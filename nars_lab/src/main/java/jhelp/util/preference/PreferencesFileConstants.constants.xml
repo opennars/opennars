@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Constants>
+	<Constant
+		name="MARKUP_PREFERENCES"
+		type="STRING"
+		value="Preferences"
+	>
+		Main markup to encapsulate all preferences
+	</Constant>
+	<Constant
+		name="MARKUP_PREFERENCE"
+		type="STRING"
+		value="Preference"
+	>
+		Markup use for one preference
+	</Constant>
+	<Constant
+		name="PARAMETER_NAME"
+		type="STRING"
+		value="name"
+	>
+		Parameter name of preference 
+	</Constant>
+	<Constant
+		name="PARAMETER_TYPE"
+		type="STRING"
+		value="type"
+	>
+		Parameter type of preference.&lt;br&gt;Can be ARRAY (byte[]), BOOLEAN (boolean), FILE (java.io.File), INTEGER (int) or STRING (java.lang.String)
+	</Constant>
+	<Constant
+		name="PARAMETER_VALUE"
+		type="STRING"
+		value="value"
+	>
+		Parameter value of preference 
+	</Constant>
+</Constants>

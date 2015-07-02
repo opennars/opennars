@@ -141,8 +141,6 @@ public class LocalRules {
     }
 
     public static Task trySolution(Task belief, final Task questionTask, final NAL nal) {
-        if (belief == null) return null;
-
         return trySolution(belief, belief.getTruth(), questionTask, nal);
     }
 
@@ -156,13 +154,13 @@ public class LocalRules {
      */
     public static Task trySolution(Task belief, final Truth projectedTruth, final Task questionTask, final NAL nal) {
 
-        if (belief == null) return null;
+        //if (belief == null) return null;
 
 
-        Sentence problem = questionTask.sentence;
+        Sentence question = questionTask.sentence;
         Memory memory = nal.memory;
 
-        if (!TemporalRules.matchingOrder(problem, belief)) {
+        if (!TemporalRules.matchingOrder(question, belief)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return null;
@@ -171,11 +169,11 @@ public class LocalRules {
 
         final long now = memory.time();
         Sentence oldBest = questionTask.getBestSolution();
-        float newQ = TemporalRules.solutionQuality(problem, belief, projectedTruth, now);
+        float newQ = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
         if (oldBest != null) {
-            float oldQ = TemporalRules.solutionQuality(problem, oldBest, now);
+            float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
             if (oldQ >= newQ) {
-                if (problem.isGoal()) {
+                if (question.isGoal()) {
                     memory.emotion.happy(oldQ, questionTask, nal);
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
@@ -186,7 +184,7 @@ public class LocalRules {
 
         Term content = belief.getTerm();
         if (content.hasVarIndep()) {
-            Term u[] = new Term[]{content, problem.getTerm()};
+            Term u[] = new Term[]{content, question.getTerm()};
 
             boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
             if (!unified) return null;
@@ -207,11 +205,11 @@ public class LocalRules {
 
         memory.logic.SOLUTION_BEST.set(questionTask.getPriority());
 
-        if (problem.isGoal()) {
+        if (question.isGoal()) {
             memory.emotion.happy(newQ, questionTask, nal);
         }
 
-        Budget budget = TemporalRules.solutionEval(problem, belief, questionTask, nal);
+        Budget budget = TemporalRules.solutionEval(question, belief, questionTask, nal);
 
             
 
