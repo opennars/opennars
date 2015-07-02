@@ -28,15 +28,15 @@ public class RoverEngine extends PhysicsModel {
 
 
     /* how often to input mission, in frames */
-    public int missionPeriod = 100;
+    public int missionPeriod = 10;
 
     boolean wraparound = false;
 
     public final List<RoverModel> rovers = new ArrayList();
-    final int angleResolution = 16;
+    final int angleResolution = 32;
 
 
-    PhysicsRun phy = new PhysicsRun(60, this);
+    PhysicsRun phy = new PhysicsRun(30, this);
     private long delayMS;
     private float fps;
     private boolean running = false;
@@ -360,7 +360,7 @@ public class RoverEngine extends PhysicsModel {
         getWorld().setAllowSleep(false);
 
         //world = new ReactorWorld(this, 32, sz, sz*2);
-        world = new FoodSpawnWorld1(this, 32, sz, sz);
+        world = new FoodSpawnWorld1(this, 128, sz, sz);
         //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
     }

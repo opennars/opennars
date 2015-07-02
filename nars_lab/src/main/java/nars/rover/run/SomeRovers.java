@@ -5,6 +5,7 @@ import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
+import nars.nal.task.filter.ConstantDerivationLeak;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
 
@@ -24,7 +25,7 @@ public class SomeRovers {
         Global.EXIT_ON_EXCEPTION = true;
 
 
-        float fps = 120;
+        float fps = 25;
         boolean cpanels = true;
 
         final RoverEngine game = new RoverEngine();
@@ -35,15 +36,23 @@ public class SomeRovers {
         for (int i = 0; i < rovers; i++)  {
 
             NAR nar;
-            nar = new NAR(new Default().simulationTime().
-                    setActiveConcepts(600) );
-            nar.param.inputsMaxPerCycle.set(100);
-            nar.param.conceptsFiredPerCycle.set(256);
+            nar = new NAR(new Default() {
 
-            nar.setCyclesPerFrame(8);
-            (nar.param).duration.set(5*8);
+                protected void initDerivationFilters() {
+                    final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                    final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                    getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+                }
 
-            nar.param.shortTermMemoryHistory.set(3);
+            }.simulationTime().
+                    setActiveConcepts(1200) );
+            nar.param.inputsMaxPerCycle.set(32);
+            nar.param.conceptsFiredPerCycle.set(48);
+
+            nar.setCyclesPerFrame(4);
+            (nar.param).duration.set(5*4);
+
+            //nar.param.shortTermMemoryHistory.set(3);
 
             (nar.param).outputVolume.set(3);
             //nar.param.budgetThreshold.set(0.02);

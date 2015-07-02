@@ -41,7 +41,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class RoverModel {
 
     int mission = 0;
-    public float curiosity = 0.05f;
+    public float curiosity = 0.1f;
 
 
     public final Body torso;
@@ -62,28 +62,33 @@ public class RoverModel {
     private final World world;
     private DebugDraw draw = null;
 
-    final double minVisionInputProbability = 0.01f;
+    final double minVisionInputProbability = 0.25f;
     final double maxVisionInputProbability = 1.0f;
-    float biteDistanceThreshold = 0.05f;
-    float tasteDistanceThreshold = 1.0f;
+
+    //float tasteDistanceThreshold = 1.0f;
     int pixels = 1;
-    int retinaResolution = 24; //should be odd # to balance
+
+    float biteDistanceThreshold = 0.5f;
+    int retinaResolution = 48; //should be odd # to balance
+    int mouthArc = retinaResolution / 12;
+
     float aStep = (float)Math.PI*2f / pixels;
-    float L = 35.0f;
+
+    float L = 24f; //vision distance
+
     Vec2 frontRetina = new Vec2(0, 0.5f);
-    int distanceResolution = 5;
-    int mouthArc = 2;
-    float mass = 2.25f;
+    int distanceResolution = 8;
+    float mass = 2f;
     Vec2[] vertices = {new Vec2(0.0f, 2.0f), new Vec2(+2.0f, -2.0f), new Vec2(-2.0f, -2.0f)};
 
-    float linearDamping = 0.8f;
-    float angularDamping = 0.6f;
+    float linearDamping = 0.9f;
+    float angularDamping = 0.8f;
 
     float restitution = 0.01f; //bounciness
     float friction = 0.5f;
 
-    public float linearThrustPerCycle = 15f;
-    public float angularSpeedPerCycle = 0.24f;
+    public float linearThrustPerCycle = 30f;
+    public float angularSpeedPerCycle = 0.44f;
 
     public static boolean allow_imitate = true;
 
@@ -161,11 +166,11 @@ public class RoverModel {
                     if (touched.getUserData() instanceof RoverEngine.Edible) {
                         if (Math.abs(ii) <= mouthArc)  {
 
-                            if (di <= biteDistanceThreshold) {
+                            if (di <= biteDistanceThreshold)
                                 eat(touched);
-                            } else if (di <= tasteDistanceThreshold) {
-                                taste(touched, di );
-                            }
+                            /*} else if (di <= tasteDistanceThreshold) {
+                                //taste(touched, di );
+                            }*/
                         }
                     }
                 }
@@ -183,6 +188,10 @@ public class RoverModel {
         addAxioms();
 
         //String p = "$0.99;0.75;0.90$ ";
+
+        randomActions.add("motor($direction)!");
+        //TODO : randomActions.add("motor($direction,$direction)!");
+
         randomActions.add("motor(left)!");
         randomActions.add("motor(left,left)!");
         randomActions.add("motor(right)!");
@@ -280,6 +289,20 @@ public class RoverModel {
                 }
 
                 //System.out.println(operation + " "+ command);
+
+                if (command.equals("$1")) {
+                    //variable causes random movement
+                    double v = Math.random();
+                    if (v < 0.25f) {
+                        command = "left";
+                    } else if (v < 0.5f) {
+                        command = "right";
+                    } else if (v < 0.75f) {
+                        command = "forward";
+                    } else {
+                        command = "reverse";
+                    }
+                }
 
                 int rspeed = 30;
                 switch (command) {
