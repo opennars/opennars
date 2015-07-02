@@ -26,7 +26,7 @@ public class SomeRovers {
         Global.EXIT_ON_EXCEPTION = true;
 
 
-        float fps = 25;
+        float fps = 85f;
         boolean cpanels = true;
 
         final RoverEngine game = new RoverEngine();
@@ -41,8 +41,8 @@ public class SomeRovers {
             nar = new NAR(new Default() {
 
                 protected void initDerivationFilters() {
-                    final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                    final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                    final float DERIVATION_PRIORITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                    final float DERIVATION_DURABILITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
                     getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
                 }
 

@@ -355,7 +355,7 @@ public class RoverEngine extends PhysicsModel {
         getWorld().setAllowSleep(false);
 
         //world = new ReactorWorld(this, 32, sz, sz*2);
-        world = new FoodSpawnWorld1(this, 128, sz, sz);
+        world = new FoodSpawnWorld1(this, 128, sz, sz, 0.95f);
         //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
     }

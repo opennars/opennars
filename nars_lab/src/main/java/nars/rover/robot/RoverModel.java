@@ -62,24 +62,26 @@ public class RoverModel {
     private final World world;
     private DebugDraw draw = null;
 
-    final double minVisionInputProbability = 0.25f;
+    final double minVisionInputProbability = 0.8f;
     final double maxVisionInputProbability = 1.0f;
 
     //float tasteDistanceThreshold = 1.0f;
-    int pixels = 1;
+    int retinaPixels = 7;
 
-    float biteDistanceThreshold = 0.55f;
-    int retinaResolution = 48; //should be odd # to balance
-    int mouthArc = retinaResolution / 12;
 
-    float aStep = (float)Math.PI*2f / pixels;
+    int retinaRaysPerPixel = 4; //rays per vision sensor
 
-    float L = 24f; //vision distance
+    float aStep = (float)Math.PI*2f / retinaPixels;
 
-    Vec2 frontRetina = new Vec2(0, 0.5f);
-    int distanceResolution = 8;
+    float L = 17f; //vision distance
+
+    Vec2 mouthPoint = new Vec2(3.0f, 0); //0.5f);
+    int distanceResolution = 10;
     float mass = 2f;
-    Vec2[] vertices = {new Vec2(0.0f, 2.0f), new Vec2(+2.0f, -2.0f), new Vec2(-2.0f, -2.0f)};
+
+    double mouthArc = Math.PI/6f; //in radians
+    float biteDistanceThreshold = 0.15f;
+    Vec2[] vertices = {new Vec2(3.0f, 0.0f), new Vec2(-1.0f, +2.0f), new Vec2(-1.0f, -2.0f)};
 
     float linearDamping = 0.9f;
     float angularDamping = 0.8f;
@@ -154,9 +156,15 @@ public class RoverModel {
 
         torso.setUserData(new RoverMaterial(id));
 
-        for (int i = -pixels / 2; i <= pixels / 2; i++) {
+        //for (int i = -pixels / 2; i <= pixels / 2; i++) {
+        for (int i = 0; i < retinaPixels; i++) {
             final int ii = i;
-            VisionRay v = new VisionRay(torso, frontRetina, MathUtils.PI / 2f + aStep * i, aStep, retinaResolution, L, distanceResolution) {
+            final float angle = /*MathUtils.PI / 2f*/ aStep * i;
+            final boolean eats = ((angle < mouthArc / 2f) || (angle > (Math.PI*2f) - mouthArc/2f));
+
+            System.out.println(i + " " + angle + " " + eats);
+
+            VisionRay v = new VisionRay(torso, eats ? mouthPoint : new Vec2(0,0), angle, aStep, retinaRaysPerPixel, L, distanceResolution) {
 
 
                 @Override
@@ -164,7 +172,8 @@ public class RoverModel {
                     if (touched == null) return;
 
                     if (touched.getUserData() instanceof RoverEngine.Edible) {
-                        if (Math.abs(ii) <= mouthArc)  {
+
+                        if (eats) {
 
                             if (di <= biteDistanceThreshold)
                                 eat(touched);
@@ -648,7 +657,7 @@ public class RoverModel {
     }
 
     public void thrust(float angle, float force) {
-        angle += torso.getAngle() + Math.PI / 2; //compensate for initial orientation
+        angle += torso.getAngle();// + Math.PI / 2; //compensate for initial orientation
         //torso.applyForceToCenter(new Vec2((float) Math.cos(angle) * force, (float) Math.sin(angle) * force));
         Vec2 v = new Vec2((float) Math.cos(angle) * force, (float) Math.sin(angle) * force);
         torso.setLinearVelocity(v);
