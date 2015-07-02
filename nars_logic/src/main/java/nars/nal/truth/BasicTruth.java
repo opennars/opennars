@@ -1,15 +1,18 @@
 package nars.nal.truth;
 
 /**
- * Created by me on 7/1/15.
+ * A truth value which allows a mutable arbitrary epsilon,
+ * with static make methods for creating new truth values that will delegate
+ * to the lighter-weight DefaultTruth when the epsilon == DefaultTruth.DEFAULT_TRUTH_EPSILON
  */
 public class BasicTruth extends AbstractTruth {
 
     public final float epsilon;
 
-    public BasicTruth(float freq, float conf, float epsilon) {
-        super(freq, conf);
-        this.epsilon = epsilon;
+    public BasicTruth(final float freq, final float conf, final float epsilon) {
+        super();
+        this.epsilon = epsilon; //epsilon must be set first
+        set(freq, conf);
     }
 
     BasicTruth(final Truth cloneFrom) {
@@ -26,19 +29,20 @@ public class BasicTruth extends AbstractTruth {
         return epsilon;
     }
 
-    /** create a new BasicTruth using the maximum epsilon of two parents */
-    public static AbstractTruth make(float f, float c, Truth a, Truth b) {
+    /** creates a new truth using the maximum epsilon (least precision) of 2 parent truth's */
+    public static AbstractTruth make(final float f, final float c, final Truth a, final Truth b) {
         return make(f, c, Math.max( a.getEpsilon(), b.getEpsilon() ));
     }
 
-    public static AbstractTruth make(float f, float c, float epsilon) {
+    /** use this instead of a constructor to automatically have DefaultTruth used when epsilon is default, saving the storage of a float */
+    public static AbstractTruth make(final float f, final float c, final float epsilon) {
         if (epsilon == DefaultTruth.DEFAULT_TRUTH_EPSILON)
             return new DefaultTruth(f, c);
         else
             return new BasicTruth(f, c, epsilon);
     }
 
-    public static Truth clone(Truth truth) {
+    public static Truth clone(final Truth truth) {
         return make(truth.getFrequency(), truth.getConfidence(), truth.getEpsilon());
     }
 }

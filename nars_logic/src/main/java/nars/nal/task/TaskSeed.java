@@ -274,11 +274,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
     public TaskSeed<T> truth(float freq, float conf, float epsilon) {
-        if (epsilon == DefaultTruth.DEFAULT_TRUTH_EPSILON) {
-            return truth(freq, conf); //DefaultTruth is more efficient that it doesnt have to store a custom epsilon value
-        }
-
-        this.truth = new BasicTruth(freq, conf, epsilon);
+        this.truth = BasicTruth.make(freq, conf, epsilon);
         return this;
     }
 
