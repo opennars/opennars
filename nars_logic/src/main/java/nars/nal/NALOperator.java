@@ -70,7 +70,7 @@ public enum NALOperator {
     OPERATION("^", 8),
 
 
-    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX), 0, false),
+    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX_OLD), 0, false),
 
     /* Syntactical, so is neither relation or isNative */
     COMPOUND_TERM_OPENER("(", 0, false, false),

@@ -86,7 +86,8 @@ abstract public class Symbols {
     public static final char IMAGE_PLACE_HOLDER = '_';
     
     /* prefix of special Term name */
-    public static final char INTERVAL_PREFIX = '+'; //TODO switch to: ????
+    @Deprecated public static final char INTERVAL_PREFIX_OLD = '+'; //TODO switch to: ????
+    public static final char INTERVAL_PREFIX = '/'; //TODO switch to: ????
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';
 
@@ -309,7 +310,7 @@ abstract public class Symbols {
             case Symbols.QUESTION:
             case Symbols.QUEST:
             case '\"':
-            case Symbols.INTERVAL_PREFIX:
+            case Symbols.INTERVAL_PREFIX_OLD:
             case '<':
             case '>':
             case '-':

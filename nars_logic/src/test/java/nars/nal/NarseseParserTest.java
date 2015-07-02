@@ -269,7 +269,7 @@ public class NarseseParserTest {
     @Test
     public void testInterval() throws InvalidInputException {
 
-        Term x = term(Symbols.INTERVAL_PREFIX + "2");
+        Term x = term(Symbols.INTERVAL_PREFIX_OLD + "2");
         assertNotNull(x);
         assertEquals(Interval.class, x.getClass());
         Interval i = (Interval) x;
@@ -962,7 +962,7 @@ public class NarseseParserTest {
             }
 
             char c = s.charAt(0);
-            if (c == Symbols.INTERVAL_PREFIX) {
+            if (c == Symbols.INTERVAL_PREFIX_OLD) {
                 return Interval.interval(s);
             }
 

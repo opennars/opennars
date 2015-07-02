@@ -14,10 +14,12 @@ import com.github.fge.grappa.support.Var;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
-import nars.nal.*;
+import nars.nal.NALOperator;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Interval;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
@@ -31,7 +33,10 @@ import nars.nal.truth.Truth;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static nars.Symbols.IMAGE_PLACE_HOLDER;
@@ -409,6 +414,8 @@ public class NarseseParser extends BaseParser<Object> {
                         ),
 
                         Variable(),
+
+                        IntervalOld(),
                         Interval(),
 
 
@@ -464,7 +471,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    final static String invalidAtomCharacters = " ,.!?" + Symbols.INTERVAL_PREFIX + "<>-=*|&()<>[]{}%#$@\'\"\t\n";
+    final static String invalidAtomCharacters = " ,.!?" + Symbols.INTERVAL_PREFIX_OLD + "<>-=*|&()<>[]{}%#$@\'\"\t\n";
 
     /**
      * an atomic term, returns a String because the result may be used as a Variable name
@@ -546,11 +553,19 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 
-    Rule Interval() {
-        return sequence(Symbols.INTERVAL_PREFIX, sequence(oneOrMore(digit()), push(match()),
-                push(Interval.interval(-1 + Texts.i((String) pop())))
+    @Deprecated Rule IntervalOld() {
+        return sequence(Symbols.INTERVAL_PREFIX_OLD, sequence(oneOrMore(digit()), push(match()),
+                //push(Interval.interval(-1 + Texts.i((String) pop())))
+                push(CyclesInterval.intervalLog(-1 + Texts.i((String) pop()), memory))
         ));
     }
+
+    Rule Interval() {
+        return sequence(Symbols.INTERVAL_PREFIX, sequence(oneOrMore(digit()), push(match()),
+                push(CyclesInterval.make(Texts.i((String) pop()), memory))
+        ));
+    }
+
 
     final static char[] variables = new char[] { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY };
 

@@ -31,9 +31,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * in base D=duration ( @see Param.java ).  The actual printed value is +1 more than the stored
  * magnitude, so for example, it will have name() "+1" if magnitude=0, and "+2" if magnitude=1.
  * 
- * @author peiwang / SeH
+ * @author peiwang
  */
-public class Interval extends Atom implements AbstractInterval {
+@Deprecated public class Interval extends Atom implements AbstractInterval {
+
+
 
     public static class AtomicDuration extends AtomicInteger {
         
@@ -125,7 +127,7 @@ public class Interval extends Atom implements AbstractInterval {
      * for specifying magnitude directly.
      */
     protected Interval(final int magnitude, final boolean yesMagnitude) {
-        super(Symbols.INTERVAL_PREFIX + String.valueOf(1+magnitude));
+        super(Symbols.INTERVAL_PREFIX_OLD + String.valueOf(1+magnitude));
         this.magnitude = magnitude;
     }
 
@@ -134,11 +136,15 @@ public class Interval extends Atom implements AbstractInterval {
         if (m < 0) return 0;
         return m;
     }
-    
+
+    public static double time(final double magnitude, final double subdurationLog) {
+        return Math.exp(magnitude * subdurationLog);
+    }
+
     public static double time(final double magnitude, final AtomicDuration duration) {
         if (magnitude <= 0)
             return 1;
-        return Math.exp(magnitude * duration.getSubDurationLog());
+        return time(magnitude, duration.getSubDurationLog());
     }
     
     public static long cycles(final int magnitude, final AtomicDuration duration) {

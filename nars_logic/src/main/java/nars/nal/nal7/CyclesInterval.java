@@ -23,6 +23,10 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     long cyc;
     int duration;
 
+    public static CyclesInterval make(long numCycles, Memory m) {
+        return make(numCycles, m.duration());
+    }
+
     public static CyclesInterval make(long numCycles, int duration) {
         if (numCycles == 0) return zero;
         return new CyclesInterval(numCycles, duration);
@@ -43,6 +47,11 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     @Override
     public boolean requiresNormalizing() {
         return false;
+    }
+
+    public static CyclesInterval intervalLog(long mag, Memory memory) {
+        long time = Math.round( Interval.time(mag, memory.param.duration) );
+        return new CyclesInterval(time, memory.duration());
     }
 
     public static byte[] interval(long numCycles, int bytesPrecision) {

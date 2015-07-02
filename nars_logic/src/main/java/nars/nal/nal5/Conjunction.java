@@ -23,14 +23,15 @@ package nars.nal.nal5;
 import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
-import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
-import java.util.*;
-
-import static java.lang.System.arraycopy;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Conjunction of statements
@@ -51,9 +52,13 @@ public class Conjunction extends Junction {
         if ((order == TemporalRules.ORDER_BACKWARD) ||
                 (order == TemporalRules.ORDER_INVALID)) {
             throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));
-        } else {
-            temporalOrder = order;
         }
+
+        if (((order == TemporalRules.ORDER_FORWARD) && (!(this instanceof Sequence)))) {
+            throw new RuntimeException("should be creating a Sequence instance not Conjunction");
+        }
+
+        temporalOrder = order;
 
         init(arg);
 
@@ -134,7 +139,7 @@ public class Conjunction extends Junction {
     public NALOperator operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return NALOperator.SEQUENCE;
+                throw new RuntimeException("use Sequence subclass of Conjunction");    //return NALOperator.SEQUENCE;
             case TemporalRules.ORDER_CONCURRENT:
                 return NALOperator.PARALLEL;
             default:
@@ -187,33 +192,7 @@ public class Conjunction extends Junction {
 
 
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-
-
-//            int remaining = len;
-//            //long cycleOffset = 0;
-//            Term l = null;
-//            int offset = 0;
-//            while (remaining > 0 && ((l = argList[remaining - 1]) instanceof AbstractInterval)) {
-//                remaining--;
-//                //offset -= ((AbstractInterval) l).cycles(mem);
-//            }
-//
-//            if (len != remaining) {
-//                if (remaining == 0) return null;
-//                if (remaining == 1) {
-//                    return argList[0];
-//                }
-//
-//                argList = Arrays.copyOfRange(argList, 0, remaining);
-//            }
-
-            Conjunction cj = new Conjunction(argList, temporalOrder);
-
-//            if (len != remaining) {
-//                //cj.setOffset(offset);
-//                System.err.println("interval making an assumption temporarily that " + argList + " shifts " + offset + " when represented as" + cj);
-//            }
-            return cj;
+            return Sequence.makeForward(argList);
 
         } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
             throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(argList));
@@ -261,10 +240,10 @@ public class Conjunction extends Junction {
 
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            return makeForward(term1, term2);
+            return Sequence.makeForward(term1, term2);
         } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
             //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
-            return makeForward(term2, term1);
+            return Sequence.makeForward(term2, term1);
             //return null;
         } else {
             if (term1 instanceof Conjunction) {
@@ -293,37 +272,7 @@ public class Conjunction extends Junction {
     }
 
 
-    protected static Term makeForward(Term term1, Term term2) {
-        final Term[] components;
 
-        if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-
-            Compound cterm1 = (Compound) term1;
-
-            ArrayList<Term> list = new ArrayList<>(cterm1.length());
-            cterm1.addTermsTo(list);
-
-            if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-                // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
-                ((Compound) term2).addTermsTo(list);
-            } else {
-                // (&,(&,P,Q),R) = (&,P,Q,R)
-                list.add(term2);
-            }
-
-            components = list.toArray(new Term[list.size()]);
-
-        } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-            Compound cterm2 = (Compound) term2;
-            components = new Term[term2.length() + 1];
-            components[0] = term1;
-            arraycopy(cterm2.term, 0, components, 1, cterm2.length());
-        } else {
-            components = new Term[]{term1, term2};
-        }
-
-        return make(components, TemporalRules.ORDER_FORWARD);
-    }
 
     @Override
     public int getTemporalOrder() {
@@ -337,5 +286,6 @@ public class Conjunction extends Junction {
     public Term last() {
         return term[term.length - 1];
     }
+
 
 }
