@@ -17,14 +17,15 @@ import nars.gui.ConceptMenu;
 import nars.gui.VerticalLayout;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
-import nars.nal.Item;
-import nars.util.data.id.Named;
+import nars.nal.Itemized;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.truth.Truthed;
 import nars.nal.concept.Concept;
+import nars.nal.process.ConceptProcess;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
+import nars.nal.truth.Truthed;
+import nars.util.data.id.Named;
 import org.infinispan.util.concurrent.ConcurrentHashSet;
 
 import javax.swing.*;
@@ -61,7 +62,8 @@ public class ConceptPanelBuilder extends NARReaction {
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
                 Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class);
+                Events.ConceptGoalRemove.class,
+                Events.ConceptProcessed.class);
 
         this.nar = n;
 
@@ -113,18 +115,31 @@ public class ConceptPanelBuilder extends NARReaction {
 
         if (event == FrameEnd.class) {
             //SwingUtilities.invokeLater(this);
-            if (isAutoRemove())
+            /*if (isAutoRemove())
                 updateAll();
-            else
+            else*/
                 updateChanged();
-        } else {
-            if (args[0] instanceof Concept) {
-                Concept c = (Concept) args[0];
-                changes().add(c);
-            } else {
-                throw new RuntimeException(this + " " + event + " unable to process unknown event format: " + event + " with " + Arrays.toString(args) + " 0:" + args[0].getClass());
-            }
+            return;
         }
+
+        if (concept.size() == 0) return;
+
+        Concept c = null;
+        if (event == Events.ConceptProcessed.class) {
+            c = ((ConceptProcess)args[0]).getCurrentConcept();
+        }
+        else {
+            if (args[0] instanceof Concept)
+            c = (Concept)args[0];
+        }
+
+
+        if (c!=null) {
+            changes().add(c);
+        } else {
+            throw new RuntimeException(this + " " + event + " unable to process unknown event format: " + event + " with " + Arrays.toString(args) + " 0:" + args[0].getClass());
+        }
+
     }
 
     @Deprecated
@@ -136,21 +151,23 @@ public class ConceptPanelBuilder extends NARReaction {
 
         if (changed == null || changes().isEmpty()) return;
 
+        if (concept.size() == 0) {
+            changed.clear();
+            return;
+        }
+
         final long now = nar.time();
 
         Iterator<Concept> ci = changed.iterator();
         while (ci.hasNext()) {
             Concept c = ci.next();
+            ci.remove();
             ConceptPanel cp = concept.get(c);
             if (cp == null) {
                 continue;
             }
-            if (cp.isShowing())
-                cp.update(now);
-            else {
-                concept.remove(c);
-            }
-            ci.remove();
+            //if (cp.isShowing())
+            cp.update(now);
         }
 
 
@@ -175,12 +192,12 @@ public class ConceptPanelBuilder extends NARReaction {
 //        }
     }
 
-    public void remove(Collection<ConceptPanel> cp) {
-        if (cp.isEmpty()) return;
-
-        for (ConceptPanel c : cp)
-            concept.remove(c.concept, c);
-    }
+//    public void remove(Collection<ConceptPanel> cp) {
+//        if (cp.isEmpty()) return;
+//
+//        for (ConceptPanel c : cp)
+//            concept.remove(c.concept, c);
+//    }
 
     public boolean remove(ConceptPanel cp) {
         return concept.remove(cp.concept, cp);
@@ -188,6 +205,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
     public void off() {
         super.off();
+        changed.clear();
         concept = new FastMap().atomic();
     }
 
@@ -616,19 +634,19 @@ public class ConceptPanelBuilder extends NARReaction {
         }
     }
 
-    abstract public static class BagChart extends ImagePanel {
+    abstract public static class BagChart<K,V extends Itemized<K>> extends ImagePanel {
 
-        final Map<String, Float> priority = new TreeMap(); //this might be limiting if items have the same .name().toString()
+        final Map<K, Float> priority = new HashMap(); //this might be limiting if items have the same .name().toString()
+        final WeakHashMap<K, String> stringified = new WeakHashMap();
 
         private final Concept concept;
         private final Bag bag;
         private final String conceptString;
 
-        float momentum = 0.9f;
         int maxItems = 32;
         private float max = 0, min = 0;
 
-        public BagChart(Concept c, Bag b) {
+        public BagChart(Concept c, Bag<K, V> b) {
             super(400, 200);
 
             this.concept = c;
@@ -636,20 +654,39 @@ public class ConceptPanelBuilder extends NARReaction {
             this.conceptString = concept.getTerm().toString();
         }
 
+        public String _stringify(K v) {
+            String n = v.toString();
+            if (v instanceof TaskLink) {
+                if (((TaskLink) v).getTerm().equals(concept.getTerm())) {
+                    n = n.replace(conceptString, "");
+                }
+            }
+            return n;
+        }
+
+        public String stringify(K k) {
+            String s = stringified.get(k);
+            if (s == null) {
+                s = _stringify(k);
+                stringified.put(k, s);
+            }
+            return s;
+        }
+
         boolean updateData() {
 
             final AtomicBoolean changed = new AtomicBoolean(false);
 
-            synchronized (priority) {
+            synchronized (bag) {
                 min = Float.POSITIVE_INFINITY;
                 max = Float.NEGATIVE_INFINITY;
                 //priority.clear();
 
-                bag.forEach(new Consumer<Item>() {
+                bag.forEach(new Consumer<V>() {
                     boolean finished = false;
 
                     @Override
-                    public void accept(final Item t) {
+                    public void accept(final V t) {
 
                         if (finished || priority.size() >= maxItems) {
                             finished = true;
@@ -658,27 +695,27 @@ public class ConceptPanelBuilder extends NARReaction {
                             return;
                         }
 
-                        String n = t.name().toString();
+                        //String n = t.name();
 
-                        if (t instanceof TaskLink) {
+                        /*if (t instanceof TaskLink) {
 
                             if (((TaskLink) t).getTerm().equals(concept.getTerm())) {
                                 n = n.replace(conceptString, "");
                             }
-                        }
+                        }*/
 
-                        float existing = priority.getOrDefault(n, -0.01f);
+
 
                         float p = t.getPriority();
                         float v = p;
 
-                        if (existing != v) {
-                            priority.put(n, v);
-                            changed.set(true);
-                        }
 
-                        if (p > max) max = p;
-                        if (p < min) min = p;
+                        Float original = priority.put(t.name(), v);
+                        if ((original == null) ||  (original != v)) {
+                            changed.set(true);
+                            if (p > max) max = p;
+                            if (p < min) min = p;
+                        }
                     }
                 });
                 setToolTipText("Min=" + min + ", Max=" + max);
@@ -703,9 +740,9 @@ public class ConceptPanelBuilder extends NARReaction {
 
     }
 
-    public static class ScatterPlotBagChart extends BagChart {
+    public static class ScatterPlotBagChart<K,V extends Itemized<K>> extends BagChart<K,V> {
 
-        public ScatterPlotBagChart(Concept c, Bag b) {
+        public ScatterPlotBagChart(Concept c, Bag<K,V> b) {
             super(c, b);
         }
 
@@ -719,9 +756,9 @@ public class ConceptPanelBuilder extends NARReaction {
             float dx = getWidth() / (1 + priority.size());
             float x = dx / 2;
             g.setFont(Video.monofont.deriveFont(9f));
-            for (Map.Entry<String, Float> e : priority.entrySet()) {
+            for (Map.Entry<K, Float> e : priority.entrySet()) {
 
-                String s = e.getKey();
+                K s = e.getKey();
                 float v = e.getValue();
                 //int textLength = g.getFontMetrics().stringWidth(s);
                 float y = (v) * (height * 0.85f) + (height * 0.1f);
@@ -737,7 +774,7 @@ public class ConceptPanelBuilder extends NARReaction {
                     g.rotate(angle);
 
 
-                g.drawString(s, 0, 0);
+                g.drawString(stringify(s), 0, 0);
 
                 if (angle != 0)
                     g.rotate(-angle);
@@ -749,11 +786,13 @@ public class ConceptPanelBuilder extends NARReaction {
         }
     }
 
-    public static class RadialBagChart extends BagChart implements MouseMotionListener {
+    public static class RadialBagChart<K,V extends Itemized<K>> extends BagChart<K,V> implements MouseMotionListener {
 
         float phase = 0;
 
-        public RadialBagChart(Concept c, Bag b) {
+        final static Color gray = new Color(0.1f, 0.1f, 0.1f);
+
+        public RadialBagChart(Concept c, Bag<K,V> b) {
             super(c, b);
 
             addMouseMotionListener(this);
@@ -762,7 +801,7 @@ public class ConceptPanelBuilder extends NARReaction {
         @Override
         protected void render(Graphics2D g) {
 
-            g.setColor(new Color(0.1f, 0.1f, 0.1f));
+            g.setColor(gray);
             g.fillRect(0, 0, getWidth(), getHeight());
 
             int count = priority.size();
@@ -774,9 +813,9 @@ public class ConceptPanelBuilder extends NARReaction {
 
             int i = 0;
             g.translate(width / 2, height / 2);
-            for (Map.Entry<String, Float> e : priority.entrySet()) {
+            for (Map.Entry<K, Float> e : priority.entrySet()) {
 
-                String s = e.getKey();
+                K s = e.getKey();
 
 
                 float rad = e.getValue() * (width / 2 * 0.45f) + (width / 2 * 0.12f);
@@ -784,19 +823,20 @@ public class ConceptPanelBuilder extends NARReaction {
                 g.setColor(Color.getHSBColor(e.getValue() * 0.5f + 0.25f, 0.75f, 0.8f));
                 //g.translate((int) theta, (int) y /*+ textLength*/);
 
+                String ss = stringify(s);
                 int x, y;
                 if (count == 1) {
-                    int textLength = g.getFontMetrics().stringWidth(s);
+                    int textLength = g.getFontMetrics().stringWidth(ss);
                     x = 0;
                     y = 0;
                     x -= textLength / 2;
-                    g.drawString(s, x, y);
+                    g.drawString(ss, x, y);
                 } else {
                     if (i == 0) g.rotate(phase); //initial angle offset
 
                     //x = (int) (rad * Math.cos(theta)) + width / 2;
                     //y = (int) (rad * Math.sin(theta)) + height / 2;
-                    g.drawString(s, rad, 0);
+                    g.drawString(ss, rad, 0);
                     g.rotate(dx);
                     //g.rotate(-theta);
                 }
