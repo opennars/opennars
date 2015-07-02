@@ -23,23 +23,20 @@ package nars.nal.concept;
 import com.google.common.base.Function;
 import nars.Global;
 import nars.Memory;
-import nars.Param;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.*;
 import nars.nal.process.TaskProcess;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.nal.tlink.*;
-import nars.util.data.id.Identifier;
+import nars.nal.truth.Truth;
 
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static com.google.common.collect.Iterators.*;
 
@@ -133,17 +130,18 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     default public void discountBeliefConfidence() {
         if (hasBeliefs()) {
-            for (final Task s : getBeliefs())
-                s.getTruth().discountConfidence();
+            discountTaskConfidences(getBeliefs());
         }
     }
 
     default public void discountGoalConfidence() {
         if (hasGoals()) {
-            for (final Task s : getGoals()) {
-                s.getTruth().discountConfidence();
-            }
+            discountTaskConfidences(getGoals());
         }
+    }
+
+    default void discountTaskConfidences(final Iterable<Task> t) {
+        t.forEach(x -> x.discountConfidence());
     }
 
     boolean isConstant();

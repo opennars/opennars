@@ -13,7 +13,7 @@ public class TransformIndependentToDependentVariables extends VariableSubstituti
     @Override
     public boolean test(Term possiblyAVariable) {
         if (super.test(possiblyAVariable))
-            return ((Variable) possiblyAVariable).hasVarIndep();
+            return possiblyAVariable.hasVarIndep();
         return false;
     }
 

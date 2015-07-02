@@ -36,7 +36,7 @@ public interface BudgetSource {
     public static class DefaultBudgetBuffer implements BudgetSource, BudgetTarget {
 
 
-        private AtomicDouble energy = new AtomicDouble();
+        private final AtomicDouble energy = new AtomicDouble();
 
         @Override
         public float energy() {

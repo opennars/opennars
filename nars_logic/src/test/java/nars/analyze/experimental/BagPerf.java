@@ -18,17 +18,17 @@
 package nars.analyze.experimental;
 
 import com.google.common.collect.Lists;
-import nars.model.impl.Default;
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.NAR;
-import nars.Global;
-import nars.budget.Budget;
-import nars.nal.Item;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
-import nars.util.sort.ArraySortedIndex;
-import com.google.common.util.concurrent.AtomicDouble;
+import nars.budget.Budget;
+import nars.model.impl.Default;
+import nars.nal.truth.DefaultTruth;
+import nars.nal.Item;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.sort.ArraySortedIndex;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -102,7 +102,7 @@ public class BagPerf {
         public String key;
     
         public NullItem() {
-            this(rng.nextFloat() * (1.0f - Global.DEFAULT_TRUTH_EPSILON));
+            this(rng.nextFloat() * (1.0f - DefaultTruth.DEFAULT_TRUTH_EPSILON));
         }
 
         public NullItem(float priority, String key) {

@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 /** input port for external, ex: sensory events */
 public class TaskSource implements Source<Task> {
 
-    private float attention;
+    private final float attention;
     private final Supplier<Task> input;
 
     public TaskSource(Supplier<Task> input, float attention) {

@@ -14,6 +14,8 @@ import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -275,11 +277,11 @@ public abstract class NAL implements Runnable {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
+    @Deprecated public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
         return deriveDouble(newTaskContent, newTruth, newBudget, temporalAdd, getCurrentTask(), allowOverlap);
     }
 
-    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
+    @Deprecated public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
         return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, getCurrentBelief(), temporalAdd, allowOverlap);
     }
 

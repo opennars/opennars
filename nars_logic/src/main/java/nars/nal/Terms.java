@@ -207,7 +207,7 @@ public class Terms {
         }
         if (list != null) {
             if (list.length > 1) {
-                return memory.term(t1, list);
+                return Memory.term(t1, list);
             }
             if (list.length == 1) {
                 if ((t1 instanceof Junction) || (t1 instanceof Intersect) || (t1 instanceof Difference)) {
@@ -223,11 +223,11 @@ public class Terms {
         if (Terms.equalType(t1, t2)) {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
-            list = t1.cloneTermsExcept(true, new Term[] { t2 });
+            list = t1.cloneTermsExcept(true, t2);
         }
         if (list != null) {
             if (list.length > 1) {
-                return memory.term(t1, list);
+                return Memory.term(t1, list);
             } else if (list.length == 1) {
                 return list[0];
             }

@@ -11,6 +11,8 @@ import nars.nal.tlink.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 import java.util.HashSet;
 import java.util.Set;

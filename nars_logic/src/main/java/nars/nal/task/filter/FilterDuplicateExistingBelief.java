@@ -3,7 +3,7 @@ package nars.nal.task.filter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;

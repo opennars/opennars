@@ -8,19 +8,16 @@ import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
-import nars.nal.NAL;
-import nars.nal.Task;
-import nars.nal.Truth;
-import nars.nal.TruthFunctions;
+import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -241,7 +238,7 @@ public class PerceptionAccel extends NARReaction {
 
             //lets make the new event the parent task, and derive it
             Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth)
-                            .budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
+                            .budget(UtilityFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
                             .parent(task, newEvent)
                             .occurrNow()
                             .setEvidentialSet(Stamp.toSetArray(evBase.toArray()))

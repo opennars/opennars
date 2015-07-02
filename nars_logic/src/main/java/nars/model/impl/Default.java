@@ -498,7 +498,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override
     protected Memory newMemory(Param narParam, LogicPolicy policy) {
         Memory m = super.newMemory(narParam, policy);
-        m.on((ConceptBuilder) this); //default conceptbuilder
+        m.on(this); //default conceptbuilder
         return m;
     }
 

@@ -315,7 +315,7 @@ abstract public class NQuadsInput {
         d.setInternalExperience(null).level(7);
         d.inputsMaxPerCycle.set(256);
         d.setTermLinkBagSize(64);
-        Global.DEFAULT_TRUTH_EPSILON = 0.02f;
+
 
 
         NAR n = new NAR(d);

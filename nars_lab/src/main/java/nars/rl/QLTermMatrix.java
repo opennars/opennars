@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
+import nars.nal.truth.DefaultTruth;
 import nars.nal.process.TaskProcess;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
@@ -40,7 +41,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
     char implicationPunctuation = Symbols.JUDGMENT;
-    float updateThresh = Global.DEFAULT_TRUTH_EPSILON * 0.25f; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
+    float updateThresh = DefaultTruth.DEFAULT_TRUTH_EPSILON * 0.25f; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount

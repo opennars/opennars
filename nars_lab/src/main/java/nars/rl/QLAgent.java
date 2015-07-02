@@ -8,7 +8,7 @@ import nars.NAR;
 import nars.event.FrameReaction;
 import nars.nal.NALOperator;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;

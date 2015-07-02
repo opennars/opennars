@@ -2,6 +2,7 @@ package nars.nal.task.filter;
 
 import nars.nal.*;
 import nars.nal.task.TaskSeed;
+import nars.nal.truth.Truth;
 
 /**
 * Created by me on 2/9/15.

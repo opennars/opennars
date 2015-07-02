@@ -18,8 +18,8 @@ import nars.nal.Task;
  */
 public abstract class Answered extends NARReaction {
     
-    private Task question;
-    private NAR nar;
+    private final Task question;
+    private final NAR nar;
     
 
 

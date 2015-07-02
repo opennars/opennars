@@ -11,7 +11,7 @@ import nars.Events.*;
 import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.util.graph.experimental.Idea;

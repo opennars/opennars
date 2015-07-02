@@ -10,12 +10,13 @@ import nars.nal.tlink.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static nars.nal.TruthFunctions.intersection;
+import static nars.nal.truth.TruthFunctions.intersection;
 
 /** --------------- questions which contain answers which are of no value for NARS but need to be answered ---------------
  * {(&&,A,B,...)?, A,B} |- {(&&,A,B)} {(&&,A,_components_1_)?,

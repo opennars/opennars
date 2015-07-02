@@ -1,7 +1,6 @@
 package nars.nal.term;
 
 import nars.nal.nal7.TemporalRules;
-import nars.nal.term.Term;
 import nars.nal.term.transform.TermVisitor;
 import nars.util.data.id.Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;

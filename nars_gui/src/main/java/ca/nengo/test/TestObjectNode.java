@@ -7,7 +7,7 @@ import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.NengrowPanel;
 import nars.NAR;
 import nars.model.impl.Default;
-import nars.nal.DefaultTruth;
+import nars.nal.truth.DefaultTruth;
 
 
 public class TestObjectNode {

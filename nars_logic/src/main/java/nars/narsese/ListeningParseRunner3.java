@@ -47,7 +47,7 @@ public class ListeningParseRunner3<V>
         implements MatchHandler
 {
     // TODO: does it need to be volatile?
-    private volatile Throwable throwable = null;
+    private final Throwable throwable = null;
 //
 //    private static final EventBus bus = new EventBus(new SubscriberExceptionHandler()
 //    {

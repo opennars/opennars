@@ -38,7 +38,7 @@ public class ConceptProcess extends NAL implements Premise {
     final TermLinkNoveltyFilter termLinkNovel = new TermLinkNoveltyFilter();
 
 
-    private int termLinksToFire;
+    private final int termLinksToFire;
     private long now;
 
 

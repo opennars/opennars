@@ -8,7 +8,7 @@ import nars.nal.term.Term;
  */
 abstract public class ConceptMatrixEntry<R extends Term, C extends Term, E extends Term, V extends ConceptMatrixEntry> implements Concept.Meta {
 
-    private ConceptMatrix matrix;
+    private final ConceptMatrix matrix;
     public final Concept concept; //may be null
 
     public ConceptMatrixEntry(ConceptMatrix<R, C, E, V> matrix, Concept c) {

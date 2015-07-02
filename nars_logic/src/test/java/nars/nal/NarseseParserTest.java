@@ -16,6 +16,8 @@ import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.*;
+import nars.nal.truth.DefaultTruth;
+import nars.nal.truth.Truth;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;

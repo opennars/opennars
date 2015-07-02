@@ -89,7 +89,7 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
     }
 
     protected void initNARS() {
-        Global.DEFAULT_TRUTH_EPSILON = 0.02f;
+
         this.nar = new NAR(new Default(3000, 10, 3).setInternalExperience(null) );
         int memoryCyclesPerFrame = 2;
 

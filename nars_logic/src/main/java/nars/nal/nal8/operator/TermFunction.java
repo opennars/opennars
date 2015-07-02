@@ -5,10 +5,10 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
-import nars.nal.DefaultTruth;
+import nars.nal.truth.DefaultTruth;
 import nars.nal.process.TaskProcess;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.ImageExt;
@@ -196,7 +196,7 @@ public abstract class TermFunction<O> extends SynchOperator {
         }
         if (y instanceof Truth) {
             //this will get the original input operation term, not after it has been inlined.
-            Compound inputTerm = (Compound)operation.getTask().getTerm();
+            Compound inputTerm = operation.getTask().getTerm();
 
             Task b = memory.newTask(
                     inputTerm

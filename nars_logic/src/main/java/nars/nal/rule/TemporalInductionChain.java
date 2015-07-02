@@ -16,6 +16,8 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -164,13 +166,15 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
             Implication whole=Implication.make(S, C,order2);
 
             if(whole!=null) {
-                Truth truth = TruthFunctions.induction(s1.getTruth(), s2.truth);
-                Budget budget = BudgetFunctions.compoundForward(truth,whole, nal);
-                budget.setPriority((float) Math.min(0.99, budget.getPriority()));
+                Truth truth = TruthFunctions.induction(s1.getTruth(), s2.getTruth());
+                if (truth!=null) {
+                    Budget budget = BudgetFunctions.compoundForward(truth, whole, nal);
+                    budget.setPriority((float) Math.min(0.99, budget.getPriority()));
 
-                return nal.deriveDouble(
-                        nal.newTask(whole).truth(truth).budget(budget)
-                                .parent(s1, s2).temporalInductable(true));
+                    return nal.deriveDouble(
+                            nal.newTask(whole).truth(truth).budget(budget)
+                                    .parent(s1, s2).temporalInductable(true));
+                }
             }
         }
         return null;

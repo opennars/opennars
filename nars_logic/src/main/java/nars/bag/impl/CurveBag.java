@@ -358,7 +358,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return
      */
     public float getFocus(final float x) {
-        return (float) curve.y(x);
+        return curve.y(x);
     }
 
 //    public static long fastRound(final double d) {

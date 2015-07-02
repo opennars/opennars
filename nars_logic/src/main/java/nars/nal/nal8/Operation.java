@@ -25,7 +25,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.NALOperator;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
@@ -36,7 +36,6 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.util.utf8.ByteBuf;
-import oracle.jrockit.jfr.openmbean.ProducerDescriptorType;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -121,7 +120,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
 
     public T getOperator() {
-        return (T) getPredicate();
+        return getPredicate();
     }
 
 

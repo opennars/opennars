@@ -11,7 +11,7 @@ import nars.NAR;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.Concept;
 import nars.util.event.Reaction;
 

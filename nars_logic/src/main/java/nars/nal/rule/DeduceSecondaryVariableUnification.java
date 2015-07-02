@@ -17,6 +17,8 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,7 +27,7 @@ import java.util.function.Predicate;
 
 import static nars.nal.Terms.reduceUntilLayer2;
 import static nars.nal.Terms.unwrapNegation;
-import static nars.nal.TruthFunctions.*;
+import static nars.nal.truth.TruthFunctions.*;
 
 /**
  * Because of the re-use of temporary collections, each thread must have its own

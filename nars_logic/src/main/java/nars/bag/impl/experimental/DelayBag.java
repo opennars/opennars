@@ -69,9 +69,9 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
 
     private final int capacity;
     
-    private Map<K,E> nameTable;
-    private Deque<E> pending;
-    private ArraySortedIndex<E> toRemove;
+    private final Map<K,E> nameTable;
+    private final Deque<E> pending;
+    private final ArraySortedIndex<E> toRemove;
     
     private float activityThreshold = 0.0f;
     private float forgetThreshold = 1.0f;
@@ -86,7 +86,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     private long now;
 
 
-    private AtomicBoolean busyReloading = new AtomicBoolean(false);
+    private final AtomicBoolean busyReloading = new AtomicBoolean(false);
     private final AtomicDouble forgetRate;
     protected int reloadIteration;
     private boolean overcapacity;

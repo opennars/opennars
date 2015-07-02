@@ -33,15 +33,14 @@ import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
-import nars.nal.DefaultTruth;
+import nars.nal.truth.DefaultTruth;
 import nars.nal.NAL;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.process.TaskProcess;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.op.app.STMInduction;
 
@@ -88,9 +87,9 @@ public class Anticipate extends NARReaction implements Mental {
     //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operate
     boolean operatorEnabled = false;
     private Memory memory;
-    private boolean debug = false;
+    private final boolean debug = false;
     private long nextUpdateTime = -1;
-    private STMInduction stm;
+    private final STMInduction stm;
 
 
     /*public Anticipate() {

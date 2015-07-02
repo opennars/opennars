@@ -29,7 +29,7 @@ public class TextPerception  {
     //public Englisch englisch;
     //public Twenglish twenglish;
     
-    private boolean enableNarsese = true;
+    private final boolean enableNarsese = true;
 
     //private boolean enableNaturalLanguage = false; //the NLP mode we should strive for
     //private boolean enableEnglisch = false;

@@ -16,7 +16,7 @@ public class Repl {
         repl(INPUT_STREAM, OUTPUT_STREAM);
     }
 
-    private static void repl(InputStream in, PrintStream out) throws IOException {
+    private static void repl(InputStream in, PrintStream out) {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 
         String input = "";

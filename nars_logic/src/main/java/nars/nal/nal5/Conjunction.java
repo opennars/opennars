@@ -315,7 +315,7 @@ public class Conjunction extends Junction {
 
         } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
             Compound cterm2 = (Compound) term2;
-            components = new Term[((Compound) term2).length() + 1];
+            components = new Term[term2.length() + 1];
             components[0] = term1;
             arraycopy(cterm2.term, 0, components, 1, cterm2.length());
         } else {

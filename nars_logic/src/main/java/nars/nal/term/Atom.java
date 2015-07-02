@@ -111,7 +111,7 @@ public class Atom extends ImmutableAtom {
         return x;
     }
     public final static Atom the(Number o) {
-        return quote(String.valueOf((Number) o));
+        return quote(String.valueOf(o));
     }
 
     /** gets the atomic term given a name */

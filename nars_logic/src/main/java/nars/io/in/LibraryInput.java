@@ -79,7 +79,7 @@ public class LibraryInput extends TextInput {
     }
 
     public static Map<String,String> getUnitTests() {
-        return getUnitTests(new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" });
+        return getUnitTests("test", "Examples/DecisionMaking", "Examples/ClassicalConditioning");
     }
 
 

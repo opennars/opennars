@@ -25,7 +25,8 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     //cached names for prefix arrays
     protected byte[] outgoing;
     protected byte[] incoming;
-    private int hashIn, hashOut;
+    private final int hashIn;
+    private final int hashOut;
 
 
     /**

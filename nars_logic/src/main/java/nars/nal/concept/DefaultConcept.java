@@ -17,6 +17,9 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
+import nars.nal.truth.BasicTruth;
+import nars.nal.truth.Truth;
+import nars.nal.truth.Truthed;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,10 +47,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
     private Map<Object, Meta> meta = null;
 
 
-    private List<Task> questions;
-    private List<Task> quests;
-    private List<Task> beliefs;
-    private List<Task> goals;
+    private final List<Task> questions;
+    private final List<Task> quests;
+    private final List<Task> beliefs;
+    private final List<Task> goals;
 
     transient private final Memory memory;
 
@@ -555,7 +558,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
 
             double Satisfaction = 1.0 - AntiSatisfaction;
-            Truth T = new DefaultTruth(newGoal.getTruth());
+            Truth T = BasicTruth.clone(newGoal.getTruth());
 
             T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
 

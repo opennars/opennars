@@ -18,6 +18,7 @@ import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.nal.truth.Truth;
 
 import java.util.Arrays;
 

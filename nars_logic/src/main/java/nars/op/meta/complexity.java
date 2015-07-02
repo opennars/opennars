@@ -10,6 +10,6 @@ public class complexity extends TermFunction<Integer> {
 
     @Override
     public Integer function(Term... x) {
-        return (int)x[0].getComplexity();
+        return x[0].getComplexity();
     }
 }

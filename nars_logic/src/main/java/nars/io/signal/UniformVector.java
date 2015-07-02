@@ -1,7 +1,8 @@
 package nars.io.signal;
 
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
+import nars.nal.truth.DefaultTruth;
 
 import java.util.Arrays;
 
@@ -11,7 +12,8 @@ import static nars.io.Texts.n2;
  * Represents a changing 1-dimensional array of double[], each element normalized to 0..1.0
  */
 public class UniformVector  {
-    
+
+    float epsilon = DefaultTruth.DEFAULT_TRUTH_EPSILON;
     public double[] lastData = null;
     public final double[] data;
     private final String prefix;
@@ -60,7 +62,7 @@ public class UniformVector  {
     }
 
     public boolean different(final double a, final double b) {
-        return Math.abs(a - b) >= Global.DEFAULT_TRUTH_EPSILON;
+        return Math.abs(a - b) >= epsilon;
     }
     
     public UniformVector setPriority(float p) {

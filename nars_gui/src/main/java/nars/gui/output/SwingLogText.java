@@ -8,7 +8,7 @@ import nars.NAR;
 import nars.io.out.TextOutput;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 

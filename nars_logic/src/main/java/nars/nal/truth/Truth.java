@@ -18,11 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.nal;
+package nars.nal.truth;
 
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
+import nars.nal.Sentence;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -70,12 +71,11 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
      *
      * @return The isAnalytic value
      */
-    public boolean getAnalytic();
+    public boolean isAnalytic();
 
-    /**
-     * Set the isAnalytic flag
-     */
-    public void setAnalytic();
+
+
+    public float getEpsilon();
 
     /**
      * Calculate the expectation value of the truth value
@@ -137,8 +137,6 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
 //    }
 
 
-
-    public Truth setAnalytic(final boolean a);
 
 
 
@@ -287,7 +285,8 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
      *
      * @return Truth value, null for question
      */
-    default public void discountConfidence() {
-        setConfidence(getConfidence() * Global.DISCOUNT_RATE).setAnalytic(false);
+    default public AnalyticTruth discountConfidence() {
+        return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE, getEpsilon());
     }
+
 }

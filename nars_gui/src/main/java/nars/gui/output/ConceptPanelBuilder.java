@@ -21,7 +21,7 @@ import nars.nal.Item;
 import nars.util.data.id.Named;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truthed;
+import nars.nal.truth.Truthed;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;

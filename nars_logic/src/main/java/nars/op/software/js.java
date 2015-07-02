@@ -2,9 +2,9 @@ package nars.op.software;
 
 import nars.Memory;
 import nars.NAR;
-import nars.nal.DefaultTruth;
+import nars.nal.truth.DefaultTruth;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.ConstantConceptBuilder;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;

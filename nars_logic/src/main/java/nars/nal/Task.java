@@ -21,7 +21,6 @@
 package nars.nal;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializable;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -37,6 +36,9 @@ import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
 import nars.nal.term.Compound;
 import nars.nal.term.Termed;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
+import nars.nal.truth.Truthed;
 import nars.op.mental.InternalExperience;
 
 import java.io.IOException;
@@ -628,12 +630,12 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
     @Override
-    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeString(toString());
     }
 
     @Override
-    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException, JsonProcessingException {
+    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
         serialize(jgen, provider);
     }
 
@@ -645,4 +647,13 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     public void setEvidentialSet(long serial) {
         setEvidentialSet(new long[] { serial } );
     }
+
+    public void setTruth(Truth t) {
+        this.truth = t;
+    }
+
+    public void discountConfidence() {
+        setTruth(getTruth().discountConfidence());
+    }
+
 }

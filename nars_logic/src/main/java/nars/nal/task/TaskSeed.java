@@ -14,6 +14,9 @@ import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
 import nars.nal.term.Compound;
+import nars.nal.truth.BasicTruth;
+import nars.nal.truth.DefaultTruth;
+import nars.nal.truth.Truth;
 
 import java.util.Arrays;
 
@@ -270,9 +273,18 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
     }
 
+    public TaskSeed<T> truth(float freq, float conf, float epsilon) {
+        if (epsilon == DefaultTruth.DEFAULT_TRUTH_EPSILON) {
+            return truth(freq, conf); //DefaultTruth is more efficient that it doesnt have to store a custom epsilon value
+        }
+
+        this.truth = new BasicTruth(freq, conf, epsilon);
+        return this;
+    }
+
     public TaskSeed<T> truth(float freq, float conf) {
-        if (this.truth == null)
-            this.truth = new DefaultTruth(freq, conf, Global.DEFAULT_TRUTH_EPSILON);
+        if (!(this.truth instanceof DefaultTruth)) //includes the null case as false
+            this.truth = new DefaultTruth(freq, conf);
         else {
             this.truth.set(freq, conf);
         }
@@ -426,7 +438,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
 
         Task t = new Task(sentenceTerm, punc,
-                (truth != null) ? new DefaultTruth(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
+                (truth != null) ? BasicTruth.clone(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
                 getBudget(),
                 getParentTask(),
                 getParentBelief(),

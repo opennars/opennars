@@ -8,9 +8,9 @@ import nars.Memory;
 import nars.NAR;
 import nars.io.JSONOutput;
 import nars.io.Texts;
-import nars.nal.DefaultTruth;
+import nars.nal.truth.DefaultTruth;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
@@ -65,7 +65,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     transient int maxRemovals = 2;
 
     //enable true for more precise temporality constraints; this may be necessary or not
-    transient private boolean strictDurationWindow = true;
+    final transient private boolean strictDurationWindow = true;
 
 
     public TaskCondition(NAR n, Task t, Class channel, long creationTimeOffset, final boolean relativeToCondition, Class... channels)  {

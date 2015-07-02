@@ -12,6 +12,8 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 
 public class Contraposition extends ConceptFireTask {

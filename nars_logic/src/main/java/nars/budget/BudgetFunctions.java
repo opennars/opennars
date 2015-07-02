@@ -27,6 +27,7 @@ import nars.nal.process.ConceptProcess;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
 
 import static java.lang.Math.max;
 import static java.lang.Math.pow;

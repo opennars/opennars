@@ -3,7 +3,6 @@ package nars.nal.nal8.operator;
 import nars.Memory;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.TermFunction;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;

@@ -87,7 +87,7 @@ public class InternalExperience extends NARReaction {
     
     //public static boolean enabled=true;
 
-    private Memory memory;
+    private final Memory memory;
     public final static Atom believe = Atom.the("believe");
     public final static Atom want = Atom.the("want");;
     public final static Atom wonder = Atom.the("wonder");;

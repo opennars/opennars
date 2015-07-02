@@ -21,11 +21,9 @@
 package nars.nal;
 
 import com.google.common.hash.PrimitiveSink;
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
-import nars.io.Texts;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
@@ -33,6 +31,7 @@ import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.*;
 import nars.nal.term.transform.TermVisitor;
+import nars.nal.truth.*;
 import nars.util.data.Util;
 import nars.util.data.id.Named;
 
@@ -58,9 +57,10 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     public final char punctuation;
     
     /**
-     * The truth value of Judgment, or desire value of Goal     
+     * The truth value of Judgment, or desire value of Goal
+     * TODO can we make this final eventually like it was before.. Concept.discountBeliefConfidence needed to mutate the truth on discount
      */
-    public final Truth truth;
+    public Truth truth;
     
 
     /**
@@ -280,7 +280,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     public static <X extends Compound> X termOrNull(Term t) {
         //if (invalidSentenceTerm(t))
             //return null;
-        Term x = (X)t.normalized();
+        Term x = t.normalized();
 //        if (Global.DEBUG) {
 //            if (invalidSentenceTerm(x)) {
 //                throw new RuntimeException("invalidity determined after normalization, wtf: " + t + " became " + x);
@@ -375,7 +375,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
     protected <X extends Compound> Sentence<X> clone_(X t) {
         return new Sentence(t, punctuation,
-                truth!=null ? new DefaultTruth(truth) : null,
+                truth!=null ? BasicTruth.clone(truth) : null,
                 this);
     }
 
@@ -425,7 +425,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         }
         
         if (newTruth == null) {
-            newTruth = new DefaultTruth(truth);
+            newTruth = BasicTruth.clone(truth);
             //return truth;
         }
         

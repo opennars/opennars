@@ -3,7 +3,7 @@ package nars.gui.output;
 import nars.NAR;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

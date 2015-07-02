@@ -62,7 +62,7 @@ public class RoverModel {
     private final World world;
     private DebugDraw draw = null;
 
-    final double minVisionInputProbability = 0.1f;
+    final double minVisionInputProbability = 0.01f;
     final double maxVisionInputProbability = 1.0f;
     float biteDistanceThreshold = 0.05f;
     float tasteDistanceThreshold = 1.0f;

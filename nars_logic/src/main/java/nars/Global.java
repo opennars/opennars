@@ -150,11 +150,9 @@ public class Global {
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.05f;
 
-    //default
-    public static float DEFAULT_TRUTH_EPSILON = 0.01f;
 
     public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
-    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - DEFAULT_TRUTH_EPSILON;
+    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - 0.01f /*DEFAULT_TRUTH_EPSILON*/;
 
     //temporary parameter for setting #threads to use, globally
     @Deprecated public static int THREADS = 1;

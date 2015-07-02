@@ -181,10 +181,10 @@ public class Variables {
             if (b == null) return false;
 
 
-            if(compound[0] instanceof Variable && ((Variable)compound[0]).hasVarQuery() && (((Variable)a).hasVarIndep() || ((Variable)a).hasVarDep()) ) {
+            if(compound[0] instanceof Variable && compound[0].hasVarQuery() && (a.hasVarIndep() || a.hasVarDep()) ) {
                 return false;
             }
-            if(compound[1] instanceof Variable && ((Variable)compound[1]).hasVarQuery() && (((Variable)b).hasVarIndep() || ((Variable)b).hasVarDep()) ) {
+            if(compound[1] instanceof Variable && compound[1].hasVarQuery() && (b.hasVarIndep() || b.hasVarDep()) ) {
                 return false;
             }
 

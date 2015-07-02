@@ -1,16 +1,15 @@
 package nars.testing;
 
 import nars.Events;
-import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
 import nars.event.NARReaction;
 import nars.io.in.TextInput;
 import nars.io.out.TextOutput;
+import nars.nal.truth.DefaultTruth;
 import nars.nal.Task;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
-import nars.nal.term.Compound;
 import nars.narsese.InvalidInputException;
 import nars.testing.condition.OutputCondition;
 import nars.testing.condition.TaskCondition;
@@ -37,7 +36,7 @@ public class TestNAR extends NAR {
     public final List<OutputCondition> requires = new ArrayList();
     public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
-    transient private boolean exitOnAllSuccess = true;
+    final transient private boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
 
 
@@ -122,7 +121,7 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
-        float h = (freqMin!=-1) ? Global.DEFAULT_TRUTH_EPSILON / 2.0f : 0;
+        float h = (freqMin!=-1) ? DefaultTruth.DEFAULT_TRUTH_EPSILON / 2.0f : 0;
 
         if (freqMin == -1) freqMin = freqMax;
 
@@ -217,7 +216,7 @@ public class TestNAR extends NAR {
     public ExplainableTask believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
-        Task t = super.believe(pri, dur, (Compound) term(beliefTerm), tense, freq, conf);
+        Task t = super.believe(pri, dur, term(beliefTerm), tense, freq, conf);
 
         return explainable(t);
     }

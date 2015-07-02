@@ -34,6 +34,8 @@ import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 import java.util.Arrays;
 
@@ -249,17 +251,18 @@ public class LocalRules {
      *
      * @param nal Reference to the memory
      */
-    public static void matchReverse(final NAL nal) {
+    public static Task matchReverse(final NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence belief = nal.getCurrentBelief();
         Sentence sentence = task.sentence;
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
             if (sentence.isJudgment()) {
-                NAL2.inferToSym(task, belief, nal);
+                return NAL2.inferToSym(task, belief, nal);
             } else {
-                conversion(nal);
+                return conversion(nal);
             }
         }
+        return null;
     }
 
     /**
@@ -317,10 +320,10 @@ public class LocalRules {
      *
      * @param nal Reference to the memory
      */
-    private static void conversion(final NAL nal) {
+    private static Task conversion(final NAL nal) {
         Truth truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
         Budget budget = BudgetFunctions.forward(truth, nal);
-        convertedJudgment(truth, budget, nal);
+        return convertedJudgment(truth, budget, nal);
     }
 
     /**
@@ -329,27 +332,29 @@ public class LocalRules {
      *
      * @param nal Reference to the memory
      */
-    private static void convertRelation(final NAL nal) {
+    private static Task convertRelation(final NAL nal) {
         Truth truth = nal.getCurrentBelief().truth;
         if ((nal.getCurrentTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(truth, 1.0f);
         }
-        Budget budget = BudgetFunctions.forward(truth, nal);
-        convertedJudgment(truth, budget, nal);
+        if (truth!=null) {
+            Budget budget = BudgetFunctions.forward(truth, nal);
+            return convertedJudgment(truth, budget, nal);
+        }
+        return null;
     }
 
     /**
      * Convert judgment into different relation
      * <p>
      * called in MatchingRules
-     *
-     * @param budget The budget value of the new task
+     *  @param budget The budget value of the new task
      * @param truth  The truth value of the new task
      * @param nal    Reference to the memory
      */
-    private static void convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
+    private static Task convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
         Statement content = (Statement) nal.getCurrentTask().getTerm();
         Statement beliefContent = (Statement) nal.getCurrentBelief().getTerm();
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
@@ -360,7 +365,7 @@ public class LocalRules {
         Term otherTerm;
 
         if (subjT.hasVarQuery() && predT.hasVarQuery()) {
-            System.err.println("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
+            //System.err.println("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
             //throw new RuntimeException("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
         } else if (subjT.hasVarQuery()) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
@@ -371,7 +376,9 @@ public class LocalRules {
         }
 
         if (content != null)
-            nal.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
+            return nal.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
+
+        return null;
     }
 
 

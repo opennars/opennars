@@ -46,7 +46,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
     private boolean ownsNodePool = false;
 
-    private int capacity;
+    private final int capacity;
     transient private float mass;
 
     transient DD<V> current = null;
@@ -98,7 +98,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
      */
     public final DDList<V> chain;
 
-    private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f; //slightly below half
+    private final float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f; //slightly below half
     private float estimatedMax = 0.5f;
     private float estimatedMin = 0.5f;
     private float estimatedMean = 0.5f;

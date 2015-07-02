@@ -1,7 +1,7 @@
 package nars.op.math;
 
-import nars.nal.DefaultTruth;
-import nars.nal.Truth;
+import nars.nal.truth.DefaultTruth;
+import nars.nal.truth.Truth;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.nal.nal8.operator.TermPredicate;

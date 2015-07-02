@@ -7,7 +7,7 @@ import nars.event.NARReaction;
 import nars.io.Texts;
 import nars.nal.process.TaskProcess;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.TemporalRules;
 import nars.util.event.AbstractReaction;

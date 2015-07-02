@@ -36,6 +36,8 @@ import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.term.transform.Substitution;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 import nars.op.mental.Mental;
 
 import java.util.HashMap;
@@ -391,11 +393,16 @@ public class TemporalRules {
         Truth givenTruth2 = s2.truth;
         //   TruthFunctions.
         Truth truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
+        Budget budget1 = truth1!=null ? BudgetFunctions.forward(truth1, nal) : null;
+        Statement statement1 = truth1!=null ? Implication.make(t1, t2, order) : null;
+
         Truth truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
+        Budget budget2 = truth2!=null ? BudgetFunctions.forward(truth2, nal) : null;
+        Statement statement2 = truth2!=null ? Implication.make(t2, t1, reverseOrder(order)) : null;
+
         Truth truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
-        Budget budget1 = BudgetFunctions.forward(truth1, nal);
-        Budget budget2 = BudgetFunctions.forward(truth2, nal);
-        Budget budget3 = BudgetFunctions.forward(truth3, nal);
+        Budget budget3 = truth3!=null ? BudgetFunctions.forward(truth3, nal) : null;
+        Statement statement3 = truth3!=null ? Equivalence.make(t1, t2, order) : null;
 
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         if (!SucceedingEventsInduction) { //reduce priority according to temporal distance
@@ -405,14 +412,14 @@ public class TemporalRules {
             float d = Math.abs(tt1 - tt2) / ((float)nal.memory.param.duration.get());
             if (d != 0) {
                 float mul = 1.0f / d;
-                budget1.setPriority(budget1.getPriority() * mul);
-                budget2.setPriority(budget2.getPriority() * mul);
-                budget3.setPriority(budget3.getPriority() * mul);
+                if (budget1!=null)  budget1.mulPriority(mul);
+                if (budget2!=null)  budget2.mulPriority(mul);
+                if (budget3!=null)  budget3.mulPriority(mul);
             }
         }
-        Statement statement1 = Implication.make(t1, t2, order);
-        Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
-        Statement statement3 = Equivalence.make(t1, t2, order);
+
+
+
 
 
         //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
@@ -558,7 +565,7 @@ public class TemporalRules {
                     occ = Stamp.ETERNAL;
                 } else {
                     long shift=0;
-                    if(((Implication) task.sentence.getTerm()).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                    if(task.sentence.getTerm().getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                         shift=nal.memory.duration();
                     }
                     occ = (strongest_desire.getOccurrenceTime()-shift);

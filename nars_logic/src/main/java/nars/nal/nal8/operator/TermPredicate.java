@@ -1,7 +1,7 @@
 package nars.nal.nal8.operator;
 
 import nars.Memory;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.ConstantConceptBuilder;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Atom;

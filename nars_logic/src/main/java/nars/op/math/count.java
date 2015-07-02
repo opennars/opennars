@@ -47,7 +47,7 @@ public class count extends TermFunction<Integer> implements Mental {
             throw new RuntimeException("Requires 1 SetExt or SetInt argument");
         }       
         
-        return ((Compound) content).length();
+        return content.length();
     }
     
 }

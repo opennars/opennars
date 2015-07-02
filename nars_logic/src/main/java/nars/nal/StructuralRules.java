@@ -34,6 +34,8 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
+import nars.nal.truth.Truth;
+import nars.nal.truth.TruthFunctions;
 
 import java.util.List;
 

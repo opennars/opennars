@@ -26,6 +26,8 @@ import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.nal.truth.DefaultTruth;
+import nars.nal.truth.Truth;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
 
@@ -750,7 +752,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Object term(Object o) {
-        if (o instanceof Term) return ((Term)o);
+        if (o instanceof Term) return o;
         if (o instanceof String) {
             String s= (String)o;
             return Atom.the(s);

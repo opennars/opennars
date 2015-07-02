@@ -170,7 +170,7 @@ public class Variable extends Atom {
         if (!((Variable) that).isScoped()) return false;
 
 
-        return super.equals((Variable) that);
+        return super.equals(that);
     }
 
     public static int compare(final Variable a, final Variable b) {

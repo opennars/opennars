@@ -4,7 +4,7 @@ import nars.Events;
 import nars.NAR;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.truth.Truth;
 import nars.nal.concept.Concept;
 import nars.op.io.Echo;
 

@@ -22,15 +22,13 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.DefaultTruth;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.*;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.term.Term;
+import nars.nal.truth.AbstractTruth;
+import nars.nal.truth.DefaultTruth;
 
 import java.util.ArrayList;
 
@@ -52,7 +50,7 @@ public class name extends SynchOperator implements Mental {
         Term atomic = operation.arg(1);
         Similarity content = Similarity.make(compound, atomic);
 
-        DefaultTruth truth;
+        AbstractTruth truth;
         return Lists.newArrayList( operation.newSubTask(memory,
                 content, Symbols.JUDGMENT, truth = new DefaultTruth(1, 0.9999f), memory.time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
