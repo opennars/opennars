@@ -103,9 +103,12 @@ public final class StructuralRules {
             return;
         
         Sentence sentence = nal.getCurrentTask().sentence;
-        Truth truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
-        Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.deriveSingle(content, truth, budget);
+
+        AnalyticTruth truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
+        if (truth!=null) {
+            Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
+            nal.deriveSingle(content, truth, budget);
+        }
     }
 
     /**
@@ -179,9 +182,9 @@ public final class StructuralRules {
      * @param statement The premise
      * @param nal Reference to the memory
      */
-    static void structuralCompose1(Compound compound, short index, Statement statement, NAL nal) {
-        if (!nal.getCurrentTask().sentence.isJudgment()) {
-            return;     // forward logic only
+    static Task structuralCompose1(Compound compound, short index, Statement statement, NAL nal) {
+        if (!nal.getCurrentTask().isJudgment()) {
+            return null;     // forward logic only
         }
         Term component = compound.term[index];
         Task task = nal.getCurrentTask();
@@ -190,7 +193,10 @@ public final class StructuralRules {
         Truth truth = sentence.truth;
         
         final float reliance = nal.memory.param.reliance.floatValue();
+
         AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
+        if (truthDed == null) return null;
+
         AnalyticTruth truthNDed = TruthFunctions.deduction(truth, reliance).negate();
         
         Term subj = statement.getSubject();
@@ -198,29 +204,33 @@ public final class StructuralRules {
         
         if (component.equals(subj)) {
             if (compound instanceof IntersectionExt) {
-                structuralStatement(compound, pred, order, truthDed, nal);
+                return structuralStatement(compound, pred, order, truthDed, nal);
             } else if (compound instanceof IntersectionInt) {
+
             } else if ((compound instanceof DifferenceExt) && (index == 0)) {
-                structuralStatement(compound, pred, order, truthDed, nal);
+                return structuralStatement(compound, pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
                 if (index == 0) {
                 } else {
-                    structuralStatement(compound, pred, order, truthNDed, nal);
+                    return structuralStatement(compound, pred, order, truthNDed, nal);
                 }
             }
         } else if (component.equals(pred)) {
             if (compound instanceof IntersectionExt) {
+
             } else if (compound instanceof IntersectionInt) {
-                structuralStatement(subj, compound, order, truthDed, nal);
+                return structuralStatement(subj, compound, order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
                 } else {
-                    structuralStatement(subj, compound, order, truthNDed, nal);
+                    return structuralStatement(subj, compound, order, truthNDed, nal);
                 }
             } else if ((compound instanceof DifferenceInt) && (index == 0)) {
-                structuralStatement(subj, compound, order, truthDed, nal);
+                return structuralStatement(subj, compound, order, truthDed, nal);
             }
         }
+
+        return null;
     }
 
     /**
@@ -231,7 +241,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param nal Reference to the memory
      */
-    static void structuralDecompose1(Compound compound, short index, Statement statement, NAL nal) {
+    static Task structuralDecompose1(Compound compound, short index, Statement statement, NAL nal) {
 //        if (!memory.getCurrentTask().sentence.isJudgment()) {
 //            return;
 //        }
@@ -243,61 +253,64 @@ public final class StructuralRules {
         Truth truth = sentence.truth;
         
         if (truth == null) {
-            return;
+            return null;
         }
         
         final float reliance = nal.memory.param.reliance.floatValue();
         AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
+        if (truthDed == null) return null;
+
         AnalyticTruth truthNDed = TruthFunctions.deduction(truth, reliance).negate(); //TODO clone from truthDed instead of calculate Deducation entirely
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
         if (compound.equals(subj)) {
             if (compound instanceof IntersectionInt) {
-                structuralStatement(component, pred, order, truthDed, nal);
+                return structuralStatement(component, pred, order, truthDed, nal);
             } else if ((compound instanceof SetExt) && (compound.length() > 1)) {
                 Term[] t1 = new Term[]{component};
-                structuralStatement(SetExt.make(t1), pred, order, truthDed, nal);
+                return structuralStatement(SetExt.make(t1), pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
                 if (index == 0) {
-                    structuralStatement(component, pred, order, truthDed, nal);
+                    return structuralStatement(component, pred, order, truthDed, nal);
                 } else {
-                    structuralStatement(component, pred, order, truthNDed, nal);
+                    return structuralStatement(component, pred, order, truthNDed, nal);
                 }
             }
         } else if (compound.equals(pred)) {
             if (compound instanceof IntersectionExt) {
-                structuralStatement(subj, component, order, truthDed, nal);
+                return structuralStatement(subj, component, order, truthDed, nal);
             } else if ((compound instanceof SetInt) && (compound.length() > 1)) {
-                structuralStatement(subj, SetInt.make(component), order, truthDed, nal);
+                return structuralStatement(subj, SetInt.make(component), order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
-                    structuralStatement(subj, component, order, truthDed, nal);
+                    return structuralStatement(subj, component, order, truthDed, nal);
                 } else {
-                    structuralStatement(subj, component, order, truthNDed, nal);
+                    return structuralStatement(subj, component, order, truthNDed, nal);
                 }
             }
         }
+        return null;
     }
 
     /**
      * Common final operations of the above two methods
-     *
-     * @param subject The subject of the new task
+     *  @param subject The subject of the new task
      * @param predicate The predicate of the new task
      * @param truth The truth value of the new task
      * @param nal Reference to the memory
      */
-    private static void structuralStatement(Term subject, Term predicate, int order, Truth truth, NAL nal) {
+    private static Task structuralStatement(Term subject, Term predicate, int order, Truth truth, NAL nal) {
         Task task = nal.getCurrentTask();
         Term oldContent = task.getTerm();
         if (oldContent instanceof Statement) {
             Statement content = Statement.make((Statement) oldContent, subject, predicate, order);
             if (content != null) {
                 Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
-                nal.deriveSingle(content, truth, budget);
+                return nal.deriveSingle(content, truth, budget);
             }
         }
+        return null;
     }
 
     /* -------------------- set transform -------------------- */

@@ -70,8 +70,8 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
         return new DefaultConceptProcess(concepts, c, t);
     }
 
-    protected Concept nextConceptToProcess() {
-        Concept currentConcept = concepts.forgetNext(memory.param.conceptForgetDurations, memory);
+    protected Concept nextConceptToProcess(float conceptForgetDurations) {
+        Concept currentConcept = concepts.forgetNext(conceptForgetDurations, memory);
 
         if (currentConcept == null)
             return null;

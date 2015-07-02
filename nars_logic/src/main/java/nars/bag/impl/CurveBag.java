@@ -3,6 +3,7 @@ package nars.bag.impl;
 import nars.Global;
 import nars.bag.Bag;
 import nars.nal.Item;
+import nars.util.data.CuckooMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 
@@ -94,14 +95,19 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         );
     }
 
-    public class CurveMap extends HashMap<K, E> {
-            //CuckooMap<K,E> {  //doesnt seem to work yet in CurveBag
+    public class CurveMap/*<K,E extends Item<K>>*/  {
 
-        public CurveMap(int initialCapacity) {
-            super(initialCapacity * 1 + 1);
+
+        final Map<K,E> map;
+
+//        public CurveMap(int initialCapacity) {
+//            super(initialCapacity * 1 + 1);
+//        }
+        public CurveMap(Map<K,E> map) {
+            this.map = map;
         }
 
-        @Override
+
         public E put(final K key, final E value) {
 
             E removed, removed2;
@@ -131,14 +137,14 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
          * put key in index, do not add value
          */
         public E putKey(final K key, final E value) {
-            return super.put(key, value);
+            return map.put(key, value);
         }
 
         /**
          * remove key only, not from items
          */
         public E removeKey(final K key) {
-            return super.remove(key);
+            return map.remove(key);
         }
 
 //        public E removeItem(K name) {
@@ -149,19 +155,9 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 //            }
 //        }
 
-        public E removeItem(final E removed) {
-            if (items.remove(removed)) {
-                mass -= removed.getPriority();
-                return removed;
-            }
-            return null;
-        }
 
-        public E addItem(final E i) {
-            return items.insert(i);
-        }
 
-        @Override
+
         public E remove(final Object key) {
 
             E e;
@@ -179,12 +175,49 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
             return e;
         }
 
-        @Override
-        public boolean remove(Object key, Object value) {
-            throw new RuntimeException("Not implemented");
+        public int size() {
+            return map.size();
         }
 
+        public boolean containsValue(E it) {
+            return map.containsValue(it);
+        }
 
+        public void clear() {
+            map.clear();
+        }
+
+        public E get(K key) {
+            return map.get(key);
+        }
+
+        public boolean containsKey(K name) {
+            return map.containsKey(name);
+        }
+
+        public Set<K> keySet() {
+            return map.keySet();
+        }
+
+        public Collection<E> values() { return map.values(); }
+
+//        public boolean remove(Object key, Object value) {
+//            throw new RuntimeException("Not implemented");
+//        }
+
+
+    }
+
+    public E removeItem(final E removed) {
+        if (items.remove(removed)) {
+            mass -= removed.getPriority();
+            return removed;
+        }
+        return null;
+    }
+
+    public E addItem(final E i) {
+        return items.insert(i);
     }
 
     public CurveBag(Random rng, int capacity, BagCurve curve, boolean randomRemoval, SortedIndex<E> items) {
@@ -204,7 +237,11 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         else
             x = 1.0f; //start a highest priority
 
-        nameTable = new CurveMap(capacity);
+        nameTable = new CurveMap(
+                //new HashMap(capacity)
+                //Global.newHashMap(capacity)
+                new CuckooMap(capacity)
+        );
 
         this.mass = 0;
     }

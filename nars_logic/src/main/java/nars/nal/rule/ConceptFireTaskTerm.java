@@ -6,17 +6,21 @@ import nars.nal.tlink.TermLink;
 import nars.nal.process.ConceptProcess;
 
 /** when a concept fires a tasklink that fires a termlink */
-abstract public class ConceptFireTaskTerm extends LogicRule<ConceptProcess>  {
+abstract public class ConceptFireTaskTerm implements LogicRule<ConceptProcess>  {
 
 
     abstract public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink);
 
     @Override
-    public boolean accept(ConceptProcess f) {
-        if (f.getCurrentTermLink()!=null) {
-            if (!apply(f, f.getCurrentTaskLink(), f.getCurrentTermLink()))
-                return false;
+    public boolean accept(final ConceptProcess f) {
+
+        final TermLink ftl = f.getCurrentTermLink();
+
+        if (ftl !=null) {
+            return apply(f, f.getCurrentTaskLink(), ftl);
         }
+
+        //continue by default
         return true;
     }
 

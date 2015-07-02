@@ -4,7 +4,7 @@ package nars.nal;
 /**
  * Base class for NARS logical reasoner / inference rules
  */
-abstract public class LogicRule<X>  {
+public interface LogicRule<X>  {
 
     /** return false to cancel subsequent rules for this object; true to continue */
     abstract public boolean accept(X x);

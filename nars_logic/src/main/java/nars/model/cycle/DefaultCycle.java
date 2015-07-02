@@ -111,8 +111,11 @@ public class DefaultCycle extends SequentialCycle {
 
         //1 concept if (memory.newTasks.isEmpty())*/
         int conceptsToFire = newTasks.isEmpty() ? memory.param.conceptsFiredPerCycle.get() : 0;
+
+        float tasklinkForgetDurations = memory.param.taskLinkForgetDurations.floatValue();
+        float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
         for (int i = 0; i < conceptsToFire; i++) {
-            ConceptProcess f = nextTaskLink(nextConceptToProcess());
+            ConceptProcess f = nextTaskLink(nextConceptToProcess(conceptForgetDurations), tasklinkForgetDurations);
             if (f != null) {
                 f.run();
             }
@@ -120,7 +123,7 @@ public class DefaultCycle extends SequentialCycle {
 
         concepts.forgetNext(
                 memory.param.conceptForgetDurations,
-                memory.random.nextFloat() * Global.CONCEPT_FORGETTING_ACCURACY,
+                memory.random.nextFloat() * Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
                 memory);
 
         memory.runNextTasks();
@@ -206,11 +209,11 @@ public class DefaultCycle extends SequentialCycle {
     }
 
 
-    private ConceptProcess nextTaskLink(final Concept concept) {
+    private ConceptProcess nextTaskLink(final Concept concept, float taskLinkForgetDurations) {
         if (concept == null) return null;
 
 
-        TaskLink taskLink = concept.getTaskLinks().forgetNext(memory.param.taskLinkForgetDurations, memory);
+        TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
         if (taskLink!=null)
             return newConceptProcess(concept, taskLink);
         else {

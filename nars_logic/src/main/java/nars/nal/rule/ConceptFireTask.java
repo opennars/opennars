@@ -7,19 +7,16 @@ import nars.nal.process.ConceptProcess;
 /**
  * when a concept fires a tasklink but before a termlink is selected
  */
-abstract public class ConceptFireTask extends LogicRule<ConceptProcess> {
+abstract public class ConceptFireTask implements LogicRule<ConceptProcess> {
 
 
 
     abstract public boolean apply(ConceptProcess f, TaskLink taskLink);
 
     @Override
-    public boolean accept(ConceptProcess f) {
+    public boolean accept(final ConceptProcess f) {
         if (f.getCurrentTermLink()==null) {
-            boolean result = apply(f, f.getCurrentTaskLink());
-            if (!result) {
-                return false;
-            }
+            return apply(f, f.getCurrentTaskLink());
         }
         return true;
     }

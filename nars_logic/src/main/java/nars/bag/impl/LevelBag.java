@@ -132,7 +132,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
         index = Global.THREADS == 1 ?
-                new CuckooMap(capacity * 3 / 2) :
+                new CuckooMap(capacity) :
                 new ConcurrentHashMap<>(capacity * 3 / 2);
 
         levelEmpty = new boolean[levels];
