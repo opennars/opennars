@@ -24,6 +24,7 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.concept.BeliefTable;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
@@ -344,7 +345,9 @@ public final class CompositionalRules {
                     return null;
                 }
 
-                Task contentTask = contentConcept.getBelief(nal, task);
+                BeliefTable table = task.isQuestion() ? contentConcept.getBeliefs() : contentConcept.getGoals();
+
+                Task contentTask = table.interpolate(nal, task);
                 if (contentTask == null) {
                     return null;
                 }

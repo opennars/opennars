@@ -19,7 +19,7 @@ public interface TaskTable extends Iterable<Task> {
      *
      * @param c the concept in which this occurrs
      * @return:
-     *      the input value, 'q' if it it was inserted
+     *      the input value, 'q' if it it was added to the table
      *      a previous stored task if this was a duplicate
      *
      */

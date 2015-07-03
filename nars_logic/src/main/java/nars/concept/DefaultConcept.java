@@ -9,7 +9,6 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.link.*;
-import nars.meter.LogicMetrics;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
@@ -44,19 +43,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     private final Term term;
 
-    private final Bag<Sentence, TaskLink> taskLinks;
-
-    private final Bag<TermLinkKey, TermLink> termLinks;
-
-    private Map<Object, Meta> meta = null;
-
-
     private final TaskTable questions;
     private final TaskTable quests;
-    private final List<Task> beliefs;
-    private final List<Task> goals;
+    private final BeliefTable beliefs;
+    private final BeliefTable goals;
 
-    transient private final Memory memory;
+    private final Bag<Sentence, TaskLink> taskLinks;
+    private final Bag<TermLinkKey, TermLink> termLinks;
 
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
@@ -65,9 +58,17 @@ public class DefaultConcept extends Item<Term> implements Concept {
     private final TermLinkBuilder termLinkBuilder;
     transient private final TaskLinkBuilder taskLinkBuilder;
 
-    private boolean constant = false;
-    final static public Equality<Task> questionEquivalence = new Equality<Task>() {
+    private Map<Object, Meta> meta = null;
 
+
+
+    transient private final Memory memory;
+
+
+
+    private boolean constant = false;
+
+    final static public Equality<Task> questionEquivalence = new Equality<Task>() {
 
         @Override
         public boolean areEqual(Task a, Task b) {
@@ -99,8 +100,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
         this.creationTime = memory.time();
         this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
 
-        this.beliefs = Global.newArrayList(1);
-        this.goals = Global.newArrayList(1);
+        this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue());
+        this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue());
 
         final int maxQuestions = memory.param.conceptQuestionsMax.intValue();
         this.questions = new ArrayListTaskTable(maxQuestions);
@@ -156,14 +157,14 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * Judgments directly made about the term Use ArrayList because of access
      * and insertion in the middle
      */
-    public List<Task> getBeliefs() {
+    public BeliefTable getBeliefs() {
         return beliefs;
     }
 
     /**
      * Desire values on the term, similar to the above one
      */
-    public List<Task> getGoals() {
+    public BeliefTable getGoals() {
         return goals;
     }
 
@@ -182,29 +183,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return term;
     }
 
-    public boolean hasGoals() {
-        final List<Task> s = getGoals();
-        if (s == null) return false;
-        return !s.isEmpty();
-    }
 
-    public boolean hasBeliefs() {
-        final List<Task> s = getBeliefs();
-        if (s == null) return false;
-        return !s.isEmpty();
-    }
-
-    public boolean hasQuestions() {
-        final TaskTable s = getQuestions();
-        if (s == null) return false;
-        return !s.isEmpty();
-    }
-
-    public boolean hasQuests() {
-        final TaskTable s = getQuests();
-        if (s == null) return false;
-        return !s.isEmpty();
-    }
 
     public State getState() {
         return state;
@@ -285,58 +264,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     /* ---------- direct processing of tasks ---------- */
 
-    /**
-     * Directly process a new task. Called exactly once on each task. Using
-     * local information and finishing in a constant time. Provide feedback in
-     * the taskBudget value of the task.
-     * <p>
-     * called in Memory.immediateProcess only
-     *
-     * @param nal  reasoning context it is being processed in
-     * @param task The task to be processed
-     * @return whether it was processed
-     */
-    public boolean process(final TaskProcess nal) {
 
-
-        if (!ensureActiveFor("DirectProcess")) return false;
-
-        final Task task = nal.getCurrentTask();
-
-        if (!valid(task)) {
-            getMemory().removed(task, "Filtered by Concept");
-            return false;
-        }
-
-        //share the same Term instance for fast comparison and reduced memory usage (via GC)
-        task.setTermInstance((Compound) getTerm());
-
-        final char type = task.sentence.punctuation;
-        final LogicMetrics logicMeter = getMemory().logic;
-
-        switch (type) {
-            case Symbols.JUDGMENT:
-                if (!processJudgment(nal, task))
-                    return false;
-
-                logicMeter.JUDGMENT_PROCESS.hit();
-                break;
-            case Symbols.GOAL:
-                if (!processGoal(nal, task))
-                    return false;
-                logicMeter.GOAL_PROCESS.hit();
-                break;
-            case Symbols.QUESTION:
-            case Symbols.QUEST:
-                processQuestion(nal, task);
-                logicMeter.QUESTION_PROCESS.hit();
-                break;
-            default:
-                throw new RuntimeException("Invalid sentence type: " + task);
-        }
-
-        return true;
-    }
 
     /**
      * called by concept before it fires to update any pending changes
@@ -401,99 +329,48 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
-    /**
-     * by default, any Task is valid
-     */
-    public boolean valid(Task t) {
-        return true;
-    }
 
 
     /**
      * To accept a new judgment as belief, and check for revisions and solutions
      *
      * @param judg      The judgment to be accepted
-     * @param newBelief The task to be processed
+     * @param belief The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processJudgment(final TaskProcess nal, Task newBelief) {
-
-        if (hasBeliefs() && isConstant())
-            return false;
-
-
-        final Task oldBelief = getTask(newBelief.sentence, getBeliefs());   // only revise with the strongest -- how about projection?
-
-        if (oldBelief != null) {
-
-            if (oldBelief.sentence == newBelief.sentence) {
-                return false;
-            }
-
-            if (newBelief.sentence.equalStamp(oldBelief.sentence, true, false, true)) {
-//                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
-//                    //task.budget.decPriority(0);    // duplicated task
-//                }   // else: activated belief
-
-                getMemory().removed(newBelief, "Duplicated");
-                return false;
-            } else if (revisible(newBelief.sentence, oldBelief.sentence)) {
-                //final long now = getMemory().time();
-
-//                if (nal.setTheNewStamp( //temporarily removed
-//                /*
-//                if (equalBases(first.getBase(), second.getBase())) {
-//                return null;  // do not merge identical bases
-//                }
-//                 */
-//                //        if (first.baseLength() > second.baseLength()) {
-//                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
-//                //        } else {
-//                //            return new Stamp(second, first, time);
-//                //        }
-//                ) != null) {
-
-                //TaskSeed projectedBelief = oldBelief.projection(nal.memory, now, task.getOccurrenceTime());
-
-
-                //Task r = oldBelief.projection(nal.memory, now, newBelief.getOccurrenceTime());
-
-                //Truth r = oldBelief.projection(now, newBelief.getOccurrenceTime());
-                /*
-                if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
-                }
-                */
+    public boolean processBelief(final TaskProcess nal, Task belief) {
 
 
 
-                Task revised = tryRevision(newBelief, oldBelief, false, nal);
-                if (revised != null) {
-                    newBelief = revised;
-                    nal.setCurrentBelief(revised);
-                }
+        boolean added;
 
-            }
+        final Task input = belief;
+
+        belief = getBeliefs().add(input, this);
+
+        if (belief!=input) {
+            getMemory().removed(input, "Unbelievable"
+                    //isGoal ? "Undesirable" : "Unbelievable"
+                    // + "compared to: " + belief
+            );
+            added = false;
+        }
+        else {
+            added = (belief!=null);
         }
 
-
-        /*if (task.aboveThreshold())*/
-        {
-
-            if (nal != null) {
-                if (hasQuestions()) {
-                    final Task b = newBelief;
-                    getQuestions().forEach( t -> trySolution(b, t, nal) );
-                }
+        if (added) {
+            /*if (task.aboveThreshold())*/
+                //if (nal != null) {
+            if (hasQuestions()) {
+                final Task b = belief;
+                //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
+                getQuestions().forEach( t -> trySolution(b, t, nal) );
             }
-
-
-            if (!addToTable(newBelief, getBeliefs(), getMemory().param.conceptBeliefsMax.get(), Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class)) {
-                //wasnt added to table
-                getMemory().removed(newBelief, "Insufficient Rank"); //irrelevant
-                return false;
-            }
+            //}
         }
-        return true;
+
+        return added;
     }
 
 
@@ -505,7 +382,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param newGoal The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final NAL nal, Task newGoal) {
+    public boolean processGoal(final TaskProcess nal, Task newGoal) {
         
 
         final Task oldGoalT = getTask(newGoal.sentence, goals); // revise with the existing desire values
@@ -559,7 +436,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (newGoal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
             // check if the Goal is already satisfied
-            Task beliefSatisfied = getTask(newGoal.sentence, beliefs);
+            Task beliefSatisfied = getBeliefs().match(newGoal, getMemory().time());
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {
@@ -646,7 +523,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param q The task to be processed
      * @return the matching task if it was not a new task to be added
      */
-    protected Task processQuestion(final TaskProcess nal, Task q) {
+    public Task processQuestion(final TaskProcess nal, Task q) {
 
 
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
@@ -675,171 +552,18 @@ public class DefaultConcept extends Item<Term> implements Concept {
             q = match; //try solution with the original question
         }
 
+        final long now = getMemory().time();
         if (q.isQuest()) {
-            trySolution(getTask(q, getGoals()), q, nal);
+            trySolution(getGoals().match(q, now), q, nal);
         } else {
-            trySolution(getTask(q, getBeliefs()), q, nal);
+            trySolution(getBeliefs().match(q, now), q, nal);
         }
 
         return q;
     }
 
-    /**
-     * Add a new belief (or goal) into the table Sort the beliefs/goals by
-     * rank, and remove redundant or low rank one
-     *
-     * @param newSentence The judgment to be processed
-     * @param table       The table to be revised
-     * @param capacity    The capacity of the table
-     * @return whether table was modified
-     */
-    public Task addToTable(final Memory memory, final Task newSentence, final List<Task> table, final int capacity) {
-
-        if (!ensureActiveFor("addToTable")) return null;
-
-        long now = memory.time();
-
-        float rank1 = rankBelief(newSentence, now);    // for the new isBelief
-
-        float rank2;
-        int i;
-
-        //int originalSize = table.size();
 
 
-        //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
-        for (i = 0; i < table.size(); i++) {
-            Sentence existingSentence = table.get(i).sentence;
-
-            rank2 = rankBelief(existingSentence, now);
-
-            if (rank1 >= rank2) {
-                if (newSentence.sentence.equivalentTo(existingSentence, false, false, true, true, false)) {
-                    //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
-                    return newSentence;
-                }
-                table.add(i, newSentence);
-                break;
-            }
-        }
-
-        if (table.size() == capacity) {
-            // no change
-            return null;
-        }
-
-        Task removed = null;
-
-        final int ts = table.size();
-        if (ts > capacity) {
-            removed = table.remove(ts - 1);
-        } else if (i == table.size()) { // branch implies implicit table.size() < capacity
-            table.add(newSentence);
-            //removed = nothing
-        }
-
-        return removed;
-    }
-
-    /** updates the concept-has-questions index if the concept transitions from having no questions to having, or from having to not having */
-    protected void onTableUpdated(char punctuation, int originalSize) {
-        if (!isActive()) return;
-
-        switch (punctuation) {
-            /*case Symbols.GOAL:
-                break;*/
-            case Symbols.QUESTION:
-                if (getQuestions().isEmpty()) {
-                    if (originalSize > 0) //became empty
-                        getMemory().updateConceptQuestions(this);
-                } else {
-                    if (originalSize == 0) { //became non-empty
-                        getMemory().updateConceptQuestions(this);
-                    }
-                }
-                break;
-        }
-    }
-
-    protected boolean addToTable(final Task goalOrJudgment, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove) {
-        int preSize = table.size();
-
-        Task removed = addToTable(getMemory(), goalOrJudgment, table, max);
-
-        onTableUpdated(goalOrJudgment.getPunctuation(), preSize);
-
-        if (removed != null) {
-            if (removed == goalOrJudgment) return false;
-
-            getMemory().event.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
-
-            if (preSize != table.size()) {
-                getMemory().event.emit(eventAdd, this, goalOrJudgment.sentence);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Select a belief value or desire value for a given query
-     *
-     * @param query The query to be processed
-     * @param list  The list of beliefs or goals to be used
-     * @return The best candidate selected
-     */
-    @Override
-    public Task getTask(final Sentence query, final List<Task>... lists) {
-        float currentBest = 0;
-        float beliefQuality;
-        Task candidate = null;
-
-        final long now = getMemory().time();
-        for (List<Task> list : lists) {
-            if (list.isEmpty()) continue;
-
-            int lsv = list.size();
-            for (int i = 0; i < lsv; i++) {
-                Task judg = list.get(i);
-                beliefQuality = solutionQuality(query, judg.sentence, now);
-                if (beliefQuality > currentBest) {
-                    currentBest = beliefQuality;
-                    candidate = judg;
-                }
-            }
-        }
-
-        return candidate;
-    }
-    @Override
-    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, final List<Task>... lists) {
-        float currentBest = 0;
-        float beliefQuality;
-        Task candidate = null;
-
-        final long now = getMemory().time();
-        for (List<Task> list : lists) {
-            if (list.isEmpty()) continue;
-
-            int lsv = list.size();
-            for (int i = 0; i < lsv; i++) {
-                Task judg = list.get(i);
-                beliefQuality = solutionQuality(hasQueryVar, occTime, judg.sentence, truth, now);
-                if (beliefQuality > currentBest) {
-                    currentBest = beliefQuality;
-                    candidate = judg;
-                }
-            }
-        }
-
-        return candidate;
-    }
-
-    public Sentence getSentence(final Sentence query, final List<Task>... lists) {
-        Task t = getTask(query, lists);
-        if (t == null) return null;
-        return t.sentence;
-    }
 
     /**
      * Link to a new task from all relevant concepts for continued processing in
@@ -1254,43 +978,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
-    /**
-     * get a random belief, weighted by their sentences confidences
-     */
-    public Sentence getBeliefRandomByConfidence(boolean eternal) {
-
-        if (getBeliefs().isEmpty()) return null;
-
-        float totalConfidence = getConfidenceSum(getBeliefs());
-        float r = getMemory().random.nextFloat() * totalConfidence;
-
-        Sentence s = null;
-        for (int i = 0; i < getBeliefs().size(); i++) {
-            s = getBeliefs().get(i).sentence;
-            r -= s.truth.getConfidence();
-            if (r < 0)
-                return s;
-        }
-
-        return s;
-    }
-
-
-    public static float getConfidenceSum(Iterable<? extends Truthed> beliefs) {
-        float t = 0;
-        for (final Truthed s : beliefs)
-            t += s.getTruth().getConfidence();
-        return t;
-    }
-
-    public static float getMeanFrequency(Collection<? extends Truthed> beliefs) {
-        if (beliefs.isEmpty()) return 0.5f;
-
-        float t = 0;
-        for (final Truthed s : beliefs)
-            t += s.getTruth().getFrequency();
-        return t / beliefs.size();
-    }
 
     @Override
     public boolean isConstant() {

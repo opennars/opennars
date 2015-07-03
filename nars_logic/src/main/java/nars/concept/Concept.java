@@ -24,14 +24,16 @@ import com.google.common.base.Function;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
+import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.link.*;
-import nars.process.NAL;
+import nars.meter.LogicMetrics;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.truth.Truth;
@@ -79,42 +81,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return getTerm().operator();
     }
 
-    /**
-     * Select a belief to interact with the given task in logic
-     * <p>
-     * get the first qualified one
-     * <p>
-     * only called in RuleTables.rule
-     *
-     * @param task The selected task
-     * @return The selected isBelief
-     */
-    default Task getBelief(final NAL nal, final Task task) {
-        if (!hasBeliefs()) return null;
-
-        final long now = nal.time();
-        long occurrenceTime = task.getOccurrenceTime();
-
-        final int b = getBeliefs().size();
-        for (int i = 0; i < b; i++) {
-            Task belief = getBeliefs().get(i);
-
-            //if (task.sentence.isEternal() && belief.isEternal()) return belief;
-
-            Task projectedBelief = belief.projection(nal.memory, occurrenceTime, now);
-
-            //TODO detect this condition before constructing Task
-            if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
-                //belief = nal.derive(projectedBelief); // return the first satisfying belief
-                return projectedBelief;
-            }
-
-            return belief;
-        }
-
-        return null;
-    }
-
 
 
     /**
@@ -148,10 +114,56 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         t.forEach(x -> x.discountConfidence());
     }
 
+
+    default public boolean hasGoals() {
+        final BeliefTable s = getGoals();
+        if (s == null) return false;
+        return !s.isEmpty();
+    }
+
+    default public boolean hasBeliefs() {
+        final BeliefTable s = getBeliefs();
+        if (s == null) return false;
+        return !s.isEmpty();
+    }
+
+    default public boolean hasQuestions() {
+        final TaskTable s = getQuestions();
+        if (s == null) return false;
+        return !s.isEmpty();
+    }
+
+    default public boolean hasQuests() {
+        final TaskTable s = getQuests();
+        if (s == null) return false;
+        return !s.isEmpty();
+    }
+
     boolean isConstant();
 
     /** allows concept state to be locked */
     boolean setConstant(boolean b);
+
+    /** updates the concept-has-questions index if the concept transitions from having no questions to having, or from having to not having */
+    default public void onTableUpdated(char punctuation, int originalSize) {
+        if (!isActive()) return;
+
+        switch (punctuation) {
+            /*case Symbols.GOAL:
+                break;*/
+            case Symbols.QUESTION:
+                if (getQuestions().isEmpty()) {
+                    if (originalSize > 0) //became empty
+                        getMemory().updateConceptQuestions(this);
+                } else {
+                    if (originalSize == 0) { //became non-empty
+                        getMemory().updateConceptQuestions(this);
+                    }
+                }
+                break;
+        }
+    }
+
 
     public enum State {
 
@@ -209,26 +221,21 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         if (!hasGoals()) {
             return null;
         }
-        Truth topValue = getGoals().get(0).getTruth();
+        Truth topValue = getGoals().top().getTruth();
         return topValue;
     }
 
-    public List<Task> getGoals();
-    public boolean hasGoals();
-
-    public List<Task> getBeliefs();
-    public boolean hasBeliefs();
+    public BeliefTable getBeliefs();
+    public BeliefTable getGoals();
 
     public TaskTable getQuestions();
-    public boolean hasQuestions();
-
     public TaskTable getQuests();
-    public boolean hasQuests();
 
     public State getState();
+    public Concept setState(State nextState);
+
     public long getCreationTime();
     public long getDeletionTime();
-    public Concept setState(State nextState);
 
     default public boolean isDeleted() {
         return getState() == Concept.State.Deleted;
@@ -262,55 +269,96 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return true;
     }
 
-    public boolean process(final TaskProcess nal);
 
-    /** returns the best belief of the specified types */
-    default public Task getStrongestBelief(boolean eternal, boolean nonEternal) {
-        return getStrongestTask(getBeliefs(), eternal, nonEternal);
-    }
+    /**
+     * Directly process a new task. Called exactly once on each task. Using
+     * local information and finishing in a constant time. Provide feedback in
+     * the taskBudget value of the task.
+     * <p>
+     * called in Memory.immediateProcess only
+     *
+     * @param nal  reasoning context it is being processed in
+     * @param task The task to be processed
+     * @return whether it was processed
+     */
+    default public boolean process(final TaskProcess nal) {
 
 
-    default public Task getStrongestGoal(boolean eternal, boolean nonEternal) {
-        return getStrongestTask(getGoals(), eternal, nonEternal);
-    }
+        if (!ensureActiveFor("TaskProcess")) return false;
 
-    /** temporary until goal is separated into goalEternal, goalTemporal */
-    @Deprecated default public Sentence getStrongestSentence(List<Task> table, boolean eternal, boolean temporal) {
-        for (Task t : table) {
-            Sentence s = t.sentence;
-            boolean e = s.isEternal();
-            if (e && eternal) return s;
-            if (!e && temporal) return s;
+        final Task task = nal.getCurrentTask();
+
+        if (!processable(task)) {
+            getMemory().removed(task, "Filtered by Concept");
+            return false;
         }
-        return null;
-    }
-    /** temporary until goal is separated into goalEternal, goalTemporal */
-    @Deprecated default public Task getStrongestTask(final List<Task> table, final boolean eternal, final boolean temporal) {
-        for (Task t : table) {
-            boolean e = t.isEternal();
-            if (e && eternal) return t;
-            if (!e && temporal) return t;
+
+        //share the same Term instance for fast comparison and reduced memory usage (via GC)
+        task.setTermInstance((Compound) getTerm());
+
+        final char type = task.sentence.punctuation;
+        final LogicMetrics logicMeter = getMemory().logic;
+
+        switch (type) {
+            case Symbols.JUDGMENT:
+
+                if (hasBeliefs() && isConstant())
+                    return false;
+
+                if (!processBelief(nal, task))
+                    return false;
+
+                logicMeter.JUDGMENT_PROCESS.hit();
+                break;
+            case Symbols.GOAL:
+                if (!processGoal(nal, task))
+                    return false;
+                logicMeter.GOAL_PROCESS.hit();
+                break;
+            case Symbols.QUESTION:
+                processQuest(nal, task);
+                logicMeter.QUESTION_PROCESS.hit();
+                break;
+            case Symbols.QUEST:
+                processQuestion(nal, task);
+                logicMeter.QUESTION_PROCESS.hit();
+                break;
+            default:
+                throw new RuntimeException("Invalid sentence type: " + task);
         }
-        return null;
+
+        return true;
     }
 
-    public static Sentence getStrongestSentence(List<Task> table) {
-        Task t = getStrongestTask(table);
-        if (t!=null) return t.sentence;
-        return null;
+    public boolean processBelief(TaskProcess nal, Task task);
+
+    public boolean processGoal(TaskProcess nal, Task task);
+
+    public Task processQuestion(TaskProcess nal, Task task);
+
+    default public Task processQuest(TaskProcess nal, Task task) {
+        return processQuestion(nal, task);
     }
 
-    public static Task getStrongestTask(List<Task> table) {
-        if (table == null) return null;
-        if (table.isEmpty()) return null;
-        return table.get(0);
+
+    /**
+     * by default, any Task is valid to be processed
+     */
+    default public boolean processable(Task t) {
+        return true;
     }
 
-    default public Task getStrongestBelief() {
-        if (hasBeliefs())
-            return getStrongestBelief(true, true);
-        return null;
-    }
+
+//    /** returns the best belief of the specified types */
+//    default public Task getStrongestBelief(boolean eternal, boolean nonEternal) {
+//        return getBeliefs().top(eternal, nonEternal);
+//    }
+//
+//
+//    default public Task getStrongestGoal(boolean eternal, boolean nonEternal) {
+//        return getGoals().top(eternal, nonEternal);
+//    }
+
 
     /**
      * Methods to be implemented by Concept meta instances
@@ -343,6 +391,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     default public void print(PrintStream out) {
         print(out, true, true, true, true);
     }
+
     /** prints a summary of all termlink, tasklink, etc.. */
     default public void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
         final String indent = "\t";
@@ -356,7 +405,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             else out.println();
             for (Task s : getBeliefs()) {
                 out.print(indent);
-                out.println((int) (rankBelief(s, now) * 100.0) + "%: " + s);
+                out.println((int) (getBeliefs().rank(s, now) * 100.0) + "%: " + s);
             }
         }
 
@@ -366,7 +415,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             else out.println();
             for (Task s : getGoals()) {
                 out.print(indent);
-                out.println((int) (rankBelief(s, now) * 100.0) + "%: " + s);
+                out.println((int) (getGoals().rank(s, now) * 100.0) + "%: " + s);
             }
         }
 
@@ -393,11 +442,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         out.println();
     }
 
-    public float rankBelief(final Sentence s, final long now);
-
-    default public float rankBelief(final Task s, final long now) {
-        return rankBelief(s.sentence, now);
-    }
 
     default public Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
         return transform(adjacentTermables(termLinks, taskLinks), new Function<Termed, Term>() {

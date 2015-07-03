@@ -154,7 +154,7 @@ public class LocalRules {
      */
     public static Task trySolution(Task belief, final Truth projectedTruth, final Task questionTask, final NAL nal) {
 
-        //if (belief == null) return null;
+        if (belief == null) return null;
 
 
         Sentence question = questionTask.sentence;
