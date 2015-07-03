@@ -1,4 +1,4 @@
-package nars.testing.condition;
+package nars.meter.condition;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

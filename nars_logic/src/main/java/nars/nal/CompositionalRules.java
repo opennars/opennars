@@ -793,7 +793,7 @@ public final class CompositionalRules {
             }
         }
         /*else*/ if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
-            System.err.println("secondCommonTerm: this condition was never possible, and may not be.  but allowing it in case it does..");
+            //System.err.println("secondCommonTerm: this condition was never possible, and may not be.  but allowing it in case it does..");
             commonTerm = ((ImageInt) term1).getTheOtherComponent();
             if ((commonTerm == null) || !term2.containsTermRecursivelyOrEquals(commonTerm)) {
                 commonTerm = ((ImageInt) term2).getTheOtherComponent();

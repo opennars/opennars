@@ -1,4 +1,4 @@
-package nars.testing;
+package nars.meter;
 
 import nars.Events;
 import nars.NAR;
@@ -10,8 +10,8 @@ import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.testing.condition.OutputCondition;
-import nars.testing.condition.TaskCondition;
+import nars.meter.condition.OutputCondition;
+import nars.meter.condition.TaskCondition;
 import nars.truth.DefaultTruth;
 
 import java.io.PrintStream;

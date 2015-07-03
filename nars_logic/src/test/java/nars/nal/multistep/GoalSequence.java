@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
-import nars.testing.condition.OutputContainsCondition;
+import nars.meter.condition.OutputContainsCondition;
 
 /**
 I played a lot with 1.6.0 version for long time now. I'm am pleased that it works that nicely.

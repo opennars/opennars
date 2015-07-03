@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.testing.condition;
+package nars.meter.condition;
 
 import nars.Events;
 import nars.NAR;

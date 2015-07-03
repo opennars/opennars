@@ -7,7 +7,7 @@ package nars.io.in;
 import nars.NAR;
 import nars.NARSeed;
 import nars.io.TextPerception;
-import nars.testing.condition.OutputCondition;
+import nars.meter.condition.OutputCondition;
 
 import java.io.File;
 import java.io.IOException;

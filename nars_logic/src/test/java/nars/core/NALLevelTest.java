@@ -5,7 +5,7 @@ import nars.Global;
 import nars.NAR;
 import nars.io.out.TextOutput;
 import nars.nar.Default;
-import nars.testing.condition.OutputCount;
+import nars.meter.condition.OutputCount;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

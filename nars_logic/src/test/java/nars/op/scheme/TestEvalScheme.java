@@ -4,7 +4,7 @@ package nars.op.scheme;
 import nars.NARSeed;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
-import nars.testing.condition.OutputContainsCondition;
+import nars.meter.condition.OutputContainsCondition;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

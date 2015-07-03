@@ -1,11 +1,11 @@
-package nars.testing;
+package nars.meter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
-import nars.testing.condition.TaskCondition;
+import nars.meter.condition.TaskCondition;
 
 import java.io.PrintStream;
 import java.util.Map;

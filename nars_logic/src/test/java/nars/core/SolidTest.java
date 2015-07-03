@@ -7,7 +7,7 @@ import nars.nar.Solid;
 import nars.task.Sentence;
 import nars.task.filter.ConstantDerivationLeak;
 import nars.term.Term;
-import nars.testing.TestNAR;
+import nars.meter.TestNAR;
 import org.junit.Test;
 
 import java.util.HashSet;

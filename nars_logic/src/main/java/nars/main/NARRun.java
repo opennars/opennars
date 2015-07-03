@@ -74,8 +74,7 @@ public class NARRun {
  an addInput file
      */
     public void run(String args[]) {
-        TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
-        output.setShowErrors(true);
+
         
         if (args.length > 0) {
             try {
@@ -97,13 +96,24 @@ public class NARRun {
             }
         }
 
+        TextOutput output = new TextOutput(nar, new PrintWriter(out, true));
+        output.setShowErrors(true);
+        output.setShowInput(true);
+
+
         run();
     }
 
     protected void readPerLine(Scanner sc) {
         while (sc.hasNextLine()) {
-            String l = sc.nextLine();
-            nar.input(l);
+            String l = sc.nextLine().trim();
+            if (l.isEmpty()) continue;
+            try {
+                nar.input(l);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

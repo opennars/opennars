@@ -4,7 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.nar.Default;
-import nars.testing.TestNAR;
 
 public class Derivations1  {
 

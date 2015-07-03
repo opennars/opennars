@@ -136,7 +136,7 @@ public class TextOutput extends Output {
     }
 
     protected boolean output(final String prefix, final CharSequence s) {
-        if ((out != null) && !((prefix!=null) && (s!=null)))  {
+        if ((out != null) && ((prefix!=null) && (s!=null)))  {
             synchronized (out) {
                 if (prefix != null)
                     out.print(prefix);

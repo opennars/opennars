@@ -4,7 +4,7 @@ import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.task.Task;
-import nars.testing.condition.OutputCondition;
+import nars.meter.condition.OutputCondition;
 import nars.util.data.CuckooMap;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.HitMeter;

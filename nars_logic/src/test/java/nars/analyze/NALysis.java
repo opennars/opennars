@@ -8,8 +8,8 @@ import nars.io.out.TextOutput;
 import nars.nal.AbstractNALTest;
 import nars.nar.Curve;
 import nars.nar.Default;
-import nars.testing.TestNAR;
-import nars.testing.condition.OutputCondition;
+import nars.meter.TestNAR;
+import nars.meter.condition.OutputCondition;
 import org.junit.Ignore;
 
 import java.util.ArrayList;

@@ -5,7 +5,7 @@ import nars.Global;
 import nars.NARSeed;
 import nars.nar.Default;
 import nars.task.Task;
-import nars.testing.TestNAR;
+import nars.meter.TestNAR;
 import nars.util.event.Reaction;
 import org.junit.Ignore;
 

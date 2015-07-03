@@ -369,6 +369,9 @@ public final class SyllogisticRules {
         //Stamper sb = nal.newStamp(belief, sentence);
 
         Statement s = Statement.make(eitherHigherOrder ? Op.EQUIVALENCE : Op.SIMILARITY, term1, term2, true, order);
+        if (s == null)
+            return false;
+
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
         boolean s1 = null != nal.deriveDouble(s, sentence.getPunctuation(), truth, budget, sentence, belief, false, true), s2 = false;
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );

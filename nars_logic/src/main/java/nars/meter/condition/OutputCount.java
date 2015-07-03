@@ -1,4 +1,4 @@
-package nars.testing.condition;
+package nars.meter.condition;
 
 import nars.Events;
 import nars.NAR;
