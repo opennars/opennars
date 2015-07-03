@@ -643,7 +643,7 @@ public class RuleTables {
         Term component = compound.term[index];
 
         Task task = nal.getCurrentTask();
-        if (Terms.equalType(component, statement, true)) {
+        if (Terms.equalType(component, statement)) {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 final Random r = nal.memory.random;
 

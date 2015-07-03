@@ -137,6 +137,16 @@
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-embedded</artifactId>
             <version>8.0.0.Alpha2</version>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.infinispan</groupId>-->
+                    <!--<artifactId>infinispan-cachestore-leveldb</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.fusesource.leveldbjni</groupId>-->
+                    <!--<artifactId>leveldbjni-all</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
         </dependency>
 
 

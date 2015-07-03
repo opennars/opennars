@@ -30,40 +30,24 @@ public class Terms {
     public final static Term[] EmptyTermArray = new Term[0];
 
     public static final boolean equalType(final Term a, final Term b) {
-        return equalType(a, b, false);
+        return (a.operator()==b.operator());
     }
 
-    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type;
-     * only compares operator */
-    public static final boolean equalType(final Term a, final Term b, final boolean exactClassIfAtomic) {
-        if (a instanceof Compound) {
-            return (a.operator()==b.operator());
-        }
-        else {
-            if (exactClassIfAtomic)
-                return a.getClass() == b.getClass();
-            else
-                return true;
-            /*if (a instanceof Interval) return b instanceof Interval;
-            else if (a instanceof Variable) return b instanceof Variable;
-            else if (a instanceof Operator) return b instanceof Operator;*/
 
-            //return a.getClass() == b.getClass();
-        }
-    }
 
-    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type */
-    public static final boolean equalType(final Term a, final Term b, final boolean operator, final boolean temporalOrder) {
-        if (operator) {
-            if (!equalType(a, b)) return false;
-        }
-        if (temporalOrder) {
-            if (!TemporalRules.matchingOrder(a.getTemporalOrder(), b.getTemporalOrder()))
-                return false;
-        }
-        return true;
-    }
-
+//    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type */
+//    public static final boolean equalType(final Term a, final Term b, final boolean operator, final boolean temporalOrder) {
+//        if (operator) {
+//            if (!equalType(a, b)) return false;
+//        }
+//        if (temporalOrder) {
+//            if (!TemporalRules.matchingOrder(a.getTemporalOrder(), b.getTemporalOrder())) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+//
 
     public static boolean equalSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
         if (a == null || b == null) {

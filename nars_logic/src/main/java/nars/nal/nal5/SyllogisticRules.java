@@ -621,7 +621,7 @@ public final class SyllogisticRules {
             premise1 = (Implication) u[0];
             premise2 = u[1];
 
-            if (!match && (Terms.equalType(commonComponent, oldCondition, true))) {
+            if (!match && (Terms.equalType(commonComponent, oldCondition))) {
 
                 Compound compoundCommonComponent = ((Compound) commonComponent);
 

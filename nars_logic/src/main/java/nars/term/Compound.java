@@ -996,7 +996,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     public Term cloneReplacingSubterm(final int index, final Term subterm) {
 
-        final boolean e = (subterm != null) && Terms.equalType(this, subterm, true, true);
+        final boolean e = (subterm != null) && Terms.equalType(this, subterm);
 
         //if the subterm is alredy equivalent, just return this instance because it will be equivalent
         if (subterm != null && (e) && (term[index].equals(subterm)))
