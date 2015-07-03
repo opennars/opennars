@@ -21,7 +21,7 @@ public class ChainBagTest {
         testChainBagSequence(8, 8*8); //no restriction
         testChainBagSequence(8, 8); //restricted
     }
-    public void testChainBagSequence(int loops, int capacity) {
+    public void testChainBagSequence(int loops, final int capacity) {
 
         XORShiftRandom rng = new XORShiftRandom();
 
@@ -37,7 +37,7 @@ public class ChainBagTest {
             assertTrue(capacity >= bag.size());
         }
 
-        assertEquals(capacity-1, bag.size());
+        assertEquals(capacity, bag.size());
 
         for (int j = 0; j < loops-1; j++) {
             for (int i = 0; i < loops; i++) {
@@ -49,7 +49,7 @@ public class ChainBagTest {
             Item r = bag.pop();
             //System.out.println("pop: " + r);
             assertNotNull(r);
-            assertEquals((capacity - 1)- (1 + j), bag.size());
+            assertEquals((capacity)- (1 + j), bag.size());
         }
 
 

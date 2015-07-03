@@ -75,10 +75,12 @@ public class CurveBagTest extends AbstractBagTest {
     
     public void testCurveBag(boolean random, SortedIndex<NullItem> items) {
         CurveBag<CharSequence, NullItem> f = new CurveBag(rng, 4, curve, random, items);
-        
-        f.put(new NullItem(.25f));
-        assert(f.size() == 1);
-        assert(f.mass() > 0);
+        assertEquals(0, f.mass(), 0.001);
+
+        NullItem ni;
+        f.put(ni = new NullItem(.25f));
+        assertEquals(1, f.size());
+        assertEquals(ni.getPriority(), f.mass(), 0.001);
         
         f.put(new NullItem(.9f));
         f.put(new NullItem(.75f));
@@ -97,7 +99,7 @@ public class CurveBagTest extends AbstractBagTest {
         f.pop();
         assert(f.size() == 0);
         
-        assert(f.mass() == 0);
+        assertEquals(0, f.mass(), 0.01);
     }
 
     public void testCapacityLimit(Bag<CharSequence,NullItem> f) {

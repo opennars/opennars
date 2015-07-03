@@ -136,7 +136,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
     @Override
     public int capacity() {
-        return capacity; //HACK
+        return capacity;
     }
 
     @Override
@@ -227,7 +227,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
             return null;
         }
 
-        boolean atCapacity = (size() >= capacity());
+        boolean atCapacity = (size() > capacity());
 
         if (atCapacity) {
             if (nextRemoval == null) {

@@ -90,7 +90,7 @@ public class HeapBagTest extends AbstractBagTest {
         f.pop();
         assert(f.size() == 0);
         
-        assert(f.mass() == 0);
+        assertEquals(0, f.mass(), 0.001f);
     }
 
     public void testCapacityLimit(Bag<CharSequence,NullItem> f) {

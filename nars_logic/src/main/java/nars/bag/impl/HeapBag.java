@@ -4,16 +4,14 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Item;
+import nars.util.CollectorMap;
 import nars.util.data.CircularArrayList;
 import nars.util.data.CuckooMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 import org.apache.commons.math3.util.FastMath;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -29,7 +27,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * mapping from key to item
      */
-    public final CurveMap index;
+    public final HeapMap index;
 
     /**
      * array of lists of items, for items on different level
@@ -63,117 +61,57 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     public HeapBag(Random rng, int capacity) {
-        this(rng, capacity, new CurveBag.FairPriorityProbabilityCurve());
+        this(rng, capacity, new CurveBag.Power6BagCurve());
     }
 
 
-    public class CurveMap extends CuckooMap<K, E> {  //doesnt seem to work yet in CurveBag
+    class HeapMap extends CollectorMap<K, E> {
 
-        public CurveMap(int initialCapacity) {
-            super(rng, initialCapacity * 1 + 1);
+        public HeapMap(int capacity) {
+            super(new CuckooMap(rng, capacity * 1 + 1));
+        }
+
+        public HeapMap(Map<K, E> map) {
+            super(map);
         }
 
         @Override
-        public E put(final K key, final E value) {
+        public E remove(final K key) {
+            E e = super.remove(key);
 
-            E removed, removed2;
+            if (Global.DEBUG && Global.DEBUG_BAG)
+                HeapBag.this.size();
 
-            /*synchronized (nameTable)*/
-            {
-
-                removed = putKey(key, value);
-                if (removed != null) {
-                    removeItem(removed);
-                }
-
-
-                removed2 = addItem(value);
-                if (removed != null && removed2 != null) {
-                    throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
-                }
-                if (removed2 != null) {
-                    removeKey(removed2.name());
-                    return removed2;
-                }
-            }
-
-            return removed;
+            return e;
         }
 
-        /**
-         * put key in index, do not add value
-         */
-        public E putKey(final K key, final E value) {
-            return super.put(key, value);
-        }
-
-        /**
-         * remove key only, not from items
-         */
-        public E removeKey(final K key) {
-            return super.remove(key);
-        }
-
-//        public E removeItem(K name) {
-//            /*synchronized (nameTable)*/ {
-//                E item = nameTable.get(name);
-//                if (item == null) return null;
-//                return removeItem(item);
-//            }
-//        }
-
-        public E removeItem(final E removed) {
-            if (items.removeIdentity(removed)) {
+        @Override
+        protected E removeItem(final E removed) {
+            if (items.remove(removed)) {
                 mass -= removed.getPriority();
                 return removed;
             }
             return null;
         }
 
-        public E addItem(final E i) {
-            return HeapBag.this.addItem(i);
-        }
 
-        @Override
-        public E remove(final Object key) {
 
-            E e;
-
-            /*synchronized (nameTable)*/
-            {
-
-                e = removeKey((K) key);
-                if (e != null) {
-                    removeItem(e);
-                }
-                if (Global.DEBUG && Global.DEBUG_BAG)
-                    HeapBag.this.size();
-
+        @Override protected E addItem(E i) {
+            E removed = null;
+            if (items.size() + 1 > capacity()) {
+                removed = items.removeLast();
             }
-            return e;
+            items.addFirst(i);
+
+
+            for (int j = 0; j < sortPrecision; j++)
+                sortNext(sortMovesMax);
+
+            return removed;
         }
-
-        @Override
-        public boolean remove(Object key, Object value) {
-            throw new RuntimeException("Not implemented");
-        }
-
-
     }
 
-    private E addItem(E i) {
-        E removed = null;
-        if (items.size() + 1 > capacity()) {
-            removed = items.removeLast();
-        }
-        items.addFirst(i);
 
-
-        for (int j = 0; j < sortPrecision; j++)
-            sortNext(sortMovesMax);
-
-        return removed;
-    }
 
 
     int heapCycle;
@@ -288,7 +226,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         items = new CircularArrayList<>(capacity);
 
-        index = new CurveMap(capacity);
+        index = new HeapMap(capacity);
 
         this.mass = 0;
     }
@@ -566,8 +504,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
                 throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 
             //should be the same object instance
-            this.index.removeKey(selected.name());
-            mass -= selected.getPriority();
+            this.index.removeKey(selected.name(), selected.getPriority());
         }
 
         return selected;
@@ -613,9 +550,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
     @Override
     public float mass() {
-        if (mass < Float.MIN_VALUE)
-            mass = 0;
-        return mass + size();
+        return index.mass();
     }
 
     @Override

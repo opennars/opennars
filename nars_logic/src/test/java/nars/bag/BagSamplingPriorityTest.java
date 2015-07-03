@@ -2,6 +2,7 @@ package nars.bag;
 
 import nars.analyze.experimental.BagPerf;
 import nars.bag.impl.CurveBag;
+import nars.bag.impl.HeapBag;
 import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
@@ -17,6 +18,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
+
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by me on 7/3/15.
@@ -175,7 +178,7 @@ public class BagSamplingPriorityTest {
     @Test
     public void testBags() {
 
-        int capacity = 1000;
+        int capacity = 100;
 
         int bins = (int)Math.sqrt(capacity);
 
@@ -229,6 +232,12 @@ public class BagSamplingPriorityTest {
                                     distr)
             );
 
+            System.out.println("  HeapBag:  err=" +
+                            getBagError(new HeapBag(rng, capacity), iterations,
+                                    capacity, bins,
+                                    distr)
+            );
+
 
             System.out.println("\n");
 
@@ -243,9 +252,13 @@ public class BagSamplingPriorityTest {
 
         a.populateCurve(itemDistributionCurve);
 
+        assertEquals("filled to capacity", c.capacity(), c.size());
+
         //System.out.println(a.getBagState());
 
         a.run(iterations);
+
+        assertEquals("discards nothing since nothing was added", c.capacity(), c.size());
 
         //System.out.println(a.removal);
         DescriptiveStatistics e = a.getErrorStats();

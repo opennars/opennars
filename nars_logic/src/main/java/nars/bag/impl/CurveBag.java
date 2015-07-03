@@ -2,6 +2,7 @@ package nars.bag.impl;
 
 import nars.Global;
 import nars.bag.Bag;
+import nars.util.CollectorMap;
 import nars.budget.Item;
 import nars.util.data.CuckooMap;
 import nars.util.data.sorted.SortedIndex;
@@ -16,12 +17,12 @@ import java.util.function.Consumer;
  * Removal policy can select items by percentile via the array index.
  * A curve function maps a probabilty distribution to an index allowing the bag
  * to choose items with certain probabilities more than others.
- *
+ * <p>
  * In theory, the curve can be calculated to emulate any potential removal policy.
- *
+ * <p>
  * Insertion into the array is a O(log(n)) insertion sort, plus O(N) to shift items (unless the array is tree-like and can avoid this cost).
  * Removal is O(N) to shift items, and an additional possible O(N) if a specific item to be removed is not found at the index expected for its current priority value.
- *
+ * <p>
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
 public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
@@ -43,10 +44,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     final int capacity;
     private final Random rng;
-    /**
-     * current sum of occupied level
-     */
-    private float mass;
+
 
     /**
      * whether items are removed by random sampling, or a continuous scanning
@@ -82,7 +80,8 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         this(rng, capacity, true);
     }
 
-    @Deprecated public CurveBag(Random rng, int capacity, boolean sampleRandomly) {
+    @Deprecated
+    public CurveBag(Random rng, int capacity, boolean sampleRandomly) {
         this(rng, capacity, new Power6BagCurve(), sampleRandomly);
     }
 
@@ -99,130 +98,37 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         );
     }
 
-    public class CurveMap/*<K,E extends Item<K>>*/  {
+    class CurveMap extends CollectorMap<K, E> {
 
-
-        final Map<K,E> map;
-
-//        public CurveMap(int initialCapacity) {
-//            super(initialCapacity * 1 + 1);
-//        }
-        public CurveMap(Map<K,E> map) {
-            this.map = map;
+        public CurveMap(Map<K, E> map) {
+            super(map);
         }
 
+        @Override
+        public E remove(final K key) {
+            E e = super.remove(key);
 
-        public E put(final K key, final E value) {
+            if (Global.DEBUG && Global.DEBUG_BAG)
+                CurveBag.this.size();
 
-            E removed, removed2;
-
-            /*synchronized (nameTable)*/ {
-
-                removed = putKey(key, value);
-                if (removed != null) {
-                    removeItem(removed);
-                }
-
-
-                removed2 = addItem(value);
-                if (removed!=null && removed2!=null) {
-                    throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
-                }
-                if (removed2!=null) {
-                    removeKey(removed2.name());
-                    return removed2;
-                }
-            }
-
-            return removed;
-        }
-
-        /**
-         * put key in index, do not add value
-         */
-        public E putKey(final K key, final E value) {
-            return map.put(key, value);
-        }
-
-        /**
-         * remove key only, not from items
-         */
-        public E removeKey(final K key) {
-            return map.remove(key);
-        }
-
-//        public E removeItem(K name) {
-//            /*synchronized (nameTable)*/ {
-//                E item = nameTable.get(name);
-//                if (item == null) return null;
-//                return removeItem(item);
-//            }
-//        }
-
-
-
-
-        public E remove(final Object key) {
-
-            E e;
-
-            /*synchronized (nameTable)*/ {
-
-                e = removeKey((K) key);
-                if (e != null) {
-                    removeItem(e);
-                }
-                if (Global.DEBUG && Global.DEBUG_BAG)
-                    CurveBag.this.size();
-
-            }
             return e;
         }
 
-        public int size() {
-            return map.size();
+        @Override
+        protected E removeItem(final E removed) {
+            if (items.remove(removed)) {
+                mass -= removed.getPriority();
+                return removed;
+            }
+            return null;
         }
 
-        public boolean containsValue(E it) {
-            return map.containsValue(it);
+        @Override
+        protected E addItem(final E i) {
+            return items.insert(i);
         }
-
-        public void clear() {
-            map.clear();
-        }
-
-        public E get(K key) {
-            return map.get(key);
-        }
-
-        public boolean containsKey(K name) {
-            return map.containsKey(name);
-        }
-
-        public Set<K> keySet() {
-            return map.keySet();
-        }
-
-        public Collection<E> values() { return map.values(); }
-
-//        public boolean remove(Object key, Object value) {
-//            throw new RuntimeException("Not implemented");
-//        }
-
-
     }
 
-    public E removeItem(final E removed) {
-        if (items.remove(removed)) {
-            mass -= removed.getPriority();
-            return removed;
-        }
-        return null;
-    }
-
-    public E addItem(final E i) {
-        return items.insert(i);
-    }
 
     public CurveBag(Random rng, int capacity, BagCurve curve, boolean sampleRandomly, SortedIndex<E> items) {
         super();
@@ -247,17 +153,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
                 new CuckooMap(capacity)
         );
 
-        this.mass = 0;
     }
 
 
     @Override
     public final void clear() {
-        /*synchronized (nameTable)*/ {
-            items.clear();
-            nameTable.clear();
-            mass = 0;
-        }
+        items.clear();
+        nameTable.clear();
     }
 
     /**
@@ -303,7 +205,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         if (s == 0) {
             return 0.01f;
         }
-        float f = mass / s;
+        float f = mass() / s;
         if (f > 1.0f)
             return 1.0f;
         if (f < 0.01f)
@@ -412,9 +314,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 //    
 
 
-
-
-
     @Override
     public float getMinPriority() {
         if (items.isEmpty()) return 0;
@@ -437,49 +336,44 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     public E put(E i) {
 
 
+        float newPriority = i.getPriority();
 
-            float newPriority = i.getPriority();
+        boolean contains = nameTable.containsKey(i.name());
+        if ((nameTable.size() >= capacity) && (!contains)) {
+            // the bag is full
 
-            boolean contains = nameTable.containsKey(i.name());
-            if ((nameTable.size() >= capacity) && (!contains)) {
-                // the bag is full
+            // this item is below the bag's already minimum item, no change (return the input as the overflow)
+            if (newPriority < getMinPriority()) {
+                return i;
+            }
 
-                // this item is below the bag's already minimum item, no change (return the input as the overflow)
-                if (newPriority < getMinPriority()) {
-                    return i;
+            E oldItem = removeItem(0);
+
+            if (oldItem == null)
+                throw new RuntimeException("required removal but nothing removed");
+            else {
+                if (oldItem.name().equals(i.name())) {
+                    throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
                 }
-
-                E oldItem = removeItem(0);
-
-                if (oldItem == null)
-                    throw new RuntimeException("required removal but nothing removed");
-                else {
-                    if (oldItem.name().equals(i.name())) {
-                        throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
-                    }
-                }
-
-
-                //insert
-                nameTable.put(i.name(), i);
-
-                mass += i.getPriority();
-
-                return oldItem;
-            } else if (contains) {
-                //TODO check this mass calculation
-                E existingToReplace = nameTable.put(i.name(), i);
-                mass += i.getPriority();
-                return null;
-            } else /* if (!contains) */ {
-                E shouldNotExist = nameTable.put(i.name(), i);
-                if (shouldNotExist != null)
-                    throw new RuntimeException("already expected no existing key/item but it was actually there");
-                mass += i.getPriority();
-                return null;
             }
 
 
+            //insert
+            nameTable.put(i.name(), i);
+
+
+
+            return oldItem;
+        } else if (contains) {
+            //TODO check this mass calculation
+            E existingToReplace = nameTable.put(i.name(), i);
+            return null;
+        } else /* if (!contains) */ {
+            E shouldNotExist = nameTable.put(i.name(), i);
+            if (shouldNotExist != null)
+                throw new RuntimeException("already expected no existing key/item but it was actually there");
+            return null;
+        }
 
 
     }
@@ -517,18 +411,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     protected E removeItem(final int index) {
 
-        final E selected;
+        E selected = items.remove(index);
 
-        /*synchronized (nameTable)*/ {
+        if (selected == null)
+            throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 
-            selected = items.remove(index);
-            if (selected == null)
-                throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
-
-            //should be the same object instance
-            nameTable.removeKey(selected.name());
-            mass -= selected.getPriority();
-        }
+        //should be the same object instance
+        nameTable.removeKey(selected.name(), selected.getPriority());
 
         return selected;
     }
@@ -536,9 +425,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     @Override
     public float mass() {
-        if (mass < Float.MIN_VALUE)
-            mass = 0;
-        return mass + size();
+        return nameTable.mass();
     }
 
     @Override
@@ -611,6 +498,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
             return "Power4BagCurve";
         }
     }
+
     public static class Power6BagCurve implements BagCurve {
 
         @Override
@@ -629,11 +517,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * Approximates priority -> probability fairness with an exponential curve
      */
-    @Deprecated public static class FairPriorityProbabilityCurve implements BagCurve {
+    @Deprecated
+    public static class FairPriorityProbabilityCurve implements BagCurve {
 
         @Override
         public final float y(final float x) {
-            return (float)(1f - Math.exp(-5f * x));
+            return (float) (1f - Math.exp(-5f * x));
         }
 
         @Override
