@@ -5,6 +5,7 @@
 package nars.util.graph.experimental;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 import nars.*;
 import nars.Events.ConceptForget;
 import nars.concept.Concept;
@@ -146,7 +147,7 @@ public class Idea implements Iterable<Concept> {
                 for (Concept c : concepts) {
                     switch (punc) {
                         case Symbols.JUDGMENT:
-                            sentences.addAll(c.getBeliefs());
+                            Iterables.addAll(sentences, c.getBeliefs());
                             break;
                         case Symbols.QUESTION:
                             sentences.addAll(Task.getSentences(c.getQuestions()));
@@ -155,7 +156,8 @@ public class Idea implements Iterable<Concept> {
                             sentences.addAll(Task.getSentences(c.getQuests()));
                             break;
                         case Symbols.GOAL:
-                            sentences.addAll(c.getGoals());
+                            Iterables.addAll(sentences, c.getGoals());
+                            //sentences.addAll(c.getGoals());
                             break;
                     }
                 }

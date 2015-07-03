@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
 
-    private int cap;
+    protected int cap;
 
     public ArrayListTaskTable() {
         super();

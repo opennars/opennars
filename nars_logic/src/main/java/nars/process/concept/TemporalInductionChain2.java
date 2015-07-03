@@ -132,7 +132,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
             if (super.test(concept)) {
 
-                Task temporalBelief = concept.getStrongestBelief(false, true);
+                Task temporalBelief = concept.getBeliefs().top(false, true);
                 if (temporalBelief != null) {
                     if (!temporalBelief.isEternal() && TemporalRules.isInputOrTriggeredOperation(temporalBelief)) {
 

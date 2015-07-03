@@ -617,7 +617,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
 
 
-    public Task projection(Memory m, final long targetTime, final long currentTime) {
+    public Task projectTask(final long targetTime, final long currentTime) {
 
         final Truth newTruth = projection(targetTime, currentTime);
 

@@ -400,7 +400,8 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             else out.println();
             for (Task s : getBeliefs()) {
                 out.print(indent);
-                out.println((int) (getBeliefs().rank(s, now) * 100.0) + "%: " + s);
+                out.println(s);
+                //out.println((int) (getBeliefs().rank(s, now) * 100.0) + "%: " + s);
             }
         }
 
@@ -410,7 +411,8 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             else out.println();
             for (Task s : getGoals()) {
                 out.print(indent);
-                out.println((int) (getGoals().rank(s, now) * 100.0) + "%: " + s);
+                out.println(s);
+                //out.println((int) (getGoals().rank(s, now) * 100.0) + "%: " + s);
             }
         }
 
@@ -437,6 +439,9 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         out.println();
     }
 
+    default public long time() {
+        return getMemory().time();
+    }
 
     default public Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
         return transform(adjacentTermables(termLinks, taskLinks), new Function<Termed, Term>() {

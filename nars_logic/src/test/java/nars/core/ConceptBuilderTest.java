@@ -30,7 +30,7 @@ public class ConceptBuilderTest {
         n.frame(1);
 
         assertTrue("although lessThan(4,3) is asserted, its ConceptBuilder will have set the correct value and locked it",
-                n.concept("lessThan(4,3)").getStrongestBelief().getTruth().isNegative());
+                n.concept("lessThan(4,3)").getBeliefs().topTruth().isNegative());
     }
 
     @Test @Ignore
@@ -46,7 +46,7 @@ public class ConceptBuilderTest {
         n.frame(1);
         assertNotNull(n.concept(term));
         assertTrue(n.concept(term).hasBeliefs());
-        assertEquals(expectedValue, n.concept(term).getStrongestBelief().getTruth().getFrequency(), 0.01);
+        assertEquals(expectedValue, n.concept(term).getBeliefs().topTruth().getFrequency(), 0.01);
     }
 
     @Test

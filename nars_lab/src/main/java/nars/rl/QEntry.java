@@ -70,8 +70,8 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     public double getQSentence(char implicationPunctuation) {
 
         Task s = implicationPunctuation == Symbols.GOAL ?
-                concept.getStrongestGoal(true, true) :
-                concept.getStrongestBelief();
+                concept.getGoals().top() :
+                concept.getBeliefs().top();
         if (s == null) return 0f;
 
         return getQSentence(s.sentence);

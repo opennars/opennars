@@ -178,7 +178,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
             Term secTerm = secondConcept.getTerm();
 
-            Task secondConceptStrongestBelief = secondConcept.getStrongestBelief();
+            Task secondConceptStrongestBelief = secondConcept.getBeliefs().top();
             Sentence second_belief = secondConceptStrongestBelief.sentence;
 
             //getBeliefRandomByConfidence(task.sentence.isEternal());

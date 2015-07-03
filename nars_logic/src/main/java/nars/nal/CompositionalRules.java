@@ -347,7 +347,9 @@ public final class CompositionalRules {
 
                 BeliefTable table = task.isQuestion() ? contentConcept.getBeliefs() : contentConcept.getGoals();
 
-                Task contentTask = table.interpolate(nal, task);
+                final long now = nal.time();
+
+                Task contentTask = table.top(task, now);
                 if (contentTask == null) {
                     return null;
                 }

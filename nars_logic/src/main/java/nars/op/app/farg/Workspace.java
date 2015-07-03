@@ -54,7 +54,7 @@ public class Workspace extends NARReaction {
         n_concepts=0;
         for(Concept node : nar.memory.cycle) {
             if(!node.getGoals().isEmpty()) {
-                s+=node.getPriority()* node.getGoals().get(0).getTruth().getExpectation();
+                s+=node.getPriority()* node.getGoals().top().getTruth().getExpectation();
             }
             n_concepts++;
         }

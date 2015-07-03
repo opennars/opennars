@@ -404,9 +404,9 @@ public class ConceptPanelBuilder extends NARReaction {
                 beliefGoalChart.update(time, concept.getBeliefs(), concept.getGoals());
 
                 if (!concept.getBeliefs().isEmpty())
-                    st += (concept.getBeliefs().get(0).getTruth().toString()) + ' ';
+                    st += (concept.getBeliefs().topTruth().toString()) + ' ';
                 if (!concept.getGoals().isEmpty()) {
-                    st += " desire: " + concept.getGoals().get(0).getTruth().toString();
+                    st += " desire: " + concept.getGoals().topTruth().toString();
                 }
 
                 beliefGoalTime.setVisible(
@@ -500,7 +500,7 @@ public class ConceptPanelBuilder extends NARReaction {
             return ((when - minTime) / timeFactor);
         }
 
-        public boolean update(long time, Collection<Task> belief, Collection<Task> goal) {
+        public boolean update(long time, Iterable<Task> belief, Iterable<Task> goal) {
 
             minTime = maxTime = time;
             for (Task s : belief) {
@@ -586,7 +586,7 @@ public class ConceptPanelBuilder extends NARReaction {
             super(width, height);
         }
 
-        public void update(long now, Collection<? extends Truthed> beliefs, Collection<? extends Truthed> goals) {
+        public void update(long now, Iterable<? extends Truthed> beliefs, Iterable<? extends Truthed> goals) {
             Graphics g = g();
             if (g == null) return;
 

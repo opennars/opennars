@@ -4,7 +4,6 @@ import javolution.util.function.Equality;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Item;
@@ -22,7 +21,6 @@ import nars.term.Term;
 import nars.term.Variable;
 import nars.truth.BasicTruth;
 import nars.truth.Truth;
-import nars.truth.Truthed;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,9 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static nars.budget.BudgetFunctions.divide;
-import static nars.nal.UtilityFunctions.or;
-import static nars.nal.nal1.LocalRules.*;
-import static nars.nal.nal7.TemporalRules.solutionQuality;
+import static nars.nal.nal1.LocalRules.trySolution;
 
 
 public class DefaultConcept extends Item<Term> implements Concept {
@@ -342,7 +338,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final Task input = belief;
 
-        belief = getBeliefs().add(input, this);
+        BeliefTable.Ranker r = new ArrayListBeliefTable.BeliefConfidenceAndCurrentTime(time());
+        belief = getBeliefs().add(input, r, this);
 
         boolean added;
 
@@ -386,7 +383,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final Task input = goal;
 
-        goal = getGoals().addGoal(input, this);
+        BeliefTable.Ranker r = new ArrayListBeliefTable.BeliefConfidenceAndCurrentTime(time());
+        goal = getGoals().add(input, r, this);
 
         boolean added;
 
@@ -418,7 +416,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (goal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
             // check if the Goal is already satisfied
-            Task beliefSatisfied = getBeliefs().match(goal, getMemory().time());
+            Task beliefSatisfied = getBeliefs().top(r);
 
             float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {
@@ -430,7 +428,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
                 beliefSatisfied = trySolution(beliefSatisfied, projectedTruth, goal, nal); // check if the Goal is already satisfied (manipulate budget)
                 if (beliefSatisfied!=null) {
-                    AntiSatisfaction = goal.getTruth().getExpDifAbs(beliefSatisfied.truth);
+                    AntiSatisfaction = goal.getTruth().getExpDifAbs(beliefSatisfied.getTruth());
                 }
             }
 
@@ -530,9 +528,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final long now = getMemory().time();
         if (q.isQuest()) {
-            trySolution(getGoals().match(q, now), q, nal);
+            trySolution(getGoals().project(q, now), q, nal);
         } else {
-            trySolution(getBeliefs().match(q, now), q, nal);
+            trySolution(getBeliefs().project(q, now), q, nal);
         }
 
         return q;

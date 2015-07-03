@@ -1,10 +1,8 @@
 package nars.concept;
 
-import nars.Memory;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Compound;
+import nars.task.stamp.Stamp;
 import nars.truth.Truth;
 import nars.truth.Truthed;
 
@@ -20,7 +18,7 @@ import static nars.nal.nal7.TemporalRules.solutionQuality;
  */
 public interface BeliefTable extends TaskTable {
 
-    public float rank(final Task s, final long now);
+
 
 
     /** attempt to insert a task.
@@ -32,15 +30,16 @@ public interface BeliefTable extends TaskTable {
      *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
      *
      */
-    public Task add(Task input, Concept c);
-
-    @Deprecated /* TEMPORAR */ Task addGoal(Task input, Concept c);
+    public Task add(Task input, Ranker r, Concept c);
 
     /**
-     * matches existing, or projects to a new task
-     * was: getTask(q, now, getBeliefs()) */
-    public Task match(Task q, long now);
+     * projects to a new task at a given time
+     * was: getTask(q, now, getBeliefs()).  Does not affect the table itself */
+    public Task project(Task t, long now);
 
+    default public Task project(final Task t) {
+        return project(t, Stamp.TIMELESS);
+    }
 
 
     /**
@@ -84,65 +83,86 @@ public interface BeliefTable extends TaskTable {
         return t / beliefs.size();
     }
 
-
-    /**
-     * Select a belief value or desire value for a given query
-     *
-     * @param query The query to be processed
-     * @param list  The list of beliefs or goals to be used
-     * @return The best candidate selected
-     */
-    public static Task getTask(final Sentence query, long now, final List<Task>... lists) {
-        float currentBest = 0;
-        float beliefQuality;
-        Task candidate = null;
-
-        for (List<Task> list : lists) {
-            if (list.isEmpty()) continue;
-
-            int lsv = list.size();
-            for (int i = 0; i < lsv; i++) {
-                Task judg = list.get(i);
-                beliefQuality = solutionQuality(query, judg.sentence, now);
-                if (beliefQuality > currentBest) {
-                    currentBest = beliefQuality;
-                    candidate = judg;
-                }
-            }
-        }
-
-        return candidate;
+    default public Task top(final Sentence query, long now) {
+        return top( (t, b) -> solutionQuality(query, t, now) );
+    }
+    default public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
+        return top( (t, b) -> solutionQuality(hasQueryVar, occTime, t, truth, now) );
     }
 
-    public static Task getTask(boolean hasQueryVar, long now, long occTime, Truth truth, final List<Task>... lists) {
-        float currentBest = 0;
-        float beliefQuality;
-        Task candidate = null;
+//    /**
+//     * Select a belief value or desire value for a given query
+//     *
+//     * @param query The query to be processed
+//     * @param list  The list of beliefs or goals to be used
+//     * @return The best candidate selected
+//     */
+//    public static Task getTask(final Sentence query, long now, final List<Task>... lists) {
+//        float currentBest = 0;
+//        float beliefQuality;
+//        Task candidate = null;
+//
+//        for (List<Task> list : lists) {
+//            if (list.isEmpty()) continue;
+//
+//            int lsv = list.size();
+//            for (int i = 0; i < lsv; i++) {
+//                Task judg = list.get(i);
+//                beliefQuality = solutionQuality(query, judg.sentence, now);
+//                if (beliefQuality > currentBest) {
+//                    currentBest = beliefQuality;
+//                    candidate = judg;
+//                }
+//            }
+//        }
+//
+//        return candidate;
+//    }
 
-        for (List<Task> list : lists) {
-            if (list.isEmpty()) continue;
 
-            int lsv = list.size();
-            for (int i = 0; i < lsv; i++) {
-                Task judg = list.get(i);
-                beliefQuality = solutionQuality(hasQueryVar, occTime, judg.sentence, truth, now);
-                if (beliefQuality > currentBest) {
-                    currentBest = beliefQuality;
-                    candidate = judg;
-                }
-            }
-        }
 
-        return candidate;
-    }
+    /** get the top-ranking belief/goal, selecting either eternal or temporal beliefs, or both  */
+    public Task top(boolean eternal, boolean temporal);
 
     /** get the top-ranking belief/goal */
-    public Task<Compound> top();
+    default public Task top() {
+        return top(true, true);
+    }
 
     /** the truth v alue of the topmost element, or null if there is none */
     default public Truth topTruth() {
         if (isEmpty()) return null;
         return top().getTruth();
+    }
+
+    public interface Ranker {
+        /** returns a number producing a score or relevancy number for a given Task
+         * @param bestToBeat current best score, which the ranking can use to decide to terminate early
+         * @return a score value, or NaN to exclude that result
+         * */
+        public float rank(Task t, float bestToBeat);
+
+        default float rank(Task t) {
+            return rank(t, Float.MIN_VALUE);
+        }
+
+    }
+
+    default public Task top(Ranker r) {
+
+        float s = Float.MIN_VALUE;
+        Task b = null;
+
+        final int n = size();
+        for (Task t : this) {
+            float x = r.rank(t, s);
+            if (x > s) {
+                s = x;
+                b = t;
+            }
+        }
+
+        return b;
     }
 
 

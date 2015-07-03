@@ -488,7 +488,7 @@ public class TemporalRules {
                 double conf = task.sentence.truth.getConfidence();
                 Concept C = nal.memory.concept(task.sentence.getTerm());
                 if (C != null && C.hasBeliefs()) {
-                    Sentence bel = C.getBeliefs().get(0).sentence;
+                    Task bel = C.getBeliefs().top();
                     Truth cur = bel.truth;
                     conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
                     //if there is no overlapping evidental base, use revision:
@@ -543,7 +543,7 @@ public class TemporalRules {
             Concept S1_State_C=nal.memory.concept(s1.getTerm());
             if(S1_State_C != null && S1_State_C.hasGoals() &&
                     !(((Statement) belief.getTerm()).getPredicate() instanceof Operation)) {
-                Task a_desire = S1_State_C.getStrongestGoal(true, true);
+                Task a_desire = S1_State_C.getGoals().top();
 
 //                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
 //                        new DefaultTruth(1.0f,0.99f), a_desire.sentence);
@@ -551,10 +551,12 @@ public class TemporalRules {
 //
 //                g.setOccurrenceTime(s1.getOccurrenceTime());
 
-                //strongest desire for that time is what we want to know
-                Task strongest_desireT = S1_State_C.getTask(S1_State_C.getTerm().hasVarQuery(),  s1.getOccurrenceTime(), s1.getTruth(), S1_State_C.getGoals());
+                final long now = nal.time();
 
-                Task strongest_desire=strongest_desireT.projection(nal.memory, s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
+                //strongest desire for that time is what we want to know
+                Task strongest_desireT = S1_State_C.getGoals().top(S1_State_C.getTerm().hasVarQuery(), now, s1.getOccurrenceTime(), s1.getTruth());
+
+                Task strongest_desire = strongest_desireT.projectTask(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
                 Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.getTruth());
 
                 //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
