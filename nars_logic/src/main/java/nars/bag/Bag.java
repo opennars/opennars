@@ -350,8 +350,12 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
     public static final int bin(final float x, final int bins) {
-        int i = (int) FastMath.floor((x + 0.5f / bins) * bins);
-        return i;
+        return (int) FastMath.floor((x + (0.5f / bins)) * bins);
+    }
+
+    /** finds the mean value of a given bin */
+    public static final float unbinCenter(final int b, final int bins) {
+        return ((float)b)/bins;
     }
 
     /** utility function for inserting an item, capturing any overflow,

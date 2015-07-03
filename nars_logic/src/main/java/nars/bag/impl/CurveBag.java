@@ -51,7 +51,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * whether items are removed by random sampling, or a continuous scanning
      */
-    private final boolean randomRemoval;
+    private final boolean sampleRandomly;
 
     private final BagCurve curve;
 
@@ -78,12 +78,16 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         //    return new FractalSortedItemList<E>();
     }
 
-    public CurveBag(Random rng, int capacity, boolean randomRemoval) {
-        this(rng, capacity, new FairPriorityProbabilityCurve(), randomRemoval);
+    public CurveBag(Random rng, int capacity) {
+        this(rng, capacity, true);
     }
 
-    public CurveBag(Random rng, int capacity, BagCurve curve, boolean randomRemoval) {
-        this(rng, capacity, curve, randomRemoval,
+    @Deprecated public CurveBag(Random rng, int capacity, boolean sampleRandomly) {
+        this(rng, capacity, new Power6BagCurve(), sampleRandomly);
+    }
+
+    public CurveBag(Random rng, int capacity, BagCurve curve, boolean sampleRandomly) {
+        this(rng, capacity, curve, sampleRandomly,
                 getIndex(capacity)                
                 
                                 /*if (capacity < 128)*/
@@ -220,11 +224,11 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         return items.insert(i);
     }
 
-    public CurveBag(Random rng, int capacity, BagCurve curve, boolean randomRemoval, SortedIndex<E> items) {
+    public CurveBag(Random rng, int capacity, BagCurve curve, boolean sampleRandomly, SortedIndex<E> items) {
         super();
         this.rng = rng;
         this.capacity = capacity;
-        this.randomRemoval = randomRemoval;
+        this.sampleRandomly = sampleRandomly;
         this.curve = curve;
 
 
@@ -232,7 +236,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         items.setCapacity(capacity);
         this.items = items;
 
-        if (randomRemoval)
+        if (sampleRandomly)
             x = rng.nextFloat();
         else
             x = 1.0f; //start a highest priority
@@ -365,7 +369,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     public int nextRemovalIndex() {
         final float s = items.size();
-        if (randomRemoval) {
+        if (sampleRandomly) {
             x = rng.nextFloat();
         } else {
             x += scanningRate * 1.0f / (1 + s);
@@ -582,19 +586,59 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:        
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return 1.0f - (x * x * x);
+            float nx = 1.0f - x;
+            return 1.0f - (nx * nx * nx);
         }
 
+        @Override
+        public String toString() {
+            return "CubicBagCurve";
+        }
+    }
+
+
+    public static class Power4BagCurve implements BagCurve {
+
+        @Override
+        public final float y(final float x) {
+            float nx = 1.0f - x;
+            float nnx = nx * nx;
+            return 1.0f - (nnx * nnx);
+        }
+
+        @Override
+        public String toString() {
+            return "Power4BagCurve";
+        }
+    }
+    public static class Power6BagCurve implements BagCurve {
+
+        @Override
+        public final float y(final float x) {
+            float nx = 1.0f - x;
+            float nnx = nx * nx;
+            return 1.0f - (nnx * nnx * nnx);
+        }
+
+        @Override
+        public String toString() {
+            return "Power6BagCurve";
+        }
     }
 
     /**
      * Approximates priority -> probability fairness with an exponential curve
      */
-    public static class FairPriorityProbabilityCurve implements BagCurve {
+    @Deprecated public static class FairPriorityProbabilityCurve implements BagCurve {
 
         @Override
         public final float y(final float x) {
             return (float)(1f - Math.exp(-5f * x));
+        }
+
+        @Override
+        public String toString() {
+            return "FairPriorityProbabilityCurve";
         }
 
     }
@@ -608,7 +652,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:        
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return 1f - (x * x);
+            float nx = 1f - x;
+            return 1f - (nx * nx);
+        }
+
+        @Override
+        public String toString() {
+            return "QuadraticBagCurve";
         }
 
     }

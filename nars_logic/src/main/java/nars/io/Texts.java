@@ -278,10 +278,13 @@ abstract public class Texts  {
             if (n.charAt(i) == c)
                 return true;        
         return false;
-    }    
+    }
 
 
 
+    final static Format threeDecimal = new DecimalFormat("0.000");
+    public static final String n3(final float x) { return threeDecimal.format(x);     }
+    public static final String n3(final double x) { return threeDecimal.format(x);     }
 
     final static Format fourDecimal = new DecimalFormat("0.0000");
     public static final String n4(final float x) { return fourDecimal.format(x);     }
