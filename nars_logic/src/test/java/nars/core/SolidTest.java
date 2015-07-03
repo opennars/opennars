@@ -21,13 +21,13 @@ public class SolidTest {
     @Test
     public void testDetective() throws Exception {
 
-        int time = 2266; //should solve the example in few cycles
+        int time = 1266; //should solve the example in few cycles
 
 
         Global.DEBUG = false;
 
-        final int numConcepts = 128;
-        final float leakRate = 0.2f;
+        final int numConcepts = 168;
+        final float leakRate = 0.7f;
         Solid s = new Solid(1, numConcepts, 1, 2, 1, 5) {
 
             @Override

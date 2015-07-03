@@ -22,8 +22,6 @@ import java.util.function.Consumer;
  */
 public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
-    final float MASS_EPSILON = 1.0e-5f;
-
     /**
      * mapping from key to item
      */
@@ -48,9 +46,9 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     private final CurveBag.BagCurve curve;
 
     //sort iterations
-    final int sortPrecision = 8;
+    final int sortPrecision = 16;
     //# of max moves per iteration before ending it
-    final int sortMovesMax = 3;
+    final int sortMovesMax = 4;
 
 
     public static <E extends Item> SortedIndex<E> getIndex(int capacity) {

@@ -33,8 +33,7 @@ public class NAL1Test extends JavaNALTest {
 
 
 
-    @Test
-    public void revision() throws InvalidInputException {
+    @Test public void revision() throws InvalidInputException {
         nar.mustOutput(3, "<bird --> swimmer>", '.', 0.87f, 0.91f)
                 .en("bird is very likely to be a type of swimmer.");
         nar.believe("<bird --> swimmer>")

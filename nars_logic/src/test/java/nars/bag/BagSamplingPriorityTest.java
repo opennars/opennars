@@ -178,9 +178,9 @@ public class BagSamplingPriorityTest {
     @Test
     public void testBags() {
 
-        int capacity = 100;
+        int capacity = 512;
 
-        int bins = (int)Math.sqrt(capacity);
+        int bins = (int)Math.sqrt(capacity)/2;
 
         int iterations = capacity * capacity;
         //CurveBag<CharSequence, BagPerf.NullItem> c = new CurveBag(rng, capacity);
