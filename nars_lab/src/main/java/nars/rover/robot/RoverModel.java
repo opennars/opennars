@@ -62,25 +62,25 @@ public class RoverModel {
     private final World world;
     private DebugDraw draw = null;
 
-    final double minVisionInputProbability = 0.8f;
+    final double minVisionInputProbability = 0.9f;
     final double maxVisionInputProbability = 1.0f;
 
     //float tasteDistanceThreshold = 1.0f;
-    int retinaPixels = 7;
+    final static int retinaPixels = 5;
 
 
-    int retinaRaysPerPixel = 4; //rays per vision sensor
+    int retinaRaysPerPixel = 16; //rays per vision sensor
 
-    float aStep = (float)Math.PI*2f / retinaPixels;
+    float aStep = (float)(Math.PI*2f) / retinaPixels;
 
-    float L = 17f; //vision distance
+    float L = 35f; //vision distance
 
     Vec2 mouthPoint = new Vec2(3.0f, 0); //0.5f);
-    int distanceResolution = 10;
+    int distanceResolution = 8;
     float mass = 2f;
 
     double mouthArc = Math.PI/6f; //in radians
-    float biteDistanceThreshold = 0.15f;
+    float biteDistanceThreshold = 0.1f;
     Vec2[] vertices = {new Vec2(3.0f, 0.0f), new Vec2(-1.0f, +2.0f), new Vec2(-1.0f, -2.0f)};
 
     float linearDamping = 0.9f;
@@ -89,7 +89,7 @@ public class RoverModel {
     float restitution = 0.01f; //bounciness
     float friction = 0.5f;
 
-    public float linearThrustPerCycle = 30f;
+    public float linearThrustPerCycle = 20f;
     public float angularSpeedPerCycle = 0.44f;
 
     public static boolean allow_imitate = true;
@@ -481,7 +481,8 @@ public class RoverModel {
 
             for (int r = 0; r < resolution; r++) {
                 float da = (-arc / 2f) + dArc * r + angOffset;
-                d.set(distance * MathUtils.cos(da + angle + body.getAngle()), distance * MathUtils.sin(da + angle + body.getAngle()));
+                final float V = da + angle + body.getAngle();
+                d.set(distance * (float)Math.cos(V), distance * (float)Math.sin(V));
                 point2.set(point1);
                 point2.addLocal(d);
                 ccallback.init();

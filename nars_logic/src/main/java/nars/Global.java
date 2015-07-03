@@ -210,7 +210,7 @@ public class Global {
 
 
     //TEMPORARY
-    public static float rankDecayPerTimeDuration = 0.1f;
+    public static float rankDecayPerTimeDuration = 0.9f;
 
 
     public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {

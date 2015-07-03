@@ -28,7 +28,7 @@ public class RoverEngine extends PhysicsModel {
     boolean wraparound = false;
 
     public final List<RoverModel> rovers = new ArrayList();
-    final int angleResolution = 32;
+    final int angleResolution = 18;
 
 
     PhysicsRun phy = new PhysicsRun(30, this);
