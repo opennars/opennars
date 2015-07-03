@@ -9,6 +9,7 @@ import nars.truth.Truthed;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
@@ -83,11 +84,22 @@ public interface BeliefTable extends TaskTable {
         return t / beliefs.size();
     }
 
-    default public Task top(final Sentence query, long now) {
-        return top( (t, b) -> solutionQuality(query, t, now) );
+    default public Task top(final Task query, long now) {
+        return top(new Ranker() {
+            @Override
+            public float rank(Task t, float bestToBeat) {
+                return solutionQuality(query, t, now);
+            }
+        });
     }
     default public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
-        return top( (t, b) -> solutionQuality(hasQueryVar, occTime, t, truth, now) );
+        //return top( (t, b) -> solutionQuality(hasQueryVar, occTime, t, truth, now) );
+        return top(new Ranker() {
+            @Override
+            public float rank(Task t, float bestToBeat) {
+                return solutionQuality(hasQueryVar, occTime, t, truth, now);
+            }
+        });
     }
 
 //    /**
@@ -135,17 +147,21 @@ public interface BeliefTable extends TaskTable {
         return top().getTruth();
     }
 
-    public interface Ranker {
+    public interface Ranker extends Function<Task,Float> {
         /** returns a number producing a score or relevancy number for a given Task
          * @param bestToBeat current best score, which the ranking can use to decide to terminate early
          * @return a score value, or NaN to exclude that result
          * */
         public float rank(Task t, float bestToBeat);
 
+
         default float rank(Task t) {
             return rank(t, Float.MIN_VALUE);
         }
 
+        @Override default Float apply(Task t) {
+            return rank(t);
+        }
     }
 
     default public Task top(Ranker r) {

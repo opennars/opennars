@@ -141,6 +141,8 @@ public class LocalRules {
     }
 
     public static Task trySolution(Task belief, final Task questionTask, final NAL nal) {
+        if (belief == null) return null;
+
         return trySolution(belief, belief.getTruth(), questionTask, nal);
     }
 

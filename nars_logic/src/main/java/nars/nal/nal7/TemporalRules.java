@@ -630,6 +630,9 @@ public class TemporalRules {
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
+        if ((problem == null) || (solution == null)) {
+            System.err.println("wtf");
+        }
 
         if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
             return 0.0F;

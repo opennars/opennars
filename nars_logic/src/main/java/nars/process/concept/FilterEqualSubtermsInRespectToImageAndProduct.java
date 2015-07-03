@@ -17,7 +17,7 @@ public class FilterEqualSubtermsInRespectToImageAndProduct extends ConceptFireTa
         final Concept beliefConcept = f.memory.concept(termLink.target);
         if (beliefConcept!=null) {
 
-            Task t = beliefConcept.getBeliefs().top(f.getCurrentBelief(), f.time());
+            Task t = beliefConcept.getBeliefs().top(f.getCurrentTask(), f.time());
 
             if (t!=null)
                 f.setCurrentBelief(t);

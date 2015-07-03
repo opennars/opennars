@@ -53,6 +53,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         final int n = size();
         for (int i = 0; i < n; i++) {
             Task t = get(i);
+
             float x = r.rank(t, s);
             if (Float.isFinite(x) && (x > s)) {
                 s = x;
