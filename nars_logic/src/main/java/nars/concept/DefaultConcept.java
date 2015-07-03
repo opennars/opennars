@@ -340,19 +340,17 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public boolean processBelief(final TaskProcess nal, Task belief) {
 
-
-
-        boolean added;
-
         final Task input = belief;
 
         belief = getBeliefs().add(input, this);
 
+        boolean added;
+
         if (belief!=input) {
-            getMemory().removed(input, "Unbelievable"
-                    //isGoal ? "Undesirable" : "Unbelievable"
-                    // + "compared to: " + belief
-            );
+            String reason = "Unbelievable or Duplicate";
+            //String reason = input.equals(belief) ? "Duplicate" : "Unbelievable";
+                // + "compared to: " + belief
+            getMemory().removed(input, reason);
             added = false;
         }
         else {
@@ -379,47 +377,31 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * decide whether to actively pursue it
      *
      * @param judg    The judgment to be accepted
-     * @param newGoal The task to be processed
+     * @param goal The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processGoal(final TaskProcess nal, Task newGoal) {
-        
-
-        final Task oldGoalT = getTask(newGoal.sentence, goals); // revise with the existing desire values
-        Sentence oldGoal;
+    public boolean processGoal(final TaskProcess nal, Task goal) {
 
 
 
-        if (oldGoalT != null) {
-            oldGoal = oldGoalT.sentence;
+        final Task input = goal;
 
-            if (newGoal.sentence.equalStamp(oldGoal, true, true, false)) {
-                return false; // duplicate
-            }
-            if (revisible(newGoal.sentence, oldGoal)) {
+        goal = getGoals().addGoal(input, this);
 
-                //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+        boolean added;
 
-
-                //Truth projectedTruth = oldGoal.projection(now, task.getOccurrenceTime());
-                /*if (projectedGoal!=null)*/
-                {
-                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
-                    // nal.singlePremiseTask(projectedGoal, task.budget);
-                    //return;
-                    // }
-                    //nal.setCurrentBelief(projectedGoal);
-
-                    Task revisedTask = tryRevision(newGoal, oldGoalT, false, nal);
-                    if (revisedTask != null) { // it is revised, so there is a new task for which this function will be called
-                        newGoal = revisedTask;
-                        //return true; // with higher/lower desire
-                    } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
-
-                    //nal.setCurrentBelief(revisedTask);
-                }
-            }
+        if (goal!=input) {
+            String reason = "Undesirable or Duplicate";
+            //String reason = input.equals(goal) ? "Duplicate" : "Undesirable";
+            // + "compared to: " + belief
+            getMemory().removed(input, reason);
+            added = false;
         }
+        else {
+            added = (goal!=null);
+        }
+
+        if (!added) return false;
 
         //long then = goal.getOccurrenceTime();
         int dur = nal.memory.duration();
@@ -433,44 +415,38 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //
 //        }
 
-        if (newGoal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
+        if (goal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
             // check if the Goal is already satisfied
-            Task beliefSatisfied = getBeliefs().match(newGoal, getMemory().time());
+            Task beliefSatisfied = getBeliefs().match(goal, getMemory().time());
 
-            double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+            float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {
 
 
 
-                Truth projectedTruth = beliefSatisfied.projection(newGoal.getOccurrenceTime(), dur);
-                //Sentence projectedBelief = belief.projectionSentence(newGoal.getOccurrenceTime(), dur);
+                Truth projectedTruth = beliefSatisfied.projection(goal.getOccurrenceTime(), dur);
+                //Sentence projectedBelief = belief.projectionSentence(goal.getOccurrenceTime(), dur);
 
-                beliefSatisfied = trySolution(beliefSatisfied, projectedTruth, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
+                beliefSatisfied = trySolution(beliefSatisfied, projectedTruth, goal, nal); // check if the Goal is already satisfied (manipulate budget)
                 if (beliefSatisfied!=null) {
-                    AntiSatisfaction = newGoal.getTruth().getExpDifAbs(beliefSatisfied.truth);
+                    AntiSatisfaction = goal.getTruth().getExpDifAbs(beliefSatisfied.truth);
                 }
             }
 
-            double Satisfaction = 1.0 - AntiSatisfaction;
-            Truth T = BasicTruth.clone(newGoal.getTruth());
+            float Satisfaction = 1.0f - AntiSatisfaction;
+            Truth T = BasicTruth.clone(goal.getTruth());
 
             T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
 
-            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && newGoal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
+            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
 
-                questionFromGoal(newGoal, nal);
-
-                if (!addToTable(newGoal, getGoals(), getMemory().param.conceptGoalsMax.get(), Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class)) {
-                    //wasnt added to table
-                    getMemory().removed(newGoal, "Insufficient Rank"); //irrelevant
-                    return false;
-                }
+                questionFromGoal(goal, nal);
 
                 //TODO
                 //InternalExperience.experienceFromTask(nal, task, false);
 
-                getMemory().execute(this, newGoal);
+                getMemory().execute(this, goal);
             }
         }
 
@@ -789,39 +765,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     }
 
-
-    /**
-     * Determine the rank of a judgment by its quality and originality (stamp
-     * baseLength), called from Concept
-     *
-     * @param s The judgment to be ranked
-     * @return The rank of the judgment, according to truth value only
-     */
-    public float rankBelief(final Sentence s, final long now) {
-        return rankBeliefConfidenceTime(s, now);
-    }
-
-    public static float rankBeliefConfidenceTime(final Sentence judg, long now) {
-        float c = judg.getTruth().getConfidence();
-        if (!judg.isEternal()) {
-            float dur = judg.getDuration();
-            float durationsToNow = Math.abs(judg.getOccurrenceTime() - now) / dur;
-
-            float ageFactor = 1.0f / (1.0f + durationsToNow * Global.rankDecayPerTimeDuration);
-            c *= ageFactor;
-        }
-        return c;
-    }
-
-    public static float rankBeliefConfidence(final Sentence judg) {
-        return judg.getTruth().getConfidence();
-    }
-
-    public static float rankBeliefOriginal(final Sentence judg) {
-        final float confidence = judg.truth.getConfidence();
-        final float originality = judg.getOriginality();
-        return or(confidence, originality);
-    }
 
 
     /**

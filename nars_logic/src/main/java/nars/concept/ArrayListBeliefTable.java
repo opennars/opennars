@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.Global;
 import nars.Memory;
 import nars.process.NAL;
 import nars.task.Sentence;
@@ -9,6 +10,7 @@ import nars.truth.Truth;
 
 import java.util.List;
 
+import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.revisible;
 import static nars.nal.nal1.LocalRules.tryRevision;
 
@@ -25,18 +27,18 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 
 
-        if (oldBelief.sentence == belief.sentence) {
+        /*if (input.sentence == belief.sentence) {
             return false;
-        }
+        }*/
 
-        if (belief.sentence.equalStamp(oldBelief.sentence, true, false, true)) {
+        if (belief.sentence.equalStamp(input.sentence, true, false, true)) {
 //                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
 //                    //task.budget.decPriority(0);    // duplicated task
 //                }   // else: activated belief
 
             getMemory().removed(belief, "Duplicated");
             return false;
-        } else if (revisible(belief.sentence, oldBelief.sentence)) {
+        } else if (revisible(belief.sentence, input.sentence)) {
             //final long now = getMemory().time();
 
 //                if (nal.setTheNewStamp( //temporarily removed
@@ -52,20 +54,20 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //                //        }
 //                ) != null) {
 
-            //TaskSeed projectedBelief = oldBelief.projection(nal.memory, now, task.getOccurrenceTime());
+            //TaskSeed projectedBelief = input.projection(nal.memory, now, task.getOccurrenceTime());
 
 
-            //Task r = oldBelief.projection(nal.memory, now, newBelief.getOccurrenceTime());
+            //Task r = input.projection(nal.memory, now, newBelief.getOccurrenceTime());
 
-            //Truth r = oldBelief.projection(now, newBelief.getOccurrenceTime());
+            //Truth r = input.projection(now, newBelief.getOccurrenceTime());
                 /*
-                if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
+                if (projectedBelief.getOccurrenceTime()!=input.getOccurrenceTime()) {
                 }
                 */
 
 
 
-            Task revised = tryRevision(belief, oldBelief, false, nal);
+            Task revised = tryRevision(belief, input, false, nal);
             if (revised != null) {
                 belief = revised;
                 nal.setCurrentBelief(revised);
@@ -79,6 +81,71 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //            getMemory().removed(belief, "Insufficient Rank"); //irrelevant
 //            return false;
 //        }
+    }
+
+    @Override
+    public Task addGoal(Task goal, Concept c) {
+        if (goal.equalStamp(input, true, true, false)) {
+            return false; // duplicate
+        }
+
+        if (revisible(goal.sentence, oldGoal)) {
+
+            //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+
+
+            //Truth projectedTruth = oldGoal.projection(now, task.getOccurrenceTime());
+                /*if (projectedGoal!=null)*/
+            {
+                // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
+                // nal.singlePremiseTask(projectedGoal, task.budget);
+                //return;
+                // }
+                //nal.setCurrentBelief(projectedGoal);
+
+                Task revisedTask = tryRevision(goal, oldGoalT, false, nal);
+                if (revisedTask != null) { // it is revised, so there is a new task for which this function will be called
+                    goal = revisedTask;
+                    //return true; // with higher/lower desire
+                } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
+
+                //nal.setCurrentBelief(revisedTask);
+            }
+        }
+    }
+
+
+    /**
+     * Determine the rank of a judgment by its quality and originality (stamp
+     * baseLength), called from Concept
+     *
+     * @param s The judgment to be ranked
+     * @return The rank of the judgment, according to truth value only
+     */
+    public float rank(final Task s, final long now) {
+        return rankBeliefConfidenceTime(s, now);
+    }
+
+    public static float rankBeliefConfidenceTime(final Sentence judg, long now) {
+        float c = judg.getTruth().getConfidence();
+        if (!judg.isEternal()) {
+            float dur = judg.getDuration();
+            float durationsToNow = Math.abs(judg.getOccurrenceTime() - now) / dur;
+
+            float ageFactor = 1.0f / (1.0f + durationsToNow * Global.rankDecayPerTimeDuration);
+            c *= ageFactor;
+        }
+        return c;
+    }
+
+    public static float rankBeliefConfidence(final Sentence judg) {
+        return judg.getTruth().getConfidence();
+    }
+
+    public static float rankBeliefOriginal(final Sentence judg) {
+        final float confidence = judg.truth.getConfidence();
+        final float originality = judg.getOriginality();
+        return or(confidence, originality);
     }
 
 

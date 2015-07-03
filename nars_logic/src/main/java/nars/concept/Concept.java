@@ -57,11 +57,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     public Memory getMemory();
 
-    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);
-
-    default public Task getTask(Sentence query, List<Task>... lists) {
-        return getTask(query.hasQueryVar(), query.getOccurrenceTime(), query.getTruth(), lists);
-    }
 
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);
 
@@ -462,5 +457,10 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
     }
 
+//    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);
+//
+//    default public Task getTask(Sentence query, List<Task>... lists) {
+//        return getTask(query.hasQueryVar(), query.getOccurrenceTime(), query.getTruth(), lists);
+//    }
 
 }

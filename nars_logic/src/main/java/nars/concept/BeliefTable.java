@@ -20,10 +20,26 @@ import static nars.nal.nal7.TemporalRules.solutionQuality;
  */
 public interface BeliefTable extends TaskTable {
 
-    //public float rankBelief(final Sentence s, final long now);
-    //return rankBelief(s.sentence, now);
-
     public float rank(final Task s, final long now);
+
+
+    /** attempt to insert a task.
+     *
+     * @param c the concept in which this occurrs
+     * @return:
+     *      the input value that was inserted, if it was added to the table
+     *      a previous stored task if this was a duplicate (table unchanged)
+     *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
+     *
+     */
+    public Task add(Task input, Concept c);
+
+    @Deprecated /* TEMPORAR */ Task addGoal(Task input, Concept c);
+
+    /**
+     * matches existing, or projects to a new task
+     * was: getTask(q, now, getBeliefs()) */
+    public Task match(Task q, long now);
 
 
 
@@ -67,18 +83,6 @@ public interface BeliefTable extends TaskTable {
             t += s.getTruth().getFrequency();
         return t / beliefs.size();
     }
-
-
-    /** attempt to insert a task.
-     *
-     * @param c the concept in which this occurrs
-     * @return:
-     *      the input value that was inserted, if it was added to the table
-     *      a previous stored task if this was a duplicate (table unchanged)
-     *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
-     *
-     */
-    public Task add(Task input, Concept c);
 
 
     /**
@@ -145,10 +149,7 @@ public interface BeliefTable extends TaskTable {
 
 
 
-    /**
-     * matches existing, or projects to a new task
-     * was: getTask(q, now, getBeliefs()) */
-    public Task match(Task q, long now);
+
 
 //    default public Task top(boolean eternal, boolean nonEternal) {
 //
@@ -178,6 +179,8 @@ public interface BeliefTable extends TaskTable {
         if (table.isEmpty()) return null;
         return table.get(0);
     }
+
+
 
 
 //    public Sentence getSentence(final Sentence query, long now, final List<Task>... lists) {
