@@ -86,7 +86,7 @@ public interface BeliefTable extends TaskTable {
         return t / beliefs.size();
     }
 
-    default public Task top(final Task query, long now) {
+    default public Task top(final Task query, final long now) {
         return top(new Ranker() {
             @Override
             public float rank(Task t, float bestToBeat) {
@@ -94,7 +94,7 @@ public interface BeliefTable extends TaskTable {
             }
         });
     }
-    default public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
+    default public Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
         //return top( (t, b) -> solutionQuality(hasQueryVar, occTime, t, truth, now) );
         return top(new Ranker() {
             @Override

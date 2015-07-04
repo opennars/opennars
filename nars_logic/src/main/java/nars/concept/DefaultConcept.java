@@ -344,10 +344,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
         boolean added;
 
         if (belief!=input) {
-            String reason = "Unbelievable or Duplicate";
-            //String reason = input.equals(belief) ? "Duplicate" : "Unbelievable";
-                // + "compared to: " + belief
-            getMemory().removed(input, reason);
+//            String reason = "Unbelievable or Duplicate";
+//            //String reason = input.equals(belief) ? "Duplicate" : "Unbelievable";
+//                // + "compared to: " + belief
+//            getMemory().removed(input, reason);
             added = false;
         }
         else {

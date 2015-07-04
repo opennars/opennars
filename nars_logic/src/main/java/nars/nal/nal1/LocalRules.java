@@ -141,8 +141,8 @@ public class LocalRules {
                         .punctuation(newBelief.getPunctuation())
                         .truth(truth)
                         .budget(budget)
-                        .parent(oldBeliefTask),
-                true, true);
+                        .parent(newBelief, oldBeliefTask),
+                true, false);
 
         if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();

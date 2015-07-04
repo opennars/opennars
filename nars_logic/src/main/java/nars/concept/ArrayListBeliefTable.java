@@ -2,12 +2,12 @@ package nars.concept;
 
 import nars.Global;
 import nars.Memory;
+import nars.op.math.add;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 
 import static nars.nal.UtilityFunctions.or;
-import static nars.nal.nal1.LocalRules.revisible;
 import static nars.nal.nal1.LocalRules.revisibleTermsAlreadyEqual;
 import static nars.nal.nal1.LocalRules.tryRevision;
 
@@ -21,14 +21,13 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
 
-    @Override public Task top(final boolean eternal, final boolean temporal) {
+    @Override
+    public Task top(final boolean eternal, final boolean temporal) {
         if (isEmpty()) {
             return null;
-        }
-        else if (eternal && temporal) {
+        } else if (eternal && temporal) {
             return get(0);
-        }
-        else if (eternal ^ temporal) {
+        } else if (eternal ^ temporal) {
             final int n = size();
             for (int i = 0; i < n; i++) {
                 Task t = get(i);
@@ -41,8 +40,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
 
-
-    @Override public Task top(Ranker r) {
+    @Override
+    public Task top(Ranker r) {
 
         float s = Float.MIN_VALUE;
         Task b = null;
@@ -68,7 +67,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
      * <p>
      * only called in RuleTables.rule
      *
-     * @param now the current time, or Stamp.TIMELESS to disable projection
+     * @param now  the current time, or Stamp.TIMELESS to disable projection
      * @param task The selected task
      * @return The selected isBelief
      */
@@ -107,8 +106,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //
 //        return null;
 //    }
-
-
     @Override
     public Task project(Task t, long now) {
         Task closest = top(new BeliefConfidenceAndCurrentTime(now));
@@ -129,93 +126,55 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         if (isEmpty()) {
             add(t);
             return t;
-        }
-        else {
+        } else {
 
             if (r == null) {
                 //just return thie top item if no ranker is provided
                 return top();
             }
 
+
+            Task existing = top(t, now);
+
+
+            if (existing != null) {
+
+                //equal instance, or equal truth and stamp:
+                if ((existing == t) || t.equivalentTo(existing, false, false, true, true, false)) {
+                        /*if (!t.isInput() && t.isJudgment()) {
+                            existing.decPriority(0);    // duplicated task
+                        }   // else: activated belief*/
+
+                    memory.removed(t, "Duplicated");
+                    return null;
+
+                } else if (revisibleTermsAlreadyEqual(t.sentence, existing.sentence)) {
+                    Task revised = tryRevision(t, existing, false, nal);
+                    if (revised != null) {
+                        //nal.setCurrentBelief( t = revised );
+                    }
+
+                }
+
+            }
+
+
+
             float rankInput = r.rank(t);    // for the new isBelief
 
-
-            int i;
 
             final int siz = size();
 
             boolean atCapacity = (cap == siz);
 
+            int i;
             for (i = 0; i < siz; i++) {
-                Task existing = get(i);
-
-
-                if (existing == t) {
-                    throw new RuntimeException(t + " already present in Concept");
-                }
-
-                float existingRank = r.rank(existing, rankInput);
-
-                boolean ranking = (Float.isFinite(existingRank) && rankInput >= existingRank);
-                {
-                    //truth and stamp:
-                    if (ranking && t.equivalentTo(existing, false, false, true, true, false)) {
-                        if (!t.isInput() && t.isJudgment()) {
-                            existing.decPriority(0);    // duplicated task
-                        }   // else: activated belief
-
-                        memory.removed(existing, "Duplicated");
-
-                        //replace with the new equivalent task
-                        set(i, t);
-                        return t;
-                    }
-                    else if (revisibleTermsAlreadyEqual(t.sentence, existing.sentence)) {
-                        Task revised = tryRevision(t, existing, false, nal);
-                        memory.input(revised);
-//                        if (revised != null) {
-//                            nal.setCurrentBelief( t = revised );
-//                        }
-                        if (ranking)
-                            break;
-                    }
-
-//            //final long now = getMemory().time();
-//
-////                if (nal.setTheNewStamp( //temporarily removed
-////                /*
-////                if (equalBases(first.getBase(), second.getBase())) {
-////                return null;  // do not merge identical bases
-////                }
-////                 */
-////                //        if (first.baseLength() > second.baseLength()) {
-////                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
-////                //        } else {
-////                //            return new Stamp(second, first, time);
-////                //        }
-////                ) != null) {
-//
-//            //TaskSeed projectedBelief = t.projection(nal.memory, now, task.getOccurrenceTime());
-//
-//
-//            //Task r = t.projection(nal.memory, now, newBelief.getOccurrenceTime());
-//
-//            //Truth r = t.projection(now, newBelief.getOccurrenceTime());
-//                /*
-//                if (projectedBelief.getOccurrenceTime()!=t.getOccurrenceTime()) {
-//                }
-//                */
-//
-//
-//
-//            Task revised = tryRevision(belief, t, false, nal);
-//            if (revised != null) {
-//                belief = revised;
-//                nal.setCurrentBelief(revised);
-//            }
-//
-//        }
-
+                Task b = get(i);
+                float existingRank = r.rank(b, rankInput);
+                boolean inputGreater = (Float.isFinite(existingRank) && rankInput >= existingRank);
+                if (inputGreater) {
+                    //item will be inserted at this index
+                    break;
                 }
             }
 
@@ -255,7 +214,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         return t;
     }
 
-        //TODO provide a projected belief
+//TODO provide a projected belief
 //
 //
 //
@@ -378,7 +337,9 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 float ageFactor = 1.0f / (1.0f + durationsToNow * Global.rankDecayPerTimeDuration);
                 c *= ageFactor;
             }
-            return c;        }
+            return c;
+        }
+
     }
 
 
@@ -391,8 +352,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         final float originality = judg.getOriginality();
         return or(confidence, originality);
     }
-
-
 
 
 //    boolean addToTable(final Task goalOrJudgment, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, Concept c) {
@@ -417,7 +376,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //
 //        return true;
 //    }
-
 
 
 }
