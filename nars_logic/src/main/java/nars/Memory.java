@@ -498,6 +498,7 @@ public class Memory implements Serializable, AbstractStamper {
 
         clock.reset();
 
+
         inputPausedUntil = -1;
 
         questionConcepts.clear();
@@ -699,7 +700,7 @@ public class Memory implements Serializable, AbstractStamper {
      *  @return how many tasks perceived
      */
     public int perceiveNext(int maxPercepts) {
-        if (!perceiving()) return 0;
+        //if (!perceiving()) return 0;
 
         boolean inputEverything;
 

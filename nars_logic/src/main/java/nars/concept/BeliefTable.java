@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -25,13 +26,14 @@ public interface BeliefTable extends TaskTable {
     /** attempt to insert a task.
      *
      * @param c the concept in which this occurrs
+     * @param nal
      * @return:
      *      the input value that was inserted, if it was added to the table
      *      a previous stored task if this was a duplicate (table unchanged)
      *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
      *
      */
-    public Task add(Task input, Ranker r, Concept c);
+    public Task add(Task input, Ranker r, Concept c, NAL nal);
 
     /**
      * projects to a new task at a given time

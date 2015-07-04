@@ -65,13 +65,6 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     public Truth truth;
     
 
-    /**
-     * Whether the sentence can be revised
-     */
-    private boolean revisible;
-
-
-
     transient private int hash;
 
 
@@ -120,11 +113,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             this.truth = truth;
         }
 
-        this.revisible = !((term instanceof Conjunction) && term.hasVarDep());
-
         this.term = term;
-
-
 
         invalidateHash();
 
@@ -161,10 +150,6 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
 
 
-
-    public void setRevisible(boolean b) {
-        this.revisible = b;
-    }
     
     /**
      * To check whether two sentences are equal
@@ -479,13 +464,9 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }
 
     public boolean isRevisible() {
-        return revisible;
+        return !((getTerm() instanceof Conjunction) && getTerm().hasVarDep());
     }
 
-    /*public Sentence setRevisible(final boolean b) {
-        revisible = b;
-        return this;
-    }*/
 
     public int getTemporalOrder() {
         int t = getTerm().getTemporalOrder();

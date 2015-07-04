@@ -39,9 +39,9 @@ public class NAL5Test extends JavaNALTest {
     }
 
     @Test public void deriveFromConjunctionComponents() {
-        nar.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
-        nar.mustBelieve(70, "<a <-> b>", 1.0f, 0.66f);
-        nar.run();
+        n.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
+        n.mustBelieve(70, "<a <-> b>", 1.0f, 0.66f);
+        n.run();
     }
 
     /** 5.15 */
@@ -62,21 +62,21 @@ public class NAL5Test extends JavaNALTest {
         long time = 512;
         //TextOutput.out(n);
 
-        nar.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>", Eternal, 0.0f, 0.9f)
+        n.believe("<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>", Eternal, 0.0f, 0.9f)
                 .en("If robin is a type of bird then robin is not a type of flying animal.");
         /*n.believe("(--,<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>)", Eternal, 1.0f, 0.9f)
                 .en("If robin is a type of bird then robin is not a type of flying animal.");*/
 
 
-        nar.believe("<<robin --> bird> ==> <robin --> [flying]>>", Eternal, 1f, 0.9f )
+        n.believe("<<robin --> bird> ==> <robin --> [flying]>>", Eternal, 1f, 0.9f )
                 .en("If robin is a type of bird then robin can fly.");
 
-        nar.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 1f,0f, 1f); //matches any truth value
+        n.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 1f,0f, 1f); //matches any truth value
 
-        nar.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 0f, 0.81f, 0.81f)
+        n.mustBelieve(time, "<<robin --> bird> ==> <robin --> animal>>", 0f, 0f, 0.81f, 0.81f)
                 .en("It is unlikely that if a robin is a type of bird then robin is a type of animal.");
 
-        nar.run();
+        n.run();
 
     }
 
@@ -120,17 +120,17 @@ public class NAL5Test extends JavaNALTest {
         new DerivationOutput(nar);
         */
 
-        nar.mustBelieve(time, "<robin --> swimmer>", 0.90f, 0.90f, 0.73f, 0.73f)
+        n.mustBelieve(time, "<robin --> swimmer>", 0.90f, 0.90f, 0.73f, 0.73f)
                 .en("robin can swim.");
-        nar.mustBelieve(time, "<robin --> [flying]>", 0.90f, 0.90f, 0.73f, 0.73f)
+        n.mustBelieve(time, "<robin --> [flying]>", 0.90f, 0.90f, 0.73f, 0.73f)
                 .en("robin can fly.")
                 .en("robin is one of the flying.");
 
-        nar.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)
+        n.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)", Eternal, 0.9f, 0.9f)
                 .en("robin can fly and swim.")
                 .en("robin is one of the flying and is a swimmer.");
 
-        nar.run();
+        n.run();
 
     }
 

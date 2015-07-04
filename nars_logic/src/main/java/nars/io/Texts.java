@@ -2,11 +2,13 @@ package nars.io;
 
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.StringHack;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -416,6 +418,16 @@ abstract public class Texts  {
         if ((x < min) || x > max)
             return Float.NaN;
         return x;
+    }
+
+    public static String arrayToString(final Object... signals) {
+        if (signals == null) return "";
+        final int slen = signals.length;
+        if ((signals != null) && (slen > 1))
+            return Arrays.toString(signals);
+        else if (slen > 0)
+            return signals[0].toString();
+        return "";
     }
 
 //    /** fast append to CharBuffer */

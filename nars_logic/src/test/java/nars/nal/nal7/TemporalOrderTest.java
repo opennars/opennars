@@ -38,21 +38,21 @@ public class TemporalOrderTest extends JavaNALTest {
 
         //TextOutput.out(nar);
 
-        nar.input("<e --> f>. :/:");
-        nar.input("<c --> d>. :|:");
-        nar.input("<a --> b>. :\\:");
-        nar.requires.add(new OutputContainsCondition.InputContainsCondition(nar, "<e --> f>. :/: %1.00;0.90%"));
-        nar.requires.add(new OutputContainsCondition.InputContainsCondition(nar, "<c --> d>. :|: %1.00;0.90%"));
-        nar.requires.add(new OutputContainsCondition.InputContainsCondition(nar, "<a --> b>. :\\: %1.00;0.90%"));
+        n.input("<e --> f>. :/:");
+        n.input("<c --> d>. :|:");
+        n.input("<a --> b>. :\\:");
+        n.requires.add(new OutputContainsCondition.InputContainsCondition(n, "<e --> f>. :/: %1.00;0.90%"));
+        n.requires.add(new OutputContainsCondition.InputContainsCondition(n, "<c --> d>. :|: %1.00;0.90%"));
+        n.requires.add(new OutputContainsCondition.InputContainsCondition(n, "<a --> b>. :\\: %1.00;0.90%"));
 
 
         //assertTrue(!futureQuestion.isTrue());
 
-        nar.runUntil(1);
+        n.runUntil(1);
         
         //assertTrue(futureQuestion.isTrue());
         
-        nar.runUntil(10);
+        n.runUntil(10);
 
         /*
         try {
@@ -64,10 +64,10 @@ public class TemporalOrderTest extends JavaNALTest {
         }
                 */
 
-        nar.input("<c --> d>?");
+        n.input("<c --> d>?");
 
 
-        nar.runUntil(20);
+        n.runUntil(20);
         
     }
 

@@ -36,29 +36,29 @@ public class NAL8Test extends JavaNALTest {
 
         String goal = "<a --> b>";
 
-        nar.goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goal, 1.0f, 0.9f);
+        n.goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goal, 1.0f, 0.9f);
 
-        nar.run(50);
+        n.run(50);
 
-        nar.mustDesire(60, goal, 1.0f, 0.9f);
-        nar.quest(goal);
+        n.mustDesire(60, goal, 1.0f, 0.9f);
+        n.quest(goal);
 
-        nar.run(10);
+        n.run(10);
     }
 
     protected void testGoalExecute(String condition, String action) {
 
         //TextOutput.out(nar);
 
-        nar.believe(condition, Tense.Present, 1.0f, 0.9f);
-        nar.goal("(&/," + condition + ',' + action + ")", 1.0f, 0.9f);
+        n.believe(condition, Tense.Present, 1.0f, 0.9f);
+        n.goal("(&/," + condition + ',' + action + ")", 1.0f, 0.9f);
 
-        nar.mustDesire(40, action, 1.0f, 0.42f);
+        n.mustDesire(40, action, 1.0f, 0.42f);
 
-        nar.mustOutput(1, 10, action, '.', 1f, 1f, Global.OPERATOR_EXECUTION_CONFIDENCE, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
+        n.mustOutput(1, 10, action, '.', 1f, 1f, Global.OPERATOR_EXECUTION_CONFIDENCE, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
 
 
-        nar.run(40);
+        n.run(40);
     }
 
     @Test public void testGoalExecute0() {
@@ -103,10 +103,10 @@ public class NAL8Test extends JavaNALTest {
 
 
     @Test public void testOperationInheritance() {
-        nar.input("pick(c). :|:");
-        nar.run(6);
-        nar.input("<a --> b>. :|:");
-        nar.input("<a --> b>!");
+        n.input("pick(c). :|:");
+        n.run(6);
+        n.input("<a --> b>. :|:");
+        n.input("<a --> b>!");
         /*nar.on(Events.TaskDerive.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {
@@ -121,8 +121,8 @@ public class NAL8Test extends JavaNALTest {
                 System.out.println("Remove: " + t + " " + t.getReason());
             }
         });*/
-        nar.mustBelieve(100, "pick(c,SELF)", 1f, 1f, 0.40f, 0.50f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
-        nar.run(100);
+        n.mustBelieve(100, "pick(c,SELF)", 1f, 1f, 0.40f, 0.50f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
+        n.run(100);
 
     }
 

@@ -225,7 +225,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         tt.setTemporalInducting(isTemporalInductable());
         tt.setCyclic(isCyclic());
         tt.setCause(getCause());
-        tt.setRevisible(isRevisible());
         tt.setLastForgetTime(getLastForgetTime());
         tt.setEvidentialSet(getEvidentialSet());
         tt.setCreationTime(getCreationTime());

@@ -83,7 +83,7 @@ abstract public class AbstractNALTest extends TestCase {
     public static CountDerivationCondition deriveMethodCounter;
 
 
-    public final TestNAR nar;
+    public final TestNAR n;
     public NARSeed build;
 
 
@@ -98,7 +98,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         results.clear();
 
-        this.nar = new TestNAR(build);
+        this.n = new TestNAR(build);
 
         this.eventCounter = null; //new CountOutputEvents(nar, results);
         this.deriveMethodCounter = null;
@@ -207,16 +207,16 @@ abstract public class AbstractNALTest extends TestCase {
     //Default test procedure
     @After public void test() {
 
-        assertTrue("No conditions tested", !nar.requires.isEmpty());
+        assertTrue("No conditions tested", !n.requires.isEmpty());
 
-        assertTrue("No cycles elapsed", nar.memory.timeSinceLastCycle() > 0);
+        assertTrue("No cycles elapsed", n.memory.timeSinceLastCycle() > 0);
 
 
-        Report r = new Report(nar.time(), nar.inputs);
+        Report r = new Report(n.time(), n.inputs);
 
-        r.setError(nar.getError());
+        r.setError(n.getError());
 
-        for (OutputCondition e : nar.requires) {
+        for (OutputCondition e : n.requires) {
             r.add(e);
         }
 
@@ -226,7 +226,7 @@ abstract public class AbstractNALTest extends TestCase {
         }
 
 
-        nar.reset();
+        n.reset();
     }
 
 

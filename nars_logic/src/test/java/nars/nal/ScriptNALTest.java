@@ -33,9 +33,9 @@ abstract public class ScriptNALTest extends AbstractNALTest {
     @Test
     public void theTest() {
 
-        runScript(nar, path, getMaxCycles());
+        runScript(n, path, getMaxCycles());
 
-        String result = nar.evaluate();
+        String result = n.evaluate();
         if (result!=null) {
             TestCase.assertTrue(false);
         }

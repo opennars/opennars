@@ -24,6 +24,7 @@ package nars.io.out;
 import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
+import nars.io.Texts;
 import nars.op.io.Echo;
 import nars.task.Task;
 
@@ -46,7 +47,7 @@ public class TextOutput extends Output {
     private float outputPriorityMin = 0;
     protected boolean enabled = true;
 
-    boolean flushAfterEachOutput = false;
+    boolean flushAfterEachOutput = true;
 
 
     public static TextOutput out(NAR n) {
@@ -136,7 +137,10 @@ public class TextOutput extends Output {
     }
 
     protected boolean output(final String prefix, final CharSequence s) {
-        if ((out != null) && ((prefix!=null) && (s!=null)))  {
+        if ((prefix == null) && (s == null))
+            return false;
+
+        if (out != null)  {
             synchronized (out) {
                 if (prefix != null)
                     out.print(prefix);
@@ -273,10 +277,7 @@ public class TextOutput extends Output {
 
 
         } else {
-            if ((signals != null) && (signals.length > 1))
-                buffer.append(Arrays.toString(signals));
-            else
-                buffer.append(signal.toString());
+            buffer.append(Texts.arrayToString(signals));
         }
 
         return buffer;

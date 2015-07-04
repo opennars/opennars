@@ -58,14 +58,14 @@ public class NAL2Test extends JavaNALTest {
         long time = 320;
         //TextOutput.out(nar);
 
-        nar.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)
+        n.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)
                 .en("Birdie is similar to Tweety.");
-        nar.ask("<{Birdie} <-> {Tweety}>")
+        n.ask("<{Birdie} <-> {Tweety}>")
                 .en("Is Birdie similar to Tweety?");
 
-        nar.mustBelieve(time, "<{Birdie} <-> {Tweety}>", 0.8f, 0.95f, 0.70f, 0.76f)
+        n.mustBelieve(time, "<{Birdie} <-> {Tweety}>", 0.8f, 0.95f, 0.70f, 0.76f)
                 .en("Birdie is similar to Tweety.");
-        nar.run();
+        n.run();
     }
 }
 

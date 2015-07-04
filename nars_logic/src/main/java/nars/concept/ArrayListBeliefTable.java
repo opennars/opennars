@@ -5,10 +5,6 @@ import nars.Memory;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Compound;
-import nars.truth.Truth;
-
-import java.util.List;
 
 import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.revisible;
@@ -120,25 +116,27 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
     @Override
-    public Task add(Task input, Ranker r, Concept c) {
+    public Task add(Task t, Ranker r, Concept c, NAL nal) {
 
         final Memory memory = c.getMemory();
 
 
+        final Task input = t; //store in case input changes
+
         long now = memory.time();
 
         if (isEmpty()) {
-            add(input);
-            return input;
+            add(t);
+            return t;
         }
         else {
 
             if (r == null) {
-                //just return the top item if no ranker is provided
+                //just return thie top item if no ranker is provided
                 return top();
             }
 
-            float rankInput = r.rank(input);    // for the new isBelief
+            float rankInput = r.rank(t);    // for the new isBelief
 
 
             int i;
@@ -154,62 +152,22 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                 if (Float.isFinite(existingRank) && rankInput >= existingRank) {
                     //truth and stamp:
-                    if (input.equivalentTo(existing, false, false, true, true, false)) {
-                        return existing;
-                    } else {
+                    if (t.equivalentTo(existing, false, false, true, true, false)) {
+                        if (!t.isInput() && t.isJudgment()) {
+                            existing.decPriority(0);    // duplicated task
+                        }   // else: activated belief
 
+                        memory.removed(existing, "Duplicated");
 
-                        if (atCapacity) {
-                            Task removed = remove(siz - 1);
-                            memory.removed(removed, "Displaced");
-                        }
-
-
-                        add(i, input);
-
-                        return input;
+                        //replace with the new equivalent task
+                        set(i, t);
                     }
-                }
-            }
-        }
-
-//        if (size()!=preSize)
-//            c.onTableUpdated(goalOrJudgment.getPunctuation(), preSize);
-//
-//        if (removed != null) {
-//            if (removed == goalOrJudgment) return false;
-//
-//            m.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
-//
-//            if (preSize != table.size()) {
-//                m.emit(eventAdd, this, goalOrJudgment.sentence);
-//            }
-//        }
-
-        //the new task was not added, so remove it
-        memory.removed(input, "Unbelievable/Undesirable");
-        return null;
-    }
-
-        //TODO provide a projected belief
-//
-//
-//
-//        //first create a projected
-//
-//
-//        /*if (input.sentence == belief.sentence) {
-//            return false;
-//        }*/
-//
-//        if (belief.sentence.equalStamp(input.sentence, true, false, true)) {
-////                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
-////                    //task.budget.decPriority(0);    // duplicated task
-////                }   // else: activated belief
-//
-//            getMemory().removed(belief, "Duplicated");
-//            return false;
-//        } else if (revisible(belief.sentence, input.sentence)) {
+                    else if (revisible(t.sentence, existing.sentence)) {
+                        Task revised = tryRevision(t, existing, false, nal);
+                        if (revised != null) {
+                            nal.setCurrentBelief( t = revised );
+                        }
+                    }
 //            //final long now = getMemory().time();
 //
 ////                if (nal.setTheNewStamp( //temporarily removed
@@ -225,20 +183,115 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 ////                //        }
 ////                ) != null) {
 //
-//            //TaskSeed projectedBelief = input.projection(nal.memory, now, task.getOccurrenceTime());
+//            //TaskSeed projectedBelief = t.projection(nal.memory, now, task.getOccurrenceTime());
 //
 //
-//            //Task r = input.projection(nal.memory, now, newBelief.getOccurrenceTime());
+//            //Task r = t.projection(nal.memory, now, newBelief.getOccurrenceTime());
 //
-//            //Truth r = input.projection(now, newBelief.getOccurrenceTime());
+//            //Truth r = t.projection(now, newBelief.getOccurrenceTime());
 //                /*
-//                if (projectedBelief.getOccurrenceTime()!=input.getOccurrenceTime()) {
+//                if (projectedBelief.getOccurrenceTime()!=t.getOccurrenceTime()) {
 //                }
 //                */
 //
 //
 //
-//            Task revised = tryRevision(belief, input, false, nal);
+//            Task revised = tryRevision(belief, t, false, nal);
+//            if (revised != null) {
+//                belief = revised;
+//                nal.setCurrentBelief(revised);
+//            }
+//
+//        }
+
+                    break;
+                }
+            }
+
+            if (atCapacity) {
+                if (i == siz) {
+                    //reached the end of the list and there is no room to add at the end
+                    memory.removed(t, "Unbelievable/Undesirable");
+                    return null; //try projecting existing belief?
+                } else {
+                    Task removed = remove(siz - 1);
+                    memory.removed(removed, "Forgotten");
+                    add(i, t);
+                }
+            } else {
+                add(i, t);
+            }
+
+
+        }
+
+
+//        if (size()!=preSize)
+//            c.onTableUpdated(goalOrJudgment.getPunctuation(), preSize);
+//
+//        if (removed != null) {
+//            if (removed == goalOrJudgment) return false;
+//
+//            m.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
+//
+//            if (preSize != table.size()) {
+//                m.emit(eventAdd, this, goalOrJudgment.sentence);
+//            }
+//        }
+
+        //the new task was not added, so remove it
+
+        return t;
+    }
+
+        //TODO provide a projected belief
+//
+//
+//
+//        //first create a projected
+//
+//
+//        /*if (t.sentence == belief.sentence) {
+//            return false;
+//        }*/
+//
+//        if (belief.sentence.equalStamp(t.sentence, true, false, true)) {
+////                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
+////                    //task.budget.decPriority(0);    // duplicated task
+////                }   // else: activated belief
+//
+//            getMemory().removed(belief, "Duplicated");
+//            return false;
+//        } else if (revisible(belief.sentence, t.sentence)) {
+//            //final long now = getMemory().time();
+//
+////                if (nal.setTheNewStamp( //temporarily removed
+////                /*
+////                if (equalBases(first.getBase(), second.getBase())) {
+////                return null;  // do not merge identical bases
+////                }
+////                 */
+////                //        if (first.baseLength() > second.baseLength()) {
+////                new Stamp(newStamp, oldStamp, memory.time()) // keep the order for projection
+////                //        } else {
+////                //            return new Stamp(second, first, time);
+////                //        }
+////                ) != null) {
+//
+//            //TaskSeed projectedBelief = t.projection(nal.memory, now, task.getOccurrenceTime());
+//
+//
+//            //Task r = t.projection(nal.memory, now, newBelief.getOccurrenceTime());
+//
+//            //Truth r = t.projection(now, newBelief.getOccurrenceTime());
+//                /*
+//                if (projectedBelief.getOccurrenceTime()!=t.getOccurrenceTime()) {
+//                }
+//                */
+//
+//
+//
+//            Task revised = tryRevision(belief, t, false, nal);
 //            if (revised != null) {
 //                belief = revised;
 //                nal.setCurrentBelief(revised);
@@ -256,7 +309,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
 //    @Override
 //    public Task addGoal(Task goal, Concept c) {
-//        if (goal.equalStamp(input, true, true, false)) {
+//        if (goal.equalStamp(t, true, true, false)) {
 //            return false; // duplicate
 //        }
 //

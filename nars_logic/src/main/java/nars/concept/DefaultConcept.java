@@ -339,7 +339,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         final Task input = belief;
 
         BeliefTable.Ranker r = new ArrayListBeliefTable.BeliefConfidenceAndCurrentTime(time());
-        belief = getBeliefs().add(input, r, this);
+        belief = getBeliefs().add(input, r, this, nal);
 
         boolean added;
 
@@ -384,7 +384,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         final Task input = goal;
 
         BeliefTable.Ranker r = new ArrayListBeliefTable.BeliefConfidenceAndCurrentTime(time());
-        goal = getGoals().add(input, r, this);
+        goal = getGoals().add(input, r, this, nal);
 
         boolean added;
 

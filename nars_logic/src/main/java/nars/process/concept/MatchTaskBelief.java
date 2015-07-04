@@ -38,15 +38,15 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
      * @param belief The belief
      */
     public static boolean match(final Task task, final Task belief, final NAL nal) {
-        final Sentence taskSentence = task.sentence;
 
-        if (taskSentence.isJudgment()) {
-            if (LocalRules.revisible(taskSentence, belief)) {
+
+        if (task.isJudgment()) {
+            if (LocalRules.revisible(task, belief)) {
                 return LocalRules.revision(task, belief, true, nal)!=null;
             }
         } else {
-            if (TemporalRules.matchingOrder(taskSentence, belief)) {
-                Term[] u = new Term[] {taskSentence.getTerm(), belief.getTerm()};
+            if (TemporalRules.matchingOrder(task, belief)) {
+                Term[] u = new Term[] {task.getTerm(), belief.getTerm()};
                 if (Variables.unify(Symbols.VAR_QUERY, u, nal.memory.random)) {
                     //TODO see if this is correct because it will be producing
                     //a Task which isnt used

@@ -5,7 +5,9 @@ import nars.Events.InferenceEvent;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.event.MemoryReaction;
+import nars.io.Texts;
 import nars.task.Task;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -111,6 +113,28 @@ public class NARTrace extends MemoryReaction {
     public NARTrace(NAR n) {
         super(n, true);
         this.nar = n;
+    }
+
+    public static NARTrace out(NAR n) {
+        return print(n, System.out);
+    }
+
+    public static NARTrace print(NAR n, PrintStream p) {
+        return new NARTrace(n) {
+
+            @Override
+            public void event(Class channel, Object[] signal) {
+                output(channel, signal);
+            }
+
+            @Override
+            public void output(Class channel, Object... signal) {
+                p.print(channel.getSimpleName());
+                p.print(": ");
+
+                p.println(Texts.arrayToString(signal));
+            }
+        };
     }
 
 

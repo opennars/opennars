@@ -57,13 +57,13 @@ public class NAL4Test extends JavaNALTest {
         long time = 2000;
 
         float minConf = 0.66f;
-        nar.believe("<0 --> num>", 1.0f, 0.9f);
-        nar.believe("<<$1 --> num> ==> <(*,$1) --> num>>", 1.0f, 0.9f);
-        nar.ask("<(*,(*,(*,0))) --> num>");
-        nar.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.81f, 1.0f);
-        nar.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.73f, 1.0f);
-        nar.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
-        nar.run();
+        n.believe("<0 --> num>", 1.0f, 0.9f);
+        n.believe("<<$1 --> num> ==> <(*,$1) --> num>>", 1.0f, 0.9f);
+        n.ask("<(*,(*,(*,0))) --> num>");
+        n.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.81f, 1.0f);
+        n.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.73f, 1.0f);
+        n.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
+        n.run();
 
     }
     
@@ -84,19 +84,19 @@ public class NAL4Test extends JavaNALTest {
         long time;
         final float finalConf = 0.73f;
 
-        if (nar.nal() <= 6) {
+        if (n.nal() <= 6) {
             time = 75; //less time for the nal6 config
         }
         else {
             time = 800;
         }
 
-        nar.believe(" <0 --> n>", 1.0f, 0.9f);
-        nar.believe("<<$1 --> n> ==> <(/,next,$1,_) --> n>>", 1.0f, 0.9f);
-        nar.ask("<(/,next,(/,next,0,_),_) --> n>");
-        nar.mustBelieve(time, "<(/,next,0,_) --> n>", 1.0f, 1.0f, 0.81f, 1.0f);
-        nar.mustBelieve(time, "<(/,next,(/,next,0,_),_) --> n>", 1.0f, 1.0f, finalConf, 1.0f);
-        nar.run();
+        n.believe(" <0 --> n>", 1.0f, 0.9f);
+        n.believe("<<$1 --> n> ==> <(/,next,$1,_) --> n>>", 1.0f, 0.9f);
+        n.ask("<(/,next,(/,next,0,_),_) --> n>");
+        n.mustBelieve(time, "<(/,next,0,_) --> n>", 1.0f, 1.0f, 0.81f, 1.0f);
+        n.mustBelieve(time, "<(/,next,(/,next,0,_),_) --> n>", 1.0f, 1.0f, finalConf, 1.0f);
+        n.run();
     }
 
 }

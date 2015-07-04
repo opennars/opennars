@@ -60,18 +60,28 @@ public class LocalRules {
     /**
      * Check whether two sentences can be used in revision
      *
-     * @param s1 The first sentence
-     * @param s2 The second sentence
+     * @param newBelief The first sentence
+     * @param oldBelief The second sentence
      * @return If revision is possible between the two sentences
      */
-    public static boolean revisible(final Sentence s1, final Sentence s2) {
-        if (s1.isRevisible())
-            if (s1.equalTerms(s2))
-                if (TemporalRules.matchingOrder(s1.getTemporalOrder(), s2.getTemporalOrder()))
+    public static boolean revisible(final Sentence newBelief, final Sentence oldBelief) {
+        if (newBelief.isRevisible())
+            if (newBelief.equalTerms(oldBelief))
+                if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
                     return true;
 
         return false;
     }
+
+    /** avoids term comparison if the two inputs are already known to have equal terms */
+    public static boolean revisibleTermsAlreadyEqual(final Sentence newBelief, final Sentence oldBelief) {
+        if (newBelief.isRevisible())
+            if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
+                return true;
+
+        return false;
+    }
+
 
 
     /**

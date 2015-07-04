@@ -45,14 +45,14 @@ public class QueryVariableTest extends JavaNALTest {
         //TextOutput.out(n);
         //new TraceWriter(n, System.out);
 
-        nar.frame(time1);
-        nar.believe("<a --> b>");
-        nar.frame(time2);
+        n.frame(time1);
+        n.believe("<a --> b>");
+        n.frame(time2);
 
         //0.9f conf is expected
-        nar.mustBelieve(time3, "<a --> b>", 1.0f, 1.0f, 0.85f, 0.95f);
-        nar.ask("<?x --> b>");
+        n.mustBelieve(time3, "<a --> b>", 1.0f, 1.0f, 0.85f, 0.95f);
+        n.ask("<?x --> b>");
 
-        nar.run();
+        n.run();
     }
 }
