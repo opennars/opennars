@@ -27,8 +27,8 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.task.Task;
 import nars.term.Term;
-import nars.truth.AbstractTruth;
 import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 
 import java.util.ArrayList;
 
@@ -50,7 +50,7 @@ public class name extends SynchOperator implements Mental {
         Term atomic = operation.arg(1);
         Similarity content = Similarity.make(compound, atomic);
 
-        AbstractTruth truth;
+        Truth truth;
         return Lists.newArrayList( operation.newSubTask(memory,
                 content, Symbols.JUDGMENT, truth = new DefaultTruth(1, 0.9999f), memory.time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );

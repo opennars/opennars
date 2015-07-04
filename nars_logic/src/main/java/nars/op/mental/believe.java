@@ -30,8 +30,8 @@ import nars.nal.nal8.operator.SynchOperator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
-import nars.truth.AbstractTruth;
 import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 
 import java.util.ArrayList;
 
@@ -54,7 +54,7 @@ public class believe extends SynchOperator implements Mental {
 
         Compound content = Sentence.termOrException(operation.arg(0));
 
-        AbstractTruth truth;
+        Truth truth;
         return Lists.newArrayList( operation.newSubTask(memory,
                 content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE), memory.time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );

@@ -508,15 +508,15 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
     /** 1 digit resolution */
     public String toStringExternalBudget1(boolean includeQuality) {
-        final char priorityString = Texts.n1(priority);
-        final char durabilityString = Texts.n1(durability);
+        final char priorityString = Texts.n1char(priority);
+        final char durabilityString = Texts.n1char(durability);
         StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)
                 .append(MARK)
                 .append(priorityString).append(SEPARATOR)
                 .append(durabilityString);
 
         if (includeQuality)
-            sb.append(SEPARATOR).append(Texts.n1(quality));
+            sb.append(SEPARATOR).append(Texts.n1char(quality));
 
         return sb.append(MARK).toString();
     }

@@ -34,6 +34,7 @@ import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.*;
+import nars.truth.AbstractScalarTruth;
 import nars.truth.AbstractTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -142,9 +143,11 @@ public final class SyllogisticRules {
             return;
         }
         Statement taskContent = (Statement) sentence1.getTerm();
+
         Truth truth1 = null;
         Truth truth2 = null;
-        AbstractTruth truth3 = null;
+        AbstractScalarTruth truth3 = null;
+
         Budget budget1, budget2, budget3;
         Truth value1 = sentence1.getTruth();
         Truth value2 = sentence2.truth;

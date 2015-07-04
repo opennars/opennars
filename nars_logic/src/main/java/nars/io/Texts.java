@@ -2,7 +2,6 @@ package nars.io;
 
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.StringHack;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.CharBuffer;
@@ -284,6 +283,10 @@ abstract public class Texts  {
 
 
 
+    final static Format oneDecimal = new DecimalFormat("0.0");
+    public static final String n1(final float x) { return oneDecimal.format(x);     }
+    public static final String n1char(final double x) { return oneDecimal.format(x);     }
+
     final static Format threeDecimal = new DecimalFormat("0.000");
     public static final String n3(final float x) { return threeDecimal.format(x);     }
     public static final String n3(final double x) { return threeDecimal.format(x);     }
@@ -334,7 +337,7 @@ abstract public class Texts  {
     //final static Format oneDecimal = new DecimalFormat("0.0");
     /** 1 character representing a 1 decimal of a value between 0..1.0;
      *  representation; 0..9 //, A=1.0 */
-    public static final char n1(final float x) {
+    public static final char n1char(final float x) {
         int i = tens(x);
         if (i >= 10)
             i=9; //return 'A';
@@ -428,6 +431,18 @@ abstract public class Texts  {
         else if (slen > 0)
             return signals[0].toString();
         return "";
+    }
+
+    public static CharSequence n(float v, int decimals) {
+
+        switch (decimals) {
+            case 1: return n1(v);
+            case 2: return n2(v);
+            case 3: return n3(v);
+            case 4: return n4(v);
+        }
+
+        throw new RuntimeException("invalid decimal number");
     }
 
 //    /** fast append to CharBuffer */

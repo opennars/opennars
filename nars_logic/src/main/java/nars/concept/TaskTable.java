@@ -1,5 +1,6 @@
 package nars.concept;
 
+import com.google.common.collect.Iterators;
 import javolution.util.function.Equality;
 import nars.task.Task;
 
@@ -36,4 +37,9 @@ public interface TaskTable extends Iterable<Task> {
         }
         return null;
     }
+
+    default public int numInputs() {
+        return Iterators.size( Iterators.filter(iterator(), t -> t.isInput() ));
+    }
+
 }

@@ -32,8 +32,8 @@ import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serializable;
 
-
-abstract public interface Truth extends Cloneable, Serializable { // implements Cloneable {
+/** scalar (1D) truth value "frequency", stored as a floating point value */
+abstract public interface Truth extends MetaTruth<Float> {
 
 
 
@@ -51,19 +51,7 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
 
     public Truth setFrequency(float f);
 
-    /**
-     * Get the confidence value
-     *
-     * @return The confidence value
-     */
-    public float getConfidence();
 
-
-    /** max confidence value */
-    public float getConfidenceMax();
-
-
-    public Truth setConfidence(float c);
 
 
     /**
@@ -75,7 +63,7 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
 
 
 
-    public float getEpsilon();
+
 
     /**
      * Calculate the expectation value of the truth value
@@ -139,13 +127,16 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
 
 
 
+    default public StringBuilder appendString(final StringBuilder sb) {
+        return appendString(sb, 2);
+    }
 
 
     /**
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
      */
-    default public StringBuilder appendString(final StringBuilder sb, final boolean external) {
+    default public StringBuilder appendString(final StringBuilder sb, final int decimals) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -154,39 +145,18 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
             return s1 + s2 + DELIMITER;
         }*/
         
-        sb.ensureCapacity(11);
+        sb.ensureCapacity(3 + 2 * (2 + decimals) );
         return sb
             .append(Symbols.TRUTH_VALUE_MARK)
-            .append(Texts.n2(getFrequency()))
+            .append(Texts.n(getFrequency(), decimals))
             .append(Symbols.VALUE_SEPARATOR)
-            .append(Texts.n2(getConfidence()))
+            .append(Texts.n(getConfidence(), decimals))
             .append(Symbols.TRUTH_VALUE_MARK);
     }
 
-    default public String toStringExternal1() {
-        return new StringBuilder(5)
-                .append(Symbols.TRUTH_VALUE_MARK)
-                .append(Texts.n1(getFrequency()))
-                .append(Symbols.VALUE_SEPARATOR)
-                .append(Texts.n1(getConfidence()))
-                .append(Symbols.TRUTH_VALUE_MARK).toString();
-    }
 
 
-    default public CharSequence name() {
-        //1 + 4 + 1 + 4 + 1
-        StringBuilder sb =  new StringBuilder();
-        return appendString(sb, false);
-    }
 
-    /** output representation */
-    default public CharSequence toStringExternal() {
-        //return name().toString();
-        StringBuilder sb =  new StringBuilder();
-        return appendString(sb, true);
-    }
-
-    
     
     /** displays the truth value as a short string indicating degree of true/false */
     default public String toTrueFalseString() {
@@ -286,5 +256,13 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
     default public AnalyticTruth discountConfidence() {
         return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE, this);
     }
+
+
+    /** use getFrequency() when possible because this may box the result as a non-primitive */
+    default public Float value() { return getFrequency(); }
+
+
+    /** use setFrequency(v) when possible because this may box the result as a non-primitive */
+    default public void setValue(Float v) { setFrequency(v); }
 
 }

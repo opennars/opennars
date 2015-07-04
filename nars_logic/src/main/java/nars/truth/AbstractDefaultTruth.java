@@ -3,7 +3,7 @@ package nars.truth;
 /**
  * Created by me on 7/1/15.
  */
-abstract public class AbstractDefaultTruth extends AbstractTruth {
+abstract public class AbstractDefaultTruth extends AbstractScalarTruth {
 
     /**
      * determines the internal precision used for TruthValue calculations.

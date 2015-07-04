@@ -595,7 +595,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         
         if (truth != null) {
             buffer.append(' ');
-            truth.appendString(buffer, true);
+            truth.appendString(buffer, 2);
         }
         
         if (showStamp)

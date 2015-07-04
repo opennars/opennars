@@ -6,15 +6,9 @@ import org.apache.commons.math3.util.FastMath;
 import static nars.Symbols.GOAL;
 import static nars.Symbols.JUDGMENT;
 
-/**
- * Created by me on 7/1/15.
- */
-public abstract class AbstractTruth implements Truth {
 
-    /**
-     * The frequency factor of the truth value
-     */
-    private float frequency;
+public abstract class AbstractTruth<T> implements MetaTruth<T> {
+
 
     /**
      * The confidence factor of the truth value
@@ -23,9 +17,8 @@ public abstract class AbstractTruth implements Truth {
 
 
 
-    public AbstractTruth(final float freq, final float conf) {
+    public AbstractTruth(final float conf) {
         super();
-        setFrequency(freq);
         setConfidence(conf);
     }
 
@@ -33,31 +26,12 @@ public abstract class AbstractTruth implements Truth {
         //freq and conf will begin at 0
     }
 
-    public float getFrequency() {
-        return frequency;
-    }
-
-    @Override
-    public int hashCode() {
-        return Truth.hash(this);
-    }
-
-    public Truth setFrequency(float f) {
-        if (f > 1.0f) f = 1.0f;
-        if (f < 0f) f = 0f;
-        //if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
-
-        final float e = getEpsilon();
-        this.frequency = FastMath.round(f / e) * e;
-        return this;
-    }
-
     @Override
     public float getConfidence() {
         return confidence;
     }
 
-    public Truth setConfidence(float c) {
+    public void setConfidence(float c) {
         //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
         final float maxConf = getConfidenceMax();
         if (c > maxConf) c = maxConf;
@@ -65,15 +39,8 @@ public abstract class AbstractTruth implements Truth {
 
         final float e = getEpsilon();
         this.confidence = Math.round(c / e) * e;
-        return this;
     }
 
-    public BasicTruth clone() {
-        if (isAnalytic())
-            return new AnalyticTruth(this);
-        else
-            return new BasicTruth(this);
-    }
 
 
     @Override
@@ -91,12 +58,12 @@ public abstract class AbstractTruth implements Truth {
     @Override
     public boolean equals(final Object that) {
         if (that == this) return true;
-        if (that instanceof Truth) {
+        if (that instanceof AbstractTruth) {
             final Truth t = ((Truth) that);
 
             final float e = getEpsilon();
 
-            if (!Truth.isEqual(getFrequency(), t.getFrequency(), e))
+            if (!equalsValue(t))
                 return false;
             if (!Truth.isEqual(getConfidence(), t.getConfidence(), e))
                 return false;
@@ -104,6 +71,8 @@ public abstract class AbstractTruth implements Truth {
         }
         return false;
     }
+
+    protected abstract boolean equalsValue(Truth t);
 
 
     public static float getDefaultConfidence(char punctuation) {
@@ -130,7 +99,7 @@ public abstract class AbstractTruth implements Truth {
         //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
 
         //1 + 6 + 1 + 6 + 1
-        return name().toString();
+        return toCharSequence().toString();
     }
 
 }
