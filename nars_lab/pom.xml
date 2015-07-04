@@ -68,11 +68,6 @@
             <artifactId>jocl-main</artifactId>
             <version>2.3.1</version>
         </dependency>
-
-
-
-
-
         <dependency>
             <groupId>net.sf.sociaal</groupId>
             <artifactId>vecmath</artifactId>
@@ -88,14 +83,25 @@
                </exclusion>
            </exclusions>
        </dependency>
+
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
         </dependency>
+
+        <!-- for VNC -->
+        <dependency>
+            <groupId>urbanophile</groupId>
+            <artifactId>java-getopt</artifactId>
+            <version>1.0.9</version>
+
+        </dependency>
+
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
         </dependency>
+
     </dependencies>
 
 
