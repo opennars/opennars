@@ -1,10 +1,10 @@
 package automenta.rdp.rdp5.disk;
 
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.rdp5.VChannels;
 import automenta.rdp.CommunicationMonitor;
 import automenta.rdp.RdesktopException;
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.rdp5.VChannel;
 
@@ -57,7 +57,7 @@ public class DiskChannel extends VChannel implements DiskConst {
     private int send_packet_index = 0;
 
     @Override
-    public void process(RdpPacket data) throws RdesktopException, IOException,
+    public void process(AbstractRdpPacket data) throws RdesktopException, IOException,
             CryptoException {
 //        int size = data.size();
 //        boolean mark = false;
@@ -108,14 +108,14 @@ public class DiskChannel extends VChannel implements DiskConst {
         }
     }
     
-    private void rdpdr_process_server_announce_request(RdpPacket data) {
+    private void rdpdr_process_server_announce_request(AbstractRdpPacket data) {
         versionMajor = data.getLittleEndian16();
         versionMinor = data.getLittleEndian16();
         clientID = data.getLittleEndian32();
     }
     
-    private void rdpdr_send_client_announce_reply(RdpPacket data) {
-        RdpPacket_Localised s = new RdpPacket_Localised(12);
+    private void rdpdr_send_client_announce_reply(AbstractRdpPacket data) {
+        RdpPacket s = new RdpPacket(12);
         s.setLittleEndian16(RDPDR_CTYP_CORE);
         s.setLittleEndian16(PAKID_CORE_CLIENTID_CONFIRM);
         s.setLittleEndian16(1);// versionMajor, must be set to 1
@@ -134,9 +134,9 @@ public class DiskChannel extends VChannel implements DiskConst {
         }
     }
     
-    private void rdpdr_send_client_name_request(RdpPacket data) {
+    private void rdpdr_send_client_name_request(AbstractRdpPacket data) {
         int clientNameLen = CLIENT_NAME.length() * 2;
-        RdpPacket_Localised s =new RdpPacket_Localised(16 + clientNameLen + 2);
+        RdpPacket s =new RdpPacket(16 + clientNameLen + 2);
 
         s.setLittleEndian16(RDPDR_CTYP_CORE);
         s.setLittleEndian16(PAKID_CORE_CLIENT_NAME);
@@ -146,11 +146,11 @@ public class DiskChannel extends VChannel implements DiskConst {
         if (clientNameLen > 0) {
             try {
                 s.copyFromByteArray(CLIENT_NAME.getBytes("UTF-16LE"), 0,
-                        s.getPosition(), clientNameLen);
+                        s.position(), clientNameLen);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            s.incrementPosition(clientNameLen);
+            s.positionAdd(clientNameLen);
         }
         s.setLittleEndian16(0);//the null terminator of client name
         s.markEnd();
@@ -162,9 +162,9 @@ public class DiskChannel extends VChannel implements DiskConst {
         }
     }
     
-    private void rdpdr_process_capability_request(RdpPacket data) {
+    private static void rdpdr_process_capability_request(AbstractRdpPacket data) {
         int numCapabilities = data.getLittleEndian16();
-        data.incrementPosition(2);//2 bytes padding
+        data.positionAdd(2);//2 bytes padding
         
         for(int i = 0; i < numCapabilities; i++) {
             int capabilityType = data.getLittleEndian16();
@@ -176,14 +176,14 @@ public class DiskChannel extends VChannel implements DiskConst {
             case CAP_DRIVE_TYPE:
             case CAP_SMARTCARD_TYPE:
                 capabilityLength = data.getLittleEndian16();
-                data.incrementPosition(capabilityLength - 4);
+                data.positionAdd(capabilityLength - 4);
                 break;
             }
         }
     }
     
-    private void rdpdr_send_capability_response(RdpPacket data) {
-        RdpPacket_Localised s = new RdpPacket_Localised(0x54);
+    private void rdpdr_send_capability_response(AbstractRdpPacket data) {
+        RdpPacket s = new RdpPacket(0x54);
         s.setLittleEndian16(RDPDR_CTYP_CORE);
         s.setLittleEndian16(PAKID_CORE_CLIENT_CAPABILITY);
         
@@ -235,7 +235,7 @@ public class DiskChannel extends VChannel implements DiskConst {
         
     }
     
-    private void rdpdr_process_server_clientid_confirm(RdpPacket data) {
+    private void rdpdr_process_server_clientid_confirm(AbstractRdpPacket data) {
         int _versionMajor = data.getLittleEndian16();
         int _versionMinor = data.getLittleEndian16();
         int _clientId = data.getLittleEndian32();
@@ -258,8 +258,8 @@ public class DiskChannel extends VChannel implements DiskConst {
         return size;
     }
     
-    private void rdpdr_send_device_list_announce_request(RdpPacket data) {
-        RdpPacket_Localised s = new RdpPacket_Localised(announcedata_size());
+    private void rdpdr_send_device_list_announce_request(AbstractRdpPacket data) {
+        RdpPacket s = new RdpPacket(announcedata_size());
         s.setLittleEndian16(RDPDR_CTYP_CORE);
         s.setLittleEndian16(PAKID_CORE_DEVICELIST_ANNOUNCE);
         
@@ -271,9 +271,9 @@ public class DiskChannel extends VChannel implements DiskConst {
             s.setLittleEndian32(i);//device id
             String name = dev.getName().replace(" ", "_").substring(0,
                     dev.getName().length() > 8 ? 8 : dev.getName().length());
-            s.copyFromByteArray(name.getBytes(), 0, s.getPosition(),
+            s.copyFromByteArray(name.getBytes(), 0, s.position(),
                     name.length());
-            s.incrementPosition(8);
+            s.positionAdd(8);
             
             s.setLittleEndian32(0);//datalength
             //TODO write data,but disk has no data, so ignore now.
@@ -290,7 +290,7 @@ public class DiskChannel extends VChannel implements DiskConst {
     
     static byte[] empty_buffer = new byte[0];
     
-    private void rdpdr_process_irp(RdpPacket data) {
+    private void rdpdr_process_irp(AbstractRdpPacket data) {
         int deviceId = data.getLittleEndian32();
         int fileId = data.getLittleEndian32();
         int completionId = data.getLittleEndian32();
@@ -325,7 +325,7 @@ public class DiskChannel extends VChannel implements DiskConst {
             
             if(ioStatus != RD_STATUS_PENDING) {
                 //device i/o response header
-                RdpPacket_Localised s = new RdpPacket_Localised(16 + (ioStatus == RD_STATUS_CANCELLED ? 4 : buffer.length));
+                RdpPacket s = new RdpPacket(16 + (ioStatus == RD_STATUS_CANCELLED ? 4 : buffer.length));
                 s.setLittleEndian16(RDPDR_CTYP_CORE);// PAKID_CORE_DEVICE_REPLY?
                 s.setLittleEndian16(PAKID_CORE_DEVICE_IOCOMPLETION);
                 s.setLittleEndian32(deviceId);
@@ -335,7 +335,7 @@ public class DiskChannel extends VChannel implements DiskConst {
                     s.setLittleEndian32(0);
                 } else {
                     if(buffer.length > 0) {
-                        s.copyFromByteArray(buffer, 0, s.getPosition(), buffer.length);
+                        s.copyFromByteArray(buffer, 0, s.position(), buffer.length);
                     }
                 }
                 
@@ -350,10 +350,10 @@ public class DiskChannel extends VChannel implements DiskConst {
         }
     }
     
-    public void send_packet(RdpPacket_Localised s) throws RdesktopException, IOException, CryptoException {
-        CommunicationMonitor.lock(this);
-        super.send_packet(s);
-        CommunicationMonitor.unlock(this);
+    public void send_packet(RdpPacket s) throws RdesktopException, IOException, CryptoException {
+        synchronized (CommunicationMonitor.synch) {
+            super.send_packet(s);
+        }
 
 //        int size = s.size();
 //        boolean mark = false;

@@ -391,7 +391,7 @@ public abstract class RdesktopFrame extends Frame {
 	 * @param f
 	 *            Window to be centred
 	 */
-	public void centreWindow(Window f) {
+	public static void centreWindow(Window f) {
 		Dimension screen_size = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension window_size = f.getSize();
 		int x = (screen_size.width - window_size.width) / 2;

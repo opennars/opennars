@@ -52,7 +52,7 @@ public class HexDump {
 	 * @param msg
 	 *            Message to include with outputted hex debug messages
 	 */
-	public void encode(byte[] data, String msg/* PrintStream out */) {
+	public static void encode(byte[] data, String msg/* PrintStream out */) {
 		int count = 0;
 		String index;
 		String number;
@@ -107,7 +107,7 @@ public class HexDump {
 					// out.println("");
 					return;
 				}
-				index += (number + " ");
+				index += (number + ' ');
 				// out.print(number + " ");
 				count++;
 			}

@@ -36,7 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 
 public class MetafilepictHandler extends TypeHandler {
 
@@ -73,7 +73,7 @@ public class MetafilepictHandler extends TypeHandler {
 		return CF_METAFILEPICT;
 	}
 
-	public Transferable handleData(RdpPacket data, int length) {
+	public static Transferable handleData(AbstractRdpPacket data, int length) {
 		String thingy = "";
 		OutputStream out = null;
 
@@ -91,7 +91,7 @@ public class MetafilepictHandler extends TypeHandler {
 			for (int i = 0; i < (length - 12); i++) {
 				int aByte = data.get8();
 				out.write(aByte);
-				thingy += Integer.toHexString(aByte & 0xFF) + " ";
+				thingy += Integer.toHexString(aByte & 0xFF) + ' ';
 			}
 			// System.out.println(thingy);
 		} catch (FileNotFoundException e) {
@@ -106,11 +106,11 @@ public class MetafilepictHandler extends TypeHandler {
 		return "CF_METAFILEPICT";
 	}
 
-	public byte[] fromTransferable(Transferable in) {
+	public static byte[] fromTransferable(Transferable in) {
 		return null;
 	}
 
-	public void handleData(RdpPacket data, int length, ClipInterface c) {
+	public void handleData(AbstractRdpPacket data, int length, ClipInterface c) {
 		String thingy = "";
 		OutputStream out = null;
 
@@ -128,7 +128,7 @@ public class MetafilepictHandler extends TypeHandler {
 			for (int i = 0; i < (length - 12); i++) {
 				int aByte = data.get8();
 				out.write(aByte);
-				thingy += Integer.toHexString(aByte & 0xFF) + " ";
+				thingy += Integer.toHexString(aByte & 0xFF) + ' ';
 			}
 			// System.out.println(thingy);
 		} catch (FileNotFoundException e) {

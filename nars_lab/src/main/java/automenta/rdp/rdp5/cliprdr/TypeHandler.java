@@ -32,7 +32,7 @@ package automenta.rdp.rdp5.cliprdr;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 
 public abstract class TypeHandler {
 
@@ -96,7 +96,7 @@ public abstract class TypeHandler {
 
 	public abstract String name();
 
-	public abstract void handleData(RdpPacket data, int length, ClipInterface c);
+	public abstract void handleData(AbstractRdpPacket data, int length, ClipInterface c);
 
 	public abstract int preferredFormat();
 

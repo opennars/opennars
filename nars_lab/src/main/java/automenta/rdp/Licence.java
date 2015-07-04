@@ -31,7 +31,7 @@
 package automenta.rdp;
 
 import automenta.rdp.rdp.LicenceStore_Localised;
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.crypto.RC4;
 import org.apache.log4j.Logger;
@@ -95,7 +95,7 @@ public class Licence {
 
 	public byte[] generate_hwid() throws UnsupportedEncodingException {
 		byte[] hwid = new byte[LICENCE_HWID_SIZE];
-		secure.setLittleEndian32(hwid, 2);
+		Secure.setLittleEndian32(hwid, 2);
 		byte[] name = Options.hostname.getBytes("US-ASCII");
 
 		if (name.length > LICENCE_HWID_SIZE - 4) {
@@ -115,11 +115,11 @@ public class Licence {
 	 * @throws IOException
 	 * @throws CryptoException
 	 */
-	public void process(RdpPacket_Localised data) throws RdesktopException,
+	public void process(RdpPacket data) throws RdesktopException,
 			IOException, CryptoException {
 		int tag = 0;
 		tag = data.get8();
-		data.incrementPosition(3); // version, length
+		data.positionAdd(3); // version, length
 
 		switch (tag) {
 
@@ -159,7 +159,7 @@ public class Licence {
 	 * @throws IOException
 	 * @throws CryptoException
 	 */
-	public void process_demand(RdpPacket_Localised data)
+	public void process_demand(RdpPacket data)
 			throws UnsupportedEncodingException, RdesktopException,
 			IOException, CryptoException {
 		byte[] null_data = new byte[Secure.SEC_MODULUS_SIZE];
@@ -168,9 +168,9 @@ public class Licence {
 		byte[] user = Options.username.getBytes("US-ASCII");
 
 		/* retrieve the server random */
-		data.copyToByteArray(server_random, 0, data.getPosition(),
+		data.copyToByteArray(server_random, 0, data.position(),
 				server_random.length);
-		data.incrementPosition(server_random.length);
+		data.positionAdd(server_random.length);
 
 		/* Null client keys are currently used */
 		this.generate_keys(null_data, server_random, null_data);
@@ -211,12 +211,12 @@ public class Licence {
 	 * @return True if signature is read successfully
 	 * @throws RdesktopException
 	 */
-	public boolean parse_authreq(RdpPacket_Localised data)
+	public boolean parse_authreq(RdpPacket data)
 			throws RdesktopException {
 
 		int tokenlen = 0;
 
-		data.incrementPosition(6); // unknown
+		data.positionAdd(6); // unknown
 
 		tokenlen = data.getLittleEndian16();
 
@@ -224,14 +224,14 @@ public class Licence {
 			throw new RdesktopException("Wrong Tokenlength!");
 		}
 		this.in_token = new byte[tokenlen];
-		data.copyToByteArray(this.in_token, 0, data.getPosition(), tokenlen);
-		data.incrementPosition(tokenlen);
+		data.copyToByteArray(this.in_token, 0, data.position(), tokenlen);
+		data.positionAdd(tokenlen);
 		this.in_sig = new byte[LICENCE_SIGNATURE_SIZE];
-		data.copyToByteArray(this.in_sig, 0, data.getPosition(),
+		data.copyToByteArray(this.in_sig, 0, data.position(),
 				LICENCE_SIGNATURE_SIZE);
-		data.incrementPosition(LICENCE_SIGNATURE_SIZE);
+		data.positionAdd(LICENCE_SIGNATURE_SIZE);
 
-		if (data.getPosition() == data.getEnd()) {
+		if (data.position() == data.getEnd()) {
 			return true;
 		} else {
 			return false;
@@ -256,7 +256,7 @@ public class Licence {
 			throws RdesktopException, IOException, CryptoException {
 		int sec_flags = Secure.SEC_LICENCE_NEG;
 		int length = 58;
-		RdpPacket_Localised data = null;
+		RdpPacket data = null;
 
 		data = secure.init(sec_flags, length + 2);
 
@@ -267,19 +267,19 @@ public class Licence {
 		data.setLittleEndian16(1);
 		data.setLittleEndian16(LICENCE_TOKEN_SIZE);
 		data
-				.copyFromByteArray(token, 0, data.getPosition(),
+				.copyFromByteArray(token, 0, data.position(),
 						LICENCE_TOKEN_SIZE);
-		data.incrementPosition(LICENCE_TOKEN_SIZE);
+		data.positionAdd(LICENCE_TOKEN_SIZE);
 
 		data.setLittleEndian16(1);
 		data.setLittleEndian16(LICENCE_HWID_SIZE);
-		data.copyFromByteArray(crypt_hwid, 0, data.getPosition(),
+		data.copyFromByteArray(crypt_hwid, 0, data.position(),
 				LICENCE_HWID_SIZE);
-		data.incrementPosition(LICENCE_HWID_SIZE);
+		data.positionAdd(LICENCE_HWID_SIZE);
 
-		data.copyFromByteArray(signature, 0, data.getPosition(),
+		data.copyFromByteArray(signature, 0, data.position(),
 				LICENCE_SIGNATURE_SIZE);
-		data.incrementPosition(LICENCE_SIGNATURE_SIZE);
+		data.positionAdd(LICENCE_SIGNATURE_SIZE);
 		data.markEnd();
 		secure.send(data, sec_flags);
 	}
@@ -306,7 +306,7 @@ public class Licence {
 				+ Secure.SEC_PADDING_SIZE + licence_size + LICENCE_HWID_SIZE
 				+ LICENCE_SIGNATURE_SIZE;
 
-		RdpPacket_Localised s = secure.init(sec_flags, length + 4);
+		RdpPacket s = secure.init(sec_flags, length + 4);
 
 		s.set8(LICENCE_TAG_PRESENT);
 		s.set8(2); // version
@@ -316,29 +316,29 @@ public class Licence {
 		s.setLittleEndian16(0);
 		s.setLittleEndian16(0x0201);
 
-		s.copyFromByteArray(client_random, 0, s.getPosition(),
+		s.copyFromByteArray(client_random, 0, s.position(),
 				Secure.SEC_RANDOM_SIZE);
-		s.incrementPosition(Secure.SEC_RANDOM_SIZE);
+		s.positionAdd(Secure.SEC_RANDOM_SIZE);
 		s.setLittleEndian16(0);
 		s
 				.setLittleEndian16((Secure.SEC_MODULUS_SIZE + Secure.SEC_PADDING_SIZE));
-		s.copyFromByteArray(rsa_data, 0, s.getPosition(),
+		s.copyFromByteArray(rsa_data, 0, s.position(),
 				Secure.SEC_MODULUS_SIZE);
-		s.incrementPosition(Secure.SEC_MODULUS_SIZE);
-		s.incrementPosition(Secure.SEC_PADDING_SIZE);
+		s.positionAdd(Secure.SEC_MODULUS_SIZE);
+		s.positionAdd(Secure.SEC_PADDING_SIZE);
 
 		s.setLittleEndian16(1);
 		s.setLittleEndian16(licence_size);
-		s.copyFromByteArray(licence_data, 0, s.getPosition(), licence_size);
-		s.incrementPosition(licence_size);
+		s.copyFromByteArray(licence_data, 0, s.position(), licence_size);
+		s.positionAdd(licence_size);
 
 		s.setLittleEndian16(1);
 		s.setLittleEndian16(LICENCE_HWID_SIZE);
-		s.copyFromByteArray(hwid, 0, s.getPosition(), LICENCE_HWID_SIZE);
-		s.incrementPosition(LICENCE_HWID_SIZE);
-		s.copyFromByteArray(signature, 0, s.getPosition(),
+		s.copyFromByteArray(hwid, 0, s.position(), LICENCE_HWID_SIZE);
+		s.positionAdd(LICENCE_HWID_SIZE);
+		s.copyFromByteArray(signature, 0, s.position(),
 				LICENCE_SIGNATURE_SIZE);
-		s.incrementPosition(LICENCE_SIGNATURE_SIZE);
+		s.positionAdd(LICENCE_SIGNATURE_SIZE);
 
 		s.markEnd();
 		secure.send(s, sec_flags);
@@ -354,7 +354,7 @@ public class Licence {
 	 * @throws IOException
 	 * @throws CryptoException
 	 */
-	public void process_authreq(RdpPacket_Localised data)
+	public void process_authreq(RdpPacket data)
 			throws RdesktopException, UnsupportedEncodingException,
 			IOException, CryptoException {
 
@@ -416,25 +416,25 @@ public class Licence {
 	 *            Packet containing issued licence
 	 * @throws CryptoException
 	 */
-	public void process_issue(RdpPacket_Localised data) throws CryptoException {
+	public void process_issue(RdpPacket data) throws CryptoException {
 		int length = 0;
 		int check = 0;
 		RC4 rc4_licence = new RC4();
 		byte[] key = new byte[this.licence_key.length];
 		System.arraycopy(this.licence_key, 0, key, 0, this.licence_key.length);
 
-		data.incrementPosition(2); // unknown
+		data.positionAdd(2); // unknown
 		length = data.getLittleEndian16();
 
-		if (data.getPosition() + length > data.getEnd()) {
+		if (data.position() + length > data.getEnd()) {
 			return;
 		}
 
 		rc4_licence.engineInitDecrypt(key);
 		byte[] buffer = new byte[length];
-		data.copyToByteArray(buffer, 0, data.getPosition(), length);
+		data.copyToByteArray(buffer, 0, data.position(), length);
 		rc4_licence.crypt(buffer, 0, length, buffer, 0);
-		data.copyFromByteArray(buffer, 0, data.getPosition(), length);
+		data.copyFromByteArray(buffer, 0, data.position(), length);
 
 		check = data.getLittleEndian16();
 		if (check != 0) {
@@ -475,7 +475,7 @@ public class Licence {
 		int hostlen = (hostname.length == 0 ? 0 : hostname.length + 1);
 		int length = 128 + userlen + hostlen;
 
-		RdpPacket_Localised buffer = secure.init(sec_flags, length);
+		RdpPacket buffer = secure.init(sec_flags, length);
 
 		buffer.set8(LICENCE_TAG_REQUEST);
 		buffer.set8(2); // version
@@ -491,45 +491,45 @@ public class Licence {
 			logger.debug("Requesting licence");
 			buffer.setLittleEndian32(0xff010000);
 		}
-		buffer.copyFromByteArray(client_random, 0, buffer.getPosition(),
+		buffer.copyFromByteArray(client_random, 0, buffer.position(),
 				Secure.SEC_RANDOM_SIZE);
-		buffer.incrementPosition(Secure.SEC_RANDOM_SIZE);
+		buffer.positionAdd(Secure.SEC_RANDOM_SIZE);
 		buffer.setLittleEndian16(0);
 
 		buffer.setLittleEndian16(Secure.SEC_MODULUS_SIZE
 				+ Secure.SEC_PADDING_SIZE);
-		buffer.copyFromByteArray(rsa_data, 0, buffer.getPosition(),
+		buffer.copyFromByteArray(rsa_data, 0, buffer.position(),
 				Secure.SEC_MODULUS_SIZE);
-		buffer.incrementPosition(Secure.SEC_MODULUS_SIZE);
+		buffer.positionAdd(Secure.SEC_MODULUS_SIZE);
 
-		buffer.incrementPosition(Secure.SEC_PADDING_SIZE);
+		buffer.positionAdd(Secure.SEC_PADDING_SIZE);
 
 		buffer.setLittleEndian16(LICENCE_TAG_USER);
 		buffer.setLittleEndian16(userlen);
 
 		if (username.length != 0) {
-			buffer.copyFromByteArray(username, 0, buffer.getPosition(),
+			buffer.copyFromByteArray(username, 0, buffer.position(),
 					userlen - 1);
 		} else {
 			buffer
-					.copyFromByteArray(username, 0, buffer.getPosition(),
+					.copyFromByteArray(username, 0, buffer.position(),
 							userlen);
 		}
 
-		buffer.incrementPosition(userlen);
+		buffer.positionAdd(userlen);
 
 		buffer.setLittleEndian16(LICENCE_TAG_HOST);
 		buffer.setLittleEndian16(hostlen);
 
 		if (hostname.length != 0) {
-			buffer.copyFromByteArray(hostname, 0, buffer.getPosition(),
+			buffer.copyFromByteArray(hostname, 0, buffer.position(),
 					hostlen - 1);
 		} else {
 			buffer
-					.copyFromByteArray(hostname, 0, buffer.getPosition(),
+					.copyFromByteArray(hostname, 0, buffer.position(),
 							hostlen);
 		}
-		buffer.incrementPosition(hostlen);
+		buffer.positionAdd(hostlen);
 		buffer.markEnd();
 		secure.send(buffer, sec_flags);
 	}
@@ -539,7 +539,7 @@ public class Licence {
 	 * 
 	 * @return Raw byte data for stored licence
 	 */
-	byte[] load_licence() {
+	static byte[] load_licence() {
 		logger.debug("load_licence");
 		// String home = "/root"; // getenv("HOME");
 
@@ -554,33 +554,33 @@ public class Licence {
 	 * @param length
 	 *            Length of licence
 	 */
-	void save_licence(RdpPacket_Localised data, int length) {
+	static void save_licence(RdpPacket data, int length) {
 		logger.debug("save_licence");
 		int len;
-		int startpos = data.getPosition();
-		data.incrementPosition(2); // Skip first two bytes
+		int startpos = data.position();
+		data.positionAdd(2); // Skip first two bytes
 		/* Skip three strings */
 		for (int i = 0; i < 3; i++) {
 			len = data.getLittleEndian32();
-			data.incrementPosition(len);
+			data.positionAdd(len);
 			/*
 			 * Make sure that we won't be past the end of data after reading the
 			 * next length value
 			 */
-			if (data.getPosition() + 4 - startpos > length) {
+			if (data.position() + 4 - startpos > length) {
 				logger.warn("Error in parsing licence key.");
 				return;
 			}
 		}
 		len = data.getLittleEndian32();
 		logger.debug("save_licence: len=" + len);
-		if (data.getPosition() + len - startpos > length) {
+		if (data.position() + len - startpos > length) {
 			logger.warn("Error in parsing licence key.");
 			return;
 		}
 
 		byte[] databytes = new byte[len];
-		data.copyToByteArray(databytes, 0, data.getPosition(), len);
+		data.copyToByteArray(databytes, 0, data.position(), len);
 
 		new LicenceStore_Localised().save_licence(databytes);
 

@@ -118,18 +118,16 @@ public class RdpApplet extends Applet {
         String rdpserver = this.getParameter("server");
         String rdpport = this.getParameter("port");
         if(rdpserver != null){
-            args[index++] = rdpserver + ((rdpport == null) ? "" : (":" + rdpport));
+            args[index++] = rdpserver + ((rdpport == null) ? "" : (':' + rdpport));
         }
         else {
             args[index++] = "localhost:" + rdpport;
         }
 
         String[] rargs = new String[index];
-        for (int i = 0; i < index; i++) {
-            rargs[i] = args[i];
-        }
+        System.arraycopy(args, 0, rargs, 0, index);
         for ( int i = 0; i < rargs.length; i++)
-            System.out.println("args[" + i + "]=\"" + rargs[i] + "\"");
+            System.out.println("args[" + i + "]=\"" + rargs[i] + '"');
 
         rThread = new RdpThread(rargs, this.getParameter("redirect_on_exit"), this);
         rThread.start();

@@ -3,7 +3,7 @@ package automenta.rdp.rdp5.snd;
 import java.io.IOException;
 
 import automenta.rdp.RdesktopException;
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.rdp5.VChannel;
 import automenta.rdp.rdp5.VChannels;
@@ -21,7 +21,7 @@ public class SoundChannel extends VChannel {
     }
 
     @Override
-    public void process(RdpPacket data) throws RdesktopException, IOException,
+    public void process(AbstractRdpPacket data) throws RdesktopException, IOException,
             CryptoException {
         // do nothing
 

@@ -30,7 +30,7 @@
 package automenta.rdp.rdp5;
 
 import automenta.rdp.*;
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.crypto.CryptoException;
 import org.apache.log4j.Logger;
 
@@ -69,7 +69,7 @@ public abstract class VChannel {
 	 * @throws IOException
 	 * @throws CryptoException
 	 */
-	public abstract void process(RdpPacket data) throws RdesktopException,
+	public abstract void process(AbstractRdpPacket data) throws RdesktopException,
 			IOException, CryptoException;
 
 	public int mcs_id() {
@@ -94,13 +94,13 @@ public abstract class VChannel {
 	 * @return Packet prepared for this channel
 	 * @throws RdesktopException
 	 */
-	public RdpPacket_Localised init(int length) throws RdesktopException {
-		RdpPacket_Localised s;
+	public static RdpPacket init(int length) throws RdesktopException {
+		RdpPacket s;
 
 		s = Common.secure.init(Options.encryption ? Secure.SEC_ENCRYPT : 0,
 				length + 8);
-		s.setHeader(RdpPacket.CHANNEL_HEADER);
-		s.incrementPosition(8);
+		s.setHeader(AbstractRdpPacket.CHANNEL_HEADER);
+		s.positionAdd(8);
 
 		return s;
 	}
@@ -114,7 +114,7 @@ public abstract class VChannel {
 	 * @throws IOException
 	 * @throws CryptoException
 	 */
-	public void send_packet(RdpPacket_Localised data) throws RdesktopException,
+	public void send_packet(RdpPacket data) throws RdesktopException,
 			IOException, CryptoException {
 		if (Common.secure == null)
 			return;
@@ -130,7 +130,7 @@ public abstract class VChannel {
 			int thisLength = Math.min(VChannels.CHANNEL_CHUNK_LENGTH, length
 					- data_offset);
 
-			RdpPacket_Localised s = Common.secure.init(
+			RdpPacket s = Common.secure.init(
 			        (Constants.encryption) ? Secure.SEC_ENCRYPT : 0,
 					8 + thisLength);
 			s.setLittleEndian32(length);
@@ -143,8 +143,8 @@ public abstract class VChannel {
 				flags |= VChannels.CHANNEL_FLAG_SHOW_PROTOCOL;
 
 			s.setLittleEndian32(flags);
-			s.copyFromPacket(data, data_offset, s.getPosition(), thisLength);
-			s.incrementPosition(thisLength);
+			s.copyFromPacket(data, data_offset, s.position(), thisLength);
+			s.positionAdd(thisLength);
 			s.markEnd();
 
 			data_offset += thisLength;

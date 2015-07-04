@@ -34,7 +34,7 @@ import automenta.rdp.keymapping.KeyCode;
 import automenta.rdp.keymapping.KeyCode_FileBased;
 import automenta.rdp.orders.*;
 import automenta.rdp.rdp.Input_Localised;
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -210,7 +210,7 @@ public abstract class RdesktopCanvas extends Canvas {
 	 * @throws RdesktopException
 	 */
 	public void displayCompressed(int x, int y, int width, int height,
-			int size, RdpPacket_Localised data, int Bpp, IndexColorModel cm)
+			int size, RdpPacket data, int Bpp, IndexColorModel cm)
 			throws RdesktopException {
 		backstore = Bitmap.decompressImgDirect(width, height, size, data, Bpp,
 				cm, x, y, backstore);
@@ -539,7 +539,7 @@ public abstract class RdesktopCanvas extends Canvas {
 						x2 = this.right;
 					pbackstore = y1 * this.width + x1;
 					for (i = 0; i < x2 - x1; i++) {
-						rop.do_pixel(opcode, backstore, x1 + i, y1, color);
+						RasterOp.do_pixel(opcode, backstore, x1 + i, y1, color);
 						pbackstore++;
 					}
 					repaint(x1, y1, x2 - x1 + 1, 1);
@@ -550,7 +550,7 @@ public abstract class RdesktopCanvas extends Canvas {
 						x1 = this.right;
 					pbackstore = y1 * this.width + x1;
 					for (i = 0; i < x1 - x2; i++) {
-						rop.do_pixel(opcode, backstore, x2 + i, y1, color);
+						RasterOp.do_pixel(opcode, backstore, x2 + i, y1, color);
 						pbackstore--;
 					}
 					repaint(x2, y1, x1 - x2 + 1, 1);
@@ -565,7 +565,7 @@ public abstract class RdesktopCanvas extends Canvas {
 						y2 = this.bottom;
 					pbackstore = y1 * this.width + x1;
 					for (i = 0; i < y2 - y1; i++) {
-						rop.do_pixel(opcode, backstore, x1, y1 + i, color);
+						RasterOp.do_pixel(opcode, backstore, x1, y1 + i, color);
 						pbackstore += this.width;
 					}
 					repaint(x1, y1, 1, y2 - y1 + 1);
@@ -576,7 +576,7 @@ public abstract class RdesktopCanvas extends Canvas {
 						y1 = this.bottom;
 					pbackstore = y1 * this.width + x1;
 					for (i = 0; i < y1 - y2; i++) {
-						rop.do_pixel(opcode, backstore, x1, y2 + i, color);
+						RasterOp.do_pixel(opcode, backstore, x1, y2 + i, color);
 						pbackstore -= this.width;
 					}
 					repaint(x1, y2, 1, y1 - y2 + 1);
@@ -1034,7 +1034,7 @@ public abstract class RdesktopCanvas extends Canvas {
 		if ((x < this.left) || (x > this.right) || (y < this.top)
 				|| (y > this.bottom)) { // Clip
 		} else {
-			rop.do_pixel(opcode, backstore, x, y, color);
+			RasterOp.do_pixel(opcode, backstore, x, y, color);
 		}
 	}
 

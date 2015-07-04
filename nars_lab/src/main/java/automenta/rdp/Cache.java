@@ -36,23 +36,23 @@ import org.apache.log4j.Logger;
 
 public class Cache {
 
-	protected static Logger logger = Logger.getLogger(Rdp.class);
+	protected static final Logger logger = Logger.getLogger(Rdp.class);
 
 	private static final int RDPCACHE_COLOURMAPSIZE = 0x06; // unified patch
 
-	private Bitmap[][] bitmapcache = new Bitmap[3][600];
+	private final Bitmap[][] bitmapcache = new Bitmap[3][600];
 
-	private Cursor[] cursorcache = new Cursor[32];
+	private final Cursor[] cursorcache = new Cursor[32];
 
-	private Glyph[][] fontcache = new Glyph[12][256];
+	private final Glyph[][] fontcache = new Glyph[12][256];
 
-	private DataBlob[] textcache = new DataBlob[256];
+	private final DataBlob[] textcache = new DataBlob[256];
 
-	private int[] highdeskcache = new int[921600];
+	private final int[] highdeskcache = new int[921600];
 
-	private int num_bitmaps_in_memory[] = new int[3];
+	private final int num_bitmaps_in_memory[] = new int[3];
 
-	private IndexColorModel[] colourcache = new IndexColorModel[RDPCACHE_COLOURMAPSIZE];
+	private final IndexColorModel[] colourcache = new IndexColorModel[RDPCACHE_COLOURMAPSIZE];
 
 	public Cache() {
 	}
@@ -72,16 +72,17 @@ public class Cache {
 		int cache_idx = 0;
 		int m = 0xffffffff;
 
-		for (i = 0; i < bitmapcache[cache_id].length; i++) {
-			if ((bitmapcache[cache_id][i] != null)
-					&& (bitmapcache[cache_id][i].getBitmapData() != null)
-					&& (bitmapcache[cache_id][i].usage < m)) {
+		final Bitmap[] bcc = bitmapcache[cache_id];
+		for (i = 0; i < bcc.length; i++) {
+			if ((bcc[i] != null)
+					&& (bcc[i].getBitmapData() != null)
+					&& (bcc[i].usage < m)) {
 				cache_idx = i;
-				m = bitmapcache[cache_id][i].usage;
+				m = bcc[i].usage;
 			}
 		}
 
-		bitmapcache[cache_id][cache_idx] = null;
+		bcc[cache_idx] = null;
 		--num_bitmaps_in_memory[cache_id];
 	}
 
@@ -95,13 +96,13 @@ public class Cache {
 	 */
 	public IndexColorModel get_colourmap(int cache_id) throws RdesktopException {
 		IndexColorModel map = null;
-		if (cache_id < colourcache.length) {
+//		if (cache_id < colourcache.length) {
 			map = colourcache[cache_id];
-			if (map != null)
+//			if (map != null)
 				return map;
-		}
-		throw new RdesktopException("Could not get colourmap with cache_id="
-				+ cache_id);
+		//}
+//		throw new RdesktopException("Could not get colourmap with cache_id="
+//				+ cache_id);
 	}
 
 	/**
@@ -115,11 +116,11 @@ public class Cache {
 	 */
 	public void put_colourmap(int cache_id, IndexColorModel map)
 			throws RdesktopException {
-		if (cache_id < colourcache.length)
+		//if (cache_id < colourcache.length)
 			colourcache[cache_id] = map;
-		else
-			throw new RdesktopException(
-					"Could not put colourmap with cache_id=" + cache_id);
+//		else
+//			throw new RdesktopException(
+//					"Could not put colourmap with cache_id=" + cache_id);
 	}
 
 	/**
@@ -137,8 +138,8 @@ public class Cache {
 
 		Bitmap bitmap = null;
 
-		if ((cache_id < bitmapcache.length)
-				&& (cache_idx < bitmapcache[0].length)) {
+//		if ((cache_id < bitmapcache.length)
+//				&& (cache_idx < bitmapcache[0].length)) {
 			bitmap = bitmapcache[cache_id][cache_idx];
 			/*
 			 * try { if (bitmap != null ||
@@ -147,11 +148,11 @@ public class Cache {
 			 * return bitmap; } } catch (IOException e) { e.printStackTrace(); }
 			 * catch (RdesktopException e) { e.printStackTrace(); }
 			 */
-			if (bitmap != null)
+//			if (bitmap != null)
 				return bitmap;
-		}
-
-		throw new RdesktopException("Could not get Bitmap!");
+//		}
+//
+//		throw new RdesktopException("Could not get Bitmap!");
 	}
 
 	/**
@@ -172,8 +173,8 @@ public class Cache {
 
 		// Bitmap old;
 
-		if ((cache_id < bitmapcache.length)
-				&& (cache_idx < bitmapcache[0].length)) {
+//		if ((cache_id < bitmapcache.length)
+//				&& (cache_idx < bitmapcache[0].length)) {
 			bitmapcache[cache_id][cache_idx] = bitmap;
 			/*
 			 * if (Options.use_rdp5) { if (++num_bitmaps_in_memory[cache_id] >
@@ -182,9 +183,9 @@ public class Cache {
 			 * bitmapcache[cache_id][cache_idx] = bitmap;
 			 * bitmapcache[cache_id][cache_idx].usage = stamp;
 			 */
-		} else {
-			throw new RdesktopException("Could not put Bitmap!");
-		}
+//		} else {
+//			throw new RdesktopException("Could not put Bitmap!");
+//		}
 	}
 
 	/**
@@ -196,15 +197,15 @@ public class Cache {
 	 * @throws RdesktopException
 	 */
 	public Cursor getCursor(int cache_idx) throws RdesktopException {
-		Cursor cursor = null;
+		Cursor cursor;
 
-		if (cache_idx < cursorcache.length) {
+//		if (cache_idx < cursorcache.length) {
 			cursor = cursorcache[cache_idx];
-			if (cursor != null) {
+			//if (cursor != null) {
 				return cursor;
-			}
-		}
-		throw new RdesktopException("Cursor not found");
+			//}
+		//}
+		//throw new RdesktopException("Cursor not found");
 	}
 
 	/**
@@ -219,11 +220,11 @@ public class Cache {
 	public void putCursor(int cache_idx, Cursor cursor)
 			throws RdesktopException {
 
-		if (cache_idx < cursorcache.length) {
+		//if (cache_idx < cursorcache.length) {
 			cursorcache[cache_idx] = cursor;
-		} else {
-			throw new RdesktopException("Could not put Cursor!");
-		}
+//		} else {
+//			throw new RdesktopException("Could not put Cursor!");
+//		}
 	}
 
 	/**
@@ -234,12 +235,12 @@ public class Cache {
 	 * @throws RdesktopException
 	 */
 	public void putFont(Glyph glyph) throws RdesktopException {
-		if ((glyph.getFont() < fontcache.length)
-				&& (glyph.getCharacter() < fontcache[0].length)) {
+//		if ((glyph.getFont() < fontcache.length)
+//				&& (glyph.getCharacter() < fontcache[0].length)) {
 			fontcache[glyph.getFont()][glyph.getCharacter()] = glyph;
-		} else {
-			throw new RdesktopException("Could not put font");
-		}
+//		} else {
+//			throw new RdesktopException("Could not put font");
+//		}
 	}
 
 	/**
@@ -266,14 +267,15 @@ public class Cache {
 	 */
 	public Glyph getFont(int font, int character) throws RdesktopException {
 
-		if ((font < fontcache.length) && (character < fontcache[0].length)) {
+		//if ((font < fontcache.length) && (character < fontcache[0].length)) {
 			Glyph glyph = fontcache[font][character];
-			if (glyph != null) {
-				return glyph;
-			}
-		}
-		throw new RdesktopException("Could not get Font:" + font + ", "
-				+ character);
+			return glyph;
+//			if (glyph != null) {
+//				return glyph;
+//			}
+//		}
+//		throw new RdesktopException("Could not get Font:" + font + ", "
+//				+ character);
 	}
 
 	/**
@@ -286,16 +288,17 @@ public class Cache {
 	 */
 	public DataBlob getText(int cache_id) throws RdesktopException {
 		DataBlob entry = null;
-		if (cache_id < textcache.length) {
+		//if (cache_id < textcache.length) {
 			entry = textcache[cache_id];
-			if (entry != null) {
-				if (entry.getData() != null) {
-					return entry;
-				}
-			}
-		}
-
-		throw new RdesktopException("Could not get Text:" + cache_id);
+			return entry;
+//			if (entry != null) {
+//				if (entry.getData() != null) {
+//					return entry;
+//				}
+//			}
+//		}
+//
+//		throw new RdesktopException("Could not get Text:" + cache_id);
 	}
 
 	/**
@@ -308,11 +311,11 @@ public class Cache {
 	 * @throws RdesktopException
 	 */
 	public void putText(int cache_id, DataBlob entry) throws RdesktopException {
-		if (cache_id < textcache.length) {
+		//if (cache_id < textcache.length) {
 			textcache[cache_id] = entry;
-		} else {
-			throw new RdesktopException("Could not put Text");
-		}
+//		} else {
+//			throw new RdesktopException("Could not put Text");
+//		}
 	}
 
 	/**
@@ -337,15 +340,15 @@ public class Cache {
 		if (offset > highdeskcache.length)
 			offset = 0;
 
-		if ((int) offset + length <= highdeskcache.length) {
+		//if (offset + length <= highdeskcache.length) {
 			for (int i = 0; i < cy; i++) {
 				System.arraycopy(data, pdata, highdeskcache, offset, cx);
 				offset += cx;
 				pdata += cx;
 			}
-		} else {
-			throw new RdesktopException("Could not put Desktop");
-		}
+//		} else {
+//			throw new RdesktopException("Could not put Desktop");
+//		}
 	}
 
 	/**
@@ -369,15 +372,15 @@ public class Cache {
 		if (offset > highdeskcache.length)
 			offset = 0;
 
-		if ((int) offset + length <= highdeskcache.length) {
+		//if ((int) offset + length <= highdeskcache.length) {
 			for (int i = 0; i < cy; i++) {
 				System.arraycopy(highdeskcache, offset, data, pdata, cx);
 				offset += cx;
 				pdata += cx;
 			}
 			return data;
-		}
-		throw new RdesktopException("Could not get Bitmap");
+//		}
+//		throw new RdesktopException("Could not get Bitmap");
 	}
 
 }

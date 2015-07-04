@@ -190,10 +190,10 @@ public abstract class Input {
 	 */
 	public void sendKeyPresses(String pressSequence) {
 		try {
-			String debugString = "Sending keypresses: ";
+			//String debugString = "Sending keypresses: ";
 			for (int i = 0; i < pressSequence.length(); i += 2) {
-				int scancode = (int) pressSequence.charAt(i);
-				int action = (int) pressSequence.charAt(i + 1);
+				int scancode = pressSequence.charAt(i);
+				int action = pressSequence.charAt(i + 1);
 				int flags = 0;
 
 				if (action == KeyCode_FileBased.UP)
@@ -207,19 +207,19 @@ public abstract class Input {
 
 				long t = getTime();
 
-				debugString += "(0x"
+				/*debugString += "(0x"
 						+ Integer.toHexString(scancode)
 						+ ", "
 						+ ((action == KeyCode_FileBased.UP || action == KeyCode_FileBased.QUIETUP) ? "up"
 								: "down")
 						+ ((flags & KBD_FLAG_QUIET) != 0 ? " quiet" : "")
-						+ " at " + t + ")";
+						+ " at " + t + ")";*/
 
 				sendScancode(t, flags, scancode);
 			}
 
-			if (pressSequence.length() > 0)
-				logger.debug(debugString);
+			/*if (pressSequence.length() > 0)
+				logger.debug(debugString);*/
 		} catch (Exception ex) {
 			return;
 		}
@@ -325,12 +325,13 @@ public abstract class Input {
 		if (lastKeyEvent == null)
 			return;
 
+		final int t = getTime();
 		if (lastKeyEvent.isShiftDown())
-			sendScancode(getTime(), RDP_KEYPRESS, 0x2a); // shift
+			sendScancode(t, RDP_KEYPRESS, 0x2a); // shift
 		if (lastKeyEvent.isAltDown())
-			sendScancode(getTime(), RDP_KEYPRESS, 0x38); // l.alt
+			sendScancode(t, RDP_KEYPRESS, 0x38); // l.alt
 		if (lastKeyEvent.isControlDown())
-			sendScancode(getTime(), RDP_KEYPRESS, 0x1d); // l.ctrl
+			sendScancode(t, RDP_KEYPRESS, 0x1d); // l.ctrl
 	}
 
 	class RdesktopKeyAdapter extends KeyAdapter {
@@ -355,9 +356,9 @@ public abstract class Input {
 			// here we add the key so we can later check if it happened
 			pressedKeys.addElement(new Integer(e.getKeyCode()));
 
-			logger.debug("PRESSED keychar='" + e.getKeyChar() + "' keycode=0x"
+			/*logger.debug("PRESSED keychar='" + e.getKeyChar() + "' keycode=0x"
 					+ Integer.toHexString(e.getKeyCode()) + " char='"
-					+ ((char) e.getKeyCode()) + "'");
+					+ ((char) e.getKeyCode()) + "'");*/
 
 			if (rdp != null) {
 				if (!handleSpecialKeys(time, e, true)) {
@@ -380,9 +381,9 @@ public abstract class Input {
 			// here we add the key so we can later check if it happened
 			pressedKeys.addElement(new Integer(e.getKeyCode()));
 
-			logger.debug("TYPED keychar='" + e.getKeyChar() + "' keycode=0x"
+			/*logger.debug("TYPED keychar='" + e.getKeyChar() + "' keycode=0x"
 					+ Integer.toHexString(e.getKeyCode()) + " char='"
-					+ ((char) e.getKeyCode()) + "'");
+					+ ((char) e.getKeyCode()) + "'");*/
 
 			if (rdp != null) {
 				if (!handleSpecialKeys(time, e, true))
@@ -410,9 +411,10 @@ public abstract class Input {
 			modifiersValid = true;
 			long time = getTime();
 
-			logger.debug("RELEASED keychar='" + e.getKeyChar() + "' keycode=0x"
+			/*logger.debug("RELEASED keychar='" + e.getKeyChar() + "' keycode=0x"
 					+ Integer.toHexString(e.getKeyCode()) + " char='"
-					+ ((char) e.getKeyCode()) + "'");
+					+ ((char) e.getKeyCode()) + "'");*/
+
 			if (rdp != null) {
 				if (!handleSpecialKeys(time, e, false))
 					sendKeyPresses(newKeyMapper.getKeyStrokes(e));
@@ -728,15 +730,15 @@ public abstract class Input {
 			int time = getTime();
 			if (rdp != null) {
 				if ((e.getModifiers() & InputEvent.BUTTON1_MASK) == InputEvent.BUTTON1_MASK) {
-					logger.debug("Mouse Button 1 Pressed.");
+					//logger.debug("Mouse Button 1 Pressed.");
 					rdp.sendInput(time, RDP_INPUT_MOUSE, MOUSE_FLAG_BUTTON1
 							| MOUSE_FLAG_DOWN, e.getX(), e.getY());
 				} else if ((e.getModifiers() & InputEvent.BUTTON3_MASK) == InputEvent.BUTTON3_MASK) {
-					logger.debug("Mouse Button 3 Pressed.");
+					//logger.debug("Mouse Button 3 Pressed.");
 					rdp.sendInput(time, RDP_INPUT_MOUSE, MOUSE_FLAG_BUTTON2
 							| MOUSE_FLAG_DOWN, e.getX(), e.getY());
 				} else if ((e.getModifiers() & InputEvent.BUTTON2_MASK) == InputEvent.BUTTON2_MASK) {
-					logger.debug("Middle Mouse Button Pressed.");
+					//logger.debug("Middle Mouse Button Pressed.");
 					middleButtonPressed(e);
 				}
 			}
@@ -765,7 +767,7 @@ public abstract class Input {
 		}
 
 		public void mouseMoved(MouseEvent e) {
-			int time = getTime();
+
 
 			// Code to limit mouse events to 4 per second. Doesn't seem to
 			// affect performance
@@ -782,7 +784,7 @@ public abstract class Input {
 			// else ((RdesktopFrame_Localised) canvas.getParent()).hideMenu();
 
 			if (rdp != null) {
-				rdp.sendInput(time, RDP_INPUT_MOUSE, MOUSE_FLAG_MOVE, e.getX(),
+				rdp.sendInput(getTime(), RDP_INPUT_MOUSE, MOUSE_FLAG_MOVE, e.getX(),
 						e.getY());
 			}
 		}
@@ -792,7 +794,7 @@ public abstract class Input {
 			// if(logger.isInfoEnabled()) logger.info("mouseMoved to
 			// "+e.getX()+", "+e.getY()+" at "+time);
 			if (rdp != null) {
-				rdp.sendInput(time, RDP_INPUT_MOUSE, MOUSE_FLAG_MOVE, e.getX(),
+				rdp.sendInput(getTime(), RDP_INPUT_MOUSE, MOUSE_FLAG_MOVE, e.getX(),
 						e.getY());
 			}
 		}

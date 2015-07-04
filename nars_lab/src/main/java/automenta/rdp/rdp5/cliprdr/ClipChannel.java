@@ -30,10 +30,10 @@
 package automenta.rdp.rdp5.cliprdr;
 
 import automenta.rdp.*;
-import automenta.rdp.rdp5.VChannels;
 import automenta.rdp.crypto.CryptoException;
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.rdp5.VChannel;
+import automenta.rdp.rdp5.VChannels;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -43,6 +43,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ClipChannel extends VChannel implements ClipInterface,
 		ClipboardOwner, FocusListener {
@@ -52,7 +53,7 @@ public class ClipChannel extends VChannel implements ClipInterface,
 			"CF_PALETTE", "CF_PENDATA", "CF_RIFF", "CF_WAVE", "CF_UNICODETEXT",
 			"CF_ENHMETAFILE", "CF_HDROP", "CF_LOCALE", "CF_MAX" };
 
-	protected static Logger logger = Logger.getLogger(Input.class);
+	protected static final Logger logger = Logger.getLogger(Input.class);
 
 	// Message types
 	public static final int CLIPRDR_CONNECT = 1;
@@ -110,7 +111,7 @@ public class ClipChannel extends VChannel implements ClipInterface,
 	/*
 	 * Data processing methods
 	 */
-	public void process(RdpPacket data) throws RdesktopException, IOException,
+	public void process(AbstractRdpPacket data) throws RdesktopException, IOException,
 			CryptoException {
 
 		int type, status;
@@ -153,9 +154,11 @@ public class ClipChannel extends VChannel implements ClipInterface,
 	}
 
 	public void send_null(int type, int status) {
-		RdpPacket_Localised s;
+		RdpPacket s;
 
-		s = new RdpPacket_Localised(12);
+		//TODO cache these by (type,status) tuples
+
+		s = new RdpPacket(12);
 		s.setLittleEndian16(type);
 		s.setLittleEndian16(status);
 		s.setLittleEndian32(0);
@@ -204,7 +207,7 @@ public class ClipChannel extends VChannel implements ClipInterface,
 //		send_packet(s);
 	}
 
-	private void handle_clip_format_announce(RdpPacket data, int length)
+	private void handle_clip_format_announce(AbstractRdpPacket data, int length)
 			throws RdesktopException, IOException, CryptoException {
 		TypeHandlerList serverTypeList = new TypeHandlerList();
 
@@ -213,7 +216,7 @@ public class ClipChannel extends VChannel implements ClipInterface,
 			int typeCode = data.getLittleEndian32();
 			// if(typeCode < types.length) System.out.print(types[typeCode] + "
 			// ");
-			data.incrementPosition(32);
+			data.positionAdd(32);
 			serverTypeList.add(allHandlers.getHandlerForFormat(typeCode));
 		}
 		// System.out.println();
@@ -225,7 +228,7 @@ public class ClipChannel extends VChannel implements ClipInterface,
 			request_clipboard_data(currentHandler.preferredFormat());
 	}
 
-	void handle_data_request(RdpPacket data) {
+	void handle_data_request(AbstractRdpPacket data) {
 		int format = data.getLittleEndian32();
 		Transferable clipData = clipboard.getContents(this);
 
@@ -243,7 +246,7 @@ public class ClipChannel extends VChannel implements ClipInterface,
 		// this.send_null(CLIPRDR_DATA_RESPONSE,CLIPRDR_ERROR);
 	}
 
-	void handle_data_response(RdpPacket data, int length) {
+	void handle_data_response(AbstractRdpPacket data, int length) {
 		// if(currentHandler !=
 		// null)clipboard.setContents(currentHandler.handleData(data,
 		// length),this);
@@ -256,7 +259,7 @@ public class ClipChannel extends VChannel implements ClipInterface,
 	void request_clipboard_data(int formatcode) throws RdesktopException,
 			IOException, CryptoException {
 
-		RdpPacket_Localised s = Common.secure.init(
+		RdpPacket s = Common.secure.init(
 				Constants.encryption ? Secure.SEC_ENCRYPT : 0, 24);
 		s.setLittleEndian32(16); // length
 
@@ -277,40 +280,40 @@ public class ClipChannel extends VChannel implements ClipInterface,
 	}
 
 	public void send_data(byte[] data, int length) {
-		CommunicationMonitor.lock(this);
+		synchronized (CommunicationMonitor.synch) {
 
-		RdpPacket_Localised all = new RdpPacket_Localised(12 + length);
+			RdpPacket all = new RdpPacket(12 + length);
 
-		all.setLittleEndian16(CLIPRDR_DATA_RESPONSE);
-		all.setLittleEndian16(CLIPRDR_RESPONSE);
-		all.setLittleEndian32(length + 4); // don't know why, but we need to
-		// add between 1 and 4 to the
-		// length,
-		// otherwise the server cliprdr thread hangs
-		all.copyFromByteArray(data, 0, all.getPosition(), length);
-		all.incrementPosition(length);
-		all.setLittleEndian32(0);
+			all.setLittleEndian16(CLIPRDR_DATA_RESPONSE);
+			all.setLittleEndian16(CLIPRDR_RESPONSE);
+			all.setLittleEndian32(length + 4); // don't know why, but we need to
+			// add between 1 and 4 to the
+			// length,
+			// otherwise the server cliprdr thread hangs
+			all.copyFromByteArray(data, 0, all.position(), length);
+			all.positionAdd(length);
+			all.setLittleEndian32(0);
 
-		try {
-			this.send_packet(all);
-		} catch (RdesktopException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-			if (!Common.underApplet)
-				System.exit(-1);
-		} catch (IOException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-			if (!Common.underApplet)
-				System.exit(-1);
-		} catch (CryptoException e) {
-			System.err.println(e.getMessage());
-			e.printStackTrace();
-			if (!Common.underApplet)
-				System.exit(-1);
+			try {
+				this.send_packet(all);
+			} catch (RdesktopException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				if (!Common.underApplet)
+					System.exit(-1);
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				if (!Common.underApplet)
+					System.exit(-1);
+			} catch (CryptoException e) {
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+				if (!Common.underApplet)
+					System.exit(-1);
+			}
 		}
 
-		CommunicationMonitor.unlock(this);
 	}
 
 	/*
@@ -335,9 +338,8 @@ public class ClipChannel extends VChannel implements ClipInterface,
 	/*
 	 * Support methods
 	 */
-	private void reset_bool(boolean[] x) {
-		for (int i = 0; i < x.length; i++)
-			x[i] = false;
+	private static void reset_bool(boolean[] x) {
+		Arrays.fill(x, false);
 	}
 
 	/*

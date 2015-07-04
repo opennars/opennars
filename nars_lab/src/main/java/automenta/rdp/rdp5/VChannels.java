@@ -34,15 +34,16 @@ import automenta.rdp.MCS;
 import automenta.rdp.Options;
 import automenta.rdp.RdesktopException;
 import automenta.rdp.crypto.CryptoException;
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class VChannels {
 
-	protected static Logger logger = Logger.getLogger(Input.class);
+	protected static final Logger logger = Logger.getLogger(Input.class);
 
 	/* Sound format constants */
 	public static final int WAVE_FORMAT_PCM = 1;
@@ -81,7 +82,7 @@ public class VChannels {
 
 	public static final int CHANNEL_FLAG_SHOW_PROTOCOL = 0x10;
 
-	private VChannel channels[] = new VChannel[MAX_CHANNELS];
+	private final VChannel channels[] = new VChannel[MAX_CHANNELS];
 
 	private int num_channels;
 
@@ -98,7 +99,7 @@ public class VChannels {
 	 *            Channel number for which to obtain MCS ID
 	 * @return MCS ID associated with the supplied channel number
 	 */
-	public int mcs_id(int c) {
+	public static int mcs_id(int c) {
 		return MCS.MCS_GLOBAL_CHANNEL + 1 + c;
 	}
 
@@ -106,7 +107,7 @@ public class VChannels {
 	 * Initialise the maximum number of Virtual Channels
 	 */
 	public VChannels() {
-		channels = new VChannel[MAX_CHANNELS];
+
 	}
 
 	/**
@@ -144,7 +145,8 @@ public class VChannels {
 	 * Remove all registered virtual channels
 	 */
 	public void clear() {
-		channels = new VChannel[MAX_CHANNELS];
+		//channels = new VChannel[MAX_CHANNELS];
+		Arrays.fill(channels, null);
 		num_channels = 0;
 	}
 
@@ -183,7 +185,7 @@ public class VChannels {
 	 * @throws IOException
 	 * @throws CryptoException
 	 */
-	public void channel_process(RdpPacket_Localised data, int mcsChannel)
+	public void channel_process(RdpPacket data, int mcsChannel)
 			throws RdesktopException, IOException, CryptoException {
 
 		int length, flags;
@@ -210,14 +212,14 @@ public class VChannels {
 			channel.process(data);
 		} else {
 			// append to the defragmentation buffer
-			byte[] content = new byte[data.getEnd() - data.getPosition()];
+			byte[] content = new byte[data.getEnd() - data.position()];
 			data
-					.copyToByteArray(content, 0, data.getPosition(),
+					.copyToByteArray(content, 0, data.position(),
 							content.length);
 			fragment_buffer = append(fragment_buffer, content);
 
 			if ((flags & CHANNEL_FLAG_LAST) != 0) {
-				RdpPacket_Localised fullpacket = new RdpPacket_Localised(
+				RdpPacket fullpacket = new RdpPacket(
 						fragment_buffer.length);
 				fullpacket.copyFromByteArray(fragment_buffer, 0, 0,
 						fragment_buffer.length);

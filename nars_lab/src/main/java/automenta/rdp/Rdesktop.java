@@ -428,14 +428,14 @@ public class Rdesktop {
 						fKdeHack = true;
 					else {
 						System.err.println(progname
-								+ ": Invalid fullscreen option '" + arg + "'");
+								+ ": Invalid fullscreen option '" + arg + '\'');
 						usage();
 					}
 				}
 				break;
 			case 'g':
 				arg = g.getOptarg();
-				int cut = arg.indexOf("x", 0);
+				int cut = arg.indexOf('x', 0);
 				if (cut == -1) {
 					System.err.println(progname + ": Invalid geometry: " + arg);
 					usage();
@@ -526,7 +526,7 @@ public class Rdesktop {
 		String server = null;
 
 		if (g.getOptind() < args.length) {
-			int colonat = args[args.length - 1].indexOf(":", 0);
+			int colonat = args[args.length - 1].indexOf(':', 0);
 			if (colonat == -1) {
 				server = args[args.length - 1];
 			} else {
@@ -588,7 +588,7 @@ public class Rdesktop {
 		KeyCode_FileBased keyMap = null;
 		try {
 			// logger.info("looking for: " + "/" + keyMapPath + mapFile);
-			InputStream istr = Rdesktop.class.getResourceAsStream("/"
+			InputStream istr = Rdesktop.class.getResourceAsStream('/'
 					+ keyMapPath + mapFile);
 			// logger.info("istr = " + istr);
 			if (istr == null) {
@@ -626,7 +626,7 @@ public class Rdesktop {
 			window.registerCommLayer(RdpLayer);
 			loggedon = false;
 			readytosend = false;
-			logger.info("Connecting to " + server + ":" + Options.port
+			logger.info("Connecting to " + server + ':' + Options.port
 			            + " ...");
 
 			if (server.equalsIgnoreCase("localhost"))
@@ -713,7 +713,7 @@ public class Rdesktop {
 					error(e, RdpLayer, window, true);
 				} catch (SocketException s) {
 					if (RdpLayer.isConnected()) {
-						logger.fatal(s.getClass().getName() + " "
+						logger.fatal(s.getClass().getName() + ' '
 								+ s.getMessage());
 						s.printStackTrace();
 						error(s, RdpLayer, window, true);
@@ -753,7 +753,7 @@ public class Rdesktop {
 						Rdesktop.exit(0, RdpLayer, window, true);
 					}
 				} catch (Exception e) {
-					logger.warn(e.getClass().getName() + " " + e.getMessage());
+					logger.warn(e.getClass().getName() + ' ' + e.getMessage());
 					e.printStackTrace();
 					error(e, RdpLayer, window, true);
 				}

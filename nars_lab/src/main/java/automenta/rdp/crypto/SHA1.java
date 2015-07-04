@@ -54,7 +54,7 @@ public final class SHA1 extends BlockMessageDigest implements Cloneable {
 	/**
 	 * Returns the length of the hash (in bytes).
 	 */
-	protected int engineGetDigestLength() {
+	protected static int engineGetDigestLength() {
 		return HASH_LENGTH;
 	}
 
@@ -192,7 +192,7 @@ public final class SHA1 extends BlockMessageDigest implements Cloneable {
 	// SHA-1 transform routines
 	// ...........................................................................
 
-	private static int f1(int a, int b, int c) {
+	private static int f1(final int a, final int b, final int c) {
 		return (c ^ (a & (b ^ c))) + 0x5A827999;
 	}
 
@@ -208,7 +208,7 @@ public final class SHA1 extends BlockMessageDigest implements Cloneable {
 		return (a ^ b ^ c) + 0xCA62C1D6;
 	}
 
-	private void transform(int[] X) {
+	private void transform(final int[] X) {
 		int A = digest[0];
 		int B = digest[1];
 		int C = digest[2];
@@ -216,9 +216,7 @@ public final class SHA1 extends BlockMessageDigest implements Cloneable {
 		int E = digest[4];
 
 		int W[] = w;
-		for (int i = 0; i < 16; i++) {
-			W[i] = X[i];
-		}
+		System.arraycopy(X, 0, W, 0, 16);
 		for (int i = 16; i < 80; i++) {
 			int j = W[i - 16] ^ W[i - 14] ^ W[i - 8] ^ W[i - 3];
 			W[i] = j;

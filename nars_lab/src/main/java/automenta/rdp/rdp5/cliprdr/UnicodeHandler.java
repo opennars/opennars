@@ -29,8 +29,8 @@
  */
 package automenta.rdp.rdp5.cliprdr;
 
-import automenta.rdp.RdpPacket;
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.AbstractRdpPacket;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.rdp.Utilities_Localised;
 
 import java.awt.datatransfer.DataFlavor;
@@ -51,7 +51,7 @@ public class UnicodeHandler extends TypeHandler {
 		return CF_UNICODETEXT;
 	}
 
-	public void handleData(RdpPacket data, int length, ClipInterface c) {
+	public void handleData(AbstractRdpPacket data, int length, ClipInterface c) {
 		String thingy = "";
 		for (int i = 0; i < length; i += 2) {
 			int aByte = data.getLittleEndian16();
@@ -66,7 +66,7 @@ public class UnicodeHandler extends TypeHandler {
 		return "CF_UNICODETEXT";
 	}
 
-	public byte[] fromTransferable(Transferable in) {
+	public static byte[] fromTransferable(Transferable in) {
 		String s;
 		if (in != null) {
 			try {
@@ -84,7 +84,7 @@ public class UnicodeHandler extends TypeHandler {
 			byte[] sBytes = s.getBytes();
 			int length = sBytes.length;
 			int lengthBy2 = length * 2;
-			RdpPacket p = new RdpPacket_Localised(lengthBy2);
+			AbstractRdpPacket p = new RdpPacket(lengthBy2);
 			for (int i = 0; i < sBytes.length; i++) {
 				p.setLittleEndian16(sBytes[i]);
 			}

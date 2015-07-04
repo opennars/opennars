@@ -32,11 +32,11 @@
 // Created on 03-Sep-2003
 package automenta.rdp;
 
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import org.apache.log4j.Logger;
 
-public abstract class RdpPacket {
-	public static Logger logger = Logger.getLogger(RdpPacket.class);
+public abstract class AbstractRdpPacket {
+	public static final Logger logger = Logger.getLogger(AbstractRdpPacket.class);
 
 	/* constants for Packet */
 	public static final int MCS_HEADER = 1;
@@ -284,7 +284,7 @@ public abstract class RdpPacket {
 	 * @param len
 	 *            Length of data to be copied
 	 */
-	public abstract void copyToPacket(RdpPacket_Localised dst, int srcOffset,
+	public abstract void copyToPacket(RdpPacket dst, int srcOffset,
 			int dstOffset, int len);
 
 	/**
@@ -299,7 +299,7 @@ public abstract class RdpPacket {
 	 * @param len
 	 *            Length of data to be copied
 	 */
-	public abstract void copyFromPacket(RdpPacket_Localised src, int srcOffset,
+	public abstract void copyFromPacket(RdpPacket src, int srcOffset,
 			int dstOffset, int len);
 
 	/**
@@ -314,7 +314,7 @@ public abstract class RdpPacket {
 	 * 
 	 * @return Current read/write position (as byte offset from start)
 	 */
-	public abstract int getPosition();
+	public abstract int position();
 
 	/**
 	 * Set current read/write position
@@ -322,7 +322,7 @@ public abstract class RdpPacket {
 	 * @param position
 	 *            New read/write position (as byte offset from start)
 	 */
-	public abstract void setPosition(int position);
+	public abstract void position(int position);
 
 	/**
 	 * Advance the read/write position
@@ -330,13 +330,13 @@ public abstract class RdpPacket {
 	 * @param length
 	 *            Number of bytes to advance read position by
 	 */
-	public abstract void incrementPosition(int length);
+	public abstract void positionAdd(int length);
 
 	/**
 	 * Mark current read/write position as end of packet
 	 */
 	public void markEnd() {
-		this.end = getPosition();
+		this.end = position();
 	}
 
 	/**
@@ -379,9 +379,9 @@ public abstract class RdpPacket {
 	 *            Required size to be reserved for header
 	 * @throws RdesktopException
 	 */
-	public void pushLayer(int header, int increment) throws RdesktopException {
+	public void pushLayer(int header, int increment)  {
 		this.setHeader(header);
-		this.incrementPosition(increment);
+		this.positionAdd(increment);
 		// this.setStart(this.getPosition());
 	}
 
@@ -395,13 +395,13 @@ public abstract class RdpPacket {
 	 */
 	public int getHeader(int header) throws RdesktopException {
 		switch (header) {
-		case RdpPacket.MCS_HEADER:
+		case AbstractRdpPacket.MCS_HEADER:
 			return this.mcs;
-		case RdpPacket.SECURE_HEADER:
+		case AbstractRdpPacket.SECURE_HEADER:
 			return this.secure;
-		case RdpPacket.RDP_HEADER:
+		case AbstractRdpPacket.RDP_HEADER:
 			return this.rdp;
-		case RdpPacket.CHANNEL_HEADER:
+		case AbstractRdpPacket.CHANNEL_HEADER:
 			return this.channel;
 		default:
 			throw new RdesktopException("Wrong Header!");
@@ -415,19 +415,19 @@ public abstract class RdpPacket {
 	 *            ID of header type
 	 * @throws RdesktopException
 	 */
-	public void setHeader(int header) throws RdesktopException {
+	public void setHeader(int header)  {
 		switch (header) {
-		case RdpPacket.MCS_HEADER:
-			this.mcs = this.getPosition();
+		case AbstractRdpPacket.MCS_HEADER:
+			this.mcs = this.position();
 			break;
-		case RdpPacket.SECURE_HEADER:
-			this.secure = this.getPosition();
+		case AbstractRdpPacket.SECURE_HEADER:
+			this.secure = this.position();
 			break;
-		case RdpPacket.RDP_HEADER:
-			this.rdp = this.getPosition();
+		case AbstractRdpPacket.RDP_HEADER:
+			this.rdp = this.position();
 			break;
-		case RdpPacket.CHANNEL_HEADER:
-			this.channel = this.getPosition();
+		case AbstractRdpPacket.CHANNEL_HEADER:
+			this.channel = this.position();
 			break;
 		default:
 			throw new RdesktopException("Wrong Header!");
@@ -460,11 +460,13 @@ public abstract class RdpPacket {
 	 *            String to write as unicode to packet
 	 * @param len
 	 *            Desired length of output unicode string
+	 *
 	 */
 	public void outUnicodeString(String str, int len) {
 		int i = 0, j = 0;
 
 		if (str.length() != 0) {
+			//TODO use use charAt dont call toCharArray which allocates a duplicate array
 			char[] name = str.toCharArray();
 			while (i < len) {
 				this.setLittleEndian16((short) name[j++]);
@@ -487,7 +489,7 @@ public abstract class RdpPacket {
 	 */
 	public void out_uint8p(String str, int length) {
 		byte[] bStr = str.getBytes();
-		this.copyFromByteArray(bStr, 0, this.getPosition(), bStr.length);
-		this.incrementPosition(length);
+		this.copyFromByteArray(bStr, 0, this.position(), bStr.length);
+		this.positionAdd(length);
 	}
 }

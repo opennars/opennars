@@ -23,7 +23,7 @@ public class HexDump
         {
             if (lineIndex == 16)
             {
-                result.append(" ");
+                result.append(' ');
                 
                 for (int j = 0 ; j < 16 ; j++)
                 {
@@ -33,7 +33,7 @@ public class HexDump
                     }
                     else
                     {
-                        result.append(".");
+                        result.append('.');
                     }
                 }
                 
@@ -43,7 +43,7 @@ public class HexDump
             }
             
             byte b = array[i];
-            result.append(" ");
+            result.append(' ');
             result.append(HEX_DIGITS[(b >>> 4) & 0x0F]);
             result.append(HEX_DIGITS[b & 0x0F]);
             
@@ -56,7 +56,7 @@ public class HexDump
             count++;
             for (int i = 0 ; i < count ; i++)
             {
-                result.append(" ");
+                result.append(' ');
             }
             
             for (int i = 0 ; i < lineIndex ; i++)
@@ -67,7 +67,7 @@ public class HexDump
                 }
                 else
                 {
-                    result.append(".");
+                    result.append('.');
                 }
             }
         }
@@ -130,7 +130,7 @@ public class HexDump
         if (c >= 'A' && c <= 'F') return (c - 'A' + 10);
         if (c >= 'a' && c <= 'f') return (c - 'a' + 10);
 
-        throw new RuntimeException ("Invalid hex char '" + c + "'");
+        throw new RuntimeException ("Invalid hex char '" + c + '\'');
     }
     
     public static byte[] hexStringToByteArray(String hexString)

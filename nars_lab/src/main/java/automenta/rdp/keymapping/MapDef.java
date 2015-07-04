@@ -41,13 +41,13 @@ public class MapDef {
 
 	// Flag masks for use in generating an integer modifiers value (for text
 	// definition output)
-	private final int FLAG_SHIFT = 0x01; // flag mask for a shift modifier
+	private static final int FLAG_SHIFT = 0x01; // flag mask for a shift modifier
 
-	private final int FLAG_CTRL = 0x02; // flag mask for a control modifier
+	private static final int FLAG_CTRL = 0x02; // flag mask for a control modifier
 
-	private final int FLAG_ALT = 0x04; // flag mask for an alt modifier
+	private static final int FLAG_ALT = 0x04; // flag mask for an alt modifier
 
-	private final int FLAG_CAPSLOCK = 0x08; // flag mask for a capslock modifier
+	private static final int FLAG_CAPSLOCK = 0x08; // flag mask for a capslock modifier
 
 	private int scancode;
 
@@ -305,8 +305,7 @@ public class MapDef {
 			capslockDown = ((modifiers & this.FLAG_CAPSLOCK) != 0);
 
 		} catch (NumberFormatException nfEx) {
-			throw new KeyMapException("" + nfEx.getMessage()
-					+ " is not numeric");
+			throw new KeyMapException(nfEx.getMessage() + " is not numeric");
 		} catch (NoSuchElementException nseEx) {
 			throw new KeyMapException("Not enough parameters in definition");
 		}
@@ -325,7 +324,7 @@ public class MapDef {
 
 		// create definition string with first character 1 if the
 		// mapping is character-defined, 0 otherwise
-		String definition = "" + (characterDef ? 1 : 0);
+		String definition = String.valueOf(characterDef ? 1 : 0);
 
 		// add character or keycode
 		definition += "\t";
@@ -348,7 +347,7 @@ public class MapDef {
 
 		// add additional information if available (and necessary)
 		if (!characterDef)
-			definition += "\t" + KeyEvent.getKeyText(this.keyCode);
+			definition += '\t' + KeyEvent.getKeyText(this.keyCode);
 
 		// output the definition to the specified stream
 		p.println(definition);

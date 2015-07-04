@@ -44,7 +44,7 @@ public final class MD5 extends BlockMessageDigest implements Cloneable {
 	private byte[] tmp;
 
 	/** Returns the length of the hash (in bytes). */
-	protected int engineGetDigestLength() {
+	protected static int engineGetDigestLength() {
 		return HASH_LENGTH;
 	}
 

@@ -31,8 +31,6 @@ package automenta.rdp.keymapping;
 
 import java.awt.event.KeyEvent;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -188,8 +186,7 @@ public abstract class KeyCode_FileBased {
 		} catch (IOException e) {
 			throw new KeyMapException("File input error: " + e.getMessage());
 		} catch (NumberFormatException nfEx) {
-			throw new KeyMapException("" + nfEx.getMessage()
-					+ " is not numeric at line " + lineNum);
+			throw new KeyMapException(nfEx.getMessage() + " is not numeric at line " + lineNum);
 		} catch (NoSuchElementException nseEx) {
 			throw new KeyMapException(
 					"Not enough parameters in definition at line " + lineNum);
@@ -215,7 +212,7 @@ public abstract class KeyCode_FileBased {
 	 * @return AWT keycode representing input character, -1 if character not
 	 *         alphanumeric
 	 */
-	private int getCodeFromAlphaChar(char keyChar) {
+	private static int getCodeFromAlphaChar(char keyChar) {
 		if (('a' <= keyChar) && (keyChar <= 'z')) {
 			return KeyEvent.VK_A + keyChar - 'a';
 		}
@@ -447,7 +444,7 @@ public abstract class KeyCode_FileBased {
 			if (e.getID() == KeyEvent.KEY_RELEASED)
 				logger.debug("Released: " + e.getKeyCode()
 						+ " returned scancode: "
-						+ ((def != null) ? "" + def.getScancode() : "null"));
+						+ ((def != null) ? String.valueOf(def.getScancode()) : "null"));
 			return def;
 		}
 
@@ -481,10 +478,10 @@ public abstract class KeyCode_FileBased {
 
 		if (e.getID() == KeyEvent.KEY_PRESSED)
 			logger.debug("Pressed: " + e.getKeyCode() + " returned scancode: "
-					+ ((best != null) ? "" + best.getScancode() : "null"));
+					+ ((best != null) ? String.valueOf(best.getScancode()) : "null"));
 		if (e.getID() == KeyEvent.KEY_TYPED)
 			logger.debug("Typed: " + e.getKeyChar() + " returned scancode: "
-					+ ((best != null) ? "" + best.getScancode() : "null"));
+					+ ((best != null) ? String.valueOf(best.getScancode()) : "null"));
 
 		registerKeyEvent(e, best);
 
@@ -555,6 +552,8 @@ public abstract class KeyCode_FileBased {
 	 *            Keyboard event to reproduce
 	 * @return List of character pairs representing scancodes and key actions to
 	 *         send to server
+	 *
+	 * TODO use StringBuilder
 	 */
 	public String getKeyStrokes(KeyEvent e) {
 		String codes = "";
@@ -568,19 +567,16 @@ public abstract class KeyCode_FileBased {
 		String type = "";
 
 		if (e.getID() == KeyEvent.KEY_RELEASED) {
-			if ((!Options.caps_sends_up_and_down)
-					&& (e.getKeyCode() == KeyEvent.VK_CAPS_LOCK)) {
-				logger.debug("Sending CAPSLOCK toggle");
-				codes = "" + ((char) 0x3a) + ((char) DOWN) + ((char) 0x3a)
-						+ ((char) UP) + codes;
+			if ((!Options.caps_sends_up_and_down) && (e.getKeyCode() == KeyEvent.VK_CAPS_LOCK)) {
+				//logger.debug("Sending CAPSLOCK toggle");
+				codes = String.valueOf(((char) 0x3a)) + ((char) DOWN) + ((char) 0x3a) + ((char) UP) + codes;
 			} else {
 				type = "" + ((char) UP);
 				codes = ((char) d.getScancode()) + type + codes;
 			}
 		} else {
-			if ((!Options.caps_sends_up_and_down)
-					&& (e.getKeyCode() == KeyEvent.VK_CAPS_LOCK)) {
-				logger.debug("Sending CAPSLOCK toggle");
+			if ((!Options.caps_sends_up_and_down) && (e.getKeyCode() == KeyEvent.VK_CAPS_LOCK)) {
+				//logger.debug("Sending CAPSLOCK toggle");
 				codes += "" + ((char) 0x3a) + ((char) DOWN) + ((char) 0x3a)
 						+ ((char) UP);
 			} else {

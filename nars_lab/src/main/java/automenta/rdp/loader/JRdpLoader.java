@@ -85,7 +85,7 @@ public class JRdpLoader {
 					else {
 						String p = getParam(identifier);
 						if (p != null)
-							outArgs += p + " " + value + " ";
+							outArgs += p + ' ' + value + ' ';
 					}
 				}
 			}
@@ -93,7 +93,7 @@ public class JRdpLoader {
 			if (server != null && server != "") {
 				outArgs += server;
 				if (port != null && port != "")
-					outArgs += ":" + port;
+					outArgs += ':' + port;
 
 				// String[] finArgs = outArgs.split(" ");
 				String[] finArgs = Utilities_Localised.split(outArgs, " ");

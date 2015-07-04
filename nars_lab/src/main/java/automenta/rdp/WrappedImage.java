@@ -99,8 +99,8 @@ public class WrappedImage {
 	}
 
 	public void setRGB(int x, int y, int color) {
-		// if(x >= bi.getWidth() || x < 0 || y >= bi.getHeight() || y < 0)
-		// return;
+		if(x >= bi.getWidth() || x < 0 || y >= bi.getHeight() || y < 0)
+			return;
 
 		if (cm != null)
 			color = cm.getRGB(color);
@@ -146,8 +146,8 @@ public class WrappedImage {
 	}
 
 	public int getRGB(int x, int y) {
-		// if(x >= this.getWidth() || x < 0 || y >= this.getHeight() || y < 0)
-		// return 0;
+		if(x >= this.getWidth() || x < 0 || y >= this.getHeight() || y < 0)
+			return 0;
 
 		if (cm == null)
 			return bi.getRGB(x, y);
@@ -156,7 +156,7 @@ public class WrappedImage {
 			int[] vals = { (pix >> 16) & 0xFF, (pix >> 8) & 0xFF, (pix) & 0xFF };
 			int out = cm.getDataElement(vals, 0);
 			if (cm.getRGB(out) != bi.getRGB(x, y))
-				logger.info("Did not get correct colour value for color ("
+				logger.warn("Did not get correct colour value for color ("
 						+ Integer.toHexString(pix) + "), got ("
 						+ cm.getRGB(out) + ") instead");
 			return out;

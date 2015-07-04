@@ -29,7 +29,7 @@
  */
 package automenta.rdp.rdp5;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 
 /**
  * @author Tom Elliott
@@ -56,7 +56,7 @@ public class TestChannel extends VChannel {
 		return flags;
 	}
 
-	public void process(RdpPacket data) {
+	public void process(AbstractRdpPacket data) {
 	}
 
 }

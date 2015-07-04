@@ -34,12 +34,14 @@ import java.awt.image.DirectColorModel;
 public class Options {
 
 	public static final int DIRECT_BITMAP_DECOMPRESSION = 0;
-
 	public static final int BUFFEREDIMAGE_BITMAP_DECOMPRESSION = 1;
-
 	public static final int INTEGER_BITMAP_DECOMPRESSION = 2;
 
-	public static int bitmap_decompression_store = INTEGER_BITMAP_DECOMPRESSION;
+	public static int bitmap_decompression_store =
+			DIRECT_BITMAP_DECOMPRESSION;
+			//INTEGER_BITMAP_DECOMPRESSION;
+			//BUFFEREDIMAGE_BITMAP_DECOMPRESSION; //seems slow
+
 
 	// disables bandwidth saving tcp packets
 	public static boolean low_latency = true;
@@ -94,7 +96,7 @@ public class Options {
 
 	public static boolean use_rdp5 = true;
 
-	public static int server_bpp = 24; // Bits per pixel
+	public static int server_bpp = 16; // Bits per pixel
 
 	public static int Bpp = (server_bpp + 7) / 8; // Bytes per pixel
 

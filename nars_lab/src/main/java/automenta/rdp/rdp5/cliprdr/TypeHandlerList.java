@@ -33,7 +33,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 
 public class TypeHandlerList {
 
@@ -86,12 +86,12 @@ public class TypeHandlerList {
 		return outList;
 	}
 
-	public void writeTypeDefinitions(RdpPacket data) {
+	public void writeTypeDefinitions(AbstractRdpPacket data) {
 		TypeHandler handler = null;
 		for (Iterator i = handlers.iterator(); i.hasNext();) {
 			handler = (TypeHandler) i.next();
 			data.setLittleEndian32(handler.preferredFormat());
-			data.incrementPosition(32);
+			data.positionAdd(32);
 		}
 	}
 

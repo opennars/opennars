@@ -1,7 +1,7 @@
 package automenta.rdp.rdp5.disk;
 
-import automenta.rdp.rdp.RdpPacket_Localised;
-import automenta.rdp.RdpPacket;
+import automenta.rdp.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.rdp5.VChannel;
 import automenta.rdp.tools.FNMatch;
 
@@ -54,7 +54,7 @@ public class DiskDevice implements Device, DiskConst {
     }
 
     @Override
-    public int process(RdpPacket data, IRP irp) throws IOException {
+    public int process(AbstractRdpPacket data, IRP irp) throws IOException {
 //        System.out.print("执行" + irp.majorFunction + ", fileId=" + irp.fileId);
         DriveFile df = files.get(irp.fileId);
 //        if(df != null) {
@@ -76,7 +76,7 @@ public class DiskDevice implements Device, DiskConst {
         }
     }
     
-    private int process0(RdpPacket data, IRP irp) throws IOException {
+    private int process0(AbstractRdpPacket data, IRP irp) throws IOException {
         int status;
         switch(irp.majorFunction) {
         case IRP_MJ_CREATE:
@@ -127,10 +127,10 @@ public class DiskDevice implements Device, DiskConst {
         return status;
     }
     
-    private int drive_process_irp_create(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_create(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         int desiredAccess = data.getLittleEndian32();
-        data.incrementPosition(16);/* AllocationSize(8), FileAttributes(4), SharedAccess(4) */
+        data.positionAdd(16);/* AllocationSize(8), FileAttributes(4), SharedAccess(4) */
         int createDisposition = data.getLittleEndian32();
         int createOptions = data.getLittleEndian32();
         int pathLength = data.getLittleEndian32();
@@ -140,7 +140,7 @@ public class DiskDevice implements Device, DiskConst {
         String fileName = ""; 
         if(pathLength > 0 && (pathLength / 2) < 256) {
             byte[] pathByte = new byte[pathLength];
-            data.copyToByteArray(pathByte, 0, data.getPosition(), pathLength);
+            data.copyToByteArray(pathByte, 0, data.position(), pathLength);
             fileName = parsePath(pathByte);
             fileName = fileName.replaceAll("\\\\", "/");
             if(fileName.endsWith("/")) {
@@ -183,7 +183,7 @@ public class DiskDevice implements Device, DiskConst {
         return ioStatus;
     }
     
-    private int drive_process_irp_close(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_close(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         DriveFile df = files.get(irp.fileId);
         if(df == null || !df.file.exists()) {
@@ -204,7 +204,7 @@ public class DiskDevice implements Device, DiskConst {
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_read(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_read(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         DriveFile df = files.get(irp.fileId);
         if (df == null || !df.file.exists()) {
@@ -234,11 +234,11 @@ public class DiskDevice implements Device, DiskConst {
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_write(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_write(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         int length = data.getLittleEndian32();
         long offset = ((long)data.getLittleEndian32()) + (((long)data.getLittleEndian32()) << 32);
-        data.incrementPosition(20);
+        data.positionAdd(20);
         
         DriveFile df = files.get(irp.fileId);
         if(df == null) {
@@ -250,7 +250,7 @@ public class DiskDevice implements Device, DiskConst {
             RandomAccessFile raf = df.getRAF(true);
             raf.seek(offset);
             byte[] bf = new byte[length];
-            data.copyToByteArray(bf, 0, data.getPosition(), length);
+            data.copyToByteArray(bf, 0, data.position(), length);
             raf.write(bf);
 //            for(int l = 0; l < length; l++) {
 //                raf.write(data.get8());
@@ -267,7 +267,7 @@ public class DiskDevice implements Device, DiskConst {
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_query_information(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_query_information(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         int fsInformationClass = data.getLittleEndian32();
         
@@ -340,11 +340,11 @@ public class DiskDevice implements Device, DiskConst {
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_set_information(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_set_information(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         int fsInformationClass = data.getLittleEndian32();
         int length = data.getLittleEndian32();
-        data.incrementPosition(24);
+        data.positionAdd(24);
         DriveFile df = files.get(irp.fileId);
         if(df == null || !df.file.exists()) {
             out.writeInt(length);//length
@@ -397,7 +397,7 @@ public class DiskDevice implements Device, DiskConst {
             String fileName = ""; 
             if(pathLength > 0 && (pathLength / 2) < 256) {
                 byte[] pathByte = new byte[pathLength];
-                data.copyToByteArray(pathByte, 0, data.getPosition(), pathLength);
+                data.copyToByteArray(pathByte, 0, data.position(), pathLength);
                 fileName = parsePath(pathByte);
                 fileName = fileName.replaceAll("\\\\", "/");
             } else {
@@ -424,7 +424,7 @@ public class DiskDevice implements Device, DiskConst {
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_query_volume_information(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_query_volume_information(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         int fsInformationClass = data.getLittleEndian32();
 //        int length = data.getLittleEndian32();
@@ -499,12 +499,12 @@ public class DiskDevice implements Device, DiskConst {
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_silent_ignore(RdpPacket data, IRP irp) throws IOException {
+    private static int drive_process_irp_silent_ignore(AbstractRdpPacket data, IRP irp) throws IOException {
         irp.out.writeInt(0);//length
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_directory_control(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_directory_control(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         switch (irp.minorFunction) {
         case IRP_MN_QUERY_DIRECTORY:
@@ -517,7 +517,7 @@ public class DiskDevice implements Device, DiskConst {
         }
     }
     
-    private int disk_create_notify(RdpPacket data, IRP irp) throws IOException {
+    private int disk_create_notify(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         int fsInformationClass = data.getLittleEndian32();
         
@@ -538,12 +538,12 @@ public class DiskDevice implements Device, DiskConst {
         return result;
     }
     
-    private int drive_process_irp_query_directory(RdpPacket data, IRP irp) throws IOException {
+    private int drive_process_irp_query_directory(AbstractRdpPacket data, IRP irp) throws IOException {
         DataOutputStream out = irp.out;
         int fsInformationClass = data.getLittleEndian32();
         int initialQuery = data.get8();
         int pathLength = data.getLittleEndian32();
-        data.incrementPosition(23);
+        data.positionAdd(23);
         
         int file_attributes = 0;
         
@@ -554,7 +554,7 @@ public class DiskDevice implements Device, DiskConst {
         String pattern = "";
         if (pathLength > 0 && pathLength < 2 * 255) {
             byte[] pathByte = new byte[pathLength];
-            data.copyToByteArray(pathByte, 0, data.getPosition(), pathLength);
+            data.copyToByteArray(pathByte, 0, data.position(), pathLength);
             pattern = parsePath(pathByte);
             pattern = pattern.replaceAll("\\\\", "/");
         }
@@ -573,7 +573,7 @@ public class DiskDevice implements Device, DiskConst {
         
         if(initialQuery != 0) {
             if(pattern.length() != 0) {
-                int index = pattern.lastIndexOf("/");
+                int index = pattern.lastIndexOf('/');
                 if(index != -1) {
                     df.pattern = pattern.substring(index);
                 } else {
@@ -587,7 +587,7 @@ public class DiskDevice implements Device, DiskConst {
         
         while(df.subfiles.hasNext()) {
             subFile = df.subfiles.next();
-            if(FNMatch.fnmatch(df.pattern, "/" + subFile, 0)) {
+            if(FNMatch.fnmatch(df.pattern, '/' + subFile, 0)) {
                 break;
             }
             subFile = null;
@@ -709,12 +709,12 @@ public class DiskDevice implements Device, DiskConst {
         return RD_STATUS_SUCCESS;
     }
     
-    private int drive_process_irp_device_control(RdpPacket data, IRP irp) throws IOException {
+    private static int drive_process_irp_device_control(AbstractRdpPacket data, IRP irp) throws IOException {
         irp.out.writeInt(0);
         return RD_STATUS_NOT_SUPPORTED;
     }
     
-    private String parsePath(byte[] unicodeBytes) {
+    private static String parsePath(byte[] unicodeBytes) {
         StringBuilder sb = new StringBuilder("");
         int i = 0;
         while(i < unicodeBytes.length) {
@@ -728,7 +728,7 @@ public class DiskDevice implements Device, DiskConst {
         return sb.toString();
     }
     
-    private void writeLongLe(DataOutputStream out, long v) throws IOException {
+    private static void writeLongLe(DataOutputStream out, long v) throws IOException {
         out.write((byte)(v >>>  0));
         out.write((byte)(v >>>  8));
         out.write((byte)(v >>> 16));
@@ -739,25 +739,25 @@ public class DiskDevice implements Device, DiskConst {
         out.write((byte)(v >>> 56));
     }
     
-    private void writeIntLe(DataOutputStream out, int v) throws IOException {
+    private static void writeIntLe(DataOutputStream out, int v) throws IOException {
         out.write((byte)(v >>>  0));
         out.write((byte)(v >>>  8));
         out.write((byte)(v >>> 16));
         out.write((byte)(v >>> 24));
     }
     
-    private long getWindowsTime(Date date) {
+    private static long getWindowsTime(Date date) {
         if(date == null) {
             date = new Date();
         }
         return (date.getTime() + 11644473600000L) * 10000;
     }
     
-    private long parseWindowsTime(long t) {
+    private static long parseWindowsTime(long t) {
         return t / 10000 - 11644473600000L;
     }
     
-    private void writePath(DataOutputStream out, String path) throws IOException {
+    private static void writePath(DataOutputStream out, String path) throws IOException {
         for(int i = 0; i < path.length(); i++) {
             char c = path.charAt(i);
             out.write((byte) c);
@@ -810,7 +810,7 @@ public class DiskDevice implements Device, DiskConst {
         }
         if(ioStatus != RD_STATUS_PENDING) {
             //device i/o response header
-            RdpPacket_Localised s = new RdpPacket_Localised(16 + buffer.length);
+            RdpPacket s = new RdpPacket(16 + buffer.length);
             s.setLittleEndian16(RDPDR_CTYP_CORE);// PAKID_CORE_DEVICE_REPLY?
             s.setLittleEndian16(PAKID_CORE_DEVICE_IOCOMPLETION);
             s.setLittleEndian32(irp.deviceId);
@@ -818,7 +818,7 @@ public class DiskDevice implements Device, DiskConst {
             s.setLittleEndian32(ioStatus);
             
             if(buffer.length > 0) {
-                s.copyFromByteArray(buffer, 0, s.getPosition(), buffer.length);
+                s.copyFromByteArray(buffer, 0, s.position(), buffer.length);
             }
             
             s.markEnd();

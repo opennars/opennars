@@ -29,7 +29,7 @@
  */
 package automenta.rdp;
 
-public class RdesktopException extends Exception {
+public class RdesktopException extends RuntimeException {
 
 	private static final long serialVersionUID = 2839110732850220601L;
 

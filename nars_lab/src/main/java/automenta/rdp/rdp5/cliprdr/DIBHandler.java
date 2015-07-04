@@ -29,7 +29,7 @@
  */
 package automenta.rdp.rdp5.cliprdr;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.rdp.Utilities_Localised;
 import automenta.rdp.Common;
 import automenta.rdp.Input;
@@ -61,7 +61,7 @@ public class DIBHandler extends TypeHandler implements ImageObserver {
 		return "CF_DIB";
 	}
 
-	public void handleData(RdpPacket data, int length, ClipInterface c) {
+	public void handleData(AbstractRdpPacket data, int length, ClipInterface c) {
 		// System.out.println("DIBHandler.handleData");
 		BMPToImageThread t = new BMPToImageThread(data, length, c);
 		t.start();

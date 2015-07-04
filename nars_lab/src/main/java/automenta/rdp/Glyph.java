@@ -32,6 +32,8 @@ package automenta.rdp;
 // import java.awt.*;
 // import java.awt.image.*;
 
+import java.util.Arrays;
+
 public class Glyph {
 
 	private int font = 0;
@@ -75,6 +77,13 @@ public class Glyph {
 		this.width = width;
 		this.height = height;
 		this.fontdata = fontdata;
+
+
+	}
+
+	@Override
+	public String toString() {
+		return "\'" + ((char)this.character) + "\': font=" + this.font + ", " + width + "x" + height;
 	}
 
 	/**

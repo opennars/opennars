@@ -29,7 +29,7 @@
  */
 package automenta.rdp;
 
-import automenta.rdp.rdp.RdpPacket_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.crypto.CryptoException;
 import org.apache.log4j.Logger;
 
@@ -77,10 +77,10 @@ public abstract class ISO {
 	 *            Desired length of PDU
 	 * @return Packet configured as ISO PDU, ready to write at higher level
 	 */
-	public RdpPacket_Localised init(int length) {
-		RdpPacket_Localised data = new RdpPacket_Localised(length + 7);// getMemory(length+7);
-		data.incrementPosition(7);
-		data.setStart(data.getPosition());
+	public static RdpPacket init(int length) {
+		RdpPacket data = new RdpPacket(length + 7);// getMemory(length+7);
+		data.positionAdd(7);
+		data.setStart(data.position());
 		return data;
 	}
 
@@ -153,7 +153,7 @@ public abstract class ISO {
 	 *                when an I/O Error occurs
 	 */
 	private void sendMessage(int type) throws IOException {
-		RdpPacket_Localised buffer = new RdpPacket_Localised(11);// getMemory(11);
+		RdpPacket buffer = new RdpPacket(11);// getMemory(11);
 		byte[] packet = new byte[11];
 
 		buffer.set8(PROTOCOL_VERSION); // send Version Info
@@ -180,7 +180,7 @@ public abstract class ISO {
 	 * @throws RdesktopException
 	 * @throws IOException
 	 */
-	public void send(RdpPacket_Localised buffer) throws RdesktopException,
+	public void send(RdpPacket buffer) throws RdesktopException,
 			IOException {
 		if (rdpsock == null || out == null)
 			return;
@@ -190,7 +190,7 @@ public abstract class ISO {
 			int length = buffer.getEnd();
 			byte[] packet = new byte[length];
 			// RdpPacket data = this.getMemory(length+7);
-			buffer.setPosition(0);
+			buffer.position(0);
 			buffer.set8(PROTOCOL_VERSION); // Version
 			buffer.set8(0); // reserved
 			buffer.setBigEndian16(length); // length of packet
@@ -219,10 +219,10 @@ public abstract class ISO {
 	 * @throws OrderException
 	 * @throws CryptoException
 	 */
-	public RdpPacket_Localised receive() throws IOException, RdesktopException,
+	public RdpPacket receive() throws IOException, RdesktopException,
 			OrderException, CryptoException {
 		int[] type = new int[1];
-		RdpPacket_Localised buffer = receiveMessage(type);
+		RdpPacket buffer = receiveMessage(type);
 		if (buffer == null)
 			return null;
 		if (type[0] != DATA_TRANSFER) {
@@ -246,10 +246,10 @@ public abstract class ISO {
 	 *         provided
 	 * @throws IOException
 	 */
-	private RdpPacket_Localised tcp_recv(RdpPacket_Localised p, int length)
+	private RdpPacket tcp_recv(RdpPacket p, int length)
 			throws IOException {
 		logger.debug("ISO.tcp_recv");
-		RdpPacket_Localised buffer = null;
+		RdpPacket buffer = null;
 		byte[] packet = new byte[length];
 
 		in.readFully(packet, 0, length);
@@ -264,17 +264,17 @@ public abstract class ISO {
 		}
 
 		if (p == null) {
-			buffer = new RdpPacket_Localised(length);
+			buffer = new RdpPacket(length);
 			buffer.copyFromByteArray(packet, 0, 0, packet.length);
 			buffer.markEnd(length);
-			buffer.setStart(buffer.getPosition());
+			buffer.setStart(buffer.position());
 		} else {
-			buffer = new RdpPacket_Localised((p.getEnd() - p.getStart())
+			buffer = new RdpPacket((p.getEnd() - p.getStart())
 					+ length);
 			buffer.copyFromPacket(p, p.getStart(), 0, p.getEnd());
 			buffer.copyFromByteArray(packet, 0, p.getEnd(), packet.length);
 			buffer.markEnd(p.size() + packet.length);
-			buffer.setPosition(p.getPosition());
+			buffer.position(p.position());
 			buffer.setStart(0);
 		}
 
@@ -292,10 +292,10 @@ public abstract class ISO {
 	 * @throws OrderException
 	 * @throws CryptoException
 	 */
-	private RdpPacket_Localised receiveMessageex(int[] type, int[] rdpver) throws IOException,
+	private RdpPacket receiveMessageex(int[] type, int[] rdpver) throws IOException,
 			RdesktopException, OrderException, CryptoException {
 		logger.debug("ISO.receiveMessage");
-		RdpPacket_Localised s = null;
+		RdpPacket s = null;
 		int length, version;
 
 		next_packet: while (true) {
@@ -309,7 +309,7 @@ public abstract class ISO {
 			rdpver[0] = version;
 
 			if (version == 3) {
-				s.incrementPosition(1); // pad
+				s.positionAdd(1); // pad
 				length = s.getBigEndian16();
 			} else {
 				length = s.get8();
@@ -335,14 +335,14 @@ public abstract class ISO {
 
 		if (type[0] == DATA_TRANSFER) {
 			logger.debug("Data Transfer Packet");
-			s.incrementPosition(1); // eot
+			s.positionAdd(1); // eot
 			return s;
 		}
 
-		s.incrementPosition(5); // dst_ref, src_ref, class
+		s.positionAdd(5); // dst_ref, src_ref, class
 		return s;
 	}
-	private RdpPacket_Localised receiveMessage(int[] type) throws IOException,
+	private RdpPacket receiveMessage(int[] type) throws IOException,
 			RdesktopException, OrderException, CryptoException {
 		int[] rdpver = new int[1];
 		return receiveMessageex(type, rdpver);
@@ -386,7 +386,7 @@ public abstract class ISO {
 		int length = 11 + (Options.username.length() > 0 ? ("Cookie: mstshash="
 				.length()
 				+ uname.length() + 2) : 0)/* + 8*/;
-		RdpPacket_Localised buffer = new RdpPacket_Localised(length);
+		RdpPacket buffer = new RdpPacket(length);
 		byte[] packet = new byte[length];
 
 		buffer.set8(PROTOCOL_VERSION); // send Version Info

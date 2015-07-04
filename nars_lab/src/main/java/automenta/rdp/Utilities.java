@@ -57,11 +57,11 @@ public class Utilities {
 				new int[] { 0 } }; ((StringTokenizer) obj[0]).hasMoreTokens(); ((String[]) obj[1])[((int[]) obj[2])[0]++] = ((StringTokenizer) obj[0])
 				.nextToken()) {
 		}
-		String out = finArgs[0];
+		StringBuilder out = new StringBuilder(finArgs[0]);
 		for (int i = 1; i < finArgs.length; i++) {
-			out += replace + finArgs[i];
+			out.append(replace).append(finArgs[i]);
 		}
-		return out;
+		return out.toString();
 	}
 
 	/**

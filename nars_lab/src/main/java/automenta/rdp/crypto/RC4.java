@@ -105,7 +105,7 @@ public final class RC4 { // must be final for security reasons
 	 * 
 	 * @return the length in bytes of an input block for this cipher.
 	 */
-	public int engineBlockSize() {
+	public static int engineBlockSize() {
 		return BLOCK_SIZE;
 	}
 

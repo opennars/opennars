@@ -143,7 +143,7 @@ public class RDPClientChooser {
 		String server = null;
 
 		if (g.getOptind() < args.length) {
-			int colonat = args[args.length - 1].indexOf(":", 0);
+			int colonat = args[args.length - 1].indexOf(':', 0);
 			if (colonat == -1) {
 				server = args[args.length - 1];
 			} else {
@@ -160,7 +160,7 @@ public class RDPClientChooser {
 		// that
 		// we can run multiple instances
 
-		String rdproot = "/var/tmp/RDP-" + Options.hostname + "-"
+		String rdproot = "/var/tmp/RDP-" + Options.hostname + '-'
 				+ Options.port;
 
 		try {
@@ -189,17 +189,17 @@ public class RDPClientChooser {
 		rdpConfigFile.write("session bpp:i:8\n"); // 256 colors
 		rdpConfigFile.write("winposstr:s:0,3,0,0,800,600\n");
 		rdpConfigFile.write("auto connect:i:1\n");
-		rdpConfigFile.write("full address:s:" + server + ":" + Options.port
-				+ "\n");
+		rdpConfigFile.write("full address:s:" + server + ':' + Options.port
+				+ '\n');
 		rdpConfigFile.write("compression:i:1\n");
 		rdpConfigFile.write("rightclickmodifiers:i:4608\n");
 		rdpConfigFile.write("altkeyreplacement:i:0\n");
 		rdpConfigFile.write("audiomode:i:1\n");
 		rdpConfigFile.write("redirectdrives:i:1\n");
 		rdpConfigFile.write("redirectprinters:i:1\n");
-		rdpConfigFile.write("username:s:" + Options.username + "\n");
-		rdpConfigFile.write("clear password:s:" + Options.password + "\n");
-		rdpConfigFile.write("domain:s:" + Options.domain + "\n");
+		rdpConfigFile.write("username:s:" + Options.username + '\n');
+		rdpConfigFile.write("clear password:s:" + Options.password + '\n');
+		rdpConfigFile.write("domain:s:" + Options.domain + '\n');
 		rdpConfigFile.write("alternate shell:s:\n");
 		rdpConfigFile.write("shell working directory:s:\n");
 		rdpConfigFile.write("preference flag id:i:2\n");
@@ -276,7 +276,7 @@ public class RDPClientChooser {
 				"/bin/sh",
 				"-c",
 				"mv " + rdproot + "/Remote\\ Desktop\\ Connection '" + rdproot
-						+ "/" + Options.windowTitle
+						+ '/' + Options.windowTitle
 						+ "' >/dev/null 2>/dev/null" };
 
 		try {
@@ -297,7 +297,7 @@ public class RDPClientChooser {
 		String[] rdpcmd = {
 				"/bin/sh",
 				"-c",
-				"open -a '" + rdproot + "/" + Options.windowTitle + "' "
+				"open -a '" + rdproot + '/' + Options.windowTitle + "' "
 						+ rdproot + "/Default.rdp >/dev/null 2>/dev/null" };
 
 		try {

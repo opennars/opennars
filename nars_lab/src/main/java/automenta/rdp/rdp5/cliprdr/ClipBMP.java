@@ -265,7 +265,7 @@ public class ClipBMP extends Component {
 	 * a 2-byte array.
 	 * 
 	 */
-	private byte[] intToWord(int parValue) {
+	private static byte[] intToWord(int parValue) {
 		byte retValue[] = new byte[2];
 		retValue[0] = (byte) (parValue & 0x00FF);
 		retValue[1] = (byte) ((parValue >> 8) & 0x00FF);
@@ -278,7 +278,7 @@ public class ClipBMP extends Component {
 	 * stored in a 4-byte array.
 	 * 
 	 */
-	private byte[] intToDWord(int parValue) {
+	private static byte[] intToDWord(int parValue) {
 		byte retValue[] = new byte[4];
 		retValue[0] = (byte) (parValue & 0x00FF);
 		retValue[1] = (byte) ((parValue >> 8) & 0x000000FF);
@@ -383,9 +383,9 @@ public class ClipBMP extends Component {
 				for (int j = 0; j < nheight; j++) {
 					for (int i = 0; i < nwidth; i++) {
 						ndata[nwidth * (nheight - j - 1) + i] = (255 & 0xff) << 24
-								| (((int) brgb[nindex + 2] & 0xff) << 16)
-								| (((int) brgb[nindex + 1] & 0xff) << 8)
-								| (int) brgb[nindex] & 0xff;
+								| ((brgb[nindex + 2] & 0xff) << 16)
+								| ((brgb[nindex + 1] & 0xff) << 8)
+								| brgb[nindex] & 0xff;
 						// System.out.println("Encoded Color at ("
 						// +i+","+j+")is:"+nrgb+" (R,G,B)= (" +((int)(brgb[2]) &
 						// 0xff)+"," +((int)brgb[1]&0xff)+","
@@ -576,9 +576,9 @@ public class ClipBMP extends Component {
 					for (int i8 = 0; i8 < (nwidth) - 1; i8 += 2) {
 						ndata8[nwidth * (nheight - j8 - 1) + i8] = npalette[((int) (bdata[nindex8] & 0x0f))];
 						ndata8[nwidth * (nheight - j8 - 1) + i8 + 1] = npalette[((int) (bdata[nindex8] & 0xf0) / 0xf)];
-						System.out.print("1:" + (bdata[nindex8] & 0x0f) + "\t");
+						System.out.print("1:" + (bdata[nindex8] & 0x0f) + '\t');
 						System.out.print("2:" + ((bdata[nindex8] & 0xf0) / 0xf)
-								+ "\t");
+								+ '\t');
 						// System.out.print(nindex8 + "/" + nsizeimage + "\t");
 						// ndata8[nwidth * j8 + i8] = npalette[((int)
 						// (bdata[nindex8] & 0x0f))];

@@ -3,7 +3,7 @@ package automenta.rdp.rdp5.disk;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 
 public class IRP {
 
@@ -16,7 +16,7 @@ public class IRP {
     public DataOutputStream out;
     public ByteArrayOutputStream bout;
     
-    public RdpPacket data;
+    public AbstractRdpPacket data;
     
     public int deviceId;
     

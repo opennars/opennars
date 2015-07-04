@@ -29,7 +29,7 @@
  */
 package automenta.rdp.rdp5.cliprdr;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.rdp.Utilities_Localised;
 
 import java.awt.datatransfer.DataFlavor;
@@ -50,21 +50,36 @@ public class TextHandler extends TypeHandler {
 		return CF_TEXT;
 	}
 
-	public Transferable handleData(RdpPacket data, int length) {
+	public static Transferable handleData(AbstractRdpPacket data, int length) {
+		StringBuilder thingy = new StringBuilder(length);// thingy = "";
+		for (int i = 0; i < length; i++) {
+			int aByte = data.get8();
+			if (aByte != 0)
+				thingy.append( (char) (aByte & 0xFF) );
+		}
+		return (new StringSelection(thingy.toString()));
+	}
+	/*
+         * (non-Javadoc)
+         *
+         * @see net.propero.rdp.rdp5.cliprdr.TypeHandler#handleData(net.propero.rdp.RdpPacket,
+         *      int, net.propero.rdp.rdp5.cliprdr.ClipInterface)
+         */
+	public void handleData(AbstractRdpPacket data, int length, ClipInterface c) {
 		String thingy = "";
 		for (int i = 0; i < length; i++) {
 			int aByte = data.get8();
 			if (aByte != 0)
 				thingy += (char) (aByte & 0xFF);
 		}
-		return (new StringSelection(thingy));
+		c.copyToClipboard(new StringSelection(thingy));
 	}
 
 	public String name() {
 		return "CF_TEXT";
 	}
 
-	public byte[] fromTransferable(Transferable in) {
+	public static byte[] fromTransferable(Transferable in) {
 		String s;
 		if (in != null) {
 			try {
@@ -84,21 +99,6 @@ public class TextHandler extends TypeHandler {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.propero.rdp.rdp5.cliprdr.TypeHandler#handleData(net.propero.rdp.RdpPacket,
-	 *      int, net.propero.rdp.rdp5.cliprdr.ClipInterface)
-	 */
-	public void handleData(RdpPacket data, int length, ClipInterface c) {
-		String thingy = "";
-		for (int i = 0; i < length; i++) {
-			int aByte = data.get8();
-			if (aByte != 0)
-				thingy += (char) (aByte & 0xFF);
-		}
-		c.copyToClipboard(new StringSelection(thingy));
-	}
 
 	/*
 	 * (non-Javadoc)

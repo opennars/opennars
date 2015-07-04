@@ -116,8 +116,8 @@ public class PstCache {
 		// rd_read_file(fd, celldata, cellhdr.length);
 		celldata = new byte[c.length];
 		fd.read(celldata);
-		logger.debug("Loading bitmap from disk (" + cache_id + ":" + cache_idx
-				+ ")\n");
+		/*logger.debug("Loading bitmap from disk (" + cache_id + ':' + cache_idx
+				+ ")\n");*/
 
 		bitmap = new Bitmap(celldata, c.width, c.height, 0, 0, Options.Bpp);
 		// bitmap = ui_create_bitmap(cellhdr.width, cellhdr.height, celldata);
@@ -235,7 +235,7 @@ public class PstCache {
 			return false;
 
 		g_pstcache_Bpp = Options.Bpp;
-		filename = "./cache/pstcache_" + cache_id + "_" + g_pstcache_Bpp;
+		filename = "./cache/pstcache_" + cache_id + '_' + g_pstcache_Bpp;
 		logger.debug("persistent bitmap cache file: " + filename);
 
 		File cacheDir = new File("./cache/");
@@ -285,20 +285,21 @@ class CELLHEADER {
 
 	}
 
-	public CELLHEADER(byte[] data) {
-		for (int i = 0; i < bitmap_id.length; i++)
-			bitmap_id[i] = data[i];
+	public CELLHEADER(final byte[] data) {
+		final int blen = bitmap_id.length;
+		System.arraycopy(data, 0, bitmap_id, 0, blen);
 
-		width = data[bitmap_id.length];
-		height = data[bitmap_id.length + 1];
-		length = (data[bitmap_id.length + 2] >> 8) + data[bitmap_id.length + 3];
-		stamp = (data[bitmap_id.length + 6] >> 24)
-				+ (data[bitmap_id.length + 6] >> 16)
-				+ (data[bitmap_id.length + 6] >> 8)
-				+ data[bitmap_id.length + 7];
+
+		width = data[blen];
+		height = data[blen + 1];
+		length = (data[blen + 2] >> 8) + data[blen + 3];
+		stamp = (data[blen + 6] >> 24)
+				+ (data[blen + 6] >> 16)
+				+ (data[blen + 6] >> 8)
+				+ data[blen + 7];
 	}
 
 	public byte[] toBytes() {
-		return null;
+		return bitmap_id;
 	}
 }

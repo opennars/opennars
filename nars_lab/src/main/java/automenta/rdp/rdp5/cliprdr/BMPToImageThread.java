@@ -32,17 +32,17 @@ package automenta.rdp.rdp5.cliprdr;
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
 
-import automenta.rdp.RdpPacket;
+import automenta.rdp.AbstractRdpPacket;
 
 public class BMPToImageThread extends Thread {
 
-	RdpPacket data;
+	AbstractRdpPacket data;
 
 	int length;
 
 	ClipInterface c;
 
-	public BMPToImageThread(RdpPacket data, int length, ClipInterface c) {
+	public BMPToImageThread(AbstractRdpPacket data, int length, ClipInterface c) {
 		super();
 		this.data = data;
 		this.length = length;
@@ -50,11 +50,11 @@ public class BMPToImageThread extends Thread {
 	}
 
 	public void run() {
-		int origin = data.getPosition();
+		int origin = data.position();
 
 		int head_len = data.getLittleEndian32();
 
-		data.setPosition(origin);
+		data.position(origin);
 
 		byte[] content = new byte[length];
 
