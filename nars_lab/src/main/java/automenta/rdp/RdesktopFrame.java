@@ -136,10 +136,10 @@ public abstract class RdesktopFrame extends Frame {
 	public RdesktopFrame() {
 		super();
 		//check java version to support JRE1.6 
-		String java_version = System.getProperty("java.specification.version"); 
-		if(java_version.compareTo("1.6")==0){ 
+		//String java_version = System.getProperty("java.specification.version");
+
 		this.setSize(Options.width+6,Options.height+30); 
-		} 
+
 
 		Common.frame = this;
 		this.canvas = new RdesktopCanvas_Localised(Options.width,

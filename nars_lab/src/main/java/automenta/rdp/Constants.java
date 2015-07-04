@@ -39,7 +39,7 @@ public class Constants {
 
 	public static boolean encryption = true;
 
-	public static boolean licence = true;
+	public static boolean licence = false;
 
 	public static final int WINDOWS = 1;
 

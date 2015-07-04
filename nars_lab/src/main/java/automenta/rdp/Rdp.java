@@ -671,7 +671,7 @@ public class Rdp {
 			} catch (EOFException e) {
 				return;
 			}
-System.out.println("dataType=" + type[0]);
+			//System.out.println("dataType=" + type[0]);
 			switch (type[0]) {
 
 			case (Rdp.RDP_PDU_DEMAND_ACTIVE):

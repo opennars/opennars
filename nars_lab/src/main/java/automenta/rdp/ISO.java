@@ -120,7 +120,7 @@ public abstract class ISO {
 		doSocketConnect(host, port);
 		rdpsock.setTcpNoDelay(Options.low_latency);
 		// this.in = new InputStreamReader(rdpsock.getInputStream());
-		this.in = new DataInputStream(new BufferedInputStream(rdpsock
+		this.in = new DataInputStream(/*new BufferedInputStream*/(rdpsock
 				.getInputStream()));
 		this.out = new DataOutputStream(new BufferedOutputStream(rdpsock
 				.getOutputStream()));

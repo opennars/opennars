@@ -46,7 +46,7 @@ public class Options {
 
 	public static int keylayout = 0x409; // UK by default
 
-	public static String username = "Administrator"; // -u username
+	public static String username = ""; // -u username
 
 	public static String domain = ""; // -d domain
 
@@ -58,7 +58,7 @@ public class Options {
 
 	public static String directory = ""; // -d directory
 
-	public static String windowTitle = "properJavaRDP"; // -T windowTitle
+	public static String windowTitle = "RDP"; // -T windowTitle
 
 	public static int width = 1024; // -g widthxheight
 
@@ -78,7 +78,7 @@ public class Options {
 
 	public static boolean debug_keyboard = false;
 
-	public static boolean debug_hexdump = false;
+	public static boolean debug_hexdump = true;
 
 	public static boolean enable_menu = true;
 
@@ -130,11 +130,11 @@ public class Options {
 
 	public static boolean bitmap_compression = true;
 
-	public static boolean persistent_bitmap_caching = false;
+	public static boolean persistent_bitmap_caching = true;
 
-	public static boolean bitmap_caching = false;
+	public static boolean bitmap_caching = true;
 
-	public static boolean precache_bitmaps = false;
+	public static boolean precache_bitmaps = true;
 
 	public static boolean polygon_ellipse_orders = false;
 
@@ -144,7 +144,7 @@ public class Options {
 
 	public static boolean encryption = true;
 
-	public static boolean packet_encryption = true;
+	public static boolean packet_encryption = false;
 
 	public static boolean desktop_save = true;
 
@@ -156,14 +156,14 @@ public class Options {
 
 	public static boolean owncolmap;
 
-	public static boolean use_ssl = false;
+	public static boolean use_ssl = true;
 
 	public static boolean map_clipboard = true;
 
 	public static int rdp5_performanceflags = Rdp.RDP5_NO_CURSOR_SHADOW
 			| Rdp.RDP5_NO_CURSORSETTINGS | Rdp.RDP5_NO_FULLWINDOWDRAG
 			| Rdp.RDP5_NO_MENUANIMATIONS /*| Rdp.RDP5_NO_THEMING*/
-			| Rdp.RDP5_NO_WALLPAPER;
+			| Rdp.RDP5_NO_WALLPAPER ;
 
 	public static boolean save_graphics = false;
 

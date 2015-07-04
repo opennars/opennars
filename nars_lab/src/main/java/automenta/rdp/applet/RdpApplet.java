@@ -118,8 +118,10 @@ public class RdpApplet extends Applet {
         String rdpserver = this.getParameter("server");
         String rdpport = this.getParameter("port");
         if(rdpserver != null){
-            args[index] = rdpserver + ((rdpport == null) ? "" : (":" + rdpport));
-            index++;
+            args[index++] = rdpserver + ((rdpport == null) ? "" : (":" + rdpport));
+        }
+        else {
+            args[index++] = "localhost:" + rdpport;
         }
 
         String[] rargs = new String[index];

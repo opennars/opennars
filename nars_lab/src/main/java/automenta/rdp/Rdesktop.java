@@ -279,22 +279,24 @@ public class Rdesktop {
 		keep_running = true;
 		loggedon = false;
 		readytosend = false;
-		showTools = false;
+		showTools = true;
 		mapFile = "en-us";
 		keyMapLocation = "";
 		toolFrame = null;
 
 		BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
+		logger.setLevel(Level.DEBUG);
 
 		// Attempt to run a native RDP Client
 
-		RDPClientChooser Chooser = new RDPClientChooser();
+		//RDPClientChooser Chooser = new RDPClientChooser();
 
+		/*
 		if (Chooser.RunNativeRDPClient(args)) {
 			if (!Common.underApplet)
 				System.exit(0);
 		}
+		*/
 
 		// Failed to run native client, drop back to Java client instead.
 
@@ -334,7 +336,7 @@ public class Rdesktop {
 		
 		DiskChannel diskChannel = new DiskChannel();
 		//diskChannel.addDiskDevice("linux", "/home/blee/temp/rdptest");
-		diskChannel.addDiskDevice("tmp", "/dev/shm");
+		//diskChannel.addDiskDevice("tmp", "/dev/shm");
 		
 //		RdpdrChannel diskChannel = new RdpdrChannel();
 //		diskChannel.deviceRegister(new DiskRdpdrDevice("linux", "/home/blee/temp/rdptest"));
@@ -555,8 +557,8 @@ public class Rdesktop {
 		if (args.length == 0)
 			usage();
 
-		String java = System.getProperty("java.specification.version");
-		logger.info("Java version is " + java);
+
+		logger.info("Java version is " + System.getProperty("java.specification.version"));
 
 		String os = System.getProperty("os.name");
 		String osvers = System.getProperty("os.version");
