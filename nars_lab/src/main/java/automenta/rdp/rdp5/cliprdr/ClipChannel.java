@@ -31,7 +31,6 @@ package automenta.rdp.rdp5.cliprdr;
 
 import automenta.rdp.*;
 import automenta.rdp.rdp5.VChannels;
-import net.propero.rdp.*;
 import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.rdp.RdpPacket_Localised;
 import automenta.rdp.rdp5.VChannel;

@@ -41,7 +41,6 @@ import java.awt.event.MouseWheelListener;
 import java.util.Collections;
 
 import automenta.rdp.*;
-import net.propero.rdp.*;
 import automenta.rdp.keymapping.KeyCode;
 import automenta.rdp.keymapping.KeyCode_FileBased;
 

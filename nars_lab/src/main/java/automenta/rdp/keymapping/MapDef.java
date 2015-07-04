@@ -229,6 +229,7 @@ public class MapDef {
 
 	protected boolean appliesToTyped(KeyEvent e, boolean capslock) {
 
+		/*
 		if (Constants.OS == Constants.MAC) {
 			// Remap the hash key to �
 			if (Options.remap_hash && (e.getKeyChar() == '�')) {
@@ -242,6 +243,7 @@ public class MapDef {
 				return ((characterDef) && (this.keyChar == c));
 			}
 		}
+		*/
 
 		return ((characterDef) && (this.keyChar == e.getKeyChar()));
 	}

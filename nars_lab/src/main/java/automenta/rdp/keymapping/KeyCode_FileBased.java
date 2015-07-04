@@ -96,13 +96,20 @@ public abstract class KeyCode_FileBased {
 	public KeyCode_FileBased(String keyMapFile) throws KeyMapException {
 		// logger.info("String called keycode reader");
 
-		FileInputStream fstream;
-		try {
-			fstream = new FileInputStream(keyMapFile);
+		InputStream fstream;
+		//try {
+			//fstream = new FileInputStream(keyMapFile);
+			String target = keyMapFile;
+			fstream = KeyCode_FileBased.class.getResourceAsStream(target);
+			if (fstream == null) {
+				throw new KeyMapException("KeyMap file not found: " + keyMapFile + " in " +
+						KeyCode_FileBased.class.getResource(".").toExternalForm()
+				);
+			}
 			readMapFile(fstream);
-		} catch (FileNotFoundException e) {
+		/*} catch (Exception e) {
 			throw new KeyMapException("KeyMap file not found: " + keyMapFile);
-		}
+		}*/
 	}
 
 	/**

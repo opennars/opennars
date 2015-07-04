@@ -333,7 +333,7 @@ public class Rdesktop {
 		SoundChannel soundChannel = new SoundChannel();
 		
 		DiskChannel diskChannel = new DiskChannel();
-		diskChannel.addDiskDevice("linux", "/home/blee/temp/rdptest");
+		//diskChannel.addDiskDevice("linux", "/home/blee/temp/rdptest");
 		diskChannel.addDiskDevice("tmp", "/dev/shm");
 		
 //		RdpdrChannel diskChannel = new RdpdrChannel();

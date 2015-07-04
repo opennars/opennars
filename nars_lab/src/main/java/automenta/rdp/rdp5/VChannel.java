@@ -31,7 +31,6 @@ package automenta.rdp.rdp5;
 
 import automenta.rdp.*;
 import automenta.rdp.rdp.RdpPacket_Localised;
-import net.propero.rdp.*;
 import automenta.rdp.crypto.CryptoException;
 import org.apache.log4j.Logger;
 
