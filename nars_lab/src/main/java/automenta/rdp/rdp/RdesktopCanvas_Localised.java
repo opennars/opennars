@@ -112,8 +112,31 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 	public void update(Graphics g) {
 
 		Rectangle r = g.getClipBounds();
-		g.drawImage(backstore.getSubimage(r.x, r.y, r.width, r.height), r.x,
-				r.y, null);
+
+		int rw = r.width;
+		int rh = r.height;
+		int bw = backstore.getWidth();
+		int bh = backstore.getHeight();
+		if (r.x + rw > bw)
+			rw = bw - r.x;
+		if (r.y + rh > bh)
+			rh = bh - r.y;
+
+		/*g.drawImage(backstore.getSubimage(r.x, r.y, rw, rh), r.x,
+				r.y, null);*/
+
+		/*public abstract boolean drawImage(Image img,
+		int dx1, int dy1, int dx2, int dy2,
+		int sx1, int sy1, int sx2, int sy2,
+		ImageObserver observer);*/
+
+
+		final int rxw = r.x + rw;
+		final int ryh = r.y + rh;
+		g.drawImage(backstore.getImage(), r.x, r.y, rxw, ryh,
+				r.x, r.y, rxw, ryh,
+				null);
+
 
 		if (Options.save_graphics) {
 			RdesktopCanvas_Localised.saveToFile(backstore.getSubimage(r.x, r.y,

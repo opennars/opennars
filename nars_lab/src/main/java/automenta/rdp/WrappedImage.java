@@ -63,7 +63,7 @@ public class WrappedImage {
 		return bi.getHeight();
 	}
 
-	public BufferedImage getBufferedImage() {
+	public BufferedImage getImage() {
 		return bi;
 	}
 

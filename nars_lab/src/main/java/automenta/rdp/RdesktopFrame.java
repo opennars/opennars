@@ -98,13 +98,13 @@ public abstract class RdesktopFrame extends Frame {
 	 * Display the menu bar
 	 */
 	public void showMenu() {
-//		if (menu == null)
-//			menu = new RdpMenu(this);
-//
-//		if (!menuVisible && Options.enable_menu)
-//			this.setMenuBar(menu);
-//		canvas.repaint();
-//		menuVisible = true;
+		if (menu == null)
+			menu = new RdpMenu(this);
+
+		if (!menuVisible && Options.enable_menu)
+			this.setMenuBar(menu);
+		canvas.repaint();
+		menuVisible = true;
 	}
 
 	/**

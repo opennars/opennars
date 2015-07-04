@@ -279,13 +279,14 @@ public class Rdesktop {
 		keep_running = true;
 		loggedon = false;
 		readytosend = false;
-		showTools = true;
+		showTools = false;
 		mapFile = "en-us";
 		keyMapLocation = "";
 		toolFrame = null;
 
 		BasicConfigurator.configure();
-		logger.setLevel(Level.DEBUG);
+		logger.setLevel(Level.INFO);
+		Logger.getRootLogger().setLevel(Level.INFO);
 
 		// Attempt to run a native RDP Client
 

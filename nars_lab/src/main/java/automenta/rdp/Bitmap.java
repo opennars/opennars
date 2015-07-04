@@ -1183,7 +1183,7 @@ public class Bitmap {
 		 * pixel[i] = Bitmap.convert16to24(pixel[i]); }
 		 */
 
-		return w.getBufferedImage();
+		return w.getImage();
 	}
 
 	/**

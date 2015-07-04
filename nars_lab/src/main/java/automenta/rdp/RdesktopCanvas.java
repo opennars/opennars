@@ -30,17 +30,18 @@
  */
 package automenta.rdp;
 
-import automenta.rdp.orders.*;
-import automenta.rdp.rdp.RdpPacket_Localised;
 import automenta.rdp.keymapping.KeyCode;
 import automenta.rdp.keymapping.KeyCode_FileBased;
+import automenta.rdp.orders.*;
 import automenta.rdp.rdp.Input_Localised;
+import automenta.rdp.rdp.RdpPacket_Localised;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.MemoryImageSource;
+import java.util.Arrays;
 
 // import org.apache.log4j.NDC;
 
@@ -286,14 +287,14 @@ public abstract class RdesktopCanvas extends Canvas {
 	 */
 	public int[] getImage(int x, int y, int cx, int cy) {
 
-		int[] data = new int[cx * cy];
+		//int[] data = new int[cx * cy];
 
-		data = backstore.getRGB(x, y, cx, cy, null, // no existing image data to
+		return backstore.getRGB(x, y, cx, cy, null, // no existing image data to
 				// add to
 				0, // retrieving as complete image, no offset needed
 				cx);
 
-		return data;
+		//return data;
 	}
 
 	/**
@@ -410,8 +411,7 @@ public abstract class RdesktopCanvas extends Canvas {
 
 		// construct rectangle as integer array, filled with color
 		int[] rect = new int[cx * cy];
-		for (int i = 0; i < rect.length; i++)
-			rect[i] = color;
+		Arrays.fill(rect, color);
 		// draw rectangle to backstore
 		backstore.setRGB(x, y, cx, cy, rect, 0, cx);
 

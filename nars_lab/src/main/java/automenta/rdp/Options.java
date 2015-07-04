@@ -78,7 +78,7 @@ public class Options {
 
 	public static boolean debug_keyboard = false;
 
-	public static boolean debug_hexdump = true;
+	public static boolean debug_hexdump = false;
 
 	public static boolean enable_menu = true;
 
@@ -156,7 +156,7 @@ public class Options {
 
 	public static boolean owncolmap;
 
-	public static boolean use_ssl = true;
+	public static boolean use_ssl = false;
 
 	public static boolean map_clipboard = true;
 
