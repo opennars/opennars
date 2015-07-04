@@ -78,7 +78,7 @@ public class Rdp5 extends Rdp {
      */
     public void rdp5_process(RdpPacket s, boolean encryption) throws RdesktopException, OrderException,
             CryptoException {
-        logger.debug("Processing RDP 5 order");
+        //logger.debug("Processing RDP 5 order");
 
         int length, count;
         int type;
@@ -87,9 +87,14 @@ public class Rdp5 extends Rdp {
         byte[] packet = null;
         if (encryption) {
             s.positionAdd(8); /* signature */
+
             byte[] data = new byte[s.size() - s.position()];
             s.copyToByteArray(data, 0, s.position(), data.length);
             packet = SecureLayer.decrypt(data);
+        }
+        else {
+            packet = new byte[s.size() - s.position()];
+            s.copyToByteArray(packet, 0, s.position(), packet.length);
         }
 
         // printf("RDP5 data:\n");
@@ -106,7 +111,7 @@ public class Rdp5 extends Rdp {
             /* next_packet = */
             next = bf.position() + length;
 
-            //logger.debug("RDP5: type = " + type);
+            //logger.info("RDP5: type = " + type);
 
 
             switch (type) {

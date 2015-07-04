@@ -248,8 +248,8 @@ public abstract class ISO {
 	 */
 	private RdpPacket tcp_recv(RdpPacket p, int length)
 			throws IOException {
-		logger.debug("ISO.tcp_recv");
-		RdpPacket buffer = null;
+		//logger.debug("ISO.tcp_recv");
+		RdpPacket buffer;
 		byte[] packet = new byte[length];
 
 		in.readFully(packet, 0, length);
@@ -294,14 +294,14 @@ public abstract class ISO {
 	 */
 	private RdpPacket receiveMessageex(int[] type, int[] rdpver) throws IOException,
 			RdesktopException, OrderException, CryptoException {
-		logger.debug("ISO.receiveMessage");
+		//logger.debug("ISO.receiveMessage");
 		RdpPacket s = null;
 		int length, version;
 
 		next_packet: while (true) {
-			logger.debug("next_packet");
+			//logger.debug("next_packet");
 			s = tcp_recv(null, 4);
-			logger.debug("off next_packet");
+			//logger.debug("off next_packet");
 			if (s == null)
 				return null;
 
@@ -323,7 +323,7 @@ public abstract class ISO {
 			if (s == null)
 				return null;
 			if ((version & 3) == 0) {
-				logger.debug("Processing rdp5 packet");
+				//logger.debug("Processing rdp5 packet");
 				Common.rdp.rdp5_process(s, (version & 0x80) != 0);
 				continue next_packet;
 			} else
@@ -334,7 +334,7 @@ public abstract class ISO {
 		type[0] = s.get8();
 
 		if (type[0] == DATA_TRANSFER) {
-			logger.debug("Data Transfer Packet");
+			//logger.debug("Data Transfer Packet");
 			s.positionAdd(1); // eot
 			return s;
 		}

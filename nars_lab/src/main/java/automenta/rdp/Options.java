@@ -38,8 +38,8 @@ public class Options {
 	public static final int INTEGER_BITMAP_DECOMPRESSION = 2;
 
 	public static int bitmap_decompression_store =
-			DIRECT_BITMAP_DECOMPRESSION;
-			//INTEGER_BITMAP_DECOMPRESSION;
+			//DIRECT_BITMAP_DECOMPRESSION;
+			INTEGER_BITMAP_DECOMPRESSION;
 			//BUFFEREDIMAGE_BITMAP_DECOMPRESSION; //seems slow
 
 
@@ -138,13 +138,13 @@ public class Options {
 
 	public static boolean precache_bitmaps = true;
 
-	public static boolean polygon_ellipse_orders = false;
+	public static boolean polygon_ellipse_orders = true;
 
 	public static boolean sendmotion = true;
 
 	public static boolean orders = true;
 
-	public static boolean encryption = true;
+	public static boolean encryption = false;
 
 	public static boolean packet_encryption = false;
 
@@ -158,7 +158,7 @@ public class Options {
 
 	public static boolean owncolmap;
 
-	public static boolean use_ssl = false;
+	public static boolean use_ssl = true;
 
 	public static boolean map_clipboard = true;
 

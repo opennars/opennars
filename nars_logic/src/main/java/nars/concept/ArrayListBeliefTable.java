@@ -164,10 +164,12 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                     }
                     else if (revisible(t.sentence, existing.sentence)) {
                         Task revised = tryRevision(t, existing, false, nal);
-                        if (revised != null) {
-                            nal.setCurrentBelief( t = revised );
-                        }
+                        memory.input(revised);
+//                        if (revised != null) {
+//                            nal.setCurrentBelief( t = revised );
+//                        }
                     }
+
 //            //final long now = getMemory().time();
 //
 ////                if (nal.setTheNewStamp( //temporarily removed

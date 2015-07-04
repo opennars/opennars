@@ -37,9 +37,9 @@ public class Constants {
 
 	public static final boolean SystemExit = true;
 
-	public static boolean encryption = true;
+	public static boolean encryption = false;
 
-	public static boolean licence = false;
+	public static boolean licence = true;
 
 	public static final int WINDOWS = 1;
 

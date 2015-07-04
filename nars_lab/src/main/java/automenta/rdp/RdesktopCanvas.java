@@ -719,17 +719,19 @@ public abstract class RdesktopCanvas extends Canvas {
 		srcx += x - memblt.getX();
 		srcy += y - memblt.getY();
 
-		if (logger.isInfoEnabled())
+		/*if (logger.isInfoEnabled())
 			logger.info("MEMBLT x=" + x + " y=" + y + " cx=" + cx + " cy=" + cy
 					+ " srcx=" + srcx + " srcy=" + srcy + " opcode="
-					+ memblt.getOpcode());
+					+ memblt.getOpcode());*/
 		try {
 			Bitmap bitmap = cache.getBitmap(memblt.getCacheID(), memblt
 					.getCacheIDX());
-			// IndexColorModel cm = cache.get_colourmap(memblt.getColorTable());
-			// should use the colormap, but requires high color backstore...
-			rop.do_array(memblt.getOpcode(), backstore, this.width, x, y, cx,
-					cy, bitmap.getBitmapData(), bitmap.getWidth(), srcx, srcy);
+			if (bitmap!=null) {
+				// IndexColorModel cm = cache.get_colourmap(memblt.getColorTable());
+				// should use the colormap, but requires high color backstore...
+				rop.do_array(memblt.getOpcode(), backstore, this.width, x, y, cx,
+						cy, bitmap.getBitmapData(), bitmap.getWidth(), srcx, srcy);
+			}
 
 			this.repaint(x, y, cx, cy);
 		} catch (RdesktopException e) {
@@ -795,7 +797,7 @@ public abstract class RdesktopCanvas extends Canvas {
 			break;
 
 		case 2: // hatch
-			System.out.println("hatch");
+			System.err.println("hatch");
 			break;
 
 		case 3: // pattern

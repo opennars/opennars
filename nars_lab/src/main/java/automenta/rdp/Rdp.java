@@ -934,8 +934,6 @@ public class Rdp {
         clen = data.getLittleEndian16(); // compression length
         clen -= 18;
 
-        System.out.println("data_pdu_type=" + data_type);
-
         switch (data_type) {
 
             case (Rdp.RDP_DATA_PDU_UPDATE):
@@ -983,9 +981,9 @@ public class Rdp {
 
     private void processUpdate(RdpPacket data) throws OrderException,
             RdesktopException {
-        int update_type = 0;
+        final int update_type = data.getLittleEndian16();
 
-        update_type = data.getLittleEndian16();
+
 
         switch (update_type) {
 
