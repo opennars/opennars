@@ -8,6 +8,7 @@ import nars.task.Task;
 
 import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.revisible;
+import static nars.nal.nal1.LocalRules.revisibleTermsAlreadyEqual;
 import static nars.nal.nal1.LocalRules.tryRevision;
 
 /**
@@ -148,11 +149,17 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             for (i = 0; i < siz; i++) {
                 Task existing = get(i);
 
+
+                if (existing == t) {
+                    throw new RuntimeException(t + " already present in Concept");
+                }
+
                 float existingRank = r.rank(existing, rankInput);
 
-                if (Float.isFinite(existingRank) && rankInput >= existingRank) {
+                boolean ranking = (Float.isFinite(existingRank) && rankInput >= existingRank);
+                {
                     //truth and stamp:
-                    if (t.equivalentTo(existing, false, false, true, true, false)) {
+                    if (ranking && t.equivalentTo(existing, false, false, true, true, false)) {
                         if (!t.isInput() && t.isJudgment()) {
                             existing.decPriority(0);    // duplicated task
                         }   // else: activated belief
@@ -161,13 +168,16 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                         //replace with the new equivalent task
                         set(i, t);
+                        return t;
                     }
-                    else if (revisible(t.sentence, existing.sentence)) {
+                    else if (revisibleTermsAlreadyEqual(t.sentence, existing.sentence)) {
                         Task revised = tryRevision(t, existing, false, nal);
                         memory.input(revised);
 //                        if (revised != null) {
 //                            nal.setCurrentBelief( t = revised );
 //                        }
+                        if (ranking)
+                            break;
                     }
 
 //            //final long now = getMemory().time();
@@ -206,7 +216,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //
 //        }
 
-                    break;
                 }
             }
 
