@@ -1,11 +1,13 @@
 package nars.core;
 
+import nars.task.stamp.Stamp;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 import static junit.framework.TestCase.assertTrue;
 import static nars.task.stamp.Stamp.toSetArray;
+import static org.junit.Assert.assertFalse;
 
 /**
  *
@@ -13,7 +15,30 @@ import static nars.task.stamp.Stamp.toSetArray;
  */
 
 
-public class TestStamp {
+public class StampTest {
+
+    public static long[] a(long... x) {
+        return x;
+    }
+
+    @Test
+    public void testOverlap() {
+
+
+        assertTrue(Stamp.overlap(  a(1, 2), a(2) ));
+        assertTrue(Stamp.overlap( a(1), a(1, 2)));
+        assertFalse(Stamp.overlap( a(1), a(2)));
+        assertFalse(Stamp.overlap( a(2), a(1)));
+        assertFalse(Stamp.overlap( a(1, 2), a(3, 4)));
+        assertTrue(Stamp.overlap(a(1, 2), a(2, 3)));
+        assertTrue(Stamp.overlap( a(2, 3), a(1, 2)));
+        assertFalse(Stamp.overlap(a(2, 3), a(1)));
+
+        assertFalse(Stamp.overlap(  a(1), a(2, 3, 4,5, 6) ));
+        assertFalse(Stamp.overlap(  a(2, 3, 4,5, 6), a(1) ));
+
+
+    }
 
     @Test 
     public void testStampToSetArray() {

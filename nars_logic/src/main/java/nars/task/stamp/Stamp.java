@@ -470,27 +470,30 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 //
 //    }
 
-    public static boolean evidentialSetOverlaps(final Sentence a, final Sentence b) {
-        if (a == b) return true;
+    /** true if there are any common elements; assumes the arrays are sorted and contain no duplicates */
+    public static boolean overlap(final long[] a, final long[] b) {
 
-        if ( a.isInput() || b.isInput() ) return false;
+        /** TODO there may be additional ways to exit early from this loop */
 
-        /** TODO since these are sorted, we can compare these faster by
-            iterating both arrays simultaneously skipping ahead when one
-            has a higher value than the other until the shorter reaches the end
-
-            or at least compare a triangular half of the matrix with these
-            2 loops
-         */
-
-        for (long l : a.getEvidentialSet()) {
-            for (long h : b.getEvidentialSet()) {
-                if (l == h) {
+        for (long x : a) {
+            for (long y : b) {
+                if (x == y) {
                     return true;
+                }
+                else if (y > x) {
+                    //any values after y in b will not be equal to x
+                    break;
                 }
             }
         }
         return false;
+    }
+
+    public static boolean evidentialSetOverlaps(final Sentence a, final Sentence b) {
+
+        if (a == b) return true;
+
+        return overlap(a.getEvidentialSet(), b.getEvidentialSet());
     }
 
 

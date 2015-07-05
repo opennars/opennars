@@ -8,6 +8,7 @@ import nars.task.stamp.Stamp;
 import nars.truth.Truth;
 import nars.truth.Truthed;
 
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -167,6 +168,12 @@ public interface BeliefTable extends TaskTable {
     default public Truth topTruth() {
         if (isEmpty()) return null;
         return top().getTruth();
+    }
+
+    default void print(PrintStream out) {
+        for (Task t : this) {
+            System.out.println(t + " " + t.getHistory());
+        }
     }
 
     public interface Ranker extends Function<Task,Float> {
