@@ -37,9 +37,7 @@ public class NAL1Test extends JavaNALTest {
 
 
     @Test public void revision() throws InvalidInputException {
-        System.out.println("\n\n\n START ------------");
-        TextOutput.out(n);
-        NARTrace.out(n);
+
 
         final String birdIsATypeOfSwimmer = "<bird --> swimmer>";
         n.believe(birdIsATypeOfSwimmer)
@@ -55,13 +53,15 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void deduction() throws InvalidInputException {
+
+
         n.believe("<bird --> animal>")
                 .en("bird is a type of animal.")
                 .es("bird es un tipo de animal.")
                 .de("bird ist eine art des animal.");
         n.believe("<robin --> bird>")
                 .en("robin is a type of bird.");
-        n.mustBelieve(23, "<robin --> animal>", 0.81f)
+        n.mustBelieve(123, "<robin --> animal>", 0.81f)
                 .en("robin is a type of animal.");
         n.run();
     }
@@ -73,11 +73,11 @@ public class NAL1Test extends JavaNALTest {
         n.believe("<chess --> competition>", 0.90f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                 .en("chess is a type of competition.");
 
-        n.mustBelieve(23, "<sport --> chess>", 1.0f, 0.42f)
+        n.mustBelieve(123, "<sport --> chess>", 1.0f, 0.42f)
                 .en("I guess sport is a type of chess.")
                 .en("sport is possibly a type of chess.")
                 .es("es posible que sport es un tipo de chess.");
-        n.mustBelieve(23, "<chess --> sport>", 0.90f, 0.45f)
+        n.mustBelieve(123, "<chess --> sport>", 0.90f, 0.45f)
                 .en("I guess chess is a type of sport");
         n.run();
     }
@@ -89,9 +89,9 @@ public class NAL1Test extends JavaNALTest {
         n.believe("<swan --> bird>")
                 .en("Swan is a type of bird.");
 
-        n.mustBelieve(23, "<bird --> swimmer>", 0.90f, 0.45f)
+        n.mustBelieve(123, "<bird --> swimmer>", 0.90f, 0.45f)
                 .en("I guess bird is a type of swimmer.");
-        n.mustBelieve(23, "<swimmer --> bird>", 1f, 0.42f)
+        n.mustBelieve(123, "<swimmer --> bird>", 1f, 0.42f)
                 .en("I guess swimmer is a type of bird.");
         n.run();
     }
@@ -100,7 +100,7 @@ public class NAL1Test extends JavaNALTest {
     public void exemplification() throws InvalidInputException {
         n.believe("<robin --> bird>");
         n.believe("<bird --> animal>");
-        n.mustOutput(25, "<animal --> robin>. %1.00;0.45%")
+        n.mustOutput(125, "<animal --> robin>. %1.00;0.45%")
                 .en("I guess animal is a type of robin.");
         n.run();
     }
@@ -130,10 +130,14 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void whQuestion() throws InvalidInputException {
+        System.out.println("\n\n\n START ------------");
+        TextOutput.out(n);
+        NARTrace.out(n);
+
+        n.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?x --> swimmer>")
                 .en("What is a type of swimmer?");
-        n.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
         n.run();
     }
 

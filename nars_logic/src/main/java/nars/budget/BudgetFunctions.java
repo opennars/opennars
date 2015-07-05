@@ -73,10 +73,10 @@ public final class BudgetFunctions extends UtilityFunctions {
         boolean feedbackToLinks = (nal instanceof ConceptProcess);
         if (feedbackToLinks) {
             ConceptProcess fc = (ConceptProcess)nal;
-            TaskLink tLink = fc.getCurrentTaskLink();
+            TaskLink tLink = fc.getTaskLink();
             tLink.decPriority(1f - difT);
             tLink.andDurability(1f - difT);
-            TermLink bLink = fc.getCurrentTermLink();
+            TermLink bLink = fc.getTermLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1f - difB);
             bLink.andDurability(1f - difB);
@@ -377,7 +377,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         ConceptProcess cp;
         if (nal instanceof ConceptProcess) {
             cp = (ConceptProcess) nal;
-            t = cp.getCurrentTaskLink();
+            t = cp.getTaskLink();
         }
         else {
             cp = null;
@@ -391,7 +391,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         final float quality = qual / complexity;
 
         if (cp!=null) {
-            final TermLink bLink = cp.getCurrentTermLink();
+            final TermLink bLink = cp.getTermLink();
             if (bLink!=null) {
                 priority = or(priority, bLink.getPriority());
                 durability = and(durability, bLink.getDurability());

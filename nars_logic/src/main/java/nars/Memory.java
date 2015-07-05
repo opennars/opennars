@@ -111,7 +111,7 @@ public class Memory implements Serializable, AbstractStamper {
 
 
     private int level;
-    private long currentStampSerial = 1;
+    private long currentStampSerial;
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
@@ -498,6 +498,8 @@ public class Memory implements Serializable, AbstractStamper {
 
         clock.reset();
 
+
+        currentStampSerial = 1;
 
         inputPausedUntil = -1;
 

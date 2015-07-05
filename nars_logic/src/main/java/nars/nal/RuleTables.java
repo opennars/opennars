@@ -114,8 +114,8 @@ public class RuleTables {
         //final Task task = nal.getCurrentTask();
         Sentence<Statement> taskSentence = task.sentence;
 
-        Task beliefTask = nal.getCurrentBeliefTask();
-        Sentence belief = nal.getCurrentBelief();
+        Task beliefTask = nal.getBelief();
+        Sentence belief = nal.getBelief();
 
         if (!(belief.getTerm() instanceof Statement)) return;
 
@@ -512,7 +512,7 @@ public class RuleTables {
         Term component = statement.term[index];
         Compound content = subSentence.getTerm();
 
-        if (((component instanceof Inheritance) || (component instanceof Negation)) && (nal.getCurrentBelief() != null)) {
+        if (((component instanceof Inheritance) || (component instanceof Negation)) && (nal.getBelief() != null)) {
 
             Compound[] u = new Compound[]{statement, content};
 
@@ -592,7 +592,7 @@ public class RuleTables {
      */
     public static void compoundAndSelf(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if (compound instanceof Junction) {
-            if (nal.getCurrentBelief() != null) {
+            if (nal.getBelief() != null) {
                 CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
             } else if (compound.containsTerm(component)) {
                 StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);
@@ -644,7 +644,7 @@ public class RuleTables {
 
         Task task = nal.getCurrentTask();
         if (Terms.equalType(component, statement)) {
-            if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
+            if ((compound instanceof Conjunction) && (nal.getBelief() != null)) {
                 final Random r = nal.memory.random;
 
                 Term[] u = new Term[]{compound, statement};

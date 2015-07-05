@@ -6,7 +6,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
@@ -117,14 +116,13 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
     }
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
-        final Task task = taskLink.getTask();
-        final Sentence taskSentence = taskLink.getSentence();
+    public final boolean apply(final ConceptProcess f, final TermLink termLink) {
+        final Task task = f.getTaskLink().getTask();
 
         // to be invoked by the corresponding links
         if (dedSecondLayerVariableUnification(task, f)) {
             //unification ocurred, done reasoning in this cycle if it's judgment
-            if (taskSentence.isJudgment())
+            if (task.isJudgment())
                 return false;
         }
         return true;

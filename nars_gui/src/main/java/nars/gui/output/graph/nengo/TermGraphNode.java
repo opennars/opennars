@@ -227,7 +227,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
             @Override
             public void event(Class event, Object... args) {
-                refresh(((ConceptProcess)args[0]).getCurrentConcept());
+                refresh(((ConceptProcess)args[0]).getConcept());
             }
         };
 

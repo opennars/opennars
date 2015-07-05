@@ -9,14 +9,12 @@ import nars.process.ConceptProcess;
  */
 abstract public class ConceptFireTask implements LogicRule<ConceptProcess> {
 
-
-
     abstract public boolean apply(ConceptProcess f, TaskLink taskLink);
 
     @Override
-    public boolean test(final ConceptProcess f) {
-        if (f.getCurrentTermLink()==null) {
-            return apply(f, f.getCurrentTaskLink());
+    public final boolean test(final ConceptProcess f) {
+        if (f.getTermLink()==null) {
+            return apply(f, f.getTaskLink());
         }
         return true;
     }

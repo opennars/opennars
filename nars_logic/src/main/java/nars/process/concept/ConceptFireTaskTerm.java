@@ -1,6 +1,5 @@
 package nars.process.concept;
 
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.LogicRule;
 import nars.process.ConceptProcess;
@@ -9,15 +8,15 @@ import nars.process.ConceptProcess;
 abstract public class ConceptFireTaskTerm implements LogicRule<ConceptProcess>  {
 
 
-    abstract public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink);
+    abstract public boolean apply(ConceptProcess f, TermLink termLink);
 
     @Override
-    public boolean test(final ConceptProcess f) {
+    public final boolean test(final ConceptProcess f) {
 
-        final TermLink ftl = f.getCurrentTermLink();
+        final TermLink ftl = f.getTermLink();
 
         if (ftl !=null) {
-            return apply(f, f.getCurrentTaskLink(), ftl);
+            return apply(f, ftl);
         }
 
         //continue by default

@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.Global;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
+import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
 /**
@@ -21,7 +23,15 @@ import static nars.nal.nal7.TemporalRules.solutionQuality;
 public interface BeliefTable extends TaskTable {
 
 
+    Ranker BeliefConfidenceOrOriginality = new Ranker() {
 
+        @Override
+        public float rank(Task belief, float bestToBeat) {
+            final float confidence = belief.getTruth().getConfidence();
+            final float originality = belief.getOriginality();
+            return or(confidence, originality);
+        }
+    };
 
     /** attempt to insert a task.
      *
@@ -40,9 +50,9 @@ public interface BeliefTable extends TaskTable {
      * was: getTask(q, now, getBeliefs()).  Does not affect the table itself */
     public Task project(Task t, long now);
 
-    default public Task project(final Task t) {
+    /*default public Task project(final Task t) {
         return project(t, Stamp.TIMELESS);
-    }
+    }*/
 
 
     /**
@@ -87,6 +97,12 @@ public interface BeliefTable extends TaskTable {
     }
 
     default public Task top(final Task query, final long now) {
+
+        switch (size()) { //check if 0 or 1 elements before creating a Ranker below
+            case 0: return null;
+            case 1: return top();
+        }
+
         return top(new Ranker() {
             @Override
             public float rank(Task t, float bestToBeat) {
@@ -95,7 +111,11 @@ public interface BeliefTable extends TaskTable {
         });
     }
     default public Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
-        //return top( (t, b) -> solutionQuality(hasQueryVar, occTime, t, truth, now) );
+        switch (size()) { //check if 0 or 1 elements before creating a Ranker below
+            case 0: return null;
+            case 1: return top();
+        }
+
         return top(new Ranker() {
             @Override
             public float rank(Task t, float bestToBeat) {
@@ -168,10 +188,16 @@ public interface BeliefTable extends TaskTable {
 
     default public Task top(Ranker r) {
 
+        final int n = size();
+        switch (n) {
+            case 0: return null;
+            case 1: return top();
+        }
+
         float s = Float.MIN_VALUE;
         Task b = null;
 
-        final int n = size();
+
         for (Task t : this) {
             float x = r.rank(t, s);
             if (x > s) {
@@ -189,6 +215,30 @@ public interface BeliefTable extends TaskTable {
 
 
 
+
+    class BeliefConfidenceAndCurrentTime implements Ranker {
+        public final long now;
+
+        public BeliefConfidenceAndCurrentTime(long now) {
+            this.now = now;
+        }
+
+        @Override
+        public float rank(Task t, float bestToBeat) {
+            float c = t.getTruth().getConfidence();
+            if (!t.isEternal()) {
+                float dur = t.getDuration();
+                float durationsToNow = Math.abs(t.getOccurrenceTime() - now) / dur;
+
+                float ageFactor = 1.0f / (1.0f + durationsToNow * Global.rankDecayPerTimeDuration);
+                c *= ageFactor;
+            }
+            return c;
+        }
+
+    }
+
+
 //    default public Task top(boolean eternal, boolean nonEternal) {
 //
 //    }
@@ -196,29 +246,38 @@ public interface BeliefTable extends TaskTable {
 
 
 
-    /** temporary until goal is separated into goalEternal, goalTemporal */
-    @Deprecated default public Task getStrongestTask(final List<Task> table, final boolean eternal, final boolean temporal) {
-        for (Task t : table) {
-            boolean e = t.isEternal();
-            if (e && eternal) return t;
-            if (!e && temporal) return t;
-        }
-        return null;
-    }
+//    /** temporary until goal is separated into goalEternal, goalTemporal */
+//    @Deprecated default public Task getStrongestTask(final List<Task> table, final boolean eternal, final boolean temporal) {
+//        for (Task t : table) {
+//            boolean e = t.isEternal();
+//            if (e && eternal) return t;
+//            if (!e && temporal) return t;
+//        }
+//        return null;
+//    }
+//
+//    public static Sentence getStrongestSentence(List<Task> table) {
+//        Task t = getStrongestTask(table);
+//        if (t!=null) return t.sentence;
+//        return null;
+//    }
+//
+//    public static Task getStrongestTask(List<Task> table) {
+//        if (table == null) return null;
+//        if (table.isEmpty()) return null;
+//        return table.get(0);
+//    }
 
-    public static Sentence getStrongestSentence(List<Task> table) {
-        Task t = getStrongestTask(table);
-        if (t!=null) return t.sentence;
-        return null;
-    }
-
-    public static Task getStrongestTask(List<Task> table) {
-        if (table == null) return null;
-        if (table.isEmpty()) return null;
-        return table.get(0);
-    }
-
-
+//    /**
+//     * Determine the rank of a judgment by its quality and originality (stamp
+//     * baseLength), called from Concept
+//     *
+//     * @param s The judgment to be ranked
+//     * @return The rank of the judgment, according to truth value only
+//     */
+    /*public float rank(final Task s, final long now) {
+        return rankBeliefConfidenceTime(s, now);
+    }*/
 
 
 //    public Sentence getSentence(final Sentence query, long now, final List<Task>... lists) {

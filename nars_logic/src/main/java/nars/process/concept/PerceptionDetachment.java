@@ -1,7 +1,6 @@
 package nars.process.concept;
 
 import nars.Memory;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -12,7 +11,7 @@ import nars.task.Task;
 public class PerceptionDetachment extends ConceptFireTaskTerm {
 
    @Override
-   public boolean apply(ConceptProcess nal, TaskLink taskLink, TermLink termLink) {
+   public boolean apply(ConceptProcess nal, TermLink termLink) {
        final Memory memory = nal.memory;
        final Task task = nal.getCurrentTask();
 

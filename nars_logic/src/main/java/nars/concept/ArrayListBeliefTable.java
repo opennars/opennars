@@ -1,11 +1,9 @@
 package nars.concept;
 
-import nars.Global;
 import nars.Memory;
-import nars.op.math.add;
 import nars.process.NAL;
-import nars.task.Sentence;
 import nars.task.Task;
+import nars.truth.Truth;
 
 import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.revisibleTermsAlreadyEqual;
@@ -19,6 +17,13 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     public ArrayListBeliefTable(int cap) {
         super(cap);
     }
+
+
+    @Override
+    public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
+        return null;
+    }
+
 
 
     @Override
@@ -148,10 +153,10 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                     memory.removed(t, "Duplicated");
                     return null;
 
-                } else if (revisibleTermsAlreadyEqual(t.sentence, existing.sentence)) {
+                } else if (revisibleTermsAlreadyEqual(t, existing)) {
                     Task revised = tryRevision(t, existing, false, nal);
                     if (revised != null) {
-                        //nal.setCurrentBelief( t = revised );
+                        //nal.setCurrentBelief( revised );
                     }
 
                 }
@@ -309,49 +314,15 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //    }
 
 
-    /**
-     * Determine the rank of a judgment by its quality and originality (stamp
-     * baseLength), called from Concept
-     *
-     * @param s The judgment to be ranked
-     * @return The rank of the judgment, according to truth value only
-     */
-    /*public float rank(final Task s, final long now) {
-        return rankBeliefConfidenceTime(s, now);
-    }*/
-
-    public static class BeliefConfidenceAndCurrentTime implements Ranker {
-        public final long now;
-
-        public BeliefConfidenceAndCurrentTime(long now) {
-            this.now = now;
-        }
-
-        @Override
-        public float rank(Task t, float bestToBeat) {
-            float c = t.getTruth().getConfidence();
-            if (!t.isEternal()) {
-                float dur = t.getDuration();
-                float durationsToNow = Math.abs(t.getOccurrenceTime() - now) / dur;
-
-                float ageFactor = 1.0f / (1.0f + durationsToNow * Global.rankDecayPerTimeDuration);
-                c *= ageFactor;
-            }
-            return c;
-        }
-
-    }
-
-
-    public static float rankBeliefConfidence(final Sentence judg) {
-        return judg.getTruth().getConfidence();
-    }
-
-    public static float rankBeliefOriginal(final Sentence judg) {
-        final float confidence = judg.truth.getConfidence();
-        final float originality = judg.getOriginality();
-        return or(confidence, originality);
-    }
+    //    public static float rankBeliefConfidence(final Sentence judg) {
+//        return judg.getTruth().getConfidence();
+//    }
+//
+//    public static float rankBeliefOriginal(final Sentence judg) {
+//        final float confidence = judg.truth.getConfidence();
+//        final float originality = judg.getOriginality();
+//        return or(confidence, originality);
+//    }
 
 
 //    boolean addToTable(final Task goalOrJudgment, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove, Concept c) {

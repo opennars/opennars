@@ -23,15 +23,16 @@ public class TableDerivations extends ConceptFireTaskTerm {
 
 
     @Override
-    public boolean apply(final ConceptProcess f, final TaskLink tLink, final TermLink bLink) {
+    public final boolean apply(final ConceptProcess f, final TermLink bLink) {
 
         f.memory.emotion.busy(f);
 
+        final TaskLink tLink = f.getTaskLink();
         final Sentence taskSentence = tLink.getSentence();
         final Term taskTerm = tLink.getTerm();
 
-        final Task beliefTask = f.getCurrentBeliefTask();
-        final Sentence belief = f.getCurrentBelief();
+        final Task beliefTask = f.getBelief();
+        final Sentence belief = f.getBelief();
         final Term beliefTerm = bLink.getTerm();
 
 //        if (belief == null) {

@@ -1,8 +1,6 @@
 package nars.task.filter;
 
 import nars.process.NAL;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.truth.Truth;
 
@@ -11,7 +9,7 @@ import nars.truth.Truth;
 */
 public class FilterBelowConfidence implements DerivationFilter {
 
-    @Override public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    @Override public final String reject(NAL nal, TaskSeed task, boolean solution, boolean revised) {
         Truth t = task.getTruth();
         if (t != null) {
             float conf = t.getConfidence();

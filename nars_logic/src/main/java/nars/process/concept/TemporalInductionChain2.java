@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Memory;
 import nars.Op;
 import nars.concept.Concept;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
@@ -46,16 +45,16 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     final InductableImplication nextInductedImplication = new InductableImplication();
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
+    public final boolean apply(final ConceptProcess f, TermLink termLink) {
 
         if (!f.nal(7)) return true;
 
-        final Sentence belief = f.getCurrentBelief();
+        final Sentence belief = f.getBelief();
         if (belief == null) return true;
 
         if (!belief.isJudgment()) return true;
 
-        final Concept concept = f.getCurrentConcept();
+        final Concept concept = f.getConcept();
 
         Task task = f.getCurrentTask();
 
@@ -70,7 +69,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 (beliefTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
 
             final int chainSamples = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
-            final float chainSampleSearchSize = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(taskLink.getPriority());
+            final float chainSampleSearchSize = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(f.getTaskLink().getPriority());
 
             //prevent duplicate inductions
 

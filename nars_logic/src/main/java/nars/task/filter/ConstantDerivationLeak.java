@@ -2,8 +2,6 @@ package nars.task.filter;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.process.NAL;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.task.TaskSeed;
 
 
@@ -26,7 +24,7 @@ public class ConstantDerivationLeak implements DerivationFilter {
 
 
     @Override
-    public String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
+    public String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised) {
         if (!solution) {
             final TaskSeed derived = task;
             if (!leak(derived))

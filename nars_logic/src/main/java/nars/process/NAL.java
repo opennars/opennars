@@ -225,7 +225,7 @@ public abstract class NAL implements Runnable {
         //use this NAL's instance defaults for the values because specific values were not substituted:
 
 
-        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getCurrentBelief(), getCurrentTask());
+        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getBelief(), getCurrentTask());
         if (rejectionReason != null) {
             memory.removed(task, rejectionReason);
             return null;
@@ -285,7 +285,7 @@ public abstract class NAL implements Runnable {
     }
 
     @Deprecated public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
-        return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, getCurrentBelief(), temporalAdd, allowOverlap);
+        return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, getBelief(), temporalAdd, allowOverlap);
     }
 
     @Deprecated public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence parentBelief, final boolean temporalAdd, boolean allowOverlap) {
@@ -306,7 +306,7 @@ public abstract class NAL implements Runnable {
         TaskSeed task = newTask(newTaskContent)
                 .punctuation(punctuation)
                 .truth(newTruth)
-                .parent(parentTask, getCurrentBelief())
+                .parent(parentTask, getBelief())
                 .temporalInductable(!temporalAdd)
                 .budget(newBudget);
 
@@ -327,7 +327,7 @@ public abstract class NAL implements Runnable {
                     newTask(task.getTerm())
                             .punctuation(task.getPunctuation())
                             .truth(TruthFunctions.eternalize(task.getTruth()))
-                            .parent(parentTask, getCurrentBelief())
+                            .parent(parentTask, getBelief())
                             .budget(task)
                             .stamp(derived)
                             .eternal(),
@@ -390,13 +390,13 @@ public abstract class NAL implements Runnable {
         Sentence pbelief;
         Task ptask;
 
-        if (taskSentence.isJudgment() || getCurrentBelief() == null) {
+        if (taskSentence.isJudgment() || getBelief() == null) {
             ptask = getCurrentTask();
             pbelief = null;
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?
             pbelief = null;
-            ptask = getCurrentBeliefTask();
+            ptask = getBelief();
         }
 
 
@@ -498,16 +498,7 @@ public abstract class NAL implements Runnable {
 //    }
 
 
-    /**
-     * @return the currentBelief
-     */
-    public Sentence getCurrentBelief() {
-        final Task t = currentBelief;
-        if (t == null) return null;
-        return t.sentence;
-    }
-
-    public Task getCurrentBeliefTask() {
+    public Task getBelief() {
         return currentBelief;
     }
 

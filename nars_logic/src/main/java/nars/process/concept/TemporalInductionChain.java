@@ -7,7 +7,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
@@ -36,12 +35,12 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptProcess f, TermLink termLink) {
 
         if (!f.nal(7)) return true;
 
-        final Task beliefTask = f.getCurrentBeliefTask();
-        final Sentence belief = f.getCurrentBelief();
+        final Task beliefTask = f.getBelief();
+        final Sentence belief = f.getBelief();
         if (belief == null) return true;
 
         final Memory memory = f.memory;

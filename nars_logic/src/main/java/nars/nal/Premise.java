@@ -9,9 +9,9 @@ import nars.link.TermLink;
  */
 public interface Premise {
 
-    Concept getCurrentConcept();
+    Concept getConcept();
 
-    TermLink getCurrentTermLink();
+    TermLink getTermLink();
 
-    TaskLink getCurrentTaskLink();
+    TaskLink getTaskLink();
 }

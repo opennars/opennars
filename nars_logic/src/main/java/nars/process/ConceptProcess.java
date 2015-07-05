@@ -58,10 +58,10 @@ public class ConceptProcess extends NAL implements Premise {
 
 
     /**
-     * @return the currentConcept
+     * @return the current Concept
      */
     @Override
-    public Concept getCurrentConcept() {
+    public Concept getConcept() {
         return currentConcept;
     }
 
@@ -84,14 +84,14 @@ public class ConceptProcess extends NAL implements Premise {
     protected void processTask() {
 
         setCurrentTerm(currentConcept.getTerm());
-        setCurrentTermLink(null);
+        setTermLink(null);
         reasoner.fire(this);
     }
 
     protected void processTerms() {
 
         //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
-        int numTermLinks = getCurrentConcept().getTermLinks().size();
+        int numTermLinks = getConcept().getTermLinks().size();
         if (numTermLinks == 0)
             return;
 
@@ -294,11 +294,11 @@ public class ConceptProcess extends NAL implements Premise {
      * @param bLink The selected TermLink, which may provide a belief
      */
     protected void processTerm(TermLink bLink) {
-        setCurrentTermLink(bLink);
+        setTermLink(bLink);
 
         reasoner.fire(this);
 
-        emit(Events.BeliefReason.class, getCurrentBelief(), getCurrentTask(), this);
+        emit(Events.BeliefReason.class, getBelief(), getCurrentTask(), this);
     }
 
     @Override
@@ -332,17 +332,17 @@ public class ConceptProcess extends NAL implements Premise {
 
 
     /**
-     * @return the currentBeliefLink
+     * @return the current termLink aka BeliefLink
      */
     @Override
-    public TermLink getCurrentTermLink() {
+    public TermLink getTermLink() {
         return currentTermLink;
     }
 
     /**
      * @param currentTermLink the currentBeliefLink to set
      */
-    public void setCurrentTermLink(TermLink currentTermLink) {
+    public void setTermLink(TermLink currentTermLink) {
 
         if (currentTermLink == null) {
             this.currentTermLink = null;
@@ -358,10 +358,10 @@ public class ConceptProcess extends NAL implements Premise {
 
 
     /**
-     * @return the currentTaskLink
+     * @return the current TaskLink
      */
     @Override
-    public TaskLink getCurrentTaskLink() {
+    public TaskLink getTaskLink() {
         return currentTaskLink;
     }
 
@@ -369,18 +369,18 @@ public class ConceptProcess extends NAL implements Premise {
 
 
 
-    /** the current belief concept */
-    public Concept getCurrentTermLinkConcept() {
-        if (currentTermLinkConcept == null && getCurrentTermLink()!=null) {
-            currentTermLinkConcept = memory.concept( getCurrentTermLink().getTarget() );
+    /** the current termlink / belieflink's concept */
+    public Concept getTermLinkConcept() {
+        if (currentTermLinkConcept == null && getTermLink()!=null) {
+            currentTermLinkConcept = memory.concept( getTermLink().getTarget() );
         }
         return currentTermLinkConcept;
     }
 
     public float conceptPriority(Term target) {
         //first check for any cached Concept
-        if (target == getCurrentTermLink().target) {
-            Concept c = getCurrentTermLinkConcept();
+        if (target == getTermLink().target) {
+            Concept c = getTermLinkConcept();
 
             if (c == null) return 0; //if the concept does not exist, use priority = 0
 

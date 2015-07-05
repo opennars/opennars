@@ -109,7 +109,7 @@ public final class CompositionalRules {
             return;
         }
         final Truth truthT = taskBelief.truth;
-        final Truth truthB = nal.getCurrentBelief().truth;
+        final Truth truthB = nal.getBelief().truth;
         final Truth truthOr = union(truthT, truthB);
         final Truth truthAnd = intersection(truthT, truthB);
         Truth truthDif = null;
@@ -174,7 +174,7 @@ public final class CompositionalRules {
         }
         Statement content = Statement.make(statement, subject, predicate, order);
         if ((content == null) || statement == null /*|| (!(content instanceof Compound))*/
-                || content.equals(statement.getTerm()) || content.equals(nal.getCurrentBelief().getTerm())) {
+                || content.equals(statement.getTerm()) || content.equals(nal.getBelief().getTerm())) {
             return null;
         }
 
@@ -217,7 +217,7 @@ public final class CompositionalRules {
 
         final Task task = nal.getCurrentTask();
         final Sentence sentence = task.sentence;
-        final Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getBelief();
         final Statement oldContent = (Statement) task.getTerm();
 
         Truth v1, v2;
@@ -308,7 +308,7 @@ public final class CompositionalRules {
         }
 
         final Task task = nal.getCurrentTask();
-        final Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getBelief();
 
         final boolean isQ = task.isQuestion() || task.isQuest();
 
@@ -442,12 +442,12 @@ public final class CompositionalRules {
             return;
         }
 
-        TaskSeed seed = nal.newDoublePremise(nal.getCurrentTask(), nal.getCurrentBelief());
+        TaskSeed seed = nal.newDoublePremise(nal.getCurrentTask(), nal.getBelief());
         if (seed == null) //all derivations here are non-cyclic, so test first
             return;
 
         Truth truthT = nal.getCurrentTask().getTruth();
-        Truth truthB = nal.getCurrentBelief().getTruth();
+        Truth truthB = nal.getBelief().getTruth();
         if ((truthT == null) || (truthB == null)) {
             return;
         }
@@ -709,7 +709,7 @@ public final class CompositionalRules {
             return null;
         }
 
-        final Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getBelief();
         Map<Term, Term> substitute = Global.newHashMap();
 
 

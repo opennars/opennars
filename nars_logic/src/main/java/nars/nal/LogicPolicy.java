@@ -55,7 +55,7 @@ public class LogicPolicy {
 
         for (int i = 0; i < dfs; i++) {
             DerivationFilter d = derivationFilters.get(i);
-            String rejectionReason = d.reject(nal, task, solution, revised, single, currentBelief, currentTask);
+            String rejectionReason = d.reject(nal, task, solution, revised);
             if (rejectionReason != null) {
                 return rejectionReason;
             }

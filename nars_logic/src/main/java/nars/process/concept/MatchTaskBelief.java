@@ -1,13 +1,11 @@
 package nars.process.concept;
 
 import nars.Symbols;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal7.TemporalRules;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Variables;
@@ -15,16 +13,15 @@ import nars.term.Variables;
 
 public class MatchTaskBelief extends ConceptFireTaskTerm {
 
-    @Override public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
-        Task currentBelief = f.getCurrentBeliefTask();
-        if (currentBelief!=null){
-            if (match(taskLink.targetTask, currentBelief, f)) {
+    @Override public final boolean apply(ConceptProcess f, TermLink termLink) {
+        Task currentBelief = f.getBelief();
+        if ((currentBelief!=null) &&
+            (match(f.getTaskLink().getTask(), currentBelief, f))) {
                 //System.err.println("MatchTaskBelief: false: " + taskLink.targetTask + " : " + currentBelief);
                 //Filter this from further processing
-                return false;
+                return STOP;
             }
-        }
-        return true;
+        return CONTINUE;
     }
 
 

@@ -32,9 +32,10 @@ import java.util.Arrays;
 public class TransformTask extends ConceptFireTask {
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink t) {
+    public final boolean apply(ConceptProcess f, TaskLink t) {
 
         if (t.type == TermLink.TRANSFORM) {
+
 
             f.setCurrentBelief(null);
 
@@ -68,7 +69,7 @@ public class TransformTask extends ConceptFireTask {
             }
 
 
-            f.emit(Events.TermLinkTransformed.class, t, f.getCurrentConcept(), this);
+            f.emit(Events.TermLinkTransformed.class, t, f.getConcept(), this);
             f.memory.logic.TERM_LINK_TRANSFORM.hit();
         }
 

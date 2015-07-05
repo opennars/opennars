@@ -4,7 +4,6 @@ package nars.process.concept;
 import nars.Symbols;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
@@ -36,11 +35,11 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
     public static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1;
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
+    public boolean apply(ConceptProcess f, TermLink termLink) {
         if (!f.nal(7)) return true;
         if (PERCEPTION_DECISION_ACCEL_SAMPLES == 0) return true;
 
-        Concept concept = f.getCurrentTermLinkConcept();
+        Concept concept = f.getTermLinkConcept();
         if (concept == null) return true;
 
         Task taskLinkTask = f.getCurrentTask();// taskLink.getTask();

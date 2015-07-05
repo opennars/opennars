@@ -146,8 +146,8 @@ public class LogicPerformance {
         
         public void explain(long t, ConceptProcess f) {
             //Concept conceptFired, TaskLink tlink, List<Task> generated) {
-            Term term = f.getCurrentConcept().getTerm();
-            TaskLink link = f.getCurrentTaskLink();
+            Term term = f.getConcept().getTerm();
+            TaskLink link = f.getTaskLink();
             
             addVertex(f);
             addVertex(term);

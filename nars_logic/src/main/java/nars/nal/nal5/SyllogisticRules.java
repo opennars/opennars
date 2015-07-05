@@ -35,7 +35,6 @@ import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.AbstractScalarTruth;
-import nars.truth.AbstractTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -484,7 +483,7 @@ public final class SyllogisticRules {
         }
 
         final Sentence taskSentence = nal.getCurrentTask().sentence;
-        final Sentence beliefSentence = nal.getCurrentBelief();
+        final Sentence beliefSentence = nal.getBelief();
 
         if (beliefSentence == null)
             return null;
@@ -592,7 +591,7 @@ public final class SyllogisticRules {
     public static Task conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
         Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
-        final Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getBelief();
         boolean deduction = (side != 0);
         boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), nal.memory.random);
         Term commonComponent;
@@ -771,7 +770,7 @@ public final class SyllogisticRules {
 
         Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
-        final Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getBelief();
         boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), r);
         Term commonComponent;
         Term newComponent = null;
@@ -903,7 +902,7 @@ public final class SyllogisticRules {
         }
         Task task = nal.getCurrentTask();
         final Sentence sentence = task.sentence;
-        final Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getBelief();
         Truth value1 = sentence.truth;
         Truth value2 = belief.truth;
         Term content;
@@ -1002,7 +1001,7 @@ public final class SyllogisticRules {
         Task task = nal.getCurrentTask();
 
         final Sentence sentence = task.sentence;
-        final Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getBelief();
 
         Truth v1 = sentence.truth;
         Truth v2 = belief.truth;

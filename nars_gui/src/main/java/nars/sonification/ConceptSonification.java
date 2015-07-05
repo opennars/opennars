@@ -108,7 +108,7 @@ public class ConceptSonification extends NARReaction {
 
         else if (event == Events.ConceptProcessed.class) {
             ConceptProcess f = (ConceptProcess)args[0];
-            update(f.getCurrentConcept());
+            update(f.getConcept());
         }
 
         else if (event == Events.ConceptForget.class) {

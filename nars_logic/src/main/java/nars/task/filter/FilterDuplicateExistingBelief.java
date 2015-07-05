@@ -2,7 +2,6 @@ package nars.task.filter;
 
 import nars.concept.Concept;
 import nars.process.NAL;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.term.Compound;
@@ -17,19 +16,15 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
 
     public final static String DUPLICATE = "Duplicate";
 
-    public FilterDuplicateExistingBelief() {
 
-        }
 
-    @Override public String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
+    @Override public final String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised) {
 
         //only process non-solution judgments
         if (solution || !task.isJudgment())
-            return null;
+            return VALID;
 
         Compound taskTerm = task.getTerm();
-        if (taskTerm == null)
-            return null;
 
         //equality:
         //  1. term (given because it is looking up in concept)
@@ -38,32 +33,29 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         //  4. evidential set
 
         final Concept c = nal.memory.concept(taskTerm);
-        if (c == null)
-            return null; //concept doesnt even exist so this is not a duplciate of anything
-
-        if (!c.hasBeliefs())
-            return null; //no beliefs exist at this concept
-
-        if (task.getTruth()==null) {
-            throw new RuntimeException("judgment has no truth value: " + task);
-        }
-
-
-        //final float conf = task.getTruth().getConfidence();
+        if ((c == null) || //concept doesnt even exist so this is not a duplciate of anything
+                (!c.hasBeliefs())) //no beliefs exist at this concept
+            return VALID;
 
         for (Task t : c.getBeliefs()) {
-            Truth tt = t.getTruth();
 
-//            /* terminatesthe search after confidence drops below the task's */
-//            if (tt.getConfidence() < conf)
-//                return null;
+            final Truth tt = t.getTruth();
 
-            if (!tt.equals(task.getTruth()))
-                return null; //different truth value
-            if (t.getOccurrenceTime()!=task.getOccurrenceTime())
-                return null; //differnt occurence time
-            if (!Arrays.equals(t.getEvidentialSet(), task.getEvidentialSet()))
-                return null; //differnt evidence
+            if (
+
+                    //different truth value
+                    (!tt.equals(task.getTruth()))
+                            ||
+
+                    //differnt occurence time
+                    (t.getOccurrenceTime()!=task.getOccurrenceTime())
+                            ||
+
+                    //differnt evidence
+                    (!Arrays.equals(t.getEvidentialSet(), task.getEvidentialSet()))
+
+                )
+                return VALID;
         }
 
         return DUPLICATE;

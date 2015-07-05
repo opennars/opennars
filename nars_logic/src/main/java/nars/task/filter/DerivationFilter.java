@@ -5,15 +5,16 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 
-/**
- * Created by me on 5/1/15.
- */
+
+@FunctionalInterface
 public interface DerivationFilter  {
 
+    /** use this when returning null to elucidate that the filter allows it */
+    public static final String VALID = null;
 
     /**
      * returns null if allowed to derive, or a String containing a short rejection rule for logging
      */
-    String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask);
+    String reject(NAL nal, TaskSeed task, boolean solution, boolean revised);
 
 }

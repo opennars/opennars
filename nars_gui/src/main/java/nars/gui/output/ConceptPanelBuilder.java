@@ -126,7 +126,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
         Concept c = null;
         if (event == Events.ConceptProcessed.class) {
-            c = ((ConceptProcess)args[0]).getCurrentConcept();
+            c = ((ConceptProcess)args[0]).getConcept();
         }
         else {
             if (args[0] instanceof Concept)

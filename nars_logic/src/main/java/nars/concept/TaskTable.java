@@ -3,8 +3,12 @@ package nars.concept;
 import com.google.common.collect.Iterators;
 import javolution.util.function.Equality;
 import nars.task.Task;
+import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
+import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 
-/** holds a set of ranked question/quests tasks */
+/** holds a set of ranked question/quests tasks
+ *  top ranking items are stored in the lower indexes so they will be first iterated
+ * */
 public interface TaskTable extends Iterable<Task> {
 
     public void setCapacity(int newCapacity);
@@ -38,8 +42,25 @@ public interface TaskTable extends Iterable<Task> {
         return null;
     }
 
-    default public int numInputs() {
+    default public int inputNum() {
         return Iterators.size( Iterators.filter(iterator(), t -> t.isInput() ));
     }
 
+    /** value in 0.,1.0 */
+    default public float inputPercent() {
+        if (isEmpty()) return 0;
+        return ((float)inputNum())/size();
+    }
+
+    default public BivariateGridInterpolator getWaveFrequencyConfidenceTime() {
+        return null;
+    }
+
+    default public UnivariateInterpolator getWaveFrequencyConfidence() {
+        return null;
+    }
+
+    default public UnivariateInterpolator getWaveConfidenceTime() {
+        return null;
+    }
 }

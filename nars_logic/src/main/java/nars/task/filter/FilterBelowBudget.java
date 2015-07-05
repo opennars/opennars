@@ -2,8 +2,6 @@ package nars.task.filter;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.process.NAL;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.task.TaskSeed;
 
 
@@ -21,8 +19,8 @@ public class FilterBelowBudget implements DerivationFilter {
         this.threshold = threshold;
     }
 
-    @Override public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    @Override public final String reject(NAL nal, TaskSeed task, boolean solution, boolean revised) {
         if (!task.summaryGreaterOrEqual(threshold)) return INSUFFICIENT_BUDGET;
-        return null;
+        return VALID;
     }
 }

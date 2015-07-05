@@ -3,7 +3,6 @@ package nars.process.concept;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.process.ConceptProcess;
@@ -29,10 +28,10 @@ import static nars.truth.TruthFunctions.intersection;
 public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
-        if (f.getCurrentBelief()!=null)
+    public final boolean apply(ConceptProcess f, TermLink termLink) {
+        if (f.getBelief() !=null)
             dedConjunctionByQuestion(
-                    taskLink.getTask(), f.getCurrentBelief(), f);
+                    f.getTaskLink().getTask(), f.getBelief(), f);
         return true;
     }
 
@@ -124,7 +123,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
                 continue;
              */
                 Truth truthT = nal.getCurrentTask().sentence.truth;
-                Truth truthB = nal.getCurrentBelief().truth;
+                Truth truthB = nal.getBelief().truth;
             /*if(truthT==null || truthB==null) {
                 //continue; //<- should this be return and not continue?
                 return;

@@ -11,6 +11,8 @@ import java.util.ArrayList;
  *  we use an ArrayList and not an ArrayDeque (which is seemingly ideal for the
  *  FIFO behavior) because we can iterate entries by numeric index avoiding
  *  allocation of an Iterator.
+ *
+ *
  */
 public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
 
@@ -19,6 +21,7 @@ public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
     public ArrayListTaskTable() {
         super();
     }
+
     public ArrayListTaskTable(int cap) {
         super(cap);
         setCapacity(cap);
@@ -30,7 +33,9 @@ public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
     }
 
 
-    /** iterator-less implementation */
+    /**
+     * iterator-less implementation
+     */
     @Override
     public Task getFirstEquivalent(final Task t, final Equality<Task> e) {
         final int n = size();
@@ -46,22 +51,25 @@ public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
     @Override
     public Task add(Task t, Equality<Task> equality, Concept c) {
 
-        if (getFirstEquivalent(t, equality)!=null) {
+        if (getFirstEquivalent(t, equality) != null) {
             return t;
         }
 
         Memory m = c.getMemory();
-        if (size() + 1 > cap) {
-            // FIFO, remove oldest question
-            Task removed = remove(0);
+        final int siz = size();
+        if (siz + 1 > cap) {
+            // FIFO, remove oldest question (last)
+            Task removed = remove(siz - 1);
             m.emit(Events.ConceptQuestionRemove.class, c, removed /*, t*/);
         }
 
-        add(t);
+        add(0, t);
 
         m.emit(Events.ConceptQuestionAdd.class, c, t);
 
         return t;
     }
 
+
 }
+

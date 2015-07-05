@@ -207,7 +207,6 @@ public class Default extends NARSeed implements ConceptBuilder {
 
                 new DerivationFilter[] {
                     new FilterBelowConfidence(),
-                    new FilterOperationWithSubjOrPredVariable(),
                     new FilterDuplicateExistingBelief(),
                     //param.getDefaultDerivationFilters().add(new BeRational());
                 }

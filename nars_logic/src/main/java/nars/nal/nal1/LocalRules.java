@@ -73,7 +73,9 @@ public class LocalRules {
         return false;
     }
 
-    /** avoids term comparison if the two inputs are already known to have equal terms */
+    /**
+     * avoids term comparison if the two inputs are already known to have equal terms
+     */
     public static boolean revisibleTermsAlreadyEqual(final Sentence newBelief, final Sentence oldBelief) {
         if (newBelief.isRevisible())
             if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
@@ -81,7 +83,6 @@ public class LocalRules {
 
         return false;
     }
-
 
 
     /**
@@ -120,29 +121,27 @@ public class LocalRules {
     }
 
 
-    public static Task tryRevision(final Task newBelief, Task oldBeliefTask, final boolean feedbackToLinks, final NAL nal) {
+    public static Task tryRevision(final Task newBelief, Task oldBelief, final boolean feedbackToLinks, final NAL nal) {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
         //if (stamp == null) return null;
 
-        if (newBelief.equals(oldBeliefTask))
+        if (newBelief.equals(oldBelief))
             return null;
 
-        if (Stamp.evidentialSetOverlaps(newBelief, oldBeliefTask))
+        if (Stamp.evidentialSetOverlaps(newBelief, oldBelief))
             return null;
-
-        Sentence oldBelief = oldBeliefTask.sentence;
 
         Truth newBeliefTruth = newBelief.getTruth();
         Truth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        Task revised = nal.derive(nal.newTask(newBelief.getTerm())
+        Task revised = nal.derive( nal.newTask(newBelief.getTerm())
                         .punctuation(newBelief.getPunctuation())
                         .truth(truth)
                         .budget(budget)
-                        .parent(newBelief, oldBeliefTask),
-                true, false);
+                        .parent(newBelief/*, oldBelief*/),
+                true);
 
         if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();
@@ -208,8 +207,7 @@ public class LocalRules {
                 throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
                 //return false;
             }
-        }
-        else {
+        } else {
             belief = belief.clone(projectedTruth);
         }
 
@@ -267,7 +265,7 @@ public class LocalRules {
      */
     public static Task matchReverse(final NAL nal) {
         Task task = nal.getCurrentTask();
-        Sentence belief = nal.getCurrentBelief();
+        Sentence belief = nal.getBelief();
         Sentence sentence = task.sentence;
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
             if (sentence.isJudgment()) {
@@ -300,7 +298,8 @@ public class LocalRules {
     /**
      * {<S <-> P>, <P --> S>} |- <S --> P> Produce an Inheritance/Implication
      * from a Similarity/Equivalence and a reversed Inheritance/Implication
-     *  @param asym The asymmetric premise
+     *
+     * @param asym The asymmetric premise
      * @param sym  The symmetric premise
      * @param nal  Reference to the memory
      */
@@ -318,7 +317,7 @@ public class LocalRules {
 
         AnalyticTruth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
 
-        if (truth!=null) {
+        if (truth != null) {
             return nal.deriveDouble(
                     s.term(content)
                             .punctuation(asym.getPunctuation())
@@ -339,7 +338,7 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static Task conversion(final NAL nal) {
-        Truth truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
+        Truth truth = TruthFunctions.conversion(nal.getBelief().truth);
         Budget budget = BudgetFunctions.forward(truth, nal);
         return convertedJudgment(truth, budget, nal);
     }
@@ -351,14 +350,14 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static Task convertRelation(final NAL nal) {
-        final Truth beliefTruth = nal.getCurrentBelief().truth;
+        final Truth beliefTruth = nal.getBelief().truth;
         final AnalyticTruth truth;
         if ((nal.getCurrentTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(beliefTruth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(beliefTruth, 1.0f);
         }
-        if (truth!=null) {
+        if (truth != null) {
             Budget budget = BudgetFunctions.forward(truth, nal);
             return convertedJudgment(truth, budget, nal);
         }
@@ -369,13 +368,14 @@ public class LocalRules {
      * Convert judgment into different relation
      * <p>
      * called in MatchingRules
-     *  @param budget The budget value of the new task
+     *
+     * @param budget The budget value of the new task
      * @param truth  The truth value of the new task
      * @param nal    Reference to the memory
      */
     private static Task convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
         Statement content = (Statement) nal.getCurrentTask().getTerm();
-        Statement beliefContent = (Statement) nal.getCurrentBelief().getTerm();
+        Statement beliefContent = (Statement) nal.getBelief().getTerm();
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();
         final Term predT = content.getPredicate();

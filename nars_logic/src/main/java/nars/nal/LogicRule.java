@@ -8,6 +8,9 @@ import java.util.function.Predicate;
  */
 public interface LogicRule<X> extends Predicate<X> {
 
+    public static final boolean CONTINUE = true;
+    public static final boolean STOP = false;
+
     /** return false to cancel subsequent rules for this object; true to continue */
     abstract public boolean test(X x);
 

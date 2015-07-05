@@ -338,7 +338,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final Task input = belief;
 
-        BeliefTable.Ranker r = new ArrayListBeliefTable.BeliefConfidenceAndCurrentTime(time());
+        BeliefTable.Ranker r = BeliefTable.BeliefConfidenceOrOriginality;
         belief = getBeliefs().add(input, r, this, nal);
 
         boolean added;
@@ -383,16 +383,16 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final Task input = goal;
 
-        BeliefTable.Ranker r = new ArrayListBeliefTable.BeliefConfidenceAndCurrentTime(time());
+        BeliefTable.Ranker r = BeliefTable.BeliefConfidenceOrOriginality;
         goal = getGoals().add(input, r, this, nal);
 
         boolean added;
 
         if (goal!=input) {
-            String reason = "Undesirable or Duplicate";
+            //String reason = "Undesirable or Duplicate";
             //String reason = input.equals(goal) ? "Duplicate" : "Undesirable";
             // + "compared to: " + belief
-            getMemory().removed(input, reason);
+            //getMemory().removed(input, reason);
             added = false;
         }
         else {
@@ -516,7 +516,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         }
 
         if (!isConstant()) {
-            boolean newQuestion = table.isEmpty();
+            //boolean newQuestion = table.isEmpty();
             final int presize = table.size();
 
             Task match = table.add(q, questionEquivalence, this);
@@ -528,9 +528,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final long now = getMemory().time();
         if (q.isQuest()) {
-            trySolution(getGoals().project(q, now), q, nal);
+            trySolution(getGoals().top(q, now), q, nal);
         } else {
-            trySolution(getBeliefs().project(q, now), q, nal);
+            trySolution(getBeliefs().top(q, now), q, nal);
         }
 
         return q;
