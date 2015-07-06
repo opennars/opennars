@@ -34,11 +34,15 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
     public void setConfidence(float c) {
         //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
         final float maxConf = getConfidenceMax();
+
+        final float e = getEpsilon();
+        c = Math.round(c / e) * e;
+
         if (c > maxConf) c = maxConf;
         if (c < 0) c = 0;
 
-        final float e = getEpsilon();
-        this.confidence = Math.round(c / e) * e;
+        this.confidence = c;
+
     }
 
 

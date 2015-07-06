@@ -31,7 +31,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 /**
 * Created by me on 2/7/15.
 */
-public class TemporalInductionChain extends ConceptFireTaskTerm {
+@Deprecated public class TemporalInductionChain extends ConceptFireTaskTerm {
 
 
     @Override
@@ -175,7 +175,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
                     return nal.deriveDouble(
                             nal.newTask(whole).truth(truth).budget(budget)
-                                    .parent(s1, s2).temporalInductable(true));
+                                    .parent(s1, s2).temporalInductable(false));
                 }
             }
         }

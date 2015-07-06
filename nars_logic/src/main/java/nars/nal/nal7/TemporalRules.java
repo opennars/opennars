@@ -582,8 +582,8 @@ public class TemporalRules {
                 Budget val=BudgetFunctions.forward(T, nal);
 
                 nal.derive(nal.newTask(s2.getTerm()).goal().truth(T).budget(val)
-                                .parent(task, strongest_desireT.sentence)
-                                .occurr(occ).temporalInductable(true)
+                                .parent(task, strongest_desireT)
+                                .occurr(occ).temporalInductable(false)
                 );
 
             }

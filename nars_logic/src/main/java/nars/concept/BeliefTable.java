@@ -53,10 +53,10 @@ public interface BeliefTable extends TaskTable {
     /** the default rank used when adding and other operations where rank is unspecified */
     public Ranker getRank();
 
-    /**
-     * projects to a new task at a given time
-     * was: getTask(q, now, getBeliefs()).  Does not affect the table itself */
-    public Task project(Task t, long now);
+//    /**
+//     * projects to a new task at a given time
+//     * was: getTask(q, now, getBeliefs()).  Does not affect the table itself */
+//    public Task project(Task t, long now);
 
     /*default public Task project(final Task t) {
         return project(t, Stamp.TIMELESS);

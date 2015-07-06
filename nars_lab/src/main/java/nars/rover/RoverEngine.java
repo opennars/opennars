@@ -23,7 +23,7 @@ public class RoverEngine extends PhysicsModel {
 
 
     /* how often to input mission, in frames */
-    public int missionPeriod = 10;
+    public int missionPeriod = 60;
 
     boolean wraparound = false;
 

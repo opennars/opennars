@@ -5,10 +5,11 @@
 package nars.nal.nal7;
 
 import nars.NARSeed;
+import nars.io.out.TextOutput;
+import nars.meter.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
 import nars.nar.Curve;
 import nars.nar.Default;
-import nars.meter.condition.OutputContainsCondition;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -36,7 +37,7 @@ public class TemporalOrderTest extends JavaNALTest {
     public void testFutureQuestion() {
 
 
-        //TextOutput.out(nar);
+        //TextOutput.out(n);
 
         n.input("<e --> f>. :/:");
         n.input("<c --> d>. :|:");

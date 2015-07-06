@@ -7,7 +7,6 @@ package nars.rover.robot;
 import nars.Memory;
 import nars.NAR;
 import nars.clock.SimulatedClock;
-import nars.io.SometimesChangedTextInput;
 import nars.io.in.ChangedTextInput;
 import nars.task.Task;
 import nars.concept.Concept;
@@ -66,33 +65,32 @@ public class RoverModel {
     final double maxVisionInputProbability = 1.0f;
 
     //float tasteDistanceThreshold = 1.0f;
-    final static int retinaPixels = 5;
+    final static int retinaPixels = 32;
 
 
-    int retinaRaysPerPixel = 16; //rays per vision sensor
+    int retinaRaysPerPixel = 1; //rays per vision sensor
 
     float aStep = (float)(Math.PI*2f) / retinaPixels;
 
     float L = 35f; //vision distance
 
     Vec2 mouthPoint = new Vec2(3.0f, 0); //0.5f);
-    int distanceResolution = 8;
+    @Deprecated int distanceResolution = 10;
     float mass = 2f;
 
     double mouthArc = Math.PI/6f; //in radians
-    float biteDistanceThreshold = 0.1f;
+    float biteDistanceThreshold = 0.05f;
     Vec2[] vertices = {new Vec2(3.0f, 0.0f), new Vec2(-1.0f, +2.0f), new Vec2(-1.0f, -2.0f)};
 
     float linearDamping = 0.9f;
-    float angularDamping = 0.8f;
+    float angularDamping = 0.1f;
 
     float restitution = 0.01f; //bounciness
-    float friction = 0.5f;
+    float friction = 0.9f;
 
     public float linearThrustPerCycle = 20f;
     public float angularSpeedPerCycle = 0.44f;
 
-    public static boolean allow_imitate = true;
 
     public class RoverMaterial extends Material {
 
@@ -134,10 +132,10 @@ public class RoverModel {
         this.world = sim.getWorld();
 
         mouthInput = new ChangedTextInput(nar);
-        feltAngularVelocity = new SometimesChangedTextInput(nar, minVisionInputProbability);
-        feltOrientation = new SometimesChangedTextInput(nar, minVisionInputProbability);
-        feltSpeed = new SometimesChangedTextInput(nar, minVisionInputProbability);
-        feltSpeedAvg = new SometimesChangedTextInput(nar, minVisionInputProbability);
+        feltAngularVelocity = new ChangedTextInput(nar);
+        feltOrientation = new ChangedTextInput(nar);
+        feltSpeed = new ChangedTextInput(nar);
+        feltSpeedAvg = new ChangedTextInput(nar);
 
     
 
@@ -162,7 +160,7 @@ public class RoverModel {
             final float angle = /*MathUtils.PI / 2f*/ aStep * i;
             final boolean eats = ((angle < mouthArc / 2f) || (angle > (Math.PI*2f) - mouthArc/2f));
 
-            System.out.println(i + " " + angle + " " + eats);
+            //System.out.println(i + " " + angle + " " + eats);
 
             VisionRay v = new VisionRay(torso, eats ? mouthPoint : new Vec2(0,0), angle, aStep, retinaRaysPerPixel, L, distanceResolution) {
 
@@ -361,7 +359,8 @@ public class RoverModel {
                 //seek food
                 curiosity = 0.05f;
 
-                nar.goal("<goal --> food>", 1.00f, 0.90f);
+                //nar.goal("<goal --> food>", 1.00f, 0.90f);
+                nar.input("<goal --> food>! :|:");
 
 
                 //nar.input("goal(food)! %1.00;0.99%");
@@ -421,7 +420,10 @@ public class RoverModel {
         final Vec2 point; //where the retina receives vision at
         final float angle;
         private final float distance;
-        final SometimesChangedTextInput sight = new SometimesChangedTextInput(nar, minVisionInputProbability);
+        final ChangedTextInput sight =
+                //new SometimesChangedTextInput(nar, minVisionInputProbability);
+                new ChangedTextInput(nar);
+
         RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
         private final Body body;
         private final int resolution;
@@ -432,10 +434,10 @@ public class RoverModel {
         Color3f normalColor = new Color3f(0.9f, 0.9f, 0.4f);
         final Color3f rayColor = new Color3f(); //current ray color
         private final String angleTerm;
-        private float distMomentum = 0.75f;
-        private float minDist;
+        private float distMomentum = 0f;
+        private float hitDist;
         private Body hit;
-        private float confMomentum = 0.75f;
+        private float confMomentum = 0;
         private float conf;
         private Concept angleConcept;
 
@@ -464,8 +466,9 @@ public class RoverModel {
                 conceptPriority = angleConcept.getPriority();
                 conceptDurability = angleConcept.getDurability();
                 conceptQuality = angleConcept.getQuality();
+
                 //sight.setProbability(Math.max(minVisionInputProbability, Math.min(1.0f, maxVisionInputProbability * conceptPriority)));
-                sight.setProbability(minVisionInputProbability);
+                //sight.setProbability(minVisionInputProbability);
             }
 
             if (angleConcept == null) {
@@ -571,9 +574,9 @@ public class RoverModel {
             updatePerception();
         }
 
-        protected void perceiveDist(Body hit, float newConf, float newMinDist) {
+        protected void perceiveDist(Body hit, float newConf, float nextHitDist) {
 
-            minDist = (distMomentum * minDist) + (1f - distMomentum) * newMinDist;
+            hitDist = (distMomentum * hitDist) + (1f - distMomentum) * nextHitDist;
             conf = (confMomentum * conf) + (1f - confMomentum) * newConf;
             
             if (hit!=null)
@@ -582,37 +585,53 @@ public class RoverModel {
         }
         
         protected void updatePerception() {
-            onTouch(hit, minDist);
+            onTouch(hit, hitDist);
 
 
 
 
             
-            if (hit == null) {
-                if (minDist > 0.5f) {
-                    if (sight.set("see(empty," + angleTerm + ",NaN). :|:")) {
+            if ((hit == null) || (hitDist > 1.0f)) {
+                if (sight.set("see(empty," + angleTerm + "). :|:")) {
 
-                    }
-                }   
-                return;                                
+                }
+                return;
             }
 
-            if (conf < 0.01f) return;
+            if (conf < 0.01f) {
+                if (sight.set("see(confusion," + angleTerm + "). :|:")) {
 
-            String dist = RoverEngine.f(minDist);
+                }
+                return;
+            }
+
+
             
             String material = hit.getUserData() != null ? hit.getUserData().toString() : "sth";
             //float freq = 0.5f + 0.5f * di;
-            float freq = 1f;
-            //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            String ss = "see(" + material + "," + angleTerm + "," + dist + "). :|: %" + freq + ";" + conf + "%";
+
+
+            //String ss = inputVisionDiscrete(minDist, material);
+            String ss = inputVisionFreq(hitDist, material);
             if (sight.set(ss)) {
 
             }
-            
 
         }
-        
+
+        private String inputVisionDiscrete(float dist, String material) {
+            float freq = 1f;
+            String sdist = RoverEngine.f(dist);
+            //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+            return "see(" + material + "," + angleTerm + "," + sdist + "). :|: %" + freq + ";" + conf + "%";
+        }
+
+        private String inputVisionFreq(float dist, String material) {
+            float freq = dist;
+            //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
+            return "see(" + material + "," + angleTerm + "). :|: %" + freq + ";" + conf + "%";
+        }
+
         public void onTouch(Body hit, float di) {
         }
 

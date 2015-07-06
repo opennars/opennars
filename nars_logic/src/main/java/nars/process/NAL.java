@@ -791,4 +791,9 @@ public abstract class NAL implements Runnable {
     public boolean unify(char varType, Term a, Term b, Term[] u) {
         return Variables.unify(varType, a, b, u, memory.random);
     }
+
+    public boolean unify(char varType, Term a, Term b) {
+        return unify(varType, a, b, new Term[] { a, b } );
+    }
+
 }

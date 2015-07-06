@@ -414,7 +414,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             // check if the Goal is already satisfied
             Task beliefSatisfied = getBeliefs().topRanked();
 
-            float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+            /*float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {
 
                 Truth projectedTruth = beliefSatisfied.projection(goal.getOccurrenceTime(), dur);
@@ -432,17 +432,23 @@ public class DefaultConcept extends Item<Term> implements Concept {
             T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
 
             if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
-
-                questionFromGoal(goal, nal);
-
-                //TODO
-                //InternalExperience.experienceFromTask(nal, task, false);
-
-                getMemory().execute(this, goal);
-            }
+*/
+                executeGoal(goal, this, nal);
+            //}
         }
 
         return true;
+    }
+
+    protected static void executeGoal(Task goal, Concept c, NAL nal) {
+
+        questionFromGoal(goal, nal);
+
+        //TODO
+        //InternalExperience.experienceFromTask(nal, task, false);
+
+        nal.memory.execute(c, goal);
+
     }
 
     final static Variable how = new Variable("?how");

@@ -1,5 +1,6 @@
 package nars.bag;
 
+import nars.Global;
 import nars.analyze.experimental.BagPerf.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
@@ -44,6 +45,8 @@ public class BagIteratorTest {
     
     public void testBagIterator(Bag<CharSequence, NullItem> b) {
 
+        //Global.DEBUG = true;
+
         b.clear();
 
         b.put(new NullItem(0.1f));
@@ -82,6 +85,7 @@ public class BagIteratorTest {
     }
     @Test
     public void testCurveBagRandomIterator() {
+
         testBagIterator(new CurveBag(rng, L*2, true));
         
     }

@@ -231,23 +231,39 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     /** clones this Task with a new Term and truth  */
     public Task clone(Compound newTerm, Truth newTruth, boolean cloneEvenIfTruthEqual) {
-        if (!cloneEvenIfTruthEqual) {
-            if (getTruth().equals(newTruth) && getTerm().equals(newTerm))
-                return this;
-        }
         return clone(newTerm, newTruth, getOccurrenceTime());
     }
 
     public <X extends Compound> Task<X> clone(X t, Truth newTruth, long occ) {
+        return clone(t, newTruth, occ, true);
+    }
+
+    public Task clone(Compound t, Truth newTruth, long occ, boolean cloneEvenIfTruthEqual) {
+        if (newTruth instanceof ProjectedTruth) {
+            long target = ((ProjectedTruth) newTruth).getTargetTime();
+            if (occ!=target) {
+                cloneEvenIfTruthEqual = true;
+                occ = target;
+            }
+        }
+
+        if (!cloneEvenIfTruthEqual) {
+            if (occ == getOccurrenceTime() && getTruth().equals(newTruth) && getTerm().equals(t))
+                return this;
+        }
+
         Task tt = new Task(t, getPunctuation(), newTruth,
                 getPriority(), getDurability(), getQuality(),
                 parentTask, parentBelief, bestSolution
         );
         tt.setTemporalInducting(isTemporalInductable());
-        tt.setCyclic(isCyclic());
         tt.setCause(getCause());
-        tt.setLastForgetTime(getLastForgetTime());
+
+        //tt.setLastForgetTime(getLastForgetTime());
+
         tt.setEvidentialSet(getEvidentialSet());
+        tt.setCyclic(isCyclic());
+
         tt.setCreationTime(getCreationTime());
         tt.setOccurrenceTime(occ);
         tt.log(getHistory());

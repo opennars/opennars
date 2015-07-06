@@ -43,10 +43,9 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
             if (LocalRules.revisible(task, belief)) {
                 return LocalRules.revision(task, belief, true, nal) != null;
             }
-        } else {
+        } /* if question or quest */ else {
             if (TemporalRules.matchingOrder(task, belief)) {
-                Term[] u = new Term[]{task.getTerm(), belief.getTerm()};
-                if (Variables.unify(Symbols.VAR_QUERY, u, nal.memory.random)) {
+                if (nal.unify(Symbols.VAR_QUERY, task.getTerm(), belief.getTerm())) {
                     //TODO see if this is correct because it will be producing
                     //a Task which isnt used
                     return LocalRules.trySolution(belief, task, nal) != null;

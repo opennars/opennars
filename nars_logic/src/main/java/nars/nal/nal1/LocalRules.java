@@ -115,7 +115,7 @@ public class LocalRules {
                         .truth(truth)
                         .budget(budget)
                         .parent(newBelief),
-                true, true);
+                true);
 
         if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();
@@ -138,6 +138,7 @@ public class LocalRules {
         ProjectedTruth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
+
 
         Task revised = nal.derive( nal.newTask(newBelief.getTerm())
                         .punctuation(newBelief.getPunctuation())

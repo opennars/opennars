@@ -351,11 +351,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
             if (oldItem == null)
                 throw new RuntimeException("required removal but nothing removed");
-            else {
-                if (oldItem.name().equals(i.name())) {
-                    throw new RuntimeException("this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
+            /*else {
+                if (Global.DEBUG) {
+                    if (oldItem.name().equals(i.name())) {
+                        throw new RuntimeException(nameTable.size() + "," + items.size() + ": this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
+                    }
                 }
-            }
+            }*/
 
 
             //insert
@@ -369,9 +371,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
             E existingToReplace = nameTable.put(i.name(), i);
             return null;
         } else /* if (!contains) */ {
+
             E shouldNotExist = nameTable.put(i.name(), i);
-            if (shouldNotExist != null)
-                throw new RuntimeException("already expected no existing key/item but it was actually there");
+            /*if (Global.DEBUG) {
+                if (shouldNotExist != null)
+                    throw new RuntimeException(i.name() + " already expected null value but " + shouldNotExist + " was there");
+            }*/
             return null;
         }
 

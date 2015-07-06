@@ -448,7 +448,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
     @Override
     public CycleProcess newControlCycle() {
-        return new DefaultCycle(newConceptBag(), newNovelTaskBag());
+        return new DefaultCycle(this, newConceptBag(), newNovelTaskBag());
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {

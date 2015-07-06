@@ -2,6 +2,7 @@ package nars.cycle;
 
 import nars.Global;
 import nars.Memory;
+import nars.Param;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.link.TaskLink;
@@ -33,15 +34,17 @@ public class DefaultCycle extends SequentialCycle {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    protected TreeSet<Task> newTasks;
+    protected final TreeSet<Task> newTasks;
     protected List<Task> newTasksTemp = new ArrayList();
     protected boolean executingNewTasks = false;
 
 
 
-    public DefaultCycle(Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
+    public DefaultCycle(Param param, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
         super(concepts);
 
+        //this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+        newTasks = new TreeSet(new TaskComparator(param.getInputMerging()));
 
         this.novelTasks = novelTasks;
 
@@ -54,19 +57,12 @@ public class DefaultCycle extends SequentialCycle {
         super.reset(m, delete);
 
         newTasksTemp.clear();
+        newTasks.clear();
 
         if (delete) {
-            newTasks.clear();
-            newTasks = null;
             novelTasks.delete();
         }
         else {
-            //this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
-            if (newTasks == null)
-                newTasks = new TreeSet(new TaskComparator(memory.param.getInputMerging()));
-            else
-                newTasks.clear();
-
             novelTasks.clear();
         }
 

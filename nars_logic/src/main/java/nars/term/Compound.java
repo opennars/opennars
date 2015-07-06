@@ -92,9 +92,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
      */
-    protected void init(Term[] term) {
-
-
+    protected void init(final Term[] term) {
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1;
@@ -110,8 +108,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
         for (final Term t : term) {
-            if (t == null)
-                throw new RuntimeException("null subterm");
+            /*if (t == null)
+                throw new RuntimeException("null subterm");*/
             compl += t.getComplexity();
             deps += t.varDep();
             indeps += t.varIndep();
@@ -128,10 +126,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.hasVarQueries = (byte) queries;
         this.varTotal = (short)(deps + indeps + queries);
         this.complexity = (short) compl;
-        if ((this.mass = (short)(varTotal + complexity)) > Global.COMPOUND_MASS_LIMIT) {
-            throw new RuntimeException("mass limit exceeded for new Compound term");
-        }
 
+        if ((this.mass = (short)(varTotal + complexity)) > Global.COMPOUND_MASS_LIMIT) {
+            throw new RuntimeException("mass limit exceeded for new Compound term: " + operator() + " " + Arrays.toString(term));
+        }
 
         invalidate();
     }

@@ -177,7 +177,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (obj == this) return true;
         return false;
         //throw new RuntimeException("tasklinks should be compared by their sentences, not directly");

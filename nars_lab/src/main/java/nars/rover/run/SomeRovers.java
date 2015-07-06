@@ -22,7 +22,7 @@ public class SomeRovers {
     }
 
     public static void main(String[] args) {
-        Global.DEBUG = false;
+        Global.DEBUG = true;
         Global.EXIT_ON_EXCEPTION = true;
 
 
@@ -41,19 +41,20 @@ public class SomeRovers {
             nar = new NAR(new Default() {
 
                 protected void initDerivationFilters() {
-                    final float DERIVATION_PRIORITY_LEAK=0.8f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                    final float DERIVATION_DURABILITY_LEAK=0.8f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                    final float DERIVATION_PRIORITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                    final float DERIVATION_DURABILITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
                     getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
                 }
 
-            }.setActiveConcepts(800).setClock(clock = new SimulatedClock())
+            }.setInternalExperience(null).setActiveConcepts(800).setClock(clock = new SimulatedClock())
             );
 
             nar.param.inputsMaxPerCycle.set(32);
-            nar.param.conceptsFiredPerCycle.set(64);
+            nar.param.conceptsFiredPerCycle.set(16);
 
-            nar.setCyclesPerFrame(2);
-            (nar.param).duration.set(5*2);
+            int nc = 4;
+            nar.setCyclesPerFrame(nc);
+            (nar.param).duration.set(5*nc);
 
             //nar.param.shortTermMemoryHistory.set(3);
 

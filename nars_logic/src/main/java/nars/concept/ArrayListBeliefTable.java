@@ -118,12 +118,13 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //
 //        return null;
 //    }
-    @Override
-    public Task project(Task t, long now) {
-        Task closest = topRanked();
-        if (closest == null) return null;
-        return closest.projectTask(t.getOccurrenceTime(), now);
-    }
+
+//    @Override
+//    public Task project(Task t, long now) {
+//        Task closest = topRanked();
+//        if (closest == null) return null;
+//        return closest.projectTask(t.getOccurrenceTime(), now);
+//    }
 
     @Override
     public Task add(Task t, Ranker r, Concept c, NAL nal) {

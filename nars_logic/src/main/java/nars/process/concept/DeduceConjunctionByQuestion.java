@@ -133,7 +133,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
                 Budget budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
 
                 nal.derive(nal.newTask(conj).punctuation(sentence.getPunctuation()).truth(truthAnd).budget(budget)
-                        .parent(sentence, belief).temporalInductable(true));
+                        .parent(sentence, belief).temporalInductable(false));
 
                 nal.memory.logic.DED_CONJUNCTION_BY_QUESTION.hit();
 
