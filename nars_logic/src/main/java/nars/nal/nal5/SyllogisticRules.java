@@ -575,6 +575,7 @@ public final class SyllogisticRules {
 
     }
 
+
     /**
      * {<(&&, S1, S2, S3) ==> P>, S1} |- <(&&, S2, S3) ==> P> {<(&&, S2, S3) ==>
      * P>, <S1 ==> S2>} |- <(&&, S1, S3) ==> P> {<(&&, S1, S3) ==> P>, <S1 ==>
@@ -588,11 +589,15 @@ public final class SyllogisticRules {
      *                 for predicate, -1 for the whole term
      * @param nal      Reference to the memory
      */
-    public static Task conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
-        Task task = nal.getCurrentTask();
-        final Sentence taskSentence = task.sentence;
+    public static Task conditionalDedInd(Implication premise1, short index, Term premise2, final int side, final NAL nal) {
+        final Task task = nal.getCurrentTask();
         final Sentence belief = nal.getBelief();
-        boolean deduction = (side != 0);
+
+        final boolean deduction = (side != 0);
+
+        TaskSeed newTask = nal.newDoublePremise(task, belief, deduction); //NOTE: overlap may be tested earlier, try to do it only once
+        if (newTask == null) return null;
+
         boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), nal.memory.random);
         Term commonComponent;
         Term newComponent = null;
@@ -682,7 +687,7 @@ public final class SyllogisticRules {
             content = premise1.getPredicate();
         }
 
-        if ((content == null) || (!(content instanceof Compound)))
+        if (Sentence.invalidSentenceTerm(content))
             return null;
 
 
@@ -690,7 +695,7 @@ public final class SyllogisticRules {
         if (nal.nal(7) && (delta != 0)) {
 
             long baseTime = (belief.getTerm() instanceof Implication) ?
-                    taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
+                    task.getOccurrenceTime() : belief.getOccurrenceTime();
 
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.time();
@@ -711,14 +716,14 @@ public final class SyllogisticRules {
             //sb = nal.newStamp(taskSentence, belief, Stamp.ETERNAL);
         }
 
-        Truth truth1 = taskSentence.truth;
+        Truth truth1 = task.truth;
         Truth truth2 = belief.truth;
         Truth truth = null;
         Budget budget;
-        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
+        if (task.isQuestion() || task.isQuest()) {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
         } else {
-            if (taskSentence.isGoal()) {
+            if (task.isGoal()) {
                 if (conditionalTask) {
                     truth = TruthFunctions.desireWeak(truth1, truth2);
                 } else if (deduction) {
@@ -742,11 +747,10 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        return nal.deriveDouble(nal.newTask((Compound) content)
+        return nal.deriveDouble(newTask.term((Compound)content)
                         .punctuation(task.getPunctuation())
                         .truth(truth)
                         .budget(budget)
-                        .parent(task, belief)
                         .occurr(occ),
 
                 false, deduction

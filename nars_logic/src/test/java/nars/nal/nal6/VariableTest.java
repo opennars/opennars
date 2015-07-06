@@ -93,7 +93,7 @@ public class VariableTest extends JavaNALTest {
 //            }
 //        };
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         n.input("<a --> 3>. :|:" + '\n' +
                         "<a --> 4>. :/:" + '\n' +

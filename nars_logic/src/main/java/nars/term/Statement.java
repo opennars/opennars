@@ -56,6 +56,9 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     protected Statement(final A subj, final B pred) {
         super(subj, pred);
     }
+    /*protected Statement(final Term... args) {
+        super(args);
+    }*/
 
     /*protected Statement(final Term... twoTermsPlease) {
         this(twoTermsPlease[0], twoTermsPlease[1]);

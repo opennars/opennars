@@ -17,6 +17,7 @@ import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variables;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -771,5 +772,15 @@ public abstract class NAL implements Runnable {
             if (x.isCyclic())
                 return null;
         return x;
+    }
+
+    public <C extends Compound> TaskSeed<C> newTask(C content, Task task, Sentence belief, boolean allowOverlap) {
+        TaskSeed s = newDoublePremise(task, belief, allowOverlap);
+        if (s == null) return null;
+        return s.term(content);
+    }
+
+    public boolean unify(char varType, Term a, Term b, Term[] u) {
+        return Variables.unify(varType, a, b, u, memory.random);
     }
 }

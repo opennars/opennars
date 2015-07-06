@@ -31,28 +31,21 @@ import java.util.Arrays;
 /**
  * A Statement about an Inheritance copula.
  */
-public class Implication extends Statement {
+public class Implication<A extends Term, B extends Term> extends Statement<A,B> {
 
     private final int temporalOrder;
 
-    /**
-     * Constructor with partial values, called by make
-     * @param arg The component list of the term
-     */
-    public Implication(Term[] arg, int order) {
-        super(arg[0], arg[1]);
+
+    protected Implication(final A subject, final B predicate, final int order) {
+        super(subject, predicate);
 
         if (order == TemporalRules.ORDER_INVALID) {
-            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));
+            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + subject + "," + predicate);
         }
 
         temporalOrder = order;
-        
-        init(arg);
-    }
-    
-    public Implication(Term subject, Term predicate, int order) {
-        this(new Term[] { subject, predicate }, order);
+
+        init(term);
     }
 
 
@@ -64,7 +57,7 @@ public class Implication extends Statement {
      */
     @Override
     public Implication clone() {
-        return new Implication(term, getTemporalOrder());
+        return new Implication(getSubject(), getPredicate(), getTemporalOrder());
     }
     
     @Override public Implication clone(final Term[] t) {

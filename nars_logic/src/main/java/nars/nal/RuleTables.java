@@ -36,6 +36,7 @@ import nars.nal.nal8.Operation;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.task.stamp.Stamp;
 import nars.term.*;
 
 import java.util.Random;
@@ -548,12 +549,12 @@ public class RuleTables {
      * @param side        The location of the shared term in the statement
      * @param nal         Reference to the memory
      */
-    public static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, NAL nal) {
+    public static void conditionalDedIndWithVar(Implication<Compound, ?> conditional, short index, Statement statement, short side, NAL nal) {
 
         if (!(conditional.getSubject() instanceof Compound))
             return;
 
-        Compound condition = (Compound) conditional.getSubject();
+        Compound condition = conditional.getSubject();
 
         Term component = condition.term[index];
         Term component2 = null;
@@ -564,18 +565,17 @@ public class RuleTables {
             component2 = statement.term[side];
         }
 
-        if (component2 != null) {
-            Random r = nal.memory.random;
 
+        if (component2 != null) {
             Term[] u = new Term[]{conditional, statement};
-            boolean unifiable = Variables.unify(VAR_INDEPENDENT, component, component2, u, r);
+            boolean unifiable = nal.unify(VAR_INDEPENDENT, component, component2, u);
             if (!unifiable) {
-                unifiable = Variables.unify(VAR_DEPENDENT, component, component2, u, r);
+                unifiable = nal.unify(VAR_DEPENDENT, component, component2, u);
             }
             if (unifiable) {
-                conditional = (Implication) u[0];
+                Implication conditionalUnified = (Implication) u[0];
                 statement = (Statement) u[1];
-                SyllogisticRules.conditionalDedInd(conditional, index, statement, side, nal);
+                SyllogisticRules.conditionalDedInd(conditionalUnified, index, statement, side, nal);
             }
         }
     }
