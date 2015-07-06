@@ -31,6 +31,7 @@ import nars.budget.Itemized;
 import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
+import nars.io.Texts;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMetrics;
 import nars.nal.LogicPolicy;
@@ -62,6 +63,7 @@ import nars.term.*;
 import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.io.Serializable;
 import java.util.*;
@@ -956,9 +958,21 @@ public class Memory implements Serializable, AbstractStamper {
         c.delete();
     }
 
+    /** sums the priorities of items in different active areas of the memory */
+    public double getActivePrioritySum(final boolean concept, final boolean tasklink, final boolean termlink) {
+        double total = 0;
+        for (Concept c : cycle) {
+            if (concept)
+                total += c.getPriority();
+            if (tasklink)
+                total += c.getTaskLinks().getPrioritySum();
+            if (termlink)
+                total += c.getTermLinks().getPrioritySum();
+        }
+        return total;
+    }
 
-
-//    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
+    //    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
 //        return item == null ? "" : "\n " + title + ":\n"
 //                + item.toString();
 //    }

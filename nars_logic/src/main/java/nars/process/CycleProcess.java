@@ -20,18 +20,7 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
 
     int size();
 
-    default public double getPrioritySum(boolean concept, boolean tasklink, boolean termlink) {
-        double total = 0;
-        for (Concept c : this) {
-            if (concept)
-                total += c.getPriority();
-            if (tasklink)
-                total += c.getTaskLinks().getPrioritySum();
-            if (termlink)
-                total += c.getTermLinks().getPrioritySum();
-        }
-        return total;
-    }
+
 
     void conceptPriorityHistogram(double[] bins);
 

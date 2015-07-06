@@ -5,6 +5,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.process.NAL;
 import nars.task.Task;
 import nars.truth.Truth;
+import nars.truth.TruthWave;
 import nars.truth.Truthed;
 
 import java.io.PrintStream;
@@ -178,6 +179,11 @@ public interface BeliefTable extends TaskTable {
             System.out.println(t + " " + t.getHistory());
         }
     }
+
+    default public TruthWave getWave() {
+        return new TruthWave(this);
+    }
+
 
     public interface Ranker extends Function<Task,Float> {
         /** returns a number producing a score or relevancy number for a given Task

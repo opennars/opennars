@@ -307,7 +307,21 @@ abstract public class Texts  {
     public static int tens(final float d) {
         return (int) ((d * 10.0f + 0.5f));
     }
-     
+
+    /** 2 decimal representation of values between 0 and 1. only the tens and hundredth
+     * decimal point are displayed - not the ones, and not a decimal point.
+     * for compact display.
+     * if the value=1.0, then 'aa' is the result
+     */
+    public static final String n2u(final float x) {
+        if ((x < 0) || (x > 1)) throw new RuntimeException("values >=0 and <=1");
+        int hundreds = (int)hundredths(x);
+        if (x == 100) return "aa";
+        if (hundreds < 10) return "0" + hundreds;
+        else
+            return Integer.toString(hundreds);
+    }
+
     public static final CharSequence n2(final float x) {
         if ((x < 0) || (x > 1.0f))
             throw new RuntimeException("Invalid value for Texts.n2");

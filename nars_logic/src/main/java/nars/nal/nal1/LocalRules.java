@@ -141,9 +141,9 @@ public class LocalRules {
                         .truth(truth)
                         .budget(budget)
                         .parent(newBelief, oldBelief)
-                        .reason("Revision(" +
-                                Arrays.toString(newBelief.getEvidentialSet()) + ":" +
-                                Arrays.toString(oldBelief.getEvidentialSet())
+                        .reason("Revision"
+                                //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
+                                //Arrays.toString(oldBelief.getEvidentialSet())
                         )
                     ,true);
 

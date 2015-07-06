@@ -1,15 +1,12 @@
-package nars.core;
+package nars.budget;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.NARSeed;
-import nars.analyze.meter.CountOutputEvents;
+import nars.meter.CountOutputEvents;
 import nars.bag.impl.CacheBag;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
-import nars.io.out.TextOutput;
 import nars.nar.Default;
 import nars.term.Term;
 import org.junit.Test;
@@ -124,11 +121,11 @@ public class CacheBagTest {
 
         totalPriorityWithin(n, 0, 0.05f);
 
-        printConcepts(n);
+        //printConcepts(n);
 
         n.frame(100);
 
-        printConcepts(n);
+        //printConcepts(n);
 
         assertEquals(2, counts.numInputs());
         assertEquals(0, counts.numErrors());
@@ -143,7 +140,7 @@ public class CacheBagTest {
 
     public double totalPriorityWithin(NAR n, float min, float max) {
         int c = n.memory.numConcepts(true, false);
-        double p = n.memory.cycle.getPrioritySum(true, true, true);
+        double p = n.memory.getActivePrioritySum(true, true, true);
         double pc = p / c;
         //System.out.println("priority @ " + n.time() + ": " + p + " (" + pc + " / " + c + " concepts)");
         //assertTrue( min <= p );

@@ -240,11 +240,15 @@ public class NAR extends Container implements Runnable {
     }
 
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term(termString), tense, freq, conf);
+        return believe((Compound)term(termString), tense, freq, conf);
     }
 
     public Task believe(Compound term, float freq, float conf) throws InvalidInputException {
-        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term, Tense.Eternal, freq, conf);
+        return believe(term, Tense.Eternal, freq, conf);
+    }
+
+    public Task believe(Compound term, Tense tense, float freq, float conf) throws InvalidInputException {
+        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term, tense, freq, conf);
     }
 
     public Task believe(String termString, float freq, float conf) throws InvalidInputException {

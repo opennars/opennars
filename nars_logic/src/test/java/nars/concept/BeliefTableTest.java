@@ -2,55 +2,34 @@ package nars.concept;
 
 import junit.framework.TestCase;
 import nars.NAR;
+import nars.meter.BeliefAnalysis;
+import nars.meter.BudgetStatus;
+import nars.nal.nal7.Tense;
 import nars.nar.Default;
-import nars.term.Compound;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by me on 7/5/15.
  */
 public class BeliefTableTest extends TestCase {
 
-    public static class BeliefAnalysis {
 
-        private final NAR nar;
-        private final Compound term;
-
-        public BeliefAnalysis(NAR n, String term) {
-            this.nar = n;
-            this.term = nar.term(term);
-        }
-
-        public BeliefAnalysis add(float freq, float conf) {
-            nar.believe(term, freq, conf);
-            nar.frame();
-            return this;
-        }
-
-        public Concept concept() {
-            return nar.concept(term);
-        }
-
-        public BeliefTable beliefs() {
-            return concept().getBeliefs();
-        }
-
-        public void print() {
-            System.out.println("Beliefs");
-            beliefs().print(System.out);
-            System.out.println();
-        }
-
-        public int size() { return beliefs().size(); }
-
+    @Before
+    public NAR newNAR(int maxBeliefs) {
+        Default d = new Default().setInternalExperience(null);
+        d.conceptBeliefsMax.set(maxBeliefs);
+        return new NAR(d);
     }
 
+    @Test
     public void testRevision() {
-        NAR n = new NAR(new Default().setInternalExperience(null));
 
+        NAR n = newNAR(4);
 
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>")
-                .add(1.0f, 0.9f)
-                .add(0.0f, 0.9f);
+                .believe(1.0f, 0.9f).run(1)
+                .believe(0.0f, 0.9f).run(1);
 
         assertEquals(2, b.size());
 
@@ -68,4 +47,77 @@ public class BeliefTableTest extends TestCase {
 
     }
 
+    @Test
+    public void testTruthOscillation() {
+
+        NAR n = newNAR(4);
+        n.param.duration.set(1);
+
+        int offCycles = 2;
+
+        BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>");
+
+        assertEquals(0.0, (Double)b.energy().get(BudgetStatus.Budgeted.ActiveConceptPrioritySum), 0.001);
+
+        b.believe(1.0f, 0.9f, Tense.Present);
+        b.run(1);
+        //b.printEnergy();
+
+        b.run(1);
+        //b.printEnergy();
+
+        b.believe(0.0f, 0.9f, Tense.Present);
+        b.run(1);
+        //b.printEnergy();
+
+        b.run(1);
+        //b.printEnergy();
+
+        b.print();
+        assertEquals(3, b.size());
+
+        b.believe(1.0f, 0.9f, Tense.Present).run(offCycles)
+                .believe(0.0f, 0.9f, Tense.Present);
+
+        /*for (int i = 0; i < 16; i++) {
+            b.printEnergy();
+            b.print();
+            n.frame(1);
+        }*/
+
+
+
+    }
+
+    @Test
+    public void testTruthOscillationLongTerm() {
+
+        NAR n = newNAR(8);
+        n.param.duration.set(1);
+
+        int period = 2;
+
+        BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>");
+
+        boolean state = true;
+
+        for (int i = 0; i < 16; i++) {
+
+            if (i % period == 0) {
+                b.believe(state ? 1f : 0f, 0.9f, Tense.Present);
+                state = !state;
+            }
+            else {
+                //nothing
+            }
+
+            n.frame();
+
+            b.printWave();
+            b.printEnergy();
+            b.print();
+        }
+
+
+    }
 }
