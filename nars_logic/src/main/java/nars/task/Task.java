@@ -36,6 +36,7 @@ import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
 import nars.task.stamp.StampEvidence;
 import nars.term.Compound;
+import nars.term.Term;
 import nars.term.Termed;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -208,13 +209,25 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 //    }
 
     /** clones this Task with a new Term */
-    public <X extends Compound> Task<X> clone(X t) {
-        return clone(t, getTruth());
+    public <X extends Compound> Task<X> clone(final X t) {
+        return clone(t, true);
+    }
+
+    public <X extends Compound> Task<X> clone(X t, boolean cloneEvenIfTruthEqual) {
+        return clone(t, getTruth(), cloneEvenIfTruthEqual);
+    }
+
+    public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
+        return clone(t, newTruth, true);
     }
 
     /** clones this Task with a new Term and truth  */
-    public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
-        return clone(t, newTruth, getOccurrenceTime());
+    public Task clone(Compound newTerm, Truth newTruth, boolean cloneEvenIfTruthEqual) {
+        if (!cloneEvenIfTruthEqual) {
+            if (getTruth().equals(newTruth) && getTerm().equals(newTerm))
+                return this;
+        }
+        return clone(newTerm, newTruth, getOccurrenceTime());
     }
 
     public <X extends Compound> Task<X> clone(X t, Truth newTruth, long occ) {
@@ -237,7 +250,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         if (!cloneEvenIfTruthEqual) {
             if (getTruth().equals(newTruth)) return this;
         }
-        return clone(getTerm(), newTruth);
+        return clone(getTerm(), newTruth, getOccurrenceTime());
     }
 
     @Override
