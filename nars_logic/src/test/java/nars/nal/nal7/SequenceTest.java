@@ -2,6 +2,8 @@ package nars.nal.nal7;
 
 import nars.NAR;
 import nars.nar.Default;
+import nars.term.Atom;
+import nars.term.Term;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -32,6 +34,27 @@ public class SequenceTest {
 
         assertEquals("output matches input", seq, ss);
 
+    }
+
+    @Test public void testSingleTermSequence() {
+        NAR nar = new NAR(new Default());
+        Term x = nar.term("(&/, a)");
+        assertNotNull(x);
+        assertEquals(Atom.class, x.getClass());
+    }
+
+    @Test public void testSequenceToString() {
+        NAR nar = new NAR(new Default());
+
+        testSeqTermString(nar, "(&/, a, /1, b)");
+        testSeqTermString(nar, "(&/, a, /2, b, /4)");
+        testSeqTermString(nar, "(&/, a, /3, b, /5, c, /10, d)");
+
+
+    }
+
+    private void testSeqTermString(NAR nar, String s) {
+        assertEquals(s, nar.term(s).toString());
     }
 
     @Test public void testDistance1() {

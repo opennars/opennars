@@ -130,48 +130,59 @@ public class Sequence extends Conjunction implements Intermval {
     @Override
     public void append(Writer p, boolean pretty) throws IOException {
 
-            boolean opener = appendTermOpener();
-            if (opener)
-                p.append(COMPOUND_TERM_OPENER.ch);
+        boolean opener = appendTermOpener();
+        if (opener)
+            p.append(COMPOUND_TERM_OPENER.ch);
 
 
-            final boolean appendedOperator = appendOperator(p);
+        final boolean appendedOperator = appendOperator(p);
+
+        appendSeparator(p, pretty);
+
+        int nterms = term.length;
+
+        long[] ii = intervals();
+
+        for (int i = 0; i < nterms+1; i++) {
 
 
-            int nterms = term.length;
+            final long c = ii[i];
 
-            long[] ii = intervals();
-            final int ni = ii.length;
+            if (c != 0) {
 
-            int subtermsWritten = 0;
-            for (int i = 0; i < nterms + 1; i++) {
-                if ((subtermsWritten != 0) || (i == 0 && nterms > 1 && appendedOperator)) {
-                    p.append(ARGUMENT_SEPARATOR);
-                    if (pretty) p.append(' ');
-                }
+                if (i == nterms)
+                    appendSeparator(p, pretty);
 
-                final long iii = ii[i];
+                //insert Interval virtual term
+                appendInterval(p, c);
 
-                if (iii!=0) {
-                    //insert Interval psuedo-term
-                    p.append(Symbols.INTERVAL_PREFIX);
-                    p.append(Long.toString(iii));
-                    if (i!=ni-1) {
-                        p.append(ARGUMENT_SEPARATOR);
-                        if (pretty) p.append(' ');
-                    }
-                    subtermsWritten++;
-                }
+                if (i == nterms)
+                    break;
+                else
+                    appendSeparator(p, pretty);
 
-                if (i < nterms) {
-                    term[i].append(p, pretty);
-                    subtermsWritten++;
-                }
             }
 
+            if (i < nterms) {
+                term[i].append(p, pretty);
+            }
 
-            appendCloser(p);
+            if (i < nterms-1) {
+                appendSeparator(p, pretty);
+            }
+
+        }
+
+
+        appendCloser(p);
 
 
     }
+
+    protected void appendInterval(Writer p, long iii) throws IOException {
+        p.append(Symbols.INTERVAL_PREFIX);
+        p.append(Long.toString(iii));
+    }
+
+
 }

@@ -213,6 +213,11 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
     }
 
+    public static void appendSeparator(final Writer p, final boolean pretty) throws IOException {
+        p.append(ARGUMENT_SEPARATOR);
+        if (pretty) p.append(' ');
+    }
+
     public boolean appendOperator(Writer p) throws IOException {
         p.append(operator().str);
         return true;

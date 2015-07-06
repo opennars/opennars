@@ -344,14 +344,29 @@ public class RoverModel {
     public abstract static class BiCycleDesire  {
 
         private final CycleDesire positive;
+        private final CycleDesire negative;
+
+        public float positiveDesire, negativeDesire;
 
         public BiCycleDesire(String positiveTerm, String negativeTerm, ConceptDesire desireFunction, NAR n) {
             this.positive = new CycleDesire(positiveTerm, desireFunction, n) {
 
+
+
                 @Override
-                float onCycle(float desire) {
+                float onCycle(final float desire) {
+                    positiveDesire = desire;
                     return 0;
                 }
+            };
+            this.negative = new CycleDesire(positiveTerm, desireFunction, n) {
+
+                @Override
+                float onCycle(float desire) {
+                    negativeDesire = desire;
+                    return 0;
+                }
+
             };
         }
     }

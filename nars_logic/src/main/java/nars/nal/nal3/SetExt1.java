@@ -30,6 +30,7 @@ public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt {
         return SetExt.make(replaced);
     }
 
+    @Override
     public void appendCloser(Writer p) throws IOException {
         p.append(Op.SET_EXT_CLOSER.ch);
     }
