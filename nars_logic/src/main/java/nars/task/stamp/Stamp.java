@@ -471,7 +471,7 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 //    }
 
     /** true if there are any common elements; assumes the arrays are sorted and contain no duplicates */
-    public static boolean overlap(final long[] a, final long[] b) {
+    public static boolean overlapping(final long[] a, final long[] b) {
 
         /** TODO there may be additional ways to exit early from this loop */
 
@@ -489,11 +489,11 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
         return false;
     }
 
-    public static boolean evidentialSetOverlaps(final Sentence a, final Sentence b) {
+    public static boolean overlapping(final Sentence a, final Sentence b) {
 
         if (a == b) return true;
 
-        return overlap(a.getEvidentialSet(), b.getEvidentialSet());
+        return overlapping(a.getEvidentialSet(), b.getEvidentialSet());
     }
 
 

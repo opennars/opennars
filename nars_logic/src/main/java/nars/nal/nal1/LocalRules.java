@@ -99,7 +99,7 @@ public class LocalRules {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
         //if (stamp == null) return null;
 
-        if (Stamp.evidentialSetOverlaps(newBelief, oldBelief))
+        if (Stamp.overlapping(newBelief, oldBelief))
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
@@ -128,7 +128,7 @@ public class LocalRules {
         if (newBelief.equals(oldBelief))
             return null;
 
-        if (Stamp.evidentialSetOverlaps(newBelief, oldBelief))
+        if (Stamp.overlapping(newBelief, oldBelief))
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
@@ -239,7 +239,7 @@ public class LocalRules {
         }*/
 
         //nal.addSolution(nal.getCurrentTask(), budget, belief, task);
-        Task solutionTask = nal.addSolution(questionTask, budget, belief, questionTask);
+        Task solutionTask = nal.deriveSolution(questionTask, budget, belief, questionTask);
         if (solutionTask != null) {
             //Solution Activated
             if (questionTask.sentence.punctuation == Symbols.QUESTION || questionTask.sentence.punctuation == Symbols.QUEST) {

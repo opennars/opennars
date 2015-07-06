@@ -26,6 +26,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
 
         Compound taskTerm = task.getTerm();
 
+
         //equality:
         //  1. term (given because it is looking up in concept)
         //  2. truth

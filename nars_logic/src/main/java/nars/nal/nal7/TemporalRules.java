@@ -493,7 +493,7 @@ public class TemporalRules {
                     conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
                     //if there is no overlapping evidental base, use revision:
                     boolean revisable;
-                    revisable = !Stamp.evidentialSetOverlaps(bel, task.sentence);
+                    revisable = !Stamp.overlapping(bel, task.sentence);
                     if (revisable) {
                         conf = TruthFunctions.revision(task.sentence.truth, bel.truth).getConfidence();
                     }

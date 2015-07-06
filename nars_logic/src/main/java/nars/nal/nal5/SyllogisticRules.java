@@ -130,8 +130,8 @@ public final class SyllogisticRules {
         }
 
 
-        TaskSeed seed = nal.newDoublePremise(sentence1, sentence2);
-        if (seed == null) //all derivations in this method must be non-cyclic, so test them here to prevent them all
+        //all derivations in this method must be non-cyclic, so test them here to prevent them all
+        if (Stamp.overlapping(sentence1, sentence2))
             return;
 
 
@@ -188,12 +188,12 @@ public final class SyllogisticRules {
         }
 
 
-        seed.punctuation(p);
+
 
         if ((!requiresTruth) || (truth1 != null)) {
             Statement s = Statement.make(taskContent, term1, term2, order);
             if (s != null) {
-                nal.deriveDouble(seed.term(s).truth(truth1).budget(budget1));
+                nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth1).budget(budget1));
                 //nal.deriveDouble(s, p, truth1, budget1, sentence1, sentence2, false, false);
             }
         }
@@ -201,7 +201,7 @@ public final class SyllogisticRules {
         if ((!requiresTruth) || (truth2 != null)) {
             Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
             if (s != null) {
-                nal.deriveDouble(seed.term(s).truth(truth2).budget(budget2));
+                nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth2).budget(budget2));
                 //nal.deriveDouble(s, p, truth2, budget2, sentence1, sentence2, false, false);
             }
         }
@@ -209,7 +209,7 @@ public final class SyllogisticRules {
         if ((!requiresTruth) || (truth3 != null)) {
             Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
             if (s != null) {
-                nal.deriveDouble(seed.term(s).truth(truth3).budget(budget3));
+                nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth3).budget(budget3));
                 //nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
             }
 
@@ -236,7 +236,7 @@ public final class SyllogisticRules {
                 truth2, budget2.clone(),false, false);*/
                 Statement s2 = Similarity.make(term1, term2);
                 if (s2 != null) {
-                    nal.deriveDouble(seed.term(s2)
+                    nal.deriveDouble(nal.newTask(s2,p).parent(sentence1, sentence2)
                                     .truth(truth3)
                                     .budget(budget2)
                     );

@@ -15,10 +15,7 @@ import org.junit.runner.notification.Failure;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -61,12 +58,12 @@ import java.util.Map;
 
 
     @Parameterized.Parameters(name="{1} {0}")
-    public static Collection params() {
+    public static List params() {
         Map<String, String> et = LibraryInput.getUnitTests();
         Collection<String> t = et.values();
         for (String x : et.keySet()) addTest(x);
 
-        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
+        List<Object[]> params = new ArrayList(t.size() * builds.length);
         for (String script : t) {
             for (NARSeed b : builds) {
                 params.add(new Object[] { b, script });

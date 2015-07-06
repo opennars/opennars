@@ -144,6 +144,10 @@ public abstract class NAL implements Runnable {
     @Deprecated public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
 
 
+        if (task.getTerm() == null) {
+            throw new RuntimeException("task has null term");
+        }
+
         if (task.getParentTask() == null && task.getParentBelief() == null) {
             throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
         }
@@ -341,6 +345,10 @@ public abstract class NAL implements Runnable {
     public <T extends Compound> TaskSeed newTask(T term) {
         return memory.newTask(term);
     }
+    public <T extends Compound> TaskSeed newTask(T term, char punc) {
+        TaskSeed<T> t = newTask(term);
+        return t.punctuation(punc);
+    }
 
     @Deprecated
     public <T extends Compound> TaskSeed newTask(Sentence<T> s) {
@@ -517,7 +525,7 @@ public abstract class NAL implements Runnable {
      * @param candidateBelief The belief to be used in future logic, for
      *                        forward/backward correspondence
      */
-    public Task addSolution(final Task currentTask, final Budget budget, final Sentence solutionBelief, final Task parentBeliefTask) {
+    public Task deriveSolution(final Task currentTask, final Budget budget, final Sentence solutionBelief, final Task parentBeliefTask) {
         return addNewTask(
                 newTask(solutionBelief)
                         .budget(budget)

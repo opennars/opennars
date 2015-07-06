@@ -6,7 +6,8 @@ import nars.io.in.LibraryInput;
 import nars.nal.NALTest;
 import nars.nar.Default;
 
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import static nars.analyze.experimental.NALStressMeasure.perfNAL;
 
@@ -34,9 +35,11 @@ public class NALPerfLoop {
         //NAR n = new NAR(new Discretinuous().setConceptBagSize(maxConcepts));
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
-        
-        Collection c = NALTest.params();
+
+        List c = NALTest.params();
         c.addAll(LibraryInput.getAllExamples().values());
+
+        Collections.shuffle(c);
 
         while (true) {
             for (Object o : c) {
