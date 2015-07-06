@@ -172,6 +172,8 @@ public class LocalRules {
         if (belief == null) return null;
 
 
+        final Task inputBelief = belief;
+
         Sentence question = questionTask.sentence;
         Memory memory = nal.memory;
 
@@ -183,8 +185,40 @@ public class LocalRules {
 
 
         final long now = memory.time();
-        Sentence oldBest = questionTask.getBestSolution();
+
+        /** temporary for comparing the result before unification and after */
+        //float newQ0 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
+
+        Term content = belief.getTerm();
+        if (content.hasVarIndep()) {
+
+            Term u[] = new Term[]{content, question.getTerm()};
+
+            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
+
+            if (unified) {
+
+                content = u[0];
+
+                belief = belief.clone((Compound) content, projectedTruth);
+                if (belief == null) {
+                    throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
+                }
+
+                //float newQ1 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
+                //System.err.println(" before unf: " + newQ0 + " , after " + newQ1);
+                //System.err.println();
+            }
+        } else {
+            belief = belief.clone(projectedTruth, false);
+        }
+
         float newQ = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
+        if (newQ == 0)
+            return null;
+
+
+        Sentence oldBest = questionTask.getBestSolution();
         if (oldBest != null) {
             float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
             if (oldQ >= newQ) {
@@ -197,36 +231,16 @@ public class LocalRules {
             }
         }
 
-        Term content = belief.getTerm();
-        if (content.hasVarIndep()) {
-            Term u[] = new Term[]{content, question.getTerm()};
-
-            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
-            if (!unified) return null;
-
-            content = u[0];
-
-            belief = belief.clone((Compound) content, projectedTruth);
-            if (belief == null) {
-                throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
-                //return false;
-            }
-        } else {
-            belief = belief.clone(projectedTruth);
-        }
 
         questionTask.setBestSolution(memory, belief);
 
-        memory.logic.SOLUTION_BEST.set(questionTask.getPriority());
+        memory.logic.SOLUTION_BEST.set(newQ);
 
         if (question.isGoal()) {
             memory.emotion.happy(newQ, questionTask, nal);
         }
 
         Budget budget = TemporalRules.solutionEval(question, belief, questionTask, nal);
-
-            
-
 
 
         /*memory.output(task);
@@ -239,24 +253,34 @@ public class LocalRules {
         }*/
 
         //nal.addSolution(nal.getCurrentTask(), budget, belief, task);
-        Task solutionTask = nal.deriveSolution(questionTask, budget, belief, questionTask);
-        if (solutionTask != null) {
-            //Solution Activated
-            if (questionTask.sentence.punctuation == Symbols.QUESTION || questionTask.sentence.punctuation == Symbols.QUEST) {
-                //if (questionTask.isInput()) { //only show input tasks as solutions
-                memory.emit(Answer.class, solutionTask, questionTask);
-            /*} else {
-                memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed
-            }*/
-            } else {
-                memory.emit(Output.class, solutionTask, questionTask);   //goal things only show silence related
-            }
 
+        //.reason(currentTask.getHistory())
+
+        if (belief!=inputBelief) {
+            //it was either unified and/or projected:
+            belief = nal.addNewTask(nal.newTask(belief)
+                            .budget(budget)
+                            .parent(questionTask, questionTask.getParentBelief())
+                            .solution(belief),
+                    "Adjusted Solution",
+                    true, false, false);
+        }
+        else {
+            belief.accumulate(budget);
+            belief.addHistory("Solved " + question);
+        }
+
+        question.decPriority(budget.getPriority());
+
+        //Solution Activated
+        if (questionTask.sentence.punctuation == Symbols.QUESTION || questionTask.sentence.punctuation == Symbols.QUEST) {
+            //if (questionTask.isInput()) { //only show input tasks as solutions
+            memory.emit(Answer.class, belief, questionTask);
+        } else {
+            memory.emit(Output.class, belief, questionTask);   //goal things only show silence related
         }
 
         return belief;
-
-
     }
 
 

@@ -221,7 +221,7 @@ public abstract class NAL implements Runnable {
      * <p>
      * if solution is false, it means it is a derivation
      */
-    protected Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single) {
+    public Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single) {
 
         if (!nal(7) && !task.isEternal()) {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
@@ -516,28 +516,7 @@ public abstract class NAL implements Runnable {
     }
 
 
-    /**
-     * Activated task called in MatchingRules.trySolution and
-     * Concept.processGoal
-     *
-     * @param budget          The budget value of the new Task
-     * @param solutionBelief  The content of the new Task
-     * @param candidateBelief The belief to be used in future logic, for
-     *                        forward/backward correspondence
-     */
-    public Task deriveSolution(final Task currentTask, final Budget budget, final Sentence solutionBelief, final Task parentBeliefTask) {
-        return addNewTask(
-                newTask(solutionBelief)
-                        .budget(budget)
-                        .parent(currentTask, parentBeliefTask.getParentBelief())
-                        .solution(solutionBelief),
-                "Activated",
-                true, false, false);
-
-        //.reason(currentTask.getHistory())
-    }
-
-//    /**
+    //    /**
 //     * create a new stamp builder for a specific occurenceTime
 //     */
 //

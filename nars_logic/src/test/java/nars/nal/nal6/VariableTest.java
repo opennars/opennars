@@ -73,43 +73,6 @@ public class VariableTest extends JavaNALTest {
 
     }
     
-    @Test public void testQueryVariableUnification() {
-        /*
-        <a --> 3>. :|:
-        <a --> 4>. :/:
-        <(&/,<a --> 3>,?what) =/> <a --> ?wat>>?
-
-        Answer <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
-
-        because ?wat can be unified with 4 since ?wat is a query variable
-       */
-
-//        AtomicBoolean solutionFound = new AtomicBoolean(false);
-//        new AbstractReaction(nar, true, Answer.class) {
-//            @Override public void event(Class event, Object[] args) {
-//                System.out.println(args[0]);
-//                solutionFound.set(true);
-//                nar.stop();
-//            }
-//        };
-
-        //TextOutput.out(n);
-
-        n.input("<a --> 3>. :|:" + '\n' +
-                        "<a --> 4>. :/:" + '\n' +
-                        "<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
-
-        n.requires.add(new OutputContainsCondition(n, "<(&/,<a --> 3>,+3) =/> <a --> 4>>.", 1));
-
-        //158
-        //1738
-        //n.run(200); //sufficient for case without internal experience
-        n.run(1200);
-          
-        //assertTrue(solutionFound.get());
-
-
-    }
 
     void unaffected(String left, String right) {
 

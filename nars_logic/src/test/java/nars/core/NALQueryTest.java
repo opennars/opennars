@@ -30,7 +30,7 @@ public class NALQueryTest {
 
     @Test
     public void testQuery1() throws InvalidInputException {
-        testQueryAnswered(0, 32);
+        testQueryAnswered(1, 32);
     }
 
 
@@ -49,7 +49,7 @@ public class NALQueryTest {
 
         n.believe("<b --> a>", Eternal, 1.0f, 0.5f);
 
-        n.runWhileNewInput(cyclesBeforeQuestion);
+        n.frame(cyclesBeforeQuestion);
 
         new Answered(n, question) {
 
@@ -67,7 +67,7 @@ public class NALQueryTest {
             }
         };
 
-        n.runWhileNewInput(cyclesAfterQuestion);
+        n.frame(cyclesAfterQuestion);
 
         assertTrue(b.get());
 

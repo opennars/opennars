@@ -21,7 +21,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
     @Override
     public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
-        return null;
+        throw new RuntimeException("not supposed to be called");
     }
 
 
@@ -56,7 +56,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             Task t = get(i);
 
             float x = r.rank(t, s);
-            if (Float.isFinite(x) && (x > s)) {
+            if (x > s) {
                 s = x;
                 b = t;
             }

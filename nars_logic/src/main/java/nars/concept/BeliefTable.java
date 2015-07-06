@@ -1,21 +1,20 @@
 package nars.concept;
 
 import nars.Global;
+import nars.nal.nal7.TemporalRules;
 import nars.process.NAL;
-import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.truth.Truth;
 import nars.truth.Truthed;
 
 import java.io.PrintStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
 import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
+import static nars.nal.nal7.TemporalRules.solutionQualityMatchingOrder;
 
 /**
  * A model storing, ranking, and projecting beliefs or goals (tasks with TruthValue).
@@ -99,23 +98,27 @@ public interface BeliefTable extends TaskTable {
 
     default public Task top(final Task query, final long now) {
 
-        switch (size()) { //check if 0 or 1 elements before creating a Ranker below
-            case 0: return null;
-            case 1: return top();
+        final Task top = top();
+        if (top == null) return null;
+
+        if (!TemporalRules.matchingOrder(query, top.getTerm())) {
+            return null;
         }
+
+        if (size() == 1)
+            return top;
+
 
         return top(new Ranker() {
             @Override
             public float rank(Task t, float bestToBeat) {
-                return solutionQuality(query, t, now);
+                return solutionQualityMatchingOrder(query, t, now);
             }
         });
     }
     default public Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
-        switch (size()) { //check if 0 or 1 elements before creating a Ranker below
-            case 0: return null;
-            case 1: return top();
-        }
+
+        if (isEmpty()) return null;
 
         return top(new Ranker() {
             @Override
@@ -179,7 +182,7 @@ public interface BeliefTable extends TaskTable {
     public interface Ranker extends Function<Task,Float> {
         /** returns a number producing a score or relevancy number for a given Task
          * @param bestToBeat current best score, which the ranking can use to decide to terminate early
-         * @return a score value, or NaN to exclude that result
+         * @return a score value, or Float.MIN_VALUE to exclude that result
          * */
         public float rank(Task t, float bestToBeat);
 
@@ -193,17 +196,13 @@ public interface BeliefTable extends TaskTable {
         }
     }
 
+    /** allowed to return null. must evaluate all items in case the final one is the
+     *  only item that does not have disqualifying rank (MIN_VALUE)
+     * */
     default public Task top(Ranker r) {
-
-        final int n = size();
-        switch (n) {
-            case 0: return null;
-            case 1: return top();
-        }
 
         float s = Float.MIN_VALUE;
         Task b = null;
-
 
         for (Task t : this) {
             float x = r.rank(t, s);

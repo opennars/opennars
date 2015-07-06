@@ -233,7 +233,10 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
     /** clones this Task with a new truth */
-    public Task<T> clone(Truth newTruth) {
+    public Task<T> clone(Truth newTruth, boolean cloneEvenIfTruthEqual) {
+        if (!cloneEvenIfTruthEqual) {
+            if (getTruth().equals(newTruth)) return this;
+        }
         return clone(getTerm(), newTruth);
     }
 

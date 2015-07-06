@@ -421,13 +421,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
             float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {
 
-
-
                 Truth projectedTruth = beliefSatisfied.projection(goal.getOccurrenceTime(), dur);
                 //Sentence projectedBelief = belief.projectionSentence(goal.getOccurrenceTime(), dur);
 
-                beliefSatisfied = trySolution(beliefSatisfied, projectedTruth, goal, nal); // check if the Goal is already satisfied (manipulate budget)
-                if (beliefSatisfied!=null) {
+                boolean solved = null!=trySolution(beliefSatisfied, projectedTruth, goal, nal); // check if the Goal is already satisfied (manipulate budget)
+                if (solved) {
                     AntiSatisfaction = goal.getTruth().getExpDifAbs(beliefSatisfied.getTruth());
                 }
             }

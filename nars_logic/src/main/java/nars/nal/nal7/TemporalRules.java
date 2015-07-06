@@ -67,8 +67,8 @@ public class TemporalRules {
         }
     }
 
-    public final static boolean matchingOrder(final Sentence a, final Sentence b) {
-        return matchingOrder(a.getTemporalOrder(), b.getTemporalOrder());
+    public final static boolean matchingOrder(final Termed a, final Termed b) {
+        return matchingOrder(a.getTerm().getTemporalOrder(), b.getTerm().getTemporalOrder());
     }
 
 
@@ -622,6 +622,7 @@ public class TemporalRules {
         }
     }
 
+
     /**
      * Evaluate the quality of the judgment as a solution to a problem
      *
@@ -630,12 +631,21 @@ public class TemporalRules {
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
-        if ((problem == null) || (solution == null)) {
-            System.err.println("wtf");
+
+        if (!matchingOrder(problem, solution)) {
+            return 0;
         }
 
-        if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
-            return 0.0F;
+        return solutionQualityMatchingOrder(problem, solution, time);
+    }
+
+    /**
+        this method is used if the order is known to be matching, so it is not checked
+     */
+    public static float solutionQualityMatchingOrder(final Sentence problem, final Sentence solution, long time) {
+
+        if ((problem == null) || (solution == null)) {
+            throw new RuntimeException("problem or solution is null");
         }
 
         Truth truth = solution.truth;
@@ -710,6 +720,9 @@ public class TemporalRules {
         }*/
         boolean judgmentTask = task.sentence.isJudgment();
         final float quality = TemporalRules.solutionQuality(problem, solution, nal.time());
+        if (quality <= 0)
+            return null;
+
         if (judgmentTask) {
             task.orPriority(quality);
         } else {
