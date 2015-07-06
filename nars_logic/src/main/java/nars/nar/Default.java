@@ -422,8 +422,9 @@ public class Default extends NARSeed implements ConceptBuilder {
     /** rank function used for concept belief and goal tables */
     public BeliefTable.RankBuilder getConceptRanking() {
         return (c, b) ->
-                new BeliefTable.BeliefConfidenceAndCurrentTime(c);
-                //BeliefTable.BeliefConfidenceOrOriginality;
+                BeliefTable.BeliefConfidenceOrOriginality;
+                //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
+
     }
 
 

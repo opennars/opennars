@@ -16,15 +16,14 @@ import org.junit.Test;
 public class BeliefTableTest extends TestCase {
 
 
-    @Before
     public NAR newNAR(int maxBeliefs) {
         return newNAR(maxBeliefs, null);
     }
 
-    @Before
     public NAR newNAR(int maxBeliefs, BeliefTable.RankBuilder rb) {
         Default d = new Default() {
 
+            /*
             @Override
             public BeliefTable.RankBuilder getConceptRanking() {
                 if (rb == null)
@@ -32,6 +31,7 @@ public class BeliefTableTest extends TestCase {
                 else
                     return rb;
             }
+            */
 
         }.setInternalExperience(null);
         d.conceptBeliefsMax.set(maxBeliefs);

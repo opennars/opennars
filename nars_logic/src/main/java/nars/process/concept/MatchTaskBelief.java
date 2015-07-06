@@ -39,11 +39,12 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
     public static boolean match(final Task task, final Task belief, final NAL nal) {
 
 
-        if (task.isJudgment() || task.isGoal()) {
+        if (task.isJudgment() ) {
             if (LocalRules.revisible(task, belief)) {
                 return LocalRules.revision(task, belief, true, nal) != null;
             }
-        } /* if question or quest */ else {
+        } else {
+            /* if goal question or quest */
             if (TemporalRules.matchingOrder(task, belief)) {
                 if (nal.unify(Symbols.VAR_QUERY, task.getTerm(), belief.getTerm())) {
                     //TODO see if this is correct because it will be producing
