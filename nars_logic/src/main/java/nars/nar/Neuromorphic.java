@@ -70,7 +70,7 @@ public class Neuromorphic extends Curve {
                     taskLinkForgetDurations, getConceptTaskLinks());
             DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(m,
                     termLinkForgetDurations, getConceptTermLinks());
-            return new DefaultConcept(t, b, taskLinks, termLinks, m);
+            return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
         }
         else {
             return super.newConcept(t, b, m);

@@ -2,6 +2,8 @@ package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.clock.Clock;
+import nars.concept.BeliefTable;
+import nars.concept.Concept;
 import nars.nal.nal7.Interval.AtomicDuration;
 import nars.task.TaskComparator;
 
@@ -270,4 +272,5 @@ public class Param implements Serializable {
     public Clock getClock() {
         return clock;
     }
+
 }

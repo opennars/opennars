@@ -9,6 +9,7 @@ import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
 import nars.clock.CycleClock;
 import nars.clock.RealtimeMSClock;
+import nars.concept.BeliefTable;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
 import nars.concept.DefaultConcept;
@@ -40,7 +41,10 @@ import nars.process.concept.*;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskComparator;
-import nars.task.filter.*;
+import nars.task.filter.ConstantDerivationLeak;
+import nars.task.filter.DerivationFilter;
+import nars.task.filter.FilterBelowConfidence;
+import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -414,13 +418,22 @@ public class Default extends NARSeed implements ConceptBuilder {
         return newConcept(t, b, taskLinks, termLinks, m);
     }
 
+
+    /** rank function used for concept belief and goal tables */
+    public BeliefTable.RankBuilder getConceptRanking() {
+        return (c, b) ->
+                new BeliefTable.BeliefConfidenceAndCurrentTime(c);
+                //BeliefTable.BeliefConfidenceOrOriginality;
+    }
+
+
     @Override
     public LogicPolicy getLogicPolicy() {
         return policy;
     }
 
     protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
-        return new DefaultConcept(t, b, taskLinks, termLinks, m);
+        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
     }
     
     public Bag<Term, Concept> newConceptBag() {

@@ -228,15 +228,15 @@ public class RunQLAgent extends JPanel {
             }
 
 
-            @Override
-            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
-                return new DefaultConcept(t, b, taskLinks, termLinks, m) {
-//                    @Override
-//                    public float rankBelief(Sentence s, long now) {
-//                        return rankBeliefRecent(s, now, cyclesPerFrame * 200, cyclesPerFrame * 1000);
-//                    }
-                };
-            }
+//            @Override
+//            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+//                return new DefaultConcept(t, b, taskLinks, termLinks, m) {
+////                    @Override
+////                    public float rankBelief(Sentence s, long now) {
+////                        return rankBeliefRecent(s, now, cyclesPerFrame * 200, cyclesPerFrame * 1000);
+////                    }
+//                };
+//            }
 
             @Override
             protected void initDerivationFilters() {

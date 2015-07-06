@@ -86,7 +86,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, final Memory memory) {
         super(b);
 
 
@@ -96,8 +96,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
         this.creationTime = memory.time();
         this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
 
-        this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue());
-        this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue());
+        this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue(), rb.get(this, true));
+        this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue(), rb.get(this, false));
 
         final int maxQuestions = memory.param.conceptQuestionsMax.intValue();
         this.questions = new ArrayListTaskTable(maxQuestions);
@@ -338,8 +338,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final Task input = belief;
 
-        BeliefTable.Ranker r = BeliefTable.BeliefConfidenceOrOriginality;
-        belief = getBeliefs().add(input, r, this, nal);
+        belief = getBeliefs().add(input, this, nal);
 
         boolean added;
 
@@ -379,12 +378,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public boolean processGoal(final TaskProcess nal, Task goal) {
 
-
-
         final Task input = goal;
 
-        BeliefTable.Ranker r = BeliefTable.BeliefConfidenceOrOriginality;
-        goal = getGoals().add(input, r, this, nal);
+        goal = getGoals().add(input, this, nal);
 
         boolean added;
 
@@ -416,7 +412,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (goal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
             // check if the Goal is already satisfied
-            Task beliefSatisfied = getBeliefs().top(r);
+            Task beliefSatisfied = getBeliefs().topRanked();
 
             float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {

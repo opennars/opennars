@@ -41,6 +41,7 @@ import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.AnalyticTruth;
 import nars.truth.Truth;
@@ -442,8 +443,7 @@ public final class CompositionalRules {
             return;
         }
 
-        TaskSeed seed = nal.newDoublePremise(nal.getCurrentTask(), nal.getBelief());
-        if (seed == null) //all derivations here are non-cyclic, so test first
+        if (Stamp.overlapping( nal.getCurrentTask(), nal.getBelief() ))
             return;
 
         Truth truthT = nal.getCurrentTask().getTruth();
@@ -607,12 +607,13 @@ public final class CompositionalRules {
         }
 
 
-        seed.punctuation(nal.getCurrentTask().getPunctuation());
+        char punc = (nal.getCurrentTask().getPunctuation());
 
         {
             Truth truth = induction(truthT, truthB);
             if (truth!=null) {
-                nal.deriveDouble(seed.term(content)
+                nal.deriveDouble(nal.newTask(content, punc)
+                        .parent(nal.getCurrentTask(), nal.getBelief())
                         .truth(truth)
                         .budget(BudgetFunctions.compoundForward(truth, content, nal)));
                 //nal.deriveDouble(content, truth, budget, false, false);
@@ -624,7 +625,8 @@ public final class CompositionalRules {
             if (ct != null) {
                 Truth truth = induction(truthB, truthT);
                 if (truth!=null) {
-                    nal.deriveDouble(seed.term(ct)
+                    nal.deriveDouble(nal.newTask(ct, punc)
+                                    .parent(nal.getCurrentTask(), nal.getBelief())
                                     .truth(truth)
                                     .budget(BudgetFunctions.compoundForward(truth, ct, nal))
                     );
@@ -639,7 +641,8 @@ public final class CompositionalRules {
             Compound ct = compoundOrNull(Equivalence.makeTerm(state1, state2));
             if (ct != null) {
                 Truth truth;
-                nal.deriveDouble(seed.term(ct)
+                nal.deriveDouble(nal.newTask(ct, punc)
+                                .parent(nal.getCurrentTask(), nal.getBelief())
                                 .truth(truth = comparison(truthT, truthB))
                                 .budget(BudgetFunctions.compoundForward(truth, ct, nal))
                 );
@@ -663,7 +666,8 @@ public final class CompositionalRules {
         Compound ct = compoundOrNull(Conjunction.make(state1, state2));
         if (ct != null) {
             Truth truth;
-            nal.deriveDouble(seed.term(ct)
+            nal.deriveDouble(nal.newTask(ct, punc)
+                            .parent(nal.getCurrentTask(), nal.getBelief())
                             .truth(truth = intersection(truthT, truthB))
                             .budget(BudgetFunctions.compoundForward(truth, ct, nal))
             );

@@ -63,7 +63,7 @@ public class Curve extends Default {
         Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve, randomRemoval);
         Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve, randomRemoval);
         
-        return new DefaultConcept(t, b, taskLinks, termLinks, m);
+        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
     }
     
 }

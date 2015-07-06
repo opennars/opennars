@@ -248,7 +248,7 @@ public class Solid extends Default implements CycleProcess {
         Bag<Sentence, TaskLink> taskLinks = new ChainBag(rng, getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new ChainBag(rng, getConceptTermLinks());
 
-        return new DefaultConcept(t, b, taskLinks, termLinks, m);
+        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
         //return super.newConcept(b, t, m);
     }
 

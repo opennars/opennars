@@ -6,6 +6,7 @@ import nars.meter.BeliefAnalysis;
 import nars.meter.BudgetStatus;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
+import nars.task.Task;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +18,22 @@ public class BeliefTableTest extends TestCase {
 
     @Before
     public NAR newNAR(int maxBeliefs) {
-        Default d = new Default().setInternalExperience(null);
+        return newNAR(maxBeliefs, null);
+    }
+
+    @Before
+    public NAR newNAR(int maxBeliefs, BeliefTable.RankBuilder rb) {
+        Default d = new Default() {
+
+            @Override
+            public BeliefTable.RankBuilder getConceptRanking() {
+                if (rb == null)
+                    return super.getConceptRanking();
+                else
+                    return rb;
+            }
+
+        }.setInternalExperience(null);
         d.conceptBeliefsMax.set(maxBeliefs);
         return new NAR(d);
     }
@@ -92,7 +108,9 @@ public class BeliefTableTest extends TestCase {
     @Test
     public void testTruthOscillationLongTerm() {
 
-        NAR n = newNAR(8);
+        NAR n = newNAR(16, (c, b) -> {
+            return new BeliefTable.BeliefConfidenceAndCurrentTime(c);
+        });
         n.param.duration.set(1);
 
         int period = 2;
@@ -101,9 +119,10 @@ public class BeliefTableTest extends TestCase {
 
         boolean state = true;
 
-        for (int i = 0; i < 16; i++) {
+        //for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 255; i++) {
 
-            if (i % period == 0) {
+            if (i % (period) == 0) {
                 b.believe(state ? 1f : 0f, 0.9f, Tense.Present);
                 state = !state;
             }
@@ -113,9 +132,11 @@ public class BeliefTableTest extends TestCase {
 
             n.frame();
 
-            b.printWave();
-            b.printEnergy();
-            b.print();
+            if (i % 10 == 0) {
+                b.printWave();
+                b.printEnergy();
+                b.print();
+            }
         }
 
 

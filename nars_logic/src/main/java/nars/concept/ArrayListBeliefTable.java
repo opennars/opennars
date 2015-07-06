@@ -14,15 +14,22 @@ import static nars.nal.nal1.LocalRules.tryRevision;
  */
 public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTable {
 
-    public ArrayListBeliefTable(int cap) {
-        super(cap);
-    }
+    private final Ranker rank;
 
+    public ArrayListBeliefTable(int cap, Ranker rank) {
+        super(cap);
+        this.rank = rank;
+    }
 
     @Override
-    public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
-        throw new RuntimeException("not supposed to be called");
+    public Ranker getRank() {
+        return rank;
     }
+
+//    @Override
+//    public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
+//        throw new RuntimeException("not supposed to be called");
+//    }
 
 
 
@@ -113,7 +120,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //    }
     @Override
     public Task project(Task t, long now) {
-        Task closest = top(new BeliefConfidenceAndCurrentTime(now));
+        Task closest = topRanked();
         if (closest == null) return null;
         return closest.projectTask(t.getOccurrenceTime(), now);
     }
