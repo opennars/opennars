@@ -55,7 +55,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public Task top(Ranker r) {
 
-        float s = Float.MIN_VALUE;
+        float s = Float.NEGATIVE_INFINITY;
         Task b = null;
 
         final int n = size();
@@ -153,6 +153,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                 //equal instance, or equal truth and stamp:
                 if ((existing == t) || t.equivalentTo(existing, false, false, true, true, false)) {
+
                         /*if (!t.isInput() && t.isJudgment()) {
                             existing.decPriority(0);    // duplicated task
                         }   // else: activated belief*/
@@ -161,6 +162,14 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                     return null;
 
                 } else if (revisibleTermsAlreadyEqual(t, existing)) {
+
+                    //two eternal beliefs with same truth, don't revise
+                    if (t.isEternal() && existing.isEternal() && t.getTruth().equals(existing.getTruth())) {
+                        memory.removed(t, "Unrevisble Eternal Duplicate");
+                        return null;
+                    }
+
+
                     Task revised = tryRevision(t, existing, false, nal);
                     if (revised != null) {
                         //nal.setCurrentBelief( revised );

@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 6/11/15.
  */
-public class CacheBagTest {
+public class BudgetBalancingTest {
 
     @Test
     public void testLatentKnowledge() {

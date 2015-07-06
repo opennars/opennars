@@ -68,8 +68,9 @@ public class LocalRules {
     public static boolean revisible(final Sentence newBelief, final Sentence oldBelief) {
         if (newBelief.isRevisible())
             if (newBelief.equalTerms(oldBelief))
-                if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
+                if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder())) {
                     return true;
+                }
 
         return false;
     }
@@ -78,9 +79,10 @@ public class LocalRules {
      * avoids term comparison if the two inputs are already known to have equal terms
      */
     public static boolean revisibleTermsAlreadyEqual(final Sentence newBelief, final Sentence oldBelief) {
-        if (newBelief.isRevisible())
+        if (newBelief.isRevisible()) {
             if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
                 return true;
+        }
 
         return false;
     }

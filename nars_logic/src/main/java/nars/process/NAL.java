@@ -19,6 +19,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variables;
 import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,7 +119,8 @@ public abstract class NAL implements Runnable {
         return derive(task, revised, !task.isDouble());
     }
 
-    @Deprecated public Task derive(final TaskSeed task, final boolean revised, final boolean single) {
+    @Deprecated
+    public Task derive(final TaskSeed task, final boolean revised, final boolean single) {
         return derive(task, revised, single, null, false);
     }
 
@@ -140,7 +142,8 @@ public abstract class NAL implements Runnable {
      * @param task         the derived task
      * @param allowOverlap
      */
-    @Deprecated public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+    @Deprecated
+    public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
 
 
         if (task.getTerm() == null) {
@@ -184,8 +187,7 @@ public abstract class NAL implements Runnable {
 
                 task.occurr(o);
             }
-        }
-        else {
+        } else {
             task.eternal();
         }
 
@@ -202,36 +204,35 @@ public abstract class NAL implements Runnable {
                 if (derived.getOccurrenceTime() > memory.time()) {
                     memory.event.emit(Events.TaskDeriveFuture.class, derived, this);
                 }
-            }
 
 
-            //TODO move this to ImmediateEternalization.java handler that reacts to TaskDeriveTemporal (to prune reacting to Eternal events)
+                //TODO move this to ImmediateEternalization.java handler that reacts to TaskDeriveTemporal (to prune reacting to Eternal events)
 
-            //TODO budget and/or confidence thresholds
+                //TODO budget and/or confidence thresholds
 
-            //"Since in principle it is always valid to eternalize a tensed belief"
-            if (Global.IMMEDIATE_ETERNALIZATION /*&& task.temporalInductable()*/ ) {
-                //temporal induction generated ones get eternalized directly
-                Task eternalized = derived.cloneEternal();
-                eternalized.log("ImmediateEternalize");
-                memory.taskAdd(eternalized);
 
-            /*derive(
-                    newTask(task.getTerm())
-                            .punctuation(task.getPunctuation())
-                            .truth(TruthFunctions.eternalize(task.getTruth()))
-                            .parent(derived.getParentTask(), derived.getParentBelief())
-                            .budget(task)
-                            .stamp(derived)
-                            .eternal(),
-                    false, false, parentTask, allowOverlap);*/
+                //"Since in principle it is always valid to eternalize a tensed belief"
+                if (Global.IMMEDIATE_ETERNALIZATION /*&& task.temporalInductable()*/) {
+                    //temporal induction generated ones get eternalized directly
+                    /*Task eternalized = derived.cloneEternal();
+
+                    eternalized.mulPriority(0.25f);
+                    eternalized.log("ImmediateEternalize");
+                    memory.taskAdd(eternalized);*/
+
+                    derive(
+                        newTask(derived.getTerm())
+                                .punctuation(derived.getPunctuation())
+                                .truth(TruthFunctions.eternalize(derived.getTruth()))
+                                .parent(derived)
+                                .budget(derived, 0.25f, 1f)
+                                .eternal(),
+                    false);
+                }
             }
 
             return derived;
         }
-
-
-
 
 
         return null;
@@ -313,15 +314,18 @@ public abstract class NAL implements Runnable {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    @Deprecated public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
+    @Deprecated
+    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
         return deriveDouble(newTaskContent, newTruth, newBudget, temporalAdd, getTask(), allowOverlap);
     }
 
-    @Deprecated public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
+    @Deprecated
+    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
         return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, getBelief(), temporalAdd, allowOverlap);
     }
 
-    @Deprecated public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence parentBelief, final boolean temporalAdd, boolean allowOverlap) {
+    @Deprecated
+    public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence parentBelief, final boolean temporalAdd, boolean allowOverlap) {
 
 
         //experimental: quick filter for below confidence threshold truths.
@@ -359,6 +363,7 @@ public abstract class NAL implements Runnable {
     public <T extends Compound> TaskSeed newTask(T term) {
         return memory.newTask(term);
     }
+
     public <T extends Compound> TaskSeed newTask(T term, char punc) {
         TaskSeed<T> t = newTask(term);
         return t.punctuation(punc);
@@ -610,8 +615,8 @@ public abstract class NAL implements Runnable {
     }
 
 
-
-    @Deprecated public static long inferOccurenceTime(Stamp t, Stamp b) {
+    @Deprecated
+    public static long inferOccurenceTime(Stamp t, Stamp b) {
         final long oc;
 
 
@@ -762,7 +767,9 @@ public abstract class NAL implements Runnable {
 
     }
 
-    /** for producing a non-cyclic derivation; returns null if the premise is cyclic */
+    /**
+     * for producing a non-cyclic derivation; returns null if the premise is cyclic
+     */
     public TaskSeed newDoublePremise(Task asym, Sentence sym) {
         return newDoublePremise(asym, sym, false);
     }

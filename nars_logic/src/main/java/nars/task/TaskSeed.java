@@ -217,7 +217,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     /**
      * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
      */
-    @Deprecated
     public TaskSeed<T> budget(Budget bv, float priMult, float durMult) {
         return budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
     }

@@ -40,7 +40,7 @@ public class QueryVariableTest extends JavaNALTest {
 
         int time1 = 55;
         int time2 = 115;
-        int time3 = 55;
+        int time3 = 115;
 
         //TextOutput.out(n);
         //new TraceWriter(n, System.out);

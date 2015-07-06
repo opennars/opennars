@@ -54,7 +54,7 @@ public class NAL4Test extends JavaNALTest {
         //TextOutput.out(nar);
 
 
-        long time = 2000;
+        long time = 1000;
 
         float minConf = 0.66f;
         n.believe("<0 --> num>", 1.0f, 0.9f);

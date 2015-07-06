@@ -130,11 +130,11 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void whQuestion() throws InvalidInputException {
-        System.out.println("\n\n\n START ------------");
-        TextOutput.out(n);
-        NARTrace.out(n);
+//        System.out.println("\n\n\n START ------------");
+//        TextOutput.out(n);
+//        NARTrace.out(n);
 
-        n.mustOutput(25, "<bird --> swimmer>. %1.00;0.80%");
+        n.mustOutput(150, "<bird --> swimmer>. %1.00;0.80%");
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
         n.ask("<?x --> swimmer>")
                 .en("What is a type of swimmer?");
@@ -157,7 +157,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void multistep() throws InvalidInputException {
-        long time = build instanceof Solid ? 15 : 750;
+        long time = build instanceof Solid ? 15 : 1750;
 
         //TextOutput.out(nar);
         n.believe("<a --> b>", 1.0f, 0.9f);
