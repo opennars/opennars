@@ -195,6 +195,13 @@ public class Global {
     public static final float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.2f;
 
     /** global switch to allow derivation evidence to overlap */
+    /* NOTE:
+            and that entire thing was eliminated by just checking cyclic at the begining of the method, or even better, in a callee
+            (if all its derivations do not allow overlap)
+            i guess this breaks the allow overlap flag, ill make a note of that and leave it set to false
+            it breaks the allow overlap unless this is checked each time
+            but i never have had to set it to true
+     */
     public static boolean OVERLAP_ALLOW = false;
 
 

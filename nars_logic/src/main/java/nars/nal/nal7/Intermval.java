@@ -26,7 +26,13 @@ public interface Intermval {
     /** l1 distance: sum absolute differnce of items normalized to total length
      *  distance = 0: equal
      * */
-    default public long distance1(Intermval other) {
+    default public long distance1(final Intermval other) {
+        return distance1(other, Long.MAX_VALUE);
+    }
+
+    /** TODO - return distance1 but as soon as distance exceeds 'onlyIfLessThan'
+     *  threshold. otherwise returns Long.MAX_VALUE */
+    default public long distance1(final Intermval other, final long onlyIfLessthan) {
         final long[] a = intervals();
         final long[] b = other.intervals();
         long dist = 0;
@@ -37,13 +43,16 @@ public interface Intermval {
             float d = a[i] - b[i];
             if (d < 0) d = -d;
             dist += d;
+            if (dist > onlyIfLessthan)
+                return Long.MAX_VALUE;
         }
 
         return dist;
     }
 
 
-    //TODO: interpolating distance between two terms that start and end at different times. the area they share in common is evaluated for
+
+        //TODO: interpolating distance between two terms that start and end at different times. the area they share in common is evaluated for
     // alignment, optionally: absolute, scaled, or translated in time.
 
 }

@@ -5,9 +5,7 @@ import nars.io.Texts;
 
 import java.io.Serializable;
 
-/**
- * abstract typed Truth
- */
+/** abstract typed Truth  */
 public interface MetaTruth<T> extends Cloneable, Serializable {
 
     public T value();

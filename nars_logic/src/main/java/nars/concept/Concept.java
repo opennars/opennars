@@ -158,6 +158,13 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         }
     }
 
+    default public float getDesireExpectation() {
+        Truth d = getDesire();
+        if (d!=null) return d.getExpectation();
+        return 0;
+    }
+
+
 
     public enum State {
 

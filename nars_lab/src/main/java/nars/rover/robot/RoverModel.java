@@ -6,19 +6,24 @@ package nars.rover.robot;
 
 import nars.Memory;
 import nars.NAR;
+import nars.Symbols;
+import nars.budget.Budget;
 import nars.clock.SimulatedClock;
-import nars.io.in.ChangedTextInput;
-import nars.task.Task;
 import nars.concept.Concept;
+import nars.event.CycleReaction;
+import nars.io.in.ChangedTextInput;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
-import nars.term.Term;
 import nars.rover.PhysicsModel;
 import nars.rover.RoverEngine;
 import nars.rover.RoverEngine.Material;
 import nars.rover.depr.RobotArm;
 import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
+import nars.task.Task;
+import nars.term.Term;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
@@ -88,8 +93,8 @@ public class RoverModel {
     float restitution = 0.01f; //bounciness
     float friction = 0.9f;
 
-    public float linearThrustPerCycle = 20f;
-    public float angularSpeedPerCycle = 0.44f;
+    public float linearThrustPerCycle = 20 * 0.1f;
+    public float angularSpeedPerCycle = 0.44f * 0.1f;
 
 
     public class RoverMaterial extends Material {
@@ -190,8 +195,9 @@ public class RoverModel {
             vision.add(v);
         }
 
+        addMotorController();
+        //addMotorOperator();
 
-        addOperators();
         addAxioms();
 
         //String p = "$0.99;0.75;0.90$ ";
@@ -267,7 +273,119 @@ public class RoverModel {
         nar.input(randomActions.get(candid));
     }
 
-    protected void addOperators() {
+    @FunctionalInterface
+    public interface ConceptDesire {
+        public float getDesire(Concept c);
+    }
+
+    public abstract static class CycleDesire extends CycleReaction {
+
+        private final ConceptDesire desireFunction;
+        private final Term term;
+        private final NAR nar;
+        transient private Concept concept;
+
+        /** budget to apply if the concept is not active */
+        private Budget remember = new Budget(0.5f, Symbols.GOAL, new DefaultTruth(1.0f, 0.9f));
+
+        public CycleDesire(String term, ConceptDesire desireFunction, NAR nar) {
+            this(desireFunction, (Term)nar.term(term), nar);
+        }
+
+        public CycleDesire(ConceptDesire desireFunction, Term term, NAR nar) {
+            super(nar);
+            this.desireFunction = desireFunction;
+            this.nar = nar;
+            this.term = term;
+        }
+
+        
+        public float getDesireIfConceptMissing() { return 0; }
+
+        /** @return feedback belief value, or Float.NaN to not apply it */
+        abstract float onCycle(float desire);
+
+        @Override
+        public void onCycle() {
+
+            Concept c = getConcept();
+
+            if (c != null) {
+                float d = desireFunction.getDesire(c);
+                float feedback = onCycle(d);
+                //TODO handle feedback
+            }
+            else {
+                onCycle(getDesireIfConceptMissing());
+            }
+
+        }
+
+        public Concept getConcept() {
+
+            if (concept != null && concept.isDeleted()) {
+                concept = null;
+            }
+
+            if (concept == null) {
+                concept = nar.concept(term);
+            }
+
+            //try remembering it
+            if (concept == null) {
+                concept = nar.memory.conceptualize(remember, term);
+            }
+
+            return concept;
+        }
+    }
+
+    /** bipolar cycle desire, which resolves two polar opposite desires into one */
+    public abstract static class BiCycleDesire  {
+
+        private final CycleDesire positive;
+
+        public BiCycleDesire(String positiveTerm, String negativeTerm, ConceptDesire desireFunction, NAR n) {
+            this.positive = new CycleDesire(positiveTerm, desireFunction, n) {
+
+                @Override
+                float onCycle(float desire) {
+                    return 0;
+                }
+            };
+        }
+    }
+
+    public static final ConceptDesire strongestTask = (c ->  c.getDesireExpectation() );
+
+    protected void addMotorController() {
+        new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
+            @Override float onCycle(float desire) {
+                thrustRelative(desire * linearThrustPerCycle);
+                return 0;
+            }
+        };
+        new CycleDesire("motor(reverse,SELF)", strongestTask, nar) {
+            @Override float onCycle(float desire) {
+                thrustRelative(desire * -linearThrustPerCycle);
+                return 0;
+            }
+        };
+        new CycleDesire("motor(left,SELF)", strongestTask, nar) {
+            @Override float onCycle(float desire) {
+                rotateRelative(+30);
+                return 0;
+            }
+        };
+        new CycleDesire("motor(right,SELF)", strongestTask, nar) {
+            @Override float onCycle(float desire) {
+                rotateRelative(-30);
+                return 0;
+            }
+        };
+    }
+
+    protected void addMotorOperator() {
         nar.on(new NullOperator("motor") {
 
             @Override

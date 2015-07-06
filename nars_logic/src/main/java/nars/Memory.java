@@ -566,6 +566,7 @@ public class Memory implements Serializable, AbstractStamper {
      * @return an existing Concept, or a new one, or null
      */
     public Concept conceptualize(final Budget budget, Term term) {
+        //TODO term in first arg
 
         if (!validConceptTerm(term))
             return null;

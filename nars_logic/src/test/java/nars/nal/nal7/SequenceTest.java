@@ -34,4 +34,21 @@ public class SequenceTest {
 
     }
 
+    @Test public void testDistance1() {
+        NAR nar = new NAR(new Default());
+
+        Sequence a = nar.term("(&/, x, /1, y)");
+        Sequence b = nar.term("(&/, x, /2, y)");
+        assertEquals(1, a.distance1(b));
+        assertEquals(1, b.distance1(a));
+        assertEquals(0, a.distance1(a));
+
+        Sequence c = nar.term("(&/, x, /1, y)");
+        Sequence d = nar.term("(&/, x, /9, y)");
+        assertEquals(Long.MAX_VALUE, c.distance1(d, 2));
+        assertEquals(1, c.distance1(b, 2));
+
+
+    }
+
 }
