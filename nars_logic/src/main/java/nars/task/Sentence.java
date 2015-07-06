@@ -27,6 +27,7 @@ import nars.Symbols;
 import nars.budget.Item;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Intermval;
+import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.task.stamp.AbstractStamper;
@@ -113,7 +114,12 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             this.truth = truth;
         }
 
-        this.term = term;
+        if (term instanceof Sequence) {
+            this.term = (T) ((Sequence)term).cloneRemovingSuffixInterval();
+        }
+        else {
+            this.term = term;
+        }
 
         invalidateHash();
 

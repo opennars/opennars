@@ -2,6 +2,7 @@ package nars.nal.nal7;
 
 import nars.NAR;
 import nars.nar.Default;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 import org.junit.Test;
@@ -49,13 +50,27 @@ public class SequenceTest {
         testSeqTermString(nar, "(&/, a, /1, b)");
         testSeqTermString(nar, "(&/, a, /2, b, /4)");
         testSeqTermString(nar, "(&/, a, /3, b, /5, c, /10, d)");
-
-
     }
 
     private void testSeqTermString(NAR nar, String s) {
         assertEquals(s, nar.term(s).toString());
     }
+
+    @Test public void testSequenceSentenceNormalization() {
+        //sequences at the top level as terms must not have any trailing intervals
+        NAR nar = new NAR(new Default());
+
+        //trailng suffix that should be removed when it becomes the sentence's content term
+        Task t = nar.task("(&/, a, /1, b, /2).");
+        assertEquals("(&/, a, /1, b)", t.toString().split("\\.")[0]);
+
+        //no trailing suffix, unchanged
+        Task u = nar.task("(&/, a, /1, b).");
+        assertEquals("(&/, a, /1, b)", u.toString().split("\\.")[0]);
+
+        //TODO test for the sentence's term to be a different instance if it was modified
+    }
+
 
     @Test public void testDistance1() {
         NAR nar = new NAR(new Default());

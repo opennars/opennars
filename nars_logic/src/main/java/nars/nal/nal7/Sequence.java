@@ -9,10 +9,10 @@ import nars.term.Term;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static java.lang.System.arraycopy;
 import static nars.Op.COMPOUND_TERM_OPENER;
-import static nars.Symbols.ARGUMENT_SEPARATOR;
 
 /**
  * Created by me on 7/1/15.
@@ -40,17 +40,26 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
     @Override
+    protected <T extends Term> T normalized(boolean destructive) {
+        return super.normalized(destructive);
+    }
+
+    @Override
     public nars.nal.nal7.Sequence clone() {
         return new nars.nal.nal7.Sequence(term, intervals);
     }
 
     @Override
-    public Term clone(Term[] t) {
+    public Term clone(final Term[] t) {
+        return clone(t, intervals);
+    }
+
+    public Sequence clone(Term[] t, long[] ii) {
         //for now, require that cloning require same # of terms because intervals will be copied as-is
         if (t.length != length())
             return null;
 
-        return new nars.nal.nal7.Sequence(t, intervals);
+        return new nars.nal.nal7.Sequence(t, ii);
     }
 
     @Override
@@ -185,4 +194,10 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
 
+    public Sequence cloneRemovingSuffixInterval() {
+        final int s = size();
+        long[] ni = Arrays.copyOf(intervals(), s+1);
+        ni[s] = 0;
+        return clone(term, ni);
+    }
 }
