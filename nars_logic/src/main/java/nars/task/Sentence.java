@@ -409,7 +409,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
             float projectedConfidence = factor * currentTruth.getConfidence();
             if (projectedConfidence > eternalTruth.getConfidence()) {
-                return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, currentTruth.getConfidence(), targetTime);
+                return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, currentTruth.getEpsilon(), targetTime);
             }
             else {
                 return eternalTruth;
