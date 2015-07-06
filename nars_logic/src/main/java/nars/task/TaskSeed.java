@@ -448,7 +448,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         t.setTemporalInducting(temporalInducatable);
 
         if (this.cause != null) t.setCause(cause);
-        if (this.reason != null) t.addHistory(reason);
+        if (this.reason != null) t.log(reason);
 
         return t;
     }
@@ -483,16 +483,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return occurrenceTime;
     }
 
-
-    @Override
-    public Stamp cloneWithNewCreationTime(long newCreationTime) {
-        throw new UnsupportedOperationException("Not impl");
-    }
-
-    @Override
-    public Stamp cloneWithNewOccurrenceTime(long newOcurrenceTime) {
-        throw new UnsupportedOperationException("Not impl");
-    }
 
     @Override
     public String toString() {
@@ -677,6 +667,10 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
     public TaskSeed<T> occurrNow() {
         return setOccurrenceTime(memory.time());
+    }
+
+    public boolean temporalInductable() {
+        return temporalInducatable;
     }
 
     /**

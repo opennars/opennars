@@ -42,12 +42,16 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     }
 
     public Truth setFrequency(float f) {
+
+        final float e = getEpsilon();
+        f = FastMath.round(f / e) * e;
+
         if (f > 1.0f) f = 1.0f;
         if (f < 0f) f = 0f;
         //if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
 
-        final float e = getEpsilon();
-        this.frequency = FastMath.round(f / e) * e;
+        this.frequency = f;
+
         return this;
     }
 

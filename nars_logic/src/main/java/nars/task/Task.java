@@ -36,8 +36,8 @@ import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
 import nars.task.stamp.StampEvidence;
 import nars.term.Compound;
-import nars.term.Term;
 import nars.term.Termed;
+import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 import nars.truth.Truthed;
@@ -142,7 +142,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
 
         if (parentTask == null)
-            addHistory("Input");
+            log("Input");
 
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
@@ -217,8 +217,16 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         return clone(t, getTruth(), cloneEvenIfTruthEqual);
     }
 
+    public Task cloneEternal() {
+        return clone(getTerm(), TruthFunctions.eternalize(getTruth()), Stamp.ETERNAL);
+    }
+
     public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
         return clone(t, newTruth, true);
+    }
+
+    public Task clone(long newOccurrenceTime) {
+        return clone(getTerm(), getTruth(), newOccurrenceTime);
     }
 
     /** clones this Task with a new Term and truth  */
@@ -242,6 +250,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         tt.setEvidentialSet(getEvidentialSet());
         tt.setCreationTime(getCreationTime());
         tt.setOccurrenceTime(occ);
+        tt.log(getHistory());
         return tt;
     }
 
@@ -543,10 +552,10 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
 
     /**
-     * optional list of strings explaining the reasons that make up this task's [hi-]story.
+     * add to this task's log history
      * useful for debugging but can also be applied to meta-analysis
      */
-    public void addHistory(String reason) {
+    public void log(String reason) {
         if (!Global.DEBUG_TASK_HISTORY)
             return;
 
@@ -575,7 +584,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
 
-    public Task addHistory(List<String> historyToCopy) {
+    public Task log(List<String> historyToCopy) {
         if (!Global.DEBUG_TASK_HISTORY)
             return this;
 
@@ -634,13 +643,9 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     public Task projectTask(final long targetTime, final long currentTime) {
 
-        final Truth newTruth = projection(targetTime, currentTime);
+        final ProjectedTruth t = projection(targetTime, currentTime);
 
-        final boolean eternalizing = (newTruth instanceof TruthFunctions.EternalizedTruthValue);
-
-        long occ = eternalizing ? Stamp.ETERNAL : targetTime;
-
-        return clone(getTerm(), newTruth, occ);
+        return clone(getTerm(), t, t.getTargetTime());
     }
 
     @Override
@@ -679,5 +684,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     public void discountConfidence() {
         setTruth(getTruth().discountConfidence());
     }
+
 
 }

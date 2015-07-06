@@ -106,7 +106,7 @@ public final class StructuralRules {
         if (content == null)
             return;
         
-        Sentence sentence = nal.getCurrentTask().sentence;
+        Sentence sentence = nal.getTask().sentence;
 
         AnalyticTruth truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
         if (truth!=null) {
@@ -153,7 +153,7 @@ public final class StructuralRules {
         if (content == null) {
             return;
         }
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;
         Budget budget;
@@ -187,11 +187,11 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static Task structuralCompose1(Compound compound, short index, Statement statement, NAL nal) {
-        if (!nal.getCurrentTask().isJudgment()) {
+        if (!nal.getTask().isJudgment()) {
             return null;     // forward logic only
         }
         Term component = compound.term[index];
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();
         Truth truth = sentence.truth;
@@ -251,7 +251,7 @@ public final class StructuralRules {
 //        }
 
         Term component = compound.term[index];
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();
         Truth truth = sentence.truth;
@@ -305,7 +305,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     private static Task structuralStatement(Term subject, Term predicate, int order, Truth truth, NAL nal) {
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         Term oldContent = task.getTerm();
         if (oldContent instanceof Statement) {
             Statement content = Statement.make((Statement) oldContent, subject, predicate, order);
@@ -352,7 +352,7 @@ public final class StructuralRules {
             return;
         }
 
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;
         Budget budget;
@@ -390,7 +390,7 @@ public final class StructuralRules {
             return null;
         
         
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
 
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;
@@ -440,7 +440,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     public static Task transformNegation(final Compound content, final NAL nal) {
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;
 

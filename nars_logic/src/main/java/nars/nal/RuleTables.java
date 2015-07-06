@@ -36,7 +36,6 @@ import nars.nal.nal8.Operation;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.*;
 
 import java.util.Random;
@@ -526,14 +525,14 @@ public class RuleTables {
                 if (subSentence != null)
                     SyllogisticRules.detachment(mainSentenceTask, subSentence, index, nal);
 
-            } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
+            } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (nal.getTask().sentence.isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();
                 if ((content instanceof Statement) && (s2.getSubject().equals(((Statement) content).getSubject()))) {
                     CompositionalRules.introVarInner((Statement) content, s2, statement, nal);
                 }
 
                 CompositionalRules.introVarSameSubjectOrPredicate(mainSentence, subSentence, component, content, index, nal);
-            } else if ((statement instanceof Equivalence) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
+            } else if ((statement instanceof Equivalence) && (statement.getPredicate() instanceof Statement) && (nal.getTask().sentence.isJudgment())) {
                 CompositionalRules.introVarSameSubjectOrPredicate(mainSentence, subSentence, component, content, index, nal);
             }
         }
@@ -642,7 +641,7 @@ public class RuleTables {
         }*/
         Term component = compound.term[index];
 
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         if (Terms.equalType(component, statement)) {
             if ((compound instanceof Conjunction) && (nal.getBelief() != null)) {
                 final Random r = nal.memory.random;

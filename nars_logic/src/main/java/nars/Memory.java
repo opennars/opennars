@@ -31,7 +31,6 @@ import nars.budget.Itemized;
 import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
-import nars.io.Texts;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMetrics;
 import nars.nal.LogicPolicy;
@@ -63,7 +62,6 @@ import nars.term.*;
 import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.io.Serializable;
 import java.util.*;
@@ -655,9 +653,9 @@ public class Memory implements Serializable, AbstractStamper {
 
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
     public void removed(final Task task, final String removalReason) {
-        task.addHistory(removalReason);
+        task.log(removalReason);
         if (Global.DEBUG_TASK_HISTORY && Global.DEBUG_DERIVATION_STACKTRACES)
-            task.addHistory(NAL.getNALStack());
+            task.log(NAL.getNALStack());
         emit(TaskRemove.class, task, removalReason);
         task.delete();
     }

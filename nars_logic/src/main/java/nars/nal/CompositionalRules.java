@@ -87,7 +87,7 @@ public final class CompositionalRules {
     static void composeCompound(final Statement taskContent, final Statement beliefContent, final int index, final NAL nal) {
 
 
-        final Sentence taskBelief = nal.getCurrentTask().sentence;
+        final Sentence taskBelief = nal.getTask().sentence;
 
         if ((!taskBelief.isJudgment()) || (!equalType(taskContent, beliefContent))) {
             return;
@@ -216,7 +216,7 @@ public final class CompositionalRules {
             return null;
         }
 
-        final Task task = nal.getCurrentTask();
+        final Task task = nal.getTask();
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getBelief();
         final Statement oldContent = (Statement) task.getTerm();
@@ -308,7 +308,7 @@ public final class CompositionalRules {
             return null;
         }
 
-        final Task task = nal.getCurrentTask();
+        final Task task = nal.getTask();
         final Sentence belief = nal.getBelief();
 
         final boolean isQ = task.isQuestion() || task.isQuest();
@@ -367,7 +367,7 @@ public final class CompositionalRules {
                             .punctuation(contentTask.getPunctuation())
                             .truth(truth = intersection(contentTask.getTruth(), belief.truth))
                             .budget(BudgetFunctions.compoundForward(truth, conj, nal)),
-                            false, false
+                            false
                         );
 
                         //nal.deriveDouble(conj, contentTask.getPunctuation(), truth, budget, contentTask, belief, false, false);
@@ -443,10 +443,10 @@ public final class CompositionalRules {
             return;
         }
 
-        if (Stamp.overlapping( nal.getCurrentTask(), nal.getBelief() ))
+        if (Stamp.overlapping( nal.getTask(), nal.getBelief() ))
             return;
 
-        Truth truthT = nal.getCurrentTask().getTruth();
+        Truth truthT = nal.getTask().getTruth();
         Truth truthB = nal.getBelief().getTruth();
         if ((truthT == null) || (truthB == null)) {
             return;
@@ -607,13 +607,13 @@ public final class CompositionalRules {
         }
 
 
-        char punc = (nal.getCurrentTask().getPunctuation());
+        char punc = (nal.getTask().getPunctuation());
 
         {
             Truth truth = induction(truthT, truthB);
             if (truth!=null) {
                 nal.deriveDouble(nal.newTask(content, punc)
-                        .parent(nal.getCurrentTask(), nal.getBelief())
+                        .parent(nal.getTask(), nal.getBelief())
                         .truth(truth)
                         .budget(BudgetFunctions.compoundForward(truth, content, nal)));
                 //nal.deriveDouble(content, truth, budget, false, false);
@@ -626,7 +626,7 @@ public final class CompositionalRules {
                 Truth truth = induction(truthB, truthT);
                 if (truth!=null) {
                     nal.deriveDouble(nal.newTask(ct, punc)
-                                    .parent(nal.getCurrentTask(), nal.getBelief())
+                                    .parent(nal.getTask(), nal.getBelief())
                                     .truth(truth)
                                     .budget(BudgetFunctions.compoundForward(truth, ct, nal))
                     );
@@ -642,7 +642,7 @@ public final class CompositionalRules {
             if (ct != null) {
                 Truth truth;
                 nal.deriveDouble(nal.newTask(ct, punc)
-                                .parent(nal.getCurrentTask(), nal.getBelief())
+                                .parent(nal.getTask(), nal.getBelief())
                                 .truth(truth = comparison(truthT, truthB))
                                 .budget(BudgetFunctions.compoundForward(truth, ct, nal))
                 );
@@ -667,7 +667,7 @@ public final class CompositionalRules {
         if (ct != null) {
             Truth truth;
             nal.deriveDouble(nal.newTask(ct, punc)
-                            .parent(nal.getCurrentTask(), nal.getBelief())
+                            .parent(nal.getTask(), nal.getBelief())
                             .truth(truth = intersection(truthT, truthB))
                             .budget(BudgetFunctions.compoundForward(truth, ct, nal))
             );
@@ -691,7 +691,7 @@ public final class CompositionalRules {
      *
      */
     static Task introVarInner(Statement premise1, Statement premise2, Compound oldCompound, NAL nal) {
-        final Task task = nal.getCurrentTask();
+        final Task task = nal.getTask();
         final Sentence taskSentence = task.sentence;
 
         if (!taskSentence.isJudgment() || (!equalType(premise1, premise2)) || oldCompound.containsTerm(premise1)) {

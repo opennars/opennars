@@ -21,6 +21,7 @@
 package nars.truth;
 
 import nars.nal.UtilityFunctions;
+import nars.task.stamp.Stamp;
 
 import static java.lang.Math.abs;
 
@@ -82,7 +83,6 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final Truth revision(final Truth a, final Truth b) {
-
         return revision(a, b, BasicTruth.get(0, 0, a, b));
     }
     
@@ -385,26 +385,21 @@ public final class TruthFunctions extends UtilityFunctions {
         final Truth v0 = BasicTruth.get(f1, w2c(c1), a, b);
         return analogy(b, v0);
     }
-    
-    
-    /** functions the same as TruthValue, but being a separate class,
-     *  indicates it was the result of eternalization */
-    public static final class EternalizedTruthValue extends BasicTruth {
-        EternalizedTruthValue(final float f, final float c, float epsilon) {
-            super(f, c, epsilon);
-        }        
-    }
-    
+
+
     /**
      * From one moment to eternal
      * @param t Truth value of the premise
      * @return Truth value of the conclusion
      */
-    public static final EternalizedTruthValue eternalize(final Truth t) {
-        return new EternalizedTruthValue(
+    public static final ProjectedTruth eternalize(final Truth t) {
+        if (t == null)
+            return null;
+        return new ProjectedTruth(
                 t.getFrequency(),
                 eternalizedConfidence(t.getConfidence()),
-                t.getEpsilon()
+                t.getEpsilon(),
+                Stamp.ETERNAL
         );
     }
     public static final float eternalizedConfidence(float conf) {

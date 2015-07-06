@@ -19,7 +19,6 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variables;
 import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,20 +190,49 @@ public abstract class NAL implements Runnable {
         }
 
 
-        Task taskCreated;
-        if (null != (taskCreated = addNewTask(task, "Derived", false, revised, single))) {
+        //TODO balance budget on input; original task + immediate eternalization budget should be shared
 
-            memory.event.emit(Events.TaskDerive.class, taskCreated);
+        Task derived;
+        if (null != (derived = addNewTask(task, "Derived", false, revised, single))) {
+
+            memory.event.emit(Events.TaskDerive.class, derived);
             memory.logic.TASK_DERIVED.hit();
 
-            if (nal(7)) {
-                if (taskCreated.getOccurrenceTime() > memory.time()) {
-                    memory.event.emit(Events.TaskDeriveFuture.class, taskCreated, this);
+            if (nal(7) && !derived.isEternal()) {
+                if (derived.getOccurrenceTime() > memory.time()) {
+                    memory.event.emit(Events.TaskDeriveFuture.class, derived, this);
                 }
             }
 
-            return taskCreated;
+
+            //TODO move this to ImmediateEternalization.java handler that reacts to TaskDeriveTemporal (to prune reacting to Eternal events)
+
+            //TODO budget and/or confidence thresholds
+
+            //"Since in principle it is always valid to eternalize a tensed belief"
+            if (Global.IMMEDIATE_ETERNALIZATION /*&& task.temporalInductable()*/ ) {
+                //temporal induction generated ones get eternalized directly
+                Task eternalized = derived.cloneEternal();
+                eternalized.log("ImmediateEternalize");
+                memory.taskAdd(eternalized);
+
+            /*derive(
+                    newTask(task.getTerm())
+                            .punctuation(task.getPunctuation())
+                            .truth(TruthFunctions.eternalize(task.getTruth()))
+                            .parent(derived.getParentTask(), derived.getParentBelief())
+                            .budget(task)
+                            .stamp(derived)
+                            .eternal(),
+                    false, false, parentTask, allowOverlap);*/
+            }
+
+            return derived;
         }
+
+
+
+
 
         return null;
     }
@@ -230,7 +258,7 @@ public abstract class NAL implements Runnable {
         //use this NAL's instance defaults for the values because specific values were not substituted:
 
 
-        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getBelief(), getCurrentTask());
+        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getBelief(), getTask());
         if (rejectionReason != null) {
             memory.removed(task, rejectionReason);
             return null;
@@ -243,16 +271,16 @@ public abstract class NAL implements Runnable {
         Task taskCreated;
         if ((taskCreated = task.input()) != null) {
 
-            taskCreated.setTemporalInducting(false);
+            //taskCreated.setTemporalInducting(false);
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                taskCreated.addHistory(System.nanoTime() + " " + this.toString());
+                taskCreated.log(System.nanoTime() + " " + this.toString());
             }
 
-            taskCreated.addHistory(reason);
+            taskCreated.log(reason);
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                taskCreated.addHistory(getNALStack());
+                taskCreated.log(getNALStack());
             }
 
             return taskCreated;
@@ -286,7 +314,7 @@ public abstract class NAL implements Runnable {
      * @param newBudget      The budget value in task
      */
     @Deprecated public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
-        return deriveDouble(newTaskContent, newTruth, newBudget, temporalAdd, getCurrentTask(), allowOverlap);
+        return deriveDouble(newTaskContent, newTruth, newBudget, temporalAdd, getTask(), allowOverlap);
     }
 
     @Deprecated public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
@@ -315,29 +343,15 @@ public abstract class NAL implements Runnable {
                 .temporalInductable(!temporalAdd)
                 .budget(newBudget);
 
-        return deriveDouble(task, temporalAdd, allowOverlap);
+        return deriveDouble(task, allowOverlap);
     }
 
-    public Task deriveDouble(TaskSeed task, boolean temporalAdd, boolean allowOverlap) {
+    public Task deriveDouble(TaskSeed task, boolean allowOverlap) {
 
         final Task parentTask = task.getParentTask();
 
         Task derived = derive(task, false, false, parentTask, allowOverlap);
 
-
-        //"Since in principle it is always valid to eternalize a tensed belief"
-        if (derived != null && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {
-            //temporal induction generated ones get eternalized directly
-            derive(
-                    newTask(task.getTerm())
-                            .punctuation(task.getPunctuation())
-                            .truth(TruthFunctions.eternalize(task.getTruth()))
-                            .parent(parentTask, getBelief())
-                            .budget(task)
-                            .stamp(derived)
-                            .eternal(),
-                    false, false, parentTask, allowOverlap);
-        }
 
         return derived;
     }
@@ -368,7 +382,7 @@ public abstract class NAL implements Runnable {
      * @param newBudget  The budget value in task
      */
     public Task deriveSingle(Compound newContent, Truth newTruth, Budget newBudget) {
-        return deriveSingle(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
+        return deriveSingle(newContent, getTask().sentence.punctuation, newTruth, newBudget);
     }
 
     public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
@@ -376,7 +390,7 @@ public abstract class NAL implements Runnable {
     }
 
     public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
-        Task parentTask = getCurrentTask().getParentTask();
+        Task parentTask = getTask().getParentTask();
         if (parentTask != null) {
             if (parentTask.getTerm() == null) {
                 return null;
@@ -394,13 +408,13 @@ public abstract class NAL implements Runnable {
             return null;
 
 
-        final Sentence taskSentence = getCurrentTask().sentence;
+        final Sentence taskSentence = getTask().sentence;
 
         Sentence pbelief;
         Task ptask;
 
         if (taskSentence.isJudgment() || getBelief() == null) {
-            ptask = getCurrentTask();
+            ptask = getTask();
             pbelief = null;
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?
@@ -430,7 +444,7 @@ public abstract class NAL implements Runnable {
     /**
      * @return the currentTask
      */
-    public Task getCurrentTask() {
+    public Task getTask() {
         return currentTask;
     }
 

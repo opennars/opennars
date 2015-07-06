@@ -42,7 +42,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
         Concept concept = f.getTermLinkConcept();
         if (concept == null) return true;
 
-        Task taskLinkTask = f.getCurrentTask();// taskLink.getTask();
+        Task taskLinkTask = f.getTask();// taskLink.getTask();
 
 
         if (!(taskLinkTask.sentence.isJudgment() || taskLinkTask.sentence.isGoal())) return true;

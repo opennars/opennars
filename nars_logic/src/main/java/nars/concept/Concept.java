@@ -41,7 +41,6 @@ import nars.truth.Truth;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Iterators.*;
@@ -281,7 +280,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
         if (!ensureActiveFor("TaskProcess")) return false;
 
-        final Task task = nal.getCurrentTask();
+        final Task task = nal.getTask();
 
         if (!processable(task)) {
             getMemory().removed(task, "Filtered by Concept");

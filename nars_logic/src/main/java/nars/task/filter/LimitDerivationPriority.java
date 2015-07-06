@@ -17,7 +17,7 @@ public class LimitDerivationPriority implements DerivationFilter {
     @Override
     public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised) {
 
-        Budget currentTaskBudget = nal.getCurrentTask().getBudget();
+        Budget currentTaskBudget = nal.getTask().getBudget();
         task.andPriority(currentTaskBudget.getPriority());
         
         return null;

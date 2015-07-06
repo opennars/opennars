@@ -13,7 +13,7 @@ public class PerceptionDetachment extends ConceptFireTaskTerm {
    @Override
    public boolean apply(ConceptProcess nal, TermLink termLink) {
        final Memory memory = nal.memory;
-       final Task task = nal.getCurrentTask();
+       final Task task = nal.getTask();
 
        return true;
    }

@@ -151,7 +151,7 @@ abstract public class Operator implements Reaction<Term> {
             for (final Task t : feedback) {
                 if (t == null) continue;
                 t.setCause(op);
-                t.addHistory("Feedback");
+                t.log("Feedback");
 
                 memory.input(t);
             }

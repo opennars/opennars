@@ -236,7 +236,7 @@ public class TemporalRules {
 
 
     public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
-        temporalInduction(s1, s2, nal, nal.getCurrentTask(), true);
+        temporalInduction(s1, s2, nal, nal.getTask(), true);
     }
 
     final static Variable var1 = new Variable("$0");

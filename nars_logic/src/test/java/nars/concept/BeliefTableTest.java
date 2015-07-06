@@ -90,7 +90,7 @@ public class BeliefTableTest extends TestCase {
         //b.printEnergy();
 
         b.print();
-        assertEquals(3, b.size());
+        assertEquals(4, b.size());
 
         b.believe(1.0f, 0.9f, Tense.Present).run(offCycles)
                 .believe(0.0f, 0.9f, Tense.Present);

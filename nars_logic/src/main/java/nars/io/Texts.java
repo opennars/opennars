@@ -324,7 +324,7 @@ abstract public class Texts  {
 
     public static final CharSequence n2(final float x) {
         if ((x < 0) || (x > 1.0f))
-            throw new RuntimeException("Invalid value for Texts.n2");
+            throw new RuntimeException("Invalid value for Texts.n2: " + x);
         
         int hundredths = (int)hundredths(x);
         switch (hundredths) {

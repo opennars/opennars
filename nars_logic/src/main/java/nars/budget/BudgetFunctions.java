@@ -66,7 +66,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public static Budget revise(final Truth tTruth, final Truth bTruth, final Truth truth, final NAL nal) {
         final float difT = truth.getExpDifAbs(tTruth);
-        final Task task = nal.getCurrentTask();
+        final Task task = nal.getTask();
         task.decPriority(1f - difT);
         task.andDurability(1f - difT);
 
@@ -384,7 +384,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         }
 
         if (t == null)
-            t = nal.getCurrentTask();
+            t = nal.getTask();
 
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;

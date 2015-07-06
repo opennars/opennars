@@ -38,6 +38,7 @@ import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Variables;
 import nars.truth.AnalyticTruth;
+import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -132,7 +133,7 @@ public class LocalRules {
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
-        Truth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
+        ProjectedTruth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
@@ -267,7 +268,7 @@ public class LocalRules {
         }
         else {
             belief.accumulate(budget);
-            belief.addHistory("Solved " + question);
+            belief.log("Solved " + question);
         }
 
         question.decPriority(budget.getPriority());
@@ -292,7 +293,7 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     public static Task matchReverse(final NAL nal) {
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         Sentence belief = nal.getBelief();
         Sentence sentence = task.sentence;
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
@@ -314,7 +315,7 @@ public class LocalRules {
      * @param nal    Reference to the memory
      */
     public static void matchAsymSym(final Task asym, final Sentence sym, int figure, final NAL nal) {
-        if (nal.getCurrentTask().sentence.isJudgment()) {
+        if (nal.getTask().sentence.isJudgment()) {
             inferToAsym(asym, sym, nal);
         } else {
             convertRelation(nal);
@@ -351,7 +352,7 @@ public class LocalRules {
                             .punctuation(asym.getPunctuation())
                             .truth(truth)
                             .budget(BudgetFunctions.forward(truth, nal)),
-                    false, false);
+                    false);
         }
 
         return null;
@@ -380,7 +381,7 @@ public class LocalRules {
     private static Task convertRelation(final NAL nal) {
         final Truth beliefTruth = nal.getBelief().truth;
         final AnalyticTruth truth;
-        if ((nal.getCurrentTask().getTerm()).isCommutative()) {
+        if ((nal.getTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(beliefTruth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(beliefTruth, 1.0f);
@@ -402,7 +403,7 @@ public class LocalRules {
      * @param nal    Reference to the memory
      */
     private static Task convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
-        Statement content = (Statement) nal.getCurrentTask().getTerm();
+        Statement content = (Statement) nal.getTask().getTerm();
         Statement beliefContent = (Statement) nal.getBelief().getTerm();
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();

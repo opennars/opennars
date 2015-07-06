@@ -60,14 +60,6 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
     public long getOccurrenceTime();
 
 
-    public Stamp cloneWithNewCreationTime(long newCreationTime);
-
-    public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime);
-
-    default public Stamp cloneEternal() {
-        return cloneWithNewOccurrenceTime(ETERNAL);
-    }
-
 
     /*** zips two evidentialBase arrays into a new one */
     static long[] zip(final long[] a, final long[] b) {

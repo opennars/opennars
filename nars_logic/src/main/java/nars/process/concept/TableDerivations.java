@@ -62,7 +62,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                                 SyllogisticRules.detachment(tLink.getTask(), belief, bIndex, f);
                             }
                         } else {
-                            goalFromQuestion(f.getCurrentTask(), taskTerm, f);
+                            goalFromQuestion(f.getTask(), taskTerm, f);
                         }
                         break;
                     case TermLink.COMPOUND_STATEMENT:

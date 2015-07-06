@@ -124,7 +124,7 @@ public class EmotionMeter implements Serializable {
     }
 
     public void busy(NAL nal) {
-        busy(nal.getCurrentTask(), nal);
+        busy(nal.getTask(), nal);
     }
 
     public double lastbusy = -1;

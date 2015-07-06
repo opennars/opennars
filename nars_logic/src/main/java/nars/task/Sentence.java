@@ -397,27 +397,28 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 //    }
 
 
-    public Truth projection(final long targetTime, final long currentTime) {
-        Truth newTruth = null;
+    public ProjectedTruth projection(final long targetTime, final long currentTime) {
+
+        final Truth currentTruth = truth;
+
                         
-        if (!isEternal()) {
-            newTruth = TruthFunctions.eternalize(truth);
-            if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = getOccurrenceTime();
-                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
-                float projectedConfidence = factor * truth.getConfidence();
-                if (projectedConfidence > newTruth.getConfidence()) {
-                    newTruth = new DefaultTruth(truth.getFrequency(), projectedConfidence);
-                }
+        if (!isEternal() && (targetTime != Stamp.ETERNAL)) {
+            ProjectedTruth eternalTruth  = TruthFunctions.eternalize(currentTruth);
+
+            long occurrenceTime = getOccurrenceTime();
+            float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+            float projectedConfidence = factor * currentTruth.getConfidence();
+            if (projectedConfidence > eternalTruth.getConfidence()) {
+                return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, currentTruth.getConfidence(), targetTime);
             }
-        }
-        
-        if (newTruth == null) {
-            newTruth = BasicTruth.clone(truth);
+            else {
+                return eternalTruth;
+            }
+
+        } else {
+            return new ProjectedTruth(currentTruth, getOccurrenceTime());
             //return truth;
         }
-        
-        return newTruth;
     }
 
     /** calculates projection truth quality without creating new TruthValue instances */
@@ -636,15 +637,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return occurrenceTime;
     }
 
-    @Override
-    public Stamp cloneWithNewCreationTime(long newCreationTime) {
-        return null;
-    }
 
-    @Override
-    public Stamp cloneWithNewOccurrenceTime(long newOcurrenceTime) {
-        return null;
-    }
 
     public boolean after(Sentence s, int duration) {
         return TemporalRules.occurrsAfter(s, this);

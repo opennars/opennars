@@ -298,7 +298,7 @@ public class ConceptProcess extends NAL implements Premise {
 
         reasoner.fire(this);
 
-        emit(Events.BeliefReason.class, getBelief(), getCurrentTask(), this);
+        emit(Events.BeliefReason.class, getBelief(), getTask(), this);
     }
 
     @Override

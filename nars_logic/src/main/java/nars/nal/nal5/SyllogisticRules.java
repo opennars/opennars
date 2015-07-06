@@ -236,7 +236,7 @@ public final class SyllogisticRules {
                 truth2, budget2.clone(),false, false);*/
                 Statement s2 = Similarity.make(term1, term2);
                 if (s2 != null) {
-                    nal.deriveDouble(nal.newTask(s2,p).parent(sentence1, sentence2)
+                    nal.deriveDouble(nal.newTask(s2, p).parent(sentence1, sentence2)
                                     .truth(truth3)
                                     .budget(budget2)
                     );
@@ -280,7 +280,7 @@ public final class SyllogisticRules {
         Statement st = (Statement) asym.getTerm();
         Truth truth = null;
         Budget budget;
-        Sentence sentence = nal.getCurrentTask().sentence;
+        Sentence sentence = nal.getTask().sentence;
         Compound taskTerm = sentence.getTerm();
 
         final Truth symTrut = sym.truth;
@@ -314,7 +314,7 @@ public final class SyllogisticRules {
         Compound statement = Sentence.termOrNull(Statement.make(st, subj, pred, order));
         if (statement == null) return false;
 
-        nal.deriveDouble(statement, nal.getCurrentTask().getPunctuation(), truth, budget,
+        nal.deriveDouble(statement, nal.getTask().getPunctuation(), truth, budget,
                 asym, sym, false, true);
 
         nal.memory.logic.ANALOGY.hit();
@@ -482,7 +482,7 @@ public final class SyllogisticRules {
             return null;
         }
 
-        final Sentence taskSentence = nal.getCurrentTask().sentence;
+        final Sentence taskSentence = nal.getTask().sentence;
         final Sentence beliefSentence = nal.getBelief();
 
         if (beliefSentence == null)
@@ -571,7 +571,7 @@ public final class SyllogisticRules {
                         .budget(budget)
                         .parent(mainSentence, subSentence)
                         .occurr(occ),
-                false, strong);
+                strong);
 
     }
 
@@ -590,7 +590,7 @@ public final class SyllogisticRules {
      * @param nal      Reference to the memory
      */
     public static Task conditionalDedInd(Implication premise1, short index, Term premise2, final int side, final NAL nal) {
-        final Task task = nal.getCurrentTask();
+        final Task task = nal.getTask();
         final Sentence belief = nal.getBelief();
 
         final boolean deduction = (side != 0);
@@ -753,7 +753,7 @@ public final class SyllogisticRules {
                         .budget(budget)
                         .occurr(occ),
 
-                false, deduction
+                deduction
         );
     }
 
@@ -772,7 +772,7 @@ public final class SyllogisticRules {
     public static boolean conditionalAna(Equivalence premise1, short index, Term premise2, int side, NAL nal) {
         final Random r = nal.memory.random;
 
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getBelief();
         boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), r);
@@ -904,7 +904,7 @@ public final class SyllogisticRules {
         if ((term1 == null) && (term2 == null)) {
             return false;
         }
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getBelief();
         Truth value1 = sentence.truth;
@@ -1002,7 +1002,7 @@ public final class SyllogisticRules {
         if ((content == null) || (!(content instanceof Compound)) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
         }
-        Task task = nal.getCurrentTask();
+        Task task = nal.getTask();
 
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getBelief();

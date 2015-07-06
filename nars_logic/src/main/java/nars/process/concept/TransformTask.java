@@ -41,7 +41,7 @@ public class TransformTask extends ConceptFireTask {
 
 
             // to turn this into structural logic as below?
-            Compound content = f.getCurrentTask().getTerm();
+            Compound content = f.getTask().getTerm();
             short[] indices = t.index;
             Term inh = null;
 
@@ -177,7 +177,7 @@ public class TransformTask extends ConceptFireTask {
         if (content == null)
             return;
 
-        Sentence sentence = nal.getCurrentTask().sentence;
+        Sentence sentence = nal.getTask().sentence;
         Truth truth = sentence.truth;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
@@ -200,7 +200,7 @@ public class TransformTask extends ConceptFireTask {
      * @param nal Reference to the memory
      */
     private static void transformSubjectPI(Compound subject, Term predicate, NAL nal) {
-        Truth truth = nal.getCurrentTask().sentence.truth;
+        Truth truth = nal.getTask().sentence.truth;
         Budget budget;
         Inheritance inheritance;
         Term newSubj, newPred;
@@ -255,7 +255,7 @@ public class TransformTask extends ConceptFireTask {
      * @param nal Reference to the memory
      */
     private static void transformPredicatePI(Term subject, Compound predicate, NAL nal) {
-        Truth truth = nal.getCurrentTask().sentence.truth;
+        Truth truth = nal.getTask().sentence.truth;
         Budget budget;
         Inheritance inheritance;
         Term newSubj, newPred;

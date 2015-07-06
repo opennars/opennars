@@ -122,7 +122,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
             if (Variables.containVarDepOrIndep(conj.name()))
                 continue;
              */
-                Truth truthT = nal.getCurrentTask().sentence.truth;
+                Truth truthT = nal.getTask().sentence.truth;
                 Truth truthB = nal.getBelief().truth;
             /*if(truthT==null || truthB==null) {
                 //continue; //<- should this be return and not continue?

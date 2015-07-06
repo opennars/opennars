@@ -19,9 +19,9 @@ import java.util.function.Predicate;
 import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
-* Patrick's new version which 'restores the special reasoning context'
-* new attempt/experiment to make nars effectively track temporal coherences
-*/
+ * Patrick's new version which 'restores the special reasoning context'
+ * new attempt/experiment to make nars effectively track temporal coherences
+ */
 public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
     static class ConceptByOperator implements Predicate<Concept> {
@@ -45,7 +45,11 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     final InductableImplication nextInductedImplication = new InductableImplication();
 
     @Override
-    public final boolean apply(final ConceptProcess f, TermLink termLink) {
+    public final boolean apply(final ConceptProcess f, final TermLink termLink) {
+
+        final Task task = f.getTask();
+        if (task.isEternal() || !task.isTemporalInductable())
+            return true;
 
         if (!f.nal(7)) return true;
 
@@ -55,11 +59,6 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         if (!belief.isJudgment()) return true;
 
         final Concept concept = f.getConcept();
-
-        Task task = f.getCurrentTask();
-
-        if (task.sentence.isEternal())
-            return true;
 
         final Memory memory = f.memory;
 
@@ -115,7 +114,6 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     static class InductableImplication extends ConceptByOperator {
 
         Set<Sentence> alreadyInducted = new HashSet();
-        Task belief = null;
         private Sentence current, prev;
         private Task task;
         private int duration;
@@ -127,35 +125,30 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         @Override
         public boolean test(Concept concept) {
 
-            belief = null;
-
             if (super.test(concept)) {
 
                 Task temporalBelief = concept.getBeliefs().top(false, true);
                 if (temporalBelief != null) {
-                    if (!temporalBelief.isEternal() && TemporalRules.isInputOrTriggeredOperation(temporalBelief)) {
+                    if (/*!temporalBelief.isEternal() &&*/ TemporalRules.isInputOrTriggeredOperation(temporalBelief) && temporalBelief.isTemporalInductable()) {
 
                         //if it was not already inducted, then Set.add will return true
-                        if (alreadyInducted.add(temporalBelief.sentence)) {
+                        if (alreadyInducted.add(temporalBelief)) {
 
-                            if(task.isTemporalInductable()) { //todo refine, add directbool in task
 
-                                if (!equalSubTermsInRespectToImageAndProduct(current.getTerm(), prev.getTerm())) {
 
-                                    this.belief = temporalBelief;
 
-                                    Sentence otherBelief = temporalBelief.sentence;
-                                    if (otherBelief.after(task.sentence, duration)) {
-                                        current = otherBelief;
-                                        prev = task.sentence;
-                                    } else {
-                                        current = task.sentence;
-                                        prev = otherBelief;
-                                    }
-
-                                    return true;
-                                }
+                            if (temporalBelief.after(task, duration)) {
+                                current = temporalBelief;
+                                prev = task;
+                            } else {
+                                current = task;
+                                prev = temporalBelief;
                             }
+
+                            if (!equalSubTermsInRespectToImageAndProduct(current.getTerm(), prev.getTerm())) {
+                                return true;
+                            }
+
                         }
 
                     }
@@ -166,12 +159,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         }
 
         public Task getTask() {
-            return belief;
-        }
-
-        /** holds the belief of the current concept that was identified as valid in the test() method, to avoid having to find it again */
-        public Sentence getBelief() {
-            return belief.sentence;
+            return task;
         }
 
         public void reset(Task task, int duration) {
@@ -179,12 +167,12 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             this.duration = duration;
             alreadyInducted.clear();
             prev = current = null;
-            belief = null;
         }
 
         public Sentence getPrevious() {
             return prev;
         }
+
         public Sentence getCurrent() {
             return current;
         }

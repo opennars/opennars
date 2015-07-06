@@ -40,7 +40,7 @@ public class TaskProcess extends NAL {
 
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
-        getCurrentTask().appendWithBudget(sb);
+        getTask().appendWithBudget(sb);
         sb.append(']');
 
         return sb.toString();
@@ -51,7 +51,7 @@ public class TaskProcess extends NAL {
 
     @Override
     public void process() {
-        Concept c = memory.conceptualize(getCurrentTask(), getCurrentTask().getTerm());
+        Concept c = memory.conceptualize(getTask(), getTask().getTerm());
         if (c!=null)
             process(c);
         
@@ -64,7 +64,7 @@ public class TaskProcess extends NAL {
 
             c.link(currentTask);
 
-            emit(TaskProcess.class, getCurrentTask(), this, c);
+            emit(TaskProcess.class, getTask(), this, c);
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         }
     }

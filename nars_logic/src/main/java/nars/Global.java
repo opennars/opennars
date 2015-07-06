@@ -156,7 +156,7 @@ public class Global {
     //temporary parameter for setting #threads to use, globally
     @Deprecated public static int THREADS = 1;
 
-    public static boolean IMMEDIATE_ETERNALIZATION=false; //WARNING: not working right
+    public static boolean IMMEDIATE_ETERNALIZATION=true; //WARNING: not working right
 
 
 
