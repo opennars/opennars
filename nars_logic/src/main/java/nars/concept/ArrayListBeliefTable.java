@@ -164,12 +164,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                 } else if (revisibleTermsAlreadyEqual(t, existing)) {
 
-                    //two eternal beliefs with same truth, don't revise
-                    if (t.isEternal() && existing.isEternal() && t.getTruth().equals(existing.getTruth())) {
-                        memory.removed(t, "Unrevisble Eternal Duplicate");
-                        return null;
-                    }
-
 
                     Task revised = tryRevision(t, existing, false, nal);
                     if (revised != null) {
