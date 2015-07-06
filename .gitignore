@@ -22,3 +22,5 @@ UIFiles
 .classpath
 .project
 .settings
+/cache
+
