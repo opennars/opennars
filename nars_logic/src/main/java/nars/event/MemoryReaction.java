@@ -1,5 +1,6 @@
 package nars.event;
 
+import nars.AbstractMemory;
 import nars.Events;
 import nars.Events.CycleEnd;
 import nars.Events.CycleStart;
@@ -11,7 +12,7 @@ import nars.task.Task;
 
 public abstract class MemoryReaction extends NARReaction {
 
-    private final Memory memory;
+    private final AbstractMemory memory;
 
     public MemoryReaction(NAR n, boolean active) {
         this(n.memory, active);

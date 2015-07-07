@@ -1,5 +1,6 @@
 package nars.bag.tx;
 
+import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
@@ -14,7 +15,7 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
 
     private final Bag<K, V> bag;
     private float forgetCycles;
-    private Memory memory;
+    private AbstractMemory memory;
     public V current = null;
     private long now;
 
@@ -44,7 +45,7 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
     }
 
     /** updates with current time, etc. call immediately before update() will be called */
-    public void set(float forgetCycles, Memory memory) {
+    public void set(float forgetCycles, AbstractMemory memory) {
         this.forgetCycles = forgetCycles;
         this.memory = memory;
         this.now = memory.time();

@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.AbstractMemory;
 import nars.Memory;
 import nars.process.NAL;
 import nars.task.Task;
@@ -129,7 +130,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public Task add(Task t, Ranker r, Concept c, NAL nal) {
 
-        final Memory memory = c.getMemory();
+        final AbstractMemory memory = c.getMemory();
 
 
         final Task input = t; //store in case input changes

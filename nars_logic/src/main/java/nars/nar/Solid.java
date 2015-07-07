@@ -188,7 +188,7 @@ public class Solid extends Default implements CycleProcess {
             for (int i = 0; i < fires; i++) {
                 TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
                 if (tl == null) break;
-                new ConceptProcess(c, tl, termFires).run();
+                new ConceptProcess( (DefaultConcept) c, tl, termFires).run();
             }
 
         }

@@ -1,14 +1,15 @@
 package nars.rl;
 
+import nars.Memory;
 import nars.Symbols;
+import nars.concept.Concept;
+import nars.nal.nal5.Implication;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.truth.Truth;
-import nars.concept.Concept;
-import nars.nal.nal5.Implication;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.Truth;
 import nars.util.index.ConceptMatrix;
 import nars.util.index.ConceptMatrixEntry;
 import org.apache.commons.math3.util.FastMath;
@@ -109,7 +110,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     float lastFreq = 0.5f; //start in neutral
 
     public void commitDirect(Task t) {
-        TaskProcess.run(concept.getMemory(), t);
+        TaskProcess.run((Memory)concept.getMemory(), t);
     }
 
 //    /** inserts the belief directly into the table */
@@ -141,7 +142,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
         if (qUpdateConfidence > 0 &&
                 ((now - lastCommit >= commitEvery) && FastMath.abs(nextFreq - lastFreq) > freqThreshold)) {
 
-            Task t = concept.getMemory().newTask((Compound) qt).punctuation(
+            Task t = ((Memory)concept.getMemory()).newTask((Compound) qt).punctuation(
 
                     punctuation
 

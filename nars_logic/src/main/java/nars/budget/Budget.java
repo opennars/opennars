@@ -21,8 +21,8 @@
 package nars.budget;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.AbstractMemory;
 import nars.Global;
-import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.task.Sentence;
@@ -554,7 +554,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     /** creates a new budget value appropriate for a given sentence type and memory's current parameters */
-    public static Budget newDefault(Sentence s, Memory memory) {
+    public static Budget newDefault(Sentence s, AbstractMemory memory) {
         float priority, durability;
         priority = newDefaultPriority(s.punctuation);
         durability = newDefaultDurability(s.punctuation);

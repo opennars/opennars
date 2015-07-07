@@ -1,6 +1,6 @@
 package nars.io;
 
-import nars.Memory;
+import nars.AbstractMemory;
 import nars.NAR;
 import nars.Symbols;
 import nars.narsese.NarseseParser;
@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  */
 public class TextPerception  {
 
-    public final Memory memory;
+    public final AbstractMemory memory;
     
     public final List<TextReaction<Task>> parsers;
 

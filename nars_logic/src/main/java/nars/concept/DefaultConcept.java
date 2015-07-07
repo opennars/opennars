@@ -1,9 +1,7 @@
 package nars.concept;
 
 import javolution.util.function.Equality;
-import nars.Events;
-import nars.Global;
-import nars.Memory;
+import nars.*;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Item;
@@ -19,8 +17,6 @@ import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.truth.BasicTruth;
-import nars.truth.Truth;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -244,6 +240,26 @@ public class DefaultConcept extends Item<Term> implements Concept {
         }
 
         return this;
+    }
+
+    /** updates the concept-has-questions index if the concept transitions from having no questions to having, or from having to not having */
+    public void onTableUpdated(char punctuation, int originalSize) {
+        if (!isActive()) return;
+
+        switch (punctuation) {
+            /*case Symbols.GOAL:
+                break;*/
+            case Symbols.QUESTION:
+                if (getQuestions().isEmpty()) {
+                    if (originalSize > 0) //became empty
+                        getMemory().updateConceptQuestions(this);
+                } else {
+                    if (originalSize == 0) { //became non-empty
+                        getMemory().updateConceptQuestions(this);
+                    }
+                }
+                break;
+        }
     }
 
     @Override
@@ -675,11 +691,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
             int numTemplates = templates.size();
             for (int i = 0; i < numTemplates; i++) {
 
-                TermLinkTemplate template = templates.get(i);
+                final TermLinkTemplate template = templates.get(i);
 
                 //only apply this loop to non-transform termlink templates
                 if (template.type != TermLink.TRANSFORM) {
-                    if (linkTerm(template, subPriority, dur, qua, updateTLinks))
+                    if (template.link(this, subPriority, dur, qua, updateTLinks))
                         activity = true;
                 }
 
@@ -707,43 +723,14 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
     boolean linkTerm(TermLinkTemplate template, boolean updateTLinks) {
-        return linkTerm(template, 0, 0, 0, updateTLinks);
+        return template.link(this, 0,0, 0, updateTLinks);
+        //return linkTerm(template, 0, 0, 0, updateTLinks);
     }
 
-    boolean linkTerm(TermLinkTemplate template, float priInc, float durInc, float quaInc, boolean updateTLinks) {
-
-        final Budget b = template;
-        b.accumulate(priInc, durInc, quaInc);
-        if (!updateTLinks) {
-            return false;
-        }
-
-        Term otherTerm = termLinkBuilder.budget(template, false).getOther();
-
-        Concept otherConcept = getMemory().conceptualize(b, otherTerm);
-        if (otherConcept == null) {
-            return false;
-        }
-
-
-        activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
-        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
-
-        Budget termlinkBudget = termLinkBuilder.getBudgetRef();
-
-        if (otherTerm instanceof Compound) {
-            otherConcept.linkTerms(termlinkBudget, false);
-        }
-        else {
-
-        }
-
-        //spent
-        b.zero();
-
-        return true;
+    @Override
+    public TermLinkBuilder getTermLinkBuilder() {
+        return termLinkBuilder;
     }
-
 
     /**
      * Insert a new or activate an existing TermLink in the TermLink bag

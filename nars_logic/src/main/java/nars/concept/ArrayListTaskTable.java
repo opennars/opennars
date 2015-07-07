@@ -1,8 +1,8 @@
 package nars.concept;
 
 import javolution.util.function.Equality;
+import nars.AbstractMemory;
 import nars.Events;
-import nars.Memory;
 import nars.task.Task;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
             return t;
         }
 
-        Memory m = c.getMemory();
+        AbstractMemory m = c.getMemory();
         final int siz = size();
         if (siz + 1 > cap) {
             // FIFO, remove oldest question (last)

@@ -1,9 +1,6 @@
 package nars.op.app;
 
-import nars.Events;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
+import nars.*;
 import nars.event.NARReaction;
 import nars.nal.nal7.TemporalRules;
 import nars.process.TaskProcess;
@@ -52,7 +49,7 @@ public class STMInduction extends NARReaction {
         }
     }
 
-    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
+    public static boolean isInputOrTriggeredOperation(final Task newEvent, AbstractMemory mem) {
         if (newEvent.isInput()) return true;
         if (containsMentalOperator(newEvent)) return true;
         if (newEvent.getCause()!=null) return true;

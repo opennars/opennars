@@ -21,6 +21,7 @@
 
 package nars.nal.nal8;
 
+import nars.AbstractMemory;
 import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
@@ -160,7 +161,7 @@ abstract public class Operator implements Reaction<Term> {
     }
 
 
-    public boolean isExecutable(final Memory mem) {
+    public boolean isExecutable(final AbstractMemory mem) {
         return true;
     }
 

@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
@@ -354,7 +355,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
      *
      * @param judg The solution to be remembered
      */
-    public void setBestSolution(final Memory memory, final Sentence judg) {
+    public void setBestSolution(final AbstractMemory memory, final Sentence judg) {
         InternalExperience.experienceFromBelief(memory, this, judg);
         bestSolution = reference(judg);
     }

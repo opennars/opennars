@@ -80,7 +80,7 @@ import java.util.function.Predicate;
  *
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable, AbstractStamper {
+public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
 
 
@@ -161,6 +161,11 @@ public class Memory implements Serializable, AbstractStamper {
         reset(false, false);
 
 
+    }
+
+    @Override
+    public Param getParam() {
+        return param;
     }
 
     /**
@@ -518,16 +523,6 @@ public class Memory implements Serializable, AbstractStamper {
 
     }
 
-    public long time() {
-        return clock.time();
-    }
-
-    public int duration() {
-        return param.duration.get();
-    }
-
-
-
 
     /**
      * difference in time since last cycle
@@ -542,6 +537,7 @@ public class Memory implements Serializable, AbstractStamper {
      * Get an existing (active OR forgotten) Concept identified
      * by the provided Term
      */
+    @Override
     public Concept concept(Term t) {
         if (!t.isNormalized()) {
             t = ((Compound)t).normalized();
@@ -565,6 +561,7 @@ public class Memory implements Serializable, AbstractStamper {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null
      */
+    @Override
     public Concept conceptualize(final Budget budget, Term term) {
         //TODO term in first arg
 
@@ -851,6 +848,7 @@ public class Memory implements Serializable, AbstractStamper {
         return cycle.nextConcept(pred, v);
     }
 
+    @Override
     public Clock getClock() {
         return clock;
     }

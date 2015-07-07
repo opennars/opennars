@@ -30,7 +30,7 @@ public interface Intermval {
         return distance1(other, Long.MAX_VALUE);
     }
 
-    /** TODO - return distance1 but as soon as distance exceeds 'onlyIfLessThan'
+    /** return distance1 but as soon as distance exceeds 'onlyIfLessThan'
      *  threshold. otherwise returns Long.MAX_VALUE */
     default public long distance1(final Intermval other, final long onlyIfLessthan) {
         final long[] a = intervals();

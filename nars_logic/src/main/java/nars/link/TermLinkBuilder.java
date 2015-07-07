@@ -10,10 +10,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.term.Compound;
-import nars.term.Statement;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,7 +18,7 @@ import java.util.List;
 
 public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey, Serializable {
 
-    transient public final Concept concept;
+    transient public final Termed concept;
 
     final List<TermLinkTemplate> template;
 
@@ -31,7 +28,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     private byte[] prefix;
     private int hash;
 
-    public TermLinkBuilder(Concept c) {
+    public TermLinkBuilder(Termed c) {
         super();
 
         this.concept = c;
@@ -162,7 +159,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder budget(final TermLinkTemplate temp, boolean initialDirection) {
+    public TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection) {
         if ((temp != currentTemplate) || (this.incoming != initialDirection)) {
             this.currentTemplate = temp;
             this.incoming = initialDirection;
@@ -296,6 +293,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     public Term getOther() {
         return currentTemplate.getTerm();
     }
+
 
 
 }

@@ -21,10 +21,7 @@
 package nars.concept;
 
 import com.google.common.base.Function;
-import nars.Global;
-import nars.Memory;
-import nars.Op;
-import nars.Symbols;
+import nars.*;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
@@ -54,7 +51,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     public void setMeta(Map<Object, Meta> meta);
 
 
-    public Memory getMemory();
+    public AbstractMemory getMemory();
 
 
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);
@@ -81,7 +78,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
      * whether a concept's desire exceeds decision threshold
      */
     default public boolean isDesired() {
-        return isDesired(getMemory().param.executionThreshold.floatValue());
+        return isDesired(getMemory().getParam().executionThreshold.floatValue());
     }
 
     default public boolean isDesired(float threshold) {
@@ -138,25 +135,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     /** allows concept state to be locked */
     boolean setConstant(boolean b);
 
-    /** updates the concept-has-questions index if the concept transitions from having no questions to having, or from having to not having */
-    default public void onTableUpdated(char punctuation, int originalSize) {
-        if (!isActive()) return;
 
-        switch (punctuation) {
-            /*case Symbols.GOAL:
-                break;*/
-            case Symbols.QUESTION:
-                if (getQuestions().isEmpty()) {
-                    if (originalSize > 0) //became empty
-                        getMemory().updateConceptQuestions(this);
-                } else {
-                    if (originalSize == 0) { //became non-empty
-                        getMemory().updateConceptQuestions(this);
-                    }
-                }
-                break;
-        }
-    }
 
     default public float getDesireExpectation() {
         Truth d = getDesire();
@@ -164,6 +143,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return 0;
     }
 
+    public TermLinkBuilder getTermLinkBuilder();
 
 
     public enum State {
@@ -271,65 +251,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
 
-    /**
-     * Directly process a new task. Called exactly once on each task. Using
-     * local information and finishing in a constant time. Provide feedback in
-     * the taskBudget value of the task.
-     * <p>
-     * called in Memory.immediateProcess only
-     *
-     * @param nal  reasoning context it is being processed in
-     * @param task The task to be processed
-     * @return whether it was processed
-     */
-    default public boolean process(final TaskProcess nal) {
-
-
-        if (!ensureActiveFor("TaskProcess")) return false;
-
-        final Task task = nal.getTask();
-
-        if (!processable(task)) {
-            getMemory().removed(task, "Filtered by Concept");
-            return false;
-        }
-
-        //share the same Term instance for fast comparison and reduced memory usage (via GC)
-        task.setTermInstance((Compound) getTerm());
-
-        final char type = task.sentence.punctuation;
-        final LogicMetrics logicMeter = getMemory().logic;
-
-        switch (type) {
-            case Symbols.JUDGMENT:
-
-                if (hasBeliefs() && isConstant())
-                    return false;
-
-                if (!processBelief(nal, task))
-                    return false;
-
-                logicMeter.JUDGMENT_PROCESS.hit();
-                break;
-            case Symbols.GOAL:
-                if (!processGoal(nal, task))
-                    return false;
-                logicMeter.GOAL_PROCESS.hit();
-                break;
-            case Symbols.QUESTION:
-                processQuest(nal, task);
-                logicMeter.QUESTION_PROCESS.hit();
-                break;
-            case Symbols.QUEST:
-                processQuestion(nal, task);
-                logicMeter.QUESTION_PROCESS.hit();
-                break;
-            default:
-                throw new RuntimeException("Invalid sentence type: " + task);
-        }
-
-        return true;
-    }
 
     public boolean processBelief(TaskProcess nal, Task task);
 

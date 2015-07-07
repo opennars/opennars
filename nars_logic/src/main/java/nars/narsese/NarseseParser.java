@@ -54,7 +54,7 @@ public class NarseseParser extends BaseParser<Object> {
     public final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     public final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
-    public Memory memory;
+    public AbstractMemory memory;
 
     protected NarseseParser() {
         this(8);
@@ -940,6 +940,7 @@ public class NarseseParser extends BaseParser<Object> {
             r = singleTaskParser.run(input);
         }
         catch (Throwable ge) {
+            ge.printStackTrace();
             throw new InvalidInputException(ge.toString() + " " + ge.getCause() + ": parsing: " + input);
         }
 

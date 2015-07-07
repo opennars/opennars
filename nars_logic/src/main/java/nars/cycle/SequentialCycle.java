@@ -5,6 +5,7 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
+import nars.concept.DefaultConcept;
 import nars.link.TaskLink;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
@@ -52,7 +53,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
         private final Bag<Term, Concept> bag;
 
-        public DefaultConceptProcess(Bag<Term, Concept> bag, Concept concept, TaskLink taskLink) {
+        public DefaultConceptProcess(Bag<Term, Concept> bag, DefaultConcept concept, TaskLink taskLink) {
             super(concept, taskLink);
             this.bag = bag;
         }
@@ -68,7 +69,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     }
 
     protected ConceptProcess newConceptProcess(Concept c, TaskLink t) {
-        return new DefaultConceptProcess(concepts, c, t);
+        return new DefaultConceptProcess(concepts, (DefaultConcept) c, t);
     }
 
     protected Concept nextConceptToProcess(float conceptForgetDurations) {

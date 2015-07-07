@@ -6,8 +6,12 @@ package nars.process;
 
 import nars.Memory;
 import nars.NAR;
+import nars.Symbols;
 import nars.concept.Concept;
+import nars.concept.DefaultConcept;
+import nars.meter.LogicMetrics;
 import nars.task.Task;
+import nars.term.Compound;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,
@@ -20,7 +24,7 @@ public class TaskProcess extends NAL {
     }
 
     /** runs the entire process in a constructor, for when a Concept is provided */
-    public TaskProcess(Concept c, Task task) {
+    public TaskProcess(DefaultConcept c, Task task) {
         this(c.getMemory(), task);
 
         onStart();
@@ -60,13 +64,74 @@ public class TaskProcess extends NAL {
     protected void process(final Concept c) {
         setCurrentTerm(currentTask.getTerm());
 
-        if (c.process(this)) {
+        if (processConcept(c)) {
 
             c.link(currentTask);
 
             emit(TaskProcess.class, getTask(), this, c);
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         }
+    }
+
+    /**
+     * Directly process a new task. Called exactly once on each task. Using
+     * local information and finishing in a constant time. Provide feedback in
+     * the taskBudget value of the task.
+     * <p>
+     * called in Memory.immediateProcess only
+     *
+     * @param nal  reasoning context it is being processed in
+     * @param task The task to be processed
+     * @return whether it was processed
+     */
+    protected boolean processConcept(final Concept c) {
+
+
+        if (!c.isActive()) return false;
+
+        final Task task = getTask();
+
+        if (!c.processable(task)) {
+            memory.removed(task, "Filtered by Concept");
+            return false;
+        }
+
+        //share the same Term instance for fast comparison and reduced memory usage (via GC)
+        task.setTermInstance((Compound) c.getTerm());
+
+        final char type = task.sentence.punctuation;
+        final LogicMetrics logicMeter = memory.logic;
+
+        switch (type) {
+            case Symbols.JUDGMENT:
+
+                if (c.hasBeliefs() && c.isConstant())
+                    return false;
+
+                if (!c.processBelief(this, task))
+                    return false;
+
+                logicMeter.JUDGMENT_PROCESS.hit();
+                break;
+            case Symbols.GOAL:
+                if (!c.processGoal(this, task))
+                    return false;
+                logicMeter.GOAL_PROCESS.hit();
+                break;
+            case Symbols.QUESTION:
+                c.processQuest(this, task);
+                logicMeter.QUESTION_PROCESS.hit();
+                break;
+            case Symbols.QUEST:
+                c.processQuestion(this, task);
+                logicMeter.QUESTION_PROCESS.hit();
+                break;
+            default:
+                throw new RuntimeException("Invalid sentence type: " + task);
+        }
+
+        return true;
+
     }
 
     public static TaskProcess run(final NAR nar, final String task) {

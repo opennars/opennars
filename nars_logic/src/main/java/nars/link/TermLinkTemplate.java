@@ -2,24 +2,33 @@ package nars.link;
 
 import nars.budget.Budget;
 import nars.concept.Concept;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.utf8.Utf8;
 
 import java.io.Serializable;
 
-/** contains most of the essential data to populate new TermLinks */
+/**
+ * contains most of the essential data to populate new TermLinks
+ */
 public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
 
     protected Term target;
 
-    /** The type of tlink, one of the above */
+    /**
+     * The type of tlink, one of the above
+     */
     public final short type;
 
-    /** The index of the component in the component list of the compound, may have up to 4 levels */
+    /**
+     * The index of the component in the component list of the compound, may have up to 4 levels
+     */
     public final short[] index;
 
-    /** term of the concept where this template exists, ie. the host */
+    /**
+     * term of the concept or "host" where this template exists, ie. the host
+     */
     public final Term concept;
 
     //cached names for prefix arrays
@@ -33,12 +42,13 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
      * TermLink template
      * <p>
      * called in CompoundTerm.prepareComponentLinks only
-     * @param target Target Term
-     * @param type Link type
+     *
+     * @param target  Target Term
+     * @param type    Link type
      * @param indices Component indices in compound, may be 1 to 4
      */
-    public TermLinkTemplate(final Concept host, Term target, final short type, final short... indices) {
-        super(0,0,0);
+    public TermLinkTemplate(final Termed host, Term target, final short type, final short... indices) {
+        super(0, 0, 0);
 
         this.concept = host.getTerm();
 
@@ -70,28 +80,29 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         return TermLinkKey.hash(prefix(in), term(in));
     }
 
-    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0) {
-        this(host, target, type, (short)i0);
+    public TermLinkTemplate(final Termed host, final short type, final Term target, final int i0) {
+        this(host, target, type, (short) i0);
     }
 
-    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0, final int i1) {
-        this(host, target, type, (short)i0, (short)i1);
+    public TermLinkTemplate(final Termed host, final short type, final Term target, final int i0, final int i1) {
+        this(host, target, type, (short) i0, (short) i1);
     }
 
-    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0, final int i1, final int i2) {
-        this(host, target, type, (short)i0, (short)i1, (short)i2);
+    public TermLinkTemplate(final Termed host, final short type, final Term target, final int i0, final int i1, final int i2) {
+        this(host, target, type, (short) i0, (short) i1, (short) i2);
     }
 
-    public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0, final int i1, final int i2, final int i3) {
-        this(host, target, type, (short)i0, (short)i1, (short)i2, (short)i3);
+    public TermLinkTemplate(final Termed host, final short type, final Term target, final int i0, final int i1, final int i2, final int i3) {
+        this(host, target, type, (short) i0, (short) i1, (short) i2, (short) i3);
     }
 
     final static byte[] emptyBytes = new byte[0];
 
-    /** creates a new TermLink key consisting of:
-     *      type
-     *      index array
-     *
+    /**
+     * creates a new TermLink key consisting of:
+     * type
+     * index array
+     * <p>
      * determined by the current template ('temp')
      */
     public static byte[] prefix(final short type, final short[] index, final boolean incoming) {
@@ -99,7 +110,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         if (!incoming) {
             t--; //point to component
         }
-        if (!incoming && type == TermLink.SELF && (index == null || index.length ==0))
+        if (!incoming && type == TermLink.SELF && (index == null || index.length == 0))
             return emptyBytes; //empty, avoids constructing useless prefix in this case
 
         if (index == null)
@@ -129,7 +140,6 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     }
 
 
-
 //    public Identifier newKey(final boolean in) {
 //        //TODO try ConcatenatedBytesIdent
 //        return new LiteralUTF8Identifier( prefix(in), ((byte) Symbols.TLinkSeparator), term(in).bytes() );
@@ -141,8 +151,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
                 incoming = prefix(type, index, true);
             }
             return incoming;
-        }
-        else {
+        } else {
             if (outgoing == null) {
                 outgoing = prefix(type, index, false);
             }
@@ -171,21 +180,25 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     public short getType(Term target) {
         if (this.getTarget().equals(target)) {
             //points in the same direction as to the subterms, so it is a component
-            return (short)(type-1);
+            return (short) (type - 1);
         }
 
         return type;
     }
 
 
-    /** The linked Term */
+    /**
+     * The linked Term
+     */
     public Term getTarget() {
         return target;
     }
 
-    /** for updating this target's field with an equivalent instance.
+    /**
+     * for updating this target's field with an equivalent instance.
      * calling this should not change the equals() value of target
      * but just helps to share common term instances
+     *
      * @param target
      */
     public void setTargetInstance(Term target) {
@@ -195,5 +208,40 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     public int hash(boolean incoming) {
         if (incoming) return hashIn;
         return hashOut;
+    }
+
+    public boolean link(Concept c, float priInc, float durInc, float quaInc, boolean propagate) {
+
+        accumulate(priInc, durInc, quaInc);
+        if (!propagate) {
+            return false;
+        }
+
+        TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
+
+        Term otherTerm = termLinkBuilder.set(this, false).getOther();
+
+        Concept otherConcept = c.getMemory().conceptualize(this, otherTerm);
+        if (otherConcept == null) {
+            return false;
+        }
+
+
+        c.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
+
+        Budget termlinkBudget = termLinkBuilder.getBudgetRef();
+
+        if (otherTerm instanceof Compound) {
+            otherConcept.linkTerms(termlinkBudget, false);
+        } else {
+
+        }
+
+        //spent
+        zero();
+
+        return true;
+
     }
 }

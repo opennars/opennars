@@ -20,6 +20,7 @@
  */
 package nars.nal.nal8;
 
+import nars.AbstractMemory;
 import nars.Memory;
 import nars.Op;
 import nars.Symbols;
@@ -213,17 +214,17 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         return arg().terms();
     }
 
-    public Concept getConcept(Memory memory) {
+    public Concept getConcept(AbstractMemory memory) {
         return memory.concept(getTerm());
     }
 
-    public Truth getConceptDesire(Memory m) {
+    public Truth getConceptDesire(AbstractMemory m) {
         Concept c = getConcept(m);
         if (c == null) return null;
         return c.getDesire();
     }
 
-    public float getConceptExpectation(Memory m) {
+    public float getConceptExpectation(AbstractMemory m) {
         Truth tv = getConceptDesire(m);
         if (tv == null) return 0;
         return tv.getExpectation();

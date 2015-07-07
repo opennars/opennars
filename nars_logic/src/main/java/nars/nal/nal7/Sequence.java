@@ -40,11 +40,6 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
     @Override
-    protected <T extends Term> T normalized(boolean destructive) {
-        return super.normalized(destructive);
-    }
-
-    @Override
     public nars.nal.nal7.Sequence clone() {
         return new nars.nal.nal7.Sequence(term, intervals);
     }

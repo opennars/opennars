@@ -2,6 +2,7 @@ package nars.bag;
 
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.bag.tx.ForgetNext;
@@ -237,7 +238,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      * @param oldItem The Item to put back
      * @return the item which was removed, or null if none removed
      */
-    public V putBack(final V oldItem, final float forgetCycles, final Memory m) {
+    public V putBack(final V oldItem, final float forgetCycles, final AbstractMemory m) {
         if (forgetCycles > 0)
             Memory.forget(m.time(), oldItem, getForgetCycles(forgetCycles, oldItem), Global.MIN_FORGETTABLE_PRIORITY);
         return put(oldItem);
@@ -251,7 +252,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      * accuracy determines the percentage of items which will be processNext().
      * this is a way to apply the forgetting process applied in putBack.
      */
-    public void forgetNext(final float forgetCycles, final float accuracy, final Memory m) {
+    public void forgetNext(final float forgetCycles, final float accuracy, final AbstractMemory m) {
         final int conceptsToForget = Math.round(size() * accuracy);
         if (conceptsToForget == 0) return;
 

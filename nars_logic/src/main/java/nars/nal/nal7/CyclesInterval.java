@@ -1,6 +1,7 @@
 package nars.nal.nal7;
 
 import com.google.common.primitives.Longs;
+import nars.AbstractMemory;
 import nars.Memory;
 import nars.Op;
 import nars.term.ImmutableAtom;
@@ -23,7 +24,7 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     long cyc;
     int duration;
 
-    public static CyclesInterval make(long numCycles, Memory m) {
+    public static CyclesInterval make(long numCycles, AbstractMemory m) {
         return make(numCycles, m.duration());
     }
 
@@ -49,8 +50,8 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
         return false;
     }
 
-    public static CyclesInterval intervalLog(long mag, Memory memory) {
-        long time = Math.round( Interval.time(mag, memory.param.duration) );
+    public static CyclesInterval intervalLog(long mag, AbstractMemory memory) {
+        long time = Math.round( Interval.time(mag, memory.duration()) );
         return new CyclesInterval(time, memory.duration());
     }
 

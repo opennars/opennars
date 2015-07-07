@@ -1,6 +1,7 @@
 package nars.util.index;
 
 import nars.concept.Concept;
+import nars.concept.DefaultConcept;
 import nars.term.Term;
 
 /**

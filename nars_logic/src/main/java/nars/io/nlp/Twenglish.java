@@ -16,7 +16,7 @@
  */
 package nars.io.nlp;
 
-import nars.Memory;
+import nars.AbstractMemory;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
@@ -43,7 +43,7 @@ public class Twenglish {
     
     /** substitutions */
     public final Map<String,String> sub = new HashMap();
-    private Memory memory;
+    private AbstractMemory memory;
 
     
     boolean languageBooted = true; //set to false to initialize on first twenglish input
@@ -99,7 +99,7 @@ public class Twenglish {
         //etc..
     }
 
-    public Twenglish(Memory memory) {
+    public Twenglish(AbstractMemory memory) {
         this.memory = memory;
     }
 

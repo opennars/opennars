@@ -89,7 +89,7 @@ public class InternalExperience extends NARReaction {
     
     //public static boolean enabled=true;
 
-    private final Memory memory;
+    private final AbstractMemory memory;
     public final static Atom believe = Atom.the("believe");
     public final static Atom want = Atom.the("want");;
     public final static Atom wonder = Atom.the("wonder");;
@@ -316,7 +316,7 @@ public class InternalExperience extends NARReaction {
 
 
     //TODO
-    public static void experienceFromBelief(Memory memory, Task task, Sentence belief) {
+    public static void experienceFromBelief(AbstractMemory memory, Task task, Sentence belief) {
         //Task T=new Task(belief.clone(),new Budget(task),null);
         ///InternalExperienceFromTask(memory,T,false);
     }

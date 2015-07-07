@@ -1,5 +1,6 @@
 package nars.term;
 
+import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
@@ -15,7 +16,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal5.Junction;
-import nars.nal.nal7.TemporalRules;
 import nars.task.Sentence;
 import nars.util.data.sorted.SortedList;
 
@@ -91,7 +91,7 @@ public class Terms {
         return true;
     }
 
-    public static Term reduceUntilLayer2(final Compound _itself, Term replacement, Memory memory) {
+    public static Term reduceUntilLayer2(final Compound _itself, Term replacement, AbstractMemory memory) {
         if (_itself == null)
             return null;
         
@@ -181,7 +181,7 @@ public class Terms {
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term reduceComponents(final Compound t1, final Term t2, final Memory memory) {
+    public static Term reduceComponents(final Compound t1, final Term t2, final AbstractMemory memory) {
         final Term[] list;
         if (Terms.equalType(t1, t2))  {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
@@ -201,7 +201,7 @@ public class Terms {
         return null;
     }
 
-    public static Term reduceComponentOneLayer(Compound t1, Term t2, Memory memory) {
+    public static Term reduceComponentOneLayer(Compound t1, Term t2, AbstractMemory memory) {
         Term[] list;
         if (Terms.equalType(t1, t2)) {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);

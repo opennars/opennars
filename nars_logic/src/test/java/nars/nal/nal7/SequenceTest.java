@@ -71,6 +71,9 @@ public class SequenceTest {
         //TODO test for the sentence's term to be a different instance if it was modified
     }
 
+    @Test public void testConceptToString() {
+
+    }
 
     @Test public void testDistance1() {
         NAR nar = new NAR(new Default());
