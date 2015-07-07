@@ -194,7 +194,7 @@ public class NarseseParser extends BaseParser<Object> {
                 ),
 
                 optional(sequence(
-                        s(), Truth(),
+                        s(), Truth(tense),
                         truth.set((Truth) pop())
                         )
                 ),
@@ -292,7 +292,7 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    Rule Truth() {
+    Rule Truth(Var<Tense> tense) {
         return sequence(
                 Symbols.TRUTH_VALUE_MARK, ShortFloat(),
 
