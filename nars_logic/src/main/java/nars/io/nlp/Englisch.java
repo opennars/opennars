@@ -173,7 +173,7 @@ public class Englisch {
         
         List<Task> results = new ArrayList();
         for (String i : statements) {
-            Task t = narsese.parseTask(new StringBuilder(i).toString());
+            Task t = narsese.task(new StringBuilder(i).toString());
             if (t!=null)
                 results.add(t);
         }

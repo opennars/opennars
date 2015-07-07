@@ -147,7 +147,7 @@ public class NARomorphic extends Default  {
 
 
         public void input(String task, @Nullable InputReaction callback) {
-            Task t = narsese.parseTask(task);
+            Task t = narsese.task(task);
             input(t, callback);
         }
 

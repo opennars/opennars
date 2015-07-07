@@ -34,7 +34,7 @@ public class NaturalLanguagePerception {
         for (String i : statements) {
             try {
                 //try {
-                    Task t = narsese.parseTask(new StringBuilder(i).toString());
+                    Task t = narsese.task(new StringBuilder(i).toString());
                     if (t != null) {
                         results.add(t);
                     }

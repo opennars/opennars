@@ -89,12 +89,13 @@ public class NarseseParser extends BaseParser<Object> {
     /**  {Premise1,Premise2} |- Conclusion. */
     public Rule TaskRule() {
 
+        //use a var to count how many rule conditions so that they can be pulled off the stack without reallocating an arraylist
         return sequence(
                 Op.STATEMENT_OPENER.str, s(),
                 push(TaskRule.class),
                 TaskRuleCond(),
                 zeroOrMore( s(), ',', s(), TaskRuleCond() ),
-                s(), Symbols.TASK_RULE_FWD, s(),
+                s(), string(Symbols.TASK_RULE_FWD), s(),
                 TaskRuleConclusion(),
                 s(), Op.STATEMENT_CLOSER.str,
 
@@ -175,27 +176,21 @@ public class NarseseParser extends BaseParser<Object> {
         return sequence(
                 s(),
 
-                optional(
-                        sequence(Budget(), budget.set((float[]) pop()))
-                ),
+                optional( Budget(budget) ),
 
 
                 Term(true, false),
                 term.set((Term) pop()),
 
-
-                SentenceTypeChar(),
-                punc.set(matchedChar()),
-
+                SentencePunctuation(punc),
 
                 optional(
                         s(), Tense(tense)
                 ),
 
-                optional(sequence(
-                        s(), Truth(tense),
-                        truth.set((Truth) pop())
-                        )
+                optional(
+                        s(), Truth(truth, tense)
+
                 ),
 
                 push(getTask(budget, term, punc, truth, tense))
@@ -218,6 +213,9 @@ public class NarseseParser extends BaseParser<Object> {
         float[] b = budget.get();
         if (b != null && ((b.length == 0) || (Float.isNaN(b[0]))))
             b = null;
+
+        //TODO use a switch and combine !=null with above comparison
+
         Budget B = (b == null) ? new Budget(p, t) :
                 b.length == 1 ? new Budget(b[0], p, t) :
                         b.length == 2 ? new Budget(b[0], b[1], t) :
@@ -238,6 +236,8 @@ public class NarseseParser extends BaseParser<Object> {
 
         Task ttt = new Task(ccontent, p, t, B, null, null, null);
         ttt.setCreationTime(Stamp.TIMELESS);
+
+        //TODO support some way of allowing memory to be null using non-Memory interfaces supplied to constructor
         ttt.setOccurrenceTime(tense.get(), memory.duration());
         ttt.setEvidentialSet(new long[] { memory.newStampSerial() });
 
@@ -251,36 +251,37 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    Rule Budget() {
+    Rule Budget(Var<float[]> budget) {
         return sequence(
-                Symbols.BUDGET_VALUE_MARK, ShortFloat(),
+                Symbols.BUDGET_VALUE_MARK,
+
+                ShortFloat(),
+
                 firstOf(
-                        BudgetPriorityDurabilityQuality(),
-                        BudgetPriorityDurability(),
-                        BudgetPriority()
+                        BudgetPriorityDurabilityQuality(budget),
+                        BudgetPriorityDurability(budget),
+                        BudgetPriority(budget)
                 ),
+
                 optional(Symbols.BUDGET_VALUE_MARK)
         );
     }
 
-    boolean BudgetPriority() {
-        return
-
-                push(new float[]{(float) pop()}) //intermediate representation
-        ;
+    boolean BudgetPriority(Var<float[]> budget) {
+        return budget.set(new float[]{(float) pop()});
     }
 
-    Rule BudgetPriorityDurability() {
+    Rule BudgetPriorityDurability(Var<float[]> budget) {
         return sequence(
                 Symbols.VALUE_SEPARATOR, ShortFloat(),
-                swap() && push(new float[]{(float) pop(), (float) pop()}) //intermediate representation
+                swap() && budget.set(new float[]{(float) pop(), (float) pop()}) //intermediate representation
         );
     }
 
-    Rule BudgetPriorityDurabilityQuality() {
+    Rule BudgetPriorityDurabilityQuality(Var<float[]> budget) {
         return sequence(
                 Symbols.VALUE_SEPARATOR, ShortFloat(), Symbols.VALUE_SEPARATOR, ShortFloat(),
-                swap() && push(new float[]{(float) pop(), (float) pop(), (float) pop()}) //intermediate representation
+                swap() && budget.set(new float[]{(float) pop(), (float) pop(), (float) pop()}) //intermediate representation
         );
     }
 
@@ -292,43 +293,47 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    Rule Truth(Var<Tense> tense) {
+    Rule Truth(Var<Truth> truth, Var<Tense> tense) {
         return sequence(
 
-                Symbols.TRUTH_VALUE_MARK, ShortFloat(),
+                Symbols.TRUTH_VALUE_MARK,
+
+                //Frequency
+                ShortFloat(),
 
                 firstOf(
 
                         sequence(
 
-                            TruthTenseSeparator(tense),
+                                TruthTenseSeparator(Symbols.VALUE_SEPARATOR, tense), // separating ;,|,/,\
 
-                            ShortFloat(),
+                                ShortFloat(),
 
-                            swap() && push(new DefaultTruth((float) pop(), (float) pop()))
+                                swap() && truth.set(new DefaultTruth((float) pop(), (float) pop())),
+
+                                optional(Symbols.TRUTH_VALUE_MARK) //tailing '%' is optional
                         ),
 
                         sequence(
 
-                                optional( TruthTenseSeparator(tense) ),
+                                truth.set(new DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE)),
 
-                                push(new DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
-
+                                optional(TruthTenseSeparator(Symbols.TRUTH_VALUE_MARK, tense)) ////tailing %,|,/,\ is optional
                         )
-                ),
+                )
 
-                optional(Symbols.TRUTH_VALUE_MARK) //tailing '%' is optional
         );
     }
 
-    Rule TruthTenseSeparator(final Var<Tense> tense) {
+    Rule TruthTenseSeparator(char defaultChar, final Var<Tense> tense) {
         return firstOf(
-                Symbols.VALUE_SEPARATOR,
+                defaultChar,
                 sequence('|', tense.set(Tense.Present)),
                 sequence('\\', tense.set(Tense.Past)),
                 sequence('/', tense.set(Tense.Future))
         );
     }
+
 
     Rule ShortFloat() {
         return sequence(
@@ -339,6 +344,7 @@ public class NarseseParser extends BaseParser<Object> {
                 push(Texts.f(matchOrDefault("NaN"), 0, 1f))
         );
     }
+
 
     Rule Integer() {
         return sequence(
@@ -359,81 +365,9 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    Rule SentenceTypeChar() {
-        return anyOf(".?!@");
+    Rule SentencePunctuation(Var<Character> punc) {
+        return sequence(anyOf(".?!@"), punc.set(matchedChar()));
     }
-
-//    /**
-//     * copula, statement, relation
-//     */
-//    Rule Copula() {
-//            /*<copula> ::= "-->"                              // inheritance
-//                        | "<->"                              // similarity
-//                        | "{--"                              // instance
-//                        | "--]"                              // property
-//                        | "{-]"                              // instance-property
-//                        | "==>"                              // implication
-//                        | "=/>"                              // (predictive implication)
-//                        | "=|>"                              // (concurrent implication)
-//                        | "=\>"                              // (retrospective implication)
-//                        | "<=>"                              // equivalence
-//                        | "</>"                              // (predictive equivalence)
-//                        | "<|>"                              // (concurrent equivalence)*/
-//
-//        /**
-//         * ??
-//         *   :- (apply, prolog implication)
-//         *   -: (reverse apply)
-//         */
-//        //TODO use separate rules for each so a parse can identify them
-//        return sequence(String.valueOf(NALOperator.STATEMENT_OPENER), StatementContent(), String.valueOf(NALOperator.STATEMENT_CLOSER));
-//    }
-
-
-//    Rule StatementContent() {
-//        return sequence(sequence(s(), Term(), s(), CopulaOperator(), s(), Term(), s()),
-//                push(getTerm((Term) pop(), (NALOperator) pop(), (Term) pop()))
-//                //push(nextTermVector()) //((Term) pop(), (NALOperator) pop(), (Term) pop()))
-//        );
-//    }
-
-//    Rule CopulaOperator() {
-//        NALOperator[] ops = getCopulas();
-//        Rule[] copulas = new Rule[ops.length];
-//        for (int i = 0; i < ops.length; i++) {
-//            copulas[i] = string(ops[i].symbol);
-//        }
-//        return sequence(
-//                firstOf(copulas),
-//                push(Symbols.getOperator(match()))
-//        );
-//    }
-
-//    public NALOperator[] getCopulas() {
-//        switch (level) {
-//            case 1:
-//                return new NALOperator[]{
-//                        INHERITANCE
-//                };
-//            case 2:
-//                return new NALOperator[]{
-//                        INHERITANCE,
-//                        SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY
-//                };
-//
-//            //TODO case 5..6.. without temporal equiv &  impl..
-//
-//            default:
-//                return new NALOperator[]{
-//                        INHERITANCE,
-//                        SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY,
-//                        IMPLICATION,
-//                        EQUIVALENCE,
-//                        IMPLICATION_AFTER, IMPLICATION_BEFORE, IMPLICATION_WHEN,
-//                        EQUIVALENCE_AFTER, EQUIVALENCE_WHEN
-//                };
-//        }
-//    }
 
     static Term the(Term predicate, Op op, Term subject) {
         return Memory.term(op, subject, predicate);
@@ -723,52 +657,9 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    Rule CompoundOperator() {
-        return sequence(
-                trie(
-                        Op.NEGATION.str,
-                        Op.DISJUNCTION.str,
-                        Op.CONJUNCTION.str,
-                        Op.SEQUENCE.str,
-                        Op.PARALLEL.str,
-                        Op.DIFFERENCE_EXT.str,
-                        Op.DIFFERENCE_INT.str,
-                        Op.INTERSECTION_EXT.str,
-                        Op.INTERSECTION_INT.str,
-                        Op.PRODUCT.str,
-                        Op.IMAGE_EXT.str,
-                        Op.IMAGE_INT.str
-                        //NALOperator.OPERATION.ch
-                ),
-                push(Symbols.getOperator(match()))
-        );
-    }
-
-    /**
-     * those compound operators which can take 2 arguments (should be everything except negation)
-     */
-    Rule CompoundOperator2() {
-        return sequence(
-                trie(
-                        Op.DISJUNCTION.str,
-                        Op.CONJUNCTION.str,
-                        Op.SEQUENCE.str,
-                        Op.PARALLEL.str,
-                        Op.DIFFERENCE_EXT.str,
-                        Op.DIFFERENCE_INT.str,
-                        Op.INTERSECTION_EXT.str,
-                        Op.INTERSECTION_INT.str,
-                        Op.PRODUCT.str,
-                        Op.IMAGE_EXT.str,
-                        Op.IMAGE_INT.str
-                ),
-                push(Symbols.getOperator(match()))
-        );
-    }
-
 
     Rule ArgSep() {
-        return sequence(s(), String.valueOf(Symbols.ARGUMENT_SEPARATOR));
+        return sequence(s(), Symbols.ARGUMENT_SEPARATOR);
 
         /*
         return firstOf(
@@ -842,11 +733,11 @@ public class NarseseParser extends BaseParser<Object> {
 
 
     /** pass-through; the object is potentially a term but don't create it yet */
-    Object termable(Object o) {
+    static Object termable(Object o) {
         return o;
     }
 
-    Object the(Object o) {
+    static Object the(final Object o) {
         if (o instanceof Term) return o;
         if (o instanceof String) {
             String s= (String)o;
@@ -858,7 +749,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
-    Term popTerm(Op op /*default */, boolean allowInternalOp) {
+    final Term popTerm(Op op /*default */, final boolean allowInternalOp) {
 
 
 
@@ -866,7 +757,8 @@ public class NarseseParser extends BaseParser<Object> {
 
         ValueStack<Object> stack = getContext().getValueStack();
 
-        List<Term> vectorterms = Global.newArrayList(stack.size() + 1);
+
+        final List<Term> vectorterms = Global.newArrayList(2); //stack.size() + 1);
 
         while (!stack.isEmpty()) {
             Object p = pop();
@@ -964,20 +856,20 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    public void parse(String input, Collection<? super Task> c) {
-        parse(input, t -> {
+    public void tasks(String input, Collection<? super Task> c) {
+        tasks(input, t -> {
             c.add(t);
         });
     }
 
-    public void parse(String input, Consumer<? super Task> c) {
-        parse(input, true, c);
+    public void tasks(String input, Consumer<? super Task> c) {
+        tasks(input, true, c);
     }
 
     /**
      * parse a series of tasks
      */
-    public void parse(String input, boolean newStamp, Consumer<? super Task> c) {
+    public void tasks(String input, boolean newStamp, Consumer<? super Task> c) {
         ParsingResult r = inputParser.run(input);
         int size = r.getValueStack().size();
 
@@ -1014,7 +906,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse one task
      */
-    public Task parseTask(String input) throws InvalidInputException {
+    public Task task(String input) throws InvalidInputException {
         ParsingResult r;
         try {
             input = input.trim();

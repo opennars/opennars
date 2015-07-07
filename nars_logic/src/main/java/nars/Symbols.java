@@ -49,7 +49,7 @@ abstract public class Symbols {
     public static final String TENSE_FUTURE = ":/:";
 
 
-    public static final String TASK_RULE_FWD = ":-";
+    public static final String TASK_RULE_FWD = "|-";
     
     /* variable type  ------------------ */
    

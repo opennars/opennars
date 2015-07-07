@@ -239,9 +239,9 @@ public class Twenglish {
             if (!languageBooted) {
                 
                 
-                results.add(0, narsese.parseTask(new StringBuilder(
+                results.add(0, narsese.task(new StringBuilder(
                         "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString()));
-                results.add(0, narsese.parseTask(new StringBuilder(
+                results.add(0, narsese.task(new StringBuilder(
                         "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString()));
                 
                 languageBooted = true;

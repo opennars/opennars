@@ -19,13 +19,13 @@ public class TaskRuleTest extends TestCase {
         assertNotNull("metaparser can is a superset of narsese", p.term("<A --> b>"));
 
         {
-            TaskRule x = p.term("< <A --> B>, <B --> A> :- <A <-> B> >");
+            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B> >");
             assertEquals("((<B --> A>, <A --> B>), <A <-> B>)", x.toString());
             assertEquals(11, x.getMass());
         }
 
         {
-            TaskRule x = p.term("<<A --> b> :- (X & y)>");
+            TaskRule x = p.term("<<A --> b> |- (X & y)>");
             assertEquals("((<A --> b>), (&, X, y))", x.toString());
             assertEquals(8, x.getMass());
         }

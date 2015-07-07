@@ -181,7 +181,7 @@ public class TextPerception  {
                     char c = input.charAt(0);
                     if (c != Symbols.COMMENT_MARK) {
                         try {
-                            parser.parse(input, recv);
+                            parser.tasks(input, recv);
                         } catch (Exception ex) {
                             recv.accept( new Echo(ex).newTask() );
                         }
