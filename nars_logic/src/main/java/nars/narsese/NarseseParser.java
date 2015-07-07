@@ -3,6 +3,7 @@ package nars.narsese;
 import com.github.fge.grappa.Grappa;
 import com.github.fge.grappa.annotations.Cached;
 import com.github.fge.grappa.matchers.MatcherType;
+import com.github.fge.grappa.matchers.NothingMatcher;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
@@ -14,7 +15,9 @@ import com.github.fge.grappa.support.Var;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
+import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
@@ -47,7 +50,12 @@ import static nars.Symbols.IMAGE_PLACE_HOLDER;
  */
 public class NarseseParser extends BaseParser<Object> {
 
+    /** Maximum supported NAL level */
     private final int level;
+
+    /** MetaNAL enable/disable */
+    boolean meta = true;
+
 
     //These should be set to something like RecoveringParseRunner for performance
     public final ParseRunner inputParser = new ListeningParseRunner3(Input());
@@ -80,6 +88,35 @@ public class NarseseParser extends BaseParser<Object> {
                                 )
                         )
                 );
+    }
+
+    /**  {Premise1,Premise2} |- Conclusion. */
+    public Rule TaskRule() {
+
+        return sequence(
+                Op.STATEMENT_OPENER.str, s(),
+                TaskRuleHead(), s(), "|-", s(), TaskRuleConclusion(),
+                s(), Op.STATEMENT_CLOSER.str,
+
+                push(newTaskRule((Term)pop(), (Term)pop()))
+        );
+
+    }
+
+    public Rule TaskRuleHead() {
+        return Term(true, false);
+    }
+    public Rule TaskRuleConclusion() {
+        return Term(true, false);
+    }
+    public TaskRule newTaskRule(Term head, Term conclusion) {
+        if (head instanceof SetExt) {
+            head = Product.makeFromIterable(((SetExt) head));
+        }
+        else {
+            head = Product.make(head);
+        }
+        return new TaskRule(Product.make(head), conclusion);
     }
 
     public Rule LineComment() {
@@ -130,7 +167,7 @@ public class NarseseParser extends BaseParser<Object> {
                 ),
 
 
-                Term(),
+                Term(true, false),
                 term.set((Term) pop()),
 
 
@@ -370,15 +407,19 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule NonOperationTerm() {
-        return Term(false);
+        return Term(false, false);
     }
 
     Rule Term() {
-        return Term(true);
+        return Term(true, meta);
+    }
+
+    Rule nothing() {
+        return new NothingMatcher();
     }
 
     @Cached
-    Rule Term(boolean includeOperation) {
+    Rule Term(boolean includeOperation, boolean includeMeta) {
         /*
                  <term> ::= <word>                             // an atomic constant term
                         | <variable>                         // an atomic variable term
@@ -392,6 +433,8 @@ public class NarseseParser extends BaseParser<Object> {
 
                         QuotedMultilineLiteral(),
                         QuotedLiteral(),
+
+                        meta ? TaskRule() : nothing(),
 
                         sequence(
                                 includeOperation,
@@ -414,7 +457,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                         Variable(),
 
-                        IntervalOld(),
+                        IntervalLog(),
                         Interval(),
 
 
@@ -486,6 +529,8 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
+
+
     public final class ValidAtomCharMatcher extends AbstractMatcher
     {
 
@@ -525,6 +570,9 @@ public class NarseseParser extends BaseParser<Object> {
         return newParser((Memory)null);
     }
 
+    public static NarseseParser newMetaParser() {
+        return newParser((Memory)null);
+    }
 
     final static Atom imageIndexTerm = Atom.theCached(String.valueOf(IMAGE_PLACE_HOLDER));
 
@@ -552,7 +600,7 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 
-    @Deprecated Rule IntervalOld() {
+    @Deprecated Rule IntervalLog() {
         return sequence(Symbols.INTERVAL_PREFIX_OLD, sequence(oneOrMore(digit()), push(match()),
                 //push(Interval.interval(-1 + Texts.i((String) pop())))
                 push(CyclesInterval.intervalLog(-1 + Texts.i((String) pop()), memory))

@@ -21,6 +21,7 @@
 
 package nars.nal.nal4;
 
+import com.google.common.collect.Iterables;
 import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
@@ -65,6 +66,9 @@ public interface Product extends Term, Iterable<Term> {
 
     public static Product make(final Collection<Term> t) {
         return make(t.toArray(new Term[t.size()]));
+    }
+    public static Product makeFromIterable(final Iterable<Term> t) {
+        return make(Iterables.toArray(t, Term.class));
     }
 
     public static Product only(final Term the) {

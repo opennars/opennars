@@ -9,7 +9,7 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 
-public interface SetTensional extends Term {
+public interface SetTensional extends Term, Iterable<Term> {
 
     /**
      * Check if the compound is communitative.
