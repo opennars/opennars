@@ -189,8 +189,7 @@ public class NarseseParser extends BaseParser<Object> {
 
 
                 optional(
-                        s(), sequence(Tense(),
-                        tense.set((Tense)pop()))
+                        s(), Tense(tense)
                 ),
 
                 optional(sequence(
@@ -203,6 +202,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         );
     }
+
 
     //TODO return TaskSeed
     Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<Truth> truth, Var<Tense> tense) {
@@ -284,29 +284,49 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    Rule Tense() {
+    Rule Tense(Var<Tense> tense) {
         return firstOf(
-            sequence(Symbols.TENSE_PRESENT, push(Tense.Present)),
-            sequence(Symbols.TENSE_PAST, push(Tense.Past)),
-            sequence(Symbols.TENSE_FUTURE, push(Tense.Future))
+            sequence(Symbols.TENSE_PRESENT, tense.set(Tense.Present)),
+            sequence(Symbols.TENSE_PAST, tense.set(Tense.Past)),
+            sequence(Symbols.TENSE_FUTURE, tense.set(Tense.Future))
         );
     }
 
     Rule Truth(Var<Tense> tense) {
         return sequence(
+
                 Symbols.TRUTH_VALUE_MARK, ShortFloat(),
 
                 firstOf(
+
                         sequence(
-                            Symbols.VALUE_SEPARATOR, ShortFloat(),
+
+                            TruthTenseSeparator(tense),
+
+                            ShortFloat(),
+
                             swap() && push(new DefaultTruth((float) pop(), (float) pop()))
                         ),
 
-                        push(new DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
+                        sequence(
 
+                                optional( TruthTenseSeparator(tense) ),
+
+                                push(new DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
+
+                        )
                 ),
 
                 optional(Symbols.TRUTH_VALUE_MARK) //tailing '%' is optional
+        );
+    }
+
+    Rule TruthTenseSeparator(final Var<Tense> tense) {
+        return firstOf(
+                Symbols.VALUE_SEPARATOR,
+                sequence('|', tense.set(Tense.Present)),
+                sequence('\\', tense.set(Tense.Past)),
+                sequence('/', tense.set(Tense.Future))
         );
     }
 
@@ -1052,10 +1072,9 @@ public class NarseseParser extends BaseParser<Object> {
         throw newParseException(input, r);
     }
     public <T extends Compound> T compound(String s) throws InvalidInputException {
-        Term t = term(s);
+        return term(s);
         /*if (t instanceof Compound)
             return ((T)t).normalizeDestructively();*/
-        return null;
     }
 
     public static InvalidInputException newParseException(String input, ParsingResult r) {

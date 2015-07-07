@@ -6,6 +6,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
@@ -270,9 +271,9 @@ public class NarseseParserTest {
 
         Term x = term(Symbols.INTERVAL_PREFIX_OLD + "2");
         assertNotNull(x);
-        assertEquals(Interval.class, x.getClass());
-        Interval i = (Interval) x;
-        assertEquals(1, i.magnitude);
+        assertEquals(CyclesInterval.class, x.getClass());
+        //Interval i = (Interval) x;
+        //assertEquals(1, i.magnitude);
 
     }
 
