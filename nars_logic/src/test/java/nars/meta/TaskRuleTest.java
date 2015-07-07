@@ -20,8 +20,19 @@ public class TaskRuleTest extends TestCase {
         Term a = p.term("<A --> b>");
         System.out.println(a);
 
-        TaskRule x = p.term("<<A --> b> |- <X & y>>");
-        System.out.println(x);
+        {
+            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B> >");
+
+            assertEquals("((<B --> A>, <A --> B>), <A <-> B>)", x.toString());
+            assertEquals(11, x.getMass());
+        }
+
+        {
+            TaskRule x = p.term("<<A --> b> |- (X & y)>");
+            assertEquals("((<A --> b>), (&, X, y))", x.toString());
+            assertEquals(8, x.getMass());
+        }
+
 
 
 

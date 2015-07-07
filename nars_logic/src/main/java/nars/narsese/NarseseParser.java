@@ -35,10 +35,7 @@ import nars.term.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static nars.Op.*;
@@ -95,28 +92,45 @@ public class NarseseParser extends BaseParser<Object> {
 
         return sequence(
                 Op.STATEMENT_OPENER.str, s(),
-                TaskRuleHead(), s(), "|-", s(), TaskRuleConclusion(),
+                push(TaskRule.class),
+                TaskRuleCond(),
+                zeroOrMore( s(), ',', s(), TaskRuleCond() ),
+                s(), "|-", s(),
+                TaskRuleConclusion(),
                 s(), Op.STATEMENT_CLOSER.str,
 
-                push(newTaskRule((Term)pop(), (Term)pop()))
+                push(popTaskRule())
         );
 
     }
 
-    public Rule TaskRuleHead() {
+    public Rule TaskRuleCond() {
         return Term(true, false);
     }
     public Rule TaskRuleConclusion() {
         return Term(true, false);
     }
-    public TaskRule newTaskRule(Term head, Term conclusion) {
-        if (head instanceof SetExt) {
-            head = Product.makeFromIterable(((SetExt) head));
+    public TaskRule popTaskRule() {
+        //(Term)pop(), (Term)pop()
+        Term conclusion = (Term)pop();
+
+        List<Term> l = Global.newArrayList(1);
+
+        Object popped = null;
+        while ( (popped = pop()) !=TaskRule.class) {
+            l.add((Term)popped);
+        }
+
+        Product premise;
+        if (l.size() >= 1) {
+            premise = Product.make(l);
         }
         else {
-            head = Product.make(head);
+            //empty premise list is invalid
+            return null;
         }
-        return new TaskRule(Product.make(head), conclusion);
+
+        return new TaskRule(premise, conclusion);
     }
 
     public Rule LineComment() {
