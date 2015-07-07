@@ -21,9 +21,9 @@ import nars.rover.depr.RobotArm;
 import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
 import nars.task.Task;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
@@ -93,8 +93,8 @@ public class RoverModel {
     float restitution = 0.01f; //bounciness
     float friction = 0.9f;
 
-    public float linearThrustPerCycle = 20 * 0.1f;
-    public float angularSpeedPerCycle = 0.44f * 0.1f;
+    public float linearThrustPerCycle = 20 * 0.25f;
+    public float angularSpeedPerCycle = 0.44f * 0.25f;
 
 
     public class RoverMaterial extends Material {
@@ -235,6 +235,8 @@ public class RoverModel {
 
     protected void addAxioms() {
 
+        nar.input("motor($r)! :|: %1.00;0.25%");
+
         nar.input("<{left,right,forward,reverse} --> direction>.");
         nar.input("<{wall,empty,food,poison} --> material>.");
         //nar.input("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
@@ -313,12 +315,18 @@ public class RoverModel {
             if (c != null) {
                 float d = desireFunction.getDesire(c);
                 float feedback = onCycle(d);
-                //TODO handle feedback
+
+                if (Float.isFinite(feedback))
+                    nar.inputDirect( getFeedback(feedback) );
             }
             else {
                 onCycle(getDesireIfConceptMissing());
             }
 
+        }
+
+        protected Task getFeedback(float feedback) {
+            return nar.task((Compound)term).present().goal().truth(feedback, 0.9f).get();
         }
 
         public Concept getConcept() {
@@ -351,8 +359,6 @@ public class RoverModel {
         public BiCycleDesire(String positiveTerm, String negativeTerm, ConceptDesire desireFunction, NAR n) {
             this.positive = new CycleDesire(positiveTerm, desireFunction, n) {
 
-
-
                 @Override
                 float onCycle(final float desire) {
                     positiveDesire = desire;
@@ -374,28 +380,48 @@ public class RoverModel {
     public static final ConceptDesire strongestTask = (c ->  c.getDesireExpectation() );
 
     protected void addMotorController() {
+        new CycleDesire("motor($r)", strongestTask, nar) {
+            @Override float onCycle(float desire) {
+                //variable causes random movement
+                double v = Math.random();
+                if (v > desire) {
+                    return Float.NaN;
+                }
+                v = Math.random();
+                if (v < 0.25f) {
+                    nar.input("motor(left)! :|:");
+                } else if (v < 0.5f) {
+                    nar.input("motor(right)! :|:");
+                } else if (v < 0.75f) {
+                    nar.input("motor(forward)! :|:");
+                } else {
+                    nar.input("motor(reverse)! :|:");
+                }
+                return 1f;
+            }
+        };
         new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
             @Override float onCycle(float desire) {
                 thrustRelative(desire * linearThrustPerCycle);
-                return 0;
+                return desire;
             }
         };
-        new CycleDesire("motor(reverse,SELF)", strongestTask, nar) {
+        /*new CycleDesire("motor(reverse,SELF)", strongestTask, nar) {
             @Override float onCycle(float desire) {
                 thrustRelative(desire * -linearThrustPerCycle);
-                return 0;
+                return desire;
             }
-        };
+        };*/
         new CycleDesire("motor(left,SELF)", strongestTask, nar) {
             @Override float onCycle(float desire) {
                 rotateRelative(+30);
-                return 0;
+                return desire;
             }
         };
         new CycleDesire("motor(right,SELF)", strongestTask, nar) {
             @Override float onCycle(float desire) {
                 rotateRelative(-30);
-                return 0;
+                return desire;
             }
         };
     }

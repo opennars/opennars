@@ -64,6 +64,10 @@ abstract public class Symbols {
     public static final char VAR_QUERY = '?';
     //public static final String VAR_QUERY_DEFAULT = VAR_QUERY + "any";
 
+
+    /** used in MetaNAL structure matching */
+    public static final char VAR_PATTERN = '%';
+
     /*
         $it $eth $1 $sth,   #sth #1    ?what      
         $it #sth ?what

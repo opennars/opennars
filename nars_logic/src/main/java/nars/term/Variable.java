@@ -64,7 +64,6 @@ public class Variable extends Atom {
         super(n);
         this.type = ensureValidVariableType((char)n[0]);
         this.scope = scope;
-
     }
 
     @Override
@@ -73,6 +72,7 @@ public class Variable extends Atom {
             case VAR_INDEPENDENT: return Op.VAR_INDEPENDENT;
             case VAR_DEPENDENT: return Op.VAR_DEPENDENT;
             case VAR_QUERY: return Op.VAR_QUERY;
+            case VAR_PATTERN: return Op.VAR_PATTERN;
             default:
                 throw new RuntimeException("Invalid variable type");
         }

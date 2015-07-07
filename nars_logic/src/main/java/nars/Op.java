@@ -14,9 +14,10 @@ public enum Op {
     /** an atomic term (includes interval and variables); this value is set if not a compound term */
     ATOM(".", 0, false),
 
-    VAR_INDEPENDENT("$",0,false),
-    VAR_DEPENDENT("#",0,false),
-    VAR_QUERY("?",0,false),
+    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT,0,false),
+    VAR_DEPENDENT(Symbols.VAR_DEPENDENT,0,false),
+    VAR_QUERY(Symbols.VAR_QUERY,0,false),
+    VAR_PATTERN(Symbols.VAR_PATTERN,0, false),
 
 
     NEGATION("--", 5, false, true, 1),
@@ -109,10 +110,17 @@ public enum Op {
     public final byte byt;
 
 
+    Op(char c, int minLevel, int... bytes) {
+        this(Character.toString(c), minLevel, false, bytes);
+    }
+
     Op(String string, int minLevel, int... bytes) {
         this(string, minLevel, false, bytes);
     }
 
+    Op(char c, int minLevel, boolean relation, int... bytes) {
+        this(Character.toString(c), minLevel, relation, bytes);
+    }
     Op(String string, int minLevel, boolean relation, int... bytes) {
         this(string, minLevel, relation, !relation, bytes);
     }
