@@ -17,7 +17,6 @@ import nars.budget.Budget;
 import nars.io.Texts;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
@@ -95,7 +94,7 @@ public class NarseseParser extends BaseParser<Object> {
                 push(TaskRule.class),
                 TaskRuleCond(),
                 zeroOrMore( s(), ',', s(), TaskRuleCond() ),
-                s(), "|-", s(),
+                s(), Symbols.TASK_RULE_FWD, s(),
                 TaskRuleConclusion(),
                 s(), Op.STATEMENT_CLOSER.str,
 
@@ -416,7 +415,7 @@ public class NarseseParser extends BaseParser<Object> {
 //        }
 //    }
 
-    static Term getTerm(Term predicate, Op op, Term subject) {
+    static Term the(Term predicate, Op op, Term subject) {
         return Memory.term(op, subject, predicate);
     }
 
@@ -520,7 +519,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                 ),
 
-                push(term(pop())),
+                push(the(pop())),
 
                 s()
         );
@@ -799,7 +798,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                 close != null ? sequence(s(), close.ch) : s(),
 
-                push(nextTermVector(defaultOp, allowInternalOp))
+                push(popTerm(defaultOp, allowInternalOp))
         );
     }
 
@@ -813,7 +812,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                 s(), Op.COMPOUND_TERM_OPENER.ch, s(), Op.COMPOUND_TERM_CLOSER.ch,
 
-                push(nextTermVector(Op.OPERATION, false))
+                push(popTerm(Op.OPERATION, false))
         );
     }
 
@@ -827,7 +826,7 @@ public class NarseseParser extends BaseParser<Object> {
         return o;
     }
 
-    Object term(Object o) {
+    Object the(Object o) {
         if (o instanceof Term) return o;
         if (o instanceof String) {
             String s= (String)o;
@@ -839,7 +838,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
-    Term nextTermVector(Op op /*default */, boolean allowInternalOp) {
+    Term popTerm(Op op /*default */, boolean allowInternalOp) {
 
 
 
@@ -1020,8 +1019,8 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     /** parse one term and normalize it if successful */
-    public <T extends Term> T parseTermNormalized(String s) {
-        Term x = parseTerm(s);
+    public <T extends Term> T term(String s) {
+        Term x = termRaw(s);
         if (x==null) return null;
 
         return x.normalizeDestructively();
@@ -1031,7 +1030,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse one term. it is more efficient to use parseTermNormalized if possible
      */
-    public <T extends Term> T parseTerm(String input) throws InvalidInputException {
+    public <T extends Term> T termRaw(String input) throws InvalidInputException {
         ParsingResult r = singleTermParser.run(input);
 
 
@@ -1052,10 +1051,10 @@ public class NarseseParser extends BaseParser<Object> {
 
         throw newParseException(input, r);
     }
-    public <T extends Compound> T parseCompoundNormalized(String s) throws InvalidInputException {
-        Term t = parseTerm(s);
-        if (t instanceof Compound)
-            return ((T)t).normalizeDestructively();
+    public <T extends Compound> T compound(String s) throws InvalidInputException {
+        Term t = term(s);
+        /*if (t instanceof Compound)
+            return ((T)t).normalizeDestructively();*/
         return null;
     }
 

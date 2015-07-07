@@ -17,8 +17,6 @@ public enum Op {
     VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT,0,false),
     VAR_DEPENDENT(Symbols.VAR_DEPENDENT,0,false),
     VAR_QUERY(Symbols.VAR_QUERY,0,false),
-    VAR_PATTERN(Symbols.VAR_PATTERN,0, false),
-
 
     NEGATION("--", 5, false, true, 1),
 
@@ -76,7 +74,10 @@ public enum Op {
     COMPOUND_TERM_OPENER("(", 0, false, false),
     COMPOUND_TERM_CLOSER(")", 0, false, false),
     STATEMENT_OPENER("<", 0, false, false),
-    STATEMENT_CLOSER(">", 0, false, false);
+    STATEMENT_CLOSER(">", 0, false, false),
+
+
+    VAR_PATTERN(Symbols.VAR_PATTERN,0, false);
 
     //-----------------------------------------------------
 

@@ -44,7 +44,7 @@ public class NarseseParserTest {
 
     static <T extends Term> T term(String s) throws InvalidInputException {
         //TODO n.term(s) when the parser is replaced
-        return p.parseTerm(s);
+        return p.termRaw(s);
     }
 
     static List<Task> tasks(String s) throws InvalidInputException {
@@ -834,7 +834,7 @@ public class NarseseParserTest {
 
 
         public Term parseTerm(String s) throws InvalidInputException {
-            return newParser.parseTerm(s);
+            return newParser.termRaw(s);
         }
 
     /* ---------- react String into term ---------- */

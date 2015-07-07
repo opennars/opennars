@@ -183,7 +183,7 @@ public class NAR extends Container implements Runnable {
     }
 
     public <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
-        return narsese.parseTermNormalized(t);
+        return narsese.term(t);
     }
 
     public Concept concept(final Term term) {
@@ -194,7 +194,7 @@ public class NAR extends Container implements Runnable {
      * gets a concept if it exists, or returns null if it does not
      */
     public Concept concept(final String conceptTerm) throws InvalidInputException {
-        return concept((Term) narsese.parseTermNormalized(conceptTerm));
+        return concept((Term) narsese.term(conceptTerm));
     }
 
 
@@ -218,7 +218,7 @@ public class NAR extends Container implements Runnable {
         input(
                 t = new Task(
 
-                        narsese.parseCompoundNormalized(goalTerm),
+                        narsese.compound(goalTerm),
                         Symbols.GOAL,
                         tv = new DefaultTruth(freq, conf),
 
@@ -298,7 +298,7 @@ public class NAR extends Container implements Runnable {
         final Task t;
         input(
                 t = new Task(
-                        narsese.parseCompoundNormalized(termString),
+                        narsese.compound(termString),
                         questionOrQuest,
                         null,
                         Global.DEFAULT_QUESTION_PRIORITY,

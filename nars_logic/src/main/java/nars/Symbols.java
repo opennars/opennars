@@ -47,9 +47,9 @@ abstract public class Symbols {
     public static final String TENSE_PAST = ":\\:";
     public static final String TENSE_PRESENT = ":|:";
     public static final String TENSE_FUTURE = ":/:";
-    
-    
-    
+
+
+    public static final String TASK_RULE_FWD = ":-";
     
     /* variable type  ------------------ */
    
@@ -100,6 +100,9 @@ abstract public class Symbols {
     /** index of operators which are encoded by 1 byte: must be less than 31 because this is the range for control characters */
     final static int numByteSymbols = 15;
     private static final Op[] byteSymbols = new Op[numByteSymbols];
+
+
+
 
     public static Op symbol(final byte b) {
         if (b > byteSymbols.length)
