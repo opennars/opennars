@@ -23,6 +23,7 @@ package nars.bag.impl;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
@@ -115,10 +116,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         this(levels, capacity, 0);
     }
 
+
+    public LevelBag(final int levels, final int capacity, final int thresholdLevel) {
+        this(new UnifiedMap(capacity*2), levels, capacity, thresholdLevel);
+    }
     /**
      * thresholdLevel = 0 disables "fire level completely" threshold effect
      */
-    public LevelBag(final int levels, final int capacity, final int thresholdLevel) {
+    public LevelBag(Map<K, DD<E>> indexMap, final int levels, final int capacity, final int thresholdLevel) {
         this.levels = levels;
 
         this.nodePool = new DDNodePool(capacity / 8);
@@ -129,10 +134,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         this.capacity = capacity;
 
-        //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
-        index = Global.THREADS == 1 ?
-                new CuckooMap(capacity) :
-                new ConcurrentHashMap<>(capacity * 3 / 2);
+        index = indexMap;
 
         levelEmpty = new boolean[levels];
 

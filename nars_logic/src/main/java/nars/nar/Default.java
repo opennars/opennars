@@ -4,8 +4,8 @@ import nars.*;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
-import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
+import nars.bag.impl.TrieCacheBag;
 import nars.budget.Budget;
 import nars.clock.CycleClock;
 import nars.clock.RealtimeMSClock;
@@ -444,7 +444,9 @@ public class Default extends NARSeed implements ConceptBuilder {
 
     @Override
     public CacheBag<Term,Concept> newIndex() {
-        return new GuavaCacheBag();
+
+        //return new GuavaCacheBag();
+        return new TrieCacheBag();
     }
 
     @Override
