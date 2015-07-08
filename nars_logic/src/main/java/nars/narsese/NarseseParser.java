@@ -126,6 +126,9 @@ public class NarseseParser extends BaseParser<Object> {
             l.add((Term)popped);
         }
 
+        Collections.reverse(l);
+        Collections.reverse(r);
+
         Product premise;
         if (l.size() >= 1) {
             premise = Product.make(l);
