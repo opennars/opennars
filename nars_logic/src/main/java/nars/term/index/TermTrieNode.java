@@ -2,15 +2,15 @@ package nars.term.index;
 
 import com.gs.collections.impl.map.mutable.primitive.ByteObjectHashMap;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.nar.Default;
-import nars.term.Term;
-import nars.util.data.id.Named;
+import nars.term.Termed;
 
 import java.io.PrintStream;
 import java.util.Arrays;
 
 /** from: http://www.superliminal.com/sources/TrieMap.java.html */
-public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
+public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
     /*
      * Implementation of a trie tree. (see http://en.wikipedia.org/wiki/Trie)
      * though I made it faster and more compact for long key strings 
@@ -23,11 +23,11 @@ public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
     private V value; // Used only for values of prefix keys.
 
 
-    public TrieMapNode() {
+    public TermTrieNode() {
         this(4);
     }
 
-    public TrieMapNode(int branch) {
+    public TermTrieNode(int branch) {
         super(branch);
     }
 
@@ -44,7 +44,7 @@ public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
     }
 
     public void put(final V v) {
-        put(v.name(), v);
+        put(v.getTerm().bytes(), v);
     }
 
     /**
@@ -55,7 +55,7 @@ public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
      */
     protected void put(byte[] key, Object val, int offset) {
         assert key != null;
-        assert !(val instanceof TrieMapNode); // Only we get to store TrieMap nodes. TODO: Allow it.
+        assert !(val instanceof TermTrieNode); // Only we get to store TrieMap nodes. TODO: Allow it.
         if(key.length-offset == 0) {
             // All of the original key's chars have been nibbled away 
             // which means this node will store this key as a prefix of other keys.
@@ -71,9 +71,9 @@ public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
             put(c, val);
             return;
         }
-        if(cObj instanceof TrieMapNode) {
+        if(cObj instanceof TermTrieNode) {
             // Collided with an existing sub-branch so nibble a char and recurse.
-            TrieMapNode childTrie = (TrieMapNode)cObj;
+            TermTrieNode childTrie = (TermTrieNode)cObj;
             childTrie.put(key, val, offset+1);
             if(val == null && childTrie.isEmpty()) {
                 // put() must have erased final entry so prune branch.
@@ -91,10 +91,10 @@ public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
         // Sprout a new branch to hold the colliding items.
 
         V cLeaf = (V)cObj;
-        TrieMapNode branch = new TrieMapNode();
+        TermTrieNode branch = new TermTrieNode();
         branch.put(suffix(key, offset+1), val); // Store new value in new subtree.
 
-        final byte[] cleafname = cLeaf.name();
+        final byte[] cleafname = cLeaf.getTerm().bytes();
         branch.put(suffix(cleafname, offset+1), cLeaf); // Plus the one we collided with.
 
         put(c, branch);
@@ -124,13 +124,13 @@ public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
             return null; // Not found.
         }
         //assert cVal instanceof Leaf || cVal instanceof TrieMapNode;
-        if(cVal instanceof TrieMapNode) { // Hash collision. Nibble first char, and recurse.
-            return ((TrieMapNode)cVal).get(key, offset+1);
+        if(cVal instanceof TermTrieNode) { // Hash collision. Nibble first char, and recurse.
+            return ((TermTrieNode)cVal).get(key, offset+1);
         }
         else {
             // cVal contains a user datum, but does the key match its substring?
             V cPair = (V)cVal;
-            if(nars.util.utf8.Utf8.equals2(key, cPair.name())) {
+            if(nars.util.utf8.Utf8.equals2(key, cPair.getTerm().bytes())) {
                 return cPair; // Return user's data value.
             }
         }
@@ -148,11 +148,11 @@ public class TrieMapNode<V extends Named<byte[]>> extends ByteObjectHashMap {
      */
     public static void main(String[] args) {
         // Insert a bunch of key/value pairs.
-        TrieMapNode<Term> trieMap = new TrieMapNode();
+        TermTrieNode trieMap = new TermTrieNode();
 
         NAR n = new NAR( new Default() );
-        trieMap.put(n.term("<a --> b>"));
-        trieMap.put(n.term("<a --> c>"));
+        trieMap.put(n.memory.conceptualize(new Budget(1f, 1f, 1f), n.term("<a --> b>") ));
+        trieMap.put(n.memory.conceptualize(new Budget(1f, 1f, 1f), n.term("<a --> c>")));
 
         trieMap.print(System.out);
 
