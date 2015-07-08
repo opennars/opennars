@@ -1,4 +1,4 @@
-package nars.core;
+package nars.bag;
 
 import nars.Global;
 import nars.io.in.LibraryInput;

@@ -1,10 +1,10 @@
 package nars.bag.impl;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
-import nars.util.CollectorMap;
 import nars.budget.Item;
-import nars.util.data.CuckooMap;
+import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 
@@ -150,7 +150,8 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         nameTable = new CurveMap(
                 //new HashMap(capacity)
                 //Global.newHashMap(capacity)
-                new CuckooMap(capacity)
+                new UnifiedMap(capacity)
+                //new CuckooMap(capacity)
         );
 
     }

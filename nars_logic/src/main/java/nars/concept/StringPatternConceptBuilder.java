@@ -27,7 +27,7 @@ public class StringPatternConceptBuilder implements ConceptBuilder {
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
 
-        String ts = t.name().toString(pretty);
+        String ts = t.toString();
 
         if (pattern.matcher(ts).matches()) {
             return builder.newConcept(t, b, m);

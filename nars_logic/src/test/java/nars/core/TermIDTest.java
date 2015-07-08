@@ -2,6 +2,7 @@ package nars.core;
 
 import nars.NAR;
 import nars.nar.Default;
+import nars.term.Term;
 import nars.util.data.id.Identifier;
 import org.junit.Test;
 
@@ -77,14 +78,14 @@ public class TermIDTest {
     //@Test public void testInternalRepresentation2() { testInternalRepresentation("<a && b>", 5); }
 
 
-    public Identifier testInternalRepresentation(String expectedPrettyOutput, int expectedLength) {
+    public Term testInternalRepresentation(String expectedPrettyOutput, int expectedLength) {
         return testInternalRepresentation(null, expectedPrettyOutput, expectedLength);
     }
 
-    public Identifier testInternalRepresentation(String expectedCompactOutput, String expectedPrettyOutput, int expectedLength) {
+    public Term testInternalRepresentation(String expectedCompactOutput, String expectedPrettyOutput, int expectedLength) {
         //UTF8Identifier b = new UTF8Identifier(expectedPrettyOutput);
-        Identifier i = nar.term(expectedPrettyOutput).name();
-        byte[] b = i.bytes();
+        Term i = nar.term(expectedPrettyOutput);
+        byte[] b = i.name();
 
         if (expectedCompactOutput != null)
             assertEquals(expectedCompactOutput, i.toString(false));

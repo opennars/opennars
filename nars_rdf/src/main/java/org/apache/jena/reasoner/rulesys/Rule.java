@@ -109,7 +109,7 @@ public class Rule implements ClauseEntry {
     /** Flags whether the rule is monotonic */
     protected boolean isMonotonic = true;
     
-    static Logger logger = LoggerFactory.getLogger(Rule.class);
+    static final Logger logger = LoggerFactory.getLogger(Rule.class);
     
     /**
      * Constructor

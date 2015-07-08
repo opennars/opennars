@@ -53,7 +53,7 @@ public class Functor implements ClauseEntry {
                     return n.isLiteral() && n.getLiteralDatatype() == FunctorDatatype.theFunctorDatatype;
             };
     
-    protected static Logger logger = LoggerFactory.getLogger(Functor.class);
+    protected static final Logger logger = LoggerFactory.getLogger(Functor.class);
     
     /**
      * Constructor. 

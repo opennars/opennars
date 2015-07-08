@@ -1,4 +1,4 @@
-package nars.term.match;
+package nars.term.pattern;
 
 import nars.term.Termed;
 
