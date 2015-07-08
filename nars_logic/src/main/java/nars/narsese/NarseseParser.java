@@ -96,12 +96,13 @@ public class NarseseParser extends BaseParser<Object> {
                 TaskRuleCond(),
                 zeroOrMore( s(), ',', s(), TaskRuleCond() ),
                 s(), string(Symbols.TASK_RULE_FWD), s(),
+                push(TaskRule.class),
                 TaskRuleConclusion(),
+                zeroOrMore(s(), ',', s(), TaskRuleConclusion() ),
                 s(), Op.STATEMENT_CLOSER.str,
 
                 push(popTaskRule())
         );
-
     }
 
     public Rule TaskRuleCond() {
@@ -112,18 +113,31 @@ public class NarseseParser extends BaseParser<Object> {
     }
     public TaskRule popTaskRule() {
         //(Term)pop(), (Term)pop()
-        Term conclusion = (Term)pop();
 
+        List<Term> r = Global.newArrayList(1);
         List<Term> l = Global.newArrayList(1);
 
         Object popped = null;
-        while ( (popped = pop()) !=TaskRule.class) {
+        while ( (popped = pop()) != TaskRule.class) { //lets go back till to the start now
+            r.add((Term)popped);
+        }
+
+        while ( (popped = pop()) != TaskRule.class) {
             l.add((Term)popped);
         }
 
         Product premise;
         if (l.size() >= 1) {
             premise = Product.make(l);
+        }
+        else {
+            //empty premise list is invalid
+            return null;
+        }
+
+        Product conclusion;
+        if (r.size() >= 1) {
+            conclusion = Product.make(r);
         }
         else {
             //empty premise list is invalid

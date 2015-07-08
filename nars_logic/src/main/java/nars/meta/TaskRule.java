@@ -11,7 +11,7 @@ import nars.term.Term;
 public class TaskRule extends Rule<Premise,Task> {
 
 
-    public TaskRule(Product premises, Term result) {
+    public TaskRule(Product premises, Product result) {
         super(premises, result);
     }
 
@@ -26,8 +26,8 @@ public class TaskRule extends Rule<Premise,Task> {
         return (Product)term(0);
     }
 
-    public Term result() {
-        return term(1);
+    public Product result() {
+        return (Product) term(1);
     }
 
     public int premiseCount() {
