@@ -604,7 +604,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             if (componentTerm.equals(getTerm())) // avoid circular transform
                 continue;
 
-            Concept componentConcept = getMemory().conceptualize(subBudget, componentTerm);
+            Concept componentConcept = getMemory().conceptualize(componentTerm, subBudget);
 
             if (componentConcept != null) {
 

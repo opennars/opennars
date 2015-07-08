@@ -137,8 +137,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
             }
             else {
                 c = nar.memory.conceptualize(
-                        new Budget(conceptualizePriority, conceptualizeDuration, conceptualizeQuality),
-                        qt
+                        qt, new Budget(conceptualizePriority, conceptualizeDuration, conceptualizeQuality)
                 );
             }
             if (c != null) {

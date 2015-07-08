@@ -1,16 +1,16 @@
 package nars.term.index;
 
 import com.gs.collections.impl.map.mutable.primitive.ByteObjectHashMap;
-import nars.NAR;
-import nars.budget.Budget;
-import nars.nar.Default;
 import nars.term.Termed;
+import nars.util.utf8.Utf8;
 
 import java.io.PrintStream;
 import java.util.Arrays;
 
-/** from: http://www.superliminal.com/sources/TrieMap.java.html */
-public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
+/**
+ * from: http://www.superliminal.com/sources/TrieMap.java.html
+ */
+public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNode<V>> {
     /*
      * Implementation of a trie tree. (see http://en.wikipedia.org/wiki/Trie)
      * though I made it faster and more compact for long key strings 
@@ -21,6 +21,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
      * Null elements indicate unused, I.E. available slots.
      */
     private V value; // Used only for values of prefix keys.
+    byte[] prefix;
 
 
     public TermTrieNode() {
@@ -31,17 +32,28 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
         super(branch);
     }
 
+    public TermTrieNode(byte[] prefix, V v) {
+        this();
+        value = v;
+        this.prefix = prefix;
+    }
+
+    @Override
+    public String toString() {
+        return (prefix != null ? Utf8.fromUtf8(prefix) : "<>") + value + ":" + super.toString();
+    }
+
     @Override
     public boolean isEmpty() {
-        if(value != null) {
+        if (value != null) {
             return false;
         }
         return super.isEmpty();
     }
 
-    public void put(byte[] key, Object val) {
+/*    public void put(byte[] key, Object val) {
         put(key, val, 0);
-    }
+    }*/
 
     public void put(final V v) {
         put(v.getTerm().bytes(), v);
@@ -49,40 +61,40 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
 
     /**
      * Inserts a key/value pair.
-     * 
+     *
      * @param key may be empty or contain low-order chars 0..255 but must not be null.
      * @param val Your data. Any data class except another TrieMap. Null values erase entries.
      */
-    protected void put(byte[] key, Object val, int offset) {
+    public void put(byte[] key, Object val) {
         assert key != null;
         assert !(val instanceof TermTrieNode); // Only we get to store TrieMap nodes. TODO: Allow it.
-        if(key.length-offset == 0) {
+        if (key.length == 0) {
             // All of the original key's chars have been nibbled away 
             // which means this node will store this key as a prefix of other keys.
-            value = (V)val; // Note: possibly removes or updates an item.
+            value = (V) val; // Note: possibly removes or updates an item.
             return;
         }
-        final byte c = key[offset];
+        final byte c = key[0];
         Object cObj = get(c);
-        if(cObj == null) { // Unused slot means no collision so just store and return;
-            if(val == null) {
+        if (cObj == null) { // Unused slot means no collision so just store and return;
+            if (val == null) {
                 return; // Don't create a leaf to store a null value.
             }
-            put(c, val);
+            put(c, new TermTrieNode(key, (V) val));
             return;
         }
-        if(cObj instanceof TermTrieNode) {
+        if (cObj instanceof TermTrieNode) {
             // Collided with an existing sub-branch so nibble a char and recurse.
-            TermTrieNode childTrie = (TermTrieNode)cObj;
-            childTrie.put(key, val, offset+1);
-            if(val == null && childTrie.isEmpty()) {
+            TermTrieNode childTrie = (TermTrieNode) cObj;
+            childTrie.put(suffix(key, 1), val);
+            if (val == null && childTrie.isEmpty()) {
                 // put() must have erased final entry so prune branch.
                 remove(c);
             }
             return;
         }
         // Collided with a leaf 
-        if(val == null) {
+        if (val == null) {
             remove(c);
             return;
         }
@@ -90,12 +102,12 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
 
         // Sprout a new branch to hold the colliding items.
 
-        V cLeaf = (V)cObj;
+        V cLeaf = (V) cObj;
         TermTrieNode branch = new TermTrieNode();
-        branch.put(suffix(key, offset+1), val); // Store new value in new subtree.
+        branch.put(suffix(key, 1), val); // Store new value in new subtree.
 
         final byte[] cleafname = cLeaf.getTerm().bytes();
-        branch.put(suffix(cleafname, offset+1), cLeaf); // Plus the one we collided with.
+        branch.put(suffix(cleafname, 1), cLeaf); // Plus the one we collided with.
 
         put(c, branch);
     }
@@ -105,35 +117,38 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
     }
 
 
-    public V get(byte[] key) {
+
+    /*public V get(byte[] key) {
         return (V)get(key, 0);
-    }
+    }*/
+
     /**
      * Retrieve a value for a given key or null if not found.
      */
-    protected Object get(byte[] key, int offset) {
+    public V get(byte[] key) {
         assert key != null;
-        if(key.length-offset == 0) {
+        if (key.length == 0) {
             // All of the original key's chars have been nibbled away 
             // which means this key is a prefix of another.
             return value;
         }
 
-        Object cVal = get(key[offset]);
-        if(cVal == null) {
+        Object cVal = get(key[0]);
+        if (cVal == null) {
             return null; // Not found.
         }
         //assert cVal instanceof Leaf || cVal instanceof TrieMapNode;
-        if(cVal instanceof TermTrieNode) { // Hash collision. Nibble first char, and recurse.
-            return ((TermTrieNode)cVal).get(key, offset+1);
+        // cVal contains a user datum, but does the key match its substring?
+        TermTrieNode cPair = (TermTrieNode) cVal;
+        if (nars.util.utf8.Utf8.equals2(key, cPair.prefix)) {
+            return (V) cPair.value; // Return user's data value.
         }
-        else {
-            // cVal contains a user datum, but does the key match its substring?
-            V cPair = (V)cVal;
-            if(nars.util.utf8.Utf8.equals2(key, cPair.getTerm().bytes())) {
-                return cPair; // Return user's data value.
-            }
+
+        if (cVal instanceof TermTrieNode) { // Hash collision. Nibble first char, and recurse.
+            return (V)((TermTrieNode) cVal).get(suffix(key, 1));
         }
+
+
         return null; // Not found.
     }
 
@@ -141,43 +156,6 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap {
         out.println(value);
         out.println("\t" + this);
 
-    }
-    
-    /**
-     * Simple example test program.
-     */
-    public static void main(String[] args) {
-        // Insert a bunch of key/value pairs.
-        TermTrieNode trieMap = new TermTrieNode();
-
-        NAR n = new NAR( new Default() );
-        trieMap.put(n.memory.conceptualize(new Budget(1f, 1f, 1f), n.term("<a --> b>") ));
-        trieMap.put(n.memory.conceptualize(new Budget(1f, 1f, 1f), n.term("<a --> c>")));
-
-        trieMap.print(System.out);
-
-//        trieMap.put("123", "456");
-//        trieMap.put("Java", "rocks");
-//        trieMap.put("Melinda", "too");
-//        trieMap.put("Moo", "cow"); // Will collide with "Melinda".
-//        trieMap.put("Moon", "walk"); // Collides with "Melinda" and turns "Moo" into a prefix.
-//        trieMap.put("", "Root"); // You can store one value at the empty key if you like.
-//
-//        // Test for inserted, nonexistent, and deleted keys.
-//        System.out.println("123 = " + trieMap.get("123"));
-//        System.out.println("Java = " + trieMap.get("Java"));
-//        System.out.println("Melinda = " + trieMap.get("Melinda"));
-//        System.out.println("Moo = " + trieMap.get("Moo"));
-//        System.out.println("Moon = " + trieMap.get("Moon"));
-//        System.out.println("Mo = " + trieMap.get("Mo")); // Should return null.
-//        System.out.println("Empty key = " + trieMap.get("")); // Should return "Root".
-//        System.out.println("Moose = " + trieMap.get("Moose")); // Never added so should return null.
-//        System.out.println("Nothing = " + trieMap.get("Nothing")); // Ditto.
-//        trieMap.put("123", null); // Removes this leaf entry.
-//        System.out.println("After removal, 123 = " + trieMap.get("123")); // Should now return null.
-//        trieMap.put("Moo", null); // Removes this prefix entry. (Special case to test internal logic).
-//        System.out.println("After removal, Moo = " + trieMap.get("Moo")); // Should now return null.
-//        trieMap.put("Moon", null); // Internal test of branch pruning.
     }
 
 

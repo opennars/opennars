@@ -341,7 +341,7 @@ public class RoverModel {
 
             //try remembering it
             if (concept == null) {
-                concept = nar.memory.conceptualize(remember, term);
+                concept = nar.memory.conceptualize(term, remember);
             }
 
             return concept;

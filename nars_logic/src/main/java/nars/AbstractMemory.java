@@ -15,7 +15,7 @@ public interface AbstractMemory {
 
     Concept concept(Term t);
 
-    Concept conceptualize(Budget budget, Term term);
+    Concept conceptualize(Term term, Budget budget);
 
     Clock getClock();
 

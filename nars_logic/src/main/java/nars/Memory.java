@@ -562,7 +562,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
      * @return an existing Concept, or a new one, or null
      */
     @Override
-    public Concept conceptualize(final Budget budget, Term term) {
+    public Concept conceptualize(Term term, final Budget budget) {
         //TODO term in first arg
 
         if (!validConceptTerm(term))

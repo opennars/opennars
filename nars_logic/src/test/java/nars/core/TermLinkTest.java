@@ -94,8 +94,8 @@ public class TermLinkTest {
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {
         NAR n = nn(term);
         //Concept c = n.conceptualize(term);
-        Concept c = n.memory.conceptualize(new Budget(1f, 1f, 1f),
-                n.term(term));
+        Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f)
+        );
         assertNotNull(c);
         n.runWhileNewInput(2);
 

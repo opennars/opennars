@@ -55,7 +55,7 @@ public class TaskProcess extends NAL {
 
     @Override
     public void process() {
-        Concept c = memory.conceptualize(getTask(), getTask().getTerm());
+        Concept c = memory.conceptualize(getTask().getTerm(), getTask());
         if (c!=null)
             process(c);
         

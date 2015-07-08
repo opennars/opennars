@@ -221,7 +221,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
         Term otherTerm = termLinkBuilder.set(this, false).getOther();
 
-        Concept otherConcept = c.getMemory().conceptualize(this, otherTerm);
+        Concept otherConcept = c.getMemory().conceptualize(otherTerm, this);
         if (otherConcept == null) {
             return false;
         }
