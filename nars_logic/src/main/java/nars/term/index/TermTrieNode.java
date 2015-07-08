@@ -40,7 +40,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
 
     @Override
     public String toString() {
-        return (prefix != null ? Utf8.fromUtf8(prefix) : "<>") + value + ":" + super.toString();
+        return (prefix != null ? Utf8.fromUtf8(prefix) : "?") + value + ":= " + super.toString();
     }
 
     @Override
@@ -55,8 +55,8 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         put(key, val, 0);
     }*/
 
-    public void put(final V v) {
-        put(v.getTerm().bytes(), v);
+    public Object put(final V v) {
+        return put(v.getTerm().bytes(), v);
     }
 
     /**
@@ -65,23 +65,23 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
      * @param key may be empty or contain low-order chars 0..255 but must not be null.
      * @param val Your data. Any data class except another TrieMap. Null values erase entries.
      */
-    public void put(byte[] key, Object val) {
+    public Object put(byte[] key, Object val) {
         assert key != null;
         assert !(val instanceof TermTrieNode); // Only we get to store TrieMap nodes. TODO: Allow it.
         if (key.length == 0) {
             // All of the original key's chars have been nibbled away 
             // which means this node will store this key as a prefix of other keys.
-            value = (V) val; // Note: possibly removes or updates an item.
-            return;
+            V oldValue = this.value;
+            value = (V)val; // Note: possibly removes or updates an item.
+            return oldValue;
         }
         final byte c = key[0];
         Object cObj = get(c);
         if (cObj == null) { // Unused slot means no collision so just store and return;
             if (val == null) {
-                return; // Don't create a leaf to store a null value.
+                return null; // Don't create a leaf to store a null value.
             }
-            put(c, new TermTrieNode(key, (V) val));
-            return;
+            return put(c, new TermTrieNode(key, (V) val));
         }
         if (cObj instanceof TermTrieNode) {
             // Collided with an existing sub-branch so nibble a char and recurse.
@@ -91,12 +91,11 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
                 // put() must have erased final entry so prune branch.
                 remove(c);
             }
-            return;
+            return null;
         }
         // Collided with a leaf 
         if (val == null) {
-            remove(c);
-            return;
+            return remove(c);
         }
         //assert cObj instanceof Leaf;
 
@@ -109,7 +108,7 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         final byte[] cleafname = cLeaf.getTerm().bytes();
         branch.put(suffix(cleafname, 1), cLeaf); // Plus the one we collided with.
 
-        put(c, branch);
+        return put(c, branch);
     }
 
     public static byte[] suffix(final byte[] x, int n) {
@@ -122,15 +121,38 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         return (V)get(key, 0);
     }*/
 
+    public V remove(byte[] key) {
+        TermTrieNode<V> n = getNode(key);
+        if (n!=null) {
+            V old = n.value;
+            n.value = null;
+            return old;
+        }
+        return null;
+    }
+
+    public V get(byte[] key) {
+        return getNode(key).value;
+    }
+
+    public boolean contains(byte[] key) {
+        TermTrieNode<V> n = getNode(key);
+        if (n != null) {
+            if (n.value!=null)
+                return true;
+        }
+        return false;
+    }
+
     /**
      * Retrieve a value for a given key or null if not found.
      */
-    public V get(byte[] key) {
+    public TermTrieNode<V> getNode(byte[] key) {
         assert key != null;
         if (key.length == 0) {
             // All of the original key's chars have been nibbled away 
             // which means this key is a prefix of another.
-            return value;
+            return this;
         }
 
         Object cVal = get(key[0]);
@@ -139,13 +161,13 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
         }
         //assert cVal instanceof Leaf || cVal instanceof TrieMapNode;
         // cVal contains a user datum, but does the key match its substring?
-        TermTrieNode cPair = (TermTrieNode) cVal;
+        TermTrieNode<V> cPair = (TermTrieNode) cVal;
         if (nars.util.utf8.Utf8.equals2(key, cPair.prefix)) {
-            return (V) cPair.value; // Return user's data value.
+            return cPair; // Return user's data value.
         }
 
         if (cVal instanceof TermTrieNode) { // Hash collision. Nibble first char, and recurse.
-            return (V)((TermTrieNode) cVal).get(suffix(key, 1));
+            return ((TermTrieNode<V>) cVal).getNode(suffix(key, 1));
         }
 
 
