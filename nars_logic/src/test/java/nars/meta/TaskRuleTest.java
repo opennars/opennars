@@ -26,7 +26,7 @@ public class TaskRuleTest extends TestCase {
 
         {
             TaskRule x = p.term("<<A --> b> |- (X & y)>");
-            assertEquals("((<A --> b>), (&, X, y))", x.toString());
+            assertEquals("((<A --> b>), ((&, X, y)))", x.toString());
             assertEquals(8, x.getMass());
         }
 
