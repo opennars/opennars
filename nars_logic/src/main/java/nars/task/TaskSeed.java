@@ -466,6 +466,9 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
      * creation time of the stamp
      */
     public long getCreationTime() {
+//        if (creationTime == Stamp.ETERNAL) {
+//            throw new RuntimeException("creation time should be specified or timeless, not eternal");
+//        }
         if (creationTime == Stamp.TIMELESS) {
             //Default: created now
             return memory.time();

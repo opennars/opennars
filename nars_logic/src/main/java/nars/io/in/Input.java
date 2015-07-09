@@ -50,18 +50,26 @@ public interface Input extends Source<Task> {
     }
 
     /** supplies consumer with tasks until get() returns null */
-    default int getAll(Collection<Task> consumer, Memory m) {
+    default int inputAll(Memory m) {
         Task t;
 
         int i =0;
         while (( t = get() ) != null) {
-            if (t instanceof ImmediateOperation.ImmediateTask)
-                m.input(t);
-            else if (consumer.add(t))
-                i++;
+            i += m.input(t);
         }
         return i;
     }
+//    default int inputNext(Memory m, int max) {
+//        Task t;
+//
+//        int i =0;
+//        while (( t = get() ) != null) {
+//            if ((i += m.input(t)) == max) {
+//                return i;
+//            }
+//        }
+//        return i;
+//    }
 
 
     /** an input that generates tasks in batches, which are stored in a buffer */

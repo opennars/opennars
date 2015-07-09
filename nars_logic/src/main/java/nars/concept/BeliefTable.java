@@ -117,13 +117,29 @@ public interface BeliefTable extends TaskTable {
             return top;
 
 
-        return top(new Ranker() {
-            @Override
-            public float rank(Task t, float bestToBeat) {
-                return solutionQualityMatchingOrder(query, t, now);
-            }
-        });
+
+        return top(new SolutionQualityMatchingOrderRanker(query, now));
     }
+
+    final static class SolutionQualityMatchingOrderRanker implements Ranker {
+
+        private final Task query;
+        private final long now;
+        final boolean hasQueryVar; //cache hasQueryVar
+
+        public SolutionQualityMatchingOrderRanker(Task query, long now) {
+            this.query = query;
+            this.now = now;
+            this.hasQueryVar = query.hasQueryVar();
+        }
+
+        @Override
+        public final float rank(final Task t, final float bestToBeat) {
+            //TODO use bestToBeat to avoid extra work
+            return solutionQualityMatchingOrder(query, t, now, hasQueryVar);
+        }
+    }
+
     default public Task top(boolean hasQueryVar, final long now, long occTime, Truth truth) {
 
         if (isEmpty()) return null;
@@ -196,16 +212,13 @@ public interface BeliefTable extends TaskTable {
      * beliefs to current time
      */
     default public float getMeanProjectedExpectation(final long time) {
-        float d = 0;
-
         int size = size();
         if (size == 0) return 0;
 
+        float d = 0;
         for (Task t : this) {
             d += t.projectionTruthQuality(time, time, false) * t.truth.getExpectation();
         }
-
-        //System.out.println(top().getTruth().getExpectation() + " " + d/size + " (" + size + ")");
 
         return d/size;
     }

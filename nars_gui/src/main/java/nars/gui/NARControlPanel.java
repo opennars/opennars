@@ -125,7 +125,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
         this.metrics = (metrics == null) ? new NARMetrics(nar, Global.METRICS_HISTORY_LENGTH) : metrics;
 
 
-        experienceWriter = new TextOutput(nar);
+        //experienceWriter = new TextOutput(nar);
 
 
         JMenuBar menuBar = new JMenuBar();

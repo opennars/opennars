@@ -337,6 +337,7 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 
         final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
         buffer.append(Symbols.STAMP_OPENER);
+
         if (!isEternal()) {
             appendOcurrenceTime(buffer);
         } else {

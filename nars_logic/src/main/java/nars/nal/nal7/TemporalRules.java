@@ -639,21 +639,25 @@ public class TemporalRules {
         return solutionQualityMatchingOrder(problem, solution, time);
     }
 
+    public static float solutionQualityMatchingOrder(final Sentence problem, final Sentence solution, final long time) {
+        return solutionQualityMatchingOrder(problem, solution, time, problem.hasQueryVar() );
+    }
     /**
         this method is used if the order is known to be matching, so it is not checked
      */
-    public static float solutionQualityMatchingOrder(final Sentence problem, final Sentence solution, long time) {
+    public static float solutionQualityMatchingOrder(final Sentence problem, final Sentence solution, final long time, final boolean hasQueryVar) {
 
-        if ((problem == null) || (solution == null)) {
+        /*if ((problem == null) || (solution == null)) {
             throw new RuntimeException("problem or solution is null");
-        }
+        }*/
 
         Truth truth = solution.truth;
         if (problem.getOccurrenceTime()!=solution.getOccurrenceTime()) {
             truth = solution.projection(problem.getOccurrenceTime(), time);
         }
 
-        if (problem.hasQueryVar()) {
+        //if (problem.hasQueryVar()) {
+        if (hasQueryVar) {
             return truth.getExpectation() / solution.getTerm().getComplexity();
         } else {
             return truth.getConfidence();

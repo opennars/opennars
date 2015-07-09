@@ -47,7 +47,7 @@ public class RoverModel {
 
     int mission = 0;
     public float curiosity = 0.1f;
-    int motionPeriod = 4;
+    int motionPeriod = 3;
 
 
     public final Body torso;
@@ -75,7 +75,7 @@ public class RoverModel {
     final static int retinaPixels = 16;
 
 
-    int retinaRaysPerPixel = 1; //rays per vision sensor
+    int retinaRaysPerPixel = 3; //rays per vision sensor
 
     float aStep = (float)(Math.PI*2f) / retinaPixels;
 
@@ -238,10 +238,20 @@ public class RoverModel {
         rotate(f * angularSpeedPerCycle);
     }
 
+    protected void curious(float freq, float conf) {
+        nar.input("motor(#r)! %" + freq + "|" + conf + "%");
+    }
     protected void addAxioms() {
 
         //alpha curiosity parameter
-        nar.input("motor(#r)! :|: %0.60;0.95%");
+        if (nar.time() < 10) {
+            curious(1.0f, 0.65f);
+        }
+        else {
+            curious(0.75f, 0.65f);
+        }
+
+
 
         //nar.input("<{left,right,forward,reverse} --> direction>.");
         //nar.input("<{wall,empty,food,poison} --> material>.");
@@ -451,13 +461,6 @@ public class RoverModel {
 
             }
 
-
-
-
-
-
-
-
         }
 
         abstract float onFrame(float desire, boolean positive);
@@ -471,20 +474,28 @@ public class RoverModel {
             @Override float onFrame(float desire) {
                 //variable causes random movement
                 double v = Math.random();
-                if (v > desire) {
+                if (v > (desire - 0.5f)*2f) {
                     return Float.NaN;
                 }
-                v = Math.random();
 
-                String tr = "%1.00|" + desire + "%";
+                //System.out.println(v + " " + (desire - 0.5f)*2f);
+
+                String tPos = "%0.75|" + desire + "%";
+                String tNeg = "%0.25|" + desire + "%";
+
+                v = Math.random();
                 if (v < 0.25f) {
-                    nar.inputDirect(nar.task("motor(left)! " + tr));
+                    nar.inputDirect(nar.task("motor(left)! " + tPos));
+                    nar.inputDirect(nar.task("motor(right)! " + tNeg));
                 } else if (v < 0.5f) {
-                    nar.inputDirect(nar.task("motor(right)! " + tr));
+                    nar.inputDirect(nar.task("motor(left)! " + tNeg));
+                    nar.inputDirect(nar.task("motor(right)! " + tPos));
                 } else if (v < 0.75f) {
-                    nar.inputDirect(nar.task("motor(forward)! " + tr));
+                    nar.inputDirect(nar.task("motor(forward)! " + tPos));
+                    nar.inputDirect(nar.task("motor(reverse)! " + tNeg));
                 } else {
-                    nar.inputDirect(nar.task("motor(reverse)! " + tr));
+                    nar.inputDirect(nar.task("motor(forward)! " + tNeg));
+                    nar.inputDirect(nar.task("motor(reverse)! " + tPos));
                 }
                 return desire;
             }

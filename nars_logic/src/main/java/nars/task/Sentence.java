@@ -454,19 +454,19 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      *
      * @return Whether the object is a Judgment
      */
-    public boolean isJudgment() {
+    public final boolean isJudgment() {
         return (punctuation == Symbols.JUDGMENT);
     }
 
-    public boolean isGoal() {
+    public final boolean isGoal() {
         return (punctuation == Symbols.GOAL);
     }
  
-    public boolean isQuest() {
+    public final boolean isQuest() {
         return (punctuation == Symbols.QUEST);
     }    
     
-    public boolean hasQueryVar() {
+    public final boolean hasQueryVar() {
         return getTerm().hasVarQuery();
     }
 
@@ -574,40 +574,42 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
         final CharSequence tenseString;
         if (memory!=null) {
+
+
             tenseString = getTense(memory.time(), memory.duration());
         }
         else {
             appendOcurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
         }
-        
-        
+
+
         CharSequence stampString = showStamp ? stampAsStringBuilder() : null;
-        
+
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
-                
+
         if (truth != null)
             stringLength += 11;
-        
+
         if (showStamp)
             stringLength += stampString.length()+1;
-        
+
         if (buffer == null)
             buffer = new StringBuilder(stringLength);
         else
             buffer.ensureCapacity(stringLength);
         buffer.append(contentName).append(punctuation);
-        
+
         if (tenseString.length() > 0)
             buffer.append(' ').append(tenseString);
-        
+
         if (truth != null) {
             buffer.append(' ');
             truth.appendString(buffer, 2);
         }
-        
+
         if (showStamp)
             buffer.append(' ').append(stampString);
-        
+
         return buffer;
     }
 
@@ -684,7 +686,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     public void setTermInstance(final T term) {
 
         //intermval generally contains unique information that should not be replaced
-        if (this.term instanceof Intermval)
+        if (this.term instanceof TermMetadata)
             return;
 
         this.term = term;
@@ -744,7 +746,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      * The content of a Sentence is a Term
      */
     @Override
-    public T getTerm() {
+    public final T getTerm() {
         return term;
     }
 

@@ -35,10 +35,6 @@ class HTMLOutput {
                 if (root!=null)
                     buffer.append(" {{").append(root.sentence).append("}}");
                 */
-            }
-            else if (signal instanceof Sentence) {
-                Sentence s = (Sentence)signal;
-                buffer.append(s.toString(nar, showStamp));
             } else {
                 buffer.append(signal.toString());
             }

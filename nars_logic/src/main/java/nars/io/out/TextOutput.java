@@ -123,7 +123,7 @@ public class TextOutput extends Output {
     @Override
     protected boolean output(final Channel channel, final Class event, final Object... args) {
 
-        if (!isEnabled())
+        if (out == null || !isEnabled())
             return false;
 
         if (!showInput && event == Events.IN.class) return false;

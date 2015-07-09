@@ -14,7 +14,6 @@ import nars.task.TaskComparator;
 import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -29,13 +28,15 @@ public class DefaultCycle extends SequentialCycle {
      */
     public final Bag<Sentence<Compound>, Task<Compound>> novelTasks;
 
+    int numNovelTasksPerCycle = 1;
+
     /* ---------- Short-term workspace for a single cycle ------- */
     /**
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
     protected final TreeSet<Task> newTasks;
-    protected List<Task> newTasksTemp = new ArrayList();
+    protected List<Task> newTasksTemp = Global.newArrayList();
     protected boolean executingNewTasks = false;
 
 
@@ -98,13 +99,9 @@ public class DefaultCycle extends SequentialCycle {
 
 
         //1 novel tasks if numNewTasks empty
-        if (newTasks.isEmpty()) {
-            int numNovelTasks = 1;
-            for (int i = 0; i < numNovelTasks; i++) {
-                Runnable novel = nextNovelTask();
-                if (novel != null) novel.run();
-                else
-                    break;
+        if (newTasks.isEmpty() && !novelTasks.isEmpty())  {
+            for (int i = 0; i < numNovelTasksPerCycle; i++) {
+                runNextNovelTask();
             }
         }
 
@@ -225,12 +222,9 @@ public class DefaultCycle extends SequentialCycle {
     /**
      * Select a novel task to process.
      */
-    protected Runnable nextNovelTask() {
-        if (novelTasks.isEmpty()) return null;
-
+    protected void runNextNovelTask() {
         final Task task = novelTasks.pop();
-
-        return TaskProcess.run(memory, task);
+        TaskProcess.run(memory, task);
     }
 
 

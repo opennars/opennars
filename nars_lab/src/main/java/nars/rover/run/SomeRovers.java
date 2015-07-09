@@ -5,13 +5,11 @@ import nars.Global;
 import nars.NAR;
 import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
-import nars.io.out.TextOutput;
-import nars.nar.Default;
+import nars.nar.Solid;
 import nars.process.TaskProcess;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.task.filter.ConstantDerivationLeak;
 
 import javax.swing.*;
@@ -30,7 +28,7 @@ public class SomeRovers {
         Global.EXIT_ON_EXCEPTION = true;
 
 
-        float fps = 45;
+        float fps = 60;
         boolean cpanels = true;
 
         final RoverEngine game = new RoverEngine();
@@ -42,7 +40,7 @@ public class SomeRovers {
 
             NAR nar;
             SimulatedClock clock;
-            nar = new NAR(new Default() {
+            nar = new NAR(new Solid(32, 555, 1, 1, 1, 2 ) {
 
                 protected void initDerivationFilters() {
                     final float DERIVATION_PRIORITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
@@ -50,7 +48,7 @@ public class SomeRovers {
                     getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
                 }
 
-            }.setInternalExperience(null).setActiveConcepts(1600).setClock(clock = new SimulatedClock())
+            }.setInternalExperience(null).setClock(clock = new SimulatedClock())
             ) {
                 @Override
                 public TaskProcess inputDirect(Task t) {
@@ -64,14 +62,16 @@ public class SomeRovers {
 
             //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
 
-            nar.param.inputsMaxPerCycle.set(32);
-            nar.param.conceptsFiredPerCycle.set(16);
-            nar.param.conceptBeliefsMax.set(24);
-            nar.param.conceptGoalsMax.set(24);
+            //N/A for solid
+            //nar.param.inputsMaxPerCycle.set(32);
+            //nar.param.conceptsFiredPerCycle.set(4);
 
-            int nc = 8;
+            nar.param.conceptBeliefsMax.set(12);
+            nar.param.conceptGoalsMax.set(12);
+
+            int nc = 1;
             nar.setCyclesPerFrame(nc);
-            (nar.param).duration.set(5);
+            (nar.param).duration.set(1);
 
             //nar.param.shortTermMemoryHistory.set(3);
 

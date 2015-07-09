@@ -4,9 +4,9 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
+import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
-import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
@@ -54,12 +54,12 @@ public class Solid extends Default implements CycleProcess {
     int tasksAddedThisCycle = 0;
 
 
-    public Solid(int inputsPerCycle, int maxConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
+    public Solid(int inputsPerCycle, int activeConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
         super();
         this.inputsPerCycle = inputsPerCycle;
-        this.maxConcepts = maxConcepts;
+        this.maxConcepts = activeConcepts;
 
-        //this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
+        //this.maxTasks = activeConcepts * maxTaskLink * maxTermLink * 2;
         this.maxTasksPerCycle = -1;
 
         this.minTaskLink = minTaskLink;
@@ -72,16 +72,18 @@ public class Solid extends Default implements CycleProcess {
         taskLinkForgetDurations.set(1);
         conceptForgetDurations.set(1);
 
+        conceptCreationExpectation.set(0);
+
         setTermLinkBagSize(16);
         setTaskLinkBagSize(16);
 
 
 
-        //concepts = new CurveBag(rng, maxConcepts, true);
-        //concepts = new ChainBag(rng, maxConcepts);
-        //concepts = new BubbleBag(rng, maxConcepts);
-        //concepts = new HeapBag(rng, maxConcepts);
-        concepts = new LevelBag(100, maxConcepts);
+        //concepts = new CurveBag(rng, activeConcepts, true);
+        //concepts = new ChainBag(rng, activeConcepts);
+        //concepts = new BubbleBag(rng, activeConcepts);
+        //concepts = new HeapBag(rng, activeConcepts);
+        concepts = new LevelBag(100, activeConcepts);
     }
 
     @Override
@@ -130,7 +132,9 @@ public class Solid extends Default implements CycleProcess {
 
     @Override
     public void perceive(Input ii) {
-        ii.getAll(tasks, memory);
+
+        //TODO use max inputs per cycle
+        ii.inputAll(memory);
     }
 
     protected void processNewTasks() {
@@ -251,8 +255,12 @@ public class Solid extends Default implements CycleProcess {
 
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
-        Bag<Sentence, TaskLink> taskLinks = new ChainBag(rng, getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(rng, getConceptTermLinks());
+        Bag<Sentence, TaskLink> taskLinks =
+                //new ChainBag(rng, getConceptTaskLinks());
+                new CurveBag(rng, getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks =
+                //new ChainBag(rng, getConceptTermLinks());
+                new CurveBag(rng, getConceptTaskLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
         //return super.newConcept(b, t, m);

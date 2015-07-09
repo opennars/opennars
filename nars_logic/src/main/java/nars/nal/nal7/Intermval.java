@@ -1,12 +1,14 @@
 package nars.nal.nal7;
 
+import nars.term.TermMetadata;
+
 /**
  * Stores a set of intervals that will be associated with a
  * conjunction sequence or other temporal term with which
  * this can describe the delays between and around zero
  * or more subterms in the sequence
  */
-public interface Intermval {
+public interface Intermval extends TermMetadata {
 
     /** a conj sequence will return a long[NUM_TERMS+1]
      * index i means the interval preceding term i

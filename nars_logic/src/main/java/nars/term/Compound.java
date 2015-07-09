@@ -141,10 +141,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     public int additionalStructureCode() { return 0; }
 
-    @Override
-    public boolean requiresNormalizing() {
-        return true;
-    }
+
 
     @Override
     public long structuralHash() {

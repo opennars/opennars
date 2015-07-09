@@ -52,8 +52,6 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
         this.concept = host.getTerm();
 
-        target.getTerm().ensureNormalized("TermLink template");
-
         this.target = target;
         this.type = type;
         if (type % 2 != 0)

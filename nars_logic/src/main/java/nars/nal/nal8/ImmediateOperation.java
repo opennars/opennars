@@ -30,17 +30,13 @@ abstract public class ImmediateOperation  {
             this.operation = o;
         }
 
-        @Override
-        public Compound getTerm() {
-            throw new RuntimeException("ImmediateTask has no term");
-        }
 
         public ImmediateOperation immediateOperation() {
             return operation;
         }
 
         @Override
-        public int getAll(Collection<Task> consumer, Memory m) {
+        public int inputAll(Memory m) {
             return m.input(this);
         }
 

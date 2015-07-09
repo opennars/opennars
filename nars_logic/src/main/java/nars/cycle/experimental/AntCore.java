@@ -140,7 +140,7 @@ public class AntCore extends ConceptWaveCore {
 
     @Override
     public void perceive(Input ii) {
-        ii.getAll(tasks, memory);
+        ii.inputAll(memory);
     }
 
     public boolean ensureAntsOccupyUniqueConcepts() {

@@ -65,8 +65,8 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
         }
     }
 
-    public String toString(Sentence s) {
-        return s.toString(nar, false).toString();
+    public String toString(Task s) {
+        return s.toString(nar.memory).toString();
     }
 
     public String toString(Class channel, Object signal) {

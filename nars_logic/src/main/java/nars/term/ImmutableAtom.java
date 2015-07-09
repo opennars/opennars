@@ -49,10 +49,8 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
         return true;
     }
 
-    @Override
-    public boolean isNormalized() {
-        return true;
-    }
+
+
 
     @Override
     public boolean containsTerm(Term target) {
@@ -105,4 +103,16 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
     public Identifier name() {
         return this;
     }
+
+
+    @Override
+    public boolean isNormalized() {
+        return true;
+    }
+
+    @Override
+    public Term normalized() {
+        return this;
+    }
+
 }

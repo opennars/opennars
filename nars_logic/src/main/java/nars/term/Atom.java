@@ -36,10 +36,6 @@ public class Atom extends ImmutableAtom {
     }
 
 
-    public boolean isNormalized() {
-        return true;
-    }
-
     @Override
     public int length() {
         throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
@@ -154,13 +150,7 @@ public class Atom extends ImmutableAtom {
         return this;
     }
 
-    /** attempts to return cloneNormalize result,
-     * if it's necessary and possible.
-     *  does not modify this term
-     * */
-    public Term normalized() {
-        return this;
-    }
+
 
     public Term cloneDeep() {
         return clone();
@@ -222,10 +212,6 @@ public class Atom extends ImmutableAtom {
     }
 
 
-    @Override
-    public boolean requiresNormalizing() {
-        return false;
-    }
 
     /**
      * The syntactic complexity, for constant atomic Term, is 1.

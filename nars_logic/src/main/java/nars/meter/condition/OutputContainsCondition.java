@@ -136,8 +136,8 @@ public class OutputContainsCondition extends OutputCondition {
                 //only compare for Sentence string, faster than TextOutput.getOutputString
                 //which also does unescaping, etc..
                 Task t = (Task)signal;
-                Sentence s = t.sentence;
-                o = toString(s);
+
+                o = toString(t);
                 if (o.contains(containing)) {
                     if ((saveSimilar) && (exact.size() < maxExacts)) {
                         exact.add(t);

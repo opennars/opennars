@@ -4,16 +4,16 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Events.OUT;
 import nars.Global;
 import nars.NAR;
-import nars.nar.Default;
-import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nar.Solid;
+import nars.narsese.InvalidInputException;
+import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.narsese.InvalidInputException;
-import nars.util.event.Reaction;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.event.Reaction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class BooleanChallenge implements Reaction<Class> {
 
     public static void main(String[] args) {
         Global.DEBUG = false;
-        NAR n = new NAR(new Default(2048, 4, 3).setInternalExperience(null));
+        NAR n = new NAR(new Solid(32, 2048, 1, 2, 1, 4).setInternalExperience(null));
 
         //NAR n = new NAR(new Discretinuous());
         //new NARPrologMirror(n, 0.95f, true, true, false);

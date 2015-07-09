@@ -89,16 +89,6 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
     public boolean containsTerm(final Term target);
     public boolean containsTermRecursivelyOrEquals(final Term target);
 
-    @Deprecated default public Term ensureNormalized(String role) {
-        if (requiresNormalizing() && !isNormalized()) {
-            //System.err.println(this + " is not normalized but as " + role + " should have already been");
-            //System.exit(1);
-            throw new RuntimeException(this + " is not normalized but as " + role + " should have already been");
-        }
-        return this;
-    }
-
-    boolean requiresNormalizing();
 
 
     default char[] chars(boolean pretty) {

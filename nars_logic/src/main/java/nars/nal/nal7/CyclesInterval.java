@@ -45,10 +45,7 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
         return 1;
     }
 
-    @Override
-    public boolean requiresNormalizing() {
-        return false;
-    }
+
 
     public static CyclesInterval intervalLog(long mag, AbstractMemory memory) {
         long time = Math.round( Interval.time(mag, memory.duration()) );

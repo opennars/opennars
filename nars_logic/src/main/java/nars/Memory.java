@@ -394,7 +394,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
     /* ---------- Constructor ---------- */
 
-    public Concept newConcept(final Budget budget, final Term term) {
+    public Concept newConcept(final Term term, final Budget budget) {
 
         Concept concept = null;
 

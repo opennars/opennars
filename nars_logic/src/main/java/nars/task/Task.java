@@ -671,11 +671,11 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
     @Override
-    public int getAll(Collection<Task> consumer, Memory m) {
-        if (consumer.add(this))
-            return 1;
-        return 0;
+    public int inputAll(Memory m) {
+        return m.input(this);
     }
+
+
 
     @Override
     public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
