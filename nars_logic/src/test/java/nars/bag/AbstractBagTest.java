@@ -16,8 +16,8 @@ import static org.junit.Assert.assertTrue;
 public class AbstractBagTest {
     final static Random rng = new XORShiftRandom();
 
-    public static int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedIndex<BagPerf.NullItem> items) {
-        CurveBag<CharSequence, BagPerf.NullItem> f = new CurveBag(rng, capacity, CurveBagTest.curve, random, items);
+    public static int[] testRemovalPriorityDistribution(int capacity, SortedIndex<BagPerf.NullItem> items) {
+        CurveBag<CharSequence, BagPerf.NullItem> f = new CurveBag(rng, capacity, CurveBagTest.curve, items);
         return testRemovalPriorityDistribution(8, capacity, 0.2f, 0.2f, f);
     }
 

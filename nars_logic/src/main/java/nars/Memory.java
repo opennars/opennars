@@ -59,7 +59,6 @@ import nars.task.TaskSeed;
 import nars.task.stamp.AbstractStamper;
 import nars.task.stamp.Stamp;
 import nars.term.*;
-import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
 
@@ -69,6 +68,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -87,7 +87,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     private Atom self;
 
     public final Random random;
-    public final Perception<Task> perception;
+
     public final CycleProcess cycle;
     public final EventEmitter<Class> event;
     public final EventEmitter<Term> exe;
@@ -137,7 +137,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         this.param = narParam;
         this.rules = policy;
 
-        this.perception = new Perception();
+
 
 
         this.cycle = cycle;
@@ -158,7 +158,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
         //after this line begins actual logic, now that the essential data strucures are allocated
         //------------------------------------
-        reset(false, false);
+        reset(false);
 
 
     }
@@ -482,12 +482,12 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     }
 
     public void delete() {
-        reset(true, true);
+        reset(true);
 
         event.delete();
     }
 
-    public void reset(boolean resetInputs, boolean delete) {
+    public void reset(boolean delete) {
 
         nextTasks.clear();
 
@@ -496,8 +496,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
             laterTasks = null;
         }
 
-        if (resetInputs)
-            perception.reset();
+
 
         event.emit(ResetStart.class);
 
@@ -680,43 +679,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         return event.isActive(channel);
     }
 
-    /** attempts to perceive the next input from perception, and
-     *  handle it by immediately acting on it, or
-     *  adding it to the new tasks queue for future reasoning.
-     * @return how many tasks were generated as a result of perceiving (which can be zero), or -1 if no percept is available */
-    public int perceiveNext() {
-        if (!perceiving()) return -1;
-
-        Task t = perception.get();
-        if (t != null)
-            return input(t);
-
-        return -1;
-    }
-
-    /** attempts to perceive at most N perceptual tasks.
-     *  this allows Attention to regulate input relative to other kinds of mental activity
-     *  if N == -1, continue perceives until perception buffer is emptied
-     *  @return how many tasks perceived
-     */
-    public int perceiveNext(int maxPercepts) {
-        //if (!perceiving()) return 0;
-
-        boolean inputEverything;
-
-        if (maxPercepts == -1) { inputEverything = true; maxPercepts = 1; }
-        else inputEverything = false;
-
-        int perceived = 0;
-        while (perceived < maxPercepts) {
-            int p = perceiveNext();
-            if (p == -1) break;
-            else if (!inputEverything) perceived += p;
-        }
-        return perceived;
-    }
-
-
 
     /** queues a task to (hopefully) be executed at an unknown time in the future,
      *  in its own thread in a thread pool */
@@ -774,7 +736,8 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         return currentStampSerial++;
     }
 
-    public boolean perceiving() {
+    /** whether the NAR is currently accepting new inputs */
+    public boolean isInputting() {
         if (inputPausedUntil == -1) return true;
         return time() >= inputPausedUntil;
     }

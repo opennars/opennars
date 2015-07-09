@@ -115,7 +115,7 @@ public class NAR extends Container implements Runnable {
      * reactivated, a signal for them to empty their state (if necessary).
      */
     public void reset() {
-        memory.reset(true, false);
+        memory.reset(false);
     }
 
     /**
@@ -410,9 +410,9 @@ public class NAR extends Container implements Runnable {
      * Adds an input channel for input from an external sense / sensor.
      * Will remain added until it closes or it is explicitly removed.
      */
-    public Input input(final Input ii) {
-        memory.perception.accept(ii);
-        return ii;
+    public Input input(final Input perception) {
+        memory.cycle.perceive(perception);
+        return perception;
     }
 
 //    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
@@ -514,41 +514,46 @@ public class NAR extends Container implements Runnable {
 
     }
 
-    /**
-     * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
-     *
-     * @param maxCycles max cycles, or -1 to allow any number of additional cycles until input finishes
-     */
-    public NAR runWhileNewInput(long minCycles, long maxCycles) {
+//    /**
+//     * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
+//     *
+//     * @param maxCycles max cycles, or -1 to allow any number of additional cycles until input finishes
+//     */
+//    public NAR runWhileNewInput(long minCycles, long maxCycles) {
+//
+//
+//        if (maxCycles <= 0) return this;
+//        if (minCycles > maxCycles)
+//            throw new RuntimeException("minCycles " + minCycles + " required <= maxCycles " + maxCycles);
+//
+//        running = true;
+//
+//        long cycleStart = time();
+//        do {
+//            frame(1);
+//
+//            long now = time();
+//
+//            long elapsed = now - cycleStart;
+//
+//            if (elapsed >= minCycles)
+//                running = (!memory.perception.isEmpty()) &&
+//                        (elapsed < maxCycles);
+//        }
+//        while (running);
+//
+//        return this;
+//    }
 
-
-        if (maxCycles <= 0) return this;
-        if (minCycles > maxCycles)
-            throw new RuntimeException("minCycles " + minCycles + " required <= maxCycles " + maxCycles);
-
-        running = true;
-
-        long cycleStart = time();
-        do {
-            frame(1);
-
-            long now = time();
-
-            long elapsed = now - cycleStart;
-
-            if (elapsed >= minCycles)
-                running = (!memory.perception.isEmpty()) &&
-                        (elapsed < maxCycles);
-        }
-        while (running);
-
+    public NAR runWhileNewInput(int extraCycles) {
+        frame(extraCycles);
         return this;
     }
 
     /**
      * Execute a fixed number of cycles, then finish any remaining walking steps.
      */
-    public NAR runWhileNewInput(long extraCycles) {
+    @Deprecated public NAR runWhileNewInputOLD(long extraCycles) {
         //TODO see if this entire method can be implemented as run(0, cycles);
 
         if (extraCycles <= 0) return this;
@@ -559,10 +564,11 @@ public class NAR extends Container implements Runnable {
         //clear existing input
 
         long cycleStart = time();
+
         do {
             frame(1);
         }
-        while ((!memory.perception.isEmpty()) && running && enabled);
+        while (/*(!memory.perception.isEmpty()) && */ running && enabled);
 
         long cyclesCompleted = time() - cycleStart;
 
@@ -572,7 +578,7 @@ public class NAR extends Container implements Runnable {
             memory.think(extraCycles);
 
         //finish all remaining cycles
-        while (!memory.perceiving() && running && enabled) {
+        while (!memory.isInputting() && running && enabled) {
             frame(1);
         }
 

@@ -410,9 +410,9 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
-        Bag<Sentence, TaskLink> taskLinks = new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks(), true);
+        Bag<Sentence, TaskLink> taskLinks = new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks(), true);
+                new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
                 //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
@@ -455,7 +455,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new CurveBag(rng, getNovelTaskBagSize(), true);
+        return new CurveBag(rng, getNovelTaskBagSize());
     }
 
 

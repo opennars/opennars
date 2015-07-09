@@ -6,6 +6,8 @@ import nars.Symbols;
 import nars.task.Task;
 import nars.term.Compound;
 
+import java.util.Collection;
+
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
 abstract public class ImmediateOperation  {
@@ -19,7 +21,7 @@ abstract public class ImmediateOperation  {
 
 
     //TODO make Task an interface so this is lightweight
-    public static class ImmediateTask extends Task {
+    public static class ImmediateTask extends Task<Compound> {
 
         public final ImmediateOperation operation;
 
@@ -35,6 +37,11 @@ abstract public class ImmediateOperation  {
 
         public ImmediateOperation immediateOperation() {
             return operation;
+        }
+
+        @Override
+        public int getAll(Collection<Task> consumer, Memory m) {
+            return m.input(this);
         }
 
         /**

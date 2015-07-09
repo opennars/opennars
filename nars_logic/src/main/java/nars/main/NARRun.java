@@ -141,7 +141,8 @@ public class NARRun {
                         + " step " + nar.time());
 
             if (maxTime > 0) {
-                if ((nar.memory.perception.isEmpty()) || nar.time() == maxTime) {
+                //(nar.memory.perception.isEmpty() || )
+                if ( nar.time() == maxTime) {
                     break;
                 }
             }

@@ -25,8 +25,8 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     
     public static <E> List<E> bestList(int capacity) {
         return capacity < 50 ?
-                Global.newArrayList() :
-                Global.newArrayList(); // : new FastSortedTable();
+                Global.newArrayList(capacity) :
+                Global.newArrayList(capacity); // : new FastSortedTable();
     }
 
     public ArraySortedIndex(int capacity) {

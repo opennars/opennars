@@ -143,6 +143,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return 0;
     }
 
+
     public TermLinkBuilder getTermLinkBuilder();
 
 

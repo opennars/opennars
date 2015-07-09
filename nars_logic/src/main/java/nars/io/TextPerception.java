@@ -73,23 +73,23 @@ public class TextPerception  {
 //            }
 //        });
 
-        //reset
-        parsers.add(new TextReaction<Task>() {
-            @Override public void react(String input, Consumer<Task> recv) {
-                if (input.equals(Symbols.RESET_COMMAND) || (input.startsWith("*") && !input.startsWith("*start")
-                        && !input.startsWith("*stop") && !input.startsWith("*volume"))) //TODO!
-                    recv.accept( new Reset(false).newTask() );
-            }
-        });
-        //reboot
-        parsers.add(new TextReaction<Task>() {
-            @Override public void react(String input, Consumer<Task> recv) {
-                if (input.equals(Symbols.REBOOT_COMMAND)) {
-                    //immediately reset the memory
-                    recv.accept(new Reset(true).newTask() );
-                }
-            }
-        });
+//        //reset
+//        parsers.add(new TextReaction<Task>() {
+//            @Override public void react(String input, Consumer<Task> recv) {
+//                if (input.equals(Symbols.RESET_COMMAND) || (input.startsWith("*") && !input.startsWith("*start")
+//                        && !input.startsWith("*stop") && !input.startsWith("*volume"))) //TODO!
+//                    recv.accept( new Reset(false).newTask() );
+//            }
+//        });
+//        //reboot
+//        parsers.add(new TextReaction<Task>() {
+//            @Override public void react(String input, Consumer<Task> recv) {
+//                if (input.equals(Symbols.REBOOT_COMMAND)) {
+//                    //immediately reset the memory
+//                    recv.accept(new Reset(true).newTask() );
+//                }
+//            }
+//        });
 
 //      TODO implement these with Task's
 //        //stop

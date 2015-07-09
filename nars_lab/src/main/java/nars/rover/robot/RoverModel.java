@@ -206,9 +206,9 @@ public class RoverModel {
         //TODO : randomActions.add("motor($direction,$direction)!");
 
         randomActions.add("motor(left)!");
-        randomActions.add("motor(left,left)!");
+        //randomActions.add("motor(left,left)!");
         randomActions.add("motor(right)!");
-        randomActions.add("motor(right,right)!");
+        //randomActions.add("motor(right,right)!");
         //randomActions.add("motor(forward,forward)!"); //too much actions are not good,
         randomActions.add("motor(forward)!"); //however i would agree if <motor(forward,forward) --> motor(forward)>.
         //randomActions.add("motor(forward,forward)!");
@@ -237,8 +237,8 @@ public class RoverModel {
 
         nar.input("motor($r)! :|: %1.00;0.25%");
 
-        nar.input("<{left,right,forward,reverse} --> direction>.");
-        nar.input("<{wall,empty,food,poison} --> material>.");
+        //nar.input("<{left,right,forward,reverse} --> direction>.");
+        //nar.input("<{wall,empty,food,poison} --> material>.");
         //nar.input("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
         //nar.input("<{0,1,2,3,4,5,6,7,8,9} --> magnitude>.");
 
@@ -286,6 +286,8 @@ public class RoverModel {
         private final Term term;
         private final NAR nar;
         transient private Concept concept;
+        boolean feedbackEnabled = true;
+        float threshold = 0.5f;
 
         /** budget to apply if the concept is not active */
         private Budget remember = new Budget(0.5f, Symbols.GOAL, new DefaultTruth(1.0f, 0.9f));
@@ -301,7 +303,10 @@ public class RoverModel {
             this.term = term;
         }
 
-        
+        public void setFeedback(boolean feedback) {
+            this.feedbackEnabled = feedback;
+        }
+
         public float getDesireIfConceptMissing() { return 0; }
 
         /** @return feedback belief value, or Float.NaN to not apply it */
@@ -314,10 +319,13 @@ public class RoverModel {
 
             if (c != null) {
                 float d = desireFunction.getDesire(c);
-                float feedback = onCycle(d);
 
-                if (Float.isFinite(feedback))
-                    nar.inputDirect( getFeedback(feedback) );
+                if (d > threshold) {
+                    float feedback = onCycle(d);
+
+                    if (feedbackEnabled && Float.isFinite(feedback))
+                        nar.inputDirect(getFeedback(feedback));
+                }
             }
             else {
                 onCycle(getDesireIfConceptMissing());
@@ -325,7 +333,7 @@ public class RoverModel {
 
         }
 
-        protected Task getFeedback(float feedback) {
+        public Task getFeedback(float feedback) {
             return nar.task((Compound)term).present().goal().truth(feedback, 0.9f).get();
         }
 
@@ -355,26 +363,60 @@ public class RoverModel {
         private final CycleDesire negative;
 
         public float positiveDesire, negativeDesire;
+        float threshold = 0.5f;
+        private NAR nar;
 
         public BiCycleDesire(String positiveTerm, String negativeTerm, ConceptDesire desireFunction, NAR n) {
+            this.nar = n;
             this.positive = new CycleDesire(positiveTerm, desireFunction, n) {
 
                 @Override
                 float onCycle(final float desire) {
                     positiveDesire = desire;
-                    return 0;
+                    return Float.NaN;
                 }
             };
+            //this will be executed directly after positive, so we put the event handler in negative
             this.negative = new CycleDesire(positiveTerm, desireFunction, n) {
 
                 @Override
-                float onCycle(float desire) {
-                    negativeDesire = desire;
-                    return 0;
+                float onCycle(float negativeDesire) {
+                    BiCycleDesire.this.negativeDesire = negativeDesire;
+
+                    float net = positiveDesire - negativeDesire;
+                    if (net > threshold) {
+                        boolean positive = (net > 0);
+                        if (!positive)
+                            net = -net;
+
+                        cycle(net, positive);
+                    }
+
+
+                    return Float.NaN;
                 }
 
             };
         }
+
+        protected void cycle(float desire, boolean isPositive) {
+
+            final float feedback = onCycle(desire, isPositive);
+
+            if (Float.isFinite(feedback)) {
+                float posFeedback = 0, negFeedback = 0;
+                if (isPositive) {
+                    posFeedback = desire;
+                } else {
+                    negFeedback = desire;
+                }
+                nar.inputDirect(positive.getFeedback(posFeedback));
+                nar.inputDirect(negative.getFeedback(negFeedback));
+            }
+        }
+
+        abstract float onCycle(float desire, boolean positive);
+
     }
 
     public static final ConceptDesire strongestTask = (c ->  c.getDesireExpectation() );
@@ -400,30 +442,62 @@ public class RoverModel {
                 return 1f;
             }
         };
-        new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
-            @Override float onCycle(float desire) {
-                thrustRelative(desire * linearThrustPerCycle);
-                return desire;
-            }
-        };
+//        new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
+//            @Override float onCycle(float desire) {
+//                thrustRelative(desire * linearThrustPerCycle);
+//                return desire;
+//            }
+//        };
         /*new CycleDesire("motor(reverse,SELF)", strongestTask, nar) {
             @Override float onCycle(float desire) {
                 thrustRelative(desire * -linearThrustPerCycle);
                 return desire;
             }
         };*/
-        new CycleDesire("motor(left,SELF)", strongestTask, nar) {
-            @Override float onCycle(float desire) {
-                rotateRelative(+30);
+
+        new BiCycleDesire("motor(forward,SELF)", "motor(reverse,SELF)", strongestTask,nar) {
+
+            @Override
+            float onCycle(float desire, boolean positive) {
+                System.out.println(desire + " " + positive);
+                if (positive) {
+                    thrustRelative(desire * linearThrustPerCycle);
+                }
+                else {
+                    thrustRelative(desire * -linearThrustPerCycle);
+                }
                 return desire;
             }
         };
-        new CycleDesire("motor(right,SELF)", strongestTask, nar) {
-            @Override float onCycle(float desire) {
-                rotateRelative(-30);
+
+        new BiCycleDesire("motor(left,SELF)", "motor(right,SELF)", strongestTask,nar) {
+
+            @Override
+            float onCycle(float desire, boolean positive) {
+                System.out.println("left/right" + desire + " " + positive);
+
+                if (positive) {
+                    rotateRelative(+20*desire);
+                }
+                else {
+                    rotateRelative(-20*desire);
+                }
                 return desire;
             }
         };
+//
+//        new CycleDesire("motor(left,SELF)", strongestTask, nar) {
+//            @Override float onCycle(float desire) {
+//
+//                return desire;
+//            }
+//        };
+//        new CycleDesire("motor(right,SELF)", strongestTask, nar) {
+//            @Override float onCycle(float desire) {
+//
+//                return desire;
+//            }
+//        };
     }
 
     protected void addMotorOperator() {

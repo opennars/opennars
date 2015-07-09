@@ -88,7 +88,7 @@ public class DefaultCycle extends SequentialCycle {
     public synchronized void cycle() {
 
         //inputs
-        memory.perceiveNext(memory.param.inputsMaxPerCycle.get());
+        inputNextPerception(memory.param.inputsMaxPerCycle.get());
 
 
         //all new tasks
@@ -127,7 +127,6 @@ public class DefaultCycle extends SequentialCycle {
                 memory);
 
         memory.runNextTasks();
-        run.clear();
 
     }
 

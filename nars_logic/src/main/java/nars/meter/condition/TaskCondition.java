@@ -2,6 +2,7 @@ package nars.meter.condition;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -18,7 +19,6 @@ import nars.truth.Truth;
 
 import java.io.Serializable;
 import java.util.*;
-
 
 public class TaskCondition extends OutputCondition implements Serializable {
 
@@ -54,7 +54,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
     //@Expose
     public Tense tense = Tense.Eternal;
 
+
     protected List<Task> exact;
+
     transient final int maxExact = 4;
 
     protected Deque<Task> removals;

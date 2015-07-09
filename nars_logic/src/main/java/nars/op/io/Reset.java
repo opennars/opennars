@@ -8,20 +8,18 @@ import nars.nal.nal8.ImmediateOperation;
  */
 public class Reset extends ImmediateOperation {
 
-    private final boolean hard;
 
-    public Reset(boolean hard) {
+    public Reset() {
         super();
-        this.hard = hard;
     }
 
     @Override
     public String toString() {
-        return "Reset[" + (hard ? "hard" : "soft") + ']';
+        return "Reset";
     }
 
     @Override
     public void execute(Memory m) {
-        m.reset(hard, false);
+        m.reset(false);
     }
 }

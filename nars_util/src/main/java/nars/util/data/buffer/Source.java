@@ -8,9 +8,6 @@ import java.util.function.Supplier;
  */
 public interface Source<Y> extends Supplier<Y> {
 
-    default public float getAttention() {
-        return 1f;
-    }
 
     /** called when perception is terminated, allowing the input supplier to
      *  close connections or free other resources

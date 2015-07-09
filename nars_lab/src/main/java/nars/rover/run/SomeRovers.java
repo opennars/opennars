@@ -46,13 +46,13 @@ public class SomeRovers {
                     getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
                 }
 
-            }.setInternalExperience(null).setActiveConcepts(800).setClock(clock = new SimulatedClock())
+            }.setInternalExperience(null).setActiveConcepts(1600).setClock(clock = new SimulatedClock())
             );
 
             nar.param.inputsMaxPerCycle.set(32);
-            nar.param.conceptsFiredPerCycle.set(16);
+            nar.param.conceptsFiredPerCycle.set(64);
 
-            int nc = 4;
+            int nc = 8;
             nar.setCyclesPerFrame(nc);
             (nar.param).duration.set(5*nc);
 

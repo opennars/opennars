@@ -43,33 +43,17 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * defined in different bags
      */
     final int capacity;
-    private final Random rng;
 
 
     /**
      * whether items are removed by random sampling, or a continuous scanning
      */
-    private final boolean sampleRandomly;
-
-    private final BagCurve curve;
-
-    /**
-     * Rate of sampling index when in non-random "scanning" removal mode.
-     * The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
-     * Default scanning behavior is to start at 1.0 (highest priority) and decrement.
-     * When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
-     * <p>
-     * Valid values are: -1.0 <= x <= 1.0, x!=0
-     */
-    final float scanningRate = -1.0f;
-
-    /**
-     * current removal index x, between 0..1.0.  set automatically
-     */
-    private float x;
 
 
-    public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
+    public final CurveSampler sampler;
+
+
+    public static <E extends Item> SortedIndex<E> defaultIndex(int capacity) {
         //if (capacity < 50)            
         return new ArraySortedIndex(capacity);
         //else
@@ -77,17 +61,16 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     public CurveBag(Random rng, int capacity) {
-        this(rng, capacity, true);
+        this(rng, capacity, new Power6BagCurve());
     }
 
-    @Deprecated
-    public CurveBag(Random rng, int capacity, boolean sampleRandomly) {
-        this(rng, capacity, new Power6BagCurve(), sampleRandomly);
+
+    public CurveBag(Random rng, int capacity, BagCurve curve, SortedIndex<E> ind) {
+        this(capacity, new RandomSampler(rng, curve), ind);
     }
 
-    public CurveBag(Random rng, int capacity, BagCurve curve, boolean sampleRandomly) {
-        this(rng, capacity, curve, sampleRandomly,
-                getIndex(capacity)                
+    public CurveBag(Random rng, int capacity, BagCurve curve) {
+        this(capacity, new RandomSampler(rng, curve), defaultIndex(capacity));
                 
                                 /*if (capacity < 128)*/
                 //items = new ArraySortedItemList<>(capacity);
@@ -95,7 +78,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
                     //items = new FractalSortedItemList<>(capacity);
                     //items = new RedBlackSortedItemList<>(capacity);
                 }*/
-        );
+
     }
 
     class CurveMap extends CollectorMap<K, E> {
@@ -130,22 +113,71 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    public CurveBag(Random rng, int capacity, BagCurve curve, boolean sampleRandomly, SortedIndex<E> items) {
+    @FunctionalInterface
+    public interface CurveSampler {
+        /** which index to select */
+        public int next(CurveBag b);
+    }
+
+    public static class RandomSampler implements CurveSampler {
+
+        private final BagCurve curve;
+        private final Random rng;
+
+        public RandomSampler(Random rng, BagCurve curve) {
+            this.curve = curve;
+            this.rng = rng;
+        }
+
+        /** maps y in 0..1.0 to an index in 0..size */
+        final int index(final float y, final int size) {
+
+            if (y < 0) return 0;
+            if (y >= 1.0f) return size-1;
+
+            return (int) Math.floor(y * size);
+            /*if (result == size) {
+                //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
+                return (size - 1);
+            }*/
+
+            //return result;
+
+        }
+
+        @Override
+        public int next(final CurveBag b) {
+            final int s = b.size();
+
+            final float x = rng.nextFloat();
+            final float y = curve.y(x);
+
+            return index(y, s);
+        }
+    }
+
+//FOR linear scanner, if re-implemented
+//    /**
+//     * Rate of sampling index when in non-random "scanning" removal mode.
+//     * The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
+//     * Default scanning behavior is to start at 1.0 (highest priority) and decrement.
+//     * When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
+//     * <p>
+//     * Valid values are: -1.0 <= x <= 1.0, x!=0
+//     */
+//    final float scanningRate = -1.0f;
+
+
+    public CurveBag(int capacity, CurveSampler sampler, SortedIndex<E> items) {
         super();
-        this.rng = rng;
         this.capacity = capacity;
-        this.sampleRandomly = sampleRandomly;
-        this.curve = curve;
+        this.sampler = sampler;
 
 
         items.clear();
         items.setCapacity(capacity);
         this.items = items;
 
-        if (sampleRandomly)
-            x = rng.nextFloat();
-        else
-            x = 1.0f; //start a highest priority
 
         nameTable = new CurveMap(
                 //new HashMap(capacity)
@@ -175,20 +207,21 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
         if (Global.DEBUG) {
             int is = items.size();
+            if (is!=in) throw new RuntimeException();
 
-            //test for a discrepency of +1/-1 difference between name and items
-            if ((is - in > 2) || (is - in < -2)) {
-                System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
-                /*System.out.println(nameTable);
-                System.out.println(items);
-                if (is > in) {
-                    List<E> e = new ArrayList(items);
-                    for (E f : nameTable.values())
-                        e.remove(f);
-                    System.out.println("difference: " + e);
-                }*/
-                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
-            }
+//            //test for a discrepency of +1/-1 difference between name and items
+//            if ((is - in > 2) || (is - in < -2)) {
+//                System.err.println(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+//                /*System.out.println(nameTable);
+//                System.out.println(items);
+//                if (is > in) {
+//                    List<E> e = new ArrayList(items);
+//                    for (E f : nameTable.values())
+//                        e.remove(f);
+//                    System.out.println("difference: " + e);
+//                }*/
+//                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
+//            }
         }
 
         return in;
@@ -253,7 +286,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     public E pop() {
 
         if (size() == 0) return null; // empty bag
-        return removeItem(nextRemovalIndex());
+        return removeItem(sampler.next(this));
 
     }
 
@@ -262,48 +295,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     public E peekNext() {
 
         if (size() == 0) return null; // empty bag
-        return items.get(nextRemovalIndex());
+        return items.get(sampler.next(this));
 
     }
 
 
-    /**
-     * distributor function
-     */
-    public int nextRemovalIndex() {
-        final float s = items.size();
-        if (sampleRandomly) {
-            x = rng.nextFloat();
-        } else {
-            x += scanningRate * 1.0f / (1 + s);
-            if (x >= 1.0f)
-                x -= 1.0f;
-            if (x <= 0.0f)
-                x += 1.0f;
-        }
 
-        float y = getFocus(x);
-        if (y < 0) y = 0;
-        if (y > 1.0f) y = 1.0f;
 
-        int result = (int) Math.floor(y * s);
-        if (result == s) {
-            //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
-            result = (int) (s - 1);
-        }
-
-        return result;
-    }
-
-    /**
-     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
-     *
-     * @param x
-     * @return
-     */
-    public float getFocus(final float x) {
-        return curve.y(x);
-    }
 
 //    public static long fastRound(final double d) {
 //        if (d > 0) {

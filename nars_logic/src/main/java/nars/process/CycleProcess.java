@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
+import nars.io.in.Input;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -12,7 +13,7 @@ import java.util.Deque;
 import java.util.function.Predicate;
 
 
-/** Core implements a central reasoning component which references a set of Concepts and activates them during a memory cycle.*/
+/** a central reasoning policy that defines processes performed during and between each memory cycle.*/
 public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plugin */ {
 
 
@@ -117,5 +118,7 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
 
 
     Concept remove(Concept c);
+
+    void perceive(Input ii);
 
 }

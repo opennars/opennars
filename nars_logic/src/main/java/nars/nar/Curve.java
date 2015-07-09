@@ -18,7 +18,7 @@ import nars.term.Term;
 
 
 public class Curve extends Default {
-    public final boolean randomRemoval;
+
     public final CurveBag.BagCurve curve;
 
     public Curve() {
@@ -26,24 +26,23 @@ public class Curve extends Default {
     }
     
     public Curve(boolean randomRemoval) {
-        this(new FairPriorityProbabilityCurve(), randomRemoval);        
+        this(new CurveBag.Power6BagCurve());
     }
     
-    public Curve(CurveBag.BagCurve curve, boolean randomRemoval) {
+    public Curve(CurveBag.BagCurve curve) {
         super();
-        this.randomRemoval = randomRemoval;
         this.curve = curve;
     }
     
 
     @Override
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new CurveBag(rng, getNovelTaskBagSize(), curve, randomRemoval);
+        return new CurveBag(rng, getNovelTaskBagSize(), curve);
     }
 
     @Override
     public Bag<Term, Concept> newConceptBag() {
-        return new CurveBag(rng, getActiveConcepts(), curve, randomRemoval);
+        return new CurveBag(rng, getActiveConcepts(), curve);
         //return new AdaptiveContinuousBag<>(getConceptBagSize());
     }
 
@@ -60,8 +59,8 @@ public class Curve extends Default {
     public Concept newConcept(final Term t, Budget b, final Memory m) {
 
 
-        Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve, randomRemoval);
-        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve, randomRemoval);
+        Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve);
+        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve);
         
         return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
     }

@@ -19,17 +19,19 @@
 
 package nars.io.in;
 
+import nars.Memory;
 import nars.nal.nal8.ImmediateOperation;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
 /**
- * 
+ *
  * Provides a stream of input tasks
  *
  */
@@ -46,6 +48,21 @@ public interface Input extends Source<Task> {
     default public void stop() {
 
     }
+
+    /** supplies consumer with tasks until get() returns null */
+    default int getAll(Collection<Task> consumer, Memory m) {
+        Task t;
+
+        int i =0;
+        while (( t = get() ) != null) {
+            if (t instanceof ImmediateOperation.ImmediateTask)
+                m.input(t);
+            else if (consumer.add(t))
+                i++;
+        }
+        return i;
+    }
+
 
     /** an input that generates tasks in batches, which are stored in a buffer */
     abstract public static class BufferedInput implements Input , Consumer<Task> {

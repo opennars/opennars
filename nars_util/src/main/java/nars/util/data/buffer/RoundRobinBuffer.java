@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * Entry point for all new memory percepts
  */
-public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
+public class RoundRobinBuffer<T>  implements Consumer<Source<T>>, Supplier<T> {
 
     //protected Environment env = Environment.initializeIfEmpty().assignErrorJournal();
 
@@ -25,7 +25,7 @@ public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
     final Iterator<Source<T>> cycle;
 
 
-    public Perception() {
+    public RoundRobinBuffer() {
         in = new ConcurrentLinkedQueue<>();
         cycle = Iterators.cycle(in);
     }

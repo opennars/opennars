@@ -239,7 +239,7 @@ public class BagPerf {
                         
                 Bag[] bags = new Bag[] { 
 
-                    new CurveBag(rng, items, curve, true, new ArraySortedIndex(items)),
+                    new CurveBag(rng, items, curve, new ArraySortedIndex(items)),
                     //new CurveBag(items, curve, true, new FractalSortedItemList<>()),                
                     new LevelBag(levels, items),
                         //new FairDelayBag(..., items)

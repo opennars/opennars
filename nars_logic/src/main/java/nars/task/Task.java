@@ -671,8 +671,10 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
     @Override
-    public float getAttention() {
-        return 1.0f;
+    public int getAll(Collection<Task> consumer, Memory m) {
+        if (consumer.add(this))
+            return 1;
+        return 0;
     }
 
     @Override

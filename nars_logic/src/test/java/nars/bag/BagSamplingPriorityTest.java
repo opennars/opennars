@@ -220,7 +220,7 @@ public class BagSamplingPriorityTest {
             }) {
 
                 System.out.println("  CurveBag curve=" + c + ":  err=" +
-                                getBagError(new CurveBag(rng, capacity, c, true), iterations,
+                                getBagError(new CurveBag(rng, capacity, c), iterations,
                                         capacity, bins,
                                         distr)
                 );

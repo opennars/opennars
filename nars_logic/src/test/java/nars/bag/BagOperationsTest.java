@@ -57,7 +57,7 @@ public class BagOperationsTest {
     
     
     @Test public void testCurveBag() {
-        testBagSequence(new CurveBag(rng, 2, new CurveBag.FairPriorityProbabilityCurve(), true));
+        testBagSequence(new CurveBag(rng, 2, new CurveBag.FairPriorityProbabilityCurve()));
     }
 
     /** test with a bag of capacity 2 */

@@ -10,6 +10,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.concept.Concept;
+import nars.io.in.Input;
 import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -84,7 +85,7 @@ public class AntCore extends ConceptWaveCore {
         
         int numNew, numNovel, numConcepts = 0, other;
 
-        memory.perceiveNext(memory.param.inputsMaxPerCycle.get());
+        //memory.perceiveNext(memory.param.inputsMaxPerCycle.get());
 
         if (!tasks.isEmpty()) {
             int maxNewTasks = Math.min(tasks.size(), ants.size());
@@ -135,6 +136,11 @@ public class AntCore extends ConceptWaveCore {
     @Override
     public Concept remove(Concept c) {
         return concepts.remove(c.getTerm());
+    }
+
+    @Override
+    public void perceive(Input ii) {
+        ii.getAll(tasks, memory);
     }
 
     public boolean ensureAntsOccupyUniqueConcepts() {

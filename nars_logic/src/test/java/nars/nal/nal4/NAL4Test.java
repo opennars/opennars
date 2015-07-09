@@ -39,30 +39,30 @@ public class NAL4Test extends JavaNALTest {
         /*
         <0 --> num>. %1.00;0.90% {0 : 1}
 
-        <<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2}
+        <<$1 --> num> ==> <($1) --> num>>. %1.00;0.90% {0 : 2}
 
-        <(*,(*,(*,0))) --> num>?  {0 : 3}
+        <(((0))) --> num>?  {0 : 3}
 
         1200
 
-        ''outputMustContain('<(*,0) --> num>.')
-        ''outputMustContain('<(*,(*,0)) --> num>.')
-        ''outputMustContain('<(*,(*,(*,0))) --> num>.')
-        ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.26%')
+        ''outputMustContain('<(0) --> num>.')
+        ''outputMustContain('<((0)) --> num>.')
+        ''outputMustContain('<(((0))) --> num>.')
+        ''outputMustContain('<(((0))) --> num>. %1.00;0.26%')
         */
 
         //TextOutput.out(nar);
 
 
-        long time = 1000;
+        long time = 2000;
 
         float minConf = 0.66f;
         n.believe("<0 --> num>", 1.0f, 0.9f);
-        n.believe("<<$1 --> num> ==> <(*,$1) --> num>>", 1.0f, 0.9f);
-        n.ask("<(*,(*,(*,0))) --> num>");
-        n.mustBelieve(time, "<(*,0) --> num>", 1.0f, 1.0f, 0.81f, 1.0f);
-        n.mustBelieve(time, "<(*,(*,0)) --> num>", 1.0f, 1.0f, 0.73f, 1.0f);
-        n.mustBelieve(time, "<(*,(*,(*,0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
+        n.believe("<<$1 --> num> ==> <($1) --> num>>", 1.0f, 0.9f);
+        n.ask("<(((0))) --> num>");
+        n.mustBelieve(time, "<(0) --> num>", 1.0f, 1.0f, 0.81f, 1.0f);
+        n.mustBelieve(time, "<((0)) --> num>", 1.0f, 1.0f, 0.73f, 1.0f);
+        n.mustBelieve(time, "<(((0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
         n.run();
 
     }

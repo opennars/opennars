@@ -11,6 +11,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
+import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -48,7 +49,6 @@ public class Solid extends Default implements CycleProcess {
     ConceptActivator activator;
 
     final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new TaskComparator(TaskComparator.Merging.Or));
-    //final SortedSet<Task> tasks = new TreeSet(new TaskComparator(TaskComparator.Duplication.Or));
         /*final SortedSet<Task> tasks = new FastSortedSet(new WrapperComparatorImpl(new TaskComparator(TaskComparator.Duplication.Or))).atomic();*/
 
     int tasksAddedThisCycle = 0;
@@ -128,6 +128,11 @@ public class Solid extends Default implements CycleProcess {
     }
 
 
+    @Override
+    public void perceive(Input ii) {
+        ii.getAll(tasks, memory);
+    }
+
     protected void processNewTasks() {
         int t = 0;
         final int mt = maxTasksPerCycle;
@@ -167,7 +172,8 @@ public class Solid extends Default implements CycleProcess {
     public void cycle() {
         //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
-        memory.perceiveNext(inputsPerCycle);
+
+
 
         processNewTasks();
 

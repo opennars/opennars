@@ -81,12 +81,12 @@ public class BagIteratorTest {
     }
     @Test
     public void testCurveBagSequenceIterator() {
-        testBagIterator(new CurveBag(rng, L * 2, false));
+        testBagIterator(new CurveBag(rng, L * 2));
     }
     @Test
     public void testCurveBagRandomIterator() {
 
-        testBagIterator(new CurveBag(rng, L*2, true));
+        testBagIterator(new CurveBag(rng, L*2));
         
     }
     

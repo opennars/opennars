@@ -6,14 +6,15 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
+import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
+import nars.task.Task;
 import nars.term.Term;
+import nars.util.data.buffer.RoundRobinBuffer;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -27,14 +28,15 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
      */
     public final Bag<Term, Concept> concepts;
 
-
-    protected List<Runnable> run = new ArrayList();
+    public final RoundRobinBuffer<Task> percepts;
 
     protected Memory memory;
 
     public SequentialCycle(Bag<Term, Concept> concepts) {
 
         this.concepts = concepts;
+
+        this.percepts = new RoundRobinBuffer();
 
     }
 
@@ -91,9 +93,8 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     @Override
     public void reset(Memory m, boolean delete) {
 
-        this.memory = m;
-
-        run.clear();
+        memory = m;
+        percepts.reset();
 
         if (delete)
             concepts.delete();
@@ -102,9 +103,50 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
     }
 
+    @Override
+    public void perceive(Input perception) {
+        percepts.accept(perception);
+    }
 
     public Iterable<Concept> getConcepts() {
         return concepts.values();
+    }
+
+
+    /** attempts to perceive the next input from perception, and
+     *  handle it by immediately acting on it, or
+     *  adding it to the new tasks queue for future reasoning.
+     * @return how many tasks were generated as a result of perceiving (which can be zero), or -1 if no percept is available */
+    public int inputNextPerception() {
+        if (!memory.isInputting()) return -1;
+
+        Task t = percepts.get();
+        if (t != null)
+            return memory.input(t);
+
+        return -1;
+    }
+
+    /** attempts to perceive at most N perceptual tasks.
+     *  this allows Attention to regulate input relative to other kinds of mental activity
+     *  if N == -1, continue perceives until perception buffer is emptied
+     *  @return how many tasks perceived
+     */
+    public int inputNextPerception(int maxPercepts) {
+        //if (!perceiving()) return 0;
+
+        boolean inputEverything;
+
+        if (maxPercepts == -1) { inputEverything = true; maxPercepts = 1; }
+        else inputEverything = false;
+
+        int perceived = 0;
+        while (perceived < maxPercepts) {
+            int p = inputNextPerception();
+            if (p == -1) break;
+            else if (!inputEverything) perceived += p;
+        }
+        return perceived;
     }
 
 
