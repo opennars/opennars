@@ -37,8 +37,6 @@ import java.util.List;
  */
 public abstract class NAL implements Runnable {
 
-    private Term currentTerm;
-
     public final Memory memory;
     protected final Task currentTask;
     protected final LogicPolicy reasoner;
@@ -296,13 +294,7 @@ public abstract class NAL implements Runnable {
     /**
      * @return the currentTerm
      */
-    public Term getCurrentTerm() {
-        return currentTerm;
-    }
-
-    protected void setCurrentTerm(Term currentTerm) {
-        this.currentTerm = currentTerm;
-    }
+    abstract public Term getCurrentTerm();
 
     /* --------------- new task building --------------- */
 
@@ -392,13 +384,11 @@ public abstract class NAL implements Runnable {
         final Task currentTask = getTask();
         final Task parentTask = currentTask.getParentTask();
         if (parentTask != null) {
-            if (parentTask.getTerm() == null) {
+            final Compound parentTaskTerm = parentTask.getTerm();
+            if (parentTaskTerm == null) {
                 return null;
             }
-            if (newContent == null) {
-                return null;
-            }
-            if (newContent.equals(parentTask.getTerm())) {
+            if (parentTaskTerm.equals(newContent)) {
                 return null;
             }
         }
@@ -408,18 +398,12 @@ public abstract class NAL implements Runnable {
             return null;
 
 
-        final Sentence taskSentence = currentTask.sentence;
-
-        //final Sentence pbelief;
         final Task ptask;
-
         final Task currentBelief = getBelief();
-        if (taskSentence.isJudgment() || currentBelief == null) {
+        if (currentTask.isJudgment() || currentBelief == null) {
             ptask = currentTask;
-            //pbelief = null;
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?
-            //pbelief = null;
             ptask = currentBelief;
         }
 

@@ -1,6 +1,7 @@
 package nars.nal;
 
 import com.google.common.collect.Lists;
+import nars.Global;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Sentence;
@@ -8,7 +9,6 @@ import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.filter.DerivationFilter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,7 +29,7 @@ public class LogicPolicy {
         if (derivationFilters!=null)
             this.derivationFilters = Lists.newArrayList(derivationFilters);
         else
-            this.derivationFilters = new ArrayList();
+            this.derivationFilters = Global.newArrayList();
 
     }
 

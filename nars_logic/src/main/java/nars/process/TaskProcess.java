@@ -12,6 +12,7 @@ import nars.concept.DefaultConcept;
 import nars.meter.LogicMetrics;
 import nars.task.Task;
 import nars.term.Compound;
+import nars.term.Term;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,
@@ -61,14 +62,17 @@ public class TaskProcess extends NAL {
         
     }
 
-    protected void process(final Concept c) {
-        setCurrentTerm(currentTask.getTerm());
+    @Override
+    public final Term getCurrentTerm() {
+        return getTask().getTerm();
+    }
 
+    protected void process(final Concept c) {
         if (processConcept(c)) {
+            emit(TaskProcess.class, getTask(), this, c);
 
             c.link(currentTask);
 
-            emit(TaskProcess.class, getTask(), this, c);
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         }
     }

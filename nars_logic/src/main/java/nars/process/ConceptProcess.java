@@ -63,7 +63,7 @@ public class ConceptProcess extends NAL implements Premise {
      * @return the current Concept
      */
     @Override
-    public Concept getConcept() {
+    public final Concept getConcept() {
         return currentConcept;
     }
 
@@ -82,10 +82,12 @@ public class ConceptProcess extends NAL implements Premise {
 
     }
 
+    @Override
+    public final Term getCurrentTerm() {
+        return getConcept().getTerm();
+    }
 
     protected void processTask() {
-
-        setCurrentTerm(currentConcept.getTerm());
         setTermLink(null);
         reasoner.fire(this);
     }
