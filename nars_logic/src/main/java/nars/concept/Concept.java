@@ -144,7 +144,10 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
 
-    public TermLinkBuilder getTermLinkBuilder();
+
+
+
+     public TermLinkBuilder getTermLinkBuilder();
 
 
     public enum State {

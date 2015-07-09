@@ -344,15 +344,15 @@ public class NAR extends Container implements Runnable {
         return this;
     }
 
-    public NAR inputDirect(final TaskSeed t) {
+    public TaskProcess inputDirect(final TaskSeed t) {
         return inputDirect(t.get());
     }
 
-    /** input a task via direct TaskProcessing */
-    public NAR inputDirect(final Task t) {
+    /** input a task via direct TaskProcessing
+     * @return the TaskProcess, after it has executed (synchronously) */
+    public TaskProcess inputDirect(final Task t) {
         preprocessInput(t);
-        TaskProcess.run(this, t);
-        return this;
+        return TaskProcess.run(this, t);
     }
 
 

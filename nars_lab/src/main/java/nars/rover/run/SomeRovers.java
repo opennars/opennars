@@ -5,10 +5,14 @@ import nars.Global;
 import nars.NAR;
 import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
+import nars.io.out.TextOutput;
 import nars.nar.Default;
-import nars.task.filter.ConstantDerivationLeak;
+import nars.process.TaskProcess;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
+import nars.task.Task;
+import nars.task.TaskSeed;
+import nars.task.filter.ConstantDerivationLeak;
 
 import javax.swing.*;
 
@@ -47,14 +51,27 @@ public class SomeRovers {
                 }
 
             }.setInternalExperience(null).setActiveConcepts(1600).setClock(clock = new SimulatedClock())
-            );
+            ) {
+                @Override
+                public TaskProcess inputDirect(Task t) {
+
+                    TaskProcess tp = super.inputDirect(t);
+                    //System.out.println(tp);
+                    return tp;
+                }
+
+            };
+
+            //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
 
             nar.param.inputsMaxPerCycle.set(32);
-            nar.param.conceptsFiredPerCycle.set(64);
+            nar.param.conceptsFiredPerCycle.set(16);
+            nar.param.conceptBeliefsMax.set(24);
+            nar.param.conceptGoalsMax.set(24);
 
             int nc = 8;
             nar.setCyclesPerFrame(nc);
-            (nar.param).duration.set(5*nc);
+            (nar.param).duration.set(5);
 
             //nar.param.shortTermMemoryHistory.set(3);
 

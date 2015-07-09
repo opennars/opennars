@@ -61,8 +61,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
     public TaskSeed(Memory memory) {
         super();
-        //setOccurrenceTime(Stamp.ETERNAL);
-        //setCreationTime(memory.time());
         this.memory = memory;
     }
 
@@ -71,16 +69,16 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         this(memory);
 
         this.duration = memory.duration();
-        this.term = t;
+        this.term = t.normalized();
     }
 
-    @Deprecated
-    public TaskSeed(Memory memory, Sentence<T> t) {
-        this(memory, t.getTerm());
-        this.punc = t.punctuation;
-        this.truth = t.truth;
-        t.applyToStamp(this);
-    }
+//    @Deprecated
+//    public TaskSeed(Memory memory, Sentence<T> t) {
+//        this(memory, t.getTerm());
+//        this.punc = t.punctuation;
+//        this.truth = t.truth;
+//        t.applyToStamp(this);
+//    }
 
 
     public TaskSeed setOccurrenceTime(long occurrenceTime) {
@@ -264,7 +262,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 //    }
 
     public TaskSeed<T> term(T t) {
-        this.term = t;
+        this.term = t.normalized();
         return this;
     }
 
@@ -603,11 +601,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
     public T getTerm() {
-        final T t = this.term;
-        if (t == null) return null;
-
-        //return normalized version no matter what, and save it to prevent redundant work
-        return this.term = t.normalized();
+        return this.term;
     }
 
     public Truth getTruth() {
@@ -671,6 +665,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     public boolean temporalInductable() {
         return temporalInducatable;
     }
+
+
 
     /**
      //     * sets an amount of cycles to shift the final applied occurence time

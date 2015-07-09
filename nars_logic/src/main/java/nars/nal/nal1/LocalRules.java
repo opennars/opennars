@@ -262,12 +262,16 @@ public class LocalRules {
 
         if (belief!=inputBelief) {
             //it was either unified and/or projected:
-            belief = nal.addNewTask(nal.newTask(belief)
+            /*belief = nal.addNewTask(nal.newTask(belief.getTerm(), belief.getPunctuation())
+                            .truth(belief.getTruth())
                             .budget(budget)
-                            .parent(questionTask, questionTask.getParentBelief())
+                            .parent(belief) //.parent(questionTask, questionTask.getParentBelief())
+                            .occurr(belief.getOccurrenceTime())
+
                             .solution(belief),
                     "Adjusted Solution",
-                    true, false, false);
+                    true, false, false);*/
+            nal.memory.taskAdd(belief);
         }
         else {
             belief.accumulate(budget);

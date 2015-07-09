@@ -601,7 +601,7 @@ public final class CompositionalRules {
 
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
-        Compound content = compoundOrNull(Implication.makeTerm(state1, state2));
+        Compound content = compoundOrNull(Implication.makeTerm(state1, state2)).normalized();
         if (content == null) {
             return;
         }

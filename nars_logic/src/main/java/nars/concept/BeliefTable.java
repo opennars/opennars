@@ -192,7 +192,23 @@ public interface BeliefTable extends TaskTable {
     }
 
 
+    /** computes the truth/desire as an aggregate of projections of all
+     * beliefs to current time
+     */
+    default public float getMeanProjectedExpectation(final long time) {
+        float d = 0;
 
+        int size = size();
+        if (size == 0) return 0;
+
+        for (Task t : this) {
+            d += t.projectionTruthQuality(time, time, false) * t.truth.getExpectation();
+        }
+
+        //System.out.println(top().getTruth().getExpectation() + " " + d/size + " (" + size + ")");
+
+        return d/size;
+    }
 
     public interface Ranker extends Function<Task,Float> {
         /** returns a number producing a score or relevancy number for a given Task

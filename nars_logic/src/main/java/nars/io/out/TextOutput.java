@@ -29,7 +29,6 @@ import nars.op.io.Echo;
 import nars.task.Task;
 
 import java.io.*;
-import java.util.Arrays;
 
 /**
  * To read and write Task stream experiences in a Text (string) representation,
@@ -44,6 +43,8 @@ public class TextOutput extends Output {
     //privte boolean showStackTrace = false;
     private boolean showStamp = true;
     private boolean showInput = true;
+    private boolean showOutput = true;
+
     private float outputPriorityMin = 0;
     protected boolean enabled = true;
 
@@ -125,6 +126,9 @@ public class TextOutput extends Output {
         if (!isEnabled())
             return false;
 
+        if (!showInput && event == Events.IN.class) return false;
+        if (!showOutput && event == Events.OUT.class) return false;
+
         final String prefix = channel.getLinePrefix(event, args);
         final CharSequence s = channel.get(event, args);
 
@@ -159,6 +163,10 @@ public class TextOutput extends Output {
         return false;
     }
 
+    public void setShowOutput(boolean b) {
+        showOutput = b;
+    }
+
     public class TaskChannel extends DefaultChannel {
 
         public TaskChannel(String prefix) {
@@ -169,6 +177,8 @@ public class TextOutput extends Output {
 
         @Override
         public CharSequence get(Class c, Object[] o) {
+
+
             if (o[0] instanceof Task) {
                 Task tt = (Task)o[0];
                 if (!allowTask(tt))
@@ -228,6 +238,9 @@ public class TextOutput extends Output {
      * generates a human-readable string from an output channel and signals
      */
     public static StringBuilder getOutputString(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float outputMinPriority) {
+
+
+
         buffer.setLength(0);
 
 

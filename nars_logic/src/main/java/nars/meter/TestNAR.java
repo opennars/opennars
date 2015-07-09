@@ -13,6 +13,7 @@ import nars.task.stamp.Stamp;
 import nars.meter.condition.OutputCondition;
 import nars.meter.condition.TaskCondition;
 import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

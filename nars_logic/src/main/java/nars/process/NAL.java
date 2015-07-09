@@ -360,18 +360,12 @@ public abstract class NAL implements Runnable {
         return derived;
     }
 
-    public <T extends Compound> TaskSeed newTask(T term) {
+    public <T extends Compound> TaskSeed newTask(final T term) {
         return memory.newTask(term);
     }
 
-    public <T extends Compound> TaskSeed newTask(T term, char punc) {
-        TaskSeed<T> t = newTask(term);
-        return t.punctuation(punc);
-    }
-
-    @Deprecated
-    public <T extends Compound> TaskSeed newTask(Sentence<T> s) {
-        return new TaskSeed(memory, s);
+    public <T extends Compound> TaskSeed newTask(final T term, final char punc) {
+        return newTask(term).punctuation(punc);
     }
 
     public TaskSeed<Compound> newTask() {

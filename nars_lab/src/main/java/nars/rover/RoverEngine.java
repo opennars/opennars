@@ -28,7 +28,7 @@ public class RoverEngine extends PhysicsModel {
     boolean wraparound = false;
 
     public final List<RoverModel> rovers = new ArrayList();
-    final int angleResolution = 18;
+    final int angleResolution = 16;
 
 
     PhysicsRun phy = new PhysicsRun(30, this);
@@ -145,42 +145,53 @@ public class RoverEngine extends PhysicsModel {
         if (normalized > Math.PI) {
             normalized -= TWO_PI;
         }
+        if (normalized < 0) {
+            normalized += TWO_PI;
+        }
         return normalized;
     }
 
     public int cnt = 0;
 
-    String[] angleTerms = new String[angleResolution*2];
+    String[] angleTerms = new String[angleResolution];
 
     public String angleTerm(final float a) {
         float h = (float) normalizeAngle(a);
-        h /= MathUtils.PI;
-        int i = (int) (h * angleResolution / 2f);
+        h /= MathUtils.PI*2.0f;
+        int i = (int) (h * angleResolution / 1f);
         String t;
         final int ha = angleResolution;
 
-        if (i == 0) {
-            t = "forward";
-        } else if (i == angleResolution / 4) {
-            t = "left";
-        } else if (i == -angleResolution / 4) {
-            t = "right";
-        } else if ((i == (angleResolution / 2 - 1)) || (i == -(angleResolution / 2 - 1))) {
-            t = "reverse";
-        } else {
+//        if (i == 0) {
+//            t = "forward";
+//        } else if (i == angleResolution / 4) {
+//            t = "left";
+//        } else if (i == -angleResolution / 4) {
+//            t = "right";
+//        } else if ((i == (angleResolution / 2 - 1)) || (i == -(angleResolution / 2 - 1))) {
+//            t = "reverse";
+//        } else {
 
-            if (angleTerms[i+ha] == null) {
 
-                String s;
+            if (angleTerms[i] == null) {
+                //angleTerms[i] = "(angle," + i + ")";
 
-                if (i == 0) s = "(forward, 0)"; //center is special
-                else
-                    s = "(" + ((i < 0) ? "left" : "right") + ',' + Math.abs(i) + ")";
+                angleTerms[i] = "a" + i;
 
-                angleTerms[i+ha] = s;
+//
+//                String s;
+//
+//                if (i == 0) s = "(forward, 0)"; //center is special
+//                else {
+//                    if (i > angleResolution/2) i = -(angleResolution/2 - i);
+//                    s = "(" + ((i < 0) ? "left" : "right") + ',' + Math.abs(i) + ")";
+//                }
+//
+//                angleTerms[i+ha] = s;
             }
-            t = angleTerms[i+ha];
-        }
+
+            t = angleTerms[i];
+        //}
 
         return t;
     }

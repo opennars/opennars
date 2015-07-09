@@ -10,10 +10,11 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.clock.SimulatedClock;
 import nars.concept.Concept;
-import nars.event.CycleReaction;
+import nars.event.FrameReaction;
 import nars.io.in.ChangedTextInput;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
+import nars.process.TaskProcess;
 import nars.rover.PhysicsModel;
 import nars.rover.RoverEngine;
 import nars.rover.RoverEngine.Material;
@@ -21,13 +22,13 @@ import nars.rover.depr.RobotArm;
 import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
-import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
@@ -46,6 +47,7 @@ public class RoverModel {
 
     int mission = 0;
     public float curiosity = 0.1f;
+    int motionPeriod = 4;
 
 
     public final Body torso;
@@ -70,14 +72,14 @@ public class RoverModel {
     final double maxVisionInputProbability = 1.0f;
 
     //float tasteDistanceThreshold = 1.0f;
-    final static int retinaPixels = 32;
+    final static int retinaPixels = 16;
 
 
     int retinaRaysPerPixel = 1; //rays per vision sensor
 
     float aStep = (float)(Math.PI*2f) / retinaPixels;
 
-    float L = 35f; //vision distance
+    float L = 25f; //vision distance
 
     Vec2 mouthPoint = new Vec2(3.0f, 0); //0.5f);
     @Deprecated int distanceResolution = 10;
@@ -88,12 +90,12 @@ public class RoverModel {
     Vec2[] vertices = {new Vec2(3.0f, 0.0f), new Vec2(-1.0f, +2.0f), new Vec2(-1.0f, -2.0f)};
 
     float linearDamping = 0.9f;
-    float angularDamping = 0.1f;
+    float angularDamping = 0.6f;
 
-    float restitution = 0.01f; //bounciness
-    float friction = 0.9f;
+    float restitution = 0.9f; //bounciness
+    float friction = 0.5f;
 
-    public float linearThrustPerCycle = 20 * 0.25f;
+    public float linearThrustPerCycle = 8f;
     public float angularSpeedPerCycle = 0.44f * 0.25f;
 
 
@@ -167,7 +169,9 @@ public class RoverModel {
 
             //System.out.println(i + " " + angle + " " + eats);
 
-            VisionRay v = new VisionRay(torso, eats ? mouthPoint : new Vec2(0,0), angle, aStep, retinaRaysPerPixel, L, distanceResolution) {
+            VisionRay v = new VisionRay(torso,
+                    /*eats ?*/ mouthPoint /*: new Vec2(0,0)*/,
+                    angle, aStep, retinaRaysPerPixel, L, distanceResolution) {
 
 
                 @Override
@@ -229,13 +233,15 @@ public class RoverModel {
         }
     }
 
+
     protected void rotateRelative(float f) {
         rotate(f * angularSpeedPerCycle);
     }
 
     protected void addAxioms() {
 
-        nar.input("motor($r)! :|: %1.00;0.25%");
+        //alpha curiosity parameter
+        nar.input("motor(#r)! :|: %0.60;0.95%");
 
         //nar.input("<{left,right,forward,reverse} --> direction>.");
         //nar.input("<{wall,empty,food,poison} --> material>.");
@@ -280,14 +286,14 @@ public class RoverModel {
         public float getDesire(Concept c);
     }
 
-    public abstract static class CycleDesire extends CycleReaction {
+    public abstract static class CycleDesire extends FrameReaction {
 
         private final ConceptDesire desireFunction;
         private final Term term;
         private final NAR nar;
         transient private Concept concept;
         boolean feedbackEnabled = true;
-        float threshold = 0.5f;
+        float threshold = 0f;
 
         /** budget to apply if the concept is not active */
         private Budget remember = new Budget(0.5f, Symbols.GOAL, new DefaultTruth(1.0f, 0.9f));
@@ -303,6 +309,11 @@ public class RoverModel {
             this.term = term;
         }
 
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + "[" + concept + "]";
+        }
+
         public void setFeedback(boolean feedback) {
             this.feedbackEnabled = feedback;
         }
@@ -310,10 +321,10 @@ public class RoverModel {
         public float getDesireIfConceptMissing() { return 0; }
 
         /** @return feedback belief value, or Float.NaN to not apply it */
-        abstract float onCycle(float desire);
+        abstract float onFrame(float desire);
 
         @Override
-        public void onCycle() {
+        public void onFrame() {
 
             Concept c = getConcept();
 
@@ -321,20 +332,21 @@ public class RoverModel {
                 float d = desireFunction.getDesire(c);
 
                 if (d > threshold) {
-                    float feedback = onCycle(d);
+                    float feedback = onFrame(d);
 
                     if (feedbackEnabled && Float.isFinite(feedback))
                         nar.inputDirect(getFeedback(feedback));
                 }
             }
             else {
-                onCycle(getDesireIfConceptMissing());
+                onFrame(getDesireIfConceptMissing());
             }
 
         }
 
-        public Task getFeedback(float feedback) {
-            return nar.task((Compound)term).present().goal().truth(feedback, 0.9f).get();
+        public TaskSeed getFeedback(float feedback) {
+            //since it's expectation, using 0.99 conf is like preserving the necessary truth as was desired, if feedback = desire
+            return nar.task((Compound) term).present().belief().truth(feedback, 0.99f);
         }
 
         public Concept getConcept() {
@@ -363,7 +375,7 @@ public class RoverModel {
         private final CycleDesire negative;
 
         public float positiveDesire, negativeDesire;
-        float threshold = 0.5f;
+        float threshold = 0f;
         private NAR nar;
 
         public BiCycleDesire(String positiveTerm, String negativeTerm, ConceptDesire desireFunction, NAR n) {
@@ -371,26 +383,19 @@ public class RoverModel {
             this.positive = new CycleDesire(positiveTerm, desireFunction, n) {
 
                 @Override
-                float onCycle(final float desire) {
+                float onFrame(final float desire) {
                     positiveDesire = desire;
                     return Float.NaN;
                 }
             };
             //this will be executed directly after positive, so we put the event handler in negative
-            this.negative = new CycleDesire(positiveTerm, desireFunction, n) {
+            this.negative = new CycleDesire(negativeTerm, desireFunction, n) {
 
                 @Override
-                float onCycle(float negativeDesire) {
+                float onFrame(float negativeDesire) {
                     BiCycleDesire.this.negativeDesire = negativeDesire;
 
-                    float net = positiveDesire - negativeDesire;
-                    if (net > threshold) {
-                        boolean positive = (net > 0);
-                        if (!positive)
-                            net = -net;
-
-                        cycle(net, positive);
-                    }
+                    frame(positiveDesire, negativeDesire);
 
 
                     return Float.NaN;
@@ -399,47 +404,89 @@ public class RoverModel {
             };
         }
 
-        protected void cycle(float desire, boolean isPositive) {
+        protected void frame(final float positiveDesire, final float negativeDesire) {
 
-            final float feedback = onCycle(desire, isPositive);
+            float net = positiveDesire - negativeDesire;
+            boolean isPos = (net > 0);
+            if (!isPos)
+                net = -net;
 
-            if (Float.isFinite(feedback)) {
-                float posFeedback = 0, negFeedback = 0;
-                if (isPositive) {
-                    posFeedback = desire;
-                } else {
-                    negFeedback = desire;
+            float posFeedback = 0, negFeedback = 0;
+            if (net > threshold) {
+                final float feedback = onFrame(net, isPos);
+                if (Float.isFinite(feedback)) {
+                    if (isPos) {
+                        posFeedback = feedback;
+                        nar.inputDirect(this.positive.getFeedback(posFeedback));
+                        nar.inputDirect(this.negative.getFeedback(0));
+
+//                        //counteract the interference
+//                        negFeedback = (negativeDesire - (positiveDesire - feedback));
+//                        if (negFeedback < 0) negFeedback = 0;
+//                        Task iit = this.negative.getFeedback(negFeedback)
+//                                .goal()
+//                                .truth(negFeedback, 0.75f) //adjust confidence too
+//                                .get();
+//
+//                        nar.inputDirect(iit);
+
+                    } else {
+                        negFeedback = feedback;
+                        nar.inputDirect(this.negative.getFeedback(negFeedback));
+                        nar.inputDirect(this.positive.getFeedback(0));
+
+//                        //counteract the interference
+//                        posFeedback = (positiveDesire - (negativeDesire - feedback));
+//                        if (posFeedback < 0) posFeedback = 0;
+//                        Task iit = this.positive.getFeedback(posFeedback)
+//                                .goal()
+//                                .truth(posFeedback, 0.75f)
+//                                .get();
+//
+//                        nar.inputDirect(iit);
+
+
+                    }
                 }
-                nar.inputDirect(positive.getFeedback(posFeedback));
-                nar.inputDirect(negative.getFeedback(negFeedback));
+
             }
+
+
+
+
+
+
+
+
         }
 
-        abstract float onCycle(float desire, boolean positive);
+        abstract float onFrame(float desire, boolean positive);
 
     }
 
-    public static final ConceptDesire strongestTask = (c ->  c.getDesireExpectation() );
+    public static final ConceptDesire strongestTask = (c ->  c.getGoals().getMeanProjectedExpectation(c.time()) );
 
     protected void addMotorController() {
-        new CycleDesire("motor($r)", strongestTask, nar) {
-            @Override float onCycle(float desire) {
+        new CycleDesire("motor(#r)", strongestTask, nar) {
+            @Override float onFrame(float desire) {
                 //variable causes random movement
                 double v = Math.random();
                 if (v > desire) {
                     return Float.NaN;
                 }
                 v = Math.random();
+
+                String tr = "%1.00|" + desire + "%";
                 if (v < 0.25f) {
-                    nar.input("motor(left)! :|:");
+                    nar.inputDirect(nar.task("motor(left)! " + tr));
                 } else if (v < 0.5f) {
-                    nar.input("motor(right)! :|:");
+                    nar.inputDirect(nar.task("motor(right)! " + tr));
                 } else if (v < 0.75f) {
-                    nar.input("motor(forward)! :|:");
+                    nar.inputDirect(nar.task("motor(forward)! " + tr));
                 } else {
-                    nar.input("motor(reverse)! :|:");
+                    nar.inputDirect(nar.task("motor(reverse)! " + tr));
                 }
-                return 1f;
+                return desire;
             }
         };
 //        new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
@@ -458,8 +505,7 @@ public class RoverModel {
         new BiCycleDesire("motor(forward,SELF)", "motor(reverse,SELF)", strongestTask,nar) {
 
             @Override
-            float onCycle(float desire, boolean positive) {
-                System.out.println(desire + " " + positive);
+            float onFrame(float desire, boolean positive) {
                 if (positive) {
                     thrustRelative(desire * linearThrustPerCycle);
                 }
@@ -473,8 +519,7 @@ public class RoverModel {
         new BiCycleDesire("motor(left,SELF)", "motor(right,SELF)", strongestTask,nar) {
 
             @Override
-            float onCycle(float desire, boolean positive) {
-                System.out.println("left/right" + desire + " " + positive);
+            float onFrame(float desire, boolean positive) {
 
                 if (positive) {
                     rotateRelative(+20*desire);
@@ -585,7 +630,8 @@ public class RoverModel {
 
         addAxioms();
 
-        nar.goal("<goal --> health>", 1.00f, 0.90f);
+        nar.goal("<goal --> [health]>", 1.00f, 0.90f);
+        nar.goal("<goal --> [health]>. :|:", 0.50f, 0.99f); //reset
 
         try {
             if (mission == 0) {
@@ -593,7 +639,8 @@ public class RoverModel {
                 curiosity = 0.05f;
 
                 //nar.goal("<goal --> food>", 1.00f, 0.90f);
-                nar.input("<goal --> food>! :|:");
+                nar.input("<goal --> [food]>! :|:");
+                nar.goal("<goal --> [food]>. :|:", 0.50f, 0.99f); //reset
 
 
                 //nar.input("goal(food)! %1.00;0.99%");
@@ -606,7 +653,7 @@ public class RoverModel {
                 //rest
                 curiosity = 0;
                 nar.input("moved(0)! %1.00;0.9%");
-                nar.input("<goal --> food>! %0.00;0.9%");
+                nar.input("<goal --> [food]>! %0.00;0.9%");
             }
         }
         catch (Exception e) {
@@ -628,11 +675,11 @@ public class RoverModel {
     public void eat(Body eaten) {
         Material m = (Material)eaten.getUserData();
         if (m instanceof RoverEngine.FoodMaterial) {
-            nar.input("<goal --> food>. :|: %0.90;0.90%");
-            nar.input("<goal --> health>. :|: %0.90;0.90%");
+            nar.input("<goal --> [food]>. :|: %0.90;0.90%");
+            nar.input("<goal --> [health]>. :|: %0.90;0.90%");
         }
         else if (m instanceof RoverEngine.PoisonMaterial) {
-            nar.input("<goal --> health>. :|: %0.00;0.90%");
+            nar.input("<goal --> [health]>. :|: %0.00;0.90%");
         }
         else {
             return;
@@ -769,11 +816,12 @@ public class RoverModel {
                     rayColor.x = conceptPriority;
                     rayColor.y = conceptDurability;
                     rayColor.z = conceptQuality;
-                    float alpha = conceptPriority * conceptDurability * conceptQuality;
-
-                    rayColor.x = Math.min(rayColor.x, 1f);
-                    rayColor.y = Math.min(rayColor.y, 1f);
-                    rayColor.z = Math.min(rayColor.z, 1f);
+                    float alpha = Math.min(
+                            conceptPriority * conceptDurability * conceptQuality+0.1f,
+                    1f);
+                    rayColor.x = Math.min(rayColor.x+0.1f, 1f);
+                    rayColor.y = Math.min(rayColor.y+0.1f, 1f);
+                    rayColor.z = Math.min(rayColor.z+0.1f, 1f);
                     rayColor.x = Math.max(rayColor.x, 0f);
                     rayColor.y = Math.max(rayColor.y, 0f);
                     rayColor.z = Math.max(rayColor.z, 0f);
@@ -825,30 +873,22 @@ public class RoverModel {
 
             
             if ((hit == null) || (hitDist > 1.0f)) {
-                if (sight.set("see(empty," + angleTerm + "). :|:")) {
-
-                }
+                inputVisionFreq(hitDist, "confusion");
                 return;
             }
-
-            if (conf < 0.01f) {
-                if (sight.set("see(confusion," + angleTerm + "). :|:")) {
-
-                }
+            else if (conf < 0.01f) {
+                inputVisionFreq(hitDist, "unknown");
                 return;
+            }
+            else {
+                String material = hit.getUserData() != null ? hit.getUserData().toString() : "sth";
+                inputVisionFreq(hitDist, material);
+
             }
 
 
             
-            String material = hit.getUserData() != null ? hit.getUserData().toString() : "sth";
-            //float freq = 0.5f + 0.5f * di;
 
-
-            //String ss = inputVisionDiscrete(minDist, material);
-            String ss = inputVisionFreq(hitDist, material);
-            if (sight.set(ss)) {
-
-            }
 
         }
 
@@ -859,10 +899,11 @@ public class RoverModel {
             return "see(" + material + "," + angleTerm + "," + sdist + "). :|: %" + freq + ";" + conf + "%";
         }
 
-        private String inputVisionFreq(float dist, String material) {
-            float freq = dist;
+        private TaskProcess inputVisionFreq(float dist, String material) {
+            float freq = 0.5f + 0.5f * dist;
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            return "see(" + material + "," + angleTerm + "). :|: %" + freq + ";" + conf + "%";
+            String x = "<see_" + angleTerm + " --> [" + material + "]>. %" + freq + "|" + conf + "%";
+            return nar.inputDirect(nar.task(x));
         }
 
         public void onTouch(Body hit, float di) {
@@ -896,12 +937,12 @@ public class RoverModel {
         do_sth_importance+=decrease_of_importance_step; //increase
         nar.addInput("(^motor,random)!");
         }*/
-        if (feel_motion) {
+        if (feel_motion && sim.cnt % motionPeriod == 0) {
             feelMotion();
         }
-        if (Math.random() < curiosity) {
+        /*if (Math.random() < curiosity) {
             randomAction();
-        }
+        }*/
 
         nar.frame();
 
@@ -918,43 +959,55 @@ public class RoverModel {
     }
 
     public void rotate(float v) {
-        //torso.setAngularVelocity(v);
-        torso.applyAngularImpulse(v);
+        torso.setAngularVelocity(v);
+        //torso.applyAngularImpulse(v);
         //torso.applyTorque(torque);
     }
 
     protected void feelMotion() {
-        //radians per frame to a discretized value
+        //radians per frame to angVelocity discretized value
         float xa = torso.getAngularVelocity();
         float angleScale = 1.50f;
-        float a = (float) (Math.log(Math.abs(xa * angleScale) + 1f)) / 2f;
+        float angVelocity = (float) (Math.log(Math.abs(xa * angleScale) + 1f)) / 2f;
         float maxAngleVelocityFelt = 0.8f;
-        if (a > maxAngleVelocityFelt) {
-            a = maxAngleVelocityFelt;
+        if (angVelocity > maxAngleVelocityFelt) {
+            angVelocity = maxAngleVelocityFelt;
         }
-        if (a < 0.1) {
-            feltAngularVelocity.set("rotated(" + RoverEngine.f(0) + "). :|: %0.95;0.90%");
-            //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");
-        } else {
-            String direction;
-            if (xa < 0) {
-                direction = sim.angleTerm(-MathUtils.PI);
-            } else /*if (xa > 0)*/ {
-                direction = sim.angleTerm(+MathUtils.PI);
-            }
-            feltAngularVelocity.set("rotated(" + RoverEngine.f(a) + "," + direction + "). :|:");
-            // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
-        }
-        feltOrientation.set("oriented(" + sim.angleTerm(torso.getAngle()) + "). :|:");
+//        if (angVelocity < 0.1) {
+//            feltAngularVelocity.set("rotated(" + RoverEngine.f(0) + "). :|: %0.95;0.90%");
+//            //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");
+//        } else {
+//            String direction;
+//            if (xa < 0) {
+//                direction = sim.angleTerm(-MathUtils.PI);
+//            } else /*if (xa > 0)*/ {
+//                direction = sim.angleTerm(+MathUtils.PI);
+//            }
+//            feltAngularVelocity.set("rotated(" + RoverEngine.f(angVelocity) + "," + direction + "). :|:");
+//            // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
+//        }
+
         float lvel = torso.getLinearVelocity().length();
-        float speed = Math.abs(lvel / 20f);
-        if (speed > 0.9f) {
-            speed = 0.9f;
-        }
-        if (speed == 0)
-            feltSpeed.set("moved(0). :|:");
-        else
-            feltSpeed.set("moved(" + (lvel < 0 ? "n" : "p") +  "," + RoverEngine.f(speed) + "). :|:");
+        float linVelocity = /*Math.abs*/(lvel / 20f);
+
+
+//        feltOrientation.set("oriented(" + sim.angleTerm(torso.getAngle()) + "). :|:");
+//
+//        if (linVelocity == 0)
+//            feltSpeed.set("moved(0). :|:");
+//        else
+//            feltSpeed.set("moved(" + (lvel < 0 ? "n" : "p") +  "," + RoverEngine.f(linVelocity) + "). :|:");
+
+
+        //String motion = "<(" + RoverEngine.f(linVelocity) + ',' + sim.angleTerm(torso.getAngle()) + ',' + RoverEngine.f(angVelocity) + ") --> motion>. :|:";
+
+        nar.inputDirect(nar.task("<linvel-->[" + RoverEngine.f(linVelocity) + "]>. :|:"));
+        nar.inputDirect(nar.task("<facing-->[" + sim.angleTerm(torso.getAngle()) + "]>. :|:"));
+        nar.inputDirect(nar.task("<angvel-->[" + RoverEngine.f(angVelocity) + "]>. :|:"));
+
+        //System.out.println("  " + motion);
+        //feltSpeed.set(motion);
+
         //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         int positionWindow1 = 16;
         Vec2 currentPosition = torso.getWorldCenter();
@@ -967,7 +1020,7 @@ public class RoverModel {
             if (dist > 1.0f) {
                 dist = 1.0f;
             }
-            feltSpeedAvg.set("<(*,speed," + Rover2.f(dist) + ") --> feel" + positionWindow1 + ">. :\\:");
+            feltSpeedAvg.set("<(*,linVelocity," + Rover2.f(dist) + ") --> feel" + positionWindow1 + ">. :\\:");
         }*/
         positions.addLast(currentPosition.clone());
     }

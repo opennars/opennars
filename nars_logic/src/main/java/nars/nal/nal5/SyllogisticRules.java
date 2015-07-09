@@ -191,7 +191,7 @@ public final class SyllogisticRules {
 
 
         if ((!requiresTruth) || (truth1 != null)) {
-            Statement s = Statement.make(taskContent, term1, term2, order);
+            Statement s = Statement.make(taskContent, term1, term2, order).normalized();
             if (s != null) {
                 nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth1).budget(budget1));
                 //nal.deriveDouble(s, p, truth1, budget1, sentence1, sentence2, false, false);
@@ -199,7 +199,7 @@ public final class SyllogisticRules {
         }
 
         if ((!requiresTruth) || (truth2 != null)) {
-            Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
+            Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order)).normalized();
             if (s != null) {
                 nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth2).budget(budget2));
                 //nal.deriveDouble(s, p, truth2, budget2, sentence1, sentence2, false, false);
@@ -207,7 +207,7 @@ public final class SyllogisticRules {
         }
 
         if ((!requiresTruth) || (truth3 != null)) {
-            Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
+            Statement s = Terms.makeSymStatement(taskContent, term1, term2, order).normalized();
             if (s != null) {
                 nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth3).budget(budget3));
                 //nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
@@ -234,7 +234,7 @@ public final class SyllogisticRules {
         nal.doublePremiseTask(
             Statement.make(NativeOperator.INHERITANCE, term2, term1),
                 truth2, budget2.clone(),false, false);*/
-                Statement s2 = Similarity.make(term1, term2);
+                Statement s2 = Similarity.make(term1, term2).normalized();
                 if (s2 != null) {
                     nal.deriveDouble(nal.newTask(s2, p).parent(sentence1, sentence2)
                                     .truth(truth3)

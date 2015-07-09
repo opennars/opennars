@@ -18,7 +18,8 @@ public class ChangedTextInput  {
     }
 
     public boolean set(String s) {
-        if (allowRepeats() || (last == null) || (!last.equals(s)) && enable()) {
+        if (!enable()) return false;
+        if (allowRepeats() || (last == null) || (!last.equals(s))) {
             if (direct) {
                 Task t = nar.task(s);
                 nar.inputDirect(t);
