@@ -27,8 +27,8 @@ public class SolidTest {
         Global.DEBUG = false;
 
         final int numConcepts = 256;
-        final float leakRate = 0.5f;
-        Solid s = new Solid(1, numConcepts, 1, 2, 1, 3) {
+        final float leakRate = 0.7f;
+        Solid s = new Solid(5, numConcepts, 1, 2, 1, 3) {
 
             @Override
             protected void initDerivationFilters() {
@@ -40,7 +40,6 @@ public class SolidTest {
         };
 
         s.level(6);
-        s.setInternalExperience(null);
 
         //s.setMaxTasksPerCycle(numConcepts);
 

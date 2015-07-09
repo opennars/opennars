@@ -304,11 +304,11 @@ public final class StructuralRules {
      * @param truth The truth value of the new task
      * @param nal Reference to the memory
      */
-    private static Task structuralStatement(Term subject, Term predicate, int order, Truth truth, NAL nal) {
-        Task task = nal.getTask();
-        Term oldContent = task.getTerm();
+    private static Task structuralStatement(final Term subject, final Term predicate, final int order, final Truth truth, final NAL nal) {
+
+        final Term oldContent = nal.getTask().getTerm();
         if (oldContent instanceof Statement) {
-            Statement content = Statement.make((Statement) oldContent, subject, predicate, order);
+            Statement content = Statement.make(oldContent.operator(), subject, predicate, order);
             if (content != null) {
                 Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
                 return nal.deriveSingle(content, truth, budget);

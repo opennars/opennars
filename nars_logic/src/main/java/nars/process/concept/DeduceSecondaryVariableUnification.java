@@ -23,6 +23,7 @@ import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
@@ -39,87 +40,29 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
     //TODO decide if f.currentBelief needs to be checked for null like it was originally
 
-    //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
-    ArrayList<Term> terms_dependent = null;
-    ArrayList<Term> terms_independent = null;
-    Map<Term, Term> Values = null;
-    /*Map<Term, Term> Values2 = null;
-    Map<Term, Term> Values3 = null;
-    Map<Term, Term> Values4 = null;*/
-    Map<Term, Term> smap = null;
 
-    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, ArrayList<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
-
-        final Sentence taskSentence = task.sentence;
-
-        final int tds = terms_dependent.size();
-
-        for (int i = 0; i < tds; i++) {
-
-            final Compound result = Sentence.termOrNull(terms_dependent.get(i));
-            if (result == null) {
-                //changed this from return to continue,
-                //to allow processing terms_dependent when it has > 1 items
-                continue;
-            }
-
-            char mark = Symbols.JUDGMENT;
-            if (task.sentence.isGoal()) {
-                if (strong) {
-                    truth = desireInd(t1, t2);
-                } else {
-                    truth = desireDed(t1, t2);
-                }
-                mark = Symbols.GOAL;
-            }
-
-
-            Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
-
-
-            long occ = taskSentence.getOccurrenceTime();
-            if (!second_belief.isEternal()) {
-                occ = second_belief.getOccurrenceTime();
-            }
-
-
-            Task dummy = new Task(second_belief, budget, task, null);
-
-            nal.setCurrentBelief(task);
-
-            if (nal.derive(nal.newTask(result)
-                    .punctuation(mark)
-                    .truth(truth)
-                    .budget(budget)
-                    .parent(task, second_belief, occ), false, false, dummy, false)!=null) {
-
-
-                nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
-
-            }
-
-
-        }
-    }
-
-    /*
-    The current NAL-6 misses another way to introduce a second variable by induction:
-  IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
-  IN: <lock1 --> lock>.
-OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
-    http://code.google.com/p/open-nars/issues/detail?id=40&can=1
-    */
-
-    private static Map<Term, Term> newVariableSubstitutionMap() {
-        //TODO give appropraite size
-        return Global.newHashMap();
-    }
 
     @Override
     public final boolean apply(final ConceptProcess f, final TermLink termLink) {
         final Task task = f.getTaskLink().getTask();
 
-        // to be invoked by the corresponding links
+
+        if (task == null || task.isQuestOrQuestion()) {
+            return true;
+        }
+
+        final Term firstTerm = task.getTerm();
+
+        if (!firstTerm.hasVar()) {
+            return true;
+        }
+
+        //lets just allow conjunctions, implication and equivalence for now
+        if (!((firstTerm instanceof Disjunction || firstTerm instanceof Conjunction || firstTerm instanceof Equivalence || firstTerm instanceof Implication))) {
+            return true;
+        }
+
+
         if (dedSecondLayerVariableUnification(task, f)) {
             //unification ocurred, done reasoning in this cycle if it's judgment
             if (task.isJudgment())
@@ -128,32 +71,29 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
         return true;
     }
 
-    public boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
+    boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
 
         final Random r = nal.memory.random;
 
-        final Sentence taskSentence = task.sentence;
 
-        if (taskSentence == null || taskSentence.isQuestion() || taskSentence.isQuest()) {
-            return false;
-        }
+        //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
+        List<Term> terms_dependent = null;
+        List<Term> terms_independent = null;
+        Map<Term, Term> Values = null;
+        Map<Term, Term> smap = null;
+    /*Map<Term, Term> Values2 = null;
+    Map<Term, Term> Values3 = null;
+    Map<Term, Term> Values4 = null;*/
 
-        Term firstTerm = taskSentence.getTerm();
-
-        if (!firstTerm.hasVar()) {
-            return false;
-        }
-
-        //lets just allow conjunctions, implication and equivalence for now
-        if (!((firstTerm instanceof Disjunction || firstTerm instanceof Conjunction || firstTerm instanceof Equivalence || firstTerm instanceof Implication))) {
-            return false;
-        }
+        final Truth taskTruth = task.getTruth();
 
         final int dur = nal.memory.duration();
 
         boolean unifiedAnything = false;
 
         int remainingUnifications = 1;
+
+        final Term firstTerm = task.getTerm();
 
         for (int k = 0; k < Global.DED_SECOND_UNIFICATION_ATTEMPTS; k++) {
             Concept secondConcept = nal.memory.cycle.nextConcept(new Predicate<Concept>() {
@@ -174,19 +114,18 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 break;
             }
 
-            Term secTerm = secondConcept.getTerm();
+            final Term secTerm = secondConcept.getTerm();
 
-            Task secondConceptStrongestBelief = secondConcept.getBeliefs().top();
-            Sentence second_belief = secondConceptStrongestBelief.sentence;
+            final Task secondConceptStrongestBelief = secondConcept.getBeliefs().top();
+            final Task second_belief = secondConceptStrongestBelief;
 
             //getBeliefRandomByConfidence(task.sentence.isEternal());
 
-            Truth truthSecond = second_belief.truth;
+            final Truth truthSecond = second_belief.truth;
 
             if (terms_dependent == null) {
-                final int initialTermListSize = 8;
-                terms_dependent = new ArrayList<>(initialTermListSize);
-                terms_independent = new ArrayList<>(initialTermListSize);
+                terms_dependent = Global.newArrayList(0);
+                terms_independent = Global.newArrayList(0);
 
                 //TODO use one Map<Term, Term[]> instead of 4 Map<Term,Term> (values would be 4-element array)
                 Values = newVariableSubstitutionMap();
@@ -196,9 +135,11 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 smap = newVariableSubstitutionMap();
             }
 
-            //we have to select a random belief
-            terms_dependent.clear();
-            terms_independent.clear();
+            else {
+                //we have to select a random belief
+                terms_dependent.clear();
+                terms_independent.clear();
+            }
 
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
@@ -273,8 +214,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 }
             }
 
-            if (taskSentence.truth == null)
-                throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
+
+            if (task.truth == null)
+                throw new RuntimeException("Task sentence truth must be non-null: " + task);
 
 
 
@@ -282,17 +224,19 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             if (!terms_dependent.isEmpty()) {
                 dedSecondLayerVariableUnificationTerms(nal, task,
                         second_belief, terms_dependent,
-                        anonymousAnalogy(taskSentence.truth, truthSecond),
-                        taskSentence.truth, truthSecond, false);
+                        anonymousAnalogy(taskTruth, truthSecond),
+                        taskTruth, truthSecond, false);
             }
 
             if (!terms_independent.isEmpty()) {
                 dedSecondLayerVariableUnificationTerms(nal, task,
                         second_belief, terms_independent,
-                        deduction(taskSentence.truth, truthSecond),
-                        taskSentence.truth, truthSecond, true);
+                        deduction(taskTruth, truthSecond),
+                        taskTruth, truthSecond, true);
             }
 
+            final boolean taskIsGoal = task.isGoal();
+            final long taskOcc = task.getOccurrenceTime();
 
             final int termsIndependent = terms_independent.size();
             for (int i = 0; i < termsIndependent; i++) {
@@ -307,11 +251,12 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 Truth truth;
 
                 char mark = Symbols.JUDGMENT;
-                if (taskSentence.isGoal()) {
-                    truth = TruthFunctions.desireInd(taskSentence.truth, truthSecond);
+
+                if (taskIsGoal) {
+                    truth = TruthFunctions.desireInd(taskTruth, truthSecond);
                     mark = Symbols.GOAL;
                 } else {
-                    truth = deduction(taskSentence.truth, truthSecond);
+                    truth = deduction(taskTruth, truthSecond);
                 }
 
 
@@ -322,7 +267,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 int side = 1;
                 boolean eternal = true;
                 long time = Stamp.ETERNAL;
-                if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
+                if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.taskIsGoal()) && (!taskSentence.isQuest())) {
                     long baseTime = second_belief.getOccurrenceTime();
                     if (baseTime == Stamp.ETERNAL) {
                         baseTime = nal.time();
@@ -338,7 +283,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 //same as above?
 
-                long occ = taskSentence.getOccurrenceTime();
+                long occ = taskOcc;
                 if (!second_belief.isEternal()) {
                     occ = second_belief.getOccurrenceTime();
                 }
@@ -357,7 +302,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (null!=newTask) {
 
-                    nal.emit(Events.ConceptUnification.class, newTask, firstTerm, secondConcept, second_belief);
+                    //nal.emit(Events.ConceptUnification.class, newTask, firstTerm, secondConcept, second_belief);
                     nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
 
                     unifiedAnything = true;
@@ -375,6 +320,73 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
         }
 
         return unifiedAnything;
+    }
+
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, List<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
+
+        final Sentence taskSentence = task.sentence;
+
+        final int tds = terms_dependent.size();
+
+        for (int i = 0; i < tds; i++) {
+
+            final Compound result = Sentence.termOrNull(terms_dependent.get(i));
+            if (result == null) {
+                //changed this from return to continue,
+                //to allow processing terms_dependent when it has > 1 items
+                continue;
+            }
+
+            char mark = Symbols.JUDGMENT;
+            if (task.sentence.isGoal()) {
+                if (strong) {
+                    truth = desireInd(t1, t2);
+                } else {
+                    truth = desireDed(t1, t2);
+                }
+                mark = Symbols.GOAL;
+            }
+
+
+            Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
+
+
+            long occ = taskSentence.getOccurrenceTime();
+            if (!second_belief.isEternal()) {
+                occ = second_belief.getOccurrenceTime();
+            }
+
+
+            Task dummy = new Task(second_belief, budget, task, null);
+
+            nal.setCurrentBelief(task);
+
+            if (nal.derive(nal.newTask(result)
+                    .punctuation(mark)
+                    .truth(truth)
+                    .budget(budget)
+                    .parent(task, second_belief, occ), false, false, dummy, false)!=null) {
+
+
+                nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
+
+            }
+
+
+        }
+    }
+
+    /*
+    The current NAL-6 misses another way to introduce a second variable by induction:
+  IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
+  IN: <lock1 --> lock>.
+OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
+    http://code.google.com/p/open-nars/issues/detail?id=40&can=1
+    */
+
+    private static Map<Term, Term> newVariableSubstitutionMap() {
+        //TODO give appropraite size
+        return Global.newHashMap();
     }
 
 }

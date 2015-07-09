@@ -32,14 +32,14 @@ public class BooleanChallenge implements Reaction<Class> {
     final float freqThresh = 0.2f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
     private final double complete;
     boolean failOnError = false; //exit on the first logical error
-    private boolean correctFeedback = false;
+    private boolean correctFeedback = true;
     boolean ignoreCorrectProvided = false; //if true, scores will only be updated if the answer is was not provided or if it was incorrect (provided or not provided)
     float confThreshold = 0.01f; //confidence threshold for being counted as an answer
     float inputConf = 0.99f;
 
     public static void main(String[] args) {
         Global.DEBUG = false;
-        NAR n = new NAR(new Solid(32, 2048, 1, 2, 1, 4).setInternalExperience(null));
+        NAR n = new NAR(new Solid(32, 2048, 1, 2, 1, 7).setInternalExperience(null));
 
         //NAR n = new NAR(new Discretinuous());
         //new NARPrologMirror(n, 0.95f, true, true, false);

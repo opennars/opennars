@@ -139,9 +139,13 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @return The Statement built
      */
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
-        return make(statement.operator(), subj, pred, true, order);
+        return make(statement.operator(), subj, pred, order);
     }
 
+    /** op needs to be a Statement operator */
+    final public static Statement make(final Op o, final Term subject, final Term predicate, int order) {
+        return make(o, subject, predicate, true, order);
+    }
 
 //    /**
 //     * Override the default in making the nameStr of the current term from

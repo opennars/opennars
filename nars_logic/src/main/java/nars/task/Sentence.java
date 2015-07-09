@@ -790,4 +790,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         this.cyclic = cyclic;
     }
 
+    final public boolean isQuestOrQuestion() {
+        return isQuestion() || isQuest();
+    }
 }

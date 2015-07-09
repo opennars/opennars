@@ -315,6 +315,11 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>0.6.11</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

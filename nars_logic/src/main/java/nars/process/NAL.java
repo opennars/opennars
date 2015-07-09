@@ -300,7 +300,7 @@ public abstract class NAL implements Runnable {
         return currentTerm;
     }
 
-    public void setCurrentTerm(Term currentTerm) {
+    protected void setCurrentTerm(Term currentTerm) {
         this.currentTerm = currentTerm;
     }
 
@@ -381,7 +381,7 @@ public abstract class NAL implements Runnable {
      * @param newBudget  The budget value in task
      */
     public Task deriveSingle(Compound newContent, Truth newTruth, Budget newBudget) {
-        return deriveSingle(newContent, getTask().sentence.punctuation, newTruth, newBudget);
+        return deriveSingle(newContent, getTask().getPunctuation(), newTruth, newBudget);
     }
 
     public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
@@ -389,7 +389,8 @@ public abstract class NAL implements Runnable {
     }
 
     public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
-        Task parentTask = getTask().getParentTask();
+        final Task currentTask = getTask();
+        final Task parentTask = currentTask.getParentTask();
         if (parentTask != null) {
             if (parentTask.getTerm() == null) {
                 return null;
@@ -407,26 +408,26 @@ public abstract class NAL implements Runnable {
             return null;
 
 
-        final Sentence taskSentence = getTask().sentence;
+        final Sentence taskSentence = currentTask.sentence;
 
-        Sentence pbelief;
-        Task ptask;
+        //final Sentence pbelief;
+        final Task ptask;
 
-        if (taskSentence.isJudgment() || getBelief() == null) {
-            ptask = getTask();
-            pbelief = null;
+        final Task currentBelief = getBelief();
+        if (taskSentence.isJudgment() || currentBelief == null) {
+            ptask = currentTask;
+            //pbelief = null;
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?
-            pbelief = null;
-            ptask = getBelief();
+            //pbelief = null;
+            ptask = currentBelief;
         }
 
 
-        return deriveSingle(newTask(newContent)
-                .punctuation(punctuation)
+        return deriveSingle(newTask(newContent, punctuation)
                 .truth(newTruth)
                 .budget(newBudget, priMult, durMult)
-                .parent(ptask, pbelief));
+                .parent(ptask,null));
 
     }
 

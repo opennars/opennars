@@ -31,7 +31,7 @@ public abstract class MemoryReaction extends NARReaction {
                 Events.ConceptGoalRemove.class,
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
-                Events.ConceptUnification.class,
+                //Events.ConceptUnification.class,
                 Events.ConceptActive.class,
                 Events.PluginsChange.class,
                 Events.OUT.class,

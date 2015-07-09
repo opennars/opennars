@@ -15,7 +15,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
-import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
@@ -83,12 +83,11 @@ public class TransformTask extends ConceptFireTask {
      * S@(*, S, M)} |- <S --> (/, P, _, M)> {<S --> (/, P, _, M)>, P@(/, P, _,
      * M)} |- <(*, S, M) --> P> {<S --> (/, P, _, M)>, M@(/, P, _, M)} |- <M -->
      * (/, P, S, _)>
-     *
-     * @param inh An Inheritance statement
+     *  @param inh An Inheritance statement
      * @param oldContent The whole content
      * @param indices The indices of the TaskLink
      */
-    public static void transformProductImage(Inheritance inh, Compound oldContent, short[] indices, NAL nal) {
+    public static Task transformProductImage(final Inheritance inh, final Compound oldContent, final short[] indices, final NAL nal) {
         Term subject = inh.getSubject();
         Term predicate = inh.getPredicate();
         if (inh.equals(oldContent)) {
@@ -98,14 +97,14 @@ public class TransformTask extends ConceptFireTask {
             if (predicate instanceof Compound) {
                 transformPredicatePI(subject, (Compound) predicate, nal);
             }
-            return;
+            return null;
         }
         short index = indices[indices.length - 1];
         short side = indices[indices.length - 2];
 
         Term compT = inh.term[side];
         if (!(compT instanceof Compound))
-            return;
+            return null;
         Compound comp = (Compound)compT;
 
         if (comp.term.length <= index) {
@@ -139,18 +138,18 @@ public class TransformTask extends ConceptFireTask {
                 predicate = cti;
             }
         } else {
-            return;
+            return null;
         }
 
         Inheritance newInh = Inheritance.make(subject, predicate);
         if (newInh == null)
-            return;
+            return null;
 
         Compound content = null;
         if (indices.length == 2) {
             content = newInh;
         } else if ((oldContent instanceof Statement) && (indices[0] == 1)) {
-            content = Statement.make((Statement) oldContent, oldContent.term[0], newInh, oldContent.getTemporalOrder());
+            content = Statement.make(oldContent.operator(), oldContent.term[0], newInh, oldContent.getTemporalOrder());
         } else {
             Term[] componentList;
             Term condition = oldContent.term[0];
@@ -158,7 +157,7 @@ public class TransformTask extends ConceptFireTask {
                 componentList = ((Compound) condition).cloneTermsDeepIfContainingVariables(); //cloneTerms();
                 componentList[indices[1]] = newInh;
                 Term newCond = Memory.term((Compound) condition, componentList);
-                content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
+                content = Statement.make(oldContent.operator(), newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
             } else {
 
                 componentList = oldContent.cloneTermsDeepIfContainingVariables(); //oldContent.cloneTerms();
@@ -166,27 +165,27 @@ public class TransformTask extends ConceptFireTask {
                 if (oldContent instanceof Conjunction) {
                     Term newContent = Memory.term(oldContent, componentList);
                     if (!(newContent instanceof Compound))
-                        return;
+                        return null;
                     content = (Compound)newContent;
                 } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
-                    content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder());
+                    content = Statement.make(oldContent.operator(), componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
             }
         }
 
         if (content == null)
-            return;
+            return null;
 
-        Sentence sentence = nal.getTask().sentence;
-        Truth truth = sentence.truth;
-        Budget budget;
-        if (sentence.isQuestion() || sentence.isQuest()) {
+        final Task currentTask = nal.getTask();
+        final Truth truth = currentTask.truth;
+        final Budget budget;
+        if (currentTask.isQuestOrQuestion()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
 
-        nal.deriveSingle(content, truth, budget);
+        return nal.deriveSingle(content, truth, budget);
     }
 
     /**

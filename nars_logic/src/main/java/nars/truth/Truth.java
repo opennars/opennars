@@ -28,7 +28,6 @@ import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serializable;
 
@@ -97,7 +96,7 @@ abstract public interface Truth extends MetaTruth<Float> {
      * @return The absolute difference
      */
     default public float getExpDifAbs(final Truth t) {
-        return FastMath.abs(getExpectation() - t.getExpectation());
+        return Math.abs(getExpectation() - t.getExpectation());
     }
 
     /**

@@ -51,6 +51,7 @@ public class ConceptProcess extends NAL implements Premise {
 
         this.currentTaskLink = taskLink;
         this.currentConcept = concept;
+
         this.termLinksToFire = termLinkCount;
 
 
