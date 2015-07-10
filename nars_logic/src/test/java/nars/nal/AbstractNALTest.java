@@ -6,7 +6,7 @@ import nars.NAR;
 import nars.NARSeed;
 import nars.analyze.NALysis;
 import nars.meter.condition.CountDerivationCondition;
-import nars.meter.CountOutputEvents;
+import nars.meter.CountIOEvents;
 import nars.io.JSONOutput;
 import nars.io.in.LibraryInput;
 import nars.task.Task;
@@ -79,7 +79,7 @@ abstract public class AbstractNALTest extends TestCase {
     }
 
 
-    public static CountOutputEvents eventCounter;
+    public static CountIOEvents eventCounter;
     public static CountDerivationCondition deriveMethodCounter;
 
 

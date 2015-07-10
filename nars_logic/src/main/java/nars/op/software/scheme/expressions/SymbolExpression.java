@@ -1,13 +1,16 @@
 package nars.op.software.scheme.expressions;
 
 
-public class SymbolExpression implements Expression {
+import nars.term.Atom;
+import nars.util.utf8.Utf8;
+
+public class SymbolExpression extends Atom implements Expression {
 
 
-    public final String value;
+    //public final String value;
 
     public SymbolExpression(String value) {
-        this.value = value;
+        super(value);
     }
 
     public static SymbolExpression symbol(String s) {
@@ -15,21 +18,22 @@ public class SymbolExpression implements Expression {
     }
 
     @Override
-    public boolean equals(Object o) {
-        return getClass() == o.getClass() && value.equals(((SymbolExpression) o).value);
+    public boolean equals(final Object o) {
+        return getClass() == o.getClass() &&
+                Utf8.equals2(bytes(), ((SymbolExpression) o).bytes());
     }
 
-    @Override
+    /*@Override
     public int hashCode() {
         return value.hashCode();
-    }
+    }*/
 
-    public String toString() {
+    /*public String toString() {
         return String.format("symbol(%s)", value);
-    }
+    }*/
 
     @Override
     public String print() {
-        return value;
+        return toString();
     }
 }

@@ -54,7 +54,7 @@ public class EvaluatorTest {
         Expression result = Evaluator.evaluate(exp, environment);
 
         assertThat(result, is(Expression.none()));
-        assertThat(environment.lookup(symbol("foo")), is(number(321)));
+        assertThat(environment.get(symbol("foo")), is(number(321)));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class EvaluatorTest {
         Expression result = Evaluator.evaluate(exp, environment);
 
         assertThat(result, is(Expression.none()));
-        assertThat(environment.lookup(symbol("foo")), is(symbol("bar")));
+        assertThat(environment.get(symbol("foo")), is(symbol("bar")));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class EvaluatorTest {
 
         Evaluator.evaluate(exp, environment);
 
-        Expression value = environment.lookup(symbol("foo"));
+        Expression value = environment.get(symbol("foo"));
         assertThat(value instanceof ProcedureExpression, is(true));
     }
 

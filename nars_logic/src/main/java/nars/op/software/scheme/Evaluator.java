@@ -22,7 +22,7 @@ public class Evaluator {
         if (isSelfEvaluating(exp)) {
             return e -> exp;
         } else if (exp.isSymbol()) {
-            return env -> env.lookup(exp.symbol());
+            return env -> env.get(exp.symbol());
         } else if (isSpecialForm(exp)) {
             return analyzeSpecialForm(exp.list());
         } else if (isFunctionCall(exp)) {
@@ -34,7 +34,9 @@ public class Evaluator {
 
     private static Function<Environment, Expression> analyzeSpecialForm(ListExpression exp) {
         Cons<Expression> exps = exp.value;
-        switch (exps.car().symbol().value) {
+
+        //TODO use an enum of these operators already decoded to byte[] so that symbols dont need to re-generate a String version
+        switch (exps.car().symbol().toString()) {
             case "quote":
                 return analyzeQuote(exps);
             case "set!":
@@ -116,7 +118,7 @@ public class Evaluator {
             Cons<Expression> list = map.stream()
                     .map(e -> e.apply(env))
                     .collect(Cons.collector());
-            return list.car().procedure().lambda.apply(list.cdr());
+            return list.car().procedure().apply(list.cdr());
         };
     }
 
@@ -128,7 +130,7 @@ public class Evaluator {
             Cons<Expression> letParams = letBindingValues.stream()
                     .map(a -> a.apply(env))
                     .collect(Cons.collector());
-            return letBody.apply(env).procedure().lambda.apply(letParams);
+            return letBody.apply(env).procedure().apply(letParams);
         };
     }
 

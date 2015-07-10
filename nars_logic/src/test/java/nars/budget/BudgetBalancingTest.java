@@ -3,7 +3,7 @@ package nars.budget;
 import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.NARSeed;
-import nars.meter.CountOutputEvents;
+import nars.meter.CountIOEvents;
 import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
@@ -77,7 +77,7 @@ public class BudgetBalancingTest {
          */
         NAR n = new NAR(d);
 
-        CountOutputEvents counts = new CountOutputEvents(n);
+        CountIOEvents counts = new CountIOEvents(n);
 
         //TextOutput.out(n);
 

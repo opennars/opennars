@@ -131,6 +131,6 @@ public class DefaultEnvironmentTest {
     }
 
     private Function<Cons<Expression>, Expression> lookupFunction(String operator) {
-        return DefaultEnvironment.newInstance().lookup(symbol(operator)).procedure().lambda;
+        return DefaultEnvironment.newInstance().get(symbol(operator)).procedure()/*.getLambda()*/;
     }
 }

@@ -6,12 +6,12 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 import nars.NAR;
-import nars.io.out.TextOutput;
+import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nar.Default;
 import nars.term.Atom;
 import nars.term.Term;
 
@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -29,14 +30,18 @@ import java.util.stream.Collectors;
  * <p>
  * http://bytebuddy.net/#/tutorial
  */
-public class NALObjectBuilder implements MethodHandler {
+public class NALObjects implements MethodHandler {
 
     private final NAR nar;
     final MutableMap<Class, ProxyFactory> proxyCache = new UnifiedMap().asSynchronized();
     final Map<Object, Term> instances = new com.google.common.collect.MapMaker()
             .concurrencyLevel(4).weakKeys().makeMap();
 
-    public NALObjectBuilder(NAR n) {
+
+    final static Atom VOID = Atom.the("void");
+    final static Atom NULL = Atom.the("null");
+
+    public NALObjects(NAR n) {
         this.nar = n;
     }
 
@@ -62,27 +67,52 @@ public class NALObjectBuilder implements MethodHandler {
             effect = termize(result);
         }
         else {
-            effect = Atom.the("void");
+            effect = VOID;
         }
 
-        nar.believe(Implication.make(cause, effect, TemporalRules.ORDER_FORWARD));
+        nar.believe(Implication.make(cause, effect, TemporalRules.ORDER_FORWARD),
+                Tense.Present,
+                1f, 0.9f
+        );
         return result;
     }
 
     public Term termize(Object o) {
+        if (o == null) return NULL;
+        if (o instanceof String) {
+            return Atom.the((String)o, true);
+        }
+        else if (o  instanceof Number) {
+            return Atom.the((Number)o);
+        }
         if (o instanceof Object[]) {
             return Product.make(
                     Arrays.stream((Object[])o).map(e -> termize(e)).collect(Collectors.toList())
             );
         }
-        else if (o instanceof Collection) {
+        else if (o instanceof Iterable) {
             return Product.make(
                     (Collection<Term>) ((Collection) o).stream().map(e -> termize(e)).collect(Collectors.toList())
             );
+        /*} else if (o instanceof Stream) {
+            return Atom.quote(o.toString().substring(17));
+        }*/
         }
 
-        return Atom.quote(o.toString());
+        String cname = o.getClass().toString().substring(6) /* "class " */;
+        int slice = cname.length();
+
+        String instanceName = o.toString();
+        if (instanceName.length() > slice)
+            instanceName = instanceName.substring(slice);
+
+        return Instance.make(Atom.quote(instanceName), Atom.quote(cname));
+
+
+        //return Atom.quote(o.toString());
     }
+
+
 
 //    //TODO use a generic Consumer<Task> for recipient/recipients of these
 //    public final NAR nar;
@@ -100,26 +130,11 @@ public class NALObjectBuilder implements MethodHandler {
 //        return this;
 //    }
 //
-    public static class TestClass {
-
-        public double the() {
-            return Math.random();
-        }
-
-        public void noParamMethodReturningVoid() {
-            //System.out.println("base call");
-            //return Math.random();
-        }
-
-        public float multiply(float a, float b) {
-            return a * b;
-        }
-    }
-
 
 
     /** the id will be the atom term label for the created instance */
     public <T> T build(String id, Class<T> classs) throws Exception {
+
 
         ProxyFactory factory = proxyCache.getIfAbsentPut(classs, () -> new ProxyFactory());
         factory.setSuperclass(classs);
@@ -135,44 +150,5 @@ public class NALObjectBuilder implements MethodHandler {
         return (T) instance;
     }
 
-    public static void main(String[] args) throws Exception {
 
-        NAR n = new NAR(new Default());
-        TextOutput.out(n);
-
-        TestClass tc = new NALObjectBuilder(n).build("myJavaObject", TestClass.class);
-
-        tc.noParamMethodReturningVoid();
-        tc.multiply(2, 3);
-        tc.the();
-        tc.the();
-        tc.the();
-
-        n.frame(4);
-
-
-        //----
-
-//        Environment e = new NALObjectBuilder(n).build("scheme", Environment.class);
-//
-//
-//        new Thread( () -> { Repl.repl(System.in, System.out, e); } ).start();
-//
-//        while (true) {
-//            n.frame(10);
-//            Thread.sleep(500);
-//        }
-//
-
-
-//        Class derivedClass = new NALObject().add(new TestHandler()).connect(TestClass.class, n);
-//
-//        System.out.println(derivedClass);
-//
-//        Object x = derivedClass.newInstance();
-//
-//        System.out.println(x);
-//
-//        ((TestClass)x).callable();
-    }
 }

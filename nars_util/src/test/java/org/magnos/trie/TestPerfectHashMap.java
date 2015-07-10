@@ -16,9 +16,9 @@
 
 package org.magnos.trie;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 
 public class TestPerfectHashMap

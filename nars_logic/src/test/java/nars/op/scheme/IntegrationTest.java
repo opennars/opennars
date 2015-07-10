@@ -87,7 +87,7 @@ public class IntegrationTest {
     @Test
     public void unexpected_expression() {
         thrown.expect(UnexpectedExpression.class);
-        thrown.expectMessage("Expected expression of type 'ListExpression', got 'symbol(a)'");
+        thrown.expectMessage("Expected expression of type 'ListExpression', got 'a'");
 
         eval("(lambda a b)");
     }

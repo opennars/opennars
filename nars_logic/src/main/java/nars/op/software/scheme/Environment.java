@@ -6,7 +6,10 @@ import nars.op.software.scheme.expressions.Expression;
 import nars.op.software.scheme.expressions.SymbolExpression;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class Environment {
@@ -31,13 +34,13 @@ public class Environment {
     }
 
 
-    public Expression lookup(SymbolExpression symbol) {
+    public Expression get(final SymbolExpression symbol) {
         if (bindings.containsKey(symbol)) {
             return bindings.get(symbol);
         } else if (enclosingEnvironment != null) {
-            return enclosingEnvironment.lookup(symbol);
+            return enclosingEnvironment.get(symbol);
         }
-        throw new VariableNotDefinedException(symbol.value);
+        throw new VariableNotDefinedException(symbol.toString());
     }
 
     public void set(SymbolExpression symbol, Expression value) {
@@ -46,7 +49,7 @@ public class Environment {
         } else if (enclosingEnvironment != null) {
             enclosingEnvironment.set(symbol, value);
         } else {
-            throw new VariableNotDefinedException(symbol.value);
+            throw new VariableNotDefinedException(symbol.toString());
         }
     }
 
@@ -78,4 +81,20 @@ public class Environment {
         result = 31 * result + (enclosingEnvironment != null ? enclosingEnvironment.hashCode() : 0);
         return result;
     }
+
+    public Stream<Expression> evalStream(String input) {
+        List<Expression> read = Reader.read(input);
+        return eval(read);
+
+    }
+
+    public Stream<Expression> eval(List<Expression> exprs) {
+        return exprs.stream().map(e -> Evaluator.evaluate(e, this));
+    }
+
+    public List<Expression> eval(String input) {
+        return evalStream(input).collect(Collectors.toList());
+    }
+
+
 }

@@ -3,13 +3,14 @@ package nars.op.software.scheme.expressions;
 
 import nars.op.software.scheme.cons.Cons;
 
+import java.lang.invoke.SerializedLambda;
 import java.util.function.Function;
 
-public class ProcedureExpression implements Expression {
+public class ProcedureExpression implements Expression, Function<Cons<Expression>, Expression> {
 
-    public final Function<Cons<Expression>, Expression> lambda;
+    final Function<Cons<Expression>, Expression> lambda;
 
-    public ProcedureExpression(Function<Cons<Expression>, Expression> lambda) {
+    protected ProcedureExpression(Function<Cons<Expression>, Expression> lambda) {
         this.lambda = lambda;
     }
 
@@ -27,8 +28,21 @@ public class ProcedureExpression implements Expression {
         return lambda.hashCode();
     }
 
+
     @Override
     public String print() {
-        return "#<Procedure>";
+        return "Procedure<" + lambda + '>';
     }
+
+    @Override
+    public String toString() {
+        return print();
+    }
+
+
+    @Override
+    public Expression apply(Cons<Expression> expressions) {
+        return lambda.apply(expressions);
+    }
+
 }

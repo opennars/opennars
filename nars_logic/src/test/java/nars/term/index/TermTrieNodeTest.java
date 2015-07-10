@@ -5,9 +5,6 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nar.Default;
 import nars.term.Term;
-import org.ardverk.collection.PatriciaTrie;
-import org.ardverk.collection.StringKeyAnalyzer;
-import org.ardverk.collection.TrieEntry;
 import org.junit.Test;
 import org.magnos.trie.Trie;
 import org.magnos.trie.TrieMatch;
@@ -50,26 +47,26 @@ public class TermTrieNodeTest  {
 
         assertEquals("0", mapper.get(t(terms[0]).bytes()));
     }
-
-    @Test
-    public void testPatriciaTree() {
-        //https://code.google.com/p/patricia-trie/wiki/Examples
-        // Trie of First Name -> Person
-        PatriciaTrie<String, Integer> trie = new PatriciaTrie<String, Integer>(StringKeyAnalyzer.INSTANCE);
-        trie.put("<a --> b>", 1);
-        trie.put("<a --> c>", 2);
-        trie.put("<a --> <b --> d>>", 3);
-        trie.put("<a --> <b --> c>>", 4);
-
-
-// Returns Alex
-        TrieEntry<String, Integer> entry = trie.select("Al");
-        //System.out.println(entry);
-
-        //System.out.println(trie.toString());
-
-        //trie.print(System.out);
-    }
+//
+//    @Test
+//    public void testPatriciaTree() {
+//        //https://code.google.com/p/patricia-trie/wiki/Examples
+//        // Trie of First Name -> Person
+//        PatriciaTrie<String, Integer> trie = new PatriciaTrie<String, Integer>(StringKeyAnalyzer.INSTANCE);
+//        trie.put("<a --> b>", 1);
+//        trie.put("<a --> c>", 2);
+//        trie.put("<a --> <b --> d>>", 3);
+//        trie.put("<a --> <b --> c>>", 4);
+//
+//
+//// Returns Alex
+//        TrieEntry<String, Integer> entry = trie.select("Al");
+//        //System.out.println(entry);
+//
+//        //System.out.println(trie.toString());
+//
+//        //trie.print(System.out);
+//    }
 
 //    @Test @Ignore
 //    public void testInsertionAndRemoval() {

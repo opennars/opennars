@@ -72,7 +72,7 @@ public class DefaultEnvironment {
             .put(symbol("null?"),
                     procedure(args -> bool(args.car().isList() && args.car().list().value.isEmpty())))
             .put(symbol("apply"),
-                    procedure(args -> args.car().procedure().lambda.apply(args.cadr().list().value)))
+                    procedure(args -> args.car().procedure().apply(args.cadr().list().value)))
             .put(symbol("car"),
                     procedure(args -> args.car().list().value.car()))
             .put(symbol("cdr"),

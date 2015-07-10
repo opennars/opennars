@@ -12,18 +12,18 @@ import java.util.Map;
 /**
 * Created by me on 2/10/15.
 */
-public class CountOutputEvents extends NARReaction {
+public class CountIOEvents extends NARReaction {
 
 //        public static final DoubleMeter numIn = new DoubleMeter("IN");
 //        public static final DoubleMeter numOut = new DoubleMeter("OUT");
 
     final Map<Class, HitMeter> eventMeters = new HashMap();
 
-    public CountOutputEvents(NAR n) {
+    public CountIOEvents(NAR n) {
         this(n, null);
     }
 
-    public CountOutputEvents(NAR n, Metrics m) {
+    public CountIOEvents(NAR n, Metrics m) {
         super(n, ev);
 
         for (Class c : getEvents()) {
