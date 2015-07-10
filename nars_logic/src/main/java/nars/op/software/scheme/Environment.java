@@ -5,6 +5,7 @@ import nars.op.software.scheme.exception.VariableNotDefinedException;
 import nars.op.software.scheme.expressions.Expression;
 import nars.op.software.scheme.expressions.SymbolExpression;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -19,6 +20,10 @@ public class Environment {
 
     public Environment(Map<SymbolExpression, Expression> bindings) {
         this(bindings, null);
+    }
+
+    public Environment() {
+        this(new HashMap<>(DefaultEnvironment.PRIMITIVES));
     }
 
     public Environment extend(Map<SymbolExpression, Expression> bindings) {

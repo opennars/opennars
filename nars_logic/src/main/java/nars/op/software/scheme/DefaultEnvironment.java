@@ -29,7 +29,7 @@ import static nars.op.software.scheme.expressions.SymbolExpression.symbol;
 
 
 public class DefaultEnvironment {
-    private static final ImmutableMap<SymbolExpression, Expression> PRIMITIVES = ImmutableMap.<SymbolExpression, Expression>builder()
+    public static final ImmutableMap<SymbolExpression, Expression> PRIMITIVES = ImmutableMap.<SymbolExpression, Expression>builder()
             .put(symbol("+"),
                     procedure(args -> longFunction(args, (a, b) -> a + b)))
             .put(symbol("-"),

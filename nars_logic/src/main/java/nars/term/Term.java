@@ -178,11 +178,11 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
     default public void append(Writer w, boolean pretty) throws IOException {
-        try {
+        //try {
             name().append(w, pretty);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     default public StringBuilder toStringBuilder(boolean pretty) {

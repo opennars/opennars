@@ -511,12 +511,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     } */
 
 
-
-
-    protected boolean requiresNormalization() {
-        return (hasVar() && !isNormalized());
-    }
-
     @Override
     public <T extends Term> T normalized() {
         return normalized(false);
@@ -531,9 +525,9 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * Normalizes if contain variables which need to be finalized for use in a Sentence
      * May return null if the resulting compound term is invalid
      */
-    protected <T extends Term> T normalized(boolean destructive) {
+    protected <T extends Term> T normalized(final boolean destructive) {
 
-        if (!requiresNormalization()) return (T) this;
+        if (!(hasVar() && !isNormalized())) return (T) this;
 
         VariableNormalization vn = new VariableNormalization(this, destructive);
         Compound result = vn.getResult();

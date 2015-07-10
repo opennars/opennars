@@ -83,7 +83,7 @@ public class Solid extends Default implements CycleProcess {
         //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
-        concepts = new LevelBag(100, activeConcepts);
+        concepts = new LevelBag(64, activeConcepts);
     }
 
     @Override

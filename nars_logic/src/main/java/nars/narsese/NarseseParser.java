@@ -930,7 +930,7 @@ public class NarseseParser extends BaseParser<Object> {
             r = singleTaskParser.run(input);
         }
         catch (Throwable ge) {
-            ge.printStackTrace();
+            //ge.printStackTrace();
             throw new InvalidInputException(ge.toString() + " " + ge.getCause() + ": parsing: " + input);
         }
 

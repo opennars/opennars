@@ -41,8 +41,8 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         Global.DEBUG = false;
 
         final int threads = 2;
-        final int individuals = 25;
-        final int cycles = 750;
+        final int individuals = 55;
+        final int cycles = 1550;
 
         Civilization c = new OptimizeLeakGenetic3(threads, individuals, cycles);
         c.run(10000);
@@ -50,7 +50,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
     @Override
     public List<Node> getOperators(RandomSequence random) {
-        List<Node> l = new ArrayList();
+        List<Node> l = Global.newArrayList();
 
         l.add( new DoubleERC(random, -1.0, 2.0, 2));
 
@@ -64,7 +64,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         l.add(new Max2());
         l.add(new Absolute());
 
-        l.add(new HyperbolicTangent());
+        //l.add(new HyperbolicTangent());
 
         LibraryGoal prototype = new LibraryGoal();
         for (Variable v : prototype.var)

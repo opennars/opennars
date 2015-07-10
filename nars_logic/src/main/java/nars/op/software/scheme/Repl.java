@@ -17,6 +17,10 @@ public class Repl {
     }
 
     private static void repl(InputStream in, PrintStream out) {
+        repl(in, out, ENV);
+    }
+
+    public static void repl(InputStream in, PrintStream out, Environment env) {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 
         String input = "";
@@ -30,7 +34,7 @@ public class Repl {
                 input += l;
                 if (completeExpression(input)) {
                     Reader.read(input).stream()
-                            .forEach(e -> out.print(print(Evaluator.evaluate(e, ENV))));
+                            .forEach(e -> out.print(print(Evaluator.evaluate(e, env))));
 
                     input = "";
                 }

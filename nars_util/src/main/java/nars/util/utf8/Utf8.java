@@ -19,13 +19,19 @@ import java.util.Arrays;
 public class Utf8 implements CharSequence, Comparable<Utf8> {
 
     public static final Charset utf8Charset = Charset.forName("UTF-8");
-    final static CharsetEncoder utf8Encoder = ThreadLocalCoders.encoderFor(utf8Charset)
-            .onMalformedInput(CodingErrorAction.REPLACE)
-            .onUnmappableCharacter(CodingErrorAction.IGNORE);
-    final static CharsetDecoder utf8Decoder = ThreadLocalCoders.decoderFor(utf8Charset)
-            .onMalformedInput(CodingErrorAction.REPLACE)
-            .onUnmappableCharacter(CodingErrorAction.REPLACE);
+//    final static CharsetEncoder utf8Encoder = ThreadLocalCoders.encoderFor(utf8Charset)
+//            .onMalformedInput(CodingErrorAction.REPLACE)
+//            .onUnmappableCharacter(CodingErrorAction.IGNORE);
+//    final static CharsetDecoder utf8Decoder = ThreadLocalCoders.decoderFor(utf8Charset)
+//            .onMalformedInput(CodingErrorAction.REPLACE)
+//            .onUnmappableCharacter(CodingErrorAction.REPLACE);
 
+    public static CharsetEncoder utf8Encoder() {
+        return ThreadLocalCoders.encoderFor(utf8Charset);
+    }
+    public static CharsetDecoder utf8Decoder() {
+        return ThreadLocalCoders.decoderFor(utf8Charset);
+    }
 
     final byte[] bytes;
     final int start;
@@ -62,11 +68,12 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
      * which creates an unnecessary duplicate of the decode buffer
      */
     public static char[] fromUtf8ToChars(final byte[] bytes, final int length) {
-        utf8Decoder.reset();
+        final CharsetDecoder uu = utf8Decoder();
+        uu.reset();
         try {
-            int n = (int)(length * utf8Decoder.averageCharsPerByte());
+            int n = (int)(length * uu.averageCharsPerByte());
             CharBuffer d = CharBuffer.allocate(n);
-            utf8Decoder.decode(ByteBuffer.wrap(bytes, 0, length), d, true);
+            uu.decode(ByteBuffer.wrap(bytes, 0, length), d, true);
             return trim(d);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -130,9 +137,10 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
     }
 
     public static final byte[] toUtf8(final CharBuffer c) {
-        utf8Encoder.reset();
+        CharsetEncoder uu = utf8Encoder();
+        uu.reset();
         try {
-            ByteBuffer e = utf8Encoder.encode(c);
+            ByteBuffer e = uu.encode(c);
             return trim(e);
         } catch (CharacterCodingException e) {
             throw new RuntimeException(e);

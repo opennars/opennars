@@ -17,7 +17,9 @@ import nars.term.Term;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,16 +45,13 @@ public class NALObjectBuilder implements MethodHandler {
      *  and input them to the NAL in narsese.
      */
     @Override
-    public Object invoke(Object self, Method overridden, Method forwarder,
+    public Object invoke(Object object, Method overridden, Method forwarder,
                          Object[] args) throws Throwable {
 
-        System.out.println("do something " + overridden.getName() + " " + Arrays.toString(args));
+        Object result = forwarder.invoke(object, args);
 
-
-        Object result = forwarder.invoke(self, args);
-
-        Term instance = instances.get(self);
-        Term argterm = Atom.quote(Arrays.toString(args));
+        Term instance = instances.get(object);
+        Term argterm = termize(args);
 
         Term effect;
 
@@ -60,7 +59,7 @@ public class NALObjectBuilder implements MethodHandler {
                 Product.make(instance, argterm));
 
         if (result!=null) {
-            effect = Atom.quote(result.toString());
+            effect = termize(result);
         }
         else {
             effect = Atom.the("void");
@@ -68,6 +67,21 @@ public class NALObjectBuilder implements MethodHandler {
 
         nar.believe(Implication.make(cause, effect, TemporalRules.ORDER_FORWARD));
         return result;
+    }
+
+    public Term termize(Object o) {
+        if (o instanceof Object[]) {
+            return Product.make(
+                    Arrays.stream((Object[])o).map(e -> termize(e)).collect(Collectors.toList())
+            );
+        }
+        else if (o instanceof Collection) {
+            return Product.make(
+                    (Collection<Term>) ((Collection) o).stream().map(e -> termize(e)).collect(Collectors.toList())
+            );
+        }
+
+        return Atom.quote(o.toString());
     }
 
 //    //TODO use a generic Consumer<Task> for recipient/recipients of these
@@ -88,17 +102,17 @@ public class NALObjectBuilder implements MethodHandler {
 //
     public static class TestClass {
 
-        public void set(double x) {
-
+        public double the() {
+            return Math.random();
         }
 
-        public void callable() {
-            System.out.println("base call");
+        public void noParamMethodReturningVoid() {
+            //System.out.println("base call");
             //return Math.random();
         }
 
-        public float function(int i) {
-            return (float)(i * Math.PI);
+        public float multiply(float a, float b) {
+            return a * b;
         }
     }
 
@@ -128,11 +142,27 @@ public class NALObjectBuilder implements MethodHandler {
 
         TestClass tc = new NALObjectBuilder(n).build("myJavaObject", TestClass.class);
 
-        tc.callable();
-        tc.function(1);
+        tc.noParamMethodReturningVoid();
+        tc.multiply(2, 3);
+        tc.the();
+        tc.the();
+        tc.the();
 
         n.frame(4);
 
+
+        //----
+
+//        Environment e = new NALObjectBuilder(n).build("scheme", Environment.class);
+//
+//
+//        new Thread( () -> { Repl.repl(System.in, System.out, e); } ).start();
+//
+//        while (true) {
+//            n.frame(10);
+//            Thread.sleep(500);
+//        }
+//
 
 
 //        Class derivedClass = new NALObject().add(new TestHandler()).connect(TestClass.class, n);

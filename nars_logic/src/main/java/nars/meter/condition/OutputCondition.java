@@ -100,8 +100,18 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
     public static List<OutputCondition> getConditions(NAR n, String example, int similarsToSave, Map<String,Task> conditionCache)  {
         return getConditions(n, example, similarsToSave, x -> {
             Task t = conditionCache.get(x);
+
+
+
             if (t == null) {
-                conditionCache.put(x, t = n.narsese.task(x));
+                try {
+                    t = n.narsese.task(x);
+                    conditionCache.put(x, t);
+                }
+                catch (Exception e) {
+                    System.err.println(e);
+                }
+
             }
             return t;
         });
