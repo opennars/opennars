@@ -178,7 +178,7 @@ public class LogicMetrics extends NARReaction {
 
         public void commit(Memory m) {
             double mean, variance;
-            final int count = m.cycle.size();
+            final int count = m.getControl().size();
             if (count > 0) {
                 mean = prioritySum / count;
 
@@ -221,7 +221,7 @@ public class LogicMetrics extends NARReaction {
 
     public void commit() {
         if (isActive()) {
-            m.cycle.forEach(conceptMeter);
+            m.getControl().forEach(conceptMeter);
             conceptMeter.commit(m);
         }
         else {

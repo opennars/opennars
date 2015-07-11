@@ -52,7 +52,7 @@ public class Workspace extends NARReaction {
     public double calc_temperature() {
         double s=0.0f;
         n_concepts=0;
-        for(Concept node : nar.memory.cycle) {
+        for(Concept node : nar.memory.getControl()) {
             if(!node.getGoals().isEmpty()) {
                 s+=node.getPriority()* node.getGoals().top().getTruth().getExpectation();
             }

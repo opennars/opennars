@@ -3,6 +3,7 @@ package nars;
 import nars.bag.impl.CacheBag;
 import nars.clock.Clock;
 import nars.concept.Concept;
+import nars.io.Perception;
 import nars.nal.LogicPolicy;
 import nars.process.CycleProcess;
 import nars.term.Term;
@@ -53,8 +54,7 @@ abstract public class NARSeed extends Param {
 //    }
 
     protected Memory newMemory(Param narParam, LogicPolicy policy) {
-
-        return new Memory(rng, getMaximumNALLevel(), narParam, policy, newIndex(), newControlCycle());
+        return new Memory(rng, getMaximumNALLevel(), narParam, policy, newIndex());
     }
 
     protected abstract CacheBag<Term,Concept> newIndex();
@@ -78,5 +78,7 @@ abstract public class NARSeed extends Param {
         return this;
     }
 
+
+    abstract public Perception newPerception();
 
 }

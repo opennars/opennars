@@ -295,7 +295,7 @@ public class Idea implements Iterable<Concept> {
                 reg = nar.memory.event.on(this, ConceptForget.class, Events.ConceptActive.class, TaskProcess.class);
 
                 //add existing
-                for (Concept c : nar.memory.cycle)
+                for (Concept c : nar.memory.getControl())
                     add(c);
            }
             else {

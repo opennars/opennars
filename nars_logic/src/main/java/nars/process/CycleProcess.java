@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
+import nars.io.Perception;
 import nars.io.in.Input;
 import nars.task.Task;
 import nars.term.Term;
@@ -58,9 +59,9 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
 
 
     /** Invoked during a memory reset to empty all concepts
-     *  @param delete  whether to finalize everything (deallocate as much as possible)
-     * */
-    public void reset(Memory memory, boolean delete);
+     * @param delete  whether to finalize everything (deallocate as much as possible)
+     * @param perception */
+    public void reset(Memory memory, Perception perception);
 
     /** Maps Term to a Concept active in this Cycle. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known */
@@ -72,7 +73,7 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
      * @return the new concept, or null if the memory is full
      *
      */
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing);
+    public Concept conceptualize(Term term, Budget budget, boolean createIfMissing);
     /**
      * Provides a "next" concept for sampling during logic.
      */
@@ -118,6 +119,10 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
 
 
     Concept remove(Concept c);
+
+    default public void delete() {
+
+    }
 
     void perceive(Input ii);
 

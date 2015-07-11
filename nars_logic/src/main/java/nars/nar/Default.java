@@ -14,6 +14,8 @@ import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
 import nars.concept.DefaultConcept;
 import nars.cycle.DefaultCycle;
+import nars.io.DefaultPerception;
+import nars.io.Perception;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -49,6 +51,7 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -356,8 +359,10 @@ public class Default extends NARSeed implements ConceptBuilder {
         };
 
 
-
-
+    @Override
+    public Perception newPerception() {
+        return new DefaultPerception();
+    }
 
     /** initialization after NAR is constructed */
     @Override public void init(NAR n) {
@@ -553,7 +558,11 @@ public class Default extends NARSeed implements ConceptBuilder {
             for (String x : filesToLoad) {
                 try {
                     n.input(new File(x));
-                } catch (Exception ex) {
+                }
+                catch (FileNotFoundException fex) {
+                    System.err.println(getClass() + ": " + fex.toString());
+                }
+                catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 //n.run(1);

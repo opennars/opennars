@@ -32,7 +32,7 @@ public class BudgetStatus extends EnumMap<BudgetStatus.Budgeted,Object> {
 
         double tActiveTaskLinkPriority = 0, tActiveTermLinkPriority = 0;
 
-        for (Concept c : m.cycle) {
+        for (Concept c : m.getControl()) {
             double p = c.getPriority();
 
             prisum.addValue(p);

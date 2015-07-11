@@ -52,7 +52,7 @@ public class NarseseParserTest {
         //TODO n.task(s) when the parser is replaced
         //return p.parseTask(s, true);
         List<Task> l = new ArrayList(1);
-        p.tasks(s, l);
+        p.tasks(n.memory, s, l);
         return l;
     }
 
@@ -583,16 +583,13 @@ public class NarseseParserTest {
 //        return newParser.parseTask(s, newStamp);
 //    }
 
-        public void parseTask(String s, Consumer<? super Task> c) throws InvalidInputException {
-            parseTask(s, true, c);
-        }
         public void parseTask(String s, Collection<? super Task> c) throws InvalidInputException {
-            newParser.tasks(s, c);
+            newParser.tasks(n.memory, s, c);
         }
 
-        public void parseTask(String s, boolean newStamp, Consumer<? super Task> c) throws InvalidInputException {
+        public void parseTask(String s, Consumer<? super Task> c) throws InvalidInputException {
             //ENTRY POINT TO NEW PARSER
-            newParser.tasks(s, newStamp, c);
+            newParser.tasks(n.memory, s, c);
         }
 
 

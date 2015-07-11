@@ -27,6 +27,7 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A Product is a sequence of 1 or more terms.
@@ -78,6 +79,16 @@ public interface Product extends Term, Iterable<Term> {
     /** 2 term constructor */
     public static Product make(final Term a, final Term b) {
         return new ProductN(a, b);
+    }
+
+    /** creates from a sublist of a list */
+    public static Product make(final List<Term> l, int from, int to) {
+        Term[] x = new Term[to - from];
+
+        for (int j = 0, i = from; i < to; i++)
+            x[j++] = l.get(i);
+
+        return make(x);
     }
 
     public static Product make(final Term... arg) {

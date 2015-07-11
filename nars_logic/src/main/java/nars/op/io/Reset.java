@@ -1,6 +1,7 @@
 package nars.op.io;
 
 import nars.Memory;
+import nars.NAR;
 import nars.nal.nal8.ImmediateOperation;
 
 /**
@@ -9,8 +10,13 @@ import nars.nal.nal8.ImmediateOperation;
 public class Reset extends ImmediateOperation {
 
 
-    public Reset() {
+    private final NAR nar;
+
+    public Reset(NAR n) {
         super();
+
+        this.nar = n;
+
     }
 
     @Override
@@ -20,6 +26,6 @@ public class Reset extends ImmediateOperation {
 
     @Override
     public void execute(Memory m) {
-        m.reset(false);
+        nar.reset();
     }
 }

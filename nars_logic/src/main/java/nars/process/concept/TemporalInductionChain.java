@@ -59,7 +59,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
             for (int i = 0; i < chainSamples; i++) {
 
-                Concept next = memory.cycle.nextConcept();
+                Concept next = memory.getControl().nextConcept();
                 if (next == null) continue;
 
                 Term t = next.getTerm();

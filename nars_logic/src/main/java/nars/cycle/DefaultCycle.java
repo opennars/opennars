@@ -5,6 +5,7 @@ import nars.Memory;
 import nars.Param;
 import nars.bag.Bag;
 import nars.concept.Concept;
+import nars.io.Perception;
 import nars.link.TaskLink;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
@@ -54,20 +55,19 @@ public class DefaultCycle extends SequentialCycle {
 
 
     @Override
-    public void reset(Memory m, boolean delete) {
-        super.reset(m, delete);
+    public void delete() {
+        super.delete();
+        novelTasks.delete();
+    }
+
+    @Override
+    public void reset(Memory m, Perception p) {
+        super.reset(m, p);
 
         newTasksTemp.clear();
         newTasks.clear();
 
-        if (delete) {
-            novelTasks.delete();
-        }
-        else {
-            novelTasks.clear();
-        }
-
-
+        novelTasks.clear();
     }
 
     @Override

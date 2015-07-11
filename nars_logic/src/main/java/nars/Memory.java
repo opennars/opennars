@@ -68,7 +68,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -88,7 +87,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
     public final Random random;
 
-    public final CycleProcess cycle;
+    private CycleProcess control;
     public final EventEmitter<Class> event;
     public final EventEmitter<Term> exe;
     public final EmotionMeter emotion = new EmotionMeter();
@@ -124,7 +123,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
      * @param narParam reasoner paramerters
      * @param policy logic parameters
      */
-    public Memory(Random rng, int nalLevel, Param narParam, LogicPolicy policy, CacheBag<Term,Concept> concepts, CycleProcess cycle) {
+    public Memory(Random rng, int nalLevel, Param narParam, LogicPolicy policy, CacheBag<Term,Concept> concepts) {
 
         this.random = rng;
         this.level = nalLevel;
@@ -136,11 +135,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
         this.param = narParam;
         this.rules = policy;
-
-
-
-
-        this.cycle = cycle;
 
         this.self = Symbols.DEFAULT_SELF; //default value
 
@@ -155,10 +149,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         //optional:
         this.resource = null; //new ResourceMeter();
         this.logic = new LogicMetrics(this);
-
-        //after this line begins actual logic, now that the essential data strucures are allocated
-        //------------------------------------
-        reset(false);
 
 
     }
@@ -472,7 +462,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
             //this test was cycle.size() previously:
             if (questionConcepts.size() > concepts.size()) {
-                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + cycle.size());
+                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + getControl().size());
             }
         }
     }
@@ -482,12 +472,17 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     }
 
     public void delete() {
-        reset(true);
+        reset();
 
         event.delete();
     }
 
-    public void reset(boolean delete) {
+    public void reset(CycleProcess control) {
+        this.control = control;
+        reset();
+    }
+
+    public void reset() {
 
         nextTasks.clear();
 
@@ -495,7 +490,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
             laterTasks.shutdown();
             laterTasks = null;
         }
-
 
 
         event.emit(ResetStart.class);
@@ -510,8 +504,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         questionConcepts.clear();
 
         concepts.clear();
-        cycle.reset(this, delete);
-
 
         goalConcepts.clear();
 
@@ -571,7 +563,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         if ((term = term.normalized()) == null)
             return null;
 
-        return cycle.conceptualize(budget, term, true);
+        return getControl().conceptualize(term, budget, true);
     }
 
     private boolean validConceptTerm(Term term) {
@@ -608,7 +600,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
 
 
-        if (cycle.addTask(t)) {
+        if (getControl().addTask(t)) {
 
             //NOTE: if duplicate outputs happen, the budget wil have changed
             //but they wont be displayed.  to display them,
@@ -761,8 +753,8 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
 
         if (includeTaskLinks) {
-            cycle.forEach( c -> {
-                if (c.getTaskLinks() !=null)
+            getControl().forEach(c -> {
+                if (c.getTaskLinks() != null)
                     c.getTaskLinks().forEach(tl -> {
                         target.add(tl.targetTask);
                     });
@@ -795,7 +787,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
      */
     public Concept nextConcept() {
 
-        Concept c = cycle.nextConcept();
+        Concept c = getControl().nextConcept();
 
         if (Global.DEBUG) {
             if (!c.isActive())
@@ -808,7 +800,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
     /** scan for a next concept matching the predicate */
     public Concept nextConcept(Predicate<Concept> pred, float v) {
-        return cycle.nextConcept(pred, v);
+        return getControl().nextConcept(pred, v);
     }
 
     @Override
@@ -823,7 +815,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
     public Iterator<Concept> getConcepts(boolean active, boolean inactive) {
         if (active && !inactive)
-            return cycle.iterator();
+            return getControl().iterator();
         else if (!active && inactive)
             return Iterators.filter(concepts.iterator(), c -> !c.isActive());
         else if (active && inactive)
@@ -834,8 +826,8 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
     public int numConcepts(boolean active, boolean inactive) {
         int total = 0;
-        if (active && !inactive) return cycle.size();
-        else if (!active && inactive) return concepts.size() - cycle.size();
+        if (active && !inactive) return getControl().size();
+        else if (!active && inactive) return concepts.size() - getControl().size();
         else if (active && inactive)
             return concepts.size();
         else
@@ -854,7 +846,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
         event.emit(Events.CycleStart.class);
 
-        cycle.cycle();
+        getControl().cycle();
 
         event.emit(Events.CycleEnd.class);
 
@@ -902,7 +894,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
     /** actually delete procedure for a concept; removes from indexes */
     protected void _delete(Concept c) {
-        Concept removedFromActive = cycle.remove(c);
+        Concept removedFromActive = getControl().remove(c);
         if (c!=removedFromActive) {
             throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
         }
@@ -921,7 +913,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     /** sums the priorities of items in different active areas of the memory */
     public double getActivePrioritySum(final boolean concept, final boolean tasklink, final boolean termlink) {
         double total = 0;
-        for (Concept c : cycle) {
+        for (Concept c : getControl()) {
             if (concept)
                 total += c.getPriority();
             if (tasklink)
@@ -930,6 +922,10 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
                 total += c.getTermLinks().getPrioritySum();
         }
         return total;
+    }
+
+    public CycleProcess getControl() {
+        return control;
     }
 
     //    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {

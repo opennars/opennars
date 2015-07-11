@@ -3,6 +3,7 @@ package nars.vision.rawAttention;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nar.Default;
+import nars.task.Task;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,7 +43,9 @@ public class Vision extends JFrame {
 
         String narsese = PerceptionToNarseseTransformer.translateToNarsese(perceptionDescriptor.sampleSensors(), "primitivevision");
 
-        nar.input(narsese, 1.0f, 0.5f);
+        Task t = nar.task(narsese);
+        t.truth.setFrequency(1f);
+        t.truth.setConfidence(0.5f);
 
         nar.frame(1);
         nar.frame(1);

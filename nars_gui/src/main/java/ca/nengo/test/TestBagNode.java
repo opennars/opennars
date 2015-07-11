@@ -131,7 +131,7 @@ public class TestBagNode extends Nengrow {
         }
 
         public Bag/*<Term,Concept>*/ concepts() {
-            return ((DefaultCycle) n.memory.cycle).concepts;
+            return ((DefaultCycle) n.memory.getControl()).concepts;
         }
     }
 

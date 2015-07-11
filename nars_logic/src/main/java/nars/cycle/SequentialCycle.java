@@ -6,13 +6,13 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
+import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.task.Task;
 import nars.term.Term;
-import nars.util.data.buffer.RoundRobinBuffer;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -28,7 +28,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
      */
     public final Bag<Term, Concept> concepts;
 
-    public final RoundRobinBuffer<Task> percepts;
+    protected Perception percepts;
 
     protected Memory memory;
 
@@ -36,7 +36,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
         this.concepts = concepts;
 
-        this.percepts = new RoundRobinBuffer();
+
 
     }
 
@@ -91,16 +91,17 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     }
 
     @Override
-    public void reset(Memory m, boolean delete) {
+    public void reset(Memory m, Perception p) {
+
+        concepts.clear();
 
         memory = m;
-        percepts.reset();
+        percepts = p;
 
-        if (delete)
-            concepts.delete();
-        else
-            concepts.clear();
+    }
 
+    @Override public void delete() {
+        concepts.delete();
     }
 
     @Override
@@ -171,7 +172,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
 
     @Override
-    public Concept conceptualize(Budget budget, final Term term, boolean createIfMissing) {
+    public Concept conceptualize(final Term term, Budget budget, boolean createIfMissing) {
         return conceptualize(term, budget, createIfMissing, memory.time(), concepts);
     }
 

@@ -24,6 +24,11 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     long cyc;
     int duration;
 
+    public static CyclesInterval make(long numCycles) {
+        return new CyclesInterval(numCycles);
+    }
+
+
     public static CyclesInterval make(long numCycles, AbstractMemory m) {
         return make(numCycles, m.duration());
     }
@@ -31,6 +36,10 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     public static CyclesInterval make(long numCycles, int duration) {
         if (numCycles == 0) return zero;
         return new CyclesInterval(numCycles, duration);
+    }
+
+    protected CyclesInterval(long numCycles) {
+        this(numCycles, 0);
     }
 
     protected CyclesInterval(long numCycles, int duration) {
@@ -47,9 +56,9 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
 
 
 
-    public static CyclesInterval intervalLog(long mag, AbstractMemory memory) {
-        long time = Math.round( Interval.time(mag, memory.duration()) );
-        return new CyclesInterval(time, memory.duration());
+    public static CyclesInterval intervalLog(long mag) {
+        long time = Math.round( Interval.time(mag, 5 /* memory.duration()*/) );
+        return new CyclesInterval(time, 0);
     }
 
     public static byte[] interval(long numCycles, int bytesPrecision) {

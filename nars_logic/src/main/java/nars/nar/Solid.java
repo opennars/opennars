@@ -11,6 +11,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
+import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -207,14 +208,16 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public void reset(Memory memory, boolean delete) {
+    public void reset(Memory memory, Perception perception) {
         tasks.clear();
 
-        if (delete)
-            concepts.delete();
-        else
-            concepts.clear();
+        concepts.clear();
 
+    }
+
+    @Override
+    public void delete() {
+        concepts.delete();
     }
 
     @Override
@@ -228,7 +231,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+    public Concept conceptualize(Term term, Budget budget, boolean createIfMissing) {
         //synchronized(activator) {
         if (budget.summaryGreaterOrEqual(memory.param.newConceptThreshold)) {
             return activator.conceptualize(term, budget, true, memory.time(), concepts);

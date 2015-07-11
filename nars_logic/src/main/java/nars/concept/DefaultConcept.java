@@ -828,7 +828,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             //completely remove from active bags and concept indexes
 
             memory.concepts.remove(getTerm());
-            Concept removed = memory.cycle.remove(this);
+            Concept removed = memory.getControl().remove(this);
             if (removed!=null && removed != this) {
                 throw new RuntimeException("Duplicate instances of Concepts with same term: " + this + " (deleting) " + removed);
             }

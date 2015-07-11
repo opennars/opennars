@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * Entry point for all new memory percepts
  */
-public class RoundRobinBuffer<T>  implements Consumer<Source<T>>, Supplier<T> {
+public class RoundRobinBuffer<T>  implements Consumer<Source<T>>,Supplier<T> {
 
     //protected Environment env = Environment.initializeIfEmpty().assignErrorJournal();
 
@@ -54,7 +54,7 @@ public class RoundRobinBuffer<T>  implements Consumer<Source<T>>, Supplier<T> {
         return null;
     }
 
-    public void reset() {
+    public void clear() {
         for (Source i : in) {
             i.stop();
         }

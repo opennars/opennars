@@ -58,8 +58,6 @@ public class NarseseParser extends BaseParser<Object> {
     public final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     public final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
-    public AbstractMemory memory;
-
     protected NarseseParser() {
         this(8);
     }
@@ -210,24 +208,22 @@ public class NarseseParser extends BaseParser<Object> {
 
                 ),
 
-                push(getTask(budget, term, punc, truth, tense))
+                push(new Object[] { budget.get(), term.get(), punc.get(), truth.get(), tense.get() } )
+                //push(getTask(budget, term, punc, truth, tense))
 
         );
     }
 
 
     //TODO return TaskSeed
-    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<Truth> truth, Var<Tense> tense) {
+    public static Task getTask(final AbstractMemory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
 
-        Character p = punc.get();
         if (p == null)
             throw new RuntimeException("character is null");
 
-        Truth t = truth.get();
         if ((t == null) && ((p == Symbols.JUDGMENT) || (p == Symbols.GOAL)))
             t = new DefaultTruth(p);
 
-        float[] b = budget.get();
         if (b != null && ((b.length == 0) || (Float.isNaN(b[0]))))
             b = null;
 
@@ -238,7 +234,6 @@ public class NarseseParser extends BaseParser<Object> {
                         b.length == 2 ? new Budget(b[0], b[1], t) :
                                 new Budget(b[0], b[1], b[2]);
 
-        Term content = term.get();
         if (!(content instanceof Compound)) {
             return null;
         }
@@ -255,7 +250,7 @@ public class NarseseParser extends BaseParser<Object> {
         ttt.setCreationTime(Stamp.TIMELESS);
 
         //TODO support some way of allowing memory to be null using non-Memory interfaces supplied to constructor
-        ttt.setOccurrenceTime(tense.get(), memory.duration());
+        ttt.setOccurrenceTime(tense, memory.duration());
         ttt.setEvidentialSet(new long[] { memory.newStampSerial() });
 
         return ttt;
@@ -402,7 +397,7 @@ public class NarseseParser extends BaseParser<Object> {
         return new NothingMatcher();
     }
 
-    @Cached
+
     Rule Term(boolean includeOperation, boolean includeMeta) {
         /*
                  <term> ::= <word>                             // an atomic constant term
@@ -587,13 +582,13 @@ public class NarseseParser extends BaseParser<Object> {
     @Deprecated Rule IntervalLog() {
         return sequence(Symbols.INTERVAL_PREFIX_OLD, sequence(oneOrMore(digit()), push(match()),
                 //push(Interval.interval(-1 + Texts.i((String) pop())))
-                push(CyclesInterval.intervalLog(-1 + Texts.i((String) pop()), memory))
+                push(CyclesInterval.intervalLog(-1 + Texts.i((String) pop())))
         ));
     }
 
     Rule Interval() {
         return sequence(Symbols.INTERVAL_PREFIX, sequence(oneOrMore(digit()), push(match()),
-                push(CyclesInterval.make(Texts.i((String) pop()), memory))
+                push(CyclesInterval.make(Texts.i((String) pop())))
         ));
     }
 
@@ -837,15 +832,13 @@ public class NarseseParser extends BaseParser<Object> {
 
 
         if (op == OPERATION) {
-            final Term self = memory.self();
+            /*final Term self = memory.self();
 
             //automatically add SELF term to operations if in NAL8+
             if (memory.nal(8) && !vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
-                vectorterms.add(self); //SELF in final argument
+                vectorterms.add(self); //SELF in final argument*/
 
-            Term operatorPred = vectorterms.remove(0);
-            Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return Operation.make(operatorPred, Product.make(va));
+            return Operation.make(vectorterms.get(0), Product.make(vectorterms, 1, vectorterms.size()));
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
@@ -868,25 +861,21 @@ public class NarseseParser extends BaseParser<Object> {
 
     public static NarseseParser newParser(Memory m) {
         NarseseParser np = Grappa.createParser(NarseseParser.class);
-        np.memory = m;
         return np;
     }
 
 
-    public void tasks(String input, Collection<? super Task> c) {
-        tasks(input, t -> {
+    public void tasks(AbstractMemory m, String input, Collection<? super Task> c) {
+        tasks(m, input, t -> {
             c.add(t);
         });
     }
 
-    public void tasks(String input, Consumer<? super Task> c) {
-        tasks(input, true, c);
-    }
 
     /**
      * parse a series of tasks
      */
-    public void tasks(String input, boolean newStamp, Consumer<? super Task> c) {
+    public void tasks(final AbstractMemory memory, String input, Consumer<? super Task> c) {
         ParsingResult r = inputParser.run(input);
         int size = r.getValueStack().size();
 
@@ -898,10 +887,11 @@ public class NarseseParser extends BaseParser<Object> {
         for (int i = size-1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);
 
-            if (o instanceof Task)
-                c.accept((Task) o);
-            else if (o instanceof ImmediateOperation) {
+            if (o instanceof ImmediateOperation) {
                 c.accept( ((ImmediateOperation)o).newTask() );
+            }
+            else if (o instanceof Object[]) {
+                c.accept(getTask(memory, (Object[]) o));
             }
             else {
                 c.accept(new Echo(Echo.class, o.toString()).newTask());
@@ -923,7 +913,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse one task
      */
-    public Task task(String input) throws InvalidInputException {
+    public Task task(AbstractMemory memory, String input) throws InvalidInputException {
         ParsingResult r;
         try {
             input = input.trim();
@@ -937,14 +927,17 @@ public class NarseseParser extends BaseParser<Object> {
         if (r == null)
             throw new InvalidInputException("null parse: " + input);
 
-        Iterator ir = r.getValueStack().iterator();
-        if (ir.hasNext()) {
-            Object x = ir.next();
-            if (x instanceof Task)
-                return (Task) x;
-        }
 
-        throw newParseException(input, r);
+        try {
+            return getTask(memory, (Object[])r.getValueStack().peek() );
+        }
+        catch (Exception e) {
+            throw newParseException(input, r);
+        }
+    }
+
+    public Task getTask(final AbstractMemory m, Object[] x) {
+        return getTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
     }
 
     /** parse one term and normalize it if successful */

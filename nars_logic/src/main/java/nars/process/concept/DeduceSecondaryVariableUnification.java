@@ -1,6 +1,5 @@
 package nars.process.concept;
 
-import nars.Events;
 import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -22,7 +21,6 @@ import nars.term.Variables;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -96,7 +94,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         final Term firstTerm = task.getTerm();
 
         for (int k = 0; k < Global.DED_SECOND_UNIFICATION_ATTEMPTS; k++) {
-            Concept secondConcept = nal.memory.cycle.nextConcept(new Predicate<Concept>() {
+            Concept secondConcept = nal.memory.getControl().nextConcept(new Predicate<Concept>() {
 
                 @Override
                 public boolean test(Concept concept) {

@@ -9,6 +9,7 @@ import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
+import nars.io.Perception;
 import nars.process.CycleProcess;
 import nars.term.Term;
 
@@ -51,7 +52,7 @@ abstract public class ConceptWaveCore extends ConceptActivator implements CycleP
     }
 
     @Override
-    public void reset(Memory m, boolean delete) {
+    public void reset(Memory m, Perception perception) {
         this.memory = m;
 
         this.concepts = new FairDelayBag(m, m.param.conceptForgetDurations, maxConcepts);

@@ -16,13 +16,11 @@ import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
 import objenome.op.math.*;
-import objenome.op.trig.HyperbolicTangent;
 import objenome.solver.Civilization;
 import objenome.solver.EGoal;
 import objenome.solver.evolve.RandomSequence;
 import objenome.solver.evolve.TypedOrganism;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -170,7 +168,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         }
 
         protected void cycle(NAR n) {
-            n.memory.cycle.conceptPriorityHistogram(conPri);
+            n.memory.getControl().conceptPriorityHistogram(conPri);
 
             //these represent the points of the boundaries between histogram bins
             c0.set(conPri[0]);

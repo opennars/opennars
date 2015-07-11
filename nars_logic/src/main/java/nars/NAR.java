@@ -5,6 +5,7 @@ import nars.Events.FrameStart;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
+import nars.io.Perception;
 import nars.io.TextPerception;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
@@ -15,6 +16,7 @@ import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
+import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -60,6 +62,8 @@ public class NAR extends Container implements Runnable {
                     "    IRC:  http://webchat.freenode.net/?channels=nars \n";
     public final NarseseParser narsese;
     public final TextPerception textPerception;
+    private Perception perception;
+    private CycleProcess control;
 
 
     /**
@@ -97,9 +101,21 @@ public class NAR extends Container implements Runnable {
      */
     private boolean enabled = true;
 
+    /**
+     * normal way to construct a NAR, using a particular Build instance
+     */
+    public NAR(NARSeed b) {
+        this( b.newControlCycle(),
+              b.newPerception(),
+              b.newMemory(b, b.getLogicPolicy()));
 
-    protected NAR(final Memory m) {
+        b.init(this);
+    }
+
+    protected NAR(final CycleProcess c, final Perception p, final Memory m) {
         super();
+        this.control = c;
+        this.perception = p;
         this.memory = m;
         this.param = m.param;
 
@@ -107,6 +123,8 @@ public class NAR extends Container implements Runnable {
 
         this.narsese = NarseseParser.newParser(this);
         this.textPerception = new TextPerception(this, narsese);
+
+        reset();
     }
 
     /**
@@ -115,14 +133,19 @@ public class NAR extends Container implements Runnable {
      * reactivated, a signal for them to empty their state (if necessary).
      */
     public void reset() {
-        memory.reset(false);
+        memory.reset(control);
+        control.reset(memory, perception);
     }
 
     /**
      * Resets and deletes the entire system
      */
     public void delete() {
+
+        control.delete();
         memory.delete();
+        perception.clear();
+
     }
 
 
@@ -155,7 +178,7 @@ public class NAR extends Container implements Runnable {
      * parses and forms a Task from a string but doesnt input it
      */
     public Task task(String taskText) {
-        Task t = narsese.task(taskText);
+        Task t = narsese.task(memory, taskText);
 
         long now = time();
         if (!t.sentence.isEternal()) {
@@ -178,9 +201,7 @@ public class NAR extends Container implements Runnable {
         return i;
     }
 
-    public NAR input(final String taskText, final float frequency, final float confidence) throws InvalidInputException {
-        return input(-1, -1, taskText, frequency, confidence);
-    }
+
 
     public <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
         return narsese.term(t);
@@ -312,24 +333,6 @@ public class NAR extends Container implements Runnable {
 
     }
 
-    public NAR input(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
-
-        narsese.tasks(taskText, t -> {
-            if (frequency != -1)
-                t.sentence.truth.setFrequency(frequency);
-            if (confidence != -1)
-                t.sentence.truth.setConfidence(confidence);
-            if (priority != -1)
-                t.setPriority(priority);
-            if (durability != -1)
-                t.setDurability(durability);
-
-            input(t);
-        });
-
-        return this;
-    }
-
     protected void preprocessInput(Task t) {
         if (t.getCreationTime() == Stamp.TIMELESS)
             t.setCreationTime(time());
@@ -411,7 +414,7 @@ public class NAR extends Container implements Runnable {
      * Will remain added until it closes or it is explicitly removed.
      */
     public Input input(final Input perception) {
-        memory.cycle.perceive(perception);
+        memory.getControl().perceive(perception);
         return perception;
     }
 
@@ -744,13 +747,7 @@ public class NAR extends Container implements Runnable {
         return null;
     }
 
-    /**
-     * normal way to construct a NAR, using a particular Build instance
-     */
-    public NAR(NARSeed b) {
-        this(b.newMemory(b, b.getLogicPolicy()));
-        b.init(this);
-    }
+
 
     /**
      * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the

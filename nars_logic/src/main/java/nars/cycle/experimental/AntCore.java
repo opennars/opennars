@@ -10,6 +10,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.concept.Concept;
+import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TLink;
 import nars.link.TaskLink;
@@ -64,13 +65,13 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public void reset(Memory m, boolean delete) {
-        super.reset(m, delete);
+    public void reset(Memory m, Perception perception) {
+        super.reset(m, perception);
         concepts.setTargetActivated((int) (ants.size() * 0.1f));
     }
 
     @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+    public Concept conceptualize(Term term, Budget budget, boolean createIfMissing) {
         return conceptualize(term, budget, createIfMissing, getMemory().time(), concepts);
     }
 
@@ -423,7 +424,7 @@ public class AntCore extends ConceptWaveCore {
                 return c = null;
             }
 
-            Concept nextC = conceptualize(delivery, ct, false);
+            Concept nextC = conceptualize(ct, delivery, false);
             if (nextC == null)
                 return c = null;
 

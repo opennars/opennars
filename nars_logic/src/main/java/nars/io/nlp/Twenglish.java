@@ -17,6 +17,7 @@
 package nars.io.nlp;
 
 import nars.AbstractMemory;
+import nars.Memory;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
@@ -200,7 +201,7 @@ public class Twenglish {
     
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<Task> parse(String s, NarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
+    public List<Task> parse(AbstractMemory m, String s, NarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
 
         
         List<Task> results = new ArrayList();
@@ -239,9 +240,9 @@ public class Twenglish {
             if (!languageBooted) {
                 
                 
-                results.add(0, narsese.task(new StringBuilder(
+                results.add(0, narsese.task(m, new StringBuilder(
                         "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString()));
-                results.add(0, narsese.task(new StringBuilder(
+                results.add(0, narsese.task(m, new StringBuilder(
                         "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString()));
                 
                 languageBooted = true;
