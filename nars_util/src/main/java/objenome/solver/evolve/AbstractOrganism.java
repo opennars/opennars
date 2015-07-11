@@ -30,7 +30,7 @@ package objenome.solver.evolve;
 public abstract class AbstractOrganism implements Organism {
 
 
-    private Fitness fitness;
+    protected Fitness fitness;
 
     /**
      * Sets this individual's fitness value

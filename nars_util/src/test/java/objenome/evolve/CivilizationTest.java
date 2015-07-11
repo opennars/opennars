@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * https://github.com/apache/commons-math/blob/master/src/test/java/org/apache/commons/math4/genetics/GeneticAlgorithmTestBinary.java
  */
-public class CivilizationTest extends Civilization<TypedOrganism> {
+public class CivilizationTest extends Civilization {
 
     IdentityHashMap uniqueVar = new IdentityHashMap();
     IdentityHashMap uniqueVarNode = new IdentityHashMap();
@@ -34,7 +34,7 @@ public class CivilizationTest extends Civilization<TypedOrganism> {
 
         add(new TestGoal());
 
-        run(1);
+        //run();
 
         System.out.println(uniqueVar);
     }
@@ -58,7 +58,7 @@ public class CivilizationTest extends Civilization<TypedOrganism> {
     }
 
     public CivilizationTest() {
-        super(1, 4);
+        super(1, 4, 8);
     }
 
     public class TestGoal extends EGoal<TypedOrganism> {

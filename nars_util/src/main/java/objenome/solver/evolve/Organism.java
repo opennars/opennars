@@ -48,4 +48,6 @@ public interface Organism extends Serializable, Cloneable, Comparable<Organism> 
     public Organism clone();
 
     public void normalize();
+
+
 }

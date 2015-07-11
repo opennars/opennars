@@ -21,10 +21,7 @@
  */
 package objenome.solver;
 
-import com.gs.collections.api.map.primitive.MutableObjectDoubleMap;
-import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.util.data.random.MersenneTwisterFast;
-import objenome.goal.DoubleFitness;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
@@ -39,7 +36,6 @@ import objenome.solver.evolve.selection.TournamentSelector;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.*;
@@ -50,15 +46,17 @@ import java.util.concurrent.*;
  * a solution to a problem characterized by a set of goals defined
  * by the programmer.
  */
-abstract public class Civilization<I extends AbstractOrganism> extends GPContainer {
+abstract public class Civilization extends GPContainer<Civilized> implements Runnable {
 
-    /**
-     * The key for setting and retrieving the list of components.
-     */
+    double minLifeSpan = 0.25;
+    double maxSurvivalCostPercentile = 80;
+
+
     public static final GPKey<ArrayList<PopulationProcess>> COMPONENTS = new GPKey<>();
 
     public final RandomSequence random = new MersenneTwisterFast();
 
+    private final DescriptiveStatistics ds = new DescriptiveStatistics();
 
     public final EventManager events = new EventManager();
 
@@ -68,12 +66,14 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
     private final int threads;
     private final int populationSize;
     protected Pipeline pipeline;
-    public final Population<I> population;
 
-    public final List<EGoal<I>> goals = new ArrayList();
-    CopyOnWriteArrayList<Life> lives = new CopyOnWriteArrayList<>();
+    public final List<EGoal<Civilized>> goals = new ArrayList();
+    private double maxAge = 1.0;
 
     public Civilization(int threads, int populationSize) {
+        this(threads, populationSize, 8);
+    }
+    public Civilization(int threads, int populationSize, int maximumDepth) {
         super();
         this.threads = threads;
         this.populationSize = populationSize;
@@ -88,8 +88,8 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         the(TypedOrganism.SYNTAX, syntax.toArray(new Node[syntax.size()]));
 
 
-        the(TypedOrganism.MAXIMUM_DEPTH, 8);
-        the(Full.MAXIMUM_INITIAL_DEPTH, 5);
+        the(TypedOrganism.MAXIMUM_DEPTH, maximumDepth);
+        the(Full.MAXIMUM_INITIAL_DEPTH, maximumDepth/2);
         the(OrganismBuilder.class, new Full());
 
         //the(Breeder.SELECTOR, new RouletteSelector());
@@ -109,16 +109,34 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         }
         the(Breeder.OPERATORS, operators);
 
-        population = new Population<I>(this) {
+
+
+    }
+
+    @Override
+    protected Population<Civilized> newPopulation() {
+        return new Population<Civilized>(this) {
+
 
             @Override
-            public void add(I individual) {
-                super.add(individual);
-                addLife(individual);
+            protected void onRemoved(Civilized i) {
+                super.onRemoved(i);
+                i.onDeath();
             }
 
         };
+    }
 
+    @Override
+    public Civilized onAdded(Organism i) {
+        Civilized c = new Civilized(((TypedOrganism) i), goals, exe) {
+
+        };
+        Thread x = new Thread(c);
+        //x.setPriority()
+
+        exe.submit(x::start); //queue its initialization to the threadpool itself
+        return c;
     }
 
     abstract public List<Node> getOperators(RandomSequence random);
@@ -126,6 +144,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
     public void add(EGoal goal) {
         goals.add(goal);
     }
+
 
 
 
@@ -179,10 +198,6 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 
 
 
-    public void reset() {
-        pipeline = null;
-        population.clear();
-    }
 
     /**
      * Performs an evolutionary run. Each component in the pipeline returned by
@@ -219,36 +234,52 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 //    }
 
 
-    public void run(double maxTimeSeconds) {
+    @Override public void run() {
 
+        while (true) {
 
-        updatePopulation();
+            updatePopulation();
 
-
-        try {
-            exe.awaitTermination((long)(maxTimeSeconds * 1000.0), TimeUnit.MILLISECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
+
     }
 
-    protected void addLife(I i) {
-        Life l = new Life(i);
-        lives.add(l);
-        new Thread(l).start();
-    }
+//    /** called automtically by population control */
+//    protected void addLife(I i) {
+//        Civilized l = new Civilized(i);
+//        lives.add(l);
+//        new Thread(l).start();
+//    }
+//
+//    /** this works in reverse; called from here if population is manipualted, so dont call this */
+//    protected void removeLife(Civilized x) {
+//        getPopulation().remove(x.i);
+//
+//        if (!lives.remove(x))
+//            throw new RuntimeException("Unable to remove life " + x);
+//
+//        System.err.println(x + " died");
+//
+//    }
 
-    protected synchronized DescriptiveStatistics getCostStatistics() {
-        DescriptiveStatistics ds = new DescriptiveStatistics();
-        for (Life l : lives) {
-            ds.addValue(l.costRate());
+
+    protected double getMaxSurvivalCostPercentileEstimate(double age) {
+        if ((age == 0) || (maxAge == 0))return 0;
+
+        synchronized (ds) {
+            double lifespan = Math.min((age/maxAge), 1.0);
+            return lifespan;
+            //return ds.getPercentile(maxSurvivalCostPercentile * lifespan);
         }
-        return ds;
     }
 
-    double minLifeSpan = 0.25;
-    double maxSurvivalCostPercentile = 80;
+
 
     protected void reproduce(int n) {
         //System.out.println(x + " reproduce");
@@ -257,10 +288,10 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         if (n == 0) return;
         try {
             b.update(getPopulation(), n);
-            System.err.println("\nborn " + n);
         }
         catch (Exception e) {
-            //System.err.println("reproduction accident: " + e);
+            System.err.println("reproduction accident: " + e);
+            e.printStackTrace();
             //e.printStackTrace();
 
             //give up reproducing for now
@@ -268,37 +299,70 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         }
     }
 
-    protected void die(Life x) {
-        lives.remove(this);
-        getPopulation().remove(x.i);
-        System.out.println(x + " die @ " + x.getAge() );
-
-        reproduce(1);
-    }
 
     int cycle = 0;
-    protected synchronized void updatePopulation() {
-        //maintain population level
-        if (population.size() == 0) {
-            getOrganismBuilder().populate(getPopulation(), populationSize);
-        }
-        else {
-            reproduce(1);
+    protected void updatePopulation() {
+
+
+        List<Civilized> toKill = new ArrayList();
+
+
+        final Population<Civilized> pop = getPopulation();
+        synchronized (ds) {
+            ds.clear();
+
+            final int ps = pop.size();
+            if (ps > 0) {
+                ds.setWindowSize(ps * 2);
+
+                double maxAge = 0;
+                for (Civilized i : pop) {
+                    if (!shouldLive(i)) {
+                        toKill.add(i);
+                    } else {
+                        ds.addValue(i.costRate());
+                        double a = i.getAge();
+                        if (a > maxAge) maxAge= a;
+                    }
+                }
+                this.maxAge = maxAge;
+            }
         }
 
-        if (cycle % 64 == 0)
-            System.err.println( "\n" + population.size() + " organisms between " + getCostStatistics().getMin() + ":min .. max:" + getCostStatistics().getMax() + '\n');
+
+        synchronized (pop) {
+
+            pop.removeAll(toKill);
+
+            //maintain population level
+            if (pop.size() == 0) {
+                getOrganismBuilder().populate(pop, populationSize);
+            } else {
+                reproduce(1);
+            }
+
+
+        }
+
+        //if (cycle % 64 == 0)
+            System.err.println( "\n" + pop.size() + " " + pop.size() + " organisms\n");
+
+        System.err.println(ds);
 
         cycle++;
     }
 
-    protected boolean shouldLive(Life x) {
-        DescriptiveStatistics s = getCostStatistics();
-        double pp = (x.costRate()),  maxSurvivalCostPercentileEstimate = s.getPercentile(maxSurvivalCostPercentile * x.getAge());
+    protected boolean shouldLive(Civilized x) {
+        return Math.random() < 0.9;
+
+    }
+    protected boolean shouldLiveOLD(Civilized x) {
+        double maxSurvivalCostPercentileEstimate = getMaxSurvivalCostPercentileEstimate(x.getAge());
+        double pp = (x.costRate()) ;
 
         boolean result;
 
-        if (x.getAge() < minLifeSpan) {
+        if (x.getAge() < minLifeSpan * maxAge) {
             result = true;
         }
         else if (pp > maxSurvivalCostPercentileEstimate) {
@@ -312,108 +376,33 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
             result = true;
         }
 
-        if (!result)
-            die(x);
 
-        updatePopulation();
 
         return result;
     }
 
-    class Life implements Runnable {
 
-        final MutableObjectDoubleMap<EGoal<I>> cost = new ObjectDoubleHashMap<EGoal<I>>().asSynchronized();
-
-        double age = 0;
-
-        public final I i;
-        private double totalCost = 0;
-
-        public Life(I i) {
-            this.i = i;
-        }
-
-
-        @Override
-        public String toString() {
-            return i.toString() + " [" + age + ", " + (totalCost) + ']';
-        }
-
-        /** rate: cost/time */
-        public double costRate() {
-            if (age == 0) return 0.5;
-            return totalCost / age;
-        }
-
-        protected void evaluate(EGoal<I> goal, double cost) {
-            this.cost.put(goal, cost);
-            totalCost = this.cost.sum();
-            i.setFitness(new DoubleFitness.Minimize(costRate()));
-        }
-
-        /** returns true if still alive, false if dead */
-        protected boolean age(double time) {
-            //Thread.currentThread().setPriority(..);
-
-            age+=time;
-
-            //shouldReproduce(this);
-            return shouldLive(this);
-        }
-
-
-        @Override public void run() {
-            List<EGoal> goalSequence = new ArrayList(goals);
-            Collections.shuffle(goalSequence);
-
-            for (int j = 0; j < goalSequence.size(); j++) {
-                final EGoal g = goalSequence.get(j);
-
-                goalSequence.set(j, null); //GC assistance
-
-                try {
-                    double s = exe.submit(new Callable<Double>() {
-                        @Override
-                        public Double call() throws Exception {
-                            //System.out.println(i + " evaluating " + g);
-                            double s = g.cost(i);
-                            //System.out.println("SCORE=" + s);
-                            return s;
-                        }
-                    }).get();
-
-                    evaluate(g, s);
-
-                    if (!age(1.0 / goalSequence.size())) {
-                        return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //evaluate(g, maxCycles)
-                    break;
-                }
-            }
-
-            die(this);
-            updatePopulation();
-        }
-
-        /** age of the organism; 0=birth, 1=retired (finished all goals) */
-        public double getAge() {
-            return age;
-        }
-    }
-
-
-
-    public OrganismBuilder<I> getOrganismBuilder() {
+    public OrganismBuilder<Civilized> getOrganismBuilder() {
         return the(OrganismBuilder.class);
     }
 
+    public void start() {
 
-    public Population<I> getPopulation() {
-        return population;
+        population = newPopulation();
+
+        updatePopulation();
+
+        new Thread((Runnable) this).start();
+
+        try {
+            exe.awaitTermination((long)(10000 * 1000.0), TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
+
 
     public static interface GPContainerAware {
 

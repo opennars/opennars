@@ -25,6 +25,7 @@ import objenome.Container;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
+import objenome.solver.Civilized;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Event;
 import objenome.solver.evolve.event.EventManager;
@@ -61,7 +62,7 @@ import java.util.List;
      */
     public final HashMap<Class<?>, Object> stat = new HashMap<>();
     protected Pipeline pipeline;
-    private Population<I> population = null;
+    protected Population<I> population = null;
 
     /**
      * The key -&gt; value mapping.
@@ -103,7 +104,7 @@ import java.util.List;
                 pipeline.add(component);
             }
             
-            population = new Population<I>(this);
+            population = newPopulation();
         }
 
         //config.fire(new StartRun(0));
@@ -115,8 +116,16 @@ import java.util.List;
         return population;
     }
 
+    protected Population<I> newPopulation() {
+        return new Population<I>(this);
+    }
+
     public Population<I> getPopulation() {
         return population;
+    }
+
+    public I onAdded(Organism i) {
+        return (I) i;
     }
 
     public static interface GPContainerAware {

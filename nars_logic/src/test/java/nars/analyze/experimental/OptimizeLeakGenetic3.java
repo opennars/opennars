@@ -29,7 +29,7 @@ import static objenome.goal.DefaultProblemSTGP.doubleVariable;
 /**
  * https://github.com/apache/commons-math/blob/master/src/test/java/org/apache/commons/math4/genetics/GeneticAlgorithmTestBinary.java
  */
-public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
+public class OptimizeLeakGenetic3 extends Civilization {
 
 
 
@@ -38,11 +38,12 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         Global.DEBUG = false;
 
         final int threads = 3;
-        final int individuals = 55;
+        final int individuals = 64;
         final int cycles = 2050;
 
         Civilization c = new OptimizeLeakGenetic3(threads, individuals, cycles);
-        c.run(10000);
+
+        c.start();
     }
 
     @Override
@@ -71,13 +72,20 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
     }
 
     public OptimizeLeakGenetic3(int threads, int populationSize, final int maxCycles) {
-        super(threads, populationSize);
+        super(threads, populationSize, 6);
 
 
 
 
         for (String path : LibraryInput.getPaths("test1", "test2", "test3", "test4", "test5", "test6")) {
-            add(new LibraryGoal(path, maxCycles));
+            add(new LibraryGoal(path, maxCycles) {
+//                @Override
+//                protected Default getSeed(TypedOrganism leakProgram) {
+//                    //return super.getSeed(leakProgram);
+//
+//                    return new Default();
+//                }
+            });
         }
 
         System.out.println(this + ": " + goals.size() + " goals");
@@ -210,6 +218,35 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
             c1 = leakProgram.var("c1");
             c2 = leakProgram.var("c2");
 
+            Default b = getSeed(leakProgram);
+
+            TestNAR nar = new TestNAR(b);
+
+            new CycleReaction(nar) {
+                @Override
+                public void onCycle() {
+                    cycle(nar);
+                }
+            };
+
+            nar.requires.addAll(OutputCondition.getConditions(nar, scriptSrc, 0, conditionsCache));
+
+            //nar.input(new TextInput(nar.textPerception, script));
+            nar.input( LibraryInput.getExampleInput(script, nar.memory ));
+
+            nar.run(maxCycles);
+
+            double cost = nar.getCost();
+            if (Double.isInfinite(cost))
+                cost = 1.0;
+
+            nar.delete();
+
+            return cost / maxCycles;
+        }
+
+        protected Default getSeed(TypedOrganism leakProgram) {
+
             Default b = new Default() {
                 @Override
                 protected void initDerivationFilters() {
@@ -243,30 +280,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
             b.level(6);
             b.setActiveConcepts(512);
             b.setInternalExperience(null);
-
-            TestNAR nar = new TestNAR(b);
-
-            new CycleReaction(nar) {
-                @Override
-                public void onCycle() {
-                    cycle(nar);
-                }
-            };
-
-            nar.requires.addAll(OutputCondition.getConditions(nar, scriptSrc, 0, conditionsCache));
-
-            //nar.input(new TextInput(nar.textPerception, script));
-            nar.input( LibraryInput.getExampleInput(script, nar.memory ));
-
-            nar.run(maxCycles);
-
-            double cost = nar.getCost();
-            if (Double.isInfinite(cost))
-                cost = 1.0;
-
-            nar.delete();
-
-            return cost / maxCycles;
+            return b;
         }
 
     }

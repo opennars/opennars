@@ -21,12 +21,12 @@
  */
 package objenome.solver.evolve;
 
-import com.gs.collections.impl.list.mutable.FastList;
 import objenome.goal.DoubleFitness;
 import objenome.solver.evolve.GPContainer.GPKey;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A <code>Population</code> is an ordered collection of {@link Organism}s.
@@ -44,7 +44,7 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
      * The list of individuals of this propulation.
      */
     private List<I> individuals;
-    private final GPContainer config;
+    private final GPContainer<I> config;
 
 
     /**
@@ -53,8 +53,8 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
     public Population(GPContainer config) {
         this.config = config;
         //individuals = new ArrayList<>(/*config.get(SIZE)*/);
-        individuals = //new CopyOnWriteArrayList();
-            new FastList().asSynchronized();
+        individuals = new CopyOnWriteArrayList();
+                //new FastList().asSynchronized();
     }
 
     public GPContainer getConfig() {
@@ -76,11 +76,26 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
      * @param individual the individual to add to this population
      */
     public void add(I individual) {
-        individuals.add(individual);
+
+        individuals.add(config.onAdded(individual));
     }
     public void remove(I i) {
         individuals.remove(i);
+        onRemoved(i);
     }
+
+    public void removeAll(Collection<I> toKill) {
+        individuals.removeAll(toKill);
+        for (I i : toKill)
+            onRemoved(i);
+
+    }
+
+    /** called when an organism is removed */
+    protected void onRemoved(I i) {
+
+    }
+
 
     /**
      * Returns the individual at the specified index in this population.
@@ -88,7 +103,7 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
      * @param index the index of the individual to be returned
      * @return the individual at the specified index position
      * @throws IndexOutOfBoundsException if the index is out of range
-	 *         <code>(index < 0 || index > size())</code>
+     *         <code>(index < 0 || index > size())</code>
      */
     public I get(int index) {
         return individuals.get(index);
@@ -117,15 +132,15 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
     public Organism[] elites(double percent) {
         return elites((int)(percent * size()));
     }
-    
+
     public void clear() {
         individuals.clear();
     }
-    
-   @Deprecated public Population<I> cullThis(double percent) {
+
+    @Deprecated public Population<I> cullThis(double percent) {
         return cullThis((int)(percent * size()));
-    }    
-    
+    }
+
     /** modifies this population */
     @Deprecated public Population<I> cullThis(int numToRemove) {
         int existing = size();
@@ -133,19 +148,20 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
             clear();
             return this;
         }
-            
-        
-        Population<I> copy = this.clone();
-        copy.sort();
+
+
+        Population<I> sorted = this.clone();
+        sorted.sort();
 
         for (int i = existing - numToRemove; i < existing; i++) {
-            individuals.remove( copy.get(i) );
+            //TODO use a batch removal
+            remove(sorted.get(i));
         }
 
-        return this;        
+        return this;
     }
 
-        
+
     /**
      * Returns the group of best individuals of the population.
      *
@@ -156,7 +172,7 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
     public Organism[] elites(int size) {
         if (size() <= size)
             size = size()-1;
-        
+
         Population<I> copy = this.clone();
         copy.sort();
 
