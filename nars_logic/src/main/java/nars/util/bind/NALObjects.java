@@ -6,7 +6,9 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 import nars.NAR;
+import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
+import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
@@ -16,11 +18,8 @@ import nars.term.Atom;
 import nars.term.Term;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**
@@ -38,8 +37,16 @@ public class NALObjects implements MethodHandler {
             .concurrencyLevel(4).weakKeys().makeMap();
 
 
+    public static Set methodExclusions = new HashSet() {{
+        add("hashCode");
+    }};
+
     final static Atom VOID = Atom.the("void");
     final static Atom NULL = Atom.the("null");
+
+    final Map<Package,Atom> packages = new HashMap();
+    final Map<Class, Term> classes = new HashMap();
+    final Map<Object, Term> objects = new HashMap();
 
     public NALObjects(NAR n) {
         this.nar = n;
@@ -54,6 +61,8 @@ public class NALObjects implements MethodHandler {
                          Object[] args) throws Throwable {
 
         Object result = forwarder.invoke(object, args);
+        if (methodExclusions.contains(overridden.getName()))
+            return result;
 
         Term instance = instances.get(object);
         Term argterm = termize(args);
@@ -85,12 +94,30 @@ public class NALObjects implements MethodHandler {
         else if (o  instanceof Number) {
             return Atom.the((Number)o);
         }
+        else if (o instanceof Class) {
+            Class oc = (Class)o;
+            String cname = oc.getSimpleName();
+            if (cname.isEmpty()) cname = oc.getName();
+
+            Package p = oc.getPackage();
+
+            Term cterm = Atom.quote(cname);
+
+            Atom pkg = packages.get(p);
+            if (pkg == null) {
+                pkg = Atom.quote(p.getName());
+                packages.put(p, pkg);
+                nar.believe( Inheritance.make(cterm, pkg) );
+            }
+
+            return cterm;
+        }
         if (o instanceof Object[]) {
             return Product.make(
                     Arrays.stream((Object[])o).map(e -> termize(e)).collect(Collectors.toList())
             );
         }
-        else if (o instanceof Iterable) {
+        else if (o instanceof List) {
             return Product.make(
                     (Collection<Term>) ((Collection) o).stream().map(e -> termize(e)).collect(Collectors.toList())
             );
@@ -99,19 +126,70 @@ public class NALObjects implements MethodHandler {
         }*/
         }
 
-        String cname = o.getClass().toString().substring(6) /* "class " */;
-        int slice = cname.length();
+        Term i = termizeInstance(o);
 
-        String instanceName = o.toString();
-        if (instanceName.length() > slice)
-            instanceName = instanceName.substring(slice);
-
-        return Instance.make(Atom.quote(instanceName), Atom.quote(cname));
+        return i;
 
 
-        //return Atom.quote(o.toString());
+//        //ensure package is term'ed
+//        String pname = p.getName();
+//        int period = pname.length()-1;
+//        int last = period;
+//        Term child = cterm;
+//        while (( period = pname.lastIndexOf('.', period)) != -1) {
+//            String parname = pname.substring(0, last);
+//            Term parent = packages.get(parname);
+//            if (parent == null) {
+//                parent = Atom.the(parname);
+//                nar.believe( Inheritance.make(child, parent) );
+//                packages.put()
+//                last = period;
+//                child = parent;
+//            }
+//            else {
+//                break;
+//            }
+//        }
+
+
+
+
+
     }
 
+    private Term termizeInstance(Object o) {
+        //        String cname = o.getClass().toString().substring(6) /* "class " */;
+//        int slice = cname.length();
+//
+        //TODO decide to use toString or System object id
+        String instanceName = o.toString();
+//        if (instanceName.length() > slice)
+//            instanceName = instanceName.substring(slice);
+
+        final Term oterm = Atom.quote(instanceName);
+
+        Term prevOterm = objects.put(o, oterm);
+        if (prevOterm == null) {
+
+
+
+            Term clas = classes.get(o.getClass());
+            if (clas == null) {
+                clas = termize(o.getClass());
+            }
+
+            nar.believe(Instance.make(oterm, clas));
+
+        }
+        else {
+            if (!oterm.equals(prevOterm)) {
+                //toString value has changed, create similarity to associate
+                nar.believe(Similarity.make(oterm, prevOterm));
+            }
+        }
+
+        return oterm;
+    }
 
 
 //    //TODO use a generic Consumer<Task> for recipient/recipients of these

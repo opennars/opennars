@@ -1,7 +1,7 @@
 package nars.op.scheme;
 
 import nars.op.software.scheme.DefaultEnvironment;
-import nars.op.software.scheme.Environment;
+import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.Evaluator;
 import nars.op.software.scheme.expressions.*;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class EvaluatorTest {
 
     @Test
     public void variable_lookup() {
-        Environment e = new Environment(bindings(symbol("foo"), number(123)));
+        SchemeClosure e = new SchemeClosure(bindings(symbol("foo"), number(123)));
 
         Expression result = Evaluator.evaluate(symbol("foo"), e);
 
@@ -48,7 +48,7 @@ public class EvaluatorTest {
 
     @Test
     public void variable_assignment() {
-        Environment environment = new Environment(bindings(symbol("foo"), number(123)));
+        SchemeClosure environment = new SchemeClosure(bindings(symbol("foo"), number(123)));
         ListExpression exp = list(symbol("set!"), symbol("foo"), number(321));
 
         Expression result = Evaluator.evaluate(exp, environment);
@@ -59,7 +59,7 @@ public class EvaluatorTest {
 
     @Test
     public void variable_definition() {
-        Environment environment = emptyEnvironment();
+        SchemeClosure environment = emptyEnvironment();
         ListExpression exp = list(symbol("define"), symbol("foo"), list(symbol("quote"), symbol("bar")));
 
         Expression result = Evaluator.evaluate(exp, environment);
@@ -134,7 +134,7 @@ public class EvaluatorTest {
 
     @Test
     public void begin() {
-        Environment environment = DefaultEnvironment.newInstance().extend(bindings(symbol("foo"), number(123)));
+        SchemeClosure environment = DefaultEnvironment.newInstance().extend(bindings(symbol("foo"), number(123)));
         ListExpression exp = list(symbol("begin"), list(symbol("set!"), symbol("foo"), number(321)), list(symbol("+"), symbol("foo"), number(1)));
 
         Expression result = Evaluator.evaluate(exp, environment);
@@ -145,7 +145,7 @@ public class EvaluatorTest {
 
     @Test
     public void define_function() {
-        Environment environment = emptyEnvironment();
+        SchemeClosure environment = emptyEnvironment();
         ListExpression exp = list(symbol("define"), list(symbol("foo"), symbol("a"), symbol("b")), number(1));
 
         Evaluator.evaluate(exp, environment);
@@ -154,7 +154,7 @@ public class EvaluatorTest {
         assertThat(value instanceof ProcedureExpression, is(true));
     }
 
-    private static Environment emptyEnvironment() {
+    private static SchemeClosure emptyEnvironment() {
 //        return new Environment(new HashMap<>());
         return DefaultEnvironment.newInstance();
     }

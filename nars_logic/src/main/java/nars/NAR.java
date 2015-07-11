@@ -167,6 +167,7 @@ public class NAR extends Container implements Runnable {
     public Task inputTask(final String taskText) {
         try {
             Task t = task(taskText);
+            t.setCreationTime(time());
             input(t);
             return t;
         } catch (Exception e) {
@@ -234,21 +235,23 @@ public class NAR extends Container implements Runnable {
     }
 
     public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
-        final Task t;
+
         final Truth tv;
-        input(
-                t = new Task(
 
-                        narsese.compound(goalTerm),
-                        Symbols.GOAL,
-                        tv = new DefaultTruth(freq, conf),
+        Task t = new Task(
+
+                narsese.compound(goalTerm),
+                Symbols.GOAL,
+                tv = new DefaultTruth(freq, conf),
 
 
-                        pri,
-                        dur, BudgetFunctions.truthToQuality(tv)
+                pri,
+                dur, BudgetFunctions.truthToQuality(tv)
 
-                )
         );
+        t.setCreationTime(time());
+
+        input(t);
         return t;
     }
 
@@ -304,6 +307,7 @@ public class NAR extends Container implements Runnable {
                 Symbols.JUDGMENT,
                 tv = new DefaultTruth(freq, conf),
                 pri, dur, BudgetFunctions.truthToQuality(tv));
+        t.setCreationTime(time());
         t.setOccurrenceTime(occurrenceTime);
 
         input(t);
@@ -316,16 +320,15 @@ public class NAR extends Container implements Runnable {
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
-        final Task t;
-        input(
-                t = new Task(
-                        narsese.compound(termString),
-                        questionOrQuest,
-                        null,
-                        Global.DEFAULT_QUESTION_PRIORITY,
-                        Global.DEFAULT_QUESTION_DURABILITY,
-                        1)
-        );
+        final Task t = new Task(
+                narsese.compound(termString),
+                questionOrQuest,
+                null,
+                Global.DEFAULT_QUESTION_PRIORITY,
+                Global.DEFAULT_QUESTION_DURABILITY,
+                1);
+        t.setCreationTime(time());
+        input(t);
 
         return t;
 

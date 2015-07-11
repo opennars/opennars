@@ -2,7 +2,7 @@ package nars.op.scheme;
 
 
 import nars.op.software.scheme.DefaultEnvironment;
-import nars.op.software.scheme.Environment;
+import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.Evaluator;
 import nars.op.software.scheme.Reader;
 import nars.op.software.scheme.exception.UnexpectedExpression;
@@ -27,7 +27,7 @@ public class IntegrationTest {
     @Test
     public void factorial() {
         String input = "(define factorial (lambda (n) (if (= n 1) 1 (* n (factorial (- n 1))))))";
-        Environment environment = DefaultEnvironment.newInstance();
+        SchemeClosure environment = DefaultEnvironment.newInstance();
 
         eval(input, environment);
         Expression result = eval("(factorial 3)", environment);
@@ -38,7 +38,7 @@ public class IntegrationTest {
     @Test
     public void fibonacci() {
         String input = "(define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))";
-        Environment environment = DefaultEnvironment.newInstance();
+        SchemeClosure environment = DefaultEnvironment.newInstance();
 
         eval(input, environment);
         Expression result = eval("(fib 10)", environment);
@@ -67,7 +67,7 @@ public class IntegrationTest {
     public void define_function_sequence() {
         String input = "(define (foo) (define a 10) a)";
 
-        Environment environment = DefaultEnvironment.newInstance();
+        SchemeClosure environment = DefaultEnvironment.newInstance();
 
         eval(input, environment);
         Expression result = eval("(foo)", environment);
@@ -117,12 +117,12 @@ public class IntegrationTest {
         return Reader.read(input).iterator().next();
     }
 
-    private Expression eval(String input, Environment environment) {
+    private Expression eval(String input, SchemeClosure environment) {
         return Evaluator.evaluate(read(input), environment);
     }
 
     private Expression eval(String input) {
-        Environment environment = DefaultEnvironment.newInstance();
+        SchemeClosure environment = DefaultEnvironment.newInstance();
 
         return eval(input, environment);
     }

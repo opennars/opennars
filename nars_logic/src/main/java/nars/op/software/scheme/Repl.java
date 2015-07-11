@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 
 
 public class Repl {
-    public static final Environment ENV = DefaultEnvironment.newInstance();
+    public static final SchemeClosure ENV = DefaultEnvironment.newInstance();
     public static final PrintStream OUTPUT_STREAM = System.out;
     public static final InputStream INPUT_STREAM = System.in;
 
@@ -20,7 +20,7 @@ public class Repl {
         repl(in, out, ENV);
     }
 
-    public static void repl(InputStream in, PrintStream out, Environment env) {
+    public static void repl(InputStream in, PrintStream out, SchemeClosure env) {
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
 
         String input = "";

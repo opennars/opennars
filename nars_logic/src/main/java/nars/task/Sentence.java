@@ -291,6 +291,10 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
     @Override
     public Sentence setCreationTime(long creationTime) {
+        if ((this.creationTime <= Stamp.TIMELESS) && (this.occurrenceTime>Stamp.TIMELESS)) {
+            //use the occurrence time as the delta, now that this has a "finite" creationTime
+            this.occurrenceTime = this.occurrenceTime + creationTime;
+        }
         this.creationTime = creationTime;
         invalidateHash();
         return this;

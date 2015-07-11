@@ -20,7 +20,7 @@ import java.util.List;
 
 public class scheme extends TermFunction {
 
-    public static final Environment env = DefaultEnvironment.newInstance();
+    public static final SchemeClosure env = DefaultEnvironment.newInstance();
 
     final static Function<Term,Expression> narsToScheme = new Function<Term, Expression>() {
 

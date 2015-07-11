@@ -7,6 +7,7 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
+import nars.clock.Clock;
 import nars.clock.CycleClock;
 import nars.clock.RealtimeMSClock;
 import nars.concept.BeliefTable;
@@ -507,9 +508,12 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
 
     
-    public Default realTime() {
-        setClock(new RealtimeMSClock(true));
+    public Default clock(Clock c) {
+        setClock(c);
         return this;
+    }
+    public Default realTime() {
+        return clock(new RealtimeMSClock(true));
     }
 
 

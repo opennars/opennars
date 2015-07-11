@@ -12,6 +12,11 @@ class Empty extends Cons<Object> {
         super(null, null);
     }
 
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
     @Override public Iterator<Object> iterator() {
         return Iterators.emptyIterator();
     }

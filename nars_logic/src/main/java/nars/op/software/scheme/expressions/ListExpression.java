@@ -3,12 +3,13 @@ package nars.op.software.scheme.expressions;
 
 import nars.op.software.scheme.cons.Cons;
 
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 import static nars.op.software.scheme.cons.Cons.copyOf;
 
 
-public class ListExpression implements Expression {
+public class ListExpression implements Expression, Iterable<Expression> {
     public static class Nil extends ListExpression {
         private static final Nil NIL = new Nil();
 
@@ -25,6 +26,12 @@ public class ListExpression implements Expression {
 
     public ListExpression(Cons<Expression> value) {
         this.value = value;
+    }
+
+
+    @Override
+    public Iterator<Expression> iterator() {
+        return value.iterator();
     }
 
     public static ListExpression list(Cons<Expression> list) {

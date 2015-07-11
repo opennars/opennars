@@ -19,6 +19,7 @@ abstract public class RealtimeClock implements Clock {
     /** update every cycle if necessary, but getting the System clock
      * is not a negligble performance cost. if many cycles are iterated per
      * frame, this could become significant
+     *
      */
     public RealtimeClock(boolean updatePerCycle) {
         this.updatePerCycle = updatePerCycle;

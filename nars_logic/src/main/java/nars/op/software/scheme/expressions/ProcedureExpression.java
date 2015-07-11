@@ -31,7 +31,7 @@ public class ProcedureExpression implements Expression, Function<Cons<Expression
 
     @Override
     public String print() {
-        return "Procedure<" + lambda + '>';
+        return "Procedure(" + lambda + ')';
     }
 
     @Override

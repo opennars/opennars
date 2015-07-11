@@ -14,11 +14,11 @@ import static nars.op.software.scheme.expressions.SymbolExpression.symbol;
 
 public class Evaluator {
 
-    public static Expression evaluate(Expression exp, Environment env) {
+    public static Expression evaluate(Expression exp, SchemeClosure env) {
         return analyze(exp).apply(env);
     }
 
-    public static Function<Environment, Expression> analyze(Expression exp) {
+    public static Function<SchemeClosure, Expression> analyze(Expression exp) {
         if (isSelfEvaluating(exp)) {
             return e -> exp;
         } else if (exp.isSymbol()) {
@@ -32,7 +32,7 @@ public class Evaluator {
         throw new IllegalArgumentException(String.format("Unable to evaluate expression '%s'", exp));
     }
 
-    private static Function<Environment, Expression> analyzeSpecialForm(ListExpression exp) {
+    private static Function<SchemeClosure, Expression> analyzeSpecialForm(ListExpression exp) {
         Cons<Expression> exps = exp.value;
 
         //TODO use an enum of these operators already decoded to byte[] so that symbols dont need to re-generate a String version
@@ -63,20 +63,20 @@ public class Evaluator {
 
     }
 
-    private static Function<Environment, Expression> analyzeQuote(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> analyzeQuote(Cons<Expression> exps) {
         return env -> exps.cadr();
     }
 
-    private static Function<Environment, Expression> analyzeLambda(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> analyzeLambda(Cons<Expression> exps) {
         Cons<SymbolExpression> paramNames = exps.cadr().list().value.stream()
                 .map(Expression::symbol)
                 .collect(Cons.collector());
         return analyzeProcedure(paramNames, exps);
     }
 
-    private static Function<Environment, Expression> analyzeSet(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> analyzeSet(Cons<Expression> exps) {
         SymbolExpression symbol = exps.cadr().symbol();
-        Function<Environment, Expression> valueProc = analyze(exps.cdr().cadr());
+        Function<SchemeClosure, Expression> valueProc = analyze(exps.cdr().cadr());
 
         return env -> {
             env.set(symbol, valueProc.apply(env));
@@ -84,21 +84,21 @@ public class Evaluator {
         };
     }
 
-    private static Function<Environment, Expression> analyzeFunctionDefinition(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> analyzeFunctionDefinition(Cons<Expression> exps) {
         SymbolExpression name = exps.cadr().list().value.car().symbol();
         Cons<SymbolExpression> paramNames = exps.cadr().list().value.cdr().stream()
                 .map(Expression::symbol)
                 .collect(Cons.collector());
-        Function<Environment, Expression> lambda = analyzeProcedure(paramNames, exps);
+        Function<SchemeClosure, Expression> lambda = analyzeProcedure(paramNames, exps);
         return env -> {
             env.define(name, lambda.apply(env));
             return Expression.none();
         };
     }
 
-    private static Function<Environment, Expression> analyzeVarDefinition(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> analyzeVarDefinition(Cons<Expression> exps) {
         SymbolExpression symbol = exps.cadr().symbol();
-        Function<Environment, Expression> valueProc = analyze(exps.cdr().cadr());
+        Function<SchemeClosure, Expression> valueProc = analyze(exps.cdr().cadr());
         return env -> {
             env.define(symbol, valueProc.apply(env));
             return Expression.none();
@@ -109,8 +109,8 @@ public class Evaluator {
         return exps.cadr().isSymbol();
     }
 
-    private static Function<Environment, Expression> analyzeFunctionCall(ListExpression exp) {
-        List<Function<Environment, Expression>> map = exp.value.stream()
+    private static Function<SchemeClosure, Expression> analyzeFunctionCall(ListExpression exp) {
+        List<Function<SchemeClosure, Expression>> map = exp.value.stream()
                 .map(Evaluator::analyze)
                 .collect(Collectors.toList());
 
@@ -122,9 +122,9 @@ public class Evaluator {
         };
     }
 
-    private static Function<Environment, Expression> analyzeLet(Cons<Expression> exps) {
-        List<Function<Environment, Expression>> letBindingValues = letBindingValues(exps);
-        Function<Environment, Expression> letBody = analyzeProcedure(letBindingSymbols(exps), exps);
+    private static Function<SchemeClosure, Expression> analyzeLet(Cons<Expression> exps) {
+        List<Function<SchemeClosure, Expression>> letBindingValues = letBindingValues(exps);
+        Function<SchemeClosure, Expression> letBody = analyzeProcedure(letBindingSymbols(exps), exps);
 
         return env -> {
             Cons<Expression> letParams = letBindingValues.stream()
@@ -140,19 +140,19 @@ public class Evaluator {
                 .collect(Cons.collector());
     }
 
-    private static List<Function<Environment, Expression>> letBindingValues(Cons<Expression> exps) {
+    private static List<Function<SchemeClosure, Expression>> letBindingValues(Cons<Expression> exps) {
         return exps.cadr().list().value.stream()
                 .map(e -> e.list().value.cadr())
                 .map(Evaluator::analyze)
                 .collect(Collectors.toList());
     }
 
-    private static Function<Environment, Expression> analyzeBegin(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> analyzeBegin(Cons<Expression> exps) {
         return analyzeSequence(exps.cdr());
     }
 
-    private static Function<Environment, Expression> analyzeSequence(Cons<Expression> exps) {
-        List<Function<Environment, Expression>> seq = exps.stream()
+    private static Function<SchemeClosure, Expression> analyzeSequence(Cons<Expression> exps) {
+        List<Function<SchemeClosure, Expression>> seq = exps.stream()
                 .map(Evaluator::analyze)
                 .collect(Collectors.toList());
 
@@ -160,36 +160,36 @@ public class Evaluator {
                 .collect(Collectors.reducing(Expression.none(), a -> a.apply(env), (a, b) -> b));
     }
 
-    private static Function<Environment, Expression> analyzeCond(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> analyzeCond(Cons<Expression> exps) {
         return condToIf(exps.cdr());
     }
 
-    private static Function<Environment, Expression> condToIf(Cons<Expression> exps) {
+    private static Function<SchemeClosure, Expression> condToIf(Cons<Expression> exps) {
         if (exps.isEmpty()) {
             return e -> BooleanExpression.bool(false);
         } else if (exps.size() == 1) {
-            Function<Environment, Expression> condition = analyze(exps.car().list().value.car());
-            Function<Environment, Expression> consequent = analyze(exps.car().list().value.cadr());
-            Optional<Function<Environment, Expression>> alternative = Optional.empty();
+            Function<SchemeClosure, Expression> condition = analyze(exps.car().list().value.car());
+            Function<SchemeClosure, Expression> consequent = analyze(exps.car().list().value.cadr());
+            Optional<Function<SchemeClosure, Expression>> alternative = Optional.empty();
 
             return makeIf(condition, consequent, alternative);
         } else {
             if (exps.cadr().list().value.car().equals(symbol("else"))) {
-                Function<Environment, Expression> condition = analyze(exps.car().list().value.car());
-                Function<Environment, Expression> consequent = analyze(exps.car().list().value.cadr());
-                Optional<Function<Environment, Expression>> alternative = Optional.of(analyze(exps.cadr().list().value.cadr()));
+                Function<SchemeClosure, Expression> condition = analyze(exps.car().list().value.car());
+                Function<SchemeClosure, Expression> consequent = analyze(exps.car().list().value.cadr());
+                Optional<Function<SchemeClosure, Expression>> alternative = Optional.of(analyze(exps.cadr().list().value.cadr()));
                 return makeIf(condition, consequent, alternative);
             } else {
-                Function<Environment, Expression> condition = analyze(exps.car().list().value.car());
-                Function<Environment, Expression> consequent = analyze(exps.car().list().value.cadr());
-                Optional<Function<Environment, Expression>> alternative = Optional.of(condToIf(exps.cdr()));
+                Function<SchemeClosure, Expression> condition = analyze(exps.car().list().value.car());
+                Function<SchemeClosure, Expression> consequent = analyze(exps.car().list().value.cadr());
+                Optional<Function<SchemeClosure, Expression>> alternative = Optional.of(condToIf(exps.cdr()));
 
                 return makeIf(condition, consequent, alternative);
             }
         }
     }
 
-    private static Function<Environment, Expression> makeIf(Function<Environment, Expression> condition, Function<Environment, Expression> consequent, Optional<Function<Environment, Expression>> alternative) {
+    private static Function<SchemeClosure, Expression> makeIf(Function<SchemeClosure, Expression> condition, Function<SchemeClosure, Expression> consequent, Optional<Function<SchemeClosure, Expression>> alternative) {
         return env -> {
             if (isTruthy(condition.apply(env))) {
                 return consequent.apply(env);
@@ -199,15 +199,15 @@ public class Evaluator {
         };
     }
 
-    private static Function<Environment, Expression> analyzeIf(Cons<Expression> exps) {
-        Function<Environment, Expression> condition = analyze(exps.cadr());
-        Function<Environment, Expression> consequent = analyze(exps.cdr().cadr());
-        Optional<Function<Environment, Expression>> alternative = exps.size() > 3 ? Optional.of(analyze(exps.cdr().cdr().cadr())) : Optional.empty();
+    private static Function<SchemeClosure, Expression> analyzeIf(Cons<Expression> exps) {
+        Function<SchemeClosure, Expression> condition = analyze(exps.cadr());
+        Function<SchemeClosure, Expression> consequent = analyze(exps.cdr().cadr());
+        Optional<Function<SchemeClosure, Expression>> alternative = exps.size() > 3 ? Optional.of(analyze(exps.cdr().cdr().cadr())) : Optional.empty();
         return makeIf(condition, consequent, alternative);
     }
 
-    private static Function<Environment, Expression> analyzeProcedure(Cons<SymbolExpression> names, Cons<Expression> exps) {
-        Function<Environment, Expression> body = analyzeSequence(exps.cdr().cdr());
+    private static Function<SchemeClosure, Expression> analyzeProcedure(Cons<SymbolExpression> names, Cons<Expression> exps) {
+        Function<SchemeClosure, Expression> body = analyzeSequence(exps.cdr().cdr());
         return env ->
                 ProcedureExpression.procedure(args ->
                         body.apply(env.extend(makeMap(names, args, new LinkedHashMap<>()))));

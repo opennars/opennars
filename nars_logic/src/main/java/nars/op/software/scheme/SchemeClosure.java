@@ -12,25 +12,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class Environment {
+public class SchemeClosure {
     public final Map<SymbolExpression, Expression> bindings;
-    public final Environment enclosingEnvironment;
+    public final SchemeClosure enclosingEnvironment;
 
-    private Environment(Map<SymbolExpression, Expression> bindings, Environment enclosingEnvironment) {
+    private SchemeClosure(Map<SymbolExpression, Expression> bindings, SchemeClosure enclosingEnvironment) {
         this.bindings = bindings;
         this.enclosingEnvironment = enclosingEnvironment;
     }
 
-    public Environment(Map<SymbolExpression, Expression> bindings) {
+    public SchemeClosure(Map<SymbolExpression, Expression> bindings) {
         this(bindings, null);
     }
 
-    public Environment() {
+    public SchemeClosure() {
         this(new HashMap<>(DefaultEnvironment.PRIMITIVES));
     }
 
-    public Environment extend(Map<SymbolExpression, Expression> bindings) {
-        return new Environment(bindings, this);
+    public SchemeClosure extend(Map<SymbolExpression, Expression> bindings) {
+        return new SchemeClosure(bindings, this);
     }
 
 
@@ -63,7 +63,7 @@ public class Environment {
             return false;
         }
 
-        Environment that = (Environment) o;
+        SchemeClosure that = (SchemeClosure) o;
 
         if (bindings != null ? !bindings.equals(that.bindings) : that.bindings != null) {
             return false;
@@ -80,6 +80,11 @@ public class Environment {
         int result = bindings != null ? bindings.hashCode() : 0;
         result = 31 * result + (enclosingEnvironment != null ? enclosingEnvironment.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "@" + Integer.toUnsignedString( hashCode(), Character.MAX_RADIX);
     }
 
     public Stream<Expression> evalStream(String input) {

@@ -150,8 +150,8 @@ public class DefaultEnvironment {
                 .allMatch(e -> predicate.test(iterator.next(), e));
     }
 
-    public static Environment newInstance() {
-        return new Environment(new HashMap<>(PRIMITIVES));
+    public static SchemeClosure newInstance() {
+        return new SchemeClosure(new HashMap<>(PRIMITIVES));
     }
 
     private static NumberExpression longFunction(Cons<Expression> args, BinaryOperator<Long> accumulator) {

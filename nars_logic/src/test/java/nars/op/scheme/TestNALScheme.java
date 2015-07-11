@@ -1,11 +1,11 @@
 package nars.op.scheme;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import nars.NAR;
+import nars.clock.HardRealtimeClock;
 import nars.io.out.TextOutput;
 import nars.nar.Default;
-import nars.op.software.scheme.Environment;
-import nars.op.software.scheme.Evaluator;
-import nars.op.software.scheme.Reader;
+import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.expressions.Expression;
 import nars.util.bind.NALObjects;
 import org.junit.Test;
@@ -23,20 +23,18 @@ public class TestNALScheme {
 
     //----
 
-    @Test
+    @Test @Ignore
     public void testDynamicSchemeProxy() throws Exception {
 
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Default().clock(new HardRealtimeClock(false)) );
 
-        //TextOutput.out(n);
+        TextOutput.out(n);
 
-        Environment env = new NALObjects(n).build("scm", Environment.class);
+        SchemeClosure env = new NALObjects(n).build("scm", SchemeClosure.class);
 
         String input = "(define factorial (lambda (n) (if (= n 1) 1 (* n (factorial (- n 1))))))";
 
         env.eval(input);
-
-        n.frame(50);
 
         List<Expression> result = env.eval("(factorial 3)");
 
@@ -44,7 +42,7 @@ public class TestNALScheme {
 
         n.frame(50);
 
-        //n.frame(1660);
+        n.frame(1660);
 
 
 //
