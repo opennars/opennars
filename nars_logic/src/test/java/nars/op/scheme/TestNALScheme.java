@@ -8,6 +8,7 @@ import nars.nar.Default;
 import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.expressions.Expression;
 import nars.util.bind.NALObjects;
+import objenome.op.compute.BrainfuckMachine;
 import org.junit.Test;
 
 import java.util.List;
@@ -22,6 +23,21 @@ import static org.junit.Assert.assertThat;
 public class TestNALScheme {
 
     //----
+    @Test @Ignore
+    public void testDynamicBrainfuckProxy() throws Exception {
+
+        NAR n = new NAR(new Default().clock(new HardRealtimeClock(false)) );
+
+        TextOutput.out(n);
+
+        BrainfuckMachine bf= new NALObjects(n).build("scm", BrainfuckMachine.class);
+
+        bf.execute("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.");
+
+        n.frame(6500);
+
+    }
+
 
     @Test @Ignore
     public void testDynamicSchemeProxy() throws Exception {

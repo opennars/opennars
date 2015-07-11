@@ -7,6 +7,7 @@ import com.github.fge.grappa.matchers.NothingMatcher;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
+import com.github.fge.grappa.run.ListeningParseRunner;
 import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
@@ -34,7 +35,9 @@ import nars.term.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static nars.Op.*;
@@ -55,11 +58,19 @@ public class NarseseParser extends BaseParser<Object> {
     final static char[] variables = new char[] { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY };
 
     //These should be set to something like RecoveringParseRunner for performance
-    public final ParseRunner inputParser = new ListeningParseRunner3(Input());
-    public final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
-    public final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
+    private final ParseRunner inputParser = new ListeningParseRunner3(Input());
+    private final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
+    private final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
-    public static final NarseseParser the = Grappa.createParser(NarseseParser.class);
+
+    static final ThreadLocal<NarseseParser> parsers = new ThreadLocal();
+
+    public static NarseseParser the() {
+        NarseseParser p = parsers.get();
+        if (p == null) parsers.set(p = Grappa.createParser(NarseseParser.class));
+        return p;
+    }
+
 
     public Rule Input() {
         return
@@ -866,7 +877,7 @@ public class NarseseParser extends BaseParser<Object> {
      * parse a series of tasks
      */
     public void tasks(final AbstractMemory memory, String input, Consumer<? super Task> c) {
-        ParsingResult r = inputParser.run(input);
+        ParsingResult r = the().inputParser.run(input);
         int size = r.getValueStack().size();
 
         if (size == 0) {

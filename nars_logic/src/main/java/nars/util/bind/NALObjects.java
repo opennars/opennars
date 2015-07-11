@@ -100,21 +100,24 @@ public class NALObjects implements MethodHandler {
             if (cname.isEmpty()) cname = oc.getName();
 
             Package p = oc.getPackage();
+            if (p!=null) {
 
-            Term cterm = Atom.quote(cname);
+                Term cterm = Atom.quote(cname);
 
-            Atom pkg = packages.get(p);
-            if (pkg == null) {
-                pkg = Atom.quote(p.getName());
-                packages.put(p, pkg);
-                nar.believe( Inheritance.make(cterm, pkg) );
+                Atom pkg = packages.get(p);
+                if (pkg == null) {
+                    pkg = Atom.quote(p.getName());
+                    packages.put(p, pkg);
+                    nar.believe(Inheritance.make(cterm, pkg));
+                }
+
+                return cterm;
             }
-
-            return cterm;
+            return Atom.the("primitive");
         }
-        if (o instanceof Object[]) {
+        else if (o instanceof Object[]) {
             return Product.make(
-                    Arrays.stream((Object[])o).map(e -> termize(e)).collect(Collectors.toList())
+                    Arrays.stream((Object[]) o).map(e -> termize(e)).collect(Collectors.toList())
             );
         }
         else if (o instanceof List) {

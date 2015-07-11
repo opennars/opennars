@@ -121,7 +121,7 @@ public class NAR extends Container implements Runnable {
 
         the(NAR.class, this);
 
-        this.narsese = NarseseParser.the;
+        this.narsese = NarseseParser.the();
         this.textPerception = new TextPerception(this, narsese);
 
         reset();

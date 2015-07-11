@@ -85,13 +85,7 @@ import java.util.Arrays;
  *
  * @since 2.0
  */
-public class BrainfuckInterpreter<T extends Organism> implements Computer<Byte,T,Object> {
-
-    // The indexable memory available to programs.
-    private final byte[] memory;
-
-    // Pointer to current memory address.
-    private int pointer;
+public class BrainfuckInterpreter<T extends Organism> extends BrainfuckMachine implements Computer<Byte,T,Object> {
 
     private SourceGenerator<T> generator;
 
@@ -116,17 +110,7 @@ public class BrainfuckInterpreter<T extends Organism> implements Computer<Byte,T
      * memory
      */
     public BrainfuckInterpreter(SourceGenerator<T> generator, int memorySize) {
-        memory = new byte[memorySize];
-        pointer = 0;
-    }
-
-    /*
-     * Resets the memory array to be filled with 0 bytes, and the pointer to
-     * address element 0.
-     */
-    private void reset() {
-        Arrays.fill(memory, (byte) 0);
-        pointer = 0;
+        super(memorySize);
     }
 
     /**
@@ -172,89 +156,6 @@ public class BrainfuckInterpreter<T extends Organism> implements Computer<Byte,T
             // Execute the source.
             execute(source);
         }
-    }
-
-    /*
-     * Parses and executes the given source string as a Brainfuck program.
-     */
-    private void execute(final String source) {
-        if (source == null) {
-            return;
-        }
-
-        for (int i = 0; i < source.length(); i++) {
-            final char c = source.charAt(i);
-
-            switch (c) {
-                case '>':
-                    pointer = ++pointer % memory.length;
-                    break;
-                case '<':
-                    pointer--;
-                    if (pointer < 0) {
-                        pointer = memory.length - 1;
-                    }
-                    break;
-                case '+':
-                    memory[pointer]++;
-                    break;
-                case '-':
-                    memory[pointer]--;
-                    break;
-                case ',':
-                    // Not supported.
-                    break;
-                case '.':
-                    // Not supported.
-                    // System.out.print((char) memory[pointer]);
-                    break;
-                case '[':
-                    final int bracketIndex = findClosingBracket(source.substring(i + 1)) + (i + 1);
-                    final String loopSource = source.substring((i + 1), bracketIndex);
-                    while (memory[pointer] != 0) {
-                        execute(loopSource);
-                    }
-                    i = bracketIndex;
-                    break;
-                case ']':
-                    // Implemented as part of '['.
-                    break;
-                default:
-                    // Ignore all other characters.
-                    break;
-            }
-        }
-    }
-
-    /*
-     * Locate the matching bracket in the given source.
-     */
-    private int findClosingBracket(final String source) {
-        int open = 1;
-        for (int i = 0; i < source.length(); i++) {
-            final char c = source.charAt(i);
-
-            if (c == '[') {
-                open++;
-            } else if (c == ']') {
-                open--;
-                if (open == 0) {
-                    return i;
-                }
-            }
-        }
-        // There is no closing bracket.
-        return -1;
-    }
-
-    /**
-     * Returns the byte array which is providing indexed memory for the
-     * programs. The array will be cleared for each execution.
-     *
-     * @return the program's indexed memory.
-     */
-    public byte[] getMemory() {
-        return memory;
     }
 
     /**

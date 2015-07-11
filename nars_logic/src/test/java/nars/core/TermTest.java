@@ -375,7 +375,12 @@ public class TermTest {
         statementHash("i4", "i2");
         statementHash("{i4}", "{i2}");
         statementHash("<{i4} --> r>", "<{i2} --> r>");
+
+
+        statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(8)>");
         statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(9)>");
+
+
         statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(7)>");
 
         //this is a case where a faulty hash function produced a collision
@@ -389,8 +394,8 @@ public class TermTest {
 
         NAR n = new NAR(new Default());
 
-        Term ta = n.term(a).normalized();
-        Term tb = n.term(b).normalized();
+        Term ta = n.term(a);
+        Term tb = n.term(b);
 
         assertNotEquals(ta, tb);
         assertNotEquals(ta.hashCode(), tb.hashCode());

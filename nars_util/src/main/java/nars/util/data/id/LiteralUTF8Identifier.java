@@ -76,6 +76,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     public void invalidate() {
         data = null;
+        hash = 0;
     }
 
     @Override
@@ -180,8 +181,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     @Override
     public void delete() {
-        data = null;
-        hash = 0;
+        invalidate();
     }
 
     @Override

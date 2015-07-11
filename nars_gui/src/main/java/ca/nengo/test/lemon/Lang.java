@@ -24,7 +24,7 @@ public class Lang {
     //TestLines.Lines lines;
 
     public Lang(){
-        p = NarseseParser.the;
+        p = NarseseParser.the();
     }
 
     private void debug(String s)

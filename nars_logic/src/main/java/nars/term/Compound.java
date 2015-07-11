@@ -107,6 +107,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         long contentHash = opOrdinal + PRIME1 * asc;
 
 
+        int p = 0;
         for (final Term t : term) {
             /*if (t == null)
                 throw new RuntimeException("null subterm");*/
@@ -115,7 +116,9 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             indeps += t.varIndep();
             queries += t.varQuery();
             subt |= t.structuralHash();
-            contentHash = (contentHash + t.hashCode()) * PRIME2;
+            contentHash = (contentHash + t.hashCode()+p) * PRIME2;
+
+            p++;
         }
 
         this.structureHash = subt | (((long)asc) << 32);

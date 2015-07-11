@@ -38,9 +38,9 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
     public static void main(String[] args) {
         Global.DEBUG = false;
 
-        final int threads = 2;
+        final int threads = 3;
         final int individuals = 55;
-        final int cycles = 1550;
+        final int cycles = 2050;
 
         Civilization c = new OptimizeLeakGenetic3(threads, individuals, cycles);
         c.run(10000);

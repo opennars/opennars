@@ -118,7 +118,7 @@ abstract public class VNCControl extends VNCClient {
 
     static final Set<Term> seeds = new LinkedHashSet();
     static {
-        NarseseParser n = NarseseParser.the;
+        NarseseParser n = NarseseParser.the();
 
         for (int scale = 1; scale<=3; scale++) {
 
