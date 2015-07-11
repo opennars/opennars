@@ -13,7 +13,7 @@ public class TaskRuleTest extends TestCase {
     @Test
     public void testParser() {
 
-        NarseseParser p = NarseseParser.newMetaParser();
+        NarseseParser p = NarseseParser.the;
         //NAR p = new NAR(new Default());
 
         assertNotNull("metaparser can is a superset of narsese", p.term("<A --> b>"));

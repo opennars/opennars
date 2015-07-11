@@ -47,28 +47,19 @@ import static nars.Symbols.IMAGE_PLACE_HOLDER;
 public class NarseseParser extends BaseParser<Object> {
 
     /** Maximum supported NAL level */
-    private final int level;
+    public static final int level = 8;
 
     /** MetaNAL enable/disable */
-    boolean meta = true;
+    public static final boolean meta = true;
 
+    final static char[] variables = new char[] { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY };
 
     //These should be set to something like RecoveringParseRunner for performance
     public final ParseRunner inputParser = new ListeningParseRunner3(Input());
     public final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     public final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
-    protected NarseseParser() {
-        this(8);
-    }
-
-    protected NarseseParser(int minNALLevel) {
-        this.level = minNALLevel;
-    }
-
-    public boolean nal(final int n) {
-        return n >= level;
-    }
+    public static final NarseseParser the = Grappa.createParser(NarseseParser.class);
 
     public Rule Input() {
         return
@@ -544,14 +535,14 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 
-    /** creates a parser that is not associated with a memory; it will not parse any operator terms (which are registered with a Memory instance) */
-    public static NarseseParser newParser() {
-        return newParser((Memory)null);
-    }
-
-    public static NarseseParser newMetaParser() {
-        return newParser((Memory)null);
-    }
+//    /** creates a parser that is not associated with a memory; it will not parse any operator terms (which are registered with a Memory instance) */
+//    public static NarseseParser newParser() {
+//        return newParser((Memory)null);
+//    }
+//
+//    public static NarseseParser newMetaParser() {
+//        return newParser((Memory)null);
+//    }
 
     final static Atom imageIndexTerm = Atom.theCached(String.valueOf(IMAGE_PLACE_HOLDER));
 
@@ -593,7 +584,6 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    final static char[] variables = new char[] { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY };
 
     Rule Variable() {
         /*
@@ -855,14 +845,14 @@ public class NarseseParser extends BaseParser<Object> {
         return zeroOrMore(anyOf(" \t\f\n"));
     }
 
-    public static NarseseParser newParser(NAR n) {
-        return newParser(n.memory);
-    }
-
-    public static NarseseParser newParser(Memory m) {
-        NarseseParser np = Grappa.createParser(NarseseParser.class);
-        return np;
-    }
+//    public static NarseseParser newParser(NAR n) {
+//        return newParser(n.memory);
+//    }
+//
+//    public static NarseseParser newParser(Memory m) {
+//        NarseseParser np = ;
+//        return np;
+//    }
 
 
     public void tasks(AbstractMemory m, String input, Collection<? super Task> c) {
