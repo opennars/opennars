@@ -73,7 +73,7 @@ public interface Input extends Source<Task> {
 
 
     /** an input that generates tasks in batches, which are stored in a buffer */
-    abstract public static class BufferedInput implements Input , Consumer<Task> {
+    public static class BufferedInput implements Input , Consumer<Task> {
 
         final Deque<Task> queue = new ArrayDeque();
 

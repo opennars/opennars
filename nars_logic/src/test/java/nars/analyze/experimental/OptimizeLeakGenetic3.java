@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.Symbols;
 import nars.event.CycleReaction;
 import nars.io.in.LibraryInput;
-import nars.io.in.TextInput;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -131,7 +130,8 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         private String path;
         private int maxCycles;
 
-        private String script;
+        private List script;
+        String scriptSrc;
 
         double[] conPri = new double[4];
 
@@ -161,7 +161,9 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
             this.path = path;
             this.maxCycles = maxCycles;
-            this.script = LibraryInput.getExample(path);
+
+            scriptSrc = LibraryInput.getExample(path);
+            this.script = LibraryInput.rawTasks(scriptSrc);
 
             initVar();
 
@@ -251,9 +253,10 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
                 }
             };
 
-            nar.requires.addAll(OutputCondition.getConditions(nar, script, 0, conditionsCache));
+            nar.requires.addAll(OutputCondition.getConditions(nar, scriptSrc, 0, conditionsCache));
 
-            nar.input(new TextInput(nar.textPerception, script));
+            //nar.input(new TextInput(nar.textPerception, script));
+            nar.input( LibraryInput.getExampleInput(script, nar.memory ));
 
             nar.run(maxCycles);
 

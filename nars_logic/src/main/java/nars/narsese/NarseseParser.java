@@ -874,9 +874,11 @@ public class NarseseParser extends BaseParser<Object> {
 
 
     /**
-     * parse a series of tasks
+     * gets a stream of raw immutable task-generating objects
+     * which can be re-used because a Memory can generate them
+     * ondemand
      */
-    public void tasks(final AbstractMemory memory, String input, Consumer<? super Task> c) {
+    public void tasks(String input, Consumer c) {
         ParsingResult r = the().inputParser.run(input);
         int size = r.getValueStack().size();
 
@@ -884,7 +886,6 @@ public class NarseseParser extends BaseParser<Object> {
             c.accept(new Echo(Events.ERR.class, "Unrecognized input: " + input).newTask());
             return;
         }
-
         for (int i = size-1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);
 
@@ -892,15 +893,29 @@ public class NarseseParser extends BaseParser<Object> {
                 c.accept( ((ImmediateOperation)o).newTask() );
             }
             else if (o instanceof Object[]) {
-                c.accept(getTask(memory, (Object[]) o));
+                c.accept( o );
             }
             else {
                 c.accept(new Echo(Echo.class, o.toString()).newTask());
                 //throw new RuntimeException("unrecognized input result: " + o);
             }
         }
+    }
 
-        r.getValueStack().clear();
+    /**
+     * parse a series of tasks
+     */
+    public void tasks(final AbstractMemory memory, String input, Consumer<? super Task> c) {
+        tasks(input, t -> {
+            if (t instanceof Object[])
+                t = getTask(memory, (Object[]) t);
+            c.accept((Task) t);
+        });
+    }
+
+
+
+        //r.getValueStack().clear();
 
 //        r.getValueStack().iterator().forEachRemaining(x -> {
 //            if (x instanceof Task)
@@ -909,7 +924,7 @@ public class NarseseParser extends BaseParser<Object> {
 //                throw new RuntimeException("Unknown parse result: " + x + " (" + x.getClass() + ')');
 //            }
 //        });
-    }
+
 
     /**
      * parse one task
@@ -937,7 +952,7 @@ public class NarseseParser extends BaseParser<Object> {
         }
     }
 
-    public Task getTask(final AbstractMemory m, Object[] x) {
+    public static Task getTask(final AbstractMemory m, Object[] x) {
         return getTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
     }
 

@@ -4,16 +4,21 @@
  */
 package nars.io.in;
 
+import nars.AbstractMemory;
+import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
 import nars.io.TextPerception;
 import nars.meter.condition.OutputCondition;
+import nars.narsese.NarseseParser;
+import nars.task.Task;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Access to library of examples/unit tests
@@ -158,5 +163,34 @@ public class LibraryInput extends TextInput {
 
     public static Map<String, String> getAllExamples() {
         return getUnitTests(directories);
+    }
+
+    public static List rawTasks(String script) {
+
+        List rr = Global.newArrayList();
+        final NarseseParser parser = NarseseParser.the();
+
+        parser.tasks(script, x -> rr.add(x));
+
+        return rr;
+    }
+
+    public static List<Task> getExample(List raw, AbstractMemory m) {
+
+        List<Task> y = new ArrayList(raw.size());
+        for (Object o : raw) {
+            if (o instanceof Task) y.add((Task)o);
+            else {
+                Object[] z = (Object[])o;
+                y.add(NarseseParser.getTask(m, z));
+            }
+        }
+        return y;
+    }
+
+    public static BufferedInput getExampleInput(List raw, AbstractMemory m) {
+        BufferedInput b = new BufferedInput();
+        b.accept(getExample(raw, m).iterator());
+        return b;
     }
 }
