@@ -4,7 +4,6 @@ import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.task.Task;
-import nars.meter.condition.OutputCondition;
 import nars.util.data.CuckooMap;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.HitMeter;
@@ -159,7 +158,7 @@ public class CountDerivationCondition extends NARReaction {
     void hit(String meter) {
         HitMeter m = (HitMeter) metrics.getMeter(meter);
         if (m == null) {
-            metrics.addMeter(m = new HitMeter(meter));
+            metrics.add(m = new HitMeter(meter));
         }
         m.hit();
     }

@@ -14,12 +14,14 @@ public class EnergyAnalysis {
     }
 
 
-    public BudgetStatus energy() {
-        return new BudgetStatus(nar.memory);
+    public MemoryBudgetState energy() {
+        return new MemoryBudgetState(nar.memory);
     }
 
     public void printEnergy() {
         System.out.println(nar.time() + ": " + energy());
     }
+
+
 
 }

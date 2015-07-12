@@ -23,6 +23,7 @@ import nars.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -41,6 +42,9 @@ public abstract class NAL implements Runnable {
     protected final Task currentTask;
     protected final LogicPolicy reasoner;
     private Task currentBelief;
+
+    /** derivation queue */
+    protected List<Task> derived = null;
 
 
     /**
@@ -75,11 +79,13 @@ public abstract class NAL implements Runnable {
     }
 
 
-    @Override
-    public void run() {
+    @Override public void run() {
         onStart();
+
         process();
+
         onFinished();
+
     }
 
     protected void onStart() {
@@ -89,6 +95,7 @@ public abstract class NAL implements Runnable {
     protected void onFinished() {
         /** implement if necessary in subclasses */
     }
+
 
     protected abstract void process();
 
@@ -109,188 +116,6 @@ public abstract class NAL implements Runnable {
     }
 
 
-    public Task derive(final TaskSeed task) {
-        return derive(task, false);
-    }
-
-    public Task derive(final TaskSeed task, final boolean revised) {
-        return derive(task, revised, !task.isDouble());
-    }
-
-    @Deprecated
-    public Task derive(final TaskSeed task, final boolean revised, final boolean single) {
-        return derive(task, revised, single, null, false);
-    }
-
-    public Task deriveDouble(final TaskSeed task) {
-        return derive(task, false, false);
-    }
-
-//    /**
-//     * TEMPORARY ADAPTER FOR OLD API
-//     */
-//    @Deprecated
-//    public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
-//        return derive(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
-//    }
-
-    /**
-     * iived task comes from the logic rules.
-     *
-     * @param task         the derived task
-     * @param allowOverlap
-     */
-    @Deprecated
-    public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
-
-
-        if (task.getTerm() == null) {
-            throw new RuntimeException("task has null term");
-        }
-
-        if (task.getParentTask() == null && task.getParentBelief() == null) {
-            throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
-        }
-
-        if (single != !task.isDouble()) {
-            throw new RuntimeException((single ? "single" : "double") + " premise not consistent with Stamp on derived task: " + task);
-        }
-
-        //its revision, of course its cyclic, apply evidental base policy
-
-        /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain
-        {
-            //if revised, the stamp should already have been prevented from even being created
-
-            if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
-                if (task.isCyclic()) {
-                    //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
-                    //re.printStackTrace();
-                    memory.removed(task, "Cyclic");
-                    return null;
-                }
-            }
-        }
-
-
-        if (nal(7)) {
-            //adjust occurence time
-            final Task parent = task.getParentTask();
-            if (task.isTimeless()) {
-                final long o;
-                if (parent != null && !parent.isEternal())
-                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
-                else
-                    o = Stamp.ETERNAL; //default ETERNAL
-
-                task.occurr(o);
-            }
-        } else {
-            task.eternal();
-        }
-
-
-        //TODO balance budget on input; original task + immediate eternalization budget should be shared
-
-        Task derived;
-        if (null != (derived = addNewTask(task, "Derived", false, revised, single))) {
-
-            memory.event.emit(Events.TaskDerive.class, derived);
-            memory.logic.TASK_DERIVED.hit();
-
-            if (nal(7) && !derived.isEternal()) {
-                if (derived.getOccurrenceTime() > memory.time()) {
-                    memory.event.emit(Events.TaskDeriveFuture.class, derived, this);
-                }
-
-
-                //TODO move this to ImmediateEternalization.java handler that reacts to TaskDeriveTemporal (to prune reacting to Eternal events)
-
-                //TODO budget and/or confidence thresholds
-
-
-                //"Since in principle it is always valid to eternalize a tensed belief"
-                if (Global.IMMEDIATE_ETERNALIZATION /*&& task.temporalInductable()*/) {
-                    //temporal induction generated ones get eternalized directly
-                    /*Task eternalized = derived.cloneEternal();
-
-                    eternalized.mulPriority(0.25f);
-                    eternalized.log("ImmediateEternalize");
-                    memory.taskAdd(eternalized);*/
-
-                    derive(
-                        newTask(derived.getTerm())
-                                .punctuation(derived.getPunctuation())
-                                .truth(TruthFunctions.eternalize(derived.getTruth()))
-                                .parent(derived)
-                                .budget(derived, 0.25f, 1f)
-                                .eternal(),
-                    false);
-                }
-            }
-
-            return derived;
-        }
-
-
-        return null;
-    }
-
-
-    /**
-     * The final destination of Tasks generated by this reasoning
-     * process.  It receives all of the information about the state
-     * of the new task, and can filter/reject it upon arrival.
-     * <p>
-     * tasks added with this method will be buffered by this NAL instance;
-     * at the end of the processing they can be reviewed and filtered
-     * then they need to be added to memory with inputTask(t)
-     * <p>
-     * if solution is false, it means it is a derivation
-     */
-    public Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single) {
-
-        if (!nal(7) && !task.isEternal()) {
-            throw new RuntimeException("Temporal task derived with non-temporal reasoning");
-        }
-
-        //use this NAL's instance defaults for the values because specific values were not substituted:
-
-
-        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getBelief(), getTask());
-        if (rejectionReason != null) {
-            memory.removed(task, rejectionReason);
-            return null;
-        }
-
-        if (task.isInput()) {
-            throw new RuntimeException("derived task must have one parentTask: " + task);
-        }
-
-        Task taskCreated;
-        if ((taskCreated = task.input()) != null) {
-
-            //taskCreated.setTemporalInducting(false);
-
-            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                taskCreated.log(System.nanoTime() + " " + this.toString());
-            }
-
-            taskCreated.log(reason);
-
-            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                taskCreated.log(getNALStack());
-            }
-
-            return taskCreated;
-        }
-
-        return null;
-
-
-    }
-
-
     /**
      * @return the currentTerm
      */
@@ -298,59 +123,7 @@ public abstract class NAL implements Runnable {
 
     /* --------------- new task building --------------- */
 
-    /**
-     * Shared final operations by all double-premise rules, called from the
-     * rules except StructuralRules
-     *
-     * @param newTaskContent The content of the sentence in task
-     * @param newTruth       The truth value of the sentence in task
-     * @param newBudget      The budget value in task
-     */
-    @Deprecated
-    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
-        return deriveDouble(newTaskContent, newTruth, newBudget, temporalAdd, getTask(), allowOverlap);
-    }
 
-    @Deprecated
-    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
-        return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, getBelief(), temporalAdd, allowOverlap);
-    }
-
-    @Deprecated
-    public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence parentBelief, final boolean temporalAdd, boolean allowOverlap) {
-
-
-        //experimental: quick filter for below confidence threshold truths.
-        // this is also applied in derivation filters but this avoids some overhead
-        /*if (newTruth!=null && newTruth.getConfidence() < memory.param.confidenceThreshold.floatValue())
-            return null;*/
-
-        newTaskContent = Sentence.termOrNull(newTaskContent);
-        if (newTaskContent == null)
-            return null;
-
-        if ((currentTask == null) || (currentBelief == null))
-            throw new RuntimeException("should not derive doublePremiseTask with non-double Stamp");
-
-        TaskSeed task = newTask(newTaskContent)
-                .punctuation(punctuation)
-                .truth(newTruth)
-                .parent(parentTask, getBelief())
-                .temporalInductable(!temporalAdd)
-                .budget(newBudget);
-
-        return deriveDouble(task, allowOverlap);
-    }
-
-    public Task deriveDouble(TaskSeed task, boolean allowOverlap) {
-
-        final Task parentTask = task.getParentTask();
-
-        Task derived = derive(task, false, false, parentTask, allowOverlap);
-
-
-        return derived;
-    }
 
     public <T extends Compound> TaskSeed newTask(final T term) {
         return memory.newTask(term);
@@ -364,60 +137,6 @@ public abstract class NAL implements Runnable {
         return new TaskSeed(memory);
     }
 
-    /**
-     * Shared final operations by all single-premise rules, called in
-     * StructuralRules
-     *
-     * @param newContent The content of the sentence in task
-     * @param newTruth   The truth value of the sentence in task
-     * @param newBudget  The budget value in task
-     */
-    public Task deriveSingle(Compound newContent, Truth newTruth, Budget newBudget) {
-        return deriveSingle(newContent, getTask().getPunctuation(), newTruth, newBudget);
-    }
-
-    public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
-        return deriveSingle(newContent, punctuation, newTruth, newBudget, 1f, 1f);
-    }
-
-    public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
-        final Task currentTask = getTask();
-        final Task parentTask = currentTask.getParentTask();
-        if (parentTask != null) {
-            final Compound parentTaskTerm = parentTask.getTerm();
-            if (parentTaskTerm == null) {
-                return null;
-            }
-            if (parentTaskTerm.equals(newContent)) {
-                return null;
-            }
-        }
-
-        newContent = Sentence.termOrNull(newContent);
-        if (newContent == null)
-            return null;
-
-
-        final Task ptask;
-        final Task currentBelief = getBelief();
-        if (currentTask.isJudgment() || currentBelief == null) {
-            ptask = currentTask;
-        } else {
-            // to answer a question with negation in NAL-5 --- move to activated task?
-            ptask = currentBelief;
-        }
-
-
-        return deriveSingle(newTask(newContent, punctuation)
-                .truth(newTruth)
-                .budget(newBudget, priMult, durMult)
-                .parent(ptask,null));
-
-    }
-
-    public Task deriveSingle(TaskSeed t) {
-        return derive(t, false, true);
-    }
 
 
     public long time() {
@@ -775,4 +494,309 @@ public abstract class NAL implements Runnable {
         return unify(varType, a, b, new Term[] { a, b } );
     }
 
+
+
+    public Task derive(final TaskSeed task) {
+        return derive(task, false);
+    }
+
+    public Task derive(final TaskSeed task, final boolean revised) {
+        return derive(task, revised, !task.isDouble());
+    }
+
+    @Deprecated
+    public Task derive(final TaskSeed task, final boolean revised, final boolean single) {
+        return derive(task, revised, single, null, false);
+    }
+
+    public Task deriveDouble(final TaskSeed task) {
+        return derive(task, false, false);
+    }
+
+//    /**
+//     * TEMPORARY ADAPTER FOR OLD API
+//     */
+//    @Deprecated
+//    public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+//        return derive(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
+//    }
+
+    /**
+     * iived task comes from the logic rules.
+     *
+     * @param task         the derived task
+     * @param allowOverlap
+     */
+    @Deprecated
+    public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+
+
+        if (task.getTerm() == null) {
+            throw new RuntimeException("task has null term");
+        }
+
+        if (task.getParentTask() == null && task.getParentBelief() == null) {
+            throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
+        }
+
+        if (single != !task.isDouble()) {
+            throw new RuntimeException((single ? "single" : "double") + " premise not consistent with Stamp on derived task: " + task);
+        }
+
+        //its revision, of course its cyclic, apply evidental base policy
+
+        /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain
+        {
+            //if revised, the stamp should already have been prevented from even being created
+
+            if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
+                if (task.isCyclic()) {
+                    //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
+                    //re.printStackTrace();
+                    memory.removed(task, "Cyclic");
+                    return null;
+                }
+            }
+        }
+
+
+        if (nal(7)) {
+            //adjust occurence time
+            final Task parent = task.getParentTask();
+            if (task.isTimeless()) {
+                final long o;
+                if (parent != null && !parent.isEternal())
+                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
+                else
+                    o = Stamp.ETERNAL; //default ETERNAL
+
+                task.occurr(o);
+            }
+        } else {
+            task.eternal();
+        }
+
+
+        //TODO balance budget on input; original task + immediate eternalization budget should be shared
+
+        Task derived;
+        if (null != (derived = addNewTask(task, "Derived", false, revised, single))) {
+
+            memory.event.emit(Events.TaskDerive.class, derived);
+            memory.logic.TASK_DERIVED.hit();
+
+            if (nal(7) && !derived.isEternal()) {
+                if (derived.getOccurrenceTime() > memory.time()) {
+                    memory.event.emit(Events.TaskDeriveFuture.class, derived, this);
+                }
+
+
+                //TODO move this to ImmediateEternalization.java handler that reacts to TaskDeriveTemporal (to prune reacting to Eternal events)
+
+                //TODO budget and/or confidence thresholds
+
+
+                //"Since in principle it is always valid to eternalize a tensed belief"
+                if (Global.IMMEDIATE_ETERNALIZATION /*&& task.temporalInductable()*/) {
+                    //temporal induction generated ones get eternalized directly
+                    /*Task eternalized = derived.cloneEternal();
+
+                    eternalized.mulPriority(0.25f);
+                    eternalized.log("ImmediateEternalize");
+                    memory.taskAdd(eternalized);*/
+
+                    derive(
+                            newTask(derived.getTerm())
+                                    .punctuation(derived.getPunctuation())
+                                    .truth(TruthFunctions.eternalize(derived.getTruth()))
+                                    .parent(derived)
+
+                                    .budget(derived)
+                                            //.budget(derived, 0.25f, 1f) //TODO scale eternalized
+
+                                    .eternal(),
+                            false);
+                }
+            }
+
+            return derived;
+        }
+
+
+        return null;
+    }
+
+
+    /**
+     * The final destination of Tasks generated by this reasoning
+     * process.  It receives all of the information about the state
+     * of the new task, and can filter/reject it upon arrival.
+     * <p>
+     * tasks added with this method will be buffered by this NAL instance;
+     * at the end of the processing they can be reviewed and filtered
+     * then they need to be added to memory with inputTask(t)
+     * <p>
+     * if solution is false, it means it is a derivation
+     */
+    public Task addNewTask(TaskSeed task, String reason, @Deprecated boolean solution, boolean revised, boolean single) {
+
+        if (!nal(7) && !task.isEternal()) {
+            throw new RuntimeException("Temporal task derived with non-temporal reasoning");
+        }
+
+        //use this NAL's instance defaults for the values because specific values were not substituted:
+
+
+        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getBelief(), getTask());
+        if (rejectionReason != null) {
+            memory.removed(task, rejectionReason);
+            return null;
+        }
+
+        if (task.isInput()) {
+            throw new RuntimeException("derived task must have one parentTask: " + task);
+        }
+
+        Task taskCreated;
+        if ((taskCreated = task.get()) != null) {
+
+            //taskCreated.setTemporalInducting(false);
+
+            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
+                taskCreated.log(System.nanoTime() + " " + this.toString());
+            }
+
+            taskCreated.log(reason);
+
+            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
+                taskCreated.log(getNALStack());
+            }
+
+            queue(taskCreated);
+
+            return taskCreated;
+        }
+
+
+
+        return null;
+
+
+    }
+
+    protected void queue(Task derivedTask) {
+        if (derived == null)
+            derived = Global.newArrayList(1);
+
+        derived.add(derivedTask);
+    }
+
+    /**
+     * Shared final operations by all single-premise rules, called in
+     * StructuralRules
+     *
+     * @param newContent The content of the sentence in task
+     * @param newTruth   The truth value of the sentence in task
+     * @param newBudget  The budget value in task
+     */
+    public Task deriveSingle(Compound newContent, Truth newTruth, Budget newBudget) {
+        return deriveSingle(newContent, getTask().getPunctuation(), newTruth, newBudget);
+    }
+
+    public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
+        return deriveSingle(newContent, punctuation, newTruth, newBudget, 1f, 1f);
+    }
+
+    public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
+        final Task currentTask = getTask();
+        final Task parentTask = currentTask.getParentTask();
+        if (parentTask != null) {
+            final Compound parentTaskTerm = parentTask.getTerm();
+            if (parentTaskTerm == null) {
+                return null;
+            }
+            if (parentTaskTerm.equals(newContent)) {
+                return null;
+            }
+        }
+
+        newContent = Sentence.termOrNull(newContent);
+        if (newContent == null)
+            return null;
+
+
+        final Task ptask;
+        final Task currentBelief = getBelief();
+        if (currentTask.isJudgment() || currentBelief == null) {
+            ptask = currentTask;
+        } else {
+            // to answer a question with negation in NAL-5 --- move to activated task?
+            ptask = currentBelief;
+        }
+
+
+        return deriveSingle(newTask(newContent, punctuation)
+                .truth(newTruth)
+                .budget(newBudget, priMult, durMult)
+                .parent(ptask,null));
+
+    }
+
+    public Task deriveSingle(TaskSeed t) {
+        return derive(t, false, true);
+    }
+
+    /**
+     * Shared final operations by all double-premise rules, called from the
+     * rules except StructuralRules
+     *
+     * @param newTaskContent The content of the sentence in task
+     * @param newTruth       The truth value of the sentence in task
+     * @param newBudget      The budget value in task
+     */
+    @Deprecated
+    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
+        return deriveDouble(newTaskContent, newTruth, newBudget, temporalAdd, getTask(), allowOverlap);
+    }
+
+    @Deprecated
+    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
+        return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, getBelief(), temporalAdd, allowOverlap);
+    }
+
+    @Deprecated
+    public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence parentBelief, final boolean temporalAdd, boolean allowOverlap) {
+
+
+        //experimental: quick filter for below confidence threshold truths.
+        // this is also applied in derivation filters but this avoids some overhead
+        /*if (newTruth!=null && newTruth.getConfidence() < memory.param.confidenceThreshold.floatValue())
+            return null;*/
+
+        newTaskContent = Sentence.termOrNull(newTaskContent);
+        if (newTaskContent == null)
+            return null;
+
+        if ((currentTask == null) || (currentBelief == null))
+            throw new RuntimeException("should not derive doublePremiseTask with non-double Stamp");
+
+        TaskSeed task = newTask(newTaskContent)
+                .punctuation(punctuation)
+                .truth(newTruth)
+                .parent(parentTask, getBelief())
+                .temporalInductable(!temporalAdd)
+                .budget(newBudget);
+
+        return deriveDouble(task, allowOverlap);
+    }
+
+    public Task deriveDouble(TaskSeed task, boolean allowOverlap) {
+
+        final Task parentTask = task.getParentTask();
+
+        Task derived = derive(task, false, false, parentTask, allowOverlap);
+
+
+        return derived;
+    }
 }

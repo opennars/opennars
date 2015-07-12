@@ -30,7 +30,7 @@ public class CountIOEvents extends NARReaction {
             HitMeter h = new HitMeter(c.getSimpleName());
             eventMeters.put(c, h);
             if (m!=null)
-                m.addMeter(h);
+                m.add(h);
         }
 
     }

@@ -5,6 +5,8 @@
  */
 package nars.util.meter;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
@@ -12,6 +14,8 @@ import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -25,33 +29,21 @@ import java.util.*;
 public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
     final static int PRECISION = 4;
-//    public final static Gson json = new GsonBuilder()
-//             .registerTypeAdapter(Double.class, new JsonSerializer<Double>()  {
-//                        @Override
-//                        public JsonElement serialize(Double value, Type theType,
-//JsonSerializationContext context) {
-//                                if (value.isNaN()) {
-//                                        return new JsonPrimitive("NaN");
-//                                } else if (value.isInfinite()) {
-//                                        return new JsonPrimitive(value);
-//                                } else {
-//                                        return new JsonPrimitive(
-//                                                new BigDecimal(value).
-//                                                    setScale(PRECISION,
-//                                                    BigDecimal.ROUND_HALF_UP).stripTrailingZeros());
-//                                }
-//                        }
-//                })
-//                .create();
 
-    
+
+
+    final static ObjectMapper json = new ObjectMapper();
+
     public static void printJSONArray(PrintStream out, Object[] row, boolean includeBrackets) {
-//        String r = json.toJson(row);
-//        if (!includeBrackets) {
-//            r = r.substring(1, r.length()-1);
-//        }
-//        out.println(r);
-        out.println(Arrays.toString(row));
+        try {
+            String r = json.writeValueAsString(row);
+            if (!includeBrackets) {
+                r = r.substring(1, r.length()-1);
+            }
+            out.println(r);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     
@@ -120,19 +112,19 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     /** adds all meters which exist as fields of a given object (via reflection) */
     public void addMeters(Object obj) {
         Class c = obj.getClass();
-        Class meter = Meter.class;
+        Class meter = Signals.class;
         for (Field f : c.getFields()) {
 
 //System.out.println("field: " + f.getType() + " " + f.isAccessible() + " " + Meter.class.isAssignableFrom( f.getType() ));
 
             if ( meter.isAssignableFrom( f.getType() ) ) {
-                Meter m = null;
+                Signals m = null;
                 try {
-                    m = (Meter)f.get(obj);
+                    m = (Signals)f.get(obj);
                 } catch (IllegalAccessException e) {
                     //TODO ignore or handle errors?
                 }
-                addMeter(m);
+                add(m);
             }
         }
     }
@@ -144,13 +136,13 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         return new SignalData(this, s);
     }
 
-    public Metrics addMeters(Meter... c) {
-        for (Meter x : c)
-            addMeter(x);
+    public Metrics addMeters(Signals... c) {
+        for (Signals x : c)
+            add(x);
         return this;
     }
 
-    public <M extends Meter<?>> M getMeter(String id) {
+    public <M extends Signals<?>> M getMeter(String id) {
         int i = indexOf(id);
         if (i == -1) return null;
         return (M) meters.get(i);
@@ -213,7 +205,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     private RowKey nextRowKey = null; //TODO use AtomicReference
     
     /** the columns of the table */
-    private final List<Meter<?>> meters = new ArrayList<>();
+    private final List<Signals<?>> meters = new ArrayList<>();
     private final ArrayDeque<Object[]> rows = new ArrayDeque<>();
     
     transient private List<Signal> signalList = new ArrayList<>();
@@ -234,7 +226,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         super();
         this.history = historySize;
         
-        addMeter(new RowKeyMeter());
+        add(new RowKeyMeter());
     }
     
 
@@ -254,7 +246,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         rows.clear();
     }
     
-    public <M extends Meter<C>, C extends Cell> M addMeter(M m) {
+    public <M extends Signals<C>, C extends Cell> M add(M m) {
         for (Signal s : m.getSignals()) {
             if (getSignal(s.id)!=null)
                 throw new RuntimeException("Signal " + s.id + " already exists in "+ this);
@@ -268,7 +260,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         return m;
     }
     
-    public void removeMeter(Meter<? extends Cell> m) {
+    public void removeMeter(Signals<? extends Cell> m) {
         throw new RuntimeException("Removal not supported yet");
     }
     
@@ -282,8 +274,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         append(nextRow, extremaToInvalidate); //append it so that any derivative columns further on can work with the most current data (in lower array indices) while the array is being formed
 
         int c = 0;
-        for (Meter m : meters) {
-            Cell[] v = ((Meter<? extends Cell>)m).sample(key);
+        for (Signals m : meters) {
+            Cell[] v = ((Signals<? extends Cell>)m).sample(key);
             if (v == null) continue;
             int vl = v.length;
 
@@ -367,7 +359,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     public List<Signal> getSignals() {
         if (signalList == null) {
             signalList = new ArrayList(numColumns);
-            for (Meter<?> m : meters)
+            for (Signals<?> m : meters)
                 signalList.addAll(m.getSignals());
         }
         return signalList;        
@@ -516,7 +508,12 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         for (Object[] row : this) {
             printJSONArray(out, row, false);
         }
+        out.flush();
     }
+    public void printCSV(String filepath) throws FileNotFoundException {
+        printCSV(new PrintStream(new FileOutputStream(filepath)));
+    }
+
 
     public String name() {
         return getClass().getSimpleName();
@@ -533,7 +530,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
 
         int n = 0;
-        for (Meter<?> m : meters) {
+        for (Signals<?> m : meters) {
             for (Signal s : m.getSignals()) {
                 if (n == 0) {
                     //key, for now we'll use string
@@ -580,4 +577,22 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         }
     }
 
+//    public final static Gson json = new GsonBuilder()
+//             .registerTypeAdapter(Double.class, new JsonSerializer<Double>()  {
+//                        @Override
+//                        public JsonElement serialize(Double value, Type theType,
+//JsonSerializationContext context) {
+//                                if (value.isNaN()) {
+//                                        return new JsonPrimitive("NaN");
+//                                } else if (value.isInfinite()) {
+//                                        return new JsonPrimitive(value);
+//                                } else {
+//                                        return new JsonPrimitive(
+//                                                new BigDecimal(value).
+//                                                    setScale(PRECISION,
+//                                                    BigDecimal.ROUND_HALF_UP).stripTrailingZeros());
+//                                }
+//                        }
+//                })
+//                .create();
 }

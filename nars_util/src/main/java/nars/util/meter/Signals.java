@@ -7,8 +7,8 @@ package nars.util.meter;
 
 import java.util.List;
 
-/** produces 1 or more signals */
-public interface Meter<M> {
+/** represents 1 or more signals */
+public interface Signals<M> {
 
     
     public default void setActive(boolean active) {

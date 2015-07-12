@@ -27,7 +27,7 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
         c = Math.round(c / e) * e;*/
 
         if (c > 1f) c = 1f;
-        if (c < 0) c = 0;
+        else if (c < 0) c = 0;
 
         this.confidence = c;
 
@@ -58,7 +58,7 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
         f = FastMath.round(f / e) * e;*/
 
         if (f > 1.0f) f = 1.0f;
-        if (f < 0f) f = 0f;
+        else if (f < 0f) f = 0f;
         //if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
 
         this.frequency = f;

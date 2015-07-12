@@ -7,6 +7,7 @@ import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
+import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
@@ -80,11 +81,11 @@ public class Solid extends Default implements CycleProcess {
 
 
 
-        //concepts = new CurveBag(rng, activeConcepts, true);
+        //concepts = new CurveBag(rng, activeConcepts);
         //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
-        concepts = new LevelBag(64, activeConcepts);
+        concepts = new LevelBag(32, activeConcepts);
     }
 
     @Override
@@ -259,8 +260,8 @@ public class Solid extends Default implements CycleProcess {
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
         Bag<Sentence, TaskLink> taskLinks =
-                //new ChainBag(rng, getConceptTaskLinks());
-                new CurveBag(rng, getConceptTaskLinks());
+                new ChainBag(rng, getConceptTaskLinks());
+                //new CurveBag(rng, getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks =
                 //new ChainBag(rng, getConceptTermLinks());
                 new CurveBag(rng, getConceptTaskLinks());

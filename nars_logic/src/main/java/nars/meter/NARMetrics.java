@@ -3,7 +3,7 @@ package nars.meter;
 import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.util.meter.Meter;
+import nars.util.meter.Signals;
 import nars.util.meter.SignalData;
 import nars.util.meter.TemporalMetrics;
 import nars.util.meter.func.FirstOrderDifference;
@@ -14,7 +14,7 @@ import java.util.List;
 public class NARMetrics extends NARReaction {
 
     public final TemporalMetrics<Object> metrics;
-    private final NAR nar;
+    public final NAR nar;
 
     public NARMetrics(NAR n, int historySize) {
         super(n, true, Events.FrameEnd.class);
@@ -31,7 +31,7 @@ public class NARMetrics extends NARReaction {
 
         //metrics.addMeter(new BasicStatistics(metrics, n.memory.resource.FRAME_DURATION.id(), 16));
         if (n.memory.resource!=null)
-            metrics.addMeter(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
+            metrics.add(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
 
         metrics.addMeters(n.memory.logic);
         n.memory.logic.setActive(isActive());
@@ -47,13 +47,14 @@ public class NARMetrics extends NARReaction {
     @Override
     public void event(Class event, Object[] args) {
         if (event == Events.FrameEnd.class) {
-            metrics.update((double)nar.time());
+            if (metrics!=null)
+                metrics.update((double)nar.time());
         }
 
     }
 
-    public void addMeter(Meter m) {
-        metrics.addMeter(m);
+    public void addMeter(Signals m) {
+        metrics.add(m);
     }
 
     public TemporalMetrics<Object> getMetrics() {

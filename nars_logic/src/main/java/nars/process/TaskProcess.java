@@ -14,6 +14,8 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 
+import java.util.List;
+
 /**
  * "Direct" processing of a new task, in constant time Local processing,
  * involving one concept only
@@ -138,6 +140,15 @@ public class TaskProcess extends NAL {
 
     }
 
+    @Override
+    public void run() {
+        super.run();
+
+        if (derived!=null)
+            for (final Task t : derived)
+                memory.taskAdd(t);
+    }
+
     public static TaskProcess run(final NAR nar, final String task) {
         return run(nar.memory, nar.task(task));
     }
@@ -166,8 +177,10 @@ public class TaskProcess extends NAL {
             return null;
 
         d.run();
+
         return d;
     }
+
 
 
 }

@@ -6,6 +6,7 @@ import nars.concept.BeliefTable;
 import nars.concept.Concept;
 import nars.io.Perception;
 import nars.nal.nal7.Interval.AtomicDuration;
+import nars.process.DerivationReaction;
 import nars.task.TaskComparator;
 
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * NAR Parameters which can be changed during runtime.
  */
-public class Param implements Serializable {
+public abstract class Param implements Serializable {
 
     //TODO only SequentialCycle implementations should be using these and should be moved to that:
 
@@ -29,7 +30,7 @@ public class Param implements Serializable {
 
     private TaskComparator.Merging merging = TaskComparator.Merging.Or;
 
-
+    abstract public DerivationReaction getDerivationReaction();
 
 
     public Param() {    }

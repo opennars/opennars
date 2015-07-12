@@ -119,7 +119,7 @@ public class Events {
     public static class Answer { }
 
     
-    /** fired at the END of a ConceptFire task */
+    /** fired at the START of a ConceptFire task */
     abstract public static class ConceptProcessed implements Reaction<Class> {
         
         /**

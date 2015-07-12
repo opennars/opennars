@@ -57,9 +57,9 @@ public class NarseseParserExtendedTest  {
         eternal(task("(a & b). %1.0;0.7%"));
         eternal(task("(a & b). %1.0 ; 0.7%"));
 
-        tensed(task("(a & b). %1.0|"), Present);
+        /*tensed(task("(a & b). %1.0|"), Present);
         tensed(task("(a & b). %1.0/"), Future);
-        tensed(task("(a & b). %1.0\\"), Past);
+        tensed(task("(a & b). %1.0\\"), Past);*/
         eternal(task("(a & b). %1.0%"));
 
 

@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Convenience implementation for a 1-signal meter
  */
-public abstract class FunctionMeter<M> implements Meter<M> {
+public abstract class FunctionMeter<M> implements Signals<M> {
 
     private final List<Signal> signals;
     private M[] vector;

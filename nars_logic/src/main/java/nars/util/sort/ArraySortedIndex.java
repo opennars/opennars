@@ -97,6 +97,9 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     
     @Override
     public E get(int i) {
+        final int s = list.size();
+        if (i >= s)
+            i = s - 1;
         return list.get(i);
     }
 

@@ -22,6 +22,7 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicRule;
+import nars.nal.Premise;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -40,6 +41,7 @@ import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
 import nars.process.CycleProcess;
+import nars.process.DerivationReaction;
 import nars.process.concept.*;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -158,13 +160,13 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         //param.budgetThreshold.set(0.01f);
 
-        conceptBeliefsMax.set(7);
+        conceptBeliefsMax.set(9);
         conceptGoalsMax.set(7);
         conceptQuestionsMax.set(5);
 
         inputsMaxPerCycle.set(1);
 
-        termLinkRecordLength.set(8);
+        termLinkRecordLength.set(12);
 
 
         this.perceptThreshold.set(0.0);
@@ -528,6 +530,22 @@ public class Default extends NARSeed implements ConceptBuilder {
     public void setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
     }
+
+
+
+
+    @Override
+    public DerivationReaction getDerivationReaction() {
+        return inputDerivationsDirectly;
+    }
+
+    public static DerivationReaction inputDerivationsDirectly = new DerivationReaction() {
+        public void onDerivation(Premise p, Iterable<Task> derived, Memory m) {
+            //basic implementation, just input tasks to memory
+            m.taskAdd(derived);
+        }
+    };
+
 
     public static class CommandLineNARBuilder extends Default {
         

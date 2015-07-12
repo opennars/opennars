@@ -36,7 +36,7 @@ public class MetricsTest {
 
         
         TemporalMetrics<Integer> tm = new TemporalMetrics<>(3);
-        tm.addMeter(timeDoubler);
+        tm.add(timeDoubler);
         
         assertEquals(0, tm.numRows());
         assertEquals("signal columns: time and 'x'", 2, tm.getSignals().size()); 
@@ -59,8 +59,8 @@ public class MetricsTest {
     @Test public void testMeterDerivative() {
         
         TemporalMetrics<Integer> tm = new TemporalMetrics<>(3);
-        tm.addMeter(timeDoubler);
-        tm.addMeter(new FirstOrderDifference(tm, timeDoubler.signalID(0)));
+        tm.add(timeDoubler);
+        tm.add(new FirstOrderDifference(tm, timeDoubler.signalID(0)));
         
         assertEquals(3, tm.getSignals().size()); 
         
@@ -85,7 +85,7 @@ public class MetricsTest {
     @Test public void testSummaryStatistics() {
 
         TemporalMetrics<Double> tm = new TemporalMetrics<>(10);
-        tm.addMeter(new BasicStatistics(tm, tm.getSignalIDs()[0]));
+        tm.add(new BasicStatistics(tm, tm.getSignalIDs()[0]));
         
         for (int i = 0; i < 10; i++) {
             tm.update(0.1 * i);

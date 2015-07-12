@@ -5,6 +5,8 @@
 package nars.process;
 
 import nars.Events;
+import nars.Global;
+import nars.Memory;
 import nars.Param;
 import nars.bag.Bag;
 import nars.concept.Concept;
@@ -13,8 +15,10 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.Premise;
+import nars.task.Task;
 import nars.term.Term;
 
+import java.util.List;
 import java.util.Random;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
@@ -30,6 +34,8 @@ public class ConceptProcess extends NAL implements Premise {
     protected final Concept currentConcept;
 
     protected TermLink currentTermLink;
+
+
 
 
     //essentially a cache for a concept lookup
@@ -77,8 +83,7 @@ public class ConceptProcess extends NAL implements Premise {
         beforeFinish();
 
 
-        emit(Events.ConceptProcessed.class, this);
-        memory.logic.TASKLINK_FIRE.hit();
+
 
     }
 
@@ -124,12 +129,15 @@ public class ConceptProcess extends NAL implements Premise {
            final TermLink bLink = nextTermLink(noveltyHorizon, termLinksToFire);
 
             if (bLink!=null) {
+
+                if (Global.DEBUG_TERMLINK_SELECTED)
+                    emit(Events.TermLinkSelected.class, bLink, this);
+
                 processTerm(bLink);
                 termLinksSelected++;
                 n += subCycle;
             }
 
-            //emit(Events.TermLinkSelected.class, bLink, this);
 
         }
 
@@ -305,15 +313,25 @@ public class ConceptProcess extends NAL implements Premise {
         emit(Events.BeliefReason.class, getBelief(), getTask(), this);
     }
 
-    @Override
     public void run() {
+        run(memory.param.getDerivationReaction());
+    }
+
+    public void run(DerivationReaction r) {
         if (!currentConcept.isActive()) return;
 
         super.run();
+
+        if (derived!=null)
+            r.onDerivation(this, derived, memory);
+
     }
 
     @Override
     protected void process() {
+
+        emit(Events.ConceptProcessed.class, this);
+        memory.logic.TASKLINK_FIRE.hit();
 
         final long now = this.now = memory.time();
 

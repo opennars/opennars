@@ -128,7 +128,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
             c = forgottenOrNewConcept();
 
             if (!c.isActive()) {
-                if (budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold)) {
+                if (isActivatable(budget)) {
                     c.setState(Concept.State.Active);
                     remember(c);
                 } else {
@@ -172,5 +172,10 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 //
 //        }
 //        return null;
+    }
+
+    protected boolean isActivatable(Budget budget) {
+        //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);
+        return budget.getPriority() > getMemory().param.activeConceptThreshold.floatValue();
     }
 }

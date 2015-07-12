@@ -109,7 +109,7 @@ public class NAL5Test extends JavaNALTest {
 
          */
 
-        long time = 15;
+        long time = 1500;
 
         /*
         Global.DEBUG = true;

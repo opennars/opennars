@@ -277,7 +277,7 @@ public class RoverModel {
 
         //String p = "$0.99;0.75;0.90$ ";
 
-        randomActions.add("motor($direction)!");
+        //randomActions.add("motor($direction)!");
         //TODO : randomActions.add("motor($direction,$direction)!");
 
         randomActions.add("motor(left)!");
@@ -287,8 +287,8 @@ public class RoverModel {
         //randomActions.add("motor(forward,forward)!"); //too much actions are not good,
         randomActions.add("motor(forward)!"); //however i would agree if <motor(forward,forward) --> motor(forward)>.
         //randomActions.add("motor(forward,forward)!");
-        randomActions.add("motor(forward)!");
-        //randomActions.add("motor(reverse)!");
+        //randomActions.add("motor(forward)!");
+        randomActions.add("motor(reverse)!");
         randomActions.add("motor(stop)!");
         //randomActions.add("motor(random)!");
 
@@ -310,7 +310,7 @@ public class RoverModel {
     }
 
     protected void curious(float freq, float conf) {
-        nar.input("motor(#r)! %" + freq + "|" + conf + "%");
+        nar.input("motor(random)! %" + freq + "|" + conf + "%");
     }
     protected void addAxioms() {
 
@@ -541,7 +541,7 @@ public class RoverModel {
     public static final ConceptDesire strongestTask = (c ->  c.getGoals().getMeanProjectedExpectation(c.time()) );
 
     protected void addMotorController() {
-        new CycleDesire("motor(#r)", strongestTask, nar) {
+        new CycleDesire("motor(random)", strongestTask, nar) {
             @Override float onFrame(float desire) {
                 //variable causes random movement
                 double v = Math.random();

@@ -500,7 +500,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return sb;
     }
 
-    public String toStringExternal() {
+    public String toBudgetString() {
         return toStringBuilderExternal().toString();
     }
 
@@ -658,6 +658,13 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         default public float getQuality() { return getBudget().getQuality(); }
         default public long getLastForgetTime() { return getBudget().getLastForgetTime(); }
         default public void setUsed(long now) { getBudget().setUsed(now); }
+
+
+        default Object[] toBudgetArray() {
+            return new Object[] {
+                    getPriority(), getQuality(), getDurability()
+            };
+        }
 
 
     }

@@ -6,6 +6,7 @@ import nars.concept.Concept;
 import nars.io.Perception;
 import nars.nal.LogicPolicy;
 import nars.process.CycleProcess;
+import nars.process.DerivationReaction;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
 
@@ -64,6 +65,8 @@ abstract public class NARSeed extends Param {
     /** called after NAR created, for initializing it */
     public void init(NAR nar) {
     }
+
+
 
     @Override
     public String toString() {

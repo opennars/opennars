@@ -6,7 +6,7 @@
 package nars.util.meter;
 
 /**
- * Effectively a column header in a Metrics table; indicates what appears
+ * Instance of a column header in a Metrics table; indicates what appears
  * in the column index of rows.
  * May cache re-usable metadata specific to the signal shared by several SignalData views (ex: min, max)
  */

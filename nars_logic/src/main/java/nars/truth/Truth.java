@@ -194,7 +194,7 @@ abstract public interface Truth extends MetaTruth<Float> {
         return Truth_UNSURE;
     }
 
-    default public Truth set(float frequency, float confidence) {
+    default public Truth set(final float frequency, final float confidence) {
         setFrequency(frequency);
         setConfidence(confidence);
         return this;

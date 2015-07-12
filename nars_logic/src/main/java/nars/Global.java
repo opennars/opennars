@@ -57,7 +57,7 @@ public class Global {
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean DEBUG_TASK_HISTORY = true; //false disables task history completely
     public static boolean EXIT_ON_EXCEPTION = true;
-
+    public static boolean DEBUG_TERMLINK_SELECTED = false;
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
@@ -156,7 +156,7 @@ public class Global {
     //temporary parameter for setting #threads to use, globally
     @Deprecated public static int THREADS = 1;
 
-    public static boolean IMMEDIATE_ETERNALIZATION=true; //WARNING: not working right
+    public static boolean IMMEDIATE_ETERNALIZATION = false; //TODO move to plugin
 
 
 

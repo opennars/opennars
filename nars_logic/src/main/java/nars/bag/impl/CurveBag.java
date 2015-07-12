@@ -133,9 +133,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         final int index(final float y, final int size) {
 
             if (y < 0) return 0;
-            if (y >= 1.0f) return size-1;
 
-            return (int) Math.floor(y * size);
+            int i= (int) Math.floor(y * size);
+
+            if (i >= size) return size-1;
+
+            return i;
+
             /*if (result == size) {
                 //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
                 return (size - 1);
@@ -207,7 +211,8 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
         if (Global.DEBUG) {
             int is = items.size();
-            if (is!=in) throw new RuntimeException();
+            if (Math.abs(is-in) > 2)
+                throw new RuntimeException("curvebag fault");
 
 //            //test for a discrepency of +1/-1 difference between name and items
 //            if ((is - in > 2) || (is - in < -2)) {

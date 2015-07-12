@@ -152,14 +152,19 @@ public class OptimizeLeakGenetic3 extends Civilization {
 
         protected void initVar() {
             derPri = doubleVariable("derPri");
+
             derQua = doubleVariable("derQua");
             derQuest = doubleVariable("derQuest");
             derJudge = doubleVariable("derJudge");
             derGoal = doubleVariable("derGoal");
+
+            /*
             derComplex = doubleVariable("derComplex");
+
             c0 = doubleVariable("c0");
             c1 = doubleVariable("c1");
             c2 = doubleVariable("c2");
+            */
 
             var = Controls.reflect(LibraryGoal.class, this);
         }
