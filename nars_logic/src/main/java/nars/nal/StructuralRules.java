@@ -201,7 +201,7 @@ public final class StructuralRules {
         AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
         if (truthDed == null) return null;
 
-        AnalyticTruth truthNDed = TruthFunctions.deduction(truth, reliance).negate();
+        Truth truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
@@ -264,7 +264,7 @@ public final class StructuralRules {
         AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
         if (truthDed == null) return null;
 
-        AnalyticTruth truthNDed = TruthFunctions.deduction(truth, reliance).negate(); //TODO clone from truthDed instead of calculate Deducation entirely
+        Truth truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
@@ -392,13 +392,12 @@ public final class StructuralRules {
         
         Task task = nal.getTask();
 
-        Sentence sentence = task.sentence;
-        Truth truth = sentence.truth;
+        Truth truth = task.getTruth();
 
         final float reliance = nal.memory.param.reliance.floatValue();
 
         Budget budget;
-        if (sentence.isQuestion() || sentence.isQuest()) {
+        if (task.isQuestOrQuestion()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else /* if (sentence.isJudgment() || sentence.isGoal()) */ {
 
@@ -419,6 +418,7 @@ public final class StructuralRules {
             } else {
                 Truth v1 = TruthFunctions.negation(truth);
                 Truth v2 = TruthFunctions.deduction(v1, reliance);
+                if (v2 == null) return null;
                 truth = TruthFunctions.negation(v2);
             }
 

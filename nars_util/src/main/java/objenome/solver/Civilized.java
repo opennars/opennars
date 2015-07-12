@@ -54,7 +54,7 @@ public class Civilized<I> extends TypedOrganism implements Runnable {
      * rate: cost/time
      */
     public double costRate() {
-        if (age == 0) return 0.5;
+        if (age == 0) return 0;
         return totalCost / age;
     }
 
@@ -112,6 +112,8 @@ public class Civilized<I> extends TypedOrganism implements Runnable {
             }
         }
 
+        age(1.0);
+
         running = false;
 
     }
@@ -122,4 +124,9 @@ public class Civilized<I> extends TypedOrganism implements Runnable {
     public double getAge() {
         return age;
     }
+
+    public boolean isRunning() {
+        return running;
+    }
+
 }

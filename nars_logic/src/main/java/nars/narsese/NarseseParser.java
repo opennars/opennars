@@ -833,10 +833,11 @@ public class NarseseParser extends BaseParser<Object> {
 
 
         if (op == OPERATION) {
-            /*final Term self = memory.self();
+            //temporary
+            final Term self = Atom.the("SELF");//memory.self();
 
             //automatically add SELF term to operations if in NAL8+
-            if (memory.nal(8) && !vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
+            if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self); //SELF in final argument*/
 
             return Operation.make(vectorterms.get(0), Product.make(vectorterms, 1, vectorterms.size()));

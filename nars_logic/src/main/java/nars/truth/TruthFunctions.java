@@ -41,7 +41,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = t.getConfidence();
         final float w = and(f1, c1);
         final float c = w2c(w);
-        return BasicTruth.make(1, c, t);
+        return new DefaultTruth(1, c);
     }
 
     /* ----- Single argument functions, called in StructuralRules ----- */
@@ -50,7 +50,13 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param t Truth value of the premise
      * @return Truth value of the conclusion
      */
-    public static final Truth negation(final Truth t) {
+    public static final Truth negation(final Truth v1) {
+        final float f = 1f - v1.getFrequency();
+        final float c = v1.getConfidence();
+        return new DefaultTruth(f, c);
+
+        /*
+
         if (t == null) return null;
         final float f = 1 - t.getFrequency();
         final float c = t.getConfidence();
@@ -58,7 +64,8 @@ public final class TruthFunctions extends UtilityFunctions {
         if (t.isAnalytic())
             return AnalyticTruth.get(f, c, t); //experimental: for cases where analytic is inverted, to preserve analytic state
         else
-            return BasicTruth.make(f, c, t);
+            return new DefaultTruth(f, c, t);
+            */
     }
 
 
@@ -72,7 +79,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = v1.getConfidence();
         final float w = and(1 - f1, c1);
         final float c = w2c(w);
-        return BasicTruth.make(0, c, v1);
+        return new DefaultTruth(0, c);
     }
 
     /* ----- double argument functions, called in MatchingRules ----- */
@@ -83,9 +90,9 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final Truth revision(final Truth a, final Truth b) {
-        return revision(a, b, BasicTruth.get(0, 0, a, b));
+        return revision(a, b, new DefaultTruth(0, 0));
     }
-    
+
     static final Truth revision(final Truth a, final Truth b, final Truth result) {
         final float f1 = a.getFrequency();
         final float f2 = b.getFrequency();
@@ -97,7 +104,7 @@ public final class TruthFunctions extends UtilityFunctions {
                 w2c(w)
         );
     }
-    
+
     /* ----- double argument functions, called in SyllogisticRules ----- */
     /**
      * {<S ==> M>, <M ==> P>} |- <S ==> P>
@@ -108,7 +115,7 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final Truth deduction(final Truth a, final Truth b) {
         final float f = and(a.getFrequency(), b.getFrequency());
         final float c = and(a.getConfidence(), b.getConfidence(), f);
-        return BasicTruth.get(f, c, a, b);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -120,7 +127,7 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final AnalyticTruth deduction(final Truth t, final float reliance) {
         final float f = t.getFrequency();
         final float c = and(f, t.getConfidence(), reliance);
-        return AnalyticTruth.get(f, c, t);
+        return new AnalyticTruth(f, c);
     }
 
     /**
@@ -136,7 +143,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2);
-        return BasicTruth.get(f, c, a, b);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -152,7 +159,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, or(f1, f2));
-        return BasicTruth.get(f, c, a, b);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -171,7 +178,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float w = and(f2, c1, c2);
         final float c = w2c(w);
-        return BasicTruth.get(f1, c, a, b);
+        return new DefaultTruth(f1, c);
     }
 
     /**
@@ -188,7 +195,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = t.getConfidence();
         final float w = and(c1, reliance);
         final float c = w2c(w);
-        return AnalyticTruth.get(f1, c, t);
+        return new AnalyticTruth(f1, c);
     }
 
     /**
@@ -217,7 +224,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float w = and(f1, f2, c1, c2);
         final float c = w2c(w);
-        return BasicTruth.get(1, c, a, b);
+        return new DefaultTruth(1, c);
     }
 
     /**
@@ -235,7 +242,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float f = (f0 == 0) ? 0 : (and(f1, f2) / f0);
         final float w = and(f0, c1, c2);
         final float c = w2c(w);
-        return BasicTruth.get(f, c, a, b);
+        return new DefaultTruth(f, c);
     }
 
     /* ----- desire-value functions, called in SyllogisticRules ----- */
@@ -252,7 +259,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2);
-        return BasicTruth.get(f, c, a, b);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -268,7 +275,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2, w2c(1.0f));
-        return BasicTruth.get(f, c, v1, v2);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -284,7 +291,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2);
-        return BasicTruth.get(f, c, v1, v2);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -300,7 +307,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float w = and(f2, c1, c2);
         final float c = w2c(w);
-        return BasicTruth.get(f1, c, v1, v2);
+        return new DefaultTruth(f1, c);
     }
 
     /* ----- double argument functions, called in CompositionalRules ----- */
@@ -317,7 +324,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = or(f1, f2);
         final float c = and(c1, c2);
-        return BasicTruth.get(f, c, v1, v2);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -333,7 +340,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2);
-        return BasicTruth.get(f, c, v1, v2);
+        return new DefaultTruth(f, c);
     }
 
     /**
@@ -352,15 +359,18 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final AnalyticTruth reduceConjunction(final Truth a, final Truth b) {
-        AnalyticTruth x = deduction(
-                intersection(negation(a), b),
-                1f
-        );
-        if (x!=null)
-            return x.negate();
-        else
-            return null;
+    public static final Truth reduceConjunction(final Truth v1, final Truth v2) {
+        final Truth v0 = intersection(negation(v1), v2);
+        return negation(deduction(v0, 1f));
+
+//        AnalyticTruth x = deduction(
+//                intersection(negation(a), b),
+//                1f
+//        );
+//        if (x!=null)
+//            return x.negate();
+//        else
+//            return null;
     }
 
     /**
@@ -369,7 +379,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final AnalyticTruth reduceConjunctionNeg(final Truth a, final Truth b) {
+    public static final Truth reduceConjunctionNeg(final Truth a, final Truth b) {
         return reduceConjunction(a, negation(b));
     }
 
@@ -382,7 +392,7 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final Truth anonymousAnalogy(final Truth a, final Truth b) {
         final float f1 = a.getFrequency();
         final float c1 = a.getConfidence();
-        final Truth v0 = BasicTruth.get(f1, w2c(c1), a, b);
+        final Truth v0 = new DefaultTruth(f1, w2c(c1));
         return analogy(b, v0);
     }
 
@@ -398,7 +408,6 @@ public final class TruthFunctions extends UtilityFunctions {
         return new ProjectedTruth(
                 t.getFrequency(),
                 eternalizedConfidence(t.getConfidence()),
-                t.getEpsilon(),
                 Stamp.ETERNAL
         );
     }

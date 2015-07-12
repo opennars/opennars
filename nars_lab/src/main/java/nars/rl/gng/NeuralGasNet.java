@@ -96,7 +96,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
 
 
         for (int i = 0; i < maxNodes; i++) {
-            addVertex(new Node(i, dimension).randomizeUniform(-1.0, 1.0));
+            addVertex(new Node(i, dimension).randomizeUniform(0, 1.0));
         }
 
 
@@ -109,7 +109,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
 //        pw.println("*");
     }
 
-    public Node closest(double[] x) {
+    public Node closest(double... x) {
         //find closest nodes
         double minDist = Double.POSITIVE_INFINITY;
         Node closest = null;
@@ -121,7 +121,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         return closest;
     }
 
-    public Node learn(double[] x) {
+    public Node learn(double... x) {
 
         //find closest nodes
         double minDist = Double.POSITIVE_INFINITY;
@@ -286,5 +286,17 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
     private void addEdge(Connection connection) {
 
         addEdge(connection.from, connection.to, connection);
+    }
+
+    public double[] getDimensionRange(final int dimension) {
+        final double[] x = new double[] { Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY};
+
+        for (Node node : vertexSet()) {
+            double v = node.getEntry(dimension);
+            if (v < x[0]) x[0] = v;
+            if (v > x[1]) x[1] = v;
+        }
+
+        return x;
     }
 }

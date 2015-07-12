@@ -68,7 +68,6 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     protected Pipeline pipeline;
 
     public final List<EGoal<Civilized>> goals = new ArrayList();
-    private double maxAge = 1.0;
 
     public Civilization(int threads, int populationSize) {
         this(threads, populationSize, 8);
@@ -131,11 +130,23 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     public Civilized onAdded(Organism i) {
         Civilized c = new Civilized(((TypedOrganism) i), goals, exe) {
 
+            @Override
+            protected void age(double time) {
+                super.age(time);
+                updatePopulation();
+            }
+
+            @Override
+            public void onDeath() {
+                super.onDeath();
+                updatePopulation();
+            }
         };
+
         Thread x = new Thread(c);
+        x.start();
         //x.setPriority()
 
-        exe.submit(x::start); //queue its initialization to the threadpool itself
         return c;
     }
 
@@ -268,16 +279,16 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
 //
 //    }
 
-
-    protected double getMaxSurvivalCostPercentileEstimate(double age) {
-        if ((age == 0) || (maxAge == 0))return 0;
-
-        synchronized (ds) {
-            double lifespan = Math.min((age/maxAge), 1.0);
-            return lifespan;
-            //return ds.getPercentile(maxSurvivalCostPercentile * lifespan);
-        }
-    }
+//
+//    protected double getMaxSurvivalCostPercentileEstimate(double age) {
+//        if ((age == 0) || (maxAge == 0))return 0;
+//
+//        synchronized (ds) {
+//            double lifespan = Math.min((age/maxAge), 1.0);
+//            return lifespan;
+//            //return ds.getPercentile(maxSurvivalCostPercentile * lifespan);
+//        }
+//    }
 
 
 
@@ -325,7 +336,6 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
                         if (a > maxAge) maxAge= a;
                     }
                 }
-                this.maxAge = maxAge;
             }
         }
 
@@ -347,39 +357,47 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         //if (cycle % 64 == 0)
             System.err.println( "\n" + pop.size() + " " + pop.size() + " organisms\n");
 
-        System.err.println(ds);
+        System.err.println(ds.getMin() + ".." + ds.getMean() + ".." + ds.getMax());
 
         cycle++;
     }
 
     protected boolean shouldLive(Civilized x) {
-        return Math.random() < 0.9;
+
+        if (!x.isRunning()) return false;
+
+        double agg = x.costRate() / goals.size();
+        if (agg < minLifeSpan) return true;
+        else
+            agg = agg*agg*agg; //cube for sharpness
+
+        return Math.random() > Math.min(agg, 1.0);
 
     }
-    protected boolean shouldLiveOLD(Civilized x) {
-        double maxSurvivalCostPercentileEstimate = getMaxSurvivalCostPercentileEstimate(x.getAge());
-        double pp = (x.costRate()) ;
-
-        boolean result;
-
-        if (x.getAge() < minLifeSpan * maxAge) {
-            result = true;
-        }
-        else if (pp > maxSurvivalCostPercentileEstimate) {
-            result = false;
-        }
-        else {
-            //double minReproductionCostPercentileEstimate = s.getPercentile(minReproductionCostPercentile);
-//            if (population.size() < populationSize && pp <= minReproductionCostPercentileEstimate) {
-//                reproduce(x);
-//            }
-            result = true;
-        }
-
-
-
-        return result;
-    }
+//    protected boolean shouldLiveOLD(Civilized x) {
+//        double maxSurvivalCostPercentileEstimate = getMaxSurvivalCostPercentileEstimate(x.getAge());
+//        double pp = (x.costRate()) ;
+//
+//        boolean result;
+//
+//        if (x.getAge() < minLifeSpan * maxAge) {
+//            result = true;
+//        }
+//        else if (pp > maxSurvivalCostPercentileEstimate) {
+//            result = false;
+//        }
+//        else {
+//            //double minReproductionCostPercentileEstimate = s.getPercentile(minReproductionCostPercentile);
+////            if (population.size() < populationSize && pp <= minReproductionCostPercentileEstimate) {
+////                reproduce(x);
+////            }
+//            result = true;
+//        }
+//
+//
+//
+//        return result;
+//    }
 
 
     public OrganismBuilder<Civilized> getOrganismBuilder() {
@@ -392,7 +410,7 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
 
         updatePopulation();
 
-        new Thread((Runnable) this).start();
+        exe.execute(this);
 
         try {
             exe.awaitTermination((long)(10000 * 1000.0), TimeUnit.MILLISECONDS);

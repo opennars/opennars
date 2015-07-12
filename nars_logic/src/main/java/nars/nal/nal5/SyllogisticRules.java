@@ -35,6 +35,7 @@ import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.AbstractScalarTruth;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -227,7 +228,7 @@ public final class SyllogisticRules {
             if(truth2!=null)
                 truth2=truth2.clone();*/
                 if (truth3 != null)
-                    truth3 = truth3.clone();
+                    truth3 = new DefaultTruth(truth3);
        /* nal.doublePremiseTask(
             Statement.make(NativeOperator.INHERITANCE, term1, term2),
                 truth1, budget1.clone(),false, false);
@@ -1004,17 +1005,17 @@ public final class SyllogisticRules {
         }
         Task task = nal.getTask();
 
-        final Sentence sentence = task.sentence;
+
         final Sentence belief = nal.getBelief();
 
-        Truth v1 = sentence.truth;
+        Truth v1 = task.truth;
         Truth v2 = belief.truth;
         Truth truth = null;
         Budget budget;
-        if (sentence.isQuestion() || sentence.isQuest()) {
+        if (task.isQuestion() || task.isQuest()) {
             budget = (compoundTask ? BudgetFunctions.backward(v2, nal) : BudgetFunctions.backwardWeak(v2, nal));
         } else {
-            if (sentence.isGoal()) {
+            if (task.isGoal()) {
                 truth = (compoundTask ? TruthFunctions.desireDed(v1, v2) : TruthFunctions.desireInd(v1, v2));  // to check
             } else {
                 truth = (compoundTask ? TruthFunctions.anonymousAnalogy(v1, v2) : TruthFunctions.anonymousAnalogy(v2, v1));

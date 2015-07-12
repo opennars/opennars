@@ -40,10 +40,10 @@ public class SomeRovers {
 
             NAR nar;
             SimulatedClock clock;
-            nar = new NAR(new Solid(32, 555, 1, 1, 1, 2 ) {
+            nar = new NAR(new Solid(32, 855, 1, 1, 1, 3 ) {
 
                 protected void initDerivationFilters() {
-                    final float DERIVATION_PRIORITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                    final float DERIVATION_PRIORITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
                     final float DERIVATION_DURABILITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
                     getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
                 }
@@ -67,7 +67,7 @@ public class SomeRovers {
             //nar.param.conceptsFiredPerCycle.set(4);
 
             nar.param.conceptBeliefsMax.set(12);
-            nar.param.conceptGoalsMax.set(12);
+            nar.param.conceptGoalsMax.set(10);
 
             int nc = 1;
             nar.setCyclesPerFrame(nc);

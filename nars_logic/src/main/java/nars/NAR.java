@@ -337,7 +337,7 @@ public class NAR extends Container implements Runnable {
     }
 
     protected void preprocessInput(Task t) {
-        if (t.getCreationTime() == Stamp.TIMELESS)
+        if (t.getCreationTime() <= Stamp.TIMELESS)
             t.setCreationTime(time());
         if (t.getEvidentialSet() == null)
             t.setEvidentialSet(memory.newStampSerial());

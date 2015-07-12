@@ -13,14 +13,8 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
     /**
      * The confidence factor of the truth value
      */
-    private float confidence;
+    protected float confidence;
 
-
-
-    public AbstractTruth(final float conf) {
-        super();
-        setConfidence(conf);
-    }
 
     public AbstractTruth() {
         //freq and conf will begin at 0
@@ -31,26 +25,14 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
         return confidence;
     }
 
-    public void setConfidence(float c) {
-        //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
-        final float maxConf = getConfidenceMax();
-
-        final float e = getEpsilon();
-        c = Math.round(c / e) * e;
-
-        if (c > maxConf) c = maxConf;
-        if (c < 0) c = 0;
-
-        this.confidence = c;
-
-    }
 
 
 
-    @Override
-    public float getConfidenceMax() {
-        return Global.MAX_CONFIDENCE;
-    }
+
+//    @Override
+//    public float getConfidenceMax() {
+//        return Global.MAX_CONFIDENCE;
+//    }
 
     /**
      * Compare two truth values
@@ -65,7 +47,7 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
         if (that instanceof AbstractTruth) {
             final Truth t = ((Truth) that);
 
-            final float e = getEpsilon();
+            final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();
 
             if (!equalsValue(t))
                 return false;

@@ -351,18 +351,18 @@ public class LocalRules {
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return null;
 
-        AnalyticTruth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
+        Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
 
-        if (truth != null) {
+
             return nal.deriveDouble(
                     s.term(content)
                             .punctuation(asym.getPunctuation())
                             .truth(truth)
                             .budget(BudgetFunctions.forward(truth, nal)),
                     false);
-        }
 
-        return null;
+
+
     }
 
     /* -------------------- one-premise logic rules -------------------- */

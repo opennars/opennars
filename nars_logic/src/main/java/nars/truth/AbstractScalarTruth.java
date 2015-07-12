@@ -7,10 +7,6 @@ import org.apache.commons.math3.util.FastMath;
  */
 public abstract class AbstractScalarTruth extends AbstractTruth<Float> implements Truth {
 
-    public AbstractScalarTruth(final float freq, final float conf) {
-        super(conf);
-        setFrequency(freq);
-    }
 
     public AbstractScalarTruth() {
         super();
@@ -23,6 +19,21 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     private float frequency;
 
 
+    public void setConfidence(float c) {
+        //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
+        //final float maxConf = getConfidenceMax();
+
+        /*final float e = getEpsilon();
+        c = Math.round(c / e) * e;*/
+
+        if (c > 1f) c = 1f;
+        if (c < 0) c = 0;
+
+        this.confidence = c;
+
+    }
+
+
 
     @Override
     public int hashCode() {
@@ -30,12 +41,12 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     }
 
 
-    public BasicTruth clone() {
-        if (isAnalytic())
-            return new AnalyticTruth(this);
-        else
-            return new BasicTruth(this);
-    }
+//    public DefaultTruth clone() {
+//        if (isAnalytic())
+//            return new AnalyticTruth(this);
+//        else
+//            return new DefaultTruth(this);
+//    }
 
     public float getFrequency() {
         return frequency;
@@ -43,8 +54,8 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
     public Truth setFrequency(float f) {
 
-        final float e = getEpsilon();
-        f = FastMath.round(f / e) * e;
+        /*final float e = getEpsilon();
+        f = FastMath.round(f / e) * e;*/
 
         if (f > 1.0f) f = 1.0f;
         if (f < 0f) f = 0f;
@@ -57,6 +68,6 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
     @Override
     protected boolean equalsValue(Truth t) {
-        return (Truth.isEqual(getFrequency(), t.getFrequency(), getEpsilon()));
+        return (Truth.isEqual(getFrequency(), t.getFrequency(), DefaultTruth.DEFAULT_TRUTH_EPSILON));
     }
 }

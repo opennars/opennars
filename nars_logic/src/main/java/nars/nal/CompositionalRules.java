@@ -43,7 +43,6 @@ import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.*;
-import nars.truth.AnalyticTruth;
 import nars.truth.Truth;
 
 import java.util.Map;
@@ -229,7 +228,7 @@ public final class CompositionalRules {
             v1 = belief.truth;
             v2 = sentence.truth;
         }
-        AnalyticTruth truth = null;
+        Truth truth = null;
         Compound content;
         if (index == 0) {
             content = Statement.make(oldContent, term1, term2, order);
@@ -405,6 +404,7 @@ public final class CompositionalRules {
                     }
                 } else {  // isJudgment
                     truth = reduceDisjunction(v1, v2);
+
                 }
             } else {
                 return null;

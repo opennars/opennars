@@ -1,6 +1,5 @@
 package nars.core;
 
-import nars.truth.BasicTruth;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import org.junit.Test;
@@ -36,19 +35,19 @@ public class TruthTest {
         assertNotEquals(a, aNotWithinThresh);
     }
 
-    @Test public void testEpsilon() {
-        float e = 0.1f;
-
-        Truth a = BasicTruth.get(1.0f, 0.9f, e);
-        assertEquals(a.getEpsilon(), e, 0.0001);
-
-        Truth aCopy = BasicTruth.get(1.0f, 0.9f, e);
-        assertEquals(a, aCopy);
-
-        Truth aEqualWithinThresh = BasicTruth.get(1.0f - a.getEpsilon() / 2, 0.9f, e);
-        assertEquals(a, aEqualWithinThresh);
-
-        Truth aNotWithinThresh = BasicTruth.get(1.0f - a.getEpsilon(), 0.9f, e);
-        assertNotEquals(a, aNotWithinThresh);
-    }
+//    @Test public void testEpsilon() {
+//        float e = 0.1f;
+//
+//        Truth a = BasicTruth.get(1.0f, 0.9f, e);
+//        assertEquals(a.getEpsilon(), e, 0.0001);
+//
+//        Truth aCopy = BasicTruth.get(1.0f, 0.9f, e);
+//        assertEquals(a, aCopy);
+//
+//        Truth aEqualWithinThresh = BasicTruth.get(1.0f - a.getEpsilon() / 2, 0.9f, e);
+//        assertEquals(a, aEqualWithinThresh);
+//
+//        Truth aNotWithinThresh = BasicTruth.get(1.0f - a.getEpsilon(), 0.9f, e);
+//        assertNotEquals(a, aNotWithinThresh);
+//    }
 }

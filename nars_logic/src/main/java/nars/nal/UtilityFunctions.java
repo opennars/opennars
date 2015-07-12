@@ -50,6 +50,10 @@ public class UtilityFunctions {
         return a*b;
     }
 
+    public final static float and(final float a, final float b, final float c) {
+        return a*b*c;
+    }
+
     
     /**
      * A function where the output is disjunctively determined by the inputs

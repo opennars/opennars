@@ -202,8 +202,8 @@ abstract public interface Truth extends MetaTruth<Float> {
 
     /** negation that modifies the truth instance itself */
     default public Truth negate() {
-        final float f = 1 - getFrequency();
-        return setFrequency(1 - getFrequency());
+        //final float f = 1 - getFrequency();
+        return setFrequency(1f - getFrequency());
     }
 
     default float projectionQuality(Sentence s, long targetTime, long currentTime, boolean problemHasQueryVar) {
@@ -264,7 +264,7 @@ abstract public interface Truth extends MetaTruth<Float> {
      * @return Truth value, null for question
      */
     default public AnalyticTruth discountConfidence() {
-        return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE, this);
+        return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE);
     }
 
 

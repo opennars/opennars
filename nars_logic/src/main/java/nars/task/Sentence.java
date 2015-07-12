@@ -26,7 +26,6 @@ import nars.NAR;
 import nars.Symbols;
 import nars.budget.Item;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.Intermval;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
@@ -373,7 +372,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
     protected <X extends Compound> Sentence<X> clone_(X t) {
         return new Sentence(t, punctuation,
-                truth!=null ? BasicTruth.clone(truth) : null,
+                truth!=null ? new DefaultTruth(truth) : null,
                 this);
     }
 
@@ -419,7 +418,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
             float projectedConfidence = factor * currentTruth.getConfidence();
             if (projectedConfidence > eternalTruth.getConfidence()) {
-                return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, currentTruth.getEpsilon(), targetTime);
+                return new ProjectedTruth(currentTruth.getFrequency(), projectedConfidence, targetTime);
             }
             else {
                 return eternalTruth;

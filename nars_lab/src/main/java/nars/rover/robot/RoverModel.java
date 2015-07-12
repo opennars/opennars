@@ -12,9 +12,11 @@ import nars.clock.SimulatedClock;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.io.in.ChangedTextInput;
+import nars.nal.nal2.Property;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.process.TaskProcess;
+import nars.rl.gng.NeuralGasNet;
 import nars.rover.PhysicsModel;
 import nars.rover.RoverEngine;
 import nars.rover.RoverEngine.Material;
@@ -23,9 +25,11 @@ import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
 import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
@@ -47,7 +51,7 @@ public class RoverModel {
 
     int mission = 0;
     public float curiosity = 0.1f;
-    int motionPeriod = 3;
+    int motionPeriod = 5;
 
 
     public final Body torso;
@@ -98,6 +102,69 @@ public class RoverModel {
     public float linearThrustPerCycle = 8f;
     public float angularSpeedPerCycle = 0.44f * 0.25f;
 
+
+    /** maps a scalar changing quality to a frequency value, with autoranging
+     *  determined by a history window of readings
+     * */
+    abstract public static class AutoRangeTruthFrequency {
+        NeuralGasNet net;
+
+        public AutoRangeTruthFrequency() {
+            net = new NeuralGasNet(1,4);
+
+
+
+        }
+
+        public void observe(float value) {
+            net.learn(value);
+
+            double[] range = net.getDimensionRange(0);
+            double proportional;
+
+            if ((range[0] == range[1]) || (!Double.isFinite(range[0])))
+                proportional = 0.5;
+            else
+                proportional = (value - range[0]) / (range[1] - range[0]);
+
+            if (proportional > 1f) proportional = 1f;
+            if (proportional < 0f) proportional = 0f;
+
+            estimate((float)proportional);
+        }
+
+        abstract public void estimate(float b);
+    }
+    public static class SimpleAutoRangeTruthFrequency extends AutoRangeTruthFrequency {
+        private final Compound term;
+        private final NAR nar;
+
+        public SimpleAutoRangeTruthFrequency(NAR nar, Compound term) {
+            this.term = term;
+            this.nar = nar;
+
+
+            net.setEpsW(0.04f);
+            net.setEpsN(0.01f);
+        }
+
+        @Override
+        public void estimate(float b) {
+            //System.out.println(range[0] + ".." + range[1]);
+            //System.out.println(b);
+
+            float freq = b; //0.5f + (b/2f);
+            float conf = 0.75f;
+            Task t;
+            nar.inputDirect(t = nar.task(term).belief().present().truth(freq, conf).get());
+
+            //System.out.println(t);
+        }
+    }
+
+    final SimpleAutoRangeTruthFrequency linearVelocity;
+    final SimpleAutoRangeTruthFrequency motionAngle;
+    final SimpleAutoRangeTruthFrequency facingAngle;
 
     public class RoverMaterial extends Material {
 
@@ -158,6 +225,10 @@ public class RoverModel {
         Fixture f = torso.createFixture(shape, mass);
         f.setRestitution(restitution);
         f.setFriction(friction);
+
+        linearVelocity = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[linear]>"));
+        motionAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[angle]>"));
+        facingAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[facing]>"));
 
         torso.setUserData(new RoverMaterial(id));
 
@@ -480,8 +551,10 @@ public class RoverModel {
 
                 //System.out.println(v + " " + (desire - 0.5f)*2f);
 
-                String tPos = "%0.75|" + desire + "%";
-                String tNeg = "%0.25|" + desire + "%";
+                float strength = 0.65f;
+                float negStrength = 1f - strength;
+                String tPos = "%" + strength + "|" + desire + "%";
+                String tNeg = "%" + negStrength + "|" + desire + "%";
 
                 v = Math.random();
                 if (v < 0.25f) {
@@ -500,12 +573,14 @@ public class RoverModel {
                 return desire;
             }
         };
-//        new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
-//            @Override float onCycle(float desire) {
-//                thrustRelative(desire * linearThrustPerCycle);
-//                return desire;
-//            }
-//        };
+        /*new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
+            @Override
+            float onFrame(float desire) {
+                thrustRelative(desire * linearThrustPerCycle);
+                return desire;
+            }
+
+        };*/
         /*new CycleDesire("motor(reverse,SELF)", strongestTask, nar) {
             @Override float onCycle(float desire) {
                 thrustRelative(desire * -linearThrustPerCycle);
@@ -533,10 +608,10 @@ public class RoverModel {
             float onFrame(float desire, boolean positive) {
 
                 if (positive) {
-                    rotateRelative(+20*desire);
+                    rotateRelative(+40*desire);
                 }
                 else {
-                    rotateRelative(-20*desire);
+                    rotateRelative(-40*desire);
                 }
                 return desire;
             }
@@ -731,6 +806,7 @@ public class RoverModel {
         private float confMomentum = 0;
         private float conf;
         private Concept angleConcept;
+        private Atom thisAngle;
 
         public VisionRay(Body body, Vec2 point, float angle, float arc, int resolution, float length, int steps) {
             this.body = body;
@@ -903,7 +979,7 @@ public class RoverModel {
 
         }
 
-        private String inputVisionDiscrete(float dist, String material) {
+        @Deprecated private String inputVisionDiscrete(float dist, String material) {
             float freq = 1f;
             String sdist = RoverEngine.f(dist);
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
@@ -913,8 +989,14 @@ public class RoverModel {
         private TaskProcess inputVisionFreq(float dist, String material) {
             float freq = 0.5f + 0.5f * dist;
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            String x = "<see_" + angleTerm + " --> [" + material + "]>. %" + freq + "|" + conf + "%";
-            return nar.inputDirect(nar.task(x));
+            //String x = "<see_" + angleTerm + " --> [" + material + "]>. %" + freq + "|" + conf + "%";
+
+            //TODO move to constructor
+            if (thisAngle == null)
+                thisAngle = Atom.the("see_" + angleTerm);
+            Compound tt = Property.make( thisAngle ,  Atom.the(material) );
+
+            return nar.inputDirect(nar.task(tt).belief().present().truth(freq, conf).get());
         }
 
         public void onTouch(Body hit, float di) {
@@ -998,8 +1080,22 @@ public class RoverModel {
 //            // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
 //        }
 
-        float lvel = torso.getLinearVelocity().length();
-        float linVelocity = /*Math.abs*/(lvel / 20f);
+
+        float linVelocity = torso.getLinearVelocity().length();
+        linearVelocity.observe(linVelocity);
+
+
+
+        Vec2 currentPosition = torso.getWorldCenter();
+        if (!positions.isEmpty()) {
+            Vec2 last = positions.getLast();
+            if (last!=null) {
+                Vec2 movement = currentPosition.sub(last);
+                double theta = Math.atan2(movement.y, movement.x);
+                motionAngle.observe((float)theta);
+            }
+        }
+        positions.addLast(currentPosition.clone());
 
 
 //        feltOrientation.set("oriented(" + sim.angleTerm(torso.getAngle()) + "). :|:");
@@ -1012,16 +1108,18 @@ public class RoverModel {
 
         //String motion = "<(" + RoverEngine.f(linVelocity) + ',' + sim.angleTerm(torso.getAngle()) + ',' + RoverEngine.f(angVelocity) + ") --> motion>. :|:";
 
-        nar.inputDirect(nar.task("<linvel-->[" + RoverEngine.f(linVelocity) + "]>. :|:"));
-        nar.inputDirect(nar.task("<facing-->[" + sim.angleTerm(torso.getAngle()) + "]>. :|:"));
+
+
+        facingAngle.observe( torso.getAngle() );
+        //nar.inputDirect(nar.task("<facing-->[" +  + "]>. :|:"));
         nar.inputDirect(nar.task("<angvel-->[" + RoverEngine.f(angVelocity) + "]>. :|:"));
 
         //System.out.println("  " + motion);
         //feltSpeed.set(motion);
 
         //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
-        int positionWindow1 = 16;
-        Vec2 currentPosition = torso.getWorldCenter();
+        //int positionWindow1 = 16;
+
         /*if (positions.size() >= positionWindow1) {
             Vec2 prevPosition = positions.removeFirst();
             float dist = prevPosition.sub(currentPosition).length();
@@ -1033,7 +1131,7 @@ public class RoverModel {
             }
             feltSpeedAvg.set("<(*,linVelocity," + Rover2.f(dist) + ") --> feel" + positionWindow1 + ">. :\\:");
         }*/
-        positions.addLast(currentPosition.clone());
+
     }
 
     public void stop() {

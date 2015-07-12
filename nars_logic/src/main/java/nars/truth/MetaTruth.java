@@ -33,16 +33,11 @@ public interface MetaTruth<T> extends Cloneable, Serializable {
     public float getConfidence();
 
 
-    /** max possible confidence value */
-    public float getConfidenceMax();
-
 
     /** TODO move this to a MutableTruth interface to separate a read-only impl */
     public void setConfidence(float c);
 
-    /** numeric precision, applied to confidence and any other numeric components.
-     * TODO seprate confidence epsilon from numeric value epsilons */
-    public float getEpsilon();
+
 
     default public CharSequence toCharSequence() {
         StringBuilder sb =  new StringBuilder();
