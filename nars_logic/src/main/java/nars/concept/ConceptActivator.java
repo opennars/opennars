@@ -41,8 +41,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return c;
     }
 
-    public ConceptActivator set(Term t, Budget b, boolean createIfMissing, long now) {
-        setKey(t);
+    public ConceptActivator set(Budget b, boolean createIfMissing, long now) {
         setBudget(b);
         this.createIfMissing = createIfMissing;
         this.now = now;
@@ -119,33 +118,9 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     public Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
 
-        set(term, budget, true, getMemory().time());
-        Concept c = concepts.update(this);
+        set(budget, true, getMemory().time());
 
-
-
-        if (c == null) {
-
-            c = forgottenOrNewConcept();
-
-            if (!c.isActive()) {
-                if (isActivatable(budget)) {
-                    c.setState(Concept.State.Active);
-                    remember(c);
-                } else {
-                    if (!c.isForgotten())
-                        c.setState(Concept.State.Forgotten);
-                }
-            }
-
-        }
-        else {
-            if (c.isDeleted()) {
-                throw new RuntimeException("deleted concept should not have been returned by index");
-            }
-        }
-
-        return c;
+        return conceptualize(term, concepts);
 
 //        if (c != null) {
 //
@@ -175,8 +150,37 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 //        return null;
     }
 
-    protected boolean isActivatable(Budget budget) {
+    protected Concept conceptualize(Term term, Bag<Term, Concept> concepts) {
+        setKey(term);
+        Concept c = concepts.update(this);
+
+
+        if (c == null) {
+
+            c = forgottenOrNewConcept();
+
+            if (!c.isActive()) {
+                if (isActivatable(c)) {
+                    c.setState(Concept.State.Active);
+                    remember(c);
+                } else {
+                    if (!c.isForgotten())
+                        c.setState(Concept.State.Forgotten);
+                }
+            }
+
+        }
+        else {
+            if (c.isDeleted()) {
+                throw new RuntimeException("deleted concept should not have been returned by index");
+            }
+        }
+
+        return c;
+    }
+
+    protected boolean isActivatable(Concept c) {
         //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);
-        return budget.getPriority() > getMemory().param.activeConceptThreshold.floatValue();
+        return c.getBudget().getPriority() > getMemory().param.activeConceptThreshold.floatValue();
     }
 }

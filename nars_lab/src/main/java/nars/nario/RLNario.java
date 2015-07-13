@@ -1,6 +1,7 @@
 package nars.nario;
 
 import automenta.vivisect.Video;
+import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nar.Default;
@@ -19,6 +20,7 @@ public class RLNario extends NARio  {
     public RLNario(NAR nar, Perception... p) {
         super(nar);
 
+        Global.DEBUG = true;
         float fps = 30f;
         gameRate = 1.0f / fps;
 

@@ -166,10 +166,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     public Sentence name() { return getSentence(); }
 
 
-    @Override
-    public int hashCode() {
-        return getSentence().hashCode();
-    }
+//    @Override
+//    public int hashCode() {
+//        return getSentence().hashCode();
+//    }
 
     public Collection<Recording> getRecords() {
         if (records == null) return Collections.EMPTY_LIST;

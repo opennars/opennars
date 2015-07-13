@@ -6,10 +6,7 @@ import nars.budget.Itemized;
 import nars.util.data.sorted.SortedIndex;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
@@ -24,8 +21,8 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     public final List<E> list;
     
     public static <E> List<E> bestList(int capacity) {
-        return capacity < 50 ?
-                Global.newArrayList(capacity) :
+        return //new ArrayList(capacity);
+
                 Global.newArrayList(capacity); // : new FastSortedTable();
     }
 
@@ -89,9 +86,10 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         }
     }
 
-    public int validPosition(int i) {
-        if (i > size()) i = size();
-        if (i < 0) i = 0;
+    public int validPosition(final int i) {
+        final int size = size();
+        if (i >= size) return size-1;
+        if (i < 0) return 0;
         return i;
     }
     

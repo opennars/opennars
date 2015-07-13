@@ -5,6 +5,7 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
+import nars.concept.ConceptPrioritizer;
 import nars.concept.DefaultConcept;
 import nars.io.Perception;
 import nars.io.in.Input;
@@ -63,6 +64,11 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
         @Override
         public void beforeFinish() {
         }
+    }
+
+    @Override
+    public boolean reprioritize(Term c, float newPriority) {
+        return new ConceptPrioritizer(this).update(c, newPriority, concepts);
     }
 
     @Override

@@ -74,12 +74,15 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
      *
      */
     public Concept conceptualize(Term term, Budget budget, boolean createIfMissing);
+
     /**
      * Provides a "next" concept for sampling during logic.
      */
     public Concept nextConcept();
 
 
+    /** set the priority of a concept. returns false if the concept is no longer active after the change */
+    public boolean reprioritize(Term term, float newPriority);
     
     /** Generic utility method for running a list of tasks in current thread */
     public static void run(final Deque<Runnable> tasks) {

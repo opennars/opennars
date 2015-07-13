@@ -63,9 +63,9 @@ public class BudgetDynamics {
                 //super.initDerivationFilters();
             }
 
-            /*public DerivationReaction getDerivationReaction() {
+            public DerivationReaction getDerivationReaction() {
                 return balancedDerivationBudget;
-            }*/
+            }
 
             public final DerivationReaction balancedDerivationBudget = new DerivationReaction() {
 
@@ -104,9 +104,13 @@ public class BudgetDynamics {
                             newPriority = 0;
                         else {
                             newPriority = parentConceptPriority - totalCost;
+
                         }
-                        parentConcept.getBudget().setPriority(newPriority);
+
+                        m.getControl().reprioritize(parentConcept.getTerm(), newPriority);
+
                     }
+
 
 
                 }
@@ -116,19 +120,23 @@ public class BudgetDynamics {
 
         }.setInternalExperience(null);
         //d.noveltyHorizon.set(1);
-        //d.conceptForgetDurations.set(50);
+        d.conceptForgetDurations.set(5);
 
         BudgetDynamics b = new BudgetDynamics(d);
 
+        b.watchConcept("a");
         b.watchConcept("b");
+        b.watchConcept("c");
         b.inputAndWatchConcept("<a --> b>");
         b.inputAndWatchConcept("<b --> c>");
         b.watchConcept("<a --> c>");
+        b.watchConcept("(&, a, b)");
+        b.watchConcept("(|, b, c)");
 
         //TextOutput.out(b.nar);
         NARTrace.out(b.nar);
 
-        b.nar.frame(75);
+        b.nar.frame(150);
 
         //b.metrics.printCSV(System.out);
         b.metrics.printCSV("/tmp/b.csv");

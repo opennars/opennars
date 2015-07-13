@@ -49,7 +49,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
             if (removed != null && removed2 != null) {
                 throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
             }
-            if (removed2 != null) {
+            if ((removed2 != null) && (!removed2.name().equals(value.name()))) {
                 removeKey(removed2.name());
                 return removed2;
             }

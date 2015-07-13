@@ -31,10 +31,10 @@ public class LogicMetrics extends NARReaction {
 
     public final DoubleMeter CONCEPTS_ACTIVE = new DoubleMeter("concepts.active");
     public final DoubleMeter CONCEPTS_TOTAL = new DoubleMeter("concepts.total");
-    public final DoubleMeter TERMLINK_MASS_CONCEPT_MEAN = new DoubleMeter("termlink.mass.concept_mean");
-    public final DoubleMeter TERMLINK_MASS_MEAN = new DoubleMeter("termlink.mass.mean");
-    public final DoubleMeter TASKLINK_MASS_CONCEPT_MEAN = new DoubleMeter("tasklink.mass.concept_mean");
-    public final DoubleMeter TASKLINK_MASS_MEAN = new DoubleMeter("tasklink.mass.mean");
+//    public final DoubleMeter TERMLINK_MASS_CONCEPT_MEAN = new DoubleMeter("termlink.mass.concept_mean");
+//    public final DoubleMeter TERMLINK_MASS_MEAN = new DoubleMeter("termlink.mass.mean");
+//    public final DoubleMeter TASKLINK_MASS_CONCEPT_MEAN = new DoubleMeter("tasklink.mass.concept_mean");
+//    public final DoubleMeter TASKLINK_MASS_MEAN = new DoubleMeter("tasklink.mass.mean");
 
 
     public final DoubleMeter CONCEPT_BELIEF_COUNT = new DoubleMeter("concept.belief.count");
@@ -118,20 +118,20 @@ public class LogicMetrics extends NARReaction {
         int totalBeliefs = 0;
         int histogramBins = 4;
         double[] histogram = new double[histogramBins];
-        SummaryStatistics
-                termLinkMassPerConcept = new SummaryStatistics(),
-                termLinkMass = new SummaryStatistics(),
-                taskLinkMassPerConcept = new SummaryStatistics(),
-                taskLinkMass = new SummaryStatistics();
+//        SummaryStatistics
+//                termLinkMassPerConcept = new SummaryStatistics(),
+//                termLinkMass = new SummaryStatistics(),
+//                taskLinkMassPerConcept = new SummaryStatistics(),
+//                taskLinkMass = new SummaryStatistics();
 
         public void reset() {
             prioritySum = prioritySumSq = 0;
             totalQuestions = totalBeliefs = 0;
             histogramBins = 4;
-            termLinkMassPerConcept.clear();
-            termLinkMass.clear();
-            taskLinkMassPerConcept.clear();
-            taskLinkMass.clear();
+//            termLinkMassPerConcept.clear();
+//            termLinkMass.clear();
+//            taskLinkMassPerConcept.clear();
+//            taskLinkMass.clear();
             inputPriority.clear();
         }
 
@@ -164,15 +164,15 @@ public class LogicMetrics extends NARReaction {
                 histogram[3]++;
             }
 
-            float termLinksMass = c.getTermLinks().mass();
-            int numTermLinks = c.getTermLinks().size();
-            float taskLinksMass = c.getTaskLinks().mass();
-            int numTaskLinks = c.getTaskLinks().size();
-
-            termLinkMassPerConcept.addValue(termLinksMass);
-            termLinkMass.addValue((numTermLinks > 0) ? termLinksMass / numTermLinks : 0);
-            taskLinkMassPerConcept.addValue(taskLinksMass);
-            taskLinkMass.addValue((numTaskLinks > 0) ? taskLinksMass / numTaskLinks : 0);
+//            float termLinksMass = c.getTermLinks().mass();
+//            int numTermLinks = c.getTermLinks().size();
+//            float taskLinksMass = c.getTaskLinks().mass();
+//            int numTaskLinks = c.getTaskLinks().size();
+//
+//            termLinkMassPerConcept.addValue(termLinksMass);
+//            termLinkMass.addValue((numTermLinks > 0) ? termLinksMass / numTermLinks : 0);
+//            taskLinkMassPerConcept.addValue(taskLinksMass);
+//            taskLinkMass.addValue((numTaskLinks > 0) ? taskLinksMass / numTaskLinks : 0);
 
         }
 
@@ -193,10 +193,10 @@ public class LogicMetrics extends NARReaction {
 
             CONCEPTS_ACTIVE.set(count);
             CONCEPTS_TOTAL.set(m.concepts.size());
-            TERMLINK_MASS_CONCEPT_MEAN.set(termLinkMassPerConcept.getMean());
-            TERMLINK_MASS_MEAN.set(termLinkMass.getMean());
-            TASKLINK_MASS_CONCEPT_MEAN.set(taskLinkMassPerConcept.getMean());
-            TASKLINK_MASS_MEAN.set(taskLinkMass.getMean());
+//            TERMLINK_MASS_CONCEPT_MEAN.set(termLinkMassPerConcept.getMean());
+//            TERMLINK_MASS_MEAN.set(termLinkMass.getMean());
+//            TASKLINK_MASS_CONCEPT_MEAN.set(taskLinkMassPerConcept.getMean());
+//            TASKLINK_MASS_MEAN.set(taskLinkMass.getMean());
             CONCEPT_BELIEF_COUNT.set(totalBeliefs);
             CONCEPT_QUESTION_COUNT.set(totalQuestions);
 

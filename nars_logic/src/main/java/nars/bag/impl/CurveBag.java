@@ -207,8 +207,18 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
         if (Global.DEBUG) {
             int is = items.size();
-            if (Math.abs(is-in) > 2)
+            if (Math.abs(is-in) > 2) {
+                System.err.println("INDEX");
+                for (Object o : nameTable.values()) {
+                    System.err.println(o);
+                }
+                System.err.println("ITEMS:");
+                for (Object o : items) {
+                    System.err.println(o);
+                }
+
                 throw new RuntimeException("curvebag fault");
+            }
 
 //            //test for a discrepency of +1/-1 difference between name and items
 //            if ((is - in > 2) || (is - in < -2)) {

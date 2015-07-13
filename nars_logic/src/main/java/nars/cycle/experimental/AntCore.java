@@ -76,6 +76,12 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
+    public boolean reprioritize(Term term, float newPriority) {
+        //TODO
+        return false;
+    }
+
+    @Override
     public boolean addTask(Task t) {
         tasks.addLast(t);
         return true;
