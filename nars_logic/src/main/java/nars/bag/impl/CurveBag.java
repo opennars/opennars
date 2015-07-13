@@ -7,6 +7,7 @@ import nars.budget.Item;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
+import objenome.op.cas.E;
 
 import java.io.Serializable;
 import java.util.*;
@@ -27,7 +28,7 @@ import java.util.function.Consumer;
  */
 public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
-    final float MASS_EPSILON = 1.0e-5f;
+    @Deprecated final float MASS_EPSILON = 1.0e-5f;
 
     /**
      * mapping from key to item
@@ -43,11 +44,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * defined in different bags
      */
     final int capacity;
-
-
-    /**
-     * whether items are removed by random sampling, or a continuous scanning
-     */
 
 
     public final CurveSampler sampler;
@@ -355,6 +351,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
             if (oldItem == null)
                 throw new RuntimeException("required removal but nothing removed");
+
             /*else {
                 if (Global.DEBUG) {
                     if (oldItem.name().equals(i.name())) {
@@ -370,18 +367,28 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
             return oldItem;
-        } else if (contains) {
-            //TODO check this mass calculation
-            E existingToReplace = nameTable.put(i.name(), i);
+        } else {
+            E existing = nameTable.remove(i.name());
+            if (existing!=null) {
+                merge(i, existing);
+            }
+            nameTable.put(i.name(), i);
             return null;
-        } else /* if (!contains) */ {
-
-            E shouldNotExist = nameTable.put(i.name(), i);
-            /*if (Global.DEBUG) {
-                if (shouldNotExist != null)
-                    throw new RuntimeException(i.name() + " already expected null value but " + shouldNotExist + " was there");
-            }*/
-            return null;
+//
+//
+//                //TODO check this mass calculation
+//                E existingToReplace = ;, i);
+//
+//                return null;
+//            } else /* if (!contains) */ {
+//
+//                E shouldNotExist = nameTable.put(i.name(), i);
+//                if (Global.DEBUG) {
+//                    if (shouldNotExist != null)
+//                        throw new RuntimeException(i.name() + " already expected null value but " + shouldNotExist + " was there");
+//                }
+//                return null;
+//            }
         }
 
 
@@ -463,7 +470,8 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     /**
-     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
+     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).
+     * x=0 represents low priority (bottom of bag), x=1.0 represents high priority
      *
      * @param x input mappig value
      * @return

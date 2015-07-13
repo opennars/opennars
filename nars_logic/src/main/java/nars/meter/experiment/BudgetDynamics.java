@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
+import nars.concept.Concept;
 import nars.meter.MemoryBudgetState;
 import nars.meter.NARMetrics;
 import nars.meter.NARTrace;
@@ -14,7 +15,6 @@ import nars.task.Task;
 import nars.util.meter.TemporalMetrics;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 /**
  * Created by me on 7/12/15.
@@ -63,9 +63,9 @@ public class BudgetDynamics {
                 //super.initDerivationFilters();
             }
 
-            public DerivationReaction getDerivationReaction() {
+            /*public DerivationReaction getDerivationReaction() {
                 return balancedDerivationBudget;
-            }
+            }*/
 
             public final DerivationReaction balancedDerivationBudget = new DerivationReaction() {
 
@@ -73,16 +73,39 @@ public class BudgetDynamics {
                 public void onDerivation(Premise p, Iterable<Task> derived, Memory m) {
 
 
-                    float totalDerivedPriority = 0;
-                    for (Task t : derived)
-                        totalDerivedPriority += t.getPriority();
-                    System.err.println("@" + m.time() + ": " + this + " requesting " + totalDerivedPriority + " for " + derived);
-                    System.err.println("  from " + p.getConcept() + " " + p.getConcept().getBudget().toBudgetString());
+                    Concept parentConcept = p.getConcept();
+                    float parentConceptPriority = parentConcept.getPriority();
+
+                    float totalCost = 0;
+                    for (final Task t : derived) {
+                        t.mulPriority( parentConceptPriority );
+
+                        //TODO threshold detect
+
+                        totalCost += t.getPriority();
+                    }
+
                     float refund = 0;
                     for (Task t : derived) {
                         final boolean added = m.taskAdd(t);
                         if (!added)
                             refund += t.getPriority();
+                    }
+
+                    totalCost -= refund;
+
+                    System.err.println("@" + m.time() + ": " + this + " requesting " + totalCost + " for " + derived);
+                    System.err.println("  from " + parentConcept + " " + parentConcept.getBudget().toBudgetString());
+
+                    if (totalCost > 0) {
+                        float newPriority;
+                        if (totalCost > parentConceptPriority)
+                            //this will produce a measurable deficit of: totalCost - parentConceptPriority
+                            newPriority = 0;
+                        else {
+                            newPriority = parentConceptPriority - totalCost;
+                        }
+                        parentConcept.getBudget().setPriority(newPriority);
                     }
 
 
@@ -93,9 +116,11 @@ public class BudgetDynamics {
 
         }.setInternalExperience(null);
         //d.noveltyHorizon.set(1);
+        //d.conceptForgetDurations.set(50);
 
         BudgetDynamics b = new BudgetDynamics(d);
 
+        b.watchConcept("b");
         b.inputAndWatchConcept("<a --> b>");
         b.inputAndWatchConcept("<b --> c>");
         b.watchConcept("<a --> c>");
@@ -103,12 +128,10 @@ public class BudgetDynamics {
         //TextOutput.out(b.nar);
         NARTrace.out(b.nar);
 
-        b.nar.frame(200);
+        b.nar.frame(75);
 
-        b.metrics.printCSV(
-                //System.out
-                "/tmp/b.csv"
-        );
+        //b.metrics.printCSV(System.out);
+        b.metrics.printCSV("/tmp/b.csv");
 
     }
 

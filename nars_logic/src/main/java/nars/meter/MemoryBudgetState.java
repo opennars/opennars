@@ -54,7 +54,7 @@ public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object
             public List<Signal> getSignals() {
                 return Lists.newArrayList(
                         new Signal(prefix + "_Priority"),
-                        new Signal(prefix + "_Duration"),
+                        new Signal(prefix + "_Durability"),
                         new Signal(prefix + "_Quality")
                         //...
                 );

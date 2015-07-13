@@ -66,7 +66,7 @@ public class AbstractBagTest {
             float min = f.getMinPriority();
             float max = f.getMaxPriority();
             if (requireOrder) {
-                assertTrue(max > min);
+                assertTrue(max >= min);
             }
 
 
@@ -90,9 +90,10 @@ public class AbstractBagTest {
 
                 float p = t.getPriority();
 
+                String expected = (min + " > "+ p + " > " + max);
                 if (requireOrder) {
-                    assertTrue(p >= min);
-                    assertTrue(p <= max);
+                    assertTrue(expected, p >= min);
+                    assertTrue(expected, p <= max);
                 }
 
                 int level = (int)Math.floor(p * levels);

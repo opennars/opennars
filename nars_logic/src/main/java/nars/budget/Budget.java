@@ -145,7 +145,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * durability: max(this, b) (similar to merge)
      * quality: max(this, b)    (similar to merge)
      * */
-    public Budget accumulate(Budget b) {
+    public Budget accumulate(final Budget b) {
         return accumulate(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
@@ -206,8 +206,8 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * @param d The new durability
      */
     public boolean setDurability(float d) {
-        if (d>=1.0f)
-            d = (1.0f-BUDGET_EPSILON); //max value
+        if (d > 1.0f)
+            d = 1.0f; //max value
         else if (d < 0)
             d = 0; //min value
 
@@ -636,11 +636,11 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     @Override
-    public boolean mulPriority(float factor) {
+    public boolean mulPriority(final float factor) {
         return setPriority(getPriority() * factor);
     }
 
-    public boolean mulDurability(float factor) {
+    public boolean mulDurability(final float factor) {
         return setDurability(getDurability() * factor);
     }
 
@@ -662,7 +662,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
         default Object[] toBudgetArray() {
             return new Object[] {
-                    getPriority(), getQuality(), getDurability()
+                    getPriority(), getDurability(), getQuality()
             };
         }
 

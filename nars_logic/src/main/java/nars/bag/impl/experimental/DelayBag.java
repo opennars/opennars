@@ -374,7 +374,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
 
         E item;
         if (existingItemWithSameKey != null) {
-            newItem.getBudget().merge(existingItemWithSameKey.getBudget());
+            merge(newItem.getBudget(), existingItemWithSameKey.getBudget());
             item = newItem;
         }
         else {

@@ -81,11 +81,11 @@ public class Solid extends Default implements CycleProcess {
 
 
 
-        //concepts = new CurveBag(rng, activeConcepts);
+        concepts = new CurveBag(rng, activeConcepts);
         //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
-        concepts = new LevelBag(32, activeConcepts);
+        //concepts = new LevelBag(32, activeConcepts);
     }
 
     @Override
@@ -234,10 +234,10 @@ public class Solid extends Default implements CycleProcess {
     @Override
     public Concept conceptualize(Term term, Budget budget, boolean createIfMissing) {
         //synchronized(activator) {
-        if (budget.summaryGreaterOrEqual(memory.param.newConceptThreshold)) {
+        //if (budget.getPriority() >= (memory.param.newConceptThreshold).floatValue() ) {
             return activator.conceptualize(term, budget, true, memory.time(), concepts);
-        }
-        return null;
+        //}
+        //return null;
         //}
     }
 
@@ -260,8 +260,8 @@ public class Solid extends Default implements CycleProcess {
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
         Bag<Sentence, TaskLink> taskLinks =
-                new ChainBag(rng, getConceptTaskLinks());
-                //new CurveBag(rng, getConceptTaskLinks());
+                //new ChainBag(rng, getConceptTaskLinks());
+                new CurveBag(rng, getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks =
                 //new ChainBag(rng, getConceptTermLinks());
                 new CurveBag(rng, getConceptTaskLinks());

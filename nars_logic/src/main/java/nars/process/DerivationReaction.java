@@ -6,7 +6,11 @@ import nars.task.Task;
 
 import java.util.List;
 
-/** called after a ConceptProcess has derived Tasks */
+/** called after a ConceptProcess has derived Tasks
+ *  these tasks have not been input to memory yet, and
+ *  this method is responsible for inputting them
+ *  after any postprocessing it wants to apply.
+ * */
 public interface DerivationReaction {
     public void onDerivation(Premise p, Iterable<Task> derived, Memory m);
 }

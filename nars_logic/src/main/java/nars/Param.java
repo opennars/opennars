@@ -28,7 +28,7 @@ public abstract class Param implements Serializable {
     //-------------------
 
 
-    private TaskComparator.Merging merging = TaskComparator.Merging.Or;
+    private TaskComparator.Merging merging = TaskComparator.Merging.Plus;
 
     abstract public DerivationReaction getDerivationReaction();
 
@@ -175,7 +175,7 @@ public abstract class Param implements Serializable {
     public AtomicDouble noveltyHorizon = new AtomicDouble();
 
     /** probability that a completely non-novel termlink/tasklink pair (older than novelty horizon) will be selected */
-    public static float NOVELTY_FLOOR = 0.1f;
+    public static float NOVELTY_FLOOR = 0.05f;
 
 
     /** Reliance factor, the empirical confidence of analytical truth.

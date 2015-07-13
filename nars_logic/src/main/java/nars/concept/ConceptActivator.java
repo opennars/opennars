@@ -18,6 +18,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     private boolean createIfMissing;
     private long now;
+    private static final nars.budget.BudgetFunctions.Activating activationFunction = BudgetFunctions.Activating.Accum;
 
 
     abstract public Memory getMemory();
@@ -35,7 +36,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
 
         final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
-        BudgetFunctions.activate(c.getBudget(), getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);
+        BudgetFunctions.activate(c.getBudget(), getBudgetRef(), activationFunction, activationFactor);
 
         return c;
     }
@@ -116,7 +117,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         forget(c);
     }
 
-    public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
+    public Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
 
         set(term, budget, true, getMemory().time());
         Concept c = concepts.update(this);

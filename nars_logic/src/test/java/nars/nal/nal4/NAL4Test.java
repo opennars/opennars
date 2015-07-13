@@ -29,7 +29,7 @@ public class NAL4Test extends JavaNALTest {
 
                 {new Curve().setInternalExperience(null)},
                 //{new Discretinuous().level(5) }
-                {new Solid(1, 96, 0, 4, 0, 3).level(5)}
+                {new Solid(1, 128, 1, 1, 1, 2).level(6)}
 
 
         });
@@ -54,7 +54,7 @@ public class NAL4Test extends JavaNALTest {
         //TextOutput.out(nar);
 
 
-        long time = 2000;
+        long time = 1500;
 
         float minConf = 0.66f;
         n.believe("<0 --> num>", 1.0f, 0.9f);

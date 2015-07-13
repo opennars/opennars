@@ -21,14 +21,14 @@ public class SolidTest {
     @Test
     public void testDetective() throws Exception {
 
-        int time = 1266; //should solve the example in few cycles
+        int time = 256; //should solve the example in few cycles
 
 
         Global.DEBUG = false;
 
         final int numConcepts = 256;
-        final float leakRate = 0.7f;
-        Solid s = new Solid(5, numConcepts, 1, 2, 1, 3) {
+        final float leakRate = 0.2f;
+        Solid s = new Solid(1, numConcepts, 1, 1, 2, 3) {
 
             @Override
             protected void initDerivationFilters() {

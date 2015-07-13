@@ -215,7 +215,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         if (previous!=null) {
 
             //displaced an item with the same key
-            merge(previous.item, newItem);
+            merge(newItem, previous.item);
 
             if (previous!=d)
                 chain.remove(previous);

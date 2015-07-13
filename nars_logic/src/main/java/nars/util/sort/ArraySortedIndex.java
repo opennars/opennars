@@ -38,7 +38,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     
     public ArraySortedIndex(int capacity, List<E> list) {
         super();
-        setCapacity(1);
+        setCapacity(capacity);
         this.list = list;
     }
 

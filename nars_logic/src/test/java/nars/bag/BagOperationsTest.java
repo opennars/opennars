@@ -118,8 +118,9 @@ public class BagOperationsTest {
 
             //same id, different priority (lower, so budget will not be affected)
             assertEquals(null, b.put(new NullConcept("b", 0.1f)));
-            assertEquals(0.1f, b.getMinPriority(),0.001f); //affected, item budget replaced to new value, 0.1 new lowest
-            assertEquals(0.2f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
+            assertEquals(0.2f, b.getMinPriority(),0.001f); //affected, item budget merged to new value, 0.1 new lowest
+            assertEquals(0.3f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
+            assertTrue(b.getMaxPriority() > b.getMinPriority());
 
             //increasing b's priority should not cause 'a' to be removed
             Item zzz = b.put(new NullConcept("b", 0.4f));

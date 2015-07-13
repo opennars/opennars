@@ -143,7 +143,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     public enum Activating {
-        Max, TaskLink
+        Classic, Accum, Max, WTF
     }
     
     
@@ -156,13 +156,24 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param receiver The budget receiving the activation
      * @param amount The budget for the new item
      */
-    public static void activate(final Budget receiver, final Budget amount, Activating mode, final float factor) {
+    public static void activate(final Budget receiver, final Budget amount, final Activating mode, final float factor) {
         switch (mode) {
             case Max:
                 BudgetFunctions.merge(receiver, amount);
                 break;
 
-            case TaskLink:
+            case Accum:
+                receiver.accumulate(amount);
+                break;
+
+            case Classic:
+                float priority = or(receiver.getPriority(), amount.getPriority());
+                float durability = aveAri(receiver.getDurability(), amount.getDurability());
+                receiver.setPriority(priority);
+                receiver.setDurability(durability);
+                break;
+
+            case WTF:
 
                 final float currentPriority = receiver.getPriority();
                 final float targetPriority = amount.getPriority();
@@ -266,20 +277,19 @@ public final class BudgetFunctions extends UtilityFunctions {
      * Merge an item into another one in a bag, when the two are identical
      * except in budget values
      *
-     * @param b The budget baseValue to be modified
-     * @param a The budget adjustValue doing the adjusting
+     * @param target The budget baseValue to be modified
+     * @param source The budget adjustValue doing the adjusting
      * @return whether the merge had any effect in changing any of the budget components
      */
-    public final static boolean merge(final Budget b, final Prioritized a0) {
-        if (a0 instanceof Budget) {
-            Budget a = (Budget)a0;
-            return
-                    b.maxPriority(a.getPriority()) ||
-                            b.maxDurability(a.getDurability()) ||
-                            b.maxQuality(a.getQuality());
-        }
-        else
-            return b.maxPriority(a0.getPriority());
+    public final static boolean merge(final Budget target, final Budget source) {
+        return target.maxPriority(source.getPriority()) ||
+                        target.maxDurability(source.getDurability()) ||
+                        target.maxQuality(source.getQuality());
+    }
+
+    /** merge just priority value from a scalar source */
+    public final static boolean merge(final Budget target, final Prioritized source) {
+        return target.maxPriority(source.getPriority());
     }
 
     /** maximum, simpler and faster than Math.max without its additional tests */

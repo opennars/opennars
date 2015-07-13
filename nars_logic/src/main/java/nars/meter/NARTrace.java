@@ -132,7 +132,13 @@ public class NARTrace extends MemoryReaction {
                 p.print(channel.getSimpleName());
                 p.print(": ");
 
-                p.println(Texts.arrayToString(signal));
+                if (signal !=null && (signal.length == 1) && (signal[0] instanceof Concept)) {
+                    Concept c = (Concept)signal[0];
+                    p.println(c.toString() + " " + c.getBudget().toBudgetString());
+                }
+                else {
+                    p.println(Texts.arrayToString(signal));
+                }
             }
         };
     }
