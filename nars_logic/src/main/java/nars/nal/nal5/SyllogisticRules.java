@@ -1012,7 +1012,7 @@ public final class SyllogisticRules {
         Truth v2 = belief.truth;
         Truth truth = null;
         Budget budget;
-        if (task.isQuestion() || task.isQuest()) {
+        if (task.isQuestOrQuestion()) {
             budget = (compoundTask ? BudgetFunctions.backward(v2, nal) : BudgetFunctions.backwardWeak(v2, nal));
         } else {
             if (task.isGoal()) {

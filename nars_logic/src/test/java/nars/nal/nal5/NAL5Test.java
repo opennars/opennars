@@ -7,6 +7,7 @@ import nars.event.NARReaction;
 import nars.nal.JavaNALTest;
 import nars.nar.Curve;
 import nars.nar.Default;
+import nars.nar.DefaultDeep;
 import nars.nar.DefaultMicro;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
@@ -31,8 +32,9 @@ public class NAL5Test extends JavaNALTest {
                 { new Default().level(5) },
                 { new Default().level(6) },
                 { new DefaultMicro().level(5) },
+                { new DefaultDeep().level(5) },
+
                 //{ new Neuromorphic(4) },
-                //{ new DefaultBuffered().setInternalExperience(null) },
                 {new Curve().setInternalExperience(null)}
 
         });
@@ -40,6 +42,11 @@ public class NAL5Test extends JavaNALTest {
 
     @Test public void deriveFromConjunctionComponents() {
         n.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
+
+        //TODO find the actual value for these intermediate steps, i think it is 81%
+        n.mustBelieve(70, "<a --> b>", 1f, 0.81f);
+        n.mustBelieve(70, "<b --> a>", 1f, 0.81f);
+
         n.mustBelieve(70, "<a <-> b>", 1.0f, 0.66f);
         n.run();
     }

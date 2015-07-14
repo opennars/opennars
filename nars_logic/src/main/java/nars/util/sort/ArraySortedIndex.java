@@ -261,8 +261,8 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
             
         } while ( (!finishedUp) || (!finishedDown) );
                 
-        throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
-        //return false;
+        //throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
+        return false;
     }
 
     private boolean attemptRemoval(Object o, Object on, int i) {

@@ -161,7 +161,7 @@ public class NAL1Test extends JavaNALTest {
 
         //we know also 73% is the theoretical maximum it can reach
         if (n.nal() <= 2)
-            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.33f, 0.99f);
+            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
         else
             //originally checked for 0.25% exact confidence
             n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);

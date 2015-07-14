@@ -101,20 +101,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     private boolean temporallyInductable = true;
 
 
-
-//    public Task(final Sentence s, final Budget b) {
-//        this(s, b, (Task) null, null, null);
-//    }
-//
-//    public Task(final Sentence s, final Budget b, final Task parentTask) {
-//        this(s, b, parentTask, null);
-//    }
-//
-//    protected Task() {
-//        this(null, null);
-//    }
-
-
     public Task(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(term, punctuation, truth,
                 bv != null ? bv.getPriority() : 0,
@@ -279,21 +265,17 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         return clone(getTerm(), newTruth, getOccurrenceTime());
     }
 
-    @Override
-    public Sentence name() {
-        return sentence;
-    }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) return false;
-        if (obj == this) return true;
-        if (obj instanceof Task) {
-            Task t = (Task) obj;
-            return super.equals(t);// && equalParents(t);
-        }
-        return false;
-    }
+
+//    @Override
+//    public boolean equals(final Object obj) {
+//        if (obj == this) return true;
+//        if (obj instanceof Sentence) {
+//            Task t = (Task) obj;
+//            return super.equals(t);// && equalParents(t);
+//        }
+//        return false;
+//    }
 
     public boolean equalParents(Task t) {
         Task p = getParentTask();

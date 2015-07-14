@@ -69,6 +69,7 @@ public class SomeRovers {
         //nar.param.inputsMaxPerCycle.set(32);
         //nar.param.conceptsFiredPerCycle.set(4);
 
+        d.conceptCreationExpectation.set(0);
         d.conceptBeliefsMax.set(16);
         d.conceptGoalsMax.set(12);
 
