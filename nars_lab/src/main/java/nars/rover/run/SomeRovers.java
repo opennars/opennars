@@ -94,8 +94,8 @@ public class SomeRovers {
             NAR nar;
             SimulatedClock clock;
 
-            NARSeed d = newSolid();
-            //NARSeed d = newDefault();
+            //NARSeed d = newSolid();
+            NARSeed d = newDefault();
             nar = new NAR(d);
 
             int nc = 4;

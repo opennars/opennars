@@ -1,5 +1,7 @@
 package nars.util;
 
+import nars.Global;
+import nars.bag.impl.CurveBag;
 import nars.budget.Item;
 
 import java.util.Collection;
@@ -40,7 +42,12 @@ public abstract class CollectorMap<K, E extends Item<K>> {
             final K key = value.name();
             removed = putKey(key, value);
             if (removed != null) {
-                removeItem(removed);
+
+                E remd = removeItem(removed);
+
+                if (remd == null) {
+                    throw new RuntimeException("unable to remove item corresponding to key " + key);
+                }
                 mass -= removed.getPriority();
             }
 
@@ -64,7 +71,9 @@ public abstract class CollectorMap<K, E extends Item<K>> {
 
         E e = removeKey(key);
         if (e != null) {
-            removeItem(e);
+            E removed = removeItem(e);
+            if (removed == null)
+                throw new RuntimeException(key + " removed from index but not from items list");
             mass -= e.getPriority();
         }
 
@@ -87,6 +96,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
         E e = map.remove(key);
         if (e!=null && massToRemove > 0)
             mass -= massToRemove;
+        
         return e;
     }
 

@@ -6,6 +6,7 @@ import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
+import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.clock.CycleClock;
@@ -418,7 +419,10 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
-        Bag<Sentence, TaskLink> taskLinks = new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+        Bag<Sentence, TaskLink> taskLinks =
+                //new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+                new ChainBag(rng,  getConceptTaskLinks());
+
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
                 //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());

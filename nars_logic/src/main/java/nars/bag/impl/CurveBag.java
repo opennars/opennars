@@ -3,6 +3,7 @@ package nars.bag.impl;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagTransaction;
 import nars.budget.Item;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
@@ -85,10 +86,9 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
         @Override
         public E remove(final K key) {
-            E e = super.remove(key);
+            final E e = super.remove(key);
 
-            if (Global.DEBUG && Global.DEBUG_BAG)
-                CurveBag.this.size();
+            if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
 
             return e;
         }
@@ -104,7 +104,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
         @Override
         protected E addItem(final E i) {
-            return items.insert(i);
+
+            final E e =items.insert(i);
+
+            if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
+
+            return e;
         }
     }
 
@@ -217,7 +222,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
                     System.err.println(o);
                 }
 
-                throw new RuntimeException("curvebag fault");
+                throw new RuntimeException("curvebag fault: " + in + " index, " + is + " items");
             }
 
 //            //test for a discrepency of +1/-1 difference between name and items
@@ -336,6 +341,17 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         return items.getLast().getPriority();
     }
 
+    @Override
+    public E update(BagTransaction<K, E> selector) {
+        if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
+
+        final E e = super.update(selector);
+
+        if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
+
+        return e;
+    }
+
     /**
      * Insert an item into the itemTable, and return the overflow
      *
@@ -411,15 +427,16 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     protected E removeItem(final int index) {
 
-        E selected = items.remove(index);
+        return remove( items.get(index ).name() );
 
-        if (selected == null)
-            throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
-
-        //should be the same object instance
-        this.index.removeKey(selected.name(), selected.getPriority());
-
-        return selected;
+//        E selected = items.remove(index);
+//
+//        if (selected == null)
+//            throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
+//
+//        this.index.removeKey(selected.name(), selected.getPriority());
+//
+//        return selected;
     }
 
 

@@ -24,7 +24,7 @@ public interface BagTransaction<K,V extends Itemized<K>> extends Budget.Budgetab
     V updateItem(V v);
 
     public default V update(final V v) {
-        if (v == null) throw new RuntimeException("null item");
+        //if (v == null) throw new RuntimeException("null item");
 
         boolean changed = false;
 

@@ -224,7 +224,8 @@ public class DefaultCycle extends SequentialCycle {
      */
     protected void runNextNovelTask() {
         final Task task = novelTasks.pop();
-        TaskProcess.run(memory, task);
+        if (task!=null)
+            TaskProcess.run(memory, task);
     }
 
 

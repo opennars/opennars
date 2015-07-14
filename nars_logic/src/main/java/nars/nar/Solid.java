@@ -81,8 +81,8 @@ public class Solid extends Default implements CycleProcess {
 
 
 
-        //concepts = new CurveBag(rng, activeConcepts);
-        concepts = new ChainBag(rng, activeConcepts);
+        concepts = new CurveBag(rng, activeConcepts);
+        //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
         //concepts = new LevelBag(32, activeConcepts);
@@ -263,8 +263,8 @@ public class Solid extends Default implements CycleProcess {
                 new ChainBag(rng, getConceptTaskLinks());
                 //new CurveBag(rng, getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks =
-                new ChainBag(rng, getConceptTermLinks());
-                //new CurveBag(rng, getConceptTaskLinks());
+                //new ChainBag(rng, getConceptTermLinks());
+                new CurveBag(rng, getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
         //return super.newConcept(b, t, m);
