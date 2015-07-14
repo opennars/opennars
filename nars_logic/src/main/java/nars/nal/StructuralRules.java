@@ -173,7 +173,7 @@ public final class StructuralRules {
      * @param index The location of focus in the compound
      * @return Whether the direction of inheritance should be revised
      */
-    private static boolean switchOrder(Compound compound, short index) {
+    private static boolean switchOrder(final Compound compound, final short index) {
         return (((compound instanceof Difference)) && (index == 1))
                 || ((compound instanceof Image) && (index != ((Image) compound).relationIndex));
     }

@@ -98,7 +98,7 @@ public class SomeRovers {
             NARSeed d = newDefault();
             nar = new NAR(d);
 
-            int nc = 4;
+            int nc = 16;
             nar.setCyclesPerFrame(nc);
 
 

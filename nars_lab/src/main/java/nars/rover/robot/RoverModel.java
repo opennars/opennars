@@ -608,10 +608,10 @@ public class RoverModel {
             float onFrame(float desire, boolean positive) {
 
                 if (positive) {
-                    rotateRelative(+40*desire);
+                    rotateRelative(+80*desire);
                 }
                 else {
-                    rotateRelative(-40*desire);
+                    rotateRelative(-80*desire);
                 }
                 return desire;
             }
