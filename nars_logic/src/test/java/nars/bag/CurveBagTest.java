@@ -3,6 +3,7 @@ package nars.bag;
 import nars.Global;
 import nars.NAR;
 import nars.Param;
+import nars.analyze.experimental.BagPerf;
 import nars.analyze.experimental.BagPerf.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
@@ -14,6 +15,7 @@ import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -107,28 +109,56 @@ public class CurveBagTest extends AbstractBagTest {
         NullItem four = new NullItem(.4f);
         NullItem five = new NullItem(.5f);
         
-        f.put(four);
-        f.put(five);
-        f.put(new NullItem(.6f));
-        Item a = f.put(new NullItem(.7f));
-        assert(a==null);
-        
-        assertEquals(4, f.size());
+        f.put(four); testOrder(f);
 
+
+
+        f.put(five); testOrder(f);
+
+        f.put(new NullItem(.6f)); testOrder(f);
+
+
+        Item a = f.put(new NullItem(.7f)); assertNull(a); testOrder(f);
+
+        assertEquals(4, f.size());
         assertEquals(f.size(), f.keySet().size());
-                
         assertTrue(f.contains(five));    //5 should be in lowest position
-        
+
+        System.out.println("x\n"); f.printAll();
+
         f.put(new NullItem(.8f)); //limit
-        
+
+        System.out.println("x\n"); f.printAll(); testOrder(f);
+
         assertTrue(!f.contains(four)); //4 should get removed
         
         assertEquals(4, f.size());
     }
-    
-    
-    
-    
+
+    private void testOrder(Bag<CharSequence, NullItem> f) {
+        float max = f.getMaxPriority();
+        float min = f.getMinPriority();
+
+        Iterator<NullItem> ii = f.iterator();
+
+        NullItem n = null;
+        do {
+            NullItem last = n;
+            n = ii.next();
+            if (last == null)
+                assertEquals(max, n.getPriority(), 0.001);
+            else {
+                assertTrue(n.getPriority() <= last.getPriority() );
+            }
+
+
+        } while (ii.hasNext());
+
+        assertEquals(min, n.getPriority(), 0.001);
+
+    }
+
+
     public static void testRemovalDistribution(int capacity) {
         int samples = 128 * capacity;
         

@@ -438,18 +438,18 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
             //insert
-            index.put(i.name(), i);
+            index.put(i);
 
             mass += i.getPriority();
 
             return oldItem;
         } else if (contains) {
             //TODO check this mass calculation
-            E existingToReplace = index.put(i.name(), i);
+            E existingToReplace = index.put(i);
             mass += i.getPriority();
             return null;
         } else /* if (!contains) */ {
-            E shouldNotExist = index.put(i.name(), i);
+            E shouldNotExist = index.put(i);
             if (shouldNotExist != null)
                 throw new RuntimeException("already expected no existing key/item but it was actually there");
             mass += i.getPriority();

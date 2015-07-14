@@ -33,7 +33,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * mapping from key to item
      */
-    public final CurveMap nameTable;
+    public final CurveMap index;
 
     /**
      * array of lists of items, for items on different level
@@ -179,7 +179,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         this.items = items;
 
 
-        nameTable = new CurveMap(
+        index = new CurveMap(
                 //new HashMap(capacity)
                 //Global.newHashMap(capacity)
                 new UnifiedMap(capacity)
@@ -192,7 +192,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     @Override
     public final void clear() {
         items.clear();
-        nameTable.clear();
+        index.clear();
     }
 
     /**
@@ -203,13 +203,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     @Override
     public int size() {
 
-        int in = nameTable.size();
+        int in = index.size();
 
         if (Global.DEBUG) {
             int is = items.size();
             if (Math.abs(is-in) > 2) {
                 System.err.println("INDEX");
-                for (Object o : nameTable.values()) {
+                for (Object o : index.values()) {
                     System.err.println(o);
                 }
                 System.err.println("ITEMS:");
@@ -267,7 +267,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     @Override
     public boolean contains(final E it) {
-        return nameTable.containsValue(it);
+        return index.containsValue(it);
     }
 
     /**
@@ -278,12 +278,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     @Override
     public E get(final K key) {
-        return nameTable.get(key);
+        return index.get(key);
     }
 
     @Override
     public E remove(final K key) {
-        return nameTable.remove(key);
+        return index.remove(key);
     }
 
 
@@ -343,64 +343,34 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override
-    public E put(E i) {
+    public E put(final E i) {
 
+        boolean full = (size() >= capacity);
 
-        float newPriority = i.getPriority();
-
-        boolean contains = nameTable.containsKey(i.name());
-        if ((nameTable.size() >= capacity) && (!contains)) {
-            // the bag is full
-
-            // this item is below the bag's already minimum item, no change (return the input as the overflow)
-            if (newPriority < getMinPriority()) {
-                return i;
-            }
-
-            E oldItem = removeItem(0);
-
-            if (oldItem == null)
-                throw new RuntimeException("required removal but nothing removed");
-
-            /*else {
-                if (Global.DEBUG) {
-                    if (oldItem.name().equals(i.name())) {
-                        throw new RuntimeException(nameTable.size() + "," + items.size() + ": this oldItem should have been removed on earlier nameTable.put call: " + oldItem + ", during put(" + i + ")");
-                    }
-                }
-            }*/
-
-
-            //insert
-            nameTable.put(i.name(), i);
-
-
-
-            return oldItem;
-        } else {
-            E existing = nameTable.remove(i.name());
-            if (existing!=null) {
-                merge(i, existing);
-            }
-            nameTable.put(i.name(), i);
+        E existing = index.remove(i.name());
+        if (existing!=null) {
+            merge(i, existing);
+            index.put(i);
             return null;
-//
-//
-//                //TODO check this mass calculation
-//                E existingToReplace = ;, i);
-//
-//                return null;
-//            } else /* if (!contains) */ {
-//
-//                E shouldNotExist = nameTable.put(i.name(), i);
-//                if (Global.DEBUG) {
-//                    if (shouldNotExist != null)
-//                        throw new RuntimeException(i.name() + " already expected null value but " + shouldNotExist + " was there");
-//                }
-//                return null;
-//            }
         }
+        else {
+            if (full) {
 
+                if (getMinPriority() > i.getPriority()) {
+                    //insufficient priority to enter the bag
+                    return i;
+                }
+                else {
+                    E low = removeLowest();
+                    index.put(i);
+                    return low;
+                }
+            }
+            else {
+                index.put(i);
+                return existing;
+            }
+        }
 
     }
 
@@ -429,6 +399,10 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 //    }
 
 
+    protected E removeLowest() {
+        return removeItem(0);
+    }
+
     /**
      * Take out the first or last E in a level from the itemTable
      *
@@ -443,7 +417,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
             throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 
         //should be the same object instance
-        nameTable.removeKey(selected.name(), selected.getPriority());
+        this.index.removeKey(selected.name(), selected.getPriority());
 
         return selected;
     }
@@ -451,7 +425,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     @Override
     public float mass() {
-        return nameTable.mass();
+        return index.mass();
     }
 
     @Override
@@ -466,12 +440,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     @Override
     public Set<K> keySet() {
-        return nameTable.keySet();
+        return index.keySet();
     }
 
     @Override
     public Collection<E> values() {
-        return nameTable.values();
+        return index.values();
     }
 
     @Override

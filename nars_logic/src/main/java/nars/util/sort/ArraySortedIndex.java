@@ -50,10 +50,10 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
     public final int positionOf(final E o) {
         final float y = o.getPriority();
-        if ((y < 0) || (y > 1.0f)) {
-            System.err.println("Invalid priority value: " + o);
-            System.exit(1);
-        }
+//        if ((y < 0) || (y > 1.0f)) {
+//            System.err.println("Invalid priority value: " + o);
+//            System.exit(1);
+//        }
         
         final int s = size();
         if (s > 0) {
@@ -64,12 +64,10 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
             while (low <= high) {
                 int mid = (low + high) / 2;
-//                if ((mid == low) && (mid == high))
-//                    break;
+                /*if ((mid == low) && (mid == high))
+                    break;*/
 
-                E midVal = get(mid);
-
-                final float x = midVal.getPriority();
+                final float x = get(mid).getPriority();
 
                 if (x < y) {
                     low = mid + 1;
@@ -88,7 +86,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
     public int validPosition(final int i) {
         final int size = size();
-        if (i >= size) return size-1;
+        if (i > size) return size; //allow i-size for inserting at the end
         if (i < 0) return 0;
         return i;
     }

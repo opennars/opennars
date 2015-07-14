@@ -29,13 +29,15 @@ public abstract class CollectorMap<K, E extends Item<K>> {
     abstract protected E removeItem(final E e);
 
 
-    public E put(final K key, final E value) {
+    public E put(final E value) {
+
 
         E removed, removed2;
 
         /*synchronized (nameTable)*/
         {
 
+            final K key = value.name();
             removed = putKey(key, value);
             if (removed != null) {
                 removeItem(removed);
@@ -49,7 +51,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
             if (removed != null && removed2 != null) {
                 throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
             }
-            if ((removed2 != null) && (!removed2.name().equals(value.name()))) {
+            if ((removed2 != null) && (!removed2.name().equals(key))) {
                 removeKey(removed2.name());
                 return removed2;
             }
