@@ -2,12 +2,13 @@ package nars.bag;
 
 import nars.Global;
 import nars.io.in.LibraryInput;
+import nars.io.out.TextOutput;
 import nars.io.qa.Answered;
+import nars.meter.TestNAR;
 import nars.nar.Solid;
 import nars.task.Sentence;
 import nars.task.filter.ConstantDerivationLeak;
 import nars.term.Term;
-import nars.meter.TestNAR;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -27,8 +28,8 @@ public class SolidTest {
         Global.DEBUG = false;
 
         final int numConcepts = 256;
-        final float leakRate = 0.2f;
-        Solid s = new Solid(1, numConcepts, 1, 1, 2, 3) {
+        final float leakRate = 0.4f;
+        Solid s = new Solid(1, numConcepts, 1, 1, 1, 1) {
 
             @Override
             protected void initDerivationFilters() {

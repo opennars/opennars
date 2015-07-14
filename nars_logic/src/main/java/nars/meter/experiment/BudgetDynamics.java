@@ -21,8 +21,8 @@ import java.io.FileNotFoundException;
  */
 public class BudgetDynamics {
 
-    private final TemporalMetrics<Object> metrics;
-    private final NAR nar;
+    public final TemporalMetrics<Object> metrics;
+    public final NAR nar;
     private final NARMetrics nm;
 
     public BudgetDynamics(NARSeed d) {
@@ -40,14 +40,18 @@ public class BudgetDynamics {
 
 
     public void input(String s) {
-        nar.input(s + ".");
+        nar.input(s);
     }
     public void watchConcept(String s) {
         MemoryBudgetState.onConcept(nm, nar.term(s));
     }
 
-    public void inputAndWatchConcept(String s) {
-        input(s);
+    public void believeAndWatchConcept(String s) {
+        nar.believe(s);
+        watchConcept(s);
+    }
+    public void askAndWatchConcept(String s) {
+        nar.ask(s);
         watchConcept(s);
     }
 
@@ -127,8 +131,8 @@ public class BudgetDynamics {
         b.watchConcept("a");
         b.watchConcept("b");
         b.watchConcept("c");
-        b.inputAndWatchConcept("<a --> b>");
-        b.inputAndWatchConcept("<b --> c>");
+        b.believeAndWatchConcept("<a --> b>");
+        b.believeAndWatchConcept("<b --> c>");
         b.watchConcept("<a --> c>");
         b.watchConcept("(&, a, b)");
         b.watchConcept("(|, b, c)");

@@ -283,19 +283,19 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public void updateTermLinks() {
 
-        /*
+
         getTermLinks().forgetNext(
                 getMemory().param.termLinkForgetDurations,
-                getMemory().random.nextFloat() * Global.TERMLINK_FORGETTING_ACCURACY,
+                getMemory().random.nextFloat() * Global.TERMLINK_FORGETTING_EXTRA_DEPTH,
                 getMemory());
-                */
 
-        /*
+
+
         getTaskLinks().forgetNext(
                 getMemory().param.taskLinkForgetDurations,
                 getMemory().random.nextFloat() * Global.TASKLINK_FORGETTING_EXTRA_DEPTH,
                 getMemory());
-                */
+
 
         linkTerms(null, true);
 

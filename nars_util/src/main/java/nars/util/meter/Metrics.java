@@ -110,7 +110,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     }
 
     /** adds all meters which exist as fields of a given object (via reflection) */
-    public void addMeters(Object obj) {
+    public void addViaReflection(Object obj) {
         Class c = obj.getClass();
         Class meter = Signals.class;
         for (Field f : c.getFields()) {
@@ -136,7 +136,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         return new SignalData(this, s);
     }
 
-    public Metrics addMeters(Signals... c) {
+    public Metrics addViaReflection(Signals... c) {
         for (Signals x : c)
             add(x);
         return this;

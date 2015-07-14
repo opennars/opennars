@@ -124,8 +124,7 @@ public class Global {
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
     public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 8;
-    /** Maximum length of the Derivation Chain of the stamp */
-    public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 8;
+
 
 
 
@@ -147,7 +146,7 @@ public class Global {
 
           
 
-    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.05f;
+    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.02f;
 
 
     public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
@@ -192,7 +191,7 @@ public class Global {
 
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
     public static final float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.05f;
-    public static final float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.2f;
+    public static final float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.05f;
 
     /** global switch to allow derivation evidence to overlap */
     /* NOTE:

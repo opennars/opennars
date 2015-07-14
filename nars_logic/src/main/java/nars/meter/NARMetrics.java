@@ -23,17 +23,17 @@ public class NARMetrics extends NARReaction {
 
         metrics = new TemporalMetrics(historySize);
 
-        metrics.addMeters(n.memory.emotion);
+        metrics.addViaReflection(n.memory.emotion);
 
         if (n.memory.resource!=null)
-            metrics.addMeters(n.memory.resource);
+            metrics.addViaReflection(n.memory.resource);
 
 
         //metrics.addMeter(new BasicStatistics(metrics, n.memory.resource.FRAME_DURATION.id(), 16));
         if (n.memory.resource!=null)
             metrics.add(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
 
-        metrics.addMeters(n.memory.logic);
+        metrics.addViaReflection(n.memory.logic);
         n.memory.logic.setActive(isActive());
     }
 

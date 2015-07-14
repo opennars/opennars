@@ -84,7 +84,14 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         }
     }
 
-    public int validPosition(final int i) {
+    public int validStorePosition(final int i) {
+        final int size = size();
+        if (i >= size) return size-1;
+        if (i < 0) return 0;
+        return i;
+    }
+
+    public int validInsertionPosition(final int i) {
         final int size = size();
         if (i > size) return size; //allow i-size for inserting at the end
         if (i < 0) return 0;
@@ -122,7 +129,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
                 removed = null;
             }
             
-            list.add(validPosition(positionOf(o)), o);
+            list.add(validInsertionPosition(positionOf(o)), o);
         }
         return removed;
     }
@@ -220,7 +227,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         
         if (size() == 1) {
             if (get(0).name().equals(on)) {
-                list.remove(0);
+                clear();
                 return true;
             }
             return false;
@@ -228,7 +235,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         
         
         //estimated position according to current priority
-        int p = validPosition(positionOf( o )); 
+        int p = validStorePosition(positionOf(o));
         
         int s = size();
         
@@ -254,8 +261,8 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
             
         } while ( (!finishedUp) || (!finishedDown) );
                 
-        //throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
-        return false;
+        throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
+        //return false;
     }
 
     private boolean attemptRemoval(Object o, Object on, int i) {

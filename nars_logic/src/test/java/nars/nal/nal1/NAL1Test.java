@@ -159,18 +159,21 @@ public class NAL1Test extends JavaNALTest {
     public void multistep() throws InvalidInputException {
         long time = build instanceof Solid ? 15 : 1750;
 
+        //we know also 73% is the theoretical maximum it can reach
+        if (n.nal() <= 2)
+            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.33f, 0.99f);
+        else
+            //originally checked for 0.25% exact confidence
+            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
+
         //TextOutput.out(nar);
         n.believe("<a --> b>", 1.0f, 0.9f);
         n.believe("<b --> c>", 1.0f, 0.9f);
         n.believe("<c --> d>", 1.0f, 0.9f);
         n.ask("<a --> d>");
 
-        //originally checked for 0.25% exact confidence
-        n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
 
-        //but we know also 73% is the theoretical maximum it can reach
-        if (n.nal() == 1)
-            n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
+
 
         n.run();
     }

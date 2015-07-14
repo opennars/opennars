@@ -122,7 +122,7 @@ public class Default extends NARSeed implements ConceptBuilder {
         conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         termLinkMaxReasoned.set(termLinksPerCycle);
-        noveltyHorizon.set(0.9f/termLinksPerCycle);
+        noveltyHorizon.set(0.7f/termLinksPerCycle);
 
         termLinkMaxMatched.set(3);
 
@@ -133,11 +133,11 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         setInputMerging(TaskComparator.Merging.Or);
 
-        setTaskLinkBagSize(16);
+        setTaskLinkBagSize(32);
 
         setTermLinkBagSize(16);
 
-        setNovelTaskBagSize(32);
+        setNovelTaskBagSize(48);
 
 
 
@@ -154,20 +154,20 @@ public class Default extends NARSeed implements ConceptBuilder {
         conceptActivationFactor.set(1.0);
         conceptFireThreshold.set(0.0);
 
-        conceptForgetDurations.set(2.0);
+        conceptForgetDurations.set(3.0);
         taskLinkForgetDurations.set(4.0);
         termLinkForgetDurations.set(10.0);
         novelTaskForgetDurations.set(2.0);
 
         //param.budgetThreshold.set(0.01f);
 
-        conceptBeliefsMax.set(9);
-        conceptGoalsMax.set(7);
+        conceptBeliefsMax.set(13);
+        conceptGoalsMax.set(9);
         conceptQuestionsMax.set(5);
 
         inputsMaxPerCycle.set(1);
 
-        termLinkRecordLength.set(12);
+        termLinkRecordLength.set(8);
 
 
         this.perceptThreshold.set(0.0);
@@ -179,13 +179,13 @@ public class Default extends NARSeed implements ConceptBuilder {
         this.taskLinkThreshold.set(0.0);
 
         this.executionThreshold.set(0.01);
+        //executionThreshold.set(0.60);
 
         setClock(new CycleClock());
         outputVolume.set(100);
 
         reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
 
-        executionThreshold.set(0.60);
 
         conceptCreationExpectation.set(0.66);
 
@@ -411,8 +411,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
 
     protected void initDerivationFilters() {
-        final float DERIVATION_PRIORITY_LEAK=0.9f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        final float DERIVATION_DURABILITY_LEAK=0.9f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_PRIORITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_DURABILITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
         getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
     }
 
@@ -420,8 +420,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks =
-                //new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-                new ChainBag(rng,  getConceptTaskLinks());
+                new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+                //new ChainBag(rng,  getConceptTaskLinks());
 
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());

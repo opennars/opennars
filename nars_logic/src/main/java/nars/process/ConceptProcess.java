@@ -162,7 +162,7 @@ public class ConceptProcess extends NAL implements Premise {
         private float noveltyDuration;
 
         /** now is float because it is calculated as the fraction of current time + 1/(termlinks matched), thus including the subcycle */
-        public void set(float noveltyHorizon, int numTermLinksInBag, int termsLinkBeingFired) {
+        public void set(final float noveltyHorizon, final int numTermLinksInBag, final int termsLinkBeingFired) {
             this.noveltyHorizon = noveltyHorizon;
             this.numTermLinks = numTermLinksInBag;
             this.termsLinkBeingFired = termsLinkBeingFired;
@@ -210,7 +210,7 @@ public class ConceptProcess extends NAL implements Premise {
                 else {
 
                     float timeSinceLastFire = lft - r.getTime();
-                    float factor = noveltyFactor(timeSinceLastFire);
+                    float factor = noveltyFactor(timeSinceLastFire, minNovelty, noveltyDuration);
 
                     if (factor <= 0) {
                         result = false;
@@ -236,26 +236,26 @@ public class ConceptProcess extends NAL implements Premise {
 
         }
 
-        private float noveltyFactor(final float timeSinceLastFire) {
-
-
-            if (timeSinceLastFire <= 0)
-                return minNovelty;
-
-            float n = Math.max(0,
-                    Math.min(1f,
-                            timeSinceLastFire /
-                                    noveltyDuration) ) ;
-
-
-            n = (minNovelty) + (n * (1.0f - minNovelty));
-
-            return n;
-
-        }
 
     }
 
+    public static float noveltyFactor(final float timeSinceLastFire, final float minNovelty, final float noveltyDuration) {
+
+
+        if (timeSinceLastFire <= 0)
+            return minNovelty;
+
+        float n = Math.max(0,
+                Math.min(1f,
+                        timeSinceLastFire /
+                                noveltyDuration) ) ;
+
+
+        n = (minNovelty) + (n * (1.0f - minNovelty));
+
+        return n;
+
+    }
 
     /**
      * Replace default to prevent repeated logic, by checking TaskLink
@@ -264,7 +264,7 @@ public class ConceptProcess extends NAL implements Premise {
      * @param time The current time
      * @return The selected TermLink
      */
-    TermLink nextTermLink(float noveltyHorizon, int termLinksBeingFired) {
+    TermLink nextTermLink(final float noveltyHorizon, int termLinksBeingFired) {
 
         final int links = currentConcept.getTermLinks().size();
         if (links == 0) return null;

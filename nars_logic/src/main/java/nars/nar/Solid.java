@@ -69,7 +69,7 @@ public class Solid extends Default implements CycleProcess {
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
         duration.set(1);
-        noveltyHorizon.set(0.9f);
+        noveltyHorizon.set(0.8f);
         termLinkForgetDurations.set(1);
         taskLinkForgetDurations.set(1);
         conceptForgetDurations.set(1);
@@ -77,7 +77,7 @@ public class Solid extends Default implements CycleProcess {
         conceptCreationExpectation.set(0);
 
         setTermLinkBagSize(16);
-        setTaskLinkBagSize(16);
+        setTaskLinkBagSize(32);
 
 
 

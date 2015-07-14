@@ -65,7 +65,7 @@ abstract public class AbstractNALTest extends TestCase {
 
 
     public static void reset() {
-        results = new Metrics().addMeters(
+        results = new Metrics().addViaReflection(
                 testCost = new DoubleMeter("Cost"),
                 testBuild = new ObjectMeter<String>("Build"),
                 testSeed = new DoubleMeter("Seed"),

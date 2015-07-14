@@ -1,8 +1,8 @@
 package nars.concept;
 
-import nars.Memory;
 import nars.nal.nal7.TemporalRules;
 import nars.process.NAL;
+import nars.task.Sentence;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.truth.TruthWave;
@@ -116,9 +116,24 @@ public interface BeliefTable extends TaskTable {
         if (size() == 1)
             return top;
 
-
-
         return top(new SolutionQualityMatchingOrderRanker(query, now));
+    }
+
+    default float getConfidenceMax(float minFreq, float maxFreq) {
+        float max = Float.NEGATIVE_INFINITY;
+
+        for (Task t : this) {
+            float f = t.getTruth().getFrequency();
+
+            if ((f >= minFreq) && (f <= maxFreq)) {
+                float c = t.getTruth().getConfidence();
+                if (c > max)
+                    max = c;
+            }
+        }
+
+        if (max == -1) return Float.NaN;
+        return max;
     }
 
     final static class SolutionQualityMatchingOrderRanker implements Ranker {
