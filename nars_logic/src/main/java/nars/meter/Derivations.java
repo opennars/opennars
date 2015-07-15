@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
@@ -63,10 +64,13 @@ public class Derivations extends DirectedMultigraph {
 
     private final boolean includeDerivedBudget;
     private final boolean includeDerivedTruth;
+    private final boolean includeDerivedParents = true;
+
 
     static final NarseseParser np = NarseseParser.the();
     static final Map<String, String> parsedTerm = new HashMap(1024);
 
+    /** this normalizes any commutative terms which are out of order, and caches them in a list to avoid reparsing */
     public static String parseTerm(String i) {
         String s = parsedTerm.get(i);
         if (s == null) {
@@ -81,6 +85,8 @@ public class Derivations extends DirectedMultigraph {
         super((Class)null);
 
         premiseResult = MultimapBuilder.treeKeys().hashSetValues().build();
+
+
         this.includeDerivedBudget = includeDerivedBudget;
         this.includeDerivedTruth = includeDerivedTruth;
     }
@@ -122,18 +128,21 @@ public class Derivations extends DirectedMultigraph {
 
     }
 
-    public static class PremiseKey extends Keyed  {
+    public class PremiseKey extends Keyed  {
 
         private final String conceptKey;
         private final String taskLinkKey;
         private final String termLinkKey;
         public final String key;
+        private final String beliefKey;
 
-        public PremiseKey(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now, boolean truth, boolean budget) {
+
+        public PremiseKey(Term concept, TaskLink tasklink, TermLink termlink, Task belief, ObjectIntHashMap<Term> unique, long now, boolean truth, boolean budget) {
             this.conceptKey = genericString(concept.getTerm(), unique);
             this.taskLinkKey = genericString(tasklink.getTask(), unique, now, truth, budget);
+            this.beliefKey = belief == null ? "null ; null ; " : genericString(belief, unique, now, truth, budget);
             this.termLinkKey = termlink == null ? "null" : genericString(termlink.getTerm(), unique);
-            this.key = (conceptKey + "; " + taskLinkKey + "; " + termLinkKey).trim();
+            this.key = (conceptKey + "; " + taskLinkKey + "; " + termLinkKey + "; " + beliefKey).trim();
         }
 
         public String name() { return key; }
@@ -142,11 +151,11 @@ public class Derivations extends DirectedMultigraph {
     }
 
 
-    public static class TaskResult extends Keyed {
+    public class TaskResult extends Keyed {
 
         public final String key;
 
-        public TaskResult(Task t, Map<Term, Integer> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
+        public TaskResult(Task t, ObjectIntHashMap<Term> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
             key = genericString(t, unique, now, includeDerivedTruth, includeDerivedBudget);
         }
 
@@ -162,7 +171,7 @@ public class Derivations extends DirectedMultigraph {
 
         public final String key;
 
-        public TermPattern(Term t, Map<Term, Integer> unique) {
+        public TermPattern(Term t, ObjectIntHashMap<Term> unique) {
             key = genericString(t, unique);
         }
 
@@ -177,7 +186,7 @@ public class Derivations extends DirectedMultigraph {
 
         public final String key;
 
-        public SentencePattern(Sentence s, Map<Term, Integer> unique, long now, boolean includeDerivedTruth) {
+        public SentencePattern(Sentence s, ObjectIntHashMap<Term> unique, long now, boolean includeDerivedTruth) {
             key = genericString(s, unique, now, includeDerivedTruth);
         }
 
@@ -188,8 +197,8 @@ public class Derivations extends DirectedMultigraph {
 
     }
 
-    public PremiseKey newPremise(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now) {
-        return new PremiseKey(concept, tasklink, termlink, unique, now, includeDerivedTruth, includeDerivedBudget);
+    public PremiseKey newPremise(Term concept, TaskLink tasklink, TermLink termlink, Task belief, ObjectIntHashMap<Term> unique, long now) {
+        return new PremiseKey(concept, tasklink, termlink, belief, unique, now, includeDerivedTruth, includeDerivedBudget);
     }
 
     public NARReaction record(NAR n) {
@@ -222,7 +231,7 @@ public class Derivations extends DirectedMultigraph {
                     Task derived = (Task)args[0];
                     if (args[1] instanceof ConceptProcess) {
                         ConceptProcess n = (ConceptProcess) args[1];
-                        result(n.getConcept(), n.getTaskLink(), n.getTermLink(), Lists.newArrayList(derived), n.time());
+                        result(n, Lists.newArrayList(derived));
                     }
                     else {
                         //revision, etc.
@@ -243,7 +252,7 @@ public class Derivations extends DirectedMultigraph {
 
 
 
-    public static String genericString(Task t, Map<Term,Integer> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
+    public String genericString(Task t, ObjectIntHashMap<Term> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
         StringBuilder tempTaskString = new StringBuilder(128);
 
         String s = genericString(t.sentence, unique, now, includeDerivedTruth);
@@ -253,7 +262,21 @@ public class Derivations extends DirectedMultigraph {
 
         tempTaskString.append(s);
 
+        if (includeDerivedParents)
+            tempTaskString.append(parentString(t));
+
         return tempTaskString.toString();
+    }
+
+    private static String parentString(Task t) {
+
+        if (t.isCyclic()) {
+            return "C";
+        }
+        else {
+            return "";
+        }
+
     }
 
     @Override
@@ -279,11 +302,15 @@ public class Derivations extends DirectedMultigraph {
         return edge;
     }
 
-    public void result(Concept c, TaskLink tasklink, TermLink termlink, Iterable<Task> result, long now) {
+    public void result(ConceptProcess n, List<Task> derived) {
+        result(n.getConcept(), n.getTaskLink(), n.getTermLink(), n.getBelief(), derived, n.time());
+    }
 
-        Map<Term,Integer> unique = Global.newHashMap();
+    public void result(Concept c, TaskLink tasklink, TermLink termlink, Task belief, Iterable<Task> result, long now) {
 
-        PremiseKey premise = newPremise(c.getTerm(), tasklink, termlink, unique, now);
+        ObjectIntHashMap<Term> unique = new ObjectIntHashMap();
+
+        PremiseKey premise = newPremise(c.getTerm(), tasklink, termlink, belief, unique, now);
         addVertex(premise);
 
         TermPattern conceptTerm = addTermPattern(c.getTerm(), unique);
@@ -323,19 +350,19 @@ public class Derivations extends DirectedMultigraph {
 
     }
 
-    SentencePattern addSentencePattern(Sentence sentence, Map<Term, Integer> unique, long now) {
+    SentencePattern addSentencePattern(Sentence sentence, ObjectIntHashMap<Term> unique, long now) {
         SentencePattern s = new SentencePattern(sentence, unique, now, includeDerivedTruth);
         addVertex(s);
         return s;
     }
-    TermPattern addTermPattern(Term term, Map<Term, Integer> unique) {
+    TermPattern addTermPattern(Term term, ObjectIntHashMap<Term> unique) {
         TermPattern s = new TermPattern(term, unique);
         addVertex(s);
         return s;
     }
 
 
-    public static String genericLiteral(Term c, Map<Term, Integer> unique) {
+    public static String genericLiteral(Term c, ObjectIntHashMap<Term> unique) {
         c.recurseTerms(new TermVisitor() {
             @Override public void visit(Term t, Term superterm) {
                 if (t instanceof Atom) {
@@ -348,26 +375,25 @@ public class Derivations extends DirectedMultigraph {
         //TODO use a better generation method, replacement might cause error if term names contain common subsequences
         //maybe use a sorted Map so that the longest terms to be replaced are iterated first, so that a shorter subterm will not interfere with subsequent longer replacement
 
-        String s;
+        final String[] s = new String[1];
         if (c instanceof Compound)
-            s = ((Compound)c).toString(false);
+            s[0] = ((Compound)c).toString(false);
         else
-            s = c.toString();
-        for (Map.Entry<Term,Integer> e : unique.entrySet()) {
-            String tn = e.getKey().toString();
-            int i = e.getValue();
+            s[0] = c.toString();
+
+        unique.forEachKeyValue( (tn, i) -> {
             if (i > 25) throw new RuntimeException("TODO support > 26 different unique atomic terms");
             String cc = String.valueOf((char) ('A' + i));
-            s = s.replace(tn, cc); //this is replaceAll but without regex
-        }
+            s[0] = s[0].replace(tn.toString(), cc); //this is replaceAll but without regex
+        });
 
-        s = parseTerm(s).toString();
+        s[0] = parseTerm(s[0]).toString();
 
-        return s;
+        return s[0];
 
     }
 
-    public static String genericString(Sentence s, Map<Term,Integer> unique, long now, boolean includeTruth) {
+    public static String genericString(Sentence s, ObjectIntHashMap<Term> unique, long now, boolean includeTruth) {
         String t = genericString(s.getTerm(), unique);
 
         t += "; " + Symbols.getPunctuationWord( s.punctuation ) + " ";
@@ -387,10 +413,10 @@ public class Derivations extends DirectedMultigraph {
         return t;
     }
 
-    public static String genericString(Term t, Map<Term,Integer> _unique) {
-        Map<Term, Integer> unique;
+    public static String genericString(Term t, ObjectIntHashMap<Term> _unique) {
+        ObjectIntHashMap<Term> unique;
         if (_unique == null)
-            unique = new HashMap();
+            unique = new ObjectIntHashMap();
         else
             unique = _unique;
 
@@ -423,17 +449,24 @@ public class Derivations extends DirectedMultigraph {
 
         for (PremiseKey premise : premiseResult.keySet()) {
             Collection<Set<TaskResult>> resultGroups = premiseResult.get(premise);
-            int g = 0;
+            //int g = 0;
+
+
+            if (resultGroups.isEmpty()) {
+                p.println(premise + ";\t DERIVE; " +  "; null");
+            }
+
             for (Set<TaskResult> result : resultGroups) {
+
                 if (result.isEmpty()) {
-                    p.println(premise + ";\t DERIVE; " + g + "; null");
+                    p.println(premise + ";\t DERIVE; " +  "; null");
                 }
                 else {
                     for (TaskResult task : result) {
-                        p.println(premise + ";\t DERIVE; " + g + "; " + task);
+                        p.println(premise + ";\t DERIVE; " +  "; " + task);
                     }
                 }
-                g++;
+                //g++;
             }
         }
 

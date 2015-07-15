@@ -17,14 +17,15 @@ public class Derivations1  {
 
         Global.DEBUG = true;
 
-        Derivations d = new Derivations(false, true);
+        Derivations d = new Derivations(false, false);
 
 
         int maxCycles = 500;
-        int maxNAL = 2;
+        int maxNAL = 5;
+        int seeds = 32; //iterate seeds to be sure we get everything, eventually it will converge
 
-        for (int seed = 1; seed < 32; seed++) {
-            for (String s : LibraryInput.getPaths("test1", "test2")) {
+        for (int seed = 1; seed < seeds; seed++) {
+            for (String s : LibraryInput.getPaths("test1"/*, "test2"*/)) {
                 NAR n = new TestNAR(new Default().setInternalExperience(null).level(maxNAL));
                 n.memory.reset(seed);
                 d.record(n);

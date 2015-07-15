@@ -9,6 +9,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
@@ -175,10 +176,9 @@ public class InternalExperience extends NARReaction {
         }
         else if (event == Events.BeliefReason.class) {
             //belief, beliefTerm, taskTerm, nal
-            Sentence belief = (Sentence)a[0];
-            Task task = (Task)a[1];
-            NAL nal = (NAL)a[2];
-            beliefReason(belief, task, nal);
+
+            ConceptProcess nal = (ConceptProcess)a[0];
+            beliefReason(nal.getBelief(), nal.getTask(), nal);
         }
     }
 

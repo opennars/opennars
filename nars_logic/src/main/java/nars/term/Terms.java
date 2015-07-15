@@ -485,6 +485,8 @@ public class Terms {
             if (nal < minLevel)
                 return false;
         }
+
+        //TODO use structural hash
         if (t instanceof Compound) {
             for (Term sub : ((Compound)t).term) {
                 if (!levelValid(sub, nal))

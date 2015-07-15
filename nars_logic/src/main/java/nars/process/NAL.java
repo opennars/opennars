@@ -17,6 +17,7 @@ import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 import nars.term.Variables;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -644,8 +645,12 @@ public abstract class NAL implements Runnable {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
         }
 
-        //use this NAL's instance defaults for the values because specific values were not substituted:
+        if (!Terms.levelValid(task.getTerm(), nal())) {
+            memory.removed(task, "Insufficient NAL level");
+            return null;
+        }
 
+        //use this NAL's instance defaults for the values because specific values were not substituted:
 
         String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getBelief(), getTask());
         if (rejectionReason != null) {

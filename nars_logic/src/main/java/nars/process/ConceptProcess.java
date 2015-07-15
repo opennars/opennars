@@ -310,7 +310,7 @@ public class ConceptProcess extends NAL implements Premise {
 
         reasoner.fire(this);
 
-        emit(Events.BeliefReason.class, getBelief(), getTask(), this);
+        emit(Events.BeliefReason.class, this);
     }
 
     public void run() {
