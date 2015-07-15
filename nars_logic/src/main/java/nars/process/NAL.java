@@ -582,7 +582,7 @@ public abstract class NAL implements Runnable {
         Task derived;
         if (null != (derived = addNewTask(task, "Derived", false, revised, single))) {
 
-            memory.event.emit(Events.TaskDerive.class, derived);
+            memory.event.emit(Events.TaskDerive.class, derived, this);
             memory.logic.TASK_DERIVED.hit();
 
             if (nal(7) && !derived.isEternal()) {

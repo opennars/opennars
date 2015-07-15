@@ -190,6 +190,9 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
     }
 
 
+    default String toStringCompact() {
+        return toString();
+    }
 
 }
 

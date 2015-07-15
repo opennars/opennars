@@ -116,6 +116,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
      */
     private long inputPausedUntil = -1;
     private boolean inCycle = false;
+    private long nextRandomSeed = 1;
 
     /**
      * Create a new memory
@@ -426,8 +427,10 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         t.setEvidentialSet(new long[]{newStampSerial()});
     }
 
-    public void randomSeed(long randomSeed) {
-        random.setSeed(randomSeed);
+    /** sets the random seed which will be used in the next reset(), then reset() */
+    public void reset(long randomSeed) {
+        nextRandomSeed = randomSeed;
+        reset();
     }
 
     /** called when a Concept's lifecycle has changed */
@@ -482,7 +485,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         reset();
     }
 
-    public void reset() {
+    public synchronized void reset() {
 
         nextTasks.clear();
 
@@ -511,7 +514,8 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
         event.emit(Restart.class);
 
-
+        //unless explicitly changed, nextRandomSeed will remain unchanged
+        random.setSeed(nextRandomSeed);
     }
 
 

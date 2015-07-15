@@ -1,18 +1,24 @@
 package nars.meter;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
+import nars.Symbols;
 import nars.concept.Concept;
 import nars.event.NARReaction;
+import nars.io.Texts;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.nal.nal4.Product;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
+import nars.narsese.NarseseParser;
+import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -27,8 +33,7 @@ import org.jgrapht.graph.DirectedMaskSubgraph;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.MaskFunctor;
 
-import java.io.FileWriter;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -53,13 +58,24 @@ import java.util.*;
 public class Derivations extends DirectedMultigraph {
 
 
-    public final Multimap<Premise, Set<TaskResult>> premiseResult;
+    public final Multimap<PremiseKey, Set<TaskResult>> premiseResult;
     Map<Object,Double> edgeWeights = Global.newHashMap();
 
     private final boolean includeDerivedBudget;
     private final boolean includeDerivedTruth;
 
+    static final NarseseParser np = NarseseParser.the();
+    static final Map<String, String> parsedTerm = new HashMap(1024);
 
+    public static String parseTerm(String i) {
+        String s = parsedTerm.get(i);
+        if (s == null) {
+            s = np.term(i).toStringCompact();
+
+            parsedTerm.put(i, s);
+        }
+        return s;
+    }
 
     public Derivations(boolean includeDerivedBudget, boolean includeDerivedTruth) {
         super((Class)null);
@@ -67,6 +83,14 @@ public class Derivations extends DirectedMultigraph {
         premiseResult = MultimapBuilder.treeKeys().hashSetValues().build();
         this.includeDerivedBudget = includeDerivedBudget;
         this.includeDerivedTruth = includeDerivedTruth;
+    }
+
+    public int size() {
+        return premiseResult.size();
+    }
+
+    public void print(String filePath) throws FileNotFoundException {
+        print(new PrintStream(new FileOutputStream(new File(filePath))));
     }
 
     abstract public static class Keyed implements Comparable<Keyed> {
@@ -98,18 +122,18 @@ public class Derivations extends DirectedMultigraph {
 
     }
 
-    public static class Premise extends Keyed  {
+    public static class PremiseKey extends Keyed  {
 
         private final String conceptKey;
         private final String taskLinkKey;
         private final String termLinkKey;
         public final String key;
 
-        public Premise(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now, boolean truth, boolean budget) {
+        public PremiseKey(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now, boolean truth, boolean budget) {
             this.conceptKey = genericString(concept.getTerm(), unique);
             this.taskLinkKey = genericString(tasklink.getTask(), unique, now, truth, budget);
-            this.termLinkKey = termlink == null ? "" : genericString(termlink.getTerm(), unique);
-            this.key = "premise<" + (conceptKey + ' ' + taskLinkKey + ' ' + termLinkKey).trim() + '>';
+            this.termLinkKey = termlink == null ? "null" : genericString(termlink.getTerm(), unique);
+            this.key = (conceptKey + "; " + taskLinkKey + "; " + termLinkKey).trim();
         }
 
         public String name() { return key; }
@@ -123,7 +147,7 @@ public class Derivations extends DirectedMultigraph {
         public final String key;
 
         public TaskResult(Task t, Map<Term, Integer> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
-            key = "task<" + genericString(t, unique, now, includeDerivedTruth, includeDerivedBudget) + '>';
+            key = genericString(t, unique, now, includeDerivedTruth, includeDerivedBudget);
         }
 
         @Override
@@ -164,37 +188,47 @@ public class Derivations extends DirectedMultigraph {
 
     }
 
-    public Premise newPremise(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now) {
-        return new Premise(concept, tasklink, termlink, unique, now, includeDerivedTruth, includeDerivedBudget);
+    public PremiseKey newPremise(Term concept, TaskLink tasklink, TermLink termlink, Map<Term, Integer> unique, long now) {
+        return new PremiseKey(concept, tasklink, termlink, unique, now, includeDerivedTruth, includeDerivedBudget);
     }
 
     public NARReaction record(NAR n) {
-        return new NARReaction(n, Events.TermLinkTransformed.class,
-                Events.ConceptProcessed.class, Events.TermLinkSelected.class, Events.TaskDerive.class) {
+        return new NARReaction(n, /* Events.TermLinkTransformed.class,
+                Events.ConceptProcessed.class, Events.TermLinkSelected.class,*/ Events.TaskDerive.class) {
 
             @Override
             public void event(Class event, Object[] args) {
 
-                if (event == Events.TermLinkTransformed.class) {
-                    TaskLink tl = (TaskLink)args[0];
-                    Concept c = (Concept)args[1];
-                    NAL n = (NAL)args[2];
-                    result(c, tl, null, null /*n.getNewTasks()*/, n.time()); //TODO see if derivations can be noticed another way
-                }
-
-                /*else if (event == Events.TermLinkSelected.class) {
-                    TermLink termlink = (TermLink)args[0];
-                    ConceptProcess n = (ConceptProcess)args[1];
-                    TaskLink tasklink = n.getCurrentTaskLink();
-                    Concept c = n.getCurrentConcept();
-                    int taskStart = (int) args[2];
-                    int taskEnd = (int) args[3];
-
-                    result(c, tasklink, termlink, getTasks(n, taskStart, taskEnd), n.time());
-                }*/
-
-                else if (event == Events.TaskDerive.class) {
+//                if (event == Events.TermLinkTransformed.class) {
+//                    TaskLink tl = (TaskLink)args[0];
+//                    Concept c = (Concept)args[1];
+//                    NAL n = (NAL)args[2];
+//                    result(c, tl, null, null /*n.getNewTasks()*/, n.time()); //TODO see if derivations can be noticed another way
+//                }
+//
+//                else if (event == Events.TermLinkSelected.class) {
+//                    TermLink termlink = (TermLink)args[0];
+//                    ConceptProcess n = (ConceptProcess)args[1];
+//                    TaskLink tasklink = n.getTaskLink();
+//                    Concept c = n.getConcept();
+//                    int taskStart = (int) args[2];
+//                    int taskEnd = (int) args[3];
+//
+//                    result(c, tasklink, termlink, getTasks(n, taskStart, taskEnd), n.time());
+//                }
+//
+                if (event == Events.TaskDerive.class) {
                     //System.out.println(args[0]);
+                    Task derived = (Task)args[0];
+                    if (args[1] instanceof ConceptProcess) {
+                        ConceptProcess n = (ConceptProcess) args[1];
+                        result(n.getConcept(), n.getTaskLink(), n.getTermLink(), Lists.newArrayList(derived), n.time());
+                    }
+                    else {
+                        //revision, etc.
+                    }
+
+
                 }
             }
         };
@@ -249,7 +283,7 @@ public class Derivations extends DirectedMultigraph {
 
         Map<Term,Integer> unique = Global.newHashMap();
 
-        Premise premise = newPremise(c.getTerm(), tasklink, termlink, unique, now);
+        PremiseKey premise = newPremise(c.getTerm(), tasklink, termlink, unique, now);
         addVertex(premise);
 
         TermPattern conceptTerm = addTermPattern(c.getTerm(), unique);
@@ -300,6 +334,7 @@ public class Derivations extends DirectedMultigraph {
         return s;
     }
 
+
     public static String genericLiteral(Term c, Map<Term, Integer> unique) {
         c.recurseTerms(new TermVisitor() {
             @Override public void visit(Term t, Term superterm) {
@@ -312,7 +347,12 @@ public class Derivations extends DirectedMultigraph {
 
         //TODO use a better generation method, replacement might cause error if term names contain common subsequences
         //maybe use a sorted Map so that the longest terms to be replaced are iterated first, so that a shorter subterm will not interfere with subsequent longer replacement
-        String s = c.toString();
+
+        String s;
+        if (c instanceof Compound)
+            s = ((Compound)c).toString(false);
+        else
+            s = c.toString();
         for (Map.Entry<Term,Integer> e : unique.entrySet()) {
             String tn = e.getKey().toString();
             int i = e.getValue();
@@ -320,19 +360,29 @@ public class Derivations extends DirectedMultigraph {
             String cc = String.valueOf((char) ('A' + i));
             s = s.replace(tn, cc); //this is replaceAll but without regex
         }
+
+        s = parseTerm(s).toString();
+
         return s;
 
     }
 
     public static String genericString(Sentence s, Map<Term,Integer> unique, long now, boolean includeTruth) {
         String t = genericString(s.getTerm(), unique);
-        t += s.punctuation;
 
-        if (!s.isEternal())
-            t += Tense.tenseRelative(s.getOccurrenceTime(), now);
+        t += "; " + Symbols.getPunctuationWord( s.punctuation ) + " ";
 
-        if (includeTruth)
-            t += (s.truth.toCharSequence());
+        t += "; ";
+        if (includeTruth) {
+            if (s.truth != null)
+                t += Texts.n2(s.truth.getFrequency()) + ";" + Texts.n2(s.truth.getConfidence());
+            else
+                t += "?;?";
+        }
+
+        if (!s.isEternal()) {
+            t += "; " + Tense.tenseRelative(s.getOccurrenceTime(), now);
+        }
 
         return t;
     }
@@ -371,23 +421,19 @@ public class Derivations extends DirectedMultigraph {
 
     public void print(PrintStream p) {
 
-        for (Premise k : premiseResult.keySet()) {
-            Collection<Set<TaskResult>> l = premiseResult.get(k);
-            p.println();
-            p.print(k);
-            p.print(": ");
-            if (l.isEmpty())
-                p.println("null");
-            else {
-                p.println(l);
-                /*
-                for (TaskResult t : l) {
-                    p.print('\t');
-                    if (t.isEmpty())
-                        p.println("null");
-                    else
-                        p.println(t);
-                }*/
+        for (PremiseKey premise : premiseResult.keySet()) {
+            Collection<Set<TaskResult>> resultGroups = premiseResult.get(premise);
+            int g = 0;
+            for (Set<TaskResult> result : resultGroups) {
+                if (result.isEmpty()) {
+                    p.println(premise + ";\t DERIVE; " + g + "; null");
+                }
+                else {
+                    for (TaskResult task : result) {
+                        p.println(premise + ";\t DERIVE; " + g + "; " + task);
+                    }
+                }
+                g++;
             }
         }
 
@@ -397,7 +443,7 @@ public class Derivations extends DirectedMultigraph {
         SummaryStatistics s = new SummaryStatistics();
         for (Double d : edgeWeights.values())
             s.addValue(d);
-        System.out.println("weights: " + s);
+        //System.out.println("weights: " + s);
 
         GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider() {
             @Override

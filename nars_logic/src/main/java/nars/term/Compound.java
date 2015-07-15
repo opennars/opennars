@@ -1290,6 +1290,11 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     @Override
+    public String toStringCompact() {
+        return toString(false);
+    }
+
+    @Override
     public boolean add(Term term) {
         return unsupportedCollectionMethod();
     }

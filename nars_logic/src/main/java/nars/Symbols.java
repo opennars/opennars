@@ -342,4 +342,13 @@ abstract public class Symbols {
         return true;
     }
 
+    public static String getPunctuationWord(char punctuation) {
+        switch (punctuation) {
+            case '.': return "BELIEF";
+            case '!': return "GOAL";
+            case '@': return "QUEST";
+            case '?': return "QUESTION";
+        }
+        return "UNKNOWN";
+    }
 }

@@ -2,7 +2,6 @@ package nars.bag;
 
 import nars.Global;
 import nars.io.in.LibraryInput;
-import nars.io.out.TextOutput;
 import nars.io.qa.Answered;
 import nars.meter.TestNAR;
 import nars.nar.Solid;
@@ -45,7 +44,7 @@ public class SolidTest {
         //s.setMaxTasksPerCycle(numConcepts);
 
         TestNAR n = new TestNAR(s);
-        n.memory.randomSeed(1);
+        n.memory.reset(1);
 
         //TextOutput.out(n).setOutputPriorityMin(0f);
 

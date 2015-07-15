@@ -63,7 +63,7 @@ public class NALysis extends AbstractNALTest {
             @Override
             public void run() {
 
-                memory.randomSeed(seed);
+                memory.reset(seed);
 
                 long nanos = runScript(this, path, maxCycles);
 
