@@ -54,13 +54,18 @@ public class Signal implements Comparable<Signal> {
         return min;
     }
 
-        void setMin(double newMin) { this.min = newMin; }
-        void setMax(double newMax) { this.max = newMax; }
+    void setMin(double newMin) {
+        this.min = newMin;
+    }
 
-        void resetBounds() {
-            min = Double.POSITIVE_INFINITY;
-            max = Double.NEGATIVE_INFINITY;
-        }
+    void setMax(double newMax) {
+        this.max = newMax;
+    }
+
+    void resetBounds() {
+        min = Double.POSITIVE_INFINITY;
+        max = Double.NEGATIVE_INFINITY;
+    }
 
 //        void invalidateBounds() {
 //            min = max = Double.NaN;

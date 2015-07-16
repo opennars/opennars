@@ -11,6 +11,7 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.task.TaskAccumulator;
 import nars.task.TaskComparator;
 import nars.term.Compound;
 import nars.term.Term;
@@ -36,21 +37,17 @@ public class DefaultCycle extends SequentialCycle {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    protected final TreeSet<Task> newTasks;
+    protected final TaskAccumulator newTasks;
     protected List<Task> newTasksTemp = Global.newArrayList();
     protected boolean executingNewTasks = false;
 
 
 
-    public DefaultCycle(Param param, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
+    public DefaultCycle(TaskAccumulator newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
         super(concepts);
 
-        //this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
-        newTasks = new TreeSet(new TaskComparator(param.getInputMerging()));
-
+        this.newTasks = newTasks;
         this.novelTasks = novelTasks;
-
-
     }
 
 
@@ -82,8 +79,11 @@ public class DefaultCycle extends SequentialCycle {
 
 
     /**
-     * An atomic working cycle of the system: process new Tasks, then fire a
-     * concept
+     * An atomic working cycle of the system:
+     *  0) optionally process inputs
+     *  1) optionally process new task(s)
+     *  2) optionally process novel task(s)
+     *  2) optionally fire a concept
      **/
     @Override
     public synchronized void cycle() {
@@ -129,22 +129,16 @@ public class DefaultCycle extends SequentialCycle {
 
     private void runNewTasks() {
 
+        for (int n = newTasks.size()-1;  n >= 0; n--) {
+            Task highest = newTasks.removeHighest();
+            if (highest == null) break;
 
-        {
+            executingNewTasks = true;
+            run(highest);
+            executingNewTasks = false;
 
-            for (int n = newTasks.size()-1;  n >= 0; n--) {
-                Task highest = newTasks.pollLast();
-                if (highest == null) break;
-
-                executingNewTasks = true;
-                run(highest);
-                executingNewTasks = false;
-
-                commitNewTasks();
-            }
-
+            commitNewTasks();
         }
-
 
     }
 

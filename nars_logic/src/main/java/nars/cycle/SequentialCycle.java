@@ -23,7 +23,6 @@ import java.util.function.Consumer;
  */
 abstract public class SequentialCycle extends ConceptActivator implements CycleProcess {
 
-    /* ---------- Long-term storage for multiple cycles ---------- */
     /**
      * Concept bag. Containing all Concepts of the system
      */
@@ -34,13 +33,8 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     protected Memory memory;
 
     public SequentialCycle(Bag<Term, Concept> concepts) {
-
         this.concepts = concepts;
-
-
-
     }
-
 
     @Override
     public void remember(Concept c) {
@@ -52,19 +46,6 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
         concepts.remove(c.getTerm());
     }
 
-    protected static class DefaultConceptProcess extends ConceptProcess {
-
-        private final Bag<Term, Concept> bag;
-
-        public DefaultConceptProcess(Bag<Term, Concept> bag, DefaultConcept concept, TaskLink taskLink) {
-            super(concept, taskLink);
-            this.bag = bag;
-        }
-
-        @Override
-        public void beforeFinish() {
-        }
-    }
 
     @Override
     public boolean reprioritize(Term c, float newPriority) {
@@ -77,7 +58,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     }
 
     protected ConceptProcess newConceptProcess(Concept c, TaskLink t) {
-        return new DefaultConceptProcess(concepts, (DefaultConcept) c, t);
+        return new ConceptProcess(memory, c, t);
     }
 
     protected Concept nextConceptToProcess(float conceptForgetDurations) {
@@ -124,7 +105,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
      *  handle it by immediately acting on it, or
      *  adding it to the new tasks queue for future reasoning.
      * @return how many tasks were generated as a result of perceiving (which can be zero), or -1 if no percept is available */
-    public int inputNextPerception() {
+    protected int inputNextPerception() {
         if (!memory.isInputting()) return -1;
 
         Task t = percepts.get();
@@ -160,21 +141,9 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
 
     /** returns a concept that is in this active concept bag only */
-    @Override public Concept getActiveConcept(final Term term) {
+    @Override public Concept concept(final Term term) {
         return concepts.get(term);
     }
-
-//    /** @return true = deleted, false = forgotten */
-//    @Override public boolean conceptRemoved(final Concept c) {
-//        if ((subcon != null) && (!c.isDeleted())) {
-//            subcon.put(c);
-//
-//            //it may have been set deleted inside the CacheBag processes's so check for it here
-//            return (c.isDeleted());
-//
-//        }
-//        return true;
-//    }
 
 
     @Override

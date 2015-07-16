@@ -43,10 +43,7 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
 
     public Memory getMemory();
 
-    /** gets any concept, including forgotten */
-    default public Concept concept(Term t) {
-        return getMemory().concept(t);
-    }
+
 
     /** called once during the main memory cycle; 
      *  responsible for executing Memory's:
@@ -64,8 +61,11 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
     public void reset(Memory memory, Perception perception);
 
     /** Maps Term to a Concept active in this Cycle. May also be called 'recognize'
-     * as it can be used to determine if a symbolic pattern (term) is known */
-    public Concept getActiveConcept(Term term);
+     * as it can be used to determine if a symbolic pattern (term) is known and active.
+     *
+     * Note this does not retrieve Concepts that are not active - for that, use Memory.concept(term)
+     * */
+    public Concept concept(Term term);
 
     /**
      * Creates and adds new concept to the memory.  May also be called 'cognize' because

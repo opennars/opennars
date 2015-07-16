@@ -1,4 +1,4 @@
-package nars.meter.experiment;
+package nars.meter.performance;
 
 import nars.io.in.LibraryInput;
 import nars.meter.TestNAR;
@@ -14,11 +14,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by me on 7/16/15.
+ * Measures the "speed" a particular NAR completes a set of unit test scripts.
+ * In terms of how many cycles to reach the required conditions.
+ * If the conditions are not satisfied within the provided maximum cycle
+ * limit, the score is equal this worst case.  Otherwise if it completes sooner,
+ * then the cost is proportional to the number of cycles that it required
+ * (cost being inversely proportional to reward or score).
  */
-public abstract class LibraryCompletionSpeed extends EGoal<TypedOrganism> {
+public abstract class TestCompletionSpeed extends EGoal<TypedOrganism> {
 
     final static Map<String, Task> conditionsCache = new ConcurrentHashMap<>();
+
     private final String path;
     private final int maxCycles;
 
@@ -27,7 +33,7 @@ public abstract class LibraryCompletionSpeed extends EGoal<TypedOrganism> {
     private List script;
     String scriptSrc;
 
-    public LibraryCompletionSpeed(String path, int maxCycles) {
+    public TestCompletionSpeed(String path, int maxCycles) {
         super(path);
         this.path = path;
         this.maxCycles = maxCycles;
@@ -35,7 +41,7 @@ public abstract class LibraryCompletionSpeed extends EGoal<TypedOrganism> {
         this.script = LibraryInput.rawTasks(scriptSrc);
 
 
-        var = Controls.reflect(LibraryCompletionSpeed.class, this);
+        var = Controls.reflect(TestCompletionSpeed.class, this);
 
     }
 
@@ -61,5 +67,5 @@ public abstract class LibraryCompletionSpeed extends EGoal<TypedOrganism> {
         return cost / maxCycles;
     }
 
-    abstract TestNAR newNAR(TypedOrganism leakProgram);
+    public abstract TestNAR newNAR(TypedOrganism leakProgram);
 }

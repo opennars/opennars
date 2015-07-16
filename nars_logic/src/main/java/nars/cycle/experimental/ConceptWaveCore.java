@@ -62,7 +62,7 @@ abstract public class ConceptWaveCore extends ConceptActivator implements CycleP
     }
 
     @Override
-    public Concept getActiveConcept(Term term) {
+    public Concept concept(Term term) {
         return concepts.get(term);
     }
 

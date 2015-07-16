@@ -23,7 +23,6 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicRule;
-import nars.nal.Premise;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -42,12 +41,11 @@ import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
 import nars.process.CycleProcess;
-import nars.process.DerivationReaction;
 import nars.process.concept.*;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.task.TaskAccumulator;
 import nars.task.TaskComparator;
-import nars.task.filter.MultiplyDerivedBudget;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
@@ -130,8 +128,6 @@ public class Default extends NARSeed implements ConceptBuilder {
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
         this.internalExperience =
                 maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
-
-        setInputMerging(TaskComparator.Merging.Or);
 
         setTaskLinkBagSize(16);
 
@@ -457,7 +453,11 @@ public class Default extends NARSeed implements ConceptBuilder {
 
     @Override
     public CycleProcess newControlCycle() {
-        return new DefaultCycle(this, newConceptBag(), newNovelTaskBag());
+        return new DefaultCycle(
+                new TaskAccumulator(TaskComparator.Merging.Or),
+                newConceptBag(),
+                newNovelTaskBag()
+        );
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {

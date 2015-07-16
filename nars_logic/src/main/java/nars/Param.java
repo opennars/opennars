@@ -28,7 +28,7 @@ public abstract class Param implements Serializable {
     //-------------------
 
 
-    private TaskComparator.Merging merging = TaskComparator.Merging.Plus;
+
 
 
     public Param() {    }
@@ -260,14 +260,6 @@ public abstract class Param implements Serializable {
 //        json = b.create();
 //    }
 
-    public TaskComparator.Merging getInputMerging() {
-        return merging;
-    }
-
-    /** handling behavior for duplicate derivations in bulk processing */
-    public void setInputMerging(TaskComparator.Merging merging) {
-        this.merging = merging;
-    }
 
     public Clock getClock() {
         return clock;

@@ -58,7 +58,7 @@ public class consider extends SynchOperator implements Mental {
 
         TaskLink taskLink = concept.getTaskLinks().peekNext();
         if (taskLink!=null) {
-            new ConceptProcess((DefaultConcept) concept, taskLink) {
+            new ConceptProcess(nar.memory, concept, taskLink) {
 
                 @Override
                 public void beforeFinish() {

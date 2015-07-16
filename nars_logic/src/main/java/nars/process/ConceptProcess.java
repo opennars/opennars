@@ -6,10 +6,10 @@ package nars.process;
 
 import nars.Events;
 import nars.Global;
+import nars.Memory;
 import nars.Param;
 import nars.bag.Bag;
 import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -44,12 +44,12 @@ public class ConceptProcess extends NAL implements Premise {
     private long now;
 
 
-    public ConceptProcess(DefaultConcept concept, TaskLink taskLink) {
-        this(concept, taskLink, concept.getMemory().getParam().termLinkMaxReasoned.get());
+    public ConceptProcess(Memory memory, Concept concept, TaskLink taskLink) {
+        this(memory, concept, taskLink, memory.param.termLinkMaxReasoned.get());
     }
 
-    public ConceptProcess(DefaultConcept concept, TaskLink taskLink, int termLinkCount) {
-        super(concept.getMemory(), taskLink.getTask());
+    public ConceptProcess(Memory memory, Concept concept, TaskLink taskLink, int termLinkCount) {
+        super(memory, taskLink.getTask());
 
 
         this.currentTaskLink = taskLink;

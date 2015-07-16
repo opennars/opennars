@@ -1,12 +1,12 @@
 package nars.task;
 
 import java.util.Comparator;
+import java.util.TreeSet;
 
 /**
  * Compares tasks, and accumulates their budget priority additively
  */
 public class TaskComparator implements Comparator<Task> {
-
 
     /** duplication mode */
     public enum Merging {
