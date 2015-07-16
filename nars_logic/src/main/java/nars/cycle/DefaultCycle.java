@@ -68,7 +68,7 @@ public class DefaultCycle extends SequentialCycle {
     }
 
     @Override
-    public boolean addTask(Task t) {
+    public boolean onTask(Task t) {
         if (executingNewTasks) {
             return newTasksTemp.add(t); //buffer it
         }

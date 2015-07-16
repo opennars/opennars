@@ -63,7 +63,7 @@ import static nars.Global.reference;
  * TODO decide if the Sentence fields need to be Reference<> also
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class Task<T extends Compound> extends Sentence<T> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence, Input {
+public class Task<T extends Compound> extends Sentence<T> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence {
 
 
     /**
@@ -614,11 +614,14 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
             //return false;
         }
 
+        if (getEvidentialSet() == null)
+            setEvidentialSet(memory.newStampSerial());
+
         //if a task has an unperceived creationTime,
         // set it to the memory's current time here,
         // and adjust occurenceTime if it's not eternal
 
-        if (getCreationTime() == Stamp.TIMELESS) {
+        if (getCreationTime() <= Stamp.TIMELESS) {
             final long now = memory.time();
             long oc = getOccurrenceTime();
             if (oc != Stamp.ETERNAL)
@@ -647,15 +650,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         return clone(getTerm(), t, t.getTargetTime());
     }
 
-    @Override
-    public Task get() {
-        return this;
-    }
-
-    @Override
-    public int inputAll(Memory m) {
-        return m.input(this);
-    }
 
 
 

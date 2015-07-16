@@ -316,7 +316,7 @@ public class ConceptProcess extends NAL implements Premise {
         super.run();
 
         if (derived!=null)
-            memory.addDerived(derived);
+            memory.add(derived);
 
     }
 

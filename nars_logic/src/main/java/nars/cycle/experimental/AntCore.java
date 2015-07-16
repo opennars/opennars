@@ -82,7 +82,7 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public boolean addTask(Task t) {
+    public boolean onTask(Task t) {
         tasks.addLast(t);
         return true;
     }
@@ -146,7 +146,7 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public void perceive(Input ii) {
+    public void onInput(Input ii) {
         ii.inputAll(memory);
     }
 

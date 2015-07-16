@@ -114,7 +114,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public boolean addTask(Task t) {
+    public boolean onTask(Task t) {
         if (tasks.add(t)) {
             tasksAddedThisCycle++;
             return true;
@@ -133,9 +133,8 @@ public class Solid extends Default implements CycleProcess {
 
 
     @Override
-    public void perceive(Input ii) {
-
-        //TODO use max inputs per cycle
+    public void onInput(Input ii) {
+        //TODO use perception buffer, but for now, just flush it all into memory
         ii.inputAll(memory);
     }
 

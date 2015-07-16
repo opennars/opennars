@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plugin */ {
 
 
-    boolean addTask(Task t);
+    boolean onTask(Task t);
 
     int size();
 
@@ -127,6 +127,6 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
 
     }
 
-    void perceive(Input ii);
+    void onInput(Input ii);
 
 }

@@ -55,7 +55,7 @@ abstract public class AbstractMirror extends NARReaction {
             //System.err.println("  " + t);
 
             if (mode == InputMode.InputTask)
-                nar.memory.input(t);
+                nar.memory.add(t);
             else if (mode == InputMode.ImmediateProcess)
                 TaskProcess.run(nar.memory, t);
 

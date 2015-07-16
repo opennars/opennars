@@ -92,7 +92,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     }
 
     @Override
-    public void perceive(Input perception) {
+    public void onInput(Input perception) {
         percepts.accept(perception);
     }
 
@@ -110,7 +110,7 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
         Task t = percepts.get();
         if (t != null)
-            return memory.input(t);
+            return memory.add(t) ? 1 : 0;
 
         return -1;
     }

@@ -62,40 +62,23 @@ public class NAR extends Container implements Runnable {
                     "    IRC:  http://webchat.freenode.net/?channels=nars \n";
     public final NarseseParser narsese;
     public final TextPerception textPerception;
-    private Perception perception;
-    private CycleProcess control;
-
-
-    /**
-     * The name of the reasoner
-     */
-    protected String name;
     /**
      * The memory of the reasoner
      */
     public final Memory memory;
     public final Param param;
-
-
-    public void think(int delay) {
-        memory.think(delay);
-    }
-
-    public NAR input(ImmediateOperation o) {
-        input(o.newTask());
-        return this;
-    }
-
-
+    /**
+     * The name of the reasoner
+     */
+    protected String name;
+    private Perception perception;
+    private CycleProcess control;
     /**
      * Flag for running continuously
      */
     private boolean running = false;
-
     private boolean threadYield = false;
-
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
-
     /**
      * memory activity enabled
      */
@@ -128,6 +111,27 @@ public class NAR extends Container implements Runnable {
     }
 
     /**
+     * create a NAR given the class of a Build.  its default constructor will be used
+     */
+    public static NAR build(Class<? extends NARSeed> g) {
+        try {
+            return new NAR(g.newInstance());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public void think(int delay) {
+        memory.think(delay);
+    }
+
+    public NAR input(ImmediateOperation o) {
+        input(o.newTask());
+        return this;
+    }
+
+    /**
      * Reset the system with an empty memory and reset clock.  Event handlers
      * will remain attached but enabled plugins will have been deactivated and
      * reactivated, a signal for them to empty their state (if necessary).
@@ -148,18 +152,11 @@ public class NAR extends Container implements Runnable {
 
     }
 
-
     public Input input(final File input) throws IOException {
         return input(new FileInput(textPerception, input));
     }
 
-    /**
-     * this needs tested to see if it still works, an asynchronous input interface is probably better
-     */
-    @Deprecated
-    public Input input(final InputStream input) {
-        return input(new ReaderInput(textPerception, input));
-    }
+
 
     /**
      * inputs a task, only if the parsed text is valid; returns null if invalid
@@ -202,8 +199,6 @@ public class NAR extends Container implements Runnable {
         return i;
     }
 
-
-
     public <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
         return narsese.term(t);
     }
@@ -219,11 +214,9 @@ public class NAR extends Container implements Runnable {
         return concept((Term) narsese.term(conceptTerm));
     }
 
-
     public Task goal(final String goalTerm, final float freq, final float conf) {
         return goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goalTerm, freq, conf);
     }
-
 
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
@@ -336,18 +329,12 @@ public class NAR extends Container implements Runnable {
 
     }
 
-    protected void preprocessInput(Task t) {
-        if (t.getCreationTime() <= Stamp.TIMELESS)
-            t.setCreationTime(time());
-        if (t.getEvidentialSet() == null)
-            t.setEvidentialSet(memory.newStampSerial());
-    }
 
     /** input a task via perception buffers */
-    public NAR input(final Task t) {
-        preprocessInput(t);
-        input((Input) t);
-        return this;
+    public Task input(final Task t) {
+        if (memory.add(t))
+            return t;
+        return null;
     }
 
     public TaskProcess inputDirect(final TaskSeed t) {
@@ -357,10 +344,8 @@ public class NAR extends Container implements Runnable {
     /** input a task via direct TaskProcessing
      * @return the TaskProcess, after it has executed (synchronously) */
     public TaskProcess inputDirect(final Task t) {
-        preprocessInput(t);
         return TaskProcess.run(this, t);
     }
-
 
     /**
      * attach event handler to one or more event (classes)
@@ -368,7 +353,6 @@ public class NAR extends Container implements Runnable {
     public EventEmitter.Registrations on(Reaction<Class> o, Class... c) {
         return memory.event.on(o, c);
     }
-
 
     public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {
         Reaction<Class> v = the(c);
@@ -411,16 +395,6 @@ public class NAR extends Container implements Runnable {
         this.cyclesPerFrame = cyclesPerFrame;
     }
 
-
-    /**
-     * Adds an input channel for input from an external sense / sensor.
-     * Will remain added until it closes or it is explicitly removed.
-     */
-    public Input input(final Input perception) {
-        memory.getControl().perceive(perception);
-        return perception;
-    }
-
 //    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
 //    public Input removeInput(Input channel) {
 //        inputChannels.remove(channel);
@@ -454,6 +428,14 @@ public class NAR extends Container implements Runnable {
 //        return Collections.unmodifiableList(plugins);
 //    }
 
+    /**
+     * Adds an input channel for input from an external sense / sensor.
+     * Will remain added until it closes or it is explicitly removed.
+     */
+    public Input input(final Input i) {
+        memory.add(i);
+        return i;
+    }
 
     @Deprecated
     public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
@@ -479,11 +461,9 @@ public class NAR extends Container implements Runnable {
         start(minCyclePeriodMS, getCyclesPerFrame());
     }
 
-
     public EventEmitter event() {
         return memory.event;
     }
-
 
     /**
      * Exits an iteration loop if running
@@ -498,26 +478,6 @@ public class NAR extends Container implements Runnable {
      */
     public void frame() {
         frame(1);
-    }
-
-    /**
-     * Runs multiple frames, unless already running (then it return -1).
-     *
-     * @return total time in seconds elapsed in realtime
-     */
-    public synchronized void frame(final int frames) {
-
-        final boolean wasRunning = running;
-
-        running = true;
-
-        final int cpf = cyclesPerFrame;
-        for (int f = 0; (f < frames) && running; f++) {
-            frameCycles(cpf);
-        }
-
-        running = wasRunning;
-
     }
 
 //    /**
@@ -551,6 +511,26 @@ public class NAR extends Container implements Runnable {
 //        return this;
 //    }
 
+    /**
+     * Runs multiple frames, unless already running (then it return -1).
+     *
+     * @return total time in seconds elapsed in realtime
+     */
+    public synchronized void frame(final int frames) {
+
+        final boolean wasRunning = running;
+
+        running = true;
+
+        final int cpf = cyclesPerFrame;
+        for (int f = 0; (f < frames) && running; f++) {
+            frameCycles(cpf);
+        }
+
+        running = wasRunning;
+
+    }
+
     public NAR runWhileNewInput(int extraCycles) {
         frame(extraCycles);
         return this;
@@ -578,7 +558,7 @@ public class NAR extends Container implements Runnable {
 
         long cyclesCompleted = time() - cycleStart;
 
-        //queue additional cycles, 
+        //queue additional cycles,
         extraCycles -= cyclesCompleted;
         if (extraCycles > 0)
             memory.think(extraCycles);
@@ -592,7 +572,6 @@ public class NAR extends Container implements Runnable {
 
         return this;
     }
-
 
     /**
      * Run until stopped, at full speed
@@ -637,14 +616,12 @@ public class NAR extends Container implements Runnable {
         }
     }
 
-
     /**
      * returns the configured NAL level
      */
     public int nal() {
         return memory.nal();
     }
-
 
     public void emit(final Class c) {
         memory.emit(c);
@@ -654,11 +631,9 @@ public class NAR extends Container implements Runnable {
         memory.emit(c, o);
     }
 
-
     protected void error(Throwable e) {
         memory.error(e);
     }
-
 
     /**
      * enable/disable all I/O and memory processing. CycleStart and CycleStop
@@ -672,7 +647,6 @@ public class NAR extends Container implements Runnable {
     public boolean isEnabled() {
         return enabled;
     }
-
 
     /**
      * executes one complete memory cycle (if not disabled)
@@ -723,11 +697,9 @@ public class NAR extends Container implements Runnable {
         return memory.time();
     }
 
-
     public boolean isRunning() {
         return running;
     }
-
 
     /**
      * When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay).
@@ -736,21 +708,6 @@ public class NAR extends Container implements Runnable {
     public void setThreadYield(boolean b) {
         this.threadYield = b;
     }
-
-
-    /**
-     * create a NAR given the class of a Build.  its default constructor will be used
-     */
-    public static NAR build(Class<? extends NARSeed> g) {
-        try {
-            return new NAR(g.newInstance());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-
 
     /**
      * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the

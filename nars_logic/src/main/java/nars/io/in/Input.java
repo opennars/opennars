@@ -55,7 +55,7 @@ public interface Input extends Source<Task> {
 
         int i =0;
         while (( t = get() ) != null) {
-            i += m.input(t);
+            i += m.add(t) ? 1 : 0;
         }
         return i;
     }

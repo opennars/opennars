@@ -31,6 +31,7 @@ import nars.budget.Itemized;
 import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
+import nars.io.in.Input;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMetrics;
 import nars.nal.LogicPolicy;
@@ -317,10 +318,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         //return goalConcepts;
     }
 
-    public void addDerived(final Iterable<Task> source) {
-        for (final Task t : source)
-            addDerived((Task) t);
-    }
+
 
     public Atom self() {
         return self;
@@ -585,13 +583,34 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         return (c == null) ? 0.0f : c.getPriority();
     }
 
-    public boolean addDerived(final Task t) {
+
+
+
+    /** adds the input stream to perception */
+    public void add(Input ii) {
+        getControl().onInput(ii);
+    }
+
+    public void add(final Iterable<Task> source) {
+        for (final Task t : source)
+            add((Task) t);
+    }
+
+
+    /**
+     * exposes the memory to an input, derived, or immediate task.
+     * the memory then delegates it to its controller
+     */
+    public boolean add(final Task t) {
 
         /* process ImmediateOperation and Operations of ImmediateOperators */
         if (t.executeIfImmediate(this)) {
             return false;
         }
 
+        if (!t.perceivable(this)) {
+            return false;
+        }
 
         if (!Terms.levelValid(t.sentence, nal())) {
             removed(t, "Insufficient NAL level");
@@ -602,9 +621,8 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         if (inputPriorityFactor!=1.0f)
             t.mulPriority( inputPriorityFactor );
 
-
-
-        if (getControl().addTask(t)) {
+        /* delegate the fate of this task to controller */
+        if (getControl().onTask(t)) {
 
             //NOTE: if duplicate outputs happen, the budget wil have changed
             //but they wont be displayed.  to display them,
@@ -613,33 +631,20 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
             if (!t.isInput())
                 emit(Events.OUT.class, t);
+            else
+                emit(Events.IN.class, t);
+
 
             logic.TASK_ADD_NEW.hit();
             return true;
         }
+        else {
+            removed(t, "Ignored");
+        }
+
         return false;
     }
 
-    /**
-     * Input task processing. Invoked by the outside or inside environment.
-     * Outside: StringParser (addInput); Inside: InnateOperator (feedback).
-     * Input tasks with low priority are ignored, and the others are put into
-     * task buffer.
-     *
-     * @param task The addInput task
-     * @return how many tasks were queued to newTasks
-     */
-    public int input(final Task task) {
-
-        if (task.perceivable(this)) {
-            if (addDerived(task)) {
-                emit(Events.IN.class, task);
-                return 1;
-            }
-        }
-
-        return 0;
-    }
 
 
     /* ---------- new task entries ---------- */

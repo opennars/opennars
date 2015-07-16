@@ -144,7 +144,7 @@ public class TaskProcess extends NAL {
 
         if (derived!=null)
             for (final Task t : derived)
-                memory.addDerived(t);
+                memory.add(t);
     }
 
     public static TaskProcess run(final NAR nar, final String task) {

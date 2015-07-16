@@ -154,7 +154,7 @@ abstract public class Operator implements Reaction<Term> {
                 t.setCause(op);
                 t.log("Feedback");
 
-                memory.input(t);
+                memory.add(t);
             }
         }
 
@@ -175,7 +175,7 @@ abstract public class Operator implements Reaction<Term> {
 
         memory.logic.TASK_EXECUTED.hit();
 
-        memory.addDerived( memory.newTask(operation).
+        memory.add(memory.newTask(operation).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
                 budget(operation.getTask()).
@@ -183,7 +183,7 @@ abstract public class Operator implements Reaction<Term> {
                 parent(opTask).
                 cause(operation).
                 reason("Executed").
-                get() );
+                get());
 
     }
 

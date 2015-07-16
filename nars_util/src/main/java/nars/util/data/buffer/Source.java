@@ -8,14 +8,9 @@ import java.util.function.Supplier;
  */
 public interface Source<Y> extends Supplier<Y> {
 
-
-    /** called when perception is terminated, allowing the input supplier to
-     *  close connections or free other resources
-     */
     default public void stop() {
 
     }
-
 
     //    /** takes input object. any tasks that it generates are input into the InPort
 //     *  via queue() methods.

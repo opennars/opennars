@@ -35,10 +35,6 @@ abstract public class ImmediateOperation  {
             return operation;
         }
 
-        @Override
-        public int inputAll(Memory m) {
-            return m.input(this);
-        }
 
         /**
          * @return true if it was immediate
