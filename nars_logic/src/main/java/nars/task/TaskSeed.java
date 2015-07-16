@@ -360,27 +360,27 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
 
-    /**
-     * attempt to build the task, and insert into memory. returns non-null if successful
-     */
-    public Task input() {
-
-        Task t = get();
-        if (t == null) return null;
-
-        if (t.isInput()) {
-            if (memory.input(t) > 0) {
-                return t;
-            }
-        } else {
-            if (memory.taskAdd(t)) {
-                return t;
-            }
-        }
-
-        return null;
-
-    }
+//    /**
+//     * attempt to build the task, and insert into memory. returns non-null if successful
+//     */
+//    public Task input() {
+//
+//        Task t = get();
+//        if (t == null) return null;
+//
+//        if (t.isInput()) {
+//            if (memory.input(t) > 0) {
+//                return t;
+//            }
+//        } else {
+//            if (memory.addDerived(t)) {
+//                return t;
+//            }
+//        }
+//
+//        return null;
+//
+//    }
 
     public boolean isInput() {
         return getParentTask() == null;

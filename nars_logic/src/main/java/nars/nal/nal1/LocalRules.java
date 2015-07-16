@@ -271,7 +271,7 @@ public class LocalRules {
                             .solution(belief),
                     "Adjusted Solution",
                     true, false, false);*/
-            nal.memory.taskAdd(belief);
+            nal.memory.addDerived(belief);
         }
         else {
             belief.accumulate(budget);

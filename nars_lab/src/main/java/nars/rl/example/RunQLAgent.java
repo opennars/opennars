@@ -4,21 +4,12 @@ import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
-import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.gui.NARSwing;
 import nars.nar.Default;
 import nars.task.Sentence;
-import nars.concept.Concept;
-import nars.concept.DefaultConcept;
-import nars.task.filter.ConstantDerivationLeak;
-import nars.term.Term;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.link.TermLinkKey;
+import nars.task.filter.MultiplyDerivedBudget;
 import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
@@ -238,12 +229,6 @@ public class RunQLAgent extends JPanel {
 //                };
 //            }
 
-            @Override
-            protected void initDerivationFilters() {
-                final float DERIVATION_PRIORITY_LEAK=0.75f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                final float DERIVATION_DURABILITY_LEAK=0.75f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
-            }
         };
 
 

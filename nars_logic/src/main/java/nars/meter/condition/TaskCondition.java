@@ -71,7 +71,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
     public TaskCondition(NAR n, Task t, Class channel, long creationTimeOffset, final boolean relativeToCondition, Class... channels)  {
-        super(n, channels);
+        super(n, TaskCondition.outAndAnswer(channel));
 
         //TODO verify that channel is included in the listened events
 

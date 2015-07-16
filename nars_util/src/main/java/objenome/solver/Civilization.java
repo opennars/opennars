@@ -21,10 +21,12 @@
  */
 package objenome.solver;
 
+import com.google.common.collect.Sets;
 import nars.util.data.random.MersenneTwisterFast;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
+import objenome.op.math.*;
 import objenome.solver.evolve.*;
 import objenome.solver.evolve.event.EventManager;
 import objenome.solver.evolve.init.Full;
@@ -38,7 +40,10 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -72,7 +77,12 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
     public Civilization(int threads, int populationSize) {
         this(threads, populationSize, 8);
     }
-    public Civilization(int threads, int populationSize, int maximumDepth) {
+
+    public Civilization(int threads, int populationSize, int maximumDepth, Node... additionalOperators) {
+        this(threads, populationSize, maximumDepth, Sets.newHashSet(additionalOperators));
+    }
+
+    public Civilization(int threads, int populationSize, int maximumDepth, Set<Node> additionalOperators) {
         super();
         this.threads = threads;
         this.populationSize = populationSize;
@@ -84,6 +94,9 @@ abstract public class Civilization extends GPContainer<Civilized> implements Run
         the(TypedOrganism.RETURN_TYPE, Double.class);
 
         final ArrayList<Node> syntax = new ArrayList(getOperators(random));
+        if (additionalOperators!=null)
+            syntax.addAll(additionalOperators);
+
         the(TypedOrganism.SYNTAX, syntax.toArray(new Node[syntax.size()]));
 
 

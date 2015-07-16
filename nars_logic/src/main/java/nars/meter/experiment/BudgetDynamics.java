@@ -62,11 +62,6 @@ public class BudgetDynamics {
 
         Default d = new Default() {
 
-            @Override
-            protected void initDerivationFilters() {
-                //super.initDerivationFilters();
-            }
-
             public DerivationReaction getDerivationReaction() {
                 return balancedDerivationBudget;
             }
@@ -91,7 +86,7 @@ public class BudgetDynamics {
 
                     float refund = 0;
                     for (Task t : derived) {
-                        final boolean added = m.taskAdd(t);
+                        final boolean added = m.addDerived(t);
                         if (!added)
                             refund += t.getPriority();
                     }

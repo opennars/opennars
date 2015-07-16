@@ -30,8 +30,6 @@ public abstract class Param implements Serializable {
 
     private TaskComparator.Merging merging = TaskComparator.Merging.Plus;
 
-    abstract public DerivationReaction getDerivationReaction();
-
 
     public Param() {    }
 

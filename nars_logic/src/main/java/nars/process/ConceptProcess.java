@@ -6,7 +6,6 @@ package nars.process;
 
 import nars.Events;
 import nars.Global;
-import nars.Memory;
 import nars.Param;
 import nars.bag.Bag;
 import nars.concept.Concept;
@@ -15,10 +14,8 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.Premise;
-import nars.task.Task;
 import nars.term.Term;
 
-import java.util.List;
 import java.util.Random;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
@@ -314,16 +311,12 @@ public class ConceptProcess extends NAL implements Premise {
     }
 
     public void run() {
-        run(memory.param.getDerivationReaction());
-    }
-
-    public void run(DerivationReaction r) {
         if (!currentConcept.isActive()) return;
 
         super.run();
 
         if (derived!=null)
-            r.onDerivation(this, derived, memory);
+            memory.addDerived(derived);
 
     }
 

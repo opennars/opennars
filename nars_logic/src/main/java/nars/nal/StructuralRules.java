@@ -401,6 +401,13 @@ public final class StructuralRules {
             budget = BudgetFunctions.compoundBackward(content, nal);
         } else /* if (sentence.isJudgment() || sentence.isGoal()) */ {
 
+
+
+
+
+
+
+
             if ((!compoundTask && compound instanceof Disjunction) ||
                             (compoundTask && compound instanceof Conjunction)) {
                 /*

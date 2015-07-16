@@ -8,11 +8,9 @@ import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
 import nars.nar.Default;
 import nars.nar.Solid;
-import nars.process.TaskProcess;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
-import nars.task.Task;
-import nars.task.filter.ConstantDerivationLeak;
+import nars.task.filter.MultiplyDerivedBudget;
 
 import javax.swing.*;
 
@@ -33,7 +31,7 @@ public class SomeRovers {
             protected void initDerivationFilters() {
                 final float DERIVATION_PRIORITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
                 final float DERIVATION_DURABILITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+                getLogicPolicy().derivationFilters.add(new MultiplyDerivedBudget(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
             }
 
         }.setInternalExperience(null).setClock(clock = new SimulatedClock());

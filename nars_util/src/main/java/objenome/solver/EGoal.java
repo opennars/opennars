@@ -1,7 +1,7 @@
 package objenome.solver;
 
 /**
- * Civliziation evolutionary objective - characterizes a problem and its possible solutions
+ * Quantifiable Experiment - characterizes a problem and its possible solutions
  *
  * A solution is modeled as a Statically-typed Genetic-Programming "Organism":
  *   VARIABLES
@@ -65,6 +65,7 @@ abstract public class EGoal<I> {
         this.id = id;
     }
 
+    /** inversely proportional to score or reward; generally minimized */
     abstract public double cost(I o);
 
     @Override

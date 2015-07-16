@@ -317,9 +317,9 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         //return goalConcepts;
     }
 
-    public void taskAdd(final Iterable<Task> source) {
+    public void addDerived(final Iterable<Task> source) {
         for (final Task t : source)
-            taskAdd((Task)t);
+            addDerived((Task) t);
     }
 
     public Atom self() {
@@ -585,7 +585,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         return (c == null) ? 0.0f : c.getPriority();
     }
 
-    public boolean taskAdd(final Task t) {
+    public boolean addDerived(final Task t) {
 
         /* process ImmediateOperation and Operations of ImmediateOperators */
         if (t.executeIfImmediate(this)) {
@@ -632,7 +632,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     public int input(final Task task) {
 
         if (task.perceivable(this)) {
-            if (taskAdd(task)) {
+            if (addDerived(task)) {
                 emit(Events.IN.class, task);
                 return 1;
             }

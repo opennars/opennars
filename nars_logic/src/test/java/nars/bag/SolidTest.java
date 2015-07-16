@@ -6,7 +6,7 @@ import nars.io.qa.Answered;
 import nars.meter.TestNAR;
 import nars.nar.Solid;
 import nars.task.Sentence;
-import nars.task.filter.ConstantDerivationLeak;
+import nars.task.filter.MultiplyDerivedBudget;
 import nars.term.Term;
 import org.junit.Test;
 
@@ -27,16 +27,8 @@ public class SolidTest {
         Global.DEBUG = false;
 
         final int numConcepts = 256;
-        final float leakRate = 0.4f;
         Solid s = new Solid(1, numConcepts, 1, 1, 1, 1) {
 
-            @Override
-            protected void initDerivationFilters() {
-                //TODO tune this based on # concepts fired, termlnks etc
-                final float DERIVATION_PRIORITY_LEAK = leakRate; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                final float DERIVATION_DURABILITY_LEAK = leakRate; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
-            }
         };
 
         s.level(6);

@@ -3,9 +3,8 @@ package nars.meter.experiment;
 import nars.Global;
 import nars.NARSeed;
 import nars.meter.MaxBeliefConfidence;
-import nars.meter.NARTrace;
 import nars.nar.Default;
-import nars.task.filter.ConstantDerivationLeak;
+import nars.task.filter.MultiplyDerivedBudget;
 
 import java.io.FileNotFoundException;
 
@@ -25,14 +24,7 @@ public class BudgetDynamics2 extends BudgetDynamics {
 
         Default d = new Default() {
 
-            @Override
-            protected void initDerivationFilters() {
-                final float DERIVATION_PRIORITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                final float DERIVATION_DURABILITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
 
-                //super.initDerivationFilters();
-            }
 
             /*public DerivationReaction getDerivationReaction() {
                 return balancedDerivationBudget;

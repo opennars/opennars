@@ -47,7 +47,7 @@ import nars.process.concept.*;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskComparator;
-import nars.task.filter.ConstantDerivationLeak;
+import nars.task.filter.MultiplyDerivedBudget;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
@@ -133,9 +133,9 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         setInputMerging(TaskComparator.Merging.Or);
 
-        setTaskLinkBagSize(32);
+        setTaskLinkBagSize(16);
 
-        setTermLinkBagSize(16);
+        setTermLinkBagSize(64);
 
         setNovelTaskBagSize(48);
 
@@ -406,15 +406,9 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         //n.on(new RuntimeNARSettings());
 
-        initDerivationFilters();
-
     }
 
-    protected void initDerivationFilters() {
-        final float DERIVATION_PRIORITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        final float DERIVATION_DURABILITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
-    }
+
 
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
@@ -538,17 +532,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
 
 
-    @Override
-    public DerivationReaction getDerivationReaction() {
-        return inputDerivationsDirectly;
-    }
 
-    public static DerivationReaction inputDerivationsDirectly = new DerivationReaction() {
-        public void onDerivation(Premise p, Iterable<Task> derived, Memory m) {
-            //basic implementation, just input tasks to memory
-            m.taskAdd(derived);
-        }
-    };
 
 
     public static class CommandLineNARBuilder extends Default {

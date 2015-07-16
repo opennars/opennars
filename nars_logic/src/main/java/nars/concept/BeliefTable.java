@@ -24,10 +24,10 @@ import static nars.nal.nal7.TemporalRules.solutionQualityMatchingOrder;
 public interface BeliefTable extends TaskTable {
 
 
-    Ranker BeliefConfidenceOrOriginality = new Ranker() {
+    static final Ranker BeliefConfidenceOrOriginality = new Ranker() {
 
         @Override
-        public float rank(Task belief, float bestToBeat) {
+        public final float rank(final Task belief, final float bestToBeat) {
             final float confidence = belief.getTruth().getConfidence();
             final float originality = belief.getOriginality();
             return or(confidence, originality);

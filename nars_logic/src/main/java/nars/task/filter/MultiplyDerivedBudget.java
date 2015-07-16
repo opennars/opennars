@@ -8,16 +8,16 @@ import nars.task.TaskSeed;
 /**
  * TODO make abstract and put the AtomicDouble params in a DefaultLeak class
  */
-public class ConstantDerivationLeak implements DerivationFilter {
+public class MultiplyDerivedBudget implements DerivationFilter {
 
     public final AtomicDouble priorityMultiplier;
     public final AtomicDouble durabilityMultiplier;
 
-    public ConstantDerivationLeak(float priorityMultiplier, float durabilityMultiplier) {
+    public MultiplyDerivedBudget(float priorityMultiplier, float durabilityMultiplier) {
         this(new AtomicDouble(priorityMultiplier), new AtomicDouble(durabilityMultiplier));
     }
 
-    public ConstantDerivationLeak(AtomicDouble priorityMultiplier, AtomicDouble durabilityMultiplier) {
+    public MultiplyDerivedBudget(AtomicDouble priorityMultiplier, AtomicDouble durabilityMultiplier) {
         this.priorityMultiplier = priorityMultiplier;
         this.durabilityMultiplier = durabilityMultiplier;
     }
@@ -28,7 +28,7 @@ public class ConstantDerivationLeak implements DerivationFilter {
         if (!solution) {
             final TaskSeed derived = task;
             if (!leak(derived))
-                return "Leak";
+                return "MultiplyDerivedBudget";
         }
         return null;
     }

@@ -105,7 +105,20 @@ public final class TruthFunctions extends UtilityFunctions {
         );
     }
 
-    /* ----- double argument functions, called in SyllogisticRules ----- */
+
+
+    /**
+     * {M, <M ==> P>} |- P
+     * @param a Truth value of the first premise
+     * @param reliance Confidence of the second (analytical) premise
+     * @return AnalyticTruth value of the conclusion, because it is structural
+     */
+    public static final AnalyticTruth deduction(final Truth a, final float reliance) {
+        final float f = a.getFrequency();
+        final float c = and(f, a.getConfidence(), reliance);
+        return new AnalyticTruth(f, c);
+    }
+        /* ----- double argument functions, called in SyllogisticRules ----- */
     /**
      * {<S ==> M>, <M ==> P>} |- <S ==> P>
      * @param a Truth value of the first premise
@@ -114,20 +127,8 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final Truth deduction(final Truth a, final Truth b) {
         final float f = and(a.getFrequency(), b.getFrequency());
-        final float c = and(a.getConfidence(), b.getConfidence(), f);
+        final float c = and(f, a.getConfidence(), b.getConfidence());
         return new DefaultTruth(f, c);
-    }
-
-    /**
-     * {M, <M ==> P>} |- P
-     * @param t Truth value of the first premise
-     * @param reliance Confidence of the second (analytical) premise
-     * @return AnalyticTruth value of the conclusion, because it is structural
-     */
-    public static final AnalyticTruth deduction(final Truth t, final float reliance) {
-        final float f = t.getFrequency();
-        final float c = and(f, t.getConfidence(), reliance);
-        return new AnalyticTruth(f, c);
     }
 
     /**

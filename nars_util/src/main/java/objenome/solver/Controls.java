@@ -1,4 +1,4 @@
-package nars.analyze.experimental;
+package objenome.solver;
 
 import objenome.op.Variable;
 

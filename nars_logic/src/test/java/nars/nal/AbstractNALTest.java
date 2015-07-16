@@ -92,13 +92,14 @@ abstract public class AbstractNALTest extends TestCase {
         super();
 
         this.build = b;
-        build.rng.setSeed(randomSeed);
+
 
         Global.DEBUG = true;
 
         results.clear();
 
         this.n = new TestNAR(build);
+        n.memory.reset(randomSeed);
 
         this.eventCounter = null; //new CountOutputEvents(nar, results);
         this.deriveMethodCounter = null;
@@ -144,8 +145,6 @@ abstract public class AbstractNALTest extends TestCase {
             deriveMethodCounter.off();
         }
 
-
-        //nar.reset(); //to help GC
 
     }
 

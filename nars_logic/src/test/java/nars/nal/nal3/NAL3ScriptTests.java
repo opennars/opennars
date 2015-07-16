@@ -24,12 +24,13 @@ public class NAL3ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(3),
+                new Curve().level(3),
                 new Curve(),
                 new Classic()
         );
     }
 
-    public int getMaxCycles() { return 200; }
+    public int getMaxCycles() { return 250; }
 
 
 }
