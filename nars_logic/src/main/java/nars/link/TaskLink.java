@@ -27,6 +27,7 @@ import nars.task.Sentenced;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
+import oracle.jrockit.jfr.Recording;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,45 +54,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
 
 
-    /* Remember the TermLinks, and when they has been used recently with this TaskLink */
-    public final static class Recording {
-
-        public final TermLink link;
-        float time;
-
-        public Recording(TermLink link, float time) {
-            this.time = time;
-            this.link = link;
-        }
-
-        public float getTime() {
-            return time;
-        }
-
-
-        public boolean setTime(float t) {
-            if (this.time!=t) {
-                this.time = t;
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return link + "@" + time;
-        }
-
-        public Term getTerm() {
-            return link.getTerm();
-        }
-
-        public void setRemoved() {
-            setTime(Float.NaN);
-        }
-    }
-
-    Map<Term,Recording> records;
 //
 //
 //    /** allows re-use of the Recording object since it would otherwise be instantiated frequently */
@@ -107,21 +69,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 //        }
 //
 //    }
-
-    public Map<Term,Recording> newRecordSet() {
-        //TODO use more efficient collection?
-
-        return new LinkedHashMap<Term,Recording>(recordLength) {
-            protected boolean removeEldestEntry(Map.Entry<Term,Recording> eldest) {
-                if (size() > recordLength) {
-
-                    eldest.getValue().setRemoved();
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
 
 
 
@@ -171,10 +118,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 //        return getSentence().hashCode();
 //    }
 
-    public Collection<Recording> getRecords() {
-        if (records == null) return Collections.EMPTY_LIST;
-        return records.values();
-    }
+
 
     @Override
     public final boolean equals(final Object obj) {
@@ -220,130 +164,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     }
 
 
-
-    /** returns the record associated with a termlink, or null if none exists (or if no records exist) */
-    public Recording get(final TermLink termLink) {
-        final Term bTerm = termLink.getTarget();
-
-        if (records == null) {
-            return null;
-        }
-
-        Recording r = records.get(bTerm);
-        if (r == null) {
-            return null;
-        }
-        else {
-            return r;
-        }
-    }
-
-    public void put(final TermLink t, final float now) {
-        put(new Recording(t, now));
-    }
-
-    public void put(final Recording r, final float now) {
-        //if the time has changed, then actually insert it.
-        //this works because if the recordlink has been removed by
-        //the collection, it will have its time set to NaN
-        if (r.setTime(now))
-            put(r);
-    }
-
-    protected void put(final Recording r) {
-        if (records == null)
-            records = newRecordSet();
-
-        records.put(r.getTerm(), r);
-    }
-
-//    /**
-//     * To check whether a TaskLink should use a TermLink, return false if they
-//     * interacted recently
-//     * <p>
-//     * called in TermLinkBag only
-//     *
-//     * @param termLink    The TermLink to be checked
-//     * @param currentTime The current time
-//     * @return (float) the novelty of the termlink, 0 = entirely non-novel (already processed in this cycle), 1 = totally novel (as far as its limited memory remembers)
-//     */
-//    public float novel(final TermLink termLink, final long currentTime, int noveltyHorizon, int recordLength) {
-//
-//        final Term bTerm = termLink.getTarget().getTerm();
-//        if (bTerm.equals(targetTask.sentence.term)) {
-//            return 0;
-//        }
-//
-//        if ((lastFireTime == -1) || (noveltyHorizon == 0)) return 1; //noveltyHorizon==0: everything novel
-//
-//        if (records == null) {
-//            //records = new ArrayDeque(recordLength);
-//            //records = new LinkedList();
-//            records = new RecordingList(recordLength);
-//        }
-//
-//
-//
-//        final long minTime = lastFireTime - noveltyHorizon;
-//
-//        long newestRecordTime =
-//                (records.isEmpty()) ?
-//                        currentTime : records.getLast().time;
-//
-//        long age = 0;
-//
-//        if (newestRecordTime <= minTime) {
-//            //just erase the entire record list because its newest entry is older than the noveltyHorizon
-//            //faster than iterating and removing individual entries (in the following else condition)
-//            records.clear();
-//        } else {
-//            //iterating the FIFO deque from oldest (first) to newest (last)
-//            //  this awkward for-loop with the CircularArrayList replaced an ArrayDeque version because ArrayDeque does not provide indexed access and this required using its Iterator which involved an allocation.  this should be less expensive and it is a critical section
-//            int size = records.size();
-//            for (int i = 0; i < size; i++) {
-//                Recording r = records.get(i);
-//
-//                if (termLink.termLinkEquals(r.link, true)) {
-//                    records.removeFast(i);
-//                    return r;
-//
-////                    if (minTime < rtime) {
-////                        //too recent, not novel
-////                        return false;
-////                    } else {
-////                        //happened long enough ago that we have forgotten it somewhat, making it seem more novel
-////                        records.removeFast(i);
-////                        addRecord(r.setTime(currentTime));
-////                        return true;
-////                    }
-//                } else if (minTime > rtime) {
-//                    //remove a record which will not apply to any other tlink
-//
-//                    records.remove(i);
-//                    i--; //skip back one so the next iteration will be at the element after the one removed
-//                    size--;
-//                }
-//            }
-//
-//
-//            //keep recordedLinks queue a maximum finite size
-//            int toRemove = (records.size() + 1) - recordLength;
-//            for (int i = 0; i < toRemove; i++)
-//                records.removeFirstFast();
-//
-//        }
-//
-//        // add knowledge reference to recordedLinks
-//        records.add(termLink, currentTime);
-//
-//
-//        return n;
-//    }
-
-//    protected void addRecord(Recording r) {
-//        records.addLast(r);
-//    }
-
     @Override
     public String toString() {
         return name().toString();
@@ -366,10 +186,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
     @Override
     public void delete() {
-        if (records != null) {
-            records.clear();
-            records = null;
-        }
+//        if (records != null) {
+//            records.clear();
+//            records = null;
+//        }
     }
 
     @Override

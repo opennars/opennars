@@ -11,6 +11,8 @@ import nars.link.TermLink;
 import nars.task.Sentence;
 import nars.term.Term;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Applies a BloomFilter as a lossy short-term memory
  * to decide the novelty of termlink/tasklink pairs
@@ -20,68 +22,73 @@ public class BloomPremiseSelector extends DirectPremiseSelector implements Funne
 
     BloomFilter<Pair<Term,Sentence>> history;
 
-    final double maxFPP = 0.15;
-    final int attempts = 12;
+    final double maxFPP = 0.1;
+    static final int attempts = 12;
 
-    final float allowedRepeatRate = 0; //TODO allow a premise which is suspected of being non-novel to be applied anyway
+    final int expectedMemorySize = 24;
+    final double desiredFPP = 0.02;
+
+    //final float allowedRepeatRate = 0; //TODO allow a premise which is suspected of being non-novel to be applied anyway
 
     private int novel;
     private int nonnovel;
 
+    /** clear the bloom filter when it becomes too dirty (too high FPP) */
+    protected void reset() {
+        history = BloomFilter.create(this, expectedMemorySize, desiredFPP);
+        novel = nonnovel = 0;
+    }
+
     public BloomPremiseSelector() {
-        super();
+        super(new AtomicInteger(attempts));
         reset();
     }
 
     @Override
-    public TermLink nextTermLink(Concept c, TaskLink taskLink) {
+    public boolean validTermLinkTarget(Concept c, TaskLink taskLink, TermLink t) {
+        if (!super.validTermLinkTarget(c, taskLink, t)) return false;
 
-        int a = attempts;
-        while (a-- > 0) {
-            TermLink t = super.nextTermLink(c, taskLink);
+        Pair<Term, Sentence> s = Tuples.pair(t.getTerm(), taskLink.getTask());
 
-            if (!PremiseSelector.validTermLinkTarget(taskLink, t))
-                continue;
+        final boolean mightContain = history.mightContain(s);
 
-            Pair<Term, Sentence> s = Tuples.pair(t.getTerm(), taskLink.getTask());
-
-            final boolean mightContain = history.mightContain(s);
-
-            if (mightContain) {
-                nonnovel++;
-                continue;
-            }
-            else {
-
-                //System.out.println(c + " " + s + " " + mightContain + " #" + novel + "/" + nonnovel + " ~"+ history.expectedFpp());;
-
-                double fpp = history.expectedFpp();
-                if (fpp > maxFPP) {
-
-                    //System.out.println(this + " fpp limit, reset " + fpp + " with " + novel);
-                    reset();
-                }
-                history.put(s);
-                novel++;
-                return t;
-            }
+        if (mightContain) {
+            nonnovel++;
+            return false;
         }
-        return null;
+        else {
+
+            //System.out.println(c + " " + s + " " + mightContain + " #" + novel + "/" + nonnovel + " ~"+ history.expectedFpp());;
+
+            double fpp = history.expectedFpp();
+            if (fpp > maxFPP) {
+
+                //System.out.println(this + " fpp limit, reset " + fpp + " with " + novel);
+                reset();
+            }
+            history.put(s);
+            novel++;
+            return true;
+        }
     }
 
 
-    /** clear the bloom filter when it becomes too dirty (too high FPP) */
-    protected void reset() {
-        history = BloomFilter.create(this, 64, 0.005);
-        novel = nonnovel = 0;
-    }
+
 
     @Override
     public void funnel(Pair<Term, Sentence> from, PrimitiveSink into) {
+        funnelSimple(from, into);
+    }
 
+    public static void funnelSimple(Pair<Term, Sentence> from, PrimitiveSink into) {
+        into.putInt(from.getOne().hashCode()).putInt(from.getTwo().hashCode());
+    }
+
+    public static void funnelDetailed(Pair<Term, Sentence> from, PrimitiveSink into) {
         //into.putBytes(from.getOne().bytes()).put
         final Term term = from.getOne();
         final Sentence task = from.getTwo();
+
 
         into
             .putLong(term.structuralHash()).putInt(term.hashCode())

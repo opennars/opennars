@@ -6,7 +6,6 @@ import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
-import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.clock.CycleClock;
@@ -40,8 +39,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.premise.BloomPremiseSelector;
-import nars.premise.NoveltyRecordPremiseSelector;
+import nars.premise.DirectPremiseSelector;
 import nars.process.CycleProcess;
 import nars.process.concept.*;
 import nars.task.Sentence;
@@ -122,7 +120,6 @@ public class Default extends NARSeed implements ConceptBuilder {
         conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         termLinkMaxReasoned.set(termLinksPerCycle);
-        noveltyHorizon.set(0.7f/termLinksPerCycle);
 
         termLinkMaxMatched.set(3);
 
@@ -159,13 +156,12 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         //param.budgetThreshold.set(0.01f);
 
-        conceptBeliefsMax.set(13);
-        conceptGoalsMax.set(9);
-        conceptQuestionsMax.set(5);
+        conceptBeliefsMax.set(11);
+        conceptGoalsMax.set(8);
+        conceptQuestionsMax.set(4);
 
         inputsMaxPerCycle.set(1);
 
-        termLinkRecordLength.set(8);
 
 
         this.perceptThreshold.set(0.0);
@@ -424,7 +420,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
 
     /** rank function used for concept belief and goal tables */
-    public BeliefTable.RankBuilder getConceptRanking() {
+    public BeliefTable.RankBuilder getConceptBeliefGoalRanking() {
         return (c, b) ->
                 BeliefTable.BeliefConfidenceOrOriginality;
                 //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
@@ -437,17 +433,16 @@ public class Default extends NARSeed implements ConceptBuilder {
         return policy;
     }
 
-    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
         return new DefaultConcept(t, b,
                 taskLinks, termLinks,
-                getConceptRanking(),
-                new NoveltyRecordPremiseSelector(m),
-                //new BloomPremiseSelector(),
-                m );
+                getConceptBeliefGoalRanking(),
+                new DirectPremiseSelector(termLinkMaxMatched),
+                mem
+        );
     }
     
     public Bag<Term, Concept> newConceptBag() {
-        //return new ChainBag(rng, getActiveConcepts());
         return new LevelBag((int)Math.sqrt(getActiveConcepts()), getActiveConcepts());
     }
 

@@ -10,7 +10,7 @@ import nars.link.TermLink;
 public interface PremiseSelector {
 
     /** a general condition */
-    public static boolean validTermLinkTarget(TaskLink c, TermLink t) {
+    default public boolean validTermLinkTarget(Concept concept, TaskLink c, TermLink t) {
         return !(t.getTarget().equals(c.getTerm()));
     }
 

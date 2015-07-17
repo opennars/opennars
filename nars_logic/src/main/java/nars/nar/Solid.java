@@ -1,13 +1,12 @@
 package nars.nar;
 
+import com.gs.collections.impl.list.mutable.FastList;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
-import nars.bag.impl.LevelBag;
-import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
@@ -17,7 +16,8 @@ import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.premise.NoveltyRecordPremiseSelector;
+import nars.premise.BloomPremiseSelector;
+import nars.premise.DirectPremiseSelector;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -25,6 +25,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskComparator;
 import nars.term.Term;
+import nars.util.sort.ArraySortedIndex;
 
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -70,7 +71,6 @@ public class Solid extends Default implements CycleProcess {
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
         duration.set(1);
-        noveltyHorizon.set(0.8f);
         termLinkForgetDurations.set(1);
         taskLinkForgetDurations.set(1);
         conceptForgetDurations.set(1);
@@ -82,8 +82,10 @@ public class Solid extends Default implements CycleProcess {
 
 
 
-        //concepts = new CurveBag(rng, activeConcepts);
-        concepts = new ChainBag(rng, activeConcepts);
+        concepts = new CurveBag(rng, activeConcepts, new CurveBag.Power6BagCurve(),
+                new ArraySortedIndex<>(activeConcepts, new FastList<>(activeConcepts)/*.asSynchronized()*/)
+        );
+        //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
         //concepts = new LevelBag(32, activeConcepts);
@@ -258,18 +260,20 @@ public class Solid extends Default implements CycleProcess {
         this.maxTasksPerCycle = maxTasksPerCycle;
     }
 
-    @Override
-    public Concept newConcept(Term t, Budget b, Memory m) {
-        Bag<Sentence, TaskLink> taskLinks =
-                new ChainBag(rng, getConceptTaskLinks());
-                //new CurveBag(rng, getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks =
-                //new ChainBag(rng, getConceptTermLinks());
-                new CurveBag(rng, getConceptTermLinks());
-
-        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), new NoveltyRecordPremiseSelector(m), m);
-        //return super.newConcept(b, t, m);
-    }
+//    @Override
+//    public Concept newConcept(Term t, Budget b, Memory m) {
+//        super.newConcept()
+//        Bag<Sentence, TaskLink> taskLinks =
+//                new CurveBag(rng, getConceptTaskLinks());
+//
+//        Bag<TermLinkKey, TermLink> termLinks =
+//                //new ChainBag(rng, getConceptTermLinks());
+//                new CurveBag(rng, getConceptTermLinks());
+//
+//        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptBeliefGoalRanking(),
+//                new DirectPremiseSelector(), m);
+//        //return super.newConcept(b, t, m);
+//    }
 
 
     /*

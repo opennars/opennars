@@ -13,7 +13,9 @@ import java.util.Collection;
 
 public class NAL4Test extends JavaNALTest {
 
-    public NAL4Test(NARSeed b) { super(b); }
+    private final NARSeed seed;
+
+    public NAL4Test(NARSeed b) { super(b); this.seed = b; }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
@@ -52,7 +54,7 @@ public class NAL4Test extends JavaNALTest {
         //TextOutput.out(nar);
 
 
-        long time = 2500;
+        long time = seed instanceof Solid ? 100 : 2500;
 
         float minConf = 0.66f;
         n.believe("<0 --> num>", 1.0f, 0.9f);
@@ -82,11 +84,15 @@ public class NAL4Test extends JavaNALTest {
         long time;
         final float finalConf = 0.73f;
 
-        if (n.nal() <= 6) {
-            time = 75; //less time for the nal6 config
+        if (seed instanceof Solid) {
+            time = 50;
         }
         else {
-            time = 800;
+            if (n.nal() <= 6) {
+                time = 75; //less time for the nal6 config
+            } else {
+                time = 800;
+            }
         }
 
         n.believe(" <0 --> n>", 1.0f, 0.9f);

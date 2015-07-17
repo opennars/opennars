@@ -18,9 +18,11 @@ public class TruthTest {
 
         Truth aEqualWithinThresh = new DefaultTruth(1.0f- DefaultTruth.DEFAULT_TRUTH_EPSILON /2f, 0.9f);
         assertEquals(a, aEqualWithinThresh);
+        assertEquals(a.hashCode(), aEqualWithinThresh.hashCode());
 
         Truth aNotWithinThresh = new DefaultTruth(1.0f - DefaultTruth.DEFAULT_TRUTH_EPSILON *1f, 0.9f);
         assertNotEquals(a, aNotWithinThresh);
+        assertNotEquals(a.hashCode(), aNotWithinThresh.hashCode());
 
     }
 
@@ -30,10 +32,13 @@ public class TruthTest {
 
         Truth aEqualWithinThresh = new DefaultTruth(1.0f, 0.5f- DefaultTruth.DEFAULT_TRUTH_EPSILON /2f);
         assertEquals(a, aEqualWithinThresh);
+        assertEquals(a.hashCode(), aEqualWithinThresh.hashCode());
 
         Truth aNotWithinThresh = new DefaultTruth(1.0f, 0.5f - DefaultTruth.DEFAULT_TRUTH_EPSILON *1f);
         assertNotEquals(a, aNotWithinThresh);
+        assertNotEquals(a.hashCode(), aNotWithinThresh.hashCode());
     }
+
 
 //    @Test public void testEpsilon() {
 //        float e = 0.1f;

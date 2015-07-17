@@ -12,7 +12,7 @@ import nars.cycle.experimental.AntCore;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.premise.NoveltyRecordPremiseSelector;
+import nars.premise.BloomPremiseSelector;
 import nars.process.CycleProcess;
 import nars.task.Sentence;
 import nars.term.Term;
@@ -71,7 +71,7 @@ public class Neuromorphic extends Curve {
                     taskLinkForgetDurations, getConceptTaskLinks());
             DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(m,
                     termLinkForgetDurations, getConceptTermLinks());
-            return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), new NoveltyRecordPremiseSelector(m), m);
+            return new DefaultConcept(t, b, taskLinks, termLinks, getConceptBeliefGoalRanking(), new BloomPremiseSelector(), m);
         }
         else {
             return super.newConcept(t, b, m);

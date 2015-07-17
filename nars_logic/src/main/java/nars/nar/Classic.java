@@ -9,7 +9,7 @@ import nars.concept.DefaultConcept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.premise.NoveltyRecordPremiseSelector;
+import nars.premise.BloomPremiseSelector;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -64,7 +64,7 @@ public class Classic extends Default {
         Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
 
-        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), new NoveltyRecordPremiseSelector(m), m);
+        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptBeliefGoalRanking(), new BloomPremiseSelector(), m);
     }
 
 

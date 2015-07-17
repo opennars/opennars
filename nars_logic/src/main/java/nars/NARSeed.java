@@ -37,23 +37,6 @@ abstract public class NARSeed extends Param {
     }
 
 
-//    /** initial runtime parameters */
-//    public Param getParam() {
-//        return param;
-//    }
-//    
-//    public Bag<Task<Term>,Sentence<Term>> getNovelTaskBag() {
-//        return novelTaskBag;
-//    }
-//    
-//    public Attention getAttention() {
-//        return attention;
-//    }
-//    
-//    public ConceptBuilder getConceptBuilder() {
-//        return conceptBuilder;
-//    }
-
     protected Memory newMemory(Param narParam, LogicPolicy policy) {
         return new Memory(rng, getMaximumNALLevel(), narParam, policy, newIndex());
     }

@@ -17,7 +17,6 @@ import nars.link.TermLinkKey;
 import nars.nar.Default;
 import nars.nar.Solid;
 import nars.premise.BloomPremiseSelector;
-import nars.premise.NoveltyRecordPremiseSelector;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
 import nars.task.Sentence;
@@ -40,11 +39,6 @@ public class SomeRovers {
     public static NARSeed newSolid() {
         NARSeed d = new Solid(32, 599, 1, 1, 1, 3 ) {
 
-            protected void initDerivationFilters() {
-                final float DERIVATION_PRIORITY_LEAK=0.6f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                final float DERIVATION_DURABILITY_LEAK=0.7f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                getLogicPolicy().derivationFilters.add(new MultiplyDerivedBudget(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
-            }
 
         }.setInternalExperience(null).setClock(clock = new SimulatedClock());
 
@@ -64,24 +58,18 @@ public class SomeRovers {
     public static NARSeed newDefault() {
         NARSeed d = new Default(1024, 32, 3) {
 
-//            protected void initDerivationFilters() {
-//                final float DERIVATION_PRIORITY_LEAK=0.8f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-//                final float DERIVATION_DURABILITY_LEAK=0.8f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-//                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+
+//            @Override
+//            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
+//                return new DefaultConcept(t, b,
+//                        taskLinks, termLinks,
+//                        getConceptBeliefGoalRanking(),
+//                        new BloomPremiseSelector(),
+//                        mem);
 //            }
 
+        }.setInternalExperience(null).setClock(clock = new SimulatedClock());
 
-            @Override
-            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
-                return new DefaultConcept(t, b,
-                        taskLinks, termLinks,
-                        getConceptRanking(),
-                        new BloomPremiseSelector(),
-                        m );
-
-            }
-        }.setInternalExperience(null).setClock(clock = new SimulatedClock())
-        ;
 
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
 

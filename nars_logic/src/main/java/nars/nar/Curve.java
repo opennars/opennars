@@ -3,14 +3,13 @@ package nars.nar;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
-import nars.bag.impl.CurveBag.FairPriorityProbabilityCurve;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.premise.NoveltyRecordPremiseSelector;
+import nars.premise.BloomPremiseSelector;
 import nars.process.CycleProcess;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -63,7 +62,7 @@ public class Curve extends Default {
         Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve);
         Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve);
         
-        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), new NoveltyRecordPremiseSelector(m), m);
+        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptBeliefGoalRanking(), new BloomPremiseSelector(), m);
     }
     
 }

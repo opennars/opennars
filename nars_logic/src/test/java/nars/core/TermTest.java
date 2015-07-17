@@ -234,7 +234,7 @@ public class TermTest {
     @Test
     public void invalidTermIndep() {
 
-        String t = "<$1 --> (~,{place4},$1)>";
+        String t = "<$1-->(~,{place4},$1)>";
         NAR n = new NAR(new Default());
 
 
@@ -265,23 +265,23 @@ public class TermTest {
         assertEquals(null, i);
 
 
-        try {
-            Compound forced = (Compound) n.term("<a --> b>");
-            assertTrue(true);
+//        try {
+            Compound forced = n.term("<a --> b>");
+            assertNotNull(forced);
 
             forced.term[0] = subj;
             forced.term[1] = pred;
             forced.invalidate();
 
-            assertEquals(t, forced.toString());
+            assertEquals(t, forced.toStringCompact());
 
             Term cloned = forced.clone();
             assertEquals(null, cloned);
 
 
-        } catch (Throwable ex) {
-            assertTrue(ex.toString(), false);
-        }
+//        } catch (Throwable ex) {
+//            assertTrue(ex.toString(), false);
+//        }
     }
 
 

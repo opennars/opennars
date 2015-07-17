@@ -162,18 +162,7 @@ public abstract class Param implements Serializable {
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptGoalsMax = new AtomicInteger();
 
-    /**
-     * this value is multiplied by the size of the termlink bag to determine
-     * how long ago a termlink will be considered completely novel for pairing
-     * with a tasklink during fire,
-     *
-     * a value of 1.0 then means that it should take N cycles before a term
-     * is considered completely novel to a Tasklink.
-     * */
-    public AtomicDouble noveltyHorizon = new AtomicDouble();
 
-    /** probability that a completely non-novel termlink/tasklink pair (older than novelty horizon) will be selected */
-    public static float NOVELTY_FLOOR = 0.05f;
 
 
     /** Reliance factor, the empirical confidence of analytical truth.

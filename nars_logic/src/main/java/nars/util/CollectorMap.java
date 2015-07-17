@@ -73,7 +73,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
                 throw new RuntimeException(key + " removed from index but not from items list");
             if (removed!=e)
                 throw new RuntimeException(key + " removed " + e + " but item removed was " + removed);
-            return null;
+            return removed;
         }
 
         return e;

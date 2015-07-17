@@ -23,9 +23,7 @@ public interface TLink<T extends Termed> extends Budget.Budgetable, Serializable
         if (t.getBudget().isNew()) {
             out.print(" (new) ");
         }
-        if (t instanceof TaskLink) {
-            out.print(((TaskLink)t).getRecords());
-        }
+
     }
 
     /** accessor for getIndex which will throw an exception if the index is not available for use as a figure value (0,1) */
