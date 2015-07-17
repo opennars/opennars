@@ -1,9 +1,8 @@
 package nars.meta;
 
-import nars.nal.Premise;
+import nars.premise.Premise;
 import nars.nal.nal4.Product;
 import nars.task.Task;
-import nars.term.Term;
 
 /**
  * A rule which produces a Task

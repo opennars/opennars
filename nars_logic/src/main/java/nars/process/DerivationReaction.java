@@ -1,10 +1,8 @@
 package nars.process;
 
 import nars.Memory;
-import nars.nal.Premise;
+import nars.premise.Premise;
 import nars.task.Task;
-
-import java.util.List;
 
 /** called after a ConceptProcess has derived Tasks
  *  these tasks have not been input to memory yet, and

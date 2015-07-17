@@ -9,6 +9,7 @@ import nars.link.*;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.premise.PremiseSelector;
 import nars.process.NAL;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
@@ -18,10 +19,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static nars.budget.BudgetFunctions.divide;
 import static nars.nal.nal1.LocalRules.trySolution;
@@ -71,6 +69,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         @Override public int compare(Task task, Task t1) {  return 0;        }
         @Override public int hashCodeOf(Task task) { return 0; }
     };
+    private final PremiseSelector premiseSelector;
 
 
     /**
@@ -82,12 +81,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, final Memory memory) {
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, PremiseSelector ps, final Memory memory) {
         super(b);
 
 
         this.term = term;
         this.memory = memory;
+        this.premiseSelector = ps;
 
         this.creationTime = memory.time();
         this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
@@ -953,6 +953,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     protected void onActive() {
 
+    }
+
+    @Override
+    public TermLink nextTermLink(TaskLink taskLink) {
+        return premiseSelector.nextTermLink(this, taskLink);
     }
 
 }

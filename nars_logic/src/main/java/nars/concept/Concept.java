@@ -147,7 +147,15 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-     public TermLinkBuilder getTermLinkBuilder();
+    public TermLinkBuilder getTermLinkBuilder();
+
+
+    /** selects the next termlink for a given tasklink with this concept.
+     *  may return null if it could not decide on one, or there was none
+     *  it wants to select.
+     */
+    public TermLink nextTermLink(TaskLink taskLink);
+
 
 
     public enum State {

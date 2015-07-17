@@ -7,17 +7,12 @@ package nars.process;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
-import nars.Param;
-import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.link.TermLinkKey;
-import nars.nal.Premise;
+import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
-
-import java.util.Random;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
@@ -29,7 +24,8 @@ import java.util.Random;
 public class ConceptProcess extends NAL implements Premise {
 
     protected final TaskLink currentTaskLink;
-    protected final Concept currentConcept;
+    protected final Concept concept;
+    private final int termlinksToReason;
 
     protected TermLink currentTermLink;
 
@@ -38,27 +34,21 @@ public class ConceptProcess extends NAL implements Premise {
 
     //essentially a cache for a concept lookup
     private transient Concept currentTermLinkConcept;
-    final TermLinkNoveltyFilter termLinkNovel = new TermLinkNoveltyFilter();
 
 
-    private final int termLinksToFire;
+
     private long now;
 
-
-    public ConceptProcess(Memory memory, Concept concept, TaskLink taskLink) {
-        this(memory, concept, taskLink, memory.param.termLinkMaxReasoned.get());
-    }
-
-    public ConceptProcess(Memory memory, Concept concept, TaskLink taskLink, int termLinkCount) {
+    public ConceptProcess(Memory memory, Concept concept, TaskLink taskLink, int termlinksFired) {
         super(memory, taskLink.getTask());
 
-
         this.currentTaskLink = taskLink;
-        this.currentConcept = concept;
+        this.concept = concept;
+        this.termlinksToReason = termlinksFired;
+    }
 
-        this.termLinksToFire = termLinkCount;
-
-
+    public ConceptProcess(Memory memory, Concept concept, TaskLink taskLink) {
+        this(memory, concept, taskLink, memory.param.termLinkMaxReasoned.intValue());
     }
 
 
@@ -68,7 +58,7 @@ public class ConceptProcess extends NAL implements Premise {
      */
     @Override
     public final Concept getConcept() {
-        return currentConcept;
+        return concept;
     }
 
 
@@ -110,11 +100,10 @@ public class ConceptProcess extends NAL implements Premise {
         if (numTermLinks == 0)
             return;
 
-        final float noveltyHorizon = memory.param.noveltyHorizon.floatValue();
 
-        int termLinkSelectionAttempts = termLinksToFire;
 
-        currentConcept.updateTermLinks();
+
+        concept.updateTermLinks();
 
 
 
@@ -124,15 +113,14 @@ public class ConceptProcess extends NAL implements Premise {
          */
         float cyclesSincePrevious = memory.timeSinceLastCycle();
 
-        float subCycle = (cyclesSincePrevious) / (termLinkSelectionAttempts);
+        int termLinkSelectionAttempts = termlinksToReason;
 
         int termLinksSelected = 0;
-        float n = now;
 
         while (termLinkSelectionAttempts-- > 0) {
 
 
-           final TermLink bLink = nextTermLink(noveltyHorizon, termLinksToFire);
+           final TermLink bLink = concept.nextTermLink(getTaskLink());
 
             if (bLink!=null) {
 
@@ -141,7 +129,6 @@ public class ConceptProcess extends NAL implements Premise {
 
                 processTerm(bLink);
                 termLinksSelected++;
-                n += subCycle;
             }
 
 
@@ -156,153 +143,10 @@ public class ConceptProcess extends NAL implements Premise {
         }*/
     }
 
-    final static float minNovelty = Param.NOVELTY_FLOOR;
-
-
-    public final class TermLinkNoveltyFilter  {
-
-        private float noveltyHorizon;
-        private int numTermLinks; //total # of tasklinks in the bag
-        private int termsLinkBeingFired;
-
-        private float noveltyDuration;
-
-        /** now is float because it is calculated as the fraction of current time + 1/(termlinks matched), thus including the subcycle */
-        public void set(final float noveltyHorizon, final int numTermLinksInBag, final int termsLinkBeingFired) {
-            this.noveltyHorizon = noveltyHorizon;
-            this.numTermLinks = numTermLinksInBag;
-            this.termsLinkBeingFired = termsLinkBeingFired;
-
-            /** proportional to an amount of cycles it should take a fired termlink
-             * to be considered novel.
-             * there needs to be at least 2 termlinks to use the novelty filter.
-             * if there is one termlink, there is nothing to prioritize it against.
-             * */
-            this.noveltyDuration = (noveltyHorizon *
-                    Math.max(0, numTermLinksInBag-1));
-        }
-
-
-        public boolean test(TermLink termLink, Random rng) {
-            if (noveltyDuration == 0) {
-                //this will happen in the case of one termlink,
-                //in which case there is no other option so duration
-                //will be zero
-                return true;
-            }
-
-            final TaskLink taskLink = currentTaskLink;
-
-            if (!taskLink.valid(termLink))
-                return false;
 
 
 
 
-            TaskLink.Recording r = taskLink.get(termLink);
-            if (r == null) {
-                taskLink.put(termLink, now);
-                return true;
-            }
-            else {
-                boolean result;
-
-                //determine age (non-novelty) factor
-                float lft = taskLink.getLastFireTime();
-                if (lft == -1) {
-                    //this is its first fire
-                    result = true;
-                }
-                else {
-
-                    float timeSinceLastFire = lft - r.getTime();
-                    float factor = noveltyFactor(timeSinceLastFire, minNovelty, noveltyDuration);
-
-                    if (factor <= 0) {
-                        result = false;
-                    }
-                    else if (factor >= 1f) {
-                        result = true;
-                    } else {
-                        float f = rng.nextFloat();
-                        result = (f < factor);
-                    }
-                }
-
-
-                if (result) {
-                    taskLink.put(r, now);
-                    return true;
-                }
-                else {
-                    return false;
-                }
-
-            }
-
-        }
-
-
-    }
-
-    public static float noveltyFactor(final float timeSinceLastFire, final float minNovelty, final float noveltyDuration) {
-
-
-        if (timeSinceLastFire <= 0)
-            return minNovelty;
-
-        float n = Math.max(0,
-                Math.min(1f,
-                        timeSinceLastFire /
-                                noveltyDuration) ) ;
-
-
-        n = (minNovelty) + (n * (1.0f - minNovelty));
-
-        return n;
-
-    }
-
-    /**
-     * Replace default to prevent repeated logic, by checking TaskLink
-     *
-     * @param taskLink The selected TaskLink
-     * @param time The current time
-     * @return The selected TermLink
-     */
-    TermLink nextTermLink(final float noveltyHorizon, int termLinksBeingFired) {
-
-        final int links = currentConcept.getTermLinks().size();
-        if (links == 0) return null;
-
-        int toMatch = memory.param.termLinkMaxMatched.get();
-
-        //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
-        if (links == 1) toMatch = 1;
-
-        Bag<TermLinkKey, TermLink> tl = currentConcept.getTermLinks();
-
-        termLinkNovel.set(noveltyHorizon, tl.size(), termLinksBeingFired);
-
-
-        Random rng = memory.random;
-        for (int i = 0; (i < toMatch); i++) {
-
-            final TermLink termLink = tl.forgetNext();
-
-            if (termLink != null) {
-                if (termLinkNovel.test(termLink, rng)) {
-                    return termLink;
-                }
-            }
-            else {
-                break;
-            }
-
-        }
-
-        return null;
-    }
 
 
     /**
@@ -320,7 +164,7 @@ public class ConceptProcess extends NAL implements Premise {
     }
 
     public void run() {
-        if (!currentConcept.isActive()) return;
+        if (!concept.isActive()) return;
 
         super.run();
 
@@ -337,10 +181,10 @@ public class ConceptProcess extends NAL implements Premise {
 
         final long now = this.now = memory.time();
 
-        currentConcept.setUsed(now);
+        concept.setUsed(now);
         currentTaskLink.setUsed(now);
 
-        currentConcept.getTermLinks().setForgetNext(memory.param.termLinkForgetDurations, memory);
+        concept.getTermLinks().setForgetNext(memory.param.termLinkForgetDurations, memory);
 
         processTask();
 
@@ -417,7 +261,7 @@ public class ConceptProcess extends NAL implements Premise {
     @Override
     public String toString() {
         return new StringBuilder()
-        .append("ConceptProcess[").append(currentConcept.toString()).append(':').append(currentTaskLink).append(',').append(currentTermLink).append(']')
+        .append("ConceptProcess[").append(concept.toString()).append(':').append(currentTaskLink).append(',').append(currentTermLink).append(']')
         .toString();
     }
 

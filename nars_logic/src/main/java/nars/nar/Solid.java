@@ -17,6 +17,7 @@ import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.premise.NoveltyRecordPremiseSelector;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -265,7 +266,7 @@ public class Solid extends Default implements CycleProcess {
                 //new ChainBag(rng, getConceptTermLinks());
                 new CurveBag(rng, getConceptTermLinks());
 
-        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), m);
+        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptRanking(), new NoveltyRecordPremiseSelector(m), m);
         //return super.newConcept(b, t, m);
     }
 

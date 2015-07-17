@@ -8,7 +8,7 @@ import nars.concept.Concept;
 import nars.meter.MemoryBudgetState;
 import nars.meter.NARMetrics;
 import nars.meter.NARTrace;
-import nars.nal.Premise;
+import nars.premise.Premise;
 import nars.nar.Default;
 import nars.process.DerivationReaction;
 import nars.task.Task;

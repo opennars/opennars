@@ -1,4 +1,4 @@
-package nars.nal;
+package nars.premise;
 
 import nars.concept.Concept;
 import nars.link.TaskLink;
