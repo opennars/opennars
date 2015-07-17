@@ -26,8 +26,8 @@ public class SolidTest {
 
         Global.DEBUG = false;
 
-        final int numConcepts = 256;
-        Solid s = new Solid(1, numConcepts, 1, 1, 1, 1) {
+        final int numConcepts = 512;
+        Solid s = new Solid(1, numConcepts, 1, 1, 1, 3) {
 
         };
 

@@ -2,15 +2,27 @@ package nars.rover.run;
 
 import automenta.vivisect.Video;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
+import nars.bag.Bag;
+import nars.budget.Budget;
 import nars.clock.SimulatedClock;
+import nars.concept.Concept;
+import nars.concept.DefaultConcept;
 import nars.gui.NARSwing;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.link.TermLinkKey;
 import nars.nar.Default;
 import nars.nar.Solid;
+import nars.premise.BloomPremiseSelector;
+import nars.premise.NoveltyRecordPremiseSelector;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
+import nars.task.Sentence;
 import nars.task.filter.MultiplyDerivedBudget;
+import nars.term.Term;
 
 import javax.swing.*;
 
@@ -50,7 +62,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        NARSeed d = new Default(2000, 64, 4) {
+        NARSeed d = new Default(256, 64, 4) {
 
 //            protected void initDerivationFilters() {
 //                final float DERIVATION_PRIORITY_LEAK=0.8f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
@@ -58,6 +70,16 @@ public class SomeRovers {
 //                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
 //            }
 
+
+            @Override
+            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+                return new DefaultConcept(t, b,
+                        taskLinks, termLinks,
+                        getConceptRanking(),
+                        new BloomPremiseSelector(),
+                        m );
+
+            }
         }.setInternalExperience(null).setClock(clock = new SimulatedClock())
         ;
 

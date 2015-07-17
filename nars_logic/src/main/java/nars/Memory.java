@@ -462,7 +462,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
             }
 
             //this test was cycle.size() previously:
-            if (questionConcepts.size() > concepts.size()) {
+            if (questionConcepts.size() > getControl().size()) {
                 throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + getControl().size());
             }
         }

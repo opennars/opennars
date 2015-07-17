@@ -154,6 +154,9 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }
 
 
+    public char getPunctuation() {
+        return punctuation;
+    }
 
     
     /**
@@ -172,7 +175,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }
 
     /** compares all sentence fields, after comparing hash (which includes them all) */
-    private boolean equivalentTo(final Sentence that) {
+    private final boolean equivalentTo(final Sentence that) {
         //if (that.hashCode()!=hashCode()) return false;
         return equivalentTo(that, true, true, true, true, false);
     }

@@ -570,9 +570,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
 
-    public char getPunctuation() {
-        return punctuation;
-    }
 
 
     /**

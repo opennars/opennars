@@ -125,11 +125,11 @@ public class NoveltyRecordPremiseSelector implements PremiseSelector {
      * @param time     The current time
      * @return The selected TermLink
      */
-    public TermLink nextTermLink(Concept concept, TaskLink taskLink) {
+    public TermLink nextTermLink(Concept c, TaskLink taskLink) {
 
         final float noveltyHorizon = memory.param.noveltyHorizon.floatValue();
 
-        final int links = concept.getTermLinks().size();
+        final int links = c.getTermLinks().size();
         if (links == 0) return null;
 
         int toMatch = memory.param.termLinkMaxMatched.get();
@@ -137,7 +137,7 @@ public class NoveltyRecordPremiseSelector implements PremiseSelector {
         //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
         if (links == 1) toMatch = 1;
 
-        Bag<TermLinkKey, TermLink> tl = concept.getTermLinks();
+        Bag<TermLinkKey, TermLink> tl = c.getTermLinks();
 
         set(noveltyHorizon, tl.size());
 

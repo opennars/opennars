@@ -82,8 +82,8 @@ public class Solid extends Default implements CycleProcess {
 
 
 
-        concepts = new CurveBag(rng, activeConcepts);
-        //concepts = new ChainBag(rng, activeConcepts);
+        //concepts = new CurveBag(rng, activeConcepts);
+        concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
         //concepts = new LevelBag(32, activeConcepts);
@@ -210,6 +210,7 @@ public class Solid extends Default implements CycleProcess {
 
     @Override
     public void reset(Memory memory, Perception perception) {
+
         tasks.clear();
 
         concepts.clear();

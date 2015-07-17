@@ -14,12 +14,13 @@ import java.util.Deque;
 import java.util.function.Predicate;
 
 
-/** a central reasoning policy that defines processes performed during and between each memory cycle.*/
+/** a central reasoning policy controller that defines processes performed during and between each memory cycle.*/
 public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plugin */ {
 
 
     boolean onTask(Task t);
 
+    /** number of concepts active in this controller */
     int size();
 
 

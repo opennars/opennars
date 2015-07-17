@@ -106,9 +106,8 @@ public final class StructuralRules {
         if (content == null)
             return;
         
-        Sentence sentence = nal.getTask().sentence;
 
-        AnalyticTruth truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
+        AnalyticTruth truth = TruthFunctions.deduction(nal.getTask().getTruth(), nal.memory.param.reliance.floatValue());
         if (truth!=null) {
             Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
             nal.deriveSingle(content, truth, budget);
