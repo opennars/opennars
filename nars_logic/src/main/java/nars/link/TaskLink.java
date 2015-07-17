@@ -180,11 +180,14 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     public final boolean equals(final Object obj) {
         //if (obj == this) return true;
         //return false;
-        throw new RuntimeException("tasklinks should be compared by their sentences, not directly");
-//        if (obj == this) return true;
-//        if (obj instanceof TaskLink) {
-//            TaskLink t = (TaskLink) obj;
-//            return getSentence().equals(t.getSentence());
+        //throw new RuntimeException("tasklinks should be compared by their sentences, not directly");
+
+        if (obj == this) return true;
+        if (obj instanceof TaskLink) {
+            TaskLink t = (TaskLink) obj;
+            return getSentence().equals(t.getSentence());
+        }
+        return false;
 //
 //            /*if (Global.TASK_LINK_UNIQUE_BY_INDEX)
 //                return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
@@ -216,9 +219,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         this.lastFireTime = now;
     }
 
-    public boolean valid(TermLink t) {
-        return !(t.getTarget().equals(getTerm()));
-    }
+
 
     /** returns the record associated with a termlink, or null if none exists (or if no records exist) */
     public Recording get(final TermLink termLink) {

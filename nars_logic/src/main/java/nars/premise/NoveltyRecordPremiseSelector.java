@@ -56,9 +56,8 @@ public class NoveltyRecordPremiseSelector implements PremiseSelector {
             return true;
         }
 
-        if (!taskLink.valid(termLink))
+        if (!PremiseSelector.validTermLinkTarget(taskLink, termLink))
             return false;
-
 
         TaskLink.Recording r = taskLink.get(termLink);
         if (r == null) {

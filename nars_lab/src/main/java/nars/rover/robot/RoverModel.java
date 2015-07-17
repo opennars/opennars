@@ -51,7 +51,7 @@ public class RoverModel {
 
     int mission = 0;
     public float curiosity = 0.1f;
-    int motionPeriod = 5;
+    int motionPeriod = 3;
 
 
     public final Body torso;
@@ -76,17 +76,17 @@ public class RoverModel {
     final double maxVisionInputProbability = 1.0f;
 
     //float tasteDistanceThreshold = 1.0f;
-    final static int retinaPixels = 16;
+    final static int retinaPixels = 12;
 
 
-    int retinaRaysPerPixel = 3; //rays per vision sensor
+    int retinaRaysPerPixel = 4; //rays per vision sensor
 
     float aStep = (float)(Math.PI*2f) / retinaPixels;
 
     float L = 25f; //vision distance
 
     Vec2 mouthPoint = new Vec2(3.0f, 0); //0.5f);
-    @Deprecated int distanceResolution = 10;
+    @Deprecated int distanceResolution = 6;
     float mass = 2f;
 
     double mouthArc = Math.PI/6f; //in radians

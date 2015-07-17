@@ -62,7 +62,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        NARSeed d = new Default(256, 64, 4) {
+        NARSeed d = new Default(768, 16, 4) {
 
 //            protected void initDerivationFilters() {
 //                final float DERIVATION_PRIORITY_LEAK=0.8f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
@@ -92,17 +92,19 @@ public class SomeRovers {
         d.conceptCreationExpectation.set(0);
         d.conceptBeliefsMax.set(16);
         d.conceptGoalsMax.set(12);
+        d.termLinkForgetDurations.set(4);
+        d.duration.set(5);
 
 
         return d;
     }
 
     public static void main(String[] args) {
-        Global.DEBUG = true;
-        Global.EXIT_ON_EXCEPTION = true;
+
+        Global.DEBUG = Global.EXIT_ON_EXCEPTION = false;
 
 
-        float fps = 60;
+        float fps = 90;
         boolean cpanels = true;
 
         final RoverEngine game = new RoverEngine();
@@ -119,7 +121,7 @@ public class SomeRovers {
             NARSeed d = newDefault();
             nar = new NAR(d);
 
-            int nc = 16;
+            int nc = 4;
             nar.setCyclesPerFrame(nc);
 
 

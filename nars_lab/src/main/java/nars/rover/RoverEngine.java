@@ -23,15 +23,15 @@ public class RoverEngine extends PhysicsModel {
 
 
     /* how often to input mission, in frames */
-    public int missionPeriod = 60;
+    public int missionPeriod = 30;
 
     boolean wraparound = false;
 
     public final List<RoverModel> rovers = new ArrayList();
-    final int angleResolution = 24;
+    final int angleResolution = 12;
 
 
-    PhysicsRun phy = new PhysicsRun(30, this);
+    PhysicsRun phy = new PhysicsRun(10, this);
     private long delayMS;
     private float fps;
     private boolean running = false;

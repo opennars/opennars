@@ -40,6 +40,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
+import nars.premise.BloomPremiseSelector;
 import nars.premise.NoveltyRecordPremiseSelector;
 import nars.process.CycleProcess;
 import nars.process.concept.*;
@@ -441,6 +442,7 @@ public class Default extends NARSeed implements ConceptBuilder {
                 taskLinks, termLinks,
                 getConceptRanking(),
                 new NoveltyRecordPremiseSelector(m),
+                //new BloomPremiseSelector(),
                 m );
     }
     
