@@ -54,9 +54,12 @@ public abstract class CollectorMap<K, E extends Item<K>> {
             }
             if ((removed2 != null) && (!removed2.name().equals(key))) {
                 removeKey(removed2.name());
-                return removed2;
+                removed = removed2;
+                //return removed2;
             }
         }
+
+        if (Global.DEBUG && Global.DEBUG_BAG)  size();
 
         return removed;
     }
@@ -68,6 +71,8 @@ public abstract class CollectorMap<K, E extends Item<K>> {
             E removed = removeItem(e);
             if (removed == null)
                 throw new RuntimeException(key + " removed from index but not from items list");
+            if (removed!=e)
+                throw new RuntimeException(key + " removed " + e + " but item removed was " + removed);
         }
 
         return e;

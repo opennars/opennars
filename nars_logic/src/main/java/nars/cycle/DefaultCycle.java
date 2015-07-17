@@ -214,9 +214,13 @@ public class DefaultCycle extends SequentialCycle {
      * Select a novel task to process.
      */
     protected void runNextNovelTask() {
+
         final Task task = novelTasks.pop();
-        if (task!=null)
+        if (task!=null) {
+            executingNewTasks = true;
             TaskProcess.run(memory, task);
+            executingNewTasks = false;
+        }
     }
 
 

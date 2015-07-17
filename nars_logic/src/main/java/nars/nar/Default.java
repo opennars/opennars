@@ -461,7 +461,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new CurveBag(rng, getNovelTaskBagSize());
+        //return new CurveBag(rng, getNovelTaskBagSize());
+        return new ChainBag(rng, getNovelTaskBagSize());
     }
 
 

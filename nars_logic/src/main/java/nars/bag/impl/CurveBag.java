@@ -1,5 +1,6 @@
 package nars.bag.impl;
 
+import com.google.common.collect.Sets;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
@@ -105,8 +106,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
             final E e =items.insert(i);
 
-            if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
-
             return e;
         }
     }
@@ -211,13 +210,23 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         if (Global.DEBUG) {
             int is = items.size();
             if (Math.abs(is-in) > 2) {
-                System.err.println("INDEX");
-                for (Object o : index.values()) {
-                    System.err.println(o);
-                }
-                System.err.println("ITEMS:");
-                for (Object o : items) {
-                    System.err.println(o);
+//                System.err.println("INDEX");
+//                for (Object o : index.values()) {
+//                    System.err.println(o);
+//                }
+//                System.err.println("ITEMS:");
+//                for (Object o : items) {
+//                    System.err.println(o);
+//                }
+
+                Set<E> difference = Sets.symmetricDifference(
+                        new HashSet(index.values()),
+                        new HashSet(items)
+                );
+
+                System.err.println("DIFFERENCE");
+                for (Object o : difference) {
+                    System.err.println("  " + o);
                 }
 
                 throw new RuntimeException("curvebag fault: " + in + " index, " + is + " items");
@@ -281,7 +290,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     @Override
     public E pop() {
 
-        if (size() == 0) return null; // empty bag
+        if (isEmpty()) return null; // empty bag
         return removeItem(sampler.next(this));
 
     }
@@ -290,7 +299,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     @Override
     public E peekNext() {
 
-        if (size() == 0) return null; // empty bag
+        if (isEmpty()) return null; // empty bag
         return items.get(sampler.next(this));
 
     }
@@ -407,7 +416,11 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     protected E removeItem(final int index) {
 
-        return remove( items.get(index ).name() );
+        E ii = items.get(index);
+        if (ii == null)
+            return null;
+
+        return remove( ii.name() );
 
 //        E selected = items.remove(index);
 //

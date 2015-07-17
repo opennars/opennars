@@ -1,10 +1,10 @@
 package nars.bag.impl.experimental;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Item;
-import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
 import nars.util.data.linkedlist.DDNodePool;
@@ -116,7 +116,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
         this.rng = rng;
         this.capacity = capacity;
-        this.index = new CuckooMap(rng, (capacity/2));
+        //this.index = new CuckooMap(rng, (capacity/2));
+        this.index = new UnifiedMap();
 
 
         this.nodePool = nodePool;
@@ -411,7 +412,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
             final int s2 = chain.size();
             if (s1 != s2)
                 throw new RuntimeException(this + " bag fault; inconsistent index (" + s1 + " index != " + s2 + " chain)");
-            if (s1 > capacity()+1)
+            if (s1 > capacity()+2)
                 throw new RuntimeException(this + " has exceeded capacity: " + s1 + " > " + capacity());
         }
         return s1;
