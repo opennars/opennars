@@ -2,7 +2,6 @@ package nars.cycle;
 
 import nars.Global;
 import nars.Memory;
-import nars.Param;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.io.Perception;
@@ -12,12 +11,10 @@ import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskAccumulator;
-import nars.task.TaskComparator;
 import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.List;
-import java.util.TreeSet;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -112,7 +109,7 @@ public class DefaultCycle extends SequentialCycle {
         float tasklinkForgetDurations = memory.param.taskLinkForgetDurations.floatValue();
         float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
         for (int i = 0; i < conceptsToFire; i++) {
-            ConceptProcess f = nextTaskLink(nextConceptToProcess(conceptForgetDurations), tasklinkForgetDurations);
+            ConceptProcess f = newProcess(nextConceptToProcess(conceptForgetDurations), tasklinkForgetDurations);
             if (f != null) {
                 f.run();
             }
@@ -199,13 +196,13 @@ public class DefaultCycle extends SequentialCycle {
     }
 
 
-    private ConceptProcess nextTaskLink(final Concept concept, float taskLinkForgetDurations) {
+    private ConceptProcess newProcess(final Concept concept, float taskLinkForgetDurations) {
         if (concept == null) return null;
 
 
         TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
         if (taskLink!=null)
-            return newConceptProcess(concept, taskLink);
+            return new ConceptProcess(memory, concept, taskLink);
         else {
             return null;
         }

@@ -235,21 +235,21 @@ public class TemporalRules {
     }*/
 
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
-        temporalInduction(s1, s2, nal, nal.getTask(), true);
+    public static void temporalInduction(final Sentence snext, final Sentence sprev, final NAL nal) {
+        temporalInduction(snext, sprev, nal, nal.getTask(), true);
     }
 
     final static Variable var1 = new Variable("$0");
     final static Variable v91 = new Variable("$91");
     final static Variable v92 = new Variable("$92");
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
+    public static void temporalInduction(final Sentence snext, final Sentence sprev, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
 
-        if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT || s2.punctuation!=Symbols.JUDGMENT)
+        if ((snext.truth==null) || (sprev.truth==null) || (!snext.isJudgment()) || (!sprev.isJudgment()))
             return;
 
-        Term t1 = s1.getTerm();
-        Term t2 = s2.getTerm();
+        Term t1 = snext.getTerm();
+        Term t2 = sprev.getTerm();
 
         if (Statement.invalidStatement(t1, t2))
             return;
@@ -361,8 +361,8 @@ public class TemporalRules {
 
         int durationCycles = nal.memory.duration();
 
-        long time1 = s1.getOccurrenceTime();
-        long time2 = s2.getOccurrenceTime();
+        long time1 = snext.getOccurrenceTime();
+        long time2 = sprev.getOccurrenceTime();
 
         final long timeDiff;
         if ((time1 == Stamp.ETERNAL) || (time2 == Stamp.ETERNAL))
@@ -389,8 +389,8 @@ public class TemporalRules {
 
 
         int order = order(timeDiff, durationCycles);
-        Truth givenTruth1 = s1.truth;
-        Truth givenTruth2 = s2.truth;
+        Truth givenTruth1 = snext.truth;
+        Truth givenTruth2 = sprev.truth;
         //   TruthFunctions.
         Truth truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
         Budget budget1 = truth1!=null ? BudgetFunctions.forward(truth1, nal) : null;
@@ -407,8 +407,8 @@ public class TemporalRules {
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         if (!SucceedingEventsInduction) { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
-            int tt1 = (int) s1.getOccurrenceTime();
-            int tt2 = (int) s2.getOccurrenceTime();
+            int tt1 = (int) snext.getOccurrenceTime();
+            int tt2 = (int) sprev.getOccurrenceTime();
             float d = Math.abs(tt1 - tt2) / ((float)nal.memory.param.duration.get());
             if (d != 0) {
                 float mul = 1.0f / d;
@@ -461,27 +461,27 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if (!tooMuchTemporalStatements(statement11, inductionLimit)) {
-                Task t = nal.deriveDouble(statement11, truth1, budget1, true, subbedTask, false);
+                Task t = nal.deriveDoubleTemporal(statement11, truth1, budget1, subbedTask, sprev);
             }
             if (!tooMuchTemporalStatements(statement22, inductionLimit)) {
-                Task t = nal.deriveDouble(statement22, truth2, budget2, true, subbedTask, false);
+                Task t = nal.deriveDoubleTemporal(statement22, truth2, budget2, subbedTask, sprev);
             }
             if (!tooMuchTemporalStatements(statement33, inductionLimit)) {
-                Task t = nal.deriveDouble(statement33, truth3, budget3, true, subbedTask, false);
+                Task t = nal.deriveDoubleTemporal(statement33, truth3, budget3, subbedTask, sprev);
             }
         }
         if (!tooMuchTemporalStatements(statement1, inductionLimit)) {
-            Task t = nal.deriveDouble(statement1, truth1, budget1, true, subbedTask, false);
+            Task t = nal.deriveDoubleTemporal(statement1, truth1, budget1, subbedTask, sprev);
         }
         if (!tooMuchTemporalStatements(statement2, inductionLimit)) {
 
             /*  =/>  */
 
-            Task task = nal.deriveDouble(statement2, truth2, budget2, true, subbedTask, false);
+            Task task = nal.deriveDoubleTemporal(statement2, truth2, budget2, subbedTask, sprev);
 
             if (task!=null) {
             
-                desireUpdateCompiledInferenceHelper(s1, task, nal, s2);
+                desireUpdateCompiledInferenceHelper(snext, task, nal, sprev);
 
                 //micropsi inspired strive for knowledge
                 //get strongest belief of that concept and use the revison truth, if there is no, use this truth
@@ -505,7 +505,7 @@ public class TemporalRules {
 
         }
         if (!tooMuchTemporalStatements(statement3, inductionLimit)) {
-            nal.deriveDouble(statement3, truth3, budget3, true, subbedTask, false);
+            nal.deriveDoubleTemporal(statement3, truth3, budget3, subbedTask, sprev);
         }
 
     }

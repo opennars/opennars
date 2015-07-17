@@ -87,7 +87,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 //select a Non-eternal (temporal) belief
                 Task b = nextInductedImplication.getTask();
-                f.setCurrentBelief(b);
+                f.setBelief(b);
 
                 induct(task,
                         nextInductedImplication.getPrevious(),

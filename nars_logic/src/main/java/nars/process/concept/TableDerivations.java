@@ -129,7 +129,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                 switch (bLink.type) {
                     case TermLink.COMPONENT:
                         if (taskTerm instanceof Statement) {
-                            RuleTables.componentAndStatement((Compound) f.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, f);
+                            RuleTables.componentAndStatement((Compound) f.getTerm(), bIndex, (Statement) taskTerm, tIndex, f);
                         }
                         break;
                     case TermLink.COMPOUND:

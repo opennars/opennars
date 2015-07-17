@@ -14,6 +14,7 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.Premise;
+import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Random;
@@ -33,7 +34,7 @@ public class ConceptProcess extends NAL implements Premise {
     protected TermLink currentTermLink;
 
 
-
+    private Task currentBelief;
 
     //essentially a cache for a concept lookup
     private transient Concept currentTermLinkConcept;
@@ -79,13 +80,21 @@ public class ConceptProcess extends NAL implements Premise {
     protected void onFinished() {
         beforeFinish();
 
+    }
 
 
 
+    @Override
+    public Task getBelief() {
+        return currentBelief;
+    }
+
+    public void setBelief(Task nextBelief) {
+        this.currentBelief = nextBelief;
     }
 
     @Override
-    public final Term getCurrentTerm() {
+    public final Term getTerm() {
         return getConcept().getTerm();
     }
 

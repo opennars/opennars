@@ -37,7 +37,7 @@ public class TransformTask extends ConceptFireTask {
         if (t.type == TermLink.TRANSFORM) {
 
 
-            f.setCurrentBelief(null);
+            f.setBelief(null);
 
 
             // to turn this into structural logic as below?

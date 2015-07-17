@@ -109,13 +109,10 @@ public class STMInduction extends NARReaction {
 
             //nal.setCurrentTask(currentTask);
 
-            Sentence previousBelief = previousTask.sentence;
-            nal.setCurrentBelief(previousTask);
-
-            Sentence currentBelief = currentTask.sentence;
+            //nal.setBelief(previousTask);
 
             //if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-            TemporalRules.temporalInduction(currentBelief, previousBelief,
+            TemporalRules.temporalInduction(currentTask, previousTask,
                     //nal.newStamp(currentTask.sentence, previousTask.sentence),
                     nal);
         }

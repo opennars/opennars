@@ -57,10 +57,6 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
         return concepts.size();
     }
 
-    protected ConceptProcess newConceptProcess(Concept c, TaskLink t) {
-        return new ConceptProcess(memory, c, t);
-    }
-
     protected Concept nextConceptToProcess(float conceptForgetDurations) {
         Concept currentConcept = concepts.forgetNext(conceptForgetDurations, memory);
 

@@ -63,7 +63,7 @@ public class TaskProcess extends NAL {
     }
 
     @Override
-    public final Term getCurrentTerm() {
+    public final Term getTerm() {
         return getTask().getTerm();
     }
 

@@ -299,7 +299,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
 
 
-            nal.setCurrentBelief(task);
+            nal.setBelief(task);
 
             final TaskSeed seed = nal.newTask(result)
                     .punctuation(mark)
@@ -307,7 +307,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
                     .budgetCompoundForward(result, nal)
                     .parent(task, second_belief, occ);
 
-            Task newTask = nal.derive(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
+            Task newTask = nal.derive(seed, false, false, true /* allow overlap */);
 
             if (null!=newTask) {
 
@@ -365,13 +365,13 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
         Task dummy = new Task(second_belief, budget, task, null);
 
-        nal.setCurrentBelief(task);
+        nal.setBelief(task);
 
         if (nal.derive(nal.newTask(result)
                 .punctuation(punc)
                 .truth(truth)
                 .budget(budget)
-                .parent(task, second_belief, occ), false, false, dummy, false)!=null) {
+                .parent(task, second_belief, occ), false, false, false)!=null) {
 
 
             nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
