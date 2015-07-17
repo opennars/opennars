@@ -49,7 +49,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class RoverModel {
 
     int mission = 0;
-    public float curiosity = 0.1f;
+    //public float curiosity = 0.1f;
     int motionPeriod = 3;
 
 
@@ -365,7 +365,7 @@ public class RoverModel {
             curious(1.0f, 0.65f);
         }
         else {
-            curious(0.75f, 0.65f);
+            curious(0.75f, 0.15f);
         }
 
 
@@ -768,7 +768,7 @@ public class RoverModel {
         try {
             if (mission == 0) {
                 //seek food
-                curiosity = 0.05f;
+                //curiosity = 0.05f;
 
                 //nar.goal("<goal --> food>", 1.00f, 0.90f);
                 nar.input("<goal --> [food]>! :|:");
@@ -783,7 +783,7 @@ public class RoverModel {
                 //nar.input("goal(rotated)! %1.00;0.70%");
             } else if (mission == 1) {
                 //rest
-                curiosity = 0;
+                //curiosity = 0;
                 nar.input("moved(0)! %1.00;0.9%");
                 nar.input("<goal --> [food]>! %0.00;0.9%");
             }
@@ -872,9 +872,14 @@ public class RoverModel {
         public synchronized void step(boolean feel, boolean drawing) {
             toDraw.clear();
 
-            float conceptPriority = 0f;
-            float conceptDurability = 0f;
-            float conceptQuality = 0f;
+            float conceptPriority;
+            float conceptDurability;
+            float conceptQuality;
+
+            if (angleConcept == null) {
+                angleConcept = nar.memory.concept(angleTerm);
+            }
+
             if (angleConcept!=null) {
                 conceptPriority = angleConcept.getPriority();
                 conceptDurability = angleConcept.getDurability();
@@ -883,10 +888,12 @@ public class RoverModel {
                 //sight.setProbability(Math.max(minVisionInputProbability, Math.min(1.0f, maxVisionInputProbability * conceptPriority)));
                 //sight.setProbability(minVisionInputProbability);
             }
-
-            if (angleConcept == null) {
-                angleConcept = nar.memory.concept(angleTerm);
+            else {
+                conceptPriority = 0;
+                conceptDurability = 0;
+                conceptQuality = 0;
             }
+
             point1 = body.getWorldPoint(point);
             Body hit = null;
             float minDist = distance * 1.1f; //far enough away
@@ -946,21 +953,22 @@ public class RoverModel {
                     //rayColor.z *= alpha - 0.35f * senseActivity;
                     //rayColor.y *= alpha - 0.35f * conceptPriority;
 
-                    rayColor.x = conceptPriority;
-                    rayColor.y = conceptDurability;
-                    rayColor.z = conceptQuality;
+                    rayColor.x = conceptPriority*conceptPriority;
+                    rayColor.y = conceptDurability*conceptDurability;
+                    rayColor.z = conceptQuality*conceptQuality;
                     float alpha = Math.min(
-                            conceptPriority * conceptDurability * conceptQuality+0.1f,
-                    1f);
-                    rayColor.x = Math.min(rayColor.x+0.1f, 1f);
-                    rayColor.y = Math.min(rayColor.y+0.1f, 1f);
-                    rayColor.z = Math.min(rayColor.z+0.1f, 1f);
+                            (0.7f * conceptPriority * conceptDurability * conceptQuality) + 0.3f,
+                            1f
+                    );
+                    rayColor.x = Math.min(rayColor.x*0.7f+0.3f, 1f);
+                    rayColor.y = Math.min(rayColor.y*0.7f+0.3f, 1f);
+                    rayColor.z = Math.min(rayColor.z*0.7f+0.3f, 1f);
                     rayColor.x = Math.max(rayColor.x, 0f);
                     rayColor.y = Math.max(rayColor.y, 0f);
                     rayColor.z = Math.max(rayColor.z, 0f);
                     final Vec2 finalEndPoint = endPoint.clone();
                     Color3f rc = new Color3f(rayColor.x, rayColor.y, rayColor.z);
-                    final float thick = 4f;
+                    final float thick = 2f;
                     toDraw.add(new Runnable() {
 
                         @Override

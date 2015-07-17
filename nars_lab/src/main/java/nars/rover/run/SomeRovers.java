@@ -56,7 +56,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        NARSeed d = new Default(1024, 32, 3) {
+        NARSeed d = new Default(1024, 64, 3) {
 
 
 //            @Override
@@ -89,7 +89,7 @@ public class SomeRovers {
 
     public static void main(String[] args) {
 
-        Global.DEBUG = Global.EXIT_ON_EXCEPTION = true;
+        Global.DEBUG = Global.EXIT_ON_EXCEPTION = false;
 
 
         float fps = 90;
