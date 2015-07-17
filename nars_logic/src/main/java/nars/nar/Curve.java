@@ -55,14 +55,14 @@ public class Curve extends Default {
         return super.newControlCycle();
     }
     
-    @Override
-    public Concept newConcept(final Term t, Budget b, final Memory m) {
-
-
-        Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve);
-        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve);
-        
-        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptBeliefGoalRanking(), new BloomPremiseSelector(), m);
-    }
+//    @Override
+//    public Concept newConcept(final Term t, Budget b, final Memory m) {
+//
+//
+//        Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve);
+//        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve);
+//
+//        return new DefaultConcept(t, b, taskLinks, termLinks, getConceptBeliefGoalRanking(), new BloomPremiseSelector(), m);
+//    }
     
 }

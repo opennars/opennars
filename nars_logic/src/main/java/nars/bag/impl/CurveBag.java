@@ -150,9 +150,24 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         @Override
         public int next(final CurveBag b) {
             final int s = b.size();
+            if (s == 1) return 0;
 
-            final float x = rng.nextFloat();
-            final float y = curve.y(x);
+            float x = rng.nextFloat();
+
+            final float min = b.getPriorityMin();
+            final float max = b.getPriorityMax();
+            if (min!=max) {
+                //rescale to dynamic range
+                x = min + (x * (max-min));
+            }
+
+            float y = curve.y(x);
+
+            if (min!=max) {
+                final float yMin = curve.y(min);
+                final float yMax = curve.y(max);
+                y = (y - yMin) / (yMax - yMin);
+            }
 
             return index(y, s);
         }
