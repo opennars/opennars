@@ -79,8 +79,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     
     private float targetActivations;
     
-    //private float numPriorityThru = 0;
-    private float mass = 0;
+
     
     
     private long now;
@@ -121,7 +120,6 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         this.targetActivations = targetPendingBufferSize;
         this.toRemove = new ArraySortedIndex(capacity);
         avgPriority = 0.5f;
-        mass = 0;
     }
     
     @Override
@@ -129,7 +127,6 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         nameTable.clear();
         pending.clear();
         avgPriority = 0.5f;
-        mass = 0;
     }
 
 
@@ -158,10 +155,6 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         return capacity;
     }
 
-    @Override
-    public float mass() {
-        return mass;
-    }
 
     protected E removeItem(final K k) {             
         E x = nameTable.remove(k);
@@ -182,7 +175,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         int originalSize = size();
         
                 
-        float numPriorityThru = mass = 0;
+        float numPriorityThru = 0,  mass = 0;
                 
         overcapacity = originalSize >= capacity;
                 

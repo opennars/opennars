@@ -71,7 +71,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         f.put(new NullItem(.25f));
         assert(f.size() == 1);
-        assert(f.mass() > 0);
+        assert(f.getPrioritySum() > 0);
         
         f.put(new NullItem(.9f));
         f.put(new NullItem(.75f));
@@ -90,7 +90,7 @@ public class HeapBagTest extends AbstractBagTest {
         f.pop();
         assert(f.size() == 0);
         
-        assertEquals(0, f.mass(), 0.001f);
+        assertEquals(0, f.getPrioritySum(), 0.001f);
     }
 
     public void testCapacityLimit(Bag<CharSequence,NullItem> f) {
@@ -156,7 +156,7 @@ public class HeapBagTest extends AbstractBagTest {
         HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
         LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
         
-        assertEquals(c.mass(), d.mass(), 0);
+        assertEquals(c.getPrioritySum(), d.getPrioritySum(), 0);
         assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);
 
         c.printAll(System.out);
@@ -172,9 +172,9 @@ public class HeapBagTest extends AbstractBagTest {
         
         c.clear();
         d.clear();
-        
-        assert(c.getPriorityMean() == 0.01f);
-        assert(d.getPriorityMean() == 0.01f);
+
+        assertEquals(c.getPriorityMean(), 0f, 0.001f);
+        assertEquals(d.getPriorityMean(), 0f, 0.001f);
         
         c.put(new NullItem(.30f));
         d.put(new NullItem(.30f));

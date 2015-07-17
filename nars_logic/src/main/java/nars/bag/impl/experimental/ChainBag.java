@@ -47,7 +47,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     private boolean ownsNodePool = false;
 
     private final int capacity;
-    transient private float mass;
 
     transient DD<V> current = null;
 
@@ -117,7 +116,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
         this.rng = rng;
         this.capacity = capacity;
-        this.mass = 0;
         this.index = new CuckooMap(rng, (capacity/2));
 
 
@@ -137,11 +135,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
     @Override
     public int capacity() {
         return capacity;
-    }
-
-    @Override
-    public float mass() {
-        return mass;
     }
 
     @Override
@@ -436,7 +429,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         index.clear();
         chain.clear();
 
-        mass = 0;
         current = null;
         estimatedMin = estimatedMax = estimatedMean = 0.5f;
 

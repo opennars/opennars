@@ -272,24 +272,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    /**
-     * Get the average priority of Items
-     *
-     * @return The average priority of Items in the bag
-     */
-    @Override
-    public float getPriorityMean() {
-        final int s = size();
-        if (s == 0) {
-            return 0.01f;
-        }
-        float f = mass / s;
-        if (f > 1.0f)
-            return 1.0f;
-        if (f < 0.01f)
-            return 0.01f;
-        return f;
-    }
+
 
 
 
@@ -394,13 +377,13 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     @Override
-    public float getMinPriority() {
+    public float getPriorityMin() {
         if (items.isEmpty()) return 0;
         return items.getFirst().getPriority();
     }
 
     @Override
-    public float getMaxPriority() {
+    public float getPriorityMax() {
         if (items.isEmpty()) return 0;
         return items.getLast().getPriority();
     }
@@ -422,7 +405,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
             // the bag is full
 
             // this item is below the bag's already minimum item, no change (return the input as the overflow)
-            if (newPriority < getMinPriority()) {
+            if (newPriority < getPriorityMin()) {
                 return i;
             }
 
@@ -502,7 +485,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
                 throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 
             //should be the same object instance
-            this.index.removeKey(selected.name(), selected.getPriority());
+            this.index.removeKey(selected.name());
         }
 
         return selected;
@@ -541,14 +524,6 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
 
 
-    }
-
-
-
-
-    @Override
-    public float mass() {
-        return index.mass();
     }
 
     @Override

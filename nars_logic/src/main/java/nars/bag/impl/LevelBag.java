@@ -73,10 +73,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     private final boolean ownsNodePool;
 
     /**
-     * current sum of occupied level
-     */
-    private float mass;
-    /**
      * index to get next level, kept in individual objects
      */
     int levelIndex;
@@ -211,7 +207,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         currentLevel = levels - 1;
         levelIndex = capacity % levels; // so that different bags start at different point
-        mass = 0;
         currentCounter = 0;
     }
 
@@ -272,22 +267,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return index.keySet();
     }
 
-    /**
-     * Get the average priority of Items
-     *
-     * @return The average priority of Items in the bag
-     */
-    @Override
-    public float getPriorityMean() {
-        if (size() == 0) {
-            return 0.01f;
-        }
-        float f = mass / (size());
-        if (f > 1) {
-            return 1.0f;
-        }
-        return f;
-    }
 
     @Override
     public E remove(final K name) {
@@ -474,11 +453,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
                 throw e;
             }
 
-            if (c==b) {
-                //update the mass as measured before and after selector update, since it is the same instance and the ordinary relevel budget change would not affect it
-                final float priNow = b.getPriority();
-                addMass(priNow - priPrev);
-            }
             return c;
         }
         else
@@ -581,9 +555,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
                 level[prevLevel].detach(x);
                 x.owner = nextLevel;
                 if (x.item!=newValue) {
-                    removeMass(x.item);
                     x.item = newValue;
-                    addMass(newValue);
                 }
                 ensureLevelExists(nextLevel).add(x);
 
@@ -600,7 +572,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         int lev = node.owner();
         if (lev == -1)
             throw new RuntimeException(node + " has invalid level");
-        removeMass(node.item);
         E i = node.item;
         level[lev].remove(node);
         index.remove(i.name());
@@ -611,7 +582,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     protected synchronized  DD<E> insert(E newItem, int inLevel) {
         if (newItem == null)
             throw new RuntimeException("IN must not be null");
-        addMass(newItem);
         DD<E> dd = ensureLevelExists(inLevel).add(newItem);
         this.index.put(newItem.name(), dd);
         return dd;
@@ -701,31 +671,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 //        return selected;
 //    }
 
-    protected synchronized void addMass(final float x) {
-        mass += x;
-
-        //-1 because it is the maximum priority which could be applied during an update
-        if (Global.DEBUG_BAG && Global.DEBUG_BAG_MASS)
-            if (mass < -1 - Global.BUDGET_EPSILON) throw new RuntimeException(this + " mass below -1: " + mass + " during addition " + x);
-
-        final int itemsMargin = (x > 0) ? 1 : 0; //allow +1 margin, when an item is being added
-
-
-        if (Global.DEBUG_BAG && Global.DEBUG_BAG_MASS) {
-            final float maxMass = (size() + itemsMargin) * 1.0f + Global.BUDGET_EPSILON;
-            if (mass > maxMass)
-                throw new RuntimeException(this + " mass above maximum (mass=" + mass + " , size=" + size() + ")");
-        }
-    }
-
-    protected void removeMass(E item) {
-        addMass(-1 * item.getPriority());
-    }
-
-    protected void addMass(E item) {
-        addMass(item.getPriority());
-    }
-
 
 //    /**
 //     * Refresh display
@@ -792,10 +737,6 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         return "Levels: " + Integer.toString(l) + ", sizes: " + buf;
     }
 
-    @Override
-    public float mass() {
-        return mass;
-    }
 
     public float getAverageItemsPerLevel() {
         return ((float) capacity) / levels;

@@ -75,7 +75,7 @@ public class BagPerf {
                 
                 if (!warmup) {                    
                     totalPriority += b.getPriorityMean();
-                    totalMass += b.mass();
+                    totalMass += b.getPrioritySum();
                     totalMinItemsPerLevel += b.getMinItemsPerLevel();
                     totalMaxItemsPerLevel += b.getMaxItemsPerLevel();
                 }

@@ -42,7 +42,7 @@ public class BubbleBagTest extends AbstractBagTest {
         assertEquals(2, s.size());
         assertEquals(0.3f, s.outPriority.getMean(), 0.001f);
         assertEquals(0.35f, s.getPriorityMean(), 0.001f);
-        assertEquals(0.7f, s.mass(), 0.001f);
+        assertEquals(0.7f, s.getPrioritySum(), 0.001f);
 
         assertEquals("removed middle element does not appear in iterator", 2, Iterators.size(s.iterator()));
 

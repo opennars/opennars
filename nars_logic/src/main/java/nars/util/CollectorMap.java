@@ -14,10 +14,6 @@ public abstract class CollectorMap<K, E extends Item<K>> {
 
     public final Map<K, E> map;
 
-    /**
-     * current sum of occupied level
-     */
-    protected float mass;
 
 
     public CollectorMap(Map<K, E> map) {
@@ -48,12 +44,10 @@ public abstract class CollectorMap<K, E extends Item<K>> {
                 if (remd == null) {
                     throw new RuntimeException("unable to remove item corresponding to key " + key);
                 }
-                mass -= removed.getPriority();
             }
 
 
             removed2 = addItem(value);
-            mass += value.getPriority();
 
             if (removed != null && removed2 != null) {
                 throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);
@@ -74,29 +68,14 @@ public abstract class CollectorMap<K, E extends Item<K>> {
             E removed = removeItem(e);
             if (removed == null)
                 throw new RuntimeException(key + " removed from index but not from items list");
-            mass -= e.getPriority();
         }
 
         return e;
     }
 
-    /**
-     * remove the key only, not from items.
-     */
-    protected E removeKey(final K key) {
-        return removeKey(key, 0);
-    }
 
-    /** remove the key and subtract some mass, in case this needs to be applied
-     * after an external removal of the collection. only use if you are sure
-     * the item has already been removed. this exists only for efficiency purposes
-     * and the main remove() method should be used in general.
-     */
-    public E removeKey(final K key, final float massToRemove) {
+    public E removeKey(final K key) {
         E e = map.remove(key);
-        if (e!=null && massToRemove > 0)
-            mass -= massToRemove;
-        
         return e;
     }
 
@@ -111,7 +90,6 @@ public abstract class CollectorMap<K, E extends Item<K>> {
 
     public void clear() {
         map.clear();
-        mass = 0;
     }
 
     public E get(K key) {
@@ -130,9 +108,6 @@ public abstract class CollectorMap<K, E extends Item<K>> {
         return map.values();
     }
 
-    public float mass() {
-        return mass;
-    }
 
     /**
      * put key in index, do not add value

@@ -8,7 +8,6 @@ import nars.budget.Item;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
-import objenome.op.cas.E;
 
 import java.io.Serializable;
 import java.util.*;
@@ -96,7 +95,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         @Override
         protected E removeItem(final E removed) {
             if (items.remove(removed)) {
-                mass -= removed.getPriority();
                 return removed;
             }
             return null;
@@ -244,24 +242,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    /**
-     * Get the average priority of Items
-     *
-     * @return The average priority of Items in the bag
-     */
-    @Override
-    public float getPriorityMean() {
-        final int s = size();
-        if (s == 0) {
-            return 0.01f;
-        }
-        float f = mass() / s;
-        if (f > 1.0f)
-            return 1.0f;
-        if (f < 0.01f)
-            return 0.01f;
-        return f;
-    }
 
 
     /**
@@ -330,13 +310,13 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
     @Override
-    public float getMinPriority() {
+    public float getPriorityMin() {
         if (items.isEmpty()) return 0;
         return items.getFirst().getPriority();
     }
 
     @Override
-    public float getMaxPriority() {
+    public float getPriorityMax() {
         if (items.isEmpty()) return 0;
         return items.getLast().getPriority();
     }
@@ -372,7 +352,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         else {
             if (full) {
 
-                if (getMinPriority() > i.getPriority()) {
+                if (getPriorityMin() > i.getPriority()) {
                     //insufficient priority to enter the bag
                     return i;
                 }
@@ -440,10 +420,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    @Override
-    public float mass() {
-        return index.mass();
-    }
 
     @Override
     public int capacity() {

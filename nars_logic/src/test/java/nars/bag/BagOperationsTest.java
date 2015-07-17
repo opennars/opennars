@@ -81,8 +81,8 @@ public class BagOperationsTest {
         
         b.put(new NullConcept("c", 0.2f));
         assertEquals(2, b.size());
-        assertEquals(0.1f, b.getMinPriority(),0.001f);
-        assertEquals(0.2f, b.getMaxPriority(),0.001f);
+        assertEquals(0.1f, b.getPriorityMin(),0.001f);
+        assertEquals(0.2f, b.getPriorityMax(),0.001f);
         
 
         //if (b instanceof GearBag()) return;
@@ -93,8 +93,8 @@ public class BagOperationsTest {
         assertEquals(2, b.size());
 
         //results in 0.2, not 0.1 if merged and not simply replaced B's budget
-        assertEquals("budget merge", 0.2f, b.getMinPriority(),0.001f);
-        assertEquals(0.4f, b.getMaxPriority(),0.001f);
+        assertEquals("budget merge", 0.2f, b.getPriorityMin(),0.001f);
+        assertEquals(0.4f, b.getPriorityMax(),0.001f);
         
         
         Item tb = b.remove(B.name());
@@ -118,15 +118,15 @@ public class BagOperationsTest {
 
             //same id, different priority (lower, so budget will not be affected)
             assertEquals(null, b.put(new NullConcept("b", 0.1f)));
-            assertEquals(0.2f, b.getMinPriority(),0.001f); //affected, item budget merged to new value, 0.1 new lowest
-            assertEquals(0.3f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
-            assertTrue(b.getMaxPriority() > b.getMinPriority());
+            assertEquals(0.2f, b.getPriorityMin(),0.001f); //affected, item budget merged to new value, 0.1 new lowest
+            assertEquals(0.3f, b.getPriorityMax(),0.001f); //affected, 0.4 highest
+            assertTrue(b.getPriorityMax() > b.getPriorityMin());
 
             //increasing b's priority should not cause 'a' to be removed
             Item zzz = b.put(new NullConcept("b", 0.4f));
             assertNull(null, zzz);
 
-            assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
+            assertEquals(0.4f, b.getPriorityMax(),0.001f); //affected, 0.4 highest
             assertNotNull(b.get("a"));
         }
         

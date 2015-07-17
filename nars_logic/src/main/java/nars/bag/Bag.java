@@ -73,8 +73,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     abstract public int capacity();
 
-    abstract public float mass();
-
     /**
      * Choose an Item according to distribution policy and take it out of the Bag
      * TODO rename removeNext()
@@ -102,6 +100,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
 
     public float getPriorityMean() {
+        if (size() == 0) return 0;
         return getPrioritySum() / size();
     }
 
@@ -329,7 +328,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     /**
      * slow, probably want to override in subclasses
      */
-    public float getMinPriority() {
+    public float getPriorityMin() {
         float min = 1.0f;
         for (Itemized e : this) {
             float p = e.getPriority();
@@ -341,7 +340,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     /**
      * slow, probably want to override in subclasses
      */
-    public float getMaxPriority() {
+    public float getPriorityMax() {
         float max = 0.0f;
         for (Itemized e : this) {
             float p = e.getPriority();

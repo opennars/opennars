@@ -3,7 +3,6 @@ package nars.bag;
 import nars.Global;
 import nars.NAR;
 import nars.Param;
-import nars.analyze.experimental.BagPerf;
 import nars.analyze.experimental.BagPerf.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
@@ -77,12 +76,13 @@ public class CurveBagTest extends AbstractBagTest {
     
     public void testCurveBag(boolean random, SortedIndex<NullItem> items) {
         CurveBag<CharSequence, NullItem> f = new CurveBag(rng, 4, curve, items);
-        assertEquals(0, f.mass(), 0.001);
+        assertEquals(0, f.getPrioritySum(), 0.001);
+
 
         NullItem ni;
         f.put(ni = new NullItem(.25f));
         assertEquals(1, f.size());
-        assertEquals(ni.getPriority(), f.mass(), 0.001);
+        assertEquals(ni.getPriority(), f.getPrioritySum(), 0.001);
         
         f.put(new NullItem(.9f));
         f.put(new NullItem(.75f));
@@ -101,7 +101,7 @@ public class CurveBagTest extends AbstractBagTest {
         f.pop();
         assert(f.size() == 0);
         
-        assertEquals(0, f.mass(), 0.01);
+        assertEquals(0, f.getPrioritySum(), 0.01);
     }
 
     public void testCapacityLimit(Bag<CharSequence,NullItem> f) {
@@ -136,8 +136,8 @@ public class CurveBagTest extends AbstractBagTest {
     }
 
     private void testOrder(Bag<CharSequence, NullItem> f) {
-        float max = f.getMaxPriority();
-        float min = f.getMinPriority();
+        float max = f.getPriorityMax();
+        float min = f.getPriorityMin();
 
         Iterator<NullItem> ii = f.iterator();
 
@@ -196,7 +196,7 @@ public class CurveBagTest extends AbstractBagTest {
         CurveBag<CharSequence, NullItem> c = new CurveBag(rng, capacity, curve, items);
         LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
         
-        assertEquals(c.mass(), d.mass(), 0);
+        assertEquals(c.getPrioritySum(), d.getPrioritySum(), 0);
         assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);
 
         c.printAll(System.out);
@@ -212,9 +212,13 @@ public class CurveBagTest extends AbstractBagTest {
         
         c.clear();
         d.clear();
-        
-        assert(c.getPriorityMean() == 0.01f);
-        assert(d.getPriorityMean() == 0.01f);
+
+        assertEquals(0, c.size());
+        assertEquals(0, d.size());
+        assertEquals(0, c.getPrioritySum(), 0.001);
+        assertEquals(0, d.getPrioritySum(), 0.001);
+        assertEquals(0, c.getPriorityMean(), 0.001);
+        assertEquals(0, d.getPriorityMean(), 0.001);
         
         c.put(new NullItem(.30f));
         d.put(new NullItem(.30f));

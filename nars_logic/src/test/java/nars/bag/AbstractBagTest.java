@@ -63,8 +63,8 @@ public class AbstractBagTest {
 
             assertEquals(preadjustCount, postadjustCount);
 
-            float min = f.getMinPriority();
-            float max = f.getMaxPriority();
+            float min = f.getPriorityMin();
+            float max = f.getPriorityMax();
             if (requireOrder) {
                 assertTrue(max >= min);
             }

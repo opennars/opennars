@@ -40,7 +40,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     public final SummaryStatistics inPriority = new SummaryStatistics();
     //public final SummaryStatistics peekPriority = new SummaryStatistics();
     public final SummaryStatistics outPriority = new SummaryStatistics();
-    double mass = 0;
     public Frequency removal = new Frequency();
 
 
@@ -88,10 +87,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
         return capacity;
     }
 
-    @Override
-    public float mass() {
-        return (float)mass;
-    }
 
     @Override
     public E pop() {
@@ -312,7 +307,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     public E onEnter(E n) {
         float p = n.getPriority();
         inPriority.addValue(p);
-        mass += p;
         index.put(n.name(), n);
         queue.addFirst(n); //TODO determine insertion policy
         swapToProportionalIndex(0, n.getPriority());
@@ -324,7 +318,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
         float p = e.getPriority();
         outPriority.addValue(p);
-        mass -= p;
         removal.addValue(bin(p));
         return e;
     }
@@ -351,12 +344,6 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
         return index.v();
     }
 
-    @Override
-    public float getPriorityMean() {
-        final int s = size();
-        if (s == 0) return 0;
-        return (float)mass / s;
-    }
 
 
     public Iterator<E> indexValues() {
