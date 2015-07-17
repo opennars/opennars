@@ -28,10 +28,7 @@ import nars.task.Task;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Global NAR operating parameters (static scope)
@@ -246,8 +243,8 @@ public class Global {
     }
 
     public static <X> List<X> newArrayList(int capacity) {
-        return new FastList(capacity);
-        //return new ArrayList(capacity);
+        //return new FastList(capacity);
+        return new ArrayList(capacity);
     }
 
     public static <X> Set<X> newHashSet(int capacity) {

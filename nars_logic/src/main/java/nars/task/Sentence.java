@@ -204,22 +204,22 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return hash;
     }
 
-    public void hash(PrimitiveSink into) {
-
-        into.putBytes(getTerm().bytes());
-        into.putByte((byte)punctuation);
-
-        getStamp().hash(into);
-
-        Truth t = truth;
-        if (t != null) {
-            into.putFloat(t.getFrequency());
-            into.putFloat(t.getConfidence());
-        }
-        into.putLong(occurrenceTime);
-        for (long e : getEvidentialSet())
-            into.putLong(e);
-    }
+//    public void hash(PrimitiveSink into) {
+//
+//        into.putBytes(getTerm().bytes());
+//        into.putByte((byte)punctuation);
+//
+//        getStamp().hash(into);
+//
+//        Truth t = truth;
+//        if (t != null) {
+//            into.putFloat(t.getFrequency());
+//            into.putFloat(t.getConfidence());
+//        }
+//        into.putLong(occurrenceTime);
+//        for (long e : getEvidentialSet())
+//            into.putLong(e);
+//    }
 
 
     /**

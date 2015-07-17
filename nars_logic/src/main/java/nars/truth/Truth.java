@@ -115,7 +115,8 @@ abstract public interface Truth extends MetaTruth<Float> {
         else if ( a < b) return ((b - a) < he);
         return true;
     }
-    
+
+
 
 
     /**

@@ -62,7 +62,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        NARSeed d = new Default(768, 16, 4) {
+        NARSeed d = new Default(1024, 32, 3) {
 
 //            protected void initDerivationFilters() {
 //                final float DERIVATION_PRIORITY_LEAK=0.8f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
@@ -101,7 +101,7 @@ public class SomeRovers {
 
     public static void main(String[] args) {
 
-        Global.DEBUG = Global.EXIT_ON_EXCEPTION = false;
+        Global.DEBUG = Global.EXIT_ON_EXCEPTION = true;
 
 
         float fps = 90;

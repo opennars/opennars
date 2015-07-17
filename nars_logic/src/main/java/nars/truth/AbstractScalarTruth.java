@@ -23,8 +23,8 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
         //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
         //final float maxConf = getConfidenceMax();
 
-        /*final float e = getEpsilon();
-        c = Math.round(c / e) * e;*/
+        final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON; //getEpsilon();
+        c = Math.round(c / e) * e;
 
         if (c > 1f) c = 1f;
         else if (c < 0) c = 0;
@@ -41,12 +41,6 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     }
 
 
-//    public DefaultTruth clone() {
-//        if (isAnalytic())
-//            return new AnalyticTruth(this);
-//        else
-//            return new DefaultTruth(this);
-//    }
 
     public float getFrequency() {
         return frequency;
@@ -54,8 +48,8 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
     public Truth setFrequency(float f) {
 
-        /*final float e = getEpsilon();
-        f = FastMath.round(f / e) * e;*/
+        final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();
+        f = FastMath.round(f / e) * e;
 
         if (f > 1.0f) f = 1.0f;
         else if (f < 0f) f = 0f;
@@ -65,6 +59,8 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
         return this;
     }
+
+
 
     @Override
     protected boolean equalsValue(Truth t) {

@@ -29,7 +29,6 @@ import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
@@ -106,20 +105,28 @@ public class RoverModel {
     /** maps a scalar changing quality to a frequency value, with autoranging
      *  determined by a history window of readings
      * */
-    abstract public static class AutoRangeTruthFrequency {
+    public static class AutoRangeTruthFrequency {
         NeuralGasNet net;
+        float threshold;
 
-        public AutoRangeTruthFrequency() {
+        public AutoRangeTruthFrequency(float thresho) {
             net = new NeuralGasNet(1,4);
-
-
-
+            this.threshold = thresho;
         }
 
-        public void observe(float value) {
-            net.learn(value);
+        /** returns estimated frequency */
+        public float observe(float value) {
+            if (Math.abs(value) < threshold ) {
+                return 0.5f;
+            }
+
+            learn(value);
 
             double[] range = net.getDimensionRange(0);
+            return (float) getFrequency(range, value);
+        }
+
+        protected double getFrequency(double[] range, float value) {
             double proportional;
 
             if ((range[0] == range[1]) || (!Double.isFinite(range[0])))
@@ -130,30 +137,69 @@ public class RoverModel {
             if (proportional > 1f) proportional = 1f;
             if (proportional < 0f) proportional = 0f;
 
-            estimate((float)proportional);
+            return proportional;
         }
 
-        abstract public void estimate(float b);
+        protected void learn(float value) {
+            net.learn(value);
+        }
+
+
     }
-    public static class SimpleAutoRangeTruthFrequency extends AutoRangeTruthFrequency {
+
+    public static class BipolarAutoRangeTruthFrequency extends AutoRangeTruthFrequency {
+
+        public BipolarAutoRangeTruthFrequency() {
+            this(0);
+        }
+
+        public BipolarAutoRangeTruthFrequency(float thresh) {
+            super(thresh);
+        }
+
+        @Override protected void learn(float value) {
+            //learn the absolute value because the stimate will include the negative range as freq < 0.5f
+            super.learn(Math.abs(value));
+            super.learn(0);
+        }
+
+        protected double getFrequency(double[] range, float value) {
+            double proportional;
+
+            if ((0 == range[1]) || (!Double.isFinite(range[0])))
+                proportional = 0.5;
+            else
+                proportional = ((value) / (range[1]))/2f + 0.5f;
+
+            //System.out.println(value + "-> +-" + range[1] + " " + " -> " + proportional);
+
+            if (proportional > 1f) proportional = 1f;
+            if (proportional < 0f) proportional = 0f;
+
+            return proportional;
+        }
+    }
+
+    public static class SimpleAutoRangeTruthFrequency  {
         private final Compound term;
         private final NAR nar;
+        private final AutoRangeTruthFrequency model;
 
-        public SimpleAutoRangeTruthFrequency(NAR nar, Compound term) {
+        public SimpleAutoRangeTruthFrequency(NAR nar, Compound term, AutoRangeTruthFrequency model) {
+            super();
             this.term = term;
             this.nar = nar;
+            this.model = model;
 
-
-            net.setEpsW(0.04f);
-            net.setEpsN(0.01f);
+            model.net.setEpsW(0.04f);
+            model.net.setEpsN(0.01f);
         }
 
-        @Override
-        public void estimate(float b) {
+        public void observe(float value) {
+            float freq = model.observe(value);
             //System.out.println(range[0] + ".." + range[1]);
             //System.out.println(b);
 
-            float freq = b; //0.5f + (b/2f);
             float conf = 0.75f;
             Task t;
             nar.inputDirect(t = nar.task(term).belief().present().truth(freq, conf).get());
@@ -226,9 +272,9 @@ public class RoverModel {
         f.setRestitution(restitution);
         f.setFriction(friction);
 
-        linearVelocity = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[linear]>"));
-        motionAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[angle]>"));
-        facingAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[facing]>"));
+        linearVelocity = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[linear]>"), new AutoRangeTruthFrequency(0.02f));
+        motionAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[angle]>"), new BipolarAutoRangeTruthFrequency());
+        facingAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[facing]>"), new BipolarAutoRangeTruthFrequency());
 
         torso.setUserData(new RoverMaterial(id));
 

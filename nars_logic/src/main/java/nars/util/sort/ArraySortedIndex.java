@@ -100,7 +100,11 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     
     @Override
     public E get(int i) {
+
         final int s = list.size();
+
+        if (s == 0) return null;
+
         if (i >= s) i = s - 1;
         if (i < 0) i = 0;
         return list.get(i);
@@ -260,9 +264,14 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
                 finishedDown = true;
             
         } while ( (!finishedUp) || (!finishedDown) );
-                
-        //throw new RuntimeException(this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s);
-        return false;
+
+
+        //try exhaustive removal as a final option
+        if (list.remove(_o)) {
+            return true;
+        }
+        String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
+        throw new RuntimeException(err);
     }
 
     private boolean attemptRemoval(Object o, Object on, int i) {
