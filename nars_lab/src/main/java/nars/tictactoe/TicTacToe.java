@@ -84,15 +84,14 @@ public class TicTacToe extends JPanel {
         super(new BorderLayout());
 
         SimulatedClock clock;
-        nar = new NAR(new Classic().
+        nar = new NAR(new Classic(1000, 100, 3).
                 setActiveConcepts(1000).
                 setClock(clock = new SimulatedClock()));
 
         nar.on(new AddO());
         (nar.param).duration.set(100);
         (nar.param).outputVolume.set(0);
-        nar.param.conceptsFiredPerCycle.set(100);
-        
+
         new NARSwing(nar);    
         nar.on(new Reaction<Class>() {
 

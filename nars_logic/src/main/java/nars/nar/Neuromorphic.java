@@ -50,17 +50,10 @@ public class Neuromorphic extends Curve {
         return null;
     }
 
-    /** set to -1 for unlimited */
-    public Neuromorphic setMaxInputsPerCycle(int i) {
-        this.maxInputsPerCycle = i;
-
-        return this;
-    }
 
     @Override
     public void init(NAR x) {
         super.init(x);
-        x.param.inputsMaxPerCycle.set(maxInputsPerCycle);
     }
 
     @Override

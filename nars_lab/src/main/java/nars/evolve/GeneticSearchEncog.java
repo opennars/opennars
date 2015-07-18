@@ -237,6 +237,7 @@ public class GeneticSearchEncog {
             b.setActiveConcepts(numConcepts);
             b.setTaskLinkBagSize(numTaskLinks);
             b.setTermLinkBagSize(numTermLinks);
+            b.conceptsFiredPerCycle.set(conceptsFired);
 
             NAR n = new NAR(b);
 
@@ -251,7 +252,6 @@ public class GeneticSearchEncog {
 
             if (builderType != 1) {
                 //analogous to # of ants but in defaultbag
-                (n.param).conceptsFiredPerCycle.set(conceptsFired);
             }
 
             /*if (prolog == 1) {

@@ -495,8 +495,8 @@ public class NARio extends Run implements RLEnvironment {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
 
-        NAR nar = new NAR(new Default().setInternalExperience(null)
-                .setActiveConcepts(3500));
+        NAR nar = new NAR(new Default(3500, 200, 3).setInternalExperience(null)
+                );
 
         Global.EXIT_ON_EXCEPTION = true;
         //Global.TRUTH_EPSILON = 0.01f;
@@ -524,7 +524,6 @@ public class NARio extends Run implements RLEnvironment {
 
         nar.param.outputVolume.set(0);
         nar.param.executionThreshold.set(0.75);
-        nar.param.conceptsFiredPerCycle.set(200);
         nar.param.shortTermMemoryHistory.set(5);
 
         float fps = 70f;

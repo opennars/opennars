@@ -31,6 +31,7 @@ import nars.Events.FrameEnd;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.cycle.DefaultCycle;
 import nars.gui.input.KeyboardInputPanel;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
@@ -881,13 +882,13 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
 
     protected void updateFrequencies() {
 
-        //relative to base freq:
-        //  input x
-        memory.param.inputsMaxPerCycle.set( 1 );
-        //  concept #
-        memory.param.conceptsFiredPerCycle.set( 1 );
-        //  term #
-        memory.param.termLinkMaxReasoned.set(1);
+//        //relative to base freq:
+//        //  input x
+//        ((DefaultCycle)memory.control).inputsMaxPerCycle.set( 1 );
+//        //  concept #
+//        memory.param.conceptsFiredPerCycle.set( 1 );
+//        //  term #
+//        memory.param.termLinkMaxReasoned.set(1);
 
         final float conceptRate = memory.param.conceptForgetDurations.floatValue();
 

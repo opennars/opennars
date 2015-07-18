@@ -48,6 +48,7 @@ public class SomeRovers {
         //nar.param.inputsMaxPerCycle.set(32);
         //nar.param.conceptsFiredPerCycle.set(4);
 
+
         d.conceptBeliefsMax.set(16);
         d.conceptGoalsMax.set(12);
         d.duration.set(1);
@@ -56,7 +57,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        NARSeed d = new Default(1024, 64, 3) {
+        Default d = new Default(1024, 64, 3) {
 
 
 //            @Override
@@ -68,7 +69,9 @@ public class SomeRovers {
 //                        mem);
 //            }
 
-        }.setInternalExperience(null).setClock(clock = new SimulatedClock());
+        };
+        d.setInternalExperience(null);
+        d.setClock(clock = new SimulatedClock());
 
 
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);

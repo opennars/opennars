@@ -61,6 +61,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -73,6 +74,14 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 public class Default extends NARSeed implements ConceptBuilder {
 
 
+    /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
+    public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
+
+    /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    public final AtomicInteger inputsMaxPerCycle = new AtomicInteger();
+
+    /** max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
 
 
     final LogicPolicy policy;
@@ -118,7 +127,6 @@ public class Default extends NARSeed implements ConceptBuilder {
     public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
 
         setActiveConcepts(maxConcepts);
-        conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         termLinkMaxReasoned.set(termLinksPerCycle);
 
@@ -161,7 +169,10 @@ public class Default extends NARSeed implements ConceptBuilder {
         conceptGoalsMax.set(8);
         conceptQuestionsMax.set(4);
 
-        inputsMaxPerCycle.set(1);
+        inputsMaxPerCycle.set(conceptsFirePerCycle);
+        conceptsFiredPerCycle.set(conceptsFirePerCycle);
+        novelMaxPerCycle.set(conceptsFirePerCycle);
+
 
 
 
@@ -459,7 +470,8 @@ public class Default extends NARSeed implements ConceptBuilder {
         return new DefaultCycle(
                 new TaskAccumulator(TaskComparator.Merging.Or),
                 newConceptBag(),
-                newNovelTaskBag()
+                newNovelTaskBag(), inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
+
         );
     }
     

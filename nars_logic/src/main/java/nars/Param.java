@@ -17,19 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class Param implements Serializable {
 
-    //TODO only SequentialCycle implementations should be using these and should be moved to that:
-
-    /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
-    @Deprecated public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
-
-    /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
-    @Deprecated public final AtomicInteger inputsMaxPerCycle = new AtomicInteger(1);
-
-    //-------------------
-
-
-
-
 
     public Param() {    }
 

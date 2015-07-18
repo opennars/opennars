@@ -56,7 +56,7 @@ public class Number1DInputTest {
         NAR n = new NAR(new Curve(true).
                 setActiveConcepts(32367));
                 
-        (n.param).conceptsFiredPerCycle.set(1024);
+        //(n.param).conceptsFiredPerCycle.set(1024);
         
         
         Number1DInput v = new Number1DInput(n, "a", x, 4);

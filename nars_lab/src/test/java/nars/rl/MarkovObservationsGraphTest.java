@@ -22,7 +22,7 @@ public class MarkovObservationsGraphTest {
             }
 
         };
-        n.param.inputsMaxPerCycle.set(5);
+
 
         n.input("<a --> b>. :|:");
         n.input("<eternal --> something>.");

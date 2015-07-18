@@ -15,12 +15,26 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
 public class DefaultCycle extends SequentialCycle {
+
+
+
+    /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
+    public final AtomicInteger conceptsFiredPerCycle;
+
+    /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    public final AtomicInteger inputsMaxPerCycle;
+
+    /** max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    public final AtomicInteger novelMaxPerCycle;
+
+
 
     /**
      * New tasks with novel composed terms, for delayed and selective processing
@@ -40,10 +54,13 @@ public class DefaultCycle extends SequentialCycle {
 
 
 
-    public DefaultCycle(TaskAccumulator newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
+    public DefaultCycle(TaskAccumulator newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
         super(concepts);
 
         this.newTasks = newTasks;
+        this.conceptsFiredPerCycle = conceptsFiredPerCycle;
+        this.inputsMaxPerCycle = inputsMaxPerCycle;
+        this.novelMaxPerCycle = novelMaxPerCycle;
         this.novelTasks = novelTasks;
     }
 
@@ -91,7 +108,7 @@ public class DefaultCycle extends SequentialCycle {
                 memory);
 
         //inputs
-        inputNextPerception(memory.param.inputsMaxPerCycle.get());
+        inputNextPerception(inputsMaxPerCycle.get());
 
 
         //all new tasks
@@ -102,14 +119,15 @@ public class DefaultCycle extends SequentialCycle {
 
         //1 novel tasks if numNewTasks empty
         if (newTasks.isEmpty() && !novelTasks.isEmpty())  {
-            for (int i = 0; i < numNovelTasksPerCycle; i++) {
-                runNextNovelTask();
-            }
+            int nn = novelMaxPerCycle.get();
+            if (nn < 0) nn = novelTasks.size(); //all
+            if (nn > 0)
+                runNextNovelTasks(nn);
         }
 
 
         //1 concept if (memory.newTasks.isEmpty())*/
-        int conceptsToFire = newTasks.isEmpty() ? memory.param.conceptsFiredPerCycle.get() : 0;
+        int conceptsToFire = newTasks.isEmpty() ? conceptsFiredPerCycle.get() : 0;
 
         float tasklinkForgetDurations = memory.param.taskLinkForgetDurations.floatValue();
         float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
@@ -126,20 +144,47 @@ public class DefaultCycle extends SequentialCycle {
 
     private void runNewTasks() {
 
+        queueNewTasks();
+
         for (int n = newTasks.size()-1;  n >= 0; n--) {
             Task highest = newTasks.removeHighest();
             if (highest == null) break;
 
-            executingNewTasks = true;
             run(highest);
-            executingNewTasks = false;
-
-            commitNewTasks();
         }
+
+        commitNewTasks();
 
     }
 
+    /**
+     * Select a novel task to process.
+     */
+    protected void runNextNovelTasks(int count) {
+
+        queueNewTasks();
+
+        for (int i = 0; i < count; i++) {
+
+            final Task task = novelTasks.pop();
+            if (task!=null)
+                TaskProcess.run(memory, task);
+            else
+                break;
+        }
+
+        commitNewTasks();
+    }
+
+    /** should be followed by a 'commitNewTasks' call after finishing */
+    private void queueNewTasks() {
+        executingNewTasks = true;
+    }
+
     private void commitNewTasks() {
+
+        executingNewTasks = false;
+
         //add the generated tasks back to newTasks
         int ns = newTasksTemp.size();
         if (ns > 0) {
@@ -208,21 +253,6 @@ public class DefaultCycle extends SequentialCycle {
         }
 
     }
-
-
-    /**
-     * Select a novel task to process.
-     */
-    protected void runNextNovelTask() {
-
-        final Task task = novelTasks.pop();
-        if (task!=null) {
-            executingNewTasks = true;
-            TaskProcess.run(memory, task);
-            executingNewTasks = false;
-        }
-    }
-
 
 
 

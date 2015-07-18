@@ -43,7 +43,7 @@ public abstract class NAL implements Runnable {
     protected final LogicPolicy reasoner;
 
 
-    /** derivation queue */
+    /** derivation queue (this might also work as a Set) */
     protected List<Task> derived = null;
 
 
