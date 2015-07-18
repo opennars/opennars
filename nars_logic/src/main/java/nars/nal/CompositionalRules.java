@@ -819,9 +819,12 @@ OUT: <lock1 --> lock>.
     public static void eliminateVariableOfConditionAbductive(final int figure, final Task<Statement> sentence, final Sentence<Statement> belief, final NAL nal) {
         final Random m = nal.memory.random;
 
+        if (belief.isQuestOrQuestion() || sentence.isQuestOrQuestion())
+            return;
+
         Statement T1 = sentence.getTerm();
         Statement T2 = belief.getTerm();
-        Truth stu = sentence.getTruth();
+        final Truth stu = sentence.getTruth();
 
         Term S1 = T2.getSubject();
         Term S2 = T1.getSubject();
@@ -829,234 +832,163 @@ OUT: <lock1 --> lock>.
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
 
-
         Map<Term, Term> res1 = Global.newHashMap();
         Map<Term, Term> res2 = Global.newHashMap();
+
+
 
         if (figure == 21) {
             res1.clear();
             res2.clear();
+
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2, m); //this part is
+
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if (T1 == null) {
+            if (T1 == null)
                 return;
-            }
+
+
             T2 = (Statement) T2.applySubstitute(res1);
-            if (T2 == null) {
+            if (T2 == null)
                 return;
-            }
+
+
             S1 = T2.getSubject();
             S2 = T1.getSubject();
             P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            P2 = T1.getPredicate();
 
             if (S1 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
-
-                //try to unify P2 with a component
-                for (final Term s1 : ((Compound) S1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4, m)) {
-                        for (Term s2 : ((Compound) S1).term) {
-                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
-                        }
-                    }
-                }
+                assymUnifyComponents(belief, m, stu, (Compound) S1, P2, nal);
             }
-            if (P2 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
 
-                //try to unify S1 with a component
-                for (final Term s1 : ((Compound) P2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4, m)) {
-                        for (Term s2 : ((Compound) P2).term) {
-                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
-                        }
-                    }
-                }
+            if (P2 instanceof Conjunction) {
+                assymUnifyComponents(belief, m, stu, (Compound) P2, S1, nal);
             }
         }
 
         if (figure == 12) {
+
             res1.clear();
             res2.clear();
+
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2, m); //this part is
+
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null) {
                 return;
             }
+
             T2 = (Statement) T2.applySubstitute(res1);
             if (T2 == null) {
                 return;
             }
+
             S1 = T2.getSubject();
             S2 = T1.getSubject();
             P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            P2 = T1.getPredicate();
 
             if (S2 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
-
-                //try to unify P1 with a component
-                for (final Term s1 : ((Compound) S2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4, m)) {
-                        for (Term s2 : ((Compound) S2).term) {
-                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
-                        }
-                    }
-                }
+                assymUnifyComponents(belief, m, stu, (Compound) S2, P1, nal);
             }
+
             if (P1 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
-
-                Term[] cp1Terms = ((Compound) P1).term;
-
-                //try to unify S2 with a component
-                for (final Term s1 : cp1Terms) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4, m)) {
-                        for (Term s2 : cp1Terms) {
-                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
-                        }
-                    }
-                }
+                assymUnifyComponents(belief, m, stu, (Compound) P1, S2, nal);
             }
         }
 
         if (figure == 11) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2, m); //this part is
-            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if (T1 == null) {
-                return;
-            }
-            T2 = (Statement) T2.applySubstitute(res1);
-            if (T2 == null) {
-                return;
-            }
 
-            S1 = T2.getSubject();
-            S2 = T1.getSubject();
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2, m); //this part is
+
+            T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
+            if (T1 == null)
+                return;
+
+            T2 = (Statement) T2.applySubstitute(res1);
+            if (T2 == null)
+                return;
+
+
             P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
+            P2 = T1.getPredicate();
 
             if (P1 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
-
-                Term[] cp1Terms = ((Compound) P1).term;
-
-                //try to unify P2 with a component
-                for (final Term s1 : cp1Terms) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4, m)) {
-                        for (Term s2 : cp1Terms) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep() || !(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            if ((!s2.equals(s1)) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                            }
-                        }
-                    }
-                }
+                assymUnifyComponents(belief, m, stu, (Compound) P1, P2, nal);
             }
 
             if (P2 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
-
-                //try to unify P1 with a component
-                for (final Term s1 : ((Compound) P2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4, m)) {
-                        for (Term s2 : ((Compound) P2).term) {
-                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
-                        }
-                    }
-                }
+                assymUnifyComponents(belief, m, stu, (Compound) P2, P1, nal);
             }
         }
 
         if (figure == 22) {
             res1.clear();
             res2.clear();
+
             Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2, m); //this part is
+
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
-            if (T1 == null) {
+            if (T1 == null)
                 return;
-            }
+
             T2 = (Statement) T2.applySubstitute(res1);
-            if (T2 == null) {
+            if (T2 == null)
                 return;
-            }
+
             S1 = T2.getSubject();
             S2 = T1.getSubject();
-            P1 = T2.getPredicate();
-            P2 = T1.getPredicate(); //update the variables because T1 and T2 may have changed
 
             if (S1 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
-
-                //try to unify S2 with a component
-                for (final Term s1 : ((Compound) S1).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4, m)) {
-                        for (Term s2 : ((Compound) S1).term) {
-                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
-                        }
-                    }
-                }
+                assymUnifyComponents(belief, m, stu, (Compound) S1, S2, nal);
             }
-            if (S2 instanceof Conjunction) {
-                Map<Term, Term> res3 = Global.newHashMap();
-                Map<Term, Term> res4 = Global.newHashMap();
 
-                //try to unify S1 with a component
-                for (final Term s1 : ((Compound) S2).term) {
-                    res3.clear();
-                    res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4, m)) {
-                        for (Term s2 : ((Compound) S2).term) {
-                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
-                        }
-                    }
-                }
+            if (S2 instanceof Conjunction) {
+                assymUnifyComponents(belief, m, stu, (Compound) S2, S1, nal);
             }
         }
     }
 
-    protected static void assymAssymSubst(Sentence<Statement> belief, NAL nal, Truth stu, Map<Term, Term> res3, Term s1, Term s2) {
+    /** try to unify S1 with a component */
+    protected static void assymUnifyComponents(Sentence<Statement> belief, Random m, Truth t, Compound a, Term b, NAL nal) {
+        final Map<Term, Term> r1 = Global.newHashMap();
+        final Map<Term, Term> r2 = Global.newHashMap();
+
+        //try to unify P1 with a component
+        final Term[] aComponents = a.term;
+
+        for (final Term a1 : aComponents) {
+
+            //here the dependent part matters, see example of Issue40
+            if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, a1, b, r1, r2, m)) {
+                for (Term a2 : aComponents) {
+
+                    if (a2 == a1) continue; //this seems safe
+
+                    assymAssymSubst(belief, nal, t, r1, a1, a2);
+                }
+            }
+
+            r1.clear();
+            r2.clear();
+        }
+    }
+
+    /** truth should not be null */
+    protected static void assymAssymSubst(Sentence<Statement> belief, NAL nal, final Truth truth, Map<Term, Term> res3, Term s1, Term s2) {
         if (!(s2 instanceof Compound)) {
             return;
         }
+
         s2 = ((Compound) s2).applySubstitute(res3);
         if (s2 == null || s2.hasVarIndep() || !(s2 instanceof Compound)) {
             return;
         }
-        if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-            assymAssymDerive(belief, nal, stu, s2);
+        if (!s2.equals(s1)) {
+            assymAssymDerive(belief, nal, truth, s2);
         }
     }
 
@@ -1065,6 +997,10 @@ OUT: <lock1 --> lock>.
         if (truth!=null) {
             Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
             nal.deriveDouble((Compound) s2, truth, budget, false, false);
+        }
+        else {
+            //this should not occurr, but if it does we will know we can prune this path
+            throw new RuntimeException("this could have been prevented by checking for analytic truth values of belief.truth and truth");
         }
     }
 
