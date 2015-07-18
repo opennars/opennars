@@ -40,6 +40,10 @@ import java.lang.management.ManagementFactory;
 public class NARSwing extends NARControlPanel {
 
 
+    static {
+        Video.themeInvert();
+    }
+
     public final NWindow mainWindow;
 
     public NARSwing(NAR nar) {

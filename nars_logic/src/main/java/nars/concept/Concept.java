@@ -26,11 +26,10 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.link.*;
-import nars.meter.LogicMetrics;
+import nars.op.mental.Abbreviation;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.truth.Truth;
@@ -47,8 +46,9 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     public Bag<Sentence, TaskLink> getTaskLinks();
     public Bag<TermLinkKey, TermLink> getTermLinks();
-    public Map<Object, Meta> getMeta();
-    public void setMeta(Map<Object, Meta> meta);
+
+    public Map<Object, Object> getMeta();
+    void setMeta(Map<Object, Object> meta);
 
 
     public AbstractMemory getMemory();
@@ -187,13 +187,13 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     /** like Map.put for storing data in meta map
      *  @param value if null will perform a removal
      * */
-    default Meta put(Object key, Meta value) {
+    default Object put(Object key, Object value) {
         if (getMeta() == null) setMeta(Global.newHashMap());
 
         if (value != null) {
-            Meta removed = getMeta().put(key, value);
-            if (removed!=value) {
-                value.onState(this, getState());
+            Object removed = getMeta().put(key, value);
+            if (value instanceof ConceptReaction && removed!=value) {
+                ((ConceptReaction)value).onState(this, getState());
             }
             return removed;
         }
@@ -202,9 +202,10 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
     /** like Map.gett for getting data stored in meta map */
-    default public <C extends Meta> C get(Object key) {
-        if (getMeta() == null) return null;
-        return (C) getMeta().get(key);
+    default public <C> C get(Object key) {
+        final Map<Object, Object> m = getMeta();
+        if (m == null) return null;
+        return (C) m.get(key);
     }
 
     /**
@@ -297,7 +298,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     /**
      * Methods to be implemented by Concept meta instances
      */
-    public static interface Meta {
+    public static interface ConceptReaction {
 
         /** called before the state changes to the given nextState */
         public void onState(Concept c, State nextState);

@@ -599,13 +599,13 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
                     //double rij = ri + rj; //total radii
 
                     if (xDelta == 0) {
-                        xDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
+                        xDelta = 0.01 + (-0.5f + 0.5f * rng.nextFloat());
                     }
 
                     //if (xDelta - rij > maxDist) continue; // early exit condition
 
                     if (yDelta == 0) {
-                        yDelta = 0.01 + (-0.5f + 0.5f * rng.nextDouble());
+                        yDelta = 0.01 + (-0.5f + 0.5f * rng.nextFloat());
                     }
 
                     //if (yDelta - rij > maxDist) continue; // early exit condition

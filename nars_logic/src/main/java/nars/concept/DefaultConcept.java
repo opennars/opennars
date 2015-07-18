@@ -48,7 +48,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     private final TermLinkBuilder termLinkBuilder;
     transient private final TaskLinkBuilder taskLinkBuilder;
 
-    private Map<Object, Meta> meta = null;
+    private Map<Object, Object> meta = null;
 
 
 
@@ -130,11 +130,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
     /**
      * metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated
      */
-    public Map<Object, Meta> getMeta() {
+    public Map<Object, Object> getMeta() {
         return meta;
     }
 
-    public void setMeta(Map<Object, Meta> meta) {
+    @Deprecated public void setMeta(Map<Object, Object> meta) {
         this.meta = meta;
     }
 
@@ -234,8 +234,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         getMemory().updateConceptState(this);
 
         if (getMeta() != null) {
-            for (Meta m : getMeta().values()) {
-                m.onState(this, getState());
+            for (Object m : getMeta().values()) {
+                if (m instanceof ConceptReaction)
+                    ((ConceptReaction)m).onState(this, getState());
             }
         }
 

@@ -100,7 +100,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     protected void swapToProportionalIndex(int currentIndex, float priority) {
         //TODO choose reinsertionIndex intelligently
         //int reinsertionIndex = Memory.randomNumber.nextInt(queue.size()-1);
-        int reinsertionIndex = (int)(rng.nextDouble() * (1.0f - priority) * (queue.size()-1));
+        int reinsertionIndex = (int)(rng.nextFloat() * (1.0f - priority) * (queue.size()-1));
         if (currentIndex == reinsertionIndex) return;
         queue.swap(currentIndex, reinsertionIndex);
     }

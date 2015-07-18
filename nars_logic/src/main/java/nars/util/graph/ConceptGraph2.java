@@ -38,7 +38,7 @@ abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGra
         return null;
     }
 
-    static class Vertex<E> implements Concept.Meta {
+    static class Vertex<E> implements Concept.ConceptReaction {
 
         public enum EdgeSet {
             Incoming, Outgoing

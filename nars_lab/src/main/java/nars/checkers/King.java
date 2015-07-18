@@ -58,4 +58,9 @@ public class King extends Piece
 		
 		g.drawPolygon(xcoords, ycoords, xcoords.length); // draw our precious crown
 	}
+
+	@Override
+	public String toString() {
+		return super.toString() + "_KING";
+	}
 }

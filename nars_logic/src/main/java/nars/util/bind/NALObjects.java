@@ -7,6 +7,7 @@ import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 import nars.NAR;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
@@ -41,7 +42,10 @@ public class NALObjects implements MethodHandler {
         add("hashCode");
     }};
 
+    final static Atom TRUE = Atom.the("true");
+    final static Negation FALSE = Atom.notThe("true");
     final static Atom VOID = Atom.the("void");
+    final static Atom EMPTY = Atom.the("empty");
     final static Atom NULL = Atom.the("null");
 
     final Map<Package,Atom> packages = new HashMap();
@@ -91,6 +95,11 @@ public class NALObjects implements MethodHandler {
         if (o instanceof String) {
             return Atom.the((String)o, true);
         }
+        if (o instanceof Boolean) {
+            boolean b = ((Boolean) o).booleanValue();
+            if (b) return TRUE;
+            else return FALSE;
+        }
         else if (o  instanceof Number) {
             return Atom.the((Number)o);
         }
@@ -115,14 +124,25 @@ public class NALObjects implements MethodHandler {
             }
             return Atom.the("primitive");
         }
-        else if (o instanceof Object[]) {
+        else if (o instanceof int[]) {
+            final List<Term> arg = Arrays.stream((int[]) o).boxed().map(e -> termize(e)).collect(Collectors.toList());
+            if (arg.isEmpty()) return EMPTY;
             return Product.make(
-                    Arrays.stream((Object[]) o).map(e -> termize(e)).collect(Collectors.toList())
+                    arg
+            );
+        }
+        else if (o instanceof Object[]) {
+            final List<Term> arg = Arrays.stream((Object[]) o).map(e -> termize(e)).collect(Collectors.toList());
+            if (arg.isEmpty()) return EMPTY;
+            return Product.make(
+                    arg
             );
         }
         else if (o instanceof List) {
+            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> termize(e)).collect(Collectors.toList());
+            if (arg.isEmpty()) return EMPTY;
             return Product.make(
-                    (Collection<Term>) ((Collection) o).stream().map(e -> termize(e)).collect(Collectors.toList())
+                   arg
             );
         /*} else if (o instanceof Stream) {
             return Atom.quote(o.toString().substring(17));

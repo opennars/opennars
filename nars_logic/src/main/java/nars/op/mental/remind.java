@@ -19,6 +19,7 @@ package nars.op.mental;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
+import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.task.Task;
@@ -44,11 +45,17 @@ public class remind extends SynchOperator implements Mental {
     @Override    
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Term term = operation.arg(0);
+
+        remind(term, memory);
+
+        return null;
+    }
+
+    public static Concept remind(Term term, Memory memory) {
         //Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
         //nar.memory.concepts.activate(concept, budget, Activating.TaskLink);
-        memory.conceptualize(term, budget);
-        return null;
+        return memory.conceptualize(term, budget);
     }
 
 }

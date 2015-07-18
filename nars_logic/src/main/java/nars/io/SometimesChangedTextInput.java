@@ -27,7 +27,7 @@ public class SometimesChangedTextInput extends ChangedTextInput {
 
     @Override
     public boolean enable() {
-        return super.allowRepeats() || (XORShiftRandom.global.nextDouble() < prob);
+        return super.allowRepeats() || (XORShiftRandom.global.nextFloat() < prob);
     }
     
     

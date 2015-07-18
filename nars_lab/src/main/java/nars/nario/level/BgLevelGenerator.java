@@ -94,7 +94,7 @@ public class BgLevelGenerator
                     int tt = 0;
                     for (int x = 0; x < width; x++)
                     {
-                        if (random.nextDouble() < 0.75) tt = 1 - tt;
+                        if (random.nextFloat() < 0.75) tt = 1 - tt;
                         for (int y = 0; y < height; y++)
                         {
                             int t = tt;

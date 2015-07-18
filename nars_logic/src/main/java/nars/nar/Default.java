@@ -9,6 +9,7 @@ import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.clock.CycleClock;
+import nars.clock.HardRealtimeClock;
 import nars.clock.RealtimeMSClock;
 import nars.concept.BeliefTable;
 import nars.concept.Concept;
@@ -519,6 +520,11 @@ public class Default extends NARSeed implements ConceptBuilder {
         return clock(new RealtimeMSClock(true));
     }
 
+    public Default realTimeHard(int durationMS) {
+        duration.set(durationMS);
+        return clock(new HardRealtimeClock());
+    }
+
 
 
     @Override
@@ -531,9 +537,6 @@ public class Default extends NARSeed implements ConceptBuilder {
     public void setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
     }
-
-
-
 
 
 

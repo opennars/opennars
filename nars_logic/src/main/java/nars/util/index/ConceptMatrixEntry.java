@@ -1,13 +1,12 @@
 package nars.util.index;
 
 import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.term.Term;
 
 /**
  * base type for cell entries in the matrix. subclass to add additional information per cell
  */
-abstract public class ConceptMatrixEntry<R extends Term, C extends Term, E extends Term, V extends ConceptMatrixEntry> implements Concept.Meta {
+abstract public class ConceptMatrixEntry<R extends Term, C extends Term, E extends Term, V extends ConceptMatrixEntry> implements Concept.ConceptReaction {
 
     private final ConceptMatrix matrix;
     public final Concept concept; //may be null

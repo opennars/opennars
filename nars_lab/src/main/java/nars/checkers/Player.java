@@ -23,6 +23,11 @@ public abstract class Player
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
+
 	/**
 	 * 
 	 * @param l

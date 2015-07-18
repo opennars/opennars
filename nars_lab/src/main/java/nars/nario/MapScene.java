@@ -95,10 +95,10 @@ public class MapScene extends Scene
         int height = 240 / 16 + 1;
         level = new int[width][height];
         data = new int[width][height];
-        double xo0 = random.nextDouble() * 512;
-        double yo0 = random.nextDouble() * 512;
-        double xo1 = random.nextDouble() * 512;
-        double yo1 = random.nextDouble() * 512;
+        double xo0 = random.nextFloat() * 512;
+        double yo0 = random.nextFloat() * 512;
+        double xo1 = random.nextFloat() * 512;
+        double yo1 = random.nextFloat() * 512;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)

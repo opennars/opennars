@@ -214,7 +214,7 @@ public class InternalExperience extends NARReaction {
         
         Term content=task.getTerm();
         // to prevent infinite recursions
-        if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+        if (content instanceof Operation/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
             return null;
         }
         Sentence sentence = task.sentence;

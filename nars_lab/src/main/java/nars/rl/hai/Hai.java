@@ -47,8 +47,8 @@ public class Hai {
         }
         
         int Action = 0;
-        if (random.nextDouble() < Alpha) {
-            Action = (int) random.nextDouble() * (nActions);
+        if (random.nextFloat() < Alpha) {
+            Action = (int) random.nextFloat() * (nActions);
         } else {
             Action = maxk;
         }

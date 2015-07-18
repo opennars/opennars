@@ -578,7 +578,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
     }
     public static double[] randomCoordinatesArray(double[] randomCoordinates) {
         for (int randomCoordinatesIndex = 0; randomCoordinatesIndex < randomCoordinates.length; randomCoordinatesIndex++) {
-            randomCoordinates[randomCoordinatesIndex] = (RANDOM.nextDouble() * 2.0) - 1.0;
+            randomCoordinates[randomCoordinatesIndex] = (RANDOM.nextFloat() * 2.0) - 1.0;
         }
         return randomCoordinates;
     }

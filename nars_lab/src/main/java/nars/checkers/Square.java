@@ -9,7 +9,7 @@ import java.awt.*;
  * @author Elio Tolhoek
  * @version 0.2
  */
-public class Square extends JPanel
+public class Square extends JComponent
 {
 	private Color color;
 	private Piece piece = null;

@@ -23,11 +23,18 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 	private Player player1;
 	private Player player2;
 
+	public Board(Player player1, Player player2, int WIDTH, int HEIGHT) {
+		this(player1, player2, new Game(WIDTH, HEIGHT));
+	}
 	/**
-	 * 
+	 *
+	 *
 	 */
-	public Board(Player player1, Player player2, int WIDTH, int HEIGHT)
+	public Board(Player player1, Player player2, Game game)
 	{
+		final int WIDTH = game.WIDTH;
+		final int HEIGHT = game.HEIGHT;
+
 		// set players
 		this.player1 = player1;
 		this.player1.setBoard(this);
@@ -52,7 +59,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 			for(int j = 0; j < HEIGHT; j++)
 			{
 				// decide weather to create a black or white square
-				squares[i][j] = i % 2 == j % 2 ? new Square(new Color(124, 67, 0, 168), i, j) : new Square(new Color(244, 241, 237), i, j);
+				squares[i][j] = i % 2 == j % 2 ? new Square(new Color(50, 50, 50), i, j) : new Square(new Color(200, 200, 200), i, j);
 
 				// set preferred size per square
 				squares[i][j].setPreferredSize(new Dimension(SQUARE_WIDTH, SQUARE_HEIGHT));
@@ -62,6 +69,9 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 			}
 		}
 
+
+		setLayout(new GridLayout(WIDTH, HEIGHT));
+
 		// add the squares to the panel in the right order
 		for(int i = HEIGHT - 1; i >= 0; i--)
 		{
@@ -70,7 +80,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 		}
 
 		// finally set the board's initial context
-		setContext(new Game(WIDTH, HEIGHT));		
+		setContext(game);
 	}
 
 	/**
@@ -238,8 +248,7 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 		player1.takeTurn();
 	}
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) throws Exception {
 		Board b = new Board(new HumanPlayer("Human1"), new HumanPlayer("Human2"), 8, 8);
                 //Board b = new Board(new MinimaxPlayer("CPU1"), new MinimaxPlayer("CPU1"), 16, 16);
 
@@ -296,5 +305,22 @@ public class Board extends JPanel implements MouseListener, PlayerListener
 			else
 				player1.takeTurn();
 		}
+	}
+
+	public void playWindow() {
+		JFrame frame = new JFrame("Checkers");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		JPanel boardPane = new JPanel(new BorderLayout());
+		//((FlowLayout)boardPane.getLayout()).setAlignment();
+		boardPane.add(this, BorderLayout.CENTER);
+
+		frame.getContentPane().setLayout(new java.awt.BorderLayout());
+		frame.getContentPane().add(boardPane, java.awt.BorderLayout.CENTER);
+		frame.pack();
+		frame.setVisible(true);
+
+		play();
+
 	}
 }

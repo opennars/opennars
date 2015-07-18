@@ -6,6 +6,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
+import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
@@ -13,6 +14,7 @@ import nars.nal.nal8.Operation;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Atom;
+import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,7 +81,7 @@ public class Abbreviation extends NARReaction {
         if (event != TaskDerive.class)
             return;
 
-        if ((memory.random.nextDouble() < abbreviationProbability))
+        if ((memory.random.nextFloat() < abbreviationProbability))
             return;
 
         Task task = (Task)a[0];
@@ -87,20 +89,31 @@ public class Abbreviation extends NARReaction {
         //is it complex and also important? then give it a name:
         if (canAbbreviate(task)) {
 
-            Operation operation = Operation.make(
-                    abbreviate, Product.make(termArray(task.sentence.getTerm())));
+            final Compound termAbbreviating = task.sentence.getTerm();
 
-            operation.setTask(task);
+            Operation compound = Operation.make(
+                    abbreviate, Product.make(termArray(termAbbreviating)));
 
-            Term compound = operation;
+            Concept concept = memory.concept(termAbbreviating);
 
-            Term atomic = newSerialTerm();
+            if (concept!=null && concept.get(Abbreviation.class)==null) {
 
-            TaskProcess.run(memory, memory.newTask(Similarity.make(compound, atomic))
-                    .judgment().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                    .parent(operation.getTask()).occurrNow()
-                    .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
-                            Global.DEFAULT_JUDGMENT_DURABILITY).get());
+                compound.setTask(task);
+
+                Term atomic = newSerialTerm();
+
+                TaskProcess.run(memory, memory.newTask(Similarity.make(compound, atomic))
+                        .judgment().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                        .parent(compound.getTask()).occurrNow()
+                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
+                                Global.DEFAULT_JUDGMENT_DURABILITY).get());
+
+                concept.put(Abbreviation.class, atomic);
+            }
+            else {
+                //already abbreviated, remember it
+                remind.remind(termAbbreviating, memory);
+            }
         }
     }
 

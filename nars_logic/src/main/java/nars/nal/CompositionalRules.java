@@ -860,20 +860,7 @@ OUT: <lock1 --> lock>.
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4, m)) {
                         for (Term s2 : ((Compound) S1).term) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
-                            }
+                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
                         }
                     }
                 }
@@ -888,20 +875,7 @@ OUT: <lock1 --> lock>.
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4, m)) {
                         for (Term s2 : ((Compound) P2).term) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
-                            }
+                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
                         }
                     }
                 }
@@ -935,20 +909,7 @@ OUT: <lock1 --> lock>.
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4, m)) {
                         for (Term s2 : ((Compound) S2).term) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
-                            }
+                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
                         }
                     }
                 }
@@ -965,20 +926,7 @@ OUT: <lock1 --> lock>.
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4, m)) {
                         for (Term s2 : cp1Terms) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
-                            }
+                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
                         }
                     }
                 }
@@ -1019,7 +967,7 @@ OUT: <lock1 --> lock>.
                                 continue;
                             }
                             s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
+                            if (s2 == null || s2.hasVarIndep() || !(s2 instanceof Compound)) {
                                 continue;
                             }
                             if ((!s2.equals(s1)) && (stu != null) && (belief.truth != null)) {
@@ -1042,20 +990,7 @@ OUT: <lock1 --> lock>.
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4, m)) {
                         for (Term s2 : ((Compound) P2).term) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
-                            }
+                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
                         }
                     }
                 }
@@ -1089,20 +1024,7 @@ OUT: <lock1 --> lock>.
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4, m)) {
                         for (Term s2 : ((Compound) S1).term) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
-                            }
+                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
                         }
                     }
                 }
@@ -1117,25 +1039,32 @@ OUT: <lock1 --> lock>.
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4, m)) {
                         for (Term s2 : ((Compound) S2).term) {
-                            if (!(s2 instanceof Compound)) {
-                                continue;
-                            }
-
-                            s2 = ((Compound) s2).applySubstitute(res3);
-                            if (s2 == null || s2.hasVarIndep()) {
-                                continue;
-                            }
-                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
-                                Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
-                            }
+                            assymAssymSubst(belief, nal, stu, res3, s1, s2);
                         }
                     }
                 }
             }
+        }
+    }
+
+    protected static void assymAssymSubst(Sentence<Statement> belief, NAL nal, Truth stu, Map<Term, Term> res3, Term s1, Term s2) {
+        if (!(s2 instanceof Compound)) {
+            return;
+        }
+        s2 = ((Compound) s2).applySubstitute(res3);
+        if (s2 == null || s2.hasVarIndep() || !(s2 instanceof Compound)) {
+            return;
+        }
+        if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+            assymAssymDerive(belief, nal, stu, s2);
+        }
+    }
+
+    protected static void assymAssymDerive(Sentence<Statement> belief, NAL nal, Truth stu, Term s2) {
+        Truth truth = abduction(stu, belief.truth);
+        if (truth!=null) {
+            Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
+            nal.deriveDouble((Compound) s2, truth, budget, false, false);
         }
     }
 

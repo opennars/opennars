@@ -124,7 +124,7 @@ public class Hauto {
             w.value=(up.charge==1 ^ down.charge==1) ? 1.0f : 0.0f;  //eval state from input connections
 
         //ADD BIDIRECTIONAL LOGIC BRIDGE TO OVERCOME 2D TOPOLOGY
-        if(r.logic==BRIDGE || (r.logic==UNCERTAINBRIDGE && nar.memory.random.nextDouble()>0.5))
+        if(r.logic==BRIDGE || (r.logic==UNCERTAINBRIDGE && nar.memory.random.nextFloat()>0.5))
         {
             if(left.chargeFront && left.logic==WIRE)
                 w.value=left.charge;

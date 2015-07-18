@@ -17,8 +17,8 @@ public class ConsolePanel extends JSplitPane {
     public ConsolePanel(NAR nar) {
         super(JSplitPane.VERTICAL_SPLIT);
         
-        //LogPanel outputLog = new SwingLogPanel(nar);
-        LogPanel outputLog = new ConceptLogPanel(nar);
+        LogPanel outputLog = new SwingLogPanel(nar);
+        //LogPanel outputLog = new ConceptLogPanel(nar);
         add(outputLog, 0);
         
         TextInputPanel inputPanel = new TextInputPanel(nar);

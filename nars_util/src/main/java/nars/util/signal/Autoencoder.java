@@ -101,11 +101,11 @@ public class Autoencoder {
 
     public void addNoise(double[] x, double[] tilde_x, double maxNoiseAmount, double corruptionRate) {
         for (int i = 0; i < n_visible; i++) {
-            if ((corruptionRate > 0) && (rng.nextDouble() < corruptionRate)) {
+            if ((corruptionRate > 0) && (rng.nextFloat() < corruptionRate)) {
                 tilde_x[i] = 0;
             }
             else if (maxNoiseAmount > 0) {
-                double nx = x[i] + (rng.nextDouble() - 0.5) * maxNoiseAmount;
+                double nx = x[i] + (rng.nextFloat() - 0.5) * maxNoiseAmount;
                 if (nx < 0) nx = 0;
                 if (nx > 1) nx = 1;
                 tilde_x[i] = nx;

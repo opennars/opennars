@@ -15,6 +15,11 @@ public class HardRealtimeClock extends RealtimeClock {
         this.msOrNano = msOrNano;
     }
 
+    /** default: ms resolution */
+    public HardRealtimeClock() {
+        this(true);
+    }
+
     @Override
     public void preCycle() {
 

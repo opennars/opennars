@@ -2,6 +2,7 @@ package nars.term;
 
 import nars.Global;
 import nars.Op;
+import nars.nal.nal1.Negation;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 
@@ -284,6 +285,10 @@ public class Atom extends ImmutableAtom {
         else if (o instanceof String) return the((String)o);
         else if (o instanceof Number) return the((Number)o);
         return null;
+    }
+
+    public static Negation notThe(String untrue) {
+        return (Negation) Negation.make(Atom.the(untrue));
     }
 
 

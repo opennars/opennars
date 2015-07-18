@@ -19,6 +19,10 @@ public class Game {
 	private char turn = TURN_DARK;	// dark is basically an alias for player 1
 	private int remainingJumpX = -1, remainingJumpY = -1;
 
+	public Game() 	{
+		this(8,8);
+	}
+
 	public Game(int width, int height) 	{
             this.WIDTH = width;
             this.HEIGHT = height;
@@ -262,16 +266,16 @@ public class Game {
 		return destinations;
 	}
 
-	/**
-	 *
-	 * @return
-	 */
-	public ArrayList<Game> getPossibleFollowingContexts()
-	{
-		ArrayList<Game> contexts = new ArrayList<>();
-
-		return contexts;
-	}
+//	/**
+//	 *
+//	 * @return
+//	 */
+//	public ArrayList<Game> getPossibleFollowingContexts()
+//	{
+//		ArrayList<Game> contexts = new ArrayList<>();
+//
+//		return contexts;
+//	}
 
 	/**
 	 * 

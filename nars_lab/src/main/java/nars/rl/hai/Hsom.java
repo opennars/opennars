@@ -44,7 +44,7 @@ public class Hsom {
         for (int x = 0; x < SomSize; x++) {
             for (int y = 0; y < SomSize; y++) {
                 for (int z = 0; z < numInputs; z++) {
-                    links[x][y][z] = (random.nextDouble() * 1/**
+                    links[x][y][z] = (random.nextFloat() * 1/**
                              * 2.0-1.0
                              */
                             ) * 0.1;
