@@ -4,6 +4,7 @@
  */
 package nars.process;
 
+import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
@@ -140,6 +141,12 @@ public class TaskProcess extends NAL {
 
     @Override
     public void run() {
+
+        if (!getTask().isInput())
+            emit(Events.OUT.class, getTask());
+        else
+            emit(Events.IN.class, getTask());
+
         super.run();
 
         if (derived!=null)

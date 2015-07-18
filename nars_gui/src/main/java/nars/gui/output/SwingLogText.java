@@ -141,34 +141,42 @@ public class SwingLogText extends SwingText {
         float priority = 1f;
 
 
+
         if (c != OUT.class) {
             //pad the channel name to max 6 characters, right aligned
 
             String n = c.getSimpleName();
-            final int nl = n.length();
-            if (nl > 6)
-                n = n.substring(0, 6);
-            switch (n.length()) {
+            final int nl = Math.min(n.length(), 6);
+
+            buffer.setLength(0);
+
+            switch (nl) {
                 case 0:
                     break;
                 case 1:
-                    n = "     " + n;
+                    buffer.append("     ");
                     break;
                 case 2:
-                    n = "    " + n;
+                    buffer.append("    ");
                     break;
                 case 3:
-                    n = "   " + n;
+                    buffer.append("   ");
                     break;
                 case 4:
-                    n = "  " + n;
+                    buffer.append("  ");
                     break;
                 case 5:
-                    n = " " + n;
+                    buffer.append(" ");
                     break;
             }
-            Color chanColor = Video.getColor(c.getClass().hashCode(), 0.8f, 0.8f);
-            print(chanColor, n);
+
+            if (nl > 6)
+                buffer.append(n.substring(0, 6));
+            else
+                buffer.append(n);
+
+            Color chanColor = Video.getColor(c.hashCode(), 0.8f, 0.8f);
+            print(chanColor, buffer.toString());
         } else {
             if (o instanceof Task) {
                 Task t = (Task) o;
@@ -191,36 +199,37 @@ public class SwingLogText extends SwingText {
         }
 
 
-        CharSequence text = TextOutput.getOutputString(c, o, showStamp, nar, buffer);
 
 
+        buffer.setLength(0);
 
-        StringBuilder sb = new StringBuilder(text.length() + 2);
-        sb.append(' ');
-        if ((text.length() > maxLineWidth) && (c != Events.ERR.class))
-            sb.append(text.subSequence(0, maxLineWidth));
-        else
-            sb.append(text);
+        buffer.append(' ');
+        TextOutput.append(c, o, showStamp, nar, buffer);
 
-        if (sb.charAt(sb.length() - 1) == '\n') {
-            sb = sb.delete(sb.length()-1, sb.length());
+        if (buffer.length() == 0)
+            throw new RuntimeException("no text generated for: " + o);
+
+        if (buffer.charAt(buffer.length() - 1) == '\n') {
+            buffer.delete(buffer.length()-1, buffer.length());
             //throw new RuntimeException(sb + " should not end in newline char");
         }
+
+        if ((buffer.length() > maxLineWidth) && (c != Events.ERR.class))
+            buffer.setLength(maxLineWidth);
 
 
         if (o instanceof Task) {
             Task t = (Task) o;
             float tc = 0.5f + 0.5f * priority;
             Color textColor = new Color(tc, tc, tc);
-            print(textColor, sb.toString(), new ConceptAction(t.getTerm()));
+            print(textColor, buffer.toString(), new ConceptAction(t.getTerm()));
 
             print(Color.GRAY, "\n"); //print the newline separately without the action handler
         }
         else {
 //        float tc = 0.75f + 0.25f * priority;
 //        Color textColor = new Color(tc,tc,tc);
-            sb.append('\n');
-            print(Color.GRAY, sb.toString());
+            print(Color.GRAY, buffer.append('\n').toString());
         }
 
 

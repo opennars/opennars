@@ -147,12 +147,13 @@ public class Video {
     }    
 
     public static int getColor(final Class c) {            
-        float hue = (((float)c.hashCode()) / Integer.MAX_VALUE);
+        //float hue = (((float)c.hashCode()) / Integer.MAX_VALUE);
+        float hue = hashFloat(c.hashCode());
         return color(hue,0.8f,0.9f,1f);
     }
     
-    public static int getColor(final String s) {            
-        float hue = (((float)s.hashCode()) / Integer.MAX_VALUE);
+    public static int getColor(final String s) {
+        float hue = hashFloat(s.hashCode()); //(((float)s.hashCode()) / Integer.MAX_VALUE);
         return color(hue,0.8f,0.9f,1f);
     }
 
@@ -161,7 +162,10 @@ public class Video {
     }
 
     public static final float hashFloat(final int h) {
-        return (h) / (((float) Integer.MAX_VALUE) - ((float) Integer.MIN_VALUE));
+        final int max = 32;
+        return Math.abs(h % max) / ((float)max);
+
+        //return (h) / (((float) Integer.MAX_VALUE) - ((float) Integer.MIN_VALUE));
     }
 
     @Deprecated public static final Color getColor(final String s, final float saturation, final float brightness) {

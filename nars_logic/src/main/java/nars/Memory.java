@@ -629,11 +629,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
             //we need to buffer unique TaskAdd ("OUT") tasks until the end
             //of the cycle
 
-            if (!t.isInput())
-                emit(Events.OUT.class, t);
-            else
-                emit(Events.IN.class, t);
-
 
             logic.TASK_ADD_NEW.hit();
             return true;

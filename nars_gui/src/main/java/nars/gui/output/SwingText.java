@@ -37,19 +37,7 @@ public class SwingText extends JTextPane {
         //StyleConstants.setFontSize(mainStyle, 16);
         doc.setLogicalStyle(0, mainStyle);
 
-        addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Element ele = doc.getCharacterElement(viewToModel(e.getPoint()));
-                AttributeSet as = ele.getAttributes();
-                Action fla = (Action) as.getAttribute("linkact");
-                if (fla != null) {
-                    fla.actionPerformed(null);
-                }
-            }
-
-        });
+        addMouseListener(new ClickableLineHandler(this));
 
     }
 
@@ -74,8 +62,9 @@ public class SwingText extends JTextPane {
         //StyleConstants.setBold(aset, bold);
         
         try {
+            MutableAttributeSet attr;
             if (action == null) {
-                doc.insertString(doc.getLength(), text.toString(), aset);
+                attr = aset;
             } else {
                 //http://stackoverflow.com/questions/16131811/clickable-text-in-a-jtextpane
                 Style link = doc.addStyle(null, StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE));
@@ -83,8 +72,9 @@ public class SwingText extends JTextPane {
                 //StyleConstants.setUnderline(tlink, true);
                 //StyleConstants.setBold(tlink, true);
                 link.addAttribute("linkact", action);
-                doc.insertString(doc.getLength(), text.toString(), link);
+                attr = link;
             }
+            doc.insertString(doc.getLength(), text.toString(), attr);
         } catch (BadLocationException ex) {
             Logger.getLogger(SwingText.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -124,4 +114,23 @@ public class SwingText extends JTextPane {
         setFont(Video.monofont.deriveFont(v));
     }
 
+    private static class ClickableLineHandler extends MouseAdapter {
+
+        private final SwingText swingText;
+
+        public ClickableLineHandler(SwingText swingText) {
+            this.swingText = swingText;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            Element ele = swingText.doc.getCharacterElement(swingText.viewToModel(e.getPoint()));
+            AttributeSet as = ele.getAttributes();
+            Action fla = (Action) as.getAttribute("linkact");
+            if (fla != null) {
+                fla.actionPerformed(null);
+            }
+        }
+
+    }
 }

@@ -1,0 +1,30 @@
+'(the hyped "robot hears own sound experiment")
+
+'you are robot1
+<SELF <-> {robot1}>.
+
+'if the sound of a robot is heard, it isn't silenced
+<<$1 --> [heard]> =|> (--,<$1 --> [silenced]>)>.
+
+'the sound of robot1 was heard
+<{robot1} --> [heard]>. :|:
+
+'are you silenced?
+<SELF --> [silenced]>?
+'  |-   "I am not silenced": <SELF --> [silenced]>. %0.00;0.66%
+
+'Answering Process:
+
+'1. Deduction
+<{robot1} --> [heard]>. :|:
+<<$1 --> [heard]> =|> (--,<$1 --> [silenced]>)>. :|:
+'  |-   (--,<{robot1} --> [silenced]>).
+
+'2. Transformation
+(--,<{robot1} --> [silenced]>).
+'  |-   <{robot1} --> [silenced]>. %0%
+
+'3. Analogy
+<{robot1} --> [silenced]>. %0%
+<SELF <-> {robot1}>.
+'  |-   <SELF --> [silenced]>. %0%

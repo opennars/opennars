@@ -26,8 +26,8 @@ import automenta.vivisect.swing.NWindow;
 import nars.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.output.SwingText;
-import nars.Events.OUT;
-import org.fife.ui.rsyntaxtextarea.*;
+import nars.op.io.Echo;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
@@ -138,7 +138,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
                                     if (!f.isDirectory()) {
                                         try {
                                             nar.input(f);
-                                            nar.emit(OUT.class, "Loaded file: " + f.getAbsolutePath());
+                                            nar.emit(Echo.class, "Loaded file: " + f.getAbsolutePath());
                                         } catch (IOException ex) {
                                             System.err.println(ex);
                                         }

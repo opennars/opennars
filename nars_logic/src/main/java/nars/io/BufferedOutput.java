@@ -231,7 +231,8 @@ abstract public class BufferedOutput extends Output {
 
             String nextChannel = i.channel.getSimpleName();
 
-            StringBuilder content = TextOutput.getOutputString(
+            buffer.setLength(0);
+            StringBuilder content = TextOutput.append(
                     i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, buffer, 0);
 
 

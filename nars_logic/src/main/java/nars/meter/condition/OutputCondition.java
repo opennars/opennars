@@ -10,7 +10,6 @@ import nars.event.NARReaction;
 import nars.io.Texts;
 import nars.io.out.TextOutput;
 import nars.narsese.InvalidInputException;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 
@@ -70,7 +69,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
     }
 
     public String toString(Class channel, Object signal) {
-        return TextOutput.getOutputString(channel, signal, false, nar, new StringBuilder(16)).toString();
+        return TextOutput.append(channel, signal, false, nar, new StringBuilder(16)).toString();
     }
 
     protected boolean continueAfterSuccess() { return false; }

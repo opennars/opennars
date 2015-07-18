@@ -176,7 +176,7 @@ public class TextOutput extends Output {
         ThreadLocal<StringBuilder> buffers = new ThreadLocal();
 
         @Override
-        public CharSequence get(Class c, Object[] o) {
+        public StringBuilder get(Class c, Object[] o) {
 
 
             if (o[0] instanceof Task) {
@@ -189,7 +189,11 @@ public class TextOutput extends Output {
             if (buffer==null) {
                 buffers.set( buffer = new StringBuilder() );
             }
-            return TextOutput.getOutputString(c, o, false, showStamp, nar, buffer, outputPriorityMin);
+            else {
+                buffer.setLength(0);
+            }
+
+            return TextOutput.append(c, o, false, showStamp, nar, buffer, outputPriorityMin);
         }
     }
 
@@ -237,11 +241,7 @@ public class TextOutput extends Output {
     /**
      * generates a human-readable string from an output channel and signals
      */
-    public static StringBuilder getOutputString(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float outputMinPriority) {
-
-
-
-        buffer.setLength(0);
+    public static StringBuilder append(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float outputMinPriority) {
 
 
         Object signal;
@@ -249,6 +249,8 @@ public class TextOutput extends Output {
         if (signalOrSignals instanceof Object[]) {
             signals = (Object[]) signalOrSignals;
             signal = signals[0];
+        } else if (signalOrSignals instanceof CharSequence) {
+            return buffer.append((CharSequence)signalOrSignals);
         } else {
             signal = signalOrSignals;
             signals = null;
@@ -308,8 +310,8 @@ public class TextOutput extends Output {
         }
     }*/
 
-    public static CharSequence getOutputString(Class channel, Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
-        return getOutputString(channel, signal, false, showStamp, nar, buffer, 0);
+    public static StringBuilder append(Class channel, Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
+        return append(channel, signal, false, showStamp, nar, buffer, 0);
     }
 
 

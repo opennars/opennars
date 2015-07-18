@@ -1,15 +1,14 @@
 package nars.rl.example;
 
 import automenta.vivisect.Video;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
+import nars.concept.BeliefTable;
 import nars.gui.NARSwing;
 import nars.nar.Default;
-import nars.task.Sentence;
-import nars.task.filter.MultiplyDerivedBudget;
 import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
@@ -17,8 +16,6 @@ import nars.rl.RawPerception;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static nars.nal.UtilityFunctions.or;
 
 /**
  * TODO add parameters determining what sensor input is exposed to NARS
@@ -151,12 +148,12 @@ public class RunQLAgent extends JPanel {
 
 
         /* Create and display the form */
-        RLEnvironment d = new PoleBalancing2D();
+        //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
         //RLEnvironment d = new Follow1DTwoPoint();
         //RLEnvironment d = new Follow1DThreePoint(0.02, 0.1);
 
-        //RLEnvironment d = new Curiousbot();
+        RLEnvironment d = new Curiousbot();
 
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
@@ -167,8 +164,8 @@ public class RunQLAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 512;
-        int conceptsPerCycle = 16;
+        int concepts = 1024;
+        int conceptsPerCycle = 64;
         final int cyclesPerFrame = 5;
 
 
@@ -199,24 +196,24 @@ public class RunQLAgent extends JPanel {
 //                };
 //            }
 
-            /** ranks beliefs by recency. the relevance decays proportional to delta time from now divided by window length (in cycles) */
-            public float rankBeliefRecent(final Sentence s, final long now, final float window, final float eternalWindow) {
-                final float confidence = s.truth.getConfidence();
-
-                //final float originality = s.stamp.getOriginality();
-                final float w, when;
-                if (s.isEternal()) {
-                    w = eternalWindow;
-                    when = s.getCreationTime();
-                }
-                else {
-                    w = window;
-                    when = s.getOccurrenceTime();
-                }
-                float timeRelevance = 1f / (1f+ Math.abs(now - when)/w);
-                //return or(confidence, Math.min(originality, timeRelevance));
-                return or(confidence, timeRelevance);
-            }
+//            /** ranks beliefs by recency. the relevance decays proportional to delta time from now divided by window length (in cycles) */
+//            public float rankBeliefRecent(final Sentence s, final long now, final float window, final float eternalWindow) {
+//                final float confidence = s.truth.getConfidence();
+//
+//                //final float originality = s.stamp.getOriginality();
+//                final float w, when;
+//                if (s.isEternal()) {
+//                    w = eternalWindow;
+//                    when = s.getCreationTime();
+//                }
+//                else {
+//                    w = window;
+//                    when = s.getOccurrenceTime();
+//                }
+//                float timeRelevance = 1f / (1f+ Math.abs(now - when)/w);
+//                //return or(confidence, Math.min(originality, timeRelevance));
+//                return or(confidence, timeRelevance);
+//            }
 
 
 //            @Override
@@ -229,6 +226,13 @@ public class RunQLAgent extends JPanel {
 //                };
 //            }
 
+
+            @Override
+            public BeliefTable.RankBuilder getConceptBeliefGoalRanking() {
+                return (c, b) -> {
+                    return new BeliefTable.BeliefConfidenceAndCurrentTime(c);
+                };
+            }
         };
 
 
@@ -241,9 +245,9 @@ public class RunQLAgent extends JPanel {
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
         //dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
-        dd.duration.set(1);
+        dd.duration.set(5);
         dd.shortTermMemoryHistory.set(3);
-        dd.executionThreshold.set(0.55);
+        dd.executionThreshold.set(0);
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd,

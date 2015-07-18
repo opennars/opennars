@@ -161,6 +161,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     }
 
 
+    final StringBuilder buffer = new StringBuilder();
 
     void print(Class channel, Object o) {
         float priority = 0;
@@ -180,18 +181,26 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
             }
         }
 
-        CharSequence s = TextOutput.getOutputString(channel, o, true, showStamp, nar, new StringBuilder(), 0f);
-        if (s == null)
-            return; //ex: too low priority
+        JLabel jl;
+
+        synchronized (buffer) {
+
+            buffer.setLength(0);
+            CharSequence s = TextOutput.append(channel, o, true, showStamp, nar, buffer, 0f);
+            if (s == null)
+                return; //ex: too low priority
+
+            jl = new JLabel(s.toString());
+            jl.setDoubleBuffered(true);
+            jl.setIgnoreRepaint(true);
+
+            applyPriority(channel, jl, priority);
+            append(jl);
+
             //throw new RuntimeException("ConceptLogPanel: " + channel + " " + o + " NULL");
+        }
 
 
-        JLabel jl = new JLabel(s.toString());
-        jl.setDoubleBuffered(true);
-        jl.setIgnoreRepaint(true);
-
-        applyPriority(channel, jl, priority);
-        append(jl);
 
     }
 
