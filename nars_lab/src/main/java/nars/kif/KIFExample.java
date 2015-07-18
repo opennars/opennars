@@ -17,8 +17,8 @@
 
 package nars.kif;
 
-import nars.nar.Curve;
 import nars.NAR;
+import nars.nar.Default;
 
 /**
  *
@@ -30,8 +30,7 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
 
 
-        NAR n = new NAR(new Curve(true)
-                .setActiveConcepts(16192));
+        NAR n = new NAR(new Default().setActiveConcepts(16192));
                 
         
         (n.param).outputVolume.set(40);

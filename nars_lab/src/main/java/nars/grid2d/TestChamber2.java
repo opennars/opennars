@@ -1,7 +1,6 @@
 package nars.grid2d;
 
 import nars.NAR;
-import nars.nar.Curve;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
@@ -12,6 +11,7 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
+import nars.nar.Default;
 import processing.core.PVector;
 
 import java.util.List;
@@ -286,7 +286,7 @@ public class TestChamber2 extends TestChamber {
     }
 
     public static void main(String[] arg) {
-        NAR nar = new NAR(new Curve(true));
+        NAR nar = new NAR(new Default());
         
         
         new TestChamber2(nar);

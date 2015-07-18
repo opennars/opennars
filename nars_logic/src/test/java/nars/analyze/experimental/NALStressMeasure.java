@@ -3,7 +3,6 @@ package nars.analyze.experimental;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.nal.NALTest;
-import nars.nar.Curve;
 import nars.nar.Default;
 
 import java.util.Collection;
@@ -87,8 +86,6 @@ public class NALStressMeasure  {
     
     public static void main(String[] args) {
 
-        NAR nc = new NAR(new Curve());
-        test(nc);
 
         NAR nd = new NAR(new Default());
         test(nd);

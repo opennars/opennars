@@ -20,7 +20,6 @@ package nars.util;
 import nars.NAR;
 import nars.io.out.TextOutput;
 import nars.io.signal.Number1DInput;
-import nars.nar.Curve;
 import nars.nar.Default;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,7 +52,7 @@ public class Number1DInputTest {
         
         double[] x = randomArray(N, 1.0, 0);
 
-        NAR n = new NAR(new Curve(true).
+        NAR n = new NAR(new Default().
                 setActiveConcepts(32367));
                 
         //(n.param).conceptsFiredPerCycle.set(1024);

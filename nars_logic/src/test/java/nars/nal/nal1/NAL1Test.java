@@ -25,10 +25,10 @@ public class NAL1Test extends JavaNALTest {
                 {new Default()},
                 {new Default().setInternalExperience(null)},
                 {new Default().level(2)}, //why does this need level 2 for some tests?
-                {new Curve().setInternalExperience(null)},
                 {new DefaultMicro() },
                 {new Classic()},
                 {new Solid(1, 64, 1, 4, 1, 3).setInternalExperience(null)},
+                {new Solid(1, 64, 1, 4, 1, 3).level(2)},
                 {new Solid(1, 64, 1, 4, 1, 3)}
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });

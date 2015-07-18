@@ -4,7 +4,6 @@ package nars.nal.nal2;
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import nars.nar.Classic;
-import nars.nar.Curve;
 import nars.nar.Default;
 import nars.nar.DefaultMicro;
 import org.junit.runners.Parameterized;
@@ -25,8 +24,6 @@ public class NAL2ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(3), //needs 3 for sets
-                new Curve().setInternalExperience(null),
-                new Curve().level(3),
                 new DefaultMicro(),
                 new Classic()
         );

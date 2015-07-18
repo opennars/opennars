@@ -2,7 +2,6 @@ package nars.nal.nal6;
 
 import nars.NARSeed;
 import nars.nal.JavaNALTest;
-import nars.nar.Curve;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -21,9 +20,7 @@ public class QueryVariableTest extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()},
                 {new Default().setInternalExperience(null)},
-                {new Default().level(5)},
-                {new Curve() },
-                {new Curve().setInternalExperience(null)}
+                {new Default().level(5)}
                 //{new Neuromorphic(4)},
         });
     }

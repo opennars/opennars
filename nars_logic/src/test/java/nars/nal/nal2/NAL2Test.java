@@ -4,7 +4,6 @@ package nars.nal.nal2;
 import nars.NARSeed;
 import nars.nal.JavaNALTest;
 import nars.nar.Classic;
-import nars.nar.Curve;
 import nars.nar.Default;
 import nars.nar.DefaultMicro;
 import nars.narsese.InvalidInputException;
@@ -26,7 +25,6 @@ public class NAL2Test extends JavaNALTest {
                 {new Default()}, //NAL8 + NAL9 didnt solve it
                 {new Default().level(3)}, //needs 3 for sets
                 {new Default().setInternalExperience(null)},
-                {new Curve().setInternalExperience(null)},
                 {new DefaultMicro() },
                 {new Classic()}
 

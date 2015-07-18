@@ -4,7 +4,6 @@ package nars.nal.nal6;
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import nars.nar.Classic;
-import nars.nar.Curve;
 import nars.nar.Default;
 import org.junit.runners.Parameterized;
 
@@ -24,8 +23,7 @@ public class NAL6ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(6),
-                new Classic().setInternalExperience(null),
-                new Curve());
+                new Classic().setInternalExperience(null));
     }
 
     public int getMaxCycles() { return 850; }

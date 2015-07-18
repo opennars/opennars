@@ -27,7 +27,6 @@ public class NAL4Test extends JavaNALTest {
                 {new Classic().setInternalExperience(null) },
                 //{new DefaultBuffered().setInternalExperience(null) },
 
-                {new Curve().setInternalExperience(null)},
                 //{new Discretinuous().level(5) }
                 {new Solid(1, 128, 1, 1, 1, 2).level(6)}
 

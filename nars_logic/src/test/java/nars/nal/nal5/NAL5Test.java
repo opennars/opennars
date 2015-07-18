@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.NARSeed;
 import nars.event.NARReaction;
 import nars.nal.JavaNALTest;
-import nars.nar.Curve;
 import nars.nar.Default;
 import nars.nar.DefaultDeep;
 import nars.nar.DefaultMicro;
@@ -32,10 +31,9 @@ public class NAL5Test extends JavaNALTest {
                 { new Default().level(5) },
                 { new Default().level(6) },
                 { new DefaultMicro().level(5) },
-                { new DefaultDeep().level(5) },
+                { new DefaultDeep().level(5) }
 
                 //{ new Neuromorphic(4) },
-                {new Curve().setInternalExperience(null)}
 
         });
     }

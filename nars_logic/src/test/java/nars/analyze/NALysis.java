@@ -6,7 +6,6 @@ import nars.io.TraceWriter;
 import nars.io.in.LibraryInput;
 import nars.io.out.TextOutput;
 import nars.nal.AbstractNALTest;
-import nars.nar.Curve;
 import nars.nar.Default;
 import nars.meter.TestNAR;
 import nars.meter.condition.OutputCondition;
@@ -192,9 +191,7 @@ public class NALysis extends AbstractNALTest {
         nal1Default(seed);
         runDir("test1", 1000, seed,
                 new Default(),
-                new Default().level(1),
-                new Curve(),
-                new Curve().setInternalExperience(null));
+                new Default().level(1));
     }
 
     public static void nal2Default(long seed) {
@@ -204,9 +201,7 @@ public class NALysis extends AbstractNALTest {
         nal2Default(seed);
         runDir("test2", 1200, seed,
                 new Default(),
-                new Default().level(3), //2 needs sets in 3
-                new Curve(),
-                new Curve().setInternalExperience(null) );
+                new Default().level(3));
     }
     public static void nal3Default(long seed) {
         runDir("test3", 1500, seed, new Default().setInternalExperience(null));
@@ -215,9 +210,7 @@ public class NALysis extends AbstractNALTest {
         nal3Default(seed);
         runDir("test3", 1500, seed,
                 new Default(),
-                new Default().level(3),
-                new Curve(),
-                new Curve().setInternalExperience(null) );
+                new Default().level(3));
     }
 
 
@@ -228,9 +221,7 @@ public class NALysis extends AbstractNALTest {
         nal4Default(seed);
         runDir("test4", 1000, seed,
                 new Default(),
-                new Default().level(4),
-                new Curve(),
-                new Curve().setInternalExperience(null) );
+                new Default().level(4));
     }
 
     public static void nal5Default() {
@@ -240,9 +231,7 @@ public class NALysis extends AbstractNALTest {
         nal5Default();
         runDir("test5", 2000, 1,
                 new Default(),
-                new Default().level(5),
-                new Curve(),
-                new Curve().setInternalExperience(null) );
+                new Default().level(5));
     }
     public static void nal6Default() {
         runDir("test6", 3000, 1, new Default().setInternalExperience(null));
@@ -251,9 +240,7 @@ public class NALysis extends AbstractNALTest {
         nal6Default();
         runDir("test6", 3000, 1,
                 new Default(),
-                new Default().level(6),
-                new Curve(),
-                new Curve().setInternalExperience(null) );
+                new Default().level(6));
     }
     public static void nal7Default() {
         runDir("test7", 3000, 1, new Default().setInternalExperience(null));

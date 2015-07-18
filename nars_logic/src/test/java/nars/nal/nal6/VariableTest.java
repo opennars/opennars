@@ -9,7 +9,6 @@ import nars.NARSeed;
 import nars.event.NARReaction;
 import nars.io.out.TextOutput;
 import nars.nal.JavaNALTest;
-import nars.nar.Curve;
 import nars.nar.Default;
 import nars.meter.condition.OutputContainsCondition;
 import org.junit.Ignore;
@@ -39,7 +38,6 @@ public class VariableTest extends JavaNALTest {
                 {new Default()},
                 //{new DefaultBuffered()},
                 //{new DefaultBuffered().setInternalExperience(null)},
-                {new Curve().setInternalExperience(null)}
 
                 /*{new Neuromorphic(1)},
                 {new Neuromorphic(4)}*/

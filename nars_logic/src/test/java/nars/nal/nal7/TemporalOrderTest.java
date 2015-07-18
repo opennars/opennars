@@ -8,7 +8,6 @@ import nars.NARSeed;
 import nars.io.out.TextOutput;
 import nars.meter.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
-import nars.nar.Curve;
 import nars.nar.Default;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -28,8 +27,7 @@ public class TemporalOrderTest extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()},
                 {new Default().setInternalExperience(null)},
-                {new Default().setInternalExperience(null).level(7)},
-                {new Curve()}
+                {new Default().setInternalExperience(null).level(7)}
         });
     }
 

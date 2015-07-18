@@ -28,7 +28,7 @@ public class TestNALScheme {
 
         NAR n = new NAR(new Default().clock(new HardRealtimeClock(false)) );
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         BrainfuckMachine bf= new NALObjects(n).build("scm", BrainfuckMachine.class);
 

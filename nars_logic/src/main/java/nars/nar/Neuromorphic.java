@@ -21,7 +21,7 @@ import nars.term.Term;
  *
  * https://en.wikipedia.org/wiki/Neuromorphic_engineering
  */
-public class Neuromorphic extends Curve {
+public class Neuromorphic extends Default {
 
     private int numAnts;
 

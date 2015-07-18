@@ -5,7 +5,6 @@ import nars.NARSeed;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
 import nars.nar.Classic;
-import nars.nar.Curve;
 import nars.nar.Default;
 import nars.nar.DefaultMicro;
 import nars.narsese.InvalidInputException;
@@ -25,7 +24,6 @@ public class NAL8Test extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()},
                 {new Default().setInternalExperience(null)},
-                {new Curve().setInternalExperience(null)},
                 {new DefaultMicro() },
                 {new Classic() }
                 //{new Discretinuous() },

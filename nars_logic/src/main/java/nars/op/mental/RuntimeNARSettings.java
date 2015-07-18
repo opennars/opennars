@@ -114,32 +114,32 @@ public class RuntimeNARSettings extends AbstractReaction {
     }
     
     
-    public double getHappyEventHigherThreshold() {
-        return Global.HAPPY_EVENT_HIGHER_THRESHOLD;
-    }
-    public void setHappyEventHigherThreshold(double val) {
-        Global.HAPPY_EVENT_HIGHER_THRESHOLD=(float) val;
-    }
+//    public double getHappyEventHigherThreshold() {
+//        return Global.HAPPY_EVENT_HIGHER_THRESHOLD;
+//    }
+//    public void setHappyEventHigherThreshold(double val) {
+//        Global.HAPPY_EVENT_HIGHER_THRESHOLD=(float) val;
+//    }
+//
+//    public double getHappyEventLowerThreshold() {
+//        return Global.HAPPY_EVENT_CHANGE_THRESHOLD;
+//    }
+//    public void setHappyEventLowerThreshold(double val) {
+//        Global.HAPPY_EVENT_CHANGE_THRESHOLD =(float) val;
+//    }
     
-    public double getHappyEventLowerThreshold() {
-        return Global.HAPPY_EVENT_LOWER_THRESHOLD;
-    }
-    public void setHappyEventLowerThreshold(double val) {
-        Global.HAPPY_EVENT_LOWER_THRESHOLD=(float) val;
-    }
-    
-    public double getBusyEventHigherThreshold() {
-        return Global.BUSY_EVENT_HIGHER_THRESHOLD;
-    }
-    public void setBusyEventHigherThreshold(double val) {
-        Global.BUSY_EVENT_HIGHER_THRESHOLD=(float) val;
-    }
+//    public double getBusyEventHigherThreshold() {
+//        return Global.BUSY_EVENT_HIGHER_THRESHOLD;
+//    }
+//    public void setBusyEventHigherThreshold(double val) {
+//        Global.BUSY_EVENT_HIGHER_THRESHOLD=(float) val;
+//    }
     
    public double getBusyEventLowerThreshold() {
-        return Global.BUSY_EVENT_LOWER_THRESHOLD;
+        return Global.BUSY_EVENT_CHANGE_THRESHOLD;
     }
     public void setBusyEventLowerThreshold(double val) {
-        Global.BUSY_EVENT_LOWER_THRESHOLD=(float) val;
+        Global.BUSY_EVENT_CHANGE_THRESHOLD =(float) val;
     }
     
     public boolean isReflectMetaHappyGoal() {

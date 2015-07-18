@@ -91,7 +91,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     private CycleProcess control;
     public final EventEmitter<Class> event;
     public final EventEmitter<Term> exe;
-    public final EmotionMeter emotion = new EmotionMeter();
+    public final EmotionMeter emotion;
     public final LogicMetrics logic;
     public final ResourceMeter resource;
     public final Param param;
@@ -151,6 +151,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         //optional:
         this.resource = null; //new ResourceMeter();
         this.logic = new LogicMetrics(this);
+        this.emotion = new EmotionMeter(this);
 
 
     }
