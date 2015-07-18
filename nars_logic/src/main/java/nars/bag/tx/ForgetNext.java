@@ -40,8 +40,10 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
             return false;
         }
 
-        return (lastForgetTime != now) && //there is >0 time across which forgetting would be applied
-                (b.getPriority() > b.getQuality() * Global.MIN_FORGETTABLE_PRIORITY); //there is sufficient priority for forgetting to occurr
+        ////there is >0 time across which forgetting would be applied
+        return (lastForgetTime != now);
+
+                //&& (b.getPriority() > b.getQuality() * Global.MIN_FORGETTABLE_PRIORITY); //there is sufficient priority for forgetting to occurr
     }
 
     /** updates with current time, etc. call immediately before update() will be called */
@@ -52,7 +54,7 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
     }
 
     @Override
-    public V updateItem(final V v) {
+    public V update(V v) {
         /*if (Parameters.DEBUG) {
             if (!Float.isFinite(forgetCycles))
                 throw new RuntimeException("Invalid forgetCycles parameter; set() method was probably not called prior");
@@ -67,6 +69,11 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
         Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
 
         return v;
+    }
+
+    @Override
+    public V updateItem(final V v) {
+        throw new RuntimeException("should not be called since update() is overridden");
     }
 
     @Override

@@ -217,9 +217,9 @@ public class TermLinkTest {
         String c = "<{x} --> y>.";
 
 
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Default().level(6));
         n.input(c);
-        n.frame(2);
+        n.frame(3);
 
         TermLinkGraph g = new TermLinkGraph(n);
 
@@ -234,6 +234,7 @@ public class TermLinkTest {
         //System.out.println(h);
         String baix = "Aa:x=({x},x)";
         assertTrue(h.toString() + " must contain " + baix, h.toString().contains(baix));
+
         TermLinkGraph i = new TermLinkGraph().add(n.concept("x"), true);
         //System.out.println(i);
 

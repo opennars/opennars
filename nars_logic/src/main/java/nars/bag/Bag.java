@@ -249,18 +249,22 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     /**
      * accuracy determines the percentage of items which will be processNext().
+     * should be between 0 and 1.0
      * this is a way to apply the forgetting process applied in putBack.
      */
-    public void forgetNext(final float forgetCycles, final float accuracy, final AbstractMemory m) {
-        final int conceptsToForget = Math.round(size() * accuracy);
-        if (conceptsToForget == 0) return;
+    public int forgetNext(final float forgetCycles, final float accuracy, final AbstractMemory m) {
+        final int conceptsToForget = (int)Math.ceil(size() * accuracy);
+        if (conceptsToForget == 0) return 0;
 
         forgetNext.set(forgetCycles, m);
 
+        int affected = 0;
         for (int i = 0; i < conceptsToForget; i++) {
-            update(forgetNext);
+            if ( update(forgetNext) != null)
+                affected++;
         }
 
+        return affected;
     }
 
     public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {

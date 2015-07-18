@@ -14,7 +14,7 @@ import nars.task.TaskAccumulator;
 import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -35,7 +35,7 @@ public class DefaultCycle extends SequentialCycle {
      * cycle
      */
     protected final TaskAccumulator newTasks;
-    protected List<Task> newTasksTemp = Global.newArrayList();
+    protected Set<Task> newTasksTemp = Global.newHashSet(8);
     protected boolean executingNewTasks = false;
 
 
@@ -85,6 +85,11 @@ public class DefaultCycle extends SequentialCycle {
     @Override
     public synchronized void cycle() {
 
+        concepts.forgetNext(
+                memory.param.conceptForgetDurations,
+                Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
+                memory);
+
         //inputs
         inputNextPerception(memory.param.inputsMaxPerCycle.get());
 
@@ -114,11 +119,6 @@ public class DefaultCycle extends SequentialCycle {
                 f.run();
             }
         }
-
-        concepts.forgetNext(
-                memory.param.conceptForgetDurations,
-                memory.random.nextFloat() * Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
-                memory);
 
         memory.runNextTasks();
 

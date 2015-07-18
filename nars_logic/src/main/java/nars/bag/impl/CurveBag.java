@@ -347,7 +347,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     @Override
     public E update(BagTransaction<K, E> selector) {
-        if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
 
         final E e = super.update(selector);
 

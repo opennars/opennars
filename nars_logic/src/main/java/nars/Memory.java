@@ -621,8 +621,13 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         if (inputPriorityFactor!=1.0f)
             t.mulPriority( inputPriorityFactor );
 
+
         /* delegate the fate of this task to controller */
         if (getControl().onTask(t)) {
+
+
+            emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
+
 
             //NOTE: if duplicate outputs happen, the budget wil have changed
             //but they wont be displayed.  to display them,

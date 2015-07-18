@@ -40,7 +40,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.premise.DirectPremiseSelector;
+import nars.premise.UniquePerCyclePremiseSelector;
 import nars.process.CycleProcess;
 import nars.process.concept.*;
 import nars.task.Sentence;
@@ -438,7 +438,7 @@ public class Default extends NARSeed implements ConceptBuilder {
         return new DefaultConcept(t, b,
                 taskLinks, termLinks,
                 getConceptBeliefGoalRanking(),
-                new DirectPremiseSelector(termLinkMaxMatched),
+                new UniquePerCyclePremiseSelector(termLinkMaxMatched),
                 mem
         );
     }

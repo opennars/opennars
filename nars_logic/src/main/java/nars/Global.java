@@ -184,11 +184,11 @@ public class Global {
      * in which case the forgetting will have been applied some amount of time past
      * when it would have completed its forget descent.
      */
-    public static final float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.02f;
+    public static final float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.1f;
 
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
-    public static final float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.05f;
-    public static final float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.05f;
+    public static final float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.1f;
+    public static final float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.1f;
 
     /** global switch to allow derivation evidence to overlap */
     /* NOTE:

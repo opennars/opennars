@@ -48,7 +48,7 @@ public class BloomPremiseSelector extends DirectPremiseSelector implements Funne
     public boolean validTermLinkTarget(Concept c, TaskLink taskLink, TermLink t) {
         if (!super.validTermLinkTarget(c, taskLink, t)) return false;
 
-        Pair<Term, Sentence> s = Tuples.pair(t.getTerm(), taskLink.getTask());
+        final Pair<Term, Sentence> s = PremiseSelector.pair(taskLink, t);
 
         final boolean mightContain = history.mightContain(s);
 
@@ -71,7 +71,6 @@ public class BloomPremiseSelector extends DirectPremiseSelector implements Funne
             return true;
         }
     }
-
 
 
 
