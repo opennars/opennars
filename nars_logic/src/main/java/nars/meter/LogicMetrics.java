@@ -2,6 +2,7 @@ package nars.meter;
 
 import nars.Events;
 import nars.Memory;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.task.Task;
@@ -110,14 +111,16 @@ public class LogicMetrics extends NARReaction {
 
     }
 
-    public class ConceptMeter implements Consumer<Concept> {
+    public static class ItemMeter<I extends Budget.Budgetable> implements Consumer<I> {
 
         double prioritySum = 0;
         double prioritySumSq = 0;
-        int totalQuestions = 0;
-        int totalBeliefs = 0;
-        int histogramBins = 4;
+        final int histogramBins = 4;
         double[] histogram = new double[histogramBins];
+        int count;
+        private double mean;
+        private double variance;
+
 //        SummaryStatistics
 //                termLinkMassPerConcept = new SummaryStatistics(),
 //                termLinkMass = new SummaryStatistics(),
@@ -125,28 +128,18 @@ public class LogicMetrics extends NARReaction {
 //                taskLinkMass = new SummaryStatistics();
 
         public void reset() {
+            count = 0;
             prioritySum = prioritySumSq = 0;
-            totalQuestions = totalBeliefs = 0;
-            histogramBins = 4;
 //            termLinkMassPerConcept.clear();
 //            termLinkMass.clear();
 //            taskLinkMassPerConcept.clear();
 //            taskLinkMass.clear();
-            inputPriority.clear();
         }
 
         @Override
-        public void accept(Concept c) {
-            if (c == null) return;
-            if (!c.isActive()) return;
+        public void accept(I c) {
 
             double p = c.getPriority();
-
-            if (c.hasQuestions())
-                totalQuestions += c.getQuestions().size();
-
-            if (c.hasBeliefs())
-                totalBeliefs += c.getBeliefs().size();
 
             //TODO totalGoals...
             //TODO totalQuests...
@@ -164,6 +157,70 @@ public class LogicMetrics extends NARReaction {
                 histogram[3]++;
             }
 
+            count++;
+
+        }
+
+        public void commit() {
+            double mean, variance;
+            if (count > 0) {
+                mean = prioritySum / count;
+
+                //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+                variance = (prioritySumSq - ((prioritySum * prioritySum) / count)) / (count - 1);
+                for (int i = 0; i < histogram.length; i++) {
+                    histogram[i] /= count;
+                }
+            } else {
+                mean = variance = 0;
+            }
+            this.mean = mean;
+            this.variance = variance;
+        }
+
+        /** average priority */
+        public double getMean() {
+            return mean;
+        }
+
+        /** variance in priority */
+        public double getVariance() {
+            return variance;
+        }
+
+        /** priority histogram */
+        public double[] getHistogram() {
+            return histogram;
+        }
+    }
+
+    public class ConceptMeter extends ItemMeter<Concept> {
+
+        int totalQuestions = 0;
+        int totalBeliefs = 0;
+
+        @Override
+        public void reset() {
+            super.reset();
+            totalQuestions = totalBeliefs = 0;
+            inputPriority.clear();
+        }
+
+        @Override
+        public void accept(Concept c) {
+            if (c == null) return;
+            if (!c.isActive()) return;
+
+            super.accept(c);
+
+
+            if (c.hasQuestions())
+                totalQuestions += c.getQuestions().size();
+
+            if (c.hasBeliefs())
+                totalBeliefs += c.getBeliefs().size();
+
+
 //            float termLinksMass = c.getTermLinks().mass();
 //            int numTermLinks = c.getTermLinks().size();
 //            float taskLinksMass = c.getTaskLinks().mass();
@@ -177,19 +234,7 @@ public class LogicMetrics extends NARReaction {
         }
 
         public void commit(Memory m) {
-            double mean, variance;
-            final int count = m.getControl().size();
-            if (count > 0) {
-                mean = prioritySum / count;
-
-                //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-                variance = (prioritySumSq - ((prioritySum * prioritySum) / count)) / (count - 1);
-                for (int i = 0; i < histogram.length; i++) {
-                    histogram[i] /= count;
-                }
-            } else {
-                mean = variance = 0;
-            }
+            super.commit();
 
             CONCEPTS_ACTIVE.set(count);
             CONCEPTS_TOTAL.set(m.concepts.size());
@@ -212,7 +257,7 @@ public class LogicMetrics extends NARReaction {
         }
     };
 
-    final ConceptMeter conceptMeter = new ConceptMeter();
+    public final ConceptMeter conceptMeter = new ConceptMeter();
 
 
     public void reset() {

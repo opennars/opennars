@@ -160,12 +160,15 @@ public class TaskProcess extends NAL {
 
 
     public static TaskProcess get(final Memory m, final Task task) {
+
+        float inputPriorityFactor = m.param.inputActivationFactor.floatValue();
+        if (inputPriorityFactor!=1.0f)
+            task.mulPriority( inputPriorityFactor );
+
         if (!task.summaryGreaterOrEqual(m.param.taskProcessThreshold)) {
             m.removed(task, "Insufficient budget");
             return null;
         }
-        //throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
-
 
         return new TaskProcess(m, task);
     }

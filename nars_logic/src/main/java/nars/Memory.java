@@ -508,7 +508,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
         goalConcepts.clear();
 
-        emotion.set(0.5f, 0.5f);
+        emotion.clear();
 
         event.emit(Restart.class);
 
@@ -616,11 +616,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
             removed(t, "Insufficient NAL level");
             return false;
         }
-
-        float inputPriorityFactor = param.inputActivationFactor.floatValue();
-        if (inputPriorityFactor!=1.0f)
-            t.mulPriority( inputPriorityFactor );
-
 
         /* delegate the fate of this task to controller */
         if (getControl().onTask(t)) {
@@ -862,6 +857,8 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         inCycle = false;
 
         deletePendingConcepts();
+
+        emotion.commit();
 
         //randomUpdate();
 

@@ -45,6 +45,8 @@ import java.util.Map;
 
 /**
  * @author peiwang
+ * TODO make deriveCompiledInferenceHelper an optional feature,
+ * passed as a lambda or interface
  */
 public class TemporalRules {
 
@@ -480,26 +482,8 @@ public class TemporalRules {
             Task task = nal.deriveDoubleTemporal(statement2, truth2, budget2, subbedTask, sprev);
 
             if (task!=null) {
-            
-                desireUpdateCompiledInferenceHelper(snext, task, nal, sprev);
 
-                //micropsi inspired strive for knowledge
-                //get strongest belief of that concept and use the revison truth, if there is no, use this truth
-                double conf = task.sentence.truth.getConfidence();
-                Concept C = nal.memory.concept(task.sentence.getTerm());
-                if (C != null && C.hasBeliefs()) {
-                    Task bel = C.getBeliefs().top();
-                    Truth cur = bel.truth;
-                    conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
-                    //if there is no overlapping evidental base, use revision:
-                    boolean revisable;
-                    revisable = !Stamp.overlapping(bel, task.sentence);
-                    if (revisable) {
-                        conf = TruthFunctions.revision(task.sentence.truth, bel.truth).getConfidence();
-                    }
-                }
-
-                questionFromLowConfidenceHighPriorityJudgement(task, conf, nal);
+                deriveCompiledInferenceHelper(snext, sprev, nal, task);
             }
 
 
@@ -510,7 +494,30 @@ public class TemporalRules {
 
     }
 
-    private static void desireUpdateCompiledInferenceHelper(final Sentence s1, Task task, final NAL nal, final Sentence s2) {
+    /** //micropsi inspired strive for knowledge
+     //get strongest belief of that concept and use the revison truth, if there is no, use this truth */
+    protected static void deriveCompiledInferenceHelper(Sentence snext, Sentence sprev, NAL nal, Task task) {
+
+        desireUpdateCompiledInferenceHelper(snext, task, nal, sprev);
+
+        double conf = task.getTruth().getConfidence();
+        Concept C = nal.memory.concept(task.getTerm());
+        if (C != null && C.hasBeliefs()) {
+            Task bel = C.getBeliefs().top();
+            Truth cur = bel.getTruth();
+            conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
+            //if there is no overlapping evidental base, use revision:
+            boolean revisable;
+            revisable = !Stamp.overlapping(bel, task);
+            if (revisable) {
+                conf = TruthFunctions.revision(task.getTruth(), bel.getTruth()).getConfidence();
+            }
+        }
+
+        questionFromLowConfidenceHighPriorityJudgement(task, conf, nal);
+    }
+
+    static Task desireUpdateCompiledInferenceHelper(final Sentence s1, Task task, final NAL nal, final Sentence s2) {
         /*
         IN <SELF --> [good]>! %1.00;0.90%
         IN (^pick,left). :|: %1.00;0.90%
@@ -581,7 +588,7 @@ public class TemporalRules {
 
                 Budget val=BudgetFunctions.forward(T, nal);
 
-                nal.derive(nal.newTask(s2.getTerm()).goal().truth(T).budget(val)
+                return nal.derive(nal.newTask(s2.getTerm()).goal().truth(T).budget(val)
                                 .parent(task, strongest_desireT)
                                 .occurr(occ).temporalInductable(false)
                 );
@@ -590,12 +597,13 @@ public class TemporalRules {
         }
         
         //PRINCIPLE END
+        return null;
     }
 
 
 
-    private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
-        if(!(task.sentence.getTerm() instanceof Implication)) return;
+    private static Task questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
+        if(!(task.sentence.getTerm() instanceof Implication)) return null;
 
         if(nal.memory.emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
                 && Global.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF
@@ -611,15 +619,16 @@ public class TemporalRules {
                 }
 
                 if(valid) {
-                    nal.derive(nal.newTask(task.getTerm())
+                    return nal.derive(nal.newTask(task.getTerm())
                                     .question()
                                     .parent(task)
                                     .occurrNow()
-                                    .budget(Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL)
+                                    .budget(task.getBudget(), Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL)
                     );
                 }
 
         }
+        return null;
     }
 
 

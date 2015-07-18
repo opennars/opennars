@@ -25,7 +25,6 @@ public class TableDerivations extends ConceptFireTaskTerm {
     @Override
     public final boolean apply(final ConceptProcess f, final TermLink bLink) {
 
-        f.memory.emotion.busy(f);
 
         final TaskLink tLink = f.getTaskLink();
         final Sentence taskSentence = tLink.getSentence();

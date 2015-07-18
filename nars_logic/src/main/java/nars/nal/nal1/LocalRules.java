@@ -21,6 +21,7 @@
 package nars.nal.nal1;
 
 import nars.Events.Answer;
+import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -226,9 +227,9 @@ public class LocalRules {
         if (oldBest != null) {
             float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
             if (oldQ >= newQ) {
-                if (question.isGoal()) {
-                    memory.emotion.happy(oldQ, questionTask, nal);
-                }
+                //if (question.isGoal()) {
+                //    memory.emotion.happy(oldQ, questionTask, nal);
+                //}
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");
                 return null;
@@ -240,9 +241,9 @@ public class LocalRules {
 
         memory.logic.SOLUTION_BEST.set(newQ);
 
-        if (question.isGoal()) {
+        //if (question.isGoal()) {
             memory.emotion.happy(newQ, questionTask, nal);
-        }
+        //}
 
         Budget budget = TemporalRules.solutionEval(question, belief, questionTask, nal);
 
@@ -275,7 +276,7 @@ public class LocalRules {
         }
         else {
             belief.accumulate(budget);
-            belief.log("Solved " + question);
+            belief.log(/*Global.DEBUG ? "Solution " + question : */"Solution");
         }
 
         question.decPriority(budget.getPriority());
@@ -285,7 +286,8 @@ public class LocalRules {
             //if (questionTask.isInput()) { //only show input tasks as solutions
             memory.emit(Answer.class, belief, questionTask);
         } else {
-            memory.emit(Output.class, belief, questionTask);   //goal things only show silence related
+            //goal quests only show silence related
+            memory.emit(Output.class, belief, questionTask);
         }
 
         return belief;

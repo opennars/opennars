@@ -78,7 +78,7 @@ public class RoverModel {
     final static int retinaPixels = 12;
 
 
-    int retinaRaysPerPixel = 4; //rays per vision sensor
+    int retinaRaysPerPixel = 8; //rays per vision sensor
 
     float aStep = (float)(Math.PI*2f) / retinaPixels;
 
@@ -835,6 +835,7 @@ public class RoverModel {
         final ChangedTextInput sight =
                 //new SometimesChangedTextInput(nar, minVisionInputProbability);
                 new ChangedTextInput(nar);
+        private final String seenAngleTerm;
 
         RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
         private final Body body;
@@ -859,6 +860,7 @@ public class RoverModel {
             this.point = point;
             this.angle = angle;
             this.angleTerm = sim.angleTerm(angle);
+            this.seenAngleTerm = "see_" + sim.angleTerm(angle);
             this.arc = arc;
             this.resolution = resolution;
             this.distance = length;
@@ -877,7 +879,7 @@ public class RoverModel {
             float conceptQuality;
 
             if (angleConcept == null) {
-                angleConcept = nar.memory.concept(angleTerm);
+                angleConcept = nar.memory.concept(seenAngleTerm);
             }
 
             if (angleConcept!=null) {
@@ -921,7 +923,7 @@ public class RoverModel {
                     if (drawing) {
                         rayColor.set(laserHitColor);
                         rayColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
-                        Vec2 pp = ccallback.m_point.clone();
+                        //Vec2 pp = ccallback.m_point.clone();
 //                        toDraw.add(new Runnable() {
 //                            @Override public void run() {
 //
@@ -953,16 +955,16 @@ public class RoverModel {
                     //rayColor.z *= alpha - 0.35f * senseActivity;
                     //rayColor.y *= alpha - 0.35f * conceptPriority;
 
-                    rayColor.x = conceptPriority*conceptPriority;
-                    rayColor.y = conceptDurability*conceptDurability;
-                    rayColor.z = conceptQuality*conceptQuality;
+                    rayColor.x = conceptPriority;
+                    rayColor.y = conceptDurability;
+                    rayColor.z = conceptQuality;
                     float alpha = Math.min(
-                            (0.7f * conceptPriority * conceptDurability * conceptQuality) + 0.3f,
+                            (0.4f * conceptPriority * conceptDurability * conceptQuality) + 0.1f,
                             1f
                     );
-                    rayColor.x = Math.min(rayColor.x*0.7f+0.3f, 1f);
-                    rayColor.y = Math.min(rayColor.y*0.7f+0.3f, 1f);
-                    rayColor.z = Math.min(rayColor.z*0.7f+0.3f, 1f);
+                    rayColor.x = Math.min(rayColor.x*0.9f+0.1f, 1f);
+                    rayColor.y = Math.min(rayColor.y*0.9f+0.1f, 1f);
+                    rayColor.z = Math.min(rayColor.z*0.9f+0.1f, 1f);
                     rayColor.x = Math.max(rayColor.x, 0f);
                     rayColor.y = Math.max(rayColor.y, 0f);
                     rayColor.z = Math.max(rayColor.z, 0f);

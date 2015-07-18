@@ -57,7 +57,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Default(1024, 64, 3) {
+        Default d = new Default(1024, 16, 3) {
 
 
 //            @Override

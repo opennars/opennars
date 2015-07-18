@@ -207,6 +207,8 @@ public class NAR extends Container implements Runnable {
         return memory.concept(term);
     }
 
+
+
     /**
      * gets a concept if it exists, or returns null if it does not
      */

@@ -39,14 +39,14 @@ public class EmotionMeter implements Serializable {
     public EmotionMeter() {
     }
 
-    public EmotionMeter(float happy, float busy) {
+    /*public EmotionMeter(float happy, float busy) {
         set(happy, busy);
-    }
+    }*/
 
     public void set(float happy, float busy) {
         this.happy = happy;
         this.busy = busy;
-        update();
+        commit();
     }
 
     public float happy() {
@@ -63,6 +63,8 @@ public class EmotionMeter implements Serializable {
         //        float oldV = happyValue;
 
         final float weight = task.getPriority();
+        float happy = this.happy;
+
         happy += newValue * weight;
         happy /= 1.0f + weight;
 
@@ -74,7 +76,7 @@ public class EmotionMeter implements Serializable {
             if (happy < Global.HAPPY_EVENT_LOWER_THRESHOLD && lasthappy >= Global.HAPPY_EVENT_LOWER_THRESHOLD) {
                 frequency = 0.0f;
             }
-            if (frequency != -1) { //ok lets add an event now
+            if ((frequency != -1) && (nal.nal(7))) { //ok lets add an event now
 
                 Inheritance inh = Inheritance.make(nal.self(), satisfiedSetInt);
 
@@ -82,9 +84,10 @@ public class EmotionMeter implements Serializable {
                         nal.newTask(inh)
                                 .judgment()
                                 .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                                .parent(task, nal.time())
-                                .reason("emotion")
+                                .budget(task.getBudget(), Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+                                .parent(task)
+                                .occurrNow()
+                                .reason("Happy")
                 );
 
                 if (Global.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
@@ -92,10 +95,11 @@ public class EmotionMeter implements Serializable {
                     //TODO convert to fluent format
 
                     nal.deriveSingle(
-                            nal.newTask(inh).goal().truth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE).parent(task).occurrNow()
+                            nal.newTask(inh).goal().truth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE).parent(task)
+                                    .occurrNow()
                                     .budget(
                                             Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY)
-                                    .parent(task).reason("metagoal")
+                                    .reason("Happy Metagoal")
                     );
 
                     //this is a good candidate for innate belief for consider and remind:
@@ -109,16 +113,20 @@ public class EmotionMeter implements Serializable {
                         for (Operation o : new Operation[]{op_remind, op_consider}) {
 
                             nal.deriveSingle(
-                                    nal.newTask(o).parent(task).judgment().present().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                                            .budgetScaled(InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL, InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                                            .reason("internal experience for consider and remind")
+                                    nal.newTask(o).parent(task).judgment().occurrNow().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                                            .budget(task.getBudget(), InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL, InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
+                                            .reason("Happy Remind/Consider")
                             );
                         }
                     }
                 }
             }
         }
-        lasthappy = happy;
+
+        lasthappy = this.happy;
+
+        this.happy = happy;
+
         //        if (Math.abs(oldV - happyValue) > 0.1) {
         //            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
     }
@@ -129,7 +137,10 @@ public class EmotionMeter implements Serializable {
 
     public double lastbusy = -1;
 
-    public void busy(Task cause, NAL nal) {
+    protected void busy(Task cause, NAL nal) {
+
+        float busy = nal.getTask().getPriority();
+
         if (lastbusy != -1) {
             float frequency = -1;
             if (busy > Global.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy <= Global.BUSY_EVENT_HIGHER_THRESHOLD) {
@@ -138,21 +149,30 @@ public class EmotionMeter implements Serializable {
             if (busy < Global.BUSY_EVENT_LOWER_THRESHOLD && lastbusy >= Global.BUSY_EVENT_LOWER_THRESHOLD) {
                 frequency = 0.0f;
             }
-            if (frequency != -1) { //ok lets add an event now
+            if ((frequency != -1) && (nal.nal(7))) { //ok lets add an event now
                 final Inheritance busyTerm = Inheritance.make(nal.self(), SetInt.make(Atom.the("busy")));
 
                 nal.deriveSingle(
                         nal.newTask(busyTerm).judgment().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE).parent(cause).occurrNow()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
-                                parent(cause).reason("emotion"));
+                                parent(cause).reason("Busy"));
 
             }
         }
-        lastbusy = busy;
+
+        lastbusy = this.busy;
+
+        this.busy = busy;
+
+
     }
 
-    protected void update() {
+    public void commit() {
         happyMeter.set(happy);
         busyMeter.set(busy);
+    }
+
+    public void clear() {
+        set(0.5f, 0.5f);
     }
 }
