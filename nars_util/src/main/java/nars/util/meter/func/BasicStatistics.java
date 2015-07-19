@@ -49,7 +49,7 @@ public class BasicStatistics extends DependsOnColumn<Number,Double>  {
     }
 
     @Override
-    protected Double getValue(Object key, int index) {
+    public Double getValue(Object key, int index) {
         
         if (index == 0) {
             double nextValue = newestValue().doubleValue();

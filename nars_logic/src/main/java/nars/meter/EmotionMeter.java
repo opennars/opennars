@@ -60,7 +60,8 @@ public class EmotionMeter implements Serializable {
     }
 
     public float busy() {
-        return busy;
+        return (float)busyMeter.get();
+        //return busy;
     }
 
 
@@ -176,7 +177,7 @@ public class EmotionMeter implements Serializable {
 //            }
 
 
-            if ((frequency != -1) && (memory.nal(7))) { //ok lets add an event now
+            if (Global.REFLECT_META_BUSY_BELIEF && (frequency != -1) && (memory.nal(7))) { //ok lets add an event now
                 final Inheritance busyTerm = Inheritance.make(memory.self(), BUSYness);
 
                 memory.add(

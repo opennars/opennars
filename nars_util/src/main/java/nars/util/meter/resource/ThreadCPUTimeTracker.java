@@ -40,7 +40,7 @@ public class ThreadCPUTimeTracker extends DoubleMeter {
     }
 
     @Override
-    protected Double getValue(Object key, int index) {
+    public Double getValue(Object key, int index) {
         if (isCPUTimeMonitoringEnabled()) {
             return getCPUTime();
         }

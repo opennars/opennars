@@ -4,11 +4,9 @@ package nars.nal;
 import nars.NAR;
 import nars.Param;
 import nars.io.in.LibraryInput;
-import nars.nar.Classic;
+import nars.io.out.TextOutput;
+import nars.nar.Default;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -58,25 +56,26 @@ public class TestQController {
             //add(new NControlSensor(p.taskCyclesToForget, 2));
             //add(new NControlSensor(p.termLinkMaxMatched, 2));
             
-            add(new EventValueControlSensor(nar, cpm, 0, 1, 7));            
-            add(new EventValueControlSensor(nar, cph0, 0, 1, 3));
-            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
-            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
-            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
-            add(new EventValueControlSensor(nar, cpv, 5, 4, 0.0001));
-            add(new EventValueControlSensor(nar, td, 5, 4, 0.0001) {
-                @Override public double get() {
-                    return taskDerivedMean = super.get();
-                }                
-            });            
-            add(new EventValueControlSensor(nar, "concept.new", 5, 2, 0.0001) {
-                @Override public double get() {
-                    return conceptNewMean = super.get();
-                }                
-            });
-            add(new EventValueControlSensor(nar, "task.judgment.process", 5, 8, 0.0001));
-            add(new EventValueControlSensor(nar, "task.question.process", 5, 8, 0.0001));
-            
+            add(new EventValueControlSensor(nar, nar.memory.logic.CONCEPT_NEW, 0, 1, 7));
+            add(new EventValueControlSensor(nar, nar.memory.logic.JUDGMENT_PROCESS, 0, 1, 7));
+//            add(new EventValueControlSensor(nar, cph0, 0, 1, 3));
+//            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
+//            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
+//            add(new EventValueControlSensor(nar, cph1, 0, 1, 3));
+//            add(new EventValueControlSensor(nar, cpv, 5, 4, 0.0001));
+//            add(new EventValueControlSensor(nar, td, 5, 4, 0.0001) {
+//                @Override public double get() {
+//                    return taskDerivedMean = super.get();
+//                }
+//            });
+//            add(new EventValueControlSensor(nar, "concept.new", 5, 2, 0.0001) {
+//                @Override public double get() {
+//                    return conceptNewMean = super.get();
+//                }
+//            });
+//            add(new EventValueControlSensor(nar, "task.judgment.process", 5, 8, 0.0001));
+//            add(new EventValueControlSensor(nar, "task.question.process", 5, 8, 0.0001));
+//
             init(3);
             //q.brain.setUseBoltzmann(true);
             //q.brain.setRandActions(0.25);
@@ -88,7 +87,7 @@ public class TestQController {
             //return new int[ (int)Math.ceil(inputSize * 2) ];
             
             //return new int[ ] { 18 }; //fixed # of hidden
-            return new int[] { 20 };
+            return new int[] { 6 };
         }
 
         @Override
@@ -98,13 +97,13 @@ public class TestQController {
             
             switch (action) {
                 case 0: 
-                    p.conceptForgetDurations.set(5);
+                    p.conceptForgetDurations.set(3);
                     break;
                 case 1: 
-                    p.conceptForgetDurations.set(10);
+                    p.conceptForgetDurations.set(5);
                     break;
                 case 2:
-                    p.conceptForgetDurations.set(15);
+                    p.conceptForgetDurations.set(7);
                     break;
             }
             
@@ -130,7 +129,7 @@ public class TestQController {
             //return conceptPriority;
             // + conceptNewMean;
             
-            return nar.memory.emotion.happy();
+            return nar.memory.emotion.happy() + nar.memory.logic.JUDGMENT_PROCESS.getValue(null, 0);
             //return conceptNewMean + taskDerivedMean + 1* nar.memory.logic.d("task.solution.best");            
         }
 
@@ -144,7 +143,7 @@ public class TestQController {
     
     public static NAR newNAR() {
         //return new Default().build();        
-        return new NAR(new Classic().setActiveConcepts(512))
+        return new NAR(new Default().setActiveConcepts(512))
         //return build(g, g.param);
         ;
     }
@@ -156,7 +155,7 @@ public class TestQController {
         NAR n = newNAR(); 
         TestController qn = new TestController(n, controlPeriod);
         qn.setActive(false);
-        
+
         //m has controller deactivated
         NAR m = newNAR();
         TestController qm = new TestController(m, controlPeriod);
@@ -178,7 +177,7 @@ public class TestQController {
         double mm = 0, nn = 0, rr = 0;
         int displayCycles = 100;
         double[] nAction = new double[qn.getNumActions()];
-        long startupPeriod = 2000;
+        long startupPeriod = 0;
         int resetPeriod = 50000;
         double avgCycleToForget = 0;
         int time = 0;
@@ -187,7 +186,8 @@ public class TestQController {
 
             if (time % resetPeriod == 0) {
                 System.out.println("RESET");
-                n.reset();
+                n.reset();        TextOutput.out(n);
+
                 m.reset();
                 r.reset();
                 

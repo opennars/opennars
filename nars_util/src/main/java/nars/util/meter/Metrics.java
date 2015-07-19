@@ -196,7 +196,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         }
 
         @Override
-        protected RowKey getValue(Object key, int index) {
+        public RowKey getValue(Object key, int index) {
             return nextRowKey;
         }
         

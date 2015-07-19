@@ -25,7 +25,7 @@ public class MetricsTest {
     static final FunctionMeter<Integer> timeDoubler = new FunctionMeter<Integer>("x") {
 
         @Override
-        protected Integer getValue(Object when, int index) {
+        public Integer getValue(Object when, int index) {
             assertEquals(0, index);
             assertTrue(when instanceof Double);
             return ((Double)when).intValue() * 2;

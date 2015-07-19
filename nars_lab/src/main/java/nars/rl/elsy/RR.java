@@ -1,7 +1,6 @@
 package nars.rl.elsy;
 
 import static nars.rl.elsy.Rand.d;
-import static nars.rl.elsy.Rand.i;
 
 
 
@@ -15,7 +14,7 @@ public class RR {
 	 * Simply returns a random object from given array. 
 	 */
 	public static Object pickRandom(Object[] arr) {
-		return arr[i(arr.length)];
+		return arr[Rand.randInt(arr.length)];
 	}
 
 	/**
@@ -39,6 +38,6 @@ public class RR {
 				return i;
 			}
 		}
-		return i(arr.length);
+		return Rand.randInt(arr.length);
 	}
 }

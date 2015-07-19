@@ -238,7 +238,7 @@ public class QBrain implements Serializable {
          System.out.println("a(" + a + ") != aMax(" + aMax + ") " + qstr);
          }*/
         if (randActions != 0 && successWithPercent(randActions)) {
-            a = i(Q.length);
+            a = randInt(Q.length);
         }
         Qmax = Q[a];
         return a;

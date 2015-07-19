@@ -31,7 +31,7 @@ public class FirstOrderDifference extends DependsOnColumn {
     
     
     @Override
-    protected Number getValue(Object key, int ignored) {
+    public Number getValue(Object key, int ignored) {
         
         List nv = newestValues(sourceColumn, 2);
                 

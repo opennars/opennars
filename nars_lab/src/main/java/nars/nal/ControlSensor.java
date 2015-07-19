@@ -20,7 +20,7 @@ public abstract class ControlSensor {
     /** returns next index */
 
     //called each cycle
-    public abstract void update();
+    public void update() { }
 
     //called during learning cycle to get the value
     public abstract double get();

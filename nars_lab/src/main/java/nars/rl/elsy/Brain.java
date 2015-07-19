@@ -223,7 +223,7 @@ public class Brain implements Serializable {
          System.out.println("a(" + a + ") != aMax(" + aMax + ") " + qstr);
          }*/
         if (randActions != 0 && Rand.successWithPercent(randActions)) {
-            a = Rand.i(Q.length);
+            a = Rand.randInt(Q.length);
         }
         Qmax = Q[a];
         return a;

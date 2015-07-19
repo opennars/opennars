@@ -74,7 +74,7 @@ public class PeriodMeter extends FunctionMeter<Double> {
     
     
     @Override
-    protected Double getValue(Object key, int index) {
+    public Double getValue(Object key, int index) {
         if (stat.getN() == 0) return null;
         switch (index) {
             case 0: return f(stat.getMin());

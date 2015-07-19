@@ -38,14 +38,14 @@ public class Rand {
 	/**
 	 * Returns random integer
 	 */
-	public static int i(int range) {
+	public static int randInt(int range) {
 		return random.nextInt(range);
 	}
 
 	/**
 	 * Returns random int in range (from,to)
 	 */
-	public static int i(int from, int to) {
+	public static int randInt(int from, int to) {
 		if(to<from) return 0;
 		return (abs(random.nextInt())%(to-from))+from;
 	}
@@ -68,21 +68,23 @@ public class Rand {
 		return nextGaussian; 
 	}
 
-	public static int i() {
+	public static int randInt() {
 		return random.nextInt();
 	}
 	
 	public static boolean successWithPercent(double percent) {
-		iPerc++;
-		if(iPerc>=arrPercent.length) {
-			kPerc++;
-			iPerc=0;
-			if(kPerc>20) {
-				setArrPercent();
-				kPerc=0;
-			}
-		}
-		return arrPercent[iPerc] < percent;
+		return random.nextDouble() < percent;
+
+//		iPerc++;
+//		if(iPerc>=arrPercent.length) {
+//			kPerc++;
+//			iPerc=0;
+//			if(kPerc>20) {
+//				setArrPercent();
+//				kPerc=0;
+//			}
+//		}
+//		return arrPercent[iPerc] < percent;
 	}
 
 	public static double gauss(double scale) {

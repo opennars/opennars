@@ -57,7 +57,7 @@ public abstract class FunctionMeter<M> implements Signals<M> {
         return signals;
     }
 
-    abstract protected M getValue(Object key, int index);
+    abstract public M getValue(Object key, int index);
 
     protected void fillVector(Object key, int fromIndex, int toIndex) {
         for (int i = 0; i < vector.length; i++) {

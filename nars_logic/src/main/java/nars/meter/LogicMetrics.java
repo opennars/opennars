@@ -42,8 +42,8 @@ public class LogicMetrics extends NARReaction {
     public final DoubleMeter CONCEPT_QUESTION_COUNT = new DoubleMeter("concept.question.count");
     public final HitMeter TERM_LINK_TRANSFORM = new HitMeter("concept.termlink.transform");
 
-    SummaryStatistics inputPriority = new SummaryStatistics();
-    public final DoubleMeter INPUT_PRIORITY_SUM = new DoubleMeter("input.pri.sum");
+    //SummaryStatistics inputPriority = new SummaryStatistics();
+    //public final DoubleMeter INPUT_PRIORITY_SUM = new DoubleMeter("input.pri.sum");
 
     /**
      * triggered for each StructuralRules.contraposition().
@@ -91,22 +91,24 @@ public class LogicMetrics extends NARReaction {
 
 
     public LogicMetrics(Memory m) {
-        super(m, false, Events.IN.class, Events.FrameEnd.class);
+        super(m, false, /*Events.IN.class, */Events.FrameStart.class, Events.FrameEnd.class);
         this.m = m;
         reset();
     }
 
     @Override
     public void event(Class event, Object[] args) {
-        if (event == Events.IN.class) {
-            Task t = (Task) args[0];
-            float p = t.getPriority();
-            if (Float.isFinite(p))
-                inputPriority.addValue(p);
-        }
-        else if (event == Events.FrameEnd.class) {
-            commit();
+//        if (event == Events.IN.class) {
+//            Task t = (Task) args[0];
+//            float p = t.getPriority();
+//            if (Float.isFinite(p))
+//                inputPriority.addValue(p);
+//        }
+        if (event == Events.FrameStart.class) {
             reset();
+        }
+        if (event == Events.FrameEnd.class) {
+            commit();
         }
 
     }
@@ -203,7 +205,7 @@ public class LogicMetrics extends NARReaction {
         public void reset() {
             super.reset();
             totalQuestions = totalBeliefs = 0;
-            inputPriority.clear();
+            //inputPriority.clear();
         }
 
         @Override
@@ -245,7 +247,7 @@ public class LogicMetrics extends NARReaction {
             CONCEPT_BELIEF_COUNT.set(totalBeliefs);
             CONCEPT_QUESTION_COUNT.set(totalQuestions);
 
-            INPUT_PRIORITY_SUM.set(inputPriority.getSum());
+            //INPUT_PRIORITY_SUM.set(inputPriority.getSum());
 
 
             //TODO

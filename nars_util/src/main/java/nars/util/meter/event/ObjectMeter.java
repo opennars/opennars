@@ -46,7 +46,7 @@ public class ObjectMeter<X> extends SourceFunctionMeter<X> {
 
     
     @Override
-    protected X getValue(Object key, int index) {
+    public X getValue(Object key, int index) {
         X c = val;
         if (autoReset) {
             reset();

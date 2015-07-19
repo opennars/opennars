@@ -309,7 +309,8 @@ public class Global {
     public static float HAPPY_EVENT_CHANGE_THRESHOLD =0.25f;
     //public static float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
     public static float BUSY_EVENT_CHANGE_THRESHOLD =0.5f;
-    public static boolean REFLECT_META_HAPPY_GOAL=true;
+    public static boolean REFLECT_META_HAPPY_GOAL = false;
+    public static boolean REFLECT_META_BUSY_BELIEF = false;
     public static boolean CONSIDER_REMIND=true;
 
     public static boolean BREAK_NAL_HOL_BOUNDARY=true;

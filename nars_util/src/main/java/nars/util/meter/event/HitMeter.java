@@ -44,8 +44,8 @@ public class HitMeter extends FunctionMeter<Long> {
     }
     
     @Override
-    protected Long getValue(Object key, int index) {
-        long c = hits.get();
+    public Long getValue(Object key, int index) {
+        long c = count();
         if (autoReset) {
             reset();
         }

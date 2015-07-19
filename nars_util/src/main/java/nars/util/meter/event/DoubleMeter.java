@@ -47,7 +47,7 @@ public class DoubleMeter extends SourceFunctionMeter<Double> {
 
     
     @Override
-    protected Double getValue(Object key, int index) {
+    public Double getValue(Object key, int index) {
         double c = val.get();
         if (autoReset) {
             reset();
