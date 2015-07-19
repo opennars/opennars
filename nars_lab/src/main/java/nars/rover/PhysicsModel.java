@@ -26,7 +26,7 @@
 package nars.rover;
 
 import nars.rover.physics.*;
-import nars.rover.physics.j2d.SwingDraw;
+import nars.rover.util.Bodies;
 import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Collision;
@@ -52,7 +52,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Runnable is for Swing invokeLater to call this
  */
-public abstract class PhysicsModel implements ContactListener, Runnable {
+public abstract class PhysicsModel extends Bodies implements ContactListener, Runnable {
 
     public static final int MAX_CONTACT_POINTS = 4048;
     public static final float ZOOM_SCALE_DIFF = .05f;
@@ -70,7 +70,6 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
     /**
      * Only visible for compatibility. Should use {@link #getWorld()} instead.
      */
-    public World m_world;
     protected Body groundBody;
     private MouseJoint mouseJoint;
 
@@ -103,6 +102,8 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
     private float time;
 
     public PhysicsModel() {
+        super(0.5f, 1f);
+
         identity.setIdentity();
         for (int i = 0; i < MAX_CONTACT_POINTS; i++) {
             points[i] = new ContactPoint();
@@ -148,7 +149,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
         this.model = model;
 
         Vec2 gravity = new Vec2(0, -10f);
-        m_world = model.getWorldCreator().createWorld(gravity);
+        world = model.getWorldCreator().createWorld(gravity);
 
         bomb = null;
         mouseJoint = null;
@@ -158,13 +159,13 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
         mouseTracerVelocity.setZero();
 
         BodyDef bodyDef = new BodyDef();
-        groundBody = m_world.createBody(bodyDef);
+        groundBody = world.createBody(bodyDef);
 
-        init(m_world, false);
+        init(world, false);
     }
 
     public void init(World world, boolean deserialized) {
-        m_world = world;
+
         pointCount = 0;
         stepCount = 0;
         bombSpawning = false;
@@ -176,13 +177,16 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
         world.setDebugDraw(model.getDebugDraw());
         title = getTestName();
         initTest(deserialized);
+
+        init(world);
     }
+
 
     /**
      * Gets the current world
      */
     public World getWorld() {
-        return m_world;
+        return world;
     }
 
     /**
@@ -366,13 +370,13 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
             ++stepCount;
         }        
 
-        m_world.setAllowSleep(settings.getSetting(TestbedSettings.AllowSleep).enabled);
-        m_world.setWarmStarting(settings.getSetting(TestbedSettings.WarmStarting).enabled);
-        m_world.setSubStepping(settings.getSetting(TestbedSettings.SubStepping).enabled);
-        m_world.setContinuousPhysics(settings.getSetting(TestbedSettings.ContinuousCollision).enabled);
+        world.setAllowSleep(settings.getSetting(TestbedSettings.AllowSleep).enabled);
+        world.setWarmStarting(settings.getSetting(TestbedSettings.WarmStarting).enabled);
+        world.setSubStepping(settings.getSetting(TestbedSettings.SubStepping).enabled);
+        world.setContinuousPhysics(settings.getSetting(TestbedSettings.ContinuousCollision).enabled);
 
     //pointCount = 0;
-        m_world.step(timeStep, settings.getSetting(TestbedSettings.VelocityIterations).value, settings.getSetting(TestbedSettings.PositionIterations).value);
+        world.step(timeStep, settings.getSetting(TestbedSettings.VelocityIterations).value, settings.getSetting(TestbedSettings.PositionIterations).value);
         
         if (!drawingQueued.get()) {
             this.panel = panel;
@@ -413,12 +417,12 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 //         : 0;*/
 //        debugDraw.setFlags(flags);
 //
-////m_world.drawDebugData();
+////world.drawDebugData();
 //        Vec2 cc = getCamera().getTransform().getCenter();
 //
 //        debugDraw.getViewportTranform().setCamera(cc.x, cc.y, getCamera().getTargetScale());
 //
-//        ((SwingDraw) debugDraw).draw(m_world);
+//        ((SwingDraw) debugDraw).draw(world);
 //
 //
 //
@@ -599,7 +603,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 
         callback.fixture = null;
 
-        m_world.queryAABB(callback, queryAABB);
+        world.queryAABB(callback, queryAABB);
 
         if (callback.fixture != null) {
             Body body = callback.fixture.getBody();
@@ -609,7 +613,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
             def.collideConnected = true;
             def.target.set(p);
             def.maxForce = 1000f * body.getMass();
-            mouseJoint = (MouseJoint) m_world.createJoint(def);
+            mouseJoint = (MouseJoint) world.createJoint(def);
             body.setAwake(true);
         }
     }
@@ -623,7 +627,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 
     private void destroyMouseJoint() {
         if (mouseJoint != null) {
-            m_world.destroyJoint(mouseJoint);
+            world.destroyJoint(mouseJoint);
             mouseJoint = null;
         }
     }
@@ -644,7 +648,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 
     private void launchBomb(Vec2 position, Vec2 velocity) {
         if (bomb != null) {
-            m_world.destroyBody(bomb);
+            world.destroyBody(bomb);
             bomb = null;
         }
         // todo optimize this
@@ -652,7 +656,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
         bd.type = BodyType.DYNAMIC;
         bd.position.set(position);
         bd.bullet = true;
-        bomb = m_world.createBody(bd);
+        bomb = world.createBody(bd);
         bomb.setLinearVelocity(velocity);
 
         CircleShape circle = new CircleShape();

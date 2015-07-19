@@ -4,8 +4,8 @@
  */
 package nars.rover.world;
 
+import nars.rover.Material;
 import nars.rover.PhysicsModel;
-import nars.rover.RoverEngine;
 import nars.rover.RoverWorld;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.MathUtils;
@@ -34,7 +34,7 @@ public class ReactorWorld extends RoverWorld {
             float minSize = 0.2f;
             float maxSize = 1.0f;
             float mass = 4.0f;
-            addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass, RoverEngine.Material.poison);
+            addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass, Material.poison);
         }
         float wt = 1f;
         addWall(0, h, w, wt, 0);

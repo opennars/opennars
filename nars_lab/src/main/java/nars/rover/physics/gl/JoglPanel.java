@@ -112,7 +112,7 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
 
 
         JoglDraw drawer = ((JoglDraw) model.getDebugDraw());
-        drawer.draw(model.model.m_world, model.model.getTime());
+        drawer.draw(model.model.world, model.model.getTime());
 
 
         //https://www.opengl.org/sdk/docs/man2/xhtml/glAccum.xml

@@ -17,12 +17,11 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.process.TaskProcess;
 import nars.rl.gng.NeuralGasNet;
-import nars.rover.PhysicsModel;
-import nars.rover.RoverEngine;
-import nars.rover.RoverEngine.Material;
-import nars.rover.depr.RobotArm;
+import nars.rover.Material;
+import nars.rover.Sim;
 import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
+import nars.rover.util.RayCastClosestCallback;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.term.Atom;
@@ -35,7 +34,6 @@ import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
-import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -44,32 +42,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
- * @author me
+ * Triangular mobile vehicle
  */
-public class RoverModel {
+public class Rover extends Robotic {
 
     int mission = 0;
     //public float curiosity = 0.1f;
     int motionPeriod = 3;
 
-
-    public final Body torso;
-    Vec2 pooledHead = new Vec2();
     Vec2 point1 = new Vec2();
     Vec2 point2 = new Vec2();
     Vec2 d = new Vec2();
-    Deque<Vec2> positions = new ArrayDeque();
-    List<VisionRay> vision = new ArrayList();
-    //public class ChangedNumericInput //discretizer
-    private final RoverEngine sim;
+    final Deque<Vec2> positions = new ArrayDeque();
+    final List<VisionRay> vision = new ArrayList();
     public final NAR nar;
     private final ChangedTextInput feltAngularVelocity;
     private final ChangedTextInput feltOrientation;
     private final ChangedTextInput feltSpeed;
     private final ChangedTextInput feltSpeedAvg;
     private final ChangedTextInput mouthInput;
-    private final World world;
-    private DebugDraw draw = null;
 
     final double minVisionInputProbability = 0.9f;
     final double maxVisionInputProbability = 1.0f;
@@ -86,11 +77,10 @@ public class RoverModel {
 
     Vec2 mouthPoint = new Vec2(3.0f, 0); //0.5f);
     @Deprecated int distanceResolution = 6;
-    float mass = 2f;
 
     double mouthArc = Math.PI/6f; //in radians
     float biteDistanceThreshold = 0.05f;
-    Vec2[] vertices = {new Vec2(3.0f, 0.0f), new Vec2(-1.0f, +2.0f), new Vec2(-1.0f, -2.0f)};
+
 
     float linearDamping = 0.9f;
     float angularDamping = 0.6f;
@@ -212,44 +202,12 @@ public class RoverModel {
     final SimpleAutoRangeTruthFrequency motionAngle;
     final SimpleAutoRangeTruthFrequency facingAngle;
 
-    public class RoverMaterial extends Material {
-
-        final String id;
-        private final Color3f color;
-        private final Color c;
-
-        public RoverMaterial(String id) {
-            this.id = id;
-
-
-
-            float h = ((id + id).hashCode() % 10)/10f;
-            c = Color.getHSBColor(h, 0.5f, 0.95f);
-            color = new Color3f();
-
-        }
-
-        @Override
-        public void before(Body b, JoglDraw d, float time) {
-            float bb = nar.memory.emotion.busy() * 0.5f + 0.5f;
-            color.set(c.getRed()/256.0f * bb, c.getGreen()/256.0f * bb, c.getBlue()/256.0f * bb);
-            d.setFillColor(color);
-        }
-
-        @Override
-        public String toString() {
-            return id;
-        }
-    }
-
     //public class DistanceInput extends ChangedTextInput
-    public RoverModel(String id, NAR nar, PhysicsModel p) {
-        this.sim = (RoverEngine) p;
+    public Rover(String id, NAR nar) {
+        super(id);
 
         this.nar = nar;
-        
 
-        this.world = sim.getWorld();
 
         mouthInput = new ChangedTextInput(nar);
         feltAngularVelocity = new ChangedTextInput(nar);
@@ -257,64 +215,10 @@ public class RoverModel {
         feltSpeed = new ChangedTextInput(nar);
         feltSpeedAvg = new ChangedTextInput(nar);
 
-    
-
-        PolygonShape shape = new PolygonShape();
-        shape.set(vertices, vertices.length);
-        //shape.m_centroid.set(bodyDef.position);
-        BodyDef bd = new BodyDef();
-        bd.linearDamping=(linearDamping);
-        bd.angularDamping=(angularDamping);
-        bd.type = BodyType.DYNAMIC;
-        bd.position.set(0, 0);
-        torso = p.getWorld().createBody(bd);
-        Fixture f = torso.createFixture(shape, mass);
-        f.setRestitution(restitution);
-        f.setFriction(friction);
 
         linearVelocity = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[linear]>"), new AutoRangeTruthFrequency(0.02f));
         motionAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[angle]>"), new BipolarAutoRangeTruthFrequency());
         facingAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[facing]>"), new BipolarAutoRangeTruthFrequency());
-
-        torso.setUserData(new RoverMaterial(id));
-
-        //for (int i = -pixels / 2; i <= pixels / 2; i++) {
-        for (int i = 0; i < retinaPixels; i++) {
-            final int ii = i;
-            final float angle = /*MathUtils.PI / 2f*/ aStep * i;
-            final boolean eats = ((angle < mouthArc / 2f) || (angle > (Math.PI*2f) - mouthArc/2f));
-
-            //System.out.println(i + " " + angle + " " + eats);
-
-            VisionRay v = new VisionRay(torso,
-                    /*eats ?*/ mouthPoint /*: new Vec2(0,0)*/,
-                    angle, aStep, retinaRaysPerPixel, L, distanceResolution) {
-
-
-                @Override
-                public void onTouch(Body touched, float di) {
-                    if (touched == null) return;
-
-                    if (touched.getUserData() instanceof RoverEngine.Edible) {
-
-                        if (eats) {
-
-                            if (di <= biteDistanceThreshold)
-                                eat(touched);
-                            /*} else if (di <= tasteDistanceThreshold) {
-                                //taste(touched, di );
-                            }*/
-                        }
-                    }
-                }
-            };
-            v.sparkColor = new Color3f(0.5f, 0.4f, 0.4f);
-            v.normalColor = new Color3f(0.4f, 0.4f, 0.4f);
-
-            ((JoglDraw)p.draw()).addLayer(v);
-
-            vision.add(v);
-        }
 
         addMotorController();
         //addMotorOperator();
@@ -338,9 +242,83 @@ public class RoverModel {
         randomActions.add("motor(stop)!");
         //randomActions.add("motor(random)!");
 
+    }
+
+    @Override
+    public void init(Sim p) {
+        super.init(p);
+
+
+
 
     }
 
+    @Override
+    public RoboticMaterial getMaterial() {
+        return new NARRoverMaterial(this, nar);
+    }
+
+    @Override
+    protected Body newTorso() {
+        PolygonShape shape = new PolygonShape();
+
+        Vec2[] vertices = {new Vec2(3.0f, 0.0f), new Vec2(-1.0f, +2.0f), new Vec2(-1.0f, -2.0f)};
+        shape.set(vertices, vertices.length);
+        //shape.m_centroid.set(bodyDef.position);
+        BodyDef bd = new BodyDef();
+        bd.linearDamping=(linearDamping);
+        bd.angularDamping=(angularDamping);
+        bd.type = BodyType.DYNAMIC;
+        bd.position.set(0, 0);
+
+        Body torso = getWorld().createBody(bd);
+        Fixture f = torso.createFixture(shape, mass);
+        f.setRestitution(restitution);
+        f.setFriction(friction);
+
+
+
+        //for (int i = -pixels / 2; i <= pixels / 2; i++) {
+        for (int i = 0; i < retinaPixels; i++) {
+            final int ii = i;
+            final float angle = /*MathUtils.PI / 2f*/ aStep * i;
+            final boolean eats = ((angle < mouthArc / 2f) || (angle > (Math.PI*2f) - mouthArc/2f));
+
+            //System.out.println(i + " " + angle + " " + eats);
+
+            VisionRay v = new VisionRay(torso,
+                    /*eats ?*/ mouthPoint /*: new Vec2(0,0)*/,
+                    angle, aStep, retinaRaysPerPixel, L, distanceResolution) {
+
+
+                @Override
+                public void onTouch(Body touched, float di) {
+                    if (touched == null) return;
+
+                    if (touched.getUserData() instanceof Sim.Edible) {
+
+                        if (eats) {
+
+                            if (di <= biteDistanceThreshold)
+                                eat(touched);
+                            /*} else if (di <= tasteDistanceThreshold) {
+                                //taste(touched, di );
+                            }*/
+                        }
+                    }
+                }
+            };
+            v.sparkColor = new Color3f(0.5f, 0.4f, 0.4f);
+            v.normalColor = new Color3f(0.4f, 0.4f, 0.4f);
+
+
+
+            ((JoglDraw)draw).addLayer(v);
+
+            vision.add(v);
+        }
+        return torso;
+    }
 
     protected void thrustRelative(float f) {
         if (f == 0) {
@@ -361,11 +339,11 @@ public class RoverModel {
     protected void addAxioms() {
 
         //alpha curiosity parameter
-        if (nar.time() < 10) {
-            curious(1.0f, 0.65f);
+        if (nar.time() < 50) {
+            curious(0.9f, 0.7f);
         }
         else {
-            curious(0.75f, 0.15f);
+            curious(0.75f, 0.05f);
         }
 
 
@@ -806,19 +784,19 @@ public class RoverModel {
 
     public void eat(Body eaten) {
         Material m = (Material)eaten.getUserData();
-        if (m instanceof RoverEngine.FoodMaterial) {
+        if (m instanceof Sim.FoodMaterial) {
             nar.input("<goal --> [food]>. :|: %0.90;0.90%");
             nar.input("<goal --> [health]>. :|: %0.90;0.90%");
         }
-        else if (m instanceof RoverEngine.PoisonMaterial) {
+        else if (m instanceof Sim.PoisonMaterial) {
             nar.input("<goal --> [health]>. :|: %0.00;0.90%");
         }
         else {
             return;
         }
 
-        float x = (float) Math.random() * RoverEngine.sz - RoverEngine.sz / 2f;
-        float y = (float) Math.random() * RoverEngine.sz - RoverEngine.sz / 2f;
+        float x = (float) Math.random() * Sim.sz - Sim.sz / 2f;
+        float y = (float) Math.random() * Sim.sz - Sim.sz / 2f;
         //random new position
         eaten.setTransform(new Vec2(x * 2.0f, y * 2.0f), eaten.getAngle());
     }
@@ -837,7 +815,7 @@ public class RoverModel {
                 new ChangedTextInput(nar);
         private final String seenAngleTerm;
 
-        RobotArm.RayCastClosestCallback ccallback = new RobotArm.RayCastClosestCallback();
+        RayCastClosestCallback ccallback = new RayCastClosestCallback();
         private final Body body;
         private final int resolution;
         private final float arc;
@@ -913,7 +891,7 @@ public class RoverModel {
                 ccallback.init();
                 
                 try {
-                    world.raycast(ccallback, point1, point2);
+                    getWorld().raycast(ccallback, point1, point2);
                 }
                 catch (Exception e) { System.err.println("Phys2D raycast: " + e + " " + point1 + " " + point2 ); e.printStackTrace(); }
 
@@ -1037,7 +1015,7 @@ public class RoverModel {
 
         @Deprecated private String inputVisionDiscrete(float dist, String material) {
             float freq = 1f;
-            String sdist = RoverEngine.f(dist);
+            String sdist = Sim.f(dist);
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
             return "see(" + material + "," + angleTerm + "," + sdist + "). :|: %" + freq + ";" + conf + "%";
         }
@@ -1060,7 +1038,6 @@ public class RoverModel {
 
         @Override
         public void drawGround(JoglDraw d, World w) {
-            draw = d;
             for (Runnable r : toDraw) {
                 r.run();
             }
@@ -1168,7 +1145,7 @@ public class RoverModel {
 
         facingAngle.observe( torso.getAngle() );
         //nar.inputDirect(nar.task("<facing-->[" +  + "]>. :|:"));
-        nar.inputDirect(nar.task("<angvel-->[" + RoverEngine.f(angVelocity) + "]>. :|:"));
+        nar.inputDirect(nar.task("<angvel-->[" + Sim.f(angVelocity) + "]>. :|:"));
 
         //System.out.println("  " + motion);
         //feltSpeed.set(motion);

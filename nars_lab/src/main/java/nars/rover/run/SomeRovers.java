@@ -9,8 +9,9 @@ import nars.event.CycleReaction;
 import nars.gui.NARSwing;
 import nars.nar.Default;
 import nars.nar.Solid;
-import nars.rover.RoverEngine;
-import nars.rover.robot.RoverModel;
+import nars.rover.Sim;
+import nars.rover.robot.Rover;
+import nars.rover.robot.Turret;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.swing.*;
@@ -47,7 +48,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Default(1024, 16, 3) {
+        Default d = new Default(1024, 32, 3) {
 
 
 //            @Override
@@ -60,7 +61,7 @@ public class SomeRovers {
 //            }
 
         };
-        d.setInternalExperience(null);
+        //d.setInternalExperience(null);
         d.setClock(clock = new SimulatedClock());
 
 
@@ -88,8 +89,10 @@ public class SomeRovers {
         float fps = 90;
         boolean cpanels = true;
 
-        final RoverEngine game = new RoverEngine();
+        final Sim game = new Sim();
 
+
+        game.add(new Turret("turret"));
 
         int rovers = 1;
 
@@ -123,7 +126,7 @@ public class SomeRovers {
 
 
 
-            game.add(new RoverModel("r" + i, nar, game));
+            game.add(new Rover("r" + i, nar));
 
             if (cpanels) {
                 SwingUtilities.invokeLater(() -> {

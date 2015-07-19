@@ -1,16 +1,18 @@
 package nars.rover;
 
+import nars.Global;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.gl.JoglDraw;
-import nars.rover.robot.RoverModel;
+import nars.rover.robot.Robotic;
 import nars.rover.world.FoodSpawnWorld1;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.FixtureDef;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ import java.util.List;
  *
  * @author me
  */
-public class RoverEngine extends PhysicsModel {
+public class Sim extends PhysicsModel {
 
 
 
@@ -27,7 +29,7 @@ public class RoverEngine extends PhysicsModel {
 
     boolean wraparound = false;
 
-    public final List<RoverModel> rovers = new ArrayList();
+    public final List<Robotic> robots = Global.newArrayList();
     final int angleResolution = 24;
 
 
@@ -35,6 +37,7 @@ public class RoverEngine extends PhysicsModel {
     private long delayMS;
     private float fps;
     private boolean running = false;
+
 
 
 //        //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
@@ -129,11 +132,13 @@ public class RoverEngine extends PhysicsModel {
     }
 
 
-    public void add(RoverModel r) {
+    public void add(Robotic r) {
+        r.init(this);
+        robots.add(r);
+    }
 
-
-        rovers.add(r);
-
+    public void remove(Body r) {
+        getWorld().destroyBody(r);
     }
 
 
@@ -239,13 +244,16 @@ public class RoverEngine extends PhysicsModel {
         return String.valueOf(i);
     }
 
-    public static abstract class Material implements JoglDraw.DrawProperty {
-
-        public static Material wall = new WallMaterial();
-        public static Material food = new FoodMaterial();
-        public static Material poison = new PoisonMaterial();
-
+    @Override
+    public BodyDef bodyDefCallback(BodyDef body) {
+        return body;
     }
+
+    @Override
+    public FixtureDef fixDefCallback(FixtureDef fixture) {
+        return fixture;
+    }
+
 
     public interface Edible {
 
@@ -291,7 +299,7 @@ public class RoverEngine extends PhysicsModel {
         }
     }
 
-    public RoverEngine() {
+    public Sim() {
         init();
     }
 
@@ -303,7 +311,7 @@ public class RoverEngine extends PhysicsModel {
 
         super.step(timeStep, settings, panel);
 
-        for (RoverModel r : rovers) {
+        for (Robotic r : robots) {
 
             r.step(1);
 

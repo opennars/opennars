@@ -4,8 +4,8 @@
  */
 package nars.rover.world;
 
+import nars.rover.Material;
 import nars.rover.PhysicsModel;
-import nars.rover.RoverEngine;
 import nars.rover.RoverWorld;
 
 /**
@@ -29,7 +29,7 @@ public class FoodSpawnWorld1 extends RoverWorld {
             float mass = 2.0f;
             addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass,
                     Math.random() < foodtoPoisonRatio ?
-                            RoverEngine.Material.food : RoverEngine.Material.poison
+                            Material.food : Material.poison
                     );
         }
         float wt = 1f;
