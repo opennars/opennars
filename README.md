@@ -5,6 +5,8 @@
 Theory Overview
 ---------------
 
+[![Join the chat at https://gitter.im/opennars/opennars](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/opennars/opennars?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Non-Axiomatic Reasoning System ([NARS](https://sites.google.com/site/narswang/home)) processes tasks imposed by its environment, which may include human users or other computer systems. Tasks can arrive at any time, and there is no restriction on their contents as far as they can be expressed in __Narsese__, the I/O language of NARS.
 
 There are several types of __tasks__:
