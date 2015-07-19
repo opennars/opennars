@@ -2,9 +2,11 @@ package nars.rover.robot;
 
 
 import nars.rover.util.Bodies;
+import nars.rover.util.Explosion;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.contacts.Contact;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -31,13 +33,24 @@ public class Turret extends Robotic {
     public void step(int i) {
         super.step(i);
 
-        if (Math.random() < 0.1f) {
+
+
+        for (Body b : removedBullets) {
+            bullets.remove(b);
+            sim.remove(b);
+
+            ((BulletData)b.getUserData()).explode();
+        }
+        removedBullets.clear();
+
+        if (Math.random() < 0.05f) {
             fireBullet();
         }
     }
 
     final int maxBullets = 16;
     final Deque<Body> bullets = new ArrayDeque(maxBullets);
+    final Deque<Body> removedBullets = new ArrayDeque(maxBullets);
 
     public void fireBullet(/*float ttl*/) {
 
@@ -49,25 +62,28 @@ public class Turret extends Robotic {
 //
 //        }
 
-        final float speed = 50f;
+        final float speed = 100f;
+
 
         if (bullets.size() >= maxBullets) {
             sim.remove( bullets.removeFirst() );
         }
 
-        Vec2 start = torso.getWorldPoint(new Vec2(4, 0));
-        Body b = sim.create(start, Bodies.rectangle(0.2f, 0.4f), BodyType.DYNAMIC);
+
+        Vec2 start = torso.getWorldPoint(new Vec2(6.5f, 0));
+        Body b = sim.create(start, Bodies.rectangle(0.4f, 0.6f), BodyType.DYNAMIC);
+        b.m_mass= 0.05f;
 
         float angle = torso.getAngle();
         Vec2 rayDir = new Vec2( (float)Math.cos(angle), (float)Math.sin(angle) );
-
         rayDir.mulLocal(speed);
 
-        b.applyForce(rayDir, new Vec2(0,0));
 
         //float diesAt = now + ttl;
-        //b.setUserData(new BulletData(diesAt));
+        b.setUserData(new BulletData(b, 0));
         bullets.add(b);
+
+        b.applyForce(rayDir, new Vec2(0,0));
 
 //        float angle = (i / (float)numRays) * 360 * DEGTORAD;
 //        b2Vec2 rayDir( sinf(angle), cosf(angle) );
@@ -94,11 +110,23 @@ public class Turret extends Robotic {
 //        body->CreateFixture( &fd );
     }
 
-    public static class BulletData {
+    public class BulletData implements Collidable {
         private final float diesAt;
+        private final Body bullet;
 
-        public BulletData(float diesAt) {
+        public BulletData(Body b, float diesAt) {
+            this.bullet = b;
             this.diesAt = diesAt;
+        }
+
+        public void explode() {
+            //System.out.println("expldoe " + bullet.getWorldCenter());
+            Explosion.explodeBlastRadius(bullet.getWorld(), bullet.getWorldCenter(), 160f, 175f);
+        }
+
+        @Override public void onCollision(Contact c) {
+            //System.out.println(bullet + " collided");
+            removedBullets.add(bullet);
         }
     }
 

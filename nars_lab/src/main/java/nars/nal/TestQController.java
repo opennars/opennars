@@ -1,9 +1,10 @@
 package nars.nal;
 
 
-import nars.nar.Classic;
 import nars.NAR;
 import nars.Param;
+import nars.io.in.LibraryInput;
+import nars.nar.Classic;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -129,7 +130,7 @@ public class TestQController {
             //return conceptPriority;
             // + conceptNewMean;
             
-            return 0;
+            return nar.memory.emotion.happy();
             //return conceptNewMean + taskDerivedMean + 1* nar.memory.logic.d("task.solution.best");            
         }
 
@@ -143,7 +144,7 @@ public class TestQController {
     
     public static NAR newNAR() {
         //return new Default().build();        
-        return new NAR(new Classic().setActiveConcepts(8192))
+        return new NAR(new Classic().setActiveConcepts(512))
         //return build(g, g.param);
         ;
     }
@@ -175,7 +176,7 @@ public class TestQController {
         qr.setActive(false);
         
         double mm = 0, nn = 0, rr = 0;
-        int displayCycles = 1000;
+        int displayCycles = 100;
         double[] nAction = new double[qn.getNumActions()];
         long startupPeriod = 2000;
         int resetPeriod = 50000;
@@ -190,7 +191,7 @@ public class TestQController {
                 m.reset();
                 r.reset();
                 
-                input("nal/Examples/Example-MultiStep-edited.txt", n, m, r);
+                input("nal/original/Example-MultiStep-edited.nal", n, m, r);
                 //input("nal/test/nars_multistep_1.nal", n, m, r);
                 //input("nal/test/nars_multistep_2.nal", n, m, r);                
             }
@@ -263,25 +264,7 @@ public class TestQController {
     
     /** duplicated from NALTest.java  -- TODO use a comon copy of this method */
     public static String getExample(String path) {
-        try {
-            String existing = exCache.get(path);
-            if (existing!=null)
-                return existing;
-            
-            StringBuilder  sb  = new StringBuilder();
-            String line;
-            File fp = new File(path);
-            BufferedReader br = new BufferedReader(new FileReader(fp));
-            while ((line = br.readLine())!=null) {
-                sb.append(line).append("\n");
-            }
-            existing = sb.toString();
-            exCache.put(path, existing);
-            return existing;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "";
+        return LibraryInput.getExample(path);
     }
     
 }

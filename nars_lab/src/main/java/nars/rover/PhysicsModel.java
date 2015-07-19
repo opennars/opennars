@@ -26,6 +26,7 @@
 package nars.rover;
 
 import nars.rover.physics.*;
+import nars.rover.robot.Collidable;
 import nars.rover.util.Bodies;
 import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
@@ -136,7 +137,15 @@ public abstract class PhysicsModel extends Bodies implements ContactListener, Ru
         camera = new PhysicsCamera(getDefaultCameraPos(), getDefaultCameraScale(), ZOOM_SCALE_DIFF);
     }
 
-    public void beginContact(Contact contact) {
+    public final void beginContact(final Contact contact) {
+
+        final Object ua = contact.getFixtureA().getBody().getUserData();
+        final Object ub = contact.getFixtureB().getBody().getUserData();
+
+        if (ua instanceof Collidable)
+            ((Collidable)ua).onCollision(contact);
+        if (ub instanceof Collidable)
+            ((Collidable)ub).onCollision(contact);
     }
 
     public void endContact(Contact contact) {

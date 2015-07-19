@@ -26,7 +26,7 @@ public class FoodSpawnWorld1 extends RoverWorld {
         for (int i = 0; i < numFood; i++) {
             float minSize = 0.8f;
             float maxSize = 2.0f;
-            float mass = 2.0f;
+            float mass = 0.1f;
             addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass,
                     Math.random() < foodtoPoisonRatio ?
                             Material.food : Material.poison
