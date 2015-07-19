@@ -2,26 +2,16 @@ package nars.rover.run;
 
 import automenta.vivisect.Video;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
-import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.clock.SimulatedClock;
-import nars.concept.Concept;
-import nars.concept.DefaultConcept;
+import nars.event.CycleReaction;
 import nars.gui.NARSwing;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.link.TermLinkKey;
 import nars.nar.Default;
 import nars.nar.Solid;
-import nars.premise.BloomPremiseSelector;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
-import nars.task.Sentence;
-import nars.task.filter.MultiplyDerivedBudget;
-import nars.term.Term;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.swing.*;
 
@@ -112,6 +102,8 @@ public class SomeRovers {
             NARSeed d = newDefault();
             nar = new NAR(d);
 
+            new InputActivationController(nar);
+
             int nc = 4;
             nar.setCyclesPerFrame(nc);
 
@@ -141,5 +133,49 @@ public class SomeRovers {
         }
 
         game.run(fps);
+    }
+
+    private static class InputActivationController extends CycleReaction {
+
+        private final NAR nar;
+
+        final int windowSize;
+
+        final DescriptiveStatistics busyness;
+
+        public InputActivationController(NAR nar) {
+            super(nar);
+            this.nar = nar;
+            this.windowSize = nar.memory.duration();
+            this.busyness = new DescriptiveStatistics(windowSize);
+        }
+
+        @Override
+        public void onCycle() {
+
+            final float bInst = nar.memory.emotion.busy();
+            busyness.addValue(bInst);
+
+            float bAvg = (float)busyness.getMean();
+
+            float busyMax = 3f;
+
+            double a = nar.param.inputActivationFactor.get();
+            if (bAvg > busyMax) {
+                a -= 0.01f;
+            }
+            else  {
+                a += 0.01f;
+            }
+
+            final float min = 0.01f;
+            if (a < min) a = min;
+            if (a > 1f) a = 1f;
+
+            //System.out.println("act: " + a + " (" + bInst + "," + bAvg);
+
+            nar.param.inputActivationFactor.set(a);
+            nar.param.conceptActivationFactor.set( 0.5f * (1f + a) /** half as attenuated */ );
+        }
     }
 }

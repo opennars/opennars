@@ -75,10 +75,10 @@ public class RoverModel {
     final double maxVisionInputProbability = 1.0f;
 
     //float tasteDistanceThreshold = 1.0f;
-    final static int retinaPixels = 12;
+    final static int retinaPixels = 24;
 
 
-    int retinaRaysPerPixel = 8; //rays per vision sensor
+    int retinaRaysPerPixel = 4; //rays per vision sensor
 
     float aStep = (float)(Math.PI*2f) / retinaPixels;
 

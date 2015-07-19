@@ -15,7 +15,10 @@ public class HumanoidFacePanel extends NPanel {
     double nextSpin = 0;
     double nextNod = 0;
     double momentum = 0.95;
-    
+
+    float shakeFreq = 4f;
+    protected float nodFreq = 6f;
+
     public boolean nod = false;
     public boolean shake = false;
     public boolean unhappy = false;
@@ -84,10 +87,10 @@ public class HumanoidFacePanel extends NPanel {
             nextSpin = 0;
         }
         else if (shake) {
-            nextSpin = Math.sin(t*4f)*6f;
+            nextSpin = Math.sin(t* shakeFreq)*6f;
         }
         else if (nod) {
-            if (Math.sin(t*6f) < 0)
+            if (Math.sin(t* nodFreq) < 0)
                 face.setFlex('v');
             else
                 face.setFlex('^');

@@ -247,17 +247,17 @@ public class ConceptProcess extends NAL implements Premise {
         return currentTermLinkConcept;
     }
 
-    public float conceptPriority(Term target) {
-        //first check for any cached Concept
-        if (target == getTermLink().target) {
-            Concept c = getTermLinkConcept();
-
-            if (c == null) return 0; //if the concept does not exist, use priority = 0
-
-            return c.getPriority();
-        }
-        return super.conceptPriority(target);
-    }
+//    public float conceptPriority(Term target) {
+////        //first check for any cached Concept
+////        if (target == getTermLink().target) {
+////            Concept c = getTermLinkConcept();
+////
+////            if (c == null) return 0; //if the concept does not exist, use priority = 0
+////
+////            return c.getPriority();
+////        }
+//        return super.conceptPriority(target);
+//    }
 
 
     @Override

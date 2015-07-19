@@ -250,8 +250,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         switch (punctuation) {
             /*case Symbols.GOAL:
                 break;*/
+            case Symbols.QUEST:
             case Symbols.QUESTION:
-                if (getQuestions().isEmpty()) {
+                if (getQuestions().isEmpty() && getQuests().isEmpty()) {
                     if (originalSize > 0) //became empty
                         getMemory().updateConceptQuestions(this);
                 } else {
@@ -536,10 +537,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         if (!isConstant()) {
             //boolean newQuestion = table.isEmpty();
-            final int presize = table.size();
 
             Task match = table.add(q, questionEquivalence, this);
             if (match == q) {
+                final int presize = getQuestions().size() + getQuests().size();
                 onTableUpdated(q.getPunctuation(), presize);
             }
             q = match; //try solution with the original question

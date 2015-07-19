@@ -69,6 +69,9 @@ public class TaskProcess extends NAL {
     }
 
     protected void process(final Concept c) {
+
+        memory.emotion.busy(this);
+
         if (processConcept(c)) {
             emit(TaskProcess.class, getTask(), this, c);
 

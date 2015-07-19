@@ -453,7 +453,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events
         called by a Concept when its questions state changes (becomes empty or becomes un-empty) */
     public void updateConceptQuestions(Concept c) {
-        if (!c.hasQuestions()) {
+        if (!c.hasQuestions() && !c.hasQuests()) {
             if (!questionConcepts.remove(c))
                 throw new RuntimeException("Concept " + c + " never registered any questions");
         }

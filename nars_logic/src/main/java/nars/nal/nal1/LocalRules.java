@@ -219,8 +219,10 @@ public class LocalRules {
         }
 
         float newQ = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
-        if (newQ == 0)
-            return null;
+//        if (newQ == 0) {
+//            memory.emotion.happy(0, questionTask, nal);
+//            return null;
+//        }
 
 
         Sentence oldBest = questionTask.getBestSolution();
@@ -228,7 +230,7 @@ public class LocalRules {
             float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
             if (oldQ >= newQ) {
                 //if (question.isGoal()) {
-                //    memory.emotion.happy(oldQ, questionTask, nal);
+                    memory.emotion.happy(oldQ, questionTask, nal);
                 //}
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");
