@@ -1,7 +1,6 @@
 package nars.util;
 
 import nars.Global;
-import nars.bag.impl.CurveBag;
 import nars.budget.Item;
 
 import java.util.Collection;
@@ -9,28 +8,29 @@ import java.util.Map;
 import java.util.Set;
 
 /** adapter to a Map for coordinating changes in a Map with another Collection */
-public abstract class CollectorMap<K, E extends Item<K>> {
+public abstract class CollectorMap<K, V extends Item<K>> {
 
 
-    public final Map<K, E> map;
+    public final Map<K, V> map;
 
 
 
-    public CollectorMap(Map<K, E> map) {
+    public CollectorMap(Map<K, V> map) {
         this.map = map;
     }
 
     /** implementation for adding the value to another collecton (called internally)  */
-    abstract protected E addItem(final E e);
+    abstract protected V addItem(final V e);
 
     /** implementation for removing the value to another collecton (called internally) */
-    abstract protected E removeItem(final E e);
+    abstract protected V removeItem(final V e);
 
 
-    public E put(final E value) {
+
+    public V put(final V value) {
 
 
-        E removed, removed2;
+        V removed, removed2;
 
         /*synchronized (nameTable)*/
         {
@@ -39,7 +39,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
             removed = putKey(key, value);
             if (removed != null) {
 
-                E remd = removeItem(removed);
+                V remd = removeItem(removed);
 
                 if (remd == null) {
                     throw new RuntimeException("unable to remove item corresponding to key " + key);
@@ -64,11 +64,11 @@ public abstract class CollectorMap<K, E extends Item<K>> {
         return removed;
     }
 
-    public E remove(final K key) {
+    public V remove(final K key) {
 
-        E e = removeKey(key);
+        V e = removeKey(key);
         if (e != null) {
-            E removed = removeItem(e);
+            V removed = removeItem(e);
             if (removed == null)
                 throw new RuntimeException(key + " removed from index but not from items list");
             if (removed!=e)
@@ -80,8 +80,8 @@ public abstract class CollectorMap<K, E extends Item<K>> {
     }
 
 
-    public E removeKey(final K key) {
-        E e = map.remove(key);
+    public V removeKey(final K key) {
+        V e = map.remove(key);
         return e;
     }
 
@@ -90,7 +90,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
         return map.size();
     }
 
-    public boolean containsValue(E it) {
+    public boolean containsValue(V it) {
         return map.containsValue(it);
     }
 
@@ -98,7 +98,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
         map.clear();
     }
 
-    public E get(K key) {
+    public V get(K key) {
         return map.get(key);
     }
 
@@ -110,7 +110,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
         return map.keySet();
     }
 
-    public Collection<E> values() {
+    public Collection<V> values() {
         return map.values();
     }
 
@@ -118,7 +118,7 @@ public abstract class CollectorMap<K, E extends Item<K>> {
     /**
      * put key in index, do not add value
      */
-    protected E putKey(final K key, final E value) {
+    protected V putKey(final K key, final V value) {
         return map.put(key, value);
     }
 

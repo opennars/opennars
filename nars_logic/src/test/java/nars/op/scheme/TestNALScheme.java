@@ -22,21 +22,21 @@ import static org.junit.Assert.assertThat;
  */
 public class TestNALScheme {
 
-    //----
-    @Test @Ignore
-    public void testDynamicBrainfuckProxy() throws Exception {
-
-        NAR n = new NAR(new Default().clock(new HardRealtimeClock(false)) );
-
-        //TextOutput.out(n);
-
-        BrainfuckMachine bf= new NALObjects(n).build("scm", BrainfuckMachine.class);
-
-        bf.execute("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.");
-
-        n.frame(6500);
-
-    }
+//    //----
+//    @Test @Ignore
+//    public void testDynamicBrainfuckProxy() throws Exception {
+//
+//        NAR n = new NAR(new Default().clock(new HardRealtimeClock(false)) );
+//
+//        //TextOutput.out(n);
+//
+//        BrainfuckMachine bf= new NALObjects(n).build("scm", BrainfuckMachine.class);
+//
+//        bf.execute("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.");
+//
+//        n.frame(6500);
+//
+//    }
 
 
     @Test @Ignore

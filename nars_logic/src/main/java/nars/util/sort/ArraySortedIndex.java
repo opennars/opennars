@@ -248,7 +248,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         do {
             
             if (i < s) {
-                if (attemptRemoval(o, on, i))
+                if (attemptRemoval(o, /*on, */i))
                     return true;
                 i++;
             }
@@ -256,7 +256,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
                 finishedUp = true;
 
             if (j >= 0) {
-                if (attemptRemoval(o, on, j))
+                if (attemptRemoval(o, /*on, */j))
                     return true;
                 j--;
             }
@@ -274,9 +274,9 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         throw new RuntimeException(err);
     }
 
-    private boolean attemptRemoval(Object o, Object on, int i) {
-        E r = list.get( i );
-        if ((o == r) || (r.name().equals(on))) {
+    private final boolean attemptRemoval(final Object o, /*final Object oName, */final int i) {
+        final E r = list.get( i );
+        if ((o == r) /*|| (r.name().equals(oName))*/) {
             if (list.remove(i)!=null)
                 return true;
         }

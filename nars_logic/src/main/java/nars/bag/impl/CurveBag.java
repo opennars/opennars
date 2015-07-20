@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * <p>
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
-public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
+public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
 
     @Deprecated final float MASS_EPSILON = 1.0e-5f;
 
@@ -39,7 +39,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * array of lists of items, for items on different level
      */
-    public final SortedIndex<E> items;
+    public final SortedIndex<V> items;
 
     /**
      * defined in different bags
@@ -62,7 +62,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    public CurveBag(Random rng, int capacity, BagCurve curve, SortedIndex<E> ind) {
+    public CurveBag(Random rng, int capacity, BagCurve curve, SortedIndex<V> ind) {
         this(capacity, new RandomSampler(rng, curve), ind);
     }
 
@@ -78,23 +78,24 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     }
 
-    class CurveMap extends CollectorMap<K, E> {
+    class CurveMap extends CollectorMap<K, V> {
 
-        public CurveMap(Map<K, E> map) {
+        public CurveMap(Map<K, V> map) {
             super(map);
         }
 
         @Override
-        public E remove(final K key) {
-            final E e = super.remove(key);
+        public V remove(final K key) {
+            final V e = super.remove(key);
 
             if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
 
             return e;
         }
 
+
         @Override
-        protected E removeItem(final E removed) {
+        protected V removeItem(final V removed) {
             if (items.remove(removed)) {
                 return removed;
             }
@@ -102,9 +103,9 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         }
 
         @Override
-        protected E addItem(final E i) {
+        protected V addItem(final V i) {
 
-            final E e =items.insert(i);
+            final V e =items.insert(i);
 
             return e;
         }
@@ -185,7 +186,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 //    final float scanningRate = -1.0f;
 
 
-    public CurveBag(int capacity, CurveSampler sampler, SortedIndex<E> items) {
+    public CurveBag(int capacity, CurveSampler sampler, SortedIndex<V> items) {
         super();
         this.capacity = capacity;
         this.sampler = sampler;
@@ -234,7 +235,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 //                    System.err.println(o);
 //                }
 
-                Set<E> difference = Sets.symmetricDifference(
+                Set<V> difference = Sets.symmetricDifference(
                         new HashSet(index.values()),
                         new HashSet(items)
                 );
@@ -275,7 +276,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return Whether the Item is in the Bag
      */
     @Override
-    public boolean contains(final E it) {
+    public boolean contains(final V it) {
         return index.containsValue(it);
     }
 
@@ -286,12 +287,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The Item with the given key
      */
     @Override
-    public E get(final K key) {
+    public V get(final K key) {
         return index.get(key);
     }
 
     @Override
-    public E remove(final K key) {
+    public V remove(final K key) {
         return index.remove(key);
     }
 
@@ -303,7 +304,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E pop() {
+    public V pop() {
 
         if (isEmpty()) return null; // empty bag
         return removeItem(sampler.next(this));
@@ -312,7 +313,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
     @Override
-    public E peekNext() {
+    public V peekNext() {
 
         if (isEmpty()) return null; // empty bag
         return items.get(sampler.next(this));
@@ -345,14 +346,60 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         return items.getLast().getPriority();
     }
 
-    @Override
-    public E update(BagTransaction<K, E> selector) {
+    /**
+     * calls overflow() on an overflown object
+     * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
+     * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses
+     */
+    public V update(final BagTransaction<K, V> selector) {
 
-        final E e = super.update(selector);
 
-        if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
+        K key = selector.name();
+        V item;
+        if (key != null) {
+            item = get(key);
+        }
+        else {
+            item = peekNext();
+        }
 
-        return e;
+        if (item == null) {
+            item = selector.newItem();
+            if (item == null)
+                return null;
+            else {
+                // put the (new or merged) item into itemTable
+                final V overflow = put(item);
+                if (overflow != null)
+                    selector.overflow(overflow);
+
+                if (overflow == item)
+                    return null;
+
+                return item;
+            }
+        } else {
+
+            V changed = selector.update(item);
+
+            if (changed == null)
+                return item;
+            else {
+                //it has changed
+
+                final V overflow = put(changed);
+
+                if (overflow == changed)
+                    return null;
+
+                if (overflow != null && !overflow.name().equals(changed.name()))
+                    selector.overflow(overflow);
+
+                return changed;
+            }
+        }
+
+
     }
 
     /**
@@ -362,11 +409,11 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The overflow Item, or null if nothing displaced
      */
     @Override
-    public E put(final E i) {
+    public V put(final V i) {
 
         boolean full = (size() >= capacity);
 
-        E existing = index.remove(i.name());
+        V existing = index.remove(i.name());
         if (existing!=null) {
             merge(i, existing);
             index.put(i);
@@ -380,7 +427,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
                     return i;
                 }
                 else {
-                    E low = removeLowest();
+                    V low = removeLowest();
                     index.put(i);
                     return low;
                 }
@@ -393,32 +440,8 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     }
 
-//
-//    protected synchronized E removeItem2(final int index) {
-//
-//        final E selected;
-//
-//        selected = items.remove(index);
-//        if (selected != null) {
-//            E removed = nameTable.removeKey(selected.name());
-//
-//            if (removed == null)
-//                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " but had no key referencing it");
-//
-//            //should be the same object instance
-//            if ((removed != null) && (removed != selected)) {
-//                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " and index referenced " + removed + " + ");
-//            }
-//            mass -= selected.budget.getPriority();
-//        } else {
-//            throw new RuntimeException(this + " items array returned null item at index " + index);
-//        }
-//
-//        return selected;
-//    }
 
-
-    protected E removeLowest() {
+    protected V removeLowest() {
         return removeItem(0);
     }
 
@@ -428,22 +451,14 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @param level The current level
      * @return The first Item
      */
-    protected E removeItem(final int index) {
+    protected V removeItem(final int index) {
 
-        E ii = items.get(index);
+        V ii = items.get(index);
         if (ii == null)
             return null;
 
         return remove( ii.name() );
 
-//        E selected = items.remove(index);
-//
-//        if (selected == null)
-//            throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
-//
-//        this.index.removeKey(selected.name(), selected.getPriority());
-//
-//        return selected;
     }
 
 
@@ -464,12 +479,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     @Override
-    public Collection<E> values() {
+    public Collection<V> values() {
         return index.values();
     }
 
     @Override
-    public Iterator<E> iterator() {
+    public Iterator<V> iterator() {
         return items.descendingIterator();
     }
 
@@ -574,7 +589,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     @Override
-    public void forEach(final Consumer<? super E> action) {
+    public void forEach(final Consumer<? super V> action) {
         items.forEach(action);
     }
 

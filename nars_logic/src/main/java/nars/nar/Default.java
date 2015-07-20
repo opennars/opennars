@@ -398,7 +398,7 @@ public class Default extends NARSeed implements ConceptBuilder {
                     n.on(c);
                 }
 
-                n.on(Anticipate.class);      // expect an event
+                //n.on(Anticipate.class);      // expect an event
 
                 if (internalExperience == Minimal) {
                     new InternalExperience(n);
@@ -455,7 +455,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Term, Concept> newConceptBag() {
-        return new LevelBag((int)Math.sqrt(getActiveConcepts()), getActiveConcepts());
+        //return new LevelBag((int)Math.sqrt(getActiveConcepts()), getActiveConcepts());
+        return new CurveBag(rng, getActiveConcepts());
     }
 
     @Override
