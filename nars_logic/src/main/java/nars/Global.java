@@ -131,13 +131,7 @@ public class Global {
      */
     public static float DISCOUNT_RATE = 0.5f;    
 
-    /** enables the parsing of functional input format for operation terms: function(a,b,...) */
-    public static boolean FUNCTIONAL_OPERATIONAL_FORMAT = true;
-    
-    
-    
-    
-    
+
     
     //RUNTIME PERFORMANCE (should not affect logic): ----------------------------------
 
@@ -184,11 +178,11 @@ public class Global {
      * in which case the forgetting will have been applied some amount of time past
      * when it would have completed its forget descent.
      */
-    public static final float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.1f;
+    public static final float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.05f;
 
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
-    public static final float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.1f;
-    public static final float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.1f;
+    public static final float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.05f;
+    public static final float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.05f;
 
     /** global switch to allow derivation evidence to overlap */
     /* NOTE:
@@ -243,8 +237,8 @@ public class Global {
     }
 
     public static <X> List<X> newArrayList(int capacity) {
-        //return new FastList(capacity);
-        return new ArrayList(capacity);
+        return new FastList(capacity);
+        //return new ArrayList(capacity);
     }
 
     public static <X> Set<X> newHashSet(int capacity) {

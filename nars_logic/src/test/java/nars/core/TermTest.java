@@ -287,7 +287,6 @@ public class TermTest {
 
     @Test
     public void testParseOperationInFunctionalForm() {
-        Global.FUNCTIONAL_OPERATIONAL_FORMAT = true;
 
         NAR n = new NAR(new Default());
 

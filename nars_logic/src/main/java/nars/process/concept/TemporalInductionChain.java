@@ -21,8 +21,8 @@ import nars.term.Variables;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,7 +100,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
         Term B1=S1.getPredicate();
         Term B2=S2.getSubject();
         Term C=S2.getPredicate();
-        ArrayList<Term> args=null;
+        List<Term> args=null;
 
         int beginoffset=0;
         if(B2 instanceof Conjunction) {
@@ -108,12 +108,12 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
             if(CB2.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                 if(A instanceof Conjunction && A.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     Conjunction ConjA=(Conjunction) A;
-                    args=new ArrayList(CB2.term.length+ConjA.term.length);
+                    args=Global.newArrayList(CB2.term.length+ConjA.term.length);
                     beginoffset=ConjA.length();
 
                     Collections.addAll(args, ConjA.term);
                 } else {
-                    args = new ArrayList(CB2.term.length + 1);
+                    args =Global.newArrayList(CB2.term.length + 1);
                     args.add(A);
                     beginoffset=1;
                 }

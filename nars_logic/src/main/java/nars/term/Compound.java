@@ -1131,11 +1131,14 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         final int subterms = in.length;
 
+        final int minMassOfMatch = S.minMassOfMatch;
+
         for (int i = 0; i < subterms; i++) {
             Term t1 = in[i];
 
             int m = t1.getMass();
-            if (m < S.minMassOfMatch) {
+
+            if (m < minMassOfMatch) {
                 //too small to be any of the keys or hold them in a subterm
                 continue;
             }
@@ -1146,6 +1149,14 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1)) {
+
+
+//                    final int massOut = out[i].getMass();
+//                    final int massIn = t2.getMass();
+//                    if (massOut-massIn + getMass() > Global.COMPOUND_MASS_LIMIT) {
+//                        System.err.println("mas slimit reacacheD");
+//                    }
+
                     if (out == in) out = copyOf(in, subterms);
                     out[i] = t2; //t2.clone();
                 }
@@ -1154,11 +1165,18 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
                 //additional constraint here?
 
-                Term ss = ((Compound) t1).applySubstitute(S);
-                if ((ss != null) && (!ss.equals(in[i]))) {
+                Term t3 = ((Compound) t1).applySubstitute(S);
+                if ((t3 != null) && (!t3.equals(in[i]))) {
                     //modification
+
+//                    final int massOut = out[i].getMass();
+//                    final int massIn = t3.getMass();
+//                    if (massOut-massIn + getMass() > Global.COMPOUND_MASS_LIMIT) {
+//                        System.err.println("mas slimit reacacheD");
+//                    }
+
                     if (out == in) out = copyOf(in, subterms);
-                    out[i] = ss;
+                    out[i] = t3;
                 }
             }
         }

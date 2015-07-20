@@ -188,17 +188,26 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
      *  @param value if null will perform a removal
      * */
     default Object put(Object key, Object value) {
-        if (getMeta() == null) setMeta(Global.newHashMap());
+
+        Map<Object, Object> currMeta = getMeta();
 
         if (value != null) {
-            Object removed = getMeta().put(key, value);
+
+            if (currMeta == null) setMeta(currMeta = Global.newHashMap());
+
+            Object removed = currMeta.put(key, value);
             if (value instanceof ConceptReaction && removed!=value) {
                 ((ConceptReaction)value).onState(this, getState());
             }
             return removed;
         }
-        else
-            return getMeta().remove(key);
+        else {
+            if (currMeta!=null)
+                return currMeta.remove(key);
+            else
+                return null;
+        }
+
     }
 
     /** like Map.gett for getting data stored in meta map */
