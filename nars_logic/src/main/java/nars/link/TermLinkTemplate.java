@@ -1,5 +1,6 @@
 package nars.link;
 
+import nars.Global;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.term.Compound;
@@ -214,6 +215,9 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         if (!propagate) {
             return false;
         }
+
+        if (summary() < Global.BUDGET_EPSILON)
+            return false;
 
         TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
 

@@ -228,6 +228,27 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return topValue;
     }
 
+    /** satisfaction/success metric:
+     * if desire exists, returns 1.0 / (1 + Math.abs(belief - desire))
+     *  otherwise zero */
+    default public float getSuccess() {
+        if (hasBeliefs() && hasGoals()) {
+
+            Truth d = getDesire();
+            float de = d.getExpectation();
+
+
+            if (d == null) return 0;
+            Truth b = getBeliefs().top().getTruth();
+            float be = b.getExpectation();
+
+
+            return 1.0f / (1.0f + Math.abs(be - de));
+        }
+
+        return 0;
+    }
+
     public BeliefTable getBeliefs();
     public BeliefTable getGoals();
 

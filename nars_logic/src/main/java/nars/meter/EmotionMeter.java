@@ -28,15 +28,16 @@ public class EmotionMeter implements Serializable {
     public static final Compound BUSYness = SetInt.make(Atom.the("busy"));
     private final Memory memory;
 
-    /**
-     * average happiness accumulated in this cycle
-     */
-    private Mean happy = new Mean();
 
     /**
-     * average priority
+     * busy = total priority accumulated in this cycle
      */
     private float busy;
+
+    /** happy = total happiness accumulated in this cycle */
+    private float happy;
+
+    private float happinessFade = 0.95f;
 
     public float lasthappy = -1;
     public float lastbusy = -1;
@@ -53,28 +54,27 @@ public class EmotionMeter implements Serializable {
     }
 
     public float happy() {
-        if (happy.getN()==0)
-            return 0f;
-
-        return (float)happy.getResult();
+        return (float)happyMeter.get();
     }
 
     public float busy() {
         return (float)busyMeter.get();
-        //return busy;
     }
 
 
-    public void happy(final float solution, final Task task, final NAL nal) {
-        this.happy.increment( task.getQuality() * solution );
+    public void happy(final float delta) {
+        this.happy += delta;
+    }
+
+    public void happy(final float solution, final Task task, @Deprecated final NAL nal) {
+        this.happy += ( task.summary() * solution );
     }
 
     protected void commitHappy() {
 
-        final float currentHappy = happy();
 
         if (lasthappy != -1) {
-            float frequency = changeSignificance(lasthappy, currentHappy, Global.HAPPY_EVENT_CHANGE_THRESHOLD);
+            float frequency = changeSignificance(lasthappy, happy, Global.HAPPY_EVENT_CHANGE_THRESHOLD);
 //            if (happy > Global.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy <= Global.HAPPY_EVENT_HIGHER_THRESHOLD) {
 //                frequency = 1.0f;
 //            }
@@ -133,9 +133,9 @@ public class EmotionMeter implements Serializable {
             }
         }
 
-        happyMeter.set(currentHappy);
+        happyMeter.set(happy);
 
-        this.happy.clear();
+        happy *= happinessFade;
     }
 
     /** @return -1 if no significant change, 0 if decreased, 1 if increased */
@@ -159,7 +159,6 @@ public class EmotionMeter implements Serializable {
     }
 
     protected void busy(Task cause, NAL nal) {
-
         this.busy += cause.getPriority();
     }
 
@@ -205,7 +204,7 @@ public class EmotionMeter implements Serializable {
     }
 
     public void clear() {
-        happy.clear();
         busy = 0;
+        happy = 0;
     }
 }

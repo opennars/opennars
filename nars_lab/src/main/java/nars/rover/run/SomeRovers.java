@@ -50,7 +50,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Equalized(1024, 256, 3) {
+        Default d = new Equalized(2048, 64, 3) {
 
 
 //            @Override
@@ -77,7 +77,7 @@ public class SomeRovers {
         d.conceptBeliefsMax.set(16);
         d.conceptGoalsMax.set(12);
         d.termLinkForgetDurations.set(4);
-        d.duration.set(5);
+
 
 
         return d;
@@ -112,8 +112,9 @@ public class SomeRovers {
 
             //new InputActivationController(nar);
 
-            int nc = 2;
+            int nc = 4;
             nar.setCyclesPerFrame(nc);
+            nar.param.duration.set(5*(nc-1));
 
 
             //nar.param.shortTermMemoryHistory.set(3);

@@ -45,10 +45,6 @@ public class Equalized extends Default {
 
             int conceptsToFire = conceptsFiredPerCycle.get();
 
-            //TEMPORARY calculation
-            memory.param.inputActivationFactor.set(1f/(conceptsToFire * 2f));
-            memory.param.conceptActivationFactor.set(1f/(conceptsToFire * 2f));
-
             concepts.forgetNext(
                     memory.param.conceptForgetDurations,
                     Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
@@ -65,16 +61,18 @@ public class Equalized extends Default {
 
             queueNewTasks();
 
+            float inputPriorityFactor = 1f/(conceptsToFire);
+
             //new tasks
             int newTasksToFire = Math.min(newTasks.size(), conceptsFiredPerCycle.get());
             for (int n = newTasksToFire;  n > 0; n--) {
                 Task highest = newTasks.removeHighest();
                 if (highest == null) break;
 
-                TaskProcess.run(memory, highest);
+                TaskProcess tp = TaskProcess.get(memory, highest, inputPriorityFactor);
+                if (tp!=null)
+                    tp.run();
             }
-
-
 
 
 
@@ -91,23 +89,24 @@ public class Equalized extends Default {
 
             int added = commitNewTasks();
 
-            System.out.print("newTasks=" + newTasksToFire + " + " + added + "  ");
+            //System.out.print("newTasks=" + newTasksToFire + " + " + added + "  ");
 
-            System.out.print("concepts=" + conceptsToFire + "  ");
+            //System.out.print("concepts=" + conceptsToFire + "  ");
 
             memory.runNextTasks();
 
-            final int maxNewTasks = conceptsToFire * 32;
+            final int maxNewTasks = conceptsToFire * memory.duration();
             if (newTasks.size() > maxNewTasks) {
                 int removed = newTasks.limit(maxNewTasks, new Consumer<Task>() {
                     @Override public void accept(Task task) {
                         memory.removed(task, "Ignored");
                     }
                 });
-                System.out.print("discarded=" + removed + "  ");
+
+                //System.out.print("discarded=" + removed + "  ");
             }
 
-            System.out.println();
+            //System.out.println();
 
 
         }

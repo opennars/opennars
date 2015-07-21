@@ -73,9 +73,12 @@ public class TaskProcess extends NAL {
         memory.emotion.busy(this);
 
         if (processConcept(c)) {
+
+            final Task t = getTask();
+
             emit(TaskProcess.class, getTask(), this, c);
 
-            c.link(currentTask);
+            c.link(t);
 
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         }
@@ -163,9 +166,12 @@ public class TaskProcess extends NAL {
 
 
     public static TaskProcess get(final Memory m, final Task task) {
+        return get(m, task, 1f);
+    }
 
-        float inputPriorityFactor = m.param.inputActivationFactor.floatValue();
-        if (inputPriorityFactor!=1.0f)
+    public static TaskProcess get(final Memory m, final Task task, float inputPriorityFactor) {
+
+        if (inputPriorityFactor!=1f)
             task.mulPriority( inputPriorityFactor );
 
         if (!task.summaryGreaterOrEqual(m.param.taskProcessThreshold)) {

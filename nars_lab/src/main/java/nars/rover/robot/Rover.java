@@ -192,7 +192,7 @@ public class Rover extends Robotic {
 
             float conf = 0.75f;
             Task t;
-            nar.inputDirect(t = nar.task(term).belief().present().truth(freq, conf).get());
+            nar.input(t = nar.task(term).belief().present().truth(freq, conf).get());
 
             //System.out.println(t);
         }
@@ -440,7 +440,7 @@ public class Rover extends Robotic {
                     float feedback = onFrame(d);
 
                     if (feedbackEnabled && Float.isFinite(feedback))
-                        nar.inputDirect(getFeedback(feedback));
+                        nar.input(getFeedback(feedback).get());
                 }
             }
             else {
@@ -522,8 +522,8 @@ public class Rover extends Robotic {
                 if (Float.isFinite(feedback)) {
                     if (isPos) {
                         posFeedback = feedback;
-                        nar.inputDirect(this.positive.getFeedback(posFeedback));
-                        nar.inputDirect(this.negative.getFeedback(0));
+                        nar.input(this.positive.getFeedback(posFeedback).get());
+                        nar.input(this.negative.getFeedback(0).get());
 
 //                        //counteract the interference
 //                        negFeedback = (negativeDesire - (positiveDesire - feedback));
@@ -537,8 +537,8 @@ public class Rover extends Robotic {
 
                     } else {
                         negFeedback = feedback;
-                        nar.inputDirect(this.negative.getFeedback(negFeedback));
-                        nar.inputDirect(this.positive.getFeedback(0));
+                        nar.input(this.negative.getFeedback(negFeedback).get());
+                        nar.input(this.positive.getFeedback(0).get());
 
 //                        //counteract the interference
 //                        posFeedback = (positiveDesire - (negativeDesire - feedback));
@@ -582,17 +582,17 @@ public class Rover extends Robotic {
 
                 v = Math.random();
                 if (v < 0.25f) {
-                    nar.inputDirect(nar.task("motor(left)! " + tPos));
-                    nar.inputDirect(nar.task("motor(right)! " + tNeg));
+                    nar.input(nar.task("motor(left)! " + tPos));
+                    nar.input(nar.task("motor(right)! " + tNeg));
                 } else if (v < 0.5f) {
-                    nar.inputDirect(nar.task("motor(left)! " + tNeg));
-                    nar.inputDirect(nar.task("motor(right)! " + tPos));
+                    nar.input(nar.task("motor(left)! " + tNeg));
+                    nar.input(nar.task("motor(right)! " + tPos));
                 } else if (v < 0.75f) {
-                    nar.inputDirect(nar.task("motor(forward)! " + tPos));
-                    nar.inputDirect(nar.task("motor(reverse)! " + tNeg));
+                    nar.input(nar.task("motor(forward)! " + tPos));
+                    nar.input(nar.task("motor(reverse)! " + tNeg));
                 } else {
-                    nar.inputDirect(nar.task("motor(forward)! " + tNeg));
-                    nar.inputDirect(nar.task("motor(reverse)! " + tPos));
+                    nar.input(nar.task("motor(forward)! " + tNeg));
+                    nar.input(nar.task("motor(reverse)! " + tPos));
                 }
                 return desire;
             }
@@ -962,9 +962,9 @@ public class Rover extends Robotic {
             if (hit != null) {
                 float meanDist = totalDist / resolution;
                 float percentDiff = (float) Math.sqrt(Math.abs(meanDist - minDist));
-                float conf = 0.70f + 0.25f * (1.0f - percentDiff);
-                if (conf > 0.99f) {
-                    conf = 0.99f;
+                float conf = 0.70f + 0.2f * (1.0f - percentDiff);
+                if (conf > 0.9f) {
+                    conf = 0.9f;
                 }
                 
                 //perceiveDist(hit, conf, meanDist);
@@ -1020,7 +1020,7 @@ public class Rover extends Robotic {
             return "see(" + material + "," + angleTerm + "," + sdist + "). :|: %" + freq + ";" + conf + "%";
         }
 
-        private TaskProcess inputVisionFreq(float dist, String material) {
+        private void inputVisionFreq(float dist, String material) {
             float freq = 0.5f + 0.5f * dist;
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
             //String x = "<see_" + angleTerm + " --> [" + material + "]>. %" + freq + "|" + conf + "%";
@@ -1030,7 +1030,7 @@ public class Rover extends Robotic {
                 thisAngle = Atom.the("see_" + angleTerm);
             Compound tt = Property.make( thisAngle ,  Atom.the(material) );
 
-            return nar.inputDirect(nar.task(tt).belief().present().truth(freq, conf).get());
+            nar.input(nar.task(tt).belief().present().truth(freq, conf).get());
         }
 
         public void onTouch(Body hit, float di) {
@@ -1145,7 +1145,7 @@ public class Rover extends Robotic {
 
         facingAngle.observe( torso.getAngle() );
         //nar.inputDirect(nar.task("<facing-->[" +  + "]>. :|:"));
-        nar.inputDirect(nar.task("<angvel-->[" + Sim.f(angVelocity) + "]>. :|:"));
+        nar.input(nar.task("<angvel-->[" + Sim.f(angVelocity) + "]>. :|:"));
 
         //System.out.println("  " + motion);
         //feltSpeed.set(motion);

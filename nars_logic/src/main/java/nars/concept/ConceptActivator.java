@@ -42,6 +42,10 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     }
 
     public ConceptActivator set(Budget b, boolean createIfMissing, long now) {
+
+        if (b.summary() == 0) {
+            System.out.println("activate: " +  b.summary() + " " +  b.getPriority() + " " + b.getDurability() + " " + b.getQuality());
+        }
         setBudget(b);
         this.createIfMissing = createIfMissing;
         this.now = now;
@@ -118,7 +122,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     public Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
 
-        set(budget, true, getMemory().time());
+        set(budget, true, time);
 
         return conceptualize(term, concepts);
 

@@ -177,12 +177,13 @@ public class Default extends NARSeed implements ConceptBuilder {
 
 
         this.perceptThreshold.set(0.0);
-        this.taskProcessThreshold.set(0.0);
+
         this.activeConceptThreshold.set(0.0);
         this.goalThreshold.set(0.01);
 
-        this.termLinkThreshold.set(0.0);
-        this.taskLinkThreshold.set(0.0);
+        this.taskProcessThreshold.set(Global.BUDGET_EPSILON);
+        this.termLinkThreshold.set(Global.BUDGET_EPSILON);
+        this.taskLinkThreshold.set(Global.BUDGET_EPSILON);
 
         this.executionThreshold.set(0.01);
         //executionThreshold.set(0.60);

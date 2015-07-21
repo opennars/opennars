@@ -356,11 +356,14 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public boolean processBelief(final TaskProcess nal, Task belief) {
 
+        float successBefore = getSuccess();
+
         final Task input = belief;
 
         belief = getBeliefs().add(input, this, nal);
 
         boolean added;
+
 
         if (belief!=input) {
 //            String reason = "Unbelievable or Duplicate";
@@ -382,6 +385,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 getQuestions().forEach( t -> trySolution(b, t, nal) );
             }
             //}
+
+            float successAfter = getSuccess();
+            float delta = successAfter - successBefore;
+            if (delta!=0)
+                memory.emotion.happy(delta);
         }
 
         return added;
@@ -397,6 +405,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @return Whether to continue the processing of the task
      */
     public boolean processGoal(final TaskProcess nal, Task goal) {
+
+        float successBefore = getSuccess();
 
         final Task input = goal;
 
@@ -416,6 +426,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
         }
 
         if (!added) return false;
+
+
+        float successAfter = getSuccess();
+        float delta = successAfter - successBefore;
+        if (delta!=0)
+            memory.emotion.happy(delta);
 
         //long then = goal.getOccurrenceTime();
         int dur = nal.memory.duration();
@@ -597,6 +613,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
 
+        if (!aboveThreshold(subBudget)) {
+            return false;
+        }
+
         taskLinkBuilder.setBudget(subBudget);
 
         for (int i = 0; i < numTemplates; i++) {
@@ -625,6 +645,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
         }
 
         return true;
+    }
+
+    static boolean aboveThreshold(Budget b) {
+        return b.summary() >= Global.BUDGET_EPSILON;
     }
 
 
