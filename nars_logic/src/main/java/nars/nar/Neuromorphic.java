@@ -37,7 +37,7 @@ public class Neuromorphic extends Default {
     }
 
     @Override
-    public CycleProcess newControlCycle() {
+    public CycleProcess newCycleProcess() {
         if (numAnts == -1)
             numAnts = conceptsFiredPerCycle.get();
         return new AntCore(numAnts, 2.0f, getActiveConcepts());

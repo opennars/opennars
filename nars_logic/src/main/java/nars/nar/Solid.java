@@ -252,7 +252,7 @@ public class Solid extends Default implements CycleProcess {
 
 
     @Override
-    public CycleProcess newControlCycle() {
+    public CycleProcess newCycleProcess() {
         return this;
     }
 

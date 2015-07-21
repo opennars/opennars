@@ -9,8 +9,10 @@ import nars.event.CycleReaction;
 import nars.gui.NARSwing;
 import nars.nar.Default;
 import nars.nar.Solid;
+import nars.nar.experimental.Equalized;
 import nars.rover.Sim;
 import nars.rover.robot.Rover;
+import nars.rover.robot.Spider;
 import nars.rover.robot.Turret;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -48,7 +50,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Default(1024, 32, 3) {
+        Default d = new Equalized(1024, 256, 3) {
 
 
 //            @Override
@@ -93,6 +95,9 @@ public class SomeRovers {
 
 
         game.add(new Turret("turret"));
+        game.add(new Spider("spider",
+                3, 3, 0.618f, 30, 30));
+
 
         int rovers = 1;
 
@@ -105,9 +110,9 @@ public class SomeRovers {
             NARSeed d = newDefault();
             nar = new NAR(d);
 
-            new InputActivationController(nar);
+            //new InputActivationController(nar);
 
-            int nc = 4;
+            int nc = 2;
             nar.setCyclesPerFrame(nc);
 
 

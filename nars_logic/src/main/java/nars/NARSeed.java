@@ -25,7 +25,7 @@ abstract public class NARSeed extends Param {
 
     protected int maxNALLevel;
 
-    abstract public CycleProcess newControlCycle();
+    abstract public CycleProcess newCycleProcess();
 
     public NARSeed() {
     }

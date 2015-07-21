@@ -9,7 +9,6 @@ import nars.io.Perception;
 import nars.io.TextPerception;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
-import nars.io.in.ReaderInput;
 import nars.io.in.TextInput;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
@@ -32,7 +31,6 @@ import objenome.Container;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 
 /**
@@ -88,7 +86,7 @@ public class NAR extends Container implements Runnable {
      * normal way to construct a NAR, using a particular Build instance
      */
     public NAR(NARSeed b) {
-        this( b.newControlCycle(),
+        this( b.newCycleProcess(),
               b.newPerception(),
               b.newMemory(b, b.getLogicPolicy()));
 

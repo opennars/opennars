@@ -78,7 +78,8 @@ public class DefaultCycle extends SequentialCycle {
         newTasksTemp.clear();
         newTasks.clear();
 
-        novelTasks.clear();
+        if (novelTasks!=null)
+            novelTasks.clear();
     }
 
     @Override
@@ -177,11 +178,12 @@ public class DefaultCycle extends SequentialCycle {
     }
 
     /** should be followed by a 'commitNewTasks' call after finishing */
-    private void queueNewTasks() {
+    protected void queueNewTasks() {
         executingNewTasks = true;
     }
 
-    private void commitNewTasks() {
+    /** @return how many new tasks added */
+    protected int commitNewTasks() {
 
         executingNewTasks = false;
 
@@ -191,6 +193,8 @@ public class DefaultCycle extends SequentialCycle {
             newTasks.addAll( newTasksTemp );
             newTasksTemp.clear();
         }
+
+        return ns;
     }
 
     /** returns whether the task was run */
@@ -241,7 +245,7 @@ public class DefaultCycle extends SequentialCycle {
     }
 
 
-    private ConceptProcess newProcess(final Concept concept, float taskLinkForgetDurations) {
+    protected ConceptProcess newProcess(final Concept concept, float taskLinkForgetDurations) {
         if (concept == null) return null;
 
 

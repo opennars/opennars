@@ -186,9 +186,13 @@ public abstract class Bodies implements BodyDefCallback, FixtureDefCallback {
 	}
 	
 	public static Shape rectangle(Vec2 width_height, Vec2 offset){
+		return rectangle(width_height, offset, 0);
+	}
+
+	public static Shape rectangle(Vec2 width_height, Vec2 offset, float angle){
 		PolygonShape gBox = new PolygonShape();
-		gBox.setAsBox(width_height.x, width_height.y, offset, 0);
-		return gBox;		
+		gBox.setAsBox(width_height.x, width_height.y, offset, angle);
+		return gBox;
 	}
 	public static Shape rectangle(Vec2 width_height){
 		return rectangle(width_height, new Vec2(0,0));
