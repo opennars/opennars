@@ -20,7 +20,7 @@ public class RDPCV  {
     private final RdesktopCanvas canvas;
     private Image backgroundImage;
 
-    ImageView a;
+    ImageView baseView;
     private WritableImage baseImage = null;
 
     public RDPCV(RdesktopCanvas canvas) {
@@ -45,9 +45,9 @@ public class RDPCV  {
 
                             @Override
                             public void handle(long now) {
-                                a.setImage(getBase());
+                                baseView.setImage(getBase());
 
-                                for (RdesktopCanvas.RDPVis v : canvas.vis) {
+                                for (RDPVis v : canvas.vis) {
                                     v.update();
                                 }
                             }
@@ -63,11 +63,11 @@ public class RDPCV  {
 
 
 
-        a = new ImageView(
+        baseView = new ImageView(
                 getBase()
         );
-        //b = new ImageView(new Image("http://40.media.tumblr.com/2fe44505fbbc3d74a147e19f5582cc07/tumblr_nrke3pflmM1rroc7fo1_540.png"));
-        //b.setOpacity(0.5f);
+
+        baseView.setOpacity(0.75f);
 
         Scene scene = createScene();
         fxPanel.setScene(scene);
@@ -86,13 +86,13 @@ public class RDPCV  {
         // construct the scene contents over a stacked background.
         StackPane layout = new StackPane();
         layout.getChildren().setAll(
-                a//,
+                baseView//,
                 //b
         );
 
         //a.setOpacity(0.5f);
 
-        for (RdesktopCanvas.RDPVis v : canvas.vis) {
+        for (RDPVis v : canvas.vis) {
             Node n = v.getNode();
             if (n!=null)
                 layout.getChildren().add(n);

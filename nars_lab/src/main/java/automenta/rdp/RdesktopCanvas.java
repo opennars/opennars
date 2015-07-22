@@ -30,16 +30,15 @@
  */
 package automenta.rdp;
 
+import automenta.rdp.cv.RDPVis;
 import automenta.rdp.keymapping.KeyCode;
 import automenta.rdp.keymapping.KeyCode_FileBased;
 import automenta.rdp.orders.*;
 import automenta.rdp.rdp.Input_Localised;
 import automenta.rdp.rdp.RdpPacket;
-import javafx.scene.Node;
 import nars.Global;
 import org.apache.log4j.Logger;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
@@ -60,19 +59,6 @@ public abstract class RdesktopCanvas extends Canvas {
 	private Cursor previous_cursor = null; // for setBusyCursor and
 
 	// unsetBusyCursor
-
-	public interface RDPVis {
-
-		void redrawn(WrappedImage backstore, int x, int y, int wx, int wy);
-		void draw(WrappedImage backstore, Graphics target);
-
-		/** JavaFX component node */
-		Node getNode();
-
-
-		void update();
-
-	}
 
 	public final java.util.List<RDPVis> vis = Global.newArrayList();
 
