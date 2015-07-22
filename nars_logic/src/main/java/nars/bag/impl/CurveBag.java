@@ -411,31 +411,27 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
     @Override
     public V put(final V i) {
 
-        boolean full = (size() >= capacity);
 
-        V existing = index.remove(i.name());
-        if (existing!=null) {
-            merge(i, existing);
-            index.put(i);
+        V overflow = index.get(i.name());
+        if (overflow!=null) {
+            index.merge(i);
             return null;
         }
         else {
+            boolean full = (size() >= capacity);
+
             if (full) {
 
                 if (getPriorityMin() > i.getPriority()) {
                     //insufficient priority to enter the bag
                     return i;
                 }
-                else {
-                    V low = removeLowest();
-                    index.put(i);
-                    return low;
-                }
+
+                overflow = removeLowest();
             }
-            else {
-                index.put(i);
-                return existing;
-            }
+
+            index.put(i);
+            return overflow;
         }
 
     }

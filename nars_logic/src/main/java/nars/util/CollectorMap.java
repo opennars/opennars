@@ -1,6 +1,7 @@
 package nars.util;
 
 import nars.Global;
+import nars.budget.BudgetFunctions;
 import nars.budget.Item;
 
 import java.util.Collection;
@@ -25,6 +26,26 @@ public abstract class CollectorMap<K, V extends Item<K>> {
     /** implementation for removing the value to another collecton (called internally) */
     abstract protected V removeItem(final V e);
 
+
+
+    public void merge(final V value) {
+
+        V valPrev, removed2;
+
+        final K key = value.name();
+        valPrev = putKey(key, value);
+        V valPrev2 = removeItem(valPrev);
+        if (valPrev!=valPrev2)
+            throw new RuntimeException("unable to remove item corresponding to key " + key);
+
+        BudgetFunctions.merge(value, valPrev);
+
+        removed2 = addItem(value);
+
+        if (removed2 != null) {
+            throw new RuntimeException("Only one item should have been valPrev on this insert; both valPrev: " + valPrev + ", " + removed2);
+        }
+    }
 
 
     public V put(final V value) {

@@ -4,6 +4,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
+import nars.nal.nal8.ImmediateOperation;
 import nars.nar.Default;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
@@ -55,8 +56,12 @@ public class Equalized extends Default {
 
                 //input all available percepts
                 Task t;
-                while ((t = percepts.get())!=null)
-                    newTasks.add(t);
+                while ((t = percepts.get())!=null) {
+                    if (t instanceof ImmediateOperation.ImmediateTask)
+                        memory.add(t);
+                    else
+                        newTasks.add(t);
+                }
             }
 
             queueNewTasks();
