@@ -35,6 +35,7 @@ import automenta.rdp.keymapping.KeyCode_FileBased;
 import automenta.rdp.orders.*;
 import automenta.rdp.rdp.Input_Localised;
 import automenta.rdp.rdp.RdpPacket;
+import javafx.scene.Node;
 import nars.Global;
 import org.apache.log4j.Logger;
 
@@ -52,7 +53,7 @@ public abstract class RdesktopCanvas extends Canvas {
 
 	private RasterOp rop = null;
 
-	protected WrappedImage backstore;
+	public WrappedImage backstore;
 
 	// Graphics backstore_graphics;
 
@@ -64,6 +65,12 @@ public abstract class RdesktopCanvas extends Canvas {
 
 		void redrawn(WrappedImage backstore, int x, int y, int wx, int wy);
 		void draw(WrappedImage backstore, Graphics target);
+
+		/** JavaFX component node */
+		Node getNode();
+
+
+		void update();
 
 	}
 

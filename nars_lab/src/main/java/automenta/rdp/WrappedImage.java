@@ -40,11 +40,12 @@ import java.awt.image.WritableRaster;
 import org.apache.log4j.Logger;
 
 public class WrappedImage {
-	static Logger logger = Logger.getLogger(RdesktopCanvas.class);
+	static final Logger logger = Logger.getLogger(RdesktopCanvas.class);
 
 	IndexColorModel cm = null;
 
-	BufferedImage bi = null;
+	public BufferedImage bi = null;
+
 
 	public WrappedImage(int arg0, int arg1, int arg2) {
 		resize(arg0, arg1, arg2);
@@ -153,7 +154,7 @@ public class WrappedImage {
 		return setRGB(bi, x, y, cx, cy, data, offset, w);
 	}
 
-	public boolean setRGB(final BufferedImage bi, int startX, int startY, int w, int h,
+	public static boolean setRGB(final BufferedImage bi, int startX, int startY, int w, int h,
 					   final int[] rgbArray, int offset, int scansize) {
 		int yoff  = offset;
 		int off;
@@ -171,7 +172,7 @@ public class WrappedImage {
 
 				if (!different) {
 					//detect change
-					exists = (int[]) raster.getDataElements(x, y, exists);
+					raster.getDataElements(x, y, exists);
 					if (exists[0] != p) {
 						different = true;
 					}

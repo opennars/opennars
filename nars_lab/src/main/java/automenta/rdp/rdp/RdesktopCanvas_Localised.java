@@ -31,12 +31,10 @@ package automenta.rdp.rdp;
 
 import automenta.rdp.Options;
 import automenta.rdp.RdesktopCanvas;
+import automenta.rdp.cv.RDPCV;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +52,7 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 		super(width, height);
 
 
+		new RDPCV(this);
 	}
 
 
@@ -114,11 +113,6 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 
 
 
-//			g.drawImage(backstore.getImage(), 0, 0, null);
-//
-//			for (RDPVis v : vis) {
-//				v.draw(backstore, g);
-//			}
 //
 //
 

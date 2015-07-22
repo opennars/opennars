@@ -34,11 +34,18 @@ import automenta.rdp.menu.RdpMenu;
 import automenta.rdp.rdp.RdesktopCanvas_Localised;
 import automenta.rdp.rdp5.cliprdr.ClipChannel;
 import io.undertow.util.FastConcurrentDirectDeque;
+import javafx.scene.canvas.*;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.*;
 import nars.rl.gng.NeuralGasNet;
 import nars.rl.gng.Node;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
+import java.awt.Color;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.Deque;
@@ -160,13 +167,16 @@ public abstract class RdesktopFrame extends Frame {
 
 		canvas.vis.add(new RdesktopCanvas.RDPVis() {
 
+
+			public boolean updated = false;
+			public Canvas vc;
 			final Random rng = new Random();
 
 			BufferedImage w;
 
-			final NeuralGasNet n = new NeuralGasNet(2, 32);
+			final NeuralGasNet n = new NeuralGasNet(2, 64);
 
-			final Deque<Consumer<Graphics>> redrawn = new FastConcurrentDirectDeque<Consumer<Graphics>>();
+			final Deque<Consumer<GraphicsContext>> redrawn = new FastConcurrentDirectDeque();
 
 			@Override
 			public void redrawn(WrappedImage backstore, int x, int y, int wx, int wy) {
@@ -189,52 +199,97 @@ public abstract class RdesktopFrame extends Frame {
 						n.learn(x, y + wy);
 					//}
 
-					//g.setColor(new Color(1,0,0,0.25f));
-					g.setColor(new Color(1f,0,0));
+					g.setFill(javafx.scene.paint.Color.rgb(255,0,0,0.35));
 					g.fillRect(x, y, wx, wy);
 				});
+
+				updated  = true;
 			}
 
 			@Override
-			public void draw(WrappedImage backstore, Graphics target) {
+			public void update() {
+				if (w==null) return;
 
-//
-				if (w!=null) {
 
-					Graphics2D g = (Graphics2D) w.getGraphics();
 
-					while (!redrawn.isEmpty()) {
-						redrawn.pollFirst().accept(g);
-					}
+				if (!updated) return;
 
-					g.setColor(Color.GREEN);
+				updated = false;
 
-					for (Node nn : n.vertexSet()) {
-						double[] d = nn.getDataRef();
 
-						final int t = 8;
-						int x = (int) d[0] - t / 2;
-						int y = (int) d[1] - t / 2;
-						g.fillRect(x, y, t, t);
-					}
+				GraphicsContext g = vc.getGraphicsContext2D();
 
-					target.drawImage(w, 0, 0, null);
-//
 
-					g.setColor(new Color(0,0,0));
+				g.setFill(javafx.scene.paint.Color.color(0,0,0,0.1));
+				g.fillRect(0,0,vc.getWidth(),vc.getHeight());
+
+				while (!redrawn.isEmpty()) {
+					redrawn.pollFirst().accept(g);
+				}
+
+				g.setFill(javafx.scene.paint.Color.GREEN);
+
+				for (Node nn : n.vertexSet()) {
+					double[] d = nn.getDataRef();
+
+					final int t = 8;
+					int x = (int) d[0] - t / 2;
+					int y = (int) d[1] - t / 2;
+					g.fillRect(x, y, t, t);
+				}
+
 
 //					float alpha = 0.1f;
 //					AlphaComposite alcom = AlphaComposite.getInstance(
 //							AlphaComposite.SRC_OVER, alpha);
 //					g.setComposite(alcom);
 //
-					g.fillRect(0, 0, w.getWidth(), w.getHeight());
 
-
-
-					g.dispose();
 //				}
-				}
+
+
+			}
+
+			@Override
+			public void draw(WrappedImage backstore, Graphics target) {
+
+//
+//				if (w!=null) {
+//
+//					Graphics2D g = (Graphics2D) w.getGraphics();
+//
+//					while (!redrawn.isEmpty()) {
+//						redrawn.pollFirst().accept(g);
+//					}
+//
+//					g.setColor(Color.GREEN);
+//
+//					for (Node nn : n.vertexSet()) {
+//						double[] d = nn.getDataRef();
+//
+//						final int t = 8;
+//						int x = (int) d[0] - t / 2;
+//						int y = (int) d[1] - t / 2;
+//						g.fillRect(x, y, t, t);
+//					}
+//
+//					target.drawImage(w, 0, 0, null);
+////
+//
+//					g.setColor(new Color(0,0,0));
+//
+////					float alpha = 0.1f;
+////					AlphaComposite alcom = AlphaComposite.getInstance(
+////							AlphaComposite.SRC_OVER, alpha);
+////					g.setComposite(alcom);
+////
+//					g.fillRect(0, 0, w.getWidth(), w.getHeight());
+//
+//
+//
+//					g.dispose();
+////				}
+//				}
 
 //				int n = redrawn.size();
 //				for (int i = 0; i < n; i++) {
@@ -252,6 +307,17 @@ public abstract class RdesktopFrame extends Frame {
 //					);
 //				}
 			}
+
+			@Override
+			public javafx.scene.Node getNode() {
+
+				vc = new javafx.scene.canvas.Canvas(canvas.width, canvas.height);
+				vc.setBlendMode(BlendMode.ADD);
+				return vc;
+
+			}
+
+
 		});
 
 		setTitle(Options.windowTitle);
