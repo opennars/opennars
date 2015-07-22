@@ -53,13 +53,7 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 	public RdesktopCanvas_Localised(int width, int height) {
 		super(width, height);
 
-		new Timer(50, new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				repaint(50);
-			}
-		}).start();
 	}
 
 
@@ -120,26 +114,28 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 
 
 
-			g.drawImage(backstore.getImage(), 0, 0, null);
-
-			for (RDPVis v : vis) {
-				v.draw(backstore, g);
-			}
-
-
-
-
-
-//		Rectangle r = g.getClipBounds();
+//			g.drawImage(backstore.getImage(), 0, 0, null);
 //
-//		int rw = r.width;
-//		int rh = r.height;
-//		int bw = backstore.getWidth();
-//		int bh = backstore.getHeight();
-//		if (r.x + rw > bw)
-//			rw = bw - r.x;
-//		if (r.y + rh > bh)
-//			rh = bh - r.y;
+//			for (RDPVis v : vis) {
+//				v.draw(backstore, g);
+//			}
+//
+//
+
+
+		if (!isShowing())
+			return;
+
+		Rectangle r = g.getClipBounds();
+
+		int rw = r.width;
+		int rh = r.height;
+		int bw = backstore.getWidth();
+		int bh = backstore.getHeight();
+		if (r.x + rw > bw)
+			rw = bw - r.x;
+		if (r.y + rh > bh)
+			rh = bh - r.y;
 
 //		g.drawImage(backstore.getSubimage(r.x, r.y, rw, rh), r.x,
 //				r.y, null);
@@ -152,11 +148,11 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 
 
 ////		//draw only updated region:
-//		final int rxw = r.x + rw;
-//		final int ryh = r.y + rh;
-//		g.drawImage(backstore.getImage(), r.x, r.y, rxw, ryh,
-//				r.x, r.y, rxw, ryh,
-//				null);
+		final int rxw = r.x + rw;
+		final int ryh = r.y + rh;
+		g.drawImage(backstore.getImage(), r.x, r.y, rxw, ryh,
+				r.x, r.y, rxw, ryh,
+				null);
 
 //		g.setClip(0,0,bw, bh);
 //

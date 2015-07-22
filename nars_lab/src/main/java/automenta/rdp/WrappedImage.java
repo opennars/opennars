@@ -143,19 +143,21 @@ public class WrappedImage {
 		if ((bi.getWidth() < cx) || (bi.getHeight() < cy))
 			resize(cx, cy, BufferedImage.TYPE_INT_RGB);
 
-		if (cm != null && data != null && data.length > 0) {
-			for (int i = 0; i < data.length; i++)
+		IndexColorModel cm = this.cm;
+		final int dlen = data.length;
+		if (cm != null && data != null && dlen > 0) {
+			for (int i = 0; i < dlen; i++)
 				data[i] = cm.getRGB(data[i]);
 		}
 
 		return setRGB(bi, x, y, cx, cy, data, offset, w);
 	}
 
-	public boolean setRGB(BufferedImage bi, int startX, int startY, int w, int h,
-					   int[] rgbArray, int offset, int scansize) {
+	public boolean setRGB(final BufferedImage bi, int startX, int startY, int w, int h,
+					   final int[] rgbArray, int offset, int scansize) {
 		int yoff  = offset;
 		int off;
-		int[] pixel = null, exists = null;
+		int[] pixel = new int[1], exists = new int[1];
 
 		ColorModel colorModel = bi.getColorModel();
 		WritableRaster raster = bi.getRaster();
@@ -164,18 +166,17 @@ public class WrappedImage {
 		for (int y = startY; y < startY+h; y++, yoff+=scansize) {
 			off = yoff;
 			for (int x = startX; x < startX+w; x++) {
-				pixel = (int[]) colorModel.getDataElements(rgbArray[off++], pixel);
+				//pixel = (int[]) colorModel.getDataElements(rgbArray[off++], pixel);
+				final int p = pixel[0] = rgbArray[off++];
+
 				if (!different) {
+					//detect change
 					exists = (int[]) raster.getDataElements(x, y, exists);
-					if (exists[0] != pixel[0]) {
-						raster.setDataElements(x, y, pixel);
+					if (exists[0] != p) {
 						different = true;
 					}
 				}
-				else {
-					raster.setDataElements(x, y, pixel);
-				}
-
+				raster.setDataElements(x, y, pixel);
 			}
 		}
 
