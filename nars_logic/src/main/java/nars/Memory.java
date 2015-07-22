@@ -232,9 +232,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
             case PARALLEL:
                 return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
 
-            case OPERATION:
-                throw new RuntimeException("Can not use this static method to instantiate an Operation, because a Memory instance is required to provide its Operator");
-
             //STATEMENTS --------------------------
             case PROPERTY:
                 if (ensureTermLength(2, a)) return Property.make(a[0], a[1]); break;

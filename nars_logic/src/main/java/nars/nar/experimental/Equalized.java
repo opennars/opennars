@@ -1,6 +1,7 @@
 package nars.nar.experimental;
 
 import nars.Global;
+import nars.Op;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
@@ -12,7 +13,9 @@ import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.task.TaskAccumulator;
 import nars.task.TaskComparator;
+import nars.term.Compound;
 import nars.term.Term;
+import org.apache.commons.math3.stat.Frequency;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -66,15 +69,15 @@ public class Equalized extends Default {
 
             queueNewTasks();
 
-            float inputPriorityFactor = 1f/(conceptsToFire);
+
 
             //new tasks
             int newTasksToFire = Math.min(newTasks.size(), conceptsFiredPerCycle.get());
             for (int n = newTasksToFire;  n > 0; n--) {
-                Task highest = newTasks.removeHighest();
-                if (highest == null) break;
+                Task next = newTasks.removeHighest();
+                if (next == null) break;
 
-                TaskProcess tp = TaskProcess.get(memory, highest, inputPriorityFactor);
+                TaskProcess tp = TaskProcess.get(memory, next, getPriority(next, conceptsToFire));
                 if (tp!=null)
                     tp.run();
             }
@@ -116,6 +119,41 @@ public class Equalized extends Default {
 
         }
 
+        //final Frequency termTypes = new Frequency();
+
+        private float getPriority(final Task task, int conceptsToFire) {
+            float f = 1f/(conceptsToFire);
+
+//            final Compound term = task.getTerm();
+//            long includedTerms = (term.structuralHash() & 0xffffffff);
+//            long v = 1;
+//            for (int i = 0; i < 32; i++) {
+//                v = v << 1;
+//                if ((includedTerms & v) > 0) {
+//                    termTypes.addValue(Op.values()[i]);
+//                }
+//            }
+
+
+
+//            //EXPERIMENTAL
+//            double p = termTypes.getPct(term.operator());
+//            f *= Math.max(0.1, 1.0 - p);
+
+
+//            switch (term.operator()) {
+//                case IMAGE_EXT:
+//                case IMAGE_INT:
+//                    f *= 0.5f;
+//                    break;
+//            }
+//
+//            if (Math.random() < 0.01) {
+//                System.out.println(termTypes);
+//            }
+
+            return f;
+        }
 
 
     }

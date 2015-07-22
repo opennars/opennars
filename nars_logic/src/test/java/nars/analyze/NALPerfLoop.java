@@ -4,7 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.nal.NALTest;
-import nars.nar.experimental.Equalized;
+import nars.nar.Default;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +28,9 @@ public class NALPerfLoop {
         Global.EXIT_ON_EXCEPTION = true;
 
           
-        NAR n = new NAR(new Equalized(maxConcepts,1,3).setActiveConcepts(maxConcepts).setInternalExperience(null) );
+        //NAR n = new NAR(new Equalized(maxConcepts,1,3).setActiveConcepts(maxConcepts).setInternalExperience(null) );
+        NAR n = new NAR(new Default().setActiveConcepts(maxConcepts).setInternalExperience(null) );
+
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         

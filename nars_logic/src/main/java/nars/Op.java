@@ -24,9 +24,6 @@ public enum Op {
     INHERITANCE("-->", 1, true, 2),
     SIMILARITY("<->", 2, true, 3),
 
-    INSTANCE("{--", 2, true), //should not be given a compact representation because this will not exist internally after parsing
-    PROPERTY("--]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
-    INSTANCE_PROPERTY("{-]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
 
     /* CompountTerm operators, length = 1 */
     INTERSECTION_EXT("&", 3, false, true),
@@ -49,9 +46,7 @@ public enum Op {
 
     /* CompountTerm delimitors, must use 4 different pairs */
     SET_INT_OPENER("[", 3, false, true), //OPENER also functions as the symbol for the entire compound
-    SET_INT_CLOSER("]", 3, false, false),
     SET_EXT_OPENER("{", 3, false, true), //OPENER also functions as the symbol for the entire compound
-    SET_EXT_CLOSER("}", 3, false, false),
 
 
 
@@ -65,10 +60,22 @@ public enum Op {
     EQUIVALENCE_AFTER("</>", 7, true, 13),
     EQUIVALENCE_WHEN("<|>", 7, true, 14),
 
-    OPERATION("^", 8),
-
 
     INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX_OLD), 0, false),
+
+    // keep all items which are invlved in the lower 32 bit structuralHash above this line
+    // so that any of their ordinal values will not exceed 31
+    //-------------
+
+    INSTANCE("{--", 2, true), //should not be given a compact representation because this will not exist internally after parsing
+    PROPERTY("--]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
+    INSTANCE_PROPERTY("{-]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
+
+
+
+    OPERATION("^", 8),
+    SET_INT_CLOSER("]", 3, false, false),
+    SET_EXT_CLOSER("}", 3, false, false),
 
     /* Syntactical, so is neither relation or isNative */
     COMPOUND_TERM_OPENER("(", 0, false, false),

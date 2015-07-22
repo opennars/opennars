@@ -15,7 +15,6 @@ import nars.io.in.ChangedTextInput;
 import nars.nal.nal2.Property;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
-import nars.process.TaskProcess;
 import nars.rl.gng.NeuralGasNet;
 import nars.rover.Material;
 import nars.rover.Sim;

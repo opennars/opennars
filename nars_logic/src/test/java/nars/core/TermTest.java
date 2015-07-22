@@ -457,8 +457,8 @@ public class TermTest {
 
         Term a3 = n.term("c");
 
-        Compound a = testStructure("<<a --> b> </> c>", "1000000000000000000000000100001");
-        Compound b = testStructure("<<$a --> #b> </> ?c>", "1000000000000000000000000101110");
+        Compound a = testStructure("<<a --> b> </> c>", "10000000000000000000100001");
+        Compound b = testStructure("<<$a --> #b> </> ?c>", "10000000000000000000101110");
 
         assertTrue( a.impossibleSubStructure(b) );
         assertFalse( a.impossibleSubStructure(a3));
@@ -477,8 +477,8 @@ public class TermTest {
 
         String i1 = "(/,x, y, _)";
         String i2 = "(/,x, _, y)";
-        Compound a = testStructure(i1, "100000000000000001000000000000001");
-        Compound b = testStructure(i2,                  "1000000000000001");
+        Compound a = testStructure(i1, "100000000000000000001000000000001");
+        Compound b = testStructure(i2,                     "1000000000001");
         assertNotEquals("additional structure code in upper bits",
                 a.structuralHash(), a.subtermStructure());
         assertNotEquals("structure code influenced contentHash",
