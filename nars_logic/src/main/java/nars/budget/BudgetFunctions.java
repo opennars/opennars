@@ -282,6 +282,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return whether the merge had any effect in changing any of the budget components
      */
     public final static boolean merge(final Budget target, final Budget source) {
+        if (target == source) return false;
         return target.maxPriority(source.getPriority()) ||
                         target.maxDurability(source.getDurability()) ||
                         target.maxQuality(source.getQuality());

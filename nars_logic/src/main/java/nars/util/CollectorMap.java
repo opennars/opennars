@@ -30,21 +30,27 @@ public abstract class CollectorMap<K, V extends Item<K>> {
 
     public void merge(final V value) {
 
-        V valPrev, removed2;
+
 
         final K key = value.name();
-        valPrev = putKey(key, value);
-        V valPrev2 = removeItem(valPrev);
-        if (valPrev!=valPrev2)
-            throw new RuntimeException("unable to remove item corresponding to key " + key);
+        final V valPrev = putKey(key, value);
 
-        BudgetFunctions.merge(value, valPrev);
+        if (!BudgetFunctions.merge(value, valPrev) && (value == valPrev))
+            return;
 
-        removed2 = addItem(value);
+        //TODO check before and after removal index and if the same just replace
+        {
+            final V valPrev2 = removeItem(valPrev);
+            if (valPrev != valPrev2)
+                throw new RuntimeException("unable to remove item corresponding to key " + key);
 
-        if (removed2 != null) {
-            throw new RuntimeException("Only one item should have been valPrev on this insert; both valPrev: " + valPrev + ", " + removed2);
+
+            final V removed2 = addItem(value);
+            if (removed2 != null)
+                throw new RuntimeException("Only one item should have been valPrev on this insert; both valPrev: " + valPrev + ", " + removed2);
         }
+
+
     }
 
 
