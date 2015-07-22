@@ -60,6 +60,17 @@
             <version>2.7.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.sksamuel.gwt</groupId>
+            <artifactId>gwt-websockets</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.gwtquery</groupId>
+            <artifactId>gwtquery</artifactId>
+            <version>1.4.3</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
   
   
