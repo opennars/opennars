@@ -16,9 +16,29 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-           
+
+    <build>
+        <resources>
+
+            <resource>
+                <directory>${basedir}/src/main/java/</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                    <include>**/public/*</include>
+                    <include>**/client/*.java</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <version>2.7.0</version>
+        </dependency>
 
         <dependency>
             <groupId>opennars</groupId>
@@ -33,7 +53,12 @@
         <dependency>
             <groupId>io.undertow</groupId>        
             <artifactId>undertow-core</artifactId>
-        </dependency>  
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>2.7.0</version>
+        </dependency>
 
     </dependencies>
   
