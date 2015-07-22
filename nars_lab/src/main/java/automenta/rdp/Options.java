@@ -62,9 +62,9 @@ public class Options {
 
 	public static String windowTitle = "RDP"; // -T windowTitle
 
-	public static int width = 1024; // -g widthxheight
+	public static int width = 1280; // -g widthxheight
 
-	public static int height = 768; // -g widthxheight
+	public static int height = 1024; // -g widthxheight
 
 	public static int port = 3389; // -t port
 
@@ -132,7 +132,7 @@ public class Options {
 
 	public static boolean bitmap_compression = true;
 
-	public static boolean persistent_bitmap_caching = true;
+	public static boolean persistent_bitmap_caching = false;
 
 	public static boolean bitmap_caching = true;
 
@@ -158,7 +158,7 @@ public class Options {
 
 	public static boolean owncolmap;
 
-	public static boolean use_ssl = true;
+	public static boolean use_ssl = false;
 
 	public static boolean map_clipboard = true;
 

@@ -285,6 +285,7 @@ public class Orders {
 
                 if ((order_flags & RDP_ORDER_BOUNDS) != 0) {
                     surface.resetClip();
+
                     //logger.debug("Reset clip");
                 }
             }

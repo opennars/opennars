@@ -1534,7 +1534,7 @@ public class Rdp {
                     Image pix = Bitmap.decompressImg(width, height, size, data,
                             Bpp, null);
                     if (pix != null)
-                        surface.displayImage(pix, left, top);
+                        surface.displayImage(pix, left, top, width, height);
                     else
                         logger.warn("Could not decompress bitmap");
                 } else {
@@ -1543,7 +1543,7 @@ public class Rdp {
                 }
             }
         }
-        surface.repaint(minX, minY, maxX - minX + 1, maxY - minY + 1);
+        //surface.repainted(minX, minY, maxX - minX + 1, maxY - minY + 1);
     }
 
     protected void processPalette(RdpPacket data) {

@@ -29,22 +29,17 @@
  */
 package automenta.rdp.rdp;
 
-import automenta.rdp.RdesktopCanvas;
 import automenta.rdp.Options;
+import automenta.rdp.RdesktopCanvas;
 
-import java.awt.AWTException;
-import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 // Created on 03-Sep-2003
 
@@ -53,6 +48,21 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 	private static final long serialVersionUID = -6806580381785981945L;
 
 	private Robot robot = null;
+
+
+	public RdesktopCanvas_Localised(int width, int height) {
+		super(width, height);
+
+		new Timer(50, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				repaint(50);
+			}
+		}).start();
+	}
+
+
 
 	public static void saveToFile(Image image) {
 		if (Options.server_bpp == 8)
@@ -77,13 +87,7 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 		g.dispose();
 	}
 
-	BufferedImage apex_backstore = null;
 
-	public RdesktopCanvas_Localised(int width, int height) {
-		super(width, height);
-		apex_backstore = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
-	}
 
 	public void movePointer(int x, int y) {
 		Point p = this.getLocationOnScreen();
@@ -109,21 +113,36 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 		}
 	}
 
+
 	public void update(Graphics g) {
 
-		Rectangle r = g.getClipBounds();
+		//super.paintComponent(g);
 
-		int rw = r.width;
-		int rh = r.height;
-		int bw = backstore.getWidth();
-		int bh = backstore.getHeight();
-		if (r.x + rw > bw)
-			rw = bw - r.x;
-		if (r.y + rh > bh)
-			rh = bh - r.y;
 
-		/*g.drawImage(backstore.getSubimage(r.x, r.y, rw, rh), r.x,
-				r.y, null);*/
+
+			g.drawImage(backstore.getImage(), 0, 0, null);
+
+			for (RDPVis v : vis) {
+				v.draw(backstore, g);
+			}
+
+
+
+
+
+//		Rectangle r = g.getClipBounds();
+//
+//		int rw = r.width;
+//		int rh = r.height;
+//		int bw = backstore.getWidth();
+//		int bh = backstore.getHeight();
+//		if (r.x + rw > bw)
+//			rw = bw - r.x;
+//		if (r.y + rh > bh)
+//			rh = bh - r.y;
+
+//		g.drawImage(backstore.getSubimage(r.x, r.y, rw, rh), r.x,
+//				r.y, null);
 
 		/*public abstract boolean drawImage(Image img,
 		int dx1, int dy1, int dx2, int dy2,
@@ -131,17 +150,25 @@ public class RdesktopCanvas_Localised extends RdesktopCanvas {
 		ImageObserver observer);*/
 
 
-		final int rxw = r.x + rw;
-		final int ryh = r.y + rh;
-		g.drawImage(backstore.getImage(), r.x, r.y, rxw, ryh,
-				r.x, r.y, rxw, ryh,
-				null);
+
+////		//draw only updated region:
+//		final int rxw = r.x + rw;
+//		final int ryh = r.y + rh;
+//		g.drawImage(backstore.getImage(), r.x, r.y, rxw, ryh,
+//				r.x, r.y, rxw, ryh,
+//				null);
+
+//		g.setClip(0,0,bw, bh);
+//
+//		//draw everything
+//		g.drawImage(backstore.getImage(), 0, 0, null);
 
 
-		if (Options.save_graphics) {
-			RdesktopCanvas_Localised.saveToFile(backstore.getSubimage(r.x, r.y,
-					r.width, r.height));
-		}
+
+//		if (Options.save_graphics) {
+//			RdesktopCanvas_Localised.saveToFile(backstore.getSubimage(r.x, r.y,
+//					r.width, r.height));
+//		}
 
 		// }
 

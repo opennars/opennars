@@ -231,7 +231,8 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
             }
 
             if (maxErrorNeighbour == null) {
-                throw new RuntimeException("maxErrorNeighbor=null");
+                //throw new RuntimeException("maxErrorNeighbor=null");
+                return null;
             }
 
             //remove connection between them

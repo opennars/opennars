@@ -33,7 +33,9 @@ package automenta.rdp;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.awt.image.WritableRaster;
 
 import org.apache.log4j.Logger;
 
@@ -45,14 +47,18 @@ public class WrappedImage {
 	BufferedImage bi = null;
 
 	public WrappedImage(int arg0, int arg1, int arg2) {
-		bi = new BufferedImage(arg0, arg1, arg2);
+		resize(arg0, arg1, arg2);
 	}
 
 	public WrappedImage(int arg0, int arg1, int arg2, IndexColorModel cm) {
-		bi = new BufferedImage(arg0, arg1, BufferedImage.TYPE_INT_RGB); // super(arg0,
-																		// arg1,
-																		// BufferedImage.TYPE_INT_RGB);
+		resize(arg0, arg1, BufferedImage.TYPE_INT_RGB);
 		this.cm = cm;
+	}
+
+	protected void resize(int arg0, int arg1, int typeIntRgb) {
+		bi = new BufferedImage(arg0, arg1, typeIntRgb); // super(arg0,
+		// arg1,
+		// BufferedImage.TYPE_INT_RGB);
 	}
 
 	public int getWidth() {
@@ -131,13 +137,49 @@ public class WrappedImage {
 		bi.setRGB(x, y, cx, cy, data, offset, w);
 	}
 
-	public void setRGB(int x, int y, int cx, int cy, int[] data, int offset,
-			int w) {
+	public boolean setRGB(int x, int y, int cx, int cy, int[] data, int offset,
+						  int w) {
+
+		if ((bi.getWidth() < cx) || (bi.getHeight() < cy))
+			resize(cx, cy, BufferedImage.TYPE_INT_RGB);
+
 		if (cm != null && data != null && data.length > 0) {
 			for (int i = 0; i < data.length; i++)
 				data[i] = cm.getRGB(data[i]);
 		}
-		bi.setRGB(x, y, cx, cy, data, offset, w);
+
+		return setRGB(bi, x, y, cx, cy, data, offset, w);
+	}
+
+	public boolean setRGB(BufferedImage bi, int startX, int startY, int w, int h,
+					   int[] rgbArray, int offset, int scansize) {
+		int yoff  = offset;
+		int off;
+		int[] pixel = null, exists = null;
+
+		ColorModel colorModel = bi.getColorModel();
+		WritableRaster raster = bi.getRaster();
+
+		boolean different = false;
+		for (int y = startY; y < startY+h; y++, yoff+=scansize) {
+			off = yoff;
+			for (int x = startX; x < startX+w; x++) {
+				pixel = (int[]) colorModel.getDataElements(rgbArray[off++], pixel);
+				if (!different) {
+					exists = (int[]) raster.getDataElements(x, y, exists);
+					if (exists[0] != pixel[0]) {
+						raster.setDataElements(x, y, pixel);
+						different = true;
+					}
+				}
+				else {
+					raster.setDataElements(x, y, pixel);
+				}
+
+			}
+		}
+
+		return different;
 	}
 
 	public int[] getRGB(int x, int y, int cx, int cy, int[] data, int offset,

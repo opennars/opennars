@@ -285,7 +285,7 @@ public class Rdesktop {
 		toolFrame = null;
 
 		BasicConfigurator.configure();
-		logger.setLevel(Level.INFO);
+		logger.setLevel(Level.WARN);
 		Logger.getRootLogger().setLevel(Level.INFO);
 
 		// Attempt to run a native RDP Client

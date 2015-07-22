@@ -29,14 +29,21 @@
  */
 package automenta.rdp;
 
+import automenta.rdp.keymapping.KeyCode_FileBased;
 import automenta.rdp.menu.RdpMenu;
 import automenta.rdp.rdp.RdesktopCanvas_Localised;
 import automenta.rdp.rdp5.cliprdr.ClipChannel;
-import automenta.rdp.keymapping.KeyCode_FileBased;
+import io.undertow.util.FastConcurrentDirectDeque;
+import nars.rl.gng.NeuralGasNet;
+import nars.rl.gng.Node;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.util.Deque;
+import java.util.Random;
+import java.util.function.Consumer;
 
 // import javax.swing.Box;
 
@@ -44,7 +51,7 @@ public abstract class RdesktopFrame extends Frame {
 
 	static Logger logger = Logger.getLogger(RdesktopFrame.class);
 
-	public RdesktopCanvas canvas = null;
+	public RdesktopCanvas_Localised canvas = null;
 
 	public Rdp rdp = null;
 
@@ -141,10 +148,112 @@ public abstract class RdesktopFrame extends Frame {
 		this.setSize(Options.width+6,Options.height+30); 
 
 
+
+
 		Common.frame = this;
-		this.canvas = new RdesktopCanvas_Localised(Options.width,
-				Options.height);
+		this.canvas = new RdesktopCanvas_Localised(Options.width, Options.height);
 		add(this.canvas);
+
+
+
+
+
+		canvas.vis.add(new RdesktopCanvas.RDPVis() {
+
+			final Random rng = new Random();
+
+			BufferedImage w;
+
+			final NeuralGasNet n = new NeuralGasNet(2, 32);
+
+			final Deque<Consumer<Graphics>> redrawn = new FastConcurrentDirectDeque<Consumer<Graphics>>();
+
+			@Override
+			public void redrawn(WrappedImage backstore, int x, int y, int wx, int wy) {
+				if (w == null || w.getWidth()!=backstore.getWidth() || w.getHeight()!=backstore.getHeight()) {
+					w = new BufferedImage(backstore.getWidth(), backstore.getHeight(), BufferedImage.TYPE_INT_ARGB);
+				}
+
+
+				//g.setColor(new Color(1f, 0, 0, 0.25f));
+				//g.fillRect(x, y, wx, wy);
+
+
+
+				redrawn.addLast( g -> {
+					//synchronized(n) {
+						n.learn(x + wx/2, y+wy/2);
+						n.learn(x, y);
+						n.learn(x + wx, y);
+						n.learn(x + wx, y + wy);
+						n.learn(x, y + wy);
+					//}
+
+					//g.setColor(new Color(1,0,0,0.25f));
+					g.setColor(new Color(1f,0,0));
+					g.fillRect(x, y, wx, wy);
+				});
+			}
+
+			@Override
+			public void draw(WrappedImage backstore, Graphics target) {
+
+//
+				if (w!=null) {
+
+					Graphics2D g = (Graphics2D) w.getGraphics();
+
+					while (!redrawn.isEmpty()) {
+						redrawn.pollFirst().accept(g);
+					}
+
+					g.setColor(Color.GREEN);
+
+					for (Node nn : n.vertexSet()) {
+						double[] d = nn.getDataRef();
+
+						final int t = 8;
+						int x = (int) d[0] - t / 2;
+						int y = (int) d[1] - t / 2;
+						g.fillRect(x, y, t, t);
+					}
+
+					target.drawImage(w, 0, 0, null);
+//
+
+					g.setColor(new Color(0,0,0));
+
+//					float alpha = 0.1f;
+//					AlphaComposite alcom = AlphaComposite.getInstance(
+//							AlphaComposite.SRC_OVER, alpha);
+//					g.setComposite(alcom);
+//
+					g.fillRect(0, 0, w.getWidth(), w.getHeight());
+
+
+
+					g.dispose();
+//				}
+				}
+
+//				int n = redrawn.size();
+//				for (int i = 0; i < n; i++) {
+//					redrawn.pollFirst().accept(target);
+//				}
+
+//
+//				if (w!=null) {
+//					//target.drawImage(w, 0, 0, null);
+
+
+//				for (int i = 0; i < 100; i++) {
+//					target.fillOval(rng.nextInt(50), rng.nextInt(50),
+//							rng.nextInt(50), rng.nextInt(50)
+//					);
+//				}
+			}
+		});
+
 		setTitle(Options.windowTitle);
 
 		if (Constants.OS == Constants.WINDOWS)
