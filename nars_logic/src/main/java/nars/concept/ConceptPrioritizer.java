@@ -51,4 +51,9 @@ public class ConceptPrioritizer extends ConceptActivator {
         activator.forget(c);
     }
 
+    @Override
+    protected boolean isActive(Term t) {
+        return activator.isActive(t);
+    }
+
 }

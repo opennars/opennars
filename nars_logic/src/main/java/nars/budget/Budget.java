@@ -339,6 +339,11 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return BudgetFunctions.merge(this, that);
     }
 
+    public boolean merge(final Budget that) {
+        return BudgetFunctions.merge(this, that);
+    }
+
+
 //    /**
 //     * returns true if this budget is greater in all quantities than another budget,
 //     * used to prevent a merge that would have no consequence

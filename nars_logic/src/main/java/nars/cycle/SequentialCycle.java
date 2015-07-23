@@ -39,12 +39,14 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
     @Override
     public void onRemembered(Concept c) {
-        concepts.put(c);
+        Concept overflown = concepts.put(c);
+        if (overflown!=null)
+            overflow(overflown);
     }
 
     @Override
     public void onForgotten(Concept c) {
-        concepts.remove(c.getTerm());
+        //will have already bbe
     }
 
 
@@ -175,7 +177,6 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     public Concept remove(Concept cc) {
 
         getMemory().emit(Events.ConceptForget.class, this);
-        getMemory().logic.CONCEPT_FORGET.hit();
 
 
         Concept c = concepts.remove(cc.getTerm());

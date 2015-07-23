@@ -10,18 +10,13 @@ import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
-import nars.concept.DefaultConcept;
+import nars.concept.ConceptBagActivator;
 import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.link.TermLinkKey;
-import nars.premise.BloomPremiseSelector;
-import nars.premise.DirectPremiseSelector;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskComparator;
 import nars.term.Term;
@@ -96,7 +91,7 @@ public class Solid extends Default implements CycleProcess {
         super.init(n);
         this.memory = n.memory;
 
-        activator = new DefaultConceptActivator(memory, concepts);
+        activator = new ConceptBagActivator(memory, concepts);
     }
 
 
@@ -316,34 +311,6 @@ public class Solid extends Default implements CycleProcess {
     @Override
     public Concept remove(Concept c) {
         return concepts.remove(c.getTerm());
-    }
-
-    public static class DefaultConceptActivator extends ConceptActivator {
-
-        private final Memory memory;
-        private final Bag<Term, Concept> conceptBag;
-
-        DefaultConceptActivator(Memory memory, Bag<Term,Concept> conceptBag) {
-            this.memory = memory;
-            this.conceptBag = conceptBag;
-        }
-
-        @Override
-        public Memory getMemory() {
-            return memory;
-        }
-
-
-        @Override
-        public void onRemembered(Concept c) {
-            conceptBag.put(c);
-        }
-
-        @Override
-        public void onForgotten(Concept c) {
-            conceptBag.remove(c.getTerm());
-        }
-
     }
 
     @Override

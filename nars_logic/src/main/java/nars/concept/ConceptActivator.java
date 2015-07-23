@@ -105,7 +105,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     }
 
 
-    protected final void remember(Concept c) {
+    protected final boolean remember(Concept c) {
 
             if (isActivatable(c)) {
 
@@ -113,13 +113,14 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
                 onRemembered(c);
 
-            } else {
-                forget(c);
+                return true;
             }
 
+        return false;
     }
 
     protected final void forget(Concept c) {
+        //getMemory().logic.CONCEPT_FORGET.hit();
         onForgotten(c);
     }
 
@@ -174,6 +175,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         Concept c = concepts.update(this);
 
 
+
         if (c == null) {
 
             c = forgottenOrNewConcept();
@@ -184,6 +186,8 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
         return c;
     }
+
+    abstract protected boolean isActive(Term t);
 
     protected boolean isActivatable(Concept c) {
         //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);

@@ -60,6 +60,11 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
+    protected boolean isActive(Term t) {
+        return concepts.keySet().contains(t);
+    }
+
+    @Override
     public void onRemembered(Concept c) {
         concepts.put(c);
     }

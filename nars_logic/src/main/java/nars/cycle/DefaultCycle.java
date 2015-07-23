@@ -259,8 +259,10 @@ public class DefaultCycle extends SequentialCycle {
     }
 
 
-
-
+    @Override
+    protected boolean isActive(Term t) {
+        return concepts.get(t)!=null;
+    }
 }
       /*
     //private final Cycle loop = new Cycle();

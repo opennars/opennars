@@ -783,22 +783,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //    }
 
 
+    /** called by memory, dont call directly */
     @Override public void delete() {
 
         if (getMemory().inCycle())
             throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
-
-
-
-        {
-            //completely remove from active bags and concept indexes
-
-            memory.concepts.remove(getTerm());
-            Concept removed = memory.getControl().remove(this);
-            if (removed!=null && removed != this) {
-                throw new RuntimeException("Duplicate instances of Concepts with same term: " + this + " (deleting) " + removed);
-            }
-        }
 
         zero();
 
