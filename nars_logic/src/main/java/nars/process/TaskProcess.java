@@ -97,9 +97,6 @@ public class TaskProcess extends NAL {
      */
     protected boolean processConcept(final Concept c) {
 
-
-        if (!c.isActive()) return false;
-
         final Task task = getTask();
 
         if (!c.processable(task)) {

@@ -1,5 +1,6 @@
 package nars.cycle;
 
+import nars.Events;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
@@ -37,12 +38,12 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     }
 
     @Override
-    public void remember(Concept c) {
+    public void onRemembered(Concept c) {
         concepts.put(c);
     }
 
     @Override
-    public void forget(Concept c) {
+    public void onForgotten(Concept c) {
         concepts.remove(c.getTerm());
     }
 
@@ -61,9 +62,6 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
         Concept currentConcept = concepts.forgetNext(conceptForgetDurations, memory);
 
         if (currentConcept == null)
-            return null;
-
-        if (!currentConcept.isActive())
             return null;
 
         if (currentConcept.getPriority() < memory.param.conceptFireThreshold.get()) {
@@ -175,6 +173,11 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
 
     @Override
     public Concept remove(Concept cc) {
+
+        getMemory().emit(Events.ConceptForget.class, this);
+        getMemory().logic.CONCEPT_FORGET.hit();
+
+
         Concept c = concepts.remove(cc.getTerm());
         return c;
     }

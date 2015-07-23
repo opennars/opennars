@@ -38,7 +38,7 @@ abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGra
         return null;
     }
 
-    static class Vertex<E> implements Concept.ConceptReaction {
+    static class Vertex<E> {
 
         public enum EdgeSet {
             Incoming, Outgoing
@@ -50,13 +50,7 @@ abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGra
         protected void ensureIncoming() {  if (incoming == null)  incoming = Global.newHashMap();       }
         protected void ensureOutgoing() { if (outgoing == null) outgoing = Global.newHashMap();        }
 
-        @Override
-        public void onState(Concept c, Concept.State state) {
-            boolean active = (state == Concept.State.Active);
-            if (!active) {
-                outgoing.clear();
-            }
-        }
+
 
         public void addEdge(Concept target, E e, EdgeSet set) {
             switch (set) {

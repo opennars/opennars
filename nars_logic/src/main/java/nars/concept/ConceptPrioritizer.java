@@ -2,7 +2,6 @@ package nars.concept;
 
 import nars.Memory;
 import nars.bag.Bag;
-import nars.budget.BudgetFunctions;
 import nars.term.Term;
 
 /**
@@ -30,7 +29,7 @@ public class ConceptPrioritizer extends ConceptActivator {
 
 
         Concept result = conceptualize(c, bag);
-        if (result!=null && result.isActive())
+        if (result!=null)
             return true;
 
         //deactivated as a result
@@ -43,13 +42,13 @@ public class ConceptPrioritizer extends ConceptActivator {
     }
 
     @Override
-    public void remember(Concept c) {
+    public void onRemembered(Concept c) {
         activator.remember(c);
     }
 
     @Override
-    public void forget(Concept c) {
-
+    public void onForgotten(Concept c) {
+        activator.forget(c);
     }
 
 }

@@ -74,7 +74,7 @@ public class Events {
     public static class ConceptForget { }
 
     /** if a concept is completely removed from both main, and subconcepts (or if subconcepts has capacity 0) */
-    public static class ConceptDelete { }
+    @Deprecated public static class ConceptDelete { }
     
     abstract public static class ConceptBeliefAdd implements Reaction<Class> {
         

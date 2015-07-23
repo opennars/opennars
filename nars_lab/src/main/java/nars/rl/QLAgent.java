@@ -160,7 +160,7 @@ public class QLAgent<S extends Term> extends NARAgent {
     }
 
     public Concept getOperatorConcept() {
-        if ((operatorConcept ==null || getOperatorConcept().isDeleted()))
+        if (operatorConcept ==null)
             operatorConcept = ql.nar.concept(operator);
         return operatorConcept;
     }

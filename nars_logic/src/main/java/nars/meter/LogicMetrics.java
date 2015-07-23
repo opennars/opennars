@@ -59,6 +59,12 @@ public class LogicMetrics extends NARReaction {
 
     public final HitMeter CONCEPT_NEW = new HitMeter("concept.new");
 
+    /** when a concept is remembered (different than created) */
+    public final HitMeter CONCEPT_REMEMBER = new HitMeter("concept.remember");
+
+    //used for error checking, should == # remembered when concept bag is full
+    @Deprecated public final HitMeter CONCEPT_FORGET = new HitMeter("concept.forget");
+
     public final HitMeter JUDGMENT_PROCESS = new HitMeter("judgment.process");
     public final HitMeter GOAL_PROCESS = new HitMeter("goal.process");
     public final HitMeter QUESTION_PROCESS = new HitMeter("question.process");
@@ -211,7 +217,6 @@ public class LogicMetrics extends NARReaction {
         @Override
         public void accept(Concept c) {
             if (c == null) return;
-            if (!c.isActive()) return;
 
             super.accept(c);
 

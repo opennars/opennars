@@ -21,12 +21,14 @@
 package nars.concept;
 
 import com.google.common.base.Function;
-import nars.*;
+import nars.AbstractMemory;
+import nars.Global;
+import nars.Op;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.event.ConceptReaction;
 import nars.link.*;
-import nars.op.mental.Abbreviation;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -158,29 +160,9 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    public enum State {
-
-        /** created but not added to memory */
-        New,
-
-        /** in memory */
-        Active,
-
-        /** in sub-concepts */
-        Forgotten,
-
-        /** unrecoverable, will be garbage collected eventually */
-        Deleted
-    }
-
-
-
-
-
-
     default public String toInstanceString() {
         String id = Integer.toString(System.identityHashCode(this), 16);
-        return this + "::" + id + "." + getState().toString().toLowerCase();
+        return this + "::" + id;
     }
 
 
@@ -195,11 +177,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
             if (currMeta == null) setMeta(currMeta = Global.newHashMap());
 
-            Object removed = currMeta.put(key, value);
-            if (value instanceof ConceptReaction && removed!=value) {
-                ((ConceptReaction)value).onState(this, getState());
-            }
-            return removed;
+            return currMeta.put(key, value);
         }
         else {
             if (currMeta!=null)
@@ -255,23 +233,10 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     public TaskTable getQuestions();
     public TaskTable getQuests();
 
-    public State getState();
-    public Concept setState(State nextState);
+
 
     public long getCreationTime();
     public long getDeletionTime();
-
-    default public boolean isDeleted() {
-        return getState() == Concept.State.Deleted;
-    }
-
-    default public boolean isNew() { return getState() == State.New;     }
-    default public boolean isActive() {
-        return getState() == State.Active;
-    }
-    default public boolean isForgotten() {
-        return getState() == State.Forgotten;
-    }
 
 
     public void delete();
@@ -282,16 +247,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 //            throw new RuntimeException("Deleted concept should not activate TermLinks");
 //    }
 
-
-
-    default public boolean ensureActiveFor(String activity) {
-        if (!this.isActive() && !this.isForgotten()) {
-            System.err.println(activity + " fail: " + this + " (state=" + getState() + ')');
-            new Exception().printStackTrace();
-            return false;
-        }
-        return true;
-    }
 
 
 
@@ -324,16 +279,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 //        return getGoals().top(eternal, nonEternal);
 //    }
 
-
-    /**
-     * Methods to be implemented by Concept meta instances
-     */
-    public static interface ConceptReaction {
-
-        /** called before the state changes to the given nextState */
-        public void onState(Concept c, State nextState);
-
-    }
 
 
 

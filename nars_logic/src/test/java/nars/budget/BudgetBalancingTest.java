@@ -35,7 +35,7 @@ public class BudgetBalancingTest {
         //System.out.println(Iterators.toString(all.iterator()));
 
         assertEquals(1, all.size());
-        assertEquals(Concept.State.Forgotten, n.concept("<a --> b>").getState());
+
         //assertEquals("[a, b, <a --> b>]", Iterators.toString(all.iterator()) );
 
         assertEquals(0, active.size());

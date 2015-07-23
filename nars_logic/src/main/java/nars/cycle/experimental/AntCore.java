@@ -55,12 +55,12 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public void forget(Concept c) {
+    public void onForgotten(Concept c) {
         concepts.remove(c.getTerm());
     }
 
     @Override
-    public void remember(Concept c) {
+    public void onRemembered(Concept c) {
         concepts.put(c);
     }
 

@@ -164,7 +164,6 @@ public class ConceptProcess extends NAL implements Premise {
     }
 
     public void run() {
-        if (!concept.isActive()) return;
 
         memory.emotion.busy(this);
 

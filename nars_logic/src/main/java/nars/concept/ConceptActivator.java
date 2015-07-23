@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
@@ -43,9 +44,6 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     public ConceptActivator set(Budget b, boolean createIfMissing, long now) {
 
-        if (b.summary() == 0) {
-            System.out.println("activate: " +  b.summary() + " " +  b.getPriority() + " " + b.getDurability() + " " + b.getQuality());
-        }
         setBudget(b);
         this.createIfMissing = createIfMissing;
         this.now = now;
@@ -68,14 +66,12 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
 
     public Concept forgottenOrNewConcept() {
-        boolean belowThreshold = getPriority() < getMemory().param.newConceptThreshold.floatValue();
+        final Memory memory = getMemory();
+        boolean belowThreshold = getPriority() < memory.param.newConceptThreshold.floatValue();
 
         //try remembering from subconscious if activation is sufficient
         Concept concept = index().get(getKey());
         if (concept != null) {
-            if (concept.isDeleted()) {
-                throw new RuntimeException("deleted concept should not have been returned by index");
-            }
 
             if (!belowThreshold) {
                 //reactivate
@@ -91,10 +87,15 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
             //create it regardless, even if this returns null because it wasnt active enough
 
-            concept = getMemory().newConcept(/*(Budget)*/getKey(), this);
+            concept = memory.newConcept(/*(Budget)*/getKey(), this);
 
             if (concept == null)
-                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + getMemory().getConceptBuilders());
+                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + memory.getConceptBuilders());
+            else {
+                memory.emit(Events.ConceptNew.class, this);
+                if (memory.logic != null)
+                    memory.logic.CONCEPT_NEW.hit();
+            }
 
             if (!belowThreshold)
                 return concept;
@@ -104,19 +105,33 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     }
 
 
+    protected final void remember(Concept c) {
+
+            if (isActivatable(c)) {
+
+                getMemory().logic.CONCEPT_REMEMBER.hit();
+
+                onRemembered(c);
+
+            } else {
+                forget(c);
+            }
+
+    }
+
+    protected final void forget(Concept c) {
+        onForgotten(c);
+    }
+
     /** called when a Concept enters attention. its state should be set active prior to call */
-    abstract public void remember(Concept c);
+    abstract protected void onRemembered(Concept c);
 
     /** called when a Concept leaves attention. its state should be set forgotten prior to call */
-    abstract public void forget(Concept c);
+    abstract protected void onForgotten(Concept c);
 
 
     @Override
-    public void overflow(Concept c) {
-        if (c.isActive()) {
-            c.setState(Concept.State.Forgotten);
-        }
-
+    public final void overflow(Concept c) {
         forget(c);
     }
 
@@ -163,21 +178,8 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
             c = forgottenOrNewConcept();
 
-            if (!c.isActive()) {
-                if (isActivatable(c)) {
-                    c.setState(Concept.State.Active);
-                    remember(c);
-                } else {
-                    if (!c.isForgotten())
-                        c.setState(Concept.State.Forgotten);
-                }
-            }
+            remember(c);
 
-        }
-        else {
-            if (c.isDeleted()) {
-                throw new RuntimeException("deleted concept should not have been returned by index");
-            }
         }
 
         return c;

@@ -370,11 +370,12 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
             else {
                 // put the (new or merged) item into itemTable
                 final V overflow = put(item);
+
                 if (overflow != null)
                     selector.overflow(overflow);
-
-                if (overflow == item)
+                else if (overflow == item)
                     return null;
+
 
                 return item;
             }
@@ -392,7 +393,7 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
                 if (overflow == changed)
                     return null;
 
-                if (overflow != null && !overflow.name().equals(changed.name()))
+                if (overflow != null) // && !overflow.name().equals(changed.name()))
                     selector.overflow(overflow);
 
                 return changed;

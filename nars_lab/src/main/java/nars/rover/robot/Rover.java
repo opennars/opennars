@@ -455,10 +455,6 @@ public class Rover extends Robotic {
 
         public Concept getConcept() {
 
-            if (concept != null && concept.isDeleted()) {
-                concept = null;
-            }
-
             if (concept == null) {
                 concept = nar.concept(term);
             }

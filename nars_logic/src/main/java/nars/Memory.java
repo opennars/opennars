@@ -434,12 +434,12 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         boolean hasQuestions = c.hasQuestions();
         boolean hasGoals = !c.getGoals().isEmpty();
 
-        if (c.isActive()) {
+        if (isActive(c)) {
             //index an incoming concept with existing questions or goals
             if (hasQuestions) updateConceptQuestions(c);
             //if (hasGoals) updateConceptGoals(c);
         }
-        else if (c.isForgotten() || c.isDeleted()) {
+        else  {
             //unindex an outgoing concept with questions or goals
             if (hasQuestions) questionConcepts.remove(c);
             //..
@@ -788,16 +788,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
      * may return null if no concept is available depending on the control system
      */
     public Concept nextConcept() {
-
-        Concept c = getControl().nextConcept();
-
-        if (Global.DEBUG) {
-            if (!c.isActive())
-                throw new RuntimeException("returned nextConcept is not active");
-        }
-
-        return c;
-
+        return getControl().nextConcept();
     }
 
     /** scan for a next concept matching the predicate */
@@ -819,11 +810,15 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         if (active && !inactive)
             return getControl().iterator();
         else if (!active && inactive)
-            return Iterators.filter(concepts.iterator(), c -> !c.isActive());
+            return Iterators.filter(concepts.iterator(), c -> isActive(c));
         else if (active && inactive)
             return concepts.iterator(); //'concepts' should contain all concepts
         else
             return Iterators.emptyIterator();
+    }
+
+    public boolean isActive(Concept c) {
+        return control.concept(c.getTerm())!=null;
     }
 
     public int numConcepts(boolean active, boolean inactive) {
@@ -872,9 +867,6 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     /** queues the deletion of a concept until after the current cycle ends.
      */
     public synchronized void delete(Concept c) {
-        if (c.isDeleted())
-            throw new RuntimeException(c + " is already deleted");
-
         if (!inCycle()) {
             //immediately delete
             _delete(c);
@@ -898,7 +890,9 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
 
     /** actually delete procedure for a concept; removes from indexes */
     protected void _delete(Concept c) {
+
         Concept removedFromActive = getControl().remove(c);
+
         if (c!=removedFromActive) {
             throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
         }

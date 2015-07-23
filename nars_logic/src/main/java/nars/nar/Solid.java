@@ -181,8 +181,6 @@ public class Solid extends Default implements CycleProcess {
         //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
 
-
-
         processNewTasks();
 
         //2. fire all concepts
@@ -337,13 +335,12 @@ public class Solid extends Default implements CycleProcess {
 
 
         @Override
-        public void remember(Concept c) {
+        public void onRemembered(Concept c) {
             conceptBag.put(c);
         }
 
         @Override
-        public void forget(Concept c) {
-
+        public void onForgotten(Concept c) {
             conceptBag.remove(c.getTerm());
         }
 

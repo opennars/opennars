@@ -1,10 +1,14 @@
 package nars.concept;
 
 import javolution.util.function.Equality;
-import nars.*;
+import nars.Events;
+import nars.Global;
+import nars.Memory;
+import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Item;
+import nars.event.ConceptReaction;
 import nars.link.*;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
@@ -19,7 +23,10 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static nars.budget.BudgetFunctions.divide;
 import static nars.nal.nal1.LocalRules.trySolution;
@@ -27,7 +34,6 @@ import static nars.nal.nal1.LocalRules.trySolution;
 
 public class DefaultConcept extends Item<Term> implements Concept {
 
-    State state;
     final long creationTime;
     long deletionTime;
 
@@ -105,12 +111,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
         this.termLinkBuilder = new TermLinkBuilder(this);
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
 
-        this.state = State.New;
-        memory.emit(Events.ConceptNew.class, this);
-        if (memory.logic != null)
-            memory.logic.CONCEPT_NEW.hit();
-
-
     }
 
     /**
@@ -177,10 +177,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
 
 
-    public State getState() {
-        return state;
-    }
-
     public long getCreationTime() {
         return creationTime;
     }
@@ -189,63 +185,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return deletionTime;
     }
 
-    /**
-     * returns the same instance, used for fluency
-     */
-    public Concept setState(State nextState) {
 
-        State lastState = this.state;
-
-        if (lastState == nextState) {
-            throw new RuntimeException(toInstanceString() + " already in state " + nextState);
-        }
-
-        if (nextState == State.New)
-            throw new RuntimeException(toInstanceString() + " can not return to New state ");
-
-
-        if (lastState == State.Deleted)
-            throw new RuntimeException(toInstanceString() + " can not exit from Deleted state");
-
-
-        //ok set the state ------
-        switch (this.state = nextState) {
-
-
-            case Forgotten:
-                getMemory().emit(Events.ConceptForget.class, this);
-                break;
-
-            case Deleted:
-
-                if (lastState == State.Active) //emit forget event if it came directly to delete
-                    getMemory().emit(Events.ConceptForget.class, this);
-
-                deletionTime = getMemory().time();
-                getMemory().emit(Events.ConceptDelete.class, this);
-                break;
-
-            case Active:
-                onActive();
-                getMemory().emit(Events.ConceptActive.class, this);
-                break;
-        }
-
-        getMemory().updateConceptState(this);
-
-        if (getMeta() != null) {
-            for (Object m : getMeta().values()) {
-                if (m instanceof ConceptReaction)
-                    ((ConceptReaction)m).onState(this, getState());
-            }
-        }
-
-        return this;
-    }
 
     /** updates the concept-has-questions index if the concept transitions from having no questions to having, or from having to not having */
     public void onTableUpdated(char punctuation, int originalSize) {
-        if (!isActive()) return;
 
         switch (punctuation) {
             /*case Symbols.GOAL:
@@ -314,8 +257,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     //TODO untested
     public void link(Collection<Task> tasks) {
-
-        if (!ensureActiveFor("link(Collection<Task>)")) return;
 
         final int s = tasks.size();
         if (s == 0) return;
@@ -847,10 +788,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (getMemory().inCycle())
             throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
 
-        if (isDeleted()) return;
 
-        //called first to allow listeners to have a final attempt to interact with this concept before it dies
-        setState(State.Deleted);
 
         {
             //completely remove from active bags and concept indexes
