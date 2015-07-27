@@ -470,7 +470,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override
     public CycleProcess newCycleProcess() {
         return new DefaultCycle(
-                new TaskAccumulator(TaskComparator.Merging.Or),
+                new TaskAccumulator(TaskComparator.Merging.Plus),
                 newConceptBag(),
                 newNovelTaskBag(), inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
 

@@ -233,6 +233,14 @@ public class NarseseParserTest {
     public void testNegation() throws InvalidInputException {
         taskEqualsOldParser("(--,negated).");
         taskEqualsOldParser("(--, negated).");
+
+        assertEquals("(--,negated)", term("(--, negated)").toString());
+
+        //without comma
+        assertEquals( "(--,x)", term("(-- x)").toStringCompact() );
+
+        //double negation in parsing
+        assertEquals( "x", term("(-- (-- x))").toStringCompact() );
     }
 
 

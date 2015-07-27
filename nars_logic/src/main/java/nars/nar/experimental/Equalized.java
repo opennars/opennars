@@ -161,7 +161,7 @@ public class Equalized extends Default {
     @Override
     public CycleProcess newCycleProcess() {
         return new EqualizedCycle(
-                new TaskAccumulator(TaskComparator.Merging.Or),
+                new TaskAccumulator(TaskComparator.Merging.Plus),
                 newConceptBag(),
                 conceptsFiredPerCycle
         );
