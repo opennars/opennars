@@ -203,7 +203,7 @@ public class Global {
     /** hard upper-bound limit on Compound term complexity;
      * if this is exceeded it may indicate a recursively
      * malformed term due to a serious inference bug */
-    public static short COMPOUND_MASS_LIMIT = 512;
+    public static short COMPOUND_VOLUME_MAX = 512;
 
 
 

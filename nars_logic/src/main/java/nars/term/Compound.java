@@ -69,7 +69,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * Whether contains a variable
      */
     transient private byte hasVarQueries, hasVarIndeps, hasVarDeps;
-    transient private short varTotal, mass, complexity;
+    transient private short varTotal, volume, complexity;
 
     transient private int containedTemporalRelations = -1;
     private boolean normalized;
@@ -130,8 +130,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.varTotal = (short)(deps + indeps + queries);
         this.complexity = (short) compl;
 
-        if ((this.mass = (short)(varTotal + complexity)) > Global.COMPOUND_MASS_LIMIT) {
-            throw new RuntimeException("mass limit exceeded for new Compound term: " + operator() + " " + Arrays.toString(term));
+        if ((this.volume = (short)(varTotal + complexity)) > Global.COMPOUND_VOLUME_MAX) {
+            throw new RuntimeException("volume limit exceeded for new Compound term: " + operator() + " " + Arrays.toString(term));
         }
 
         invalidate();
@@ -546,8 +546,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     @Override
-    public int getMass() {
-        return mass;
+    public int getVolume() {
+        return volume;
     }
 
     /**
@@ -848,22 +848,14 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
     public boolean impossibleSubterm(final Term target) {
         return ((impossibleSubStructure(target.subtermStructure())) ||
-        (impossibleSubTermMass(target.getMass())));
+        (impossibleSubTermVolume(target.getVolume())));
     }
     public boolean impossibleSubTermOrEquality(final Term target) {
         return ((impossibleSubStructure(target.subtermStructure())) ||
-                (impossibleSubTermOrEqualityMass(target.getMass())));
+                (impossibleSubTermOrEqualityVolume(target.getVolume())));
     }
 
-//    /** tests if another term is possibly a subterm of this, given
-//     *  its mass and this term's mass.
-//     *  (if the target is larger than the maximum combined subterms size,
-//     *  it would not be contained by this) */
-//    public boolean impossibleSubTermByMass(final Compound possibleComponent) {
-//        if (impossibleSubtermByType(possibleComponent)) return true;
-//        if (impossibleSubTermByMass(possibleComponent.getMass())) return true;
-//        return false;
-//    }
+
 
     public boolean impossibleSubStructure(final Term c) {
         return impossibleSubStructure(c.subtermStructure());
@@ -876,22 +868,22 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return ((possibleSubtermStructure | existingStructure) != existingStructure);
     }
 
-    public boolean impossibleSubTermMass(final int otherTermsMass) {
-        return otherTermsMass >
-                getMass()
+    public boolean impossibleSubTermVolume(final int otherTermVolume) {
+        return otherTermVolume >
+                getVolume()
                         - 1 /* for the compound itself */
-                        - (length() - 1) /* each subterm has a mass >= 1, so if there are more than 1, each reduces the potential space of the insertable */
+                        - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
                 ;
     }
 
     /** if it's larger than this term it can not be equal to this.
      * if it's larger than some number less than that, it can't be a subterm.
      */
-    public boolean impossibleSubTermOrEqualityMass(int otherTermsMass) {
-        return otherTermsMass > getMass();
+    public boolean impossibleSubTermOrEqualityVolume(int otherTermsVolume) {
+        return otherTermsVolume > getVolume();
     }
 
-    
+
 
     
     /*static void shuffle(final Term[] list, final Random randomNumber) {
@@ -1131,14 +1123,14 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         final int subterms = in.length;
 
-        final int minMassOfMatch = S.minMassOfMatch;
+        final int minVolumeOfMatch = S.minMatchVolume;
 
         for (int i = 0; i < subterms; i++) {
             Term t1 = in[i];
 
-            int m = t1.getMass();
+            int m = t1.getVolume();
 
-            if (m < minMassOfMatch) {
+            if (m < minVolumeOfMatch) {
                 //too small to be any of the keys or hold them in a subterm
                 continue;
             }
@@ -1149,13 +1141,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1)) {
-
-
-//                    final int massOut = out[i].getMass();
-//                    final int massIn = t2.getMass();
-//                    if (massOut-massIn + getMass() > Global.COMPOUND_MASS_LIMIT) {
-//                        System.err.println("mas slimit reacacheD");
-//                    }
 
                     if (out == in) out = copyOf(in, subterms);
                     out[i] = t2; //t2.clone();
@@ -1168,12 +1153,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
                 Term t3 = ((Compound) t1).applySubstitute(S);
                 if ((t3 != null) && (!t3.equals(in[i]))) {
                     //modification
-
-//                    final int massOut = out[i].getMass();
-//                    final int massIn = t3.getMass();
-//                    if (massOut-massIn + getMass() > Global.COMPOUND_MASS_LIMIT) {
-//                        System.err.println("mas slimit reacacheD");
-//                    }
 
                     if (out == in) out = copyOf(in, subterms);
                     out[i] = t3;

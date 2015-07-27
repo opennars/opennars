@@ -50,7 +50,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Equalized(2048, 64, 3) {
+        Default d = new Equalized(1024, 256, 4) {
 
 
 //            @Override

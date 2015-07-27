@@ -429,7 +429,7 @@ public class TermTest {
 
         assertNotNull(t);
         assertEquals(complexity, t.getComplexity());
-        assertEquals(mass, t.getMass());
+        assertEquals(mass, t.getVolume());
 
         assertEquals(varDep, t.varDep());
         assertEquals(varDep != 0, t.hasVarDep());

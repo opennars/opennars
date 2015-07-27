@@ -41,7 +41,7 @@ public class DelayBagTest {
 
     public void test(int ants) throws InvalidInputException {
 
-        NAR n = new NAR(new Neuromorphic(ants));
+        NAR n = new NAR(new Neuromorphic(ants).setInternalExperience(null));
 
         assertTrue(n.memory.getControl() != null);
         

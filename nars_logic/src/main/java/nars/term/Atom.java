@@ -63,7 +63,7 @@ public class Atom extends ImmutableAtom {
 
     }
 
-    @Override public int getMass() { return 1; }
+    @Override public int getVolume() { return 1; }
 
     public int compareHash(final Term that) {
         return Integer.compare(hashCode(), that.hashCode());

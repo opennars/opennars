@@ -79,7 +79,7 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
             return null;
         }
 
-        if (Operation.validOperatorTerm(predicate) && (subject.getMass() > 2)) {
+        if (Operation.validOperatorTerm(predicate) && (subject.getVolume() > 2)) {
             //subject mass > 1 means it is a compound, > 2 ensures that it is a set wrapping a product wrapping > 0 arguments
             Product operationArgument = Operation.getArgumentProduct((Compound)subject);
             if (operationArgument!=null) {

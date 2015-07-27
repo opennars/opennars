@@ -1,31 +1,31 @@
-//natural numbers existence evidence:
+'natural numbers existence evidence:
 <{0} --> N>.
 <<(/,successor,$1,_) --> N> <=> <$1 --> N>>.
 
-//defining arithmetic on natural numbers:
+'defining arithmetic on natural numbers:
 <<$a --> N> ==> <(*,{0},$a,$a) --> Nadd>>.
 <<(*,$a,$b,$c) --> Nadd> ==> <(*,(/,successor,$a,_),$b,(/,successor,$c,_)) --> Nadd>>.
 <<$a --> N> ==> <(*,{0},$a,{0}) --> Nmul>>.
 
-//when a natural number is equals or bigger than another:
+'when a natural number is equals or bigger than another:
 <<(*,$a,$b,$c) --> Nadd> ==> <(*,$c,$a) --> NbiggerOrEqual>>.
 
-//multiplication by successive addition:
+'multiplication by successive addition:
 <(&&,<(*,$a,$b,$d) --> Nmul>,<(*,$d,$b,$c) --> Nadd>) ==> <(*,(/,successor,$a,_),$b,$c) --> Nmul>>.
 
-//defining arithmetic on positive rational numbers a/b with a,b being natural numbers:
+'defining arithmetic on positive rational numbers a/b with a,b being natural numbers:
 <(&&,(--,<$AN <-> 0>),(--,<$BN <-> 0>),<(*,$AN,$BN,$CN1) --> Nmul>,<(*,$AZBN,$BZAN,$CZ1) --> Nadd>,<(*,$AZ,$BN,$AZBN) --> Nmul>,<(*,$BZ,$AN,$BZAN) --> Nmul>,<(*,$CZ1,$CN1,$C,$D) --> Qequals>) ==> <(*,AZ,$AN,$BZ,$BN,$C,$D) --> Qadd>>.
 <(&&,(--,<$AN <-> 0>),(--,<$BN <-> 0>),<(*,$AN,$BN,$CN1) --> Nmul>,<(*,$AZ,$BZ,$CZ1) --> Nmul>,<(*,$CZ1,$CN1,$C,$D) --> Qequals>) ==> <(*,$AZ,$AN,$BZ,$BN,$C,$D) --> Qmul>>.
 <(&&,(--,<$AN <-> 0>),(--,<$BN <-> 0>),<(*,$AZ,$BN,$AZBN) --> NMul>,<(*,$BZ,$AN,$BZAN) --> NMul>,<(*,$AZBN,$BZAN) --> NbiggerOrEqual>) ==> <(*,$AZ,$AN,$BZ,$BN) --> Qbigger>>.
 <(&&,(--,<$AN <-> 0>),(--,<$BN <-> 0>),<(*,$AZ,$BN,$AZBN) --> NMul>,<(*,$BZ,$AN,$BZAN) --> NMul>,<$AZBN <-> $BZAN>) ==> <(*,$AZ,$AN,$BZ,$BN) --> Qequals>>.
 
-//ok all this stuff so far was to support continuous calculations, let's define inheritance inference rules now:
-//deduction truth function (lets also use it as budget function for now)
+'ok all this stuff so far was to support continuous calculations, let's define inheritance inference rules now:
+'deduction truth function (lets also use it as budget function for now)
 <(&&,<(*,$f1z,$f1n,$f2z,$f2n,$fz,$fn) --> Qmul>,<(*,$fz,$fn,$c1z,$c1n,$w1,$w2) --> Qmul>,<(*,$w1,$w2,$c2z,$c2n,$cz,$cn) --> Qmul>) ==> <(*,$f1z,$f1n,$c1z,$c1n,$f2z,$f2n,$c2z,$c2n,$fz,$fn,$cz,$cn) --> deduction>>.
 
-//deduction rule:
+'deduction rule:
 <(&&,<(*,$a,$b,$p1z,$p1n,$f1z,$f1n,$c1z,$c1n) --> INHERITANCE>,<(*,$b,$c,$p2z,$p2n,$f2z,$f2n,$c2z,$c2n) --> INHERITANCE>,<(*,$f1z,$f1n,$c1z,$c1n,$f2z,$f2n,$c2z,$c2n,$fz,$fn,$cz,$cn) --> deduction>) ==> <(*,$a,$c,$fz,$fn,$fz,$fn,$cz,$cn) --> INHERITANCE>>.
 
-//have fun to implement others ;)
-//and a simplified object level control mechanism by NAL9, if a concept reaches a certain priority level (>=1/2), consider it, so that the high budget has a real consequence:
+'have fun to implement others ;)
+'and a simplified object level control mechanism by NAL9, if a concept reaches a certain priority level (>=1/2), consider it, so that the high budget has a real consequence:
 <(&&,<(*,$a,$b,$p1z,$p1n,$f1z,$f1n,$c1z,$c1n) --> INHERITANCE>,<(*,$p1z,$p1n,(/,successor,{0},_),(/,successor,(/,successor,{0},_),_)) --> Qbigger>) =|> (^consider,<(*,$a,$b,$p1z,$p1n,$f1z,$f1n,$c1z,$c1n) --> INHERITANCE>)>!

@@ -41,12 +41,8 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
     public Op operator();
 
 
-    /** total number of terms = complexity + # total variables */
-    /*default public int getMass() {
-
-        return getComplexity() + getTotalVariables();
-    }*/
-    public int getMass();
+    /** volume = total number of terms = complexity + # total variables */
+    public int getVolume();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
     public int getComplexity();

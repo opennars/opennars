@@ -11,8 +11,8 @@ import java.util.Map;
 public class Substitution {
     final Map<Term, Term> subs;
 
-    public int minMassOfMatch = Integer.MAX_VALUE;
-    int maxMassOfMatch = Integer.MIN_VALUE;
+    public int minMatchVolume = Integer.MAX_VALUE;
+    int maxMatchVolume = Integer.MIN_VALUE;
     final int numSubs;
 
     int numDep = 0, numIndep = 0, numQuery = 0;
@@ -32,15 +32,15 @@ public class Substitution {
 
             final Term m = e.getKey();
 
-            final int mass = m.getMass();
-            if (minMassOfMatch > mass) minMassOfMatch = mass;
-            if (maxMassOfMatch < mass) maxMassOfMatch = mass;
+            final int v = m.getVolume();
+            if (minMatchVolume > v) minMatchVolume = v;
+            if (maxMatchVolume < v) maxMatchVolume = v;
 
             if (m instanceof Variable) {
-                Variable v = (Variable) m;
-                if (v.hasVarIndep()) numIndep++;
-                if (v.hasVarDep()) numDep++;
-                if (v.hasVarQuery()) numQuery++;
+                final Variable vv = (Variable) m;
+                if (vv.hasVarIndep()) numIndep++;
+                if (vv.hasVarDep()) numDep++;
+                if (vv.hasVarQuery()) numQuery++;
             }
 
         /* collapse a substitution map to each key's ultimate destination
@@ -72,7 +72,7 @@ public class Substitution {
         int subsApplicable = numSubs;
 
         if (superterm instanceof Compound) {
-            if (((Compound)superterm).impossibleSubTermOrEqualityMass(minMassOfMatch)) {
+            if (((Compound)superterm).impossibleSubTermOrEqualityVolume(minMatchVolume)) {
                 //none of the subs could possibly fit inside or be equal to the superterm
                 return true;
             }

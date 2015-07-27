@@ -2,7 +2,6 @@ package nars.meta;
 
 import junit.framework.TestCase;
 import nars.narsese.NarseseParser;
-import nars.term.Term;
 import org.junit.Test;
 
 /**
@@ -21,26 +20,26 @@ public class TaskRuleTest extends TestCase {
         {
             TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>>");
             assertEquals("((<A --> B>, <B --> A>), (<A <-> B>))", x.toString());
-            assertEquals(12, x.getMass());
+            assertEquals(12, x.getVolume());
         }
 
         {
             TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, <Nonsense --> Test>>");
             assertEquals("((<A --> B>, <B --> A>), (<A <-> B>, <Nonsense --> Test>))", x.toString());
-            assertEquals(15, x.getMass());
+            assertEquals(15, x.getVolume());
         }
 
         {
             TaskRule x = p.term("<<A --> b> |- (X & y)>");
             assertEquals("((<A --> b>), ((&, X, y)))", x.toString());
-            assertEquals(9, x.getMass());
+            assertEquals(9, x.getVolume());
         }
 
         {
             //and the first complete rule:
             TaskRule x = p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
             assertEquals("((<S --> M>, <P --> M>), (<P <-> S>, (TruthComparison, DesireStrong)))", x.toString());
-            assertEquals(15, x.getMass());
+            assertEquals(15, x.getVolume());
         }
 
         //TODO test that Pattern Variables are created for uppercase atoms
