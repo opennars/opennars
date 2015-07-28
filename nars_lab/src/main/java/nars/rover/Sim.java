@@ -374,7 +374,7 @@ public class Sim extends PhysicsModel {
         getWorld().setAllowSleep(false);
 
         //world = new ReactorWorld(this, 32, sz, sz*2);
-        world = new FoodSpawnWorld1(this, 128, sz, sz, 0.95f);
+        world = new FoodSpawnWorld1(this, 128, sz, sz, 0.5f);
         //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
     }

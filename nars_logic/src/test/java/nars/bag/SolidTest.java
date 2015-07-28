@@ -4,9 +4,8 @@ import nars.Global;
 import nars.io.in.LibraryInput;
 import nars.io.qa.Answered;
 import nars.meter.TestNAR;
-import nars.nar.Solid;
+import nars.nar.experimental.Solid;
 import nars.task.Sentence;
-import nars.task.filter.MultiplyDerivedBudget;
 import nars.term.Term;
 import org.junit.Test;
 

@@ -3,6 +3,7 @@ package nars.nal.nal4;
 import nars.NARSeed;
 import nars.nal.JavaNALTest;
 import nars.nar.*;
+import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;

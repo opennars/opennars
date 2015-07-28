@@ -22,30 +22,32 @@ import java.util.function.Consumer;
 /**
  * Base class for single-threaded Cores based on the original NARS design
  */
-abstract public class SequentialCycle extends ConceptActivator implements CycleProcess {
+abstract public class SequentialCycle extends AbstractCycle {
 
     /**
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Term, Concept> concepts;
 
-    protected Perception percepts;
-
-    protected Memory memory;
-
     public SequentialCycle(Bag<Term, Concept> concepts) {
         this.concepts = concepts;
     }
 
     @Override
-    public void onRemembered(Concept c) {
+    public void reset(Memory m, Perception p) {
+        super.reset(m, p);
+        concepts.clear();
+    }
+
+    @Override
+    public void on(Concept c) {
         Concept overflown = concepts.put(c);
         if (overflown!=null)
             overflow(overflown);
     }
 
     @Override
-    public void onForgotten(Concept c) {
+    public void off(Concept c) {
         //will have already bbe
     }
 
@@ -73,67 +75,13 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
         return currentConcept;
     }
 
-    @Override
-    public void reset(Memory m, Perception p) {
-
-        concepts.clear();
-
-        memory = m;
-        percepts = p;
-
-    }
-
     @Override public void delete() {
         concepts.delete();
-    }
-
-    @Override
-    public void onInput(Input perception) {
-        percepts.accept(perception);
     }
 
     public Iterable<Concept> getConcepts() {
         return concepts.values();
     }
-
-
-    /** attempts to perceive the next input from perception, and
-     *  handle it by immediately acting on it, or
-     *  adding it to the new tasks queue for future reasoning.
-     * @return how many tasks were generated as a result of perceiving (which can be zero), or -1 if no percept is available */
-    protected int inputNextPerception() {
-        if (!memory.isInputting()) return -1;
-
-        Task t = percepts.get();
-        if (t != null)
-            return memory.add(t) ? 1 : 0;
-
-        return -1;
-    }
-
-    /** attempts to perceive at most N perceptual tasks.
-     *  this allows Attention to regulate input relative to other kinds of mental activity
-     *  if N == -1, continue perceives until perception buffer is emptied
-     *  @return how many tasks perceived
-     */
-    public int inputNextPerception(int maxPercepts) {
-        //if (!perceiving()) return 0;
-
-        boolean inputEverything;
-
-        if (maxPercepts == -1) { inputEverything = true; maxPercepts = 1; }
-        else inputEverything = false;
-
-        int perceived = 0;
-        while (perceived < maxPercepts) {
-            int p = inputNextPerception();
-            if (p == -1) break;
-            else if (!inputEverything) perceived += p;
-        }
-        return perceived;
-    }
-
-
 
 
     /** returns a concept that is in this active concept bag only */
@@ -155,11 +103,6 @@ abstract public class SequentialCycle extends ConceptActivator implements CycleP
     @Override
     public Iterator<Concept> iterator() {
         return concepts.iterator();
-    }
-
-    @Override
-    public Memory getMemory() {
-        return memory;
     }
 
 

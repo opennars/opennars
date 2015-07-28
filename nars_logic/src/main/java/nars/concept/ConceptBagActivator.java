@@ -23,12 +23,12 @@ public class ConceptBagActivator extends ConceptActivator {
     }
 
     @Override
-    protected boolean isActive(Term t) {
+    protected boolean active(Term t) {
         return conceptBag.get(t) != null;
     }
 
     @Override
-    public void onRemembered(Concept c) {
+    public void on(Concept c) {
 
         Concept overflown = conceptBag.put(c);
         if (overflown!=null)
@@ -36,7 +36,7 @@ public class ConceptBagActivator extends ConceptActivator {
     }
 
     @Override
-    public void onForgotten(Concept c) {
+    public void off(Concept c) {
         Concept x = conceptBag.remove(c.getTerm());
         if (x!=null)
             throw new RuntimeException("should have been removed already but not here");

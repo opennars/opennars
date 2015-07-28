@@ -42,18 +42,18 @@ public class ConceptPrioritizer extends ConceptActivator {
     }
 
     @Override
-    public void onRemembered(Concept c) {
+    public void on(Concept c) {
         activator.remember(c);
     }
 
     @Override
-    public void onForgotten(Concept c) {
+    public void off(Concept c) {
         activator.forget(c);
     }
 
     @Override
-    protected boolean isActive(Term t) {
-        return activator.isActive(t);
+    protected boolean active(Term t) {
+        return activator.active(t);
     }
 
 }

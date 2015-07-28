@@ -111,7 +111,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
                 getMemory().logic.CONCEPT_REMEMBER.hit();
 
-                onRemembered(c);
+                on(c);
 
                 return true;
             }
@@ -121,14 +121,14 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     protected final void forget(Concept c) {
         //getMemory().logic.CONCEPT_FORGET.hit();
-        onForgotten(c);
+        off(c);
     }
 
     /** called when a Concept enters attention. its state should be set active prior to call */
-    abstract protected void onRemembered(Concept c);
+    abstract protected void on(Concept c);
 
     /** called when a Concept leaves attention. its state should be set forgotten prior to call */
-    abstract protected void onForgotten(Concept c);
+    abstract protected void off(Concept c);
 
 
     @Override
@@ -187,7 +187,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return c;
     }
 
-    abstract protected boolean isActive(Term t);
+    abstract protected boolean active(Term t);
 
     protected boolean isActivatable(Concept c) {
         //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);

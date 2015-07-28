@@ -55,17 +55,17 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public void onForgotten(Concept c) {
+    public void off(Concept c) {
         concepts.remove(c.getTerm());
     }
 
     @Override
-    protected boolean isActive(Term t) {
+    protected boolean active(Term t) {
         return concepts.keySet().contains(t);
     }
 
     @Override
-    public void onRemembered(Concept c) {
+    public void on(Concept c) {
         concepts.put(c);
     }
 
@@ -87,7 +87,7 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public boolean onTask(Task t) {
+    public boolean accept(Task t) {
         tasks.addLast(t);
         return true;
     }

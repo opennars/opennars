@@ -18,6 +18,8 @@ public class Turret extends Robotic {
 
     final static Random rng = new XORShiftRandom();
 
+    final float fireProbability = 0.005f;
+
     public Turret(String id) {
         super(id);
     }
@@ -71,7 +73,7 @@ public class Turret extends Robotic {
         }
         removedBullets.clear();
 
-        if (Math.random() < 0.05f) {
+        if (Math.random() < fireProbability) {
             fireBullet();
         }
     }

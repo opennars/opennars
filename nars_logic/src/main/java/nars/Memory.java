@@ -616,7 +616,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
         }
 
         /* delegate the fate of this task to controller */
-        if (getControl().onTask(t)) {
+        if (getControl().accept(t)) {
 
 
             emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);

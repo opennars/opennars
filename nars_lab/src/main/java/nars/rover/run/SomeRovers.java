@@ -8,7 +8,7 @@ import nars.clock.SimulatedClock;
 import nars.event.CycleReaction;
 import nars.gui.NARSwing;
 import nars.nar.Default;
-import nars.nar.Solid;
+import nars.nar.experimental.Solid;
 import nars.nar.experimental.Equalized;
 import nars.rover.Sim;
 import nars.rover.robot.Rover;
@@ -50,7 +50,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Equalized(1024, 256, 4) {
+        Default d = new Equalized(2048, 256, 3) {
 
 
 //            @Override
@@ -76,7 +76,7 @@ public class SomeRovers {
         d.conceptCreationExpectation.set(0);
         d.conceptBeliefsMax.set(16);
         d.conceptGoalsMax.set(12);
-        d.termLinkForgetDurations.set(4);
+        //d.termLinkForgetDurations.set(4);
 
 
 
@@ -112,9 +112,9 @@ public class SomeRovers {
 
             //new InputActivationController(nar);
 
-            int nc = 4;
+            int nc = 2;
             nar.setCyclesPerFrame(nc);
-            nar.param.duration.set(5*(nc-1));
+            nar.param.duration.set(2*(nc-1));
 
 
             //nar.param.shortTermMemoryHistory.set(3);

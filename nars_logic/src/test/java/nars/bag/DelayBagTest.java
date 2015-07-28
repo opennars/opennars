@@ -7,7 +7,7 @@ package nars.bag;
 import nars.Global;
 import nars.NAR;
 import nars.cycle.experimental.AntCore;
-import nars.nar.Neuromorphic;
+import nars.nar.experimental.Neuromorphic;
 import nars.narsese.InvalidInputException;
 import nars.term.Term;
 import org.junit.Before;

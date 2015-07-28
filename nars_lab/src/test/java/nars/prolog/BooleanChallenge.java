@@ -7,7 +7,7 @@ import nars.NAR;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nar.Solid;
+import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.term.Compound;

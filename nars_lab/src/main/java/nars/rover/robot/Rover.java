@@ -13,6 +13,7 @@ import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.io.in.ChangedTextInput;
 import nars.nal.nal2.Property;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.rl.gng.NeuralGasNet;
@@ -65,7 +66,7 @@ public class Rover extends Robotic {
     final double maxVisionInputProbability = 1.0f;
 
     //float tasteDistanceThreshold = 1.0f;
-    final static int retinaPixels = 24;
+    final static int retinaPixels = 12;
 
 
     int retinaRaysPerPixel = 4; //rays per vision sensor
@@ -736,7 +737,8 @@ public class Rover extends Robotic {
         addAxioms();
 
         nar.goal("<goal --> [health]>", 1.00f, 0.90f);
-        nar.goal("<goal --> [health]>. :|:", 0.50f, 0.99f); //reset
+
+        nar.believe("<goal --> [health]>", Tense.Present, 0.50f, 0.99f); //reset
 
         try {
             if (mission == 0) {
@@ -784,6 +786,7 @@ public class Rover extends Robotic {
             nar.input("<goal --> [health]>. :|: %0.90;0.90%");
         }
         else if (m instanceof Sim.PoisonMaterial) {
+            nar.input("<goal --> [food]>. :|: %0.00;0.90%");
             nar.input("<goal --> [health]>. :|: %0.00;0.90%");
         }
         else {
@@ -1116,12 +1119,9 @@ public class Rover extends Robotic {
 
         Vec2 currentPosition = torso.getWorldCenter();
         if (!positions.isEmpty()) {
-            Vec2 last = positions.getLast();
-            if (last!=null) {
-                Vec2 movement = currentPosition.sub(last);
-                double theta = Math.atan2(movement.y, movement.x);
-                motionAngle.observe((float)theta);
-            }
+            Vec2 movement = currentPosition.sub( positions.poll() );
+            double theta = Math.atan2(movement.y, movement.x);
+            motionAngle.observe((float)theta);
         }
         positions.addLast(currentPosition.clone());
 

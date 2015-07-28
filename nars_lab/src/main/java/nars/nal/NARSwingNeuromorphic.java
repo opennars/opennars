@@ -7,7 +7,7 @@ package nars.nal;
 import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.nar.Solid;
+import nars.nar.experimental.Solid;
 
 import java.io.File;
 

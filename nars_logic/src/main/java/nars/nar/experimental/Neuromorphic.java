@@ -1,4 +1,4 @@
-package nars.nar;
+package nars.nar.experimental;
 
 import nars.Memory;
 import nars.NAR;
@@ -12,6 +12,7 @@ import nars.cycle.experimental.AntCore;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.nar.Default;
 import nars.premise.BloomPremiseSelector;
 import nars.process.CycleProcess;
 import nars.task.Sentence;

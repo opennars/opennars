@@ -1,4 +1,4 @@
-package nars.nar;
+package nars.nar.experimental;
 
 import com.gs.collections.impl.list.mutable.FastList;
 import nars.Memory;
@@ -14,6 +14,7 @@ import nars.concept.ConceptBagActivator;
 import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TaskLink;
+import nars.nar.Default;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -112,7 +113,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public boolean onTask(Task t) {
+    public boolean accept(Task t) {
         if (tasks.add(t)) {
             tasksAddedThisCycle++;
             return true;

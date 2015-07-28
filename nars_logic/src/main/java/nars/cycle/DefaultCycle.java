@@ -83,7 +83,7 @@ public class DefaultCycle extends SequentialCycle {
     }
 
     @Override
-    public boolean onTask(Task t) {
+    public boolean accept(Task t) {
         if (executingNewTasks) {
             return newTasksTemp.add(t); //buffer it
         }
@@ -260,7 +260,7 @@ public class DefaultCycle extends SequentialCycle {
 
 
     @Override
-    protected boolean isActive(Term t) {
+    protected boolean active(Term t) {
         return concepts.get(t)!=null;
     }
 }
