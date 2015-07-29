@@ -4,12 +4,11 @@
  */
 package nars.process;
 
-import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
+import nars.concept.AbstractConcept;
 import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.meter.LogicMetrics;
 import nars.task.Task;
 import nars.term.Compound;
@@ -26,7 +25,7 @@ public class TaskProcess extends NAL {
     }
 
     /** runs the entire process in a constructor, for when a Concept is provided */
-    public TaskProcess(DefaultConcept c, Task task) {
+    public TaskProcess(AbstractConcept c, Task task) {
         this(c.getMemory(), task);
 
         onStart();

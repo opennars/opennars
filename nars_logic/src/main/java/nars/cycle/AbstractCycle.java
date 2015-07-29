@@ -47,6 +47,8 @@ public abstract class AbstractCycle extends ConceptActivator implements CyclePro
         return -1;
     }
 
+
+
     /** attempts to perceive at most N perceptual tasks.
      *  this allows Attention to regulate input relative to other kinds of mental activity
      *  if N == -1, continue perceives until perception buffer is emptied
