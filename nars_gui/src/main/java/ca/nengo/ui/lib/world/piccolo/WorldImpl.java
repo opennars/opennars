@@ -9,6 +9,7 @@ import ca.nengo.ui.lib.action.RemoveObjectsAction;
 import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.action.ZoomToFitAction;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
+import ca.nengo.ui.lib.moveme.BoundUpdatableSelectionBorder;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.World;
@@ -175,6 +176,10 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		mySky.addLayer(layer);
 		addChild(mySky);
 
+		// create frame for selection
+		BoundUpdatableSelectionBorder selectionFrame = new BoundUpdatableSelectionBorder(this);
+
+
 		/*
 		 * Create handlers
 		 */
@@ -182,7 +187,8 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		keyboardHandler = new KeyboardHandler();
 		mySky.getCamera().addInputEventListener(keyboardHandler);
 		mySky.getCamera().addInputEventListener(new TooltipPickHandler(this, 1000, 0));
-		mySky.getCamera().addInputEventListener(new MouseHandler(this));
+		mySky.getCamera().addInputEventListener(new MouseHandler(this, selectionFrame));
+		mySky.getCamera().addInputEventListener(new ScrollZoomHandler(selectionFrame));
 
 
 		selectionEventHandler = new SelectionHandler(this, panHandler);
