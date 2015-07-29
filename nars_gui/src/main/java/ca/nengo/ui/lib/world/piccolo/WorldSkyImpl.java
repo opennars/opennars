@@ -1,14 +1,12 @@
 package ca.nengo.ui.lib.world.piccolo;
 
-import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.WorldSky;
+import ca.nengo.ui.lib.world.handler.BoundUpdateAgnisticZoomEventHandler;
 import ca.nengo.ui.lib.world.handler.KeyboardFocusHandler;
-import ca.nengo.ui.lib.world.handler.ScrollZoomHandler;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXCamera;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXEdge;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.PLayer;
-import org.piccolo2d.event.PZoomEventHandler;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -40,7 +38,7 @@ public class WorldSkyImpl extends WorldLayerImpl implements WorldSky {
 		/*
 		 * Attach handlers
 		 */
-		PZoomEventHandler zoomHandler = new PZoomEventHandler();
+		BoundUpdateAgnisticZoomEventHandler zoomHandler = new BoundUpdateAgnisticZoomEventHandler();
 		zoomHandler.setMinDragStartDistance(20);
 		zoomHandler.setMinScale(MIN_ZOOM_SCALE);
 		zoomHandler.setMaxScale(MAX_ZOOM_SCALE);

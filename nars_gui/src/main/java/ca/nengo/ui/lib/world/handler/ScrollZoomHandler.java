@@ -8,6 +8,7 @@ import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 
 /**
  * Zooms the world using the scroll wheel.
@@ -15,10 +16,10 @@ import java.awt.geom.Point2D;
  * @author Shu Wu
  */
 public class ScrollZoomHandler extends PBasicInputEventHandler {
-	private final BoundUpdatableSelectionBorder selectionFrame;
+	private final List<BoundUpdatableSelectionBorder> boundUpdatableSelectionBorders;
 
-	public ScrollZoomHandler(BoundUpdatableSelectionBorder selectionFrame) {
-		this.selectionFrame = selectionFrame;
+	public ScrollZoomHandler(List<BoundUpdatableSelectionBorder> boundUpdatableSelectionBorders) {
+		this.boundUpdatableSelectionBorders = boundUpdatableSelectionBorders;
 	}
 
 	@Override
@@ -43,7 +44,9 @@ public class ScrollZoomHandler extends PBasicInputEventHandler {
 		event.getCamera().scaleViewAboutPoint(scaleDelta, viewZoomPoint.getX(),
 				viewZoomPoint.getY());
 
-		selectionFrame.updateBounds();
+		for( BoundUpdatableSelectionBorder iterationBorder : boundUpdatableSelectionBorders ) {
+			iterationBorder.updateBounds();
+		}
 	}
 
 }
