@@ -71,7 +71,7 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends NARSeed implements ConceptBuilder {
+public class Default extends NARSeed  {
 
 
     /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
@@ -83,6 +83,44 @@ public class Default extends NARSeed implements ConceptBuilder {
     /** max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
     public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
 
+
+    public static LogicPolicy newPolicy() {
+
+        return new LogicPolicy(
+
+                new LogicRule /* <ConceptProcess> */ [] {
+
+                        //A. concept fire tasklink derivation
+                        new TransformTask(),
+                        new Contraposition(),
+
+                        //B. concept fire tasklink termlink (pre-filter)
+                        new FilterEqualSubtermsInRespectToImageAndProduct(),
+                        new MatchTaskBelief(),
+
+                        //C. concept fire tasklink termlink derivation ---------
+                        new ForwardImplicationProceed(),
+
+                        //temporalInduce(nal, task, taskSentence, memory);
+                        //(new TemporalInductionChain()),
+                        new TemporalInductionChain2(),
+
+                        new PerceptionDetachment(),
+
+                        new DeduceSecondaryVariableUnification(),
+                        new DeduceConjunctionByQuestion(),
+                        new TableDerivations()
+                        //---------------------------------------------
+                } ,
+
+                new DerivationFilter[] {
+                        new FilterBelowConfidence(),
+                        new FilterDuplicateExistingBelief(),
+                        //param.getDefaultDerivationFilters().add(new BeRational());
+                }
+
+        );
+    }
 
     final LogicPolicy policy;
 
@@ -196,41 +234,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         conceptCreationExpectation.set(0.66);
 
-        policy = new LogicPolicy(
-
-                new LogicRule /* <ConceptProcess> */ [] {
-
-                    //A. concept fire tasklink derivation
-                    new TransformTask(),
-                    new Contraposition(),
-
-                    //B. concept fire tasklink termlink (pre-filter)
-                    new FilterEqualSubtermsInRespectToImageAndProduct(),
-                    new MatchTaskBelief(),
-
-                    //C. concept fire tasklink termlink derivation ---------
-                    new ForwardImplicationProceed(),
-
-                    //temporalInduce(nal, task, taskSentence, memory);
-                    //(new TemporalInductionChain()),
-                    new TemporalInductionChain2(),
-
-                    new PerceptionDetachment(),
-
-                    new DeduceSecondaryVariableUnification(),
-                    new DeduceConjunctionByQuestion(),
-                    new TableDerivations()
-                    //---------------------------------------------
-                } ,
-
-                new DerivationFilter[] {
-                    new FilterBelowConfidence(),
-                    new FilterDuplicateExistingBelief(),
-                    //param.getDefaultDerivationFilters().add(new BeRational());
-                }
-
-        );
-
+        policy = newPolicy();
     }
 
     public static final Operator[] exampleOperators = new Operator[] {

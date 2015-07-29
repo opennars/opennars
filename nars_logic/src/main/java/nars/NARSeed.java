@@ -3,6 +3,7 @@ package nars;
 import nars.bag.impl.CacheBag;
 import nars.clock.Clock;
 import nars.concept.Concept;
+import nars.concept.ConceptBuilder;
 import nars.io.Perception;
 import nars.nal.LogicPolicy;
 import nars.process.CycleProcess;
@@ -18,7 +19,7 @@ import java.util.Random;
  * These do not change after initialization.
  * For runtime parameters, @see Param
  */
-abstract public class NARSeed extends Param {
+abstract public class NARSeed extends Param implements ConceptBuilder {
 
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng = new XorShift1024StarRandom(1);

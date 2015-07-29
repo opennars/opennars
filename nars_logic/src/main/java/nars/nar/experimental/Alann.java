@@ -1,19 +1,22 @@
 package nars.nar.experimental;
 
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
+import nars.*;
 import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
+import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
+import nars.clock.CycleClock;
 import nars.concept.AbstractConcept;
 import nars.concept.BeliefTable;
 import nars.concept.Concept;
 import nars.concept.TaskTable;
 import nars.cycle.AbstractCycle;
+import nars.io.DefaultPerception;
 import nars.io.Perception;
 import nars.io.out.TextOutput;
 import nars.link.*;
+import nars.nal.LogicPolicy;
 import nars.nar.Default;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -31,17 +34,32 @@ import java.util.Map;
  * "Adaptive Logic And Neural Networks" Spiking continuous-time model
  * designed by TonyLo
  */
-public class Alann extends Default {
+public class Alann extends NARSeed {
+
+    public Alann() {
+        setClock(new CycleClock());
+    }
 
     public static void main(String[] args) {
         //temporary testing shell
+
+        Global.DEBUG = true;
+        Global.EXIT_ON_EXCEPTION = true;
 
         NAR n = new NAR(new Alann());
         TextOutput.out(n);
 
         n.input("<x --> y>.");
-        n.frame(1);
+        n.input("<y --> z>.");
+        n.frame(4);
 
+    }
+
+    @Override
+    protected Memory newMemory(Param narParam, LogicPolicy policy) {
+        Memory m = super.newMemory(narParam, policy);
+        m.on(this); //default conceptbuilder
+        return m;
     }
 
     @Override
@@ -50,10 +68,32 @@ public class Alann extends Default {
     }
 
     @Override
-    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
-        //TODO make sure that provided tasklinks and termlink bags are not wastefully created
-        return new AlannConcept(t, b, mem);
+    protected CacheBag<Term, Concept> newIndex() {
+        return new GuavaCacheBag<>();
     }
+
+    @Override
+    protected int getMaximumNALLevel() {
+        return 8;
+    }
+
+    @Override
+    public LogicPolicy getLogicPolicy() {
+        return Default.newPolicy();
+    }
+
+    @Override
+    public Perception newPerception() {
+        return new DefaultPerception();
+    }
+
+
+    @Override
+    public Concept newConcept(final Term t, final Budget b, final Memory m) {
+        return new AlannConcept(t, b, m);
+    }
+
+
 
     public static class AlannConcept extends AbstractConcept {
 
@@ -135,16 +175,19 @@ public class Alann extends Default {
 
         @Override
         public boolean processBelief(TaskProcess nal, Task task) {
+            System.out.println(this + " processBelief " + task);
             return false;
         }
 
         @Override
         public boolean processGoal(TaskProcess nal, Task task) {
+            System.out.println(this + " processGoal " + task);
             return false;
         }
 
         @Override
         public Task processQuestion(TaskProcess nal, Task task) {
+            System.out.println(this + " processQuestion " + task);
             return null;
         }
     }
@@ -198,7 +241,7 @@ public class Alann extends Default {
             if (c == null)
                 return false;
 
-            //
+            TaskProcess.run(memory, t);
 
             return true;
         }
@@ -215,9 +258,8 @@ public class Alann extends Default {
 
         @Override
         public void cycle() {
-
+            inputNextPerception();
         }
-
 
 
         @Override
@@ -238,7 +280,7 @@ public class Alann extends Default {
 
         @Override
         public Concept remove(Concept c) {
-            return null;
+            return concepts.remove(c.getTerm());
         }
 
         @Override
@@ -253,7 +295,7 @@ public class Alann extends Default {
 
         @Override
         protected boolean active(Term t) {
-            return false;
+            return concepts.get(t)!=null;
         }
 
         @Override
