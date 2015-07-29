@@ -30,6 +30,7 @@
 package ca.nengo.ui.lib.world.handler;
 
 import ca.nengo.ui.lib.action.DragAction;
+import ca.nengo.ui.lib.moveme.BoundUpdatableSelectionBorder;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
@@ -104,6 +105,8 @@ public class SelectionHandler extends PDragSequenceEventHandler {
     private float strokeNum = 0;
     private Stroke[] strokes = null;
 
+    private final List<BoundUpdatableSelectionBorder> boundUpdatableSelectionBorders; /* all global borders which should be updated on pan/zooming */
+
     /**
      * Creates a selection event handler.
      *
@@ -112,7 +115,9 @@ public class SelectionHandler extends PDragSequenceEventHandler {
      * @param selectableParent The node whose children will be selected by this event
      *                         handler.
      */
-    public SelectionHandler(WorldImpl world, PanEventHandler panHandler) {
+    public SelectionHandler(WorldImpl world, PanEventHandler panHandler, List<BoundUpdatableSelectionBorder> boundUpdatableSelectionBorders) {
+        this.boundUpdatableSelectionBorders = boundUpdatableSelectionBorders;
+
         this.world = world;
         this.marqueeParent = world.getSky();
         this.selectableParent = world.getGround();
@@ -405,19 +410,22 @@ public class SelectionHandler extends PDragSequenceEventHandler {
     }
 
     public void decorateSelectedNode(WorldObjectImpl node) {
-        SelectionBorder frame = new SelectionBorder(world, node);
+        BoundUpdatableSelectionBorder frame = new BoundUpdatableSelectionBorder(world, node);
+        boundUpdatableSelectionBorders.add(frame);
 
         node.setSelected(true);
         node.getPNode().addAttribute(SELECTION_HANDLER_FRAME_ATTR, frame);
     }
 
     public void undecorateSelectedNode(WorldObjectImpl node) {
-        SelectionBorder frame = (SelectionBorder) node.getPNode().getAttribute(SELECTION_HANDLER_FRAME_ATTR);
+        BoundUpdatableSelectionBorder frame = (BoundUpdatableSelectionBorder) node.getPNode().getAttribute(SELECTION_HANDLER_FRAME_ATTR);
         if (frame != null && frame instanceof SelectionBorder) {
             frame.destroy();
         }
         node.setSelected(false);
         node.getPNode().addAttribute(SELECTION_HANDLER_FRAME_ATTR, null);
+
+        boundUpdatableSelectionBorders.remove(frame);
     }
 
     /**

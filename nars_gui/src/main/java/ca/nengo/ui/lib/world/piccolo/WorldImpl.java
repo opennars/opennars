@@ -22,6 +22,7 @@ import ca.nengo.ui.lib.world.piccolo.primitive.PXLayer;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.util.NengoClipboard;
 import com.google.common.collect.Iterables;
+import com.gs.collections.impl.list.mutable.FastList;
 import org.piccolo2d.PRoot;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEventListener;
@@ -33,6 +34,7 @@ import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Implementation of World. World holds World Objects and has navigation and
@@ -183,6 +185,10 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		BoundUpdatableSelectionBorder tooltipFrame = new BoundUpdatableSelectionBorder(this);
 		tooltipFrame.setFrameColor(NengoStyle.COLOR_TOOLTIP_BORDER);
 
+		List<BoundUpdatableSelectionBorder> boundUpdatableSelectionBorders = new FastList<>();
+		boundUpdatableSelectionBorders.add(selectionFrame);
+		boundUpdatableSelectionBorders.add(tooltipFrame);
+
 		/*
 		 * Create handlers
 		 */
@@ -191,20 +197,17 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		mySky.getCamera().addInputEventListener(keyboardHandler);
 		mySky.getCamera().addInputEventListener(new TooltipPickHandler(this, 1000, 0, tooltipFrame));
 		mySky.getCamera().addInputEventListener(new MouseHandler(this, selectionFrame));
-		mySky.getCamera().addInputEventListener(new ScrollZoomHandler(selectionFrame, tooltipFrame));
+		mySky.getCamera().addInputEventListener(new ScrollZoomHandler(boundUpdatableSelectionBorders));
 
 		for( PInputEventListener iterationEventListener : mySky.getCamera().getInputEventListeners() ) {
 			if( iterationEventListener instanceof BoundUpdateAgnisticZoomEventHandler ) {
-				int x = 0;
-
 				BoundUpdateAgnisticZoomEventHandler zoomEventHandler = (BoundUpdateAgnisticZoomEventHandler)iterationEventListener;
 
-				zoomEventHandler.selectionBorders.add(selectionFrame);
-				zoomEventHandler.selectionBorders.add(tooltipFrame);
+				zoomEventHandler.selectionBorders = boundUpdatableSelectionBorders;
 			}
 		}
 
-		selectionEventHandler = new SelectionHandler(this, panHandler);
+		selectionEventHandler = new SelectionHandler(this, panHandler, boundUpdatableSelectionBorders);
 		selectionEventHandler.setMarqueePaint(NengoStyle.COLOR_BORDER_SELECTED);
 		selectionEventHandler.setMarqueeStrokePaint(NengoStyle.COLOR_BORDER_SELECTED);
 		selectionEventHandler.setMarqueePaintTransparency(0.1f);
