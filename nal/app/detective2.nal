@@ -1,0 +1,65 @@
+//the detective claims that tim lives in graz
+<{tim} --> (/,livingIn,_,{graz})>.
+
+10
+
+//the lawyer claims that this is not the case
+<{tim} --> (/,livingIn,_,{graz})>. %0%
+
+//if this 500 time pressure is too short, then NARS might give an preliminary answer, namely to make tim guilty (or not guilty dependent on which premise was considered).
+//If enough time on the other hand, the system will be inconclusive about tim since it had two equally trustworthy sources which claimed the opposite, while tom will be seen as guilty because someone saw him with sunglasses
+500
+
+//the first deponent, a psychologist,
+//claims that people with sunglasses are more aggressive
+<<(*,$1,sunglasses) --> own> ==> <$1 --> [aggressive]>>.
+
+10
+
+//the third deponent claims, that he has seen tom with sunglasses on:
+<(*,{tom},sunglasses) --> own>.
+
+10
+
+//the teacher claims, that people who are aggressive tend to be murders
+<<$1 --> [aggressive]> ==> <$1 --> murder>>.
+
+10
+
+//the second deponent claims, that if the person lives in Graz, he is surely the murder
+<<$1 --> (/,livingIn,_,{graz})> ==> <$1 --> murder>>.
+
+10
+
+
+
+//who is the murder?
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+10
+<{?who} --> murder>?
+
+//Answer <{tom} --> murder>. %1.00;0.73%
+
+10000
+
+//kim is a murder
+<{kim} --> murder>.
+
+//does kim own sunglasses?
+<(*,{kim},sunglasses) --> own>?
+
+//Answer <(*,{kim},sunglasses) --> own>. %1.00;0.40%
