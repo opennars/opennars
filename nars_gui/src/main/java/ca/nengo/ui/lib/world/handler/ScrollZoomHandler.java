@@ -16,9 +16,11 @@ import java.awt.geom.Point2D;
  */
 public class ScrollZoomHandler extends PBasicInputEventHandler {
 	private final BoundUpdatableSelectionBorder selectionFrame;
+	private final BoundUpdatableSelectionBorder tooltipFrame;
 
-	public ScrollZoomHandler(BoundUpdatableSelectionBorder selectionFrame) {
+	public ScrollZoomHandler(BoundUpdatableSelectionBorder selectionFrame, BoundUpdatableSelectionBorder tooltipFrame) {
 		this.selectionFrame = selectionFrame;
+		this.tooltipFrame = tooltipFrame;
 	}
 
 	@Override
@@ -44,6 +46,7 @@ public class ScrollZoomHandler extends PBasicInputEventHandler {
 				viewZoomPoint.getY());
 
 		selectionFrame.updateBounds();
+		tooltipFrame.updateBounds();
 	}
 
 }

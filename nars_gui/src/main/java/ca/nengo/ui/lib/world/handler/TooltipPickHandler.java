@@ -1,7 +1,6 @@
 package ca.nengo.ui.lib.world.handler;
 
 import ca.nengo.ui.lib.AppFrame;
-import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
@@ -33,13 +32,11 @@ public class TooltipPickHandler extends AbstractPickHandler {
 	//private final int myPickDelay;
     //private final int myKeepPickDelay;
 
-	public TooltipPickHandler(WorldImpl world, int pickDelay, int keepPickDelay) {
+	public TooltipPickHandler(WorldImpl world, int pickDelay, int keepPickDelay, SelectionBorder tooltipFrame) {
 		super(world);
 		//myPickDelay = pickDelay;
 		//myKeepPickDelay = keepPickDelay;
-		tooltipFrame = new SelectionBorder(world);
-		tooltipFrame.setFrameColor(NengoStyle.COLOR_TOOLTIP_BORDER);
-
+		this.tooltipFrame = tooltipFrame;
 	}
 
 	private void processKeyboardEvent(PInputEvent event) {

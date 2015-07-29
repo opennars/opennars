@@ -180,6 +180,8 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		// create frame for selection
 		BoundUpdatableSelectionBorder selectionFrame = new BoundUpdatableSelectionBorder(this);
 
+		BoundUpdatableSelectionBorder tooltipFrame = new BoundUpdatableSelectionBorder(this);
+		tooltipFrame.setFrameColor(NengoStyle.COLOR_TOOLTIP_BORDER);
 
 		/*
 		 * Create handlers
@@ -187,9 +189,9 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		panHandler = new PanEventHandler();
 		keyboardHandler = new KeyboardHandler();
 		mySky.getCamera().addInputEventListener(keyboardHandler);
-		mySky.getCamera().addInputEventListener(new TooltipPickHandler(this, 1000, 0));
+		mySky.getCamera().addInputEventListener(new TooltipPickHandler(this, 1000, 0, tooltipFrame));
 		mySky.getCamera().addInputEventListener(new MouseHandler(this, selectionFrame));
-		mySky.getCamera().addInputEventListener(new ScrollZoomHandler(selectionFrame));
+		mySky.getCamera().addInputEventListener(new ScrollZoomHandler(selectionFrame, tooltipFrame));
 
 		for( PInputEventListener iterationEventListener : mySky.getCamera().getInputEventListeners() ) {
 			if( iterationEventListener instanceof BoundUpdateAgnisticZoomEventHandler ) {
@@ -198,6 +200,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 				BoundUpdateAgnisticZoomEventHandler zoomEventHandler = (BoundUpdateAgnisticZoomEventHandler)iterationEventListener;
 
 				zoomEventHandler.selectionBorders.add(selectionFrame);
+				zoomEventHandler.selectionBorders.add(tooltipFrame);
 			}
 		}
 
