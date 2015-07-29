@@ -24,6 +24,7 @@ import ca.nengo.ui.util.NengoClipboard;
 import com.google.common.collect.Iterables;
 import org.piccolo2d.PRoot;
 import org.piccolo2d.event.PBasicInputEventHandler;
+import org.piccolo2d.event.PInputEventListener;
 import org.piccolo2d.util.PBounds;
 
 import javax.swing.*;
@@ -190,6 +191,15 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		mySky.getCamera().addInputEventListener(new MouseHandler(this, selectionFrame));
 		mySky.getCamera().addInputEventListener(new ScrollZoomHandler(selectionFrame));
 
+		for( PInputEventListener iterationEventListener : mySky.getCamera().getInputEventListeners() ) {
+			if( iterationEventListener instanceof BoundUpdateAgnisticZoomEventHandler ) {
+				int x = 0;
+
+				BoundUpdateAgnisticZoomEventHandler zoomEventHandler = (BoundUpdateAgnisticZoomEventHandler)iterationEventListener;
+
+				zoomEventHandler.selectionBorders.add(selectionFrame);
+			}
+		}
 
 		selectionEventHandler = new SelectionHandler(this, panHandler);
 		selectionEventHandler.setMarqueePaint(NengoStyle.COLOR_BORDER_SELECTED);
