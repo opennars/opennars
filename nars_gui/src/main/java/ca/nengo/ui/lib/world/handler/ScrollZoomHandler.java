@@ -1,6 +1,7 @@
 package ca.nengo.ui.lib.world.handler;
 
 
+import ca.nengo.ui.lib.moveme.BoundUpdatableSelectionBorder;
 import ca.nengo.ui.lib.world.WorldSky;
 import org.piccolo2d.PCamera;
 import org.piccolo2d.event.PBasicInputEventHandler;
@@ -14,10 +15,14 @@ import java.awt.geom.Point2D;
  * @author Shu Wu
  */
 public class ScrollZoomHandler extends PBasicInputEventHandler {
+	private final BoundUpdatableSelectionBorder selectionFrame;
+
+	public ScrollZoomHandler(BoundUpdatableSelectionBorder selectionFrame) {
+		this.selectionFrame = selectionFrame;
+	}
 
 	@Override
 	public void mouseWheelRotated(PInputEvent event) {
-
 		int rotationAmount = event.getWheelRotation() * -1;
 
 		double scaleDelta = 1 + (0.2 * rotationAmount);
@@ -37,6 +42,8 @@ public class ScrollZoomHandler extends PBasicInputEventHandler {
 
 		event.getCamera().scaleViewAboutPoint(scaleDelta, viewZoomPoint.getX(),
 				viewZoomPoint.getY());
+
+		selectionFrame.updateBounds();
 	}
 
 }

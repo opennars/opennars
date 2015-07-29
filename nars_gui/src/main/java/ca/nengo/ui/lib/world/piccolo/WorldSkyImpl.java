@@ -48,8 +48,6 @@ public class WorldSkyImpl extends WorldLayerImpl implements WorldSky {
 		myCamera.addInputEventListener(zoomHandler);
 
 		myCamera.addInputEventListener(new KeyboardFocusHandler());
-
-		myCamera.addInputEventListener(new ScrollZoomHandler());
 	}
 
 	public void addLayer(PLayer layer) {
