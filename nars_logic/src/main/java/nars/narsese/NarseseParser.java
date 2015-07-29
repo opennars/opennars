@@ -7,7 +7,6 @@ import com.github.fge.grappa.matchers.NothingMatcher;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
-import com.github.fge.grappa.run.ListeningParseRunner;
 import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
@@ -18,6 +17,7 @@ import nars.budget.Budget;
 import nars.io.Texts;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal1.Negation;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
@@ -443,7 +443,7 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 //                        //negation shorthand
-//                        sequence(NALOperator.NEGATION.symbol, s(), Term(), push(Negation.make(term(pop())))),
+                        //sequence(Op.NEGATION.str, s(), Term(), push(Negation.make(popTerm(null, true)))),
 
 
                         sequence(
@@ -762,7 +762,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
-    final Term popTerm(Op op /*default */, final boolean allowInternalOp) {
+    final Term popTerm(Op op /*default */, @Deprecated final boolean allowInternalOp) {
 
 
 
