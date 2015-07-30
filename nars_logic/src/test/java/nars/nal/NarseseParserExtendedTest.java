@@ -1,17 +1,20 @@
 package nars.nal;
 
 import nars.Op;
+import nars.Symbols;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal1.Negation;
+import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal7.Tense;
+import nars.narsese.InvalidInputException;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.Compound;
+import nars.term.Term;
 import org.junit.Test;
 
 import static nars.nal.NarseseParserTest.task;
 import static nars.nal.NarseseParserTest.term;
 import static nars.nal.nal7.Tense.*;
-import static nars.nal.nal7.Tense.Present;
 import static org.junit.Assert.*;
 
 /**
@@ -90,29 +93,44 @@ public class NarseseParserExtendedTest  {
     }
 
 
-//    @Test
-//    public void testNegation2() throws InvalidInputException {
-//
-//        for (String s : new String[]{"--negated!", "-- negated!"}) {
-//            Task t = task(s);
-//            Term tt = t.getTerm();
-//            assertTrue(tt instanceof Negation);
-//            assertTrue(((Negation) tt).the().toString().equals("negated"));
-//            assertTrue(t.getPunctuation() == Symbols.GOAL);
-//        }
-//    }
 
-//    @Test
-//    public void testNegation3() {
-//        Negation nab = term("--(a & b)");
-//        assertTrue(nab instanceof Negation);
-//        IntersectionExt ab = (IntersectionExt) nab.the();
-//        assertTrue(ab instanceof IntersectionExt);
-//
+    @Test
+    public void testNegation2() throws InvalidInputException {
+
+
+        for (String s : new String[]{"--negated!", "-- negated!"}) {
+            Task t = task(s);
+
+            //System.out.println(t);
+            /*
+            (--,(negated))! %1.00;0.90% {?: 1}
+            (--,(negated))! %1.00;0.90% {?: 2}
+            */
+
+            Term tt = t.getTerm();
+            assertTrue(tt instanceof Negation);
+            assertTrue(((Negation) tt).the().toString().equals("negated"));
+            assertTrue(t.getPunctuation() == Symbols.GOAL);
+        }
+    }
+
+    @Test
+    public void testNegation3() {
+        //without comma
+        assertEquals( "(--,x)", term("-- x").toStringCompact() );
+
+        assertEquals( "(--,(&&,x,y))", term("-- (x && y)").toStringCompact() );
+
+
+        Negation nab = term("--(a & b)");
+        assertTrue(nab instanceof Negation);
+        IntersectionExt ab = (IntersectionExt) nab.the();
+        assertTrue(ab instanceof IntersectionExt);
+
 //        try {
 //            task("(-- negated illegal_extra_term)!");
 //            assertTrue(false);
 //        } catch (Exception e) {
 //        }
-//    }
+    }
 }

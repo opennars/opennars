@@ -443,7 +443,9 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 //                        //negation shorthand
-                        //sequence(Op.NEGATION.str, s(), Term(), push(Negation.make(popTerm(null, true)))),
+                        sequence(Op.NEGATION.str, s(), Term(), push(
+                                //Negation.make(popTerm(null, true)))),
+                                Negation.make(Atom.the(pop())))),
 
 
                         sequence(

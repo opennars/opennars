@@ -236,11 +236,6 @@ public class NarseseParserTest {
 
         assertEquals("(--,negated)", term("(--, negated)").toString());
 
-        //without comma
-        assertEquals( "(--,x)", term("(-- x)").toStringCompact() );
-
-        //double negation in parsing
-        assertEquals( "x", term("(-- (-- x))").toStringCompact() );
     }
 
 
