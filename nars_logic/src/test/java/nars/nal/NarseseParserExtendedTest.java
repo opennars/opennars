@@ -117,6 +117,7 @@ public class NarseseParserExtendedTest  {
     @Test
     public void testNegation3() {
         //without comma
+        assertEquals( "(--,x)", term("--x").toStringCompact() );
         assertEquals( "(--,x)", term("-- x").toStringCompact() );
 
         assertEquals( "(--,(&&,x,y))", term("-- (x && y)").toStringCompact() );

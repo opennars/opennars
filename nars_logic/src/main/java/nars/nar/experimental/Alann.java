@@ -36,6 +36,9 @@ import java.util.Map;
  */
 public class Alann extends NARSeed {
 
+    final int MAX_CONCEPTS = 128 * 1024;
+    final int subcyclesPerCycle = 3;
+
     public Alann() {
         setClock(new CycleClock());
     }
@@ -95,63 +98,83 @@ public class Alann extends NARSeed {
 
 
 
+
+
     public static class AlannConcept extends AbstractConcept {
 
-        final Map<Concept, Truth> linked = Global.newHashMap();
+        //final Map<Concept, Truth> linked = Global.newHashMap();
+
+        Task lastTask;
 
         public AlannConcept(Term term, Budget budget, Memory memory) {
             super(term, budget, memory);
         }
 
+        @Override
+        public boolean processBelief(TaskProcess nal, Task task) {
+            System.out.println(this + " processBelief " + task);
 
-
-        /*
-
-
-            //// So these are the three main behaviours of a concept. The other aspect is to activate but that is a response to onSpike
-            onTask ( task)
-            {
-                // just store/replace the task in the concept
-            }
-            onBelief ( belief)
-            {
-                If input belief
-                    trigger spike event (spike const * truth.confidence)
-
-                Local Inference on belief (revision/Choice/Decision)
-            }
-            onSpike ( spike)
-            {
-                // adjust activation level for decay
-                // add spike to activation
-                // if activation > threshold then
-                    this.Activate()
+            if (task.isInput()) {
+                //trigger spike event (spike const * truth.confidence)
             }
 
+            inferLocal(task);
 
-                    concept.Activate()
-            {
-                reset activationLevel
-                for each outbound link
-                    trigger spike event (spike const * truth.confidence)
+            return false;
+        }
 
-                activeBeliefs = getActivatedBeliefs() // belief links with active src and destination
+        /**  Local Inference on belief (revision/Choice/Decision) */
+        protected void inferLocal(Task t) {
+            //....
+        }
 
-                for each activeBelief
-                    new_tasks = do inference (lastTaskRx, activeBelief)
-                    for each newtask
-                        addTask(newTask)
-            }
 
-            AddTask(task)
-            {
-                match against commands or goals and adjust as necessary
-                Update UI as required
-                decrement priority of derived tasks
-                Create new concepts if required
-                trigger onTask event for respective concepts
-            }
-         */
+        /*onTask ( task)
+        {
+            // just store/replace the task in the concept
+        }*/
+
+        @Override
+        public boolean processGoal(TaskProcess nal, Task task) {
+            System.out.println(this + " processGoal " + task);
+            lastTask = task;
+            return false;
+        }
+
+        @Override
+        public Task processQuestion(TaskProcess nal, Task task) {
+            System.out.println(this + " processQuestion " + task);
+            lastTask = task;
+            return null;
+        }
+
+        protected void onSpike(float amount) {
+            // adjust activation level for decay
+            // add spike to activation
+            // if activation > threshold then this.Activate()
+        }
+
+        protected void activate() {
+            /*
+            reset activationLevel
+            for each outbound link
+            trigger spike event (spike const * truth.confidence)
+
+            activeBeliefs = getActivatedBeliefs() // belief links with active src and destination
+
+            for each activeBelief
+            new_tasks = do inference (lastTaskRx, activeBelief)
+            for each newtask
+            addTask(newTask)
+            */
+
+        }
+
+
+
+
+        // the following should not be necessary and will be removed:
+
 
         @Override
         public Bag<Sentence, TaskLink> getTaskLinks() {
@@ -223,23 +246,7 @@ public class Alann extends NARSeed {
             return 0;
         }
 
-        @Override
-        public boolean processBelief(TaskProcess nal, Task task) {
-            System.out.println(this + " processBelief " + task);
-            return false;
-        }
 
-        @Override
-        public boolean processGoal(TaskProcess nal, Task task) {
-            System.out.println(this + " processGoal " + task);
-            return false;
-        }
-
-        @Override
-        public Task processQuestion(TaskProcess nal, Task task) {
-            System.out.println(this + " processQuestion " + task);
-            return null;
-        }
     }
 
     class AlannCycle extends AbstractCycle {
@@ -254,17 +261,26 @@ public class Alann extends NARSeed {
          */
         Bag<Term, Concept> concepts;
 
-        final int MAX_CONCEPTS = 128 * 1024;
-
         private double conceptActivationThreshold = 0.05f; //this will be automatically tuned by a busy metric
 
         @Override
         public boolean accept(Task t) {
+
             if (t.isInput() && !t.isJudgment()) {
+                //match against commands or goals and adjust as necessary
                 commands.add(t);
             } else {
                 add(t);
             }
+
+            /*
+            {
+                Update UI as required
+                decrement priority of derived tasks
+                Create new concepts if required
+                trigger onTask event for respective concepts
+            }
+            */
 
             return false;
         }
@@ -306,47 +322,51 @@ public class Alann extends NARSeed {
             concepts.getPriorityHistogram(bins);
         }
 
-        @Override
-        public void cycle() {
+        /** forever (slow cycle) “cycle” */
+        @Override public void cycle() {
 
-            inputNextPerception();
 
-            /*
-            forever (slow cycle) “cycle”
-                inject tasks and goals into respective concepts only questions and goals
-                insert task into each relevant concept and replace existing as necessary
 
-                for fast cycle in 1 to n “subcycle” {
-                    insert input tasks into respective concepts
-
-                    for each concept {
-                        check activation level
-                        if level > threshold {
-                            send spike to all outbound belief links modulating for truth.confidence
-                            reset activation
-                            do inference on all beliefs that have a matching activated concept on the other end of the link
-                            send generated (derived?) tasks to relevant concepts
-                        }
-                    }
-                }
-            */
-
-            // I know why I am struggling with this. It i not design this way
             // it needs to be thought of as a parallel system
             // if you process it sequentially then you have to store all the spikes for each cycle for each concept
             // However, if you think of it an an event based model then it is much easier
             // So concepts are, ideally, independent processing elements that receive events (spike/tasks)
             // It does not really translate to a loop.
             // So no ‘real’ cycles
-            //thats fine but some granularity is necessary otherwise it will run at 100% cpu and that isnt helpful for GUI
-            //like an event queue at least when a cycle needs to interrupt or something
-            // I run the gui on a seperate thread, is that not the case here?
-            // ok yes and no but lets see how it works in a pure event model and then backwards fit it to the gui somehow if it doesnt fit
-            // Yes, makes sense to get something running then improve it
-            // yeah
-            // so there are a finite # of events.. they can be described as onSomeEvent() methods right?
 
 
+            /*
+                inject tasks and goals into respective concepts only questions and goals
+
+                insert task into each relevant concept and replace existing as necessary
+            */
+
+            inputNextPerception();
+
+            // for fast cycle in 1 to n “subcycle”
+            for (int i = 0; i < subcyclesPerCycle; i++)
+                subcycle();
+
+        }
+
+        protected void subcycle() {
+            /*insert input tasks into respective concepts */
+
+            for (Concept c : concepts) {
+
+                /*
+
+                check activation level
+
+                if level > threshold {
+                    send spike to all outbound belief links modulating for truth.confidence
+                    reset activation
+                    do inference on all beliefs that have a matching activated concept on the other end of the link
+                    send generated (derived?) tasks to relevant concepts
+                }
+
+                */
+            }
 
         }
 
