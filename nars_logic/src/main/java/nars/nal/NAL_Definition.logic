@@ -92,9 +92,9 @@
 
 //// conditional syllogism
 
-    (M ==> P), M |- P, Truth.Deduction
-    (P ==> M), M |- P, Truth.Abduction
-    M, (S <=> M) |- S, Truth.Analogy
+    (M ==> P), M |- P, (Truth.Deduction)
+    (P ==> M), M |- P, (Truth.Abduction)
+    M, (S <=> M) |- S, (Truth.Analogy)
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
 
