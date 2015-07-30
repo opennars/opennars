@@ -264,7 +264,13 @@ public class Variable extends Atom {
 
 
     public static boolean validVariableType(final char c) {
-        return (c == VAR_QUERY) || (c == VAR_DEPENDENT) || (c == VAR_INDEPENDENT);
+        switch (c) {
+            case VAR_QUERY: return true;
+            case VAR_DEPENDENT: return true;
+            case VAR_INDEPENDENT: return true;
+            case VAR_PATTERN: return true;
+        }
+        return false;
     }
 
 

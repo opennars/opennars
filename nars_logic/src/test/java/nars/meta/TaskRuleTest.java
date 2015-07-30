@@ -47,4 +47,17 @@ public class TaskRuleTest extends TestCase {
 
     }
 
+    @Test
+    public void testPatternVariables() {
+
+        NarseseParser p = NarseseParser.the();
+        TaskRule x = p.term("<<A --> b> |- (X & y)>");
+        assertEquals("((<A --> b>), ((&, X, y)))", x.toString());
+
+        x.normalize();
+
+        assertEquals("((<%A --> b>), ((&, %X, y)))", x.toString());
+
+
+    }
 }

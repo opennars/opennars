@@ -803,6 +803,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return (T)this;
     }
 
+    /** transforms destructively, may need to use on a new clone */
     protected <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans, int depth) {
         final int len = length();
 
@@ -810,16 +811,15 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         for (int i = 0; i < len; i++) {
             Term t = term[i];
 
-            if (t.hasVar()) {
-                if (t instanceof Compound) {
-                    ((Compound) t).transform(trans);
-                } else if (trans.test(t)) {
-
-                    if (thiss == null) thiss = (I) this;
-                    term[i] = trans.apply(thiss, (T) t, depth + 1);
-
-                }
+            if (trans.test(t)) {
+                if (thiss == null) thiss = (I) this;
+                term[i] = trans.apply(thiss, (T) t, depth + 1);
             }
+            else if (t instanceof Compound) {
+                //recurse
+                ((Compound) t).transform(trans);
+            }
+
         }
     }
 
