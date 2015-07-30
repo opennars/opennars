@@ -117,6 +117,8 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
                 return hasVarIndep();
             case Symbols.VAR_QUERY:
                 return hasVarQuery();
+            case Symbols.VAR_PATTERN: //if this is the case, its always the case because then its the meta-matcher which asks
+                return true; //who only operators with PATTERN variables
         }
         throw new RuntimeException("Invalid variable type: " + type);
     }

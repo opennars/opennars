@@ -1,6 +1,7 @@
 package nars.meta;
 
 import junit.framework.TestCase;
+import nars.nal.NALExecuter;
 import nars.narsese.NarseseParser;
 import org.junit.Test;
 
@@ -12,10 +13,20 @@ public class TaskRuleTest extends TestCase {
     @Test
     public void testParser() {
 
+        NALExecuter executer =new NALExecuter(); //all the inference rules have to pass of course
+
         NarseseParser p = NarseseParser.the();
         //NAR p = new NAR(new Default());
 
         assertNotNull("metaparser can is a superset of narsese", p.term("<A --> b>"));
+
+        //
+
+        {
+            TaskRule x = p.term("< A, A |- A, (Truth_Revision, Desire_Weak)>");
+            assertEquals("((A, A), (A, (Truth_Revision, Desire_Weak)))", x.toString());
+            // assertEquals(12, x.getVolume());
+        }
 
         {
             TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>>");
@@ -60,4 +71,5 @@ public class TaskRuleTest extends TestCase {
 
 
     }
+
 }

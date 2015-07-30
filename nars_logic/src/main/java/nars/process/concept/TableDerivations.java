@@ -2,6 +2,7 @@ package nars.process.concept;
 
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.nal.NALExecuter;
 import nars.nal.RuleTables;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Equivalence;
@@ -19,8 +20,11 @@ import static nars.Symbols.VAR_INDEPENDENT;
 import static nars.nal.RuleTables.goalFromQuestion;
 
 
-public class TableDerivations extends ConceptFireTaskTerm {
+public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable, but since this one we will delete, the confusion will be gone
 
+    NALExecuter nalex = null;
+    boolean UseNalex = true; //so far also both can be used, because this
+    boolean UseRuletable = false; //make it easy to compare if there truth values or results differ
 
     @Override
     public final boolean apply(final ConceptProcess f, final TermLink bLink) {
@@ -33,6 +37,20 @@ public class TableDerivations extends ConceptFireTaskTerm {
         final Task beliefTask = f.getBelief();
         final Sentence belief = f.getBelief();
         final Term beliefTerm = bLink.getTerm();
+
+        if(UseNalex && nalex == null) {
+            nalex=new NALExecuter();
+        }
+
+        boolean applied_something = false; //
+
+        if(UseNalex) {
+            applied_something = nalex.reason(tLink.getTask(),belief,f);
+        }
+
+        if(!UseRuletable) {
+            return applied_something;
+        }
 
 //        if (belief == null) {
 //            if (beliefTerm!=null) {

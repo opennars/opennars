@@ -162,6 +162,9 @@ public class Variable extends Atom {
 
     /** tests equal name and scope. if either or both are unscoped, the instances are not equal. */
     @Override public boolean equals(final Object that) {
+        if(that instanceof Variable && getType() == VAR_PATTERN && ((Variable)that).getType() == VAR_PATTERN && toString().equals(that.toString())) { //TODO
+            return true;
+        }
         if (this == that) return true;
         if (!(that instanceof Variable)) return false;
 

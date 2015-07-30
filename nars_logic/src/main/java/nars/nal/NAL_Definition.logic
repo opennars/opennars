@@ -7,10 +7,10 @@
 
     (S --> P) |- (P --> S), (Truth.Conversion)
     (S ==> P) |- (P ==> S), (Truth.Conversion)
-    ((-- S) ==> P) |- ((-- P) ==> S), (Truth.Contraposition)
+    ( --S ==> P) |- ( --P ==> S), (Truth.Contraposition)
 
-    (-- S) |- S, (Truth.Negation)
-    S |- (-- S), (Truth.Negation)
+    --S |- S, (Truth.Negation)
+    S |- --S, (Truth.Negation)
 
 //// structural inference
 //java
@@ -116,7 +116,7 @@
     
     ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth.Deduction)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth.Abduction)
-    ((&&,A,A_1..n) ==> C), (A ==> M) |- (&&,M,A_1..n) ==> C), (Truth.Induction)
+    ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth.Induction)
 
 //// variable introduction
 
@@ -140,7 +140,7 @@
                                                                              (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth.Intersection)
     
     (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A_1..n)), (Truth.Abduction),
-                                                         (&&, (S --> #Y), (P --> #Y), A_1..n)), (Truth.Intersection)
+                                                         (&&, (S --> #Y), (P --> #Y), A_1..n), (Truth.Intersection)
 
 //// dependent variable elimination
 
