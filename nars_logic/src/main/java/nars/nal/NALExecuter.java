@@ -5,6 +5,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.TaskRule;
+import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.Product1;
 import nars.narsese.NarseseParser;
@@ -219,6 +220,29 @@ public class NALExecuter {
                 //match second rule pattern with belief
                 if(!Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[1], belief.getTerm(), assign, waste, nal.memory.random))
                     return false;
+
+                //also check if the preconditions are met
+                /*for(int i=2; i<preconditions.length; i++)   <-relations are broken in 1.7, as long as they are broken this code is also broken ^^
+                {
+                    Inheritance predicate = (Inheritance) preconditions[i];
+                    Term predicate_name = predicate.getPredicate();
+                    Term[] args = ((Product)predicate.getSubject()).terms();
+                    //ok apply substitution to both elements in args
+                    Term arg1 = ((Compound)args[0]).applySubstitute(assign);
+                    Term arg2 = ((Compound)args[1]).applySubstitute(assign);
+
+                    if(predicate_name.toString().equals("not_equal"))
+                    {
+                        if(arg1.equals(arg2))
+                            return false; //not_equal
+                    }
+
+                    if(predicate_name.toString().equals("no_common_subterm"))
+                    {
+                        //TODO
+                    }
+                }*/
+
                 //now we have to apply this to the derive term
                 derive = (Compound) derive.applySubstitute(assign);
             }
