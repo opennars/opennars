@@ -4,53 +4,82 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nal.nal4.Product1;
 import nars.narsese.NarseseParser;
 import nars.process.ConceptProcess;
-import nars.process.TaskProcess;
+import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.Variables;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
-import nars.util.data.ArrayArrayList;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by patrick.hammer on 30.07.2015.
  */
-public class NALExecuter {
+public class NALExecuter extends ConceptFireTaskTerm  {
 
-    public static List<String> loadRuleStrings()
-    {
-        //1. Load files from list
-        List<String> lines = null;
 
-        try
-        {
-            lines = Files.readAllLines(Paths.get("C:\\Users\\patrick.hammer\\IdeaProjects\\opennars\\nars_logic\\src\\main\\java\\nars\\nal\\NAL_Definition.logic"), StandardCharsets.UTF_8);
-        }
-        catch (IOException e)
-        {
+    public final Rule[] rules;
+
+    public static final NALExecuter defaults;
+    static {
+
+        NALExecuter r;
+
+        try {
+            r = new NALExecuter();
+        } catch (Exception e) {
+            r = null;
             e.printStackTrace();
+            System.exit(1);
         }
+
+        defaults = r;
+    }
+
+
+    public NALExecuter() throws IOException, URISyntaxException {
+        this("NAL_Definition.logic");
+    }
+
+    public NALExecuter(String ruleFile) throws IOException, URISyntaxException {
+
+        this( Files.readAllLines( Paths.get(
+                NALExecuter.class.getResource(ruleFile).toURI()
+        )) );
+
+    }
+
+    public NALExecuter(Iterable<String> ruleStrings)  {
+        rules = getRules(parseRules(loadRuleStrings(ruleStrings))); //rules are constructed once
+    }
+
+    @Override
+    public final boolean apply(final ConceptProcess f, final TermLink bLink) {
+        final TaskLink tLink = f.getTaskLink();
+        final Task belief = f.getBelief();
+        return reason(tLink.getTask(), belief, f);
+    }
+
+    public static List<String> loadRuleStrings(Iterable<String> lines)     {
 
         List<String> unparsed_rules = new ArrayList<>();
         String current_rule = "";
@@ -94,8 +123,7 @@ public class NALExecuter {
         return ret.replace("\n", "")/*.replace("A_1..n","\"A_1..n\"")*/; //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
 
-    public static List<Term> parseRules(List<String> not_yet_parsed_rules)
-    {
+    public static List<Term> parseRules(List<String> not_yet_parsed_rules)    {
         //2. ok we have our unparsed rules, lets parse them to terms now
         NarseseParser meta = NarseseParser.the();
         List<Term> uninterpreted_rules = new ArrayList<>();
@@ -118,16 +146,16 @@ public class NALExecuter {
         return uninterpreted_rules;
     }
 
-    public class PostCondition //since there can be multiple tasks derived per rule
+    public static class PostCondition //since there can be multiple tasks derived per rule
     {
-        Product Term_and_Meta; //what to derive
+        final Product Term_and_Meta; //what to derive
 
         public PostCondition(Product Term_and_Meta)
         {
             this.Term_and_Meta = Term_and_Meta;
         }
 
-        public boolean Apply(boolean single_premise, Term[] preconditions, Task task, Sentence belief, ConceptProcess nal)
+        public boolean apply(boolean single_premise, Term[] preconditions, Task task, Sentence belief, ConceptProcess nal)
         {
             Truth truth = null;
             Truth desire = null;
@@ -319,12 +347,14 @@ public class NALExecuter {
         }
     }
 
-    public class Rule
-    {
-        private boolean single_premise = false; //whether its a single premise inference rule
+    public static class Rule {
+
+        private final boolean single_premise; //whether its a single premise inference rule
         //A rule is named by precondition terms
-        private Term[] preconditions; //the terms to match
-        private PostCondition[] postconditions;
+
+        private final Term[] preconditions; //the terms to match
+
+        private final PostCondition[] postconditions;
         //it has certain pre-conditions, all given as predicates after the two input premises
 
         public Rule(Product rule) //here we can already distinguish between preconditions, predicates, postconditions, post-evaluations and metainfo
@@ -337,15 +367,14 @@ public class NALExecuter {
             Term[] precon = preprod.terms();
             Term[] postcons = postprods.terms();
             //single premise
-            if(precon.length == 1)
-            {
+            if(precon.length == 1) {
                 single_premise = true;
                 preconditions = precon;
                 postconditions = new PostCondition[1]; //only one conclusion for single premise rules, NAL doesn't need more:
                 postconditions[0] = new PostCondition((Product) terms[1]);
             }
-            else
-            {
+            else {
+                single_premise = false;
                 //The last entry is the postcondition
                 preconditions = precon;
                 postconditions = new PostCondition[postcons.length/2]; //term_1 meta_1 ,..., term_2 meta_2 ...
@@ -360,39 +389,32 @@ public class NALExecuter {
             }
         }
 
-        public void CheckAndApply(Task task, Sentence belief, ConceptProcess nal)
+        public void apply(Task task, Sentence belief, ConceptProcess nal)
         {
             //if preconditions are met:
             for (PostCondition p : postconditions)
-                p.Apply(single_premise, preconditions, task, belief, nal);
+                p.apply(single_premise, preconditions, task, belief, nal);
         }
     }
 
-    public List<Rule> constructRule(List<Term> uninterpreted_rules)
-    {
+    public static Rule[] getRules(List<Term> uninterpreted_rules)  {
         List<Rule> rules = new ArrayList<>();
 
         for(Term t : uninterpreted_rules)
             rules.add(new Rule((Product)t));
 
-        return rules;
+        return rules.toArray(new Rule[rules.size()]);
     }
 
-    List<Rule> rules = null;
-    public NALExecuter()
-    {
-        rules = constructRule(parseRules(loadRuleStrings())); //rules are constructed once
-    }
+    public boolean reason(final Task task, final Sentence belief, final ConceptProcess nal) {
 
-    public boolean reason(Task task, Sentence belief, ConceptProcess nal)
-    {
-        for(Rule r : rules)
-        {
-            if(task.isJudgment() || task.isGoal()) //forward inference
-            {
-                r.CheckAndApply(task, belief, nal); //TODO also allow backward inference by traversing
+        for(Rule r : rules) {
+            if (task.isJudgment() || task.isGoal()) { //forward inference
+                r.apply(task, belief, nal); //TODO also allow backward inference by traversing
             }
         }
+
         return true;
     }
+
 }

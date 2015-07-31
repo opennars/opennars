@@ -10,10 +10,11 @@ import org.junit.Test;
  */
 public class TaskRuleTest extends TestCase {
 
+    static final NALExecuter executer = NALExecuter.defaults; //all the inference rules have to pass of course
+
     @Test
     public void testParser() {
 
-        NALExecuter executer =new NALExecuter(); //all the inference rules have to pass of course
 
         NarseseParser p = NarseseParser.the();
         //NAR p = new NAR(new Default());

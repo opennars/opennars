@@ -21,6 +21,17 @@
     </scm>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/java/</directory>
+                <includes>
+                    <include>**/*.logic</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+
         <finalName>opennars_logic_${project.version}</finalName>
         <plugins>
 

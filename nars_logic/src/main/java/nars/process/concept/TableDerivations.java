@@ -22,12 +22,24 @@ import static nars.nal.RuleTables.goalFromQuestion;
 
 public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable, but since this one we will delete, the confusion will be gone
 
-    NALExecuter nalex = null;
+    NALExecuter nalex = NALExecuter.defaults;
+
     boolean UseNalex = true; //so far also both can be used, because this
     boolean UseRuletable = false; //make it easy to compare if there truth values or results differ
 
     @Override
     public final boolean apply(final ConceptProcess f, final TermLink bLink) {
+
+        boolean applied_something = false; //
+
+        if(UseNalex) {
+            applied_something = nalex.apply(f, bLink);
+        }
+
+        if(!UseRuletable) {
+            return applied_something;
+        }
+
 
 
         final TaskLink tLink = f.getTaskLink();
@@ -35,22 +47,10 @@ public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable
         final Term taskTerm = tLink.getTerm();
 
         final Task beliefTask = f.getBelief();
-        final Sentence belief = f.getBelief();
+        @Deprecated final Sentence belief = f.getBelief();
         final Term beliefTerm = bLink.getTerm();
 
-        if(UseNalex && nalex == null) {
-            nalex=new NALExecuter();
-        }
 
-        boolean applied_something = false; //
-
-        if(UseNalex) {
-            applied_something = nalex.reason(tLink.getTask(),belief,f);
-        }
-
-        if(!UseRuletable) {
-            return applied_something;
-        }
 
 //        if (belief == null) {
 //            if (beliefTerm!=null) {
