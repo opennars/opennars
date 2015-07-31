@@ -134,12 +134,12 @@ public class NALExecuter extends ConceptFireTaskTerm  {
             try
             {
                 TaskRule r = meta.term(parsable);
-                r.normalize();
                 uninterpreted_rules.add(r); //try to parse it
             }
-            catch (Exception ex)
-            {
-                System.out.println("The following rule can not be parsed so won't be used:\n" + parsable + " \n "+ ex.toString());
+            catch (Exception ex) {
+                System.err.println("The following rule can not be parsed so won't be used:\n" +
+                        parsable + " \n "+ ex.toString());
+                ex.printStackTrace();
             }
         }
 

@@ -56,7 +56,14 @@ public class TaskRule extends Rule<Premise,Task> {
 
     final static TaskRuleNormalization taskRuleNormalization = new TaskRuleNormalization();
 
-    public TaskRule normalize() {
-        return this.transform(taskRuleNormalization);
+    @Override
+    public TaskRule normalizeDestructively() {
+        this.transform(taskRuleNormalization);
+        return this;
     }
+
+    public TaskRule normalize() {
+        return this;
+    }
+
 }
