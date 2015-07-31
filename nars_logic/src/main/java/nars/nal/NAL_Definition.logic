@@ -5,12 +5,12 @@
 
 //// immediate inference
 
-    (S --> P) |- (P --> S), (Truth.Conversion)
-    (S ==> P) |- (P ==> S), (Truth.Conversion)
-    ( --S ==> P) |- ( --P ==> S), (Truth.Contraposition)
+    (S --> P) |- (P --> S), (Truth.Conversion, Info.SeldomUseful)
+    (S ==> P) |- (P ==> S), (Truth.Conversion, Info.SeldomUseful)
+    ( --S ==> P) |- ( --P ==> S), (Truth.Contraposition, Info.SeldomUseful)
 
-    --S |- S, (Truth.Negation, Desire.Negation)
-    S |- --S, (Truth.Negation, Desire.Negation)
+    --S |- S, (Truth.Negation, Desire.Negation, Info.SeldomUseful)
+    S |- --S, (Truth.Negation, Desire.Negation, Info.SeldomUseful)
 
 //// structural inference
 //java

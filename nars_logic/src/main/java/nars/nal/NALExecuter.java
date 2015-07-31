@@ -85,7 +85,7 @@ public class NALExecuter {
 
     public static String preprocess(String rule) //minor things like Truth.Comparison -> Truth_Comparison
     {                                     //A_1..n ->  "A_1_n" and adding of "<" and ">" in order to be parsable
-        String ret = "<" + rule.replace("Truth.","Truth_").replace("Desire.", "Desire_").replace("Occurrence.", "Occurrence_").replace("Order.","Order_").replace("Stamp.","Stamp_") + ">";
+        String ret = "<" + rule.replace("Info.","Info_").replace("Truth.","Truth_").replace("Desire.", "Desire_").replace("Occurrence.", "Occurrence_").replace("Order.","Order_").replace("Stamp.","Stamp_") + ">";
         while(ret.contains("  "))
         {
             ret=ret.replace("  "," ");
@@ -209,6 +209,10 @@ public class NALExecuter {
                         break;
                     case "Desire.Deduction": //implicit assumption: happens after, so it overwrites
                         desire = TruthFunctions.desireDed(task.truth, belief.truth);
+                        break;
+                    case "Info.SeldomUseful":
+                        if(nal.memory.random.nextDouble() > 0.05)
+                            return false;
                         break;
                     default: //only these 3 for now, can be extended later, lets go on with the rest for now
                         break;
