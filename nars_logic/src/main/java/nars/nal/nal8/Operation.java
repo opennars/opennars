@@ -43,7 +43,7 @@ import java.io.Writer;
 import java.util.Arrays;
 
 /**
- * An operation is interpreted as an Inheritance relation.
+ * An operation is interpreted as an Inheritance relation with an operator.
  */
 public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> {
 

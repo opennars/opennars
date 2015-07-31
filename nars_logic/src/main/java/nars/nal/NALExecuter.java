@@ -6,6 +6,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.Product1;
 import nars.narsese.NarseseParser;
@@ -125,10 +126,29 @@ public class NALExecuter {
             this.Term_and_Meta = Term_and_Meta;
         }
 
+        public Term substituted_version(Term t, Map<Term,Term> subs)
+        {
+            if(t instanceof Compound)
+                return ((Compound)t).applySubstitute(subs);
+
+            else //assume its a variable instead
+            {
+                if(subs.keySet().contains(t))
+                    return subs.get(t);
+            }
+            return t;
+        }
+
         public boolean Apply(boolean single_premise, Term[] preconditions, Task task, Sentence belief, ConceptProcess nal)
         {
             Truth truth = null;
             Truth desire = null;
+
+            if(!single_premise && (task == null || belief == null))
+                return false;
+
+            if(single_premise && task==null)
+                return false;
 
             //todo consume and use also other meta information
             for(Term t : ((Product)this.Term_and_Meta.term(1)).terms())
@@ -201,7 +221,7 @@ public class NALExecuter {
             //now match the rule with the task term <- should probably happen earlier ^^
             final Map<Term, Term> assign = Global.newHashMap();
             final Map<Term, Term> waste = Global.newHashMap();
-            Compound derive = (Compound) Term_and_Meta.term(0); //first entry is term
+            Term derive = Term_and_Meta.term(0); //first entry is term
             //precon[0]
             //TODO checking the precondition again for every postcondition misses the point, but is easily fixable (needs to be moved down to Rule)
             if(single_premise) //only match precondition pattern with task
@@ -210,7 +230,7 @@ public class NALExecuter {
                 if(!Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[0], task.getTerm(), assign, waste, nal.memory.random))
                     return false;
                 //now we have to apply this to the derive term
-                derive = (Compound) derive.applySubstitute(assign); //apply same substitution to the task term
+                derive = substituted_version(derive,assign);
             }
             else
             {
@@ -222,14 +242,16 @@ public class NALExecuter {
                     return false;
 
                 //also check if the preconditions are met
-                /*for(int i=2; i<preconditions.length; i++)   <-relations are broken in 1.7, as long as they are broken this code is also broken ^^
+                for(int i=2; i<preconditions.length; i++)
                 {
                     Inheritance predicate = (Inheritance) preconditions[i];
                     Term predicate_name = predicate.getPredicate();
-                    Term[] args = ((Product)predicate.getSubject()).terms();
+                    Term[] args = ((Product)(((SetExt)predicate.getSubject()).term(0))).terms();
                     //ok apply substitution to both elements in args
-                    Term arg1 = ((Compound)args[0]).applySubstitute(assign);
-                    Term arg2 = ((Compound)args[1]).applySubstitute(assign);
+
+                    Term arg1 = args[0], arg2 = args[1];
+                    arg1 = substituted_version(arg1, assign);
+                    arg2 = substituted_version(arg2, assign);
 
                     if(predicate_name.toString().equals("not_equal"))
                     {
@@ -239,21 +261,21 @@ public class NALExecuter {
 
                     if(predicate_name.toString().equals("no_common_subterm"))
                     {
-                        //TODO
+                        //TODO: don't we already have a function for this?
                     }
-                }*/
+                }
 
                 //now we have to apply this to the derive term
-                derive = (Compound) derive.applySubstitute(assign);
+                derive = substituted_version(derive,assign);
             }
 
-            //TODO also check precondition predicates
             //TODO also allow substituted evaluation on output side (used by 2 rules I think)
 
             Budget budget = BudgetFunctions.compoundForward(truth, derive, nal);
 
-            boolean allowOverlap = true; //to be refined
-            nal.deriveDouble(nal.newDoublePremise(task,belief,allowOverlap).term(derive).punctuation(task.punctuation).truth(truth).budget(budget)); //TODO newSinglePremise doesnt exist yet but is needed in case of single premise!!
+            boolean allowOverlap = false; //to be refined
+            if(derive instanceof Compound)
+                nal.deriveDouble(nal.newDoublePremise(task,belief,allowOverlap).term((Compound) derive).punctuation(task.punctuation).truth(truth).budget(budget)); //TODO newSinglePremise doesnt exist yet but is needed in case of single premise!!
             return true;
         }
     }
@@ -329,11 +351,13 @@ public class NALExecuter {
         {
             if(task.isJudgment() || task.isGoal()) //forward inference
             {
-                try {
+                try
+                {
                     r.CheckAndApply(task, belief, nal); //TODO also allow backward inference by traversing
                 }
-                catch(Exception ex) {
-
+                catch(Exception ex)
+                {
+                    System.out.println(ex.toString());
                 }
             }
         }
