@@ -126,19 +126,6 @@ public class NALExecuter {
             this.Term_and_Meta = Term_and_Meta;
         }
 
-        public Term substituted_version(Term t, Map<Term,Term> subs)
-        {
-            if(t instanceof Compound)
-                return ((Compound)t).applySubstitute(subs);
-
-            else //assume its a variable instead
-            {
-                if(subs.keySet().contains(t))
-                    return subs.get(t);
-            }
-            return t;
-        }
-
         public boolean Apply(boolean single_premise, Term[] preconditions, Task task, Sentence belief, ConceptProcess nal)
         {
             Truth truth = null;
@@ -225,8 +212,13 @@ public class NALExecuter {
                 }
             }
 
-            if(truth==null && task.isJudgment() || desire==null && task.isGoal()) {
-                System.out.println("truth and desire value of rule were not specified, deriving nothing: \n" + Term_and_Meta.toString());
+            if(truth==null && task.isJudgment()) {
+                System.out.println("truth value of rule was not specified, deriving nothing: \n" + Term_and_Meta.toString());
+                return false; //not specified!!
+            }
+
+            if(desire==null && task.isGoal()) {
+                System.out.println("desire value of rule was not specified, deriving nothing: \n" + Term_and_Meta.toString());
                 return false; //not specified!!
             }
 
@@ -242,7 +234,7 @@ public class NALExecuter {
                 if(!Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[0], task.getTerm(), assign, waste, nal.memory.random))
                     return false;
                 //now we have to apply this to the derive term
-                derive = substituted_version(derive,assign);
+                derive = Term.substituted_version(derive, assign);
             }
             else
             {
@@ -262,8 +254,8 @@ public class NALExecuter {
                     //ok apply substitution to both elements in args
 
                     Term arg1 = args[0], arg2 = args[1];
-                    arg1 = substituted_version(arg1, assign);
-                    arg2 = substituted_version(arg2, assign);
+                    arg1 = Term.substituted_version(arg1, assign);
+                    arg2 = Term.substituted_version(arg2, assign);
 
                     if(predicate_name.toString().equals("not_equal"))
                     {
@@ -278,7 +270,7 @@ public class NALExecuter {
                 }
 
                 //now we have to apply this to the derive term
-                derive = substituted_version(derive,assign);
+                derive = Term.substituted_version(derive, assign);
             }
 
             //TODO also allow substituted evaluation on output side (used by 2 rules I think)

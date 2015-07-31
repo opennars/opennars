@@ -30,6 +30,7 @@ import nars.util.data.id.Identified;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.Map;
 
 public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable {
 
@@ -190,6 +191,19 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
     default String toStringCompact() {
         return toString();
+    }
+
+    static public Term substituted_version(Term t, Map<Term,Term> subs)
+    {
+        if(t instanceof Compound)
+            return ((Compound)t).applySubstitute(subs);
+
+        else //assume its a variable instead
+        {
+            if(subs.keySet().contains(t))
+                return subs.get(t);
+        }
+        return t;
     }
 
 }
