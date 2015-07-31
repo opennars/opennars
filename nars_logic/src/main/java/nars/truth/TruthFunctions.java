@@ -397,6 +397,54 @@ public final class TruthFunctions extends UtilityFunctions {
         return analogy(b, v0);
     }
 
+    public static final Truth decomposePositiveNegativeNegative(final Truth a, final Truth b) {
+        final float f1 = a.getFrequency();
+        final float c1 = a.getConfidence();
+        final float f2 = b.getFrequency();
+        final float c2 = b.getConfidence();
+
+        final float fn = and(f1,1-f2);
+        return new DefaultTruth(1-fn, and(fn,c1,c2));
+    }
+
+    public static final Truth decomposeNegativePositivePositive(final Truth a, final Truth b) {
+        final float f1 = a.getFrequency();
+        final float c1 = a.getConfidence();
+        final float f2 = b.getFrequency();
+        final float c2 = b.getConfidence();
+
+        final float f = and((1-f1),f2);
+        return new DefaultTruth(f, and(f,c1,c2));
+    }
+
+    public static final Truth decomposePositiveNegativePositive(final Truth a, final Truth b) {
+        final float f1 = a.getFrequency();
+        final float c1 = a.getConfidence();
+        final float f2 = b.getFrequency();
+        final float c2 = b.getConfidence();
+
+        final float f = and(f1,(1-f2));
+        return new DefaultTruth(f, and(f,c1,c2));
+    }
+
+    public static final Truth decomposeNegativeNegativeNegative(final Truth a, final Truth b) {
+        final float f1 = a.getFrequency();
+        final float c1 = a.getConfidence();
+        final float f2 = b.getFrequency();
+        final float c2 = b.getConfidence();
+
+        final float fn = and((1-f1),(1-f2));
+        return new DefaultTruth(1-fn, and(fn,c1,c2));
+    }
+
+    public static final Truth difference(final Truth a, final Truth b) {
+        final float f1 = a.getFrequency();
+        final float c1 = a.getConfidence();
+        final float f2 = b.getFrequency();
+        final float c2 = b.getConfidence();
+
+        return new DefaultTruth(and(f1,(1-f2)), and(c1,c2));
+    }
 
     /**
      * From one moment to eternal

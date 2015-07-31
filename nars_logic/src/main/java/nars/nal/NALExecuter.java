@@ -186,14 +186,26 @@ public class NALExecuter {
                     case "Truth.Intersection":
                         truth = TruthFunctions.intersection(task.truth, belief.truth);
                         break;
-                   // case "Truth.Difference":
-                    //    truth = TruthFunctions.(task.truth, belief.truth);
-                    //    break;
+                    case "Truth.Difference":
+                        truth = TruthFunctions.difference(task.truth, belief.truth);
+                        break;
                     case "Truth.Analogy":
                         truth = TruthFunctions.analogy(task.truth, belief.truth);
                         break;
                     case "Truth.Exemplification":
                         truth = TruthFunctions.exemplification(task.truth, belief.truth);
+                        break;
+                    case "Truth.DecomposeNegativeNegativeNegative":
+                        truth = TruthFunctions.decomposeNegativeNegativeNegative(task.truth, belief.truth);
+                        break;
+                    case "Truth.DecomposePositiveNegativePositive":
+                        truth = TruthFunctions.decomposePositiveNegativePositive(task.truth, belief.truth);
+                        break;
+                    case "Truth.DecomposeNegativePositivePositive":
+                        truth = TruthFunctions.decomposeNegativePositivePositive(task.truth, belief.truth);
+                        break;
+                    case "Truth.DecomposePositiveNegativeNegative":
+                        truth = TruthFunctions.decomposePositiveNegativeNegative(task.truth, belief.truth);
                         break;
                     //TODO all others also
                     case "Desire.Strong": //implicit assumption: happens after, so it overwrites
@@ -275,8 +287,19 @@ public class NALExecuter {
 
             boolean allowOverlap = false; //to be refined
             if(derive instanceof Compound)
-                nal.deriveDouble(nal.newDoublePremise(task,belief,allowOverlap).term((Compound) derive).punctuation(task.punctuation).truth(truth).budget(budget)); //TODO newSinglePremise doesnt exist yet but is needed in case of single premise!!
-            return true;
+            {
+                if(!single_premise)
+                {
+                    TaskSeed seed = nal.newDoublePremise(task, belief, allowOverlap);
+                    if(seed != null)
+                        nal.deriveDouble(seed.term((Compound) derive).punctuation(task.punctuation).truth(truth).budget(budget)); //TODO newSinglePremise doesnt exist yet but is needed in case of single premise!!
+                }
+                else //assuming derive means deriveSingle
+                {
+                    nal.deriveSingle((Compound) derive, truth, budget);
+                }
+            }
+                return true;
         }
     }
 
@@ -351,14 +374,7 @@ public class NALExecuter {
         {
             if(task.isJudgment() || task.isGoal()) //forward inference
             {
-                try
-                {
-                    r.CheckAndApply(task, belief, nal); //TODO also allow backward inference by traversing
-                }
-                catch(Exception ex)
-                {
-                    System.out.println(ex.toString());
-                }
+                r.CheckAndApply(task, belief, nal); //TODO also allow backward inference by traversing
             }
         }
         return true;

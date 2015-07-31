@@ -1,7 +1,7 @@
 // Pei Wang's "Non-Axiomatic Logic" specified with a math. notation inspired DSL: (TODO: So far only NAL1-6)
 
-// revision
-    A, A |- A, (Truth.Revision)
+// revision (already handled by belief management in java)
+//    A, A |- A, (Truth.Revision)
 
 //// immediate inference
 
@@ -17,7 +17,7 @@
 
 //// inheritance-based syllogism
 
-    (M --> P), (S --> M), not_equal(S,P) |- (S --> P), (Truth.Deduction)
+    (M --> P), (S --> M), not_equal(S,P) |- (S --> P), (Truth.Deduction, DesireDed)
     (P --> M), (S --> M), not_equal(S,P) |- (S --> P), (Truth.Abduction)
     (M --> P), (M --> S), not_equal(S,P) |- (S --> P), (Truth.Induction)
     (P --> M), (M --> S), not_equal(S,P) |- (S --> P), (Truth.Exemplification)
