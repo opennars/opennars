@@ -130,6 +130,7 @@ public class NALExecuter {
         {
             Truth truth = null;
             Truth desire = null;
+            boolean deriveOccurence = false; //if false its just the occurence time of the parent
 
             if(!single_premise && (task == null || belief == null))
                 return false;
@@ -214,6 +215,9 @@ public class NALExecuter {
                         if(nal.memory.random.nextDouble() > 0.05)
                             return false;
                         break;
+                    case "Occurrence.Derive": //detachment
+                        deriveOccurence = true;
+                        break;
                     default: //only these 3 for now, can be extended later, lets go on with the rest for now
                         break;
                 }
@@ -283,6 +287,12 @@ public class NALExecuter {
             //TODO also allow substituted evaluation on output side (used by 2 rules I think)
 
             Budget budget = BudgetFunctions.compoundForward(truth, derive, nal);
+
+
+            //TODO on occurenceDerive, for example consider ((&/,<a --> b>,+8) =/> (c --> k)), (a --> b) |- (c --> k)
+            // or ((a --> b) =/> (c --> k)), (a --> b) |- (c --> k) where the order makes a difference,
+            //a difference in occuring, not a difference in matching
+            //CALCULATE OCCURENCE TIME HERE AND SET DERIVED TASK OCCURENCE TIME ACCORDINGLY!
 
             boolean allowOverlap = false; //to be refined
             if(derive instanceof Compound)

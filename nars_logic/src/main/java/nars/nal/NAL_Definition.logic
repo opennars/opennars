@@ -92,20 +92,20 @@
 
 //// conditional syllogism
 
-    M, (M ==> P) |- P, (Truth.Deduction, Desire.Induction)
-    M, (P ==> M) |- P, (Truth.Abduction, Desire.Deduction)
-    M, (S <=> M) |- S, (Truth.Analogy, Desire.Strong)
+    M, (M ==> P) |- P, (Truth.Deduction, Desire.Induction, Occurence.Derive)
+    M, (P ==> M) |- P, (Truth.Abduction, Desire.Deduction, Occurence.Derive)
+    M, (S <=> M) |- S, (Truth.Analogy, Desire.Strong, Occurence.Derive)
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
 
-//    P, S, no_common_subterm(S,P) |- (S ==> P), (Truth.Induction)
-//    P, S, no_common_subterm(S,P) |- (S <=> P), (Truth.Comparison)
-//    P, S, no_common_subterm(S,P) |- (P && S), (Truth.Intersection)
-//    P, S, no_common_subterm(S,P) |- (P || S), (Truth.Union)
+    P, S, no_common_subterm(S,P) |- (S ==> P), (Truth.Induction)
+    P, S, no_common_subterm(S,P) |- (S <=> P), (Truth.Comparison)
+    P, S, no_common_subterm(S,P) |- (P && S), (Truth.Intersection)
+    P, S, no_common_subterm(S,P) |- (P || S), (Truth.Union)
     
 //// propositional decomposition
 
-    S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth.DecomposePositiveNegativeNegative)
+    S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth.DecomposePositiveNegativeNegative, Occurrence.Derive)
     S, (||,S,A_1..n) |- (||,A_1..n), (Truth.DecomposeNegativePositivePositive)
 
 //// multi-conditional syllogism
@@ -147,6 +147,20 @@
     (&&,(#N --> S), A_1..n), (M --> S) |- (&&,substituted(A_1..n,#N,M)), (Truth.AnonymousAnalogy)
     
     (&&,(S --> #N), A_1..n), (S --> M) |- (&&,substituted(A_1..n,#N,M)), (Truth.AnonymousAnalogy)
+
+//NAL7 specific inference
+//all above rules work for all orders to be able to use NAL1-6 (as long as the order of both premises is the same)
+//(where order of (&/ is taken into account in findSubstitute already which doesn't permute if there is order,
+//and where order of =/> on detachment is handled by Occurence.Derive)
+//but if order is explicitely given, only a premise of the same order will match,
+//this keeps this file very straightforward
+
+    (&/,A_1..n), ((&/,A_1..n, B_1..m) ==> B) |- ((&/,B_1..m) ==> B), (Truth.Deduction, Occurrence.Derive)
+    (&/,A_1..n), ((&/,A_1..n, I) ==> B), interval(I) |- B, (Truth.Deduction, Occurrence.Derive)
+
+    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) =/> P), (Truth.Induction)
+    P, S, no_common_subterm(S,P), event(P), event(S) |- (&/,S,measure_time(S,P) </> P), (Truth.Comparison)
+    P, S, no_common_subterm(S,P), event(P), event(S) |- (&/,S,measure_time(S,P),P), (Truth.Intersection)
 
 ////// Theorems in IL:
 //java
