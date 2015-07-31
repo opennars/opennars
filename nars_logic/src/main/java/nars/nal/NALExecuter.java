@@ -15,6 +15,7 @@ import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
@@ -85,7 +86,7 @@ public class NALExecuter {
 
     public static String preprocess(String rule) //minor things like Truth.Comparison -> Truth_Comparison
     {                                     //A_1..n ->  "A_1_n" and adding of "<" and ">" in order to be parsable
-        String ret = "<" + rule.replace("Info.","Info_").replace("Truth.","Truth_").replace("Desire.", "Desire_").replace("Occurrence.", "Occurrence_").replace("Order.","Order_").replace("Stamp.","Stamp_") + ">";
+        String ret = "<" + rule.replace("Info.","Info_").replace("Truth.", "Truth_").replace("Desire.", "Desire_").replace("Occurrence.", "Occurrence_").replace("Order.","Order_").replace("Stamp.","Stamp_") + ">";
         while(ret.contains("  "))
         {
             ret=ret.replace("  "," ");
@@ -272,6 +273,12 @@ public class NALExecuter {
                     {
                         if(arg1.equals(arg2))
                             return false; //not_equal
+                    }
+                    if(predicate_name.toString().equals("event"))
+                    {
+                        //TODO refine check what it refers to, to task or belief
+                        if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL)
+                            return false;
                     }
 
                     if(predicate_name.toString().equals("no_common_subterm"))

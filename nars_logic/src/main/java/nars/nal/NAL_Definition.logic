@@ -98,10 +98,10 @@
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
 
-    P, S, no_common_subterm(S,P) |- (S ==> P), (Truth.Induction)
-    P, S, no_common_subterm(S,P) |- (S <=> P), (Truth.Comparison)
-    P, S, no_common_subterm(S,P) |- (P && S), (Truth.Intersection)
-    P, S, no_common_subterm(S,P) |- (P || S), (Truth.Union)
+//   P, S, no_common_subterm(S,P) |- (S ==> P), (Truth.Induction)
+//   P, S, no_common_subterm(S,P) |- (S <=> P), (Truth.Comparison)
+//   P, S, no_common_subterm(S,P) |- (P && S), (Truth.Intersection)
+//   P, S, no_common_subterm(S,P) |- (P || S), (Truth.Union)
     
 //// propositional decomposition
 
@@ -159,7 +159,7 @@
     (&/,A_1..n), ((&/,A_1..n, I) ==> B), interval(I) |- B, (Truth.Deduction, Occurrence.Derive)
 
     P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) =/> P), (Truth.Induction)
-    P, S, no_common_subterm(S,P), event(P), event(S) |- (&/,S,measure_time(S,P) </> P), (Truth.Comparison)
+    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) </> P), (Truth.Comparison)
     P, S, no_common_subterm(S,P), event(P), event(S) |- (&/,S,measure_time(S,P),P), (Truth.Intersection)
 
 ////// Theorems in IL:
