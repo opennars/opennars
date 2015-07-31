@@ -1,7 +1,10 @@
 package nars.meta;
 
 import junit.framework.TestCase;
+import nars.meter.NARComparator;
 import nars.nal.NALExecuter;
+import nars.nar.Default;
+import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
 import org.junit.Test;
 
@@ -73,4 +76,28 @@ public class TaskRuleTest extends TestCase {
 
     }
 
+    public void testDerivationComparator() {
+
+        NARComparator c = new NARComparator(new Default(), new NewDefault());
+        c.input("<x --> y>.");
+        c.input("<y --> z>.");
+
+        System.out.println();
+
+        int cycles = 16;
+        for (int i = 0; i < cycles; i++) {
+            if (!c.areEqual()) {
+
+                System.out.println("\ncycle: " + c.time());
+                System.out.println("original: " + c.getTaskSetA());
+                System.out.println("rules: " + c.getTaskSetB());
+//                System.out.println(c.getAMinusB());
+//                System.out.println(c.getBMinusA());
+            }
+            c.frame(1);
+        }
+
+
+
+    }
 }

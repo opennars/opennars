@@ -5,7 +5,6 @@ import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
-import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.clock.CycleClock;
@@ -23,6 +22,7 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicRule;
+import nars.nal.NALExecuter;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -84,7 +84,7 @@ public class Default extends NARSeed  {
     public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
 
 
-    public static LogicPolicy newPolicy() {
+    public static LogicPolicy newPolicy(ConceptFireTaskTerm ruletable) {
 
         return new LogicPolicy(
 
@@ -109,7 +109,8 @@ public class Default extends NARSeed  {
 
                         new DeduceSecondaryVariableUnification(),
                         new DeduceConjunctionByQuestion(),
-                        new TableDerivations()
+
+                        ruletable
                         //---------------------------------------------
                 } ,
 
@@ -234,8 +235,10 @@ public class Default extends NARSeed  {
 
         conceptCreationExpectation.set(0.66);
 
-        policy = newPolicy();
+        policy = getLogicPolicy();
     }
+
+
 
     public static final Operator[] exampleOperators = new Operator[] {
         //new Wait(),
@@ -447,7 +450,7 @@ public class Default extends NARSeed  {
 
     @Override
     public LogicPolicy getLogicPolicy() {
-        return policy;
+        return newPolicy(new TableDerivations());
     }
 
     protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {

@@ -20,6 +20,7 @@ import nars.nal.LogicPolicy;
 import nars.nar.Default;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
+import nars.process.concept.TableDerivations;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskAccumulator;
@@ -82,7 +83,7 @@ public class Alann extends NARSeed {
 
     @Override
     public LogicPolicy getLogicPolicy() {
-        return Default.newPolicy();
+        return Default.newPolicy(new TableDerivations());
     }
 
     @Override
