@@ -201,10 +201,13 @@ public class NALExecuter {
                     case "Desire.Weak": //implicit assumption: happens after, so it overwrites
                         desire = TruthFunctions.desireWeak(task.truth, belief.truth);
                         break;
-                    case "Desire.Ind": //implicit assumption: happens after, so it overwrites
+                    case "Desire.Negation": //implicit assumption: happens after, so it overwrites
+                        desire = TruthFunctions.negation(task.truth);
+                        break;
+                    case "Desire.Induction": //implicit assumption: happens after, so it overwrites
                         desire = TruthFunctions.desireInd(task.truth, belief.truth);
                         break;
-                    case "Desire.Ded": //implicit assumption: happens after, so it overwrites
+                    case "Desire.Deduction": //implicit assumption: happens after, so it overwrites
                         desire = TruthFunctions.desireDed(task.truth, belief.truth);
                         break;
                     default: //only these 3 for now, can be extended later, lets go on with the rest for now

@@ -198,7 +198,8 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         if(t instanceof Compound)
             return ((Compound)t).applySubstitute(subs);
 
-        else //assume its a variable instead
+        else
+        if(t instanceof Variable)
         {
             if(subs.keySet().contains(t))
                 return subs.get(t);

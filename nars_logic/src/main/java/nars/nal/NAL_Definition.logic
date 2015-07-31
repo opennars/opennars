@@ -9,30 +9,30 @@
     (S ==> P) |- (P ==> S), (Truth.Conversion)
     ( --S ==> P) |- ( --P ==> S), (Truth.Contraposition)
 
-    --S |- S, (Truth.Negation)
-    S |- --S, (Truth.Negation)
+    --S |- S, (Truth.Negation, Desire.Negation)
+    S |- --S, (Truth.Negation, Desire.Negation)
 
 //// structural inference
 //java
 
 //// inheritance-based syllogism
 
-    (M --> P), (S --> M), not_equal(S,P) |- (S --> P), (Truth.Deduction, DesireDed)
-    (P --> M), (S --> M), not_equal(S,P) |- (S --> P), (Truth.Abduction)
-    (M --> P), (M --> S), not_equal(S,P) |- (S --> P), (Truth.Induction)
-    (P --> M), (M --> S), not_equal(S,P) |- (S --> P), (Truth.Exemplification)
+    (M --> P), (S --> M), not_equal(S,P) |- (S --> P), (Truth.Deduction, Desire.Strong)
+    (P --> M), (S --> M), not_equal(S,P) |- (S --> P), (Truth.Abduction, Desire.Weak)
+    (M --> P), (M --> S), not_equal(S,P) |- (S --> P), (Truth.Induction, Desire.Weak)
+    (P --> M), (M --> S), not_equal(S,P) |- (S --> P), (Truth.Exemplification, Desire.Weak)
 
 //// similarity from inheritance
 
-    (S --> P), (P --> S) |- (S <-> P), (Truth.Intersection)
+    (S --> P), (P --> S) |- (S <-> P), (Truth.Intersection, Desire.Strong)
 
 //// similarity-based syllogism
 
-    (P --> M), (S --> M), not_equal(S,P) |- (S <-> P), (Truth.Comparison)
-    (M --> P), (M --> S), not_equal(S,P) |- (S <-> P), (Truth.Comparison)
-    (M --> P), (S <-> M), not_equal(S,P) |- (S --> P), (Truth.Analogy)
-    (P --> M), (S <-> M), not_equal(S,P) |- (P --> S), (Truth.Analogy)
-    (M <-> P), (S <-> M), not_equal(S,P) |- (S <-> P), (Truth.Resemblance)
+    (P --> M), (S --> M), not_equal(S,P) |- (S <-> P), (Truth.Comparison, Desire.Weak)
+    (M --> P), (M --> S), not_equal(S,P) |- (S <-> P), (Truth.Comparison, Desire.Weak)
+    (M --> P), (S <-> M), not_equal(S,P) |- (S --> P), (Truth.Analogy, Desire.Strong)
+    (P --> M), (S <-> M), not_equal(S,P) |- (P --> S), (Truth.Analogy, Desire.Strong)
+    (M <-> P), (S <-> M), not_equal(S,P) |- (S <-> P), (Truth.Resemblance, Desire.Strong)
 
 //// inheritance-based composition
 
@@ -92,9 +92,9 @@
 
 //// conditional syllogism
 
-    (M ==> P), M |- P, (Truth.Deduction)
-    (P ==> M), M |- P, (Truth.Abduction)
-    M, (S <=> M) |- S, (Truth.Analogy)
+    M, (M ==> P) |- P, (Truth.Deduction, Desire.Induction)
+    M, (P ==> M) |- P, (Truth.Abduction, Desire.Deduction)
+    M, (S <=> M) |- S, (Truth.Analogy, Desire.Strong)
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
 
