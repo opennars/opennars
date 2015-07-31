@@ -150,6 +150,30 @@ public class NALExecuter {
                     case "Truth.Conversion":
                         truth = TruthFunctions.conversion(task.truth);
                         break;
+                    case "Truth.Negation":
+                        truth = TruthFunctions.negation(task.truth);
+                        break;
+                    case "Truth.Contraposition":
+                        truth = TruthFunctions.contraposition(task.truth);
+                        break;
+                    case "Truth.Resemblance":
+                        truth = TruthFunctions.resemblance(task.truth, belief.truth);
+                        break;
+                    case "Truth.Union":
+                        truth = TruthFunctions.union(task.truth, belief.truth);
+                        break;
+                    case "Truth.Intersection":
+                        truth = TruthFunctions.intersection(task.truth, belief.truth);
+                        break;
+                   // case "Truth.Difference":
+                    //    truth = TruthFunctions.(task.truth, belief.truth);
+                    //    break;
+                    case "Truth.Analogy":
+                        truth = TruthFunctions.analogy(task.truth, belief.truth);
+                        break;
+                    case "Truth.Exemplification":
+                        truth = TruthFunctions.exemplification(task.truth, belief.truth);
+                        break;
                     //TODO all others also
                     case "Desire.Strong": //implicit assumption: happens after, so it overwrites
                         desire = TruthFunctions.desireStrong(task.truth, belief.truth);
@@ -196,7 +220,7 @@ public class NALExecuter {
                 if(!Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[1], belief.getTerm(), assign, waste, nal.memory.random))
                     return false;
                 //now we have to apply this to the derive term
-                derive = (Compound) derive.applySubstitute(assign); //apply same substitution to the task term
+                derive = (Compound) derive.applySubstitute(assign);
             }
 
             //TODO also check precondition predicates
