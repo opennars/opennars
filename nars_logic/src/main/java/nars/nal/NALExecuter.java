@@ -40,9 +40,6 @@ public class NALExecuter extends ConceptFireTaskTerm {
 
     public final TaskRule[] rules;
 
-    @Deprecated
-    public static final float seldomUsefulProbability = 0.05f;
-
     public static final NALExecuter defaults;
 
     static {

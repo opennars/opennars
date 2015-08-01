@@ -32,6 +32,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
     private final Term[] modifiers;
 
     public final TruthFunction truth;
+    boolean single_premise = false;
+    boolean negation = false;
+    boolean derive_occurence = false;
 
 
     public PostCondition(Term term, Term... modifiers) {
@@ -39,27 +42,56 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
         @Deprecated List<Term> otherModifiers = new ArrayList();
         TruthFunction truthFunc = null;
+        DesireFunction desireFunc = null;
 
         for (Term m : modifiers) {
             if (m instanceof Inheritance) {
                 Inheritance i = (Inheritance)m;
                 Term type = i.getPredicate();
                 Term which = i.getSubject();
+                String swhich = which.toString();
                 if (type instanceof Atom) {
                     String typeStr = type.toString();
                     switch (typeStr) {
+                        case "Desire":
                         case "Truth":
                             if (truthFunc!=null)
                                 throw new RuntimeException("truthFunc " + truthFunc + " already specified");
 
-                            TruthFunction tm = TruthFunction.get(which);
-                            if (tm!=null) {
-                                truthFunc = tm;
-                                continue;
+                            if(swhich.equals("Negation")) {
+                                negation = true;
                             }
-                            else {
-                                throw new RuntimeException("unknown TruthFunction " + which);
+
+                            if(swhich.equals("Negation") || swhich.equals("Conversion") || swhich.equals("Contraposition")) {
+                                single_premise = true;
                             }
+
+                            if(typeStr.equals("Truth")) {
+                                TruthFunction tm = TruthFunction.get(which);
+                                if (tm != null) {
+                                    truthFunc = tm;
+                                    continue;
+                                } else {
+                                    throw new RuntimeException("unknown TruthFunction " + which);
+                                }
+                            }
+                            else
+                            if(typeStr.equals("Desire")) {
+                                DesireFunction tm = DesireFunction.get(which);
+                                if (tm != null) {
+                                    desireFunc = tm;
+                                    continue;
+                                } else {
+                                    throw new RuntimeException("unknown TruthFunction " + which);
+                                }
+                            }
+                            break;
+                        case "Occurece":
+                            if(swhich.equals("Derive")) {
+                                derive_occurence = true;
+                            }
+                        default:
+                            break;
                     }
                 }
             }
@@ -73,24 +105,17 @@ public class PostCondition //since there can be multiple tasks derived per rule
         this.modifiers = otherModifiers.toArray(new Term[ otherModifiers.size() ]);
     }
 
-    public boolean apply(boolean single_premise, Term[] preconditions, Task task, Sentence belief, ConceptProcess nal) {
+    public boolean apply(Term[] preconditions, Task task, Sentence belief, ConceptProcess nal) {
         if (task == null)
             throw new RuntimeException("null task");
 
         final Truth T = task.truth;
-        final Truth B = single_premise ? null : belief.truth;
-
-
+        final Truth B = belief == null ? null : belief.truth;
 
         Truth truth = null;
         Truth desire = null;
         boolean deriveOccurrence = false; //if false its just the occurence time of the parent
-
-
-        //todo consume and use also other meta information
-        if (this.truth!=null) {
-            truth = this.truth.get(T,B);
-        }
+        boolean single_premise = false;
 
         for (Term t : modifiers) {
             //String s = t.toString().replace("_", ".");//.replace("%","");
@@ -102,40 +127,19 @@ public class PostCondition //since there can be multiple tasks derived per rule
             else {
                 throw new RuntimeException("invalid meta: " + this);
             }
+        }
 
+        if(negation && task.truth.getFrequency()>=0.5) { //its negation, it needs this additional information to be useful
+            return false;
+        }
 
-            switch (s) { //truth value calculation happens here
+        if(!single_premise && belief == null) {  //at this point single_premise is already decided, if its double premise and belief is null, we can stop already here
+            return false;
+        }
 
-
-                //TODO all others also
-                case "Desire.Strong": //implicit assumption: happens after, so it overwrites
-                    desire = TruthFunctions.desireStrong(T, B);
-                    break;
-                case "Desire.Weak": //implicit assumption: happens after, so it overwrites
-                    desire = TruthFunctions.desireWeak(T, B);
-                    break;
-                case "Desire.Negation": //implicit assumption: happens after, so it overwrites
-                    desire = TruthFunctions.negation(T);
-                    break;
-                case "Desire.Induction": //implicit assumption: happens after, so it overwrites
-                    desire = TruthFunctions.desireInd(T, B);
-                    break;
-                case "Desire.Deduction": //implicit assumption: happens after, so it overwrites
-                    desire = TruthFunctions.desireDed(T, B);
-                    break;
-
-                case "Info.SeldomUseful":
-                    if (nal.memory.random.nextFloat() > NALExecuter.seldomUsefulProbability)
-                        return false;
-                    break;
-
-                case "Occurrence.Derive": //detachment
-                    deriveOccurrence = true;
-                    break;
-
-                default: //only these 3 for now, can be extended later, lets go on with the rest for now
-                    break;
-            }
+        //todo consume and use also other meta information
+        if (this.truth != null) {
+            truth = this.truth.get(T,B);
         }
 
         if (truth == null && task.isJudgment()) {
@@ -194,8 +198,14 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             return false; //not_equal
                         break;
                     case "event":
-                        //TODO refine check what it refers to, to task or belief
+                        //TODO refine check what it refers to, the arguments, to task or belief
                         if (task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL)
+                            return false;
+                        break;
+                    case "negative":
+                        //TODO refine check what it refers to, the arguments, to task or belief
+                        single_premise=true;
+                        if (task.truth.getFrequency()>=0.5)
                             return false;
                         break;
                     case "no_common_subterm":
