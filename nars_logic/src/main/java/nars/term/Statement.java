@@ -344,18 +344,6 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
         return false;
     }
 
-    /**
-     * Check the validity of a potential Statement. [To be refined]
-     * <p>
-     * Minimum requirement: the two terms cannot be the same, or containing each
-     * other as component
-     *
-     * @return Whether The Statement is invalid
-     */
-    public boolean invalid() {
-        return invalidStatement(getSubject(), getPredicate());
-    }
-
 
     /**
      * Return the first component of the statement
@@ -378,4 +366,24 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     @Override
     public abstract Statement clone();
 
+    public Term getSubject(boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
+        return Compound.unwrap(getSubject(), unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
+    }
+    public Term getPredicate(boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
+        return Compound.unwrap(getPredicate(), unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
+    }
 }
+
+
+//    Should not be necessary since a Statement that would be invalid would never be created:
+//    /**
+//     * Check the validity of a potential Statement. [To be refined]
+//     * <p>
+//     * Minimum requirement: the two terms cannot be the same, or containing each
+//     * other as component
+//     *
+//     * @return Whether The Statement is invalid
+//     */
+//    public boolean invalid() {
+//        return invalidStatement(getSubject(), getPredicate());
+//    }

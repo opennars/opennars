@@ -26,6 +26,9 @@ import com.google.common.primitives.UnsignedLongs;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
+import nars.nal.nal4.Product;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
@@ -353,6 +356,28 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     public Term term(int i) {
         return term[i];
     }
+
+    public Term term(int i, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
+        Term x = term[i];
+        return Compound.unwrap(x, unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
+    }
+
+    public static Term unwrap(Term x, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
+        if (x instanceof Compound) {
+            Compound c = (Compound)x;
+            if (c.length() == 1) {
+                if  ( (unwrapLen1SetInt && (c instanceof SetInt)) ||
+                        (unwrapLen1SetExt && (c instanceof SetExt)) ||
+                          (unwrapLen1Product && (c instanceof Product))
+                        ) {
+                    return c.term(0);
+                }
+            }
+        }
+
+        return x;
+    }
+
 
     /**
      * Abstract method to get the operate of the compound
@@ -737,31 +762,88 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * Cloned array of Terms, except for one or more Terms.
      *
      * @param toRemove
-     * @return the cloned array with the missing terms removed, OR null if no terms were actually removed when requireModification=true
+     * @return the cloned array with the missing terms removed,
+     *         OR null if no terms were actually removed when requireModification=true
      */
     public Term[] cloneTermsExcept(final boolean requireModification, final Term... toRemove) {
-        //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
 
-        List<Term> l = asTermList();
-        boolean removed = false;
-
-        for (final Term t : toRemove) {
-            if (l.remove(t))
-                removed = true;
+        final int toRemoveLen = toRemove.length;
+        if (toRemoveLen == 0)
+            throw new RuntimeException("no removals specified");
+        else if (toRemoveLen == 1) {
+            //use the 1-term optimized version of this method
+            return cloneTermsExcept(requireModification, toRemove[0]);
         }
-        if ((!removed) && (requireModification))
-            return null;
+
+        final int n = length();
+        final Term[] l = new Term[n];
+
+        final Set<Term> toRemoveSet = Compound.termSet(toRemove);
 
 
-        return l.toArray(new Term[l.size()]);
+        int remain = 0;
+        for (int i = 0; i < n; i++) {
+            final Term x = term(i);
+            if (!toRemoveSet.contains(x))
+                l[remain++] = x;
+        }
+
+        return resultOfCloneTermsExcept(requireModification, l, remain);
     }
+
+    /**
+     * Cloned array of Terms, except for a specific Term.
+     *
+     * @param toRemove
+     * @return the cloned array with the missing terms removed,
+     *         OR null if no terms were actually removed when requireModification=true
+     */
+    public Term[] cloneTermsExcept(final boolean requireModification, final Term toRemove) {
+
+        final int n = length();
+        final Term[] l = new Term[n];
+
+
+        int remain = 0;
+        for (int i = 0; i < n; i++) {
+            final Term x = term(i);
+            if (!toRemove.equals(x))
+                l[remain++] = x;
+        }
+
+        return resultOfCloneTermsExcept(requireModification, l, remain);
+    }
+
+    private static Term[] resultOfCloneTermsExcept(boolean requireModification, Term[] l, int remain) {
+        final boolean removed = (remain!=l.length);
+
+
+        if (!removed) {
+            //no removals
+            if (requireModification)
+                return null;
+            return l;
+        }
+        else {
+            //trim the array
+            return Arrays.copyOf(l, remain);
+        }
+    }
+
+
 
     /**
      * creates a new ArrayList for terms
      */
     public List<Term> asTermList() {
-        List<Term> l = new ArrayList(length());
+        List<Term> l = Global.newArrayList(length());
         addTermsTo(l);
+        return l;
+    }
+
+    public static Set<Term> termSet(Term... t) {
+        Set<Term> l = Global.newHashSet(t.length);
+        for (Term x : t) l.add(x);
         return l;
     }
 

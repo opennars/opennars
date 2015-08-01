@@ -26,10 +26,8 @@ public class NAL4Test extends JavaNALTest {
                 {new Default().setInternalExperience(null) },
                 {new Default().level(5)},
                 {new Classic().setInternalExperience(null) },
-                //{new DefaultBuffered().setInternalExperience(null) },
 
-                //{new Discretinuous().level(5) }
-                {new Solid(1, 128, 1, 1, 1, 2).level(6)}
+                {new Solid(1, 128, 1, 1, 1, 2).level(5)}
 
 
         });
@@ -89,7 +87,7 @@ public class NAL4Test extends JavaNALTest {
         }
         else {
             if (n.nal() <= 6) {
-                time = 75; //less time for the nal6 config
+                time = 400; //less time for the nal6 config
             } else {
                 time = 800;
             }

@@ -15,6 +15,7 @@ import nars.budget.ItemComparator;
 import nars.term.Term;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -30,6 +31,9 @@ public class Equalized extends Default {
     }
 
     public static class EqualizedCycle extends DefaultCycle {
+
+        /** stores sorted tasks temporarily */
+        private List<Task> temporary = Global.newArrayList();
 
         public EqualizedCycle(ItemAccumulator taskAccumulator, Bag<Term, Concept> concepts, AtomicInteger conceptsFiredPerCycle) {
             super(taskAccumulator, concepts, null, null, null, conceptsFiredPerCycle);
@@ -71,7 +75,7 @@ public class Equalized extends Default {
 
             //new tasks
             int newTasksToFire = Math.min(newTasks.size(), conceptsFiredPerCycle.get());
-            Iterator<Task> ii = newTasks.iterateSorted();
+            Iterator<Task> ii = newTasks.iterateHighestFirst();
 
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
                 Task next = ii.next();
@@ -111,7 +115,7 @@ public class Equalized extends Default {
                     @Override public void accept(Task task) {
                         memory.removed(task, "Ignored");
                     }
-                });
+                }, temporary);
 
                 //System.out.print("discarded=" + removed + "  ");
             }

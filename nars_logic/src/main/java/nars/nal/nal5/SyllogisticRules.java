@@ -476,7 +476,7 @@ public final class SyllogisticRules {
         } else
             return null;
 
-        if (content == null || (content instanceof Statement) && ((Statement) content).invalid())
+        if (content == null)
             return null;
 
         if (Variables.indepVarUsedInvalid(content)) {
@@ -1000,9 +1000,10 @@ public final class SyllogisticRules {
      */
     public static void elimiVarDep(Compound compound, Term component, boolean compoundTask, NAL nal) {
         Term content = reduceComponents(compound, component, nal.memory);
-        if ((content == null) || (!(content instanceof Compound)) || ((content instanceof Statement) && ((Statement) content).invalid())) {
-            return;
-        }
+
+        if ((content == null) || (!(content instanceof Compound))) return;
+
+
         Task task = nal.getTask();
 
 

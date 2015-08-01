@@ -46,7 +46,7 @@ public class ItemAccumulatorTest {
         assertEquals(0.75f, a.highest().getPriority()); //new instance but equal, does cause merging
 
 
-        Iterator<NullItem> ii = a.iterateSorted();
+        Iterator<NullItem> ii = a.iterateHighestFirst();
         assertEquals(x, ii.next());
         assertEquals(y, ii.next());
         assertEquals(z, ii.next());

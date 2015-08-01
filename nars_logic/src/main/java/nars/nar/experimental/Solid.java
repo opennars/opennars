@@ -1,6 +1,7 @@
 package nars.nar.experimental;
 
 import com.gs.collections.impl.list.mutable.FastList;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
@@ -8,6 +9,8 @@ import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
+import nars.budget.ItemAccumulator;
+import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.ConceptBagActivator;
@@ -19,13 +22,11 @@ import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
-import nars.budget.ItemComparator;
 import nars.term.Term;
 import nars.util.sort.ArraySortedIndex;
 
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.List;
 
 /**
  * processes every concept fairly, according to priority, in each cycle
@@ -48,8 +49,13 @@ public class Solid extends Default implements CycleProcess {
 
     ConceptActivator activator;
 
-    final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new ItemComparator.Plus());
+    final ItemAccumulator<Task> tasks = new ItemAccumulator<>(new ItemComparator.Plus<>());
+    //final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new ItemComparator.Plus());
         /*final SortedSet<Task> tasks = new FastSortedSet(new WrapperComparatorImpl(new TaskComparator(TaskComparator.Duplication.Or))).atomic();*/
+
+    /** stores sorted tasks temporarily */
+    private List<Task> temporary = Global.newArrayList();
+
 
     int tasksAddedThisCycle = 0;
 
@@ -146,7 +152,11 @@ public class Solid extends Default implements CycleProcess {
 
         float maxPriority = -1, currentPriority;
         float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
-        for (Task task : tasks) {
+
+        Iterator<Task> ii = tasks.iterateHighestFirst(temporary);
+        while (ii.hasNext()) {
+
+            Task task = ii.next();
 
             currentPriority = task.getPriority();
             if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
@@ -160,6 +170,7 @@ public class Solid extends Default implements CycleProcess {
                 if (mt != -1 && t >= mt) break;
             }
         }
+        temporary.clear();
 
             /*
             System.out.print(tasksAddedThisCycle + " added, " + nt + " unique  ");

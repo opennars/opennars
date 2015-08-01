@@ -4,6 +4,7 @@ package nars.nal.nal4;
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import nars.nar.Default;
+import nars.nar.experimental.Solid;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -21,13 +22,13 @@ public class NAL4ScriptTests extends ScriptNALTest {
         return getParams(new String[]{"test4"},
                 new Default(),
                 new Default().setInternalExperience(null),
-                new Default().level(4)
-                //new Solid(1, 64, 1, 4, 1, 3).setInternalExperience(null)
+                new Default().level(4),
+                new Solid(1, 64, 1, 4, 1, 3).setInternalExperience(null)
         );
 
     }
 
-    public int getMaxCycles() { return 700; }
+    public int getMaxCycles() { return 1300; }
 
 
 }

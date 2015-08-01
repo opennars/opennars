@@ -182,23 +182,28 @@ public class Terms {
      * @return The new compound
      */
     public static Term reduceComponents(final Compound t1, final Term t2, final AbstractMemory memory) {
+
         final Term[] list;
+
         if (Terms.equalType(t1, t2))  {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, t2);
         }
-        if (list != null) {
-            if (list.length > 1) {
-                return Memory.term(t1, list);
+
+        if (list == null)
+            return null;
+
+        if (list.length == 1)  {
+            if ((t1 instanceof Junction) || (t1 instanceof Intersect) || (t1 instanceof Difference)) {
+                return list[0];
             }
-            if (list.length == 1) {
-                if ((t1 instanceof Junction) || (t1 instanceof Intersect) || (t1 instanceof Difference)) {
-                    return list[0];
-                }
-            }
+
         }
-        return null;
+        //else  /*if (list.length > 1)*/ {
+            return Memory.term(t1, list);
+        //}
+
     }
 
     public static Term reduceComponentOneLayer(Compound t1, Term t2, AbstractMemory memory) {

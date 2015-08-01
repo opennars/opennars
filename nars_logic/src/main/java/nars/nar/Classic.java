@@ -23,25 +23,22 @@ public class Classic extends Default {
 
     int taskLinkBagLevels;
     int termLinkBagLevels;
+    int taskBufferLevels;
     int conceptBagLevels;
 
 
     public Classic() {
         this(1000, 1, 3);
 
-        setConceptBagLevels(64);
-        setTaskLinkBagLevels(16);
-        setTermLinkBagLevels(28);
-        setNovelTaskBagLevels(16);
+        setConceptBagLevels(100);
+        setTaskLinkBagLevels(100);
+        setTermLinkBagLevels(100);
+        setNovelTaskBagLevels(100);
 
     }
 
     public Classic(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
-
-        setConceptBagLevels(64);
-        setTaskLinkBagLevels(16);
-        setTermLinkBagLevels(28);
 
     }
 
@@ -55,9 +52,16 @@ public class Classic extends Default {
 
     @Override
     public Bag<Term, Concept> newConceptBag() {
-        return new LevelBag(getConceptBagLevels(), getActiveConcepts()).setNextNonEmptyMode(Fast);
+        return new LevelBag(getConceptBagLevels(), getActiveConcepts()); //.setNextNonEmptyMode(Fast);
     }
 
+    public int getConceptBagLevels() { return conceptBagLevels; }
+    public Default setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
+
+
+    public int getNovelTaskBagLevels() {
+        return taskBufferLevels;
+    }
 
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
@@ -68,8 +72,6 @@ public class Classic extends Default {
     }
 
 
-    public int getConceptBagLevels() { return conceptBagLevels; }
-    public Default setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
 
     /**
      * @return the taskLinkBagLevels

@@ -138,7 +138,6 @@ public class Default extends NARSeed  {
     /** Size of TaskBuffer */
     int taskBufferSize;
     
-    int taskBufferLevels;
 
     InternalExperience.InternalExperienceMode internalExperience;
     private int cyclesPerFrame = 1;
@@ -506,10 +505,6 @@ public class Default extends NARSeed  {
     }
 
 
-    public int getNovelTaskBagLevels() {
-        return taskBufferLevels;
-    }
-    
 
     public int getConceptTaskLinks() {
         return taskLinkBagSize;
