@@ -76,11 +76,14 @@ public class TaskRuleTest extends TestCase {
 
 
 
-        TaskRule y = p.term("<(S --> P) |- (P --> S), (Truth.Conversion, Info.SeldomUseful)>");
+        TaskRule y = p.term("<(S --> P) |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
         assertEquals("((<%S --> %P>), (<%P --> %S>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
         assertEquals(16, y.getVolume());
         assertEquals(16, y.getComplexity());
+
+
     }
+
 
     @Test public void testRangeTerm() {
         NarseseParser p = NarseseParser.the();

@@ -7,6 +7,7 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
+import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -92,7 +93,33 @@ public class NarseseParserExtendedTest  {
 
     }
 
+    @Test
+    public void testNamespaceTerms2() {
 
+        final String input = "Truth:Something";
+        final String input2 = "Truth : Something";
+        final String expected = "<Something-->Truth>";
+
+        NarseseParser p = NarseseParser.the();
+
+        Inheritance a = p.term(input);
+        assertNotNull(a);
+        assertEquals(expected, a.toStringCompact());
+
+        Inheritance a2 = p.term(input2);
+        assertNotNull(a2);
+        assertEquals(expected, a2.toStringCompact());
+
+    }
+
+    @Test
+    public void testNamespaceLikeJSON() {
+        NarseseParser p = NarseseParser.the();
+        Term a = p.term("{ a:x, b:{x,y} }");
+        assertNotNull(a);
+        assertEquals("{<{x, y} --> b>, <x --> a>}", a.toString());
+
+    }
 
     @Test
     public void testNegation2() throws InvalidInputException {
