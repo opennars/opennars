@@ -21,9 +21,6 @@ import java.util.Set;
  */
 public class TaskRule extends Rule<Premise,Task> {
 
-    private final boolean single_premise; //whether its a single premise inference rule
-    //A rule is named by precondition terms
-
     private final Term[] preconditions; //the terms to match
 
     private final PostCondition[] postconditions;
@@ -40,30 +37,17 @@ public class TaskRule extends Rule<Premise,Task> {
         Term[] precon = this.preconditions = premises.terms();
         Term[] postcons = result.terms();
 
-        //single premise
-        if (precon.length == 1) {
-            single_premise = true;
+        //The last entry is the postcondition
 
-            //only one conclusion for single premise rules, NAL doesn't need more:
-            postconditions = new PostCondition[]{
-                    new PostCondition(result.term(0),
-                            ((Product)(result.term(1))).terms())
-            };
-        } else {
-            single_premise = false;
+        postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
 
-            //The last entry is the postcondition
-
-            postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
-
-            int k = 0;
-            for (int i = 0; i < postcons.length; ) {
-                Term t = postcons[i++];
-                if (i >= postcons.length)
-                    throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
-                postconditions[k++] = new PostCondition(t,
-                        ((Product)postcons[i++]).terms() );
-            }
+        int k = 0;
+        for (int i = 0; i < postcons.length; ) {
+            Term t = postcons[i++];
+            if (i >= postcons.length)
+                throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
+            postconditions[k++] = new PostCondition(t,
+                    ((Product)postcons[i++]).terms() );
         }
 
     }
@@ -134,15 +118,8 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
     public void forward(Task task, Sentence belief, ConceptProcess nal) {
-        if (!single_premise) {
-            if (belief == null) {
-                //throw new RuntimeException("double premise but null belief");
-                return;
-            }
-        }
-
         //if preconditions are met:
         for (PostCondition p : postconditions)
-            p.apply(single_premise, preconditions, task, belief, nal);
+            p.apply(preconditions, task, belief, nal);
     }
 }

@@ -22,6 +22,7 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicRule;
+import nars.nal.NALExecuter;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -449,7 +450,10 @@ public class Default extends NARSeed  {
 
     @Override
     public LogicPolicy getLogicPolicy() {
-        return newPolicy(new TableDerivations());
+        try {
+            return newPolicy(new NALExecuter());
+        }catch(Exception ex) {}
+        return null;
     }
 
     protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
