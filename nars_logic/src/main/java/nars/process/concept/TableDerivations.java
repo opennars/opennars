@@ -190,6 +190,7 @@ public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable
                     default:
                         none(tLink, bLink); break;
                 }
+                break;
             default:
                 none(tLink); break;
         }

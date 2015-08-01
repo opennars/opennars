@@ -167,13 +167,13 @@ public class TextOutput extends Output {
         showOutput = b;
     }
 
+    static final ThreadLocal<StringBuilder> buffers = new ThreadLocal();
+
     public class TaskChannel extends DefaultChannel {
 
         public TaskChannel(String prefix) {
             super(prefix);
         }
-
-        ThreadLocal<StringBuilder> buffers = new ThreadLocal();
 
         @Override
         public StringBuilder get(Class c, Object[] o) {

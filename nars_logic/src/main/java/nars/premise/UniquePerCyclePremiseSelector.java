@@ -46,11 +46,13 @@ public class UniquePerCyclePremiseSelector extends DirectPremiseSelector {
                 s = premisesThisCycle.get();
 
             if (s == null) {
-                s = Global.newHashSet(4);
+                s = Global.newHashSet(0);
                 premisesThisCycle = new SoftReference(s);
             }
             else {
-                if (now - prevCycle > clearAfterCycles) premisesThisCycle.clear();
+                if (now - prevCycle > clearAfterCycles) {
+                    s.clear();
+                }
             }
 
             return s.add(PremiseSelector.pair(c, t));

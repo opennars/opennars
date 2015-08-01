@@ -407,7 +407,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public synchronized E update(final BagTransaction<K, E> selector) {
+    public E update(final BagTransaction<K, E> selector) {
 
         final K key = selector.name();
         final DD<E> bx;
@@ -537,7 +537,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /** removes from existing level and adds to new one */
-    protected synchronized  DD<E> relevel(final DD<E> x, final E newValue) {
+    protected DD<E> relevel(final DD<E> x, final E newValue) {
         final int prevLevel = x.owner();
         final int nextLevel = getLevel(newValue);
 
@@ -579,7 +579,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     /** addition of the item to its level and the index */
-    protected synchronized  DD<E> insert(E newItem, int inLevel) {
+    protected  DD<E> insert(E newItem, int inLevel) {
         if (newItem == null)
             throw new RuntimeException("IN must not be null");
         DD<E> dd = ensureLevelExists(inLevel).add(newItem);
@@ -593,11 +593,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     @Override
-    public synchronized E put(final E newItem) {
+    public E put(final E newItem) {
         if (newItem==null)
             throw new RuntimeException("PUT item muts be non-null");
-
-        E overflow = null;
 
         //if (Parameters.DEBUG_BAG) size();
         DD<E> existing = index.get(newItem.name());
@@ -614,6 +612,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         //1. ensure capacity
         int inLevel = getLevel(newItem);
 
+        E overflow = null;
         if (size() >= capacity) {      // the bag will be full after the next
             int outLevel = 0;
             while (levelEmpty[outLevel]) {

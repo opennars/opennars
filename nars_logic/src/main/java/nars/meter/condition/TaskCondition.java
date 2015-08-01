@@ -274,7 +274,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 }
 
 
-                float tenseCost = 0.35f;
                 float temporalityCost = 0.75f;
 
                 //require right kind of tense
@@ -312,6 +311,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                             if (!tmatch) {
                                 //beyond tense boundaries
                                 //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
+                                float tenseCost = 0.35f;
                                 distance += tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
                                 match = false;
                             }

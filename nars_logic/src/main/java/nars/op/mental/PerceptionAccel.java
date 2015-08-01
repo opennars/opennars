@@ -21,8 +21,8 @@ import nars.term.Term;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
 import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
@@ -42,7 +42,7 @@ public class PerceptionAccel extends NARReaction {
     int[] sv = new int[ConjunctionMemorySize]; //use static array, should suffice for now
     boolean debugMechanism = false;
     float partConceptsPrioThreshold = 0.1f;
-    final ArrayList<Task> eventbuffer = new ArrayList<>();
+    final List<Task> eventbuffer = Global.newArrayList();
     int cur_maxlen = 1;
     final LongArrayList evBase = new LongArrayList();
 
@@ -90,7 +90,7 @@ public class PerceptionAccel extends NARReaction {
     }
 
 
-    public synchronized void perceive(Task task, NAL nal) { //implement Peis idea here now
+    public void perceive(Task task, NAL nal) { //implement Peis idea here now
         //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
 
         boolean longest_result_derived_already = false;
@@ -219,9 +219,7 @@ public class PerceptionAccel extends NARReaction {
             }
 
             Term[] relterms2_real=new Term[u];
-            for(int i=0; i<u; i++) {
-                relterms2_real[i] = relterms2[i];
-            }
+            System.arraycopy(relterms2, 0, relterms2_real, 0, u);
 
             Term C0 = Conjunction.make(relterms2_real, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             if (!(C0 instanceof Conjunction)) {

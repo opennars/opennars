@@ -93,7 +93,7 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public synchronized void cycle() {
+    public void cycle() {
         
         int numNew, numNovel, numConcepts = 0, other;
 
@@ -200,7 +200,7 @@ public class AntCore extends ConceptWaveCore {
             this.speed = speed;                        
         }
                 
-        synchronized void goRandomConcept(List<Runnable> queue) {
+        void goRandomConcept(List<Runnable> queue) {
 
             if (c !=null)
                 occupied.remove(c.getTerm());
@@ -425,7 +425,7 @@ public class AntCore extends ConceptWaveCore {
             return (float)(speed * conceptVisitDelivery);
         }                
         
-        protected synchronized Concept goNextConcept(Termed x, Budget delivery) {
+        protected Concept goNextConcept(Termed x, Budget delivery) {
 
             Term ct = x.getTerm();
             if (c !=null)

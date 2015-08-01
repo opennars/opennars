@@ -214,14 +214,17 @@ public class Evaluator {
     }
 
     private static Map<SymbolExpression, Expression> makeMap(Cons<SymbolExpression> names, Cons<Expression> args, Map<SymbolExpression, Expression> map) {
-        if (names.isEmpty()) {
-            return map;
-        } else if (names.car().equals(symbol("."))) {
-            map.put(names.cadr(), list(args));
-            return map;
-        } else {
-            map.put(names.car(), args.car());
-            return makeMap(names.cdr(), args.cdr(), map);
+        while (true) {
+            if (names.isEmpty()) {
+                return map;
+            } else if (names.car().equals(symbol("."))) {
+                map.put(names.cadr(), list(args));
+                return map;
+            } else {
+                map.put(names.car(), args.car());
+                names = names.cdr();
+                args = args.cdr();
+            }
         }
     }
 
@@ -231,11 +234,11 @@ public class Evaluator {
     }
 
     private static boolean isFunctionCall(Expression exp) {
-        return exp.isList() && exp.list().value.size() > 0;
+        return exp.isList() && !exp.list().value.isEmpty();
     }
 
     private static boolean isSelfEvaluating(Expression exp) {
-        return exp.isNumber() || exp.isBoolean() || exp.isString() || exp == Expression.none() || (exp.isList() && exp.list().value.size() == 0);
+        return exp.isNumber() || exp.isBoolean() || exp.isString() || exp == Expression.none() || (exp.isList() && exp.list().value.isEmpty());
     }
 
     private static boolean isTruthy(Expression exp) {

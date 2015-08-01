@@ -202,8 +202,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         if (nextRemoval!=null && nextRemoval.getPriority() > newItem.getPriority())
             return newItem; //too low priority to add to this
 
-        V overflow = null;
-
         DD<V> d = chain.add(newItem);
         DD<V> previous = index.put(newItem.name(), d);
         if (previous!=null) {
@@ -223,6 +221,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
         boolean atCapacity = (size() > capacity());
 
+        V overflow = null;
         if (atCapacity) {
             if (nextRemoval == null) {
                 //find something to remove

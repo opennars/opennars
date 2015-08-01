@@ -123,7 +123,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     }
     
     @Override
-    public synchronized void clear() {
+    public void clear() {
         nameTable.clear();
         pending.clear();
         avgPriority = 0.5f;
@@ -171,12 +171,9 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         this.latencyMin = memory.param.cycles(forgetRate);
         float forgetCycles = memory.param.cycles(forgetRate);
 
-        int j = 0;
         int originalSize = size();
-        
-                
-        float numPriorityThru = 0,  mass = 0;
-                
+
+
         overcapacity = originalSize >= capacity;
                 
         int numToRemove = originalSize - capacity;
@@ -187,6 +184,9 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         
             
         E e = null;
+        float mass = 0;
+        float numPriorityThru = 0;
+        int j = 0;
         for (final Map.Entry<K, E> ee : nameTable.entrySet()) {
         
             e = ee.getValue();
@@ -273,7 +273,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         
     
     protected boolean ensureLoaded() {
-        if (pending.size() == 0) {
+        if (pending.isEmpty()) {
             
             //allow only one thread to reload, while the others try again later
             if (busyReloading.compareAndSet(false, true)) {

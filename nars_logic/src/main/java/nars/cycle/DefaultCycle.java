@@ -102,7 +102,7 @@ public class DefaultCycle extends SequentialCycle {
      *  2) optionally fire a concept
      **/
     @Override
-    public synchronized void cycle() {
+    public void cycle() {
 
         concepts.forgetNext(
                 memory.param.conceptForgetDurations,

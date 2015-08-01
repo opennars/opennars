@@ -304,11 +304,11 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     /** prints a summary of all termlink, tasklink, etc.. */
     default public void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
-        final String indent = "\t";
         long now = getMemory().time();
 
         out.println("CONCEPT: " + toInstanceString() + " @ " + now);
 
+        final String indent = "\t";
         if (showbeliefs) {
             out.print(" Beliefs:");
             if (getBeliefs().isEmpty()) out.println(" none");

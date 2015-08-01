@@ -94,7 +94,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public void init(NAR n) {
+    public synchronized void init(NAR n) {
         super.init(n);
         this.memory = n.memory;
 
@@ -150,7 +150,7 @@ public class Solid extends Default implements CycleProcess {
         //int nt = tasks.size();
         //long now = memory.time();
 
-        float maxPriority = -1, currentPriority;
+        float maxPriority = -1;
         float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
 
         Iterator<Task> ii = tasks.iterateHighestFirst(temporary);
@@ -158,7 +158,7 @@ public class Solid extends Default implements CycleProcess {
 
             Task task = ii.next();
 
-            currentPriority = task.getPriority();
+            float currentPriority = task.getPriority();
             if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
 
             float currentQuality = task.getQuality();
@@ -184,7 +184,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public synchronized void cycle() {
+    public void cycle() {
         //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
 

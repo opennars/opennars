@@ -712,7 +712,7 @@ public class NarseseParserTest {
                 throw new InvalidInputException("missing budget closer");
             }
             String budgetString = s.substring(1, i).trim();
-            if (budgetString.length() == 0) {
+            if (budgetString.isEmpty()) {
                 throw new InvalidInputException("empty budget");
             }
             s.delete(0, i + 1);
@@ -737,7 +737,7 @@ public class NarseseParserTest {
                 throw new InvalidInputException("missing truth mark");
             }
             final String truthString = s.substring(first + 1, last).trim();
-            if (truthString.length() == 0) {                // empty usage
+            if (truthString.isEmpty()) {                // empty usage
                 throw new InvalidInputException("empty truth");
             }
             s.delete(first, last + 1);                 // remaining addInput to be processed outside

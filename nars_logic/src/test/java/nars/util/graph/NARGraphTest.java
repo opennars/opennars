@@ -30,7 +30,7 @@ public class NARGraphTest {
         
         //System.out.println(g);
         
-        assert(g.vertexSet().size() > 0);
-        assert(g.edgeSet().size() > 0);
+        assert(!g.vertexSet().isEmpty());
+        assert(!g.edgeSet().isEmpty());
     }
 }

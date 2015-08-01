@@ -99,7 +99,7 @@ public class CurveBagTest extends AbstractBagTest {
         f.pop();
         assert(f.size() == 1);
         f.pop();
-        assert(f.size() == 0);
+        assert(f.isEmpty());
         
         assertEquals(0, f.getPrioritySum(), 0.01);
     }

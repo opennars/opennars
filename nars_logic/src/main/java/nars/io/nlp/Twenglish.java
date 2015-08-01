@@ -116,7 +116,7 @@ public class Twenglish {
             t.add( spanToTerm(c) );
             last = c;
         }
-        if (t.size() == 0) return Collections.EMPTY_LIST;
+        if (t.isEmpty()) return Collections.EMPTY_LIST;
         
         String sentenceType = "fragment";
         if ((last!=null) && (last.pattern.equals("punct"))) {
@@ -220,7 +220,7 @@ public class Twenglish {
                     case ".":
                     case "?":
                     case "!":
-                        if (currentSentence.size() > 0) {
+                        if (!currentSentence.isEmpty()) {
                             sentences.add(currentSentence);
                             currentSentence = new LinkedList();
                             break;
@@ -236,7 +236,7 @@ public class Twenglish {
             results.addAll( parseSentence(x, narsese, modifyVocabulary) );
         }
                 
-        if (results.size() > 0) {
+        if (!results.isEmpty()) {
             if (!languageBooted) {
                 
                 

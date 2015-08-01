@@ -75,7 +75,7 @@ public class Equalized extends Default {
 
             //new tasks
             int newTasksToFire = Math.min(newTasks.size(), conceptsFiredPerCycle.get());
-            Iterator<Task> ii = newTasks.iterateHighestFirst();
+            Iterator<Task> ii = newTasks.iterateHighestFirst(temporary);
 
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
                 Task next = ii.next();
@@ -87,6 +87,7 @@ public class Equalized extends Default {
 
                 ii.remove();
             }
+            temporary.clear();
 
 
 

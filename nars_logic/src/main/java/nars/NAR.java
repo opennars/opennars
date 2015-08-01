@@ -536,42 +536,42 @@ public class NAR extends Container implements Runnable {
         return this;
     }
 
-    /**
-     * Execute a fixed number of cycles, then finish any remaining walking steps.
-     */
-    @Deprecated public NAR runWhileNewInputOLD(long extraCycles) {
-        //TODO see if this entire method can be implemented as run(0, cycles);
-
-        if (extraCycles <= 0) return this;
-
-        running = true;
-        enabled = true;
-
-        //clear existing input
-
-        long cycleStart = time();
-
-        do {
-            frame(1);
-        }
-        while (/*(!memory.perception.isEmpty()) && */ running && enabled);
-
-        long cyclesCompleted = time() - cycleStart;
-
-        //queue additional cycles,
-        extraCycles -= cyclesCompleted;
-        if (extraCycles > 0)
-            memory.think(extraCycles);
-
-        //finish all remaining cycles
-        while (!memory.isInputting() && running && enabled) {
-            frame(1);
-        }
-
-        running = false;
-
-        return this;
-    }
+//    /**
+//     * Execute a fixed number of cycles, then finish any remaining walking steps.
+//     */
+//    @Deprecated public NAR runWhileNewInputOLD(long extraCycles) {
+//        //TODO see if this entire method can be implemented as run(0, cycles);
+//
+//        if (extraCycles <= 0) return this;
+//
+//        running = true;
+//        enabled = true;
+//
+//        //clear existing input
+//
+//        long cycleStart = time();
+//
+//        do {
+//            frame(1);
+//        }
+//        while (/*(!memory.perception.isEmpty()) && */ running && enabled);
+//
+//        long cyclesCompleted = time() - cycleStart;
+//
+//        //queue additional cycles,
+//        extraCycles -= cyclesCompleted;
+//        if (extraCycles > 0)
+//            memory.think(extraCycles);
+//
+//        //finish all remaining cycles
+//        while (!memory.isInputting() && running && enabled) {
+//            frame(1);
+//        }
+//
+//        running = false;
+//
+//        return this;
+//    }
 
     /**
      * Run until stopped, at full speed

@@ -56,7 +56,7 @@ public class TrieMap {
     public void put(String key, Object val) {
         assert key != null;
         assert !(val instanceof TrieMap); // Only we get to store TrieMap nodes. TODO: Allow it.
-        if(key.length() == 0) {
+        if(key.isEmpty()) {
             // All of the original key's chars have been nibbled away 
             // which means this node will store this key as a prefix of other keys.
             mPrefixVal = val; // Note: possibly removes or updates an item.
@@ -99,29 +99,34 @@ public class TrieMap {
      * Retrieve a value for a given key or null if not found.
      */
     public Object get(String key) {
-        assert key != null;
-        if(key.length() == 0) {
-            // All of the original key's chars have been nibbled away 
-            // which means this key is a prefix of another.
-            return mPrefixVal;
-        }
-        char c = key.charAt(0);
-        Object cVal = mChars[c];
-        if(cVal == null) {
+        TrieMap other = this;
+        while (true) {
+            assert key != null;
+            if (key.isEmpty()) {
+                // All of the original key's chars have been nibbled away
+                // which means this key is a prefix of another.
+                return other.mPrefixVal;
+            }
+            char c = key.charAt(0);
+            Object cVal = other.mChars[c];
+            if (cVal == null) {
+                return null; // Not found.
+            }
+            assert cVal instanceof Leaf || cVal instanceof TrieMap;
+            if (cVal instanceof TrieMap) { // Hash collision. Nibble first char, and recurse.
+                key = key.substring(1);
+                other = ((TrieMap) cVal);
+                continue;
+            }
+            if (cVal instanceof Leaf) {
+                // cVal contains a user datum, but does the key match its substring?
+                Leaf cPair = (Leaf) cVal;
+                if (key.equals(cPair.mStr)) {
+                    return cPair.mVal; // Return user's data value.
+                }
+            }
             return null; // Not found.
         }
-        assert cVal instanceof Leaf || cVal instanceof TrieMap;
-        if(cVal instanceof TrieMap) { // Hash collision. Nibble first char, and recurse.
-            return ((TrieMap)cVal).get(key.substring(1));
-        }
-        if(cVal instanceof Leaf) {
-            // cVal contains a user datum, but does the key match its substring?
-            Leaf cPair = (Leaf)cVal;
-            if(key.equals(cPair.mStr)) {
-                return cPair.mVal; // Return user's data value.
-            }
-        }
-        return null; // Not found.
     }
 
     

@@ -306,7 +306,6 @@ public abstract class NAL implements Runnable {
 
     @Deprecated
     public static long inferOccurenceTime(Stamp t, Stamp b) {
-        final long oc;
 
 
         if ((t == null) && (b == null))
@@ -324,6 +323,7 @@ public abstract class NAL implements Runnable {
 
         /* see: https://groups.google.com/forum/#!searchin/open-nars/eternal$20belief/open-nars/8KnAbKzjp4E/rBc-6V5pem8J) */
 
+        final long oc;
         if (tEternal && bEternal) {
             /* eternal belief, eternal task => eternal conclusion */
             oc = Stamp.ETERNAL;
@@ -400,8 +400,7 @@ public abstract class NAL implements Runnable {
         //String prevMethodID;
 
         List<String> path = new ArrayList();
-        int i;
-        for (i = 0; i < s.length; i++) {
+        for (int i = 0; i < s.length; i++) {
             StackTraceElement e = s[i];
 
             String className = e.getClassName();

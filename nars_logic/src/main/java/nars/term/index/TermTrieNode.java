@@ -148,30 +148,35 @@ public class TermTrieNode<V extends Termed> extends ByteObjectHashMap<TermTrieNo
      * Retrieve a value for a given key or null if not found.
      */
     public TermTrieNode<V> getNode(byte[] key) {
-        assert key != null;
-        if (key.length == 0) {
-            // All of the original key's chars have been nibbled away 
-            // which means this key is a prefix of another.
-            return this;
-        }
+        TermTrieNode result = this;
+        while (true) {
+            assert key != null;
+            if (key.length == 0) {
+                // All of the original key's chars have been nibbled away
+                // which means this key is a prefix of another.
+                return result;
+            }
 
-        Object cVal = get(key[0]);
-        if (cVal == null) {
+            Object cVal = result.get(key[0]);
+            if (cVal == null) {
+                return null; // Not found.
+            }
+            //assert cVal instanceof Leaf || cVal instanceof TrieMapNode;
+            // cVal contains a user datum, but does the key match its substring?
+            TermTrieNode<V> cPair = (TermTrieNode) cVal;
+            if (Utf8.equals2(key, cPair.prefix)) {
+                return cPair; // Return user's data value.
+            }
+
+            if (cVal instanceof TermTrieNode) { // Hash collision. Nibble first char, and recurse.
+                key = suffix(key, 1);
+                result = ((TermTrieNode<V>) cVal);
+                continue;
+            }
+
+
             return null; // Not found.
         }
-        //assert cVal instanceof Leaf || cVal instanceof TrieMapNode;
-        // cVal contains a user datum, but does the key match its substring?
-        TermTrieNode<V> cPair = (TermTrieNode) cVal;
-        if (nars.util.utf8.Utf8.equals2(key, cPair.prefix)) {
-            return cPair; // Return user's data value.
-        }
-
-        if (cVal instanceof TermTrieNode) { // Hash collision. Nibble first char, and recurse.
-            return ((TermTrieNode<V>) cVal).getNode(suffix(key, 1));
-        }
-
-
-        return null; // Not found.
     }
 
     public void print(PrintStream out) {

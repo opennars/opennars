@@ -306,12 +306,12 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     public double[] getPriorityHistogram(final double[] x) {
         int bins = x.length;
-        double total = 0;
         forEach(e -> {
             final float p = e.getPriority();
             final int b = bin(p, bins - 1);
             x[b]++;
         });
+        double total = 0;
         for (double e : x) {
             total += e;
         }

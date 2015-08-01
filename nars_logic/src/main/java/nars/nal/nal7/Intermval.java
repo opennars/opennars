@@ -37,10 +37,10 @@ public interface Intermval extends TermMetadata {
     default public long distance1(final Intermval other, final long onlyIfLessthan) {
         final long[] a = intervals();
         final long[] b = other.intervals();
-        long dist = 0;
 
         if (a.length!=b.length)
             throw new RuntimeException("differnt length arrays comparison not impl yet");
+        long dist = 0;
         for (int i = 0; i < a.length; i++) {
             float d = a[i] - b[i];
             if (d < 0) d = -d;

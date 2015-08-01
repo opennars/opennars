@@ -71,11 +71,12 @@ public interface Stamp extends Cloneable, Serializable {
         int firstLength = a.length;
         int secondLength = b.length;
 
-        int i1 = 0, i2 = 0, j =0;
+        int i2 = 0, j =0;
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143
         while (i2 < secondLength && j < baseLength) {
             c[j++] = b[i2++];
         }
+        int i1 = 0;
         while (i1 < firstLength && j < baseLength) {
             c[j++] = a[i1++];
         }

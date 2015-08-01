@@ -90,6 +90,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             if(swhich.equals("Derive")) {
                                 derive_occurence = true;
                             }
+                            break;
                         default:
                             break;
                     }
