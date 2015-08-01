@@ -178,6 +178,8 @@ public class TextPerception  {
             @Override
             public void react(String input, Consumer<Task> recv) {
                 if (enableNarsese) {
+                    if (input.isEmpty()) return;
+
                     char c = input.charAt(0);
                     if (c != Symbols.COMMENT_MARK) {
                         try {

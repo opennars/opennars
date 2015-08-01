@@ -549,7 +549,10 @@ public class NarseseParser extends BaseParser<Object> {
      * MACRO: namespace.x    becomes    <x --> namespace>
      */
     Rule NamespacedAtom() {
-        return sequence(Atom(), ':', Atom(), push(Inheritance.make(Atom.the(pop()), Atom.the(pop()))));
+        return sequence(
+                Atom(), s(), ':', s(), Term(false,false),
+                push(Inheritance.make((Term)(pop()), Atom.the(pop())))
+        );
     }
 
 

@@ -449,10 +449,7 @@ public class Default extends NARSeed  {
 
     @Override
     public LogicPolicy getLogicPolicy() {
-        try {
-            return newPolicy(new NALExecuter());
-        }catch(Exception ex) {}
-        return null;
+        return newPolicy(new TableDerivations());
     }
 
     protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
