@@ -20,7 +20,6 @@
  */
 package nars.task;
 
-import com.google.common.hash.PrimitiveSink;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
@@ -37,6 +36,7 @@ import nars.truth.*;
 import nars.util.data.Util;
 import nars.util.data.id.Named;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 
@@ -491,15 +491,20 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
 
     /**
-     * Get a String representation of the sentence
-     *
-     * @return The String
+     * Overridden in Task
      */
     @Override
-    public String toString() {
-        throw new RuntimeException("should not need to be called");
-        //return getKey().toString();
+    public String toString() { throw new RuntimeException("unsupported");    }
+
+    public StringBuilder appendTo(StringBuilder sb) {
+        return appendTo(sb, null);
     }
+
+    /**
+     * Overridden in Task
+     */
+    public StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
+        throw new RuntimeException("unsupported");    }
 
     @Override
     public Sentence name() {
@@ -560,7 +565,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return toString(new StringBuilder(), memory, showStamp);
     }
 
-    @Deprecated public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean showStamp) {
+    @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         return toString(buffer, memory, true, true);
     }
     /**
@@ -570,7 +575,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
      * @return The String
      */
-    @Deprecated public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean term, final boolean showStamp) {
+    @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp) {
 
         String contentName;
         if (term) {
@@ -580,8 +585,6 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
         final CharSequence tenseString;
         if (memory!=null) {
-
-
             tenseString = getTense(memory.time(), memory.duration());
         }
         else {

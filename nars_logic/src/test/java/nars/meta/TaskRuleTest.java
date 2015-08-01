@@ -34,9 +34,9 @@ public class TaskRuleTest extends TestCase {
         }
 
         {
-            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>>");
-            assertEquals("((<A --> B>, <B --> A>), (<A <-> B>))", x.toString());
-            assertEquals(12, x.getVolume());
+            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (Truth_Revision, Desire_Weak)>");
+            assertEquals("((<A --> B>, <B --> A>), (<A <-> B>, (Truth_Revision, Desire_Weak)))", x.toString());
+            assertEquals(15, x.getVolume());
         }
 
         {
@@ -94,25 +94,27 @@ public class TaskRuleTest extends TestCase {
     public void testDerivationComparator() {
 
         NARComparator c = new NARComparator(new Default(), new NewDefault());
-        c.input("<x --> y>.");
-        c.input("<y --> z>.");
+        c.input("<x --> y>.\n<y --> z>.\n");
 
-        System.out.println();
 
-        int cycles = 16;
+
+        int cycles = 64;
         for (int i = 0; i < cycles; i++) {
             if (!c.areEqual()) {
 
                 System.out.println("\ncycle: " + c.time());
-                System.out.println("original: " + c.getTaskSetA());
-                System.out.println("rules: " + c.getTaskSetB());
+                c.printTasks("Original:", c.a);
+                c.printTasks("Rules:", c.b);
+
 //                System.out.println(c.getAMinusB());
 //                System.out.println(c.getBMinusA());
             }
             c.frame(1);
         }
 
-
+        System.out.println("\nDifference: " + c.time());
+        System.out.println("Original - Rules:\n" + c.getAMinusB());
+        System.out.println("Rules - Original:\n" + c.getBMinusA());
 
     }
 }

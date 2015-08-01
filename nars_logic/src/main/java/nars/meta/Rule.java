@@ -13,6 +13,5 @@ abstract public class Rule<X,Y> extends ProductN {
         super(premises, result);
     }
 
-    abstract public Y generate(X context);
 
 }

@@ -8,6 +8,7 @@ import nars.NARSeed;
 import nars.io.out.Output;
 import nars.task.Task;
 
+import java.io.PrintStream;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,9 +17,12 @@ import java.util.Set;
  */
 public class NARComparator {
 
-    private final NAR a, b;
-    private final Output oa, ob;
-    Multimap<NAR,Task> outputs = MultimapBuilder.hashKeys(2).arrayListValues().build();
+    public final NAR a;
+    public final NAR b;
+
+    final Multimap<NAR,Task> outputs = MultimapBuilder.hashKeys(2).arrayListValues().build();
+
+    final Output oa, ob;
 
     public NARComparator(NARSeed sa, NARSeed sb) {
         a = new NAR(sa);
@@ -89,5 +93,26 @@ public class NARComparator {
         return at;
     }
 
+
+    public void printTasks(String header, NAR x) {
+        printTasks(System.out, header, x);
+    }
+
+    public void printTasks(PrintStream p, String header, NAR x) {
+        p.println(header);
+
+        StringBuilder sb = new StringBuilder();
+        final Set<Task> ts = getTaskSet(x);
+        if (ts.isEmpty()) {
+            p.println("(none)");
+        }
+        else {
+            for (Task t : ts) {
+                p.println(t.getExplanation(sb));
+            }
+        }
+
+        p.println();
+    }
 
 }

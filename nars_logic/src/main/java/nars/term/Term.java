@@ -193,19 +193,20 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         return toString();
     }
 
-    static public Term substituted_version(Term t, Map<Term,Term> subs)
-    {
-        if(t instanceof Compound)
-            return ((Compound)t).applySubstitute(subs);
+    /** returns the effective term as substituted by the set of subs */
+    default Term substituted(Map<Term, Term> subs) {
 
-        else
-        if(t instanceof Variable)
-        {
-            if(subs.keySet().contains(t))
-                return subs.get(t);
+        if (this instanceof Compound) {
+            return ((Compound) this).applySubstitute(subs);
         }
-        return t;
+        else if (this instanceof Variable) {
+            Term contained = subs.get(this);
+            if (contained!=null) return contained;
+        }
+
+        return this;
     }
+
 
 }
 

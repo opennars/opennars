@@ -20,7 +20,6 @@ import nars.term.Term;
 import nars.term.Terms;
 import nars.term.Variables;
 import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,8 +131,8 @@ public abstract class NAL implements Runnable {
         return newTask(term).punctuation(punc);
     }
 
-    public TaskSeed<Compound> newTask() {
-        return new TaskSeed(memory);
+    public <C extends Compound> TaskSeed<C> newTask() {
+        return new TaskSeed<C>(memory);
     }
 
 
@@ -460,15 +459,19 @@ public abstract class NAL implements Runnable {
     /**
      * for producing a non-cyclic derivation; returns null if the premise is cyclic
      */
-    public TaskSeed newDoublePremise(Task asym, Sentence sym) {
+    public <C extends Compound> TaskSeed<?> newDoublePremise(Task asym, Sentence sym) {
         return newDoublePremise(asym, sym, false);
     }
 
-    public TaskSeed newDoublePremise(Task a, Sentence b, boolean allowOverlap) {
-        TaskSeed x = newTask().parent(a, b);
-        if (!allowOverlap)
-            if (x.isCyclic())
-                return null;
+    public <C extends Compound> TaskSeed<C> newSinglePremise(Task parentTask, boolean allowOverlap) {
+        return newDoublePremise(parentTask, null, allowOverlap);
+    }
+
+    public <C extends Compound> TaskSeed<C> newDoublePremise(Task parentTask, Sentence parentBelief, boolean allowOverlap) {
+        TaskSeed x = newTask();
+        x.parent(parentTask, parentBelief);
+        if (!allowOverlap && x.isCyclic())
+            return null;
         return x;
     }
 
@@ -704,7 +707,7 @@ public abstract class NAL implements Runnable {
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    public Task deriveSingle(Compound newContent, Truth newTruth, Budget newBudget) {
+    @Deprecated public Task deriveSingle(Compound newContent, Truth newTruth, Budget newBudget) {
         return deriveSingle(newContent, getTask().getPunctuation(), newTruth, newBudget);
     }
 

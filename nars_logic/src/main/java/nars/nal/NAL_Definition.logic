@@ -92,9 +92,9 @@
 
 //// conditional syllogism
 
-    M, (M ==> P) |- P, (Truth.Deduction, Desire.Induction, Occurence.Derive)
-    M, (P ==> M) |- P, (Truth.Abduction, Desire.Deduction, Occurence.Derive)
-    M, (S <=> M) |- S, (Truth.Analogy, Desire.Strong, Occurence.Derive)
+    M, (M ==> P) |- P, (Truth.Deduction, Desire.Induction, Occurrence.Derive)
+    M, (P ==> M) |- P, (Truth.Abduction, Desire.Deduction, Occurrence.Derive)
+    M, (S <=> M) |- S, (Truth.Analogy, Desire.Strong, Occurrence.Derive)
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
 
@@ -151,7 +151,7 @@
 //NAL7 specific inference
 //all above rules work for all orders to be able to use NAL1-6 (as long as the order of both premises is the same)
 //(where order of (&/ is taken into account in findSubstitute already which doesn't permute if there is order,
-//and where order of =/> on detachment is handled by Occurence.Derive)
+//and where order of =/> on detachment is handled by Occurrence.Derive)
 //but if order is explicitely given, only a premise of the same order will match,
 //this keeps this file very straightforward
 

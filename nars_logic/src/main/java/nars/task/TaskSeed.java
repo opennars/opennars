@@ -84,6 +84,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         this.occurrenceTime = occurrenceTime;
         return this;
     }
+
+    /** is double-premise */
     public boolean isDouble() {
         return this.getParentTask()!=null && this.getParentBelief()!=null;
     }

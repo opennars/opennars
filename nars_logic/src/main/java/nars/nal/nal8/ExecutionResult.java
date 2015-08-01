@@ -37,7 +37,7 @@ public class ExecutionResult {
             //Term operator = operation.getOperator();
             StringBuilder sb = new StringBuilder();
 
-            t.appendToString(sb, memory);
+            t.appendTo(sb, memory);
 
 //                Budget b = getTask();
 //                if (b!=null)

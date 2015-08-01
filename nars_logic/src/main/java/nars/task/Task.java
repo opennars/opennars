@@ -30,7 +30,6 @@ import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
-import nars.io.in.Input;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.op.mental.InternalExperience;
@@ -43,6 +42,7 @@ import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 import nars.truth.Truthed;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.Reference;
@@ -363,15 +363,15 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     @Override
     @Deprecated
     public String toString() {
-        return appendToString(null,null).toString();
+        return appendTo(null,null).toString();
     }
 
 
-    public StringBuilder toString(Memory memory) {
-        return appendToString(null, memory);
+    public StringBuilder toString(@Nullable Memory memory) {
+        return appendTo(null, memory);
     }
 
-    public StringBuilder appendToString(StringBuilder sb, Memory memory) {
+    public StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
         if (sb == null) sb = new StringBuilder();
         return toString(sb, memory, false);
     }
@@ -426,8 +426,13 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     public String getExplanation() {
         StringBuilder sb = new StringBuilder();
-        getExplanation(this, 0, sb);
-        return sb.toString();
+        return getExplanation(sb).toString();
+    }
+
+    public StringBuilder getExplanation(StringBuilder temporary) {
+        temporary.setLength(0);
+        getExplanation(this, 0, temporary);
+        return temporary;
     }
 
     protected static void getExplanation(Task task, int indent, StringBuilder sb) {
@@ -436,23 +441,27 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         for (int i = 0; i < indent; i++)
             sb.append("  ");
 
-        task.appendToString(sb, null).append(" history=").append(task.getHistory());
+        task.appendTo(sb).append(" history=").append(task.getHistory());
 
         if (task.getCause() != null)
             sb.append(" cause=").append(task.getCause());
+
         if (task.getBestSolution() != null) {
-            if (!task.getTerm().equals(task.getBestSolution().getTerm()))
-                sb.append(" solution=").append(task.getBestSolution());
+            if (!task.getTerm().equals(task.getBestSolution().getTerm())) {
+                sb.append(" solution=");
+                task.getBestSolution().appendTo(sb);
+            }
         }
 
         Task pt = task.getParentTask();
 
         Sentence pb = task.getParentBelief();
         if (pb != null) {
-            if (pt != null && pb.equals(pt.sentence)) {
+            if (pt != null && pb.equals(pt)) {
 
             } else {
-                sb.append(" parentBelief=").append(task.getParentBelief()).append(task.getParentBelief().getStamp());
+                sb.append(" parentBelief=");
+                task.getParentBelief().appendTo(sb);
             }
         }
         sb.append('\n');
