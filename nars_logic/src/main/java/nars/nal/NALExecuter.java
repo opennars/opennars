@@ -173,9 +173,23 @@ public class NALExecuter extends ConceptFireTaskTerm {
             String parsable = preprocess(rule);
             try {
 
-                TaskRule r = meta.term(parsable);
+                //there might be now be A_1..n in it, if this is the case we have to add up to n rules
+                int n=5;
+                if(parsable.contains("A_1..n")) {
+                    String str="A_1";
+                    for(int i=0;i<n;i++) {
 
-                uninterpreted_rules.add(r); //try to parse it
+                        String parsable_unrolled = parsable.replace("A_1..n",str);
+                        TaskRule r = meta.term(parsable_unrolled);
+                        uninterpreted_rules.add(r); //try to parse it
+
+                        str+=", A_"+String.valueOf(i+2);
+                    }
+                }
+                else {
+                    TaskRule r = meta.term(parsable);
+                    uninterpreted_rules.add(r); //try to parse it
+                }
             } catch (Exception ex) {
                 System.err.println("Ignoring Invalid rule:");
                 System.err.print("  ");
