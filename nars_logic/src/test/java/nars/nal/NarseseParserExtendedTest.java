@@ -77,16 +77,16 @@ public class NarseseParserExtendedTest  {
 
     @Test
     public void testNamespaceTerms() {
-        Inheritance t = term("namespace.named");
+        Inheritance t = term("namespace:named");
         assertEquals(t.operator(), Op.INHERITANCE);
         assertEquals("namespace", t.getPredicate().toString());
         assertEquals("named", t.getSubject().toString());
 
 
-        Compound u = term("<a.b --> c.d>");
+        Compound u = term("<a:b --> c:d>");
         assertEquals("<<b --> a> --> <d --> c>>", u.toString());
 
-        Task ut = task("<a.b --> c.d>.");
+        Task ut = task("<a:b --> c:d>.");
         assertNotNull(ut);
         assertEquals(ut.getTerm(), u);
 

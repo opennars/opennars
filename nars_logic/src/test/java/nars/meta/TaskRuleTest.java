@@ -3,10 +3,10 @@ package nars.meta;
 import junit.framework.TestCase;
 import nars.meter.NARComparator;
 import nars.nal.NALExecuter;
+import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
-import nars.truth.Truth;
 import org.junit.Test;
 
 /**
@@ -15,6 +15,8 @@ import org.junit.Test;
 public class TaskRuleTest extends TestCase {
 
     static final NALExecuter executer = NALExecuter.defaults; //all the inference rules have to pass of course
+
+
 
     @Test
     public void testParser() {

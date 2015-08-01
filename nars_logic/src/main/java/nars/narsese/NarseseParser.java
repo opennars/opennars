@@ -512,7 +512,6 @@ public class NarseseParser extends BaseParser<Object> {
 
 
         return sequence(
-                //oneOrMore(noneOf(invalidAtomCharacters)),
                 new ValidAtomCharMatcher(),
                 push(match())
         );
@@ -550,7 +549,7 @@ public class NarseseParser extends BaseParser<Object> {
      * MACRO: namespace.x    becomes    <x --> namespace>
      */
     Rule NamespacedAtom() {
-        return sequence(Atom(), '.', Atom(), push(Inheritance.make(Atom.the(pop()), Atom.the(pop()))));
+        return sequence(Atom(), ':', Atom(), push(Inheritance.make(Atom.the(pop()), Atom.the(pop()))));
     }
 
 
