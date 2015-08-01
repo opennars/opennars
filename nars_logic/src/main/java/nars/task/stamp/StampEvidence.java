@@ -3,7 +3,7 @@ package nars.task.stamp;
 /**
  * Provides stamp evidenceBase and evidenceSet
  */
-public interface StampEvidence extends AbstractStamper {
+public interface StampEvidence {
 
 
     /** deduplicated and sorted version of the evidentialBase.
@@ -19,4 +19,12 @@ public interface StampEvidence extends AbstractStamper {
         return false;
     }
 
+    /**
+     * responsible for setting some or all of the following Stamp setters:
+     *      setDuration(int duration);
+     *      setCreationTime(long creationTime);
+     *      setOccurrenceTime(long occurrenceTime);
+     *      setEvidentialBase(long[] evidentialBase);
+     */
+    void applyToStamp(Stamp target);
 }

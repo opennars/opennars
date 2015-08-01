@@ -126,7 +126,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
         }
         return false;
     }
-    
+
     abstract public static class StringKeyItem extends Item<CharSequence> {
         
         public StringKeyItem(final Budget budget) { super(budget);         }

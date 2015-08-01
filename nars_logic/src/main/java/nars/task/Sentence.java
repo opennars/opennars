@@ -28,8 +28,8 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
-import nars.task.stamp.AbstractStamper;
 import nars.task.stamp.Stamp;
+import nars.task.stamp.StampEvidence;
 import nars.term.*;
 import nars.term.transform.TermVisitor;
 import nars.truth.*;
@@ -46,7 +46,7 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends Compound> extends Item<Sentence<T>> implements Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Sentenced, Serializable, AbstractStamper {
+public class Sentence<T extends Compound> extends Item<Sentence<T>> implements Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Sentenced, Serializable {
 
 
     protected T term;
@@ -84,13 +84,13 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
 
     @Deprecated Sentence(char punctuation) {
-        super(0,0,0);
+        super((float) 0, (float) 0, (float) 0);
         this.punctuation = punctuation;
         this.truth = null;
         this.term = null;
     }
 
-    Sentence(Term invalidTerm, char punctuation, Truth newTruth, AbstractStamper newStamp) {
+    Sentence(Term invalidTerm, char punctuation, Truth newTruth, StampEvidence newStamp) {
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
@@ -99,7 +99,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         this(seedTerm, punctuation, truth, 0, 0, 0);
     }
     Sentence(T term, final char punctuation, final Truth truth, float p, float d, float q) {
-        super(p,d,q);
+        super(p, d, q);
         this.punctuation = punctuation;
 
         boolean isQuestionOrQuest = isQuestion() || isQuest();
@@ -134,7 +134,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      * @param normalize if false, normalization is not attempted and the compound will be used as-is
      * base
      */
-    public Sentence(T seedTerm, final char punctuation, final Truth truth, AbstractStamper stamp) {
+    public Sentence(T seedTerm, final char punctuation, final Truth truth, StampEvidence stamp) {
         this(seedTerm, punctuation, truth);
 
 
@@ -667,7 +667,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
 
     /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
-    @Override public void applyToStamp(Stamp target) {
+    public void applyToStamp(Stamp target) {
         target.setDuration(getDuration());
         target.setTime(getCreationTime(), getOccurrenceTime());
         target.setEvidentialSet(getEvidentialSet());

@@ -6,7 +6,7 @@ import nars.nal.NALExecuter;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
-import nars.term.Term;
+import nars.truth.Truth;
 import org.junit.Test;
 
 /**
@@ -40,16 +40,16 @@ public class TaskRuleTest extends TestCase {
         }
 
         {
-            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, <Nonsense --> Test>>");
-            assertEquals("((<A --> B>, <B --> A>), (<A <-> B>, <Nonsense --> Test>))", x.toString());
-            assertEquals(15, x.getVolume());
+            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
+            assertEquals("((<A --> B>, <B --> A>), (<A <-> B>, (<Nonsense --> Test>)))", x.toString());
+            assertEquals(16, x.getVolume());
         }
 
-        {
-            TaskRule x = p.termRaw("<<A --> b> |- (X & y)>");
-            assertEquals("((<A --> b>), ((&, X, y)))", x.toString());
-            assertEquals(9, x.getVolume());
-        }
+//        {
+//            TaskRule x = p.termRaw("<<A --> b> |- (X & y)>");
+//            assertEquals("((<A --> b>), ((&, X, y)))", x.toString());
+//            assertEquals(9, x.getVolume());
+//        }
 
         {
             //and the first complete rule:
@@ -58,20 +58,26 @@ public class TaskRuleTest extends TestCase {
             assertEquals(15, x.getVolume());
         }
 
-        //TODO test that Pattern Variables are created for uppercase atoms
 
 
     }
 
     @Test
-    public void testPatternVariables() {
+    public void testPatternVarNormalization() {
 
         NarseseParser p = NarseseParser.the();
-        TaskRule x = p.term("<<A --> b> |- (X & y)>");
 
-        assertEquals("((<%A --> b>), ((&, %X, y)))", x.toString());
+        //TODO test combination of lowercase and uppercase pattern terms
+//        TaskRule x = p.term("<<A --> b> |- (X & y)>");
+//
+//        assertEquals("((<%A --> b>), ((&, %X, y)))", x.toString());
 
 
+
+        TaskRule y = p.term("<(S --> P) |- (P --> S), (Truth.Conversion, Info.SeldomUseful)>");
+        assertEquals("((<%S --> %P>), (<%P --> %S>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
+        assertEquals(16, y.getVolume());
+        assertEquals(16, y.getComplexity());
     }
 
     @Test public void testRangeTerm() {

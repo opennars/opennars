@@ -125,6 +125,7 @@ public class TaskRule extends Rule<Premise,Task> {
     @Override
     public TaskRule normalizeDestructively() {
         this.transform(taskRuleNormalization);
+        this.invalidate();
         return this;
     }
 

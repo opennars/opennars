@@ -57,7 +57,6 @@ import nars.process.CycleProcess;
 import nars.process.NAL;
 import nars.task.Task;
 import nars.task.TaskSeed;
-import nars.task.stamp.AbstractStamper;
 import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.util.event.EventEmitter;
@@ -80,7 +79,7 @@ import java.util.function.Predicate;
  *
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable, AbstractStamper, AbstractMemory {
+public class Memory implements Serializable, AbstractMemory {
 
 
 
@@ -405,7 +404,7 @@ public class Memory implements Serializable, AbstractStamper, AbstractMemory {
     }
 
     /** applies default settings, with a new serial # as its evidentialBase, for a new input sentence */
-    @Override public void applyToStamp(Stamp t) {
+    public void applyToStamp(Stamp t) {
 //
 //    public Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
 //        super();
