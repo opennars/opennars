@@ -14,12 +14,15 @@ import java.util.Map;
  */
 public enum DesireFunction {
 
-    DesireStrong() {
+    Negation() {
+        @Override public Truth get(final Truth T, final Truth B) { return TruthFunctions.negation(T); }
+    },
+    Strong() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.desireStrong(T,B);
         }
     },
-    DesireWeak() {
+    Weak() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.desireWeak(T, B);
         }
@@ -47,7 +50,7 @@ public enum DesireFunction {
         return get(t, null);
     }
 
-    static final Map<Term, DesireFunction> atomToTruthModifier = Global.newHashMap(TruthFunction.values().length);
+    static final Map<Term, DesireFunction> atomToTruthModifier = Global.newHashMap(DesireFunction.values().length);
 
     static {
         for (DesireFunction tm : DesireFunction.values())

@@ -14,6 +14,11 @@ import java.util.Map;
  */
 public enum TruthFunction {
 
+    Revision() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return TruthFunctions.revision(T, B);
+        }
+    },
     Deduction() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.deduction(T, B);

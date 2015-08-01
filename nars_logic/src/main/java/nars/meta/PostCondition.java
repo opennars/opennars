@@ -55,8 +55,8 @@ public class PostCondition //since there can be multiple tasks derived per rule
                     switch (typeStr) {
                         case "Desire":
                         case "Truth":
-                            if (truthFunc!=null)
-                                throw new RuntimeException("truthFunc " + truthFunc + " already specified");
+                            //if (truthFunc!=null)
+                             //   throw new RuntimeException("truthFunc " + truthFunc + " already specified");
 
                             if(swhich.equals("Negation")) {
                                 negation = true;
