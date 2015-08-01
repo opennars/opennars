@@ -1,5 +1,10 @@
 package nars.nal;
 
+import com.github.fge.grappa.run.ListeningParseRunner;
+import com.github.fge.grappa.run.ParseRunnerListener;
+import com.github.fge.grappa.run.events.MatchFailureEvent;
+import com.github.fge.grappa.run.events.MatchSuccessEvent;
+import com.google.common.eventbus.Subscribe;
 import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -126,19 +131,58 @@ public class NALExecuter extends ConceptFireTaskTerm  {
     public static List<Term> parseRules(List<String> not_yet_parsed_rules)    {
         //2. ok we have our unparsed rules, lets parse them to terms now
         NarseseParser meta = NarseseParser.the();
-        List<Term> uninterpreted_rules = new ArrayList<>();
+        List<Term> uninterpreted_rules = new ArrayList<>(not_yet_parsed_rules.size() /* approximately */);
 
-        for(String rule : not_yet_parsed_rules)
-        {
+        /*
+        ArrayList<String> fails = new ArrayList();
+
+        ListeningParseRunner lpr = new ListeningParseRunner(meta.Term());
+
+        lpr.registerListener(new ParseRunnerListener() {
+
+
+            @Override
+            public void matchSuccess(MatchSuccessEvent event) {
+                fails.clear();
+            }
+
+            @Override
+            public void matchFailure(MatchFailureEvent event) {
+
+                String es = event.getContext().toString();
+                es = es.replace("Term/firstOf/sequence", "term");
+                es = es.replace("Term/firstOf/Variable", "var");
+
+
+                if (!fails.isEmpty()) {
+                    //replace the last one if it leads an extension of the current one
+                    final int f = fails.size() - 1;
+                    String last = fails.get(f);
+                    boolean contained = (last.indexOf(es) == 0);
+                    if (contained) {
+                        if (last.length() < es.length())
+                            fails.set(f, es);
+                        return;
+                    }
+                }
+                fails.add(es);
+            }
+
+        });
+        */
+
+        for(String rule : not_yet_parsed_rules) {
+
             String parsable = preprocess(rule);
-            try
-            {
+            try {
+
                 TaskRule r = meta.term(parsable);
+
                 uninterpreted_rules.add(r); //try to parse it
             }
             catch (Exception ex) {
                 System.err.println("The following rule can not be parsed so won't be used:\n" +
-                        parsable + " \n "+ ex.toString());
+                        parsable);
                 ex.printStackTrace();
             }
         }

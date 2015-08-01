@@ -2,6 +2,7 @@ package nars.narsese;
 
 import com.github.fge.grappa.Grappa;
 import com.github.fge.grappa.annotations.Cached;
+import com.github.fge.grappa.buffers.CharSequenceInputBuffer;
 import com.github.fge.grappa.matchers.MatcherType;
 import com.github.fge.grappa.matchers.NothingMatcher;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
@@ -61,6 +62,7 @@ public class NarseseParser extends BaseParser<Object> {
     private final ParseRunner inputParser = new ListeningParseRunner3(Input());
     private final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     private final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
+
 
 
     static final ThreadLocal<NarseseParser> parsers = new ThreadLocal();
@@ -391,7 +393,7 @@ public class NarseseParser extends BaseParser<Object> {
         return Term(false, false);
     }
 
-    Rule Term() {
+    public Rule Term() {
         return Term(true, meta);
     }
 
@@ -634,12 +636,15 @@ public class NarseseParser extends BaseParser<Object> {
 
     //}
 
-    Rule AnyOperator() {
-        return sequence(firstOf(
-
+    Rule Op() {
+        return sequence(
+                trie(
+                        INTERSECTION_EXT.str, INTERSECTION_INT.str,
+                        DIFFERENCE_EXT.str, DIFFERENCE_INT.str,
+                        PRODUCT.str,
+                        IMAGE_EXT.str, IMAGE_INT.str,
 
                         INHERITANCE.str,
-
 
                         SIMILARITY.str,
 
@@ -656,18 +661,9 @@ public class NarseseParser extends BaseParser<Object> {
                         DISJUNCTION.str,
                         CONJUNCTION.str,
                         SEQUENCE.str,
-                        PARALLEL.str,
-
-                        anyOf(
-                                INTERSECTION_EXT.str +
-                                        INTERSECTION_INT.str +
-                                        DIFFERENCE_EXT.str +
-                                        DIFFERENCE_INT.str + PRODUCT.str + IMAGE_EXT.str + IMAGE_INT.str
-                        )
-
-
-                        //OPERATION.ch
+                        PARALLEL.str
                 ),
+
                 push(Symbols.getOperator(match()))
         );
     }
@@ -709,11 +705,11 @@ public class NarseseParser extends BaseParser<Object> {
 
                 //open != null ? sequence(open.ch, s()) : s(),
 
-                initialOp ? AnyOperator() : Term(),
+                initialOp ? Op() : Term(),
 
                 spaceSeparates ?
 
-                        sequence( s(), AnyOperator(), s(), Term() )
+                        sequence( s(), Op(), s(), Term() )
 
                         :
 
@@ -743,7 +739,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule AnyOperatorOrTerm() {
-        return firstOf(AnyOperator(), Term());
+        return firstOf(Op(), Term());
     }
 
 
@@ -968,12 +964,17 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
+    public <T extends Term> T termRaw(String input) throws InvalidInputException {
+        return termRaw(input, singleTermParser);
+    }
+
+
     /**
      * parse one term. it is more efficient to use parseTermNormalized if possible
      */
-    public <T extends Term> T termRaw(String input) throws InvalidInputException {
-        ParsingResult r = singleTermParser.run(input);
+    public <T extends Term> T termRaw(String input, ParseRunner p) throws InvalidInputException {
 
+        ParsingResult r = p.run(input);
 
         if (!r.getValueStack().isEmpty()) {
 
@@ -999,6 +1000,9 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public static InvalidInputException newParseException(String input, ParsingResult r) {
+
+        CharSequenceInputBuffer ib = (CharSequenceInputBuffer) r.getInputBuffer();
+
 
         //if (!r.isSuccess()) {
             return new InvalidInputException("input: " + input + " (" + r.toString() + ')');
