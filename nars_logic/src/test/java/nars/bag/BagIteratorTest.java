@@ -1,7 +1,6 @@
 package nars.bag;
 
-import nars.Global;
-import nars.analyze.experimental.BagPerf.NullItem;
+import nars.analyze.experimental.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.util.data.random.XORShiftRandom;

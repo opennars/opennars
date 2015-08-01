@@ -10,7 +10,7 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskAccumulator;
+import nars.budget.ItemAccumulator;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -48,13 +48,13 @@ public class DefaultCycle extends SequentialCycle {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    protected final TaskAccumulator newTasks;
+    protected final ItemAccumulator<Task> newTasks;
     protected Set<Task> newTasksTemp = Global.newHashSet(8);
     protected boolean executingNewTasks = false;
 
 
 
-    public DefaultCycle(TaskAccumulator newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
+    public DefaultCycle(ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
         super(concepts);
 
         this.newTasks = newTasks;

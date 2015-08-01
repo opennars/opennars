@@ -23,10 +23,8 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
-import nars.budget.Budget;
 import nars.budget.Item;
 import nars.nar.Default;
-import nars.truth.DefaultTruth;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.sort.ArraySortedIndex;
 
@@ -96,32 +94,7 @@ public class BagPerf {
     }
             
     public static int itemID = 0;
-    
-    /** Empty Item implementation useful for testing */
-    public static class NullItem extends Item.StringKeyItem {
-        public String key;
-    
-        public NullItem() {
-            this(rng.nextFloat() * (1.0f - DefaultTruth.DEFAULT_TRUTH_EPSILON));
-        }
 
-        public NullItem(float priority, String key) {
-            super(new Budget(priority, priority, priority));
-            this.key = key;
-        }
-
-        public NullItem(float priority) {
-            super(priority, priority, priority);
-            this.key = "" + (itemID++);
-        }
-
-        @Override
-        public CharSequence name() {
-            return key;
-        }
-        
-    }
-    
     public static void randomBagIO(Bag<CharSequence, NullItem> b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
             if (rng.nextFloat() > insertProportion) {

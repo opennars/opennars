@@ -29,7 +29,6 @@ import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.task.stamp.Stamp;
-import nars.task.stamp.StampEvidence;
 import nars.term.*;
 import nars.term.transform.TermVisitor;
 import nars.truth.*;
@@ -90,9 +89,6 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         this.term = null;
     }
 
-    Sentence(Term invalidTerm, char punctuation, Truth newTruth, StampEvidence newStamp) {
-        this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
-    }
 
     @Deprecated
     public Sentence(T seedTerm, final char punctuation, final Truth truth) {
@@ -130,16 +126,16 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      * @param seedTerm The Term that forms the content of the sentence
      * @param punctuation The punctuation indicating the type of the sentence
      * @param truth The truth value of the sentence, null for question
-     * @param stamp The stamp of the sentence indicating its derivation time and
+     * @param copyStampFrom The stamp of the sentence indicating its derivation time and
      * @param normalize if false, normalization is not attempted and the compound will be used as-is
      * base
      */
-    public Sentence(T seedTerm, final char punctuation, final Truth truth, StampEvidence stamp) {
+    public Sentence(T seedTerm, final char punctuation, final Truth truth, Sentence copyStampFrom) {
         this(seedTerm, punctuation, truth);
 
 
         //apply the stamp to this
-        stamp.applyToStamp(this);
+        copyStampFrom.applyToStamp(this);
 
 
 //        if ((isQuestion() || isQuest()) && !isEternal()) {

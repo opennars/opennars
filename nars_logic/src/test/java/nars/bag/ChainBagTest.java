@@ -1,6 +1,6 @@
 package nars.bag;
 
-import nars.analyze.experimental.BagPerf;
+import nars.analyze.experimental.NullItem;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
 import nars.util.data.random.XORShiftRandom;
@@ -33,7 +33,7 @@ public class ChainBagTest {
 
         int inputs = loops * loops;
         for (int i = 0 ;i < inputs; i++) {
-            bag.put(new BagPerf.NullItem(rng.nextFloat()));
+            bag.put(new NullItem(rng.nextFloat()));
             assertTrue(capacity >= bag.size());
         }
 

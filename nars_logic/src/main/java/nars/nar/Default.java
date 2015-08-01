@@ -22,7 +22,6 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicRule;
-import nars.nal.NALExecuter;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -45,8 +44,8 @@ import nars.process.CycleProcess;
 import nars.process.concept.*;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskAccumulator;
-import nars.task.TaskComparator;
+import nars.budget.ItemAccumulator;
+import nars.budget.ItemComparator;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
@@ -477,7 +476,7 @@ public class Default extends NARSeed  {
     @Override
     public CycleProcess newCycleProcess() {
         return new DefaultCycle(
-                new TaskAccumulator(TaskComparator.Merging.Plus),
+                new ItemAccumulator(new ItemComparator.Plus()),
                 newConceptBag(),
                 newNovelTaskBag(), inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
 

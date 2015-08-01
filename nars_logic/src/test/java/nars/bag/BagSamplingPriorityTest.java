@@ -1,6 +1,6 @@
 package nars.bag;
 
-import nars.analyze.experimental.BagPerf;
+import nars.analyze.experimental.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.HeapBag;
 import nars.bag.impl.LevelBag;
@@ -145,14 +145,14 @@ public class BagSamplingPriorityTest {
 
     }
 
-    public static class DefaultBagSampleAnalysis extends BagSampleAnalysis<CharSequence, BagPerf.NullItem> {
+    public static class DefaultBagSampleAnalysis extends BagSampleAnalysis<CharSequence, NullItem> {
 
-        public DefaultBagSampleAnalysis(Bag<CharSequence, BagPerf.NullItem> bag, int bins) {
+        public DefaultBagSampleAnalysis(Bag<CharSequence, NullItem> bag, int bins) {
             super(bag, bins);
         }
 
         public void add(float pri) {
-            bag.put(new BagPerf.NullItem(pri));
+            bag.put(new NullItem(pri));
         }
 
         /** fills the bag to capacity with values determined by a distribution curve */
@@ -245,7 +245,7 @@ public class BagSamplingPriorityTest {
 
     }
 
-    public static double getBagError(Bag<CharSequence, BagPerf.NullItem> c, int iterations, int capacity, int bins, Function<Float, Float> itemDistributionCurve) {
+    public static double getBagError(Bag<CharSequence, NullItem> c, int iterations, int capacity, int bins, Function<Float, Float> itemDistributionCurve) {
 
 
         DefaultBagSampleAnalysis a = new DefaultBagSampleAnalysis(c, bins);

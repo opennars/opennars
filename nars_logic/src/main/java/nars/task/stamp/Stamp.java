@@ -36,7 +36,7 @@ import static nars.nal.nal7.TemporalRules.*;
  *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
  */
 
-public interface Stamp extends StampEvidence, Cloneable, Serializable {
+public interface Stamp extends Cloneable, Serializable {
 
     /**
      * default for atemporal events
@@ -368,6 +368,30 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
     public Stamp setCreationTime(long c);
     public Stamp setOccurrenceTime(long o);
     public Stamp setDuration(int d);
+
+
+
+    /** deduplicated and sorted version of the evidentialBase.
+     * this can always be calculated deterministically from the evidentialBAse
+     * since it is the deduplicated and sorted form of it. */
+    abstract public long[] getEvidentialSet();
+
+
+
+    public boolean isCyclic();
+
+    default public boolean isInput() {
+        return false;
+    }
+
+    /**
+     * responsible for setting some or all of the following Stamp setters:
+     *      setDuration(int duration);
+     *      setCreationTime(long creationTime);
+     *      setOccurrenceTime(long occurrenceTime);
+     *      setEvidentialBase(long[] evidentialBase);
+     */
+    void applyToStamp(Stamp target);
 
 
     /** default implementation here is just to ignore the cached value

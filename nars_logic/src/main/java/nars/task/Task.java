@@ -34,7 +34,6 @@ import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
-import nars.task.stamp.StampEvidence;
 import nars.term.Compound;
 import nars.term.Termed;
 import nars.truth.ProjectedTruth;
@@ -63,7 +62,7 @@ import static nars.Global.reference;
  * TODO decide if the Sentence fields need to be Reference<> also
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class Task<T extends Compound> extends Sentence<T> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence {
+public class Task<T extends Compound> extends Sentence<T> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable {
 
 
     /**
@@ -158,7 +157,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         this(s.getTerm(), s.punctuation, s.truth, budget, parentTask, parentBelief, null);
     }
 
-    protected Task(char punctuation) {
+    @Deprecated protected Task(char punctuation) {
         super(punctuation);
         this.parentTask = null;
         this.parentBelief = null;

@@ -12,7 +12,8 @@ import java.util.Random;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static nars.analyze.experimental.BagPerf.NullItem;
+
+import nars.analyze.experimental.NullItem;
 import static org.junit.Assert.assertTrue;
 
 public class BubbleBagTest extends AbstractBagTest {

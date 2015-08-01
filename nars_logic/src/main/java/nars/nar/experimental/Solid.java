@@ -19,7 +19,7 @@ import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
-import nars.task.TaskComparator;
+import nars.budget.ItemComparator;
 import nars.term.Term;
 import nars.util.sort.ArraySortedIndex;
 
@@ -48,7 +48,7 @@ public class Solid extends Default implements CycleProcess {
 
     ConceptActivator activator;
 
-    final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new TaskComparator(TaskComparator.Merging.Or));
+    final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new ItemComparator.Plus());
         /*final SortedSet<Task> tasks = new FastSortedSet(new WrapperComparatorImpl(new TaskComparator(TaskComparator.Duplication.Or))).atomic();*/
 
     int tasksAddedThisCycle = 0;

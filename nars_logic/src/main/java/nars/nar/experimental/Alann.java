@@ -23,13 +23,11 @@ import nars.process.TaskProcess;
 import nars.process.concept.TableDerivations;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskAccumulator;
-import nars.task.TaskComparator;
+import nars.budget.ItemAccumulator;
+import nars.budget.ItemComparator;
 import nars.term.Term;
-import nars.truth.Truth;
 
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * "Adaptive Logic And Neural Networks" Spiking continuous-time model
@@ -255,7 +253,7 @@ public class Alann extends NARSeed {
         /**
          * holds original (user-input) goals and question tasks
          */
-        protected final TaskAccumulator commands = new TaskAccumulator(TaskComparator.Merging.Plus);
+        protected final ItemAccumulator commands = new ItemAccumulator(new ItemComparator.Plus());
 
         /**
          * this is temporary if it can be is unified with the concept's main index

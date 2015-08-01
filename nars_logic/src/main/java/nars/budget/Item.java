@@ -133,15 +133,6 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
         public StringKeyItem(float p, float d, float q) { super(p, d, q);         }
         public StringKeyItem(float p) { this(p, p, p);         }
 
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj == this) return true;
-            if (obj instanceof Item) {
-                return ((Item)obj).name().equals(name());
-            }
-            return false;
-        }
-    
     }
 
     public static float getPrioritySum(Iterable<? extends Item> c) {

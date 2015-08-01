@@ -1,6 +1,6 @@
 package nars.bag;
 
-import nars.analyze.experimental.BagPerf;
+import nars.analyze.experimental.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.data.sorted.SortedIndex;
@@ -16,16 +16,16 @@ import static org.junit.Assert.assertTrue;
 public class AbstractBagTest {
     final static Random rng = new XORShiftRandom();
 
-    public static int[] testRemovalPriorityDistribution(int capacity, SortedIndex<BagPerf.NullItem> items) {
-        CurveBag<CharSequence, BagPerf.NullItem> f = new CurveBag(rng, capacity, CurveBagTest.curve, items);
+    public static int[] testRemovalPriorityDistribution(int capacity, SortedIndex<NullItem> items) {
+        CurveBag<CharSequence, NullItem> f = new CurveBag(rng, capacity, CurveBagTest.curve, items);
         return testRemovalPriorityDistribution(8, capacity, 0.2f, 0.2f, f);
     }
 
-    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, BagPerf.NullItem> f) {
+    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, NullItem> f) {
         return testRemovalPriorityDistribution(loops, insertsPerLoop, fractionToAdjust, fractionToRemove, f, true);
     }
 
-    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, BagPerf.NullItem> f, boolean requireOrder) {
+    public static int[] testRemovalPriorityDistribution(int loops, int insertsPerLoop, float fractionToAdjust, float fractionToRemove, Bag<CharSequence, NullItem> f, boolean requireOrder) {
 
         int levels = 9;
         int count[] = new int[levels];
@@ -38,7 +38,7 @@ public class AbstractBagTest {
         for (int l = 0; l < loops; l++) {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
-                BagPerf.NullItem ni = new BagPerf.NullItem();
+                NullItem ni = new NullItem();
                 ni.key = "" + (int)(rng.nextFloat() * insertsPerLoop * 1.2f);
                 f.put(ni);
             }
@@ -49,7 +49,7 @@ public class AbstractBagTest {
 
             //remove some, adjust their priority, and re-insert
             for (int i= 0; i < insertsPerLoop * adjustFraction; i++) {
-                BagPerf.NullItem t = f.pop();
+                NullItem t = f.pop();
                 if (t == null) break;
                 if (i % 2 == 0)
                     t.setPriority(t.getPriority() * 0.99f);
@@ -75,7 +75,7 @@ public class AbstractBagTest {
             for (int i= 0; i < insertsPerLoop * removeFraction; i++) {
                 int sizeBefore = f.size();
 
-                BagPerf.NullItem t = f.pop();
+                NullItem t = f.pop();
 
                 int sizeAfter = f.size();
 
@@ -126,7 +126,7 @@ public class AbstractBagTest {
     }
 
 
-    public static int[] testRetaining(int loops, int insertsPerLoop, Bag<CharSequence, BagPerf.NullItem> f) {
+    public static int[] testRetaining(int loops, int insertsPerLoop, Bag<CharSequence, NullItem> f) {
 
         int levels = 9;
         int count[] = new int[levels];
@@ -135,7 +135,7 @@ public class AbstractBagTest {
         for (int l = 0; l < loops; l++) {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
-                BagPerf.NullItem ni = new BagPerf.NullItem(rng.nextFloat());
+                NullItem ni = new NullItem(rng.nextFloat());
                 f.put(ni);
             }
 

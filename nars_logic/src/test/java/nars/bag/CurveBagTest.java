@@ -3,7 +3,7 @@ package nars.bag;
 import nars.Global;
 import nars.NAR;
 import nars.Param;
-import nars.analyze.experimental.BagPerf.NullItem;
+import nars.analyze.experimental.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;

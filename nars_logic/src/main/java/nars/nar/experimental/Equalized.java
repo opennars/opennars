@@ -1,7 +1,6 @@
 package nars.nar.experimental;
 
 import nars.Global;
-import nars.Op;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
@@ -11,11 +10,9 @@ import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
-import nars.task.TaskAccumulator;
-import nars.task.TaskComparator;
-import nars.term.Compound;
+import nars.budget.ItemAccumulator;
+import nars.budget.ItemComparator;
 import nars.term.Term;
-import org.apache.commons.math3.stat.Frequency;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -33,7 +30,7 @@ public class Equalized extends Default {
 
     public static class EqualizedCycle extends DefaultCycle {
 
-        public EqualizedCycle(TaskAccumulator taskAccumulator, Bag<Term, Concept> concepts, AtomicInteger conceptsFiredPerCycle) {
+        public EqualizedCycle(ItemAccumulator taskAccumulator, Bag<Term, Concept> concepts, AtomicInteger conceptsFiredPerCycle) {
             super(taskAccumulator, concepts, null, null, null, conceptsFiredPerCycle);
         }
 
@@ -161,7 +158,7 @@ public class Equalized extends Default {
     @Override
     public CycleProcess newCycleProcess() {
         return new EqualizedCycle(
-                new TaskAccumulator(TaskComparator.Merging.Plus),
+                new ItemAccumulator(new ItemComparator.Plus()),
                 newConceptBag(),
                 conceptsFiredPerCycle
         );

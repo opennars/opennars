@@ -11,7 +11,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.process.NAL;
 import nars.task.stamp.Stamp;
-import nars.task.stamp.StampEvidence;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -24,7 +23,7 @@ import java.util.Arrays;
  * <p>
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
-public class TaskSeed<T extends Compound> extends DirectBudget implements StampEvidence, Stamp {
+public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp {
 
     transient public final Memory memory;
 
