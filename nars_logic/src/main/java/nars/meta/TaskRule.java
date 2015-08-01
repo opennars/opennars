@@ -43,8 +43,16 @@ public class TaskRule extends Rule<Premise,Task> {
 
         @Override
         public boolean test(Term term) {
-            if (term instanceof Atom)
-                return (Character.isUpperCase( ((Atom)term).toString().charAt(0) ));
+            if (term instanceof Atom) {
+                String name = term.toString();
+                if (!(
+                        name.startsWith("Truth_") ||
+                                name.startsWith("Stamp_") ||
+                                name.startsWith("Truth_") ||
+                                name.startsWith("Truth_")
+                        ))
+                    return (Character.isUpperCase(name.charAt(0)));
+            }
             return false;
         }
 

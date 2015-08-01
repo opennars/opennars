@@ -211,9 +211,8 @@ public class NALExecuter extends ConceptFireTaskTerm  {
                 return false;
 
             //todo consume and use also other meta information
-            for(Term t : ((Product)this.Term_and_Meta.term(1)).terms())
-            {
-                String s = t.toString().replace("_",".").replace("%","");
+            for(Term t : ((Product)this.Term_and_Meta.term(1)).terms()) {
+                String s = t.toString().replace("_",".");//.replace("%","");
 
                 switch (s) { //truth value calculation happens here
                     case "Truth.Deduction":
@@ -251,6 +250,9 @@ public class NALExecuter extends ConceptFireTaskTerm  {
                         break;
                     case "Truth.Analogy":
                         truth = TruthFunctions.analogy(task.truth, belief.truth);
+                        break;
+                    case "Truth.AnonymousAnalogy":
+                        truth = TruthFunctions.anonymousAnalogy(task.truth, belief.truth);
                         break;
                     case "Truth.Exemplification":
                         truth = TruthFunctions.exemplification(task.truth, belief.truth);

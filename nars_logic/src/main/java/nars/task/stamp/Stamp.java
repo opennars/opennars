@@ -354,7 +354,7 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             }
         }
 
-        buffer.append(Symbols.STAMP_CLOSER).append(' ');
+        buffer.append(Symbols.STAMP_CLOSER); //.append(' ');
 
         //this is for estimating an initial size of the stringbuffer
         //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
