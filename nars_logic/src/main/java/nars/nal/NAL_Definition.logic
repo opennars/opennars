@@ -108,7 +108,7 @@
     
 //// propositional decomposition
 
-    S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative, Occurrence:Derive)
+    S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative)
     S, (||,S,A_1..n) |- (||,A_1..n), (Truth:DecomposeNegativePositivePositive)
 
 //// multi-conditional syllogism
@@ -151,18 +151,20 @@
     
     (&&,(S --> #N), A_1..n), (S --> M) |- (&&,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
 
-//NAL7 specific inference
-//all above rules work for all orders to be able to use NAL1-6 (as long as the order of both premises is the same)
-//(where order of (&/ is taken into account in findSubstitute already which doesn't permute if there is order,
-//and where order of =/> on detachment is handled by Occurrence:Derive)
-//but if order is explicitely given, only a premise of the same order will match,
-//this keeps this file very straightforward
+//NAL7/8 specific inference
+//all above rules are order such that they work for all temporal orders (as long as the order of both premises is the same)
+//Occurence time, except if Occurence:Derive, will be assumed to be the occurence time of the parent task.
+//Order of ==> in conclusions will always be derived, rules with ==> or && are expected (besides commutativity which is considered) to also work with same order
+//while if an order is given, the rule will only be used with the given order
 
-    (&/,A_1..n), ((&/,A_1..n, B_1..m) ==> B) |- ((&/,B_1..m) ==> B), (Truth:Deduction, Occurrence:Derive)
-    (&/,A_1..n), ((&/,A_1..n, I) ==> B), interval(I) |- B, (Truth:Deduction, Occurrence:Derive)
+    C, ((&/,C,A_1..n) ==> B) |- ((&/,A_1..n) ==> B), (Truth:Deduction, Occurrence:Derive)
+    C, <(&/,C,I) ==> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
+    B, <(&/,C,I) ==> B>, interval(I) |- C, (Truth.Abduction, Desire.Deduction, Occurrence:Derive)
 
-    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) =/> P), (Truth:Induction)
-    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) </> P), (Truth:Comparison)
+//Temporal induction:
+
+    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) ==> P), (Truth:Induction)
+    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) <=> P), (Truth:Comparison)
     P, S, no_common_subterm(S,P), event(P), event(S) |- (&/,S,measure_time(S,P),P), (Truth:Intersection)
 
 ////// Theorems in IL:
