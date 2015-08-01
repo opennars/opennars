@@ -135,7 +135,8 @@ public class EmotionMeter implements Serializable {
 
         happyMeter.set(happy);
 
-        happy *= happinessFade;
+        if (happy > 0)
+            happy *= happinessFade;
     }
 
     /** @return -1 if no significant change, 0 if decreased, 1 if increased */

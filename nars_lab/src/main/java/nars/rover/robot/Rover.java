@@ -75,7 +75,7 @@ public class Rover extends Robotic {
 
     float L = 25f; //vision distance
 
-    Vec2 mouthPoint = new Vec2(3.0f, 0); //0.5f);
+    Vec2 mouthPoint = new Vec2(2.7f, 0); //0.5f);
     @Deprecated int distanceResolution = 6;
 
     double mouthArc = Math.PI/6f; //in radians

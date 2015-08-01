@@ -14,6 +14,7 @@ import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.term.Term;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -70,13 +71,17 @@ public class Equalized extends Default {
 
             //new tasks
             int newTasksToFire = Math.min(newTasks.size(), conceptsFiredPerCycle.get());
-            for (int n = newTasksToFire;  n > 0; n--) {
-                Task next = newTasks.removeHighest();
+            Iterator<Task> ii = newTasks.iterateSorted();
+
+            for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
+                Task next = ii.next();
                 if (next == null) break;
 
                 TaskProcess tp = TaskProcess.get(memory, next, getPriority(next, conceptsToFire));
                 if (tp!=null)
                     tp.run();
+
+                ii.remove();
             }
 
 

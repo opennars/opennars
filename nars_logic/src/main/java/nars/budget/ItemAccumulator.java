@@ -84,44 +84,47 @@ public class ItemAccumulator<I extends Item> {
 
     public I lowest() {
         if (buffer.isEmpty()) return null;
-        return sortedKeyValues().getFirst().getTwo();
+        return lowestFirstKeyValues().getFirst().getTwo();
     }
 
     public I highest() {
         if (buffer.isEmpty()) return null;
-        return sortedKeyValues().getLast().getTwo();
+        return lowestFirstKeyValues().getLast().getTwo();
     }
 
 
 
-    private RichIterable<Pair<I,I>> sortedKeyValues() {
-        return buffer.keyValuesView().toSortedList(new LowestFirstComparator<>());
+    private MutableList<Pair<I,I>> lowestFirstKeyValues() {
+        return buffer.keyValuesView().toSortedList(lowestFirst);
     }
-    private MutableList<Pair<I, I>> inverseSortedKeyValues() {
-
+    private MutableList<Pair<I, I>> highestFirstKeyValues() {
         return buffer.keyValuesView().toSortedList(highestFirst);
     }
 
     /** iterates the items highest first */
     public Iterator<I> iterateSorted() {
-        return Iterators.transform( inverseSortedKeyValues().iterator(),
+        return Iterators.transform( highestFirstKeyValues().iterator(),
+                input -> input.getTwo() );
+    }
+    public Iterator<I> iterateSortedInverse() {
+        return Iterators.transform( lowestFirstKeyValues().iterator(),
                 input -> input.getTwo() );
     }
 
-    public int removeLowest(int n) {
+    public int removeLowest(final int n) {
         final int s = buffer.size();
         if (s <= n) {
             buffer.clear();
             return s;
         }
 
-        RichIterable<Pair<I,I>> v = sortedKeyValues();
-        MutableList<Pair<I,I>> sv = v.toSortedList();
-        int r = 0;
-        for (int i = sv.size()-1; i >= 0; i--) {
-            buffer.remove( sv.get(i).getOne() );
-            r++;
+        MutableList<Pair<I, I>> lf = lowestFirstKeyValues();
+
+        int r;
+        for (r = 0; r < n; r++) {
+            buffer.remove( lf.get(r).getOne() );
         }
+
         return r;
     }
 

@@ -25,7 +25,7 @@ public class Sim extends PhysicsModel {
 
 
     /* how often to input mission, in frames */
-    public int missionPeriod = 30;
+    public int missionPeriod = 8;
 
     boolean wraparound = false;
 
