@@ -158,69 +158,17 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         Term secterm_unwrap = unwrapNegation(secTerm);
 
         for (final Term T1 : components_level1) {
-            Term T1_unwrap = unwrapNegation(T1);
-            values.clear(); //we are only interested in first variables
+            final Term T1_unwrap = unwrapNegation(T1);
 
-            smap.clear();
+            dedSecondLayerReduce(nal, r, terms_dependent, terms_independent, values, smap, firstTerm, secTerm, secterm_unwrap, T1_unwrap);
 
-            if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, values, smap, r)) {
-
-                Compound ctaskterm_subs = firstTerm;
-                ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(values);
-                Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
-                if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
-                    terms_dependent.add(taskterm_subs);
-                }
-            }
-
-            values.clear(); //we are only interested in first variables
-            smap.clear();
-
-            if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, values, smap, r)) {
-                Compound ctaskterm_subs = firstTerm;
-                ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(values);
-                Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
-                if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
-
-                    terms_independent.add(taskterm_subs);
-                }
-            }
-
-            if (!((T1_unwrap instanceof Implication) || (T1_unwrap instanceof Equivalence) || (T1_unwrap instanceof Conjunction) || (T1_unwrap instanceof Disjunction))) {
-                continue;
-            }
-
-            if (T1_unwrap instanceof Compound) {
+            if ((T1_unwrap instanceof Implication) || (T1_unwrap instanceof Equivalence) || (T1_unwrap instanceof Conjunction) || (T1_unwrap instanceof Disjunction)) {
                 Term[] components_level2 = ((Compound) T1_unwrap).term;
 
                 for (final Term T2 : components_level2) {
                     Term T2_unwrap = unwrapNegation(T2);
 
-                    values.clear(); //we are only interested in first variables
-                    smap.clear();
-
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, values, smap, r)) {
-                        //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                        Compound ctaskterm_subs = firstTerm;
-                        ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(values);
-                        Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
-                        if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
-                            terms_dependent.add(taskterm_subs);
-                        }
-                    }
-
-                    values.clear(); //we are only interested in first variables
-                    smap.clear();
-
-                    if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, values, smap, r)) {
-                        //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                        Compound ctaskterm_subs = firstTerm;
-                        ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(values);
-                        Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
-                        if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
-                            terms_independent.add(taskterm_subs);
-                        }
-                    }
+                    dedSecondLayerReduce(nal, r, terms_dependent, terms_independent, values, smap, firstTerm, secTerm, secterm_unwrap, T2_unwrap);
                 }
             }
         }
@@ -320,6 +268,32 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
         }
         return unifiedAnything;
+    }
+
+    private void dedSecondLayerReduce(ConceptProcess nal, Random r, List<Term> terms_dependent, List<Term> terms_independent, Map<Term, Term> values, Map<Term, Term> smap, Compound firstTerm, Term secTerm, Term secterm_unwrap, Term t1_unwrap) {
+        smap.clear();
+        values.clear(); //we are only interested in first variables
+        if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, t1_unwrap, secterm_unwrap, values, smap, r)) {
+            dedSecondLayerReduce(nal, terms_dependent, values, firstTerm, secTerm);
+        }
+
+
+        smap.clear();
+        values.clear();
+        if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, t1_unwrap, secterm_unwrap, values, smap, r)) {
+            dedSecondLayerReduce(nal, terms_independent, values, firstTerm, secTerm);
+        }
+    }
+
+    private static void dedSecondLayerReduce(ConceptProcess nal, List<Term> termsPendent, Map<Term, Term> values, Compound firstTerm, Term secTerm) {
+
+
+        Compound ctaskterm_subs = firstTerm;
+        ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(values);
+        Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
+        if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
+            termsPendent.add(taskterm_subs);
+        }
     }
 
     private static void dedSecondLayerVariableUnificationTerms(final ConceptProcess nal, Task task, Sentence second_belief, List<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {

@@ -40,9 +40,9 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     public TaskLink newItem() {
         final int recordLen = memory.param.termLinkRecordLength.get();
         if (template == null)
-            return new TaskLink(getTask(), getBudgetRef(), recordLen);
+            return new TaskLink(getTask(), getBudgetRef());
         else
-            return new TaskLink(getTask(), template, getBudgetRef(), recordLen);
+            return new TaskLink(getTask(), template, getBudgetRef());
     }
 
 

@@ -7,9 +7,11 @@ package nars.process;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
+import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.link.TermLinkKey;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
@@ -70,6 +72,8 @@ public class ConceptProcess extends NAL implements Premise {
     protected void onFinished() {
         beforeFinish();
 
+        if (derived!=null)
+            memory.add(derived);
     }
 
 
@@ -163,15 +167,9 @@ public class ConceptProcess extends NAL implements Premise {
         emit(Events.BeliefReason.class, this);
     }
 
-    public void run() {
-
+    @Override
+    protected void onStart() {
         memory.emotion.busy(this);
-
-        super.run();
-
-        if (derived!=null)
-            memory.add(derived);
-
     }
 
     @Override
@@ -185,7 +183,9 @@ public class ConceptProcess extends NAL implements Premise {
         concept.setUsed(now);
         currentTaskLink.setUsed(now);
 
-        concept.getTermLinks().setForgetNext(memory.param.termLinkForgetDurations, memory);
+        final Bag<TermLinkKey, TermLink> tl = concept.getTermLinks();
+        if (tl!=null)
+            tl.setForgetNext(memory.param.termLinkForgetDurations, memory);
 
         processTask();
 

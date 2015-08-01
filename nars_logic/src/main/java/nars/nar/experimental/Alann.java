@@ -1,33 +1,38 @@
 package nars.nar.experimental;
 
+import com.google.common.collect.Iterators;
+import com.google.common.util.concurrent.AtomicDouble;
+import com.gs.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
 import nars.*;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
+import nars.budget.ItemAccumulator;
+import nars.budget.ItemComparator;
 import nars.clock.CycleClock;
-import nars.concept.AbstractConcept;
-import nars.concept.BeliefTable;
-import nars.concept.Concept;
-import nars.concept.TaskTable;
+import nars.concept.*;
 import nars.cycle.AbstractCycle;
 import nars.io.DefaultPerception;
 import nars.io.Perception;
 import nars.io.out.TextOutput;
 import nars.link.*;
+import nars.meter.NARTrace;
 import nars.nal.LogicPolicy;
 import nars.nar.Default;
+import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.process.concept.TableDerivations;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.budget.ItemAccumulator;
-import nars.budget.ItemComparator;
+import nars.term.Compound;
 import nars.term.Term;
+import nars.term.transform.TermVisitor;
 
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 /**
  * "Adaptive Logic And Neural Networks" Spiking continuous-time model
@@ -35,8 +40,13 @@ import java.util.Iterator;
  */
 public class Alann extends NARSeed {
 
+    static final AtomicDouble activationThreshold = new AtomicDouble(0.05);
     final int MAX_CONCEPTS = 128 * 1024;
     final int subcyclesPerCycle = 3;
+    static final float spikeDecay = 0.9f;
+    static final float defaultBeliefPriority = 0.1f;
+    private double conceptActivationThreshold = 0.05f; //this will be automatically tuned by a busy metric
+    final int commandsPerCycle = 1;
 
     public Alann() {
         setClock(new CycleClock());
@@ -48,12 +58,17 @@ public class Alann extends NARSeed {
         Global.DEBUG = true;
         Global.EXIT_ON_EXCEPTION = true;
 
+        Global.DEFAULT_JUDGMENT_PRIORITY = defaultBeliefPriority;
+
         NAR n = new NAR(new Alann());
         TextOutput.out(n);
+        NARTrace.out(n);
 
-        n.input("<x --> y>.");
-        n.input("<y --> z>.");
-        n.frame(4);
+        n.input("<x --> y>.\n" +
+                "<y --> z>.\n" +
+                "<x --> z>?\n");
+
+        n.frame(8);
 
     }
 
@@ -97,34 +112,83 @@ public class Alann extends NARSeed {
 
 
 
-
-
     public static class AlannConcept extends AbstractConcept {
 
-        //final Map<Concept, Truth> linked = Global.newHashMap();
+        final ArrayListBeliefTable beliefs;
 
+        final TermLinkBuilder termLinkBuilder;
+
+        final ObjectFloatHashMap<TermLink> termLinks = new ObjectFloatHashMap<>();
+
+        float activation = 0;
         Task lastTask;
 
         public AlannConcept(Term term, Budget budget, Memory memory) {
             super(term, budget, memory);
+            beliefs = new ArrayListBeliefTable(4, new BeliefTable.BeliefConfidenceAndCurrentTime(this));
+            termLinkBuilder = new TermLinkBuilder(this);
+
+            if (termLinkBuilder.templates()!=null) {
+                for (TermLinkTemplate tlt : termLinkBuilder.templates())
+                    termLinks.put(termLinkBuilder.out(tlt), 0);
+            }
         }
 
         @Override
         public boolean processBelief(TaskProcess nal, Task task) {
             System.out.println(this + " processBelief " + task);
 
+            final TaskLink taskLink = new TaskLink(task, task.getBudget());
+
+
+            believe(taskLink);
+
             if (task.isInput()) {
                 //trigger spike event (spike const * truth.confidence)
+                onSpike(taskLink, 1f);
             }
 
-            inferLocal(task);
 
             return false;
         }
 
+        @Override
+        public Task processQuestion(TaskProcess nal, Task task) {
+            System.out.println(this + " processQuestion " + task);
+
+
+            final TaskLink taskLink = new TaskLink(task, task.getBudget());
+            onSpike(taskLink, 1f);
+
+            lastTask = task;
+
+
+            return null;
+        }
+
+        protected void believe(TaskLink beliefTask) {
+            final Task theTask = beliefTask.getTask();
+            BeliefTable.Ranker belifeRanker = new BeliefTable.Ranker() {
+
+                @Override
+                public float rank(Task t, float bestToBeat) {
+                    return t.getTruth().getConfidence();
+                }
+            };
+
+            if (beliefs.add(theTask, belifeRanker, this, null) == theTask) {
+                inferLocal(beliefTask);
+                System.out.println(this + " added belief " + theTask);
+            }
+        }
+
         /**  Local Inference on belief (revision/Choice/Decision) */
-        protected void inferLocal(Task t) {
-            //....
+        protected void inferLocal(TaskLink t) {
+
+            //???
+
+            new AlannConceptProcess(memory, this, t).run();
+
         }
 
 
@@ -140,33 +204,119 @@ public class Alann extends NARSeed {
             return false;
         }
 
-        @Override
-        public Task processQuestion(TaskProcess nal, Task task) {
-            System.out.println(this + " processQuestion " + task);
-            lastTask = task;
-            return null;
+
+        protected void forget() {
+            //TODO make sure # cycles relative to duration are appropriately used
+            Memory.forget(memory.time(),
+                    this, memory.param.conceptForgetDurations.floatValue(), 0);
+        }
+        protected void forget(TermLink tl) {
+            //TODO make sure # cycles relative to duration are appropriately used
+            Memory.forget(memory.time(),
+                    tl, memory.param.termLinkForgetDurations.floatValue(), 0);
+        }
+        protected void forget(TaskLink tl) {
+            //TODO make sure # cycles relative to duration are appropriately used
+            Memory.forget(memory.time(),
+                    tl, memory.param.termLinkForgetDurations.floatValue(), 0);
         }
 
-        protected void onSpike(float amount) {
+        protected void onSpike(TaskLink taskLink, float multiplier) {
             // adjust activation level for decay
-            // add spike to activation
+            //forget();
+
+
+
+            float conf =
+                    taskLink.getTask().isQuestOrQuestion() ?
+                            1f :
+                            taskLink.getTask().getTruth().getConfidence();
+            float spikeActivation = taskLink.getPriority() * conf * multiplier;
+
             // if activation > threshold then this.Activate()
+            if (getPriority() > activationThreshold.floatValue()) {
+
+                taskLink.addPriority(spikeActivation);
+                taskLink.orDurability(getDurability());
+                taskLink.orQuality(getQuality());
+
+                for (TermLink tl : termLinks.keySet()) {
+
+                    tl.addPriority(spikeActivation);
+                    tl.orDurability(getDurability());
+                    tl.orQuality(getQuality());
+                    activate(taskLink, tl, multiplier);
+
+                }
+            }
+            else {
+                //System.out.println(this + " at " + toBudgetString());
+
+                //accumulate difference
+                addPriority(spikeActivation);
+            }
+
+
+
         }
 
-        protected void activate() {
-            /*
-            reset activationLevel
-            for each outbound link
-            trigger spike event (spike const * truth.confidence)
+        /** not used currently */
+        public void forEachSubterm(TermVisitor consumeTerm) {
 
-            activeBeliefs = getActivatedBeliefs() // belief links with active src and destination
+            final Term t = getTerm();
+            if (t instanceof Compound) {
+                Compound c = (Compound)t;
+                c.recurseTerms(consumeTerm);
+            }
 
-            for each activeBelief
-            new_tasks = do inference (lastTaskRx, activeBelief)
-            for each newtask
-            addTask(newTask)
-            */
+        }
 
+        public void forEachBelief(Consumer<Task> beliefConsumer) {
+            beliefs.forEach(beliefConsumer);
+        }
+
+        protected void activate(TaskLink taskLink, TermLink termLink, float multiplier) {
+
+
+            System.out.println(this + " activated by " + taskLink + "," + termLink + " @ " + getPriority() );
+
+            //reset activationLevel because it has fired
+
+
+
+            final Term thisTerm = getTerm();
+
+            //for each outbound link
+
+                Term term = termLink.getTerm();
+
+                if (term.equals(thisTerm)) return;
+
+                System.out.println("  spiking: " + term);
+
+                AlannConcept c = (AlannConcept)memory.conceptualize(term, taskLink.getBudget());
+
+                //trigger spike event (spike const * truth.confidence)
+                c.onSpike(taskLink, multiplier * spikeDecay);
+
+            //for each activeBelief
+            //  activeBeliefs = getActivatedBeliefs() // belief links with active src and destination
+            forEachBelief(b -> {
+                /*
+                new_tasks = do inference (lastTaskRx, activeBelief)
+                for each newtask
+                addTask(newTask)
+                */
+                AlannConceptProcess cp = new AlannConceptProcess(memory, AlannConcept.this, taskLink);
+
+
+                cp.setBelief(b);
+                cp.run(termLink);
+
+            });
+
+            //setPriority(0);
+            forget();
         }
 
 
@@ -222,7 +372,7 @@ public class Alann extends NARSeed {
 
         @Override
         public BeliefTable getBeliefs() {
-            return null;
+            return beliefs;
         }
 
         @Override
@@ -248,28 +398,62 @@ public class Alann extends NARSeed {
 
     }
 
+    static class AlannConceptProcess extends ConceptProcess {
+
+        public AlannConceptProcess(Memory memory, Concept concept, TaskLink taskLink) {
+            super(memory, concept, taskLink);
+        }
+
+        @Override
+        protected void onFinished() {
+            super.onFinished();
+
+            if (derived!=null && !derived.isEmpty())
+                System.out.println(this + " derived " + derived);
+        }
+
+        public void run(TermLink tl) {
+
+            onStart();
+
+            process();
+
+            if (tl != null)
+                processTerm(tl);
+
+            onFinished();
+
+        }
+
+        @Override
+        protected void processTerms() {
+            //nothing
+        }
+    }
+
     class AlannCycle extends AbstractCycle {
 
         /**
          * holds original (user-input) goals and question tasks
          */
-        protected final ItemAccumulator commands = new ItemAccumulator(new ItemComparator.Plus());
+        protected final ItemAccumulator<Task> commands = new ItemAccumulator(new ItemComparator.Plus());
+
+        Iterator<Task> commandCycle;
 
         /**
          * this is temporary if it can be is unified with the concept's main index
          */
         Bag<Term, Concept> concepts;
 
-        private double conceptActivationThreshold = 0.05f; //this will be automatically tuned by a busy metric
 
         @Override
         public boolean accept(Task t) {
 
             if (t.isInput() && !t.isJudgment()) {
                 //match against commands or goals and adjust as necessary
-                commands.add(t);
+                return commands.add(t);
             } else {
-                add(t);
+                return add(t);
             }
 
             /*
@@ -281,7 +465,6 @@ public class Alann extends NARSeed {
             }
             */
 
-            return false;
         }
 
         public double getConceptActivationThreshold() {
@@ -296,6 +479,9 @@ public class Alann extends NARSeed {
                 concepts = new CurveBag(memory.random, MAX_CONCEPTS);
             else
                 concepts.clear();
+
+            commands.clear();
+            commandCycle = Iterators.cycle(commands.items);
         }
 
         /**
@@ -342,6 +528,15 @@ public class Alann extends NARSeed {
 
             inputNextPerception();
 
+
+            if (commandCycle.hasNext()) {
+                for (int i = 0; i < commandsPerCycle; i++) {
+                    Task nextCommand = commandCycle.next();
+                    add(nextCommand);
+                    //TaskProcess.run(memory, nextCommand);
+                }
+            }
+
             // for fast cycle in 1 to n “subcycle”
             for (int i = 0; i < subcyclesPerCycle; i++)
                 subcycle();
@@ -353,15 +548,34 @@ public class Alann extends NARSeed {
 
             for (Concept c : concepts) {
 
+                AlannConcept a = (AlannConcept)c;
+
+                //if level > threshold {
+                /*if (a.active())*/ {
+
+                    a.forEachBelief(b -> {
+
+                        /*
+                        send spike to all outbound belief links modulating for truth.confidence
+                        reset activation
+                        do inference on all beliefs that have a matching activated concept on the other end of the link
+                        send generated (derived?) tasks to relevant concepts
+                        */
+
+                        float bconf = b.getTruth().getConfidence();
+
+                        a.onSpike(new TaskLink(b, b.getBudget()), bconf);
+
+                    });
+
+                }
+
                 /*
 
-                check activation level
 
-                if level > threshold {
-                    send spike to all outbound belief links modulating for truth.confidence
-                    reset activation
-                    do inference on all beliefs that have a matching activated concept on the other end of the link
-                    send generated (derived?) tasks to relevant concepts
+
+
+
                 }
 
                 */
@@ -372,7 +586,7 @@ public class Alann extends NARSeed {
 
         @Override
         public Concept conceptualize(final Term term, Budget budget, boolean createIfMissing) {
-            return conceptualize(term, budget, createIfMissing, memory.time(), concepts);
+            return (AlannConcept)conceptualize(term, budget, createIfMissing, memory.time(), concepts);
         }
 
 

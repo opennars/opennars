@@ -112,9 +112,9 @@ public class SomeRovers {
 
             //new InputActivationController(nar);
 
-            int nc = 4;
+            int nc = 8;
             nar.setCyclesPerFrame(nc);
-            nar.param.duration.set(2*(nc-1));
+            nar.param.duration.set(nc);
 
 
             //nar.param.shortTermMemoryHistory.set(3);

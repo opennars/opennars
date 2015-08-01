@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 public class ItemAccumulator<I extends Item> {
 
 
-    public final UnifiedMap<I,I> buffer = new UnifiedMap();
+    public final UnifiedMap<I,I> items = new UnifiedMap();
 
 //    final Comparator<? super I> floatValueComparator = new Comparator<I>() {
 //        @Override public final int compare(final I o1, final I o2) {
@@ -38,19 +38,19 @@ public class ItemAccumulator<I extends Item> {
     }
 
     public void clear() {
-        buffer.clear();
+        items.clear();
     }
 
     public boolean add(I t) {
 
-        I accumulated = buffer.remove(t);
+        I accumulated = items.remove(t);
 
         if (accumulated!=null)
             accumulated.accumulate(t.getBudget());
         else
             accumulated = t;
 
-        buffer.put(t, accumulated);
+        items.put(accumulated, accumulated);
 
 //        buffer.updateValue(t, 0, v -> {
 //
@@ -61,33 +61,33 @@ public class ItemAccumulator<I extends Item> {
     }
 
     public int size() {
-        return buffer.size();
+        return items.size();
     }
 
     public boolean isEmpty() {
-        return buffer.isEmpty();
+        return items.isEmpty();
     }
 
     public I removeHighest() {
-        if (buffer.isEmpty()) return null;
+        if (items.isEmpty()) return null;
         I i = highest();
-        buffer.remove(i);
+        items.remove(i);
         return i;
     }
     public I removeLowest() {
-        if (buffer.isEmpty()) return null;
+        if (items.isEmpty()) return null;
         I i = lowest();
-        buffer.remove(i);
+        items.remove(i);
         return i;
     }
 
     public I lowest() {
-        if (buffer.isEmpty()) return null;
+        if (items.isEmpty()) return null;
         return lowestFirstKeyValues().get(0);
     }
 
     public I highest() {
-        if (buffer.isEmpty()) return null;
+        if (items.isEmpty()) return null;
         return highestFirstKeyValues().get(0);
     }
 
@@ -109,12 +109,12 @@ public class ItemAccumulator<I extends Item> {
 
     private List<I> sortedKeyValues(Comparator<Item> c, List<I> result) {
         if (result == null)
-            result = Global.newArrayList(buffer.size());
+            result = Global.newArrayList(items.size());
         else {
             result.clear();
         }
 
-        result.addAll(buffer.values());
+        result.addAll(items.keySet());
         result.sort(c);
 
         return result;
@@ -135,9 +135,9 @@ public class ItemAccumulator<I extends Item> {
     }
 
     public int removeLowest(final int n, @Nullable List<I> temporary) {
-        final int s = buffer.size();
+        final int s = items.size();
         if (s <= n) {
-            buffer.clear();
+            items.clear();
             return s;
         }
 
@@ -145,7 +145,7 @@ public class ItemAccumulator<I extends Item> {
 
         int r;
         for (r = 0; r < n; r++) {
-            buffer.remove( lf.get(r) );
+            items.remove( lf.get(r) );
         }
 
         temporary.clear();
@@ -174,7 +174,7 @@ public class ItemAccumulator<I extends Item> {
 
     @Override
     public String toString() {
-        return buffer.toString();
+        return items.toString();
     }
 
 

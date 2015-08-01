@@ -250,6 +250,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return new TermLink(getTarget(), currentTemplate, this, prefix, hash);
     }
 
+    public TermLink out(TermLinkTemplate tlt) {
+        return new TermLink(tlt.getTarget(), tlt, this,
+                tlt.prefix(false),
+                tlt.hash(false));
+    }
+
 
 /*    public int size() {
         return template.size();

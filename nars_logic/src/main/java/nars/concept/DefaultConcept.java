@@ -48,6 +48,19 @@ public class DefaultConcept extends AbstractConcept {
     transient private final TaskLinkBuilder taskLinkBuilder;
 
 
+    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
+
+        @Override
+        public boolean areEqual(Task a, Task b) {
+            return (a.equals(b));
+        }
+
+        //N/A
+        @Override public int compare(Task task, Task t1) {  return 0;        }
+        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
+    };
+
+
     final static public Equality<Task> questionEquivalence = new Equality<Task>() {
 
         @Override
@@ -57,7 +70,7 @@ public class DefaultConcept extends AbstractConcept {
 
         //N/A
         @Override public int compare(Task task, Task t1) {  return 0;        }
-        @Override public int hashCodeOf(Task task) { return 0; }
+        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
     };
 
     private final PremiseSelector premiseSelector;

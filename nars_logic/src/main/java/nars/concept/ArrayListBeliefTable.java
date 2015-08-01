@@ -166,9 +166,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 } else if (revisibleTermsAlreadyEqual(t, existing)) {
 
 
-                    Task revised = tryRevision(t, existing, false, nal);
-                    if (revised != null) {
-                        //nal.setCurrentBelief( revised );
+                    if (nal!=null) {
+                        Task revised = tryRevision(t, existing, false, nal);
+                        if (revised != null) {
+                            //nal.setCurrentBelief( revised );
+                        }
                     }
 
                 }

@@ -27,12 +27,6 @@ import nars.task.Sentenced;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
-import oracle.jrockit.jfr.Recording;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Reference to a Task.
@@ -48,7 +42,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * The Task linked
      */
     public final Task targetTask;
-    private final int recordLength;
     private float lastFireTime = -1; //float to include the "subcycle"
 
 
@@ -84,16 +77,15 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     public final short[] index;
 
 
-    protected TaskLink(Task t, Budget v, short[] index, short type, int recordLength) {
+    protected TaskLink(Task t, Budget v, short[] index, short type) {
         super(v);
         this.targetTask = t;
-        this.recordLength = recordLength;
         this.index = index;
         this.type = type;
     }
 
-    public TaskLink(final Task t, final Budget v, int recordLength) {
-        this(t, v, null, TermLink.SELF, recordLength);
+    public TaskLink(final Task t, final Budget v) {
+        this(t, v, null, TermLink.SELF);
     }
 
     /**
@@ -104,8 +96,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * @param template The TermLink template
      * @param v        The budget
      */
-    public TaskLink(final Task t, final TermLinkTemplate template, final Budget v, int recordLength) {
-        this(t, v, template.index, template.type, recordLength);
+    public TaskLink(final Task t, final TermLinkTemplate template, final Budget v) {
+        this(t, v, template.index, template.type);
     }
 
 
