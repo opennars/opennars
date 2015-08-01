@@ -30,7 +30,7 @@ public class TaskRuleTest extends TestCase {
         //
 
         {
-            TaskRule x = p.termRaw("< A, A |- A, (Truth_Revision, Desire_Weak)>");
+            TaskRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
             assertEquals("((A, A), (A, (Truth_Revision, Desire_Weak)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
@@ -76,7 +76,7 @@ public class TaskRuleTest extends TestCase {
 
 
 
-        TaskRule y = p.term("<(S --> P) |- (P --> S), (Truth.Conversion, Info.SeldomUseful)>");
+        TaskRule y = p.term("<(S --> P) |- (P --> S), (Truth:Conversion, Desire:Weak)>");
         assertEquals("((<%S --> %P>), (<%P --> %S>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
         assertEquals(16, y.getVolume());
         assertEquals(16, y.getComplexity());
