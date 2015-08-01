@@ -16,6 +16,7 @@ import com.github.fge.grappa.support.Var;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
+import nars.meta.RangeTerm;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -61,7 +62,7 @@ public class NarseseParser extends BaseParser<Object> {
     //These should be set to something like RecoveringParseRunner for performance
     private final ParseRunner inputParser = new ListeningParseRunner3(Input());
     private final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
-    private final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
+    private final ParseRunner singleTermParser = new ListeningParseRunner3(Term());
 
 
 
@@ -171,7 +172,7 @@ public class NarseseParser extends BaseParser<Object> {
 
     @Cached
     public Rule PauseInput() {
-        return sequence(Integer(),
+        return sequence(IntegerNonNegative(),
                 push( new PauseInput( (Integer) pop() ) ), "\n" );
     }
     @Cached
@@ -362,7 +363,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    Rule Integer() {
+    Rule IntegerNonNegative() {
         return sequence(
                 oneOrMore(digit()),
                 push(Integer.parseInt(matchOrDefault("NaN")))
@@ -414,9 +415,11 @@ public class NarseseParser extends BaseParser<Object> {
                 s(),
                 firstOf(
 
+
                         QuotedMultilineLiteral(),
                         QuotedLiteral(),
 
+                        RangeTerm(),
                         meta ? TaskRule() : nothing(),
 
                         sequence(
@@ -485,7 +488,9 @@ public class NarseseParser extends BaseParser<Object> {
 //                        sequence( NALOperator.COMPOUND_TERM_OPENER.symbol,
 //                        ),
 
+
                         NamespacedAtom(),
+
                         Atom(),
                         ImageIndex()
 
@@ -577,11 +582,30 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
+    Rule RangeTerm() {
+        return sequence(
+                AnyAlphas(),
+                "_",
+                IntegerNonNegative(),
+                "..", alpha(), push( matchedChar() ),
+                swap(3),
+                push( new RangeTerm( pop().toString(), (Integer)pop(), (Character) pop() ) )
+        );
+    }
 
     Rule AnyString() {
         //TODO handle \" escape
         return oneOrMore(noneOf("\""));
     }
+
+    Rule AnyAlphas() {
+        //TODO handle \" escape
+        return sequence( alpha(), push(matchedChar()), zeroOrMore( alphanumeric() ), push(match()),
+                swap(),
+                push( pop().toString() + pop().toString()));
+    }
+
+    Rule alphanumeric() { return firstOf(alpha(), digit()); }
 
 
 

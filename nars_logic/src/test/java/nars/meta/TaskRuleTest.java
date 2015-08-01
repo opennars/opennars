@@ -6,6 +6,7 @@ import nars.nal.NALExecuter;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
+import nars.term.Term;
 import org.junit.Test;
 
 /**
@@ -71,6 +72,23 @@ public class TaskRuleTest extends TestCase {
         assertEquals("((<%A --> b>), ((&, %X, y)))", x.toString());
 
 
+    }
+
+    @Test public void testRangeTerm() {
+        NarseseParser p = NarseseParser.the();
+        RangeTerm t = p.term("A_1..n");
+        assertNotNull(t);
+        assertEquals(RangeTerm.class, t.getClass());
+        assertEquals("A_1..n", t.toString());
+        assertEquals("A", t.prefix);
+        assertEquals(1, t.from);
+        assertEquals('n', t.to);
+
+        //multichar prefix
+        final RangeTerm abc0x = p.term("Abc_0..x");
+        assertEquals("Abc", abc0x.prefix);
+        assertEquals(0, abc0x.from);
+        assertEquals('x', abc0x.to);
     }
 
     public void testDerivationComparator() {

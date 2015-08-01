@@ -87,31 +87,28 @@ public class NALExecuter extends ConceptFireTaskTerm  {
     public static List<String> loadRuleStrings(Iterable<String> lines)     {
 
         List<String> unparsed_rules = new ArrayList<>();
-        String current_rule = "";
+        StringBuilder current_rule = new StringBuilder();
 
-        for(String s : lines)
-        {
-            if(s.startsWith("//") || s.replace(" ","").isEmpty())
-            {
-                if(!current_rule.isEmpty())
-                {
-                    unparsed_rules.add(current_rule); //rule is finished, add it
-                    current_rule = ""; //start identifying a new rule
+        for(String s : lines) {
+            boolean currentRuleEmpty = current_rule.length() == 0;
+
+            if(s.startsWith("//") || s.replace(" ","").isEmpty()) {
+
+                if(!currentRuleEmpty) {
+                    unparsed_rules.add(current_rule.toString().trim()); //rule is finished, add it
+                    current_rule.setLength(0); //start identifying a new rule
                 }
-            }
-            else
-            {
+
+            } else {
                 //note, it can also be that the current_rule is not empty and this line contains |- which means
                 //its already a new rule, in which case the old rule has to be added before we go on
-                if(!current_rule.isEmpty() && s.contains("|-"))
-                {
-                    if(!current_rule.isEmpty())
-                    {
-                        unparsed_rules.add(current_rule); //rule is finished, add it
-                        current_rule = ""; //start identifying a new rule
-                    }
+                if(!currentRuleEmpty && s.contains("|-")) {
+
+                    unparsed_rules.add(current_rule.toString().trim()); //rule is finished, add it
+                    current_rule.setLength(0); //start identifying a new rule
+
                 }
-                current_rule += s + "\n";
+                current_rule.append(s).append('\n');
             }
         }
 
@@ -181,9 +178,11 @@ public class NALExecuter extends ConceptFireTaskTerm  {
                 uninterpreted_rules.add(r); //try to parse it
             }
             catch (Exception ex) {
-                System.err.println("The following rule can not be parsed so won't be used:\n" +
-                        parsable);
-                ex.printStackTrace();
+                System.err.println("Ignoring Invalid rule:");
+                System.err.print("  ");
+                System.err.println(parsable);
+                System.err.println();
+                //ex.printStackTrace();
             }
         }
 
