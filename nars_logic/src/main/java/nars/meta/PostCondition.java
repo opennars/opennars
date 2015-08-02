@@ -228,8 +228,12 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         break;
                     case "event":
                         //TODO refine check what it refers to, the arguments, to task or belief
-                        if (task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL)
+                        if(arg1.equals(task.getTerm()) && task.getOccurrenceTime() == Stamp.ETERNAL) {
                             return false;
+                        }
+                        if(arg1.equals(belief.getTerm()) && belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                            return false;
+                        }
                         break;
                     case "negative":
                         //TODO refine check what it refers to, the arguments, to task or belief
