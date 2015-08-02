@@ -74,11 +74,8 @@
 
 //// implication-based syllogism
 
-    (M ==> P), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Deduction)
-    (M =|> P), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Deduction)
-    (M =/> P), (S =/> M), not_equal(S,P) |- (S =/> P), (Truth:Deduction)
-    (M =\> P), (S =\> M), not_equal(S,P) |- (S =\> P), (Truth:Deduction)
-
+    (M ==> P), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Deduction, Order:ForAllSame)
+    
 //"Please note that the temporal order in the conclusion of a weak rule is
 //not necessarily the same as the order in the premises, given the hypothetical
 //nature of such a rule."
@@ -174,57 +171,21 @@
 
 //// implication-based decomposition
 
-    (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative)
-    (S =/> M), ((||,S,A_1..n) =/> M) |- ((||,A_1..n) =/> M), (Truth:DecomposePositiveNegativeNegative)
-    (S =|> M), ((||,S,A_1..n) =|> M) |- ((||,A_1..n) =|> M), (Truth:DecomposePositiveNegativeNegative)
-    (S =\> M), ((||,S,A_1..n) =\> M) |- ((||,A_1..n) =\> M), (Truth:DecomposePositiveNegativeNegative)
+    (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
 
-    (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive)
-    (S ==> M), ((&|,S,A_1..n) ==> M) |- ((&|,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive)
-    (S ==> M), ((&/,S,A_1..n) ==> M) |- ((&/,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive)
-    (S =/> M), ((&&,S,A_1..n) =/> M) |- ((&&,A_1..n) =/> M), (Truth:DecomposeNegativePositivePositive)
-    (S =/> M), ((&|,S,A_1..n) =/> M) |- ((&|,A_1..n) =/> M), (Truth:DecomposeNegativePositivePositive)
-    (S =/> M), ((&/,S,A_1..n) =/> M) |- ((&/,A_1..n) =/> M), (Truth:DecomposeNegativePositivePositive)
-    (S =|> M), ((&&,S,A_1..n) =|> M) |- ((&&,A_1..n) =|> M), (Truth:DecomposeNegativePositivePositive)
-    (S =|> M), ((&|,S,A_1..n) =|> M) |- ((&|,A_1..n) =|> M), (Truth:DecomposeNegativePositivePositive)
-    (S =|> M), ((&/,S,A_1..n) =|> M) |- ((&/,A_1..n) =|> M), (Truth:DecomposeNegativePositivePositive)
-    (S =\> M), ((&&,S,A_1..n) =\> M) |- ((&&,A_1..n) =\> M), (Truth:DecomposeNegativePositivePositive)
-    (S =\> M), ((&|,S,A_1..n) =\> M) |- ((&|,A_1..n) =\> M), (Truth:DecomposeNegativePositivePositive)
-    (S =\> M), ((&/,S,A_1..n) =\> M) |- ((&/,A_1..n) =\> M), (Truth:DecomposeNegativePositivePositive)
+    (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
-    (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M ==> S), (M ==> (&|,S,A_1..n)) |- (M ==> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M ==> S), (M ==> (&/,S,A_1..n)) |- (M ==> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =/> S), (M =/> (&&,S,A_1..n)) |- (M =/> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =/> S), (M =/> (&|,S,A_1..n)) |- (M =/> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =/> S), (M =/> (&/,S,A_1..n)) |- (M =/> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =|> S), (M =|> (&&,S,A_1..n)) |- (M =|> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =|> S), (M =|> (&|,S,A_1..n)) |- (M =|> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =|> S), (M =|> (&/,S,A_1..n)) |- (M =|> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =\> S), (M =\> (&&,S,A_1..n)) |- (M =\> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =\> S), (M =\> (&|,S,A_1..n)) |- (M =\> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
-    (M =\> S), (M =\> (&/,S,A_1..n)) |- (M =\> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
+    (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
 
-    (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
-    (M =/> S), (M =/> (||,S,A_1..n)) |- (M =/> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
-    (M =|> S), (M =|> (||,S,A_1..n)) |- (M =|> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
-    (M =\> S), (M =\> (||,S,A_1..n)) |- (M =\> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
+    (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
 //// conditional syllogism
 
-    M, (M ==> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
-    M, (M =/> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
-    M, (M =|> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
-    M, (M =\> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
+    M, (M ==> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame)
 
-    M, (P ==> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
-    M, (P =/> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
-    M, (P =|> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
-    M, (P =\> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
+    M, (P ==> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive, Order:ForAllSame)
 
-    M, (S <=> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive)
-    M, (S </> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive)
-    M, (S <|> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive)
+    M, (S <=> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive, Order:ForAllSame)
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
 
@@ -235,90 +196,22 @@
 
 //// propositional decomposition
 
-    S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative)
-    S, (&|,S,A_1..n) |- (&|,A_1..n), (Truth:DecomposePositiveNegativeNegative)
-    S, (&/,S,A_1..n) |- (&/,A_1..n), (Truth:DecomposePositiveNegativeNegative)
+    S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     S, (||,S,A_1..n) |- (||,A_1..n), (Truth:DecomposeNegativePositivePositive)
 
 //// multi-conditional syllogism
 
-    ((&&,M,A_1..n) ==> C), M |- ((&&,A_1..n) ==> C), (Truth:Deduction)
-    ((&&,M,A_1..n) =|> C), M |- ((&&,A_1..n) =|> C), (Truth:Deduction)
-    ((&&,M,A_1..n) =/> C), M |- ((&&,A_1..n) =/> C), (Truth:Deduction)
-    ((&&,M,A_1..n) =\> C), M |- ((&&,A_1..n) =\> C), (Truth:Deduction)
-    ((&|,M,A_1..n) ==> C), M |- ((&|,A_1..n) ==> C), (Truth:Deduction)
-    ((&|,M,A_1..n) =|> C), M |- ((&|,A_1..n) =|> C), (Truth:Deduction)
-    ((&|,M,A_1..n) =/> C), M |- ((&|,A_1..n) =/> C), (Truth:Deduction)
-    ((&|,M,A_1..n) =\> C), M |- ((&|,A_1..n) =\> C), (Truth:Deduction)
-    ((&/,M,A_1..n) ==> C), M |- ((&/,A_1..n) ==> C), (Truth:Deduction)
-    ((&/,M,A_1..n) =|> C), M |- ((&/,A_1..n) =|> C), (Truth:Deduction)
-    ((&/,M,A_1..n) =/> C), M |- ((&/,A_1..n) =/> C), (Truth:Deduction)
-    ((&/,M,A_1..n) =\> C), M |- ((&/,A_1..n) =\> C), (Truth:Deduction)
+    ((&&,M,A_1..n) ==> C), M |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
 
-    ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction)
-    ((&&,M,A_1..n) =|> C), ((&&,A_1..n) =|> C) |- M, (Truth:Abduction)
-    ((&&,M,A_1..n) =/> C), ((&&,A_1..n) =/> C) |- M, (Truth:Abduction)
-    ((&&,M,A_1..n) =\> C), ((&&,A_1..n) =\> C) |- M, (Truth:Abduction)
-    ((&|,M,A_1..n) ==> C), ((&|,A_1..n) ==> C) |- M, (Truth:Abduction)
-    ((&|,M,A_1..n) =|> C), ((&|,A_1..n) =|> C) |- M, (Truth:Abduction)
-    ((&|,M,A_1..n) =/> C), ((&|,A_1..n) =/> C) |- M, (Truth:Abduction)
-    ((&|,M,A_1..n) =\> C), ((&|,A_1..n) =\> C) |- M, (Truth:Abduction)
-    ((&/,M,A_1..n) ==> C), ((&/,A_1..n) ==> C) |- M, (Truth:Abduction)
-    ((&/,M,A_1..n) =|> C), ((&/,A_1..n) =|> C) |- M, (Truth:Abduction)
-    ((&/,M,A_1..n) =/> C), ((&/,A_1..n) =/> C) |- M, (Truth:Abduction)
-    ((&/,M,A_1..n) =\> C), ((&/,A_1..n) =\> C) |- M, (Truth:Abduction)
+    ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
 
-    ((&&,A_1..n) ==> C), M |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
-    ((&&,A_1..n) =|> C), M |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
-    ((&&,A_1..n) =/> C), M |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
-    ((&&,A_1..n) =\> C), M |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
-    ((&|,A_1..n) ==> C), M |- ((&|,M,A_1..n) ==> C), (Truth:Induction)
-    ((&|,A_1..n) =|> C), M |- ((&|,M,A_1..n) =|> C), (Truth:Induction)
-    ((&|,A_1..n) =/> C), M |- ((&|,M,A_1..n) =/> C), (Truth:Induction)
-    ((&|,A_1..n) =\> C), M |- ((&|,M,A_1..n) =\> C), (Truth:Induction)
-    ((&/,A_1..n) ==> C), M |- ((&/,M,A_1..n) ==> C), (Truth:Induction)
-    ((&/,A_1..n) =|> C), M |- ((&/,M,A_1..n) =|> C), (Truth:Induction)
-    ((&/,A_1..n) =/> C), M |- ((&/,M,A_1..n) =/> C), (Truth:Induction)
-    ((&/,A_1..n) =\> C), M |- ((&/,M,A_1..n) =\> C), (Truth:Induction)
+    ((&&,A_1..n) ==> C), M |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
 
-    ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction)
-    ((&&,M,A_1..n) =|> C), (A =|> M) |- ((&&,A,A_1..n) =|> C), (Truth:Deduction)
-    ((&&,M,A_1..n) =/> C), (A =/> M) |- ((&&,A,A_1..n) =/> C), (Truth:Deduction)
-    ((&&,M,A_1..n) =\> C), (A =\> M) |- ((&&,A,A_1..n) =\> C), (Truth:Deduction)
-    ((&|,M,A_1..n) ==> C), (A ==> M) |- ((&|,A,A_1..n) ==> C), (Truth:Deduction)
-    ((&|,M,A_1..n) =|> C), (A =|> M) |- ((&|,A,A_1..n) =|> C), (Truth:Deduction)
-    ((&|,M,A_1..n) =/> C), (A =/> M) |- ((&|,A,A_1..n) =/> C), (Truth:Deduction)
-    ((&|,M,A_1..n) =\> C), (A =\> M) |- ((&|,A,A_1..n) =\> C), (Truth:Deduction)
-    ((&/,M,A_1..n) ==> C), (A ==> M) |- ((&/,A,A_1..n) ==> C), (Truth:Deduction)
-    ((&/,M,A_1..n) =|> C), (A =|> M) |- ((&/,A,A_1..n) =|> C), (Truth:Deduction)
-    ((&/,M,A_1..n) =/> C), (A =/> M) |- ((&/,A,A_1..n) =/> C), (Truth:Deduction)
-    ((&/,M,A_1..n) =\> C), (A =\> M) |- ((&/,A,A_1..n) =\> C), (Truth:Deduction)
+    ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
 
-    ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction)
-    ((&&,M,A_1..n) =|> C), ((&&,A,A_1..n) =|> C) |- (A =|> M), (Truth:Abduction)
-    ((&&,M,A_1..n) =/> C), ((&&,A,A_1..n) =/> C) |- (A =/> M), (Truth:Abduction)
-    ((&&,M,A_1..n) =\> C), ((&&,A,A_1..n) =\> C) |- (A =\> M), (Truth:Abduction)
-    ((&|,M,A_1..n) ==> C), ((&|,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction)
-    ((&|,M,A_1..n) =|> C), ((&|,A,A_1..n) =|> C) |- (A =|> M), (Truth:Abduction)
-    ((&|,M,A_1..n) =/> C), ((&|,A,A_1..n) =/> C) |- (A =/> M), (Truth:Abduction)
-    ((&|,M,A_1..n) =\> C), ((&|,A,A_1..n) =\> C) |- (A =\> M), (Truth:Abduction)
-    ((&/,M,A_1..n) ==> C), ((&/,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction)
-    ((&/,M,A_1..n) =|> C), ((&/,A,A_1..n) =|> C) |- (A =|> M), (Truth:Abduction)
-    ((&/,M,A_1..n) =/> C), ((&/,A,A_1..n) =/> C) |- (A =/> M), (Truth:Abduction)
-    ((&/,M,A_1..n) =\> C), ((&/,A,A_1..n) =\> C) |- (A =\> M), (Truth:Abduction)
+    ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction, Order:ForAllSame)
 
-    ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
-    ((&&,A,A_1..n) =|> C), (A =|> M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
-    ((&&,A,A_1..n) =/> C), (A =/> M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
-    ((&&,A,A_1..n) =\> C), (A =\> M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
-    ((&|,A,A_1..n) ==> C), (A ==> M) |- ((&|,M,A_1..n) ==> C), (Truth:Induction)
-    ((&|,A,A_1..n) =|> C), (A =|> M) |- ((&|,M,A_1..n) =|> C), (Truth:Induction)
-    ((&|,A,A_1..n) =/> C), (A =/> M) |- ((&|,M,A_1..n) =/> C), (Truth:Induction)
-    ((&|,A,A_1..n) =\> C), (A =\> M) |- ((&|,M,A_1..n) =\> C), (Truth:Induction)
-    ((&/,A,A_1..n) ==> C), (A ==> M) |- ((&/,M,A_1..n) ==> C), (Truth:Induction)
-    ((&/,A,A_1..n) =|> C), (A =|> M) |- ((&/,M,A_1..n) =|> C), (Truth:Induction)
-    ((&/,A,A_1..n) =/> C), (A =/> M) |- ((&/,M,A_1..n) =/> C), (Truth:Induction)
-    ((&/,A,A_1..n) =\> C), (A =\> M) |- ((&/,M,A_1..n) =\> C), (Truth:Induction)
+    ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
 
 //// variable introduction
 
@@ -375,6 +268,7 @@
     C, ((&/,C,A_1..n) =/> B) |- ((&/,A_1..n) =/> B), (Truth:Deduction, Occurrence:Derive)
     C, ((&/,C,A_1..n) =|> B) |- ((&/,A_1..n) =|> B), (Truth:Deduction, Occurrence:Derive)
     C, <(&/,C,I) =\> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
+    B, <(&/,C,I) =\> B>, interval(I) |- C, (Truth:Abduction, Desire:Induction, Occurrence:Derive)
     C, <(&/,C,I) =/> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
     B, <(&/,C,I) =/> B>, interval(I) |- C, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
     C, <(&/,C,I) =|> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
@@ -393,7 +287,7 @@
     P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (&|,S,P), (Truth:Intersection)
 
 ////// Theorems in IL:
-//java
+//TODO
 
 ////// Truth-value functions
 //java./flu
