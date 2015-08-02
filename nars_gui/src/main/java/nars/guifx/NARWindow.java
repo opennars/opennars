@@ -1,19 +1,14 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.CodeInput;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.event.NARReaction;
@@ -107,28 +102,6 @@ public class NARWindow extends Stage {
             else {
                 setActive(false);
             }
-        }
-    }
-
-    public static class LogPane extends VBox {
-
-        public LogPane(NAR nar) {
-            super();
-            getChildren().add(new Button("<x --> y>. %1.00;0.90%"));
-
-            Text t =new javafx.scene.text.Text("Echo: WTF");
-            t.setFill(Color.ORANGE);
-
-            getChildren().add(t);
-        }
-    }
-
-    public static class TerminalPane extends SplitPane {
-
-        public TerminalPane(NAR nar) {
-            super();
-            setOrientation(Orientation.VERTICAL);
-            getItems().addAll(scrolled(new LogPane(nar)), scrolled(new CodeInput()));
         }
     }
 
