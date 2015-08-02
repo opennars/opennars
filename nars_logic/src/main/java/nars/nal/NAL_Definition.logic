@@ -156,6 +156,10 @@
 
     (S ==> P), (P ==> S), not_equal(S,P) |- (S <=> P), (Truth:Intersection)
     (S =/> P), (P =\> S), not_equal(S,P) |- (S </> P), (Truth:Intersection)
+    (S =|> P), (P =|> S), not_equal(S,P) |- (S <|> P), (Truth:Intersection)
+    (S =/> P), (P =|> S), not_equal(S,P) |- ((S </> P) || (S <|> P)), (Truth:Intersection)
+    (S =|> P), (P =\> S), not_equal(S,P) |- ((S <|> P) || (S </> P)), (Truth:Intersection)
+
 
 //// equivalence-based syllogism
 
@@ -168,6 +172,12 @@
                                             (S </> P), (Truth:Comparison)
     (P =|> M), (S =/> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
                                             (S </> P), (Truth:Comparison)
+    (P =\> M), (S =/> M), not_equal(S,P) |- (S </> P), (Truth:Comparison)
+    (P =\> M), (S =|> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+    (P =/> M), (S =\> M), not_equal(S,P) |- (P </> S), (Truth:Comparison)
+    (P =|> M), (S =\> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (P </> S), (Truth:Comparison)
 
     (M ==> P), (M ==> S), not_equal(S,P) |- (S <=> P), (Truth:Comparison)
     (M =/> P), (M =/> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
@@ -178,18 +188,28 @@
                                             (S </> P), (Truth:Comparison)
     (M =|> P), (M =/> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
                                             (S </> P), (Truth:Comparison)
+    (M =\> P), (M =/> S), not_equal(S,P) |- (S </> P), (Truth:Comparison)
+    (M =\> P), (M =|> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (P </> S), (Truth:Comparison)
+    (M =/> P), (M =\> S), not_equal(S,P) |- (S </> P), (Truth:Comparison)
+    (M =|> P), (M =\> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
 
     (M ==> P), (S <=> M), not_equal(S,P) |- (S ==> P), (Truth:Analogy)
     (M =/> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
     (M =|> P), (S <|> M), not_equal(S,P) |- (S =|> P), (Truth:Analogy)
     (M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
     (M =|> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
+    (M =\> P), (S <|> M), not_equal(S,P) |- (S =\> P), (Truth:Analogy)
+    (M =\> P), (S </> M), not_equal(S,P) |- (||,(S =/> P),(S =|> P),(S =\> P)), (Truth:Analogy)
 
     (P ==> M), (S <=> M), not_equal(S,P) |- (P ==> S), (Truth:Analogy)
-//  (P =/> M), (S </> M), not_equal(S,P) |- (P =|> =/> =\> S), (Truth:Analogy)  order can not be deduced, so this strong rule has no right to exist, except maybe as disjunction of 3 statements hm
+    (P =/> M), (S </> M), not_equal(S,P) |- (||,(P =|> S), (P =/> S), (P =\> S)), (Truth:Analogy)
     (P =|> M), (S <|> M), not_equal(S,P) |- (P =|> S), (Truth:Analogy)
     (P =/> M), (S <|> M), not_equal(S,P) |- (P =/> S), (Truth:Analogy)
     (P =|> M), (S </> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
+    (P =\> M), (S <|> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
+    (P =\> M), (S </> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
 
     (M <=> P), (S <=> M), not_equal(S,P) |- (S <=> P), (Truth:Resemblance)
     (M <|> P), (S <|> M), not_equal(S,P) |- (S <|> P), (Truth:Resemblance)
@@ -198,7 +218,7 @@
     (M <|> P), (S </> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
 
 //// implication-based composition
-
+//TODO:
     (P ==> M), (S ==> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) ==> M), (Truth:Intersection),
                                                                     ((P && S) ==> M), (Truth:Union)
     (P =|> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
