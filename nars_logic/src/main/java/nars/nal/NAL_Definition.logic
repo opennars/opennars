@@ -306,39 +306,92 @@
 
 //// variable introduction
 
-    (P --> M), (S --> M), not_equal(S,P) |- ((P --> $X) ==> (S --> $X)), (Truth:Abduction, Order.Derive),
-                                            ((P --> $X) <=> (S --> $X)), (Truth:Comparison, Order.Derive),
-                                            (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection, Order.Derive)
+    (P --> M), (S --> M), not_equal(S,P) |- ((P --> $X) ==> (S --> $X)), (Truth:Abduction),
+                                            ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
+                                            (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
+
+    (P --> M), (S --> M), not_equal(S,P), after((S --> M),(P --> M)) |- ((P --> $X) =/> (S --> $X)), (Truth:Abduction),
+                                                                        ((P --> $X) </> (S --> $X)), (Truth:Comparison),
+                                                                        (&/,(P --> #Y),(S --> #Y)), (Truth:Intersection)
+
+    (P --> M), (S --> M), not_equal(S,P), concurrent((S --> M),(P --> M)) |- ((P --> $X) =|> (S --> $X)), (Truth:Abduction),
+                                                                             ((P --> $X) <|> (S --> $X)), (Truth:Comparison),
+                                                                             (&|,(P --> #Y),(S --> #Y)), (Truth:Intersection)
                                             
-    (M --> P), (M --> S), not_equal(S,P) |- (($X --> S) ==> ($X --> P)), (Truth:Induction, Order.Derive),
-                                            (($X --> S) <=> ($X --> P)), (Truth:Comparison, Order.Derive),
-                                            (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection, Order.Derive)
-    
+    (M --> P), (M --> S), not_equal(S,P) |- (($X --> S) ==> ($X --> P)), (Truth:Induction),
+                                            (($X --> S) <=> ($X --> P)), (Truth:Comparison),
+                                            (&&,(#Y --> S),(#Y --> P)), (Truth:Intersection)
+
+    (M --> P), (M --> S), not_equal(S,P), after((M --> P),(M --> S)) |- (($X --> S) =/> ($X --> P)), (Truth:Induction),
+                                                                        (($X --> S) </> ($X --> P)), (Truth:Comparison),
+                                                                        (&/,(#Y --> S),(#Y --> P)), (Truth:Intersection)
+
+    (M --> P), (M --> S), not_equal(S,P), concurrent((M --> P),(M --> S)) |- (($X --> S) =|> ($X --> P)), (Truth:Induction),
+                                                                             (($X --> S) <|> ($X --> P)), (Truth:Comparison),
+                                                                             (&|,(#Y --> S),(#Y --> P)), (Truth:Intersection)
 //// 2nd variable introduction
 
     (A ==> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) ==> ($X --> P)), (Truth:Induction),
                                                              (&&,(A ==> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
+    (A =|> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) =|> ($X --> P)), (Truth:Induction),
+                                                                 (&&,(A =|> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
+    (A =/> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) =/> ($X --> P)), (Truth:Induction),
+                                                                 (&&,(A =/> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
     
     (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A_1..n)), (Truth:Induction),
                                                          (&&,(#Y --> S), (#Y --> P), A_1..n), (Truth:Intersection)
+    (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P), after((&&,(M --> P), A_1..n),(M --> S)) |- (($Y --> S) =/> (&&,($Y --> P), A_1..n)), (Truth:Induction),
+                                                                                                  (&/,(#Y --> S),(&&,(#Y --> P), A_1..n)), (Truth:Intersection)
+    (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P), concurrent((&&,(M --> P), A_1..n),(M --> S)) |- (($Y --> S) =|> (&&,($Y --> P), A_1..n)), (Truth:Induction),
+                                                                                                       (&|,(#Y --> S),(&&,(#Y --> P), A_1..n)), (Truth:Intersection)
 
-    (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction),
-                                                                             (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection)
-    
+    (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction, Order.Derive),
+                                                                             (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
+
+    (A =/> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =/> (S --> $X)), (Truth:Abduction, Order.Derive),
+                                                                             (&&,(A =/> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
+
+    (A =|> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =|> (S --> $X)), (Truth:Abduction, Order.Derive),
+                                                                                 (&&,(A =|> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
+
     (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
                                                          (&&, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
+    (&|,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&|,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                         (&|, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
+    (&/,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&/,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                         (&/, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
 
+    (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P), after((&&,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =/> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                                                                   (&/, (S --> #Y), (&&,(P --> #Y), A_1..n)), (Truth:Intersection)
+    (&|,(P --> M), A_1..n), (S --> M), not_equal(S,P), after((&|,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =/> (&|,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                                                                   (&/, (S --> #Y), (&|,(P --> #Y), A_1..n)), (Truth:Intersection)
+    (&/,(P --> M), A_1..n), (S --> M), not_equal(S,P), after((&/,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =/> (&/,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                                                                   (&/, (S --> #Y), (&/,(P --> #Y), A_1..n)), (Truth:Intersection)
+
+    (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P), concurrent((&&,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =|> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                                                                        (&|, (S --> #Y), (&&,(P --> #Y), A_1..n)), (Truth:Intersection)
+    (&|,(P --> M), A_1..n), (S --> M), not_equal(S,P), concurrent((&|,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =|> (&|,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                                                                        (&|, (S --> #Y), (&|,(P --> #Y), A_1..n)), (Truth:Intersection)
+    (&/,(P --> M), A_1..n), (S --> M), not_equal(S,P), concurrent((&/,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =|> (&/,(P --> $Y), A_1..n)), (Truth:Abduction),
+                                                                                                        (&|, (S --> #Y), (&/,(P --> #Y), A_1..n)), (Truth:Intersection)
 //// dependent variable elimination
 
     (&&,(#N --> S), A_1..n), (M --> S) |- (&&,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
-    
-    (&&,(S --> #N), A_1..n), (S --> M) |- (&&,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
+    (&|,(#N --> S), A_1..n), (M --> S) |- (&|,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
+    (&/,(#N --> S), A_1..n), (M --> S) |- (&/,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
 
+    (&&,(S --> #N), A_1..n), (S --> M) |- (&&,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
+    (&|,(S --> #N), A_1..n), (S --> M) |- (&|,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
+    (&/,(S --> #N), A_1..n), (S --> M) |- (&/,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
+    
 //NAL7/8 specific inference
 
-    C, ((&/,C,A_1..n) ==> B) |- ((&/,A_1..n) ==> B), (Truth:Deduction, Occurrence:Derive)
-    C, <(&/,C,I) ==> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
-    B, <(&/,C,I) ==> B>, interval(I) |- C, (Truth.Abduction, Desire.Deduction, Occurrence:Derive)
+    C, ((&/,C,A_1..n) =/> B) |- ((&/,A_1..n) =/> B), (Truth:Deduction, Occurrence:Derive)
+    C, ((&/,C,A_1..n) =|> B) |- ((&/,A_1..n) =|> B), (Truth:Deduction, Occurrence:Derive)
+    C, <(&/,C,I) =/> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
+    B, <(&/,C,I) =/> B>, interval(I) |- C, (Truth.Abduction, Desire.Deduction, Occurrence:Derive)
+    C, <(&/,C,I) =|> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
+    B, <(&/,C,I) =|> B>, interval(I) |- C, (Truth.Abduction, Desire.Deduction, Occurrence:Derive)
 
 //Temporal induction:
 
