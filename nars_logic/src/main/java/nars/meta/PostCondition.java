@@ -301,7 +301,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                             return false;
                         }
-                        case "substituted":
+                        case "substitute":
                         {
                             Term M = args[1]; //this one got substituted, but with what?
                             Term with = assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
