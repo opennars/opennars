@@ -33,10 +33,10 @@
 
 //// inheritance-based syllogism
 
-    (M --> S), (P --> M), not_equal(S,P) |- (S --> P), (Truth:Deduction, Desire:Strong)
-    (S --> M), (P --> M), not_equal(S,P) |- (S --> P), (Truth:Abduction, Desire:Weak)
-    (M --> S), (M --> P), not_equal(S,P) |- (S --> P), (Truth:Induction, Desire:Weak)
-    (S --> M), (M --> P), not_equal(S,P) |- (S --> P), (Truth:Exemplification, Desire:Weak)
+    (M --> P), (S --> M), not_equal(S,P) |- (S --> P), (Truth:Deduction, Desire:Strong)
+    (P --> M), (S --> M), not_equal(S,P) |- (S --> P), (Truth:Abduction, Desire:Weak)
+    (M --> P), (M --> S), not_equal(S,P) |- (S --> P), (Truth:Induction, Desire:Weak)
+    (P --> M), (M --> S), not_equal(S,P) |- (S --> P), (Truth:Exemplification, Desire:Weak)
 
 //// similarity from inheritance
 
@@ -383,13 +383,13 @@
                                                                                                         (&|, (S --> #Y), (&/,(P --> #Y), A_1..n)), (Truth:Intersection)
 //// dependent variable elimination
 
-    (&&,(#N --> S), A_1..n), (M --> S) |- (&&,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
-    (&|,(#N --> S), A_1..n), (M --> S) |- (&|,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
-    (&/,(#N --> S), A_1..n), (M --> S) |- (&/,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
+    (&&,(#N --> S), A_1..n), (M --> S), substituted(A_1..n,#N,M,B_1..n) |- (&&,B_1..n), (Truth:AnonymousAnalogy)
+    (&|,(#N --> S), A_1..n), (M --> S), substituted(A_1..n,#N,M,B_1..n) |- (&|,B_1..n), (Truth:AnonymousAnalogy)
+    (&/,(#N --> S), A_1..n), (M --> S), substituted(A_1..n,#N,M,B_1..n) |- (&/,B_1..n), (Truth:AnonymousAnalogy)
 
-    (&&,(S --> #N), A_1..n), (S --> M) |- (&&,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
-    (&|,(S --> #N), A_1..n), (S --> M) |- (&|,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
-    (&/,(S --> #N), A_1..n), (S --> M) |- (&/,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
+    (&&,(S --> #N), A_1..n), (S --> M), substituted(A_1..n,#N,M,B_1..n) |- (&&,B_1..n), (Truth:AnonymousAnalogy)
+    (&|,(S --> #N), A_1..n), (S --> M), substituted(A_1..n,#N,M,B_1..n) |- (&|,B_1..n), (Truth:AnonymousAnalogy)
+    (&/,(S --> #N), A_1..n), (S --> M), substituted(A_1..n,#N,M,B_1..n) |- (&/,B_1..n), (Truth:AnonymousAnalogy)
 
 //NAL7/8 specific inference
 
@@ -402,9 +402,15 @@
 
 //Temporal induction:
 
-    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) ==> P), (Truth:Induction)
-    P, S, no_common_subterm(S,P), event(P), event(S) |- ((&/,S,measure_time(S,P)) <=> P), (Truth:Comparison)
-    P, S, no_common_subterm(S,P), event(P), event(S) |- (&/,S,measure_time(S,P),P), (Truth:Intersection)
+    P, S, no_common_subterm(S,P), event(P), event(S), measure_time(S,P,I) |- ((&/,S,I) =/> P), (Truth:Induction),
+                                                                             (P =\> (&/,S,I)), (Truth:Induction)
+    P, S, no_common_subterm(S,P), event(P), event(S), measure_time(S,P,I) |- ((&/,S,I) </> P), (Truth:Comparison)
+    P, S, no_common_subterm(S,P), event(P), event(S), measure_time(S,P,I) |- (&/,S,I,P), (Truth:Intersection)
+
+    P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (S =|> P), (Truth:Induction),
+                                                                         (P =|> S), (Truth:Induction)
+    P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (S <|> P), (Truth:Comparison)
+    P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (&|,S,P), (Truth:Intersection)
 
 ////// Theorems in IL:
 //java
