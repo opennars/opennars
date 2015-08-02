@@ -7,10 +7,18 @@
 
     (S --> P), S |- (P --> S), (Truth:Conversion)
     (S ==> P), S |- (P ==> S), (Truth:Conversion)
+    (S =|> P), S |- (P =|> S), (Truth:Conversion)
+    (S =/> P), S |- (P =\> S), (Truth:Conversion)
     (S --> P), P |- (P --> S), (Truth:Conversion)
     (S ==> P), P |- (P ==> S), (Truth:Conversion)
+    (S =|> P), P |- (P =|> S), (Truth:Conversion)
+    (S =/> P), P |- (P =\> S), (Truth:Conversion)
     ( --S ==> P), P |- ( --P ==> S), (Truth:Contraposition)
     ( --S ==> P), S |- ( --P ==> S), (Truth:Contraposition)
+    ( --S =|> P), P |- ( --P =|> S), (Truth:Contraposition)
+    ( --S =|> P), S |- ( --P =|> S), (Truth:Contraposition)
+    ( --S =/> P), P |- ( --P =\> S), (Truth:Contraposition)
+    ( --S =/> P), S |- ( --P =\> S), (Truth:Contraposition)
 
     --S, negative(--S) |- S, (Truth:Negation, Desire:Negation)
     S, negative(S) |- --S, (Truth:Negation, Desire:Negation)
@@ -62,7 +70,32 @@
 //// implication-based syllogism
 
     (M ==> P), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Deduction)
+    (M =|> P), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Deduction)
+    (M =/> P), (S =/> M), not_equal(S,P) |- (S =/> P), (Truth:Deduction)
+    (M =|> P), (S =/> M), not_equal(S,P) |- (S =/> P), (Truth:Deduction)
+    (M =/> P), (S =|> M), not_equal(S,P) |- (S =/> P), (Truth:Deduction)
+
     (P ==> M), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Abduction)
+
+//"Please note that the temporal order in the conclusion of a weak rule is
+//not necessarily the same as the order in the premises, given the hypothetical
+//nature of such a rule."
+    (P =|> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
+                                            (S =/> P), (Truth:Abduction),
+                                            (S =\> P), (Truth:Abduction)
+
+    (P =/> M), (S =/> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
+                                            (S =/> P), (Truth:Abduction),
+                                            (S =\> P), (Truth:Abduction)
+
+    (P =|> M), (S =/> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
+                                            (S =/> P), (Truth:Abduction),
+                                            (S =\> P), (Truth:Abduction)
+
+    (P =/> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
+                                            (S =/> P), (Truth:Abduction),
+                                            (S =\> P), (Truth:Abduction)
+
     (M ==> P), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Induction)
     (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification)
 
@@ -152,10 +185,6 @@
     (&&,(S --> #N), A_1..n), (S --> M) |- (&&,substituted(A_1..n,#N,M)), (Truth:AnonymousAnalogy)
 
 //NAL7/8 specific inference
-//all above rules are order such that they work for all temporal orders (as long as the order of both premises is the same)
-//Occurence time, except if Occurence:Derive, will be assumed to be the occurence time of the parent task.
-//Order of ==> in conclusions will always be derived, rules with ==> or && are expected (besides commutativity which is considered) to also work with same order
-//while if an order is given, the rule will only be used with the given order
 
     C, ((&/,C,A_1..n) ==> B) |- ((&/,A_1..n) ==> B), (Truth:Deduction, Occurrence:Derive)
     C, <(&/,C,I) ==> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
