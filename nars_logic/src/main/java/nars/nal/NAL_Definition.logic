@@ -218,7 +218,7 @@
     (M <|> P), (S </> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
 
 //// implication-based composition
-//TODO:
+
     (P ==> M), (S ==> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) ==> M), (Truth:Intersection),
                                                                     ((P && S) ==> M), (Truth:Union)
     (P =|> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
@@ -231,8 +231,20 @@
                                                                     ((P && S) =/> M), (Truth:Union)
     (P =|> M), (S =/> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
                                                                     ((P && S) =|> M), (Truth:Union),
-                                                                    ((P || S) =/> M), (Truth:Intersection),
-                                                                    ((P && S) =/> M), (Truth:Union)
+                                                                    ((P || S) =\> M), (Truth:Intersection),
+                                                                    ((P && S) =\> M), (Truth:Union)
+    (P =\> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
+                                                                    ((P && S) =|> M), (Truth:Union),
+                                                                    ((P || S) =\> M), (Truth:Intersection),
+                                                                    ((P && S) =\> M), (Truth:Union)
+    (P =/> M), (S =\> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =/> M), (Truth:Intersection),
+                                                                    ((P && S) =/> M), (Truth:Union),
+                                                                    ((P || S) =\> M), (Truth:Intersection),
+                                                                    ((P && S) =\> M), (Truth:Union)
+    (P =|> M), (S =\> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
+                                                                    ((P && S) =|> M), (Truth:Union),
+                                                                    ((P || S) =\> M), (Truth:Intersection),
+                                                                    ((P && S) =\> M), (Truth:Union)
 
     (M ==> P), (M ==> S), not_equal(S,P), no_common_subterm(S,P) |- (M ==> (P && S)), (Truth:Intersection),
                                                                     (M ==> (P || S)), (Truth:Union)
@@ -240,19 +252,13 @@
                                                                     (M =/> (P || S)), (Truth:Union)
     (M =|> P), (M =|> S), not_equal(S,P), no_common_subterm(S,P) |- (M =|> (P && S)), (Truth:Intersection),
                                                                     (M =|> (P || S)), (Truth:Union)
-    (M =/> P), (M =|> S), not_equal(S,P), no_common_subterm(S,P) |- (M =/> (P && S)), (Truth:Intersection),
-                                                                    (M =/> (P || S)), (Truth:Union),
-                                                                    (M =|> (P && S)), (Truth:Intersection),
-                                                                    (M =|> (P || S)), (Truth:Union)
-    (M =|> P), (M =/> S), not_equal(S,P), no_common_subterm(S,P) |- (M =/> (P && S)), (Truth:Intersection),
-                                                                    (M =/> (P || S)), (Truth:Union),
-                                                                    (M =|> (P && S)), (Truth:Intersection),
-                                                                    (M =|> (P || S)), (Truth:Union)
+
 //// implication-based decomposition
 
     (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative)
     (S =/> M), ((||,S,A_1..n) =/> M) |- ((||,A_1..n) =/> M), (Truth:DecomposePositiveNegativeNegative)
     (S =|> M), ((||,S,A_1..n) =|> M) |- ((||,A_1..n) =|> M), (Truth:DecomposePositiveNegativeNegative)
+    (S =\> M), ((||,S,A_1..n) =\> M) |- ((||,A_1..n) =\> M), (Truth:DecomposePositiveNegativeNegative)
 
     (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive)
     (S ==> M), ((&|,S,A_1..n) ==> M) |- ((&|,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive)
@@ -263,6 +269,9 @@
     (S =|> M), ((&&,S,A_1..n) =|> M) |- ((&&,A_1..n) =|> M), (Truth:DecomposeNegativePositivePositive)
     (S =|> M), ((&|,S,A_1..n) =|> M) |- ((&|,A_1..n) =|> M), (Truth:DecomposeNegativePositivePositive)
     (S =|> M), ((&/,S,A_1..n) =|> M) |- ((&/,A_1..n) =|> M), (Truth:DecomposeNegativePositivePositive)
+    (S =\> M), ((&&,S,A_1..n) =\> M) |- ((&&,A_1..n) =\> M), (Truth:DecomposeNegativePositivePositive)
+    (S =\> M), ((&|,S,A_1..n) =\> M) |- ((&|,A_1..n) =\> M), (Truth:DecomposeNegativePositivePositive)
+    (S =\> M), ((&/,S,A_1..n) =\> M) |- ((&/,A_1..n) =\> M), (Truth:DecomposeNegativePositivePositive)
 
     (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
     (M ==> S), (M ==> (&|,S,A_1..n)) |- (M ==> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
@@ -273,20 +282,26 @@
     (M =|> S), (M =|> (&&,S,A_1..n)) |- (M =|> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
     (M =|> S), (M =|> (&|,S,A_1..n)) |- (M =|> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
     (M =|> S), (M =|> (&/,S,A_1..n)) |- (M =|> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
+    (M =\> S), (M =\> (&&,S,A_1..n)) |- (M =\> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
+    (M =\> S), (M =\> (&|,S,A_1..n)) |- (M =\> (&|,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
+    (M =\> S), (M =\> (&/,S,A_1..n)) |- (M =\> (&/,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
 
     (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
     (M =/> S), (M =/> (||,S,A_1..n)) |- (M =/> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
-    (M =/> S), (M =/> (||,S,A_1..n)) |- (M =/> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
+    (M =|> S), (M =|> (||,S,A_1..n)) |- (M =|> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
+    (M =\> S), (M =\> (||,S,A_1..n)) |- (M =\> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive)
 
 //// conditional syllogism
 
     M, (M ==> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
     M, (M =/> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
     M, (M =|> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
+    M, (M =\> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
 
     M, (P ==> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
     M, (P =/> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
     M, (P =|> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
+    M, (P =\> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
 
     M, (S <=> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive)
     M, (S </> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive)
@@ -312,62 +327,80 @@
     ((&&,M,A_1..n) ==> C), M |- ((&&,A_1..n) ==> C), (Truth:Deduction)
     ((&&,M,A_1..n) =|> C), M |- ((&&,A_1..n) =|> C), (Truth:Deduction)
     ((&&,M,A_1..n) =/> C), M |- ((&&,A_1..n) =/> C), (Truth:Deduction)
+    ((&&,M,A_1..n) =\> C), M |- ((&&,A_1..n) =\> C), (Truth:Deduction)
     ((&|,M,A_1..n) ==> C), M |- ((&|,A_1..n) ==> C), (Truth:Deduction)
     ((&|,M,A_1..n) =|> C), M |- ((&|,A_1..n) =|> C), (Truth:Deduction)
     ((&|,M,A_1..n) =/> C), M |- ((&|,A_1..n) =/> C), (Truth:Deduction)
+    ((&|,M,A_1..n) =\> C), M |- ((&|,A_1..n) =\> C), (Truth:Deduction)
     ((&/,M,A_1..n) ==> C), M |- ((&/,A_1..n) ==> C), (Truth:Deduction)
     ((&/,M,A_1..n) =|> C), M |- ((&/,A_1..n) =|> C), (Truth:Deduction)
     ((&/,M,A_1..n) =/> C), M |- ((&/,A_1..n) =/> C), (Truth:Deduction)
+    ((&/,M,A_1..n) =\> C), M |- ((&/,A_1..n) =\> C), (Truth:Deduction)
 
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction)
     ((&&,M,A_1..n) =|> C), ((&&,A_1..n) =|> C) |- M, (Truth:Abduction)
     ((&&,M,A_1..n) =/> C), ((&&,A_1..n) =/> C) |- M, (Truth:Abduction)
+    ((&&,M,A_1..n) =\> C), ((&&,A_1..n) =\> C) |- M, (Truth:Abduction)
     ((&|,M,A_1..n) ==> C), ((&|,A_1..n) ==> C) |- M, (Truth:Abduction)
     ((&|,M,A_1..n) =|> C), ((&|,A_1..n) =|> C) |- M, (Truth:Abduction)
     ((&|,M,A_1..n) =/> C), ((&|,A_1..n) =/> C) |- M, (Truth:Abduction)
+    ((&|,M,A_1..n) =\> C), ((&|,A_1..n) =\> C) |- M, (Truth:Abduction)
     ((&/,M,A_1..n) ==> C), ((&/,A_1..n) ==> C) |- M, (Truth:Abduction)
     ((&/,M,A_1..n) =|> C), ((&/,A_1..n) =|> C) |- M, (Truth:Abduction)
     ((&/,M,A_1..n) =/> C), ((&/,A_1..n) =/> C) |- M, (Truth:Abduction)
+    ((&/,M,A_1..n) =\> C), ((&/,A_1..n) =\> C) |- M, (Truth:Abduction)
 
     ((&&,A_1..n) ==> C), M |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
     ((&&,A_1..n) =|> C), M |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
     ((&&,A_1..n) =/> C), M |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
+    ((&&,A_1..n) =\> C), M |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
     ((&|,A_1..n) ==> C), M |- ((&|,M,A_1..n) ==> C), (Truth:Induction)
     ((&|,A_1..n) =|> C), M |- ((&|,M,A_1..n) =|> C), (Truth:Induction)
     ((&|,A_1..n) =/> C), M |- ((&|,M,A_1..n) =/> C), (Truth:Induction)
+    ((&|,A_1..n) =\> C), M |- ((&|,M,A_1..n) =\> C), (Truth:Induction)
     ((&/,A_1..n) ==> C), M |- ((&/,M,A_1..n) ==> C), (Truth:Induction)
     ((&/,A_1..n) =|> C), M |- ((&/,M,A_1..n) =|> C), (Truth:Induction)
     ((&/,A_1..n) =/> C), M |- ((&/,M,A_1..n) =/> C), (Truth:Induction)
+    ((&/,A_1..n) =\> C), M |- ((&/,M,A_1..n) =\> C), (Truth:Induction)
     
     ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction)
     ((&&,M,A_1..n) =|> C), (A =|> M) |- ((&&,A,A_1..n) =|> C), (Truth:Deduction)
     ((&&,M,A_1..n) =/> C), (A =/> M) |- ((&&,A,A_1..n) =/> C), (Truth:Deduction)
+    ((&&,M,A_1..n) =\> C), (A =\> M) |- ((&&,A,A_1..n) =\> C), (Truth:Deduction)
     ((&|,M,A_1..n) ==> C), (A ==> M) |- ((&|,A,A_1..n) ==> C), (Truth:Deduction)
     ((&|,M,A_1..n) =|> C), (A =|> M) |- ((&|,A,A_1..n) =|> C), (Truth:Deduction)
     ((&|,M,A_1..n) =/> C), (A =/> M) |- ((&|,A,A_1..n) =/> C), (Truth:Deduction)
+    ((&|,M,A_1..n) =\> C), (A =\> M) |- ((&|,A,A_1..n) =\> C), (Truth:Deduction)
     ((&/,M,A_1..n) ==> C), (A ==> M) |- ((&/,A,A_1..n) ==> C), (Truth:Deduction)
     ((&/,M,A_1..n) =|> C), (A =|> M) |- ((&/,A,A_1..n) =|> C), (Truth:Deduction)
     ((&/,M,A_1..n) =/> C), (A =/> M) |- ((&/,A,A_1..n) =/> C), (Truth:Deduction)
+    ((&/,M,A_1..n) =\> C), (A =\> M) |- ((&/,A,A_1..n) =\> C), (Truth:Deduction)
 
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction)
     ((&&,M,A_1..n) =|> C), ((&&,A,A_1..n) =|> C) |- (A =|> M), (Truth:Abduction)
     ((&&,M,A_1..n) =/> C), ((&&,A,A_1..n) =/> C) |- (A =/> M), (Truth:Abduction)
+    ((&&,M,A_1..n) =\> C), ((&&,A,A_1..n) =\> C) |- (A =\> M), (Truth:Abduction)
     ((&|,M,A_1..n) ==> C), ((&|,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction)
     ((&|,M,A_1..n) =|> C), ((&|,A,A_1..n) =|> C) |- (A =|> M), (Truth:Abduction)
     ((&|,M,A_1..n) =/> C), ((&|,A,A_1..n) =/> C) |- (A =/> M), (Truth:Abduction)
+    ((&|,M,A_1..n) =\> C), ((&|,A,A_1..n) =\> C) |- (A =\> M), (Truth:Abduction)
     ((&/,M,A_1..n) ==> C), ((&/,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction)
     ((&/,M,A_1..n) =|> C), ((&/,A,A_1..n) =|> C) |- (A =|> M), (Truth:Abduction)
     ((&/,M,A_1..n) =/> C), ((&/,A,A_1..n) =/> C) |- (A =/> M), (Truth:Abduction)
+    ((&/,M,A_1..n) =\> C), ((&/,A,A_1..n) =\> C) |- (A =\> M), (Truth:Abduction)
 
     ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
     ((&&,A,A_1..n) =|> C), (A =|> M) |- ((&&,M,A_1..n) =|> C), (Truth:Induction)
     ((&&,A,A_1..n) =/> C), (A =/> M) |- ((&&,M,A_1..n) =/> C), (Truth:Induction)
+    ((&&,A,A_1..n) =\> C), (A =\> M) |- ((&&,M,A_1..n) =\> C), (Truth:Induction)
     ((&|,A,A_1..n) ==> C), (A ==> M) |- ((&|,M,A_1..n) ==> C), (Truth:Induction)
     ((&|,A,A_1..n) =|> C), (A =|> M) |- ((&|,M,A_1..n) =|> C), (Truth:Induction)
     ((&|,A,A_1..n) =/> C), (A =/> M) |- ((&|,M,A_1..n) =/> C), (Truth:Induction)
+    ((&|,A,A_1..n) =\> C), (A =\> M) |- ((&|,M,A_1..n) =\> C), (Truth:Induction)
     ((&/,A,A_1..n) ==> C), (A ==> M) |- ((&/,M,A_1..n) ==> C), (Truth:Induction)
     ((&/,A,A_1..n) =|> C), (A =|> M) |- ((&/,M,A_1..n) =|> C), (Truth:Induction)
     ((&/,A,A_1..n) =/> C), (A =/> M) |- ((&/,M,A_1..n) =/> C), (Truth:Induction)
+    ((&/,A,A_1..n) =\> C), (A =\> M) |- ((&/,M,A_1..n) =\> C), (Truth:Induction)
 
 //// variable introduction
 
@@ -402,6 +435,8 @@
                                                                  (&&,(A =|> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
     (A =/> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) =/> ($X --> P)), (Truth:Induction),
                                                                  (&&,(A =/> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
+    (A =\> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) =\> ($X --> P)), (Truth:Induction),
+                                                                     (&&,(A =\> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
     
     (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A_1..n)), (Truth:Induction),
                                                          (&&,(#Y --> S), (#Y --> P), A_1..n), (Truth:Intersection)
@@ -415,6 +450,9 @@
 
     (A =/> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =/> (S --> $X)), (Truth:Abduction, Order.Derive),
                                                                              (&&,(A =/> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
+
+    (A =\> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =\> (S --> $X)), (Truth:Abduction, Order.Derive),
+                                                                                 (&&,(A =\> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
 
     (A =|> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =|> (S --> $X)), (Truth:Abduction, Order.Derive),
                                                                                  (&&,(A =|> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
@@ -451,8 +489,10 @@
 
 //NAL7/8 specific inference
 
+    C, ((&/,C,A_1..n) =\> B) |- ((&/,A_1..n) =\> B), (Truth:Deduction, Occurrence:Derive)
     C, ((&/,C,A_1..n) =/> B) |- ((&/,A_1..n) =/> B), (Truth:Deduction, Occurrence:Derive)
     C, ((&/,C,A_1..n) =|> B) |- ((&/,A_1..n) =|> B), (Truth:Deduction, Occurrence:Derive)
+    C, <(&/,C,I) =\> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
     C, <(&/,C,I) =/> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
     B, <(&/,C,I) =/> B>, interval(I) |- C, (Truth.Abduction, Desire.Deduction, Occurrence:Derive)
     C, <(&/,C,I) =|> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
