@@ -97,13 +97,13 @@
     (M ==> P), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Induction)
     (M =/> P), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
                                             (S =/> P), (Truth:Induction),
-                                            (S =\> P), (Truth.Induction)
+                                            (S =\> P), (Truth:Induction)
     (M =|> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
                                             (S =/> P), (Truth:Induction),
-                                            (S =\> P), (Truth.Induction)
+                                            (S =\> P), (Truth:Induction)
     (M =\> P), (M =\> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
                                             (S =/> P), (Truth:Induction),
-                                            (S =\> P), (Truth.Induction)
+                                            (S =\> P), (Truth:Induction)
 
     (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification)
     (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
@@ -132,14 +132,13 @@
                                             (S </> P), (Truth:Comparison),
                                             (P </> S), (Truth:Comparison)
     (M =|> P), (M =|> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison)
-TODO:
+
     (M ==> P), (S <=> M), not_equal(S,P) |- (S ==> P), (Truth:Analogy)
     (M =/> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
-    (M =|> P), (S <|> M), not_equal(S,P) |- (S =|> P), (Truth:Analogy)
     (M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
-    (M =|> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
+    (M =|> P), (S <|> M), not_equal(S,P) |- (S =|> P), (Truth:Analogy)
+    (M =\> P), (M </> S), not_equal(S,P) |- (S =\> P), (Truth:Analogy)
     (M =\> P), (S <|> M), not_equal(S,P) |- (S =\> P), (Truth:Analogy)
-    (M =\> P), (S </> M), not_equal(S,P) |- (||,(S =/> P),(S =|> P),(S =\> P)), (Truth:Analogy)
 
     (P ==> M), (S <=> M), not_equal(S,P) |- (P ==> S), (Truth:Analogy)
     (P =/> M), (S </> M), not_equal(S,P) |- (||,(P =|> S), (P =/> S), (P =\> S)), (Truth:Analogy)
@@ -161,27 +160,9 @@ TODO:
                                                                     ((P && S) ==> M), (Truth:Union)
     (P =|> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
                                                                     ((P && S) =|> M), (Truth:Union)
-    (P =/> M), (S =/> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
-                                                                    ((P && S) =|> M), (Truth:Union)
-    (P =/> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
-                                                                    ((P && S) =|> M), (Truth:Union),
-                                                                    ((P || S) =/> M), (Truth:Intersection),
+    (P =/> M), (S =/> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =/> M), (Truth:Intersection),
                                                                     ((P && S) =/> M), (Truth:Union)
-    (P =|> M), (S =/> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
-                                                                    ((P && S) =|> M), (Truth:Union),
-                                                                    ((P || S) =\> M), (Truth:Intersection),
-                                                                    ((P && S) =\> M), (Truth:Union)
-    (P =\> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
-                                                                    ((P && S) =|> M), (Truth:Union),
-                                                                    ((P || S) =\> M), (Truth:Intersection),
-                                                                    ((P && S) =\> M), (Truth:Union)
-    (P =/> M), (S =\> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =/> M), (Truth:Intersection),
-                                                                    ((P && S) =/> M), (Truth:Union),
-                                                                    ((P || S) =\> M), (Truth:Intersection),
-                                                                    ((P && S) =\> M), (Truth:Union)
-    (P =|> M), (S =\> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
-                                                                    ((P && S) =|> M), (Truth:Union),
-                                                                    ((P || S) =\> M), (Truth:Intersection),
+    (P =\> M), (S =\> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =\> M), (Truth:Intersection),
                                                                     ((P && S) =\> M), (Truth:Union)
 
     (M ==> P), (M ==> S), not_equal(S,P), no_common_subterm(S,P) |- (M ==> (P && S)), (Truth:Intersection),
@@ -190,6 +171,8 @@ TODO:
                                                                     (M =/> (P || S)), (Truth:Union)
     (M =|> P), (M =|> S), not_equal(S,P), no_common_subterm(S,P) |- (M =|> (P && S)), (Truth:Intersection),
                                                                     (M =|> (P || S)), (Truth:Union)
+    (M =\> P), (M =\> S), not_equal(S,P), no_common_subterm(S,P) |- (M =\> (P && S)), (Truth:Intersection),
+                                                                    (M =\> (P || S)), (Truth:Union)
 
 //// implication-based decomposition
 
@@ -257,7 +240,6 @@ TODO:
     S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative)
     S, (&|,S,A_1..n) |- (&|,A_1..n), (Truth:DecomposePositiveNegativeNegative)
     S, (&/,S,A_1..n) |- (&/,A_1..n), (Truth:DecomposePositiveNegativeNegative)
-
     S, (||,S,A_1..n) |- (||,A_1..n), (Truth:DecomposeNegativePositivePositive)
 
 //// multi-conditional syllogism
@@ -369,52 +351,16 @@ TODO:
 
     (A ==> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) ==> ($X --> P)), (Truth:Induction),
                                                              (&&,(A ==> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
-    (A =|> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) =|> ($X --> P)), (Truth:Induction),
-                                                                 (&&,(A =|> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
-    (A =/> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) =/> ($X --> P)), (Truth:Induction),
-                                                                 (&&,(A =/> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
-    (A =\> (M --> P)), (M --> S), not_equal(A, (M --> S)) |- ((&&,A,($X --> S)) =\> ($X --> P)), (Truth:Induction),
-                                                                     (&&,(A =\> (#Y --> P)), (#Y --> S)), (Truth:Intersection)
 
     (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A_1..n)), (Truth:Induction),
                                                          (&&,(#Y --> S), (#Y --> P), A_1..n), (Truth:Intersection)
-    (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P), after((&&,(M --> P), A_1..n),(M --> S)) |- (($Y --> S) =/> (&&,($Y --> P), A_1..n)), (Truth:Induction),
-                                                                                                  (&/,(#Y --> S),(&&,(#Y --> P), A_1..n)), (Truth:Intersection)
-    (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P), concurrent((&&,(M --> P), A_1..n),(M --> S)) |- (($Y --> S) =|> (&&,($Y --> P), A_1..n)), (Truth:Induction),
-                                                                                                       (&|,(#Y --> S),(&&,(#Y --> P), A_1..n)), (Truth:Intersection)
 
     (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction, Order.Derive),
                                                                              (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
 
-    (A =/> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =/> (S --> $X)), (Truth:Abduction, Order.Derive),
-                                                                             (&&,(A =/> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
-
-    (A =\> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =\> (S --> $X)), (Truth:Abduction, Order.Derive),
-                                                                                 (&&,(A =\> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
-
-    (A =|> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) =|> (S --> $X)), (Truth:Abduction, Order.Derive),
-                                                                                 (&&,(A =|> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
-
     (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
                                                          (&&, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
-    (&|,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&|,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                         (&|, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
-    (&/,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&/,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                         (&/, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
 
-    (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P), after((&&,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =/> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                                                                   (&/, (S --> #Y), (&&,(P --> #Y), A_1..n)), (Truth:Intersection)
-    (&|,(P --> M), A_1..n), (S --> M), not_equal(S,P), after((&|,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =/> (&|,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                                                                   (&/, (S --> #Y), (&|,(P --> #Y), A_1..n)), (Truth:Intersection)
-    (&/,(P --> M), A_1..n), (S --> M), not_equal(S,P), after((&/,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =/> (&/,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                                                                   (&/, (S --> #Y), (&/,(P --> #Y), A_1..n)), (Truth:Intersection)
-
-    (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P), concurrent((&&,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =|> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                                                                        (&|, (S --> #Y), (&&,(P --> #Y), A_1..n)), (Truth:Intersection)
-    (&|,(P --> M), A_1..n), (S --> M), not_equal(S,P), concurrent((&|,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =|> (&|,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                                                                        (&|, (S --> #Y), (&|,(P --> #Y), A_1..n)), (Truth:Intersection)
-    (&/,(P --> M), A_1..n), (S --> M), not_equal(S,P), concurrent((&/,(P --> M), A_1..n),(S --> M))  |- ((S --> $Y) =|> (&/,(P --> $Y), A_1..n)), (Truth:Abduction),
-                                                                                                        (&|, (S --> #Y), (&/,(P --> #Y), A_1..n)), (Truth:Intersection)
 //// dependent variable elimination
 
     (&&,(#N --> S), A_1..n), (M --> S), substituted(A_1..n,#N,M,B_1..n) |- (&&,B_1..n), (Truth:AnonymousAnalogy)
@@ -430,11 +376,11 @@ TODO:
     C, ((&/,C,A_1..n) =\> B) |- ((&/,A_1..n) =\> B), (Truth:Deduction, Occurrence:Derive)
     C, ((&/,C,A_1..n) =/> B) |- ((&/,A_1..n) =/> B), (Truth:Deduction, Occurrence:Derive)
     C, ((&/,C,A_1..n) =|> B) |- ((&/,A_1..n) =|> B), (Truth:Deduction, Occurrence:Derive)
-    C, <(&/,C,I) =\> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
-    C, <(&/,C,I) =/> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
-    B, <(&/,C,I) =/> B>, interval(I) |- C, (Truth.Abduction, Desire.Deduction, Occurrence:Derive)
-    C, <(&/,C,I) =|> B>, interval(I) |- B, (Truth.Deduction, Desire.Induction, Occurrence:Derive)
-    B, <(&/,C,I) =|> B>, interval(I) |- C, (Truth.Abduction, Desire.Deduction, Occurrence:Derive)
+    C, <(&/,C,I) =\> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
+    C, <(&/,C,I) =/> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
+    B, <(&/,C,I) =/> B>, interval(I) |- C, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
+    C, <(&/,C,I) =|> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
+    B, <(&/,C,I) =|> B>, interval(I) |- C, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
 
 //Temporal induction:
 
