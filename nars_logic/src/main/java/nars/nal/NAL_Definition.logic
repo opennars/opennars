@@ -80,6 +80,7 @@
 //"Please note that the temporal order in the conclusion of a weak rule is
 //not necessarily the same as the order in the premises, given the hypothetical
 //nature of such a rule."
+
     (P =|> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
                                             (S =/> P), (Truth:Abduction),
                                             (S =\> P), (Truth:Abduction)
@@ -90,14 +91,29 @@
 
     (P =|> M), (S =/> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
                                             (S =/> P), (Truth:Abduction),
-                                            (S =\> P), (Truth:Abduction)
 
     (P =/> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
-                                            (S =/> P), (Truth:Abduction),
                                             (S =\> P), (Truth:Abduction)
 
     (M ==> P), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Induction)
+
+    (M =/> P), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
+                                            (S =/> P), (Truth:Induction),
+                                            (S =\> P), (Truth.Induction)
+
+    (M =|> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
+                                            (S =/> P), (Truth:Induction),
+                                            (S =\> P), (Truth.Induction)
+
+    (M =|> P), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
+                                            (S =\> P), (Truth.Induction)
+
+    (M =/> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
+                                            (S =/> P), (Truth:Induction),
+
     (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification)
+
+    (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification)
 
 //// implication to equivalence
 
