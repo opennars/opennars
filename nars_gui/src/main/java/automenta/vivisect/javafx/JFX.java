@@ -1,6 +1,8 @@
 package automenta.vivisect.javafx;
 
+import com.sun.javafx.tk.Toolkit;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -11,24 +13,34 @@ import javafx.stage.Stage;
  */
 public class JFX {
     public static void popup(Parent n) {
-        Stage st = new Stage();
+        Platform.runLater(() -> {
+            Stage st = new Stage();
 
-        st.setScene(new Scene(n));
-        st.show();
+            st.setScene(new Scene(n));
+            st.show();
+        });
     }
+
+    static {
+        Toolkit.getToolkit().init();
+    }
+
    public static void popup(Application a) {
-        Stage st = new Stage();
 
-        BorderPane root = new BorderPane();
-        st.setScene(new Scene(root));
-        try {
-            a.start(st);
-        } catch (Exception ex) {
-            //Logger.getLogger(NetentionJFX.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
-        }
+       Platform.runLater(() -> {
+           Stage st = new Stage();
 
-        st.show();
+           BorderPane root = new BorderPane();
+           st.setScene(new Scene(root));
+           try {
+               a.start(st);
+           } catch (Exception ex) {
+               //Logger.getLogger(NetentionJFX.class.getName()).log(Level.SEVERE, null, ex);
+               ex.printStackTrace();
+           }
+
+           st.show();
+       });
     }
 
 }

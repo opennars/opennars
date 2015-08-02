@@ -22,7 +22,8 @@ public class NotebookFX extends Application {
 
         BorderPane p = new BorderPane();
         Scene s = new Scene(p, 800, 600);
-        s.getStylesheets().add(NotebookFX.class.getResource("codearea.css").toExternalForm());
+
+        s.getStylesheets().add(Spacegraph.spacegraphCSS);
 
         StyleClassedTextArea codeArea = new StyleClassedTextArea();
         codeArea.getStyleClass().add("code-area");

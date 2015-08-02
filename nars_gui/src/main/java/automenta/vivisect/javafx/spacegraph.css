@@ -1,5 +1,5 @@
 .code-area {
-    -fx-background-color: #222;
+    -fx-background-color: #262626;
     -fx-font-family: monospace;
     -fx-font-size: 150%;
 }
@@ -7,4 +7,13 @@
 .default {
      -fx-fill: white;
      /*-fx-font-weight: bold;*/
+}
+
+.spacegraph {
+
+}
+
+.dark {
+    -fx-background-color: #111;
+    -fx-fill: white;
 }
