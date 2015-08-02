@@ -314,7 +314,10 @@ public class PostCondition //since there can be multiple tasks derived per rule
             }
 
             //now we have to apply this to the derive term
-            derive = derive.substituted(assign).substituted(precondsubs); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
+            derive = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
+            if(!precondsubs.isEmpty()) {
+                derive = derive.substituted(precondsubs);
+            }
         }
 
         //TODO also allow substituted evaluation on output side (used by 2 rules I think)
