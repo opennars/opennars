@@ -75,62 +75,86 @@
     (M =|> P), (S =/> M), not_equal(S,P) |- (S =/> P), (Truth:Deduction)
     (M =/> P), (S =|> M), not_equal(S,P) |- (S =/> P), (Truth:Deduction)
 
-    (P ==> M), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Abduction)
-
 //"Please note that the temporal order in the conclusion of a weak rule is
 //not necessarily the same as the order in the premises, given the hypothetical
 //nature of such a rule."
 
+    (P ==> M), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Abduction)
     (P =|> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
                                             (S =/> P), (Truth:Abduction),
                                             (S =\> P), (Truth:Abduction)
-
     (P =/> M), (S =/> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
                                             (S =/> P), (Truth:Abduction),
                                             (S =\> P), (Truth:Abduction)
-
     (P =|> M), (S =/> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
-                                            (S =/> P), (Truth:Abduction),
-
+                                            (S =/> P), (Truth:Abduction)
     (P =/> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
                                             (S =\> P), (Truth:Abduction)
 
     (M ==> P), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Induction)
-
     (M =/> P), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
                                             (S =/> P), (Truth:Induction),
                                             (S =\> P), (Truth.Induction)
-
     (M =|> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
                                             (S =/> P), (Truth:Induction),
                                             (S =\> P), (Truth.Induction)
-
     (M =|> P), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
                                             (S =\> P), (Truth.Induction)
-
     (M =/> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
-                                            (S =/> P), (Truth:Induction),
+                                            (S =/> P), (Truth:Induction)
 
     (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification)
-
     (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification)
 
 //// implication to equivalence
 
     (S ==> P), (P ==> S), not_equal(S,P) |- (S <=> P), (Truth:Intersection)
+    (S =/> P), (P =\> S), not_equal(S,P) |- (S </> P), (Truth:Intersection)
 
 //// equivalence-based syllogism
 
     (P ==> M), (S ==> M), not_equal(S,P) |- (S <=> P), (Truth:Comparison)
+    (P =/> M), (S =/> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+    (P =|> M), (S =|> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+    (P =/> M), (S =|> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+    (P =|> M), (S =/> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+
     (M ==> P), (M ==> S), not_equal(S,P) |- (S <=> P), (Truth:Comparison)
+    (M =/> P), (M =/> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+    (M =|> P), (M =|> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+    (M =/> P), (M =|> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+    (M =|> P), (M =/> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+                                            (S </> P), (Truth:Comparison)
+
     (M ==> P), (S <=> M), not_equal(S,P) |- (S ==> P), (Truth:Analogy)
+    (M =/> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
+    (M =|> P), (S <|> M), not_equal(S,P) |- (S =|> P), (Truth:Analogy)
+    (M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
+    (M =|> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
+
     (P ==> M), (S <=> M), not_equal(S,P) |- (P ==> S), (Truth:Analogy)
+//  (P =/> M), (S </> M), not_equal(S,P) |- (P =|> =/> =\> S), (Truth:Analogy)  order can not be deduced, so this strong rule has no right to exist, except maybe as disjunction of 3 statements hm
+    (P =|> M), (S <|> M), not_equal(S,P) |- (P =|> S), (Truth:Analogy)
+    (P =/> M), (S <|> M), not_equal(S,P) |- (P =/> S), (Truth:Analogy)
+    (P =|> M), (S </> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
+
     (M <=> P), (S <=> M), not_equal(S,P) |- (S <=> P), (Truth:Resemblance)
+    (M <|> P), (S <|> M), not_equal(S,P) |- (S <|> P), (Truth:Resemblance)
+    (M </> P), (S </> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
+    (M </> P), (S <|> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
+    (M <|> P), (S </> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
 
 //// implication-based composition
 
-    (P ==> M), (S ==> M), not_equal(S,P), no_common_subterm(S,P) |- ((||,P,S) ==> M), (Truth:Intersection),
-                                                                    ((&&,P,S) ==> M), (Truth:Union)
+    (P ==> M), (S ==> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) ==> M), (Truth:Intersection),
+                                                                    ((P && S) ==> M), (Truth:Union)
                                             
     (M ==> P), (M ==> S), not_equal(S,P), no_common_subterm(S,P) |- (M ==> (P && S)), (Truth:Intersection),
                                                                     (M ==> (P || S)), (Truth:Union)
