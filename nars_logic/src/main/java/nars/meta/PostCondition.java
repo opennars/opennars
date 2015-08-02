@@ -64,7 +64,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
         for (final Term m : modifiers) {
             if (!(m instanceof Inheritance)) {
-                System.err.println("Unknown postcondition: " + m );
+                System.err.println("Unknown postcondition format: " + m );
                 continue;
             }
 
@@ -77,6 +77,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 negation = true;
             }
 
+            //TODO compare by Atom, and avoid generating switch String (UTF8 will be slightly more efficient than UTF16)
             if (swhich.equals("Negation") || swhich.equals("Conversion") || swhich.equals("Contraposition")) {
                 single_premise = true;
             }
@@ -110,6 +111,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                     case "Occurrence":
                         if (swhich.equals("Derive")) {
                             this.derive_occurrence = true;
+                        }
+                        else {
+                            throw new RuntimeException("unknown Occurrence " + which);
                         }
                         break;
 
