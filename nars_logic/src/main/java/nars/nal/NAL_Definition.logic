@@ -21,9 +21,9 @@
     ( --S =|> P), P |- ( --P =|> S), (Truth:Contraposition)
     ( --S =|> P), S |- ( --P =|> S), (Truth:Contraposition)
     ( --S =/> P), P |- ( --P =\> S), (Truth:Contraposition)
-    ( --S =/> P), S |- ( --P =\> S), (Truth:Contraposition)
+    ( --S =|> P), S |- ( --P =\> S), (Truth:Contraposition)
     ( --S =\> P), P |- ( --P =/> S), (Truth:Contraposition)
-    ( --S =\> P), S |- ( --P =/> S), (Truth:Contraposition)
+    ( --S =\> P), S |- ( --P =|> S), (Truth:Contraposition)
 
     --S, negative(--S) |- S, (Truth:Negation, Desire:Negation)
     S, negative(S) |- --S, (Truth:Negation, Desire:Negation)
@@ -81,7 +81,9 @@
     (M =/> P), (S =|> M), not_equal(S,P) |- (S =/> P), (Truth:Deduction)
     (M =\> P), (S =\> M), not_equal(S,P) |- (S =\> P), (Truth:Deduction)
     (M =\> P), (S =|> M), not_equal(S,P) |- (S =\> P), (Truth:Deduction)
-//  (M =\> P), (S =/> M), not_equal(S,P) |- (S =\> P), (Truth:Deduction) this rule doesn't exist, order can't be decided
+    (M =\> P), (S =/> M), not_equal(S,P) |- (||,(S =\> P), (S =|> P), (S =/> P)), (Truth:Deduction)
+    (M =|> P), (S =\> M), not_equal(S,P) |- (S =\> P), (Truth:Deduction)
+    (M =/> P), (S =\> M), not_equal(S,P) |- (S =\> P), (Truth:Deduction)
 
 //"Please note that the temporal order in the conclusion of a weak rule is
 //not necessarily the same as the order in the premises, given the hypothetical
@@ -98,6 +100,17 @@
                                             (S =/> P), (Truth:Abduction)
     (P =/> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
                                             (S =\> P), (Truth:Abduction)
+    (P =\> M), (S =/> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
+                                            (S =\> P), (Truth:Abduction),
+                                            (S =/> P), (Truth:Abduction)
+    (P =\> M), (S =|> M), not_equal(S,P) |- (S =|> P), (Truth:Abduction),
+                                            (S =/> P), (Truth:Abduction)
+    (P =\> M), (S =|> M), not_equal(S,P) |- (S =/> P), (Truth:Abduction),
+                                            (S =|> P), (Truth:Abduction)
+    (P =|> M), (S =\> M), not_equal(S,P) |- (S =\> P), (Truth:Abduction),
+                                            (S =|> P), (Truth:Abduction)
+    (P =/> M), (S =\> M), not_equal(S,P) |- (S =\> P), (Truth:Abduction),
+                                            (S =|> P), (Truth:Abduction)
 
     (M ==> P), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Induction)
     (M =/> P), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
@@ -110,9 +123,34 @@
                                             (S =\> P), (Truth.Induction)
     (M =/> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
                                             (S =/> P), (Truth:Induction)
+    (M =\> P), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Induction),
+                                            (S =|> P), (Truth:Induction)
+    (M =\> P), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
+                                            (S =/> P), (Truth:Induction)
+    (M =|> P), (M =\> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
+                                            (S =/> P), (Truth:Induction)
+    (M =/> P), (M =\> S), not_equal(S,P) |- (S =|> P), (Truth:Induction),
+                                            (S =/> P), (Truth:Induction)
 
     (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification)
-    (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification)
+    (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
+    (P =|> M), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Exemplification),
+                                            (S =/> P), (Truth:Exemplification),
+                                            (S =\> P), (Truth:Exemplification)
+    (P =/> M), (M =|> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
+                                            (S =|> P), (Truth:Exemplification)
+    (P =|> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
+                                            (S =|> P), (Truth:Exemplification)
+    (P =\> M), (M =/> S), not_equal(S,P) |- (S =|> P), (Truth:Exemplification),
+                                            (S =/> P), (Truth:Exemplification),
+                                            (S =\> P), (Truth:Exemplification)
+    (P =\> M), (M =|> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
+                                            (S =|> P), (Truth:Exemplification)
+    (P =/> M), (M =\> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
+                                            (S =|> P), (Truth:Exemplification),
+                                            (S =/> P), (Truth:Exemplification)
+    (P =|> M), (M =\> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
+                                            (S =|> P), (Truth:Exemplification)
 
 //// implication to equivalence
 
