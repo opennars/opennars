@@ -141,12 +141,10 @@
     (M =\> P), (S <|> M), not_equal(S,P) |- (S =\> P), (Truth:Analogy)
 
     (P ==> M), (S <=> M), not_equal(S,P) |- (P ==> S), (Truth:Analogy)
-    (P =/> M), (S </> M), not_equal(S,P) |- (||,(P =|> S), (P =/> S), (P =\> S)), (Truth:Analogy)
-    (P =|> M), (S <|> M), not_equal(S,P) |- (P =|> S), (Truth:Analogy)
     (P =/> M), (S <|> M), not_equal(S,P) |- (P =/> S), (Truth:Analogy)
-    (P =|> M), (S </> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
-    (P =\> M), (S <|> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
+    (P =|> M), (S <|> M), not_equal(S,P) |- (P =|> S), (Truth:Analogy)
     (P =\> M), (S </> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
+    (P =\> M), (S <|> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
 
     (M <=> P), (S <=> M), not_equal(S,P) |- (S <=> P), (Truth:Resemblance)
     (M <|> P), (S <|> M), not_equal(S,P) |- (S <|> P), (Truth:Resemblance)
