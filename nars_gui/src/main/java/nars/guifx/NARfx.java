@@ -1,12 +1,13 @@
 package nars.guifx;
 
 import automenta.vivisect.Video;
+import automenta.vivisect.javafx.Spacegraph;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -16,12 +17,14 @@ import java.util.Map;
  */
 public class NARfx extends Application {
 
+    static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
+
     static {
         Video.themeInvert();
     }
 
     /** NAR instances -> GUI windows */
-    public static Map<NAR, NARWindow> window = new HashMap();
+    public static Map<NAR, NARWindow> window = Global.newHashMap();
 
 //    public void start_(Stage primaryStage) {
 //        primaryStage.setTitle("Tree View Sample");

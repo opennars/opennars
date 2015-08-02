@@ -1,36 +1,35 @@
 package nars.guifx;
 
-import de.jensd.fx.glyphs.GlyphsDude;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import automenta.vivisect.javafx.CodeInput;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.embed.swing.SwingNode;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.gui.NARControlPanel;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created by me on 1/21/15.
  */
 public class NARWindow extends Stage {
+
+
+    private final BorderPane menu = new BorderPane();
+
+    private final TabPane content = new TabPane();
+    private final NARControlFX buttonStrip;
+    private final BorderPane f;
+    private final SplitPane g;
 
     public static class ResizableCanvas extends Canvas {
 
@@ -111,126 +110,61 @@ public class NARWindow extends Stage {
         }
     }
 
-    /**
-     * small VBox vertically oriented component which can be attached
-     * to the left or right of anything else, which contains a set of
-     * buttons for controlling a nar
-     */
-    public static class NARControlFX extends StackPane {
+    public static class LogPane extends VBox {
 
-        private final FXReaction busyBackgroundColor;
-
-        public NARControlFX(NAR n, boolean runButtons, boolean memoryButtons, boolean guiButtons) {
+        public LogPane(NAR nar) {
             super();
+            getChildren().add(new Button("<x --> y>. %1.00;0.90%"));
 
-            Canvas canvas = new ResizableCanvas(this);
-            //canvas.maxWidth(Double.MAX_VALUE);
-            //canvas.maxHeight(Double.MAX_VALUE);
+            Text t =new javafx.scene.text.Text("Echo: WTF");
+            t.setFill(Color.ORANGE);
 
-            VBox v = new VBox();
-
-            getChildren().add(canvas);
-            getChildren().add(v);
-
-
-
-            //b.getChildren().add(new Separator(Orientation.HORIZONTAL));
-
-
-            //b.getChildren().add(new Separator(Orientation.HORIZONTAL));
-
-
-            if (runButtons) {
-                Button bp = GlyphsDude.createIconButton(FontAwesomeIcon.PLAY);
-                bp.setTooltip(new Tooltip("Play"));
-                v.getChildren().add(bp);
-
-
-                Button bs = GlyphsDude.createIconButton(FontAwesomeIcon.STEP_FORWARD);
-                bs.setTooltip(new Tooltip("Step"));
-                v.getChildren().add(bs);
-            }
-
-            if (memoryButtons) {
-                Button b0 = GlyphsDude.createIconButton(FontAwesomeIcon.FOLDER);
-                b0.setTooltip(new Tooltip("Open"));
-                v.getChildren().add(b0);
-
-                Button b1 = GlyphsDude.createIconButton(FontAwesomeIcon.SAVE);
-                b1.setTooltip(new Tooltip("Save"));
-                v.getChildren().add(b1);
-
-                Button b2 = GlyphsDude.createIconButton(FontAwesomeIcon.CODE_FORK);
-                b2.setTooltip(new Tooltip("Clone"));
-                v.getChildren().add(b2);
-            }
-
-            if (guiButtons) {
-                Button bi = GlyphsDude.createIconButton(FontAwesomeIcon.CODE);
-                bi.setTooltip(new Tooltip("Input..."));
-                v.getChildren().add(bi);
-
-                Button bo = GlyphsDude.createIconButton(FontAwesomeIcon.TACHOMETER);
-                bo.setTooltip(new Tooltip("Output..."));
-                v.getChildren().add(bo);
-            }
-
-            v.getChildren().forEach(c -> {
-                if (c instanceof Control)
-                    ((Control) c).setMaxWidth(Double.MAX_VALUE);
-            });
-            //b.setFillWidth(true);
-
-
-
-
-            this.busyBackgroundColor = new FXReaction(n, this, Events.FrameEnd.class) {
-
-                @Override
-                public void event(Class event, Object[] args) {
-
-                    if (event == Events.FrameEnd.class) {
-                        Platform.runLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                float b = 0, h = 0;
-
-                                if (n.isRunning()) {
-                                    b = n.memory.emotion.busy();
-                                    h = n.memory.emotion.happy();
-                                }
-
-                                if ((canvas.getWidth()!=getWidth()) || (canvas.getHeight()!=getHeight()))
-                                    canvas.resize(Double.MAX_VALUE, Double.MAX_VALUE);
-
-                                GraphicsContext g = canvas.getGraphicsContext2D();
-                                g.setFill(new javafx.scene.paint.Color(0.25 * b, 0.25 * h, 0, 1.0));
-                                g.fillRect(0, 0, getWidth(), getHeight());
-
-                            }
-                        });
-
-                    }
-
-                }
-            };
-
-
+            getChildren().add(t);
         }
+    }
 
+    public static class TerminalPane extends SplitPane {
 
+        public TerminalPane(NAR nar) {
+            super();
+            setOrientation(Orientation.VERTICAL);
+            getItems().addAll(scrolled(new LogPane(nar)), scrolled(new CodeInput()));
+        }
     }
 
     private final NAR nar;
 
+
     public NARWindow(NAR n) {
         super();
         this.nar = n;
-        setTitle("NAR " + n.hashCode());
+        setTitle(n.toString());
 
 
-        StackPane b = new NARControlFX(nar, true, true, true);
+        buttonStrip = new NARControlFX(nar, true, true, true) {
+
+            Tab t = null;
+
+            @Override
+            protected void onIO(boolean selected) {
+                if (selected && t == null) {
+
+                    t = new Tab("I/O", new TerminalPane(nar));
+
+                    Platform.runLater(() -> {
+                        content.getTabs().add(t);
+                        contentUpdate();
+                    });
+                }
+                else if (t!=null) {
+                    Platform.runLater(() -> {
+                        content.getTabs().remove(t);
+                        t = null;
+                        contentUpdate();
+                    });
+                }
+            }
+        };
 
         /*.root {
             -fx-base: rgb(50, 50, 50);
@@ -239,28 +173,81 @@ public class NARWindow extends Stage {
         }*/
 
 
-        VBox f = new VBox();
-
-        TitledPane tp1 = new TitledPane("Options", new Button("Button"));
-
-
-        SwingNode mn = new SwingNode();
-        JPanel jp = new JPanel(new BorderLayout());
-        jp.add(new NARControlPanel(nar, null, false));
-        mn.setContent(jp);
-        tp1.setContent(mn);
+//        TitledPane tp1 = new TitledPane("Options", new Button("Button"));
+//
+//        SwingNode mn = new SwingNode();
+//        JPanel jp = new JPanel(new BorderLayout());
+//        jp.add(new NARControlPanel(nar, null, false));
+//        mn.setContent(jp);
+//        tp1.setContent(mn);
 
 
-        f.getChildren().add(tp1);
+        //f.getChildren().add(tp1);
 
-        TitledPane tp2 = new TitledPane("Tasks", new Button("Button"));
+        //TitledPane tp2 = new TitledPane("Tasks", new Button("Button"));
 
-        f.getChildren().add(new NARTree(n));
+        f = new BorderPane();
+        f.setCenter(scrolled(new NARTree(n)));
+        f.setRight(buttonStrip);
+
+        f.setMinWidth(250);
+        f.setMaxHeight(Double.MAX_VALUE);
+
+        content.setMaxWidth(Double.MAX_VALUE);
+        content.setMaxHeight(Double.MAX_VALUE);
 
 
-        Scene scene = new Scene(new HBox(2, b, f));
-        scene.getStylesheets().add("dark.css");
+        g = new SplitPane(f);
+        g.setDividerPositions(0.5f);
+        f.setMaxWidth(Double.MAX_VALUE);
+
+        g.setMaxWidth(Double.MAX_VALUE);
+        g.setMaxHeight(Double.MAX_VALUE);
+
+
+        setMaxWidth(Double.MAX_VALUE);
+        setMaxHeight(Double.MAX_VALUE);
+
+
+        Scene scene = new Scene(g);
+        scene.getStylesheets().addAll(NARfx.css, "dark.css" );
+
+        contentUpdate();
 
         setScene(scene);
+    }
+
+
+
+    public void contentUpdate() {
+
+            Platform.runLater(() -> {
+                if (content.getTabs().size() == 0) {
+                    content.setVisible(false);
+                    g.getItems().setAll(f);
+                }
+                else {
+                    content.setVisible(true);
+                    g.getItems().setAll(f, content);
+                }
+
+                g.layout();
+                //g.autosize();
+
+                if (!isMaximized())
+                    sizeToScene();
+            });
+
+    }
+
+    public static final javafx.scene.control.ScrollPane scrolled(Node n) {
+        javafx.scene.control.ScrollPane s = new javafx.scene.control.ScrollPane();
+        s.setContent(n);
+        //s.setFitToHeight(true);
+        //s.setFitToWidth(true);
+        s.setMaxHeight(Double.MAX_VALUE);
+        s.setMaxWidth(Double.MAX_VALUE);
+        //s.autosize();
+        return s;
     }
 }

@@ -1,10 +1,15 @@
 package automenta.vivisect.javafx;
 
 import com.sun.javafx.tk.Toolkit;
+import de.jensd.fx.glyphs.GlyphsDude;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -43,4 +48,17 @@ public class JFX {
        });
     }
 
+    public static Button newIconButton(FontAwesomeIcon i) {
+        Button b = GlyphsDude.createIconButton(i);
+        b.getStyleClass().addAll("menubutton");
+        b.getGraphic().getStyleClass().addAll("menubuttonLabel");
+        return b;
+    }
+
+    public static ToggleButton newToggleButton(FontAwesomeIcon i) {
+        ToggleButton b = GlyphsDude.createIconToggleButton(i, "", "", ContentDisplay.CENTER);
+        b.getStyleClass().addAll("menubutton");
+        b.getGraphic().getStyleClass().addAll("menubuttonLabel");
+        return b;
+    }
 }
