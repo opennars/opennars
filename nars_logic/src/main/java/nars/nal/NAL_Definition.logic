@@ -361,13 +361,13 @@
 
 //// dependent variable elimination
 
-    (&&,(#N --> S), A_1..n), (M --> S), substituted((A_1..n),#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy)
-    (&|,(#N --> S), A_1..n), (M --> S), substituted((A_1..n),#N,M) |- (&|,A_1..n), (Truth:AnonymousAnalogy)
-    (&/,(#N --> S), A_1..n), (M --> S), substituted((A_1..n),#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
+    (&&,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy)
+    (&|,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&|,A_1..n), (Truth:AnonymousAnalogy)
+    (&/,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
 
-    (&&,(S --> #N), A_1..n), (S --> M), substituted((A_1..n),#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy)
-    (&|,(S --> #N), A_1..n), (S --> M), substituted((A_1..n),#N,M) |- (&|,A_1..n), (Truth:AnonymousAnalogy)
-    (&/,(S --> #N), A_1..n), (S --> M), substituted((A_1..n),#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
+    (&&,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy)
+    (&|,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&|,A_1..n), (Truth:AnonymousAnalogy)
+    (&/,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
 
 //NAL7/8 specific inference
 

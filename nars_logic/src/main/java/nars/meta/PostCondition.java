@@ -7,6 +7,7 @@ import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Interval;
 import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -183,6 +184,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
         //now match the rule with the task term <- should probably happen earlier ^^
         final Map<Term, Term> assign = Global.newHashMap();
+        final Map<Term, Term> precondsubs = Global.newHashMap();
         final Map<Term, Term> waste = Global.newHashMap();
 
         Term derive = term; //first entry is term
@@ -227,19 +229,21 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             return false; //not_equal
                         break;
                     case "event":
-                        //TODO refine check what it refers to, the arguments, to task or belief
-                        if(arg1.equals(preconditions[0]) && task.getOccurrenceTime() == Stamp.ETERNAL) {
+                        if(arg1.equals(task.getTerm()) && task.getOccurrenceTime() == Stamp.ETERNAL) {
                             return false;
                         }
-                        if(arg1.equals(preconditions[1]) && belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                        if(!single_premise && arg2.equals(belief.getTerm()) && belief.getOccurrenceTime() == Stamp.ETERNAL) {
                             return false;
                         }
                         break;
                     case "negative":
-                        //TODO refine check what it refers to, the arguments, to task or belief
-                        single_premise = true;
-                        if (task.truth.getFrequency() >= 0.5)
+                        if(arg1.equals(task.getTerm()) && task.truth.getFrequency() >= 0.5) {
                             return false;
+                        }
+                        if(!single_premise && arg2.equals(belief.getTerm()) && belief.truth.getFrequency() >= 0.5) {
+                            return false;
+                        }
+                        single_premise = true;
                         break;
                     case "no_common_subterm":
 
@@ -253,12 +257,64 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             if (Terms.shareAnySubTerms((Compound)arg1, (Compound)arg2))
                                 return false;
                         break;
-
+                    case "measure_time":
+                        {
+                            long time1 = 0, time2 = 0;
+                            if (arg1.equals(task.getTerm())) {
+                                time1 = task.getOccurrenceTime();
+                            }
+                            if (arg2.equals(belief.getTerm())) {
+                                time2 = belief.getOccurrenceTime();
+                            }
+                            long time = time2 - time1;
+                            if (time < 0) {
+                                return false;
+                            }
+                            assign.put(args[2], Interval.interval(time, nal.memory)); // I:=+8 for example
+                        }
+                        break;
+                        case "after":
+                        {
+                            if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                                return false;
+                            }
+                            long time1 = 0, time2 = 0;
+                            if (arg1.equals(task.getTerm())) {
+                                return task.after(belief,nal.memory.getParam().duration.get());
+                            }
+                            if (arg1.equals(belief.getTerm())) {
+                                return belief.after(task,nal.memory.getParam().duration.get());
+                            }
+                            return false;
+                        }
+                        case "concurrent":
+                        {
+                            if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                                return false;
+                            }
+                            long time1 = 0, time2 = 0;
+                            if (arg1.equals(task.getTerm())) {
+                                return !task.after(belief,nal.memory.getParam().duration.get()) && !belief.after(task,nal.memory.getParam().duration.get());
+                            }
+                            if (arg1.equals(belief.getTerm())) {
+                                return !task.after(belief,nal.memory.getParam().duration.get()) && !belief.after(task,nal.memory.getParam().duration.get());
+                            }
+                            return false;
+                        }
+                        case "substituted":
+                        {
+                            Term M = args[1]; //this one got substituted, but with what?
+                            Term with = assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
+                            //args[0] now encodes a variable which we want to replace with what M was assigned to
+                            //(relevant for variable elimination rules)
+                            precondsubs.put(args[0],with);
+                            return false;
+                        }
                 }
             }
 
             //now we have to apply this to the derive term
-            derive = derive.substituted(assign);
+            derive = derive.substituted(assign).substituted(precondsubs); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
         }
 
         //TODO also allow substituted evaluation on output side (used by 2 rules I think)
