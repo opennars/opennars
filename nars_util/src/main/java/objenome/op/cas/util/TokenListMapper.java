@@ -15,7 +15,7 @@ public class TokenListMapper {
     }
     
     public TokenList<Object> mapTokens(TokenList<?> tokenedW) {
-        // if (debug) System.err.println("mapping tokens…");
+        // if (debug) System.err.println("mapping tokens");
         TokenList<Object> tokened = tokenedW.castValuesTo(Object.class);
         int indexOn;
         
@@ -43,7 +43,7 @@ public class TokenListMapper {
         }
         
         if (debug) System.err.println("mapped to: " + tokened);
-        // if (debug) System.err.println("…done mapping tokens");
+        // if (debug) System.err.println("done mapping tokens");
         return tokened;
     }
     

@@ -95,7 +95,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
      */
-    protected void init(final Term[] term) {
+    protected void init(final Term... term) {
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1;

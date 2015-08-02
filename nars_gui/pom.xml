@@ -33,6 +33,13 @@
                     <include>**</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>${basedir}/src/main/java/</directory>
+                <includes>
+                    <include>**/*.css</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
         </resources>
 
     </build>
@@ -115,12 +122,43 @@
         </dependency>
 
 
-        <!-- http://tomsondev.bestsolution.at/2015/07/24/developing-a-source-code-editor-in-javafx-without-e4-and-osgi/ -->
         <dependency>
-            <groupId>at.bestsolution.eclipse</groupId>
-            <artifactId>org.eclipse.fx.code.editor.fx</artifactId>
-            <version>2.1.0-SNAPSHOT</version>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-common</artifactId>
+            <version>8.0-r3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-controls</artifactId>
+            <version>8.0-r3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-window</artifactId>
+            <version>8.0-r3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dejv78.commons.jfx</groupId>
+            <artifactId>jfx-binding</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dejv78.commons.jfx</groupId>
+            <artifactId>jfx-geometry</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dejv78.commons.jfx</groupId>
+            <artifactId>jfx-input</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+
     </dependencies>
 
 

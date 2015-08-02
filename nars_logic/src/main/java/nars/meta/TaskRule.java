@@ -53,7 +53,7 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
     @Override
-    protected void init(Term[] term) {
+    protected void init(Term... term) {
         super.init(term);
     }
 

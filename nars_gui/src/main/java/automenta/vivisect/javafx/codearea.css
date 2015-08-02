@@ -1,0 +1,10 @@
+.code-area {
+    -fx-background-color: #222;
+    -fx-font-family: monospace;
+    -fx-font-size: 150%;
+}
+
+.default {
+     -fx-fill: white;
+     /*-fx-font-weight: bold;*/
+}

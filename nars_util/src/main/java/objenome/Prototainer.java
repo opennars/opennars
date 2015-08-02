@@ -8,7 +8,7 @@ import objenome.solution.dependency.Scope;
 import java.util.Set;
 
 /**
- * first; anterior; relating to a precursor + from Latin tenere 'to hold.’"
+ * first; anterior; relating to a precursor + from Latin tenere 'to hold."
  */
 public interface Prototainer  {
 

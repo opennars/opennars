@@ -80,7 +80,7 @@ public class LevelsParser {
                         afterPopHandler.handleAfterPop(tokenPair, parenContextStack.get(
                             parenContextStack.size() - 1), levelParser));
                 
-                if (debug) System.err.println("…popped level");
+                if (debug) System.err.println("popped level");
             }
             else {
                 parenContextStack.get(parenContextStack.size() - 1).add(tokenOn);

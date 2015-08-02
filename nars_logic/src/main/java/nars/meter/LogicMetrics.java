@@ -101,7 +101,7 @@ public class LogicMetrics extends NARReaction {
     }
 
     @Override
-    public void event(Class event, Object[] args) {
+    public void event(Class event, Object... args) {
 //        if (event == Events.IN.class) {
 //            Task t = (Task) args[0];
 //            float p = t.getPriority();

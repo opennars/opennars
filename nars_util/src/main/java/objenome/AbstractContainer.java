@@ -10,7 +10,7 @@ import objenome.solution.dependency.Scope;
 /**
  * AbstractContainer which can completely operate to produce or modify objects
  * 
- * "Middle English: from Old French contenir, from Latin continere, from con- ‘altogether’ + tenere ‘to hold.’"
+ * "Middle English: from Old French contenir, from Latin continere, from con- altogether + tenere to hold."
  */
 public interface AbstractContainer extends Prototainer {
 

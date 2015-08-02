@@ -80,7 +80,7 @@ public class Events {
         
         abstract public void onBeliefAdd(Concept c, Task t, Object[] extra);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(Class event, Object... args) {
             onBeliefAdd( (Concept)args[0], (Task)args[1], (Object[])args[2]);
         }
         
@@ -90,7 +90,7 @@ public class Events {
 
         abstract public void onBeliefRemove(Concept c, Sentence removed, Task t, Object[] extra);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(Class event, Object... args) {
             onBeliefRemove( (Concept)args[0], (Sentence)args[1], (Task)args[2], (Object[])args[3]);
         }        
 
@@ -129,7 +129,7 @@ public class Events {
          */
         abstract public void onFire(ConceptProcess n);
         
-        @Override public void event(Class event, Object[] args) {
+        @Override public void event(Class event, Object... args) {
             onFire((ConceptProcess)args[0]);
         }
         

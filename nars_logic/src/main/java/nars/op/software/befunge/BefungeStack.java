@@ -1,6 +1,5 @@
 package nars.op.software.befunge;
 
-import com.sun.xml.internal.bind.v2.TODO;
 
 import java.util.Stack;
 

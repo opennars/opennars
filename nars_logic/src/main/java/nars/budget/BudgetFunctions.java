@@ -228,7 +228,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float newPri = budget.getQuality() * relativeThreshold;      // re-scaled quality
         final float dp = budget.getPriority() - newPri;                     // priority above quality
         if (dp > 0) {
-            newPri += dp * pow(budget.getDurability(), 1.0 / (forgetCycles * dp));
+            newPri += (float) (dp * pow(budget.getDurability(), 1.0f / (forgetCycles * dp)));
         }    // priority Durability
         budget.setPriority(newPri);
         return newPri;
@@ -254,7 +254,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (forgetProportion <= 0) return currentPriority;
 
         //more durability = slower forgetting; durability near 1.0 means forgetting will happen slowly, near 0.0 means will happen at a max rate
-        forgetProportion *= (1.0 - budget.getDurability());
+        forgetProportion *= (1.0f - budget.getDurability());
 
         float newPriority;
         if (forgetProportion > 1.0f) {
