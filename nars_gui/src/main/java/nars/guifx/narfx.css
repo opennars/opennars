@@ -1,0 +1,21 @@
+
+.button {
+    -fx-padding: 12 30 12 30;
+    -fx-border-width: 0;
+}
+.button:hover {
+
+}
+.button:pressed {
+
+}
+
+
+.label {
+    -fx-font-size: 18px;
+}
+
+
+.menubuttonLabel {
+    -fx-fill: #fff;
+}

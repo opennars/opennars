@@ -7,4 +7,8 @@ import org.fxmisc.richtext.CodeArea;
  */
 public class CodeInput extends CodeArea {
 
+    public CodeInput() {
+
+    }
+
 }

@@ -28,6 +28,7 @@ public class NARTree extends TreeView {
 
         rootItem.setExpanded(true);
 
+
         setRoot(rootItem);
 
         setEditable(true);
@@ -45,7 +46,6 @@ public class NARTree extends TreeView {
 
         setRoot(rootItem);
         setShowRoot(true);
-
 
     }
 
