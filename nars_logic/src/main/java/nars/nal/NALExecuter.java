@@ -177,13 +177,15 @@ public class NALExecuter extends ConceptFireTaskTerm {
                 int n=5;
                 if(parsable.contains("A_1..n")) {
                     String str="A_1";
+                    String str2="B_1";
                     for(int i=0;i<n;i++) {
 
-                        String parsable_unrolled = parsable.replace("A_1..n",str);
+                        String parsable_unrolled = parsable.replace("A_1..n",str).replace("B_1..n",str2);
                         TaskRule r = meta.term(parsable_unrolled);
                         uninterpreted_rules.add(r); //try to parse it
 
                         str+=", A_"+String.valueOf(i+2);
+                        str2+=", B_"+String.valueOf(i+2);
                     }
                 }
                 else {
