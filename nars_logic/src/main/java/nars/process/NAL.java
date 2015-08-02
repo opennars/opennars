@@ -305,7 +305,7 @@ public abstract class NAL implements Runnable {
 
 
     @Deprecated
-    public static long inferOccurenceTime(Stamp t, Stamp b) {
+    public static long inferOccurrenceTime(Stamp t, Stamp b) {
 
 
         if ((t == null) && (b == null))

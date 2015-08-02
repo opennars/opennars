@@ -30,7 +30,7 @@ public class AnticipationTest extends JavaNALTest {
     }
 
     @Test //test the occurrence time feature of TaskCondition
-    public void testOcurrenceTimeTesting()  throws InvalidInputException {
+    public void testOccurrenceTimeTesting()  throws InvalidInputException {
         //TextOutput.out(nar);
         n.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55);
         n.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);

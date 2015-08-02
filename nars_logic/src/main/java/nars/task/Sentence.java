@@ -584,7 +584,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             tenseString = getTense(memory.time(), memory.duration());
         }
         else {
-            appendOcurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
+            appendOccurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
         }
 
 

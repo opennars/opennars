@@ -104,7 +104,10 @@ public class TaskRuleTest extends TestCase {
 
     public void testDerivationComparator() {
 
-        NARComparator c = new NARComparator(new Default(), new NewDefault());
+        NARComparator c = new NARComparator(
+                new Default().setInternalExperience(null),
+                new NewDefault().setInternalExperience(null)
+        );
         c.input("<x --> y>.\n<y --> z>.\n");
 
 

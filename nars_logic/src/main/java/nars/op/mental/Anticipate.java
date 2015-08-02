@@ -105,7 +105,7 @@ public class Anticipate extends NARReaction implements Mental {
     }
 
 
-    public void anticipate(Compound term, long occurenceTime, Task t) {
+    public void anticipate(Compound term, long occurrenceTime, Task t) {
         if (memory == null)
             memory = nal.memory;
 
@@ -119,11 +119,11 @@ public class Anticipate extends NARReaction implements Mental {
 
         long now = memory.time();
 
-        if (memory.time() > occurenceTime) //its about the past..
+        if (memory.time() > occurrenceTime) //its about the past..
             return;
 
         if (debug)
-            System.err.println("Anticipating " + term + " in " + (occurenceTime - now));
+            System.err.println("Anticipating " + term + " in " + (occurrenceTime - now));
 
         TaskTime tt = new TaskTime(t, memory.param.duration);
         anticipations.put(term, tt);
@@ -158,7 +158,7 @@ public class Anticipate extends NARReaction implements Mental {
 
     protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
-        long expectedOccurenceTime = tt.getOccurrenceTime();
+        long expectedOccurrenceTime = tt.getOccurrenceTime();
 
         //it did not happen, so the time of when it did not
         //happen is exactly the time it was expected
@@ -170,7 +170,7 @@ public class Anticipate extends NARReaction implements Mental {
                 .judgment()
                 .truth(expiredTruth)
                 .parent(tt.task)
-                .occurr(expectedOccurenceTime)
+                .occurr(expectedOccurrenceTime)
                 .budget(tt.getBudget())
                 .temporalInductable(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         );

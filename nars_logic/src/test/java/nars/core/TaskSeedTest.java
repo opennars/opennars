@@ -26,7 +26,7 @@ public class TaskSeedTest {
 
     }
 
-    @Test public void testTenseOccurenceOverrides() {
+    @Test public void testTenseOccurrenceOverrides() {
 
         NAR n = new NAR(new Default());
 

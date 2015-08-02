@@ -571,8 +571,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         return this;
     }
 
-    public TaskSeed<T> occurr(long occurenceTime) {
-        this.setOccurrenceTime(occurenceTime);
+    public TaskSeed<T> occurr(long occurrenceTime) {
+        this.setOccurrenceTime(occurrenceTime);
         return this;
     }
 
@@ -635,9 +635,9 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
 
-    public TaskSeed<T> parent(Task parentTask, Sentence parentBelief, long occurence) {
+    public TaskSeed<T> parent(Task parentTask, Sentence parentBelief, long occurrence) {
         parent(parentTask, parentBelief);
-        setOccurrenceTime(occurence);
+        setOccurrenceTime(occurrence);
         return this;
     }
 

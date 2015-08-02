@@ -33,10 +33,10 @@
 
 //// inheritance-based syllogism
 
-    (M --> P), (S --> M), not_equal(S,P) |- (S --> P), (Truth:Deduction, Desire:Strong)
-    (P --> M), (S --> M), not_equal(S,P) |- (S --> P), (Truth:Abduction, Desire:Weak)
-    (M --> P), (M --> S), not_equal(S,P) |- (S --> P), (Truth:Induction, Desire:Weak)
-    (P --> M), (M --> S), not_equal(S,P) |- (S --> P), (Truth:Exemplification, Desire:Weak)
+    (M --> S), (P --> M), not_equal(S,P) |- (S --> P), (Truth:Deduction, Desire:Strong)
+    (S --> M), (P --> M), not_equal(S,P) |- (S --> P), (Truth:Abduction, Desire:Weak)
+    (M --> S), (M --> P), not_equal(S,P) |- (S --> P), (Truth:Induction, Desire:Weak)
+    (S --> M), (M --> P), not_equal(S,P) |- (S --> P), (Truth:Exemplification, Desire:Weak)
 
 //// similarity from inheritance
 

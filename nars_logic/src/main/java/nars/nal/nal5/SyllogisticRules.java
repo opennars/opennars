@@ -509,7 +509,7 @@ public final class SyllogisticRules {
         } else {
             //new stamp, inferring occurence time from the sentences
             //st = nal.newStamp(mainSentence, subSentence);
-            occ = NAL.inferOccurenceTime(mainSentence.sentence, subSentence);
+            occ = NAL.inferOccurrenceTime(mainSentence.sentence, subSentence);
         }
 
         Truth beliefTruth = beliefSentence.truth;

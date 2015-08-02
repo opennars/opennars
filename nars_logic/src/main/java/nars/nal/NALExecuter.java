@@ -82,7 +82,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
         return reason(tLink.getTask(), belief, f);
     }
 
-    public static List<String> loadRuleStrings(Iterable<String> lines) {
+    static List<String> loadRuleStrings(Iterable<String> lines) {
 
         List<String> unparsed_rules = new ArrayList<>();
         StringBuilder current_rule = new StringBuilder();
@@ -113,7 +113,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
         return unparsed_rules;
     }
 
-    @Deprecated /* soon */ public static String preprocess(String rule) //minor things like Truth.Comparison -> Truth_Comparison
+    @Deprecated /* soon */ static String preprocess(String rule) //minor things like Truth.Comparison -> Truth_Comparison
     {                                     //A_1..n ->  "A_1_n" and adding of "<" and ">" in order to be parsable
 
         String ret = "<" + rule + ">";
@@ -125,7 +125,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
         return ret.replace("\n", "")/*.replace("A_1..n","\"A_1..n\"")*/; //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
 
-    public static List<TaskRule> parseRules(Collection<String> not_yet_parsed_rules) {
+    static List<TaskRule> parseRules(Collection<String> not_yet_parsed_rules) {
         //2. ok we have our unparsed rules, lets parse them to terms now
         NarseseParser meta = NarseseParser.the();
         List<TaskRule> uninterpreted_rules = new ArrayList<>(not_yet_parsed_rules.size() /* approximately */);

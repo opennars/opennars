@@ -288,7 +288,7 @@ public interface Stamp extends Cloneable, Serializable {
 
 
 
-    default public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
+    default public StringBuilder appendOccurrenceTime(final StringBuilder sb) {
         if (getOccurrenceTime() != ETERNAL) {
             int estTimeLength = 10; /* # digits */
             sb.ensureCapacity(estTimeLength);
@@ -342,7 +342,7 @@ public interface Stamp extends Cloneable, Serializable {
         if (getCreationTime() == Stamp.TIMELESS) {
             buffer.append('?');
         } else if (!isEternal()) {
-            appendOcurrenceTime(buffer);
+            appendOccurrenceTime(buffer);
         } else {
             buffer.append(getCreationTime());
         }

@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.NALExecuter;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
@@ -13,14 +12,13 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variables;
+import nars.term.*;
 import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by me on 7/31/15.
@@ -32,10 +30,30 @@ public class PostCondition //since there can be multiple tasks derived per rule
     private final Term[] modifiers;
 
     public final TruthFunction truth;
+    public final DesireFunction desire;
     boolean single_premise = false;
     boolean negation = false;
-    boolean derive_occurence = false;
+    boolean derive_occurrence = false;
 
+    /* high-speed adaptive RETE-like precondition filtering:
+
+            sort all unique preconditions by a hueristic value:
+
+                # of applications (across all appearances in rules) divided by an estimated computational cost,
+                since some preconditions are less expensive to test than others.
+                this value represents the discriminatory power to computational cost ratio
+                of the precondition, and the higher the value, the earlier this condition
+                should be tested to eliminate the most possibilities as soon as possible.
+
+            the remaining preconditions to test in each iteration only need to be those
+            which will discriminate the remaining eligible rules, and eliminating
+            these sooner will require less necessary precondition tests.
+
+            if no tests remain, the process terminates without any derivation.  this
+            is the ideal result becaues a brute-force approach (as originally implemented here)
+            requires the slower traversal of all rules, regardless.
+
+     */
 
     public PostCondition(Term term, Term... modifiers) {
         this.term = term;
@@ -44,66 +62,72 @@ public class PostCondition //since there can be multiple tasks derived per rule
         TruthFunction truthFunc = null;
         DesireFunction desireFunc = null;
 
-        for (Term m : modifiers) {
-            if (m instanceof Inheritance) {
-                Inheritance i = (Inheritance)m;
-                Term type = i.getPredicate();
-                Term which = i.getSubject();
-                String swhich = which.toString();
-                if (type instanceof Atom) {
-                    String typeStr = type.toString();
-                    switch (typeStr) {
-                        case "Desire":
-                        case "Truth":
-                            //if (truthFunc!=null)
-                             //   throw new RuntimeException("truthFunc " + truthFunc + " already specified");
+        for (final Term m : modifiers) {
+            if (!(m instanceof Inheritance)) {
+                System.err.println("Unknown postcondition: " + m );
+                continue;
+            }
 
-                            if(swhich.equals("Negation")) {
-                                negation = true;
-                            }
+            Inheritance i = (Inheritance) m;
+            Term type = i.getPredicate();
+            Term which = i.getSubject();
+            String swhich = which.toString();
 
-                            if(swhich.equals("Negation") || swhich.equals("Conversion") || swhich.equals("Contraposition")) {
-                                single_premise = true;
-                            }
+            if (swhich.equals("Negation")) {
+                negation = true;
+            }
 
-                            if(typeStr.equals("Truth")) {
-                                TruthFunction tm = TruthFunction.get(which);
-                                if (tm != null) {
-                                    truthFunc = tm;
-                                    continue;
-                                } else {
-                                    throw new RuntimeException("unknown TruthFunction " + which);
-                                }
-                            }
-                            else
-                            if(typeStr.equals("Desire")) {
-                                DesireFunction tm = DesireFunction.get(which);
-                                if (tm != null) {
-                                    desireFunc = tm;
-                                    continue;
-                                } else {
-                                    throw new RuntimeException("unknown TruthFunction " + which);
-                                }
-                            }
-                            break;
-                        case "Occurece":
-                            if(swhich.equals("Derive")) {
-                                derive_occurence = true;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
+            if (swhich.equals("Negation") || swhich.equals("Conversion") || swhich.equals("Contraposition")) {
+                single_premise = true;
+            }
+
+            if (type instanceof Atom) {
+                final String typeStr = type.toString();
+                switch (typeStr) {
+
+                    case "Truth":
+                        TruthFunction tm = TruthFunction.get(which);
+                        if (tm != null) {
+                            if (truthFunc!=null) //only allow one
+                                throw new RuntimeException("truthFunc " + truthFunc + " already specified; attempting to set to " + tm);
+                            truthFunc = tm;
+                        } else {
+                            throw new RuntimeException("unknown TruthFunction " + which);
+                        }
+                        break;
+
+                    case "Desire":
+                        DesireFunction dm = DesireFunction.get(which);
+                        if (dm != null) {
+                            if (desireFunc!=null) //only allow one
+                                throw new RuntimeException("desireFunc " + desireFunc + " already specified; attempting to set to " + dm);
+                            desireFunc = dm;
+                        } else {
+                            throw new RuntimeException("unknown TruthFunction " + which);
+                        }
+                        break;
+
+                    case "Occurrence":
+                        if (swhich.equals("Derive")) {
+                            this.derive_occurrence = true;
+                        }
+                        break;
+
+                    default:
+                        System.err.println("Unknown postcondition: " + type + ":" + which );
+                        otherModifiers.add(m);
+                        break;
                 }
             }
 
-            otherModifiers.add(m);
+
         }
 
 
         this.truth = truthFunc;
+        this.desire = desireFunc;
 
-        this.modifiers = otherModifiers.toArray(new Term[ otherModifiers.size() ]);
+        this.modifiers = otherModifiers.toArray(new Term[otherModifiers.size()]);
     }
 
     public boolean apply(Term[] preconditions, Task task, Sentence belief, ConceptProcess nal) {
@@ -118,29 +142,29 @@ public class PostCondition //since there can be multiple tasks derived per rule
         boolean deriveOccurrence = false; //if false its just the occurence time of the parent
         boolean single_premise = false;
 
+        /* TODO remove this for loop  */
         for (Term t : modifiers) {
             //String s = t.toString().replace("_", ".");//.replace("%","");
             String s;
             if (t instanceof Inheritance) {
-                Inheritance i = (Inheritance)t;
+                Inheritance i = (Inheritance) t;
                 s = i.getPredicate() + "." + i.getSubject();
-            }
-            else {
+            } else {
                 throw new RuntimeException("invalid meta: " + this);
             }
         }
 
-        if(negation && task.truth.getFrequency()>=0.5) { //its negation, it needs this additional information to be useful
+        if (negation && task.truth.getFrequency() >= 0.5) { //its negation, it needs this additional information to be useful
             return false;
         }
 
-        if(!single_premise && belief == null) {  //at this point single_premise is already decided, if its double premise and belief is null, we can stop already here
+        if (!single_premise && belief == null) {  //at this point single_premise is already decided, if its double premise and belief is null, we can stop already here
             return false;
         }
 
         //todo consume and use also other meta information
         if (this.truth != null) {
-            truth = this.truth.get(T,B);
+            truth = this.truth.get(T, B);
         }
 
         if (truth == null && task.isJudgment()) {
@@ -205,12 +229,21 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         break;
                     case "negative":
                         //TODO refine check what it refers to, the arguments, to task or belief
-                        single_premise=true;
-                        if (task.truth.getFrequency()>=0.5)
+                        single_premise = true;
+                        if (task.truth.getFrequency() >= 0.5)
                             return false;
                         break;
                     case "no_common_subterm":
-                        //TODO: don't we already have a function for this?
+
+                        //TODO this will only compare the first level of subterms
+                        //for recursive, we will need a stronger test
+                        //but we should decide if recursive is actually necessary
+                        //and create alternate noCommonSubterm and noCommonRecursiveSubterm
+                        //preconditions to be entirely clear
+
+                        if ((arg1 instanceof Compound) && (arg2 instanceof Compound))
+                            if (Terms.shareAnySubTerms((Compound)arg1, (Compound)arg2))
+                                return false;
                         break;
 
                 }

@@ -508,12 +508,12 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     /**
-     * extracts a subterm provided by the index tuple
+     * extracts a subterm provided by the address tuple
      * returns null if specified subterm does not exist
      */
-    public <X extends Term> X subterm(int... index) {
+    public <X extends Term> X subterm(final int... address) {
         Term ptr = this;
-        for (int i : index) {
+        for (final int i : address) {
             if (ptr instanceof Compound) {
                 ptr = ((Compound) ptr).term[i];
             }
