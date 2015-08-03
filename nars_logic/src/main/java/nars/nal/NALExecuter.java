@@ -144,10 +144,10 @@ public class NALExecuter extends ConceptFireTaskTerm {
             }
 
             ArrayList<String> conjs = new ArrayList<>();
-            impls.add("&&");
+            conjs.add("&&");
             if(parsable.contains("&&")) {
-                impls.add("&|");
-                impls.add("&/");
+                conjs.add("&|");
+                conjs.add("&/");
             }
 
             for(String equ : equs) {
