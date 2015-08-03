@@ -125,6 +125,49 @@ public class NALExecuter extends ConceptFireTaskTerm {
         return ret.replace("\n", "")/*.replace("A_1..n","\"A_1..n\"")*/; //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
 
+    public static void AddWithPotentialForAllSameOrder(NarseseParser meta,List<TaskRule> uninterpreted_rules,String parsable) {
+        if(parsable.contains("Order:ForAllSame")) {
+
+            ArrayList<String> equs = new ArrayList<>();
+            equs.add("<=>");
+            if(parsable.contains("<=>")) {
+                equs.add("</>");
+                equs.add("<|>");
+            }
+
+            ArrayList<String> impls = new ArrayList<>();
+            impls.add("==>");
+            if(parsable.contains("==>")) {
+                impls.add("=/>");
+                impls.add("=|>");
+                impls.add("=>");
+            }
+
+            ArrayList<String> conjs = new ArrayList<>();
+            impls.add("&&");
+            if(parsable.contains("&&")) {
+                impls.add("&|");
+                impls.add("&/");
+            }
+
+            for(String equ : equs) {
+                for(String imp : impls) {
+                    for(String conj : conjs) {
+                        String variation = parsable.replace("<=>",equ).replace("==>",imp).replace("&&",conj);
+                        TaskRule r = meta.term(variation);
+                        uninterpreted_rules.add(r); //try to parse it
+                    }
+                }
+            }
+
+        }
+        else {
+            TaskRule r = meta.term(parsable);
+            uninterpreted_rules.add(r); //try to parse it
+        }
+    }
+
+
     static List<TaskRule> parseRules(Collection<String> not_yet_parsed_rules) {
         //2. ok we have our unparsed rules, lets parse them to terms now
         NarseseParser meta = NarseseParser.the();
@@ -180,17 +223,15 @@ public class NALExecuter extends ConceptFireTaskTerm {
                     String str2="B_1";
                     for(int i=0;i<n;i++) {
 
-                        String parsable_unrolled = parsable.replace("A_1..n",str).replace("B_1..n",str2);
-                        TaskRule r = meta.term(parsable_unrolled);
-                        uninterpreted_rules.add(r); //try to parse it
+                        String parsable_unrolled = parsable.replace("A_1..n",str).replace("B_1..n", str2);
+                        AddWithPotentialForAllSameOrder(meta,uninterpreted_rules,parsable_unrolled);
 
                         str+=", A_"+String.valueOf(i+2);
                         str2+=", B_"+String.valueOf(i+2);
                     }
                 }
                 else {
-                    TaskRule r = meta.term(parsable);
-                    uninterpreted_rules.add(r); //try to parse it
+                    AddWithPotentialForAllSameOrder(meta,uninterpreted_rules,parsable);
                 }
             } catch (Exception ex) {
                 System.err.println("Ignoring Invalid rule:");
