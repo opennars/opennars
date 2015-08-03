@@ -103,7 +103,7 @@
                                             (S =\> P), (Truth:Induction)
 
     (P ==> M), (M ==> S), not_equal(S,P) |- (S ==> P), (Truth:Exemplification)
-    (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification),
+    (P =/> M), (M =/> S), not_equal(S,P) |- (S =\> P), (Truth:Exemplification)
     (P =|> M), (M =|> S), not_equal(S,P) |- (S =|> P), (Truth:Exemplification)
 
 //// implication to equivalence
@@ -119,7 +119,7 @@
     (P =/> M), (S =/> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
                                             (S </> P), (Truth:Comparison),
                                             (P </> S), (Truth:Comparison)
-    (P =|> M), (S =|> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
+    (P =|> M), (S =|> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison)
     (P =\> M), (S =\> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
                                             (S </> P), (Truth:Comparison),
                                             (P </> S), (Truth:Comparison)
@@ -246,8 +246,8 @@
     (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A_1..n)), (Truth:Induction),
                                                          (&&,(#Y --> S), (#Y --> P), A_1..n), (Truth:Intersection)
 
-    (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction, Order.Derive),
-                                                                             (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order.Derive)
+    (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction, Order:Derive),
+                                                                             (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order:Derive)
 
     (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
                                                          (&&, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
