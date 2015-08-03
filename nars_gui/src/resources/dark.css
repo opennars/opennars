@@ -26,6 +26,17 @@
     -fx-focus-color: #222;
 }
 
+.code-area {
+    -fx-background-color: #262626;
+    -fx-font-family: monospace;
+    -fx-font-size: 150%;
+}
+.code-area-default {
+     -fx-fill: white;
+     /*-fx-font-weight: bold;*/
+}
+
+
 /* Pasted from:  http://search.maven.org/#artifactdetails%7Ccom.guigarage%7Cflatter%7C0.7%7Cjar */
 
 .root {

@@ -28,7 +28,7 @@ public class NotebookFX extends Application {
         StyleClassedTextArea codeArea = new StyleClassedTextArea();
         codeArea.getStyleClass().add("code-area");
 
-        List<String> ss = Lists.newArrayList("default");
+        List<String> ss = Lists.newArrayList("code-area-default");
         codeArea.setStyle(0, ss);
 
 

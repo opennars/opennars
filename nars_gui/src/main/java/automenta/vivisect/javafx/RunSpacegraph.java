@@ -1,6 +1,7 @@
 package automenta.vivisect.javafx;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -14,11 +15,25 @@ import javafx.stage.Stage;
  */
 public class RunSpacegraph extends Application {
 
+    final Spacegraph space = new Spacegraph();
 
     @Override
     public void start(Stage primaryStage) {
 
-        Spacegraph space = new Spacegraph();
+        Scene scene = space.newScene(1200, 800);
+
+        // init and show the stage
+        primaryStage.setTitle("WignerFX Spacegraph Demo");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+
+        Platform.runLater(() -> {
+            start();
+        });
+    }
+
+    protected void start() {
 
         //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
 
@@ -34,17 +49,13 @@ public class RunSpacegraph extends Application {
         chart.setTitle("Imported Fruits");
         //chart.setCacheHint(CacheHint.SPEED);
 
+        Windget wc = new Windget("Chart", chart, 400, 400);
+        wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
+
         space.getContent().addAll(
-                new Windget("Chart", chart, 400, 400),
-                new Windget("Edit", new CodeInput(), 300, 200)
+                wc,
+                new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-100,-100)
         );
-
-        Scene scene = space.newScene(1200, 800);
-
-        // init and show the stage
-        primaryStage.setTitle("WignerFX Spacegraph Demo");
-        primaryStage.setScene(scene);
-        primaryStage.show();
     }
 
     /**
