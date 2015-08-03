@@ -20,6 +20,7 @@ import nars.meta.RangeTerm;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
+import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
@@ -489,7 +490,8 @@ public class NarseseParser extends BaseParser<Object> {
 //                        ),
 
 
-                        NamespacedAtom(),
+                        ColonReverseInheritance(),
+                        BacktickReverseInstance(),
 
                         Atom(),
                         ImageIndex()
@@ -546,15 +548,24 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     /**
-     * MACRO: namespace.x    becomes    <x --> namespace>
+     * MACRO: y:x    becomes    <x --> y>
      */
-    Rule NamespacedAtom() {
+    Rule ColonReverseInheritance() {
         return sequence(
                 Atom(), s(), ':', s(), Term(false,false),
                 push(Inheritance.make((Term)(pop()), Atom.the(pop())))
         );
     }
 
+    /**
+     * MACRO: y`x    becomes    <{x} --> y>
+     */
+    Rule BacktickReverseInstance() {
+        return sequence(
+                Atom(), s(), '`', s(), Term(false,false),
+                push(Instance.make((Term)(pop()), Atom.the(pop())))
+        );
+    }
 
 
 //    /** creates a parser that is not associated with a memory; it will not parse any operator terms (which are registered with a Memory instance) */

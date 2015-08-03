@@ -335,6 +335,7 @@ abstract public class Symbols {
             case '#':
             case '$':
             case ':':
+            case '`':
             case '\'':
             case '\t':
             case '\n':

@@ -338,6 +338,13 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     @Override
     public void append(Writer p, boolean pretty) throws IOException {
 
+        if ((getPredicate().getVolume()!=1) || (getPredicate().hasVar())) {
+            //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
+            super.append(p, pretty);
+            return;
+        }
+
+
         final Term[] xt = arg().terms();
 
         getPredicate().append(p, pretty); //add the operator name without leading '^'
@@ -346,10 +353,15 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
         int n = 0;
         for (final Term t : xt) {
-            if (n != 0)
+            if (n != 0) {
                 p.append(Symbols.ARGUMENT_SEPARATOR);
+                if (pretty)
+                    p.append(' ');
+            }
 
             t.append(p, pretty);
+
+
 
             n++;
         }

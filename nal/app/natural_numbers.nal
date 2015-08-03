@@ -1,0 +1,37 @@
+'adapted from tauchain addzz.n3
+
+
+'{ ?x a nat. ?x succ ?y } => { ?y a nat }.
+((nat:#x && succ(#x, #y)) ==> nat:#y).
+
+{ (?x ?y) add ?z } => { (?y ?x) add ?z }.
+{ (?x ?y) mul ?z } => { (?y ?x) mul ?z }.
+
+
+{ (?x z) mul ?z } => { ?z eq z }.
+{ (?x o) mul ?z } => { ?z eq ?x }.
+{ (?x z) add ?z } => { ?z eq ?x }.
+
+{ ?z eq z } => { (?x z) mul ?z } .
+{ ?z eq ?x } => { (?x o) mul ?z } .
+{ ?z eq ?x } => { (?x z) add ?z } .
+
+{ ?x a nat. ?x succ ?y } => { (?x o) add ?y }.
+
+z succ o.
+
+(z z) add z.
+(z z) mul z.
+
+X a nat.
+Y a nat.
+(X Y) add S.
+(X Y) mul M.
+
+o succ two.
+
+
+'(z z) add ?q.
+<z --> nat>.
+add(z,z,#q)?
+

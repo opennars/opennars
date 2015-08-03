@@ -4,6 +4,7 @@ import nars.Op;
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
+import nars.nal.nal2.Instance;
 import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
@@ -77,7 +78,7 @@ public class NarseseParserExtendedTest  {
     }
 
     @Test
-    public void testNamespaceTerms() {
+    public void testColonReverseInheritance() {
         Inheritance t = term("namespace:named");
         assertEquals(t.operator(), Op.INHERITANCE);
         assertEquals("namespace", t.getPredicate().toString());
@@ -91,6 +92,13 @@ public class NarseseParserExtendedTest  {
         assertNotNull(ut);
         assertEquals(ut.getTerm(), u);
 
+    }
+    @Test
+    public void testBacktickReverseInstance() {
+        Inheritance t = term("namespace`named");
+        assertEquals(t.operator(), Op.INHERITANCE);
+        assertEquals("namespace", t.getPredicate().toString());
+        assertEquals("{named}", t.getSubject().toString());
     }
 
     @Test
