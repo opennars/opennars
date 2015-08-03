@@ -1,37 +1,47 @@
-'adapted from tauchain addzz.n3
-
+'adapted from tauchain addzz.n3: https://github.com/naturalog/tauchain/
 
 '{ ?x a nat. ?x succ ?y } => { ?y a nat }.
-((nat:#x && succ(#x, #y)) ==> nat:#y).
+((nat`#x && succ`(#x, #y)) ==> nat`#y).
 
-{ (?x ?y) add ?z } => { (?y ?x) add ?z }.
-{ (?x ?y) mul ?z } => { (?y ?x) mul ?z }.
+'scalar2: two arguments, producing scalar output
+scalar2:{add,mul}.
 
+'closure under scalar2 operator
+(&&, nat`#x, nat`#y, nat`#z, scalar2`(#x,#y,#z) ).
 
-{ (?x z) mul ?z } => { ?z eq z }.
-{ (?x o) mul ?z } => { ?z eq ?x }.
-{ (?x z) add ?z } => { ?z eq ?x }.
+'{ (?x ?y) add ?z } => { (?y ?x) add ?z }.
+(add`(#x,#y,#z) ==> add`(#y,#x,#z)).
 
-{ ?z eq z } => { (?x z) mul ?z } .
-{ ?z eq ?x } => { (?x o) mul ?z } .
-{ ?z eq ?x } => { (?x z) add ?z } .
+'{ (?x ?y) mul ?z } => { (?y ?x) mul ?z }.
+(mul`(#x,#y,#z) ==> mul`(#y,#x,#z)).
 
-{ ?x a nat. ?x succ ?y } => { (?x o) add ?y }.
+'{ (?x z) mul ?z } => { ?z eq z }.
+mul`(#x,0,0).
 
-z succ o.
+'{ (?x o) mul ?z } => { ?z eq ?x }.
+mul`(#x,1,#x).
 
-(z z) add z.
-(z z) mul z.
+'{ (?x z) add ?z } => { ?z eq ?x }.
+add`(#x,0,#x).
 
-X a nat.
-Y a nat.
-(X Y) add S.
-(X Y) mul M.
+'{ ?x a nat. ?x succ ?y } => { (?x o) add ?y }.
+(add`(#x,1,#y) ==> succ`(#x,#y)).
 
-o succ two.
+'z succ o.
+succ`(0, 1).
 
+'(z z) add z.
+add`(0,0,0).
+
+'(z z) mul z.
+mul`(0,0,0).
+
+'o succ two.
+succ`(1, 2).
+
+--succ`(#x,#x).
+(succ`(#x,#y) ==> --succ`(#y,#x)).
 
 '(z z) add ?q.
-<z --> nat>.
-add(z,z,#q)?
+nat:{0,1,2}.
 
