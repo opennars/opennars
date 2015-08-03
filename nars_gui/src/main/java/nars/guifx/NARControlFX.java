@@ -48,6 +48,16 @@ abstract public class NARControlFX extends VBox {
             getChildren().add(bs);
         }
 
+
+        Slider speedSlider = new Slider(0, 1, 0);
+        speedSlider.setOrientation(Orientation.VERTICAL);
+        speedSlider.setTooltip(new Tooltip("Speed"));
+        speedSlider.setMinorTickCount(10);
+        speedSlider.setShowTickMarks(true);
+        getChildren().add(speedSlider);
+
+
+
         if (memoryButtons) {
             Button b0 = JFX.newIconButton(FontAwesomeIcon.FOLDER);
             b0.setTooltip(new Tooltip("Open"));
@@ -74,12 +84,6 @@ abstract public class NARControlFX extends VBox {
 //            bo.setTooltip(new Tooltip("Output..."));
 //            v.getChildren().add(bo);
         }
-
-        Slider speedSlider = new Slider(0, 1, 0);
-        speedSlider.setOrientation(Orientation.VERTICAL);
-        speedSlider.setTooltip(new Tooltip("Speed"));
-        speedSlider.setShowTickMarks(true);
-        getChildren().add(speedSlider);
 
 
         getChildren().forEach(c -> {

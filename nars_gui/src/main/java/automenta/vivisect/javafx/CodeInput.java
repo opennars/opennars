@@ -1,6 +1,8 @@
 package automenta.vivisect.javafx;
 
 import com.google.common.collect.Lists;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
@@ -25,10 +27,27 @@ public class CodeInput extends BorderPane {
 
         setCenter(codeArea);
 
-        setMinSize(100,100);
-        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        autosize();
+        codeArea.setMinSize(100,100);
 
+        //codeArea.setPrefSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        codeArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        //codeArea.autosize();
+
+
+
+        codeArea.setOnKeyPressed(k -> {
+            //ctrl-enter
+            if (k.isControlDown() && k.getCode() == KeyCode.ENTER) {
+                if (onInput(codeArea.getText())) {
+                    codeArea.clear();
+                }
+            }
+        });
     }
 
+    /** return false to indicate input was not accepted, leaving it as-is.
+     * otherwise, return true that it was accepted and the buffer will be cleared. */
+    public boolean onInput(String s) {
+        return true;
+    }
 }

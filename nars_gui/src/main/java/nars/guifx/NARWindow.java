@@ -26,7 +26,7 @@ public class NARWindow extends Stage {
     private final TabPane content = new TabPane();
     private final NARControlFX buttonStrip;
     private final BorderPane f;
-    private final SplitPane g=null;
+    private final SplitPane g;
 
     public static class ResizableCanvas extends Canvas {
 
@@ -124,7 +124,7 @@ public class NARWindow extends Stage {
             protected void onIO(boolean selected) {
                 if (selected && t == null) {
 
-                 //   t = new Tab("I/O", new TerminalPane(nar));
+                    t = new Tab("I/O", new TerminalPane(nar));
 
                     Platform.runLater(() -> {
                         content.getTabs().add(t);
@@ -172,8 +172,8 @@ public class NARWindow extends Stage {
         content.setMaxHeight(Double.MAX_VALUE);
 
 
-    //    g = new SplitPane(f);
-        g.setDividerPositions(0.5f);
+        g = new SplitPane(f);
+        //g.setDividerPositions(0.5f);
         f.setMaxWidth(Double.MAX_VALUE);
 
         g.setMaxWidth(Double.MAX_VALUE);
