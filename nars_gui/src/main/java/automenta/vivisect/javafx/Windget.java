@@ -1,12 +1,15 @@
 package automenta.vivisect.javafx;
 
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import jfxtras.scene.control.window.Window;
 
@@ -25,28 +28,34 @@ public class Windget extends Window {
         private final Windget win;
 
         public RectPort(Windget win, boolean incoming, double rx, double ry, double w, double h) {
-            super(1, 1);
+            super(rx * win.getWidth(), ry * win.getHeight(), w, h);
             this.win = win;
 
             setFill(Color.ORANGE);
 
-            setScaleX(w);
-            setScaleY(h);
-            setTranslateX(rx * win.getWidth());
-            setTranslateY(ry * win.getHeight());
+
+            Bounds lb = win.getLayoutBounds();
+            //setTranslateX((rx-0.5) * win.getWidth());
+            //setTranslateY((ry-0.5) * win.getHeight());
             setTranslateZ(1);
+
+            //setScaleX(w);
+            //setScaleY(h);
+
             setOpacity(0.75f);
 
             setOnMouseEntered(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     setFill(Color.GREEN);
+                    event.consume();
                 }
             });
             setOnMouseExited(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
                     setFill(Color.ORANGE);
+                    event.consume();
                 }
             });
             setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -55,8 +64,61 @@ public class Windget extends Window {
 
                 }
             });
+            setOnMouseDragged(new EventHandler<MouseEvent>() {
+
+                TriangleEdge dragging = null;
+
+                @Override
+                public void handle(MouseEvent e) {
+                    if (dragging == null) {
+                        win.addOverlay(dragging = new TriangleEdge(RectPort.this, e));
+
+                        //System.out.println(e);
+                    }
+                    else {
+                        dragging.update(e);
+                    }
+
+                    e.consume();
+                }
+            });
         }
+
     }
+
+    public static class TriangleEdge extends Polygon {
+
+        private final RectPort source;
+        private RectPort target;
+
+        public TriangleEdge(RectPort source, MouseEvent event) {
+            this(source, (RectPort)null);
+            update(event);
+        }
+
+        public TriangleEdge(RectPort source, RectPort target) {
+            super();
+
+            this.source = source;
+            this.target = target;
+
+            update();
+        }
+
+        protected void update() {
+
+        }
+        protected void update(MouseEvent event) {
+            ObservableList<Double> pp = getPoints();
+            pp.clear();
+            pp.addAll(source.getX()-50, source.getY());
+            pp.addAll(event.getX(), event.getY()-50);
+            pp.addAll(event.getX(), event.getY());
+        }
+
+
+    }
+
 
     public Windget(String title, Node content) {
         super(title);

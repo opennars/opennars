@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.stage.Stage;
@@ -47,14 +48,17 @@ public class RunSpacegraph extends Application {
                         new PieChart.Data("Apples", 30));
         final PieChart chart = new PieChart(pieChartData);
         chart.setTitle("Imported Fruits");
-        //chart.setCacheHint(CacheHint.SPEED);
+        chart.setCacheHint(CacheHint.SPEED);
+
+        Windget cc = new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-100,-100);
+        cc.addOverlay(new Windget.RectPort(cc, true, +1, -1, 30, 30));
 
         Windget wc = new Windget("Chart", chart, 400, 400);
         wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
 
         space.getContent().addAll(
                 wc,
-                new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-100,-100)
+                cc
         );
     }
 
