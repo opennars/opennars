@@ -118,6 +118,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         }
                         break;
 
+                    case "Order":
+                        break;
+
                     default:
                         System.err.println("Unknown postcondition: " + type + ":" + which );
                         otherModifiers.add(m);

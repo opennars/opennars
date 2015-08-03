@@ -140,7 +140,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
             if(parsable.contains("==>")) {
                 impls.add("=/>");
                 impls.add("=|>");
-                impls.add("=>");
+                impls.add("==>");
             }
 
             ArrayList<String> conjs = new ArrayList<>();
