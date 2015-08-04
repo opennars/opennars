@@ -3,7 +3,9 @@ package nars.nal.nal1;
 
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
-import nars.nar.*;
+import nars.nar.Classic;
+import nars.nar.Default;
+import nars.nar.DefaultMicro;
 import nars.nar.experimental.Solid;
 import org.junit.runners.Parameterized;
 

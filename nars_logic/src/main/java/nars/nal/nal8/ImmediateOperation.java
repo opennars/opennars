@@ -6,8 +6,6 @@ import nars.Symbols;
 import nars.task.Task;
 import nars.term.Compound;
 
-import java.util.Collection;
-
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
 abstract public class ImmediateOperation  {

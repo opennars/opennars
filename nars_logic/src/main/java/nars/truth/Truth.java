@@ -29,8 +29,6 @@ import nars.term.Atom;
 import nars.term.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import java.io.Serializable;
-
 /** scalar (1D) truth value "frequency", stored as a floating point value */
 abstract public interface Truth extends MetaTruth<Float> {
 

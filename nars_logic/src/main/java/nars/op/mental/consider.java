@@ -20,7 +20,6 @@ package nars.op.mental;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.link.TaskLink;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;

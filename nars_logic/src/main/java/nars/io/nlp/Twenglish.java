@@ -17,7 +17,6 @@
 package nars.io.nlp;
 
 import nars.AbstractMemory;
-import nars.Memory;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;

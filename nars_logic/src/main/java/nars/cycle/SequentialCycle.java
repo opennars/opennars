@@ -5,15 +5,8 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.concept.ConceptActivator;
 import nars.concept.ConceptPrioritizer;
-import nars.concept.DefaultConcept;
 import nars.io.Perception;
-import nars.io.in.Input;
-import nars.link.TaskLink;
-import nars.process.ConceptProcess;
-import nars.process.CycleProcess;
-import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Iterator;

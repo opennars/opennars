@@ -5,10 +5,10 @@ import nars.NARSeed;
 import nars.io.TraceWriter;
 import nars.io.in.LibraryInput;
 import nars.io.out.TextOutput;
-import nars.nal.AbstractNALTest;
-import nars.nar.Default;
 import nars.meter.TestNAR;
 import nars.meter.condition.OutputCondition;
+import nars.nal.AbstractNALTest;
+import nars.nar.Default;
 import org.junit.Ignore;
 
 import java.util.ArrayList;

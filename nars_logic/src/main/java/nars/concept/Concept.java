@@ -27,7 +27,6 @@ import nars.Op;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
-import nars.event.ConceptReaction;
 import nars.link.*;
 import nars.process.TaskProcess;
 import nars.task.Sentence;

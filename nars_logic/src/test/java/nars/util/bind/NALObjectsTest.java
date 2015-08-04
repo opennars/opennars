@@ -1,9 +1,7 @@
 package nars.util.bind;
 
 import junit.framework.TestCase;
-import nars.Events;
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.meter.CountIOEvents;
 import nars.nar.Default;
 import org.junit.Test;

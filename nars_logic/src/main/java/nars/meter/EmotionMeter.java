@@ -16,7 +16,6 @@ import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.util.meter.event.DoubleMeter;
-import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
 import java.io.Serializable;
 

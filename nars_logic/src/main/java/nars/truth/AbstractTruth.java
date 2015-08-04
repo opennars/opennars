@@ -1,7 +1,6 @@
 package nars.truth;
 
 import nars.Global;
-import org.apache.commons.math3.util.FastMath;
 
 import static nars.Symbols.GOAL;
 import static nars.Symbols.JUDGMENT;

@@ -139,6 +139,17 @@
         </dependency>
         <dependency>
             <groupId>org.jfxtras</groupId>
+            <artifactId>jfxtras-labs</artifactId>
+            <version>8.0-r3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-window</artifactId>
             <version>8.0-r3</version>
         </dependency>

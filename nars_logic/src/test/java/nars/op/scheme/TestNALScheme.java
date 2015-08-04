@@ -8,7 +8,6 @@ import nars.nar.Default;
 import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.expressions.Expression;
 import nars.util.bind.NALObjects;
-import objenome.op.compute.BrainfuckMachine;
 import org.junit.Test;
 
 import java.util.List;

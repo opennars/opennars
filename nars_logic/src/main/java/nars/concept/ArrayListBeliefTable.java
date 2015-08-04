@@ -1,12 +1,9 @@
 package nars.concept;
 
 import nars.AbstractMemory;
-import nars.Memory;
 import nars.process.NAL;
 import nars.task.Task;
-import nars.truth.Truth;
 
-import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.revisibleTermsAlreadyEqual;
 import static nars.nal.nal1.LocalRules.tryRevision;
 

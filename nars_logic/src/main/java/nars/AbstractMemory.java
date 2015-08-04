@@ -3,7 +3,6 @@ package nars;
 import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.task.Task;
 import nars.term.Term;
 

@@ -7,10 +7,14 @@ import dejv.commons.jfx.input.handler.DragActionHandler;
 import dejv.commons.jfx.input.handler.ScrollActionHandler;
 import dejv.commons.jfx.input.properties.GestureEventProperties;
 import dejv.commons.jfx.input.properties.MouseEventProperties;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 /**
@@ -21,6 +25,23 @@ public class Spacegraph extends ZoomFX {
     static final String spacegraphCSS = Spacegraph.class.getResource("spacegraph.css").toExternalForm();
     private final GridCanvas grid;
 
+    public void addNodes(Node... n) {
+        verts.getChildren().addAll(n);
+    }
+
+    public void removeNodes(Node n) {
+        verts.getChildren().remove(n);
+    }
+
+    public void addEdges(Node... n) {
+        edges.getChildren().addAll(n);
+    }
+
+    public void removeEdges(Node n) {
+        edges.getChildren().remove(n);
+    }
+
+
     public class GridCanvas extends Canvas {
 
         private final boolean drawSharpLines;
@@ -29,6 +50,7 @@ public class Spacegraph extends ZoomFX {
         public GridCanvas(boolean drawSharpLines) {
             super();
             this.drawSharpLines = drawSharpLines;
+            setMouseTransparent(true);
         }
 
         final double minScale = 30;
@@ -89,6 +111,17 @@ public class Spacegraph extends ZoomFX {
 
     }
 
+    public static Spacegraph getSpace(final Node n) {
+        //TODO cache this?
+
+        Node p = n;
+        while ((p = p.getParent())!=null) {
+            if (p instanceof Spacegraph) return ((Spacegraph)p);
+        }
+        return null;
+    }
+
+
     static final double snap(final double y) {
         return ((int) y) + .5;
     }
@@ -101,11 +134,30 @@ public class Spacegraph extends ZoomFX {
             grid.update();
     }
 
+    final Group verts = new Group();
+    final Group edges = new Group();
+    final Pane layers = new AnchorPane(verts, edges);
+
     public Spacegraph() {
         super();
 
         getChildren().add(0, grid = new GridCanvas(true));
 
+
+
+        verts.maxWidth(Double.MAX_VALUE);
+        verts.maxHeight(Double.MAX_VALUE);
+        edges.maxWidth(Double.MAX_VALUE);
+        edges.maxHeight(Double.MAX_VALUE);
+
+
+        layers.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        layers.setPickOnBounds(false);
+        edges.setPickOnBounds(false);
+        verts.setPickOnBounds(false);
+
+
+        content().add(layers);
 
         getStyleClass().add("spacegraph");
         getStyleClass().add("dark");

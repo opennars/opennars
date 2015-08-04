@@ -3,9 +3,9 @@ package nars.analyze;
 import nars.Events;
 import nars.Global;
 import nars.NARSeed;
+import nars.meter.TestNAR;
 import nars.nar.Default;
 import nars.task.Task;
-import nars.meter.TestNAR;
 import nars.util.event.Reaction;
 import org.junit.Ignore;
 

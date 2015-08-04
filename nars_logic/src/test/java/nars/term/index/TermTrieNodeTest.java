@@ -1,8 +1,6 @@
 package nars.term.index;
 
 import nars.NAR;
-import nars.budget.Budget;
-import nars.concept.Concept;
 import nars.nar.Default;
 import nars.term.Term;
 import org.junit.Test;
@@ -11,7 +9,6 @@ import org.magnos.trie.TrieMatch;
 import org.magnos.trie.Tries;
 
 import static org.jgroups.util.Util.assertEquals;
-import static org.junit.Assert.*;
 
 /**
  * Created by me on 7/8/15.

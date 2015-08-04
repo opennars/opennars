@@ -7,13 +7,23 @@ import javafx.collections.ObservableList;
 import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.Skin;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import nars.NAR;
+import nars.nar.Default;
+import nars.op.software.scheme.SchemeClosure;
+import org.controlsfx.control.PropertySheet;
+import org.controlsfx.property.BeanProperty;
+import org.controlsfx.property.BeanPropertyUtils;
 
-/**
- * Third VFXWindows tutorial.
- *
- * @author Michael Hoffer <info@michaelhoffer.de>
- */
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.util.function.Predicate;
+
+
 public class RunSpacegraph extends Application {
 
     final Spacegraph space = new Spacegraph();
@@ -56,10 +66,55 @@ public class RunSpacegraph extends Application {
         Windget wc = new Windget("Chart", chart, 400, 400);
         wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
 
-        space.getContent().addAll(
+
+        Region jps = new PropertySheet(getProperties(
+                new NAR(new Default())
+                        /*,p -> {
+                            System.out.println(p);
+                            return true;
+                        }*/
+        ));
+        jps.setStyle("-fx-font-size: 75%");
+        Windget wd = new Windget("WTF",
+                jps,
+                //new Button("XYZ"),
+                400, 400);
+        wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
+
+        space.addNodes(
                 wc,
-                cc
+                cc,
+                wd
         );
+    }
+
+    public static ObservableList<PropertySheet.Item> getProperties(final Object bean) {
+        return getProperties(bean, null);
+    }
+
+    public static ObservableList<PropertySheet.Item> getProperties(final Object bean, Predicate<PropertyDescriptor> test) {
+        ObservableList<PropertySheet.Item> list = FXCollections.observableArrayList();
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass(), Object.class);
+            for (PropertyDescriptor p : beanInfo.getPropertyDescriptors()) {
+                if (p.getReadMethod() == null) {
+                    System.err.println(p + " missing ReadMethod");
+                    continue;
+                }
+                if (test==null || test.test(p)) {
+                    try {
+                        list.add(new BeanProperty(bean, p));
+                    }
+                    catch (Exception e) {
+                        System.err.println(p + " " + e);
+                    }
+                }
+            }
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
     /**

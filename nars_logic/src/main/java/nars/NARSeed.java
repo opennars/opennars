@@ -7,7 +7,6 @@ import nars.concept.ConceptBuilder;
 import nars.io.Perception;
 import nars.nal.LogicPolicy;
 import nars.process.CycleProcess;
-import nars.process.DerivationReaction;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
 

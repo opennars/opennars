@@ -3,7 +3,6 @@ package nars.meta;
 import junit.framework.TestCase;
 import nars.meter.NARComparator;
 import nars.nal.NALExecuter;
-import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;

@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.util.Iterator;
 
 import static org.jgroups.util.Util.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * TODO test for correct accumulation of durability and quality

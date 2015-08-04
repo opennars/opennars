@@ -8,7 +8,6 @@ import nars.Events;
 import nars.NAR;
 import nars.io.Texts;
 import nars.nal.nal8.ExecutionResult;
-import nars.task.Sentence;
 import nars.task.Task;
 
 import java.io.Serializable;

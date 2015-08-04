@@ -5,10 +5,8 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.event.NARReaction;
-import nars.task.Task;
 import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.function.Consumer;
 

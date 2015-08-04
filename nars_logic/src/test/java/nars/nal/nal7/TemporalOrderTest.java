@@ -5,7 +5,6 @@
 package nars.nal.nal7;
 
 import nars.NARSeed;
-import nars.io.out.TextOutput;
 import nars.meter.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;

@@ -2,7 +2,6 @@ package nars.core;
 
 import nars.NAR;
 import nars.nar.Default;
-import nars.term.Term;
 import nars.util.data.id.Identifier;
 import org.junit.Test;
 

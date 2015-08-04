@@ -4,7 +4,6 @@ import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
 import com.gs.collections.api.tuple.Pair;
-import com.gs.collections.impl.tuple.Tuples;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;

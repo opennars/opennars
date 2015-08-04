@@ -3,6 +3,7 @@ package nars.cycle;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
+import nars.budget.ItemAccumulator;
 import nars.concept.Concept;
 import nars.io.Perception;
 import nars.link.TaskLink;
@@ -10,7 +11,6 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.budget.ItemAccumulator;
 import nars.term.Compound;
 import nars.term.Term;
 

@@ -2,6 +2,8 @@ package nars.nar.experimental;
 
 import nars.Global;
 import nars.bag.Bag;
+import nars.budget.ItemAccumulator;
+import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
 import nars.nal.nal8.ImmediateOperation;
@@ -10,8 +12,6 @@ import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
-import nars.budget.ItemAccumulator;
-import nars.budget.ItemComparator;
 import nars.term.Term;
 
 import java.util.Iterator;

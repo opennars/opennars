@@ -3,6 +3,7 @@ package nars.bag;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import nars.analyze.experimental.NullItem;
 import nars.bag.impl.experimental.BubbleBag;
 import nars.budget.Item;
 import nars.util.data.random.XORShiftRandom;
@@ -12,8 +13,6 @@ import java.util.Random;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-
-import nars.analyze.experimental.NullItem;
 import static org.junit.Assert.assertTrue;
 
 public class BubbleBagTest extends AbstractBagTest {
