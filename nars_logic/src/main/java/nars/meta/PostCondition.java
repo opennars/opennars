@@ -188,7 +188,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 return false;
 
             //match second rule pattern with beliefterm (belief may be null because belief might not exist, but termlink matters here)
-            if (!Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[1], beliefterm, assign, waste, nal.memory.random))
+            if (!negation && !Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[1], beliefterm, assign, waste, nal.memory.random))
                 return false;
 
             //now we have to apply this to the derive term
