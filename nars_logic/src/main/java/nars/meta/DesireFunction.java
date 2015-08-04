@@ -3,6 +3,7 @@ package nars.meta;
 import nars.Global;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -35,6 +36,11 @@ public enum DesireFunction {
     Deduction() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.desireDed(T,B);
+        }
+    },
+    Identity() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
     }
 

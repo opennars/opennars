@@ -3,6 +3,7 @@ package nars.meta;
 import nars.Global;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
@@ -105,6 +106,11 @@ public enum TruthFunction {
     DecomposePositiveNegativeNegative() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.decomposePositiveNegativeNegative(T,B);
+        }
+    },
+    Identity() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
     }
 
