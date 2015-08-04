@@ -45,7 +45,7 @@ public class ZoomFX extends StackPane {
     /*private final ScrollBar hscroll = new ScrollBar();
     private final ScrollBar vscroll = new ScrollBar();*/
     //private final Pane contentPane = new Pane();
-    private final Group contentGroup = new Group();
+    public final Group content = new Group();
     private final Rectangle clip = new Rectangle();
 
     private final ObservableBounds pivotLogicalExtent = new ObservableBounds();
@@ -68,8 +68,9 @@ public class ZoomFX extends StackPane {
         setupClipping();
         setupBindings();
 
+
         //contentPane.getChildren().add(contentGroup);
-        getChildren().addAll(contentGroup/*, hscroll, vscroll*/);
+        getChildren().addAll(content/*, hscroll, vscroll*/);
 
 
         //hscroll.setValue(0.5);
@@ -80,9 +81,10 @@ public class ZoomFX extends StackPane {
     /**
      * @return The list of contained nodes.
      */
-    public ObservableList<Node> getContent() {
-        return contentGroup.getChildren();
+    public ObservableList<Node> content() {
+        return content.getChildren();
     }
+
 
 
     /**
@@ -220,7 +222,7 @@ public class ZoomFX extends StackPane {
             viewportPhysicalSize.setHeight(newValue.getHeight());
         });
 
-        contentGroup.boundsInLocalProperty().addListener((sender, oldValue, newValue) -> {
+        content.boundsInLocalProperty().addListener((sender, oldValue, newValue) -> {
             contentLogicalBounds.setMinX(newValue.getMinX());
             contentLogicalBounds.setMinY(newValue.getMinY());
             contentLogicalBounds.setMaxX(newValue.getMaxX());
@@ -270,6 +272,6 @@ public class ZoomFX extends StackPane {
         //scale.xProperty().bind(zoomFactor);
         //scale.yProperty().bind(zoomFactor);
 
-        contentGroup.getTransforms().setAll(scale, translate);
+        content.getTransforms().setAll(scale, translate);
     }
 }

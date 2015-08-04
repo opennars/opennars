@@ -7,13 +7,10 @@ import javafx.collections.ObservableList;
 import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-/**
- * Third VFXWindows tutorial.
- *
- * @author Michael Hoffer <info@michaelhoffer.de>
- */
+
 public class RunSpacegraph extends Application {
 
     final Spacegraph space = new Spacegraph();
@@ -56,9 +53,13 @@ public class RunSpacegraph extends Application {
         Windget wc = new Windget("Chart", chart, 400, 400);
         wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
 
-        space.getContent().addAll(
+        Windget wd = new Windget("WTF", new Button("XYZ"), 400, 400);
+        wd.addOverlay(new Windget.RectPort(wc, true, 300, +1, 10, 10));
+
+        space.addNodes(
                 wc,
-                cc
+                cc,
+                wd
         );
     }
 
