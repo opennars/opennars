@@ -39,7 +39,7 @@ public class TaskRule extends Rule<Premise,Task> {
         Term[] postcons = result.terms();
 
         //The last entry is the postcondition
-
+        this.normalizeDestructively();
         postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
 
         int k = 0;
