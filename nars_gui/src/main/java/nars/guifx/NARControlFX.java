@@ -2,14 +2,9 @@ package nars.guifx;
 
 import automenta.vivisect.javafx.JFX;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.application.Platform;
 import javafx.geometry.Orientation;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import nars.Events;
 import nars.NAR;
 
 /**
@@ -18,6 +13,8 @@ import nars.NAR;
  * buttons for controlling a nar
  */
 abstract public class NARControlFX extends VBox {
+
+    public final ToggleButton consoleButton;
 
     //private final NARWindow.FXReaction busyBackgroundColor;
 
@@ -73,16 +70,19 @@ abstract public class NARControlFX extends VBox {
         }
 
         if (guiButtons) {
-            ToggleButton bi = JFX.newToggleButton(FontAwesomeIcon.CODE);
-            bi.setTooltip(new Tooltip("I/O..."));
-            getChildren().add(bi);
-            bi.setOnAction(e -> {
-                onIO(bi.isSelected());
+            consoleButton = JFX.newToggleButton(FontAwesomeIcon.CODE);
+            consoleButton.setTooltip(new Tooltip("I/O..."));
+            getChildren().add(consoleButton);
+            consoleButton.setOnAction(e -> {
+                onConsole(consoleButton.isSelected());
             });
 
 //            Button bo = newIconButton(FontAwesomeIcon.TACHOMETER);
 //            bo.setTooltip(new Tooltip("Output..."));
 //            v.getChildren().add(bo);
+        }
+        else {
+            consoleButton = null;
         }
 
 
@@ -130,7 +130,7 @@ abstract public class NARControlFX extends VBox {
 
     }
 
-    protected abstract void onIO(boolean selected);
+    protected abstract void onConsole(boolean selected);
 
 
 }

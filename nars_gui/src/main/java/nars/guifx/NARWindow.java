@@ -24,9 +24,32 @@ public class NARWindow extends Stage {
     private final BorderPane menu = new BorderPane();
 
     private final TabPane content = new TabPane();
-    private final NARControlFX buttonStrip;
+    public final NARControlFX controlStrip;
     private final BorderPane f;
     private final SplitPane g;
+
+    Tab console = null;
+
+    public void console(boolean enabled) {
+
+        if (enabled && console == null) {
+
+            console = new Tab("I/O", new TerminalPane(nar));
+
+            Platform.runLater(() -> {
+                content.getTabs().add(console);
+                contentUpdate();
+            });
+        }
+        else if (console !=null) {
+            Platform.runLater(() -> {
+                content.getTabs().remove(console);
+                console = null;
+                contentUpdate();
+            });
+        }
+
+    }
 
     public static class ResizableCanvas extends Canvas {
 
@@ -116,28 +139,9 @@ public class NARWindow extends Stage {
         setTitle(n.toString());
 
 
-        buttonStrip = new NARControlFX(nar, true, true, true) {
-
-            Tab t = null;
-
-            @Override
-            protected void onIO(boolean selected) {
-                if (selected && t == null) {
-
-                    t = new Tab("I/O", new TerminalPane(nar));
-
-                    Platform.runLater(() -> {
-                        content.getTabs().add(t);
-                        contentUpdate();
-                    });
-                }
-                else if (t!=null) {
-                    Platform.runLater(() -> {
-                        content.getTabs().remove(t);
-                        t = null;
-                        contentUpdate();
-                    });
-                }
+        controlStrip = new NARControlFX(nar, true, true, true) {
+            @Override protected void onConsole(boolean selected) {
+                console(selected);
             }
         };
 
@@ -163,7 +167,7 @@ public class NARWindow extends Stage {
 
         f = new BorderPane();
         f.setCenter(scrolled(new NARTree(n)));
-        f.setRight(buttonStrip);
+        f.setRight(controlStrip);
 
         f.setMinWidth(250);
         f.setMaxHeight(Double.MAX_VALUE);
@@ -204,10 +208,15 @@ public class NARWindow extends Stage {
                 else {
                     content.setVisible(true);
                     g.getItems().setAll(f, content);
+
                 }
+
+
 
                 g.layout();
                 //g.autosize();
+
+                g.setDividerPosition(0, 0.25);
 
                 if (!isMaximized())
                     sizeToScene();

@@ -24,7 +24,11 @@ public class TerminalPane extends SplitPane {
                 (new CodeInput() {
                     @Override
                     public boolean onInput(String s) {
-                        TextInput i = nar.input(s);
+                        TextInput i = null;
+
+                        if (!s.isEmpty()) {
+                            i = nar.input(s);
+                        }
 
                         if (!nar.isRunning())
                             nar.frame(1);
@@ -35,6 +39,9 @@ public class TerminalPane extends SplitPane {
 
         setDividerPosition(0,0.85);
 
+
+        setMinSize(400, 300);
+        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 
     }

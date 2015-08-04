@@ -556,7 +556,7 @@ public class Default extends NARSeed  {
 
 
 
-    public static class CommandLineNARBuilder extends Default {
+    @Deprecated public static class CommandLineNARBuilder extends Default {
         
         List<String> filesToLoad = new ArrayList();
         

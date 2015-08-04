@@ -20,6 +20,8 @@ import java.util.Iterator;
  * inputs that were input, focusing it towards those
  * outcomes.
  *
+ * Analogous to a continuous echo/delay effect,
+ * or a sustain effecct.
  */
 public class Commander extends NARReaction {
 

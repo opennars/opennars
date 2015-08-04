@@ -11,7 +11,7 @@ import com.google.common.collect.Iterators;
 import nars.Events;
 import nars.Memory;
 import nars.event.ConceptReaction;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.util.data.id.Named;
 import nars.task.Task;
 import nars.concept.Concept;
@@ -227,7 +227,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
             @Override
             public void event(Class event, Object... args) {
-                refresh(((ConceptProcess)args[0]).getConcept());
+                refresh(((Premise)args[0]).getConcept());
             }
         };
 

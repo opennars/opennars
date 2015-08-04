@@ -2,7 +2,7 @@ package nars.nal;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -16,13 +16,13 @@ import java.util.List;
  */
 public class LogicPolicy {
 
-    public final RuleList<ConceptProcess> conceptProcessing;
+    public final RuleList<Premise> conceptProcessing;
     public final List<DerivationFilter> derivationFilters;
 
     public LogicPolicy() {
         this(null,null);
     }
-    public LogicPolicy(LogicRule<ConceptProcess>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
+    public LogicPolicy(LogicRule<Premise>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
 
         conceptProcessing = new RuleList(conceptProcessRules);
 
@@ -34,8 +34,8 @@ public class LogicPolicy {
     }
 
 
-    public void fire(final ConceptProcess fireConcept) {
-        final List<LogicRule<ConceptProcess>> rules = conceptProcessing.rules;
+    public void fire(final Premise fireConcept) {
+        final List<LogicRule<Premise>> rules = conceptProcessing.rules;
         final int n = rules.size();
         for (int l = 0; l < n; l++) {
             if (!rules.get(l).test(fireConcept))

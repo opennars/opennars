@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 import nars.Events.ConceptProcessed;
 import nars.NAR;
 import nars.Global;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.link.TaskLink;
@@ -144,7 +144,7 @@ public class LogicPerformance {
             }
         }
         
-        public void explain(long t, ConceptProcess f) {
+        public void explain(long t, Premise f) {
             //Concept conceptFired, TaskLink tlink, List<Task> generated) {
             Term term = f.getConcept().getTerm();
             TaskLink link = f.getTaskLink();
@@ -277,7 +277,7 @@ public class LogicPerformance {
          n.on(new ConceptProcessed() {
 
             @Override
-            public void onFire(ConceptProcess f) {
+            public void onFire(Premise f) {
 
                 process.explain(n.time(), f);
             }

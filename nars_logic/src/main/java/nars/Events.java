@@ -1,7 +1,7 @@
 package nars;
 
 import nars.concept.Concept;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.util.event.Reaction;
@@ -127,10 +127,10 @@ public class Events {
          * Concept n.getCurrentConcept()
          * TaskLink n.getCurrentTaskLink()
          */
-        abstract public void onFire(ConceptProcess n);
+        abstract public void onFire(Premise n);
         
         @Override public void event(Class event, Object... args) {
-            onFire((ConceptProcess)args[0]);
+            onFire((Premise)args[0]);
         }
         
     }

@@ -143,9 +143,9 @@
             <version>8.0-r3</version>
         </dependency>
         <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>8.40.9</version>
+            <groupId>com.dooapp.fxform2</groupId>
+            <artifactId>core</artifactId>
+            <version>8.0.10</version> <!-- Note: For JavaFX 8, use 2.2.6 -->
         </dependency>
 
         <dependency>

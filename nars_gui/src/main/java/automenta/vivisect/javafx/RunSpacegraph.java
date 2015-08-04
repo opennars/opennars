@@ -1,27 +1,28 @@
 package automenta.vivisect.javafx;
 
+import com.dooapp.fxform.FXForm;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Skin;
+import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.nar.Default;
-import nars.op.software.scheme.SchemeClosure;
-import org.controlsfx.control.PropertySheet;
-import org.controlsfx.property.BeanProperty;
-import org.controlsfx.property.BeanPropertyUtils;
+import za.co.knonchalant.builder.POJONode;
+import za.co.knonchalant.builder.TaggedParameters;
+import za.co.knonchalant.sample.pojo.SampleClass;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RunSpacegraph extends Application {
@@ -67,13 +68,26 @@ public class RunSpacegraph extends Application {
         wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
 
 
-        Region jps = new PropertySheet(getProperties(
-                new NAR(new Default())
-                        /*,p -> {
-                            System.out.println(p);
-                            return true;
-                        }*/
-        ));
+        //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
+
+
+        TaggedParameters taggedParameters = new TaggedParameters();
+        List<String> range = new ArrayList<>();
+        range.add("Ay");
+        range.add("Bee");
+        range.add("See");
+        taggedParameters.addTag("range", range);
+        Pane jps = POJONode.build(new SampleClass(), taggedParameters);
+
+//        Button button = new Button("Read in");
+//        button.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                //SampleClass sample = POJONode.read(mainPane, SampleClass.class);
+//                //System.out.println(sample.getTextString());
+//            }
+//        });
+
         jps.setStyle("-fx-font-size: 75%");
         Windget wd = new Windget("WTF",
                 jps,
@@ -88,34 +102,6 @@ public class RunSpacegraph extends Application {
         );
     }
 
-    public static ObservableList<PropertySheet.Item> getProperties(final Object bean) {
-        return getProperties(bean, null);
-    }
-
-    public static ObservableList<PropertySheet.Item> getProperties(final Object bean, Predicate<PropertyDescriptor> test) {
-        ObservableList<PropertySheet.Item> list = FXCollections.observableArrayList();
-        try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass(), Object.class);
-            for (PropertyDescriptor p : beanInfo.getPropertyDescriptors()) {
-                if (p.getReadMethod() == null) {
-                    System.err.println(p + " missing ReadMethod");
-                    continue;
-                }
-                if (test==null || test.test(p)) {
-                    try {
-                        list.add(new BeanProperty(bean, p));
-                    }
-                    catch (Exception e) {
-                        System.err.println(p + " " + e);
-                    }
-                }
-            }
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
 
     /**
      * The main() method is ignored in correctly deployed JavaFX application.

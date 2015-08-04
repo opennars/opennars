@@ -1,14 +1,17 @@
 package nars.guifx;
 
-import automenta.vivisect.Video;
-import automenta.vivisect.javafx.Spacegraph;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+
+import static javafx.application.Platform.runLater;
 
 
 /**
@@ -19,9 +22,9 @@ public class NARfx extends Application {
 
     static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
 
-    static {
-        Video.themeInvert();
-    }
+//    static {
+//        Video.themeInvert();
+//    }
 
     /** NAR instances -> GUI windows */
     public static Map<NAR, NARWindow> window = Global.newHashMap();
@@ -69,8 +72,25 @@ public class NARfx extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        NARWindow w = NARfx.window(new NAR(new Default()));
+
+
+
+        NAR n = new NAR(new Default());
+
+        NARWindow w = NARfx.window(n);
         w.show();
+
+        for (String s : getParameters().getRaw()) {
+            try {
+                n.input(new File(s));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        //startup defaults
+        w.console(true);
+
 
         //JFX.popup(new NodeControlPane());
 
@@ -109,7 +129,7 @@ public class NARfx extends Application {
 //            }
 //        });
 
-        Application.launch(NARfx.class);
+        Application.launch(NARfx.class, arg);
 
     }
 

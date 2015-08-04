@@ -8,7 +8,7 @@ import automenta.vivisect.audio.synth.SineWave;
 import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.process.ConceptProcess;
+import nars.premise.Premise;
 import nars.concept.Concept;
 
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class ConceptSonification extends NARReaction {
         }
 
         else if (event == Events.ConceptProcessed.class) {
-            ConceptProcess f = (ConceptProcess)args[0];
+            Premise f = (Premise)args[0];
             update(f.getConcept());
         }
 

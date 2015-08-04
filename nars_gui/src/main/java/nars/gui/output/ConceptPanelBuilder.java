@@ -18,10 +18,10 @@ import nars.gui.VerticalLayout;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.budget.Itemized;
+import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.concept.Concept;
-import nars.process.ConceptProcess;
 import nars.term.Term;
 import nars.link.TaskLink;
 import nars.truth.Truthed;
@@ -126,7 +126,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
         Concept c = null;
         if (event == Events.ConceptProcessed.class) {
-            c = ((ConceptProcess)args[0]).getConcept();
+            c = ((Premise)args[0]).getConcept();
         }
         else {
             if (args[0] instanceof Concept)

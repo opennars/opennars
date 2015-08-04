@@ -25,6 +25,7 @@ import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.UtilityFunctions;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Sentence;
@@ -72,7 +73,7 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         boolean feedbackToLinks = (nal instanceof ConceptProcess);
         if (feedbackToLinks) {
-            ConceptProcess fc = (ConceptProcess)nal;
+            Premise fc = (Premise)nal;
             TaskLink tLink = fc.getTaskLink();
             tLink.decPriority(1f - difT);
             tLink.andDurability(1f - difT);

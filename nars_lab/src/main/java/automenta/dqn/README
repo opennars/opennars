@@ -1,0 +1,19 @@
+https://groups.google.com/forum/#!topic/deeplearning4j/aKFwOGSRf98
+
+Hi all,
+
+Newbie here. I am investigating the practicality of implementing a Deep Q-learning Network using the NN lib provided by Deeplearning4j.
+The network architecture is pretty simple, 2 hidden fully connected rectifier layers, 1 regression output layer.
+Training method is simply SGD (for each sample, we pass in a target dimension and its target value)
+
+Which part of the DL4J api should I look into first?
+Thanks very much in advance!
+
+
+Adam Gibson
+Apr 23
+
+
+The MultiLayerNetwork. Take a look at the 0.0.3.3 examples (https://github.com/deeplearning4j/dl4j-0.0.3.3-examples)
+Build from master for now on this. This will give you the composable networks.
+- show quoted text -
