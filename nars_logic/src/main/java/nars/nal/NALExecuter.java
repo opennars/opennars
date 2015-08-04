@@ -8,6 +8,7 @@ import nars.process.ConceptProcess;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -64,7 +65,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
     public final boolean apply(final ConceptProcess f, final TermLink bLink) {
         final TaskLink tLink = f.getTaskLink();
         final Task belief = f.getBelief();
-        return reason(tLink.getTask(), belief, f);
+        return reason(tLink.getTask(), belief, bLink.getTerm(), f);
     }
 
     static List<String> loadRuleStrings(Iterable<String> lines) {
@@ -242,13 +243,13 @@ public class NALExecuter extends ConceptFireTaskTerm {
     }
 
 
-    public boolean reason(final Task task, final Sentence belief, final ConceptProcess nal) {
+    public boolean reason(final Task task, final Sentence belief, Term beliefterm, final ConceptProcess nal) {
 
         if (task.isJudgment() || task.isGoal()) {
 
             //forward inference
             for (TaskRule r : rules) {
-                r.forward(task, belief, nal);
+                r.forward(task, belief, beliefterm,  nal);
             }
 
             //TODO also allow backward inference by traversing

@@ -1,5 +1,6 @@
 package nars.meta;
 
+import nars.link.TermLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.premise.Premise;
@@ -117,9 +118,9 @@ public class TaskRule extends Rule<Premise,Task> {
         return this;
     }
 
-    public void forward(Task task, Sentence belief, ConceptProcess nal) {
+    public void forward(Task task, Sentence belief, Term beliefTerm, ConceptProcess nal) {
         //if preconditions are met:
         for (PostCondition p : postconditions)
-            p.apply(preconditions, task, belief, nal);
+            p.apply(preconditions, task, belief, beliefTerm, nal);
     }
 }
