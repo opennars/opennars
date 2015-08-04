@@ -149,7 +149,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
         Truth truth = null;
         Truth desire = null;
         boolean deriveOccurrence = false; //if false its just the occurence time of the parent
-        boolean single_premise = false;
+        boolean single_premise = this.single_premise;
 
         if (negation && task.truth.getFrequency() >= 0.5) { //its negation, it needs this additional information to be useful
             return false;
@@ -226,7 +226,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         if(arg1.equals(task.getTerm()) && task.getOccurrenceTime() == Stamp.ETERNAL) {
                             return false;
                         }
-                        if(!single_premise && arg2.equals(belief.getTerm()) && belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                        if(arg2.equals(beliefterm) && (belief == null || belief.getOccurrenceTime() == Stamp.ETERNAL)) {
                             return false;
                         }
                         break;
@@ -234,7 +234,8 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         if(arg1.equals(task.getTerm()) && task.truth.getFrequency() >= 0.5) {
                             return false;
                         }
-                        if(!single_premise && arg2.equals(belief.getTerm()) && belief.truth.getFrequency() >= 0.5) {
+                        else
+                        if(arg2.equals(beliefterm) && (belief == null || belief.truth.getFrequency() >= 0.5)) {
                             return false;
                         }
                         single_premise = true;
@@ -253,6 +254,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         break;
                     case "measure_time":
                         {
+                            if(belief == null) {
+                                return false;
+                            }
                             long time1 = 0, time2 = 0;
                             if (arg1.equals(task.getTerm())) {
                                 time1 = task.getOccurrenceTime();
@@ -269,6 +273,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         break;
                         case "after":
                         {
+                            if(belief == null) {
+                                return false;
+                            }
                             if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
                                 return false;
                             }
@@ -283,6 +290,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         }
                         case "concurrent":
                         {
+                            if(belief == null) {
+                                return false;
+                            }
                             if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
                                 return false;
                             }
