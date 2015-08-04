@@ -288,7 +288,7 @@
 
 ////// Theorems in IL:
 //TODO
-((*,A_1..n) --> M) |- (A_i --> (/,M, A_1..A_i.substitute(_)..A_n )), (Truth:Identity, Desire:Identity)
+((*,A_1..n) --> M), M |- (A_i --> (/,M, A_1..A_i.substitute(_)..A_n )), (Truth:Identity, Desire:Identity)
 
 ////// Truth-value functions
 //java./flu
