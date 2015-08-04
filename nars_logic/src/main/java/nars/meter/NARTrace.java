@@ -7,7 +7,6 @@ import nars.concept.Concept;
 import nars.event.MemoryReaction;
 import nars.io.Texts;
 import nars.task.Task;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

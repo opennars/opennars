@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.Symbols;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;
-import nars.op.io.Reset;
 import nars.op.io.SetVolume;
 import nars.task.Task;
 

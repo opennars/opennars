@@ -1,6 +1,5 @@
 package nars.analyze.experimental;
 
-import nars.budget.Budget;
 import nars.budget.Item;
 import nars.truth.DefaultTruth;
 

@@ -2,9 +2,9 @@ package nars.op.scheme;
 
 
 import nars.op.software.scheme.DefaultEnvironment;
-import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.Evaluator;
 import nars.op.software.scheme.Reader;
+import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.exception.UnexpectedExpression;
 import nars.op.software.scheme.expressions.Expression;
 import org.junit.Rule;

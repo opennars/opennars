@@ -4,7 +4,6 @@ import nars.Op;
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
-import nars.nal.nal2.Instance;
 import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;

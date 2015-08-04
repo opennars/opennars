@@ -1,7 +1,5 @@
 package nars.clock;
 
-import nars.Memory;
-
 /**
  * hard realtime does not cache the value and will always update when time()
  * is called

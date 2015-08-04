@@ -7,8 +7,6 @@ import nars.nal.nal7.TemporalRules;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Task;
-import nars.term.Term;
-import nars.term.Variables;
 
 
 public class MatchTaskBelief extends ConceptFireTaskTerm {

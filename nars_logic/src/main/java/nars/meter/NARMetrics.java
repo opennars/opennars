@@ -3,8 +3,8 @@ package nars.meter;
 import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.util.meter.Signals;
 import nars.util.meter.SignalData;
+import nars.util.meter.Signals;
 import nars.util.meter.TemporalMetrics;
 import nars.util.meter.func.FirstOrderDifference;
 

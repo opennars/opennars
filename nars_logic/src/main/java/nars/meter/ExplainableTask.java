@@ -2,10 +2,10 @@ package nars.meter;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import nars.meter.condition.TaskCondition;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
-import nars.meter.condition.TaskCondition;
 
 import java.io.PrintStream;
 import java.util.Map;

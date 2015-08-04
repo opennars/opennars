@@ -1,7 +1,5 @@
 package nars.truth;
 
-import nars.Memory;
-
 /**
  * Truth value used to store values when in the 'analytic' state
  */

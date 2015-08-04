@@ -15,8 +15,6 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 
-import static nars.bag.impl.LevelBag.NextNonEmptyLevelMode.Fast;
-
 /** Classic NARS configuration (most like the Default from 1.6.4 and before)
   * Uses LevelBag for all bags */
 public class Classic extends Default {

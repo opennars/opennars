@@ -1,27 +1,13 @@
 package nars.nal;
 
-import nars.Global;
-import nars.Symbols;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.meta.TaskRule;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal4.Product;
 import nars.narsese.NarseseParser;
 import nars.process.ConceptProcess;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskSeed;
-import nars.task.stamp.Stamp;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variables;
-import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by patrick.hammer on 30.07.2015.

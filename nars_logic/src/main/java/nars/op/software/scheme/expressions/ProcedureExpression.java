@@ -3,7 +3,6 @@ package nars.op.software.scheme.expressions;
 
 import nars.op.software.scheme.cons.Cons;
 
-import java.lang.invoke.SerializedLambda;
 import java.util.function.Function;
 
 public class ProcedureExpression implements Expression, Function<Cons<Expression>, Expression> {

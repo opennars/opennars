@@ -1,10 +1,12 @@
 package nars.op.app;
 
-import nars.*;
+import nars.AbstractMemory;
+import nars.Events;
+import nars.Global;
+import nars.NAR;
 import nars.event.NARReaction;
 import nars.nal.nal7.TemporalRules;
 import nars.process.TaskProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 
 import java.util.ArrayDeque;

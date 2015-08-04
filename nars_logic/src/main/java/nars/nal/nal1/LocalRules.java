@@ -21,7 +21,6 @@
 package nars.nal.nal1;
 
 import nars.Events.Answer;
-import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;

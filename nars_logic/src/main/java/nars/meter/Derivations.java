@@ -14,7 +14,6 @@ import nars.event.NARReaction;
 import nars.io.Texts;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.nal.nal4.Product;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;

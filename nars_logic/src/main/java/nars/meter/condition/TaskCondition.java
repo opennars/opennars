@@ -2,7 +2,6 @@ package nars.meter.condition;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import nars.Events;
 import nars.Global;
 import nars.Memory;

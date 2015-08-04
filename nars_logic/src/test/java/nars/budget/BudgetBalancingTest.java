@@ -1,12 +1,11 @@
 package nars.budget;
 
-import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.NARSeed;
-import nars.meter.CountIOEvents;
 import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
+import nars.meter.CountIOEvents;
 import nars.nar.Default;
 import nars.term.Term;
 import org.junit.Test;

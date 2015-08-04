@@ -2,7 +2,9 @@ package nars.nal.nal4;
 
 import nars.NARSeed;
 import nars.nal.JavaNALTest;
-import nars.nar.*;
+import nars.nar.Classic;
+import nars.nar.Default;
+import nars.nar.DefaultDeep;
 import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;

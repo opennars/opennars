@@ -1,8 +1,8 @@
 package nars.op.scheme;
 
 import nars.op.software.scheme.DefaultEnvironment;
-import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.Evaluator;
+import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.expressions.*;
 import org.junit.Test;
 

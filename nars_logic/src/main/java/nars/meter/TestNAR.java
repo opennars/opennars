@@ -6,14 +6,13 @@ import nars.NARSeed;
 import nars.event.NARReaction;
 import nars.io.in.TextInput;
 import nars.io.out.TextOutput;
+import nars.meter.condition.OutputCondition;
+import nars.meter.condition.TaskCondition;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.meter.condition.OutputCondition;
-import nars.meter.condition.TaskCondition;
 import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

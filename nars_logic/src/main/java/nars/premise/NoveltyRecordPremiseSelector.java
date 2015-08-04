@@ -15,9 +15,6 @@ package nars.premise;
 //import java.util.*;
 //
 
-import com.google.common.util.concurrent.AtomicDouble;
-import nars.premise.PremiseSelector;
-
 /**
  * Uses a Record short-term-memory list of recently fired termlinks
  * for each tasklink

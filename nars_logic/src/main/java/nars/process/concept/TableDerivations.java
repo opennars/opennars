@@ -2,7 +2,6 @@ package nars.process.concept;
 
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.nal.NALExecuter;
 import nars.nal.RuleTables;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Equivalence;
