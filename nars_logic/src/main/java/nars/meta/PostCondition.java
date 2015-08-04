@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.link.TermLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
@@ -79,7 +80,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
             }
 
             //TODO compare by Atom, and avoid generating switch String (UTF8 will be slightly more efficient than UTF16)
-            if (swhich.equals("Negation") || swhich.equals("Conversion") || swhich.equals("Contraposition")) {
+            if (swhich.equals("Negation") || swhich.equals("Conversion") || swhich.equals("Contraposition") || swhich.equals("Identity")) {
                 single_premise = true;
             }
 
@@ -138,7 +139,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
         this.modifiers = otherModifiers.toArray(new Term[otherModifiers.size()]);
     }
 
-    public boolean apply(Term[] preconditions, Task task, Sentence belief, ConceptProcess nal) {
+    public boolean apply(Term[] preconditions, Task task, Sentence belief, Term beliefterm, ConceptProcess nal) {
         if (task == null)
             throw new RuntimeException("null task");
 
@@ -148,19 +149,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
         Truth truth = null;
         Truth desire = null;
         boolean deriveOccurrence = false; //if false its just the occurence time of the parent
-        boolean single_premise = false;
-
-        /* TODO remove this for loop  */
-        for (Term t : modifiers) {
-            //String s = t.toString().replace("_", ".");//.replace("%","");
-            String s;
-            if (t instanceof Inheritance) {
-                Inheritance i = (Inheritance) t;
-                s = i.getPredicate() + "." + i.getSubject();
-            } else {
-                throw new RuntimeException("invalid meta: " + this);
-            }
-        }
+        boolean single_premise = this.single_premise;
 
         if (negation && task.truth.getFrequency() >= 0.5) { //its negation, it needs this additional information to be useful
             return false;
@@ -170,7 +159,6 @@ public class PostCondition //since there can be multiple tasks derived per rule
             return false;
         }
 
-        //todo consume and use also other meta information
         if (this.truth != null) {
             truth = this.truth.get(T, B);
         }
@@ -192,12 +180,15 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
         Term derive = term; //first entry is term
 
-        //precon[0]
         //TODO checking the precondition again for every postcondition misses the point, but is easily fixable (needs to be moved down to Rule)
         if (single_premise) { //only match precondition pattern with task
 
             //match first rule pattern with task
             if (!Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[0], task.getTerm(), assign, waste, nal.memory.random))
+                return false;
+
+            //match second rule pattern with beliefterm (belief may be null because belief might not exist, but termlink matters here)
+            if (!negation && !Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[1], beliefterm, assign, waste, nal.memory.random))
                 return false;
 
             //now we have to apply this to the derive term
@@ -235,7 +226,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         if(arg1.equals(task.getTerm()) && task.getOccurrenceTime() == Stamp.ETERNAL) {
                             return false;
                         }
-                        if(!single_premise && arg2.equals(belief.getTerm()) && belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                        if(arg2.equals(beliefterm) && (belief == null || belief.getOccurrenceTime() == Stamp.ETERNAL)) {
                             return false;
                         }
                         break;
@@ -243,7 +234,8 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         if(arg1.equals(task.getTerm()) && task.truth.getFrequency() >= 0.5) {
                             return false;
                         }
-                        if(!single_premise && arg2.equals(belief.getTerm()) && belief.truth.getFrequency() >= 0.5) {
+                        else
+                        if(arg2.equals(beliefterm) && (belief == null || belief.truth.getFrequency() >= 0.5)) {
                             return false;
                         }
                         single_premise = true;
@@ -262,6 +254,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         break;
                     case "measure_time":
                         {
+                            if(belief == null) {
+                                return false;
+                            }
                             long time1 = 0, time2 = 0;
                             if (arg1.equals(task.getTerm())) {
                                 time1 = task.getOccurrenceTime();
@@ -278,6 +273,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         break;
                         case "after":
                         {
+                            if(belief == null) {
+                                return false;
+                            }
                             if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
                                 return false;
                             }
@@ -292,6 +290,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         }
                         case "concurrent":
                         {
+                            if(belief == null) {
+                                return false;
+                            }
                             if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
                                 return false;
                             }

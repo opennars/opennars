@@ -8,6 +8,7 @@ import nars.process.ConceptProcess;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -64,7 +65,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
     public final boolean apply(final ConceptProcess f, final TermLink bLink) {
         final TaskLink tLink = f.getTaskLink();
         final Task belief = f.getBelief();
-        return reason(tLink.getTask(), belief, f);
+        return reason(tLink.getTask(), belief, bLink.getTerm(), f);
     }
 
     static List<String> loadRuleStrings(Iterable<String> lines) {
@@ -203,13 +204,24 @@ public class NALExecuter extends ConceptFireTaskTerm {
 
                 //there might be now be A_1..n in it, if this is the case we have to add up to n rules
                 int n=5;
-                if(parsable.contains("A_1..n")) {
+                if(parsable.contains("A_1..n") || parsable.contains("A_1..A_i.substitute(_)..A_n")) {
                     String str="A_1";
                     String str2="B_1";
-                    for(int i=0;i<n;i++) {
-
-                        String parsable_unrolled = parsable.replace("A_1..n",str).replace("B_1..n", str2);
-                        AddWithPotentialForAllSameOrder(meta,uninterpreted_rules,parsable_unrolled);
+                    for(int i=0; i < n; i++) {
+                        if(parsable.contains("A_i")) {
+                            for(int j=0; j <= i; j++) {
+                                String A_i = "A_" + String.valueOf(j + 1);
+                                String strrep = str;
+                                if(parsable.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
+                                    strrep = str.replace(A_i,"_");
+                                }
+                                String parsable_unrolled = parsable.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..n", str2).replace("A_i",A_i);
+                                AddWithPotentialForAllSameOrder(meta, uninterpreted_rules, parsable_unrolled);
+                            }
+                        } else {
+                            String parsable_unrolled = parsable.replace("A_1..n", str).replace("B_1..n", str2);
+                            AddWithPotentialForAllSameOrder(meta, uninterpreted_rules, parsable_unrolled);
+                        }
 
                         str+=", A_"+String.valueOf(i+2);
                         str2+=", B_"+String.valueOf(i+2);
@@ -231,13 +243,13 @@ public class NALExecuter extends ConceptFireTaskTerm {
     }
 
 
-    public boolean reason(final Task task, final Sentence belief, final ConceptProcess nal) {
+    public boolean reason(final Task task, final Sentence belief, Term beliefterm, final ConceptProcess nal) {
 
         if (task.isJudgment() || task.isGoal()) {
 
             //forward inference
             for (TaskRule r : rules) {
-                r.forward(task, belief, nal);
+                r.forward(task, belief, beliefterm,  nal);
             }
 
             //TODO also allow backward inference by traversing
