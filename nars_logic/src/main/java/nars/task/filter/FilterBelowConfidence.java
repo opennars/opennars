@@ -1,6 +1,6 @@
 package nars.task.filter;
 
-import nars.process.NAL;
+import nars.premise.Premise;
 import nars.task.TaskSeed;
 import nars.truth.Truth;
 
@@ -9,11 +9,11 @@ import nars.truth.Truth;
 */
 public class FilterBelowConfidence implements DerivationFilter {
 
-    @Override public final String reject(NAL nal, TaskSeed task, boolean solution, boolean revised) {
+    @Override public final String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
         Truth t = task.getTruth();
         if (t != null) {
             float conf = t.getConfidence();
-            if (conf < nal.memory.param.confidenceThreshold.get()) {
+            if (conf < nal.param().confidenceThreshold.get()) {
                 //no confidence - we can delete the wrongs out that way.
                 return "Insufficient confidence";
             }

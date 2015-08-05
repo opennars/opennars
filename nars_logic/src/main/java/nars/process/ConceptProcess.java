@@ -23,7 +23,7 @@ import nars.term.Term;
  *     TermLinks
  *
  * */
-public class ConceptProcess extends NAL implements Premise {
+public class ConceptProcess extends NAL  {
 
     protected final TaskLink currentTaskLink;
     protected final Concept concept;
@@ -53,6 +53,11 @@ public class ConceptProcess extends NAL implements Premise {
         this(memory, concept, taskLink, memory.param.termLinkMaxReasoned.intValue());
     }
 
+
+
+    @Override public Task getTask() {
+        return getTaskLink().getTask();
+    }
 
 
     /**
@@ -87,14 +92,11 @@ public class ConceptProcess extends NAL implements Premise {
         this.currentBelief = nextBelief;
     }
 
-    @Override
-    public final Term getTerm() {
-        return getConcept().getTerm();
-    }
+
 
     protected void processTask() {
         setTermLink(null);
-        reasoner.fire(this);
+        getMemory().rules.fire(this);
     }
 
     protected void processTerms() {
@@ -162,7 +164,7 @@ public class ConceptProcess extends NAL implements Premise {
     protected void processTerm(TermLink bLink) {
         setTermLink(bLink);
 
-        reasoner.fire(this);
+        getMemory().rules.fire(this);
 
         emit(Events.BeliefReason.class, this);
     }

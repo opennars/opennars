@@ -9,7 +9,10 @@ import nars.NAR;
 import nars.Symbols;
 import nars.concept.AbstractConcept;
 import nars.concept.Concept;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.meter.LogicMetrics;
+import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -33,6 +36,21 @@ public class TaskProcess extends NAL {
         onFinished();
     }
 
+
+    @Override
+    public TermLink getTermLink() {
+        return null;
+    }
+
+    @Override
+    public TaskLink getTaskLink() {
+        return null;
+    }
+
+    @Override
+    public Concept getConcept() {
+        return memory.concept(getTerm());
+    }
 
     @Override
     protected void onFinished() {
@@ -151,12 +169,12 @@ public class TaskProcess extends NAL {
                 memory.add(t);
     }
 
-    public static TaskProcess run(final NAR nar, final String task) {
+    public static Premise run(final NAR nar, final String task) {
         return run(nar.memory, nar.task(task));
     }
 
     /** create and execute a direct process immediately */
-    public static TaskProcess run(final NAR nar, final Task task) {
+    public static Premise run(final NAR nar, final Task task) {
         return run(nar.memory, task);
     }
 
@@ -179,7 +197,7 @@ public class TaskProcess extends NAL {
     }
 
     /** create and execute a direct process immediately */
-    public static TaskProcess run(final Memory m, final Task task) {
+    public static Premise run(final Memory m, final Task task) {
         TaskProcess d = get(m, task);
         if (d == null)
             return null;

@@ -1,6 +1,7 @@
 package nars.concept;
 
 import nars.nal.nal7.TemporalRules;
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Task;
 import nars.truth.Truth;
@@ -43,9 +44,9 @@ public interface BeliefTable extends TaskTable {
      *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
      *
      */
-    public Task add(Task input, Ranker r, Concept c, NAL nal);
+    public Task add(Task input, Ranker r, Concept c, Premise nal);
 
-    default Task add(Task input, Concept c, NAL nal) {
+    default Task add(Task input, Concept c, Premise nal) {
         return add(input, getRank(), c, nal);
     }
 

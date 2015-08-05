@@ -10,6 +10,7 @@ import nars.link.*;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.premise.Premise;
 import nars.premise.PremiseSelector;
 import nars.process.NAL;
 import nars.process.TaskProcess;
@@ -247,7 +248,7 @@ public class DefaultConcept extends AbstractConcept {
      * @param belief The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processBelief(final TaskProcess nal, Task belief) {
+    public boolean processBelief(final Premise nal, Task belief) {
 
         float successBefore = getSuccess();
 

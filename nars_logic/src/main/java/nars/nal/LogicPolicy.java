@@ -22,9 +22,9 @@ public class LogicPolicy {
     public LogicPolicy() {
         this(null,null);
     }
-    public LogicPolicy(LogicRule<Premise>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
+    public LogicPolicy(LogicStage<Premise>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
 
-        conceptProcessing = new RuleList(conceptProcessRules);
+        conceptProcessing = new RuleList<Premise>(conceptProcessRules);
 
         if (derivationFilters!=null)
             this.derivationFilters = Lists.newArrayList(derivationFilters);
@@ -35,7 +35,7 @@ public class LogicPolicy {
 
 
     public void fire(final Premise fireConcept) {
-        final List<LogicRule<Premise>> rules = conceptProcessing.rules;
+        final List<LogicStage<Premise>> rules = conceptProcessing.rules;
         final int n = rules.size();
         for (int l = 0; l < n; l++) {
             if (!rules.get(l).test(fireConcept))
@@ -48,7 +48,7 @@ public class LogicPolicy {
     }
 
     /** tests validity of a derived task; if valid returns null, else returns a String rule explaining why it is invalid */
-    public String getDerivationRejection(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
+    public String getDerivationRejection(final Premise nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
 
         List<DerivationFilter> derivationFilters = getDerivationFilters();
         final int dfs = derivationFilters.size();

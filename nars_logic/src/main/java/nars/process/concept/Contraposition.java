@@ -8,6 +8,7 @@ import nars.link.TermLink;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Sentence;
@@ -21,7 +22,7 @@ import nars.truth.TruthFunctions;
 public class Contraposition extends ConceptFireTask {
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink taskLink) {
+    public boolean apply(Premise f, TaskLink taskLink) {
         final Sentence taskSentence = taskLink.getSentence();
 
         final Term taskTerm = taskSentence.getTerm();
@@ -34,7 +35,7 @@ public class Contraposition extends ConceptFireTask {
 
             float n = taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
             float w = 1.0f / ((n * (n - 1)) / 2.0f); //let's assume hierachical tuple (triangle numbers) amount for this
-            if (f.memory.random.nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
+            if (f.getRandom().nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
 
                 contraposition(taskSentence, f);
                 //}
@@ -49,12 +50,12 @@ public class Contraposition extends ConceptFireTask {
      *
      * @param statement The premise
      */
-    protected static Task contraposition(final Sentence sentence, final NAL nal) {
+    protected static Task contraposition(final Sentence sentence, final Premise nal) {
         //TODO this method can end earlier if it detects an input implication with freq=1, because the resulting confidence should be 0 which is useless
 
         final Statement statement = (Statement) sentence.getTerm();
 
-        Memory memory = nal.memory;
+        Memory memory = nal.getMemory();
         memory.logic.CONTRAPOSITION.hit();
 
         Term subj = statement.getSubject();

@@ -28,6 +28,7 @@ import nars.budget.BudgetFunctions;
 import nars.io.out.Output;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -124,7 +125,7 @@ public class LocalRules {
     }
 
 
-    public static Task tryRevision(final Task newBelief, final Task oldBelief, final boolean feedbackToLinks, final NAL nal) {
+    public static <T extends Compound> Task<T> tryRevision(final Task<T> newBelief, final Task<T> oldBelief, final boolean feedbackToLinks, final Premise nal) {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
         //if (stamp == null) return null;
 
@@ -140,7 +141,7 @@ public class LocalRules {
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
 
-        Task revised = nal.derive( nal.newTask(newBelief.getTerm())
+        Task<T> revised = nal.derive( nal.newTask(newBelief.getTerm())
                         .punctuation(newBelief.getPunctuation())
                         .truth(truth)
                         .budget(budget)
@@ -152,12 +153,12 @@ public class LocalRules {
                     ,true);
 
         if (revised != null)
-            nal.memory.logic.BELIEF_REVISION.hit();
+            nal.getMemory().logic.BELIEF_REVISION.hit();
 
         return revised;
     }
 
-    public static Task trySolution(Task belief, final Task questionTask, final NAL nal) {
+    public static Task trySolution(Task belief, final Task questionTask, final Premise nal) {
         if (belief == null) return null;
 
         return trySolution(belief, belief.getTruth(), questionTask, nal);
@@ -171,7 +172,7 @@ public class LocalRules {
      * @param memory       Reference to the memory
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(Task belief, final Truth projectedTruth, final Task questionTask, final NAL nal) {
+    public static Task trySolution(Task belief, final Truth projectedTruth, final Task questionTask, final Premise nal) {
 
         if (belief == null) return null;
 
@@ -179,7 +180,7 @@ public class LocalRules {
         final Task inputBelief = belief;
 
         Sentence question = questionTask.sentence;
-        Memory memory = nal.memory;
+        Memory memory = nal.getMemory();
 
         if (!TemporalRules.matchingOrder(question, belief)) {
             //System.out.println("Unsolved: Temporal order not matching");
@@ -198,7 +199,7 @@ public class LocalRules {
 
             Term u[] = new Term[]{content, question.getTerm()};
 
-            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
+            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.getRandom());
 
             if (unified) {
 
@@ -273,7 +274,7 @@ public class LocalRules {
                             .solution(belief),
                     "Adjusted Solution",
                     true, false, false);*/
-            nal.memory.add(belief);
+            nal.getMemory().add(belief);
         }
         else {
             belief.accumulate(budget);

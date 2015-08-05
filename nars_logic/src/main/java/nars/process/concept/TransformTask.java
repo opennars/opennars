@@ -13,6 +13,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Task;
@@ -32,15 +33,17 @@ import java.util.Arrays;
 public class TransformTask extends ConceptFireTask {
 
     @Override
-    public final boolean apply(ConceptProcess f, TaskLink t) {
+    public final boolean apply(Premise f, TaskLink t) {
 
         if (t.type == TermLink.TRANSFORM) {
 
 
-            f.setBelief(null);
+            if (f instanceof ConceptProcess)
+                ((ConceptProcess)f).setBelief(null);
 
 
             // to turn this into structural logic as below?
+
             Compound content = f.getTask().getTerm();
             short[] indices = t.index;
             Term inh = null;
@@ -69,8 +72,8 @@ public class TransformTask extends ConceptFireTask {
             }
 
 
-            f.emit(Events.TermLinkTransformed.class, t, f.getConcept(), this);
-            f.memory.logic.TERM_LINK_TRANSFORM.hit();
+            f.getMemory().emit(Events.TermLinkTransformed.class, t, f.getConcept(), this);
+            f.getMemory().logic.TERM_LINK_TRANSFORM.hit();
         }
 
         return true;
@@ -87,7 +90,7 @@ public class TransformTask extends ConceptFireTask {
      * @param oldContent The whole content
      * @param indices The indices of the TaskLink
      */
-    public static Task transformProductImage(final Inheritance inh, final Compound oldContent, final short[] indices, final NAL nal) {
+    public static Task transformProductImage(final Inheritance inh, final Compound oldContent, final short[] indices, final Premise nal) {
         Term subject = inh.getSubject();
         Term predicate = inh.getPredicate();
         if (inh.equals(oldContent)) {
@@ -198,7 +201,7 @@ public class TransformTask extends ConceptFireTask {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformSubjectPI(Compound subject, Term predicate, NAL nal) {
+    private static void transformSubjectPI(Compound subject, Term predicate, Premise nal) {
         Truth truth = nal.getTask().sentence.truth;
         Budget budget;
         Inheritance inheritance;
@@ -253,7 +256,7 @@ public class TransformTask extends ConceptFireTask {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformPredicatePI(Term subject, Compound predicate, NAL nal) {
+    private static void transformPredicatePI(Term subject, Compound predicate, Premise nal) {
         Truth truth = nal.getTask().sentence.truth;
         Budget budget;
         Inheritance inheritance;

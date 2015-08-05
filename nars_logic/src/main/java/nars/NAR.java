@@ -15,6 +15,7 @@ import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
+import nars.premise.Premise;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
@@ -337,13 +338,13 @@ public class NAR extends Container implements Runnable {
         return null;
     }
 
-    public TaskProcess inputDirect(final TaskSeed t) {
+    public Premise inputDirect(final TaskSeed t) {
         return inputDirect(t.get());
     }
 
     /** input a task via direct TaskProcessing
      * @return the TaskProcess, after it has executed (synchronously) */
-    public TaskProcess inputDirect(final Task t) {
+    public Premise inputDirect(final Task t) {
         return TaskProcess.run(this, t);
     }
 

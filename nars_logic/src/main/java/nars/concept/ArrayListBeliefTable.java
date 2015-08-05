@@ -1,7 +1,7 @@
 package nars.concept;
 
 import nars.AbstractMemory;
-import nars.process.NAL;
+import nars.premise.Premise;
 import nars.task.Task;
 
 import static nars.nal.nal1.LocalRules.revisibleTermsAlreadyEqual;
@@ -125,7 +125,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //    }
 
     @Override
-    public Task add(Task t, Ranker r, Concept c, NAL nal) {
+    public Task add(Task t, Ranker r, Concept c, Premise nal) {
 
         final AbstractMemory memory = c.getMemory();
 

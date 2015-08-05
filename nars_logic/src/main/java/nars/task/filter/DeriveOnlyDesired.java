@@ -4,7 +4,7 @@
  */
 package nars.task.filter;
 
-import nars.process.NAL;
+import nars.premise.Premise;
 import nars.task.TaskSeed;
 
 /**
@@ -14,7 +14,7 @@ import nars.task.TaskSeed;
 public class DeriveOnlyDesired implements DerivationFilter {
 
     @Override
-    public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised) {
+    public String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
         if (!task.isGoal()) {
             if (task.isEternal())
                 return "Not Goal";

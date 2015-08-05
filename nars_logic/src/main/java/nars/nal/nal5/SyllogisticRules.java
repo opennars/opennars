@@ -28,6 +28,7 @@ import nars.budget.BudgetFunctions;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -483,7 +484,7 @@ public final class SyllogisticRules {
             return null;
         }
 
-        final Sentence taskSentence = nal.getTask().sentence;
+        final Sentence taskSentence = nal.getTask();
         final Sentence beliefSentence = nal.getBelief();
 
         if (beliefSentence == null)
@@ -509,7 +510,7 @@ public final class SyllogisticRules {
         } else {
             //new stamp, inferring occurence time from the sentences
             //st = nal.newStamp(mainSentence, subSentence);
-            occ = NAL.inferOccurrenceTime(mainSentence.sentence, subSentence);
+            occ = Premise.inferOccurrenceTime(mainSentence, subSentence);
         }
 
         Truth beliefTruth = beliefSentence.truth;

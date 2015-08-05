@@ -18,8 +18,8 @@ import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.narsese.NarseseParser;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
@@ -242,7 +242,7 @@ public class Derivations extends DirectedMultigraph {
         };
     }
 
-    static Iterable<Task> getTasks(NAL n, int taskStart, int taskEnd) {
+    static Iterable<Task> getTasks(Premise n, int taskStart, int taskEnd) {
         if (taskStart == taskEnd)
             return Collections.emptyList();
         return Iterables.limit(Iterables.skip(null /*n.getNewTasks()*/, taskStart), taskEnd - taskStart); //TODO see if derivations can be noticed another way

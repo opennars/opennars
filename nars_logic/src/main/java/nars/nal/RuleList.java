@@ -9,18 +9,18 @@ import java.util.List;
  */
 public class RuleList<X> {
 
-    public final List<LogicRule<X>> rules = new ArrayList();
+    public final List<LogicStage<X>> rules = new ArrayList();
 
     public RuleList() {
         super();
     }
-    public RuleList(final LogicRule<X>[] rules) {
+    public RuleList(final LogicStage<X>[] rules) {
         if (rules!=null)
-            for (LogicRule<X> l : rules)
+            for (LogicStage<X> l : rules)
                 add(l);
     }
 
-    public boolean add(final LogicRule l) {
+    public boolean add(final LogicStage l) {
         return rules.add(l);
     }
 

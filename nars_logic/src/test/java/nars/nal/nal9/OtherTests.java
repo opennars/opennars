@@ -19,12 +19,12 @@ public class OtherTests extends ScriptNALTest {
 
     @Parameterized.Parameters(name= "{1} {0}")
     public static Collection configurations() {
-        return getParams(new String[]{"operator", "other"},
+        return getParams(new String[]{/*"operator",*/ "other"},
                 new Default()
         );
     }
 
-    public int getMaxCycles() { return 200; }
+    public int getMaxCycles() { return 600; }
 
 
 }

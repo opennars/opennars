@@ -31,6 +31,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal7.TemporalRules;
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -118,9 +119,9 @@ public final class StructuralRules {
      * {<(S*T) --> (P*T)>, S@(S*T)} |- <S --> P>
      *
      * @param statement The premise
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    static void structuralDecompose2(Statement statement, int index, NAL nal) {
+    static void structuralDecompose2(Statement statement, int index, Premise p) {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
 
@@ -152,16 +153,16 @@ public final class StructuralRules {
         if (content == null) {
             return;
         }
-        Task task = nal.getTask();
+        Task task = p.getTask();
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
-            budget = BudgetFunctions.compoundBackward(content, nal);
+            budget = BudgetFunctions.compoundBackward(content, p);
         } else {
-            budget = BudgetFunctions.compoundForward(truth, content, nal);
+            budget = BudgetFunctions.compoundForward(truth, content, p);
         }
-        nal.deriveSingle(content, truth, budget);
+        p.deriveSingle(content, truth, budget);
     }
 
     /**
@@ -301,16 +302,16 @@ public final class StructuralRules {
      *  @param subject The subject of the new task
      * @param predicate The predicate of the new task
      * @param truth The truth value of the new task
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    private static Task structuralStatement(final Term subject, final Term predicate, final int order, final Truth truth, final NAL nal) {
+    private static Task structuralStatement(final Term subject, final Term predicate, final int order, final Truth truth, final Premise p) {
 
-        final Term oldContent = nal.getTask().getTerm();
+        final Term oldContent = p.getTask().getTerm();
         if (oldContent instanceof Statement) {
             Statement content = Statement.make(oldContent.operator(), subject, predicate, order);
             if (content != null) {
-                Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
-                return nal.deriveSingle(content, truth, budget);
+                Budget budget = BudgetFunctions.compoundForward(truth, content, p);
+                return p.deriveSingle(content, truth, budget);
             }
         }
         return null;
@@ -323,9 +324,9 @@ public final class StructuralRules {
      * @param compound The set compound
      * @param statement The premise
      * @param side The location of the indicated term in the premise
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    static void transformSetRelation(Compound compound, Statement statement, short side, NAL nal) {
+    static void transformSetRelation(Compound compound, Statement statement, short side, Premise p) {
         if (compound.length() > 1) {
             return;
         }
@@ -351,16 +352,16 @@ public final class StructuralRules {
             return;
         }
 
-        Task task = nal.getTask();
+        Task task = p.getTask();
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;
         Budget budget;
         if (sentence.isJudgment()) {
-            budget = BudgetFunctions.compoundForward(truth, content, nal);
+            budget = BudgetFunctions.compoundForward(truth, content, p);
         } else {
-            budget = BudgetFunctions.compoundBackward(content, nal);
+            budget = BudgetFunctions.compoundBackward(content, p);
         }
-        nal.deriveSingle(content, truth, budget);
+        p.deriveSingle(content, truth, budget);
     }
 
 
@@ -443,10 +444,10 @@ public final class StructuralRules {
      * {A, A@(--, A)} |- (--, A)
      *
      * @param content The premise
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    public static Task transformNegation(final Compound content, final NAL nal) {
-        Task task = nal.getTask();
+    public static Task transformNegation(final Compound content, final Premise p) {
+        Task task = p.getTask();
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;
 
@@ -454,12 +455,12 @@ public final class StructuralRules {
         
         if (sentence.isJudgment() || sentence.isGoal()) {
             truth = TruthFunctions.negation(truth);
-            budget = BudgetFunctions.compoundForward(truth, content, nal);
+            budget = BudgetFunctions.compoundForward(truth, content, p);
         } else {
-            budget = BudgetFunctions.compoundBackward(content, nal);
+            budget = BudgetFunctions.compoundBackward(content, p);
         }
 
-        return nal.deriveSingle(content, truth, budget);
+        return p.deriveSingle(content, truth, budget);
     }
 
 }

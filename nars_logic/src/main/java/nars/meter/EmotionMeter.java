@@ -9,9 +9,8 @@ import nars.nal.nal8.Operation;
 import nars.op.mental.InternalExperience;
 import nars.op.mental.consider;
 import nars.op.mental.remind;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
-import nars.process.NAL;
-import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -65,7 +64,7 @@ public class EmotionMeter implements Serializable {
         this.happy += delta;
     }
 
-    public void happy(final float solution, final Task task, @Deprecated final NAL nal) {
+    public void happy(final float solution, final Task task, @Deprecated final Premise p) {
         this.happy += ( task.summary() * solution );
     }
 
@@ -154,11 +153,11 @@ public class EmotionMeter implements Serializable {
         busy(nal.getTask(), nal);
     }
 
-    public void busy(TaskProcess nal) {
+    public void busy(Premise nal) {
         busy(nal.getTask(), nal);
     }
 
-    protected void busy(Task cause, NAL nal) {
+    protected void busy(Task cause, Premise p) {
         this.busy += cause.getPriority();
     }
 

@@ -1,7 +1,7 @@
 package nars.nar;
 
 import nars.nal.LogicPolicy;
-import nars.nal.LogicRule;
+import nars.nal.LogicStage;
 import nars.nal.NALExecuter;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.process.concept.FilterEqualSubtermsInRespectToImageAndProduct;
@@ -23,7 +23,7 @@ public class NewDefault extends Default {
 
         return new LogicPolicy(
 
-                new LogicRule /* <ConceptProcess> */ [] {
+                new LogicStage /* <ConceptProcess> */ [] {
                         new FilterEqualSubtermsInRespectToImageAndProduct(),
                         ruletable
                         //---------------------------------------------

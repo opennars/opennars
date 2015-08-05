@@ -28,6 +28,7 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.link.*;
+import nars.premise.Premise;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -249,7 +250,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    public boolean processBelief(TaskProcess nal, Task task);
+    public boolean processBelief(Premise nal, Task task);
 
     public boolean processGoal(TaskProcess nal, Task task);
 

@@ -1,7 +1,7 @@
 package nars.task.filter;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.process.NAL;
+import nars.premise.Premise;
 import nars.task.TaskSeed;
 
 
@@ -24,7 +24,7 @@ public class MultiplyDerivedBudget implements DerivationFilter {
 
 
     @Override
-    public String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised) {
+    public String reject(final Premise nal, final TaskSeed task, final boolean solution, final boolean revised) {
         if (!solution) {
             final TaskSeed derived = task;
             if (!leak(derived))

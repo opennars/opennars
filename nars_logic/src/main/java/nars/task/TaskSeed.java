@@ -9,7 +9,7 @@ import nars.budget.DirectBudget;
 import nars.io.JSONOutput;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.process.NAL;
+import nars.premise.Premise;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
@@ -623,8 +623,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 //    }
 //
 
-    public TaskSeed<T> budgetCompoundForward(Compound result, NAL nal) {
-        BudgetFunctions.compoundForward(this, getTruth(), result, nal);
+    public TaskSeed<T> budgetCompoundForward(Compound result, Premise p) {
+        BudgetFunctions.compoundForward(this, getTruth(), result, p);
         return this;
     }
 

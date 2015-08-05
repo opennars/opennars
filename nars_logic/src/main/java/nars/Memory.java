@@ -53,8 +53,8 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.premise.Premise;
 import nars.process.CycleProcess;
-import nars.process.NAL;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
@@ -645,7 +645,7 @@ public class Memory implements Serializable, AbstractMemory {
     public void removed(final Task task, final String removalReason) {
         task.log(removalReason);
         if (Global.DEBUG_TASK_HISTORY && Global.DEBUG_DERIVATION_STACKTRACES)
-            task.log(NAL.getNALStack());
+            task.log(Premise.getStack());
         emit(TaskRemove.class, task, removalReason);
         task.delete();
     }

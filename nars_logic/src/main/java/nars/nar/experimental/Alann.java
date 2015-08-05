@@ -21,6 +21,7 @@ import nars.link.*;
 import nars.meter.NARTrace;
 import nars.nal.LogicPolicy;
 import nars.nar.Default;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -135,7 +136,7 @@ public class Alann extends NARSeed {
         }
 
         @Override
-        public boolean processBelief(TaskProcess nal, Task task) {
+        public boolean processBelief(Premise nal, Task task) {
             System.out.println(this + " processBelief " + task);
 
             final TaskLink taskLink = new TaskLink(task, task.getBudget());

@@ -1,11 +1,11 @@
 package nars.process.concept;
 
 import nars.link.TermLink;
-import nars.nal.LogicRule;
+import nars.nal.LogicStage;
 import nars.process.ConceptProcess;
 
 /** when a concept fires a tasklink that fires a termlink */
-abstract public class ConceptFireTaskTerm implements LogicRule<ConceptProcess>  {
+abstract public class ConceptFireTaskTerm implements LogicStage<ConceptProcess> {
 
 
     abstract public boolean apply(ConceptProcess f, TermLink termLink);

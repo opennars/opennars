@@ -5,7 +5,7 @@
 package nars.task.filter;
 
 import nars.nal.nal8.Operation;
-import nars.process.NAL;
+import nars.premise.Premise;
 import nars.task.TaskSeed;
 import nars.term.Compound;
 
@@ -18,14 +18,14 @@ import nars.term.Compound;
 public class DeriveOnlyDemandedTasks implements DerivationFilter {
 
     @Override
-    public final String reject(NAL nal, TaskSeed task, boolean solution, boolean revised) {
+    public final String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
         
 
         Compound x = task.getTerm();
         
         if ((task.isJudgment()) && !(x instanceof Operation)) {
             
-            boolean noConcept = (nal.memory.concept(x) == null);
+            boolean noConcept = (nal.concept(x) == null);
 
             if (noConcept) {
                 //there is no question and goal of this, return

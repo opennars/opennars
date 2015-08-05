@@ -30,19 +30,19 @@ public class TaskRuleTest extends TestCase {
 
         {
             TaskRule x = p.termRaw("< A, A |- A, (Truth_Revision, Desire_Weak)>");
-            assertEquals("((A, A), (A, (Truth_Revision, Desire_Weak)))", x.toString());
+            assertEquals("((%A, %A), (%A, (%Truth_Revision, %Desire_Weak)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
 
         {
             TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (Truth_Revision, Desire_Weak)>");
-            assertEquals("((<A --> B>, <B --> A>), (<A <-> B>, (Truth_Revision, Desire_Weak)))", x.toString());
+            assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (%Truth_Revision, %Desire_Weak)))", x.toString());
             assertEquals(15, x.getVolume());
         }
 
         {
             TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
-            assertEquals("((<A --> B>, <B --> A>), (<A <-> B>, (<Nonsense --> Test>)))", x.toString());
+            assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (<%Nonsense --> %Test>)))", x.toString());
             assertEquals(16, x.getVolume());
         }
 
@@ -55,7 +55,7 @@ public class TaskRuleTest extends TestCase {
         {
             //and the first complete rule:
             TaskRule x = p.termRaw("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
-            assertEquals("((<S --> M>, <P --> M>), (<P <-> S>, (TruthComparison, DesireStrong)))", x.toString());
+            assertEquals("((<%S --> %M>, <%P --> %M>), (<%P <-> %S>, (%TruthComparison, %DesireStrong)))", x.toString());
             assertEquals(15, x.getVolume());
         }
 

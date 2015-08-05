@@ -1,5 +1,6 @@
 package nars.task.filter;
 
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.TaskSeed;
 
@@ -13,6 +14,6 @@ public interface DerivationFilter  {
     /**
      * returns null if allowed to derive, or a String containing a short rejection rule for logging
      */
-    String reject(NAL nal, TaskSeed task, boolean solution, boolean revised);
+    String reject(Premise nal, TaskSeed task, boolean solution, boolean revised);
 
 }

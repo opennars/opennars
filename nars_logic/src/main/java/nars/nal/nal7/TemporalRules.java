@@ -31,6 +31,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.op.mental.Mental;
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -724,7 +725,7 @@ public class TemporalRules {
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final NAL nal) {
+    public static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final Premise p) {
         Budget budget = null;
         boolean feedbackToLinks = false;
         /*if (task == null) {
@@ -732,7 +733,7 @@ public class TemporalRules {
             feedbackToLinks = true;
         }*/
         boolean judgmentTask = task.sentence.isJudgment();
-        final float quality = TemporalRules.solutionQuality(problem, solution, nal.time());
+        final float quality = TemporalRules.solutionQuality(problem, solution, p.time());
         if (quality <= 0)
             return null;
 

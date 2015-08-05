@@ -23,7 +23,7 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.LogicPolicy;
-import nars.nal.LogicRule;
+import nars.nal.LogicStage;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -87,7 +87,7 @@ public class Default extends NARSeed  {
 
         return new LogicPolicy(
 
-                new LogicRule /* <ConceptProcess> */ [] {
+                new LogicStage /* <ConceptProcess> */ [] {
 
                         //A. concept fire tasklink derivation
                         new TransformTask(),

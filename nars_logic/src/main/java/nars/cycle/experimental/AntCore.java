@@ -15,6 +15,7 @@ import nars.io.in.Input;
 import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.premise.Premise;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -105,7 +106,7 @@ public class AntCore extends ConceptWaveCore {
                 Task t = tasks.removeFirst();
                 if (t == null) break;
 
-                TaskProcess tp = TaskProcess.get(memory, t);
+                Premise tp = TaskProcess.get(memory, t);
                 if (tp != null) {
                     run.add(new TaskProcess(memory, t));
                     i++;

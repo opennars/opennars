@@ -4,14 +4,17 @@ package nars.nal;
 import java.util.function.Predicate;
 
 /**
- * Base class for NARS logical reasoner / inference rules
+ * A stage in a NARS logical reasoner / inference pipeline.
+ * It processes a premise and returns true if the pipeline
+ * should be allowed to continue to the next stage, or false
+ * to cancel this premise's processing any further.
  */
-public interface LogicRule<X> extends Predicate<X> {
+public interface LogicStage<X> extends Predicate<X> {
 
     public static final boolean CONTINUE = true;
     public static final boolean STOP = false;
 
-    /** return false to cancel subsequent rules for this object; true to continue */
+    /** return false to stop subsequent rules for this item; true to continue */
     abstract public boolean test(X x);
 
 //    public LogicRule setAction(Consumer<Event<X>> action) {
