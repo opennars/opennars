@@ -31,9 +31,8 @@ public class DefaultMicro extends Default {
         conceptQuestionsMax.set(3);
 
 
-        termLinkMaxReasoned.set(3);
+        conceptTaskTermProcessPerCycle.set(3);
         termLinkMaxMatched.set(5);
-        termLinkRecordLength.set(6);
 
 
         //add derivation filters here:

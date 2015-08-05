@@ -136,6 +136,11 @@ public class NAR extends Container implements Runnable {
      * reactivated, a signal for them to empty their state (if necessary).
      */
     public void reset() {
+
+        /* If the doors of perception were cleansed every thing would
+        appear to NARS as it is, Infinite */
+        perception.clear();
+
         memory.reset(control);
         control.reset(memory, perception);
     }

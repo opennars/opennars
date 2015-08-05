@@ -3,25 +3,25 @@ package nars.bag.tx;
 import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
-import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 
 /**
 * Applies forgetting to the next sequence of sampled bag items
+ *
+ * NOT thread safe
 */
-public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V> {
-
-    private final Bag<K, V> bag;
-    private float forgetCycles;
-    private AbstractMemory memory;
-    public V current = null;
-    private long now;
+public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K,V> {
 
 
-    public ForgetNext(Bag<K, V> bag) {
-        this.bag = bag;
+    protected float forgetCycles;
+    public V selected = null;
+    protected long now;
+
+
+
+    public BagForgetting() {
         this.forgetCycles = Float.NaN;
     }
 
@@ -47,23 +47,25 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
     }
 
     /** updates with current time, etc. call immediately before update() will be called */
-    public void set(float forgetCycles, AbstractMemory memory) {
+    public void set(float forgetCycles, long now) {
         this.forgetCycles = forgetCycles;
-        this.memory = memory;
-        this.now = memory.time();
+        this.now = now;
     }
 
-    @Override
-    public V update(V v) {
-        /*if (Parameters.DEBUG) {
-            if (!Float.isFinite(forgetCycles))
-                throw new RuntimeException("Invalid forgetCycles parameter; set() method was probably not called prior");
-        }*/
+    public void set(float forgetCycles, AbstractMemory memory) {
+        set(forgetCycles, memory.time());
+    }
 
-        this.current = v;
+
+
+    @Override
+    public V update(final V v) {
+        this.selected = v;
 
         if (!forgettingCouldAffectItemBudget(now, v)) {
-            return null; //unaffected (null means that the item's budget was not changed, so the bag knows it can avoid any reindexing it)
+            //unaffected; null means that the item's budget was not changed,
+            // so the bag knows it can avoid any reindexing it)
+            return null;
         }
 
         Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);

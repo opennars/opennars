@@ -9,10 +9,8 @@ public class DefaultDeep extends Default {
         super();
 
         conceptsFiredPerCycle.set(3);
-        termLinkMaxReasoned.set(8);
+        conceptTaskTermProcessPerCycle.set(8);
         termLinkMaxMatched.set(16);
-        termLinkRecordLength.set(6);
-
 
     }
 

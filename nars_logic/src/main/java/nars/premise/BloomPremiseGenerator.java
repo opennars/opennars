@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * to decide the novelty of termlink/tasklink pairs
  * https://code.google.com/p/guava-libraries/wiki/HashingExplained#BloomFilter
  */
-public class BloomPremiseSelector extends DirectPremiseSelector implements Funnel<Pair<Term, Sentence>> {
+public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator implements Funnel<Pair<Term, Sentence>> {
 
     BloomFilter<Pair<Term,Sentence>> history;
 
@@ -38,7 +38,7 @@ public class BloomPremiseSelector extends DirectPremiseSelector implements Funne
         novel = nonnovel = 0;
     }
 
-    public BloomPremiseSelector() {
+    public BloomPremiseGenerator() {
         super(new AtomicInteger(attempts));
         reset();
     }
@@ -47,7 +47,7 @@ public class BloomPremiseSelector extends DirectPremiseSelector implements Funne
     public boolean validTermLinkTarget(Concept c, TaskLink taskLink, TermLink t) {
         if (!super.validTermLinkTarget(c, taskLink, t)) return false;
 
-        final Pair<Term, Sentence> s = PremiseSelector.pair(taskLink, t);
+        final Pair<Term, Sentence> s = PremiseGenerator.pair(taskLink, t);
 
         final boolean mightContain = history.mightContain(s);
 

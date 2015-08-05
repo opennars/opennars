@@ -108,7 +108,7 @@ public class NLPIRCBot extends IRCBot {
 
         d.shortTermMemoryHistory.set(4);
 
-        d.termLinkMaxReasoned.set(4);
+        d.conceptTaskTermProcessPerCycle.set(4);
 
         d.conceptsFiredPerCycle.set(64);
 

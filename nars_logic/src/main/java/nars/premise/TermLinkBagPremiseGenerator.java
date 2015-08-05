@@ -1,46 +1,73 @@
 package nars.premise;
 
+import nars.bag.tx.ParametricBagForgetting;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.link.TermLinkKey;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 /**
  * Permits any premise to be selected, unfiltered, as decided by the Concept's bag
  * Includes parameter for how many re-attempts in case no termlink was
  * provided by the bag, or if the provided termlink was invalid.
+ *
+ * Not thread safe
  */
-public class DirectPremiseSelector implements PremiseSelector {
+public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLinkKey,TermLink> implements PremiseGenerator, Function<TermLink, ParametricBagForgetting.ForgetAction> {
 
     public final AtomicInteger maxSelectionAttempts;
+    private Concept currentConcept;
+    private TaskLink currentTaskLink;
 
-    public DirectPremiseSelector(AtomicInteger maxSelectionAttempts) {
+
+    public TermLinkBagPremiseGenerator(AtomicInteger maxSelectionAttempts) {
+        super();
         this.maxSelectionAttempts = maxSelectionAttempts;
+        setModel(this);
+
+    }
+
+    @Override
+    public ForgetAction apply(TermLink termLink) {
+
+        if (validTermLinkTarget(currentConcept, currentTaskLink, termLink)) {
+            return ParametricBagForgetting.ForgetAction.SelectAndForget;
+        }
+        else {
+            return ParametricBagForgetting.ForgetAction.Ignore;
+        }
+
     }
 
     @Override
     public @Nullable TermLink nextTermLink(final Concept c, final TaskLink taskLink) {
 
         final int attempting = getMaxAttempts(c);
+        if (attempting == 0) return null;
+
         int r = attempting;
 
-        TermLink result = null;
+        this.currentConcept = c;
+        this.currentTaskLink = taskLink;
+        set(c.getMemory().param.termLinkForgetDurations.floatValue(), c.getMemory().time());
+
         while (r > 0) {
 
             r--;
 
-            result = c.getTermLinks().forgetNext();
-
-            if (validTermLinkTarget(c, taskLink, result))
+            c.getTermLinks().update(this);
+            if (selected != null)
                 break;
 
         }
 
-        onSelect(c, result != null, attempting - r);
+        onSelect(c, selected != null, attempting - r);
 
-        return result;
+        return selected;
     }
 
     /** for statistics and tuning purposes in subclasses */

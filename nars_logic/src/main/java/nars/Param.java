@@ -130,11 +130,9 @@ public abstract class Param implements Serializable {
 
 
     /** Maximum TermLinks used in reasoning for each Task in Concept */
-    public final AtomicInteger termLinkMaxReasoned = new AtomicInteger();
+    public final AtomicInteger conceptTaskTermProcessPerCycle = new AtomicInteger();
 
-    /** Record-length for newly created TermLink's */
-    public final AtomicInteger termLinkRecordLength = new AtomicInteger();
-    
+
     /** Maximum number of beliefs kept in a Concept */
     public final AtomicInteger conceptBeliefsMax = new AtomicInteger();
     

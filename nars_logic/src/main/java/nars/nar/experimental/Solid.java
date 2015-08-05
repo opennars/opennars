@@ -211,7 +211,7 @@ public class Solid extends Default implements CycleProcess {
                 if (tl == null) break;
 
                 ConceptProcess.run(c, tl,
-                        termFires*2, termFires,
+                        termFires,
                         tlfd,
                         cp -> cp.run()
                 );

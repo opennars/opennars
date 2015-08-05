@@ -22,7 +22,7 @@ package nars.premise;
 
 //TODO reimplement and make non-abstract
 
-abstract public class NoveltyRecordPremiseSelector implements PremiseSelector {
+abstract public class NoveltyRecordPremiseGenerator implements PremiseGenerator {
 
     //noveltyHorizon.set(0.7f/termLinksPerCycle);
     //termLinkRecordLength.set(8);

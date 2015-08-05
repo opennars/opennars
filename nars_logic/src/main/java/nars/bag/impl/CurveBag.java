@@ -381,7 +381,7 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
             }
         } else {
 
-            V changed = selector.update(item);
+            final V changed = selector.update(item);
 
             if (changed == null)
                 return item;

@@ -41,7 +41,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.premise.UniquePerCyclePremiseSelector;
+import nars.premise.UniquePerCyclePremiseGenerator;
 import nars.process.CycleProcess;
 import nars.process.concept.*;
 import nars.task.Sentence;
@@ -165,9 +165,9 @@ public class Default extends NARSeed  {
 
         setActiveConcepts(maxConcepts);
 
-        termLinkMaxReasoned.set(termLinksPerCycle);
+        conceptTaskTermProcessPerCycle.set(termLinksPerCycle);
 
-        termLinkMaxMatched.set(3);
+        termLinkMaxMatched.set(8);
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
@@ -455,7 +455,7 @@ public class Default extends NARSeed  {
         return new DefaultConcept(t, b,
                 taskLinks, termLinks,
                 getConceptBeliefGoalRanking(),
-                new UniquePerCyclePremiseSelector(termLinkMaxMatched),
+                new UniquePerCyclePremiseGenerator(termLinkMaxMatched),
                 mem
         );
     }

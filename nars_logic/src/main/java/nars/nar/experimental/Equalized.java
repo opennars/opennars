@@ -126,7 +126,15 @@ public class Equalized extends Default {
         //final Frequency termTypes = new Frequency();
 
         private float getPriority(final Task task, int conceptsToFire) {
-            float f = 1f/(conceptsToFire);
+            //somehow this should be a function of:
+            // # of concepts
+            // concept forget rate
+            // concept bag priority sum and distribution
+            float targetBusyness = 5;
+
+            float f = targetBusyness/(conceptsToFire);
+            if (f > 1f) f = 1f;
+
 
 //            final Compound term = task.getTerm();
 //            long includedTerms = (term.structuralHash() & 0xffffffff);

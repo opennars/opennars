@@ -25,9 +25,9 @@ public class NAL1ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(1),
-                new DefaultMicro(),
-                new Classic(),
-                new Solid(1, 128, 1, 1, 1, 3)
+                new DefaultMicro().setInternalExperience(null),
+                new Classic().setInternalExperience(null),
+                new Solid(1, 16, 1, 1, 1, 1).setInternalExperience(null)
         );
     }
 
@@ -35,7 +35,7 @@ public class NAL1ScriptTests extends ScriptNALTest {
         if (build instanceof Solid)
             return 4; //yes needs only ONE cycle for these tests
 
-        return 500;
+        return 200;
     }
 
 

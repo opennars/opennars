@@ -5,7 +5,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
-import nars.bag.tx.ForgetNext;
+import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.BudgetSource;
@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements Iterable<V>, Consumer<V>, Supplier<V>, Serializable {
 
-    transient protected final ForgetNext<K, V> forgetNext = new ForgetNext(this);
+    transient public final BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
 
 
@@ -288,7 +288,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     public V forgetNext() {
         update(forgetNext);
-        return forgetNext.current;
+        return forgetNext.selected;
     }
 
     /** call this to set the forgetNext settings prior to calling forgetNext() */

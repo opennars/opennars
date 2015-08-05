@@ -7,12 +7,12 @@ import nars.premise.Premise;
 /**
  * when a concept fires a tasklink but before a termlink is selected
  */
-abstract public class ConceptFireTask implements LogicStage<Premise> {
+abstract public class ConceptFireTask<P extends Premise> implements LogicStage<P> {
 
-    abstract public boolean apply(Premise f, TaskLink taskLink);
+    abstract public boolean apply(P f, TaskLink taskLink);
 
     @Override
-    public final boolean test(final Premise f) {
+    public final boolean test(final P f) {
         if (f.getTermLink()==null) {
             return apply(f, f.getTaskLink());
         }

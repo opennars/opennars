@@ -11,7 +11,7 @@ import nars.term.Term;
 /**
  * Model that a Concept uses to decide a Termlink to fire with a given Tasklink
  */
-public interface PremiseSelector {
+public interface PremiseGenerator {
 
     /** a general condition */
     default public boolean validTermLinkTarget(Concept concept, TaskLink c, TermLink t) {

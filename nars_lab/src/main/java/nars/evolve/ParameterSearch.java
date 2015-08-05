@@ -141,15 +141,14 @@ public class ParameterSearch {
     
     public static void main(String[] args) throws Exception {
 
-        //p.termLinkRecordLength.set(10);
-        experiments.clear();
-        for (int i = 1; i < 15; i++) {
-            NAR a = new NAR(new Default());
-            
-            (a.param).termLinkRecordLength.set(i);
-            score("termLinkRecordLength_" + String.format("%03d", i), a);
-        }
-        report();
+//        //p.termLinkRecordLength.set(10);
+//        experiments.clear();
+//        for (int i = 1; i < 15; i++) {
+//            NAR a = new NAR(new Default());
+//
+//            score("termLinkRecordLength_" + String.format("%03d", i), a);
+//        }
+//        report();
 
         //p.beliefCyclesToForget.set(50);
         experiments.clear();
@@ -197,7 +196,7 @@ public class ParameterSearch {
         for (int i = 1; i < 13; i++) {
             NAR a = new NAR(new Default());
             
-            (a.param).termLinkMaxReasoned.set(i);
+            (a.param).conceptTaskTermProcessPerCycle.set(i);
             score("termLinkMaxReasoned_" + String.format("%03d", i), a);
         }
         report();

@@ -99,26 +99,25 @@ abstract public class ConceptProcess extends NAL  {
 
         final Param p = memory.param;
         final float tasklinkForgetDurations = p.taskLinkForgetDurations.floatValue();
-        final int termLinkSelections = p.termLinkMaxReasoned.intValue();
-        final int termLinkAttempts = p.termLinkMaxMatched.intValue();
+        final int termLinkSelections = p.conceptTaskTermProcessPerCycle.intValue();
 
         for (int i = 0; i < concepts; i++) {
             Concept c = conceptSource.get();
             if (c==null) continue;
 
             ConceptProcess.run(c,
-                    termLinkSelections, termLinkAttempts,
+                    termLinkSelections,
                     tasklinkForgetDurations,
                     proc
             );
         }
     }
 
-    public static void run(@Nullable final Concept concept, int termLinks, int termLinkAttempts, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
-        run(concept, null, termLinks, termLinkAttempts, taskLinkForgetDurations, proc);
+    public static void run(@Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
+        run(concept, null, termLinks, taskLinkForgetDurations, proc);
     }
 
-    public static void run(@Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, int termLinkAttempts, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
+    public static void run(@Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
         if (concept == null) return;
 
         concept.updateLinks();
@@ -131,9 +130,9 @@ abstract public class ConceptProcess extends NAL  {
 
         proc.accept( new ConceptProcessTaskLink(concept, taskLink) );
 
-        if ((termLinkAttempts > 0) && (taskLink.type!=TermLink.TRANSFORM))
+        if ((termLinks > 0) && (taskLink.type!=TermLink.TRANSFORM))
             ConceptProcess.getTermLinks(concept, taskLink,
-                    termLinks, termLinkAttempts,
+                    termLinks,
                     proc
             );
     }
@@ -142,7 +141,7 @@ abstract public class ConceptProcess extends NAL  {
      * from a concept's TermLink bag
      * @return how many processes generated
      * */
-    public static int getTermLinks(Concept concept, TaskLink t, final int termlinksToReason, final int maxSelections, Consumer<ConceptProcess> proc) {
+    public static int getTermLinks(Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
 
 
         int numTermLinks = concept.getTermLinks().size();
@@ -160,11 +159,10 @@ abstract public class ConceptProcess extends NAL  {
          */
         //float cyclesSincePrevious = memory.timeSinceLastCycle();
 
-        int remainingAttempts = maxSelections;
 
         int remainingProcesses = termlinksToReason;
 
-        while ((remainingAttempts-- > 0) && (remainingProcesses > 0)) {
+        while (remainingProcesses > 0) {
 
            final TermLink bLink = concept.nextTermLink(t);
 
@@ -174,8 +172,9 @@ abstract public class ConceptProcess extends NAL  {
                         new ConceptProcessTaskTermLink(concept, t, bLink)
                 );
 
-                remainingProcesses--;
             }
+
+            remainingProcesses--;
 
         }
 

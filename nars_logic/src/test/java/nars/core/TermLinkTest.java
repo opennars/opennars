@@ -59,10 +59,10 @@ public class TermLinkTest {
         assertEquals(2, tj3.size());
 
 
-        Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<(*,c,d) ==> e>");
-        assertEquals(4, cj2.size());
         List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(*,c,d) ==> e>");
         assertEquals(4, tj2.size()); //4 templates: [<(*,c,d) ==> e>:Ea|Da:(*,c,d), <(*,c,d) ==> e>:Iaa|Haa:c, <(*,c,d) ==> e>:Iab|Hab:d, <(*,c,d) ==> e>:Eb|Db:e]
+        Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<(*,c,d) ==> e>");
+        assertEquals("2 of the links are transform and will not appear in the bag", 2, cj2.size());
 
 
         /*Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>");
@@ -93,11 +93,16 @@ public class TermLinkTest {
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {
         NAR n = nn(term);
-        //Concept c = n.conceptualize(term);
-        Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f)
-        );
+
+        //note: this method also seems to work
+        //Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f) );
+
+        n.input("$1;1;1$ " + term + ".");
+        n.frame(1);
+
+        Concept c = n.concept(term);
+        //System.out.println(c.getTermLinkBuilder().templates());
         assertNotNull(c);
-        n.runWhileNewInput(2);
 
         return c.getTermLinks();
     }
@@ -219,7 +224,7 @@ public class TermLinkTest {
 
         NAR n = new NAR(new Default().level(6));
         n.input(c);
-        n.frame(3);
+        n.frame(10); //allow sufficient time for all subterms to be processed
 
         TermLinkGraph g = new TermLinkGraph(n);
 
@@ -229,6 +234,9 @@ public class TermLinkTest {
         ConnectivityInspector<Term, TermLink> ci = new ConnectivityInspector(g);
         assertTrue("termlinks between the two input concepts form a fully connected graph",
                 ci.isGraphConnected());
+
+        assertEquals(4, g.vertexSet().size());
+        assertEquals(3, g.edgeSet().size());
 
         TermLinkGraph h = new TermLinkGraph().add(n.concept("{x}"), true);
         //System.out.println(h);

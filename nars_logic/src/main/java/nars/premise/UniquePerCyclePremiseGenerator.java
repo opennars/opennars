@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by me on 7/18/15.
  */
-public class UniquePerCyclePremiseSelector extends DirectPremiseSelector {
+public class UniquePerCyclePremiseGenerator extends TermLinkBagPremiseGenerator {
 
     long prevCycle = -1;
 
@@ -25,11 +25,11 @@ public class UniquePerCyclePremiseSelector extends DirectPremiseSelector {
     /** use a soft reference so that this doesnt become attached to any term/sentence pair contents, if it becomes inactive */
     transient SoftReference<Set<Pair<Term,Sentence>>> premisesThisCycle;
 
-    public UniquePerCyclePremiseSelector(AtomicInteger maxSelectionAttempts) {
+    public UniquePerCyclePremiseGenerator(AtomicInteger maxSelectionAttempts) {
         this(maxSelectionAttempts, 1);
     }
 
-    public UniquePerCyclePremiseSelector(AtomicInteger maxSelectionAttempts, int clearAfterCycles) {
+    public UniquePerCyclePremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles) {
         super(maxSelectionAttempts);
         this.clearAfterCycles = clearAfterCycles;
     }
@@ -40,13 +40,12 @@ public class UniquePerCyclePremiseSelector extends DirectPremiseSelector {
             long now = concept.time();
 
 
-
             Set<Pair<Term,Sentence>> s = null;
             if (premisesThisCycle != null)
                 s = premisesThisCycle.get();
 
             if (s == null) {
-                s = Global.newHashSet(0);
+                s = Global.newHashSet(1);
                 premisesThisCycle = new SoftReference(s);
             }
             else {
@@ -55,7 +54,9 @@ public class UniquePerCyclePremiseSelector extends DirectPremiseSelector {
                 }
             }
 
-            return s.add(PremiseSelector.pair(c, t));
+            prevCycle = now;
+
+            return s.add(PremiseGenerator.pair(c, t));
         }
         return false;
     }

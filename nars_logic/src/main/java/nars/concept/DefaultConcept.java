@@ -11,9 +11,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
-import nars.premise.PremiseSelector;
-import nars.process.NAL;
-import nars.process.TaskProcess;
+import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -74,7 +72,7 @@ public class DefaultConcept extends AbstractConcept {
         @Override public int hashCodeOf(Task task) { return task.hashCode(); }
     };
 
-    private final PremiseSelector premiseSelector;
+    private final PremiseGenerator premiseGenerator;
 
 
     /**
@@ -86,11 +84,11 @@ public class DefaultConcept extends AbstractConcept {
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, PremiseSelector ps, final Memory memory) {
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, PremiseGenerator ps, final Memory memory) {
         super(term, b, memory);
 
 
-        this.premiseSelector = ps;
+        this.premiseGenerator = ps;
 
         this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
 
@@ -771,7 +769,7 @@ public class DefaultConcept extends AbstractConcept {
 
     @Override
     public TermLink nextTermLink(TaskLink taskLink) {
-        return premiseSelector.nextTermLink(this, taskLink);
+        return premiseGenerator.nextTermLink(this, taskLink);
     }
 
     /** called by memory, dont call directly */
