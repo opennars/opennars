@@ -25,7 +25,6 @@ import objenome.Container;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
-import objenome.solver.Civilized;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Event;
 import objenome.solver.evolve.event.EventManager;

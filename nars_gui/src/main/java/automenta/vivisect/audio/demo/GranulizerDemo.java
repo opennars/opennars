@@ -2,8 +2,8 @@ package automenta.vivisect.audio.demo;
 
 import automenta.vivisect.Audio;
 import automenta.vivisect.audio.SoundListener;
-import automenta.vivisect.audio.granular.TimeStretchGui;
 import automenta.vivisect.audio.granular.Granulize;
+import automenta.vivisect.audio.granular.TimeStretchGui;
 import automenta.vivisect.audio.sample.SampleLoader;
 import automenta.vivisect.swing.NSlider;
 

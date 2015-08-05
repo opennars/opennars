@@ -1,7 +1,6 @@
 package za.co.knonchalant.builder.converters;
 
 import javafx.scene.Node;
-import javafx.stage.Window;
 import za.co.knonchalant.builder.TaggedParameters;
 
 /**

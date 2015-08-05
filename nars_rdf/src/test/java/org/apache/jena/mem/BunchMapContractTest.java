@@ -18,19 +18,18 @@
 
 package org.apache.jena.mem;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractTest;
-
 import org.xenei.junit.contract.IProducer;
-import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test triple bunch implementations - NOT YET FINISHED

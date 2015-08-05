@@ -18,12 +18,13 @@
 
 package org.apache.jena.graph.compose;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.util.CollectionFactory;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.shared.impl.PrefixMappingImpl ;
-import org.apache.jena.util.CollectionFactory ;
+import java.util.List;
+import java.util.Map;
 
 
 public class PolyadicPrefixMappingImpl extends PrefixMappingImpl implements PrefixMapping

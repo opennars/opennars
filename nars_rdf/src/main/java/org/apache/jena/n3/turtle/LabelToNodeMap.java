@@ -18,11 +18,11 @@
 
 package org.apache.jena.n3.turtle;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
 
 /** Map from _:* form to bNodes
  */

@@ -18,11 +18,11 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.rdf.model.AnonId ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
 
 /**
     A Node has five subtypes: Node_Blank, Node_Anon, Node_URI,  

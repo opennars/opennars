@@ -20,14 +20,14 @@
 ///////////////
 package org.apache.jena.util;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.util.*;
 
 /**
  * <p>

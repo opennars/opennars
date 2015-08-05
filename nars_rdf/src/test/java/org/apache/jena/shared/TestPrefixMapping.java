@@ -18,11 +18,10 @@
 
 package org.apache.jena.shared;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.assembler.JA ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.shared.impl.PrefixMappingImpl ;
-import org.apache.jena.vocabulary.* ;
+import junit.framework.TestSuite;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.vocabulary.*;
 
 /**
     Tests PrefixMappingImpl by subclassing AbstractTestPrefixMapping, qv.

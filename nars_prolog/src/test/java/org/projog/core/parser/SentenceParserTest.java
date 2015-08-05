@@ -1,15 +1,13 @@
 package org.projog.core.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.parseSentence;
-import static org.projog.TestUtils.write;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.Operands;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.parseSentence;
+import static org.projog.TestUtils.write;
 
 public class SentenceParserTest {
    @Test

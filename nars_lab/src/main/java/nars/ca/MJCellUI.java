@@ -4,9 +4,13 @@ package nars.ca;// Mirek's Java Cellebration
 // User interface
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 class MJCellUI extends Frame {
 	public MJRules mjr;

@@ -18,8 +18,9 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
      TripleStore - interface for bulk storage of triples used in composed graphs.

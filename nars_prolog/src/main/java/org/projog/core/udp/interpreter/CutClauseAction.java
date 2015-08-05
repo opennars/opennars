@@ -1,11 +1,11 @@
 package org.projog.core.udp.interpreter;
 
-import java.util.Map;
-
 import org.projog.core.CutException;
 import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PVar;
+
+import java.util.Map;
 
 /**
  * A clause whose body consists of a single cut ({@code !}) predicate.

@@ -18,8 +18,8 @@
 
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.impl.ResourceImpl ;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.impl.ResourceImpl;
 /**
  * This class includes fragment IDs from the
  * <a href="http://www.w3.org/TR/rdf-syntax-grammar">

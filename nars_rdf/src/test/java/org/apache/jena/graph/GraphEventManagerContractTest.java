@@ -18,26 +18,21 @@
 
 package org.apache.jena.graph;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
+import org.apache.jena.testing_framework.GraphHelper;
+import org.apache.jena.testing_framework.NodeCreateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.Mockito;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractTest;
-
-import static org.junit.Assert.*;
-
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphEventManager;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.testing_framework.GraphHelper;
 import org.xenei.junit.contract.IProducer;
-import org.apache.jena.testing_framework.NodeCreateUtils;
 
-import static org.apache.jena.testing_framework.GraphHelper.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.apache.jena.testing_framework.GraphHelper.tripleArray;
+import static org.junit.Assert.*;
 
 /**
  * An abstract test that tests EventManager implementations to ensure they

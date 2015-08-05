@@ -18,9 +18,11 @@
 
 package org.apache.jena.rdf.model;
 
-import java.util.Iterator;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ValidityReport;
 
-import org.apache.jena.reasoner.* ;
+import java.util.Iterator;
 
 /**
  * An extension to the normal Model interface that supports access to any

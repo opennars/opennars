@@ -18,11 +18,14 @@
 
 package org.apache.jena.graph.compose.test;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.graph.impl.GraphBase ;
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphStatisticsHandler;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 public class TestUnionStatistics extends GraphTestBase
     {

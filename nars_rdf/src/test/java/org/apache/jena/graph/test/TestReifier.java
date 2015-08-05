@@ -18,12 +18,12 @@
 
 package org.apache.jena.graph.test;
 
-import java.lang.reflect.Constructor ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.mem.GraphMem;
+import org.apache.jena.shared.JenaException;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.mem.GraphMem ;
-import org.apache.jena.shared.JenaException ;
+import java.lang.reflect.Constructor;
 
 /**
     This class tests the reifiers of ordinary GraphMem graphs.

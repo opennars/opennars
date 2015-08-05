@@ -2,11 +2,8 @@ package ca.nengo.test.lemon;
 
 import automenta.vivisect.swing.ColorArray;
 import ca.nengo.model.SimulationException;
-import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.ui.lib.world.handler.KeyboardHandler;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
-import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
 
 import java.awt.*;

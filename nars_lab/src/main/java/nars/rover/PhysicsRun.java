@@ -27,7 +27,6 @@ package nars.rover;
 
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
-import nars.NAR;
 import nars.rover.physics.PhysicsController;
 import nars.rover.physics.PhysicsController.MouseBehavior;
 import nars.rover.physics.PhysicsController.UpdateBehavior;
@@ -35,7 +34,8 @@ import nars.rover.physics.TestbedErrorHandler;
 import nars.rover.physics.TestbedState;
 import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.gl.JoglPanel;
-import nars.rover.physics.j2d.*;
+import nars.rover.physics.j2d.TestPanelJ2D;
+import nars.rover.physics.j2d.TestbedSidePanel;
 
 import javax.swing.*;
 import java.awt.*;

@@ -24,11 +24,10 @@
 
 package automenta.vnc.viewer.swing;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.JToggleButton;
 
 public class ModifierButtonEventListener {
 	final Map<Integer, JToggleButton> buttons = new HashMap<>();

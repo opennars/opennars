@@ -1,7 +1,6 @@
 package nars.rover.physics.external;
 
 
-import nars.checkers.Game;
 import nars.rover.physics.external.particles.EmitterSettings;
 import nars.rover.physics.external.particles.ParticleEmitter;
 import org.jbox2d.common.Vec2;

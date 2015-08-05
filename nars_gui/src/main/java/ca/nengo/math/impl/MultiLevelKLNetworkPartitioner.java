@@ -1,10 +1,10 @@
 package ca.nengo.math.impl;
 
 import ca.nengo.math.NetworkPartitioner;
-import ca.nengo.model.Node;
 import ca.nengo.model.NSource;
-import ca.nengo.model.Projection;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.Node;
+import ca.nengo.model.Projection;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.NetworkImpl.SourceWrapper;
 import ca.nengo.model.impl.NetworkImpl.TargetWrapper;

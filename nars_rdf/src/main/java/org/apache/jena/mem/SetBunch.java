@@ -18,14 +18,14 @@
 
 package org.apache.jena.mem;
 
-import java.util.HashSet ;
-import java.util.Iterator ;
-import java.util.Set ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class SetBunch implements TripleBunch
     {

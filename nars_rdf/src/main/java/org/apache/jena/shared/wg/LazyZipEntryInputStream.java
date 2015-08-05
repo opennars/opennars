@@ -19,8 +19,10 @@
 package org.apache.jena.shared.wg;
 
 
-import java.io.*;
-import java.util.zip.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  *In test cases we cannot open all the input files

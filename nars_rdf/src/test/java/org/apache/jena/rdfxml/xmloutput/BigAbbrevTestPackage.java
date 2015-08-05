@@ -18,7 +18,8 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class BigAbbrevTestPackage extends TestCase
     {

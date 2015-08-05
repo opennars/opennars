@@ -18,12 +18,12 @@
 
 package org.apache.jena.graph.test;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphListener;
+import org.apache.jena.graph.Triple;
+
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.GraphListener ;
-import org.apache.jena.graph.Triple ;
 
 /**
  * These tests are for listeners that add or delete

@@ -7,7 +7,6 @@ package jurls.core.brain;
 
 import jurls.core.LearnerAndActor;
 import jurls.core.approximation.ParameterizedFunctionGenerator;
-import jurls.core.reinforcementlearning.EpsilonGreedyActionSelector;
 import jurls.core.reinforcementlearning.RLParameters;
 import jurls.core.utils.Utils;
 

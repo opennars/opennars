@@ -12,9 +12,9 @@ import nars.gui.NARSwing;
 import nars.io.Texts;
 import nars.io.out.TextOutput;
 import nars.nar.Default;
+import nars.op.io.say;
 import nars.term.Atom;
 import nars.term.Term;
-import nars.op.io.say;
 import nars.util.language.Twokenize;
 
 import java.io.File;

@@ -18,9 +18,9 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.graph.impl.* ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.shared.PrefixMapping;
 
 /**
     An RDF node holding a literal value. Literals may have datatypes.

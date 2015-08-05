@@ -18,10 +18,10 @@
 
 package org.apache.jena.rdfxml.xmlinput ;
 
-import junit.framework.Test ;
-import junit.framework.TestSuite ;
-import org.apache.jena.iri.IRIFactory ;
-import org.apache.jena.shared.wg.TestInputStreamFactory ;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.shared.wg.TestInputStreamFactory;
 
 public class TestARPMain
 {

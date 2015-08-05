@@ -18,26 +18,20 @@
 
 package org.apache.jena.testing_framework;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-
+import org.apache.jena.graph.Factory;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.AnonId;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.graph.Factory;
+import org.junit.Test;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Class that produces RDF and TTL data, a Graph and a Model that all contain

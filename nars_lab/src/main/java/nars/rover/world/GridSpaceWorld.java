@@ -8,9 +8,9 @@ import nars.grid2d.*;
 import nars.grid2d.map.Maze;
 import nars.rover.PhysicsModel;
 import nars.rover.RoverWorld;
+import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.j2d.SwingDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
-import nars.rover.physics.gl.JoglDraw;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 

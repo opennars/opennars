@@ -18,9 +18,9 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import org.apache.jena.datatypes.BaseDatatype ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.graph.impl.LiteralLabel ;
+import org.apache.jena.datatypes.BaseDatatype;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.graph.impl.LiteralLabel;
 
 /** rdf:langString.
  * This covers the unusual case of "foo"^^rdf:langString

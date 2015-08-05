@@ -18,7 +18,8 @@
 
 package org.apache.jena.util;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * All developers should edit this file to add their tests.

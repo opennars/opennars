@@ -18,7 +18,7 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.graph.* ;
+import org.apache.jena.graph.Graph;
 
 /**
     Exception that may be thrown if an operation is attempted on a closed graph.

@@ -18,27 +18,27 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
-import java.io.* ;
-import java.util.Collection ;
-import java.util.HashSet ;
-import java.util.Iterator ;
-import java.util.Set ;
-import java.util.regex.Pattern ;
+import org.apache.jena.graph.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler;
+import org.apache.jena.rdf.model.impl.Util;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.rdfxml.xmloutput.impl.BaseXMLWriter;
+import org.apache.jena.rdfxml.xmloutput.impl.SimpleLogger;
+import org.apache.jena.shared.BadURIException;
+import org.apache.jena.shared.InvalidPropertyURIException;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.vocabulary.RDF;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.RDFReader ;
-import org.apache.jena.rdf.model.RDFWriter ;
-import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler ;
-import org.apache.jena.rdf.model.impl.Util ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.rdfxml.xmloutput.impl.BaseXMLWriter ;
-import org.apache.jena.rdfxml.xmloutput.impl.SimpleLogger ;
-import org.apache.jena.shared.BadURIException ;
-import org.apache.jena.shared.InvalidPropertyURIException ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.vocabulary.RDF ;
+import java.io.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class TestXMLFeatures extends XMLOutputTestBase {
 	// static protected Logger logger = LoggerFactory.getLogger( TestXMLFeatures.class );

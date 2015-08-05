@@ -19,10 +19,11 @@
 package org.apache.jena.assembler.test;
 
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.MemoryModelAssembler ;
-import org.apache.jena.mem.GraphMemBase ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.MemoryModelAssembler;
+import org.apache.jena.mem.GraphMemBase;
+import org.apache.jena.rdf.model.Model;
 
 public class TestMemoryModelAssembler extends AssemblerTestBase
     {

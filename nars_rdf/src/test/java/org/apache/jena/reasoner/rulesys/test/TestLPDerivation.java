@@ -18,20 +18,20 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.*;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.rulesys.FBRuleInfGraph;
+import org.apache.jena.reasoner.rulesys.FBRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.reasoner.rulesys.RuleDerivation;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.Derivation ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.rulesys.FBRuleInfGraph ;
-import org.apache.jena.reasoner.rulesys.FBRuleReasoner ;
-import org.apache.jena.reasoner.rulesys.Rule ;
-import org.apache.jena.reasoner.rulesys.RuleDerivation ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
 
 /**
  * Test the derivation tracing of the LP system.

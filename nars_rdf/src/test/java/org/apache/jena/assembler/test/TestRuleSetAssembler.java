@@ -18,12 +18,17 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.BadObjectException;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.RuleSet;
+import org.apache.jena.assembler.assemblers.RuleSetAssembler;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.rulesys.Rule;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.RuleSetAssembler ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.rulesys.Rule ;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TestRuleSetAssembler extends AssemblerTestBase
     {

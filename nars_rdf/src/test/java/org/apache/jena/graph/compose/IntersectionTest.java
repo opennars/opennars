@@ -18,22 +18,17 @@
 
 package org.apache.jena.graph.compose;
 
-import static org.apache.jena.testing_framework.GraphHelper.*;
-import static org.junit.Assert.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.testing_framework.AbstractGraphProducer;
+import org.junit.runner.RunWith;
+import org.xenei.junit.contract.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.runner.RunWith;
-import org.xenei.junit.contract.Contract;
-import org.xenei.junit.contract.ContractImpl;
-import org.xenei.junit.contract.ContractSuite;
-import org.xenei.junit.contract.ContractTest;
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphUtil;
-import org.apache.jena.graph.compose.Intersection;
-import org.apache.jena.testing_framework.AbstractGraphProducer;
-import org.xenei.junit.contract.IProducer;
+import static org.apache.jena.testing_framework.GraphHelper.*;
+import static org.junit.Assert.fail;
 
 @RunWith(ContractSuite.class)
 @ContractImpl(Intersection.class)

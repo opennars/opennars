@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
-import java.io.FileWriter ;
-import java.io.IOException ;
-import java.lang.reflect.InvocationTargetException ;
-import java.util.* ;
+import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers;
+import org.apache.jena.rdfxml.xmlinput.impl.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
 
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
-import org.apache.jena.rdfxml.xmlinput.impl.* ;
-import org.xml.sax.Attributes ;
-import org.xml.sax.SAXParseException ;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * For each state s, for each element-attribute event e1, - test s, e1 - if s,

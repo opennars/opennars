@@ -1,13 +1,13 @@
 package org.projog.core.function.list;
 
-import static org.projog.core.term.TermUtils.backtrack;
-
 import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
+
+import static org.projog.core.term.TermUtils.backtrack;
 
 // Moved methods to separate class so can be used by both MapList and SubList. If useful then move to TermUtils.
 class PartialApplicationUtils {

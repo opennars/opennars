@@ -2,8 +2,8 @@ package ca.nengo.neural.neuron.impl;
 
 import ca.nengo.model.*;
 import ca.nengo.model.impl.RealOutputImpl;
-import ca.nengo.neural.impl.SpikeOutputImpl;
 import ca.nengo.neural.SpikeOutput;
+import ca.nengo.neural.impl.SpikeOutputImpl;
 import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.neural.neuron.SpikeGenerator;
 import junit.framework.TestCase;

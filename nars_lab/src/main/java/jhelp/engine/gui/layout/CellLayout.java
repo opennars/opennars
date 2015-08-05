@@ -7,9 +7,9 @@
  */
 package jhelp.engine.gui.layout;
 
-import java.awt.Dimension;
-
 import jhelp.engine.gui.components.Component;
+
+import java.awt.*;
 
 /**
  * Layout by cells<br>

@@ -5,10 +5,10 @@
 package nars.tictactoe;
 
 import automenta.vivisect.swing.NPanel;
-import nars.util.event.Reaction;
 import nars.Events.FrameEnd;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.util.event.Reaction;
 
 import javax.swing.*;
 import java.awt.*;

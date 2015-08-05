@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.model.Literal ;
-import org.apache.jena.rdf.model.RDFNode ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.StmtIterator ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.PropertyNotFoundException ;
-import org.apache.jena.test.JenaTestBase ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.PropertyNotFoundException;
+import org.apache.jena.test.JenaTestBase;
+import org.apache.jena.vocabulary.RDF;
 import org.junit.Assert;
 
 public class TestResourceMethods extends AbstractModelTestBase

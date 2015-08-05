@@ -7,19 +7,14 @@
  */
 package jhelp.engine.gui.components;
 
-import java.util.concurrent.locks.ReentrantLock;
-
-import jhelp.engine.JHelpSceneRenderer;
-import jhelp.engine.Material;
-import jhelp.engine.Node;
-import jhelp.engine.NodeWithMaterial;
-import jhelp.engine.PickUVlistener;
-import jhelp.engine.Texture;
+import jhelp.engine.*;
 import jhelp.engine.event.NodeListener;
 import jhelp.engine.util.ColorsUtil;
 import jhelp.util.text.UtilText;
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedVerySimpleTask;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Window as material<br>

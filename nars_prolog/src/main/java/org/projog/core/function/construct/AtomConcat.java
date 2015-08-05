@@ -1,8 +1,5 @@
 package org.projog.core.function.construct;
 
-import static org.projog.core.term.PrologOperator.ATOM;
-import static org.projog.core.term.TermUtils.getAtomName;
-
 import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
@@ -11,6 +8,9 @@ import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
+
+import static org.projog.core.term.PrologOperator.ATOM;
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /* TEST
  % Examples of when all three terms are atoms:

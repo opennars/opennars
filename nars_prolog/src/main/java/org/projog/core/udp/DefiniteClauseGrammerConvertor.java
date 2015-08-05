@@ -1,18 +1,11 @@
 package org.projog.core.udp;
 
-import static org.projog.core.KnowledgeBaseUtils.CONJUNCTION_PREDICATE_NAME;
-import static org.projog.core.KnowledgeBaseUtils.IMPLICATION_PREDICATE_NAME;
-import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
+import org.projog.core.ProjogException;
+import org.projog.core.term.*;
 
 import java.util.ArrayList;
 
-import org.projog.core.ProjogException;
-import org.projog.core.term.PList;
-import org.projog.core.term.ListFactory;
-import org.projog.core.term.PStruct;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
-import org.projog.core.term.PVar;
+import static org.projog.core.KnowledgeBaseUtils.*;
 
 /**
  * Provides support for Definite Clause Grammars (DCG).

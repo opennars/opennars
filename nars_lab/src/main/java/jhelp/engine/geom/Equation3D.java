@@ -7,12 +7,6 @@
  */
 package jhelp.engine.geom;
 
-import jhelp.math.Rotf;
-import jhelp.math.Vec3f;
-
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-
 import jhelp.engine.NodeType;
 import jhelp.engine.Object3D;
 import jhelp.engine.Vertex;
@@ -20,10 +14,15 @@ import jhelp.engine.event.Equation3DListener;
 import jhelp.engine.twoD.Line2D;
 import jhelp.engine.twoD.Path;
 import jhelp.engine.util.Math3D;
+import jhelp.math.Rotf;
+import jhelp.math.Vec3f;
 import jhelp.util.math.formal.Function;
 import jhelp.util.math.formal.Variable;
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedVerySimpleTask;
+
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * Equation 3D.<br>

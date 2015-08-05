@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph;
 
-import java.util.*;
+import java.util.List;
 
 /**
     The component of a graph responsible for managing events and listeners.

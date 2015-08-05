@@ -18,18 +18,18 @@
 
 package org.apache.jena.graph.test;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.datatypes.xsd.AbstractDateTime;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.rdf.model.*;
+import org.junit.Assert;
+
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Calendar;
-import java.util.GregorianCalendar ;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.apache.jena.datatypes.xsd.AbstractDateTime ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
-import org.apache.jena.rdf.model.* ;
-import org.junit.Assert ;
+import java.util.GregorianCalendar;
 
 /**
  * Tests behaviour of the AbstractDateTime support, specifically for 

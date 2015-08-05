@@ -19,13 +19,13 @@
 package org.apache.jena.graph.test;
 
 
-import java.util.Arrays ;
-import java.util.Iterator ;
-import java.util.List ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.*;
+import org.apache.jena.mem.GraphMem;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.mem.GraphMem ;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Version of graph tests that set up a listener that copies all changes

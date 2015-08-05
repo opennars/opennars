@@ -1,7 +1,6 @@
 package nars.rl.hai;
 
 import jurls.core.LearnerAndActor;
-import nars.Memory;
 
 
 /**

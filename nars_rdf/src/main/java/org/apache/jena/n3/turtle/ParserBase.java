@@ -18,18 +18,18 @@
 
 package org.apache.jena.n3.turtle;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.n3.IRIResolver ;
-import org.apache.jena.n3.JenaURIException ;
-import org.apache.jena.rdf.model.AnonId ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.shared.impl.PrefixMappingImpl ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.n3.IRIResolver;
+import org.apache.jena.n3.JenaURIException;
+import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.vocabulary.RDF;
 
 @SuppressWarnings("deprecation")
 public class ParserBase

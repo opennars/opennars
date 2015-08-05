@@ -23,10 +23,13 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import org.apache.jena.enhanced.* ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.Property ;
+
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.enhanced.Implementation;
+import org.apache.jena.graph.Node;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.model.Property;
 
 
 /**

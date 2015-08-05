@@ -18,15 +18,17 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.List;
-
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.ModelAssembler ;
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.ModelAssembler;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.rdf.model.test.ModelTestBase;
 import org.junit.Assert;
+
+import java.util.List;
 
 /**
     A model assembler that creates a model with controllable supporting of

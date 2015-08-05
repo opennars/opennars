@@ -23,15 +23,23 @@ package org.apache.jena.ontology;
 // Imports
 ///////////////
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.ontology.impl.OntModelImpl ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.ReasonerFactory ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasonerFactory ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.AssemblerHelp;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.ontology.impl.OntModelImpl;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.rulesys.OWLFBRuleReasonerFactory;
+import org.apache.jena.reasoner.rulesys.OWLMicroReasonerFactory;
+import org.apache.jena.reasoner.rulesys.OWLMiniReasonerFactory;
+import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasonerFactory;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.XSD;
 
 /**
  * <p>

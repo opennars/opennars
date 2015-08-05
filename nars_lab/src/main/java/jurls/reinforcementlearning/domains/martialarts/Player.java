@@ -5,8 +5,6 @@
  */
 package jurls.reinforcementlearning.domains.martialarts;
 
-import java.awt.image.BufferedImage;
-
 /**
  *
  * @author thorsten

@@ -24,8 +24,8 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.apache.jena.rdfxml.xmlinput.ALiteral ;
-import org.apache.jena.rdfxml.xmlinput.states.Frame ;
+import org.apache.jena.rdfxml.xmlinput.ALiteral;
+import org.apache.jena.rdfxml.xmlinput.states.Frame;
 import org.xml.sax.SAXParseException;
 
 public class ARPString extends TaintImpl implements ALiteral {

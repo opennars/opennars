@@ -1,9 +1,9 @@
 package org.projog.core.udp.compiler;
 
+import org.projog.core.term.PTerm;
+
 import static org.projog.core.udp.compiler.CompiledPredicateVariables.ARGUMENT_PREFIX;
 import static org.projog.core.udp.compiler.CompiledPredicateVariables.PLACEHOLDER_PREFIX;
-
-import org.projog.core.term.PTerm;
 
 final class RecursivePredicateInvocationGenerator implements PredicateInvocationGenerator {
    @Override

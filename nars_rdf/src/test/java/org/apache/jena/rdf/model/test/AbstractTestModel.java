@@ -18,11 +18,12 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.test.NodeCreateUtils ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.test.NodeCreateUtils;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.shared.Command;
 
 public abstract class AbstractTestModel extends ModelTestBase
     {

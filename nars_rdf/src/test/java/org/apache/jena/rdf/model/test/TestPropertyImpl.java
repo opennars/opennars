@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.Property ;
-import org.apache.jena.rdf.model.impl.PropertyImpl ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.junit.Assert;
 import junit.framework.TestCase;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.impl.PropertyImpl;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.junit.Assert;
 
 public class TestPropertyImpl extends TestCase
 {

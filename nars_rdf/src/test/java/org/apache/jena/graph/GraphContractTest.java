@@ -18,56 +18,36 @@
 
 package org.apache.jena.graph;
 
-import static org.apache.jena.testing_framework.GraphHelper.assertContainsAll ;
-import static org.apache.jena.testing_framework.GraphHelper.assertIsomorphic ;
-import static org.apache.jena.testing_framework.GraphHelper.assertOmitsAll ;
-import static org.apache.jena.testing_framework.GraphHelper.graphAddTxn ;
-import static org.apache.jena.testing_framework.GraphHelper.graphWith ;
-import static org.apache.jena.testing_framework.GraphHelper.iteratorToSet ;
-import static org.apache.jena.testing_framework.GraphHelper.memGraph ;
-import static org.apache.jena.testing_framework.GraphHelper.node ;
-import static org.apache.jena.testing_framework.GraphHelper.nodeSet ;
-import static org.apache.jena.testing_framework.GraphHelper.triple ;
-import static org.apache.jena.testing_framework.GraphHelper.tripleArray ;
-import static org.apache.jena.testing_framework.GraphHelper.tripleSet ;
-import static org.apache.jena.testing_framework.GraphHelper.txnBegin ;
-import static org.apache.jena.testing_framework.GraphHelper.txnCommit ;
-import static org.apache.jena.testing_framework.GraphHelper.txnRollback ;
-import static org.apache.jena.testing_framework.TestUtils.assertDiffer ;
-import static org.junit.Assert.assertEquals ;
-import static org.junit.Assert.assertFalse ;
-import static org.junit.Assert.assertNotEquals ;
-import static org.junit.Assert.assertNotNull ;
-import static org.junit.Assert.assertSame ;
-import static org.junit.Assert.assertTrue ;
-import static org.junit.Assert.fail ;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.mem.TrackingTripleIterator;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.impl.ReifierStd;
+import org.apache.jena.shared.ClosedException;
+import org.apache.jena.shared.DeleteDeniedException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.testing_framework.AbstractGraphProducer;
+import org.apache.jena.testing_framework.NodeCreateUtils;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.junit.After;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xenei.junit.contract.Contract;
+import org.xenei.junit.contract.ContractTest;
 
-import java.io.InputStream ;
-import java.net.MalformedURLException ;
-import java.net.URISyntaxException ;
-import java.util.Arrays ;
-import java.util.Iterator ;
-import java.util.List ;
-import java.util.Set ;
-import java.util.function.Function ;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.mem.TrackingTripleIterator ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.impl.ReifierStd ;
-import org.apache.jena.shared.ClosedException ;
-import org.apache.jena.shared.DeleteDeniedException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.testing_framework.AbstractGraphProducer ;
-import org.apache.jena.testing_framework.NodeCreateUtils ;
-import org.apache.jena.util.iterator.ClosableIterator ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.junit.After ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
-import org.xenei.junit.contract.Contract ;
-import org.xenei.junit.contract.ContractTest ;
+import static org.apache.jena.testing_framework.GraphHelper.*;
+import static org.apache.jena.testing_framework.TestUtils.assertDiffer;
+import static org.junit.Assert.*;
 
 /**
  * Graph contract test.

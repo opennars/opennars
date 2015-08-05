@@ -18,8 +18,9 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.rdf.model.Resource;
 
 public class TestAssemblerVocabulary extends AssemblerTestBase
     {

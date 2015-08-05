@@ -17,11 +17,7 @@
  */
 package org.apache.jena.testing_framework;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
 
 /**
  * An abstract implementation of the IProducer<RDFNode> interface.

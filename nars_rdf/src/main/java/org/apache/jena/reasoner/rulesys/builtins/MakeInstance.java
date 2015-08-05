@@ -18,9 +18,10 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.impl.BBRuleContext ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.BuiltinException;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.impl.BBRuleContext;
 
 /**
  * Create or lookup an anonymous instance of a property value. Syntax of the call is:

@@ -18,9 +18,9 @@
 
 package org.apache.jena.testing_framework;
 
-import java.util.List;
-
 import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.List;
 
 public interface IIteratorProducer<T> {
 

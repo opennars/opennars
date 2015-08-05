@@ -18,15 +18,21 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.util.*;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.impl.* ;
-import org.apache.jena.reasoner.test.TestUtil ;
+import org.apache.jena.graph.*;
+import org.apache.jena.reasoner.FGraph;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.rulesys.impl.*;
+import org.apache.jena.reasoner.test.TestUtil;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class TestRETE  extends TestCase {
      

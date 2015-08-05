@@ -18,7 +18,7 @@
 
 package org.apache.jena.n3;
 
-import junit.framework.* ;
+import junit.framework.TestSuite;
 
 public class N3TestSuite extends TestSuite
 {

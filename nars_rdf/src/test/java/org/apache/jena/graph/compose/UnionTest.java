@@ -18,26 +18,22 @@
 
 package org.apache.jena.graph.compose;
 
-import static org.apache.jena.testing_framework.GraphHelper.*;
-import static org.junit.Assert.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.runner.RunWith;
-import org.xenei.junit.contract.Contract;
-import org.xenei.junit.contract.ContractImpl;
-import org.xenei.junit.contract.ContractSuite;
-import org.xenei.junit.contract.ContractTest;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.graph.GraphStatisticsHandler;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.graph.compose.Union;
 import org.apache.jena.graph.impl.GraphBase;
 import org.apache.jena.testing_framework.AbstractGraphProducer;
-import org.xenei.junit.contract.IProducer;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.junit.runner.RunWith;
+import org.xenei.junit.contract.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.jena.testing_framework.GraphHelper.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(ContractSuite.class)
 @ContractImpl(Union.class)

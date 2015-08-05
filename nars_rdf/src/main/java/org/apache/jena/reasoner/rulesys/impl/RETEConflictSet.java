@@ -18,16 +18,16 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.reasoner.ReasonerException ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Manages a set of ready-to-fire rules. For monotonic rule sets

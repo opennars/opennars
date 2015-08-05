@@ -18,8 +18,10 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
 public class AcceptanceTesting extends AssemblerTestBase
     {

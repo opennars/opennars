@@ -1,8 +1,8 @@
 package jhelp.engine;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import jhelp.engine.util.PositionNode;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Represents a mirror.<br>

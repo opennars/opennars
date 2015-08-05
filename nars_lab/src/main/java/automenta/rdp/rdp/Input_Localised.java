@@ -33,16 +33,15 @@
  */
 package automenta.rdp.rdp;
 
-import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
+import automenta.rdp.*;
+import automenta.rdp.keymapping.KeyCode;
+import automenta.rdp.keymapping.KeyCode_FileBased;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Collections;
-
-import automenta.rdp.*;
-import automenta.rdp.keymapping.KeyCode;
-import automenta.rdp.keymapping.KeyCode_FileBased;
 
 public class Input_Localised extends Input {
 	public Input_Localised(RdesktopCanvas c, Rdp r, KeyCode_FileBased k) {

@@ -29,10 +29,10 @@
  */
 package automenta.rdp.rdp5.cliprdr;
 
-import java.awt.Image;
-import java.io.ByteArrayInputStream;
-
 import automenta.rdp.AbstractRdpPacket;
+
+import java.awt.*;
+import java.io.ByteArrayInputStream;
 
 public class BMPToImageThread extends Thread {
 

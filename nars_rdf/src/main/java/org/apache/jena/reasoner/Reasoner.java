@@ -18,9 +18,11 @@
 
 package org.apache.jena.reasoner;
 
-import org.apache.jena.graph.Capabilities ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 
 /**
  * The minimal interface to which all reasoners (or reasoner adaptors) conform. 

@@ -26,13 +26,13 @@ package automenta.vnc;
 
 import automenta.vivisect.swing.NWindow;
 import automenta.vnc.drawing.Renderer;
-import automenta.vnc.viewer.swing.*;
 import automenta.vnc.rfb.client.ClientToServerMessage;
 import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.viewer.ConnectionPresenter;
 import automenta.vnc.viewer.UiSettings;
 import automenta.vnc.viewer.cli.VNCProperties;
+import automenta.vnc.viewer.swing.*;
 import automenta.vnc.viewer.swing.gui.ConnectionView;
 
 import javax.swing.*;

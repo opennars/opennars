@@ -18,10 +18,11 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.Iterator;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
 
 /** An implementation of StmtIterator.
  */

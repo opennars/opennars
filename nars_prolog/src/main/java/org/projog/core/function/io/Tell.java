@@ -1,13 +1,13 @@
 package org.projog.core.function.io;
 
-import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
-import static org.projog.core.term.TermUtils.getAtomName;
-
 import org.projog.core.FileHandles;
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /* TEST
  %LINK prolog-io

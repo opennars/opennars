@@ -18,10 +18,11 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.Iterator;
+import org.apache.jena.rdf.model.RSIterator;
+import org.apache.jena.rdf.model.ReifiedStatement;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import java.util.Iterator;
 
 public class RSIteratorImpl extends WrappedIterator<ReifiedStatement> implements RSIterator
     {

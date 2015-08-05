@@ -1,20 +1,13 @@
 package org.projog.core.term;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.decimalFraction;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.list;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
+import static org.projog.core.term.TermUtils.createAnonymousVariable;
 
 /**
  * Test implementations of {@link PTerm}

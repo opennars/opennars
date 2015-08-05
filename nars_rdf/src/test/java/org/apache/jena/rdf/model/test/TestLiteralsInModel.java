@@ -18,11 +18,11 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.Literal ;
-import org.apache.jena.rdf.model.Property ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 import org.junit.Assert;
 
 public class TestLiteralsInModel extends AbstractModelTestBase

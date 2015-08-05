@@ -1,22 +1,14 @@
 package org.projog.core.function.math;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.createArgs;
-import static org.projog.TestUtils.createKnowledgeBase;
-import static org.projog.TestUtils.decimalFraction;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-
 import org.junit.Test;
 import org.projog.core.ProjogException;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
 
 public class AbstractCalculatableTest {
    // a non-abstract implementation of AbstractPredicate (so we can create and test it) 

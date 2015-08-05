@@ -18,19 +18,25 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.io.*;
-import java.util.*;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Finder;
+import org.apache.jena.reasoner.IllegalParameterException;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.util.FileUtils;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.vocabulary.RDF;
 
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.Finder ;
-import org.apache.jena.reasoner.IllegalParameterException ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.util.FileUtils ;
-import org.apache.jena.util.iterator.ClosableIterator ;
-import org.apache.jena.vocabulary.RDF ;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A small random collection of utility functions used by the rule systems.

@@ -7,10 +7,10 @@
  */
 package jhelp.engine.graphics;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
 import jhelp.engine.Texture;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Graphics on texture with layer<br>

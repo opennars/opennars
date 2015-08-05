@@ -1,10 +1,10 @@
 package jhelp.util;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedSimpleTask;
 import jhelp.util.thread.ThreadedVerySimpleTask;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Clear the memory with regular time

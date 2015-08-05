@@ -18,12 +18,12 @@
 
 package org.apache.jena.shared.uuid;
 
+import org.apache.jena.JenaRuntime;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.Random;
-
-import org.apache.jena.JenaRuntime ;
 
 class LibUUID
 {

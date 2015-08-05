@@ -18,12 +18,13 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.*;
+
 import java.io.PrintStream;
 import java.util.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.reasoner.rulesys.* ;
 
 /**
  * Object used to hold the compiled bytecode stream for a single rule clause.

@@ -18,7 +18,8 @@
 
 package org.apache.jena.graph.test;
 
-import org.apache.jena.graph.* ;
+import org.apache.jena.graph.GraphEvents;
+import org.apache.jena.graph.Triple;
 
 public class TestGraphEvents extends GraphTestBase
     {

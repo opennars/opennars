@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.util.List;
-
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 import org.junit.Assert;
+
+import java.util.List;
 
 public class TestSelectorUse extends AbstractModelTestBase
 {

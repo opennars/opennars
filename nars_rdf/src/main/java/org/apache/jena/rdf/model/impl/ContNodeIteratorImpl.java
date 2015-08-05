@@ -18,10 +18,16 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.*;
+import org.apache.jena.rdf.model.Container;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.util.iterator.NiceIterator;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /** An internal class not normally of interest to application developers.
  *  An iterator over the nodes in a container.

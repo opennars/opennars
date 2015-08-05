@@ -33,6 +33,7 @@ import nars.nal.nal3.SetTensional;
 import nars.nal.nal5.*;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -290,7 +291,7 @@ public class RuleTables {
         }
     }
 
-    public static void goalFromQuestion(final Task task, final Term taskTerm, final NAL nal) {
+    public static void goalFromQuestion(final Task task, final Term taskTerm, final Premise p) {
         if (task.sentence.punctuation == Symbols.QUESTION && (taskTerm instanceof Implication || taskTerm instanceof Equivalence)) { //<a =/> b>? |- a!
             Term goalterm = null;
             Term goalterm2 = null;
@@ -326,17 +327,17 @@ public class RuleTables {
 
             //TODO run each goalTerm through the same TaskSeed to save memory
             if (goalterm != null && (goalterm instanceof Compound) && !goalterm.hasVarIndep()) {
-                goalFromTask(task, nal, (Compound) goalterm);
+                goalFromTask(task, p, (Compound) goalterm);
             }
             if (goalterm2 != null && (goalterm2 instanceof Compound) && !goalterm2.hasVarIndep()) {
-                goalFromTask(task, nal, (Compound) goalterm2);
+                goalFromTask(task, p, (Compound) goalterm2);
             }
         }
     }
 
-    static void goalFromTask(Task task, NAL nal, Compound goalterm) {
-        nal.deriveSingle(
-                nal.newTask(goalterm)
+    static void goalFromTask(Task task, Premise p, Compound goalterm) {
+        p.deriveSingle(
+                p.newTask(goalterm)
                         .goal().truth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE * Global.CURIOSITY_DESIRE_CONFIDENCE_MUL)
                         .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL)
                         .parent(task).occurrNow()

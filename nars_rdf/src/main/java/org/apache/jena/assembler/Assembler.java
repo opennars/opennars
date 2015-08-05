@@ -18,8 +18,9 @@
 
 package org.apache.jena.assembler;
 
-import org.apache.jena.assembler.assemblers.* ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.assembler.assemblers.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
 /**
     An Assembler creates objects from their RDF descriptions. The root motivation

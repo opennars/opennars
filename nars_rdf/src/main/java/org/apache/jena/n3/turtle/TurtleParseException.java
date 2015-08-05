@@ -18,7 +18,7 @@
 
 package org.apache.jena.n3.turtle;
 
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.shared.JenaException;
 
 /** QueryParseException is root exception for all (intentional) exceptions
  *  from the various parsers where the error is to do with the syntax of a query.

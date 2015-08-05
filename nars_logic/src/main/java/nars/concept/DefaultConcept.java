@@ -382,7 +382,7 @@ public class DefaultConcept extends AbstractConcept {
     }
 
 
-    public static void questionFromGoal(final Task task, final NAL nal) {
+    public static void questionFromGoal(final Task task, final Premise p) {
         if (Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
 
@@ -408,14 +408,14 @@ public class DefaultConcept extends AbstractConcept {
 
             if (qu.isEmpty()) return;
 
-            TaskSeed<Compound> t = nal.newTask()
+            TaskSeed<Compound> t = p.newTask()
                     .question()
                     .parent(task)
                     .occurr(task.sentence.getOccurrenceTime()) //set tense of question to goal tense)
                     .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
 
             for (Compound q : qu)
-                nal.deriveSingle(t.term(q));
+                p.deriveSingle(t.term(q));
         }
     }
 

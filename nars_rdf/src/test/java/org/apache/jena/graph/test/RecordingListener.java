@@ -18,15 +18,15 @@
 
 package org.apache.jena.graph.test;
 
-import java.util.ArrayList ;
-import java.util.Arrays ;
-import java.util.Iterator ;
-import java.util.List ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphListener;
+import org.apache.jena.graph.Triple;
+import org.junit.Assert;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.GraphListener ;
-import org.apache.jena.graph.Triple ;
-import org.junit.Assert ;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
     This testing listener records the event names and data, and provides

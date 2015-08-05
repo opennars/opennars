@@ -19,7 +19,9 @@
 package org.apache.jena.shared.uuid;
 
 import junit.framework.TestCase;
-import static org.apache.jena.shared.uuid.UUIDTestSuite.* ;
+
+import static org.apache.jena.shared.uuid.UUIDTestSuite.factory1;
+import static org.apache.jena.shared.uuid.UUIDTestSuite.factory4;
 
 public class TestUUID extends TestCase
 {

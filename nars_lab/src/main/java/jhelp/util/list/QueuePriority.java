@@ -7,10 +7,10 @@
  */
 package jhelp.util.list;
 
+import jhelp.util.text.UtilText;
+
 import java.util.Comparator;
 import java.util.PriorityQueue;
-
-import jhelp.util.text.UtilText;
 
 /**
  * Queue with priority<br>

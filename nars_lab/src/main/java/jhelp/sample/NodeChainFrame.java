@@ -1,17 +1,6 @@
 package jhelp.sample;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-import jhelp.engine.Animation;
-import jhelp.engine.Color4f;
-import jhelp.engine.JHelpSceneRenderer;
-import jhelp.engine.Material;
-import jhelp.engine.Node;
-import jhelp.engine.NodeChain;
-import jhelp.engine.Object3D;
-import jhelp.engine.ObjectClone;
-import jhelp.engine.Scene;
+import jhelp.engine.*;
 import jhelp.engine.anim.AnimationEquation;
 import jhelp.engine.anim.AnimationPositionNode;
 import jhelp.engine.anim.MultiAnimation;
@@ -22,6 +11,8 @@ import jhelp.engine.util.PositionNode;
 import jhelp.util.math.formal.Function;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * Frame tha shows the node chain sample

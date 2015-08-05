@@ -18,8 +18,9 @@
 
 package org.apache.jena.graph.compose;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     Class representing the dynamic set difference L - R of two graphs. This is updatable;

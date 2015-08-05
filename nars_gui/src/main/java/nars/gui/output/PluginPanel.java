@@ -1,23 +1,9 @@
 package nars.gui.output;
 
-import automenta.vivisect.Video;
-import automenta.vivisect.swing.ReflectPanel;
-import nars.Events;
 import nars.NAR;
-import nars.event.NARReaction;
-import nars.util.data.PackageUtility;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Manages the activated set of plugins in a NAR, and a menu for adding additional ones

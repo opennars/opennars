@@ -19,10 +19,10 @@
 package org.apache.jena.graph.test;
 
 import junit.framework.TestSuite;
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.shared.AbstractTestPrefixMapping ;
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.shared.AbstractTestPrefixMapping;
+import org.apache.jena.shared.PrefixMapping;
 
 public class TestGraphPrefixMapping extends GraphTestBase
     {

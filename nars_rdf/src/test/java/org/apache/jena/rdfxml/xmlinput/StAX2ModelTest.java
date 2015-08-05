@@ -18,21 +18,18 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-
-import javax.xml.stream.XMLEventReader;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler ;
-import org.apache.jena.rdfxml.xmlinput.StAX2Model ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * Derived from {@link SAX2RDFTest}

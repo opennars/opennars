@@ -18,10 +18,11 @@
 
 package org.apache.jena.util.iterator.test;
 
-import java.util.*;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import java.util.List;
+import java.util.Set;
 
 public class TestAsCollection extends ModelTestBase
     {

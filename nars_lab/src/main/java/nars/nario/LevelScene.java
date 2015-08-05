@@ -1,6 +1,5 @@
 package nars.nario;
 
-import automenta.vivisect.audio.FixedSoundSource;
 import nars.nario.level.BgLevelGenerator;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;

@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.TripleBoundary ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.TripleBoundary;
 
 /**
     StatementBoundaryBase - a base class for StatementBoundarys, with

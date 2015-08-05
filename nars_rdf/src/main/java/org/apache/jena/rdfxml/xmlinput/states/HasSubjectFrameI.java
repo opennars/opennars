@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
-import org.apache.jena.rdfxml.xmlinput.impl.ANode ;
+import org.apache.jena.rdfxml.xmlinput.impl.ANode;
 
 public interface HasSubjectFrameI extends FrameI {
   void aPredAndObj(ANode p, ANode o);

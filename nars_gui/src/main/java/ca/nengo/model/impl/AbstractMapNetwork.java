@@ -4,7 +4,6 @@ import ca.nengo.model.*;
 import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyChanges;
 import javolution.util.FastMap;
-import javolution.util.FastSortedMap;
 
 import java.util.*;
 

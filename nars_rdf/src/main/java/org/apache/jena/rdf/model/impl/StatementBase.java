@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
 
 /**
  	Abstract base class for StaementImpl - pulls up the stuff that doesn't depend

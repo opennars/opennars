@@ -7,12 +7,12 @@
  */
 package jhelp.engine.twoD;
 
-import java.util.StringTokenizer;
-
 import jhelp.engine.Point3D;
 import jhelp.engine.io.ConstantsXML;
 import jhelp.util.text.UtilText;
 import jhelp.xml.MarkupXML;
+
+import java.util.StringTokenizer;
 
 /**
  * Element of path <br>

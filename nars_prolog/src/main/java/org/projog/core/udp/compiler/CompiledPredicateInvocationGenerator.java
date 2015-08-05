@@ -1,9 +1,9 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getClassNameMinusPackage;
-
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getClassNameMinusPackage;
 
 final class CompiledPredicateInvocationGenerator implements PredicateInvocationGenerator {
    @Override

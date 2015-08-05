@@ -18,14 +18,14 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.AddDeniedException ;
-import org.apache.jena.shared.ClosedException ;
-import org.apache.jena.shared.DeleteDeniedException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.shared.impl.PrefixMappingImpl ;
-import org.apache.jena.util.iterator.ClosableIterator ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.*;
+import org.apache.jena.shared.AddDeniedException;
+import org.apache.jena.shared.ClosedException;
+import org.apache.jena.shared.DeleteDeniedException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     GraphBase is an implementation of Graph that provides some convenient

@@ -16,9 +16,9 @@ import georegression.struct.point.Point2D_F64;
 import georegression.struct.point.Point2D_I32;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.nar.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
+import nars.nar.Default;
 import nars.term.Atom;
 
 import javax.swing.*;

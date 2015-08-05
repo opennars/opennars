@@ -1,9 +1,9 @@
 package org.projog.core.function.flow;
 
-import static org.projog.core.term.TermUtils.castToNumeric;
-
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.term.TermUtils.castToNumeric;
 
 /* TEST
  %QUERY repeat(3), write('hello, world'), nl

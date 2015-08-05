@@ -7,7 +7,6 @@ package nars.process;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
-import nars.concept.AbstractConcept;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -23,17 +22,17 @@ import nars.term.Term;
  */
 public class TaskProcess extends NAL {
 
+    public final Task task;
+
     public TaskProcess(Memory mem, Task task) {
-        super(mem, task);
+        super(mem);
+        this.task = task;
     }
 
-    /** runs the entire process in a constructor, for when a Concept is provided */
-    public TaskProcess(AbstractConcept c, Task task) {
-        this(c.getMemory(), task);
 
-        onStart();
-        process(c); //WARNING this will avoid conceptualizing the concept
-        onFinished();
+    @Override
+    public Task getTask() {
+        return task;
     }
 
 
@@ -52,11 +51,7 @@ public class TaskProcess extends NAL {
         return memory.concept(getTerm());
     }
 
-    @Override
-    protected void onFinished() {
 
-
-    }
 
     @Override
     public String toString() {
@@ -73,7 +68,7 @@ public class TaskProcess extends NAL {
 
 
     @Override
-    public void process() {
+    public void derive() {
         Concept c = memory.conceptualize(getTask().getTerm(), getTask());
         if (c!=null)
             process(c);
@@ -87,9 +82,11 @@ public class TaskProcess extends NAL {
 
     protected void process(final Concept c) {
 
-        memory.emotion.busy(this);
+
 
         if (processConcept(c)) {
+
+            memory.emotion.busy(this);
 
             final Task t = getTask();
 
@@ -117,17 +114,17 @@ public class TaskProcess extends NAL {
         final Task task = getTask();
 
         if (!c.processable(task)) {
-            memory.removed(task, "Filtered by Concept");
+            removed(task, "Filtered by Concept");
             return false;
         }
 
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
-        task.setTermInstance((Compound) c.getTerm());
+        task.setSharedTerm((Compound) c.getTerm());
 
-        final char type = task.sentence.punctuation;
+
         final LogicMetrics logicMeter = memory.logic;
 
-        switch (type) {
+        switch (task.getPunctuation()) {
             case Symbols.JUDGMENT:
 
                 if (c.hasBeliefs() && c.isConstant())

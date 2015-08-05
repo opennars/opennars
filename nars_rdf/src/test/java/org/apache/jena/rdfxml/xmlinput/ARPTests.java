@@ -17,16 +17,16 @@
  */
 
 package org.apache.jena.rdfxml.xmlinput;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.iri.IRIFactory;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
-
-import org.apache.jena.iri.IRI;
-import org.apache.jena.iri.IRIFactory;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * The JUnit test suite for ARP.

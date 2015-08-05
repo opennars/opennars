@@ -1,7 +1,5 @@
 package org.projog.core;
 
-import org.projog.core.function.io.See;
-
 /**
  % projog-bootstrap.pl
  % This file contains Prolog syntax that is interpreted when a projog console is started.

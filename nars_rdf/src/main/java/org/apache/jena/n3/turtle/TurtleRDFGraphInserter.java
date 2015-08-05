@@ -18,9 +18,9 @@
 
 package org.apache.jena.n3.turtle;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 
 
 public class TurtleRDFGraphInserter implements TurtleEventHandler

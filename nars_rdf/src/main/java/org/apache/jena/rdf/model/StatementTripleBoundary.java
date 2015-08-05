@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.TripleBoundary ;
+import org.apache.jena.graph.TripleBoundary;
 
 /**
     StatementTripleBoundary - a StatementBoundary that just wraps a

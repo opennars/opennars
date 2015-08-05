@@ -38,7 +38,8 @@ import ca.nengo.model.*;
 import ca.nengo.neural.SpikeOutput;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.impl.TimeSeriesImpl;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A basic implementation of Termination with configurable dynamics and no special

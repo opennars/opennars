@@ -18,7 +18,7 @@
 
 package org.apache.jena.n3.turtle;
 
-import junit.framework.* ;
+import junit.framework.TestSuite;
 
 public class TurtleTestSuite extends TestSuite
 {

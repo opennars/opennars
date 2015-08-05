@@ -5,8 +5,9 @@ package nars.ca;// Mirek's Java Cellebration
 // Patterns names are read from the resource file 'pat.txt'.
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
 
 public class MJPatternsList extends Dialog implements ActionListener {
 	private final Button btnLoad;

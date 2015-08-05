@@ -18,14 +18,21 @@
 
 package org.apache.jena.assembler.test;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.ModelAssembler;
+import org.apache.jena.assembler.assemblers.OntModelAssembler;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+
 import java.lang.reflect.Field;
 import java.util.List;
-
-import junit.framework.*;
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.* ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
 
 public class TestOntModelAssembler extends AssemblerTestBase
     {

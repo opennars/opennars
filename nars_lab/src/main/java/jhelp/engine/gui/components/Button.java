@@ -7,14 +7,13 @@
  */
 package jhelp.engine.gui.components;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-
 import jhelp.engine.Texture;
 import jhelp.engine.gui.events.ButtonClickListener;
 import jhelp.engine.util.ColorsUtil;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * A button <br>

@@ -25,8 +25,8 @@
 package automenta.vnc.rfb.protocol.state;
 
 import automenta.vnc.exceptions.*;
-import automenta.vnc.rfb.protocol.auth.AuthHandler;
 import automenta.vnc.rfb.protocol.ProtocolContext;
+import automenta.vnc.rfb.protocol.auth.AuthHandler;
 
 public class AuthenticationState extends ProtocolState {
 

@@ -18,15 +18,15 @@
 
 package org.apache.jena.datatypes;
 
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.impl.RDFLangString;
+import org.apache.jena.datatypes.xsd.impl.XMLLiteralType;
+import org.apache.jena.shared.impl.JenaParameters;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.datatypes.xsd.impl.RDFLangString ;
-import org.apache.jena.datatypes.xsd.impl.XMLLiteralType ;
-import org.apache.jena.shared.impl.JenaParameters ;
 
 /**
  * The TypeMapper provides a global registry of known datatypes.

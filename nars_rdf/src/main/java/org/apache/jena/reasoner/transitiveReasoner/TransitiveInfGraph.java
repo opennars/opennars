@@ -18,10 +18,13 @@
 
 package org.apache.jena.reasoner.transitiveReasoner;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.UniqueFilter ;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.UniqueFilter;
 
 /**
  * Implementation of InfGraph used by the TransitiveReasoner.

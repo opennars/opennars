@@ -18,11 +18,14 @@
 
 package org.apache.jena.mem;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.Triple.Field;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.Triple.Field ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
 
 /**
     A base class for in-memory graphs

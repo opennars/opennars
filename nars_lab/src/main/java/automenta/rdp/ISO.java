@@ -29,8 +29,8 @@
  */
 package automenta.rdp;
 
-import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.crypto.CryptoException;
+import automenta.rdp.rdp.RdpPacket;
 import org.apache.log4j.Logger;
 
 import java.io.*;

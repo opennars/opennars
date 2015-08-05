@@ -18,17 +18,17 @@
 
 package org.apache.jena.rdf.model.test;
 
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.InvalidPropertyURIException;
+import org.apache.jena.shared.PropertyNotFoundException;
+import org.apache.jena.test.JenaTestBase;
+import org.apache.jena.vocabulary.RDF;
+import org.junit.Assert;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.InvalidPropertyURIException ;
-import org.apache.jena.shared.PropertyNotFoundException ;
-import org.apache.jena.test.JenaTestBase ;
-import org.apache.jena.vocabulary.RDF ;
-import org.junit.Assert;
 
 public class TestResources extends AbstractModelTestBase
 {

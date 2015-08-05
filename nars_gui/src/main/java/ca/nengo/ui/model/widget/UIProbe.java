@@ -24,7 +24,6 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.widget;
 
-import ca.nengo.model.Node;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.ProbeIcon;

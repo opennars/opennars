@@ -1,17 +1,15 @@
 package jhelp.util.resources;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Hashtable;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import jhelp.util.debug.Debug;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Hashtable;
 
 /**
  * Parser of XML that describes a text resources for a language.<br>

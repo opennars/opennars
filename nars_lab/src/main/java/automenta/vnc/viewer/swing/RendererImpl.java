@@ -24,10 +24,10 @@
 
 package automenta.vnc.viewer.swing;
 
-import automenta.vnc.rfb.encoding.PixelFormat;
-import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import automenta.vnc.drawing.Renderer;
 import automenta.vnc.drawing.SoftCursor;
+import automenta.vnc.rfb.encoding.PixelFormat;
+import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import automenta.vnc.transport.Reader;
 
 import java.awt.*;

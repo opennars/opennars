@@ -18,7 +18,7 @@
 
 package org.apache.jena.n3;
 
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.shared.JenaException;
 
 
 public class JenaURIException extends JenaException

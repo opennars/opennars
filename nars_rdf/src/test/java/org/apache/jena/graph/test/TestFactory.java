@@ -18,8 +18,8 @@
 
 package org.apache.jena.graph.test;
 
-import junit.framework.*;
-import org.apache.jena.graph.* ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Factory;
 
 public class TestFactory extends GraphTestBase
     {

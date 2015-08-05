@@ -18,10 +18,10 @@
 
 package org.apache.jena.graph.compose.test;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.Delta ;
-import org.apache.jena.graph.test.AbstractTestGraph ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.Delta;
+import org.apache.jena.graph.test.AbstractTestGraph;
 
 public class TestDelta extends AbstractTestGraph
 {

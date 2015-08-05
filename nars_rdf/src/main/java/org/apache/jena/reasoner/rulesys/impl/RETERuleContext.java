@@ -18,10 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.util.iterator.ClosableIterator ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.util.iterator.ClosableIterator;
 
 /**
  * An implementation of the generic RuleContext for use in the RETE implementation.

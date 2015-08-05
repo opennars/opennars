@@ -18,8 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.TriplePattern ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.TriplePattern;
 
 /**
  * Interface through which the current bound values of variables

@@ -18,7 +18,7 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.graph.Triple ;
+import org.apache.jena.graph.Triple;
 
 /**
  * Interface supported by each of the rule system interpreters that

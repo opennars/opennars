@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdf.model;
 
-import java.rmi.server.UID;
+import org.apache.jena.shared.impl.JenaParameters;
 
-import org.apache.jena.shared.impl.JenaParameters ;
+import java.rmi.server.UID;
 
 /** Create a new id for an anonymous node.
  *

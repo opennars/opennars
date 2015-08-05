@@ -14,11 +14,11 @@ import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
 import nars.NAR;
 import nars.bag.Bag;
+import nars.budget.Item;
+import nars.cycle.DefaultCycle;
 import nars.event.NARReaction;
 import nars.io.out.Output;
-import nars.cycle.DefaultCycle;
 import nars.nar.Default;
-import nars.budget.Item;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

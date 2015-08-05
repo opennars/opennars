@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdfxml.xmlinput.ParseException ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdfxml.xmlinput.ParseException;
+import org.apache.jena.shared.JenaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**

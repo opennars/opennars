@@ -1,11 +1,8 @@
 package jurls.reinforcementlearning.domains.grid;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
 
 
 public class Grid2DRelative implements World {

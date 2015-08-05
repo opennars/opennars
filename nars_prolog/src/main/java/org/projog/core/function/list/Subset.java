@@ -1,10 +1,10 @@
 package org.projog.core.function.list;
 
-import static org.projog.core.term.ListUtils.isMember;
-import static org.projog.core.term.ListUtils.toJavaUtilList;
-
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.term.ListUtils.isMember;
+import static org.projog.core.term.ListUtils.toJavaUtilList;
 
 /* TEST
  %TRUE subset([],[])

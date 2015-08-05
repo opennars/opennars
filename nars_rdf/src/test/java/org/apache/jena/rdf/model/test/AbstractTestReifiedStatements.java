@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.util.Set;
-
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.test.JenaTestBase ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.test.JenaTestBase;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.vocabulary.RDF;
 import org.junit.Assert;
+
+import java.util.Set;
 
 public abstract class AbstractTestReifiedStatements extends ModelTestBase
 {

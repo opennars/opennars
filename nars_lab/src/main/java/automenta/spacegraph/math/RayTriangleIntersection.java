@@ -39,11 +39,7 @@
 
 package automenta.spacegraph.math;
 
-import automenta.spacegraph.math.linalg.IntersectionPoint;
-import automenta.spacegraph.math.linalg.Mat3f;
-import automenta.spacegraph.math.linalg.MathUtil;
-import automenta.spacegraph.math.linalg.Vec2f;
-import automenta.spacegraph.math.linalg.Vec3f;
+import automenta.spacegraph.math.linalg.*;
 
 
 /** Implements ray casting against a 3D triangle. */

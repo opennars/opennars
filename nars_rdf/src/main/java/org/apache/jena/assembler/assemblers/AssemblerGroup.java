@@ -18,12 +18,24 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.AssemblerHelp;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.exceptions.AmbiguousSpecificTypeException;
+import org.apache.jena.assembler.exceptions.AssemblerException;
+import org.apache.jena.assembler.exceptions.NoImplementationException;
+import org.apache.jena.assembler.exceptions.NoSpecificTypeException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.exceptions.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.vocabulary.RDFS ;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class AssemblerGroup extends AssemblerBase implements Assembler
     {    

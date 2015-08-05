@@ -26,11 +26,11 @@ package automenta.vnc.rfb.protocol.auth;
 
 import automenta.vnc.exceptions.FatalException;
 import automenta.vnc.exceptions.TransportException;
+import automenta.vnc.exceptions.UnsupportedSecurityTypeException;
+import automenta.vnc.rfb.CapabilityContainer;
 import automenta.vnc.rfb.IPasswordRetriever;
 import automenta.vnc.transport.Reader;
 import automenta.vnc.transport.Writer;
-import automenta.vnc.exceptions.UnsupportedSecurityTypeException;
-import automenta.vnc.rfb.CapabilityContainer;
 
 public abstract class AuthHandler {
 	/**

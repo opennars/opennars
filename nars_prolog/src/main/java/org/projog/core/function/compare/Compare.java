@@ -1,10 +1,10 @@
 package org.projog.core.function.compare;
 
-import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
-
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
 
 /* TEST
  %QUERY compare(X, a, z)

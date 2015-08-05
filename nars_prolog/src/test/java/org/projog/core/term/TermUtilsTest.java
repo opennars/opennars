@@ -1,26 +1,16 @@
 package org.projog.core.term;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.decimalFraction;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.list;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-
-import java.util.Set;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.Calculatables;
 import org.projog.core.KB;
 import org.projog.core.ProjogException;
+
+import java.util.Set;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
 
 public class TermUtilsTest {
    @Test

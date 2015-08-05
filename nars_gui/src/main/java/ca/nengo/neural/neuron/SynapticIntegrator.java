@@ -31,10 +31,10 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.neural.neuron;
 
+import ca.nengo.model.NTarget;
 import ca.nengo.model.Node;
 import ca.nengo.model.Resettable;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.NTarget;
 import ca.nengo.util.TimeSeries1D;
 
 import java.io.Serializable;

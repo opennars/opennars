@@ -31,13 +31,12 @@ package automenta.rdp;
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 public class RDPClientChooser {
 	static Logger logger = Logger.getLogger(RDPClientChooser.class);

@@ -1,15 +1,15 @@
 package org.projog.core.function.debug;
 
-import static org.projog.core.KnowledgeBaseUtils.getPredicateKeysByName;
-import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
-
-import java.util.List;
-
 import org.projog.core.PredicateKey;
 import org.projog.core.ProjogException;
 import org.projog.core.SpyPoints;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import java.util.List;
+
+import static org.projog.core.KnowledgeBaseUtils.getPredicateKeysByName;
+import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
 
 /* TEST
  %LINK prolog-debugging

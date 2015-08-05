@@ -32,8 +32,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.math.impl;
 
-import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.config.impl.SingleValuedPropertyImpl;
 import ca.nengo.math.Function;

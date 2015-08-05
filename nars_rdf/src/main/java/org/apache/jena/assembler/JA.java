@@ -18,7 +18,7 @@
 
 package org.apache.jena.assembler;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.*;
 
 public class JA
     {

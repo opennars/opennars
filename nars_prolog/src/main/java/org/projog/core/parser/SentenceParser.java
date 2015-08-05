@@ -1,34 +1,16 @@
 package org.projog.core.parser;
 
-import static java.lang.Double.parseDouble;
-import static java.lang.Long.parseLong;
-import static org.projog.core.parser.Delimiters.isArgumentSeperator;
-import static org.projog.core.parser.Delimiters.isListCloseBracket;
-import static org.projog.core.parser.Delimiters.isListOpenBracket;
-import static org.projog.core.parser.Delimiters.isListTail;
-import static org.projog.core.parser.Delimiters.isPredicateCloseBracket;
-import static org.projog.core.parser.Delimiters.isPredicateOpenBracket;
-import static org.projog.core.parser.Delimiters.isSentenceTerminator;
+import org.projog.core.Operands;
+import org.projog.core.term.*;
 
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.projog.core.Operands;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.DecimalFraction;
-import org.projog.core.term.EmptyList;
-import org.projog.core.term.IntegerNumber;
-import org.projog.core.term.ListFactory;
-import org.projog.core.term.PStruct;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.TermUtils;
-import org.projog.core.term.PVar;
+import static java.lang.Double.parseDouble;
+import static java.lang.Long.parseLong;
+import static org.projog.core.parser.Delimiters.*;
 
 /**
  * Parses Prolog syntax representing rules including operators.

@@ -24,21 +24,16 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.util.Locale ;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import java.io.*;
+import java.net.URL;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** A command line interface into ARP.
  * Creates NTriple's or just error messages.

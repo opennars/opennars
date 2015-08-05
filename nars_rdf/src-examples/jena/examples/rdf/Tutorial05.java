@@ -19,9 +19,8 @@
 package jena.examples.rdf ;
 
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.util.FileManager;
 
-import java.io.*;
+import java.io.InputStream;
 
 /** Tutorial 5 - read RDF XML from a file and write it to standard out
  */

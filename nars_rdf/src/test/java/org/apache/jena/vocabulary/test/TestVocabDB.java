@@ -18,8 +18,8 @@
 
 package org.apache.jena.vocabulary.test;
 
-import junit.framework.*;
-import org.apache.jena.vocabulary.* ;
+import junit.framework.TestSuite;
+import org.apache.jena.vocabulary.DB;
 
 public class TestVocabDB extends VocabTestBase
     {

@@ -27,12 +27,12 @@ package automenta.vnc.viewer.swing;
 import automenta.vnc.VNCClient;
 import automenta.vnc.core.SettingsChangedEvent;
 import automenta.vnc.rfb.IChangeSettingsListener;
+import automenta.vnc.rfb.client.KeyEventMessage;
 import automenta.vnc.rfb.protocol.Protocol;
+import automenta.vnc.rfb.protocol.ProtocolContext;
 import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.utils.Keymap;
 import automenta.vnc.viewer.ConnectionPresenter;
-import automenta.vnc.rfb.client.KeyEventMessage;
-import automenta.vnc.rfb.protocol.ProtocolContext;
 import automenta.vnc.viewer.UiSettings;
 import automenta.vnc.viewer.swing.gui.OptionsDialog;
 

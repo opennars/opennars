@@ -19,10 +19,9 @@
 package jena.examples.rdf ;
 
 import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.vocabulary.*;
 
-import java.io.*;
+import java.io.InputStream;
 
 /** Tutorial 7 - selecting the VCARD resources
  */

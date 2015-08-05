@@ -1,9 +1,9 @@
 package org.projog.core.function.list;
 
-import static org.projog.core.term.ListUtils.isMember;
-
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.term.ListUtils.isMember;
 
 /* TEST
  %TRUE memberchk(a, [a,b,c])

@@ -42,7 +42,10 @@ import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.NodeThreadPool;
 import ca.nengo.util.impl.ProbeImpl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A Simulator that runs locally (ie in the Java Virtual Machine in which it is

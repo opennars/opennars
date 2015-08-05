@@ -24,7 +24,7 @@
 
 package automenta.vnc.viewer.swing;
 
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;

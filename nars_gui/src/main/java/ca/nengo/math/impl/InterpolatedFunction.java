@@ -1,7 +1,7 @@
 package ca.nengo.math.impl;
 
-import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.config.impl.SingleValuedPropertyImpl;
 import ca.nengo.math.Function;

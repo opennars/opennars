@@ -18,10 +18,11 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.DefaultModelAssembler ;
-import org.apache.jena.mem.GraphMemBase ;
-import org.apache.jena.rdf.model.Model ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.DefaultModelAssembler;
+import org.apache.jena.mem.GraphMemBase;
+import org.apache.jena.rdf.model.Model;
 
 public class TestDefaultModelAssembler extends AssemblerTestBase
     {

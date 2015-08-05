@@ -29,22 +29,13 @@
  */
 package automenta.rdp.keymapping;
 
-import java.awt.event.KeyEvent;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
 import automenta.rdp.Input;
 import automenta.rdp.Options;
-
 import org.apache.log4j.Logger;
+
+import java.awt.event.KeyEvent;
+import java.io.*;
+import java.util.*;
 
 public abstract class KeyCode_FileBased {
 

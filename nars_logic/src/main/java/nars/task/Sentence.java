@@ -685,29 +685,29 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return this;
     }
 
-    /** WARNING: calling this should not change the value of term, but just the
+    /** WARNING: calling this should not change the value of equivalentInstance, but just the
      * particular instance that it references
      */
-    public void setTermInstance(final T term) {
+    public void setSharedTerm(final T equivalentInstance) {
 
         //intermval generally contains unique information that should not be replaced
         if (this.term instanceof TermMetadata)
             return;
 
-        this.term = term;
+        this.term = equivalentInstance;
     }
 
 
     public static final class ExpectationComparator implements Comparator<Sentence> {
         final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
-            return Float.compare(a.truth.getExpectation(), b.truth.getExpectation());
+            return Float.compare(a.getExpectation(), b.getExpectation());
         }
     }
     public static final class ConfidenceComparator implements Comparator<Sentence> {
         final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
-            return Float.compare(a.truth.getConfidence(), b.truth.getConfidence());
+            return Float.compare(a.getConfidence(), b.getConfidence());
         }
     }
     

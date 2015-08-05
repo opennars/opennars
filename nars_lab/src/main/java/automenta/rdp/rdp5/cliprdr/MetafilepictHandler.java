@@ -29,14 +29,14 @@
  */
 package automenta.rdp.rdp5.cliprdr;
 
+import automenta.rdp.AbstractRdpPacket;
+
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import automenta.rdp.AbstractRdpPacket;
 
 public class MetafilepictHandler extends TypeHandler {
 

@@ -1,12 +1,12 @@
 package org.projog.core.function.compound;
 
-import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
-
-import java.util.List;
-
 import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermComparator;
+
+import java.util.List;
+
+import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
 
 /* TEST
  z(r).

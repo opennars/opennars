@@ -18,8 +18,8 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.rdf.model.impl.Util ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.rdf.model.impl.Util;
+import org.apache.jena.shared.PrefixMapping;
 
 /**
     RDF nodes with a global identity given by a URI.

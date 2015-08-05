@@ -18,9 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import org.apache.jena.reasoner.rulesys.Rule ;
-import org.apache.jena.shared.RulesetNotFoundException ;
-import org.apache.jena.shared.WrappedIOException ;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.shared.RulesetNotFoundException;
+import org.apache.jena.shared.WrappedIOException;
 import org.junit.Test;
 
 /**

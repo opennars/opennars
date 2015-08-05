@@ -18,11 +18,12 @@
 
 package org.apache.jena.n3 ;
 
-import java.io.* ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
-import junit.framework.* ;
-import org.apache.jena.n3.N3JenaWriter ;
-import org.apache.jena.rdf.model.* ;
+import java.io.*;
 
 public class N3JenaWriterTests extends N3ExternalTestsCom
 {

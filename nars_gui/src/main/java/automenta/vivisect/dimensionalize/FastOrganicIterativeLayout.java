@@ -1,9 +1,9 @@
 package automenta.vivisect.dimensionalize;
 
-import nars.gui.output.graph.nengo.UIEdge;
-import nars.gui.output.graph.nengo.UIVertex;
 import com.google.common.collect.Iterators;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import nars.gui.output.graph.nengo.UIEdge;
+import nars.gui.output.graph.nengo.UIVertex;
 import nars.util.data.random.XORShiftRandom;
 
 import java.awt.geom.Rectangle2D;

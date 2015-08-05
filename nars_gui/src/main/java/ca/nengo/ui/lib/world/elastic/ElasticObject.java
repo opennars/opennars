@@ -6,8 +6,8 @@ import ca.nengo.ui.lib.world.WorldLayer;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.WorldObject.Property;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
-import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 import ca.nengo.ui.lib.world.piccolo.primitive.PiccoloNodeInWorld;
+import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

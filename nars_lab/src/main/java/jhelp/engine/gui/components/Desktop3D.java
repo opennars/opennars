@@ -7,15 +7,6 @@
  */
 package jhelp.engine.gui.components;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-
-import javax.swing.SwingUtilities;
-
 import jhelp.engine.JHelpSceneRenderer;
 import jhelp.engine.Node;
 import jhelp.engine.Scene;
@@ -23,6 +14,10 @@ import jhelp.engine.geom.Plane;
 import jhelp.engine.gui.ComponentView3D;
 import jhelp.engine.gui.events.InternalFrameListener;
 import jhelp.util.text.UtilText;
+
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * 3D view like a desktop, contains some {@link InternalFrame}<br>

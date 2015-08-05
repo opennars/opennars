@@ -18,9 +18,12 @@
 
 package org.apache.jena.rdf.listeners;
 
-import java.util.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelChangedListener;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 
-import org.apache.jena.rdf.model.* ;
+import java.util.List;
 
 /**
     A listener that ignores everything you tell it; intended as a base class

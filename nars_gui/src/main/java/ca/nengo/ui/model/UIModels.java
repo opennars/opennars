@@ -29,8 +29,8 @@ package ca.nengo.ui.model;
 
 import ca.nengo.ui.action.AddProbesAction;
 import ca.nengo.ui.action.RemoveModelsAction;
-import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.menu.AbstractMenuBuilder;
+import ca.nengo.ui.lib.object.model.ModelObject;
 
 import java.util.Collection;
 

@@ -18,9 +18,12 @@
 
 package org.apache.jena.mem;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.TripleStore ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.GraphEvents;
+import org.apache.jena.graph.GraphStatisticsHandler;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.TripleStore;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 public class GraphMem extends GraphMemBase
 {

@@ -1,8 +1,8 @@
 package ca.nengo.model.impl;
 
+import ca.nengo.model.NSource;
 import ca.nengo.model.Node;
 import ca.nengo.model.Resettable;
-import ca.nengo.model.NSource;
 
 /**
  * Default source implementation which can provide any type of object

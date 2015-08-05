@@ -23,7 +23,10 @@
  */
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 
 /** VCARD vocabulary class for namespace http://www.w3.org/2001/vcard-rdf/3.0#
  */

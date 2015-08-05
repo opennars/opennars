@@ -24,8 +24,6 @@ package objenome.op.compute;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
 
-import java.util.Arrays;
-
 /**
  * A BrainfuckInterpreter provides the facility to execute programs in the
  * esoteric Brainfuck programming language. Memory is provided in the form of a

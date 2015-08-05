@@ -22,17 +22,18 @@ package org.apache.jena.rdf.model.test;
 
 // Imports
 // /////////////
+
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.vocabulary.RDF;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.vocabulary.RDF ;
-import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <p>

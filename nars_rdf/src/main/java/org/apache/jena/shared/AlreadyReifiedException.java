@@ -18,7 +18,7 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.graph.Node ;
+import org.apache.jena.graph.Node;
 
 
 /**

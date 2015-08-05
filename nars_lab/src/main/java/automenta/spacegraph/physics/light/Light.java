@@ -3,8 +3,6 @@ package automenta.spacegraph.physics.light;
 
 import org.jbox2d.common.Vec2;
 
-import javax.vecmath.Vector2f;
-
 public class Light {
 	public Vec2 location;
 	public float red;

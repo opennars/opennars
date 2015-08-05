@@ -18,12 +18,18 @@
 
 package org.apache.jena.assembler.assemblers;
 
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.AssemblerHelp;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.exceptions.CannotConstructException;
+import org.apache.jena.assembler.exceptions.CannotLoadClassException;
+import org.apache.jena.assembler.exceptions.NotUniqueException;
+import org.apache.jena.assembler.exceptions.PropertyRequiredException;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.vocabulary.RDF;
+
 import java.util.List;
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.exceptions.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.vocabulary.RDF ;
 
 public abstract class AssemblerBase implements Assembler
     {

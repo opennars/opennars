@@ -1,9 +1,9 @@
 package org.projog.core.function.debug;
 
-import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
-
 import org.projog.core.SpyPoints;
 import org.projog.core.function.AbstractSingletonPredicate;
+
+import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
 
 /* TEST
  %LINK prolog-debugging

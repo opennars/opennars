@@ -18,8 +18,8 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.reasoner.Finder ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.Finder;
 
 /**
  * Rule engines implement the internals of forward rule inference

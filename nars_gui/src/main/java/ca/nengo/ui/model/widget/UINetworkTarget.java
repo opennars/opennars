@@ -21,8 +21,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.widget;
 
-import ca.nengo.model.Network;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.Network;
 import ca.nengo.ui.model.node.UINetwork;
 
 /**

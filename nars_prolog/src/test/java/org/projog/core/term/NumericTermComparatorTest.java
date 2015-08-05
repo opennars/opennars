@@ -1,20 +1,16 @@
 package org.projog.core.term;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.decimalFraction;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.Calculatables;
 import org.projog.core.KB;
 import org.projog.core.ProjogException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.projog.TestUtils.*;
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
+import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR;
 
 public class NumericTermComparatorTest {
    private final KB kb = TestUtils.createKnowledgeBase();

@@ -18,7 +18,8 @@
 
 package org.apache.jena.shared;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestSharedPackage extends TestCase
     {

@@ -18,10 +18,10 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.RDFErrorHandler ;
-import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler ;
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler;
+import org.apache.jena.shared.JenaException;
 import org.xml.sax.SAXParseException;
 
 /**

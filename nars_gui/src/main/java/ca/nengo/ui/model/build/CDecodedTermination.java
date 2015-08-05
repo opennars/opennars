@@ -24,8 +24,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.build;
 
-import ca.nengo.model.StructuralException;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.StructuralException;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.ui.config.*;
 import ca.nengo.ui.config.descriptors.PBoolean;

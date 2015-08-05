@@ -1,12 +1,12 @@
 package org.projog.example;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class RetryablePredicateExample extends AbstractRetryablePredicate {
    private Iterator<Map.Entry<Object, Object>> systemProperties;

@@ -18,20 +18,20 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import java.io.IOException ;
-import java.io.StringReader ;
+import org.apache.jena.datatypes.BaseDatatype;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.rdfxml.xmlinput.ALiteral;
+import org.apache.jena.rdfxml.xmlinput.ARP;
+import org.apache.jena.rdfxml.xmlinput.AResource;
+import org.apache.jena.rdfxml.xmlinput.StatementHandler;
+import org.apache.jena.shared.BrokenException;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
-import org.apache.jena.datatypes.BaseDatatype ;
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.rdfxml.xmlinput.ALiteral ;
-import org.apache.jena.rdfxml.xmlinput.ARP ;
-import org.apache.jena.rdfxml.xmlinput.AResource ;
-import org.apache.jena.rdfxml.xmlinput.StatementHandler ;
-import org.apache.jena.shared.BrokenException ;
-import org.xml.sax.ErrorHandler ;
-import org.xml.sax.SAXException ;
-import org.xml.sax.SAXParseException ;
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Builtin data type to represent XMLLiteral (i.e. items created

@@ -5,8 +5,11 @@
  */
 package jurls.reinforcementlearning.domains.martialarts;
 
-import java.awt.Component;
-import java.awt.GridLayout;
+import jurls.reinforcementlearning.domains.RLEnvironment;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -17,11 +20,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JProgressBar;
-import jurls.reinforcementlearning.domains.RLEnvironment;
 
 /**
  *

@@ -30,22 +30,15 @@
 
 package automenta.rdp.applet;
 
-import java.applet.Applet;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.TextArea;
-import java.io.ByteArrayOutputStream;
-import java.io.FilterOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import automenta.rdp.Common;
 import automenta.rdp.Rdesktop;
 import automenta.rdp.RdesktopException;
+
+import java.applet.Applet;
+import java.awt.*;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class RdpApplet extends Applet {
 

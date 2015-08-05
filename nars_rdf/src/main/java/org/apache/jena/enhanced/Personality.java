@@ -18,10 +18,10 @@
 
 package org.apache.jena.enhanced;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.util.CollectionFactory;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.util.CollectionFactory ;
+import java.util.Map;
 
 /**
  * Defines a set of permitted mappings from [interface] Class objects to 

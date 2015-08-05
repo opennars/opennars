@@ -1,12 +1,12 @@
 package org.projog.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
 import org.junit.Test;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 /**
  * Simply tests get methods of {@link ProjogStackTraceElement} (as that is the only functionality the class provides).

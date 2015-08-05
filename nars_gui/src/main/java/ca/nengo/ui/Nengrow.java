@@ -10,7 +10,7 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.TimerTask;
 
 abstract public class Nengrow extends AbstractNengo {
 

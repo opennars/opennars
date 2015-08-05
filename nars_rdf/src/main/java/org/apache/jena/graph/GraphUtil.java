@@ -18,13 +18,14 @@
 
 package org.apache.jena.graph;
 
-import java.util.Iterator ;
-import java.util.List ;
-import java.util.Set ;
-import org.apache.jena.graph.impl.GraphWithPerform ;
-import org.apache.jena.util.IteratorCollection ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import org.apache.jena.graph.impl.GraphWithPerform;
+import org.apache.jena.util.IteratorCollection;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
     An ad-hoc collection of useful code for graphs

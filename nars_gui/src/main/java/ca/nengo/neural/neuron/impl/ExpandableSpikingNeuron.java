@@ -28,12 +28,13 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.neural.neuron.impl;
 
 import ca.nengo.model.ExpandableNode;
-import ca.nengo.model.StructuralException;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.StructuralException;
 import ca.nengo.neural.neuron.ExpandableSynapticIntegrator;
 import ca.nengo.neural.neuron.SpikeGenerator;
 import ca.nengo.neural.neuron.SynapticIntegrator;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A SpikingNeuron with an ExpandableSynapticIntegrator.

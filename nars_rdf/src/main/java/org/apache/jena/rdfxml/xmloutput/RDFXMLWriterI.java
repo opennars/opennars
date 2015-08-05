@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
-import org.apache.jena.rdf.model.RDFWriter ;
-import org.apache.jena.vocabulary.RDFSyntax ;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.vocabulary.RDFSyntax;
 
 /**
  * 

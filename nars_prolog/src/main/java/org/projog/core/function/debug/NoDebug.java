@@ -1,12 +1,12 @@
 package org.projog.core.function.debug;
 
-import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
-
-import java.util.Map;
-
 import org.projog.core.PredicateKey;
 import org.projog.core.SpyPoints;
 import org.projog.core.function.AbstractSingletonPredicate;
+
+import java.util.Map;
+
+import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
 
 /* TEST
  %LINK prolog-debugging

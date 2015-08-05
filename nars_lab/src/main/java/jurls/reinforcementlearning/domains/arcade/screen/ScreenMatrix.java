@@ -17,12 +17,7 @@
  */
 package jurls.reinforcementlearning.domains.arcade.screen;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 
 /** Encapsulates screen matrix data. Also provides basic save/load operations on
  *   screen data.

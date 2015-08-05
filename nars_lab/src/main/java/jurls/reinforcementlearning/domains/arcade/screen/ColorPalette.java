@@ -17,7 +17,7 @@
  */
 package jurls.reinforcementlearning.domains.arcade.screen;
 
-import java.awt.Color;
+import java.awt.*;
 
 /** Defines a palette of colors. Up to 256 entries. 0 is always black.
  *

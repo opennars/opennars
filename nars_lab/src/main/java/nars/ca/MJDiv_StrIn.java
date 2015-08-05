@@ -3,7 +3,8 @@ package nars.ca;// Mirek's Java Cellebration
 //
 // Diversities - string injection
 
-import java.util.*;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class MJDiv_StrIn {
 

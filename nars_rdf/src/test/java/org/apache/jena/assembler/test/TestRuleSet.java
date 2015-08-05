@@ -18,11 +18,14 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.RuleSet;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.shared.BrokenException;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.reasoner.rulesys.Rule ;
-import org.apache.jena.shared.BrokenException ;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class TestRuleSet extends AssemblerTestBase
     {

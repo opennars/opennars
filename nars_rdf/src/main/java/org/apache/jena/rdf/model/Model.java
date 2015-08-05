@@ -18,11 +18,19 @@
 
 package org.apache.jena.rdf.model;
 
-import java.io.*;
-import java.util.*;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.shared.Command;
+import org.apache.jena.shared.Lock;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.PropertyNotFoundException;
 
-import org.apache.jena.datatypes.* ;
-import org.apache.jena.shared.* ;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Iterator;
+import java.util.List;
 
 /**
     An RDF Model.

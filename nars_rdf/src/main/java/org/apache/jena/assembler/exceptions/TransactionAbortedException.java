@@ -18,7 +18,7 @@
 
 package org.apache.jena.assembler.exceptions;
 
-import org.apache.jena.rdf.model.Resource ;
+import org.apache.jena.rdf.model.Resource;
 
 /**
     Exception used to report that a transaction was aborted when loading

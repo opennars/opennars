@@ -17,24 +17,21 @@
  */
 
 package org.apache.jena.rdfxml.xmlinput;
-import java.io.* ;
-import java.util.HashSet ;
-import java.util.Set ;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.iri.IRI ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.RDFErrorHandler ;
-import org.apache.jena.rdfxml.xmlinput.ALiteral ;
-import org.apache.jena.rdfxml.xmlinput.ARPEventHandler ;
-import org.apache.jena.rdfxml.xmlinput.AResource ;
-import org.apache.jena.rdfxml.xmlinput.NTriple ;
-import org.apache.jena.rdfxml.xmlinput.impl.ARPResource ;
-import org.apache.jena.rdfxml.xmlinput.impl.ARPSaxErrorHandler ;
-import org.apache.jena.shared.wg.TestInputStreamFactory ;
-import org.junit.Assert ;
-import org.xml.sax.SAXException ;
-import org.xml.sax.SAXParseException ;
+import junit.framework.TestSuite;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdfxml.xmlinput.impl.ARPResource;
+import org.apache.jena.rdfxml.xmlinput.impl.ARPSaxErrorHandler;
+import org.apache.jena.shared.wg.TestInputStreamFactory;
+import org.junit.Assert;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A version of the test suite which uses the

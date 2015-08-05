@@ -21,8 +21,6 @@ package jurls.reinforcementlearning.domains.tetris.visualizer;
 import jurls.reinforcementlearning.domains.tetris.Tetris;
 import nars.gui.output.ImagePanel;
 
-import java.awt.*;
-
 public class TetrisVisualizer extends ImagePanel {
 
     private final int blockSize;

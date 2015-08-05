@@ -1,10 +1,10 @@
 package jhelp.util.thread;
 
-import java.util.Iterator;
-import java.util.PriorityQueue;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
+
+import java.util.Iterator;
+import java.util.PriorityQueue;
 
 /**
  * Thread manager.<br>

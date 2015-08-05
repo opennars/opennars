@@ -1,10 +1,10 @@
 package jhelp.engine.util;
 
+import jhelp.engine.Vertex;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import jhelp.engine.Vertex;
 
 /**
  * Triangle list

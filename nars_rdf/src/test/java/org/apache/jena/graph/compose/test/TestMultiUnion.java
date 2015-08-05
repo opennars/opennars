@@ -24,18 +24,18 @@ package org.apache.jena.graph.compose.test;
 // Imports
 ///////////////
 
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphStatisticsHandler;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.graph.compose.MultiUnion.MultiUnionStatisticsHandler;
+import org.apache.jena.graph.test.AbstractTestGraph;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import junit.framework.TestSuite;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.GraphStatisticsHandler ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.graph.compose.MultiUnion.MultiUnionStatisticsHandler ;
-import org.apache.jena.graph.test.AbstractTestGraph ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
 
 
 /**

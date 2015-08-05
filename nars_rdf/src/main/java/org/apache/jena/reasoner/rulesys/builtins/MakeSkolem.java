@@ -18,15 +18,15 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.shared.JenaException;
+import org.apache.xerces.impl.dv.util.Base64;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.rdf.model.AnonId ;
-import org.apache.jena.reasoner.rulesys.RuleContext ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.xerces.impl.dv.util.Base64;
 
 /**
  * Bind a blank node to the first argument.

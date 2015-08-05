@@ -18,14 +18,13 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdfxml.xmlinput.NTriple ;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class MemoryLeakTest extends TestCase {
 

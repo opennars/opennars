@@ -1,20 +1,9 @@
 package jhelp.util.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.font.LineMetrics;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import jhelp.util.list.Pair;
-import jhelp.util.text.StringExtractor;
-import jhelp.util.text.UtilText;
 
 /**
  * Represents a font with underline information

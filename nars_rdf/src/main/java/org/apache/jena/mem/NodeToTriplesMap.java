@@ -18,14 +18,17 @@
 
 package org.apache.jena.mem;
 
-import static org.apache.jena.util.iterator.WrappedIterator.create;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.Triple.Field;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.function.Predicate;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.Triple.* ;
-import org.apache.jena.util.iterator.* ;
+import static org.apache.jena.util.iterator.WrappedIterator.create;
 
 /**
 	NodeToTriplesMap: a map from nodes to sets of triples.

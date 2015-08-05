@@ -1,12 +1,12 @@
 package automenta.rdp.rdp5.snd;
 
-import java.io.IOException;
-
-import automenta.rdp.RdesktopException;
 import automenta.rdp.AbstractRdpPacket;
+import automenta.rdp.RdesktopException;
 import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.rdp5.VChannel;
 import automenta.rdp.rdp5.VChannels;
+
+import java.io.IOException;
 
 public class SoundChannel extends VChannel {
 

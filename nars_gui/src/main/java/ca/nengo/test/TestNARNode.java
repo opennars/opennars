@@ -20,13 +20,13 @@ import nars.NAR;
 import nars.event.NARReaction;
 import nars.gui.NARSwing;
 import nars.io.out.Output;
-import nars.nar.Default;
-import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.nal8.operator.TermFunction;
+import nars.nar.Default;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 

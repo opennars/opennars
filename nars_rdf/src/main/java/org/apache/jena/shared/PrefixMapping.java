@@ -18,11 +18,11 @@
 
 package org.apache.jena.shared;
 
-import java.util.*;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.vocabulary.*;
 
-import org.apache.jena.assembler.JA ;
-import org.apache.jena.shared.impl.* ;
-import org.apache.jena.vocabulary.* ;
+import java.util.Map;
 
 /**
     Methods for recording namepsace prefix mappings and applying and

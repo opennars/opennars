@@ -18,21 +18,16 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import junit.framework.TestCase;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import junit.framework.TestCase;
-import org.apache.jena.rdfxml.xmlinput.ALiteral ;
-import org.apache.jena.rdfxml.xmlinput.AResource ;
-import org.apache.jena.rdfxml.xmlinput.DOM2Model ;
-import org.apache.jena.rdfxml.xmlinput.StatementHandler ;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MoreDOM2RDFTest extends TestCase implements StatementHandler {
 

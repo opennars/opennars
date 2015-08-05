@@ -18,13 +18,14 @@
 
 package org.apache.jena.assembler.exceptions;
 
-import java.util.*;
+import org.apache.jena.assembler.assemblers.AssemblerGroup;
+import org.apache.jena.assembler.assemblers.AssemblerGroup.Frame;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.assembler.assemblers.AssemblerGroup ;
-import org.apache.jena.assembler.assemblers.AssemblerGroup.Frame ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.vocabulary.RDFS ;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
     Assembler Exception class: contains code shared by all the Assembler

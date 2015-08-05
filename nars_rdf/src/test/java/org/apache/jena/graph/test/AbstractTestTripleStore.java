@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph.test;
 
-import org.apache.jena.graph.impl.TripleStore ;
+import org.apache.jena.graph.impl.TripleStore;
 
 /**
      AbstractTestTripleStore - post-hoc tests for TripleStores.

@@ -1,22 +1,14 @@
 package automenta.vivisect.javafx;
 
-import com.dooapp.fxform.FXForm;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.stage.Stage;
-import nars.NAR;
-import nars.nar.Default;
 import za.co.knonchalant.builder.POJONode;
 import za.co.knonchalant.builder.TaggedParameters;
 import za.co.knonchalant.sample.pojo.SampleClass;

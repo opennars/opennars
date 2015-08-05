@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.FrontsTriple ;
+import org.apache.jena.graph.FrontsTriple;
 
 /** An RDF Statement.
  *

@@ -18,14 +18,14 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.Assembler ;
-import org.apache.jena.assembler.Mode ;
-import org.apache.jena.assembler.assemblers.ContentAssembler ;
-import org.apache.jena.assembler.assemblers.ModelAssembler ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.ContentAssembler;
+import org.apache.jena.assembler.assemblers.ModelAssembler;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.PrefixMapping;
 
 public class TestModelAssembler extends AssemblerTestBase
     {

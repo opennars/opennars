@@ -18,9 +18,9 @@
 
 package org.apache.jena.datatypes.xsd;
 
-import java.util.Arrays ;
+import org.apache.jena.graph.impl.LiteralLabel;
 
-import org.apache.jena.graph.impl.LiteralLabel ;
+import java.util.Arrays;
 
 /** Root class for XSD datatypes with binary values, xsd:hexBinary and xsd:base64Binary.
  * The binary value is stored as a byte[] in the LiteralLabel.

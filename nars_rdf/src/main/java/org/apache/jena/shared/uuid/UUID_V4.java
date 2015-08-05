@@ -18,8 +18,8 @@
 
 package org.apache.jena.shared.uuid;
 
-import java.util.* ;
-import java.security.* ;
+import java.security.SecureRandom;
+import java.util.Random;
 
 /** Random number based UUIDs
  */

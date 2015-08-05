@@ -3,8 +3,8 @@ package org.projog.core;
 import org.projog.core.event.ProjogEventsObservable;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermFormatter;
 import org.projog.core.term.PrologOperator;
+import org.projog.core.term.TermFormatter;
 
 import java.util.ArrayList;
 import java.util.List;

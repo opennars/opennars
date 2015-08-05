@@ -18,12 +18,12 @@
 
 package org.apache.jena.graph ;
 
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.rdf.model.AnonId ;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.AnonId;
 
 public class NodeFactory {
 

@@ -18,7 +18,7 @@
 
 package org.apache.jena.datatypes;
 
-import org.apache.jena.shared.* ;
+import org.apache.jena.shared.JenaException;
 
 /**
  * Exception thrown when a lexical form does not match the stated

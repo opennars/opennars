@@ -1,10 +1,10 @@
 package org.projog.core.function.io;
 
-import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
-
 import org.projog.core.FileHandles;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
 
 /* TEST
  %QUERY write_canonical( 1+1 )

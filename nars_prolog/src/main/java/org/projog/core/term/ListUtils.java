@@ -1,10 +1,10 @@
 package org.projog.core.term;
 
-import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
 
 /**
  * Helper methods for performing common tasks with Prolog list data structures.

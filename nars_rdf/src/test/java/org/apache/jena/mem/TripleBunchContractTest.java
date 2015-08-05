@@ -17,24 +17,19 @@
  */
 package org.apache.jena.mem;
 
-import static org.junit.Assert.*;
-import static org.apache.jena.testing_framework.GraphHelper.*;
-
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import org.apache.jena.graph.Triple;
+import org.apache.jena.testing_framework.NodeCreateUtils;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractTest;
-
-import org.apache.jena.graph.Triple;
 import org.xenei.junit.contract.IProducer;
-import org.apache.jena.testing_framework.NodeCreateUtils;
-import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.*;
+
+import static org.apache.jena.testing_framework.GraphHelper.*;
+import static org.junit.Assert.*;
 
 /**
  * Test triple bunch implementations - NOT YET FINISHED

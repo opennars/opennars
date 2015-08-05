@@ -18,9 +18,9 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import org.apache.jena.datatypes.xsd.* ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.shared.impl.JenaParameters ;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.shared.impl.JenaParameters;
 
 /**
  * Base implementation for all string datatypes derived from

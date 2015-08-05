@@ -18,13 +18,18 @@
 
 package org.apache.jena.reasoner;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasonerFactory;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasonerFactory ;
-import org.apache.jena.vocabulary.* ;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**

@@ -19,8 +19,9 @@
 
 package org.apache.jena.n3.turtle.parser ;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.n3.turtle.ParserBase ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.n3.turtle.ParserBase;
 
 public class TurtleParser extends ParserBase implements TurtleParserConstants {
 

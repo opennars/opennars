@@ -18,12 +18,12 @@
 
 package org.apache.jena.graph.compose;
 
-import java.util.Set ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.util.Set;
 
 /**
     A class representing the dynamic union of two graphs. Addition only affects the left 

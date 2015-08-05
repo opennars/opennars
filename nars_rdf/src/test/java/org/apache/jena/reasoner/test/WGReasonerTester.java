@@ -18,29 +18,29 @@
 
 package org.apache.jena.reasoner.test;
 
-import java.io.BufferedInputStream ;
-import java.io.FileInputStream ;
-import java.io.IOException ;
-import java.io.InputStream ;
-import java.net.URL ;
-import java.util.ArrayList ;
-import java.util.List ;
+import junit.framework.TestCase;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.PropertyImpl;
+import org.apache.jena.rdf.model.impl.ResourceImpl;
+import org.apache.jena.rdfxml.xmlinput.ARPTests;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.vocabulary.RDF;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import junit.framework.TestCase ;
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.PropertyImpl ;
-import org.apache.jena.rdf.model.impl.ResourceImpl ;
-import org.apache.jena.rdfxml.xmlinput.ARPTests ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.ReasonerFactory ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.vocabulary.RDF ;
-import org.junit.Assert ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A utility to support execution of the RDFCode working group entailment

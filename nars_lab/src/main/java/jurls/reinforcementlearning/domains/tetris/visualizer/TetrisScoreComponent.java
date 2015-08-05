@@ -19,12 +19,8 @@ http://brian.tannerpages.com
 
 package jurls.reinforcementlearning.domains.tetris.visualizer;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.util.Observable;
-import java.util.Observer;
 
 public class TetrisScoreComponent {
 	private TetrisVisualizer tetVis = null;

@@ -23,36 +23,40 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.io.InputStream ;
-import java.io.OutputStream ;
-import java.io.Reader ;
-import java.io.Writer ;
-import java.util.* ;
-import java.util.function.Predicate;
 
-import org.apache.jena.enhanced.BuiltinPersonalities ;
-import org.apache.jena.enhanced.EnhNode ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.listeners.StatementListener ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.IteratorFactory ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
-import org.apache.jena.reasoner.Derivation ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.ValidityReport ;
-import org.apache.jena.shared.ConfigException ;
-import org.apache.jena.util.iterator.* ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import org.apache.jena.enhanced.BuiltinPersonalities;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.listeners.StatementListener;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.IteratorFactory;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ValidityReport;
+import org.apache.jena.shared.ConfigException;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
+import org.apache.jena.util.iterator.UniqueFilter;
+import org.apache.jena.util.iterator.WrappedIterator;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * <p>

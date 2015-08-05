@@ -18,17 +18,17 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.util.ArrayList;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler;
+import org.apache.jena.vocabulary.RDF;
 import org.xml.sax.Attributes;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import java.util.ArrayList;
 
 public class TestPropEltErrorMsg extends TestCase {
     

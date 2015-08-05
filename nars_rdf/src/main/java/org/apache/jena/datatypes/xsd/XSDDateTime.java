@@ -18,9 +18,11 @@
 
 package org.apache.jena.datatypes.xsd;
 
-import java.util.*;
+import org.apache.jena.datatypes.xsd.impl.XSDAbstractDateTimeType;
 
-import org.apache.jena.datatypes.xsd.impl.XSDAbstractDateTimeType ;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 
 /**

@@ -18,10 +18,14 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.BackwardRuleInfGraphI;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

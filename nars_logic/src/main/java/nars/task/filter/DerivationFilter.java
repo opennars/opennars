@@ -1,7 +1,6 @@
 package nars.task.filter;
 
 import nars.premise.Premise;
-import nars.process.NAL;
 import nars.task.TaskSeed;
 
 

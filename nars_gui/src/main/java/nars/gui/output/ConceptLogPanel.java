@@ -4,11 +4,11 @@ import automenta.vivisect.Video;
 import javolution.util.FastSet;
 import nars.Events;
 import nars.NAR;
+import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.io.out.TextOutput;
-import nars.util.data.id.Named;
 import nars.task.Task;
-import nars.concept.Concept;
+import nars.util.data.id.Named;
 
 import javax.swing.*;
 import java.awt.*;

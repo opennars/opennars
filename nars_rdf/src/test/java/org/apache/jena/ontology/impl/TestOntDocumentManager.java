@@ -23,20 +23,23 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.io.StringReader;
-import java.util.*;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.graph.impl.SimpleGraphMaker ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.ontology.OntDocumentManager.ReadFailureHandler ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.ModelMakerImpl ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.graph.impl.SimpleGraphMaker;
+import org.apache.jena.ontology.*;
+import org.apache.jena.ontology.OntDocumentManager.ReadFailureHandler;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.ModelMakerImpl;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.OntDocManagerVocab;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.StringReader;
+import java.util.*;
 
 
 

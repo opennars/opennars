@@ -18,12 +18,12 @@
 
 package org.apache.jena.n3;
 
-import java.io.* ;
-import java.util.List ;
+import junit.framework.TestSuite;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.FileUtils;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.util.FileUtils ;
+import java.io.*;
+import java.util.List;
 
 
 public abstract class N3ExternalTestsCom extends TestSuite

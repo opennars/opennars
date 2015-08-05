@@ -6,7 +6,8 @@ package ca.nengo.math.impl;
 import ca.nengo.TestUtil;
 import ca.nengo.plot.Plotter;
 import junit.framework.TestCase;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Unit test for GaussianPDF. 

@@ -18,6 +18,15 @@
 
 package org.apache.jena.rdf.model.test;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.AbstractTestPrefixMapping;
+import org.apache.jena.util.CollectionFactory;
+import org.junit.Assert;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,15 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.AbstractTestPrefixMapping ;
-import org.apache.jena.util.CollectionFactory ;
-import org.junit.Assert;
 
 public class TestNamespace extends AbstractModelTestBase
 {

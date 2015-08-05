@@ -1,6 +1,5 @@
 package nars.meta;
 
-import nars.link.TermLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.premise.Premise;

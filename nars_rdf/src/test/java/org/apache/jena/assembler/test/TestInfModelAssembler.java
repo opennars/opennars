@@ -18,12 +18,17 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.InfModelAssembler ;
-import org.apache.jena.assembler.exceptions.NotUniqueException ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.GenericRuleReasonerFactory ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.InfModelAssembler;
+import org.apache.jena.assembler.exceptions.NotUniqueException;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasonerFactory;
 
 public class TestInfModelAssembler extends AssemblerTestBase
     {

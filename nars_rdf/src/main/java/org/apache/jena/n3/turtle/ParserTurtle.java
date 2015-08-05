@@ -18,14 +18,14 @@
 
 package org.apache.jena.n3.turtle;
 
-import java.io.InputStream ;
-import java.io.Reader ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.n3.turtle.parser.ParseException;
+import org.apache.jena.n3.turtle.parser.TokenMgrError;
+import org.apache.jena.n3.turtle.parser.TurtleParser;
+import org.apache.jena.util.FileUtils;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.n3.turtle.parser.ParseException ;
-import org.apache.jena.n3.turtle.parser.TokenMgrError ;
-import org.apache.jena.n3.turtle.parser.TurtleParser ;
-import org.apache.jena.util.FileUtils ;
+import java.io.InputStream;
+import java.io.Reader;
 
 
 public class ParserTurtle

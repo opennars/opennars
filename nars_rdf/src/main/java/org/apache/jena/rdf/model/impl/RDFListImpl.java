@@ -23,18 +23,24 @@ package org.apache.jena.rdf.model.impl;
 
 // Imports
 ///////////////
-import java.util.*;
-import java.util.function.Function;
 
-import org.apache.jena.enhanced.* ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.iterator.* ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.enhanced.Implementation;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.Profile;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.function.Function;
 
 
 /**

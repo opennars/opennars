@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.util.List ;
+import junit.framework.JUnit4TestAdapter;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-import junit.framework.JUnit4TestAdapter ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.vocabulary.RDF ;
-import org.junit.AfterClass ;
-import org.junit.Assert ;
-import org.junit.BeforeClass ;
-import org.junit.Test ;
+import java.util.List;
 
 public class TestListStatements
 {

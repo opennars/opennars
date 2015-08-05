@@ -18,13 +18,13 @@
 
 package org.apache.jena.util.iterator.test;
 
-import java.util.List ;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.NiceIterator ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import java.util.List;
 
 public class TestAndThen extends ModelTestBase
     {

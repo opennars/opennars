@@ -19,8 +19,8 @@
 package org.apache.jena.assembler.test;
 
 import junit.framework.TestSuite;
-import org.apache.jena.assembler.Assembler ;
-import org.apache.jena.shared.BrokenException ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.shared.BrokenException;
 
 public class TestAssemblers extends AssemblerTestBase
     {

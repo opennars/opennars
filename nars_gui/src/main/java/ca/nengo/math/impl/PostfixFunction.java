@@ -28,7 +28,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.math.impl;
 
 import ca.nengo.math.Function;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.Serializable;
 import java.util.ArrayList;

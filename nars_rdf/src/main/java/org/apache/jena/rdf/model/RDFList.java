@@ -23,10 +23,12 @@ package org.apache.jena.rdf.model;
 
 // Imports
 ///////////////
-import java.util.*;
-import java.util.function.Function;
 
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
 
 
 /**

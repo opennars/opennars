@@ -1,11 +1,11 @@
 package jhelp.util.math.formal;
 
+import jhelp.util.text.UtilText;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-
-import jhelp.util.text.UtilText;
 
 /**
  * Represents a mathematical function in formal format <br>

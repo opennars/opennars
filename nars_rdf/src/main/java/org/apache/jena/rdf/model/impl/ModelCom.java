@@ -18,26 +18,30 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.io.* ;
-import java.net.URL ;
-import java.util.* ;
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
-import org.apache.jena.enhanced.BuiltinPersonalities ;
-import org.apache.jena.enhanced.EnhGraph ;
-import org.apache.jena.enhanced.Personality ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.shared.impl.PrefixMappingImpl ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.* ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.enhanced.BuiltinPersonalities;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.Personality;
+import org.apache.jena.graph.*;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.*;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.FilterIterator;
+import org.apache.jena.util.iterator.Map1Iterator;
+import org.apache.jena.vocabulary.RDF;
+
+import java.io.*;
+import java.net.URL;
+import java.util.*;
 
 /** Common methods for model implementations.
  *

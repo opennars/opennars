@@ -18,13 +18,18 @@
 
 package jena;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.shared.JenaException;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
-
-import java.net.*;
-import java.io.*;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
 
 /** A program which read an RDF model and copy it to the standard output stream.
  *

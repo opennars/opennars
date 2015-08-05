@@ -1,24 +1,16 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getClassNameMinusPackage;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
 import org.projog.core.term.PVar;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.udp.StaticUserDefinedPredicateFactory;
+
+import java.util.*;
+
+import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getClassNameMinusPackage;
 
 /**
  * Maintains details of member variables of a {@link CompiledPredicate}.

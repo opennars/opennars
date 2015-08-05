@@ -29,10 +29,10 @@
  */
 package automenta.rdp;
 
-import automenta.rdp.rdp.RdpPacket;
-import automenta.rdp.rdp5.VChannels;
 import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.rdp.ISO_Localised;
+import automenta.rdp.rdp.RdpPacket;
+import automenta.rdp.rdp5.VChannels;
 import org.apache.log4j.Logger;
 
 import java.io.EOFException;

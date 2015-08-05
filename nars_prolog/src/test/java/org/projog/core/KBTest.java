@@ -1,19 +1,5 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.ADD_PREDICATE_KEY;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.structure;
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
-
-import java.util.Map;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.function.AbstractSingletonPredicate;
@@ -26,6 +12,13 @@ import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 import org.projog.core.udp.StaticUserDefinedPredicateFactory;
 import org.projog.core.udp.UserDefinedPredicateFactory;
+
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
+import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
 
 public class KBTest {
    private final KB kb = TestUtils.createKnowledgeBase();

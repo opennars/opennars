@@ -28,8 +28,8 @@ import automenta.vnc.rfb.client.ClientToServerMessage;
 import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import automenta.vnc.viewer.AbstractConnectionWorkerFactory;
 import automenta.vnc.viewer.ConnectionPresenter;
-import automenta.vnc.viewer.RfbConnectionWorker;
 import automenta.vnc.viewer.NetworkConnectionWorker;
+import automenta.vnc.viewer.RfbConnectionWorker;
 
 import javax.swing.*;
 

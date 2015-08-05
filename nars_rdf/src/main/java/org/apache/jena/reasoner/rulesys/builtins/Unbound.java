@@ -19,8 +19,9 @@
 package org.apache.jena.reasoner.rulesys.builtins;
 
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.Node_RuleVariable;
+import org.apache.jena.reasoner.rulesys.RuleContext;
 
 /**
  * Predicate used to check if a variable has not been bound.

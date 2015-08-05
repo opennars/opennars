@@ -23,12 +23,12 @@ package org.apache.jena.graph.test;
     and reifier test suites.
 */
 
-import junit.framework.Test ;
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.impl.WrappedGraph ;
-import org.apache.jena.mem.GraphMem ;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.impl.WrappedGraph;
+import org.apache.jena.mem.GraphMem;
 
 public class TestGraph extends GraphTestBase
     { 

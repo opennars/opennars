@@ -1,11 +1,11 @@
 package org.projog.core.function.db;
 
-import static org.projog.core.KnowledgeBaseServiceLocator.getServiceLocator;
-
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
+
+import static org.projog.core.KnowledgeBaseServiceLocator.getServiceLocator;
 
 /* TEST
  % Add three records to the recorded database.

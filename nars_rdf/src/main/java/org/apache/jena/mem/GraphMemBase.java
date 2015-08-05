@@ -18,9 +18,9 @@
 
 package org.apache.jena.mem;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.GraphBase ;
-import org.apache.jena.graph.impl.TripleStore ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.graph.impl.TripleStore;
 
 /**
      GraphMemBase - a common base class for GraphMem and SmallGraphMem.

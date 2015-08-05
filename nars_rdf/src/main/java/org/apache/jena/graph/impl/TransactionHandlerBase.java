@@ -18,8 +18,9 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.graph.TransactionHandler;
+import org.apache.jena.shared.Command;
+import org.apache.jena.shared.JenaException;
 
 /**
      

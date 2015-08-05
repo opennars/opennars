@@ -18,8 +18,9 @@
 
 package org.apache.jena.enhanced;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.graph.FrontsNode;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.RDFNode;
 
 /**
  * <p>

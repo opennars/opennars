@@ -22,12 +22,15 @@ package jena.examples.ontology.describeClass;
 
 // Imports
 ///////////////
-import java.io.PrintStream;
-import java.util.*;
 
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.shared.PrefixMapping;
+
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 

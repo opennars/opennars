@@ -18,17 +18,17 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.io.IOException ;
-import java.net.ConnectException ;
-import java.net.NoRouteToHostException ;
-import java.net.UnknownHostException ;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.JenaException;
+import org.junit.Assert;
+import org.slf4j.LoggerFactory;
 
-import org.apache.jena.rdf.model.RDFReader ;
-import org.apache.jena.rdf.model.StmtIterator ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.JenaException ;
-import org.junit.Assert ;
-import org.slf4j.LoggerFactory ;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.net.UnknownHostException;
 
 public class TestReaders extends AbstractModelTestBase
 {

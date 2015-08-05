@@ -7,21 +7,17 @@
  */
 package jhelp.util.classLoader;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import jhelp.util.debug.Debug;
+import jhelp.util.debug.DebugLevel;
+import jhelp.util.list.EnumerationIterator;
+import jhelp.util.text.UtilText;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.debug.DebugLevel;
-import jhelp.util.list.EnumerationIterator;
-import jhelp.util.text.UtilText;
 
 /**
  * Loader of class, can add several other class loader and also individual .class file<br>

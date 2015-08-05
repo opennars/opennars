@@ -1,13 +1,13 @@
 package org.projog.core.function.db;
 
-import static org.projog.core.KnowledgeBaseServiceLocator.getServiceLocator;
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
-
-import java.util.Iterator;
-
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.PTerm;
+
+import java.util.Iterator;
+
+import static org.projog.core.KnowledgeBaseServiceLocator.getServiceLocator;
+import static org.projog.core.term.TermUtils.createAnonymousVariable;
 
 /* TEST
  %FALSE recorded(X,Y,Z)

@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdf.model.test;
 
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.test.JenaTestBase;
+import org.apache.jena.vocabulary.RDF;
+import org.junit.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.test.JenaTestBase ;
-import org.apache.jena.vocabulary.RDF ;
-import org.junit.Assert;
-import junit.framework.TestSuite;
 
 public class TestSeqMethods extends AbstractContainerMethods
 {

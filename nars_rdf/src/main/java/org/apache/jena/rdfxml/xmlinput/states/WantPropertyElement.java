@@ -18,11 +18,11 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
-import java.util.ArrayList;
-
-import org.apache.jena.rdfxml.xmlinput.impl.* ;
+import org.apache.jena.rdfxml.xmlinput.impl.*;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
+
+import java.util.ArrayList;
 
 public class WantPropertyElement extends Frame implements WantsObjectFrameI,
         HasSubjectFrameI {

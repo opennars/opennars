@@ -30,8 +30,6 @@ package ca.nengo.model;
 import ca.nengo.sim.Simulator;
 import ca.nengo.util.ScriptGenException;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**

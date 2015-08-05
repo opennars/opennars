@@ -18,18 +18,18 @@
 
 package org.apache.jena.rdf.model.test;
 
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.WrappedGraph;
+import org.apache.jena.graph.test.NodeCreateUtils;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.test.JenaTestBase;
+import org.junit.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.WrappedGraph ;
-import org.apache.jena.graph.test.NodeCreateUtils ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.test.JenaTestBase ;
-import org.junit.Assert;
 
 public class TestRemoveSPO extends AbstractModelTestBase
 {

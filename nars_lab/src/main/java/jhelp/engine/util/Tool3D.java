@@ -7,31 +7,8 @@
  */
 package jhelp.engine.util;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Stack;
-import java.util.StringTokenizer;
-
-import jhelp.engine.Color4f;
-import jhelp.engine.JHelpSceneRenderer;
-import jhelp.engine.Material;
-import jhelp.engine.Mesh;
-import jhelp.engine.Node;
-import jhelp.engine.NodeType;
-import jhelp.engine.NodeWithMaterial;
-import jhelp.engine.Object3D;
-import jhelp.engine.ObjectClone;
-import jhelp.engine.Point3D;
-import jhelp.engine.Scene;
-import jhelp.engine.Texture;
-import jhelp.engine.Vertex;
-import jhelp.engine.VirtualBox;
-import jhelp.engine.geom.Box;
-import jhelp.engine.geom.PathGeom;
-import jhelp.engine.geom.Plane;
-import jhelp.engine.geom.Revolution;
-import jhelp.engine.geom.Sphere;
+import jhelp.engine.*;
+import jhelp.engine.geom.*;
 import jhelp.engine.io.ConstantsXML;
 import jhelp.engine.twoD.GUI2D;
 import jhelp.engine.twoD.Line2D;
@@ -40,6 +17,12 @@ import jhelp.engine.twoD.Path;
 import jhelp.util.debug.Debug;
 import jhelp.util.text.UtilText;
 import jhelp.xml.MarkupXML;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 /**
  * Tools for 3D manipulation <br>

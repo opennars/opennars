@@ -17,16 +17,17 @@
  */
 package org.apache.jena.graph.impl;
 
-import java.util.Collection ;
-import java.util.HashSet ;
-import java.util.Locale ;
-import java.util.Set ;
-import org.apache.jena.graph.Capabilities ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * A simple graph implementation that wraps a collection of triples.

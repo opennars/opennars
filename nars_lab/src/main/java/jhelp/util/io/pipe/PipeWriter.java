@@ -1,12 +1,12 @@
 package jhelp.util.io.pipe;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import jhelp.util.Utilities;
 import jhelp.util.io.Binarizable;
 import jhelp.util.io.ByteArray;
 import jhelp.util.io.UtilIO;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Write messages in pipe<br>

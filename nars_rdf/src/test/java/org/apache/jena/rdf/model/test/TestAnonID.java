@@ -18,11 +18,11 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.AnonId ;
-import org.apache.jena.shared.impl.JenaParameters ;
-import org.apache.jena.test.JenaTestBase ;
-import org.junit.Assert;
 import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.shared.impl.JenaParameters;
+import org.apache.jena.test.JenaTestBase;
+import org.junit.Assert;
 
 /**
  * Test for anonID generation. (Originally test for the debugging hack

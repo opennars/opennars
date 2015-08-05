@@ -18,9 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
 /**
  * Factory object for creating general rule reasoner instances. The

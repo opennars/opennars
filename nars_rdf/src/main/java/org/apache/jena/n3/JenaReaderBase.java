@@ -18,15 +18,21 @@
 
 package org.apache.jena.n3;
 
-import java.net.* ;
-import java.nio.charset.StandardCharsets ;
-import java.io.* ;
-
-import org.apache.jena.graph.GraphEvents ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.FileUtils ;
+import org.apache.jena.graph.GraphEvents;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.FileUtils;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
 /** Abstract class that sorts out input streams, readers and base URIs, to call a
  * single worker function with model, UTF8 reader and visated base  

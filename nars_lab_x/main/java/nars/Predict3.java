@@ -10,15 +10,15 @@ import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.model.Default;
 import nars.gui.NARSwing;
 import nars.gui.output.ConceptsPanel;
 import nars.io.TextOutput;
-import nars.narsese.Narsese;
+import nars.model.Default;
 import nars.nal.entity.Concept;
 import nars.nal.entity.Task;
 import nars.nal.language.Tense;
 import nars.nal.language.Term;
+import nars.narsese.Narsese;
 import nars.util.TreeMLData;
 
 import java.awt.*;

@@ -7,11 +7,10 @@
  */
 package jhelp.engine.gui.components;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.geom.Rectangle2D;
-
 import jhelp.engine.Texture;
+
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Label with text <br>

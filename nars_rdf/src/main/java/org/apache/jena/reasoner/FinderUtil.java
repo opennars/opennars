@@ -18,8 +18,9 @@
 
 package org.apache.jena.reasoner;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * Some simple helper methods used when working with Finders,

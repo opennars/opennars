@@ -1,13 +1,13 @@
 package org.projog.core.udp.interpreter;
 
-import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
-
 import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.TailRecursivePredicate;
 import org.projog.core.udp.TailRecursivePredicateMetaData;
+
+import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
 
 /**
  * Creates "tail recursion optimised" versions of user defined predicates.

@@ -18,9 +18,9 @@
 
 package org.apache.jena.test;
 
-import junit.framework.TestCase ;
-import junit.framework.TestSuite ;
-import org.apache.jena.assembler.test.TestAssemblerPackage ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.assembler.test.TestAssemblerPackage;
 
 /**
  * All developers should edit this file to add their tests.

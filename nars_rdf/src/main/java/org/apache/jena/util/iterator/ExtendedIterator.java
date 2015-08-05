@@ -18,7 +18,9 @@
 
 package org.apache.jena.util.iterator;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 

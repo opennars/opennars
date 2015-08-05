@@ -24,9 +24,13 @@ package org.apache.jena.reasoner.rulesys.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.util.FileManager ;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.ValidityReport;
+import org.apache.jena.util.FileManager;
 
 /**
  * Test the preliminary OWL validation rules.

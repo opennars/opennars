@@ -4,9 +4,9 @@
  */
 package nars.evolve;
 
-import nars.nar.Default;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
+import nars.nar.Default;
 import nars.util.data.MultiOutputStream;
 import org.apache.commons.math3.genetics.*;
 import org.encog.ml.CalculateScore;

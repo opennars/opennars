@@ -18,7 +18,7 @@
 
 package org.apache.jena.reasoner;
 
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.shared.JenaException;
 
 /**
  * Exception signalling some generic problem with the reasoning subsystem.

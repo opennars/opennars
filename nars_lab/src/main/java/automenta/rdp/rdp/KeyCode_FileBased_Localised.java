@@ -29,13 +29,13 @@
  */
 package automenta.rdp.rdp;
 
+import automenta.rdp.Options;
+import automenta.rdp.keymapping.KeyCode_FileBased;
+import automenta.rdp.keymapping.KeyMapException;
+
 import java.awt.event.KeyEvent;
 import java.io.InputStream;
 import java.util.HashMap;
-
-import automenta.rdp.keymapping.KeyMapException;
-import automenta.rdp.Options;
-import automenta.rdp.keymapping.KeyCode_FileBased;
 
 public class KeyCode_FileBased_Localised extends KeyCode_FileBased {
 

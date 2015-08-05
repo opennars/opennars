@@ -1,6 +1,8 @@
 package automenta.vnc;
 
+import automenta.vnc.drawing.Renderer;
 import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
+import automenta.vnc.viewer.swing.Surface;
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
 import com.sun.jna.ptr.PointerByReference;
@@ -9,8 +11,6 @@ import net.sourceforge.tess4j.ITessAPI;
 import net.sourceforge.tess4j.TessAPI;
 import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.LoadLibs;
-import automenta.vnc.drawing.Renderer;
-import automenta.vnc.viewer.swing.Surface;
 
 import javax.swing.*;
 import java.awt.*;

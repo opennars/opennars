@@ -1,16 +1,16 @@
 package org.projog.core;
 
-import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
-import static org.projog.core.KnowledgeBaseUtils.getTermFormatter;
+import org.projog.core.event.ProjogEvent;
+import org.projog.core.event.ProjogEventType;
+import org.projog.core.term.PTerm;
+import org.projog.core.term.TermFormatter;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.projog.core.event.ProjogEvent;
-import org.projog.core.event.ProjogEventType;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.TermFormatter;
+import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
+import static org.projog.core.KnowledgeBaseUtils.getTermFormatter;
 
 /**
  * Collection of spy points.

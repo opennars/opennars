@@ -17,3 +17,56 @@ Apr 23
 The MultiLayerNetwork. Take a look at the 0.0.3.3 examples (https://github.com/deeplearning4j/dl4j-0.0.3.3-examples)
 Build from master for now on this. This will give you the composable networks.
 - show quoted text -
+
+
+http://arxiv.org/pdf/1507.04296v2.pdf
+Algorithm 1 Distributed DQN Algorithm
+Initialise replay memory D to size P.
+Initialise the training network for the action-value function
+Q(s, a; θ) with weights θ and target network
+Q(s, a; θ
+−) with weights θ
+− = θ.
+for episode = 1 to M do
+Initialise the start state to s1.
+Update θ from parameters θ
++ of the parameter server.
+for t = 1 to T do
+With probability  take a random action at or else
+at = argmax
+a
+Q(s, a; θ).
+Execute the action in the environment and observe
+the reward rt and the next state st+1. Store
+(st, at, rt, st+1) in D.
+Update θ from parameters θ
++ of the parameter
+server.
+Sample random mini-batch from D. And for each
+tuple (si
+, ai
+, ri
+, si+1) set target yt as
+if si+1 is terminal then
+yt = ri
+else
+yt = ri + γmax
+a0
+Q(si+1, a0
+; θ
+−)
+end if
+Calculate the loss Lt = (yt − Q(si
+, ai
+; θ)
+2
+).
+Compute gradients with respect to the network parameters
+θ using equation 2.
+Send gradients to the parameter server.
+Every global N steps sync θ
+− with parameters θ
++
+from the parameter server.
+end for
+end for

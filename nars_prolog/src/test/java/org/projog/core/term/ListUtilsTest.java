@@ -1,23 +1,12 @@
 package org.projog.core.term;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.decimalFraction;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.parseTerm;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-import static org.projog.TestUtils.write;
-import static org.projog.core.term.EmptyList.EMPTY_LIST;
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
-
 import org.junit.Test;
 import org.projog.TestUtils;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
+import static org.projog.core.term.EmptyList.EMPTY_LIST;
+import static org.projog.core.term.TermUtils.createAnonymousVariable;
 
 public class ListUtilsTest {
    @Test

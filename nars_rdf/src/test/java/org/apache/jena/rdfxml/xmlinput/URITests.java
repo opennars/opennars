@@ -17,11 +17,13 @@
  */
 
 package org.apache.jena.rdfxml.xmlinput;
-import org.apache.jena.iri.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.iri.Violation;
 
 //import java.net.*;
 public class URITests

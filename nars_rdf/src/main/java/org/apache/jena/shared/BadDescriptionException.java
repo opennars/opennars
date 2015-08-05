@@ -18,7 +18,7 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Model;
 /**
     Exception to throw if a model (or graph) is a bad description
 */

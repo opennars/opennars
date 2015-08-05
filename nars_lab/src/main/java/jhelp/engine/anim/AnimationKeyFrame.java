@@ -7,12 +7,11 @@
  */
 package jhelp.engine.anim;
 
-import java.util.ArrayList;
-
 import com.jogamp.opengl.GL;
-
 import jhelp.engine.Animation;
 import jhelp.util.list.ArrayInt;
+
+import java.util.ArrayList;
 
 /**
  * Generic animation by key frames<br>

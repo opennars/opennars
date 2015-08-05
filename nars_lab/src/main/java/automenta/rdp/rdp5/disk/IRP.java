@@ -1,9 +1,9 @@
 package automenta.rdp.rdp5.disk;
 
+import automenta.rdp.AbstractRdpPacket;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-
-import automenta.rdp.AbstractRdpPacket;
 
 public class IRP {
 

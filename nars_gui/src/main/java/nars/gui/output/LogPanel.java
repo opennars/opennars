@@ -7,12 +7,12 @@ import automenta.vivisect.swing.NSlider;
 import nars.Events.ERR;
 import nars.Events.EXE;
 import nars.NAR;
+import nars.Symbols;
 import nars.event.NARReaction;
 import nars.gui.WrapLayout;
-import nars.io.out.Output;
-import nars.Symbols;
 import nars.io.TraceWriter;
 import nars.io.TraceWriter.LogOutput;
+import nars.io.out.Output;
 import nars.task.Sentence;
 import nars.task.Task;
 

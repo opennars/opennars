@@ -23,14 +23,15 @@ package org.apache.jena.ontology;
 
 // Imports
 ///////////////
-import java.io.OutputStream ;
-import java.io.Writer ;
-import java.util.List ;
-import java.util.Set ;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>

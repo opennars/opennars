@@ -18,12 +18,12 @@
 
 package jena;
 
+import org.apache.jena.rdfxml.xmlinput.NTriple;
+import org.apache.jena.shared.Command;
+
+import java.lang.reflect.Constructor;
+
 import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
-
-import java.lang.reflect.Constructor ;
-
-import org.apache.jena.rdfxml.xmlinput.NTriple ;
-import org.apache.jena.shared.Command ;
 
 /** A command line interface into ARP.
  * Creates NTriple's or just error messages.

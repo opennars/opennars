@@ -18,7 +18,8 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.graph.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
 
 /**
      GraphWithPerform is an implementation interface that extends Graph

@@ -18,12 +18,18 @@
 
 package org.apache.jena.reasoner.transitiveReasoner;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.FGraph;
+import org.apache.jena.reasoner.Finder;
+import org.apache.jena.reasoner.FinderUtil;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.vocabulary.RDFS ;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * Uses two transitive graph caches to store a subclass and a subproperty

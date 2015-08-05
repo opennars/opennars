@@ -18,10 +18,12 @@
 
 package org.apache.jena.mem.test;
 
-import java.util.*;
+import org.apache.jena.mem.HashCommon;
+import org.apache.jena.rdf.model.test.ModelTestBase;
 
-import org.apache.jena.mem.HashCommon ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public class TestHashCommon extends ModelTestBase
     {

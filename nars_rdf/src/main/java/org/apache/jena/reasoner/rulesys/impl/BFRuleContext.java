@@ -18,15 +18,20 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.util.iterator.ClosableIterator ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.util.iterator.ClosableIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * An implementation of the generic RuleContext interface used by

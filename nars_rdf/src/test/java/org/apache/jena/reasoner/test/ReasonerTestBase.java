@@ -18,8 +18,9 @@
 
 package org.apache.jena.reasoner.test;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.* ;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.test.ModelTestBase;
 
 /**
 	ReasonerTestBase - provide common base code for reasoner tests

@@ -18,10 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.StandardValidityReport;
+import org.apache.jena.reasoner.ValidityReport;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
+import java.util.List;
 
 /**
  * Customization of the generic rule inference graph for RDFS inference.

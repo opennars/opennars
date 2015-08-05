@@ -4,8 +4,6 @@ import ca.nengo.model.Network;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.test.TestCharMesh;
-
-
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.UINeoNode;

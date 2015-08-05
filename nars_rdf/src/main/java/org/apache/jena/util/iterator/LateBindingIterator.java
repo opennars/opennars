@@ -17,7 +17,8 @@
  */
 
 package org.apache.jena.util.iterator;
-import java.util.Iterator ;
+
+import java.util.Iterator;
 /** An Iterator that is created lazily.
  * The sequence to be defined is defined by
  * the subclass's definition of create().

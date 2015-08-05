@@ -17,7 +17,7 @@
  */
 package jurls.reinforcementlearning.domains.arcade.screen;
 
-import java.awt.Color;
+import java.awt.*;
 
 /** This class defines the SECAM color palette. The entries in this class were
  *  taken from Stella.

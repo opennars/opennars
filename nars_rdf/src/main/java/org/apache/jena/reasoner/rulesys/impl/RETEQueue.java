@@ -18,9 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
 
-import org.apache.jena.graph.* ;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents one input left of a join node. The queue points to a sibling queue

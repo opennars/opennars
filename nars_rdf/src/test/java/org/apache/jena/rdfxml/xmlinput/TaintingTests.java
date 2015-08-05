@@ -18,24 +18,16 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.ontology.OntDocumentManager ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
-import org.apache.jena.rdfxml.xmlinput.NTriple ;
-import org.apache.jena.rdfxml.xmlinput.ParseException ;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXParseException;
+
+import java.io.*;
 
 public class TaintingTests extends TestCase implements ErrorHandler,
 		ARPErrorNumbers {

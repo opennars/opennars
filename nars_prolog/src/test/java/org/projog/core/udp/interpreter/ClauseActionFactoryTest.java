@@ -1,24 +1,14 @@
 package org.projog.core.udp.interpreter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.parseSentence;
-import static org.projog.TestUtils.variable;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.CutException;
 import org.projog.core.KB;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.IntegerNumber;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
-import org.projog.core.term.TermUtils;
-import org.projog.core.term.PVar;
+import org.projog.core.term.*;
 import org.projog.core.udp.ClauseModel;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
 
 public class ClauseActionFactoryTest {
    private final KB kb = TestUtils.createKnowledgeBase();

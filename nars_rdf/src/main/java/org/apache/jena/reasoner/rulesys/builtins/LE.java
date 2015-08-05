@@ -18,8 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.Util;
 
 /**
  * Tests if the first argument is less than or equal to the second.

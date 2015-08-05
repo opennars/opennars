@@ -4,6 +4,12 @@
  */
 package jhelp.xml;
 
+import jhelp.util.debug.Debug;
+import jhelp.util.debug.DebugLevel;
+import jhelp.util.filter.FileFilter;
+import jhelp.util.io.UtilIO;
+import jhelp.util.list.Scramble;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,12 +17,6 @@ import java.io.OutputStreamWriter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Stack;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.debug.DebugLevel;
-import jhelp.util.filter.FileFilter;
-import jhelp.util.io.UtilIO;
-import jhelp.util.list.Scramble;
 
 /**
  * Generate Background slide show description for Ubuntu.<br>

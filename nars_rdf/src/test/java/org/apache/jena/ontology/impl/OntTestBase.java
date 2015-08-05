@@ -23,12 +23,17 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.util.*;
 
-import junit.framework.*;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.test.TestUtil ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.ProfileException;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.reasoner.test.TestUtil;
+
+import java.util.Iterator;
 
 
 /**

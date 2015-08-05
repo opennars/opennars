@@ -19,7 +19,10 @@
 package org.apache.jena.graph.test;
 
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphExtract;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.TripleBoundary;
 
 /**
      Tests for recursive sub-graph extraction.

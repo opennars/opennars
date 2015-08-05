@@ -18,14 +18,14 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import java.util.Calendar;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.reasoner.rulesys.BindingEnvironment;
+import org.apache.jena.reasoner.rulesys.RuleContext;
 
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment ;
-import org.apache.jena.reasoner.rulesys.RuleContext ;
+import java.util.Calendar;
 
 /**
  * Bind the first arg to the current date time in the current locale and timezone.

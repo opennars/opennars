@@ -4,8 +4,9 @@ package nars.ca;// Mirek's Java Cellebration
 // Various tools
 
 import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Vector;
 
 public class MJTools {
 	// ----------------------------------------------------------------

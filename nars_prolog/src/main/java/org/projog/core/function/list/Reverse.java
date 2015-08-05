@@ -1,14 +1,14 @@
 package org.projog.core.function.list;
 
+import org.projog.core.function.AbstractSingletonPredicate;
+import org.projog.core.term.PTerm;
+
+import java.util.Collections;
+
 import static org.projog.core.term.ListFactory.createList;
 import static org.projog.core.term.ListUtils.toJavaUtilList;
 import static org.projog.core.term.PrologOperator.EMPTY_LIST;
 import static org.projog.core.term.PrologOperator.LIST;
-
-import java.util.Collections;
-
-import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.PTerm;
 
 /* TEST
  %TRUE reverse([a],[a])

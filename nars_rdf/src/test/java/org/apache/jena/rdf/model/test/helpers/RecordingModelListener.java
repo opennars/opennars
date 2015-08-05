@@ -18,17 +18,17 @@
 
 package org.apache.jena.rdf.model.test.helpers;
 
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelChangedListener;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.junit.Assert;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelChangedListener ;
-import org.apache.jena.rdf.model.Statement ;
-import org.apache.jena.rdf.model.StmtIterator ;
-import org.junit.Assert;
 /**
  * Class to listen to model changes and record them for testing.
  */

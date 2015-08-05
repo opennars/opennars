@@ -18,20 +18,20 @@
 
 package org.apache.jena.testing_framework.manifest;
 
-import java.util.ArrayList ;
-import java.util.Collection ;
-import java.util.Iterator ;
-import java.util.List ;
+import org.apache.jena.n3.IRIResolver;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.TestManifest;
+import org.apache.jena.vocabulary.TestManifestX;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.jena.n3.IRIResolver ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.TestManifest ;
-import org.apache.jena.vocabulary.TestManifestX ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A test manifest for a single manifest file.

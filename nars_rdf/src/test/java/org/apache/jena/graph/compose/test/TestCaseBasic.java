@@ -18,10 +18,11 @@
 
 package org.apache.jena.graph.compose.test;
 
-import java.lang.reflect.*;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.ModelFactory;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.ModelFactory ;
+import java.lang.reflect.Constructor;
 
 public class TestCaseBasic extends org.apache.jena.regression.TestCaseBasic 
 	{

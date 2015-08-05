@@ -19,8 +19,8 @@
 package org.apache.jena.graph.test;
 
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.Triple.* ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.Triple.Field;
 
 public class TestTripleField extends GraphTestBase
     {

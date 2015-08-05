@@ -19,25 +19,19 @@
  */
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.junit.Test;
-
-import org.apache.jena.graph.Factory;
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.*;
 import org.apache.jena.reasoner.rulesys.FBRuleInfGraph;
 import org.apache.jena.reasoner.rulesys.FBRuleReasoner;
 import org.apache.jena.reasoner.rulesys.Rule;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 public class TestLPBRuleEngineLeak extends TestCase {
 	public static TestSuite suite() {

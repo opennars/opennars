@@ -18,7 +18,7 @@
 
 package org.apache.jena.enhanced;
 
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.shared.JenaException;
 
 /**
     Exception to throw when adding a view to a Polymorphic discovers that

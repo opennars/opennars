@@ -18,14 +18,17 @@
 
 package org.apache.jena.graph.test;
 
-import static org.apache.jena.graph.impl.GraphBase.TOSTRING_TRIPLE_BASE ;
-import static org.apache.jena.graph.impl.GraphBase.TOSTRING_TRIPLE_LIMIT ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.GraphBase ;
-import org.apache.jena.util.iterator.* ;
+import static org.apache.jena.graph.impl.GraphBase.TOSTRING_TRIPLE_BASE;
+import static org.apache.jena.graph.impl.GraphBase.TOSTRING_TRIPLE_LIMIT;
 
 /**
     Tests for the revisions to GraphBase.toString() to see that it's compact,

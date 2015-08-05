@@ -4,11 +4,10 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.follow.Follow1D;
 import nars.Global;
 import nars.NAR;
-import nars.nar.Default;
 import nars.concept.Concept;
+import nars.nar.Default;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 

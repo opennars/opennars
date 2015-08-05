@@ -1,6 +1,6 @@
 package automenta.spacegraph.demo;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public interface Demo {
 

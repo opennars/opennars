@@ -18,11 +18,11 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.io.StringReader;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 import org.junit.Assert;
+
+import java.io.StringReader;
 
 public class TestRemoveBug extends AbstractModelTestBase
 {

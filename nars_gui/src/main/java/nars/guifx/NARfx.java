@@ -1,7 +1,6 @@
 package nars.guifx;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
@@ -10,8 +9,6 @@ import nars.nar.Default;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-
-import static javafx.application.Platform.runLater;
 
 
 /**

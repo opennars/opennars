@@ -26,9 +26,9 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model.widget;
 
+import ca.nengo.model.NTarget;
 import ca.nengo.model.Network;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.NTarget;
 import ca.nengo.neural.nef.impl.DecodedTarget;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.action.ActionException;

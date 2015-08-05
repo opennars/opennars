@@ -1,15 +1,15 @@
 package org.projog.core.function.compound;
 
-import java.util.HashMap;
-
 import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.PTerm;
+import org.projog.core.term.PVar;
 import org.projog.core.term.TermUtils;
 import org.projog.core.term.Unifier;
-import org.projog.core.term.PVar;
+
+import java.util.HashMap;
 
 /* TEST
  %TRUE true, true

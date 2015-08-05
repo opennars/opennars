@@ -39,7 +39,6 @@
 
 package automenta.spacegraph.demo.spacegraph.old;
 
-import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 

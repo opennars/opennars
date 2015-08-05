@@ -18,7 +18,7 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.graph.* ;
+import org.apache.jena.graph.Node;
 
 /**
  * Rules employ builtins to do all tests and actions other than simple triple

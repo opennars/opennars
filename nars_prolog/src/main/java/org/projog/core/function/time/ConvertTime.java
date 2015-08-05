@@ -1,15 +1,15 @@
 package org.projog.core.function.time;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
+import org.projog.core.Calculatables;
+import org.projog.core.function.AbstractSingletonPredicate;
+import org.projog.core.term.PAtom;
+import org.projog.core.term.PTerm;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.projog.core.Calculatables;
-import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.PTerm;
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
 
 /* TEST
  %QUERY convert_time(0, X)

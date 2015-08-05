@@ -19,13 +19,17 @@
 package org.apache.jena.n3;
 
 //import org.apache.commons.logging.*;
-import java.util.* ;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.util.iterator.* ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.SingletonIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+
+import java.util.*;
 
 /** An N3 pretty printer.
  *  Tries to make N3 data look readable - works better on regular data.

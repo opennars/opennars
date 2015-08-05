@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     An extended iterator that can return its next element as a Triple.

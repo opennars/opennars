@@ -18,16 +18,16 @@
 
 package org.apache.jena.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList ;
-import java.util.InvalidPropertiesFormatException;
-import java.util.List ;
-import java.util.Properties;
-
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.shared.JenaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
+import java.util.Properties;
 
 /** 
  * Pluck data out of the ether - or failing that, read it from a properties file.

@@ -18,9 +18,9 @@
 
 package org.apache.jena.mem;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Triple.Field ;
-import org.apache.jena.graph.impl.TripleStore ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple.Field;
+import org.apache.jena.graph.impl.TripleStore;
 
 public class GraphTripleStoreMem extends GraphTripleStoreBase implements TripleStore
     {    

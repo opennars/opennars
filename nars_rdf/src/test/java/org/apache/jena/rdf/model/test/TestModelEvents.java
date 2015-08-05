@@ -18,27 +18,22 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.listeners.ChangedListener ;
-import org.apache.jena.rdf.listeners.NullListener ;
-import org.apache.jena.rdf.listeners.ObjectListener ;
-import org.apache.jena.rdf.listeners.StatementListener ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelChangedListener ;
-import org.apache.jena.rdf.model.Statement ;
-import org.apache.jena.rdf.model.StmtIterator ;
-import org.apache.jena.rdf.model.impl.StmtIteratorImpl ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.RecordingModelListener ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.listeners.ChangedListener;
+import org.apache.jena.rdf.listeners.NullListener;
+import org.apache.jena.rdf.listeners.ObjectListener;
+import org.apache.jena.rdf.listeners.StatementListener;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelChangedListener;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.impl.StmtIteratorImpl;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.RecordingModelListener;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 import org.junit.Assert;
+
+import java.util.*;
 
 /**
  * Tests for model events and listeners.

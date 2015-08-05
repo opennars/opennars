@@ -18,15 +18,16 @@
 
 package org.apache.jena.mem.test;
 
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.mem.ArrayBunch;
+import org.apache.jena.mem.TripleBunch;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.mem.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
 
 /**
     Test triple bunch implementations - NOT YET FINISHED

@@ -1,12 +1,12 @@
 package org.projog.core.function.io;
 
-import static org.projog.core.KnowledgeBaseUtils.getOperands;
-import static org.projog.core.term.TermUtils.getAtomName;
-import static org.projog.core.term.TermUtils.toInt;
-
 import org.projog.core.Operands;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getOperands;
+import static org.projog.core.term.TermUtils.getAtomName;
+import static org.projog.core.term.TermUtils.toInt;
 
 /* TEST
  '~'(X,Y) :- X>Y-4, X<Y+4.

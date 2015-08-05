@@ -23,7 +23,8 @@ package org.apache.jena.ontology;
 
 // Imports
 ///////////////
-import org.apache.jena.rdf.model.Resource ;
+
+import org.apache.jena.rdf.model.Resource;
 
 
 /**

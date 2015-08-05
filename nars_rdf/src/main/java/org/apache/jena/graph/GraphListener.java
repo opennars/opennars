@@ -18,7 +18,8 @@
 
 package org.apache.jena.graph;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
     Interface for listening to graph-level update events. Each time the graph is

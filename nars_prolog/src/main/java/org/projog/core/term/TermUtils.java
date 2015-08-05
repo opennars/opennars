@@ -1,12 +1,12 @@
 package org.projog.core.term;
 
+import org.projog.core.Calculatables;
+import org.projog.core.ProjogException;
+
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.projog.core.Calculatables;
-import org.projog.core.ProjogException;
 
 /**
  * Helper methods for performing common tasks on {@link PTerm} instances.

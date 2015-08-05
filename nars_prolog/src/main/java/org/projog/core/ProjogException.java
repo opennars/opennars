@@ -1,9 +1,9 @@
 package org.projog.core;
 
+import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
 
 /**
  * An exception that provides information on an error within the Projog environment.

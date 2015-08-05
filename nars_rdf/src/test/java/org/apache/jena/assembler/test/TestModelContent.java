@@ -18,11 +18,14 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.exceptions.TransactionAbortedException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.exceptions.TransactionAbortedException ;
-import org.apache.jena.rdf.model.* ;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestModelContent extends AssemblerTestBase
     {

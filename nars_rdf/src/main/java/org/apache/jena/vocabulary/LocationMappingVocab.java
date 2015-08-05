@@ -19,7 +19,10 @@
 /* CVS $Id: LocationMappingVocab.java,v 1.1 2009-06-29 08:55:36 castagna Exp $ */
 
 package org.apache.jena.vocabulary;
-import org.apache.jena.rdf.model.* ;
+
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
  
 /**
  * Vocabulary definitions from Vocabularies/location-mapping-rdfs.n3 

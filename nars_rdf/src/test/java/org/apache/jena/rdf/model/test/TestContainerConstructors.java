@@ -18,11 +18,11 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.Alt ;
-import org.apache.jena.rdf.model.Bag ;
-import org.apache.jena.rdf.model.Seq ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.rdf.model.Alt;
+import org.apache.jena.rdf.model.Bag;
+import org.apache.jena.rdf.model.Seq;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.vocabulary.RDF;
 import org.junit.Assert;
 
 public class TestContainerConstructors extends AbstractModelTestBase

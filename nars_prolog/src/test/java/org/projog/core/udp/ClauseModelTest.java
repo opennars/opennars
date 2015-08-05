@@ -1,10 +1,10 @@
 package org.projog.core.udp;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.assertEquals;
 
 public class ClauseModelTest {
    @Test

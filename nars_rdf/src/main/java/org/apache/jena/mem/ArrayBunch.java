@@ -18,13 +18,11 @@
 
 package org.apache.jena.mem;
 
-import org.apache.jena.ext.com.google.common.collect.Iterators;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 
 /**
  * An ArrayBunch implements TripleBunch with a linear search of a short-ish

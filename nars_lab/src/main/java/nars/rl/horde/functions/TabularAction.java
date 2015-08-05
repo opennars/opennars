@@ -1,6 +1,5 @@
 package nars.rl.horde.functions;
 
-import jurls.reinforcementlearning.domains.arcade.io.Actions;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 

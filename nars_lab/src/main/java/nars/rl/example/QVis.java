@@ -7,9 +7,9 @@ import jurls.core.utils.MatrixImage;
 import nars.Symbols;
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.term.Term;
 import nars.rl.QEntry;
 import nars.rl.QLAgent;
+import nars.term.Term;
 import org.apache.commons.math3.util.FastMath;
 
 import javax.swing.*;

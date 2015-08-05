@@ -18,10 +18,11 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.*;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
 
 /** A NodeIterator implementation.
  */

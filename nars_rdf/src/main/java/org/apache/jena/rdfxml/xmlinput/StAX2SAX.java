@@ -18,28 +18,20 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.util.Iterator;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.Comment;
-import javax.xml.stream.events.DTD;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.EntityDeclaration;
-import javax.xml.stream.events.Namespace;
-import javax.xml.stream.events.ProcessingInstruction;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.AttributesImpl;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.events.*;
+import java.util.Iterator;
 
 /**
  * 

@@ -18,8 +18,8 @@
 
 package org.apache.jena.datatypes.xsd;
 
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.xerces.impl.dv.util.Base64 ;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.xerces.impl.dv.util.Base64;
 
 /**
  * Implement base64binary type. Most of the work is done in the superclass.

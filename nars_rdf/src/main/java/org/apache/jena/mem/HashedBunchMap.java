@@ -18,7 +18,7 @@
 
 package org.apache.jena.mem;
 
-import org.apache.jena.shared.* ;
+import org.apache.jena.shared.BrokenException;
 
 /**
     An implementation of BunchMap that does open-addressed hashing.

@@ -34,7 +34,8 @@ import ca.nengo.neural.neuron.SynapticIntegrator;
 import ca.nengo.util.MU;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.impl.TimeSeriesImpl;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Properties;
 

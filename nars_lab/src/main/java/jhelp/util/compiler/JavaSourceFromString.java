@@ -7,9 +7,8 @@
  */
 package jhelp.util.compiler;
 
-import java.net.URI;
-
 import javax.tools.SimpleJavaFileObject;
+import java.net.URI;
 
 /**
  * Form Sun Javadoc of {@link javax.tools#JavaCompiler} : <br>

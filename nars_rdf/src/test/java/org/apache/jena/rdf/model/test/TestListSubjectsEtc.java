@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.NodeIterator ;
-import org.apache.jena.rdf.model.ResIterator ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.test.JenaTestBase ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.ResIterator;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.test.JenaTestBase;
 import org.junit.Assert;
 
 /**

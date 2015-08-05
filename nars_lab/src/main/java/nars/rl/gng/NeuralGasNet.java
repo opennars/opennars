@@ -3,9 +3,7 @@ package nars.rl.gng;
 import org.jgrapht.graph.SimpleGraph;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * from: https://github.com/scadgek/NeuralGas

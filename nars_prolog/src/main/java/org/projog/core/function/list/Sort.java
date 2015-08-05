@@ -1,12 +1,12 @@
 package org.projog.core.function.list;
 
-import static org.projog.core.term.ListFactory.createList;
-import static org.projog.core.term.ListUtils.toSortedJavaUtilList;
+import org.projog.core.function.AbstractSingletonPredicate;
+import org.projog.core.term.PTerm;
 
 import java.util.List;
 
-import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.PTerm;
+import static org.projog.core.term.ListFactory.createList;
+import static org.projog.core.term.ListUtils.toSortedJavaUtilList;
 
 /* TEST
  %QUERY msort([q,w,e,r,t,y], X)

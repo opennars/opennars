@@ -18,10 +18,10 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.Iterator;
+import org.apache.jena.rdf.model.NsIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
 
 /** An NsIterator implementation
  */

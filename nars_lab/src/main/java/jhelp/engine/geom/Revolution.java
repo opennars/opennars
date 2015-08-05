@@ -7,19 +7,15 @@
  */
 package jhelp.engine.geom;
 
-import java.util.ArrayList;
-
-import jhelp.engine.Mesh;
-import jhelp.engine.NodeType;
-import jhelp.engine.Object3D;
-import jhelp.engine.Point2D;
-import jhelp.engine.Vertex;
+import jhelp.engine.*;
 import jhelp.engine.io.ConstantsXML;
 import jhelp.engine.twoD.Line2D;
 import jhelp.engine.twoD.Path;
 import jhelp.util.list.EnumerationIterator;
 import jhelp.util.text.UtilText;
 import jhelp.xml.MarkupXML;
+
+import java.util.ArrayList;
 
 /**
  * Revolution is a path draw on (X, Y) plane, then turn it around Y axis <br>

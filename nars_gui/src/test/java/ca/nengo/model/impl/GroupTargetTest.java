@@ -4,8 +4,8 @@
 package ca.nengo.model.impl;
 
 import ca.nengo.TestUtil;
-import ca.nengo.model.StructuralException;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.StructuralException;
 import junit.framework.TestCase;
 
 /**

@@ -24,9 +24,9 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import java.io.IOException;
-
 import org.xml.sax.SAXException;
+
+import java.io.IOException;
 /**
  * Wrap some other exception - being wise to SAXExceptions which
  * wrap something else.

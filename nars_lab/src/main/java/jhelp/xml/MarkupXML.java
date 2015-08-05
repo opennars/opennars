@@ -7,18 +7,12 @@
  */
 package jhelp.xml;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import jhelp.util.list.EnumerationIterator;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import jhelp.util.list.EnumerationIterator;
 
 /**
  * Markup XML<br>

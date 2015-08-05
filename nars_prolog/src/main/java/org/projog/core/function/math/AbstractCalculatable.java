@@ -1,12 +1,12 @@
 package org.projog.core.function.math;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-
 import org.projog.core.Calculatable;
 import org.projog.core.Calculatables;
 import org.projog.core.KB;
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
 
 abstract class AbstractCalculatable implements Calculatable {
    private Calculatables calculatables;

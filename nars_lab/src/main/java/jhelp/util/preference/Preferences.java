@@ -1,11 +1,11 @@
 package jhelp.util.preference;
 
-import java.io.File;
-import java.util.HashMap;
-
 import jhelp.util.io.UtilIO;
 import jhelp.util.io.base64.Base64Common;
 import jhelp.util.list.Pair;
+
+import java.io.File;
+import java.util.HashMap;
 
 /**
  * Store preferences in RAM and file.<br>

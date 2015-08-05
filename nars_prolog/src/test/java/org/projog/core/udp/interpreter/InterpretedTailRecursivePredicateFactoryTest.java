@@ -1,21 +1,16 @@
 package org.projog.core.udp.interpreter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.projog.TestUtils.createClauseModel;
-import static org.projog.TestUtils.createKnowledgeBase;
-import static org.projog.TestUtils.parseTerm;
-import static org.projog.TestUtils.write;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.TailRecursivePredicateMetaData;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
 
 public class InterpretedTailRecursivePredicateFactoryTest {
    private final InterpretedTailRecursivePredicateFactory FACTORY = createFactory("prefix([],Ys).", "prefix([X|Xs],[X|Ys]) :- prefix(Xs,Ys).");

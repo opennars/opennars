@@ -18,10 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.Util;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import java.util.List;
 
 /**
  * For each element in the RDF list (first argument) it asserts 

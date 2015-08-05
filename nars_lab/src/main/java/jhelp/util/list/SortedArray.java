@@ -1,12 +1,12 @@
 package jhelp.util.list;
 
-import java.lang.reflect.Array;
-import java.util.Comparator;
-import java.util.Iterator;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.reflection.Reflector;
+
+import java.lang.reflect.Array;
+import java.util.Comparator;
+import java.util.Iterator;
 
 /**
  * Array of sorted element.<br>

@@ -1,11 +1,5 @@
 package org.projog.core.function.compare;
 
-import static org.projog.core.term.TermUtils.getAtomName;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractSingletonPredicate;
@@ -13,6 +7,12 @@ import org.projog.core.term.ListFactory;
 import org.projog.core.term.ListUtils;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PVar;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /* TEST
  %QUERY predsort(compare, [s,d,f,a,a,a,z], X)

@@ -18,8 +18,8 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.RuleContext;
 
 /**
  * Tests wheter the first argument is not an instance of the datatype defined

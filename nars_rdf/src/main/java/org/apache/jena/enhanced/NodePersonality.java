@@ -18,7 +18,7 @@
 
 package org.apache.jena.enhanced;
 
-import org.apache.jena.rdf.model.RDFNode ;
+import org.apache.jena.rdf.model.RDFNode;
 
 /**
     Personalities for nodes.

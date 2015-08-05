@@ -18,25 +18,20 @@
 
 package org.apache.jena.testing_framework;
 
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 import static org.junit.Assert.*;
-
-import org.apache.jena.util.CollectionFactory;
-import org.apache.jena.util.iterator.ExtendedIterator;
-import org.apache.jena.util.iterator.WrappedIterator;
 
 /**
  * Basis for Jena test cases which provides assertFalse and assertDiffer.

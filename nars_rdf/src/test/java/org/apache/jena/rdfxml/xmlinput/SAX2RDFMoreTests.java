@@ -18,21 +18,19 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Arrays;
-
 import junit.framework.TestCase;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.RDFReader ;
-import org.apache.jena.rdfxml.xmlinput.SAX2Model ;
-import org.apache.jena.rdfxml.xmlinput.SAX2RDF ;
-import org.apache.jena.rdfxml.xmlinput.SAX2RDFTest.RDFEHArray ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.rdfxml.xmlinput.SAX2RDFTest.RDFEHArray;
 import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
 
 public class SAX2RDFMoreTests extends TestCase {
 	public SAX2RDFMoreTests(String nm) {

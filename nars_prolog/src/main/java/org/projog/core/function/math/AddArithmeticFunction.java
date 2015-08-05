@@ -1,20 +1,15 @@
 package org.projog.core.function.math;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-
-import java.util.Arrays;
-
-import org.projog.core.Calculatable;
-import org.projog.core.Calculatables;
-import org.projog.core.KB;
-import org.projog.core.PredicateFactory;
-import org.projog.core.PredicateKey;
-import org.projog.core.ProjogException;
+import org.projog.core.*;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermUtils;
 import org.projog.core.term.PVar;
+import org.projog.core.term.TermUtils;
+
+import java.util.Arrays;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
 
 /* TEST
  squared(X,Y) :- Y is X * X.

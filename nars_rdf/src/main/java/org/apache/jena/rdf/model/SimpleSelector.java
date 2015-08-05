@@ -18,8 +18,9 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.impl.* ;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.rdf.model.impl.LiteralImpl;
+import org.apache.jena.rdf.model.impl.ModelCom;
 
 /** 
     A general selector class for use when querying models.

@@ -18,8 +18,10 @@
 
 package org.apache.jena.reasoner;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
 /**
  * Wrapper round a Graph to implement the slighly modified Finder

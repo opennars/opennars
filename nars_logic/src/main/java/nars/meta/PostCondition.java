@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.link.TermLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;

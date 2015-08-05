@@ -1,14 +1,14 @@
 package org.projog.core.udp.interpreter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Unifier;
 import org.projog.core.term.PVar;
+import org.projog.core.term.Unifier;
 import org.projog.core.udp.TailRecursivePredicate;
 import org.projog.core.udp.TailRecursivePredicateMetaData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A implementation of {@link TailRecursivePredicate} for interpreted user defined predicates.

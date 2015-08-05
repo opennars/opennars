@@ -1,16 +1,16 @@
 package org.projog.core.function.kb;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.projog.core.Calculatables;
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
 
 /* TEST
  %QUERY flag(p(a), X, 2)

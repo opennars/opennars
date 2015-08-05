@@ -19,7 +19,10 @@
 package org.apache.jena.n3;
 
 //import org.apache.commons.logging.*;
-import org.apache.jena.rdf.model.* ;
+
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 
 /** A simple N3 writer - writes N3 out as triples with prefixes done.
  *  "N3 triples" - triples with N3 abbreviations and prefixes.

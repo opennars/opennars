@@ -18,10 +18,11 @@ limitations under the License.
  */
 package jurls.reinforcementlearning.domains.tetris;
 
-import java.awt.Component;
-import java.net.URL;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.tetris.visualizer.TetrisVisualizer;
+
+import java.awt.*;
+import java.net.URL;
 
 
 public class Tetris implements RLEnvironment {

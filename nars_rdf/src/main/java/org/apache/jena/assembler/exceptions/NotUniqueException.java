@@ -18,7 +18,8 @@
 
 package org.apache.jena.assembler.exceptions;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 
 public class NotUniqueException extends AssemblerException
     {

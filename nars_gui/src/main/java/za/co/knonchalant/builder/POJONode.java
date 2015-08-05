@@ -16,7 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 import javafx.util.Callback;
 import za.co.knonchalant.builder.converters.IValueFieldConverter;
 import za.co.knonchalant.builder.exception.ComponentException;

@@ -7,6 +7,7 @@
 package jurls.reinforcementlearning.domains.grid.mnist;
 
 import jurls.reinforcementlearning.domains.grid.World;
+
 import java.io.IOException;
 
 /**

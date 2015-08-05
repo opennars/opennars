@@ -7,20 +7,19 @@
  */
 package jhelp.util.compiler;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import jhelp.util.debug.Debug;
+import jhelp.util.debug.DebugLevel;
+import jhelp.util.io.UtilIO;
+import jhelp.util.text.UtilText;
 
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.debug.DebugLevel;
-import jhelp.util.io.UtilIO;
-import jhelp.util.text.UtilText;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Compiler of class<br>

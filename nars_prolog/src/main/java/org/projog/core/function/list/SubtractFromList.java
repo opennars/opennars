@@ -1,13 +1,13 @@
 package org.projog.core.function.list;
 
-import static org.projog.core.term.ListFactory.createList;
-import static org.projog.core.term.ListUtils.toJavaUtilList;
+import org.projog.core.function.AbstractSingletonPredicate;
+import org.projog.core.term.PTerm;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.PTerm;
+import static org.projog.core.term.ListFactory.createList;
+import static org.projog.core.term.ListUtils.toJavaUtilList;
 
 /* TEST
  %TRUE subtract([a,b,c,d,e,f], [a,s,d,f], [b,c,e])

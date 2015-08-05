@@ -18,11 +18,15 @@
 
 package org.apache.jena.n3 ;
 
-import java.io.* ;
-import java.util.* ;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 class TupleSet implements Iterator<List<TupleItem>>
 {

@@ -29,8 +29,8 @@ package ca.nengo.neural.plasticity.impl;
 
 import ca.nengo.model.InstantaneousOutput;
 import ca.nengo.model.PlasticNodeTarget;
-import ca.nengo.neural.SpikeOutput;
 import ca.nengo.model.StructuralException;
+import ca.nengo.neural.SpikeOutput;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.neuron.impl.SpikingNeuron;
 

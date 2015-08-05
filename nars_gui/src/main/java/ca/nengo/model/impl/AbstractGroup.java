@@ -39,7 +39,8 @@ import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.SpikePatternImpl;
 import ca.nengo.util.impl.TimeSeriesImpl;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 

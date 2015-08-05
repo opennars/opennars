@@ -18,17 +18,15 @@
 
 package org.apache.jena.shared.wg;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.iri.IRIRelativize;
+import org.apache.jena.shared.JenaException;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.ZipFile;
-
-import org.apache.jena.iri.*;
-import org.apache.jena.shared.JenaException ;
 
 /**
  * This class provides input streams that:

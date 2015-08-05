@@ -27,9 +27,9 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.neural.nef.impl;
 
-import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configurable;
 import ca.nengo.config.Configuration;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.dynamics.DynamicalSystem;
 import ca.nengo.dynamics.Integrator;
@@ -51,7 +51,8 @@ import ca.nengo.util.VectorGenerator;
 import ca.nengo.util.impl.RandomHypersphereVG;
 import ca.nengo.util.impl.TimeSeries1DImpl;
 import ca.nengo.util.impl.TimeSeriesImpl;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * An Origin of functions of the state variables of an NEFEnsemble.

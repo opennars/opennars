@@ -1,21 +1,5 @@
 package jhelp.engine.gui;
 
-import java.awt.BorderLayout;
-import java.awt.HeadlessException;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowEvent;
-import java.io.File;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
 import jhelp.engine.JHelpSceneRenderer;
 import jhelp.util.MemorySweeper;
 import jhelp.util.gui.UtilGUI;
@@ -23,7 +7,11 @@ import jhelp.util.io.UtilIO;
 import jhelp.util.preference.Preferences;
 import jhelp.util.resources.ResourceText;
 import jhelp.util.resources.Resources;
-import jhelp.util.text.UtilText;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
 
 /**
  * Frame for help to create 3D game

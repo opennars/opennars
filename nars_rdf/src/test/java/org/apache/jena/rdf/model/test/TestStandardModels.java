@@ -18,8 +18,9 @@
 
 package org.apache.jena.rdf.model.test;
 
-import junit.framework.*;
-import org.apache.jena.rdf.model.* ;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
 public class TestStandardModels extends AbstractTestModel
     {

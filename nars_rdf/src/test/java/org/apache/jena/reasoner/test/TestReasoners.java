@@ -20,21 +20,27 @@ package org.apache.jena.reasoner.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.jena.graph.*;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasoner;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasonerFactory;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory ;
-import org.apache.jena.reasoner.transitiveReasoner.* ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.vocabulary.* ;
 
 /**
  * Outline unit tests for initial experimental reasoners

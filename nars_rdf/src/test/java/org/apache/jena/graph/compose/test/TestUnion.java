@@ -18,9 +18,9 @@
 
 package org.apache.jena.graph.compose.test;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.Union ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.Union;
 
 public class TestUnion extends TestDyadic 
 {

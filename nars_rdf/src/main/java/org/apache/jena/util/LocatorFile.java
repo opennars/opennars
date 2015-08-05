@@ -18,14 +18,14 @@
 
 package org.apache.jena.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.AccessControlException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Location files in the filing system.
  *  A FileLocator can have a "current directory" - this is separate from any

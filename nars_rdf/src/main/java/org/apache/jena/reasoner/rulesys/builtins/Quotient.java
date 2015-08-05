@@ -18,10 +18,10 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.Node ;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment ;
-import org.apache.jena.reasoner.rulesys.RuleContext ;
-import org.apache.jena.reasoner.rulesys.Util ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.BindingEnvironment;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.Util;
 
 
 /**

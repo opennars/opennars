@@ -5,17 +5,6 @@
  */
 package jurls.core.becca;
 
-import com.google.common.util.concurrent.AtomicDouble;
-import static java.lang.Math.pow;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import jurls.core.approximation.Scalar;
-import org.apache.commons.math3.linear.DefaultRealMatrixPreservingVisitor;
-import org.apache.commons.math3.linear.OpenMapRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
-
 abstract public class Ziptie {
     
     /**

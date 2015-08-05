@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
-import java.io.ByteArrayOutputStream ;
-import java.io.StringWriter ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.impl.NTripleWriter;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.rdfxml.xmloutput.impl.Abbreviated;
+import org.apache.jena.rdfxml.xmloutput.impl.Basic;
 
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.impl.NTripleWriter ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.rdfxml.xmloutput.impl.Abbreviated ;
-import org.apache.jena.rdfxml.xmloutput.impl.Basic ;
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 
 public class TestWriterInterface extends ModelTestBase {
     private String lang;

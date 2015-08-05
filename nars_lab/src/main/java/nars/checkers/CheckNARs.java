@@ -5,9 +5,6 @@ import nars.gui.NARSwing;
 import nars.nar.Default;
 import nars.util.bind.NALObjects;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * Created by me on 7/17/15.
  */

@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.xml.sax.SAXParseException;
 import org.apache.jena.iri.IRI;
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
+import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers;
+import org.xml.sax.SAXParseException;
 
 public class XMLBaselessContext extends AbsXMLContext implements ARPErrorNumbers {
 

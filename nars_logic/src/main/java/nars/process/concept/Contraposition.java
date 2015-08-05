@@ -9,8 +9,6 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
-import nars.process.ConceptProcess;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Statement;

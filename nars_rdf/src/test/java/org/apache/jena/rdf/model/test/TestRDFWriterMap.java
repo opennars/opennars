@@ -18,20 +18,20 @@
 
 package org.apache.jena.rdf.model.test;
 
+import org.apache.jena.Jena;
+import org.apache.jena.n3.*;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.RDFWriterF;
+import org.apache.jena.rdf.model.impl.NTripleWriter;
+import org.apache.jena.rdfxml.xmloutput.impl.Abbreviated;
+import org.apache.jena.rdfxml.xmloutput.impl.Basic;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.NoWriterForLangException;
+import org.apache.jena.test.JenaTestBase;
+import org.junit.Assert;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.jena.Jena ;
-import org.apache.jena.n3.* ;
-import org.apache.jena.rdf.model.RDFWriter ;
-import org.apache.jena.rdf.model.RDFWriterF ;
-import org.apache.jena.rdf.model.impl.NTripleWriter ;
-import org.apache.jena.rdfxml.xmloutput.impl.Abbreviated ;
-import org.apache.jena.rdfxml.xmloutput.impl.Basic ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.NoWriterForLangException ;
-import org.apache.jena.test.JenaTestBase ;
-import org.junit.Assert;
 
 public class TestRDFWriterMap extends JenaTestBase
 {

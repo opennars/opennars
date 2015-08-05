@@ -1,13 +1,13 @@
 package org.projog.core.function.kb;
 
-import java.util.Iterator;
-import java.util.Map;
-
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.PTerm;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.UserDefinedPredicateFactory;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /* TEST
  % Examples of using "clause":

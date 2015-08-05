@@ -18,12 +18,12 @@
 
 package org.apache.jena.n3.turtle;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Locale ;
-
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
+import java.util.Locale;
 
 /** Emit N-triples */
 public class Turtle2NTriples implements TurtleEventHandler

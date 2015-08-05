@@ -18,8 +18,9 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
 
 /**
     Exception to throw when an RDFNode required to be a Resource isn't, or when a Node

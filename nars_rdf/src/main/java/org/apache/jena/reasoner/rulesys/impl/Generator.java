@@ -18,9 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.reasoner.TriplePattern;
 
-import org.apache.jena.reasoner.TriplePattern ;
+import java.util.*;
 
 /**
  * A generator represents a set of memoized results for a single 

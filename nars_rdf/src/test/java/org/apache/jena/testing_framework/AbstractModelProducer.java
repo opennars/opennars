@@ -17,11 +17,11 @@
  */
 package org.apache.jena.testing_framework;
 
+import org.apache.jena.rdf.model.Model;
+import org.xenei.junit.contract.IProducer;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.xenei.junit.contract.IProducer;
-import org.apache.jena.rdf.model.Model;
 
 /**
  * An abstract implementation of the ModelProducerInterface.

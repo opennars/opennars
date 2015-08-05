@@ -18,11 +18,18 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.StmtIterator;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OntModelAssembler extends InfModelAssembler implements Assembler
     {

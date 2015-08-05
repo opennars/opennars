@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
-import org.apache.jena.rdfxml.xmlinput.impl.ANode ;
-import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext ;
+import org.apache.jena.rdfxml.xmlinput.impl.ANode;
+import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext;
 
 public class RDFCollection extends Collection {
 

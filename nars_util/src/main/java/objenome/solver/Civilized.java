@@ -3,7 +3,6 @@ package objenome.solver;
 import com.gs.collections.api.map.primitive.MutableObjectDoubleMap;
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import objenome.goal.DoubleFitness;
-import objenome.op.Node;
 import objenome.solver.evolve.Fitness;
 import objenome.solver.evolve.TypedOrganism;
 

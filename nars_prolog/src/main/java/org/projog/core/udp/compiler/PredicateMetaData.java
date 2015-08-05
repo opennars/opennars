@@ -1,11 +1,11 @@
 package org.projog.core.udp.compiler;
 
-import java.util.List;
-
 import org.projog.core.KB;
 import org.projog.core.PredicateKey;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.TailRecursivePredicateMetaData;
+
+import java.util.List;
 
 /**
  * Defines the characteristics of a user defined predicate.

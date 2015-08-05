@@ -18,7 +18,7 @@
 
 package org.apache.jena.mem;
 
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     A pruned (and slightly stewed) version of Map, containing just those operations

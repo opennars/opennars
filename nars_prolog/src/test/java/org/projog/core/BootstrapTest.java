@@ -1,14 +1,9 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.ADD_CALCULATABLE_KEY;
-import static org.projog.TestUtils.ADD_PREDICATE_KEY;
-import static org.projog.TestUtils.BOOTSTRAP_FILE;
-import static org.projog.TestUtils.parseTermsFromFile;
-import static org.projog.core.KnowledgeBaseUtils.QUESTION_PREDICATE_NAME;
+import org.junit.Test;
+import org.projog.TestUtils;
+import org.projog.core.function.AbstractRetryablePredicate;
+import org.projog.core.term.PTerm;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -16,10 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
-import org.projog.TestUtils;
-import org.projog.core.function.AbstractRetryablePredicate;
-import org.projog.core.term.PTerm;
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
+import static org.projog.core.KnowledgeBaseUtils.QUESTION_PREDICATE_NAME;
 
 /**
  * Tests contents of {@code etc/projog-bootstrap.pl}.

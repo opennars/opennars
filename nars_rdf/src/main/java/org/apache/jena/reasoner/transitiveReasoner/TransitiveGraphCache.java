@@ -18,11 +18,13 @@
 
 package org.apache.jena.reasoner.transitiveReasoner;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.Finder;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.util.iterator.*;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.*;
 
 /**
  * Datastructure used to represent a closed transitive reflexive relation.

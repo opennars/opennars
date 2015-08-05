@@ -24,11 +24,11 @@
 
 package automenta.vnc.rfb.client;
 
-import java.util.Set;
-
 import automenta.vnc.exceptions.TransportException;
 import automenta.vnc.rfb.encoding.EncodingType;
 import automenta.vnc.transport.Writer;
+
+import java.util.Set;
 
 public class SetEncodingsMessage implements ClientToServerMessage {
 	private final Set<EncodingType> encodings;

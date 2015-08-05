@@ -19,15 +19,18 @@
 package org.apache.jena.graph.compose.test;
 
 
-import junit.framework.*;
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.* ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.test.AbstractTestPackage ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.PrefixMapping ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.Difference;
+import org.apache.jena.graph.compose.Intersection;
+import org.apache.jena.graph.compose.Union;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.test.AbstractTestPackage;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.PrefixMapping;
 
 public class TestPackage extends TestCase {
     

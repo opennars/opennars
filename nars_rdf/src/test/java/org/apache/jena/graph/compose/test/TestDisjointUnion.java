@@ -18,9 +18,9 @@
 
 package org.apache.jena.graph.compose.test;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.DisjointUnion ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.DisjointUnion;
 
 /**
      TestDisjointUnion - test that DisjointUnion works, as well as we can.

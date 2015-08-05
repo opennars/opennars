@@ -7,19 +7,6 @@
  */
 package jhelp.engine.gui;
 
-import java.awt.BorderLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
 import jhelp.engine.JHelpSceneRenderer;
 import jhelp.engine.Node;
 import jhelp.engine.Scene;
@@ -29,6 +16,11 @@ import jhelp.util.MemorySweeper;
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.gui.UtilGUI;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * Frame with a single 3D view in it<br>

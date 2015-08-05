@@ -18,8 +18,8 @@
 
 package org.apache.jena.assembler.exceptions;
 
-import org.apache.jena.assembler.Assembler ;
-import org.apache.jena.rdf.model.Resource ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.rdf.model.Resource;
 
 /**
     Exception used to report a failure of a group assembler to construct an

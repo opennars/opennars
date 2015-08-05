@@ -37,7 +37,8 @@ import ca.nengo.util.MU;
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyChangesUtils;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 

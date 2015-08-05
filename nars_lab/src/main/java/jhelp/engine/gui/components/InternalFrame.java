@@ -7,9 +7,6 @@
  */
 package jhelp.engine.gui.components;
 
-import java.awt.Color;
-import java.util.ArrayList;
-
 import jhelp.engine.Texture;
 import jhelp.engine.gui.events.ButtonClickListener;
 import jhelp.engine.gui.events.InternalFrameListener;
@@ -18,6 +15,9 @@ import jhelp.engine.gui.layout.BorderLayoutConstraints;
 import jhelp.engine.gui.layout.HorizontalLayout;
 import jhelp.engine.gui.layout.HorizontalLayoutConstraints;
 import jhelp.util.debug.Debug;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Internal frame inside a {@link Desktop3D}<br>

@@ -18,9 +18,11 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.PrefixMapping;
 
 public class PrefixMappingAssembler extends AssemblerBase implements Assembler
     {

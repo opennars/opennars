@@ -3,8 +3,6 @@ package automenta.rdp.cv;
 import automenta.rdp.WrappedImage;
 import javafx.scene.Node;
 
-import java.awt.*;
-
 /**
  * Created by me on 7/22/15.
  */

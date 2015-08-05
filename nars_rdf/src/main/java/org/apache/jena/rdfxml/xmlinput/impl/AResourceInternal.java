@@ -24,7 +24,7 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.apache.jena.rdfxml.xmlinput.AResource ;
+import org.apache.jena.rdfxml.xmlinput.AResource;
 
 /** A resource from the input file.
  */

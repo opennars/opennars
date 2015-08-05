@@ -3,7 +3,6 @@ package nars.process.concept;
 import nars.link.TaskLink;
 import nars.nal.LogicStage;
 import nars.premise.Premise;
-import nars.process.ConceptProcess;
 
 /**
  * when a concept fires a tasklink but before a termlink is selected

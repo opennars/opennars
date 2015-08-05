@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph.test;
 
-import junit.framework.TestSuite ;
+import junit.framework.TestSuite;
 
 /**
     Collected test suite for the .graph package.

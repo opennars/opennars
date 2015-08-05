@@ -18,11 +18,11 @@
 
 package org.apache.jena.rdf.model;
 
-import java.util.Calendar;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.graph.Node;
 
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.graph.Node ;
+import java.util.Calendar;
 
 
 /** Convenience methods which extend the {@link Model} interface.

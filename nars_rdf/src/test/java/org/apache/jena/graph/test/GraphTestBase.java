@@ -22,27 +22,20 @@ package org.apache.jena.graph.test;
     An extension of JenaTestBase (which see) with Graph-specific methods.
 */
 
+import org.apache.jena.graph.*;
+import org.apache.jena.ontology.impl.TestListSyntaxCategories;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.test.JenaTestBase;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.IteratorCollection;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
 import java.io.FileNotFoundException;
-import java.lang.reflect.Constructor ;
+import java.lang.reflect.Constructor;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.ontology.impl.TestListSyntaxCategories ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.test.JenaTestBase ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.IteratorCollection ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.util.*;
 
 public class GraphTestBase extends JenaTestBase
     {

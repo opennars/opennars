@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /** An iterator which returns RDF Resources.
  *

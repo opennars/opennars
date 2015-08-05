@@ -19,7 +19,8 @@
 package org.apache.jena.mem.test;
 
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestGraphMemPackage extends TestCase
     {

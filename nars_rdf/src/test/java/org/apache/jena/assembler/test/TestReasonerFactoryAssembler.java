@@ -18,15 +18,22 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.RuleSet;
+import org.apache.jena.assembler.assemblers.AssemblerBase;
+import org.apache.jena.assembler.assemblers.ReasonerFactoryAssembler;
+import org.apache.jena.assembler.exceptions.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasonerFactory;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.* ;
-import org.apache.jena.assembler.exceptions.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.transitiveReasoner.* ;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class TestReasonerFactoryAssembler extends AssemblerTestBase
     {

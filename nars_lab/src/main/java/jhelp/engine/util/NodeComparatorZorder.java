@@ -7,9 +7,9 @@
  */
 package jhelp.engine.util;
 
-import java.util.Comparator;
-
 import jhelp.engine.Node;
+
+import java.util.Comparator;
 
 /**
  * Compare two nodes in Z Order <br>

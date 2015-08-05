@@ -18,14 +18,17 @@
 
 package org.apache.jena.mem.test;
 
-import java.util.*;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.test.NodeCreateUtils;
+import org.apache.jena.mem.ArrayBunch;
+import org.apache.jena.mem.HashedTripleBunch;
+import org.apache.jena.mem.SetBunch;
+import org.apache.jena.mem.TripleBunch;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import junit.framework.*;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.test.NodeCreateUtils ;
-import org.apache.jena.mem.* ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.util.ConcurrentModificationException;
 
 public abstract class TestConcurrentModificationException extends ModelTestBase
     {

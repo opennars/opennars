@@ -18,18 +18,18 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
-import java.io.* ;
-import java.util.Random ;
-import java.util.Vector ;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.vocabulary.RDFSyntax;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import junit.framework.Test ;
-import junit.framework.TestSuite ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.vocabulary.RDFSyntax ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import java.io.*;
+import java.util.Random;
+import java.util.Vector;
 
 /**
  * This will test any Writer and Reader pair.

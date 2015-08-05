@@ -7,8 +7,7 @@
  */
 package jhelp.engine;
 
-import java.awt.Color;
-import java.awt.Polygon;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**

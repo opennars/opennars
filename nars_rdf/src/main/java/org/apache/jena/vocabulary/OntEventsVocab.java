@@ -23,8 +23,13 @@ package org.apache.jena.vocabulary;
 
 // Imports
 ///////////////////////////////////////
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
+
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
 
 
 

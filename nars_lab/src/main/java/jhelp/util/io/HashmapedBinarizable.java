@@ -1,8 +1,8 @@
 package jhelp.util.io;
 
-import java.util.HashMap;
-
 import jhelp.util.debug.Debug;
+
+import java.util.HashMap;
 
 /**
  * Class with the aim to simplify the data getting and setting in a {@link Binarizable}.<br>

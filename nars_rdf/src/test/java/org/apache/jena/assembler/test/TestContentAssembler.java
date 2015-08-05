@@ -18,11 +18,16 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.ContentAssembler ;
-import org.apache.jena.assembler.exceptions.UnknownEncodingException ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.* ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.BadObjectException;
+import org.apache.jena.assembler.Content;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.ContentAssembler;
+import org.apache.jena.assembler.exceptions.UnknownEncodingException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.FileManager;
 
 public class TestContentAssembler extends AssemblerTestBase
     {

@@ -1,9 +1,9 @@
 package automenta.rdp.rdp5.disk;
 
-import java.io.IOException;
-
 import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.rdp5.VChannel;
+
+import java.io.IOException;
 
 public interface Device {
 

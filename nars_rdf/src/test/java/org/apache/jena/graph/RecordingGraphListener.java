@@ -18,14 +18,11 @@
 
 package org.apache.jena.graph;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphListener;
-import org.apache.jena.graph.Triple;
 import org.apache.jena.testing_framework.AbstractRecordingListener;
 import org.apache.jena.testing_framework.GraphHelper;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This testing listener records the event names and data, and provides a method

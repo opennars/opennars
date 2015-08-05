@@ -18,16 +18,16 @@
 
 package org.apache.jena.rdf.model.test;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.Lock;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.Lock ;
 
 /**
  * Collected test suite for the .model package.

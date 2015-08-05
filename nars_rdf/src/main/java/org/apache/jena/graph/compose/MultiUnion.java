@@ -20,16 +20,19 @@
 ///////////////
 package org.apache.jena.graph.compose;
 
-import java.util.Iterator ;
-import java.util.Set ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphStatisticsHandler;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.SimpleEventManager;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.SimpleEventManager ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.NullIterator ;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * <p>

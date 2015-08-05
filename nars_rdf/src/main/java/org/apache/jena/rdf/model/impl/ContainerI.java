@@ -18,7 +18,8 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Container;
+import org.apache.jena.rdf.model.RDFNode;
 
 /** An internal interface, not normally of interest to application developers.
  */

@@ -18,12 +18,14 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.BadObjectException;
+import org.apache.jena.assembler.ImportManager;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.util.FileManager;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.util.FileManager ;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestImportManager extends AssemblerTestBase
     {

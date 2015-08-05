@@ -39,7 +39,7 @@
 
 package automenta.spacegraph.math.linalg;
 
-import java.awt.Color;
+import java.awt.*;
 
 /** 3-element single-precision vector */
 

@@ -20,10 +20,10 @@ package org.apache.jena.n3.turtle;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.util.junit.TestFactoryManifest ;
-import org.apache.jena.util.junit.TestUtils ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.junit.TestFactoryManifest;
+import org.apache.jena.util.junit.TestUtils;
+import org.apache.jena.vocabulary.RDF;
 
 
 public class TurtleTestFactory extends TestFactoryManifest

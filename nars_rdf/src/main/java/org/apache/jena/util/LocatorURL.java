@@ -18,16 +18,16 @@
 
 package org.apache.jena.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Locale ;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Locale;
 
 /** Location files named by a URL
  */

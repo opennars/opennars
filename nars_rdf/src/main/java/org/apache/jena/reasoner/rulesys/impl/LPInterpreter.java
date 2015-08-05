@@ -18,15 +18,20 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.impl.RuleClauseCode.CompileState.RuleClauseCodeList ;
-import org.apache.jena.util.PrintUtil ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.rulesys.impl.RuleClauseCode.CompileState.RuleClauseCodeList;
+import org.apache.jena.util.PrintUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Bytecode interpeter engine for the LP version of the backward

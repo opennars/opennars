@@ -1,13 +1,12 @@
 package jhelp.engine.anim;
 
+import com.jogamp.opengl.GL;
+import jhelp.engine.Animation;
+import jhelp.util.list.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.jogamp.opengl.GL;
-
-import jhelp.engine.Animation;
-import jhelp.util.list.Pair;
 
 /**
  * Animation that does several animation in parallel

@@ -2,12 +2,7 @@
  */
 package jhelp.engine.geom;
 
-import jhelp.engine.Mesh;
-import jhelp.engine.NodeType;
-import jhelp.engine.Object3D;
-import jhelp.engine.Point2D;
-import jhelp.engine.Point3D;
-import jhelp.engine.Vertex;
+import jhelp.engine.*;
 import jhelp.engine.io.ConstantsXML;
 import jhelp.xml.MarkupXML;
 

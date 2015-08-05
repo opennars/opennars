@@ -23,7 +23,9 @@ package org.apache.jena.util.iterator;
 
 // Imports
 ///////////////
-import java.util.*;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * An iterator that represents the concatenation of two individual iterators.

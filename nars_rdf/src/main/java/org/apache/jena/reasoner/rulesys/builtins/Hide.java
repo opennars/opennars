@@ -18,9 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.rulesys.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.rulesys.BuiltinException;
+import org.apache.jena.reasoner.rulesys.FBRuleInfGraph;
+import org.apache.jena.reasoner.rulesys.RuleContext;
 
 /**
  * Register a node as to be hidden from query

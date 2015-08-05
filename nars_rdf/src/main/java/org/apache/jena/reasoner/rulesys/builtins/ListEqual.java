@@ -18,10 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.Util;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Test if the two argument lists contain the same semantic elements.

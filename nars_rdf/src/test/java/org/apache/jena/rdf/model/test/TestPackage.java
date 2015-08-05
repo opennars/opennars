@@ -18,11 +18,11 @@
 package org.apache.jena.rdf.model.test;
 
 import junit.framework.TestSuite;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.PrefixMapping;
 
 /**
  * Implementation of the basic Model TestPackage. Uses the standard

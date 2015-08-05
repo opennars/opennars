@@ -23,10 +23,10 @@ package org.apache.jena.util;
 
 // Imports
 ///////////////
-import java.util.*;
 
 import junit.framework.TestCase;
-import org.apache.jena.util.OneToManyMap ;
+
+import java.util.*;
 
 
 

@@ -6,15 +6,12 @@ package automenta.spacegraph.control;
 
 import automenta.spacegraph.SG.KeyStates;
 import automenta.spacegraph.Surface;
-import automenta.spacegraph.video.SGPanel;
 import automenta.spacegraph.math.linalg.Vec2f;
 import automenta.spacegraph.math.linalg.Vec3f;
 import automenta.spacegraph.shape.Rect;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import automenta.spacegraph.video.SGPanel;
+
+import java.awt.event.*;
 
 /**
  *

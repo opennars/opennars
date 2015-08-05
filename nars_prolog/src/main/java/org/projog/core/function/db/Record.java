@@ -1,14 +1,14 @@
 package org.projog.core.function.db;
 
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
+import org.projog.core.PredicateKey;
+import org.projog.core.term.IntegerNumber;
+import org.projog.core.term.PAtom;
+import org.projog.core.term.PStruct;
+import org.projog.core.term.PTerm;
 
 import java.util.Arrays;
 
-import org.projog.core.PredicateKey;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.IntegerNumber;
-import org.projog.core.term.PStruct;
-import org.projog.core.term.PTerm;
+import static org.projog.core.term.TermUtils.createAnonymousVariable;
 
 /** Represents a record stored in a {@code RecordedDatabase}. */
 class Record {

@@ -18,14 +18,16 @@
 
 package org.apache.jena.graph.test;
 
-import static org.junit.Assert.* ;
-import junit.framework.JUnit4TestAdapter ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.junit.Test ;
+import junit.framework.JUnit4TestAdapter;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 // See also TestTypedLiterals
 /** Tests for LiteralLabel.sameValueAs

@@ -18,17 +18,20 @@
 
 package org.apache.jena.util;
 
-import java.util.*;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.test.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.RecordingModelListener ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.util.MonitorGraph ;
-import org.apache.jena.util.MonitorModel ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.test.NodeCreateUtils;
+import org.apache.jena.graph.test.RecordingListener;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.RecordingModelListener;
+import org.apache.jena.reasoner.test.TestUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests for MonitorGraph implementation.

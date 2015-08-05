@@ -5,9 +5,9 @@ import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nar.Default;
-import nars.term.Atom;
 import nars.rl.*;
 import nars.rl.example.QVis;
+import nars.term.Atom;
 
 /**
  * Created by me on 4/26/15.

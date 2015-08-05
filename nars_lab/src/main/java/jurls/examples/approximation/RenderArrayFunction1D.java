@@ -5,7 +5,7 @@
  */
 package jurls.examples.approximation;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  *

@@ -18,12 +18,13 @@
 
 package org.apache.jena.util.junit;
 
-import java.util.Iterator;
-
-import junit.framework.*;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.shared.JenaException ;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.JenaException;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
 
 
 public abstract class TestFactoryManifest implements ManifestItemHandler

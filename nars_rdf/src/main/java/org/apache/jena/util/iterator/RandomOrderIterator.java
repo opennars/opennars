@@ -18,7 +18,8 @@
 
 package org.apache.jena.util.iterator;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.Random;
 /**
  * RandomOrderIterator - Reorders the elements returned by an Iterator.
  */

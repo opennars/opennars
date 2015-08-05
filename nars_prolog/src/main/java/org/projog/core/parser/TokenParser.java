@@ -1,24 +1,14 @@
 package org.projog.core.parser;
 
-import static java.lang.Character.isAlphabetic;
-import static java.lang.Character.isDigit;
-import static java.lang.Character.isLowerCase;
-import static java.lang.Character.isUpperCase;
-import static java.lang.Character.isWhitespace;
-import static org.projog.core.parser.Delimiters.isDelimiter;
-import static org.projog.core.parser.Delimiters.isListOpenBracket;
-import static org.projog.core.parser.TokenType.ANONYMOUS_VARIABLE;
-import static org.projog.core.parser.TokenType.ATOM;
-import static org.projog.core.parser.TokenType.FLOAT;
-import static org.projog.core.parser.TokenType.INTEGER;
-import static org.projog.core.parser.TokenType.QUOTED_ATOM;
-import static org.projog.core.parser.TokenType.SYMBOL;
-import static org.projog.core.parser.TokenType.VARIABLE;
+import org.projog.core.Operands;
 
 import java.io.BufferedReader;
 import java.io.Reader;
 
-import org.projog.core.Operands;
+import static java.lang.Character.*;
+import static org.projog.core.parser.Delimiters.isDelimiter;
+import static org.projog.core.parser.Delimiters.isListOpenBracket;
+import static org.projog.core.parser.TokenType.*;
 
 /**
  * Parses an input stream into discrete 'tokens' that are used to represent Prolog queries and rules.

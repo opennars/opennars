@@ -18,10 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment ;
-import org.apache.jena.reasoner.rulesys.Node_RuleVariable ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.BindingEnvironment;
+import org.apache.jena.reasoner.rulesys.Node_RuleVariable;
 
 /**
  * Implementation of the binding environment interface for use in LP

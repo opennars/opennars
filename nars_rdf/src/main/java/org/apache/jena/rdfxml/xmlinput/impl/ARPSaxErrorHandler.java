@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.apache.jena.rdf.model.RDFErrorHandler ;
+import org.apache.jena.rdf.model.RDFErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 /**

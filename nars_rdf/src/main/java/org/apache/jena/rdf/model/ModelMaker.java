@@ -18,10 +18,10 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.AlreadyExistsException ;
-import org.apache.jena.shared.DoesNotExistException ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.GraphMaker;
+import org.apache.jena.shared.AlreadyExistsException;
+import org.apache.jena.shared.DoesNotExistException;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     A ModelMaker contains a collection of named models, methods for creating

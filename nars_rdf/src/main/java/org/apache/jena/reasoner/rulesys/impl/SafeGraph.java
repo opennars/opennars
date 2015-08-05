@@ -18,12 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.SimpleEventManager ;
-import org.apache.jena.graph.impl.WrappedGraph ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.SimpleEventManager;
+import org.apache.jena.graph.impl.WrappedGraph;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * A SafeGraph wraps a graph which might contain generalized RDF

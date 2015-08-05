@@ -18,9 +18,9 @@
 
 package org.apache.jena.testing_framework.manifest;
 
-import java.util.List ;
+import org.junit.runner.Runner;
 
-import org.junit.runner.Runner ;
+import java.util.List;
 
 public interface ManifestItemHandler {
 	/**

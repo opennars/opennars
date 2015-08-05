@@ -18,9 +18,9 @@
 
 package org.apache.jena.util;
 
-import org.apache.jena.shared.JenaException ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import org.apache.jena.shared.JenaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** 
  * Note: this has been copied here from ARQ.

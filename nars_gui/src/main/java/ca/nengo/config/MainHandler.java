@@ -34,7 +34,8 @@ import ca.nengo.config.ui.ConfigurationTreeModel.NullValue;
 import ca.nengo.model.SimulationMode;
 import ca.nengo.model.Units;
 import ca.nengo.neural.neuron.impl.IzhikevichSpikeGenerator;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;

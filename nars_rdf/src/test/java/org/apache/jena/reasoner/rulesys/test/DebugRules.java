@@ -18,16 +18,16 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.util.Iterator ;
-import java.util.List ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.rulesys.BasicForwardRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.reasoner.rulesys.Util;
+import org.apache.jena.util.PrintUtil;
 
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.rulesys.BasicForwardRuleReasoner ;
-import org.apache.jena.reasoner.rulesys.Rule ;
-import org.apache.jena.reasoner.rulesys.Util ;
-import org.apache.jena.util.PrintUtil ;
+import java.util.Iterator;
+import java.util.List;
 
 /** * Using during debuging of the rule systems.
  * Runs a named set of rules (can contain axioms and rules) and

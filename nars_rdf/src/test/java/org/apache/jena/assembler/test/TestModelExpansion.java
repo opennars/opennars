@@ -18,10 +18,11 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.ModelExpansion;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
-import org.apache.jena.assembler.ModelExpansion ;
-import org.apache.jena.rdf.model.* ;
+import java.util.List;
 
 public class TestModelExpansion extends AssemblerTestBase
     {

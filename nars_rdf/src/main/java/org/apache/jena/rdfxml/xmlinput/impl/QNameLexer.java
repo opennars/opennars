@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
+import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers;
+import org.apache.jena.rdfxml.xmlinput.states.Frame;
+import org.xml.sax.SAXParseException;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
-import org.apache.jena.rdfxml.xmlinput.states.Frame ;
-import org.xml.sax.SAXParseException;
 
 abstract public class QNameLexer implements Names, ARPErrorNumbers {
     final int bad;

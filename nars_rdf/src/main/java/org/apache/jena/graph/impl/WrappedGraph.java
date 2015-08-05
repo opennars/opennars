@@ -18,9 +18,9 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.*;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     A  wrapper class which simply defers all operations to its base.

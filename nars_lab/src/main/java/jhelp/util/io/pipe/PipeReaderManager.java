@@ -1,15 +1,15 @@
 package jhelp.util.io.pipe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.io.Binarizable;
 import jhelp.util.io.ByteArray;
 import jhelp.util.list.Triplet;
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedSimpleTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Helper for read {@link Binarizable} throw listener (Call back when new message arrive) in a pipe <br>

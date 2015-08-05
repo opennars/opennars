@@ -18,8 +18,10 @@
 
 package org.apache.jena.mem.test;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.mem.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.mem.HashedTripleBunch;
+import org.apache.jena.mem.TripleBunch;
 
 public class TestHashedTripleBunch extends TestTripleBunch
     {

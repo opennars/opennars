@@ -18,7 +18,10 @@
 
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
  
 /**
  * The vocabulary used by the RDFCore working group to define test manifests.

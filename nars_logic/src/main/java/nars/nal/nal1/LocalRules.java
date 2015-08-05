@@ -301,17 +301,17 @@ public class LocalRules {
     /**
      * The task and belief match reversely
      *
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    public static Task matchReverse(final NAL nal) {
-        Task task = nal.getTask();
-        Sentence belief = nal.getBelief();
+    public static Task matchReverse(final Premise p) {
+        Task task = p.getTask();
+        Sentence belief = p.getBelief();
         Sentence sentence = task.sentence;
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
             if (sentence.isJudgment()) {
-                return NAL2.inferToSym(task, belief, nal);
+                return NAL2.inferToSym(task, belief, p);
             } else {
-                return conversion(nal);
+                return conversion(p);
             }
         }
         return null;
@@ -323,13 +323,13 @@ public class LocalRules {
      * @param asym   A Inheritance/Implication sentence
      * @param sym    A Similarity/Equivalence sentence
      * @param figure location of the shared term
-     * @param nal    Reference to the memory
+     * @param p    Reference to the memory
      */
-    public static void matchAsymSym(final Task asym, final Sentence sym, int figure, final NAL nal) {
-        if (nal.getTask().sentence.isJudgment()) {
-            inferToAsym(asym, sym, nal);
+    public static void matchAsymSym(final Task asym, final Sentence sym, int figure, final Premise p) {
+        if (p.getTask().sentence.isJudgment()) {
+            inferToAsym(asym, sym, p);
         } else {
-            convertRelation(nal);
+            convertRelation(p);
         }
     }
 
@@ -341,10 +341,10 @@ public class LocalRules {
      *
      * @param asym The asymmetric premise
      * @param sym  The symmetric premise
-     * @param nal  Reference to the memory
+     * @param p  Reference to the memory
      */
-    private static Task inferToAsym(Task asym, Sentence sym, NAL nal) {
-        TaskSeed s = nal.newDoublePremise(asym, sym);
+    private static Task inferToAsym(Task asym, Sentence sym, Premise p) {
+        TaskSeed s = p.newDoublePremise(asym, sym);
         if (s == null)
             return null;
 
@@ -358,11 +358,11 @@ public class LocalRules {
         Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
 
 
-            return nal.deriveDouble(
+            return p.deriveDouble(
                     s.term(content)
                             .punctuation(asym.getPunctuation())
                             .truth(truth)
-                            .budget(BudgetFunctions.forward(truth, nal)),
+                            .budget(BudgetFunctions.forward(truth, p)),
                     false);
 
 
@@ -375,31 +375,31 @@ public class LocalRules {
      * {<P --> S>} |- <S --> P> Produce an Inheritance/Implication from a
      * reversed Inheritance/Implication
      *
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    private static Task conversion(final NAL nal) {
-        Truth truth = TruthFunctions.conversion(nal.getBelief().truth);
-        Budget budget = BudgetFunctions.forward(truth, nal);
-        return convertedJudgment(truth, budget, nal);
+    private static Task conversion(final Premise p) {
+        Truth truth = TruthFunctions.conversion(p.getBelief().truth);
+        Budget budget = BudgetFunctions.forward(truth, p);
+        return convertedJudgment(truth, budget, p);
     }
 
     /**
      * {<S --> P>} |- <S <-> P> {<S <-> P>} |- <S --> P> Switch between
      * Inheritance/Implication and Similarity/Equivalence
      *
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    private static Task convertRelation(final NAL nal) {
-        final Truth beliefTruth = nal.getBelief().truth;
+    private static Task convertRelation(final Premise p) {
+        final Truth beliefTruth = p.getBelief().truth;
         final AnalyticTruth truth;
-        if ((nal.getTask().getTerm()).isCommutative()) {
+        if ((p.getTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(beliefTruth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(beliefTruth, 1.0f);
         }
         if (truth != null) {
-            Budget budget = BudgetFunctions.forward(truth, nal);
-            return convertedJudgment(truth, budget, nal);
+            Budget budget = BudgetFunctions.forward(truth, p);
+            return convertedJudgment(truth, budget, p);
         }
         return null;
     }
@@ -411,11 +411,11 @@ public class LocalRules {
      *
      * @param budget The budget value of the new task
      * @param truth  The truth value of the new task
-     * @param nal    Reference to the memory
+     * @param p    Reference to the memory
      */
-    private static Task convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
-        Statement content = (Statement) nal.getTask().getTerm();
-        Statement beliefContent = (Statement) nal.getBelief().getTerm();
+    private static Task convertedJudgment(final Truth newTruth, final Budget newBudget, final Premise p) {
+        Statement content = (Statement) p.getTask().getTerm();
+        Statement beliefContent = (Statement) p.getBelief().getTerm();
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();
         final Term predT = content.getPredicate();
@@ -435,7 +435,7 @@ public class LocalRules {
         }
 
         if (content != null)
-            return nal.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
+            return p.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
 
         return null;
     }

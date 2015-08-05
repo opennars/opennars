@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.datatypes.BaseDatatype ;
+import org.apache.jena.datatypes.BaseDatatype;
 
 public class AdhocDatatype extends BaseDatatype 
 	{	

@@ -18,11 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.reasoner.*;
 
-import org.apache.jena.graph.Capabilities ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.reasoner.* ;
+import java.util.List;
 
 /**
  * Reasoner configuration for the OWL mini reasoner.

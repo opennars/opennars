@@ -18,32 +18,28 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Locale ;
-
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.graph.*;
+import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler;
+import org.apache.jena.rdfxml.xmlinput.impl.RDFXMLParser;
+import org.apache.jena.shared.DoesNotExistException;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.UnknownPropertyException;
+import org.apache.jena.shared.WrappedIOException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.iri.IRIFactory;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.RDFErrorHandler ;
-import org.apache.jena.rdf.model.RDFReader ;
-import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler ;
-import org.apache.jena.rdfxml.xmlinput.impl.RDFXMLParser ;
-import org.apache.jena.shared.DoesNotExistException ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.UnknownPropertyException ;
-import org.apache.jena.shared.WrappedIOException ;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Locale;
 
 /**
  * Interface between Jena and ARP.

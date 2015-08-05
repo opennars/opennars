@@ -1,14 +1,10 @@
 package org.projog.core.function.construct;
 
-import java.util.ArrayList;
-
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.ListFactory;
-import org.projog.core.term.PStruct;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
+import org.projog.core.term.*;
+
+import java.util.ArrayList;
 
 /* TEST
  %QUERY p(a,b,c) =.. X

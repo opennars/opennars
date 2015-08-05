@@ -1,13 +1,13 @@
 package jhelp.util.io;
 
+import jhelp.util.math.UtilMath;
+import jhelp.util.reflection.Reflector;
+import jhelp.util.text.UtilText;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
-
-import jhelp.util.math.UtilMath;
-import jhelp.util.reflection.Reflector;
-import jhelp.util.text.UtilText;
 
 /**
  * Byte array can be use as {@link InputStream} and {@link OutputStream}

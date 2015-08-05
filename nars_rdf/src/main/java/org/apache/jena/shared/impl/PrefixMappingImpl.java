@@ -18,13 +18,13 @@
 
 package org.apache.jena.shared.impl;
 
-import java.util.*;
-import java.util.Map.Entry;
-
-import org.apache.jena.rdf.model.impl.Util ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.CollectionFactory ;
+import org.apache.jena.rdf.model.impl.Util;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.util.CollectionFactory;
 import org.apache.xerces.util.XMLChar;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
     An implementation of PrefixMapping. The mappings are stored in a pair

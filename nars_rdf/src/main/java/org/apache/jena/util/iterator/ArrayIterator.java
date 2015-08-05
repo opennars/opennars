@@ -18,9 +18,10 @@
 
 //ArrayIterator.java
 package org.apache.jena.util.iterator;
-import java.util.Iterator;
+
 import java.lang.reflect.Array;
-import java.util.NoSuchElementException ;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /** An Iterator for arrays  
  * @deprecated Use <code> Arrays.asList( array ).iterator();</code>

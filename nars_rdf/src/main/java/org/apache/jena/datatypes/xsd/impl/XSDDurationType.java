@@ -18,8 +18,8 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import org.apache.jena.datatypes.* ;
-import org.apache.jena.datatypes.xsd.* ;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.xsd.XSDDuration;
 
 /**
  * The XSD duration type, the only job of this extra layer is to

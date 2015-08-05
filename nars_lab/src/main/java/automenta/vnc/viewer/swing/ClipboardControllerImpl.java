@@ -25,10 +25,10 @@
 package automenta.vnc.viewer.swing;
 
 import automenta.vnc.core.SettingsChangedEvent;
-import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.rfb.ClipboardController;
 import automenta.vnc.rfb.client.ClientCutTextMessage;
 import automenta.vnc.rfb.protocol.ProtocolContext;
+import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.utils.Strings;
 
 import java.awt.*;

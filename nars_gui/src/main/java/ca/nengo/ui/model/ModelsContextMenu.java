@@ -26,9 +26,9 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.ui.model;
 
-import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.menu.AbstractMenuBuilder;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
+import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.world.WorldObject;
 
 import javax.swing.*;

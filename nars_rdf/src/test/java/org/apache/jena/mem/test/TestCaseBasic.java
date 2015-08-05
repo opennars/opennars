@@ -18,7 +18,7 @@
 
 package org.apache.jena.mem.test;
 
-import org.apache.jena.rdf.model.ModelFactory ;
+import org.apache.jena.rdf.model.ModelFactory;
 
 public class TestCaseBasic extends org.apache.jena.regression.TestCaseBasic {
 

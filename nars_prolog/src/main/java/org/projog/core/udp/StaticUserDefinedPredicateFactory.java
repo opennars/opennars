@@ -1,29 +1,17 @@
 package org.projog.core.udp;
 
-import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
-import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
+import org.projog.core.*;
+import org.projog.core.term.PTerm;
+import org.projog.core.udp.compiler.CompiledPredicateClassGenerator;
+import org.projog.core.udp.interpreter.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.projog.core.KB;
-import org.projog.core.KnowledgeBaseUtils;
-import org.projog.core.Predicate;
-import org.projog.core.PredicateFactory;
-import org.projog.core.PredicateKey;
-import org.projog.core.ProjogException;
-import org.projog.core.ProjogProperties;
-import org.projog.core.SpyPoints;
-import org.projog.core.term.PTerm;
-import org.projog.core.udp.compiler.CompiledPredicateClassGenerator;
-import org.projog.core.udp.interpreter.AlwaysMatchedClauseAction;
-import org.projog.core.udp.interpreter.ClauseAction;
-import org.projog.core.udp.interpreter.ClauseActionFactory;
-import org.projog.core.udp.interpreter.ImmutableArgumentsClauseAction;
-import org.projog.core.udp.interpreter.InterpretedTailRecursivePredicateFactory;
-import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
+import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
+import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
 
 /**
  * Maintains a record of the clauses that represents a "static" user defined predicate.

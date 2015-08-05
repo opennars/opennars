@@ -2,11 +2,11 @@ package nars.rdfowl;
 
 import nars.NAR;
 import nars.io.out.TextOutput;
-import nars.nar.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
+import nars.nar.Default;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;

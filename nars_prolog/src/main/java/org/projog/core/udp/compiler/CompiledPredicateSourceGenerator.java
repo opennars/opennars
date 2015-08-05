@@ -1,28 +1,22 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getKeyGeneration;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getNewListSyntax;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getNewVariableSyntax;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.isNoMoreThanTwoElementList;
-import static org.projog.core.udp.compiler.CompiledPredicateVariables.ARGUMENT_PREFIX;
-import static org.projog.core.udp.compiler.CompiledPredicateVariables.INLINED_CTR_PREFIX;
-import static org.projog.core.udp.compiler.CompiledPredicateVariables.PLACEHOLDER_PREFIX;
-import static org.projog.core.udp.compiler.CompiledPredicateWriter.MAIN_LOOP_LABEL;
+import org.projog.core.KB;
+import org.projog.core.PredicateFactory;
+import org.projog.core.PredicateKey;
+import org.projog.core.term.PTerm;
+import org.projog.core.term.PVar;
+import org.projog.core.term.PrologOperator;
+import org.projog.core.term.TermUtils;
+import org.projog.core.udp.MultipleRulesWithMultipleImmutableArgumentsPredicate;
+import org.projog.core.udp.MultipleRulesWithSingleImmutableArgumentPredicate;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.projog.core.KB;
-import org.projog.core.PredicateFactory;
-import org.projog.core.PredicateKey;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
-import org.projog.core.term.TermUtils;
-import org.projog.core.term.PVar;
-import org.projog.core.udp.MultipleRulesWithMultipleImmutableArgumentsPredicate;
-import org.projog.core.udp.MultipleRulesWithSingleImmutableArgumentPredicate;
+import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.*;
+import static org.projog.core.udp.compiler.CompiledPredicateVariables.*;
+import static org.projog.core.udp.compiler.CompiledPredicateWriter.MAIN_LOOP_LABEL;
 
 /**
  * Manages the construction of source code for new {@link CompiledPredicate} subclasses.

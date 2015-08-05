@@ -18,33 +18,33 @@
 
 package org.apache.jena.graph.test;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.datatypes.BaseDatatype;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.*;
+import org.apache.jena.datatypes.xsd.impl.RDFLangString;
+import org.apache.jena.datatypes.xsd.impl.XMLLiteralType;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.graph.*;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.impl.JenaParameters;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.XSD;
+import org.apache.xerces.impl.dv.util.HexBin;
+import org.junit.Assert;
+
 import java.io.FileReader;
 import java.io.IOException;
-import java.math.BigDecimal ;
-import java.math.BigInteger ;
-import java.text.SimpleDateFormat ;
-import java.util.* ;
-
-import junit.framework.TestCase ;
-import junit.framework.TestSuite ;
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.datatypes.BaseDatatype ;
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.datatypes.xsd.* ;
-import org.apache.jena.datatypes.xsd.impl.RDFLangString ;
-import org.apache.jena.datatypes.xsd.impl.XMLLiteralType ;
-import org.apache.jena.enhanced.EnhNode ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.impl.JenaParameters ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.XSD ;
-import org.apache.xerces.impl.dv.util.HexBin ;
-import org.junit.Assert ;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.*;
    
 /**
  * Unit test for the typed literal machinery - including RDFDatatype,

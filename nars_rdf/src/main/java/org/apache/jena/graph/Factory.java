@@ -18,10 +18,10 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.graph.impl.GraphBase ;
-import org.apache.jena.mem.GraphMem ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.NullIterator ;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.mem.GraphMem;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
 /**
     A factory class for creating Graphs.

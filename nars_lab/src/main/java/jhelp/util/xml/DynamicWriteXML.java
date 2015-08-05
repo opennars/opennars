@@ -1,12 +1,12 @@
 package jhelp.util.xml;
 
+import jhelp.util.text.UtilText;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Stack;
-
-import jhelp.util.text.UtilText;
 
 /**
  * Write dynamically an XML to a stream.<br>

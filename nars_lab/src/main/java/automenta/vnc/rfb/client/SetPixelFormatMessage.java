@@ -24,9 +24,9 @@
 
 package automenta.vnc.rfb.client;
 
+import automenta.vnc.exceptions.TransportException;
 import automenta.vnc.rfb.encoding.PixelFormat;
 import automenta.vnc.transport.Writer;
-import automenta.vnc.exceptions.TransportException;
 
 public class SetPixelFormatMessage implements ClientToServerMessage {
 	private final PixelFormat pixelFormat;

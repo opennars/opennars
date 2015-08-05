@@ -22,7 +22,7 @@ package org.apache.jena.n3;
 import org.apache.jena.iri.IRI;
 import org.apache.jena.iri.IRIException;
 import org.apache.jena.iri.IRIFactory;
-import org.apache.jena.util.FileUtils ;
+import org.apache.jena.util.FileUtils;
 
 /** A simple class to access IRI resolution.
  * Replaced by {@code org.apache.jena.riot.system.IRIResolver}

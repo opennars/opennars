@@ -1,10 +1,5 @@
 package jhelp.util.preference;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.io.UtilIO;
 import jhelp.util.list.Pair;
@@ -12,6 +7,11 @@ import jhelp.util.thread.Mutex;
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedTask;
 import jhelp.util.xml.DynamicWriteXML;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Serialize preferences in XML

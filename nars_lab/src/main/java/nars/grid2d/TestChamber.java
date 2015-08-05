@@ -1,11 +1,9 @@
 package nars.grid2d;
 
-import nars.NARSeed;
-import nars.util.event.Reaction;
 import nars.Events;
-import nars.NAR;
 import nars.Global;
-import nars.nar.Default;
+import nars.NAR;
+import nars.NARSeed;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.map.Maze;
@@ -15,6 +13,8 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
+import nars.nar.Default;
+import nars.util.event.Reaction;
 import processing.core.PVector;
 
 import java.util.List;

@@ -25,9 +25,9 @@
 package automenta.vnc.rfb.protocol.state;
 
 import automenta.vnc.exceptions.*;
-import automenta.vnc.transport.Writer;
 import automenta.vnc.rfb.protocol.ProtocolContext;
 import automenta.vnc.transport.Reader;
+import automenta.vnc.transport.Writer;
 
 abstract public class ProtocolState {
 	protected final ProtocolContext context;

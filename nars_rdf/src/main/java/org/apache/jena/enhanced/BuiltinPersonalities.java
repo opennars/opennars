@@ -17,13 +17,14 @@
  */
 
 package org.apache.jena.enhanced;
-import java.io.PrintWriter ;
-import java.util.Map ;
 
-import org.apache.jena.ontology.* ;
-import org.apache.jena.ontology.impl.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.* ;
+import org.apache.jena.ontology.*;
+import org.apache.jena.ontology.impl.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.*;
+
+import java.io.PrintWriter;
+import java.util.Map;
 
 /**
     The personalities that are provided for the existing Jena classes. It is likely that this

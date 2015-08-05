@@ -17,14 +17,22 @@
  */
 
 package org.apache.jena.graph.impl;
+
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 import static org.apache.jena.util.iterator.WrappedIterator.create;
-
-import java.util.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.* ;
 
 // Purely syntactic: Uses .equals, not .sameVAlueAs (see the one note at "PURE SYNTAX" below and "containsSameTerm") 
 

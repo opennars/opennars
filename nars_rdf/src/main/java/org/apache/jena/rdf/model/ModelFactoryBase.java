@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.shared.JenaException;
 
 /**
     Helper functions for ModelFactory - in here to keep from obtruding on the

@@ -18,12 +18,12 @@
 
 package org.apache.jena.reasoner;
 
-import java.util.Iterator;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.util.Iterator;
 
 /**
  * Extends the Graph interface to give additional means to query an inferred

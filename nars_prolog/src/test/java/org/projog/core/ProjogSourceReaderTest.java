@@ -1,23 +1,18 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.createKnowledgeBase;
-import static org.projog.TestUtils.writeToTempFile;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
-
 import org.junit.Test;
 import org.projog.core.parser.ParserException;
 import org.projog.core.udp.DynamicUserDefinedPredicateFactory;
 import org.projog.core.udp.StaticUserDefinedPredicateFactory;
 import org.projog.core.udp.UserDefinedPredicateFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.createKnowledgeBase;
+import static org.projog.TestUtils.writeToTempFile;
 
 public class ProjogSourceReaderTest {
    @Test

@@ -18,7 +18,7 @@
 
 package org.apache.jena.util.junit;
 
-import org.apache.jena.rdf.model.Resource ;
+import org.apache.jena.rdf.model.Resource;
 
 
 public interface ManifestItemHandler

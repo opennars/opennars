@@ -8,13 +8,13 @@ import nars.Memory;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.io.in.ChangedTextInput;
-import nars.nar.Default;
-import nars.task.Task;
-import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.operator.NullOperator;
+import nars.nar.Default;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
+import nars.task.Task;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

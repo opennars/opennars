@@ -18,10 +18,12 @@
 
 package org.apache.jena.util;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.WrappedGraph;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.* ;
+import java.util.*;
 
 /**
  * Graph wrapper which provides normal access to an underlying graph but

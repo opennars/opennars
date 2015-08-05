@@ -18,11 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
-
-import org.apache.jena.reasoner.rulesys.* ;
+import org.apache.jena.reasoner.rulesys.ForwardRuleInfGraphI;
+import org.apache.jena.reasoner.rulesys.Rule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * The final node in a RETE graph. It runs the builtin guard clauses

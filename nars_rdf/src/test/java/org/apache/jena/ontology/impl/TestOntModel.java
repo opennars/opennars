@@ -23,21 +23,23 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.io.*;
-import java.util.*;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.ontology.impl.OWLDLProfile ;
-import org.apache.jena.ontology.impl.OWLLiteProfile ;
-import org.apache.jena.ontology.impl.OWLProfile ;
-import org.apache.jena.ontology.impl.OntModelImpl ;
-import org.apache.jena.ontology.impl.OWLProfile.SupportsCheck ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.reasoner.rulesys.test.TestBugs ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.ontology.*;
+import org.apache.jena.ontology.impl.OWLProfile.SupportsCheck;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.reasoner.rulesys.test.TestBugs;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.*;
 
 
 

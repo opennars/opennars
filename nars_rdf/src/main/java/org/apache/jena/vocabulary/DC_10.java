@@ -18,7 +18,8 @@
 
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 /** Dublin Core version 1.0 vocabulary.
  */

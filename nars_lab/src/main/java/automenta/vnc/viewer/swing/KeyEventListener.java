@@ -24,9 +24,9 @@
 
 package automenta.vnc.viewer.swing;
 
-import automenta.vnc.utils.Keymap;
 import automenta.vnc.rfb.client.KeyEventMessage;
 import automenta.vnc.rfb.protocol.ProtocolContext;
+import automenta.vnc.utils.Keymap;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

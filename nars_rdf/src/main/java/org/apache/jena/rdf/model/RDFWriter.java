@@ -17,8 +17,9 @@
  */
 
 package org.apache.jena.rdf.model;
-import java.io.Writer;
+
 import java.io.OutputStream;
+import java.io.Writer;
 /** RDFWriter is an interface to RDF serializers.
  *
  * <p>An <code>RDFWriter</code> is a class which serializes an RDF model

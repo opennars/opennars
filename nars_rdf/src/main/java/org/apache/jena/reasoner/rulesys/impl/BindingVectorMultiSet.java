@@ -18,11 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
+import org.apache.jena.graph.Node;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.jena.graph.Node ;
 
 /**
  * A multi set of BindingVector's divided in buckets matching an unique

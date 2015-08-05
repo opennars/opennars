@@ -1,9 +1,9 @@
 package jhelp.util.time;
 
-import java.util.ArrayList;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
+
+import java.util.ArrayList;
 
 /**
  * Measure time during operation.<br>

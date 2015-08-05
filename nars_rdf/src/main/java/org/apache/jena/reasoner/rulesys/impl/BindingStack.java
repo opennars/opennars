@@ -18,13 +18,17 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node_ANY;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.BindingEnvironment;
+import org.apache.jena.reasoner.rulesys.Functor;
+import org.apache.jena.reasoner.rulesys.Node_RuleVariable;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment ;
-import org.apache.jena.reasoner.rulesys.Functor ;
-import org.apache.jena.reasoner.rulesys.Node_RuleVariable ;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Provides a trail of possible variable bindings for a forward rule.

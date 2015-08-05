@@ -18,11 +18,15 @@
 
 package org.apache.jena.testing_framework.tuples;
 
-import java.io.*;
-import java.util.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class TupleSet implements Iterator<List<TupleItem>> {
 	BufferedReader in;

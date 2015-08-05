@@ -1,9 +1,9 @@
 package jhelp.util.thread;
 
-import java.util.HashMap;
-
 import jhelp.util.list.Pair;
 import jhelp.util.list.Queue;
+
+import java.util.HashMap;
 
 /**
  * Manager for make waiting task for an specific event before play

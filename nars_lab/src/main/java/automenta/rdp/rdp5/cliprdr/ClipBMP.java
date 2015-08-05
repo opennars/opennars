@@ -29,19 +29,16 @@
  */
 package automenta.rdp.rdp5.cliprdr;
 
-import java.awt.Component;
-import java.awt.Image;
-import java.awt.Toolkit;
+import automenta.rdp.Input;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import automenta.rdp.Input;
-
-import org.apache.log4j.Logger;
 
 public class ClipBMP extends Component {
 

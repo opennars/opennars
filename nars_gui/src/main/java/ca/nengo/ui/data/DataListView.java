@@ -32,9 +32,9 @@ import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.ReversableAction;
 import ca.nengo.ui.lib.action.StandardAction;
 import ca.nengo.ui.lib.action.UserCancelledException;
+import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.UserMessages;
-import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.util.FileExtensionFilter;
 
 import javax.swing.*;

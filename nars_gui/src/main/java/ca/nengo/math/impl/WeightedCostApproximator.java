@@ -35,7 +35,8 @@ import ca.nengo.math.Function;
 import ca.nengo.math.LinearApproximator;
 import ca.nengo.util.MU;
 import ca.nengo.util.Memory;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.util.Arrays;

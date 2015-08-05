@@ -18,12 +18,16 @@
 
 package org.apache.jena.reasoner.transitiveReasoner;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveGraphCache.GraphWalker;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveGraphCache.Visitor;
+import org.apache.jena.shared.BrokenException;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.transitiveReasoner.TransitiveGraphCache.* ;
-import org.apache.jena.shared.BrokenException ;
-import org.apache.jena.util.iterator.* ;
+import java.util.*;
 
 /**
 	 * Inner class used to represent the graph node structure.

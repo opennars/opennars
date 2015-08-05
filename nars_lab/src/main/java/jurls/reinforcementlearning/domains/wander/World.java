@@ -1,8 +1,6 @@
 package jurls.reinforcementlearning.domains.wander;
 
-import jurls.reinforcementlearning.domains.wander.Obstacle;
-import jurls.reinforcementlearning.domains.wander.Player;
-import java.awt.Color;
+import java.awt.*;
 
 public class World {
 	public static final int SIZE = 300;

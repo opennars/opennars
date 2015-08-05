@@ -1,7 +1,6 @@
 package jhelp.engine.anim;
 
 import com.jogamp.opengl.GL;
-
 import jhelp.engine.Animation;
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedTask;

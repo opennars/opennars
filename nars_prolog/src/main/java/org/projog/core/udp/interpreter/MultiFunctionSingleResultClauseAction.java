@@ -1,14 +1,14 @@
 package org.projog.core.udp.interpreter;
 
-import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
-
-import java.util.Map;
-
 import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
+
+import java.util.Map;
+
+import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
 
 /**
  * A functions whose body is a conjunction consisting only of non-retryable predicates.

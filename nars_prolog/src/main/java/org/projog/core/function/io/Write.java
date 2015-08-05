@@ -1,12 +1,12 @@
 package org.projog.core.function.io;
 
-import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
-import static org.projog.core.KnowledgeBaseUtils.getTermFormatter;
-
 import org.projog.core.FileHandles;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermFormatter;
+
+import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
+import static org.projog.core.KnowledgeBaseUtils.getTermFormatter;
 
 /* TEST
  %QUERY write( 1+1 )

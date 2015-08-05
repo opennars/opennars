@@ -18,13 +18,13 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.shared.impl.JenaParameters;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
-import org.apache.jena.datatypes.* ;
-import org.apache.jena.datatypes.xsd.* ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.shared.impl.JenaParameters ;
 
 /**
  * Base implementation for all numeric datatypes derived from

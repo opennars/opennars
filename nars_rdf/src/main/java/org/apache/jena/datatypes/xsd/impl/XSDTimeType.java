@@ -18,8 +18,8 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import org.apache.jena.datatypes.xsd.AbstractDateTime ;
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
+import org.apache.jena.datatypes.xsd.AbstractDateTime;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
 
 /**
  * Type processor for time, most of the machinery is in the

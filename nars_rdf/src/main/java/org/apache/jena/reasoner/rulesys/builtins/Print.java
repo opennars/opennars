@@ -18,9 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.util.PrintUtil ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.util.PrintUtil;
 
 /**
  * Print its argument list as a side effect

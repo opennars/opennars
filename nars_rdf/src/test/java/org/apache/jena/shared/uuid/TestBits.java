@@ -19,7 +19,6 @@
 package org.apache.jena.shared.uuid;
 
 import junit.framework.TestCase;
-import org.apache.jena.shared.uuid.Bits ;
 
 public class TestBits extends TestCase
 {

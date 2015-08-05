@@ -1,14 +1,14 @@
 package org.projog.core.function;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 
 public class AbstractSingletonPredicateTest {
    @Test

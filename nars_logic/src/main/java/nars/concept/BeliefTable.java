@@ -2,7 +2,6 @@ package nars.concept;
 
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
-import nars.process.NAL;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.truth.TruthWave;

@@ -24,11 +24,13 @@ package org.apache.jena.ontology;
 
 // Imports
 ///////////////
-import java.util.Iterator;
 
-import org.apache.jena.enhanced.* ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+
+import java.util.Iterator;
 
 
 

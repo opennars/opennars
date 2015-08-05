@@ -7,10 +7,10 @@
  */
 package jhelp.xml;
 
+import jhelp.util.debug.Debug;
+
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import jhelp.util.debug.Debug;
 
 /**
  * Default parser XML listener.<br>

@@ -1,19 +1,11 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.decimalFraction;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.list;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-
 import org.junit.Test;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
 
 public class PredicateKeyTest {
    @Test

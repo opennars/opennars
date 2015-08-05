@@ -18,8 +18,9 @@
 
 package org.apache.jena.vocabulary.test;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.test.ModelTestBase;
 
 public class VocabTestBase extends ModelTestBase
     {

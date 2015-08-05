@@ -18,13 +18,15 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.io.PrintWriter;
-import java.util.*;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.PrintUtil;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.Derivation ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.util.PrintUtil ;
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Derivation records are used to determine how an inferred triple

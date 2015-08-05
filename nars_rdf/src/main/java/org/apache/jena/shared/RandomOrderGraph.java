@@ -18,10 +18,12 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.WrappedGraph ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.*;
+import org.apache.jena.graph.impl.WrappedGraph;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.RandomOrderIterator;
 
 /**
  * Wraps a graph and randomizes the order of find results.

@@ -18,6 +18,7 @@
 package jurls.reinforcementlearning.domains.arcade.rl;
 
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
+
 import java.util.LinkedList;
 
 /** A time-ordered list of frames.

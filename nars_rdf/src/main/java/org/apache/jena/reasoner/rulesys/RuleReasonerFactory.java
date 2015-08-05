@@ -18,7 +18,7 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.reasoner.ReasonerFactory ;
+import org.apache.jena.reasoner.ReasonerFactory;
 
 /**
     RuleReasonerFactory - a ReasonerFactory interface which allows rules

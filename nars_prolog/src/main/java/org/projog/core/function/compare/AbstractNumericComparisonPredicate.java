@@ -1,11 +1,11 @@
 package org.projog.core.function.compare;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR;
-
 import org.projog.core.Calculatables;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
+import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR;
 
 abstract class AbstractNumericComparisonPredicate extends AbstractSingletonPredicate {
    private Calculatables calculatables;

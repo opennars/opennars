@@ -18,8 +18,9 @@
 
 package org.apache.jena.regression;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.test.JenaTestBase ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.test.JenaTestBase;
 
 
 

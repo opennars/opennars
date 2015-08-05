@@ -18,9 +18,10 @@
 
 package org.apache.jena.mem;
 
-import java.util.Iterator;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
 
-import org.apache.jena.graph.* ;
+import java.util.Iterator;
 
 /**
      An iterator wrapper for NodeToTriplesMap iterators which ensures that

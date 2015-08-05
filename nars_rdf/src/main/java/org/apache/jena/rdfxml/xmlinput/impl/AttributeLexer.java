@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import java.util.BitSet;
-
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
-import org.apache.jena.rdfxml.xmlinput.states.Frame ;
+import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers;
+import org.apache.jena.rdfxml.xmlinput.states.Frame;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
+
+import java.util.BitSet;
 
 
 public class AttributeLexer extends QNameLexer implements ARPErrorNumbers {

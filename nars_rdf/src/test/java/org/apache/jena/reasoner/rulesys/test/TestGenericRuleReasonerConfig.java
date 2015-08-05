@@ -18,12 +18,16 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.util.*;
+import org.apache.jena.assembler.test.AssemblerTestBase;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
-import org.apache.jena.assembler.test.AssemblerTestBase ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
     Your eyes will bleed with the number of backslashes required in the substitute

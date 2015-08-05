@@ -18,9 +18,9 @@
 
 package org.apache.jena.graph.test;
 
-import junit.framework.*;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.* ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.GraphMaker;
+import org.apache.jena.graph.impl.SimpleGraphMaker;
 
 /**
     Test the SimpleGraphFactory by extending AbstractTestGraphFactory

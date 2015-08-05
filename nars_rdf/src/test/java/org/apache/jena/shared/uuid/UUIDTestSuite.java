@@ -19,8 +19,6 @@
 package org.apache.jena.shared.uuid;
 
 import junit.framework.TestSuite;
-import org.apache.jena.shared.uuid.UUID_V1_Gen ;
-import org.apache.jena.shared.uuid.UUID_V4_Gen ;
 
 public class UUIDTestSuite  extends TestSuite
 {

@@ -1,7 +1,7 @@
 package nars.evolve;
 
-import nars.nar.Default;
 import nars.NAR;
+import nars.nar.Default;
 import org.encog.ml.data.MLDataPair;
 
 import java.util.*;

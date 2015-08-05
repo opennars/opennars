@@ -15,7 +15,6 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
-import nars.process.NAL;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;

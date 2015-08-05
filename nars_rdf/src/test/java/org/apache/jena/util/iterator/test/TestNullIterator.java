@@ -18,11 +18,13 @@
 
 package org.apache.jena.util.iterator.test;
 
-import java.util.NoSuchElementException;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
-import junit.framework.*;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.iterator.* ;
+import java.util.NoSuchElementException;
 
 public class TestNullIterator extends ModelTestBase
     {

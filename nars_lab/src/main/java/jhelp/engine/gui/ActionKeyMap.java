@@ -1,11 +1,11 @@
 package jhelp.engine.gui;
 
+import jhelp.util.preference.Preferences;
+
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import jhelp.util.preference.Preferences;
 
 /**
  * Map that associate key to game action

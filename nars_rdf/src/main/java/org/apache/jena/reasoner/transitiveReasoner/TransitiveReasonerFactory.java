@@ -18,9 +18,13 @@
 
 package org.apache.jena.reasoner.transitiveReasoner;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
 /**
  * Factory class for creating blank instances of the transitive reasoner.

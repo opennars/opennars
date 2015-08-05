@@ -18,13 +18,17 @@
 
 package org.apache.jena.graph.impl;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphEventManager;
+import org.apache.jena.graph.GraphListener;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.mem.TrackingTripleIterator;
+import org.apache.jena.util.IteratorCollection;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.mem.TrackingTripleIterator ;
-import org.apache.jena.util.IteratorCollection ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
     Simple implementation of GraphEventManager for GraphBase to use.

@@ -24,11 +24,10 @@
 
 package automenta.vnc.viewer.swing;
 
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.MemoryImageSource;
-
 import automenta.vnc.drawing.SoftCursor;
+
+import java.awt.*;
+import java.awt.image.MemoryImageSource;
 
 public class SoftCursorImpl extends SoftCursor {
 	private Image cursorImage;

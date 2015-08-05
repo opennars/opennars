@@ -9,7 +9,8 @@ import ca.nengo.neural.SpikeOutput;
 import ca.nengo.neural.neuron.ExpandableSynapticIntegrator;
 import ca.nengo.neural.neuron.SpikeGenerator;
 import junit.framework.TestCase;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Unit tests for SpikingNeuron. 

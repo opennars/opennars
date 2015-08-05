@@ -1,10 +1,9 @@
 package jhelp.engine.anim;
 
-import java.util.ArrayList;
-
 import com.jogamp.opengl.GL;
-
 import jhelp.engine.Animation;
+
+import java.util.ArrayList;
 
 /**
  * List of animation played sequentially.<br>

@@ -1,9 +1,9 @@
 package jhelp.util.io.base64;
 
+import jhelp.util.debug.Debug;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import jhelp.util.debug.Debug;
 
 /**
  * Stream for write in Base 64

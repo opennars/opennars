@@ -29,8 +29,6 @@
  */
 package automenta.rdp.orders;
 
-import java.util.Arrays;
-
 public class Text2Order implements Order {
 
 	private int flags = 0;

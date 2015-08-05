@@ -7,6 +7,11 @@
  */
 package jhelp.util.classLoader;
 
+import jhelp.util.debug.Debug;
+import jhelp.util.debug.DebugLevel;
+import jhelp.util.list.EnumerationIterator;
+import jhelp.util.text.UtilText;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +23,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.debug.DebugLevel;
-import jhelp.util.list.EnumerationIterator;
-import jhelp.util.text.UtilText;
 
 /**
  * Loader of class inside several jars<br>

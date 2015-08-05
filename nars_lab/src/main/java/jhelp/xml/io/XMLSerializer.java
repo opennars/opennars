@@ -7,6 +7,14 @@
  */
 package jhelp.xml.io;
 
+import jhelp.util.list.EnumerationIterator;
+import jhelp.util.reflection.Reflector;
+import jhelp.util.text.StringExtractor;
+import jhelp.util.text.UtilText;
+import jhelp.util.xml.DynamicWriteXML;
+import jhelp.xml.ExceptionParseXML;
+import jhelp.xml.MarkupXML;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,14 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.StringTokenizer;
-
-import jhelp.util.list.EnumerationIterator;
-import jhelp.util.reflection.Reflector;
-import jhelp.util.text.StringExtractor;
-import jhelp.util.text.UtilText;
-import jhelp.util.xml.DynamicWriteXML;
-import jhelp.xml.ExceptionParseXML;
-import jhelp.xml.MarkupXML;
 
 /**
  * Utilities for serialize/deserialize an object in XML.<br>

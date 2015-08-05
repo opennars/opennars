@@ -18,8 +18,7 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.xsd.impl.XSDAbstractDateTimeType ;
+import org.apache.jena.datatypes.DatatypeFormatException;
 
 public class XSDYearMonthDurationType extends XSDAbstractDateTimeType {
     public XSDYearMonthDurationType() {

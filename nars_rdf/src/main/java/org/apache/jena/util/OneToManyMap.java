@@ -23,9 +23,10 @@ package org.apache.jena.util;
 
 // Imports
 ///////////////
-import java.util.*;
 
-import org.apache.jena.util.iterator.NullIterator ;
+import org.apache.jena.util.iterator.NullIterator;
+
+import java.util.*;
 
 /**
  * An extension to a standard map that supports one-to-many mappings: that is, there

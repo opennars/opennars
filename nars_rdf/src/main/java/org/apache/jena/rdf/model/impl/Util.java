@@ -17,16 +17,17 @@
  */
 
 package org.apache.jena.rdf.model.impl;
-import java.util.regex.Matcher ;
-import java.util.regex.Pattern ;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.rdf.model.Literal ;
-import org.apache.jena.shared.CannotEncodeCharacterException ;
-import org.apache.xerces.util.XMLChar ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.shared.CannotEncodeCharacterException;
+import org.apache.xerces.util.XMLChar;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Some utility functions.
  */

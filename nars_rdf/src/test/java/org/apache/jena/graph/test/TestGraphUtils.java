@@ -18,10 +18,13 @@
 
 package org.apache.jena.graph.test;
 
-import junit.framework.*;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.* ;
-import org.apache.jena.util.iterator.* ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 public class TestGraphUtils extends GraphTestBase
     {

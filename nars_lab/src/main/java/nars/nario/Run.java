@@ -1,8 +1,5 @@
 package nars.nario;
 
-import nars.nario.level.Level;
-import nars.nario.level.LevelGenerator;
-
 import javax.swing.*;
 import java.awt.*;
 

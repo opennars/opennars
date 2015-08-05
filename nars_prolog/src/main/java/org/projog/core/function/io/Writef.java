@@ -1,14 +1,5 @@
 package org.projog.core.function.io;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
-import static org.projog.core.KnowledgeBaseUtils.getTermFormatter;
-import static org.projog.core.term.EmptyList.EMPTY_LIST;
-import static org.projog.core.term.ListUtils.toJavaUtilList;
-import static org.projog.core.term.TermUtils.toLong;
-
-import java.util.List;
-
 import org.projog.core.Calculatables;
 import org.projog.core.FileHandles;
 import org.projog.core.KB;
@@ -17,6 +8,13 @@ import org.projog.core.term.ListUtils;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermFormatter;
 import org.projog.core.term.TermUtils;
+
+import java.util.List;
+
+import static org.projog.core.KnowledgeBaseUtils.*;
+import static org.projog.core.term.EmptyList.EMPTY_LIST;
+import static org.projog.core.term.ListUtils.toJavaUtilList;
+import static org.projog.core.term.TermUtils.toLong;
 
 /* TEST
  %QUERY writef('%s%n %t%r', [[h,e,l,l,o], 44, world, !, 3])

@@ -18,12 +18,14 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.OneToManyMap;
 
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.util.OneToManyMap ;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * In some rules we need to be able to create temporary property values 

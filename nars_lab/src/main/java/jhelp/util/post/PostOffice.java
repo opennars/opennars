@@ -1,16 +1,11 @@
 package jhelp.util.post;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
 import jhelp.util.list.Pair;
 import jhelp.util.list.SortedArray;
 import jhelp.util.thread.ThreadManager;
 import jhelp.util.thread.ThreadedSimpleTask;
+
+import java.util.*;
 
 /**
  * Post office for deliver {@link Message} between {@link User users}.<br>

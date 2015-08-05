@@ -18,22 +18,19 @@
 
 package org.apache.jena.graph;
 
+import org.apache.jena.shared.Command;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.CollectionFactory;
+import org.xenei.junit.contract.Contract;
+import org.xenei.junit.contract.ContractTest;
+import org.xenei.junit.contract.IProducer;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.xenei.junit.contract.Contract;
-import org.xenei.junit.contract.ContractTest;
-
-import static org.junit.Assert.*;
-
-import org.apache.jena.graph.TransactionHandler;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.shared.Command;
-import org.apache.jena.shared.JenaException;
-import org.xenei.junit.contract.IProducer;
-import org.apache.jena.util.CollectionFactory;
-import static org.apache.jena.testing_framework.GraphHelper.*;
+import static org.apache.jena.testing_framework.GraphHelper.tripleArray;
+import static org.junit.Assert.fail;
 
 /**
  * AbstractTestGraph provides a bunch of basic tests for something that purports

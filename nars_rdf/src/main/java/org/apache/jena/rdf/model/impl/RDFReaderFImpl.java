@@ -18,12 +18,16 @@
 
 package org.apache.jena.rdf.model.impl;
 
+import org.apache.jena.Jena;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.rdf.model.RDFReaderF;
+import org.apache.jena.shared.ConfigException;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.NoReaderForLangException;
+
 import java.util.Arrays;
 import java.util.Properties;
-
-import org.apache.jena.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
 
 /**
  */

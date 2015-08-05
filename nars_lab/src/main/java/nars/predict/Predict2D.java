@@ -5,12 +5,12 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.clock.SimulatedClock;
+import nars.concept.Concept;
 import nars.event.NARReaction;
+import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.concept.Concept;
-import nars.nal.nal1.Inheritance;
 import nars.term.Term;
 
 import javax.swing.*;

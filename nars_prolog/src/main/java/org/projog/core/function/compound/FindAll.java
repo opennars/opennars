@@ -1,9 +1,5 @@
 package org.projog.core.function.compound;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.projog.core.KnowledgeBaseUtils;
 import org.projog.core.Predicate;
 import org.projog.core.function.AbstractSingletonPredicate;
@@ -11,6 +7,10 @@ import org.projog.core.term.EmptyList;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PVar;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /* TEST
  z(r).

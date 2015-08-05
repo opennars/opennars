@@ -7,18 +7,17 @@
  */
 package jhelp.engine.io;
 
-import java.awt.Color;
+import jhelp.engine.Texture;
+import jhelp.util.debug.Debug;
+import jhelp.util.list.Queue;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import javax.imageio.ImageIO;
-
-import jhelp.engine.Texture;
-import jhelp.util.debug.Debug;
-import jhelp.util.list.Queue;
 
 /**
  * For read textures on streaming <br>

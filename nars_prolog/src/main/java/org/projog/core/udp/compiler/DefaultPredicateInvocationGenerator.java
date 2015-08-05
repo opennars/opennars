@@ -1,13 +1,13 @@
 package org.projog.core.udp.compiler;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
-
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PVar;
+
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
 
 final class DefaultPredicateInvocationGenerator implements PredicateInvocationGenerator {
    // TODO consider ways to improve this class through refactoring

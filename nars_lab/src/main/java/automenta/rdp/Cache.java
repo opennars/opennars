@@ -29,10 +29,10 @@
  */
 package automenta.rdp;
 
-import java.awt.Cursor;
-import java.awt.image.IndexColorModel;
-
 import org.apache.log4j.Logger;
+
+import java.awt.*;
+import java.awt.image.IndexColorModel;
 
 public class Cache {
 

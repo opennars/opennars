@@ -23,11 +23,8 @@ import jurls.reinforcementlearning.domains.arcade.gui.NullUI;
 import jurls.reinforcementlearning.domains.arcade.io.ALEPipes;
 import jurls.reinforcementlearning.domains.arcade.io.ConsoleRAM;
 import jurls.reinforcementlearning.domains.arcade.io.RLData;
-import jurls.reinforcementlearning.domains.arcade.screen.ColorPalette;
-import jurls.reinforcementlearning.domains.arcade.screen.NTSCPalette;
-import jurls.reinforcementlearning.domains.arcade.screen.SECAMPalette;
-import jurls.reinforcementlearning.domains.arcade.screen.ScreenConverter;
-import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
+import jurls.reinforcementlearning.domains.arcade.screen.*;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 

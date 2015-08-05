@@ -18,13 +18,13 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
+import org.apache.jena.rdf.model.Model;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.apache.jena.rdf.model.Model ;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * 

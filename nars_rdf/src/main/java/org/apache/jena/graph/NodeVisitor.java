@@ -18,8 +18,8 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.graph.impl.* ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.rdf.model.AnonId;
 
 /**
     The NodeVisitor interface is used by Node::visitWith so that an application

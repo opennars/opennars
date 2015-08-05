@@ -18,18 +18,21 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.io.* ;
-import java.util.* ;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.rulesys.FBRuleInfGraph;
+import org.apache.jena.reasoner.test.WGReasonerTester;
+import org.apache.jena.vocabulary.*;
 
-import org.apache.jena.ontology.OntModelSpec ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.ReasonerException ;
-import org.apache.jena.reasoner.ReasonerRegistry ;
-import org.apache.jena.reasoner.rulesys.FBRuleInfGraph ;
-import org.apache.jena.reasoner.test.WGReasonerTester ;
-import org.apache.jena.vocabulary.* ;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Test harness for running the WebOnt working group tests relevant 

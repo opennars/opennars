@@ -1,10 +1,10 @@
 package org.projog.core.event;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import org.projog.core.KB;
 import org.projog.core.KnowledgeBaseUtils;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Controls the registering and notification of observers of a {@link KB}.

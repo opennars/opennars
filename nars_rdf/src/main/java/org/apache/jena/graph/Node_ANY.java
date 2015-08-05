@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.shared.PrefixMapping;
 
 /**
     A Node_ANY (there should be only one) is a meta-node that is used to stand

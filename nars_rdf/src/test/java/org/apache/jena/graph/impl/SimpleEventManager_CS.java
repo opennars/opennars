@@ -22,7 +22,6 @@ import org.junit.runner.RunWith;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractImpl;
 import org.xenei.junit.contract.ContractSuite;
-
 import org.xenei.junit.contract.IProducer;
 
 /**

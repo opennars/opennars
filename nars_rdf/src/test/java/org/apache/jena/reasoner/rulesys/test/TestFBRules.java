@@ -18,32 +18,32 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.util.Iterator ;
-import java.util.List ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.shared.ClosedException;
+import org.apache.jena.shared.impl.JenaParameters;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import junit.framework.TestCase ;
-import junit.framework.TestSuite ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.Derivation ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.ReasonerRegistry ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.shared.ClosedException ;
-import org.apache.jena.shared.impl.JenaParameters ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.vocabulary.OWL ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Test suite for the hybrid forward/backward rule system.

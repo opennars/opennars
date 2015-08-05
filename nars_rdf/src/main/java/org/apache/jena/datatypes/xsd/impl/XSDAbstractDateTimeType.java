@@ -18,10 +18,10 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
-import org.apache.jena.graph.impl.LiteralLabel ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.impl.LiteralLabel;
 
 /**
  * Base class for all date/time/duration type representations.

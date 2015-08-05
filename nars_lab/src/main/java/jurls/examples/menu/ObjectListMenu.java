@@ -5,8 +5,7 @@
  */
 package jurls.examples.menu;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButtonMenuItem;
+import javax.swing.*;
 
 /**
  *

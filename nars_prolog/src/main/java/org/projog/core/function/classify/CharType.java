@@ -1,19 +1,19 @@
 package org.projog.core.function.classify;
 
-import static java.lang.Character.MAX_VALUE;
-import static org.projog.core.term.TermUtils.getAtomName;
-
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.function.io.GetChar;
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
+
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+
+import static java.lang.Character.MAX_VALUE;
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /* TEST
  %FALSE char_type(a, digit)

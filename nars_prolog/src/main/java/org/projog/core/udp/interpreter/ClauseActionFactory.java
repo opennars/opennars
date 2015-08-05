@@ -1,11 +1,5 @@
 package org.projog.core.udp.interpreter;
 
-import static org.projog.core.KnowledgeBaseUtils.isConjunction;
-import static org.projog.core.KnowledgeBaseUtils.isSingleAnswer;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.bool.True;
@@ -13,6 +7,12 @@ import org.projog.core.function.flow.Cut;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
 import org.projog.core.udp.ClauseModel;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.projog.core.KnowledgeBaseUtils.isConjunction;
+import static org.projog.core.KnowledgeBaseUtils.isSingleAnswer;
 
 /**
  * Constructs new {@link ClauseAction} instances.

@@ -18,14 +18,18 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.enhanced.* ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.enhanced.Implementation;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.BadBooleanException;
+import org.apache.jena.shared.BadCharLiteralException;
+import org.apache.jena.shared.PrefixMapping;
 
 /** An implementation of Literal.
  */

@@ -24,19 +24,19 @@
 
 package automenta.vnc.viewer.swing;
 
-import automenta.vnc.exceptions.*;
-import automenta.vnc.rfb.protocol.Protocol;
-import automenta.vnc.rfb.protocol.ProtocolSettings;
-import automenta.vnc.viewer.*;
-import automenta.vnc.viewer.swing.gui.PasswordDialog;
 import automenta.vnc.drawing.Renderer;
+import automenta.vnc.exceptions.*;
 import automenta.vnc.rfb.IPasswordRetriever;
 import automenta.vnc.rfb.IRfbSessionListener;
 import automenta.vnc.rfb.client.ClientToServerMessage;
 import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
+import automenta.vnc.rfb.protocol.Protocol;
+import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.transport.Reader;
 import automenta.vnc.transport.Writer;
 import automenta.vnc.utils.Strings;
+import automenta.vnc.viewer.*;
+import automenta.vnc.viewer.swing.gui.PasswordDialog;
 
 import javax.swing.*;
 import java.io.IOException;

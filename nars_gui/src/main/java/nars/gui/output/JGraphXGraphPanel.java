@@ -3,7 +3,6 @@ package nars.gui.output;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxGraphLayout;
-import com.mxgraph.layout.mxOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import nars.NAR;

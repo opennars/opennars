@@ -4,7 +4,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Equivalence;
-import nars.process.NAL;
+import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -22,9 +22,9 @@ public class NAL2 {
      * pair of reversed Inheritance/Implication
      *  @param judgment1 The first premise
      * @param judgment2 The second premise
-     * @param nal Reference to the memory
+     * @param p Reference to the memory
      */
-    public static Task inferToSym(Task judgment1, Sentence judgment2, NAL nal) {
+    public static Task inferToSym(Task judgment1, Sentence judgment2, Premise p) {
         Statement s1 = (Statement) judgment1.getTerm();
         Term t1 = s1.getSubject();
         Term t2 = s1.getPredicate();
@@ -35,8 +35,8 @@ public class NAL2 {
             content = Equivalence.make(t1, t2, s1.getTemporalOrder());
         }
         Truth truth = TruthFunctions.intersection(judgment1.getTruth(), judgment2.truth);
-        Budget budget = BudgetFunctions.forward(truth, nal);
-        return nal.deriveDouble(content, judgment1.getPunctuation(),
+        Budget budget = BudgetFunctions.forward(truth, p);
+        return p.deriveDouble(content, judgment1.getPunctuation(),
                 truth, budget, judgment1, judgment2,
                 false, true);
     }

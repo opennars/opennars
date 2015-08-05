@@ -22,13 +22,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractTest;
-
-import static org.junit.Assert.*;
+import org.xenei.junit.contract.IProducer;
 
 import static org.apache.jena.testing_framework.GraphHelper.*;
-import org.apache.jena.graph.impl.TripleStore;
-
-import org.xenei.junit.contract.IProducer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * AbstractTestTripleStore - post-hoc tests for TripleStores.

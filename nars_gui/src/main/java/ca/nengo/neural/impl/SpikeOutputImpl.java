@@ -27,8 +27,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.neural.impl;
 
-import ca.nengo.neural.SpikeOutput;
 import ca.nengo.model.Units;
+import ca.nengo.neural.SpikeOutput;
 
 /**
  * Default implementation of SpikeOutput. 

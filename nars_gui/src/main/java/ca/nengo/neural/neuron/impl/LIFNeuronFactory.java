@@ -35,7 +35,8 @@ import ca.nengo.model.impl.NodeFactory;
 import ca.nengo.neural.neuron.Neuron;
 import ca.nengo.neural.neuron.SpikeGenerator;
 import ca.nengo.neural.neuron.SynapticIntegrator;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A factory for leaky-integrate-and-fire neurons. 

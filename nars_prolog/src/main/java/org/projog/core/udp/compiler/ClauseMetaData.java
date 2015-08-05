@@ -1,22 +1,22 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
-
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.function.flow.Cut;
 import org.projog.core.term.PTerm;
+import org.projog.core.term.PVar;
 import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
-import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.StaticUserDefinedPredicateFactory;
+
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
 
 /**
  * Defines the characteristics of a clause belonging to a user defined predicate.

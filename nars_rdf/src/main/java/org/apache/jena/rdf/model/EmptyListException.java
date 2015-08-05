@@ -25,7 +25,8 @@ package org.apache.jena.rdf.model;
 
 // Imports
 ///////////////
-import org.apache.jena.shared.JenaException ;
+
+import org.apache.jena.shared.JenaException;
 
 
 /**

@@ -1,15 +1,5 @@
 package org.projog.core.udp.interpreter;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.variable;
-import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.KB;
@@ -17,6 +7,14 @@ import org.projog.core.PredicateKey;
 import org.projog.core.SpyPoints;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PVar;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.atom;
+import static org.projog.TestUtils.variable;
+import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
 
 public class InterpretedUserDefinedPredicateTest {
    private final KB kb = TestUtils.createKnowledgeBase();

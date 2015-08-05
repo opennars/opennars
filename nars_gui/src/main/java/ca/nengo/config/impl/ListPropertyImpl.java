@@ -27,9 +27,9 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.config.impl;
 
-import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.ListProperty;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.model.StructuralException;
 
 import java.lang.reflect.Array;

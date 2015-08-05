@@ -18,8 +18,8 @@
 
 package org.apache.jena.util;
 
-import junit.framework.*;
-import org.apache.jena.util.FileUtils ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * TestFileUtils

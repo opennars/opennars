@@ -18,11 +18,12 @@
 
 package org.apache.jena;
 
-import java.util.* ;
+import org.apache.jena.util.Metadata;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
-import org.apache.jena.util.Metadata ;
+import java.util.HashMap;
+import java.util.Map;
 
 /** Methods and constants that define features of the current the environment.
  *  Primarily for other parts of the Jena framework. 

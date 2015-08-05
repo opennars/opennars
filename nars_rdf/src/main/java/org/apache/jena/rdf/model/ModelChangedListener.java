@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model;
 
-import java.util.*;
+import java.util.List;
 
 /**
     The interface for classes that listen for model-changed events. In all cases,

@@ -18,10 +18,10 @@
 
 package org.apache.jena.mem;
 
-import java.util.Iterator;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import java.util.Iterator;
 
 /**
     A WrappedIterator which remembers the last object next'ed in a

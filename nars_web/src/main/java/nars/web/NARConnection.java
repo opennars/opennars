@@ -7,7 +7,6 @@
 package nars.web;
 
 import nars.NAR;
-import nars.io.out.Output;
 import nars.io.out.TextOutput;
 
 /**

@@ -24,12 +24,12 @@
 
 package automenta.vnc.viewer;
 
-import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
-import automenta.vnc.rfb.protocol.ProtocolSettings;
-import automenta.vnc.viewer.mvp.Presenter;
 import automenta.vnc.drawing.Renderer;
 import automenta.vnc.rfb.client.ClientToServerMessage;
+import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
+import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.utils.Strings;
+import automenta.vnc.viewer.mvp.Presenter;
 import automenta.vnc.viewer.swing.ConnectionParams;
 import automenta.vnc.viewer.swing.Surface;
 import automenta.vnc.viewer.swing.WrongParameterException;

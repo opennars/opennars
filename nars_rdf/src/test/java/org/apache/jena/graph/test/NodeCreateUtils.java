@@ -18,16 +18,17 @@
 
 package org.apache.jena.graph.test;
 
-import java.util.StringTokenizer;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
 
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.rdf.model.AnonId ;
-import org.apache.jena.shared.* ;
+import java.util.StringTokenizer;
 
 /**
     Creating nodes from string specifications.

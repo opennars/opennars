@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.RDFErrorHandler ;
-import org.apache.jena.rdfxml.xmlinput.impl.ARPSaxErrorHandler ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.shared.impl.PrefixMappingImpl ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdfxml.xmlinput.impl.ARPSaxErrorHandler;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
 
 final class JenaHandler extends ARPSaxErrorHandler implements StatementHandler, NamespaceHandler
     {

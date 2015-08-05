@@ -17,7 +17,8 @@
  */
 
 package org.apache.jena.enhanced;
-import org.apache.jena.graph.* ;
+
+import org.apache.jena.graph.Node;
 
 /**
  * <p>

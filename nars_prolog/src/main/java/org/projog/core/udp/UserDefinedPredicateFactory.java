@@ -1,9 +1,9 @@
 package org.projog.core.udp;
 
-import java.util.Iterator;
-
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
+
+import java.util.Iterator;
 
 /**
  * Maintains a record of the clauses that define a user defined predicate.

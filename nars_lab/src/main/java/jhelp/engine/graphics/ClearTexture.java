@@ -1,8 +1,8 @@
 package jhelp.engine.graphics;
 
-import java.awt.Color;
-
 import jhelp.engine.Texture;
+
+import java.awt.*;
 
 /**
  * Order to clear a texture

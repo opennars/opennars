@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.FrontsNode ;
+import org.apache.jena.graph.FrontsNode;
 
 /** 
     Interface covering RDF resources and literals. Allows probing whether a

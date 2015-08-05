@@ -34,8 +34,8 @@ package ca.nengo.neural.nef;
 
 import ca.nengo.math.Function;
 import ca.nengo.model.NSource;
-import ca.nengo.model.StructuralException;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.StructuralException;
 import ca.nengo.neural.nef.impl.BiasSource;
 import ca.nengo.neural.nef.impl.BiasTarget;
 import ca.nengo.neural.nef.impl.DecodedTarget;

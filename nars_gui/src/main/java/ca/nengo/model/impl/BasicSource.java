@@ -27,14 +27,15 @@ a recipient may use your version of this file under either the MPL or the GPL Li
  */
 package ca.nengo.model.impl;
 
-import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.Configurable;
 import ca.nengo.config.Configuration;
 import ca.nengo.config.Property;
+import ca.nengo.config.PropretiesUtil;
 import ca.nengo.config.impl.ConfigurationImpl;
 import ca.nengo.config.impl.SingleValuedPropertyImpl;
 import ca.nengo.model.*;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A generic implementation of Origin. Nodes that contain an Origin of this type should call one

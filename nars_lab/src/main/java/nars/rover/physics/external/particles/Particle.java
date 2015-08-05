@@ -1,7 +1,6 @@
 package nars.rover.physics.external.particles;
 
 
-import nars.checkers.Game;
 import nars.rover.physics.external.BoxEntity;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.FixtureDef;

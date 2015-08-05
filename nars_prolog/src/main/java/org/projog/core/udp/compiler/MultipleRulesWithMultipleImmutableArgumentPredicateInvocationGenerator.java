@@ -1,15 +1,15 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
+import org.projog.core.PredicateFactory;
+import org.projog.core.term.PTerm;
+import org.projog.core.term.PVar;
+import org.projog.core.udp.MultipleRulesWithMultipleImmutableArgumentsPredicate;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.projog.core.PredicateFactory;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.PVar;
-import org.projog.core.udp.MultipleRulesWithMultipleImmutableArgumentsPredicate;
+import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
 
 final class MultipleRulesWithMultipleImmutableArgumentPredicateInvocationGenerator implements PredicateInvocationGenerator {
    // TODO consider ways to improve this class through refactoring

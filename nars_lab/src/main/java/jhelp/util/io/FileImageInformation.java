@@ -1,16 +1,15 @@
 package jhelp.util.io;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
+import jhelp.util.debug.Debug;
+import jhelp.util.list.EnumerationIterator;
+import jhelp.util.text.UtilText;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.list.EnumerationIterator;
-import jhelp.util.text.UtilText;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
 
 /**
  * Describes information about a image file

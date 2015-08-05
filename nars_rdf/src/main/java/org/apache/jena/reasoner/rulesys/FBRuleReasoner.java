@@ -18,13 +18,16 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.shared.WrappedIOException;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Rule-based reasoner interface. This is the default rule reasoner to use.

@@ -18,9 +18,9 @@
 
 package org.apache.jena.vocabulary.test;
 
-import junit.framework.*;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.vocabulary.* ;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.vocabulary.RDF;
 
 public class TestVocabRDF extends ModelTestBase
     {

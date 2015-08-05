@@ -18,20 +18,20 @@
 
 package org.apache.jena.reasoner.rulesys;
 
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.reasoner.rulesys.impl.FRuleEngineI;
+import org.apache.jena.reasoner.rulesys.impl.FRuleEngineIFactory;
+import org.apache.jena.reasoner.rulesys.impl.SafeGraph;
+import org.apache.jena.util.OneToManyMap;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
+
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.impl.FRuleEngineI ;
-import org.apache.jena.reasoner.rulesys.impl.FRuleEngineIFactory ;
-import org.apache.jena.reasoner.rulesys.impl.SafeGraph ;
-import org.apache.jena.util.OneToManyMap ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.NullIterator ;
 
 /**
  * An inference graph interface that runs a set of forward chaining

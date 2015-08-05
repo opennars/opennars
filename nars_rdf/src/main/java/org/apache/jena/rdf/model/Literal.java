@@ -17,7 +17,8 @@
  */
 
 package org.apache.jena.rdf.model;
-import org.apache.jena.datatypes.RDFDatatype ;
+
+import org.apache.jena.datatypes.RDFDatatype;
 
 /** An RDF Literal.
  * 

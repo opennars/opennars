@@ -1,16 +1,5 @@
 package org.projog.core.udp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.variable;
-
-import java.util.Iterator;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.KB;
@@ -18,6 +7,12 @@ import org.projog.core.Predicate;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
+
+import java.util.Iterator;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.atom;
+import static org.projog.TestUtils.variable;
 
 public class DynamicUserDefinedPredicateFactoryTest {
    private static final String TEST_PREDICATE_NAME = "test";

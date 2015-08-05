@@ -1,15 +1,13 @@
 package org.projog.core.function.construct;
 
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
-import static org.projog.core.term.TermUtils.getAtomName;
-import static org.projog.core.term.TermUtils.toInt;
-
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.PAtom;
 import org.projog.core.term.IntegerNumber;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.term.TermUtils.*;
 
 /* TEST
  %QUERY functor(f(a,b,c(Z)),F,N)

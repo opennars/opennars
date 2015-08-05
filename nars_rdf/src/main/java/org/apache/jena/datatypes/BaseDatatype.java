@@ -18,7 +18,7 @@
 
 package org.apache.jena.datatypes;
 
-import org.apache.jena.graph.impl.LiteralLabel ;
+import org.apache.jena.graph.impl.LiteralLabel;
 
 /**
  * Base level implementation of datatype from which real implementations

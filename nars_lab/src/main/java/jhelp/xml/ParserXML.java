@@ -7,12 +7,12 @@
  */
 package jhelp.xml;
 
+import jhelp.util.text.UtilText;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Hashtable;
-
-import jhelp.util.text.UtilText;
 
 /**
  * Parse dynamically an XML.<br>

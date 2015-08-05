@@ -18,9 +18,10 @@
 
 package org.apache.jena.shared.uuid;
 
-import java.util.* ;
+import org.apache.jena.shared.uuid.JenaUUID.UUIDFormatException;
 
-import org.apache.jena.shared.uuid.JenaUUID.UUIDFormatException ;
+import java.util.Locale;
+import java.util.Random;
 
 
 /** Generator for for random number based UUIDs (version 2, variant 4)

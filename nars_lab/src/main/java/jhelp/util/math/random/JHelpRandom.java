@@ -1,11 +1,11 @@
 package jhelp.util.math.random;
 
-import java.util.ArrayList;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.reflection.Reflector;
 import jhelp.util.text.UtilText;
+
+import java.util.ArrayList;
 
 /**
  * Able to choice an object randomly.<br>

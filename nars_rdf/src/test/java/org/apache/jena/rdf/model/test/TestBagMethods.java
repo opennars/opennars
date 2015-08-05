@@ -18,10 +18,10 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.Container ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.rdf.model.Container;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.vocabulary.RDF;
 
 public class TestBagMethods extends AbstractContainerMethods
 {

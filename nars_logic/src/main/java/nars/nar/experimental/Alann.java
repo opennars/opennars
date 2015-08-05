@@ -406,8 +406,8 @@ public class Alann extends NARSeed {
         }
 
         @Override
-        protected void onFinished() {
-            super.onFinished();
+        protected void afterDerive() {
+            super.afterDerive();
 
             if (derived!=null && !derived.isEmpty())
                 System.out.println(this + " derived " + derived);
@@ -415,14 +415,14 @@ public class Alann extends NARSeed {
 
         public void run(TermLink tl) {
 
-            onStart();
+            beforeDerive();
 
-            process();
+            derive();
 
             if (tl != null)
                 processTerm(tl);
 
-            onFinished();
+            afterDerive();
 
         }
 

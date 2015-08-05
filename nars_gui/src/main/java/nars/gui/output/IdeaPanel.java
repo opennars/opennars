@@ -4,16 +4,16 @@
  */
 package nars.gui.output;
 
-import nars.budget.Budget;
-import nars.util.event.EventEmitter;
-import nars.util.event.Reaction;
 import nars.Events.*;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.task.Task;
-import nars.truth.Truth;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.Truth;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 import nars.util.graph.experimental.Idea;
 import nars.util.graph.experimental.Idea.IdeaSet;
 import nars.util.graph.experimental.Idea.SentenceType;

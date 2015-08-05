@@ -1,14 +1,5 @@
 package jhelp.util.io.idl;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import jhelp.util.classLoader.JHelpClassLoader;
 import jhelp.util.compiler.Compiler;
 import jhelp.util.compiler.Compiler.NameCode;
@@ -22,6 +13,15 @@ import jhelp.util.io.pipe.PipeWriter;
 import jhelp.util.list.SortedArray;
 import jhelp.util.reflection.Reflector;
 import jhelp.util.thread.MessageHandler;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Way to call distant method betwwen two Java applications in same computer.<br>

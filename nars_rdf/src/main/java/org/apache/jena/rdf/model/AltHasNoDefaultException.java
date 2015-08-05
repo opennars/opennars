@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.shared.JenaException;
 
 /**
     Exception thrown if an Alt has no default statement.

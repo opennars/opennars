@@ -1,10 +1,10 @@
 package org.projog.core.function.construct;
 
-import static org.projog.core.term.TermUtils.toInt;
-
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.term.TermUtils.toInt;
 
 /* TEST
  %QUERY arg(2, a(b,c(d)), X)

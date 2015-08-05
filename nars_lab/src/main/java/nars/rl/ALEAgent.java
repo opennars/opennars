@@ -11,8 +11,8 @@ import jurls.reinforcementlearning.domains.arcade.rl.FrameHistory;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
 import nars.NAR;
 import nars.nar.Default;
-import nars.task.Task;
 import nars.rl.example.QVis;
+import nars.task.Task;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

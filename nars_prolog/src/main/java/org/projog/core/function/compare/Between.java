@@ -1,9 +1,5 @@
 package org.projog.core.function.compare;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR;
-import static org.projog.core.term.TermUtils.toLong;
-
 import org.projog.core.Calculatables;
 import org.projog.core.KB;
 import org.projog.core.Predicate;
@@ -11,6 +7,10 @@ import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
+import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR;
+import static org.projog.core.term.TermUtils.toLong;
 
 /* TEST
  %TRUE between(1, 5, 1)

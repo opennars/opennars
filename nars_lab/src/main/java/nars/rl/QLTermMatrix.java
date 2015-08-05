@@ -6,14 +6,14 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
-import nars.truth.DefaultTruth;
-import nars.process.TaskProcess;
-import nars.task.Task;
 import nars.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.process.TaskProcess;
+import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
 import nars.util.index.ConceptMatrix;
 
 import java.util.List;

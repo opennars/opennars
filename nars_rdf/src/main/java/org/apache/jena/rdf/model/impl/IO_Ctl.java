@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.lang.reflect.Method ;
+import java.lang.reflect.Method;
 
 
 public class IO_Ctl

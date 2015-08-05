@@ -18,10 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.reasoner.rulesys.Functor ;
-import org.apache.jena.reasoner.rulesys.Node_RuleVariable ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.Functor;
+import org.apache.jena.reasoner.rulesys.Node_RuleVariable;
 
 /**
  * Frame on the choice point stack used to represent the state of some form of triple

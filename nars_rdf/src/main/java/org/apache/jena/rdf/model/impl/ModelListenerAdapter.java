@@ -18,10 +18,13 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphListener;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.ModelChangedListener;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
+import java.util.Iterator;
+import java.util.List;
 
 /**
     Adapter class that converts a ModelChangedListener into a GraphListener.

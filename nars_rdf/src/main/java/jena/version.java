@@ -18,11 +18,11 @@
 
 package jena;
 
+import org.apache.jena.Jena;
+
+import java.lang.reflect.Field;
+
 import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
-
-import java.lang.reflect.*;
-
-import org.apache.jena.Jena ;
 
 /**
  * jena.version

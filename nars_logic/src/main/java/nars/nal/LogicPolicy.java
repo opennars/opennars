@@ -3,7 +3,6 @@ package nars.nal;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.premise.Premise;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;

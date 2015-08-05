@@ -1,22 +1,15 @@
 package org.projog.core.udp.compiler;
 
+import org.projog.core.ProjogException;
+
+import javax.tools.*;
+import javax.tools.JavaCompiler.CompilationTask;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Locale;
-
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.JavaFileObject;
-import javax.tools.SimpleJavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
-
-import org.projog.core.ProjogException;
 
 /** Compiles Java source code into bytecode. */
 final class JavaSourceCompiler {

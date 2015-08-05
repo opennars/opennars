@@ -23,10 +23,12 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import junit.framework.*;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.vocabulary.OWL ;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.OWL;
 
 
 

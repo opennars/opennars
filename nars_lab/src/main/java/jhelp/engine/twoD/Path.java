@@ -7,15 +7,15 @@
  */
 package jhelp.engine.twoD;
 
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-
 import jhelp.engine.Point2D;
 import jhelp.engine.Point3D;
 import jhelp.engine.Texture;
 import jhelp.engine.io.ConstantsXML;
 import jhelp.engine.util.Math3D;
 import jhelp.xml.MarkupXML;
+
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
 /**
  * A path <br>

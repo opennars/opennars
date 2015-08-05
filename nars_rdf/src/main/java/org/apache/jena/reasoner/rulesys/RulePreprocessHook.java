@@ -18,9 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.reasoner.Finder ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.Finder;
 
 /**
  * Implementors of this interface can be used as proprocessing passes

@@ -18,8 +18,8 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.reasoner.ReasonerException ;
-import org.apache.jena.reasoner.rulesys.Rule ;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.rulesys.Rule;
 
 /**
  * Exception used to indicate syntactic errors the LP version of the

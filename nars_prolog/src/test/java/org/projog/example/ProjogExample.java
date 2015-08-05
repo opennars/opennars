@@ -1,11 +1,11 @@
 package org.projog.example;
 
-import java.io.File;
-
 import org.projog.api.Projog;
 import org.projog.api.QueryResult;
 import org.projog.api.QueryStatement;
 import org.projog.core.term.PAtom;
+
+import java.io.File;
 
 public class ProjogExample {
    public static void main(String[] args) {

@@ -19,13 +19,10 @@
 package org.apache.jena.rdfxml.xmlinput.states;
 
 
-import org.apache.jena.rdfxml.xmlinput.impl.ANode ;
-import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext ;
-import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler ;
-import org.apache.jena.rdfxml.xmlinput.states.AbsXMLLiteral ;
-import org.apache.jena.rdfxml.xmlinput.states.HasSubjectFrameI ;
-import org.apache.jena.rdfxml.xmlinput.states.WantsObjectFrameI ;
-import org.junit.Assert ;
+import org.apache.jena.rdfxml.xmlinput.impl.ANode;
+import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext;
+import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler;
+import org.junit.Assert;
 
 class TestFrame extends AbsXMLLiteral implements WantsObjectFrameI,
         HasSubjectFrameI {

@@ -18,13 +18,17 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.BadObjectException;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.DocumentManagerAssembler;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.FileManager;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.DocumentManagerAssembler ;
-import org.apache.jena.ontology.OntDocumentManager ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.FileManager ;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestDocumentManagerAssembler extends AssemblerTestBase
     {

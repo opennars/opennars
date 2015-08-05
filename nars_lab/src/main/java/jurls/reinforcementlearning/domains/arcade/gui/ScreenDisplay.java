@@ -17,12 +17,9 @@
  */
 package jurls.reinforcementlearning.domains.arcade.gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
 
 /** Displays the current Atari frame in a simple GUI.
  *

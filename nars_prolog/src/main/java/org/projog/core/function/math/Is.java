@@ -1,11 +1,11 @@
 package org.projog.core.function.math;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-
 import org.projog.core.Calculatables;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
 
 /* TEST
  %QUERY X is 3

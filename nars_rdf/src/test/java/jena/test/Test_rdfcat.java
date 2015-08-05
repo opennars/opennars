@@ -18,13 +18,16 @@
 
 package jena.test;
 
-import java.io.*;
-import java.util.*;
-
 import jena.rdfcat;
 import junit.framework.TestCase;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class Test_rdfcat extends TestCase

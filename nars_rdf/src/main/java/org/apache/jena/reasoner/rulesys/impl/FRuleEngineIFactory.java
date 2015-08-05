@@ -18,10 +18,10 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.List;
+import org.apache.jena.reasoner.rulesys.ForwardRuleInfGraphI;
+import org.apache.jena.reasoner.rulesys.Rule;
 
-import org.apache.jena.reasoner.rulesys.ForwardRuleInfGraphI ;
-import org.apache.jena.reasoner.rulesys.Rule ;
+import java.util.List;
 
 /**
  * Factory class for creating {@link FRuleEngineI}. This class is a singleton pattern, the single global 

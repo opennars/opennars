@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.util.Random;
-
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.Statement ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.vocabulary.RDF;
 import org.junit.Assert;
+
+import java.util.Random;
 
 public class IsomorphicTests extends AbstractModelTestBase
 {

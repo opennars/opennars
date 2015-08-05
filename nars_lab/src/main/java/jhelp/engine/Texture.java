@@ -2,11 +2,19 @@
  */
 package jhelp.engine;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import com.jogamp.opengl.GL;
+import jhelp.engine.graphics.CompressiveImage;
+import jhelp.engine.util.BufferUtils;
+import jhelp.engine.util.ColorsUtil;
+import jhelp.engine.util.Math3D;
+import jhelp.util.debug.Debug;
+import jhelp.util.debug.DebugLevel;
+import jhelp.util.gui.JHelpImage;
+import jhelp.util.list.EnumerationIterator;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
@@ -20,19 +28,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
-
-import javax.imageio.ImageIO;
-import com.jogamp.opengl.GL;
-import javax.swing.Icon;
-
-import jhelp.engine.graphics.CompressiveImage;
-import jhelp.engine.util.BufferUtils;
-import jhelp.engine.util.ColorsUtil;
-import jhelp.engine.util.Math3D;
-import jhelp.util.debug.Debug;
-import jhelp.util.debug.DebugLevel;
-import jhelp.util.gui.JHelpImage;
-import jhelp.util.list.EnumerationIterator;
 
 /**
  * Texture, you can draw on the texture<br>

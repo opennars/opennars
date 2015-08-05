@@ -18,13 +18,13 @@
 
 package org.apache.jena.util;
 
-import static org.apache.jena.util.SplitIRI.* ;
+import junit.framework.JUnit4TestAdapter;
+import org.junit.Assert;
+import org.junit.Test;
 
-import java.util.Objects ;
+import java.util.Objects;
 
-import junit.framework.JUnit4TestAdapter ;
-import org.junit.Assert ;
-import org.junit.Test ;
+import static org.apache.jena.util.SplitIRI.*;
 
 /** Test splitting IRI strings using Turtle rules.
  */

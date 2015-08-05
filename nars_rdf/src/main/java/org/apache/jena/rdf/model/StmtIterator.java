@@ -21,9 +21,9 @@ package org.apache.jena.rdf.model;
 /**
  */
 
-import java.util.NoSuchElementException;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.util.iterator.* ;
+import java.util.NoSuchElementException;
 
 /** 
     An iterator which returns RDF Statements.

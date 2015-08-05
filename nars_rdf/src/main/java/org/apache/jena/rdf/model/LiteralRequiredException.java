@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.shared.JenaException;
 
 /**
     Exception to throw when an RDFNode required to be a Literal isn't, or when a

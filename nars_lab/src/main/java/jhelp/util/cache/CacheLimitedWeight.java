@@ -1,11 +1,11 @@
 package jhelp.util.cache;
 
-import java.util.HashMap;
-
 import jhelp.util.list.HeavyObject;
 import jhelp.util.list.HeavyObjectCreator;
 import jhelp.util.list.LimitedWeightHashMap;
 import jhelp.util.list.LimitedWeightHashMap.Result;
+
+import java.util.HashMap;
 
 /**
  * Cache with elements number is limited in memory

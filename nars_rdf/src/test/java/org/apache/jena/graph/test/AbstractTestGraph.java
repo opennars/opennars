@@ -18,25 +18,19 @@
 
 package org.apache.jena.graph.test;
 
-import java.io.InputStream ;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.apache.jena.graph.*;
+import org.apache.jena.mem.TrackingTripleIterator;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.impl.ReifierStd;
+import org.apache.jena.shared.Command;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.mem.TrackingTripleIterator ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.impl.ReifierStd ;
-import org.apache.jena.shared.Command ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.ClosableIterator ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.io.InputStream;
+import java.util.*;
 
 /**
     AbstractTestGraph provides a bunch of basic tests for something that

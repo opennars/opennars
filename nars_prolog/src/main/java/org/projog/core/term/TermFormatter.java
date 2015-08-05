@@ -1,9 +1,9 @@
 package org.projog.core.term;
 
-import static org.projog.core.KnowledgeBaseUtils.getOperands;
-
 import org.projog.core.KB;
 import org.projog.core.Operands;
+
+import static org.projog.core.KnowledgeBaseUtils.getOperands;
 
 /**
  * Produces {@code String} representations of {@link PTerm} instances.

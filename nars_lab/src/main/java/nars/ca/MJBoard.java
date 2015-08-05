@@ -4,7 +4,7 @@ package nars.ca;// Mirek's Java Cellebration
 // The board
 
 import java.awt.*;
-import java.awt.image.*;
+import java.awt.image.MemoryImageSource;
 import java.util.StringTokenizer;
 
 //-----------------------------------------------------------------------

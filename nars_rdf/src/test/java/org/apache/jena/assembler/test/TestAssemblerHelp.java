@@ -18,14 +18,24 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.AssemblerHelp;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.AssemblerBase;
+import org.apache.jena.assembler.assemblers.AssemblerGroup;
+import org.apache.jena.assembler.exceptions.AmbiguousSpecificTypeException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.shared.BadDescriptionMultipleRootsException;
+import org.apache.jena.shared.BadDescriptionNoRootException;
+import org.apache.jena.shared.BrokenException;
+import org.apache.jena.vocabulary.RDF;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.* ;
-import org.apache.jena.assembler.exceptions.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.vocabulary.RDF ;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TestAssemblerHelp extends AssemblerTestBase
     {

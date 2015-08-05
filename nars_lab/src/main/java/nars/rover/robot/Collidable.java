@@ -1,6 +1,5 @@
 package nars.rover.robot;
 
-import org.jbox2d.collision.Collision;
 import org.jbox2d.dynamics.contacts.Contact;
 
 /**

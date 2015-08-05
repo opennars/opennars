@@ -3,7 +3,6 @@ package automenta.vivisect.swing;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 abstract public class TimeControl extends NPanel implements ActionListener {
 

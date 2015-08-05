@@ -18,10 +18,13 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.enhanced.* ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.enhanced.Implementation;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
 
 /** An implementation of Alt.
  */

@@ -1,13 +1,13 @@
 package org.projog.core.function.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /* TEST
  %QUERY flatten([a,[[b]],[c]], X)

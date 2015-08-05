@@ -5,15 +5,15 @@
 package nars.predict;
 
 import nars.NAR;
-import nars.narsese.InvalidInputException;
 import nars.concept.Concept;
-import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal7.Tense;
+import nars.narsese.InvalidInputException;
 import nars.process.TaskProcess;
+import nars.task.Task;
+import nars.term.Atom;
+import nars.term.Term;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

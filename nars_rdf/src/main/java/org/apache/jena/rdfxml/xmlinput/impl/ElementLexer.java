@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.apache.jena.rdfxml.xmlinput.states.Frame ;
+import org.apache.jena.rdfxml.xmlinput.states.Frame;
 import org.xml.sax.SAXParseException;
 
 public class ElementLexer extends QNameLexer  {

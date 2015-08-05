@@ -18,9 +18,9 @@
 
 package org.apache.jena.datatypes.xsd;
 
-import java.math.BigDecimal;
+import org.apache.jena.datatypes.xsd.impl.XSDAbstractDateTimeType;
 
-import org.apache.jena.datatypes.xsd.impl.XSDAbstractDateTimeType ;
+import java.math.BigDecimal;
 
 /**
  * Represent an XSD duration value. We use a seven dimensional space

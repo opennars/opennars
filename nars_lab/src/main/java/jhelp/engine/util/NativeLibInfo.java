@@ -2,9 +2,9 @@
  */
 package jhelp.engine.util;
 
-import java.text.MessageFormat;
-
 import jhelp.util.debug.Debug;
+
+import java.text.MessageFormat;
 
 /**
  * OpenGL library informations, to know with jar to open and extract libraries.<br>

@@ -18,13 +18,12 @@
 
 package org.apache.jena.n3.turtle;
 
-import junit.framework.* ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.n3.turtle.parser.TurtleParser;
+import org.apache.jena.util.junit.TestUtils;
 
-import java.io.* ;
-
-import org.apache.jena.n3.turtle.TurtleEventNull ;
-import org.apache.jena.n3.turtle.parser.TurtleParser ;
-import org.apache.jena.util.junit.TestUtils ;
+import java.io.StringReader;
 
 public class TurtleInternalTests extends TestSuite
 {

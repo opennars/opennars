@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.io.*;
-import java.util.Locale ;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.FileUtils ;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.UnknownPropertyException;
+import org.apache.jena.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.Locale;
 
 /** Writes out an XML serialization of a model.
  */

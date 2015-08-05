@@ -18,9 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.List;
+import org.apache.jena.reasoner.Reasoner;
 
-import org.apache.jena.reasoner.Reasoner ;
+import java.util.List;
 
 /**
      RuleReasoner - an interface to capture the idea of a Reasoner that relies on

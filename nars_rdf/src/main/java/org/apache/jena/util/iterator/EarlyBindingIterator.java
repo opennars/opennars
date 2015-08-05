@@ -17,7 +17,10 @@
  */
 
 package org.apache.jena.util.iterator;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Fully execute the iterator immediately, but pretend we haven't.

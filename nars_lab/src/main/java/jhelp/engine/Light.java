@@ -7,7 +7,6 @@
  */
 package jhelp.engine;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import jhelp.engine.util.BufferUtils;
 

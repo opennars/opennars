@@ -18,20 +18,13 @@
 
 package org.apache.jena.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import junit.framework.TestSuite;
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.IteratorCollection ;
-import org.apache.jena.util.iterator.NullIterator ;
-import org.apache.jena.util.iterator.SingletonIterator ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.util.iterator.NullIterator;
+import org.apache.jena.util.iterator.SingletonIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
+
+import java.util.*;
 
 public class TestIteratorCollection extends GraphTestBase
     {

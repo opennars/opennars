@@ -16,7 +16,10 @@ import nars.term.Term;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
 
 import java.util.ArrayList;
 import java.util.List;

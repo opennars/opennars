@@ -18,14 +18,17 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import java.util.*;
-import java.util.function.Function;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.Content;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.exceptions.TransactionAbortedException;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.vocabulary.RDF;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.exceptions.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.vocabulary.RDF ;
+import java.util.List;
+import java.util.function.Function;
 
 public abstract class ModelAssembler extends AssemblerBase implements Assembler
     {    

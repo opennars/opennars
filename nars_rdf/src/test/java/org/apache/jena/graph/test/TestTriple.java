@@ -18,16 +18,16 @@
 
 package org.apache.jena.graph.test;
 
-import java.util.function.Function ;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.shared.PrefixMapping;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.rdf.model.AnonId ;
-import org.apache.jena.shared.PrefixMapping ;
+import java.util.function.Function;
 
 public class TestTriple extends GraphTestBase
     {    

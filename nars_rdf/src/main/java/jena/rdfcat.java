@@ -24,20 +24,20 @@ package jena;
 // Imports
 ///////////////
 
-import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.IO_Ctl;
+import org.apache.jena.rdf.model.impl.RDFWriterFImpl;
+import org.apache.jena.shared.NoWriterForLangException;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.FileUtils;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 
-import java.io.OutputStream ;
-import java.util.* ;
+import java.io.OutputStream;
+import java.util.*;
 import java.util.function.BiConsumer;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.IO_Ctl ;
-import org.apache.jena.rdf.model.impl.RDFWriterFImpl ;
-import org.apache.jena.shared.NoWriterForLangException ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.FileUtils ;
-import org.apache.jena.vocabulary.OWL ;
-import org.apache.jena.vocabulary.RDFS ;
+import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
 
 
 /**

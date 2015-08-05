@@ -18,11 +18,13 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.* ;
-import org.apache.jena.assembler.exceptions.AssemblerException ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.AssemblerBase;
+import org.apache.jena.assembler.assemblers.AssemblerGroup;
+import org.apache.jena.assembler.exceptions.AssemblerException;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.JenaException;
 
 public class TestAssemblerGroupTracing extends AssemblerTestBase
     {

@@ -18,9 +18,10 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
 
-import org.apache.jena.graph.Node ;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Represents a single frame in the LP interpreter's choice point stack,

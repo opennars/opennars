@@ -18,13 +18,13 @@
 
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.xsd.impl.RDFLangString ;
-import org.apache.jena.datatypes.xsd.impl.XMLLiteralType ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.rdf.model.Property ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.ResourceFactory ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.impl.RDFLangString;
+import org.apache.jena.datatypes.xsd.impl.XMLLiteralType;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 /**
     The standard RDF vocabulary.

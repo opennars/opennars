@@ -31,7 +31,6 @@ import nars.Events.FrameEnd;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.cycle.DefaultCycle;
 import nars.gui.input.KeyboardInputPanel;
 import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;

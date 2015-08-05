@@ -1,14 +1,7 @@
 package jhelp.sample;
 
-import java.io.IOException;
-
-import jhelp.engine.JHelpSceneRenderer;
-import jhelp.engine.Material;
+import jhelp.engine.*;
 import jhelp.engine.NodeWithMaterial.TwoSidedState;
-import jhelp.engine.Object3D;
-import jhelp.engine.Point2D;
-import jhelp.engine.Scene;
-import jhelp.engine.Texture;
 import jhelp.engine.geom.Equation3D;
 import jhelp.engine.gui.JHelpFrame3D;
 import jhelp.engine.twoD.Path;
@@ -16,6 +9,8 @@ import jhelp.engine.util.Math3D;
 import jhelp.util.debug.Debug;
 import jhelp.util.gui.UtilGUI;
 import jhelp.util.resources.Resources;
+
+import java.io.IOException;
 
 public class Equation3DSample2
 {

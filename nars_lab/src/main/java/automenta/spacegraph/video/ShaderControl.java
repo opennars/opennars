@@ -4,18 +4,14 @@ package automenta.spacegraph.video;
  * Created by me on 5/14/15.
  */
 
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.glsl.ShaderProgram;
 
-
-        import com.jogamp.opengl.GL;
-        import com.jogamp.opengl.GL2;
-        import com.jogamp.opengl.util.glsl.ShaderProgram;
-
-        import java.io.BufferedReader;
-        import java.io.InputStream;
-        import java.io.InputStreamReader;
-        import java.nio.ByteBuffer;
-        import java.nio.IntBuffer;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 // The shader control class.
 // loads and starts/stops shaders.

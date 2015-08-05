@@ -1,6 +1,8 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
+import org.projog.core.KB;
+import org.projog.core.ProjogException;
+import org.projog.core.udp.ClauseModel;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -8,9 +10,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
-import org.projog.core.KB;
-import org.projog.core.ProjogException;
-import org.projog.core.udp.ClauseModel;
+import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
 
 /**
  * Constructs and compiles source code for new {@link CompiledPredicate} classes.

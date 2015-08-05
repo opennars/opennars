@@ -17,8 +17,9 @@
  */
 
 package org.apache.jena.rdfxml.xmlinput;
-import org.apache.jena.rdfxml.xmlinput.impl.SAX2RDFImpl ;
-import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler ;
+
+import org.apache.jena.rdfxml.xmlinput.impl.SAX2RDFImpl;
+import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;

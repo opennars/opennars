@@ -18,9 +18,10 @@
 
 package org.apache.jena.util.iterator.test;
 
-import java.util.Iterator;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
 
 /**
     A closable iterator that wraps a base iterator and reports whether or not it

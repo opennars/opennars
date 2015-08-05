@@ -1,12 +1,12 @@
 package jhelp.util.io.pipe;
 
-import java.io.File;
-import java.io.FileInputStream;
-
 import jhelp.util.Utilities;
 import jhelp.util.io.Binarizable;
 import jhelp.util.io.ByteArray;
 import jhelp.util.io.UtilIO;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * Pipe reader, for read a pipe messages <br>

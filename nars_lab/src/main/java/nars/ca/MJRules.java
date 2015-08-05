@@ -5,7 +5,7 @@ package nars.ca;// Mirek's Java Cellebration
 
 // 29/6/2000, Modification of Neumann binary rules by T. Suzudo
 
-import java.util.*;
+import java.util.Vector;
 
 public class MJRules {
 	public static final String S_USERRULE = "User rule";

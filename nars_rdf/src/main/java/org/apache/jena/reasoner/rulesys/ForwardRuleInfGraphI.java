@@ -18,9 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * This interface collects together the operations on the InfGraph which

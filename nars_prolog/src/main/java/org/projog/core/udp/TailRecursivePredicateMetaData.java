@@ -1,13 +1,13 @@
 package org.projog.core.udp;
 
-import static org.projog.core.KnowledgeBaseUtils.isSingleAnswer;
-import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
-
-import java.util.List;
-
 import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
+
+import java.util.List;
+
+import static org.projog.core.KnowledgeBaseUtils.isSingleAnswer;
+import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
 
 /**
  * Defines the characteristics of a tail recursive user defined predicate.

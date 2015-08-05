@@ -2,10 +2,10 @@ package nars.nario;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
-import nars.task.Task;
-import nars.term.Term;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
+import nars.task.Task;
+import nars.term.Term;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;

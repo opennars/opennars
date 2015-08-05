@@ -18,25 +18,25 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import java.io.* ;
-import java.nio.charset.Charset ;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.vocabulary.RDF;
+import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
-import junit.framework.Test ;
-import junit.framework.TestCase ;
-import junit.framework.TestSuite ;
-import org.apache.jena.iri.IRIFactory ;
-import org.apache.jena.ontology.OntDocumentManager ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.RDFErrorHandler ;
-import org.apache.jena.rdf.model.RDFReader ;
-import org.apache.jena.vocabulary.RDF ;
-import org.junit.Assert ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
-import org.xml.sax.ErrorHandler ;
-import org.xml.sax.SAXException ;
-import org.xml.sax.SAXParseException ;
+import java.io.*;
+import java.nio.charset.Charset;
 
 public class MoreTests extends TestCase implements RDFErrorHandler,
 		ARPErrorNumbers {

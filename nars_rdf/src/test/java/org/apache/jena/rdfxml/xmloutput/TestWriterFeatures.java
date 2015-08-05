@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.FileManager;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.RDFWriter ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.FileManager ;
 
 public class TestWriterFeatures extends ModelTestBase
 {

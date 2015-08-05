@@ -1,23 +1,16 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.event.ProjogEventsObservable;
 import org.projog.core.function.bool.True;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermFormatter;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
 
 public class KBUtilsTest {
    private final KB kb = TestUtils.createKnowledgeBase();

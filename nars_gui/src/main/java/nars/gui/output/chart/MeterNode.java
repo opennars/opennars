@@ -5,8 +5,8 @@ import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.ui.model.plot.LinePlot;
 import nars.NAR;
-import nars.event.NARReaction;
 import nars.event.FrameReaction;
+import nars.event.NARReaction;
 import nars.util.meter.Signal;
 import nars.util.meter.TemporalMetrics;
 

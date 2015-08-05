@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
 
 /**
     ModelGraphInterface - this interface mediates between the API Model level

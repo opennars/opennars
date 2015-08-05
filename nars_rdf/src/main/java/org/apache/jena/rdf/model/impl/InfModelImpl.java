@@ -18,11 +18,15 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.Iterator;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ValidityReport;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
+import java.util.Iterator;
 
 /**
  * Default implementation of the InfModel interface which simply wraps up

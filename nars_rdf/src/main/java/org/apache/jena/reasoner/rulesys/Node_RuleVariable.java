@@ -18,8 +18,8 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Node_Variable ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Node_Variable;
 
 /**
  * A variation on the normal Node_Variable which support for value bindings.

@@ -46,7 +46,8 @@ import ca.nengo.util.MU;
 import ca.nengo.util.VectorGenerator;
 import ca.nengo.util.VisiblyChangesUtils;
 import ca.nengo.util.impl.RandomHypersphereVG;
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;

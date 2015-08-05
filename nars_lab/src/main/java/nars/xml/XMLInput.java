@@ -1,10 +1,10 @@
 package nars.xml;
 
-import nars.nar.Default;
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.io.TextPerception;
 import nars.io.in.PrintWriterInput;
+import nars.io.out.TextOutput;
+import nars.nar.Default;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

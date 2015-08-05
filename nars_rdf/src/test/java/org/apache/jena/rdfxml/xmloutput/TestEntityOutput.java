@@ -18,12 +18,15 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
-import java.io.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.rdfxml.xmloutput.impl.BaseXMLWriter;
+import org.apache.jena.vocabulary.RDF;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.rdfxml.xmloutput.impl.BaseXMLWriter ;
-import org.apache.jena.vocabulary.RDF ;
+import java.io.*;
 
 /**
     Tests for entities being created corresponding to prefixes.

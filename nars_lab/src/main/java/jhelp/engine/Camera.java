@@ -4,13 +4,13 @@ package jhelp.engine;
 //
 
 import com.jogamp.opengl.glu.GLU;
+import jhelp.engine.io.ConstantsXML;
+import jhelp.engine.util.Math3D;
+import jhelp.engine.util.Tool3D;
 import jhelp.math.Mat4f;
 import jhelp.math.Rotf;
 import jhelp.math.Vec3f;
 import jhelp.math.Vec4f;
-import jhelp.engine.io.ConstantsXML;
-import jhelp.engine.util.Math3D;
-import jhelp.engine.util.Tool3D;
 import jhelp.xml.MarkupXML;
 
 /**

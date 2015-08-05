@@ -7,9 +7,9 @@
  */
 package jhelp.engine.graphics;
 
-import java.awt.Color;
-
 import jhelp.engine.Texture;
+
+import java.awt.*;
 
 /**
  * Rectangle on texture<br>

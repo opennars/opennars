@@ -18,8 +18,8 @@
 
 package org.apache.jena.datatypes;
 
-import junit.framework.JUnit4TestAdapter ;
-import junit.framework.TestSuite ;
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.TestSuite;
 
 /**
     Collected test suite for the .datatype package.

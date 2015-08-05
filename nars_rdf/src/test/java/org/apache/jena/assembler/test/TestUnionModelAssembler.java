@@ -18,14 +18,19 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.BadObjectException;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.AssemblerBase;
+import org.apache.jena.assembler.assemblers.UnionModelAssembler;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.AddDeniedException;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.* ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.AddDeniedException ;
+import java.util.*;
 
 public class TestUnionModelAssembler extends AssemblerTestBase
     {

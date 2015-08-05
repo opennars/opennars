@@ -24,9 +24,9 @@
 
 package automenta.vnc.drawing;
 
+import automenta.vnc.exceptions.TransportException;
 import automenta.vnc.rfb.encoding.PixelFormat;
 import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
-import automenta.vnc.exceptions.TransportException;
 import automenta.vnc.transport.Reader;
 
 import java.awt.image.BufferedImage;

@@ -18,9 +18,10 @@
 
 package org.apache.jena.assembler;
 
-import java.util.*;
+import org.apache.jena.rdf.model.Model;
 
-import org.apache.jena.rdf.model.Model ;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
     A Content object records content to be used to fill models. This Content

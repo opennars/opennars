@@ -1,8 +1,8 @@
 package jhelp.util.cache;
 
-import java.util.HashMap;
-
 import jhelp.util.list.LimitedSizeHashMap;
+
+import java.util.HashMap;
 
 /**
  * Cache with elements number is limited in memory

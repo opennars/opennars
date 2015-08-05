@@ -18,33 +18,29 @@
 
 package org.apache.jena.reasoner.rulesys;
 
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.rdf.model.AnonId;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.RulesetNotFoundException;
+import org.apache.jena.shared.WrappedIOException;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.FileUtils;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.util.Tokenizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.rdf.model.AnonId ;
-import org.apache.jena.reasoner.ReasonerException ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.shared.RulesetNotFoundException ;
-import org.apache.jena.shared.WrappedIOException ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.FileUtils ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.util.Tokenizer ;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**Representation of a generic inference rule. 
  * <p>

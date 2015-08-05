@@ -18,17 +18,27 @@
 
 package org.apache.jena.assembler.test;
 
-import java.lang.reflect.Field;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.OntModelSpecAssembler;
+import org.apache.jena.assembler.assemblers.ReasonerFactoryAssembler;
+import org.apache.jena.assembler.exceptions.ReasonerClashException;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.ProfileRegistry;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelGetter;
+import org.apache.jena.rdf.model.ModelReader;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.rulesys.OWLFBRuleReasonerFactory;
+import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory;
+import org.apache.jena.shared.CannotCreateException;
 
-import junit.framework.*;
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.* ;
-import org.apache.jena.assembler.exceptions.ReasonerClashException ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.shared.CannotCreateException ;
+import java.lang.reflect.Field;
 
 public class TestOntModelSpecAssembler extends AssemblerTestBase
     {

@@ -18,16 +18,21 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.util.List;
-
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.test.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.util.PrintUtil ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.test.AbstractTestReifier;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RSIterator;
+import org.apache.jena.reasoner.BaseInfGraph;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.FBRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.util.PrintUtil;
+
+import java.util.List;
 
 public class TestInferenceReification extends AbstractTestReifier 
     {

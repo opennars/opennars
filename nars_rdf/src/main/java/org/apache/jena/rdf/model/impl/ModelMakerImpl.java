@@ -18,9 +18,12 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphMaker;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelMaker;
+import org.apache.jena.rdf.model.ModelReader;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     A ModelMakerImpl implements a ModelMaker over a GraphMaker.

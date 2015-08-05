@@ -18,15 +18,15 @@
 
 package org.apache.jena.reasoner.test;
 
-import java.util.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.shared.JenaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.shared.JenaException ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import java.util.*;
 
 public class Matcher
 {

@@ -24,10 +24,10 @@
 
 package automenta.vnc.rfb.protocol.state;
 
-import automenta.vnc.rfb.encoding.ServerInitMessage;
-import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.exceptions.TransportException;
+import automenta.vnc.rfb.encoding.ServerInitMessage;
 import automenta.vnc.rfb.protocol.ProtocolContext;
+import automenta.vnc.rfb.protocol.ProtocolSettings;
 
 /**
  * Server Interaction Capabilities Message (protocol versions 3.7t, 3.8t)

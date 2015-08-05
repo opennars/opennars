@@ -34,9 +34,6 @@ import java.io.PrintStream;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
-import automenta.rdp.Constants;
-import automenta.rdp.Options;
-
 public class MapDef {
 
 	// Flag masks for use in generating an integer modifiers value (for text

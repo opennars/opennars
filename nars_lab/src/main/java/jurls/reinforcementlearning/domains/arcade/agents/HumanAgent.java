@@ -21,6 +21,7 @@ import jurls.reinforcementlearning.domains.arcade.io.ConsoleRAM;
 import jurls.reinforcementlearning.domains.arcade.io.RLData;
 import jurls.reinforcementlearning.domains.arcade.movie.MovieGenerator;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
+
 import java.awt.image.BufferedImage;
 
 /** An 'agent' meant to be controlled by a human. Used to play the game and

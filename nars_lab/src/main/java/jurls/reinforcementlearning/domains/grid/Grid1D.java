@@ -1,7 +1,5 @@
 package jurls.reinforcementlearning.domains.grid;
 
-import jurls.reinforcementlearning.domains.grid.World;
-
 /*
     One-dimensional grid task
     

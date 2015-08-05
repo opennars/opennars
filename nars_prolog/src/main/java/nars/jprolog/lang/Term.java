@@ -1,6 +1,5 @@
 package nars.jprolog.lang;
 
-import com.google.common.base.Equivalence;
 import nars.jprolog.Prolog;
 
 import java.io.Serializable;

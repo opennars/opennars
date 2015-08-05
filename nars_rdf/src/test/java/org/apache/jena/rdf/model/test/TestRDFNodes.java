@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdf.model.test;
 
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.test.JenaTestBase;
+import org.junit.Assert;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.test.JenaTestBase ;
-import org.junit.Assert;
 
 /**
  * This class tests various properties of RDFNodes.

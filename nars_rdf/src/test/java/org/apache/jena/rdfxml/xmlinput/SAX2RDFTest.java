@@ -18,27 +18,25 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.xerces.parsers.SAXParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Vector;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.RDFErrorHandler ;
-import org.apache.jena.rdf.model.RDFReader ;
-import org.apache.jena.rdfxml.xmlinput.SAX2Model ;
-import org.apache.jena.rdfxml.xmlinput.SAX2RDF ;
-import org.apache.xerces.parsers.SAXParser;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
 
 public class SAX2RDFTest extends TestCase {
 

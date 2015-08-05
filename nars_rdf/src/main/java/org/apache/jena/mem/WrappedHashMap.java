@@ -18,10 +18,11 @@
 
 package org.apache.jena.mem;
 
-import java.util.Map;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Map;
 
 /**
     An implementation of BunchMap that delegates to a [Hashed]Map.

@@ -18,8 +18,8 @@
 
 package org.apache.jena.reasoner;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * Minimal interface for preforming simple pattern find operations.

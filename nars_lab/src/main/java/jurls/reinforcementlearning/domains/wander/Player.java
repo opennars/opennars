@@ -1,13 +1,10 @@
 package jurls.reinforcementlearning.domains.wander;
 
-import static jurls.reinforcementlearning.domains.wander.Obstacle.d;
-import jurls.reinforcementlearning.domains.wander.brain.MyPerception;
-import jurls.reinforcementlearning.domains.wander.brain.actions.MoveForward;
-import jurls.reinforcementlearning.domains.wander.brain.actions.Nop;
-import jurls.reinforcementlearning.domains.wander.brain.actions.TurnLeft;
-import jurls.reinforcementlearning.domains.wander.brain.actions.TurnRight;
 import jurls.reinforcementlearning.domains.wander.brain.Action;
-import jurls.reinforcementlearning.domains.wander.brain.actions.MoveBackward;
+import jurls.reinforcementlearning.domains.wander.brain.MyPerception;
+import jurls.reinforcementlearning.domains.wander.brain.actions.*;
+
+import static jurls.reinforcementlearning.domains.wander.Obstacle.d;
 
 public class Player {
 

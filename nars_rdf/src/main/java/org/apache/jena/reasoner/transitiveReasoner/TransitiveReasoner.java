@@ -18,11 +18,15 @@
 
 package org.apache.jena.reasoner.transitiveReasoner;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
 /**
  * A  simple "reasoner" used to help with API development.

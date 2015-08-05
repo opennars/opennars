@@ -18,7 +18,7 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.graph.* ;
+import org.apache.jena.graph.Triple;
 
 /**
     Superclass of exceptions thrown when attempting to add/delete on a

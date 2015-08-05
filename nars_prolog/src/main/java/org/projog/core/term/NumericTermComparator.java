@@ -1,9 +1,9 @@
 package org.projog.core.term;
 
-import java.util.Comparator;
-
 import org.projog.core.Calculatables;
 import org.projog.core.ProjogException;
+
+import java.util.Comparator;
 
 /**
  * An implementation of {@code Comparator} for comparing instances of {@link Numeric}.

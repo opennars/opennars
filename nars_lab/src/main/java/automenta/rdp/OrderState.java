@@ -30,17 +30,7 @@
  */
 package automenta.rdp;
 
-import automenta.rdp.orders.PolyLineOrder;
-import automenta.rdp.orders.BoundsOrder;
-import automenta.rdp.orders.DeskSaveOrder;
-import automenta.rdp.orders.DestBltOrder;
-import automenta.rdp.orders.LineOrder;
-import automenta.rdp.orders.MemBltOrder;
-import automenta.rdp.orders.PatBltOrder;
-import automenta.rdp.orders.RectangleOrder;
-import automenta.rdp.orders.ScreenBltOrder;
-import automenta.rdp.orders.Text2Order;
-import automenta.rdp.orders.TriBltOrder;
+import automenta.rdp.orders.*;
 
 class OrderState {
 	private int order_type = 0;

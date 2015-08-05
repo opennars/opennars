@@ -18,19 +18,18 @@
 
 package org.apache.jena.graph.impl;
 
-import static org.apache.jena.testing_framework.GraphHelper.memGraph;
-
-import java.util.HashSet;
-
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.CollectionGraph ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.testing_framework.AbstractGraphProducer;
 import org.junit.runner.RunWith;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractImpl;
 import org.xenei.junit.contract.ContractSuite;
 import org.xenei.junit.contract.IProducer;
+
+import java.util.HashSet;
+
+import static org.apache.jena.testing_framework.GraphHelper.memGraph;
 
 @RunWith(ContractSuite.class)
 @ContractImpl(CollectionGraph.class)

@@ -18,10 +18,12 @@
 
 package org.apache.jena.assembler;
 
-import java.util.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.vocabulary.* ;
+import java.util.*;
 
 /**
      The ModelExpansion code expands a model <code>M</code> against a 

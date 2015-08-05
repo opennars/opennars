@@ -18,11 +18,12 @@
 
 package org.apache.jena.mem;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.NiceIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.NiceIterator ;
+import java.util.*;
 
 /**
     Helper class for listObjects. Because literal indexing means that the

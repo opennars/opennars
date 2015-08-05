@@ -1,10 +1,10 @@
 package jhelp.util.thread;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.text.UtilText;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Mutex (Mutual Exclusion) for synchronization

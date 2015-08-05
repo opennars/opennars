@@ -1,14 +1,18 @@
 package jhelp.util.gui;
 
-import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Toolkit;
+import jhelp.util.debug.Debug;
+import jhelp.util.gui.JHelpAnimatedImage.AnimationMode;
+import jhelp.util.io.FileImageInformation;
+import jhelp.util.list.HeavyObject;
+import jhelp.util.list.Pair;
+import jhelp.util.list.SizedObject;
+import jhelp.util.list.SortedArray;
+import jhelp.util.math.UtilMath;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.RoundRectangle2D;
@@ -23,19 +27,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.gui.JHelpAnimatedImage.AnimationMode;
-import jhelp.util.io.FileImageInformation;
-import jhelp.util.list.HeavyObject;
-import jhelp.util.list.Pair;
-import jhelp.util.list.SizedObject;
-import jhelp.util.list.SortedArray;
-import jhelp.util.math.UtilMath;
 
 /**
  * Represents an image.<br>

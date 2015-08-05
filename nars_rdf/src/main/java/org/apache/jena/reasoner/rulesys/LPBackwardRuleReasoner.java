@@ -19,13 +19,17 @@
 package org.apache.jena.reasoner.rulesys;
 
 
-import java.util.*;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.reasoner.rulesys.impl.LPRuleStore;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.impl.* ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import java.util.List;
 
 /**
  * Reasoner implementation which augments or transforms an RDF graph

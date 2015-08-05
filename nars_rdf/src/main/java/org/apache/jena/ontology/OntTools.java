@@ -23,11 +23,12 @@ package org.apache.jena.ontology;
 
 // Imports
 ///////////////
+
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+
 import java.util.*;
 import java.util.function.Predicate;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
 
 
 /**

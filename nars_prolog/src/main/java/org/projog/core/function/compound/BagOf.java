@@ -1,9 +1,9 @@
 package org.projog.core.function.compound;
 
-import java.util.List;
-
 import org.projog.core.KB;
 import org.projog.core.term.PTerm;
+
+import java.util.List;
 
 /* TEST
  z(r).

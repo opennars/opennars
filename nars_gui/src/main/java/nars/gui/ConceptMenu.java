@@ -2,8 +2,8 @@ package nars.gui;
 
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
-import nars.gui.output.graph.nengo.GraphPanelNengo;
 import nars.concept.Concept;
+import nars.gui.output.graph.nengo.GraphPanelNengo;
 import nars.util.graph.DerivationTree;
 import nars.util.graph.TermLinkGraph;
 

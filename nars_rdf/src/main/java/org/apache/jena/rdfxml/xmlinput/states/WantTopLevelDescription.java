@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
-import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext ;
-import org.apache.jena.rdfxml.xmlinput.impl.AttributeLexer ;
-import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler ;
+import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext;
+import org.apache.jena.rdfxml.xmlinput.impl.AttributeLexer;
+import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler;
 import org.xml.sax.SAXParseException;
 
 public class WantTopLevelDescription extends WantDescription {

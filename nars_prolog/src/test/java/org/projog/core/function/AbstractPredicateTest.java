@@ -1,12 +1,10 @@
 package org.projog.core.function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.createArgs;
-
 import org.junit.Test;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.createArgs;
 
 public class AbstractPredicateTest {
    // a non-abstract implementation of AbstractPredicate (so we can create and test it) 

@@ -18,8 +18,8 @@
 
 package org.apache.jena.datatypes.xsd;
 
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.xerces.impl.dv.util.HexBin ;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.xerces.impl.dv.util.HexBin;
 
 /**
  * Implement hexbinary type. Most of the work is done in the superclass.

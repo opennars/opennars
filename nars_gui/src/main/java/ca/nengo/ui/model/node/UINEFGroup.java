@@ -29,8 +29,8 @@ package ca.nengo.ui.model.node;
 //import java.util.List;
 
 import ca.nengo.model.NSource;
-import ca.nengo.model.StructuralException;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.StructuralException;
 import ca.nengo.neural.nef.NEFGroup;
 import ca.nengo.neural.nef.impl.DecodedSource;
 import ca.nengo.plot.Plotter;
@@ -44,10 +44,10 @@ import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.model.build.CDecodedOrigin;
 import ca.nengo.ui.model.build.CDecodedTermination;
 import ca.nengo.ui.model.build.ModelFactory;
-import ca.nengo.ui.model.widget.UISource;
-import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;
 import ca.nengo.ui.model.viewer.NodeViewer;
+import ca.nengo.ui.model.widget.UISource;
+import ca.nengo.ui.model.widget.UITarget;
 //import ca.shu.ui.lib.util.UserMessages;
 
 /**

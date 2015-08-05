@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.graph.FrontsTriple ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.AlreadyReifiedException ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.FrontsTriple;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.AlreadyReifiedException;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     This class impedance-matches the reification requests of Model[Com] to the operations

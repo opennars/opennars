@@ -18,15 +18,15 @@
 
 package org.apache.jena.graph.test;
 
-import java.util.Set;
-
 import junit.framework.TestSuite;
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+
+import java.util.Set;
 
 public class TestFindLiterals extends GraphTestBase
     {

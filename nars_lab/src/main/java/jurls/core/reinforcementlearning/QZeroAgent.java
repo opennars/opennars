@@ -14,11 +14,12 @@
  */
 package jurls.core.reinforcementlearning;
 
-import java.util.Arrays;
-import jurls.core.LearnerAndActor;
-import jurls.core.approximation.ParameterizedFunctionGenerator;
-import jurls.core.utils.ActionValuePair;
-import jurls.core.utils.Utils;
+    import jurls.core.LearnerAndActor;
+    import jurls.core.approximation.ParameterizedFunctionGenerator;
+    import jurls.core.utils.ActionValuePair;
+    import jurls.core.utils.Utils;
+
+    import java.util.Arrays;
 
 /**
  *

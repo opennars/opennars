@@ -7,9 +7,9 @@
  */
 package jhelp.engine.gui.layout;
 
-import java.awt.Dimension;
-
 import jhelp.util.debug.Debug;
+
+import java.awt.*;
 
 /**
  * Relative layout<br>

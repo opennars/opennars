@@ -20,18 +20,24 @@ package org.apache.jena.reasoner.rulesys.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.jena.graph.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.rulesys.impl.BFRuleContext;
+import org.apache.jena.reasoner.rulesys.impl.BindingStack;
+import org.apache.jena.reasoner.rulesys.impl.FRuleEngine;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
-import java.util.*;
-import java.io.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.impl.* ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.vocabulary.* ;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Unit tests for simple infrastructure pieces of the rule systems.

@@ -1,15 +1,15 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
+import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
 
 /**
  * Outputs java code that matches functionality of {@link org.projog.core.function.math.Is}

@@ -2,9 +2,9 @@ package ca.nengo.test.depr;
 
 import ca.nengo.math.Function;
 import ca.nengo.math.impl.ConstantFunction;
+import ca.nengo.model.NTarget;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
-import ca.nengo.model.NTarget;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.FunctionInput;
 import ca.nengo.model.impl.NetworkImpl;

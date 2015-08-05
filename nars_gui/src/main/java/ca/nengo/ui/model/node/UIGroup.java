@@ -31,9 +31,9 @@ import ca.nengo.ui.lib.action.ActionException;
 import ca.nengo.ui.lib.action.ReversableAction;
 import ca.nengo.ui.lib.menu.AbstractMenuBuilder;
 import ca.nengo.ui.model.icon.GroupIcon;
-import ca.nengo.ui.model.widget.UISpikeProbe;
 import ca.nengo.ui.model.viewer.GroupViewer;
 import ca.nengo.ui.model.viewer.NodeViewer;
+import ca.nengo.ui.model.widget.UISpikeProbe;
 
 /**
  * UI Wrapper for an Ensemble

@@ -1,12 +1,12 @@
 package org.projog.core.function.kb;
 
-import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
-import static org.projog.core.term.TermUtils.getAtomName;
-
 import org.projog.core.Calculatables;
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseUtils.getCalculatables;
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /* TEST
  %QUERY X is sum(1, 1)

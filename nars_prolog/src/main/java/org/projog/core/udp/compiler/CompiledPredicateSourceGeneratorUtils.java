@@ -2,8 +2,8 @@ package org.projog.core.udp.compiler;
 
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
 import org.projog.core.term.PVar;
+import org.projog.core.term.PrologOperator;
 
 /**
  * Contains static methods which aid the construction of {@link CompiledPredicate} source code.

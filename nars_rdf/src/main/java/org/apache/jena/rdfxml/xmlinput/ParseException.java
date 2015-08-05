@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import org.apache.jena.rdfxml.xmlinput.impl.ARPLocation ;
+import org.apache.jena.rdfxml.xmlinput.impl.ARPLocation;
 import org.xml.sax.SAXParseException;
 
 import java.lang.reflect.Field;

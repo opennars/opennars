@@ -1,23 +1,14 @@
 package org.projog.core.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.createKnowledgeBase;
-import static org.projog.core.KnowledgeBaseUtils.getOperands;
-import static org.projog.core.parser.TokenType.ANONYMOUS_VARIABLE;
-import static org.projog.core.parser.TokenType.ATOM;
-import static org.projog.core.parser.TokenType.FLOAT;
-import static org.projog.core.parser.TokenType.INTEGER;
-import static org.projog.core.parser.TokenType.QUOTED_ATOM;
-import static org.projog.core.parser.TokenType.VARIABLE;
+import org.junit.Test;
+import org.projog.core.Operands;
 
 import java.io.StringReader;
 
-import org.junit.Test;
-import org.projog.core.Operands;
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.createKnowledgeBase;
+import static org.projog.core.KnowledgeBaseUtils.getOperands;
+import static org.projog.core.parser.TokenType.*;
 
 public class TokenParserTest {
    private final Operands operands = getOperands(createKnowledgeBase());

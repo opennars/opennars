@@ -22,28 +22,17 @@ package org.apache.jena.testing_framework;
  * Foo set of static test helpers.  Generally included as a static.
  */
 
-import static org.junit.Assert.*;
-
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.apache.jena.graph.Factory;
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphUtil;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.*;
 import org.apache.jena.shared.JenaException;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.util.CollectionFactory;
 import org.apache.jena.util.IteratorCollection;
 import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 public class GraphHelper extends TestUtils {
 

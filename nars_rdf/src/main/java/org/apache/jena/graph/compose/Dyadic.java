@@ -18,9 +18,10 @@
 
 package org.apache.jena.graph.compose;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.SimpleEventManager ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.SimpleEventManager;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     Base class for the two-operand composition operations; has two graphs L and R

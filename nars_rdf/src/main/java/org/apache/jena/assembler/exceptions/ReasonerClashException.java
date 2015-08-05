@@ -18,7 +18,7 @@
 
 package org.apache.jena.assembler.exceptions;
 
-import org.apache.jena.rdf.model.Resource ;
+import org.apache.jena.rdf.model.Resource;
 
 /**
     Exception to throw when a reasoner [or factory] has multiple clashing

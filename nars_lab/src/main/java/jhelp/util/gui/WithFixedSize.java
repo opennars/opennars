@@ -1,6 +1,6 @@
 package jhelp.util.gui;
 
-import java.awt.Dimension;
+import java.awt.*;
 
 /**
  * Indicated that a component have a fixed dimension

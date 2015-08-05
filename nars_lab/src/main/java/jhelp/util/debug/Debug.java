@@ -1,10 +1,10 @@
 package jhelp.util.debug;
 
+import jhelp.util.reflection.Reflector;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.concurrent.locks.ReentrantLock;
-
-import jhelp.util.reflection.Reflector;
 
 /**
  * Class for debugging and thread safe.<br>

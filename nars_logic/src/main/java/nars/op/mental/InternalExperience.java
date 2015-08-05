@@ -9,6 +9,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.process.TaskProcess;
@@ -295,12 +296,12 @@ public class InternalExperience extends NARReaction {
         }
     }
 
-    protected static Task beliefReasonDerive(Task parent, Compound new_term, NAL nal) {
+    protected static Task beliefReasonDerive(Task parent, Compound new_term, Premise p) {
 
 
         //TODO should this be a mew stamp or attached to parent.. originally it was a fresh new stamp from memory
 
-        return nal.derive(nal.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+        return p.derive(p.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                 .budget(Global.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL,
                         Global.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL)
                 .parent(parent).occurrNow()

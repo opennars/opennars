@@ -18,15 +18,13 @@
 
 package org.apache.jena.datatypes;
 
-import static org.junit.Assert.assertEquals ;
-import static org.junit.Assert.assertFalse ;
-import static org.junit.Assert.assertNotNull ;
-import static org.junit.Assert.assertTrue ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.vocabulary.XSD ;
-import org.junit.Test ;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.XSD;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class TestDatatypes {
 

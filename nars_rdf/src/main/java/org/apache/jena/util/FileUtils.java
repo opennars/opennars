@@ -18,14 +18,14 @@
 
 package org.apache.jena.util;
 
-import java.io.* ;
-import java.net.URL ;
-import java.nio.charset.Charset ;
-import java.nio.charset.StandardCharsets ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.WrappedIOException;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.WrappedIOException ;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class FileUtils
 {

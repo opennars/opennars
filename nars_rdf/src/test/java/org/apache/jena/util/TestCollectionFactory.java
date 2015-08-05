@@ -18,11 +18,13 @@
 
 package org.apache.jena.util;
 
-import java.util.*;
-
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.CollectionFactory ;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  	TestHashUtils - test that the hash utility returns a map.

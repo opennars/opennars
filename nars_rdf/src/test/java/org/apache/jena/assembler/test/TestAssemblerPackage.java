@@ -18,7 +18,8 @@
 
 package org.apache.jena.assembler.test;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class TestAssemblerPackage extends TestCase
     {

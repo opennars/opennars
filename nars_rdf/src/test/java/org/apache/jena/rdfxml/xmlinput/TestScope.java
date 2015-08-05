@@ -17,14 +17,15 @@
  */
 
 package org.apache.jena.rdfxml.xmlinput;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.RDFErrorHandler ;
+import org.apache.jena.rdf.model.RDFErrorHandler;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class TestScope extends TestCase {
 	public static Test suite() {

@@ -1,10 +1,10 @@
 package org.projog.example;
 
-import static org.projog.core.term.TermUtils.getAtomName;
-
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.term.TermUtils.getAtomName;
 
 public class SingletonPredicateExample extends AbstractSingletonPredicate {
    @Override

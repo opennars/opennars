@@ -20,19 +20,20 @@ package org.apache.jena.reasoner.rulesys.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.rulesys.RDFSFBRuleReasonerFactory;
+import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory;
+import org.apache.jena.reasoner.test.ReasonerTester;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Iterator;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.test.* ;
-import org.apache.jena.vocabulary.OWL ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Test suite to test the production rule version of the RDFS implementation.
  * <p> The tests themselves have been replaced by an updated version

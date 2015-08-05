@@ -18,15 +18,17 @@
 
 package org.apache.jena.reasoner;
 
-import java.util.Map;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Node_URI;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.rulesys.ClauseEntry;
+import org.apache.jena.reasoner.rulesys.Functor;
+import org.apache.jena.reasoner.rulesys.Node_RuleVariable;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.ClauseEntry ;
-import org.apache.jena.reasoner.rulesys.Functor ;
-import org.apache.jena.reasoner.rulesys.Node_RuleVariable ;
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
+import java.util.Map;
 
 /**
  * Datastructure which defines a triple pattern as used in simple

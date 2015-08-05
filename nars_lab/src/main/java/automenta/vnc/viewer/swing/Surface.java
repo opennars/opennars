@@ -25,18 +25,18 @@
 package automenta.vnc.viewer.swing;
 
 import automenta.vnc.OCR;
+import automenta.vnc.VNCControl;
 import automenta.vnc.core.SettingsChangedEvent;
 import automenta.vnc.rfb.IChangeSettingsListener;
-import automenta.vnc.rfb.encoding.PixelFormat;
-import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
-import automenta.vnc.rfb.protocol.ProtocolSettings;
-import nars.concept.Concept;
-import automenta.vnc.VNCControl;
 import automenta.vnc.rfb.IRepaintController;
 import automenta.vnc.rfb.client.KeyEventMessage;
+import automenta.vnc.rfb.encoding.PixelFormat;
+import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import automenta.vnc.rfb.protocol.ProtocolContext;
+import automenta.vnc.rfb.protocol.ProtocolSettings;
 import automenta.vnc.transport.Reader;
 import automenta.vnc.viewer.UiSettings;
+import nars.concept.Concept;
 
 import javax.swing.*;
 import java.awt.*;

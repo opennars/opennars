@@ -18,10 +18,10 @@
 
 package org.apache.jena.mem;
 
-import java.util.Iterator ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import java.util.Iterator;
 
 public class HashedTripleBunch extends HashCommon<Triple> implements TripleBunch
     {    

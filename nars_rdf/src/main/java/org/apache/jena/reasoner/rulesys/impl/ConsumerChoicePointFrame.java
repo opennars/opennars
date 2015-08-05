@@ -18,10 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.rulesys.Node_RuleVariable;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.Node_RuleVariable ;
+import java.util.List;
 
 /**
  * Frame in the LPInterpreter's control stack used to represent matching

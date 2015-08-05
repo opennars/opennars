@@ -18,6 +18,18 @@
 
 package org.apache.jena.n3;
 
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.Util;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.XSD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -26,18 +38,6 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.*;
 import java.util.Map.Entry;
-
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.Util ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.util.iterator.ClosableIterator ;
-import org.apache.jena.util.iterator.WrappedIterator ;
-import org.apache.jena.vocabulary.OWL ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.XSD ;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Common framework for implementing N3 writers.
  */

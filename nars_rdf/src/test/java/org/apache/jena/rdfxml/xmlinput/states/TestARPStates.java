@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 public class TestARPStates extends TestCase {
     public TestARPStates() {

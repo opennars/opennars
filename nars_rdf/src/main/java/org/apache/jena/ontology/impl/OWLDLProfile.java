@@ -24,13 +24,20 @@ package org.apache.jena.ontology.impl;
 // Imports
 ///////////////
 
-import java.util.*;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFList;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.enhanced.* ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.vocabulary.* ;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 

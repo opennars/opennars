@@ -18,13 +18,14 @@
 
 package org.apache.jena.mem;
 
-import java.util.Iterator;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.TripleStore;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.TripleStore ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
 
 public abstract class GraphTripleStoreBase implements TripleStore
     {

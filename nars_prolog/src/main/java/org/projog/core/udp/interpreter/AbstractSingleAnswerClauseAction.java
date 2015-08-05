@@ -1,12 +1,12 @@
 package org.projog.core.udp.interpreter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.projog.core.KB;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Unifier;
 import org.projog.core.term.PVar;
+import org.projog.core.term.Unifier;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A clause that will not succeed more than once.

@@ -30,10 +30,10 @@
 // Created on 02-Jul-2003
 package automenta.rdp;
 
-import automenta.rdp.rdp.LicenceStore_Localised;
-import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.crypto.CryptoException;
 import automenta.rdp.crypto.RC4;
+import automenta.rdp.rdp.LicenceStore_Localised;
+import automenta.rdp.rdp.RdpPacket;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

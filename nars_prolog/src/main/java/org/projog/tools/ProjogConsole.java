@@ -1,18 +1,5 @@
 package org.projog.tools;
 
-import static org.projog.core.KnowledgeBaseUtils.QUESTION_PREDICATE_NAME;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Scanner;
-import java.util.Set;
-
 import org.projog.api.Projog;
 import org.projog.api.QueryResult;
 import org.projog.api.QueryStatement;
@@ -20,6 +7,14 @@ import org.projog.core.ProjogException;
 import org.projog.core.event.ProjogEvent;
 import org.projog.core.parser.ParserException;
 import org.projog.core.term.PTerm;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.*;
+
+import static org.projog.core.KnowledgeBaseUtils.QUESTION_PREDICATE_NAME;
 
 /**
  * Command line interface to Prolog.

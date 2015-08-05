@@ -18,13 +18,13 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.util.List;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.vocabulary.RDF;
 import org.junit.Assert;
+
+import java.util.List;
 
 public class TestSimpleListStatements extends AbstractModelTestBase
 {

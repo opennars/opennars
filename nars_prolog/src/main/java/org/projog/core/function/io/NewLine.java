@@ -1,9 +1,9 @@
 package org.projog.core.function.io;
 
-import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
-
 import org.projog.core.FileHandles;
 import org.projog.core.function.AbstractSingletonPredicate;
+
+import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
 
 /* TEST
  %QUERY write('a'), write('b'), nl, write('c')

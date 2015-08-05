@@ -24,13 +24,13 @@
 
 package automenta.vnc.rfb.protocol.state;
 
-import automenta.vnc.rfb.protocol.auth.SecurityType;
 import automenta.vnc.exceptions.TransportException;
 import automenta.vnc.exceptions.UnsupportedProtocolVersionException;
 import automenta.vnc.exceptions.UnsupportedSecurityTypeException;
 import automenta.vnc.rfb.CapabilityContainer;
 import automenta.vnc.rfb.protocol.ProtocolContext;
 import automenta.vnc.rfb.protocol.auth.AuthHandler;
+import automenta.vnc.rfb.protocol.auth.SecurityType;
 import automenta.vnc.utils.Strings;
 
 import java.util.logging.Logger;

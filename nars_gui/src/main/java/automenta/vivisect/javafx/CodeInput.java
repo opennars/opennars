@@ -2,7 +2,6 @@ package automenta.vivisect.javafx;
 
 import com.google.common.collect.Lists;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 

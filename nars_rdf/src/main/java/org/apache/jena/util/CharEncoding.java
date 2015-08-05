@@ -19,7 +19,8 @@
 package org.apache.jena.util;
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 /**
  * 
  * This class provides a number of static methods which interact with

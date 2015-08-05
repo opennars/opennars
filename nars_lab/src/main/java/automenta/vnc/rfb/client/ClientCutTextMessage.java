@@ -24,8 +24,8 @@
 
 package automenta.vnc.rfb.client;
 
-import automenta.vnc.transport.Writer;
 import automenta.vnc.exceptions.TransportException;
+import automenta.vnc.transport.Writer;
 
 /**
  * ClientCutText

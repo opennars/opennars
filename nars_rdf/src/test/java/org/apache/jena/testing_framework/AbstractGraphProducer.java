@@ -17,12 +17,11 @@
  */
 package org.apache.jena.testing_framework;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.apache.jena.graph.Graph;
 import org.xenei.junit.contract.IProducer;
 
-import org.apache.jena.graph.Graph;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An abstract implementation of the GraphProducerInterface.

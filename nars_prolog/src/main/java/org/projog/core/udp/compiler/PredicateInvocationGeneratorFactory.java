@@ -1,15 +1,10 @@
 package org.projog.core.udp.compiler;
 
+import org.projog.core.PredicateFactory;
+import org.projog.core.udp.compiler.NumericComparisonPredicateInvocationGenerator.*;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.projog.core.PredicateFactory;
-import org.projog.core.udp.compiler.NumericComparisonPredicateInvocationGenerator.NumericEqualPredicateInvocationGenerator;
-import org.projog.core.udp.compiler.NumericComparisonPredicateInvocationGenerator.NumericGreaterThanOrEqualPredicateInvocationGenerator;
-import org.projog.core.udp.compiler.NumericComparisonPredicateInvocationGenerator.NumericGreaterThanPredicateInvocationGenerator;
-import org.projog.core.udp.compiler.NumericComparisonPredicateInvocationGenerator.NumericLessThanOrEqualPredicateInvocationGenerator;
-import org.projog.core.udp.compiler.NumericComparisonPredicateInvocationGenerator.NumericLessThanPredicateInvocationGenerator;
-import org.projog.core.udp.compiler.NumericComparisonPredicateInvocationGenerator.NumericNotEqualPredicateInvocationGenerator;
 
 /**
  * Contains a collection of {@link PredicateInvocationGenerator} instances.

@@ -17,26 +17,21 @@
  */
 package org.apache.jena.mem;
 
-import static org.apache.jena.testing_framework.GraphHelper.*;
-import static org.junit.Assert.*;
-
-import java.util.Iterator;
-
+import org.apache.jena.graph.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.testing_framework.AbstractGraphProducer;
+import org.apache.jena.util.iterator.ExtendedIterator;
 import org.junit.runner.RunWith;
 import org.xenei.junit.contract.Contract.Inject;
 import org.xenei.junit.contract.ContractImpl;
 import org.xenei.junit.contract.ContractSuite;
 import org.xenei.junit.contract.ContractTest;
-
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphStatisticsHandler;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Node_URI;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.shared.JenaException;
-import org.apache.jena.testing_framework.AbstractGraphProducer;
 import org.xenei.junit.contract.IProducer;
-import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.Iterator;
+
+import static org.apache.jena.testing_framework.GraphHelper.*;
+import static org.junit.Assert.*;
 
 @RunWith(ContractSuite.class)
 @ContractImpl(GraphMem.class)

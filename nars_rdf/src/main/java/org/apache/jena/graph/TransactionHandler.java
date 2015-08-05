@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.shared.* ;
+import org.apache.jena.shared.Command;
 
 /**
     Preliminary interface for graphs supporting transactions.

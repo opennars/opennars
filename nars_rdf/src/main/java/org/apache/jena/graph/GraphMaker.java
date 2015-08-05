@@ -18,8 +18,9 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.shared.AlreadyExistsException;
+import org.apache.jena.shared.DoesNotExistException;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     A factory for providing instances of named graphs with appropriate storage models.

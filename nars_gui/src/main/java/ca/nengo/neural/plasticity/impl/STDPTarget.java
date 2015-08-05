@@ -32,9 +32,9 @@ package ca.nengo.neural.plasticity.impl;
 
 import ca.nengo.model.InstantaneousOutput;
 import ca.nengo.model.Node;
-import ca.nengo.neural.SpikeOutput;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.LinearExponentialTarget;
+import ca.nengo.neural.SpikeOutput;
 import ca.nengo.neural.neuron.Neuron;
 
 /**

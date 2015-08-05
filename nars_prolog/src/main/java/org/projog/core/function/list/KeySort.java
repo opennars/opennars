@@ -1,17 +1,17 @@
 package org.projog.core.function.list;
 
-import static java.util.Collections.sort;
-import static org.projog.core.term.ListFactory.createList;
-import static org.projog.core.term.ListUtils.toJavaUtilList;
-import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
-
-import java.util.Comparator;
-import java.util.List;
-
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
+
+import java.util.Comparator;
+import java.util.List;
+
+import static java.util.Collections.sort;
+import static org.projog.core.term.ListFactory.createList;
+import static org.projog.core.term.ListUtils.toJavaUtilList;
+import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
 
 /* TEST
  %QUERY keysort([a - 1,b - 3,c - 2], X)

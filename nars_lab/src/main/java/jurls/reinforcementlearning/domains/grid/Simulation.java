@@ -6,7 +6,7 @@
 
 package jurls.reinforcementlearning.domains.grid;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 /**
  *

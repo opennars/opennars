@@ -20,13 +20,14 @@ package org.apache.jena.rdfxml.xmloutput;
 
 // Imports
 ///////////////
-import java.io.StringWriter;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.shared.BadURIException ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.shared.BadURIException;
+
+import java.io.StringWriter;
 
 /**
  * JUnit regression tests for output

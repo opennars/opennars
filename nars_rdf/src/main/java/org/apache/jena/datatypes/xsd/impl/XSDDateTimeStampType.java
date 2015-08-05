@@ -18,8 +18,7 @@
 
 package org.apache.jena.datatypes.xsd.impl;
 
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.xsd.impl.XSDDateTimeType ;
+import org.apache.jena.datatypes.DatatypeFormatException;
 
 public class XSDDateTimeStampType extends XSDDateTimeType {
         public XSDDateTimeStampType(String name) {

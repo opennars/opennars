@@ -19,9 +19,11 @@
 package org.apache.jena.util;
 
 import junit.framework.JUnit4TestAdapter;
-import org.apache.jena.rdf.model.impl.Util ;
+import org.apache.jena.rdf.model.impl.Util;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 public class TestSplitIRI_XML
 {
      public static junit.framework.Test suite() {

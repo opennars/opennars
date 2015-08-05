@@ -18,11 +18,14 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.reasoner.rulesys.ClauseEntry;
+import org.apache.jena.reasoner.rulesys.Functor;
+import org.apache.jena.reasoner.rulesys.Node_RuleVariable;
+import org.apache.jena.reasoner.rulesys.Rule;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.reasoner.rulesys.* ;
+import java.util.*;
 
 /**
  * Holds the set of backward rules used by an LPEngine. Is responsible

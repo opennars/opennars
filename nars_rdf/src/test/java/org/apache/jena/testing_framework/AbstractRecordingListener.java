@@ -18,16 +18,11 @@
 
 package org.apache.jena.testing_framework;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
-import org.junit.Assert;
-
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
+import org.junit.Assert;
+
+import java.util.*;
 
 /**
  * This testing listener records the event names and data, and provides a method

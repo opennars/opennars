@@ -18,15 +18,20 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.impl.* ;
-import org.apache.jena.util.OneToManyMap ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.reasoner.rulesys.impl.*;
+import org.apache.jena.util.OneToManyMap;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
+import org.apache.jena.util.iterator.UniqueFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
 
 /**
  * Inference graph for accessing the LP version of the backward chaining

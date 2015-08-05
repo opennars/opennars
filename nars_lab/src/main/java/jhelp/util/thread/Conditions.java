@@ -1,9 +1,9 @@
 package jhelp.util.thread;
 
+import jhelp.util.list.Pair;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import jhelp.util.list.Pair;
 
 /**
  * Create and manage conditions for launching thread. <br>

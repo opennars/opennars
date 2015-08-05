@@ -24,7 +24,7 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import org.apache.jena.rdfxml.xmlinput.impl.ANode ;
+import org.apache.jena.rdfxml.xmlinput.impl.ANode;
 
 /**
  * A string literal property value from an RDF/XML file. 

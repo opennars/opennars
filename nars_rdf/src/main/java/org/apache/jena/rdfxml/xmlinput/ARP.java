@@ -22,15 +22,16 @@
  */
 
 package org.apache.jena.rdfxml.xmlinput;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 
-import org.apache.jena.rdfxml.xmlinput.impl.RDFXMLParser ;
+import org.apache.jena.rdfxml.xmlinput.impl.RDFXMLParser;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 
 /** Another RDF Parser.

@@ -18,7 +18,8 @@
 
 package org.apache.jena.vocabulary.test;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
     Collect together all the vocabulary tests.

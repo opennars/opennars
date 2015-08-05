@@ -18,7 +18,7 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.graph.Triple ;
+import org.apache.jena.graph.Triple;
 
 /**
     Exception to throw if a delete is denied.

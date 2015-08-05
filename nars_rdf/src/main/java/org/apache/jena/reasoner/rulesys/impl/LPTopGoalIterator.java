@@ -18,11 +18,14 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.rulesys.BackwardRuleInfGraphI;
+import org.apache.jena.util.iterator.ClosableIterator;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.reasoner.rulesys.BackwardRuleInfGraphI ;
-import org.apache.jena.util.iterator.ClosableIterator ;
+import java.util.ConcurrentModificationException;
+import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Wraps up the results an LP rule engine instance into a conventional

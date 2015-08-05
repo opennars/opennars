@@ -23,13 +23,16 @@ package org.apache.jena.util.iterator.test;
 
 // Imports
 ///////////////
-import junit.framework.*;
 
-import java.util.*;
+import junit.framework.TestCase;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.util.ResourceUtils;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.* ;
-import org.apache.jena.vocabulary.RDFS ;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 /**

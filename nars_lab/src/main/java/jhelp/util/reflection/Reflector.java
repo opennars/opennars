@@ -7,16 +7,11 @@
  */
 package jhelp.util.reflection;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Stack;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.text.UtilText;
+
+import java.lang.reflect.*;
+import java.util.Stack;
 
 /**
  * Reflection utilities <br>

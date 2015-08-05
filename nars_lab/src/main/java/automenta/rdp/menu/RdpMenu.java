@@ -29,14 +29,11 @@
  */
 package automenta.rdp.menu;
 
-import java.awt.Event;
-import java.awt.Menu;
-import java.awt.MenuBar;
-import java.awt.MenuItem;
-
 import automenta.rdp.Common;
 import automenta.rdp.Options;
 import automenta.rdp.RdesktopFrame;
+
+import java.awt.*;
 
 public class RdpMenu extends MenuBar {
 

@@ -18,7 +18,7 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.graph.Capabilities ;
+import org.apache.jena.graph.Capabilities;
 
 /**
     A default implementation of capabilities, in which everything is allowed,

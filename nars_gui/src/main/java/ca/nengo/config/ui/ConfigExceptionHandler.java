@@ -24,7 +24,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 
 package ca.nengo.config.ui;
 
-import org.apache.logging.log4j.Logger;import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;

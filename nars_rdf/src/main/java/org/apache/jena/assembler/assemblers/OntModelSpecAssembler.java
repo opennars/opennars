@@ -18,14 +18,19 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import java.lang.reflect.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.exceptions.ReasonerClashException;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.ModelGetter;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.shared.NotFoundException;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.exceptions.ReasonerClashException ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.ReasonerFactory ;
-import org.apache.jena.shared.NotFoundException ;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
     An OntModelSpecAssembler constructs OntModelSpec's from their

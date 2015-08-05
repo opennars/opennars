@@ -18,14 +18,13 @@
 
 package org.apache.jena.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.ResourceFactory ;
-import org.apache.jena.util.PrintUtil ;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestPrintUtil extends TestCase
 {    

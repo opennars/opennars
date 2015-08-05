@@ -1,20 +1,15 @@
 package org.projog.core.function.compound;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.projog.core.KnowledgeBaseUtils;
 import org.projog.core.Predicate;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermUtils;
 import org.projog.core.term.PVar;
+import org.projog.core.term.TermUtils;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 abstract class AbstractCollectionOf extends AbstractRetryablePredicate {
    private List<PVar> variablesNotInTemplate;

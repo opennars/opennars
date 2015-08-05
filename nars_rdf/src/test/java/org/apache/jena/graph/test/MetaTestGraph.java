@@ -18,11 +18,14 @@
 
 package org.apache.jena.graph.test;
 
-import java.lang.reflect.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.shared.JenaException;
 
-import junit.framework.*;
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.* ;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
 	MetaTestGraph

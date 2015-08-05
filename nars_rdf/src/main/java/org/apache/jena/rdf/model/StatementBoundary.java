@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.TripleBoundary ;
+import org.apache.jena.graph.TripleBoundary;
 
 /**
      An interface for expressing search boundaries in terms of bounding statements.

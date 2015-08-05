@@ -7,14 +7,17 @@ import automenta.vivisect.audio.granular.Granulize;
 import automenta.vivisect.audio.synth.SineWave;
 import nars.Events;
 import nars.NAR;
+import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.premise.Premise;
-import nars.concept.Concept;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

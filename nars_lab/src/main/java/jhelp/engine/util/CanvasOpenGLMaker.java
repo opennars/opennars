@@ -8,7 +8,6 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLCapabilitiesChooser;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.awt.GLJPanel;
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 

@@ -106,9 +106,8 @@ public class AntCore extends ConceptWaveCore {
                 Task t = tasks.removeFirst();
                 if (t == null) break;
 
-                Premise tp = TaskProcess.get(memory, t);
+                Premise tp = TaskProcess.run(memory, t);
                 if (tp != null) {
-                    run.add(new TaskProcess(memory, t));
                     i++;
                 }
             }

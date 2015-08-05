@@ -19,8 +19,8 @@
 package org.apache.jena.util.iterator.test;
 
 
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.iterator.Map1Iterator;
 
 public class TestMapIterators extends ModelTestBase
     {

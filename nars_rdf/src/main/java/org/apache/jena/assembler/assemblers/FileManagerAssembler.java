@@ -18,9 +18,12 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.util.* ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.LocationMapper;
 
 /**
     A FileManagerAssembler creates a FileManager object which may be

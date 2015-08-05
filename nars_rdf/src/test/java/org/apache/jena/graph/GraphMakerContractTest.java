@@ -18,23 +18,19 @@
 
 package org.apache.jena.graph;
 
-import static org.junit.Assert.*;
-import java.util.Set;
-
+import org.apache.jena.shared.AlreadyExistsException;
+import org.apache.jena.shared.DoesNotExistException;
+import org.apache.jena.testing_framework.GraphHelper;
+import org.apache.jena.testing_framework.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractTest;
-
-import org.apache.jena.graph.Graph;
-import org.apache.jena.graph.GraphMaker;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.shared.AlreadyExistsException;
-import org.apache.jena.shared.DoesNotExistException;
-import org.apache.jena.testing_framework.GraphHelper;
 import org.xenei.junit.contract.IProducer;
-import org.apache.jena.testing_framework.TestUtils;
+
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 /**
  * GraphMaker contract test.

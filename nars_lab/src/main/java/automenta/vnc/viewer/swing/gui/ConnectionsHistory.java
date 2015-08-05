@@ -1,11 +1,11 @@
 package automenta.vnc.viewer.swing.gui;
 
 import automenta.vnc.rfb.protocol.ProtocolSettings;
+import automenta.vnc.utils.Strings;
+import automenta.vnc.viewer.UiSettings;
 import automenta.vnc.viewer.UiSettingsData;
 import automenta.vnc.viewer.mvp.Model;
 import automenta.vnc.viewer.swing.ConnectionParams;
-import automenta.vnc.utils.Strings;
-import automenta.vnc.viewer.UiSettings;
 
 import java.io.*;
 import java.security.AccessControlException;

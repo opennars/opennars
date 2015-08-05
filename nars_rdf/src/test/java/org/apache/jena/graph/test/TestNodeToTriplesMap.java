@@ -18,12 +18,15 @@
 
 package org.apache.jena.graph.test;
 
-import java.util.*;
-
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.Triple.* ;
-import org.apache.jena.mem.NodeToTriplesMap ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.Triple.Field;
+import org.apache.jena.mem.NodeToTriplesMap;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  	TestNodeToTriplesMap: added, post-hoc, by kers once NTM got

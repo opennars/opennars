@@ -1,19 +1,15 @@
 package org.projog.core.function.list;
 
-import static org.projog.core.function.list.PartialApplicationUtils.apply;
-import static org.projog.core.function.list.PartialApplicationUtils.createArguments;
-import static org.projog.core.function.list.PartialApplicationUtils.getPredicateFactory;
-import static org.projog.core.function.list.PartialApplicationUtils.isAtomOrStructure;
-import static org.projog.core.function.list.PartialApplicationUtils.isList;
-import static org.projog.core.term.ListFactory.createList;
-import static org.projog.core.term.ListUtils.toJavaUtilList;
+import org.projog.core.PredicateFactory;
+import org.projog.core.function.AbstractSingletonPredicate;
+import org.projog.core.term.PTerm;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.projog.core.PredicateFactory;
-import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.PTerm;
+import static org.projog.core.function.list.PartialApplicationUtils.*;
+import static org.projog.core.term.ListFactory.createList;
+import static org.projog.core.term.ListUtils.toJavaUtilList;
 
 /* TEST
  %TRUE include(atom, [], [])

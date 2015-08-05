@@ -1,23 +1,5 @@
 package nars.rover.robot;
 
-import nars.rover.Sim;
-import nars.rover.physics.PhysicsCamera;
-import nars.rover.physics.TestbedPanel;
-import nars.rover.physics.TestbedSettings;
-import nars.rover.robot.Robotic;
-import org.jbox2d.callbacks.RayCastCallback;
-import org.jbox2d.collision.shapes.EdgeShape;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Color3f;
-import org.jbox2d.common.MathUtils;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.joints.RevoluteJoint;
-import org.jbox2d.dynamics.joints.RevoluteJointDef;
-
 /**
  *
  * @author me

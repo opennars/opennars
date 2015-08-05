@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import java.util.Iterator ;
-import java.util.regex.Pattern ;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.iri.IRIComponents;
+import org.apache.jena.iri.Violation;
+import org.apache.jena.iri.ViolationCodes;
+import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers;
+import org.xml.sax.SAXParseException;
 
-import org.apache.jena.iri.IRI ;
-import org.apache.jena.iri.IRIComponents ;
-import org.apache.jena.iri.Violation ;
-import org.apache.jena.iri.ViolationCodes ;
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
-import org.xml.sax.SAXParseException ;
+import java.util.Iterator;
+import java.util.regex.Pattern;
 
 public abstract class AbsXMLContext implements ARPErrorNumbers {
 

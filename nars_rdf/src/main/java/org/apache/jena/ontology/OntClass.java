@@ -25,8 +25,11 @@ package org.apache.jena.ontology;
 
 // Imports
 ///////////////
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFList;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 
 /**

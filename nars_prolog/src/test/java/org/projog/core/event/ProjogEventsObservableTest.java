@@ -1,14 +1,14 @@
 package org.projog.core.event;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class ProjogEventsObservableTest {
    @Test

@@ -18,14 +18,15 @@
 
 package org.apache.jena.test;
 
-import java.lang.reflect.*;
+import junit.framework.TestCase;
+import org.apache.jena.util.CollectionFactory;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import junit.framework.*;
-
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
-
-import org.apache.jena.util.CollectionFactory ;
-import org.apache.jena.util.iterator.* ;
 
 /**
     A basis for Jena test cases which provides assertFalse and assertDiffer.

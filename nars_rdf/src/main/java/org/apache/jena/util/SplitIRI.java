@@ -18,8 +18,8 @@
 
 package org.apache.jena.util;
 
-import org.apache.jena.graph.Node ;
-import org.apache.jena.rdf.model.impl.Util ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.impl.Util;
 //import org.apache.jena.riot.system.RiotChars ;
 
 /**

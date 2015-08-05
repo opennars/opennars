@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.GraphExtract ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.TripleBoundary ;
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphExtract;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.TripleBoundary;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 import org.junit.Assert;
 
 public class TestModelExtract extends AbstractModelTestBase

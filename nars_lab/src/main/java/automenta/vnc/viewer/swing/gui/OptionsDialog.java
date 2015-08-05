@@ -24,11 +24,11 @@
 
 package automenta.vnc.viewer.swing.gui;
 
+import automenta.vnc.rfb.encoding.EncodingType;
 import automenta.vnc.rfb.protocol.LocalPointer;
 import automenta.vnc.rfb.protocol.ProtocolSettings;
-import automenta.vnc.viewer.swing.LocalMouseCursorShape;
-import automenta.vnc.rfb.encoding.EncodingType;
 import automenta.vnc.viewer.UiSettings;
+import automenta.vnc.viewer.swing.LocalMouseCursorShape;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,16 +1,16 @@
 package org.projog.core.function.kb;
 
-import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
-import static org.projog.core.term.TermUtils.getAtomName;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import org.projog.core.ProjogSourceReader;
 import org.projog.core.event.ProjogEvent;
 import org.projog.core.event.ProjogEventType;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /* TEST
  %LINK prolog-io

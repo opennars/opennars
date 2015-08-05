@@ -1,10 +1,5 @@
 package org.projog.core.udp;
 
-import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
-import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
-
-import java.util.Iterator;
-
 import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateKey;
@@ -13,6 +8,11 @@ import org.projog.core.term.PTerm;
 import org.projog.core.udp.interpreter.ClauseAction;
 import org.projog.core.udp.interpreter.ClauseActionFactory;
 import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
+
+import java.util.Iterator;
+
+import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
+import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
 
 /**
  * Maintains a record of the clauses that represents a "dynamic" user defined predicate.

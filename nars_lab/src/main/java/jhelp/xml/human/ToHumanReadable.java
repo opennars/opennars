@@ -7,30 +7,20 @@
  */
 package jhelp.xml.human;
 
-import java.awt.FileDialog;
+import jhelp.util.debug.Debug;
+import jhelp.util.io.UtilIO;
+import jhelp.util.text.UtilText;
+import jhelp.util.xml.DynamicWriteXML;
+import jhelp.xml.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.io.UtilIO;
-import jhelp.util.text.UtilText;
-import jhelp.util.xml.DynamicWriteXML;
-import jhelp.xml.ExceptionParseXML;
-import jhelp.xml.InvalidParameterValueException;
-import jhelp.xml.InvalidTextException;
-import jhelp.xml.MissingRequiredParameterException;
-import jhelp.xml.ParseXMLlistener;
-import jhelp.xml.ParserXML;
-import jhelp.xml.UnexpectedEndOfMarkup;
-import jhelp.xml.UnexpectedEndOfParse;
 
 /**
  * Convert an XML compact to human readable XML<br>

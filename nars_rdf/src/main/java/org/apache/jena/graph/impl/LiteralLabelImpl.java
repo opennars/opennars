@@ -18,19 +18,21 @@
 
 package org.apache.jena.graph.impl;
 
-import java.util.Locale ;
-import java.util.Objects ;
-
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.datatypes.* ;
-import org.apache.jena.datatypes.xsd.* ;
-import org.apache.jena.datatypes.xsd.impl.* ;
-import org.apache.jena.rdf.model.impl.Util ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.impl.JenaParameters ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.impl.XMLLiteralType;
+import org.apache.jena.rdf.model.impl.Util;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.impl.JenaParameters;
+import org.apache.jena.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Represents the "contents" of a Node_Literal.

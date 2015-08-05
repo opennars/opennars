@@ -18,12 +18,12 @@
 
 package org.apache.jena.util;
 
+import org.apache.jena.util.iterator.NiceIterator;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.jena.util.iterator.NiceIterator ;
 
 
 /**

@@ -18,13 +18,17 @@
 
 package org.apache.jena.graph.compose.test;
 
-import java.util.*;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.compose.CompositionBase;
+import org.apache.jena.graph.compose.Dyadic;
+import org.apache.jena.graph.test.AbstractTestGraph;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
 
-import junit.framework.*;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.compose.* ;
-import org.apache.jena.graph.test.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.StringTokenizer;
 
 public abstract class TestDyadic extends AbstractTestGraph
 	{

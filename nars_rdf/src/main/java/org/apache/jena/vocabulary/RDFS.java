@@ -18,8 +18,10 @@
 
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 /**
     RDFS vocabulary items

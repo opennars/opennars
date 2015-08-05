@@ -18,11 +18,11 @@
 
 package org.apache.jena.graph.test;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.impl.ReifierStd ;
-import org.apache.jena.shared.AlreadyReifiedException ;
-import org.apache.jena.shared.CannotReifyException ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.graph.*;
+import org.apache.jena.rdf.model.impl.ReifierStd;
+import org.apache.jena.shared.AlreadyReifiedException;
+import org.apache.jena.shared.CannotReifyException;
+import org.apache.jena.vocabulary.RDF;
 
 /**
     Abstract base class for reification tests. 

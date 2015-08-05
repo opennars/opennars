@@ -7,12 +7,12 @@
  */
 package jhelp.engine.twoD;
 
-import java.awt.Shape;
-import java.awt.geom.PathIterator;
-import java.util.ArrayList;
-
 import jhelp.engine.Font3D;
 import jhelp.engine.util.Math3D;
+
+import java.awt.*;
+import java.awt.geom.PathIterator;
+import java.util.ArrayList;
 
 /**
  * Iterator around a path border.<br>

@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdf.model.test;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.PrefixMapping;
+import org.junit.Assert;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.Statement ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.junit.Assert;
 
 /**
  * Tests of the Model-level bulk update API.

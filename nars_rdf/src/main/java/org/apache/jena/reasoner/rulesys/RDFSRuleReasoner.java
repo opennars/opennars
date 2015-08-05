@@ -18,13 +18,19 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.reasoner.rulesys.impl.RDFSCMPPreprocessHook;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.impl.RDFSCMPPreprocessHook ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A full implemention of RDFS reasoning using a hybrid rule system, together

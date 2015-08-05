@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdfxml.xmloutput;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.rdfxml.xmloutput.impl.BaseXMLWriter;
+import org.apache.jena.rdfxml.xmloutput.impl.SimpleLogger;
+
 import java.io.*;
 import java.util.Properties;
 import java.util.regex.Pattern;
-
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.RDFWriter ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.rdfxml.xmloutput.impl.BaseXMLWriter ;
-import org.apache.jena.rdfxml.xmloutput.impl.SimpleLogger ;
 
 public class XMLOutputTestBase extends ModelTestBase
     {

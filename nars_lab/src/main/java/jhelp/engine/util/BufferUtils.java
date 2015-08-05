@@ -1,10 +1,6 @@
 package jhelp.engine.util;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.nio.*;
 
 /**
  * Buffer utilities.<br>

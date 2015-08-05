@@ -1,12 +1,12 @@
 package jhelp.util.list;
 
-import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.text.UtilText;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A bag in two dimension.<br>

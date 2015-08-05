@@ -1,11 +1,11 @@
 package jhelp.engine.util;
 
-import java.io.File;
-import java.io.IOException;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.io.UtilIO;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Install libraries need for communicate with Open GL

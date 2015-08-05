@@ -18,8 +18,8 @@
 
 package org.apache.jena.graph.impl ;
 
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
 
 public interface LiteralLabel
 {

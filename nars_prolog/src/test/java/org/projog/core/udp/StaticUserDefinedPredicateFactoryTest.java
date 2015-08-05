@@ -1,10 +1,5 @@
 package org.projog.core.udp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.KB;
@@ -16,6 +11,8 @@ import org.projog.core.udp.compiler.CompiledPredicate;
 import org.projog.core.udp.compiler.CompiledTailRecursivePredicate;
 import org.projog.core.udp.interpreter.InterpretedTailRecursivePredicateFactory;
 import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests {@link StaticUserDefinedPredicateFactory}.

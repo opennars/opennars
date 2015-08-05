@@ -1,14 +1,14 @@
 package org.projog.core;
 
-import static org.projog.core.CoreUtils.instantiate;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.projog.core.CoreUtils.instantiate;
 
 /**
  * Maintains a collection of {@link Calculatable} instances.

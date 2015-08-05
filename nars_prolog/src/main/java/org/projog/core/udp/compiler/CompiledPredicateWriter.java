@@ -1,28 +1,14 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.encodeName;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getNewListSyntax;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getNewVariableSyntax;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.isNoMoreThanTwoElementList;
+import org.projog.core.KB;
+import org.projog.core.term.*;
+import org.projog.core.udp.ClauseModel;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.projog.core.KB;
-import org.projog.core.term.EmptyList;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
-import org.projog.core.term.TermUtils;
-import org.projog.core.term.PVar;
-import org.projog.core.udp.ClauseModel;
+import static org.projog.core.KnowledgeBaseUtils.getProjogProperties;
+import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.*;
 
 /**
  * Constructs Java source code of new {@link CompiledPredicate} classes.

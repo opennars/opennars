@@ -18,24 +18,24 @@
 
 package org.apache.jena.assembler;
 
-import java.lang.reflect.Constructor ;
-import java.lang.reflect.Method ;
-import java.util.ArrayList ;
-import java.util.HashSet ;
-import java.util.List ;
-import java.util.Set ;
+import org.apache.jena.assembler.assemblers.AssemblerGroup;
+import org.apache.jena.assembler.exceptions.AmbiguousSpecificTypeException;
+import org.apache.jena.atlas.logging.Log;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.BadDescriptionMultipleRootsException;
+import org.apache.jena.shared.BadDescriptionNoRootException;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
-import org.apache.jena.assembler.assemblers.AssemblerGroup ;
-import org.apache.jena.assembler.exceptions.AmbiguousSpecificTypeException ;
-import org.apache.jena.atlas.logging.Log ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.BadDescriptionMultipleRootsException ;
-import org.apache.jena.shared.BadDescriptionNoRootException ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
     AssemblerHelp provides utility methods used by, and useful for working with,

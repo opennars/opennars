@@ -2,11 +2,11 @@
  */
 package jhelp.engine.twoD;
 
-import java.util.ArrayList;
-
 import jhelp.engine.Texture;
 import jhelp.engine.event.Object2DListener;
 import jhelp.util.list.Queue;
+
+import java.util.ArrayList;
 
 /**
  * 2D object.<br>

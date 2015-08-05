@@ -18,14 +18,14 @@
 
 package org.apache.jena.util;
 
+import org.apache.jena.shared.JenaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import org.apache.jena.shared.JenaException ;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /** Location files in a zip file  */
  

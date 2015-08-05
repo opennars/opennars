@@ -18,12 +18,12 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.vocabulary.RDF;
 
 public class LiteralLabelFactory
 {

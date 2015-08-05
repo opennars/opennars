@@ -29,11 +29,11 @@
  */
 package automenta.rdp.rdp5.cliprdr;
 
+import automenta.rdp.AbstractRdpPacket;
+
 import java.awt.datatransfer.DataFlavor;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import automenta.rdp.AbstractRdpPacket;
 
 public class TypeHandlerList {
 

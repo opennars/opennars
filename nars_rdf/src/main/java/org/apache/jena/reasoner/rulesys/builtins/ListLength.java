@@ -18,9 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.BindingEnvironment;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.Util;
+import org.apache.jena.vocabulary.RDF;
 
 /**
  * Bind the second arg to the length of the first arg treated as a list.

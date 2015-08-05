@@ -1,12 +1,12 @@
 package automenta.rdp.rdp5.disk;
 
-import automenta.rdp.rdp.RdpPacket;
-import automenta.rdp.rdp5.VChannels;
+import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.CommunicationMonitor;
 import automenta.rdp.RdesktopException;
-import automenta.rdp.AbstractRdpPacket;
 import automenta.rdp.crypto.CryptoException;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.rdp5.VChannel;
+import automenta.rdp.rdp5.VChannels;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

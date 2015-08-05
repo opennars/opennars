@@ -17,10 +17,9 @@
  */
 package org.apache.jena.testing_framework;
 
-import org.xenei.junit.contract.IProducer;
-
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
+import org.xenei.junit.contract.IProducer;
 
 /**
  * An abstract implementation of the IProducer<RDFNode> interface.

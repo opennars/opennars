@@ -18,10 +18,13 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.reasoner.ReasonerRegistry ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
 /**
     Tests for configuration vocabulary added as part of ModelSpec removal

@@ -18,29 +18,29 @@
 
 package org.apache.jena.rdfxml.xmloutput.impl;
 
-import java.io.OutputStream ;
-import java.io.OutputStreamWriter ;
-import java.io.PrintWriter ;
-import java.io.Writer ;
-import java.util.* ;
-import java.util.Map.Entry ;
-import java.util.regex.Pattern ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler;
+import org.apache.jena.rdf.model.impl.ResourceImpl;
+import org.apache.jena.rdf.model.impl.Util;
+import org.apache.jena.rdfxml.xmloutput.RDFXMLWriterI;
+import org.apache.jena.shared.*;
+import org.apache.jena.util.CharEncoding;
+import org.apache.jena.util.FileUtils;
+import org.apache.jena.vocabulary.*;
+import org.apache.xerces.util.XMLChar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.iri.IRI ;
-import org.apache.jena.iri.IRIFactory ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.RDFDefaultErrorHandler ;
-import org.apache.jena.rdf.model.impl.ResourceImpl ;
-import org.apache.jena.rdf.model.impl.Util ;
-import org.apache.jena.rdfxml.xmloutput.RDFXMLWriterI ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.CharEncoding ;
-import org.apache.jena.util.FileUtils ;
-import org.apache.jena.vocabulary.* ;
-import org.apache.xerces.util.XMLChar ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /** 
  * This is not part of the public API.

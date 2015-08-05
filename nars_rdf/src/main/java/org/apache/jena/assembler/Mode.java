@@ -18,7 +18,7 @@
 
 package org.apache.jena.assembler;
 
-import org.apache.jena.rdf.model.Resource ;
+import org.apache.jena.rdf.model.Resource;
 
 /**
     A Mode object controls whether persistent objects can be created or reused

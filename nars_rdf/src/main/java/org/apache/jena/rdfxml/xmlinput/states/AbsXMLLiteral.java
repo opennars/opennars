@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
+import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext;
+import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXParseException;
+
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext ;
-import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler ;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXParseException;
 
 public abstract class AbsXMLLiteral extends Frame {
     boolean checkComposingChar = true;

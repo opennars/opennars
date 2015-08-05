@@ -1,16 +1,14 @@
 package jhelp.util.gui;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import jhelp.util.io.UtilIO;
+
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Stack;
-
-import jhelp.util.io.UtilIO;
 
 /**
  * Represents a mask.<br>

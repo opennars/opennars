@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.io.StringReader;
+import org.apache.jena.graph.GraphEvents;
+import org.apache.jena.rdf.model.RDFReader;
+import org.apache.jena.rdf.model.test.helpers.RecordingModelListener;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 
-import org.apache.jena.graph.GraphEvents ;
-import org.apache.jena.rdf.model.RDFReader ;
-import org.apache.jena.rdf.model.test.helpers.RecordingModelListener ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import java.io.StringReader;
 
 /**
  * TestReaderEvents - test that reader events are issued

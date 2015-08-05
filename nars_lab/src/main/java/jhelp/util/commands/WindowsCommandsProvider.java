@@ -1,10 +1,10 @@
 package jhelp.util.commands;
 
-import java.io.File;
-import java.util.List;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
+
+import java.io.File;
+import java.util.List;
 
 class WindowsCommandsProvider
       implements CommandsProvider

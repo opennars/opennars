@@ -1,18 +1,13 @@
 package org.projog.core;
 
-import static org.projog.core.term.TermUtils.getAtomName;
+import org.projog.core.term.PAtom;
+import org.projog.core.term.PTerm;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.projog.core.term.PAtom;
-import org.projog.core.term.PTerm;
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /**
  * Collection of input and output streams.

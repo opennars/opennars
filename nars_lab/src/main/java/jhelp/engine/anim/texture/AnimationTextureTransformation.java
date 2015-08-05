@@ -1,7 +1,6 @@
 package jhelp.engine.anim.texture;
 
 import com.jogamp.opengl.GL;
-
 import jhelp.engine.Animation;
 import jhelp.engine.Texture;
 import jhelp.util.list.SortedArray;

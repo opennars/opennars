@@ -1,7 +1,7 @@
 package automenta.rdp.rdp5.disk;
 
-import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.AbstractRdpPacket;
+import automenta.rdp.rdp.RdpPacket;
 import automenta.rdp.rdp5.VChannel;
 import automenta.rdp.tools.FNMatch;
 

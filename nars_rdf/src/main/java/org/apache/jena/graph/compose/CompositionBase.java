@@ -23,13 +23,18 @@ package org.apache.jena.graph.compose;
 
 // Imports
 ///////////////
-import java.util.*;
-import java.util.function.Predicate;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.* ;
-import org.apache.jena.util.IteratorCollection ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.util.IteratorCollection;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.FilterIterator;
+import org.apache.jena.util.iterator.NiceIterator;
+
+import java.util.Set;
+import java.util.function.Predicate;
 
 
 /**

@@ -10,7 +10,6 @@ import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.EmptyIcon;
 import ca.nengo.ui.model.icon.ModelIcon;
-import org.piccolo2d.extras.nodes.PNodeCache;
 import org.piccolo2d.util.PBounds;
 
 /**

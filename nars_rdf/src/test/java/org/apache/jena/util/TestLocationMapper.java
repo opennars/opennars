@@ -18,15 +18,13 @@
 
 package org.apache.jena.util;
 
-import java.util.Iterator;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.LocationMapper ;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
 
 /** TestLocationMapper
  */

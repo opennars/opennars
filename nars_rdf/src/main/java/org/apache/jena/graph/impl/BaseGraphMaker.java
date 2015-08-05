@@ -18,8 +18,9 @@
 
 package org.apache.jena.graph.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.shared.* ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphMaker;
+import org.apache.jena.shared.DoesNotExistException;
 
 /**
     This base class provides convenience functions for the three "usual" graph

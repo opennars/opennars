@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 import org.junit.After;
 import org.junit.Assert;
 

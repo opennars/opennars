@@ -21,8 +21,8 @@
 package nars.concept;
 
 import com.google.common.base.Function;
-import nars.AbstractMemory;
 import nars.Global;
+import nars.Memory;
 import nars.Op;
 import nars.bag.Bag;
 import nars.budget.Budget;
@@ -53,7 +53,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     void setMeta(Map<Object, Object> meta);
 
 
-    public AbstractMemory getMemory();
+    public Memory getMemory();
 
 
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);

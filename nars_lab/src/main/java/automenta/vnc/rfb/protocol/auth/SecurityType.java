@@ -24,10 +24,10 @@
 
 package automenta.vnc.rfb.protocol.auth;
 
+import automenta.vnc.exceptions.UnsupportedSecurityTypeException;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import automenta.vnc.exceptions.UnsupportedSecurityTypeException;
 
 /**
  * Security types that implemented

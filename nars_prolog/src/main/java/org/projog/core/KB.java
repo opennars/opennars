@@ -1,19 +1,19 @@
 package org.projog.core;
 
-import static org.projog.core.CoreUtils.instantiate;
-import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.projog.core.event.ProjogEvent;
 import org.projog.core.event.ProjogEventType;
 import org.projog.core.function.kb.AddPredicateFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.udp.DynamicUserDefinedPredicateFactory;
 import org.projog.core.udp.UserDefinedPredicateFactory;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.projog.core.CoreUtils.instantiate;
+import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
 
 /**
  * Acts as a repository of rules and facts.

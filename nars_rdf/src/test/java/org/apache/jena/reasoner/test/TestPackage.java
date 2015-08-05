@@ -18,7 +18,7 @@
 
 package org.apache.jena.reasoner.test;
 
-import junit.framework.*;
+import junit.framework.TestSuite;
 
 /**
  * Aggregate tester that runs all the test associated with the reasoner package.

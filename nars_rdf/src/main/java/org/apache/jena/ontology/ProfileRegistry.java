@@ -23,10 +23,16 @@ package org.apache.jena.ontology;
 
 // Imports
 ///////////////
-import java.util.*;
 
-import org.apache.jena.ontology.impl.* ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.ontology.impl.OWLDLProfile;
+import org.apache.jena.ontology.impl.OWLLiteProfile;
+import org.apache.jena.ontology.impl.OWLProfile;
+import org.apache.jena.ontology.impl.RDFSProfile;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**

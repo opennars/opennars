@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.Lock ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.Lock;
 import org.junit.Assert;
 
 /**

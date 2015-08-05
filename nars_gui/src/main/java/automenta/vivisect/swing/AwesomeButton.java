@@ -1,7 +1,6 @@
 package automenta.vivisect.swing;
 
 import automenta.vivisect.Video;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 
 import javax.swing.*;
 

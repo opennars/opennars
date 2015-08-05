@@ -18,11 +18,11 @@
 
 package org.apache.jena.util.junit;
 
-import java.util.ArrayList ;
-import java.util.Collection ;
-import java.util.List ;
+import org.apache.jena.rdf.model.*;
 
-import org.apache.jena.rdf.model.* ;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class TestUtils
 {

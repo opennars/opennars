@@ -18,11 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.impl.FRuleEngineIFactory;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.impl.* ;
+import java.util.List;
 
 /**
  * RETE implementation of the forward rule infernce graph.

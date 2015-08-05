@@ -1,13 +1,13 @@
 package org.projog.core.udp.compiler;
 
-import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
-
-import java.util.Map;
-
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
 import org.projog.core.udp.MultipleRulesWithSingleImmutableArgumentPredicate;
+
+import java.util.Map;
+
+import static org.projog.core.udp.compiler.CompiledPredicateSourceGeneratorUtils.getUnifyStatement;
 
 final class MultipleRulesWithSingleImmutableArgumentPredicateInvocationGenerator implements PredicateInvocationGenerator {
    // TODO consider ways to improve this class through refactoring

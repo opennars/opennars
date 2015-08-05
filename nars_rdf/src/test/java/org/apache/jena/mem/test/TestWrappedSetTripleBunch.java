@@ -18,7 +18,8 @@
 
 package org.apache.jena.mem.test;
 
-import org.apache.jena.mem.* ;
+import org.apache.jena.mem.SetBunch;
+import org.apache.jena.mem.TripleBunch;
 
 public class TestWrappedSetTripleBunch extends TestTripleBunch
     {

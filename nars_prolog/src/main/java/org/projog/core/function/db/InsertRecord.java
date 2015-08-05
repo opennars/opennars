@@ -1,11 +1,11 @@
 package org.projog.core.function.db;
 
-import static org.projog.core.KnowledgeBaseServiceLocator.getServiceLocator;
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
-
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
+
+import static org.projog.core.KnowledgeBaseServiceLocator.getServiceLocator;
+import static org.projog.core.term.TermUtils.createAnonymousVariable;
 
 /* TEST
  % Example of recorda/3.

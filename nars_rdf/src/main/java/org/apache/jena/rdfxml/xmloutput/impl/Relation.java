@@ -18,13 +18,10 @@
 
 package org.apache.jena.rdfxml.xmloutput.impl;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import org.apache.jena.util.iterator.Map1Iterator ;
-import org.apache.jena.util.iterator.WrappedIterator ;
+import org.apache.jena.util.iterator.Map1Iterator;
+import org.apache.jena.util.iterator.WrappedIterator;
+
+import java.util.*;
 
 /**
  * A sparse 2 dimensional array of boolean indexed by Object.

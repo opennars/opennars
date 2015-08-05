@@ -1,24 +1,18 @@
 package jhelp.engine.util;
 
-import edu.uci.ics.jung.utils.StringInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 //import jhelp.util.debug.Debug;
 //import jhelp.util.io.base64.Base64InputStream;
 //import jhelp.util.io.base64.Base64OutputStream;
 //import jhelp.util.list.Pair;
 //import jhelp.util.text.StringCutter;
 //import jhelp.util.text.UtilText;
-
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.math.BigInteger;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 /**
  * Utilities for Input/Output streams

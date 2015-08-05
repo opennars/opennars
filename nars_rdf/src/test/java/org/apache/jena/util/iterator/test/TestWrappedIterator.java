@@ -23,12 +23,15 @@ package org.apache.jena.util.iterator.test;
     some fake base iterator to do the checking, and _close_, ditto.
 */
 
-import java.util.*;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import junit.framework.*;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class TestWrappedIterator extends GraphTestBase
     {

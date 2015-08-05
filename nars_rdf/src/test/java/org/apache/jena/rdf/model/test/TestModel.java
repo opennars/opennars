@@ -18,15 +18,15 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.graph.test.NodeCreateUtils ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.Command ;
-import org.apache.jena.test.JenaTestBase ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.graph.test.NodeCreateUtils;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.Command;
+import org.apache.jena.test.JenaTestBase;
 import org.junit.Assert;
 
 public class TestModel extends AbstractModelTestBase

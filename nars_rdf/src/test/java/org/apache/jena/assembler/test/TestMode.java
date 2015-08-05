@@ -18,8 +18,8 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.Mode ;
-import org.apache.jena.rdf.model.Resource ;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.rdf.model.Resource;
 
 public class TestMode extends AssemblerTestBase
     {

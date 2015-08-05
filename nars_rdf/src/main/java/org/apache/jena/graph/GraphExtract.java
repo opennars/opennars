@@ -18,10 +18,10 @@
 
 package org.apache.jena.graph;
 
+import org.apache.jena.util.CollectionFactory;
+
 import java.util.Iterator;
 import java.util.Set;
-
-import org.apache.jena.util.CollectionFactory ;
 
 /**
      GraphExtract offers a very simple recursive extraction of a subgraph with a

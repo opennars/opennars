@@ -18,9 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.TriplePattern ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.TriplePattern;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /* */
 public class TopLevelTripleMatchFrame extends GenericChoiceFrame {

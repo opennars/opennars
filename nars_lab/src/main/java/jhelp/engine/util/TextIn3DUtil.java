@@ -7,16 +7,13 @@
  */
 package jhelp.engine.util;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Toolkit;
-import java.util.StringTokenizer;
-
 import jhelp.engine.Texture;
 import jhelp.engine.twoD.Object2D;
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
+
+import java.awt.*;
+import java.util.StringTokenizer;
 
 /**
  * Utilities for text <br>

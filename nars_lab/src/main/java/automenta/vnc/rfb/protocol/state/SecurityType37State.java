@@ -24,9 +24,9 @@
 
 package automenta.vnc.rfb.protocol.state;
 
+import automenta.vnc.rfb.protocol.ProtocolContext;
 import automenta.vnc.rfb.protocol.auth.AuthHandler;
 import automenta.vnc.rfb.protocol.auth.SecurityType;
-import automenta.vnc.rfb.protocol.ProtocolContext;
 
 public class SecurityType37State extends SecurityTypeState {
 

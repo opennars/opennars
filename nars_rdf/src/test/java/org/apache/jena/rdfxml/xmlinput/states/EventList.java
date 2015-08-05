@@ -19,8 +19,7 @@
 package org.apache.jena.rdfxml.xmlinput.states;
 
 
-import org.apache.jena.rdfxml.xmlinput.impl.TaintImpl ;
-import org.apache.jena.rdfxml.xmlinput.states.FrameI ;
+import org.apache.jena.rdfxml.xmlinput.impl.TaintImpl;
 import org.junit.Assert;
 import org.xml.sax.Attributes;
 

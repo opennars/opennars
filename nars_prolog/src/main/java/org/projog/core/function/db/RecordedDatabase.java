@@ -1,17 +1,11 @@
 package org.projog.core.function.db;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.projog.core.PredicateKey;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.PTerm;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Provides a mechanism to associate a term with a key.

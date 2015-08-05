@@ -1,19 +1,15 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.atom;
+import org.junit.Test;
+import org.projog.core.term.PAtom;
+import org.projog.core.term.PTerm;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.junit.Test;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.PTerm;
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.atom;
 
 public class FileHandlesTest {
    @Test

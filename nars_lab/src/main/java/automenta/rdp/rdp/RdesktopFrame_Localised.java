@@ -33,9 +33,7 @@ package automenta.rdp.rdp;
 import automenta.rdp.Options;
 import automenta.rdp.RdesktopFrame;
 
-import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 
 public class RdesktopFrame_Localised extends RdesktopFrame {
 

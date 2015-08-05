@@ -7,14 +7,14 @@
  */
 package jhelp.engine;
 
-import java.awt.Font;
+import jhelp.engine.twoD.BorderIterator;
+import jhelp.engine.util.Math3D;
+
+import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.Hashtable;
-
-import jhelp.engine.twoD.BorderIterator;
-import jhelp.engine.util.Math3D;
 
 /**
  * 3D font. It creates 3D object for character or String <br>

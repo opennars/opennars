@@ -1,10 +1,10 @@
 package ca.nengo.test;
 
-import ca.nengo.ui.model.plot.MeshCursor;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.NengrowPanel;
+import ca.nengo.ui.model.plot.MeshCursor;
 
 /** example in nengrow panel */
 public class TestCursor extends NengrowPanel {

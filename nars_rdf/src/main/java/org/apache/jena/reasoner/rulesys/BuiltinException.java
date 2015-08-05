@@ -18,7 +18,7 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.shared.JenaException ;
+import org.apache.jena.shared.JenaException;
 
 /**
  * Exceptions thrown by runtime errors in exceuting rule system

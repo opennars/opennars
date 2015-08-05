@@ -19,12 +19,12 @@
 package org.apache.jena.assembler.assemblers;
 
 
-import org.apache.jena.assembler.Assembler ;
-import org.apache.jena.assembler.JA ;
-import org.apache.jena.assembler.Mode ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.Resource ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
 
 public class MemoryModelAssembler extends ModelAssembler implements Assembler
     {

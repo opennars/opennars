@@ -7,9 +7,9 @@
  */
 package jhelp.engine.gui.components;
 
-import java.awt.image.BufferedImage;
-
 import jhelp.engine.Texture;
+
+import java.awt.image.BufferedImage;
 
 /**
  * Label with image<br>

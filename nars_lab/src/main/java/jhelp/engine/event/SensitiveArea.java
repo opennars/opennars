@@ -1,13 +1,5 @@
 package jhelp.engine.event;
 
-import java.awt.Rectangle;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
 import jhelp.engine.JHelpSceneRenderer;
 import jhelp.engine.Node;
 import jhelp.engine.PickUVlistener;
@@ -21,6 +13,14 @@ import jhelp.xml.ExceptionParseXML;
 import jhelp.xml.ExceptionXML;
 import jhelp.xml.ParseXMLlistener;
 import jhelp.xml.ParserXML;
+
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Sensitive area

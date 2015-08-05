@@ -1,8 +1,8 @@
 package jhelp.util.list;
 
-import java.util.ArrayList;
-
 import jhelp.util.text.UtilText;
+
+import java.util.ArrayList;
 
 /**
  * Set of elements, where elements have no order

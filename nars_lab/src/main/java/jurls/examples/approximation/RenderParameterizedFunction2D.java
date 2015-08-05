@@ -5,8 +5,9 @@
  */
 package jurls.examples.approximation;
 
-import java.awt.Color;
 import jurls.core.approximation.ParameterizedFunction;
+
+import java.awt.*;
 
 /**
  *

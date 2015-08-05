@@ -7,13 +7,6 @@
  */
 package jhelp.engine.io.obj;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 import jhelp.engine.Mesh;
 import jhelp.engine.Object3D;
 import jhelp.engine.Point2D;
@@ -22,6 +15,13 @@ import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.list.ArrayInt;
 import jhelp.util.text.StringCutter;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * Loader for OBJ format <br>

@@ -1,7 +1,10 @@
 package nars.johkra;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: Johannes Krampf <johkra@gmail.com>

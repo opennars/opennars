@@ -1,9 +1,5 @@
 package jhelp.util.gui;
 
-import java.awt.Point;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import jhelp.util.cache.Cache;
 import jhelp.util.cache.CacheElement;
 import jhelp.util.debug.Debug;
@@ -13,6 +9,10 @@ import jhelp.util.list.Triplet;
 import jhelp.util.resources.Resources;
 import jhelp.util.text.StringExtractor;
 import jhelp.util.text.UtilText;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Text with the possibility to insert some image in it.<br>

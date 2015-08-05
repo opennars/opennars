@@ -18,33 +18,33 @@
 
 package org.apache.jena.datatypes.xsd;
 
-import java.io.Reader ;
-import java.math.BigDecimal ;
-import java.math.BigInteger ;
-import java.net.URI ;
-import java.util.ArrayList ;
-import java.util.List ;
+import org.apache.jena.datatypes.BaseDatatype;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.impl.*;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.xerces.impl.dv.*;
+import org.apache.xerces.impl.dv.util.Base64;
+import org.apache.xerces.impl.dv.util.HexBin;
+import org.apache.xerces.impl.dv.xs.DecimalDV;
+import org.apache.xerces.impl.dv.xs.XSSimpleTypeDecl;
+import org.apache.xerces.impl.validation.ValidationState;
+import org.apache.xerces.parsers.XMLGrammarPreparser;
+import org.apache.xerces.util.SymbolHash;
+import org.apache.xerces.xni.grammars.XMLGrammarDescription;
+import org.apache.xerces.xni.grammars.XSGrammar;
+import org.apache.xerces.xni.parser.XMLInputSource;
+import org.apache.xerces.xs.XSConstants;
+import org.apache.xerces.xs.XSNamedMap;
+import org.apache.xerces.xs.XSTypeDefinition;
 
-import org.apache.jena.datatypes.BaseDatatype ;
-import org.apache.jena.datatypes.DatatypeFormatException ;
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.datatypes.xsd.impl.* ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.xerces.impl.dv.* ;
-import org.apache.xerces.impl.dv.util.Base64 ;
-import org.apache.xerces.impl.dv.util.HexBin ;
-import org.apache.xerces.impl.dv.xs.DecimalDV ;
-import org.apache.xerces.impl.dv.xs.XSSimpleTypeDecl ;
-import org.apache.xerces.impl.validation.ValidationState ;
-import org.apache.xerces.parsers.XMLGrammarPreparser ;
-import org.apache.xerces.util.SymbolHash ;
-import org.apache.xerces.xni.grammars.XMLGrammarDescription ;
-import org.apache.xerces.xni.grammars.XSGrammar ;
-import org.apache.xerces.xni.parser.XMLInputSource ;
-import org.apache.xerces.xs.XSConstants ;
-import org.apache.xerces.xs.XSNamedMap ;
-import org.apache.xerces.xs.XSTypeDefinition ;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representation of an XSD datatype based on the Xerces-2

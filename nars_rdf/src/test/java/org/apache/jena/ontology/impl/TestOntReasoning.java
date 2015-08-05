@@ -23,19 +23,24 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.io.ByteArrayInputStream;
-import java.util.*;
 
-import org.apache.jena.enhanced.EnhGraph ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.ontology.impl.OntClassImpl ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.ReasonerRegistry ;
-import org.apache.jena.reasoner.test.TestUtil ;
+import junit.framework.TestCase;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.test.TestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import junit.framework.TestCase;
+
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**

@@ -26,7 +26,6 @@ import nars.util.data.random.MersenneTwisterFast;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
-import objenome.op.math.*;
 import objenome.solver.evolve.*;
 import objenome.solver.evolve.event.EventManager;
 import objenome.solver.evolve.init.Full;

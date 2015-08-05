@@ -5,8 +5,7 @@
  */
 package jurls.examples.approximation;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package ca.nengo.model.impl;
 
 import automenta.vivisect.Video;
-import ca.nengo.model.Node;
-import ca.nengo.model.SimulationException;
 import ca.nengo.model.NSource;
 import ca.nengo.model.NTarget;
+import ca.nengo.model.Node;
+import ca.nengo.model.SimulationException;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.NodeIcon;

@@ -24,8 +24,8 @@
 
 package automenta.vnc.drawing;
 
-import automenta.vnc.rfb.encoding.PixelFormat;
 import automenta.vnc.exceptions.TransportException;
+import automenta.vnc.rfb.encoding.PixelFormat;
 import automenta.vnc.transport.Reader;
 
 public class ColorDecoder {

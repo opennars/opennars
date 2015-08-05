@@ -18,9 +18,12 @@
 
 package org.apache.jena.graph.compose ;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.SimpleEventManager ;
-import org.apache.jena.util.iterator.* ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.SimpleEventManager;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
  * Graph operation for wrapping a base graph and leaving it unchanged while

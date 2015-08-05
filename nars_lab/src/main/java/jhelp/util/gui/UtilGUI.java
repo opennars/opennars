@@ -1,27 +1,13 @@
 package jhelp.util.gui;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.InputEvent;
-import java.awt.image.BufferedImage;
-
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-
 import jhelp.util.Utilities;
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Utilities for GUI

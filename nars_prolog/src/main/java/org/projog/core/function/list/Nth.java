@@ -1,17 +1,17 @@
 package org.projog.core.function.list;
 
-import static org.projog.core.term.ListUtils.toJavaUtilList;
-import static org.projog.core.term.TermUtils.toInt;
-
-import java.util.Collections;
-import java.util.List;
-
 import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.PTerm;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.projog.core.term.ListUtils.toJavaUtilList;
+import static org.projog.core.term.TermUtils.toInt;
 
 /* TEST
  %TRUE nth0(0, [a,b,c], a)

@@ -1,11 +1,11 @@
 package org.projog.core.term;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.projog.TestUtils.createKnowledgeBase;
 import static org.projog.TestUtils.parseSentence;
 import static org.projog.core.KnowledgeBaseUtils.getTermFormatter;
-
-import org.junit.Test;
 
 public class TermFormatterTest {
    @Test

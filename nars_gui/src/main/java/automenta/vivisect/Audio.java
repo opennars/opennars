@@ -1,11 +1,9 @@
 package automenta.vivisect;
 
-import automenta.vivisect.Sound;
 import automenta.vivisect.audio.ListenerMixer;
 import automenta.vivisect.audio.SoundListener;
 import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.SoundSource;
-import automenta.vivisect.audio.sample.SamplePlayer;
 import automenta.vivisect.audio.sample.SonarSample;
 
 import javax.sound.sampled.*;

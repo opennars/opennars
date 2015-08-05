@@ -17,9 +17,12 @@
  */
 
 package org.apache.jena.rdf.model.test ;
-import junit.framework.*;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.Lock ;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.shared.Lock;
 public class TestConcurrency  extends TestSuite
 {
 

@@ -18,39 +18,30 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.iri.IRIFactory;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.PropertyImpl;
+import org.apache.jena.rdf.model.impl.ResourceImpl;
+import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory;
+import org.apache.jena.reasoner.test.WGReasonerTester;
+import org.apache.jena.shared.BrokenException;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.impl.JenaParameters;
+import org.apache.jena.shared.wg.TestInputStreamFactory;
+import org.apache.jena.vocabulary.OWLResults;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
+import org.xml.sax.SAXException;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.xml.sax.SAXException;
-import org.apache.jena.iri.IRI;
-import org.apache.jena.iri.IRIFactory;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.PropertyImpl ;
-import org.apache.jena.rdf.model.impl.ResourceImpl ;
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
-import org.apache.jena.rdfxml.xmlinput.JenaReader ;
-import org.apache.jena.rdfxml.xmlinput.ParseException ;
-import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory ;
-import org.apache.jena.reasoner.test.WGReasonerTester ;
-import org.apache.jena.shared.BrokenException ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.impl.JenaParameters ;
-import org.apache.jena.shared.wg.TestInputStreamFactory ;
-import org.apache.jena.vocabulary.OWLResults ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import java.util.*;
 class WGTestSuite extends TestSuite implements ARPErrorNumbers {
 	static private Resource jena2;
 	static private Model testResults;

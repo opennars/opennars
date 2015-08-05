@@ -1,15 +1,15 @@
 package org.projog.core.function.io;
 
-import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
-import static org.projog.core.KnowledgeBaseUtils.getOperands;
-
-import java.io.InputStreamReader;
-
 import org.projog.core.FileHandles;
 import org.projog.core.Operands;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.parser.SentenceParser;
 import org.projog.core.term.PTerm;
+
+import java.io.InputStreamReader;
+
+import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
+import static org.projog.core.KnowledgeBaseUtils.getOperands;
 
 /* TEST
  %LINK prolog-io

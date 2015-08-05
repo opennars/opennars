@@ -18,14 +18,17 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.impl.OWLRuleTranslationHook ;
-import org.apache.jena.shared.impl.JenaParameters ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.rulesys.impl.OWLRuleTranslationHook;
+import org.apache.jena.shared.impl.JenaParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * A hybrid forward/backward implementation of the OWL closure rules.

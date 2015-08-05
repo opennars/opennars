@@ -18,7 +18,8 @@
 
 package org.apache.jena.util.iterator;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 /**
  * A variant on the closable/extended iterator that filters out

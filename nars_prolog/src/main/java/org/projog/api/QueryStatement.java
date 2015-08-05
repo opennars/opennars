@@ -1,6 +1,5 @@
 package org.projog.api;
 
-import jdk.nashorn.internal.objects.Global;
 import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.ProjogException;

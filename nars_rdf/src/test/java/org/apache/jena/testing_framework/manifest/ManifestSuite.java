@@ -18,11 +18,7 @@
 
 package org.apache.jena.testing_framework.manifest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.jena.shared.JenaException;
 import org.junit.internal.runners.ErrorReportingRunner;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -34,7 +30,7 @@ import org.junit.runners.model.RunnerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.jena.shared.JenaException;
+import java.util.*;
 
 /**
  * Class that runs the Manifest annotated tests.

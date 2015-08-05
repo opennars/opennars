@@ -18,9 +18,11 @@
 
 package org.apache.jena.assembler;
 
-import java.util.*;
+import org.apache.jena.reasoner.rulesys.Rule;
 
-import org.apache.jena.reasoner.rulesys.Rule ;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
     A RuleSet wraps a list of rules.

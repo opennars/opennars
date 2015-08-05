@@ -18,14 +18,14 @@
 
 package org.apache.jena.rdf.model.test;
 
-import java.io.FileNotFoundException ;
-import java.io.InputStream ;
-import java.net.URISyntaxException ;
-import java.net.URL ;
+import junit.framework.TestCase;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 
-import junit.framework.TestCase ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Base for all test cases.

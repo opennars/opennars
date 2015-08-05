@@ -8,14 +8,16 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.nal.LogicPolicy;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
-import nars.term.*;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Terms;
+import nars.term.Variables;
 import nars.truth.Truth;
 
 import java.util.ArrayList;
@@ -606,6 +608,9 @@ public interface Premise {
     }
 
     default public void removed(TaskSeed task, String reason) {
+        getMemory().removed(task, reason);
+    }
+    default public void removed(Task task, String reason) {
         getMemory().removed(task, reason);
     }
 

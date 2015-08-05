@@ -31,13 +31,13 @@
  */
 package automenta.rdp;
 
-import java.awt.Graphics;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
-
-import org.apache.log4j.Logger;
 
 public class WrappedImage {
 	static final Logger logger = Logger.getLogger(RdesktopCanvas.class);

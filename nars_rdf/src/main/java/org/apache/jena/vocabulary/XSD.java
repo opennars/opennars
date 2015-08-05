@@ -18,9 +18,9 @@
 
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.ResourceFactory ;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 /**
  * Defines Jena resources corresponding to the URIs for 

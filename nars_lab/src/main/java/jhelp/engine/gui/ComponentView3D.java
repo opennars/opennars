@@ -10,7 +10,6 @@ package jhelp.engine.gui;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.awt.GLJPanel;
 import jhelp.engine.JHelpSceneRenderer;
 import jhelp.engine.util.CanvasOpenGLMaker;
 

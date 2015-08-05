@@ -1,21 +1,17 @@
 package org.projog.core.function.db;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.Test;
+import org.projog.core.PredicateKey;
+import org.projog.core.term.IntegerNumber;
+import org.projog.core.term.PAtom;
+import org.projog.core.term.PTerm;
+import org.projog.core.term.PrologOperator;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.junit.Test;
-import org.projog.core.PredicateKey;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.IntegerNumber;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.PrologOperator;
+import static org.junit.Assert.*;
 
 public class RecordedDatabaseTest {
    @Test

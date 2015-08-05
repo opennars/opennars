@@ -7,23 +7,21 @@
  */
 package jhelp.util.gui;
 
+import com.sun.imageio.plugins.gif.GIFImageMetadata;
+import com.sun.imageio.plugins.gif.GIFImageReader;
+import jhelp.util.io.IntegerArrayInputStream;
+import jhelp.util.list.ArrayInt;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReadParam;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-
-import jhelp.util.io.IntegerArrayInputStream;
-import jhelp.util.list.ArrayInt;
-
-import com.sun.imageio.plugins.gif.GIFImageMetadata;
-import com.sun.imageio.plugins.gif.GIFImageReader;
 
 /**
  * GIF image <br>

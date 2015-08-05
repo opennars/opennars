@@ -1,11 +1,11 @@
 package jhelp.util.commands;
 
-import java.io.File;
-import java.util.List;
-
 import jhelp.util.debug.Debug;
 import jhelp.util.debug.DebugLevel;
 import jhelp.util.list.ListFromArray;
+
+import java.io.File;
+import java.util.List;
 
 class LinuxCommandsProvider
       implements CommandsProvider

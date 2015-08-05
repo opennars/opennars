@@ -18,11 +18,13 @@
 
 package org.apache.jena.util;
 
-import java.util.*;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.impl.ModelCom;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Model wrapper which provides normal access to an underlying model but

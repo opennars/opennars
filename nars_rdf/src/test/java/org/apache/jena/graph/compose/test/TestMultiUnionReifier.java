@@ -18,15 +18,15 @@
 
 package org.apache.jena.graph.compose.test;
 
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.GraphUtil ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.graph.test.NodeCreateUtils ;
-import org.apache.jena.rdf.model.impl.ReifierStd ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphUtil;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.graph.test.NodeCreateUtils;
+import org.apache.jena.rdf.model.impl.ReifierStd;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
     Test the reifier for multi-unions.

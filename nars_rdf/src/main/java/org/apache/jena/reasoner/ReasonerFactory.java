@@ -18,7 +18,8 @@
 
 package org.apache.jena.reasoner;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
 /**
  * The interface through which a reasoner (inference engine) can be

@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.HashMap;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.ModelGetter;
+import org.apache.jena.rdf.model.ModelReader;
 
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.ModelGetter ;
-import org.apache.jena.rdf.model.ModelReader ;
+import java.util.HashMap;
 
 public class MemoryModelGetter implements ModelGetter
 	{

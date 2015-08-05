@@ -18,12 +18,17 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.FileManagerAssembler;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.IteratorCollection;
+import org.apache.jena.util.LocationMapper;
+import org.apache.jena.util.Locator;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.FileManagerAssembler ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.util.* ;
+import java.util.Iterator;
+import java.util.List;
 
 public class TestFileManagerAssembler extends AssemblerTestBase
     {

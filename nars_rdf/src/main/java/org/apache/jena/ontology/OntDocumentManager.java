@@ -23,19 +23,20 @@ package org.apache.jena.ontology;
 
 // Imports
 ///////////////
-import java.io.InputStream ;
-import java.util.* ;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.shared.impl.PrefixMappingImpl ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.FileUtils ;
-import org.apache.jena.vocabulary.OntDocManagerVocab ;
-import org.apache.jena.vocabulary.RDF ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.shared.impl.PrefixMappingImpl;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.FileUtils;
+import org.apache.jena.vocabulary.OntDocManagerVocab;
+import org.apache.jena.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.*;
 
 
 /**

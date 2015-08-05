@@ -18,18 +18,18 @@
 
 package org.apache.jena.assembler.acceptance;
 
-import java.io.File ;
-import java.io.FileOutputStream ;
-import java.io.IOException ;
+import junit.framework.TestSuite;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.test.AssemblerTestBase;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.util.FileUtils;
 
-import junit.framework.TestSuite ;
-import org.apache.jena.assembler.Assembler ;
-import org.apache.jena.assembler.test.AssemblerTestBase ;
-import org.apache.jena.rdf.model.InfModel ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.reasoner.rulesys.GenericRuleReasoner ;
-import org.apache.jena.util.FileUtils ;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class AllAccept extends AssemblerTestBase
     {

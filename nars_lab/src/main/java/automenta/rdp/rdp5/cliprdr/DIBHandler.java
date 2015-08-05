@@ -30,9 +30,9 @@
 package automenta.rdp.rdp5.cliprdr;
 
 import automenta.rdp.AbstractRdpPacket;
-import automenta.rdp.rdp.Utilities_Localised;
 import automenta.rdp.Common;
 import automenta.rdp.Input;
+import automenta.rdp.rdp.Utilities_Localised;
 import org.apache.log4j.Logger;
 
 import java.awt.*;

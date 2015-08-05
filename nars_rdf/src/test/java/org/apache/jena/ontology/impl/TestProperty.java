@@ -23,15 +23,16 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.util.List;
 
 import junit.framework.TestSuite;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.Property ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.vocabulary.RDF;
+
+import java.util.List;
 
 
 

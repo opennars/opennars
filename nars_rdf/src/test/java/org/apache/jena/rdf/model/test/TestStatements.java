@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.graph.FrontsTriple ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.test.JenaTestBase ;
-import org.apache.jena.vocabulary.RDF ;
+import org.apache.jena.graph.FrontsTriple;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.test.JenaTestBase;
+import org.apache.jena.vocabulary.RDF;
 import org.junit.Assert;
 
 public class TestStatements extends AbstractModelTestBase

@@ -20,23 +20,25 @@ package org.apache.jena.reasoner.rulesys.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import java.util.*;
-
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.GenericRuleReasoner.RuleMode ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.LocationMapper ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import org.apache.jena.graph.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Derivation;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner.RuleMode;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.LocationMapper;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
+import java.util.List;
 
 
 /**

@@ -18,16 +18,16 @@
 
 package org.apache.jena.rdf.model.test;
 
+import org.apache.jena.graph.test.GraphTestBase;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.vocabulary.RDF;
+import org.junit.Assert;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.jena.graph.test.GraphTestBase ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.vocabulary.RDF ;
-import org.junit.Assert;
 
 public class TestObjects extends AbstractModelTestBase
 {

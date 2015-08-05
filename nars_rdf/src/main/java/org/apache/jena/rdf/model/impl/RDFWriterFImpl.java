@@ -18,13 +18,16 @@
 
 package org.apache.jena.rdf.model.impl;
 
+import org.apache.jena.Jena;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.n3.N3JenaWriter;
+import org.apache.jena.rdf.model.RDFWriter;
+import org.apache.jena.rdf.model.RDFWriterF;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.NoWriterForLangException;
+
 import java.util.Arrays;
 import java.util.Properties;
-
-import org.apache.jena.* ;
-import org.apache.jena.n3.N3JenaWriter ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
 
 
 /**

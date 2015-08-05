@@ -18,15 +18,18 @@
 
 package org.apache.jena.rdf.model;
 
-import java.util.Calendar;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.rdf.model.impl.LiteralImpl;
+import org.apache.jena.rdf.model.impl.PropertyImpl;
+import org.apache.jena.rdf.model.impl.ResourceImpl;
+import org.apache.jena.rdf.model.impl.StatementImpl;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDatatype ;
-import org.apache.jena.datatypes.xsd.XSDDateTime ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.rdf.model.impl.* ;
+import java.util.Calendar;
 
 /** A Factory class for creating resources.
  * 

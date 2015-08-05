@@ -16,16 +16,16 @@ import nars.core.Events.TaskAdd;
 import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.model.Default;
 import nars.cycle.NAL;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
-import nars.narsese.Narsese;
+import nars.model.Default;
 import nars.nal.TruthFunctions;
 import nars.nal.entity.Task;
 import nars.nal.language.Interval;
 import nars.nal.language.Tense;
 import nars.nal.language.Term;
+import nars.narsese.Narsese;
 import nars.task.task.filter.LimitDerivationPriority;
 
 import javax.swing.*;

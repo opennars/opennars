@@ -23,18 +23,25 @@ package jena.test;
 
 // Imports
 ///////////////
-import java.io.*;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.regex.Pattern;
 
 import jena.schemagen;
 import jena.schemagen.SchemagenOptionsImpl;
 import junit.framework.TestCase;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.FileUtils ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 
 /**

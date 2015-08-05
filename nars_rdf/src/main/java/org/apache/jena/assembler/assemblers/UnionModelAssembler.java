@@ -18,16 +18,16 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import org.apache.jena.assembler.Assembler ;
-import org.apache.jena.assembler.JA ;
-import org.apache.jena.assembler.Mode ;
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.rdf.model.StmtIterator ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.StmtIterator;
 
 public class UnionModelAssembler extends ModelAssembler implements Assembler
     {

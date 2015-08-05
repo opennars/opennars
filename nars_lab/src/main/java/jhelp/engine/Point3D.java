@@ -3,9 +3,9 @@
 package jhelp.engine;
 
 import com.jogamp.opengl.GL2;
+import jhelp.engine.util.Math3D;
 import jhelp.math.Vec3f;
 import jhelp.math.Vec4f;
-import jhelp.engine.util.Math3D;
 
 /**
  * 3D point, can be used like vector <br>

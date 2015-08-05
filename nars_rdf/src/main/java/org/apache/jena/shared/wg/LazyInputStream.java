@@ -19,7 +19,8 @@
 package org.apache.jena.shared.wg;
 
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  *In test cases we cannot open all the input files

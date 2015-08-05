@@ -7,12 +7,12 @@
  */
 package jhelp.util.filter;
 
+import jhelp.util.debug.Debug;
+import jhelp.util.io.FileImageInformation;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.io.FileImageInformation;
 
 /**
  * File filter on extention.<br>

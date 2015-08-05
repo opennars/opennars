@@ -18,13 +18,15 @@
 
 package org.apache.jena.assembler.test;
 
-import java.util.*;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.LocationMapperAssembler;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.IteratorCollection;
+import org.apache.jena.util.LocationMapper;
+import org.apache.jena.vocabulary.LocationMappingVocab;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.LocationMapperAssembler ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.util.* ;
-import org.apache.jena.vocabulary.LocationMappingVocab ;
+import java.util.Set;
 
 public class TestLocationMapperAssembler extends AssemblerTestBase
     {

@@ -1,12 +1,12 @@
 package org.projog.core;
 
-import static org.projog.core.term.TermUtils.getAtomName;
-import static org.projog.core.term.TermUtils.toInt;
-
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PrologOperator;
+
+import static org.projog.core.term.TermUtils.getAtomName;
+import static org.projog.core.term.TermUtils.toInt;
 
 /**
  * Represents the structure of a {@link PTerm}.

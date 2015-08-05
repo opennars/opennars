@@ -1,15 +1,8 @@
 package jhelp.util.io.pipe;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
 import jhelp.util.io.UtilIO;
+
+import java.io.*;
 
 /**
  * Pipe common operations, <br>

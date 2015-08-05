@@ -18,10 +18,14 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import java.util.*;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.reasoner.rulesys.Util;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * CountLiteralValues(X, P, C) sets C to be the number of semantically

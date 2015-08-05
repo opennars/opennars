@@ -1,7 +1,6 @@
 package nars.guifx;
 
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;

@@ -18,7 +18,7 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Property;
 
 /**
     Exception to throw if something does not have the specified property.

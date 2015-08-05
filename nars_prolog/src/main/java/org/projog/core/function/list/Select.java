@@ -1,13 +1,13 @@
 package org.projog.core.function.list;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.ListUtils;
 import org.projog.core.term.PTerm;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /* TEST
  %QUERY select(X,[h,e,l,l,o],Z)

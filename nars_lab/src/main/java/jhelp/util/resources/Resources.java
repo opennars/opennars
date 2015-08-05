@@ -1,22 +1,17 @@
 package jhelp.util.resources;
 
+import jhelp.util.debug.Debug;
+import jhelp.util.gui.JHelpImage;
+import jhelp.util.io.UtilIO;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.gui.JHelpImage;
-import jhelp.util.io.UtilIO;
 
 /**
  * Access to internal resources.<br>

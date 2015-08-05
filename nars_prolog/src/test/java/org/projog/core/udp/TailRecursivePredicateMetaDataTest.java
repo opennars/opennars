@@ -1,18 +1,15 @@
 package org.projog.core.udp;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.KB;
 import org.projog.core.term.PTerm;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class TailRecursivePredicateMetaDataTest {
    private final KB kb = TestUtils.createKnowledgeBase();

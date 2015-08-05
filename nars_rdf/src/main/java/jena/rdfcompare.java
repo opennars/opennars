@@ -18,12 +18,13 @@
 
 package jena;
 
-import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 
-import java.net.URL;
 import java.io.FileInputStream;
+import java.net.URL;
 
-import org.apache.jena.rdf.model.* ;
+import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
 
 /** A program which read two RDF models and determines if they are the same.
  *

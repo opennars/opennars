@@ -29,16 +29,11 @@
  */
 package automenta.rdp.tools;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
 import automenta.rdp.Input;
 import automenta.rdp.Rdp;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class SendEvent extends JFrame {
 

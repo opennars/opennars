@@ -62,9 +62,9 @@ public final class SyllogisticRules {
      * @param term2    Predicate of the first new task
      * @param sentence The first premise
      * @param belief   The second premise
-     * @param nal      Reference to the memory
+     * @param p      Reference to the memory
      */
-    public static void dedExe(Term term1, Term term2, Task<Statement> sentence, Sentence belief, NAL nal) {
+    public static void dedExe(Term term1, Term term2, Task<Statement> sentence, Sentence belief, Premise p) {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
@@ -81,11 +81,11 @@ public final class SyllogisticRules {
         Truth truth2 = null;
         Budget budget1, budget2;
         if (sentence.isQuestion()) {
-            budget1 = BudgetFunctions.backwardWeak(value2, nal);
-            budget2 = BudgetFunctions.backwardWeak(value2, nal);
+            budget1 = BudgetFunctions.backwardWeak(value2, p);
+            budget2 = BudgetFunctions.backwardWeak(value2, p);
         } else if (sentence.isQuest()) {
-            budget1 = BudgetFunctions.backward(value2, nal);
-            budget2 = BudgetFunctions.backward(value2, nal);
+            budget1 = BudgetFunctions.backward(value2, p);
+            budget2 = BudgetFunctions.backward(value2, p);
         } else {
             if (sentence.isGoal()) {
                 truth1 = TruthFunctions.desireWeak(value1, value2);
@@ -100,8 +100,8 @@ public final class SyllogisticRules {
                 }
             }
 
-            budget1 = BudgetFunctions.forward(truth1, nal);
-            budget2 = BudgetFunctions.forward(truth2, nal);
+            budget1 = BudgetFunctions.forward(truth1, p);
+            budget2 = BudgetFunctions.forward(truth2, p);
         }
         Statement content = sentence.getTerm();
         Statement content1 = Statement.make(content, term1, term2, order);
@@ -111,8 +111,8 @@ public final class SyllogisticRules {
             return;
 
         //final Stamper stamp = nal.newStamp(sentence, belief);
-        nal.deriveDouble(content1, sentence.getPunctuation(), truth1, budget1, sentence, belief, false, false);
-        nal.deriveDouble(content2, sentence.getPunctuation(), truth2, budget2, sentence, belief, false, false);
+        p.deriveDouble(content1, sentence.getPunctuation(), truth1, budget1, sentence, belief, false, false);
+        p.deriveDouble(content2, sentence.getPunctuation(), truth2, budget2, sentence, belief, false, false);
     }
 
     /**
@@ -124,9 +124,9 @@ public final class SyllogisticRules {
      * @param sentence2 The second premise
      * @param figure    Locations of the shared term in premises --- can be
      *                  removed?
-     * @param nal       Reference to the memory
+     * @param p       Reference to the memory
      */
-    public static void abdIndCom(final Term term1, final Term term2, final Task sentence1, final Sentence sentence2, final int figure, final NAL nal) {
+    public static void abdIndCom(final Term term1, final Term term2, final Task sentence1, final Sentence sentence2, final int figure, final Premise p) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
             return;
         }
@@ -155,25 +155,25 @@ public final class SyllogisticRules {
 
         final boolean requiresTruth;
 
-        char p = sentence1.getPunctuation();
-        if (p == Symbols.QUESTION) {
+        final char punc = sentence1.getPunctuation();
+        if (punc == Symbols.QUESTION) {
             requiresTruth = false;
 
-            budget1 = BudgetFunctions.backward(value2, nal);
-            budget2 = BudgetFunctions.backwardWeak(value2, nal);
-            budget3 = BudgetFunctions.backward(value2, nal);
+            budget1 = BudgetFunctions.backward(value2, p);
+            budget2 = BudgetFunctions.backwardWeak(value2, p);
+            budget3 = BudgetFunctions.backward(value2, p);
 
-        } else if (p == Symbols.QUEST) {
+        } else if (punc == Symbols.QUEST) {
             requiresTruth = false;
 
-            budget1 = BudgetFunctions.backwardWeak(value2, nal);
-            budget2 = BudgetFunctions.backward(value2, nal);
-            budget3 = BudgetFunctions.backwardWeak(value2, nal);
+            budget1 = BudgetFunctions.backwardWeak(value2, p);
+            budget2 = BudgetFunctions.backward(value2, p);
+            budget3 = BudgetFunctions.backwardWeak(value2, p);
 
         } else {
             requiresTruth = true;
 
-            if (p == Symbols.GOAL) {
+            if (punc == Symbols.GOAL) {
                 truth1 = TruthFunctions.desireStrong(value1, value2);
                 truth2 = TruthFunctions.desireWeak(value2, value1);
                 truth3 = TruthFunctions.desireStrong(value1, value2);
@@ -184,9 +184,9 @@ public final class SyllogisticRules {
                 truth3 = TruthFunctions.comparison(value1, value2);
             }
 
-            budget1 = BudgetFunctions.forward(truth1, nal);
-            budget2 = BudgetFunctions.forward(truth2, nal);
-            budget3 = BudgetFunctions.forward(truth3, nal);
+            budget1 = BudgetFunctions.forward(truth1, p);
+            budget2 = BudgetFunctions.forward(truth2, p);
+            budget3 = BudgetFunctions.forward(truth3, p);
         }
 
 
@@ -195,24 +195,24 @@ public final class SyllogisticRules {
         if ((!requiresTruth) || (truth1 != null)) {
             Statement s = Statement.make(taskContent, term1, term2, order).normalized();
             if (s != null) {
-                nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth1).budget(budget1));
-                //nal.deriveDouble(s, p, truth1, budget1, sentence1, sentence2, false, false);
+                p.deriveDouble(p.newTask(s, punc).parent(sentence1, sentence2).truth(truth1).budget(budget1));
+                //p.deriveDouble(s, punc, truth1, budget1, sentence1, sentence2, false, false);
             }
         }
 
         if ((!requiresTruth) || (truth2 != null)) {
             Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order)).normalized();
             if (s != null) {
-                nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth2).budget(budget2));
-                //nal.deriveDouble(s, p, truth2, budget2, sentence1, sentence2, false, false);
+                p.deriveDouble(p.newTask(s, punc).parent(sentence1, sentence2).truth(truth2).budget(budget2));
+                //p.deriveDouble(s, punc, truth2, budget2, sentence1, sentence2, false, false);
             }
         }
 
         if ((!requiresTruth) || (truth3 != null)) {
             Statement s = Terms.makeSymStatement(taskContent, term1, term2, order).normalized();
             if (s != null) {
-                nal.deriveDouble(nal.newTask(s, p).parent(sentence1, sentence2).truth(truth3).budget(budget3));
-                //nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
+                p.deriveDouble(p.newTask(s, punc).parent(sentence1, sentence2).truth(truth3).budget(budget3));
+                //p.deriveDouble(s, punc, truth3, budget3, sentence1, sentence2, false, false);
             }
 
             if (Global.BREAK_NAL_HOL_BOUNDARY && order1 == order2 && isHigherOrderStatement(taskContent) && isHigherOrderStatement(sentence2.getTerm())) { //
@@ -230,15 +230,15 @@ public final class SyllogisticRules {
                 truth2=truth2.clone();*/
                 if (truth3 != null)
                     truth3 = new DefaultTruth(truth3);
-       /* nal.doublePremiseTask(
+       /* p.doublePremiseTask(
             Statement.make(NativeOperator.INHERITANCE, term1, term2),
                 truth1, budget1.clone(),false, false);
-        nal.doublePremiseTask(
+        p.doublePremiseTask(
             Statement.make(NativeOperator.INHERITANCE, term2, term1),
                 truth2, budget2.clone(),false, false);*/
                 Statement s2 = Similarity.make(term1, term2).normalized();
                 if (s2 != null) {
-                    nal.deriveDouble(nal.newTask(s2, p).parent(sentence1, sentence2)
+                    p.deriveDouble(p.newTask(s2, punc).parent(sentence1, sentence2)
                                     .truth(truth3)
                                     .budget(budget2)
                     );
@@ -331,9 +331,9 @@ public final class SyllogisticRules {
      * @param sentence The second premise
      * @param belief   The first premise
      * @param figure   Locations of the shared term in premises
-     * @param nal      Reference to the memory
+     * @param p      Reference to the memory
      */
-    public static boolean resemblance(Term term1, Term term2, Task<Statement> sentence, Sentence<Statement> belief, int figure, NAL nal) {
+    public static boolean resemblance(Term term1, Term term2, Task<Statement> sentence, Sentence<Statement> belief, int figure, Premise p) {
         if (Statement.invalidStatement(term1, term2)) {
             return false;
         }
@@ -347,14 +347,14 @@ public final class SyllogisticRules {
         Truth truth = null;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
-            budget = BudgetFunctions.backward(belief.getTruth(), nal);
+            budget = BudgetFunctions.backward(belief.getTruth(), p);
         } else {
             if (sentence.isGoal()) {
                 truth = TruthFunctions.desireStrong(sentence.getTruth(), belief.getTruth());
             } else {
                 truth = TruthFunctions.resemblance(belief.getTruth(), sentence.getTruth());
             }
-            budget = BudgetFunctions.forward(truth, nal);
+            budget = BudgetFunctions.forward(truth, p);
         }
 
         boolean beliefTermHO = isHigherOrderStatement(belief.getTerm());
@@ -377,7 +377,7 @@ public final class SyllogisticRules {
             return false;
 
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
-        boolean s1 = null != nal.deriveDouble(s, sentence.getPunctuation(), truth, budget, sentence, belief, false, true), s2 = false;
+        boolean s1 = null != p.deriveDouble(s, sentence.getPunctuation(), truth, budget, sentence, belief, false, true), s2 = false;
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
 
         if (Global.BREAK_NAL_HOL_BOUNDARY && !sentence.getTerm().hasVarIndep() && (st instanceof Equivalence) &&
@@ -392,11 +392,11 @@ public final class SyllogisticRules {
             if (sentence.isQuestion()) {
                /* budget1 = BudgetFunctions.backward(value2, nal);
                 budget2 = BudgetFunctions.backwardWeak(value2, nal);*/
-                budget3 = BudgetFunctions.backward(value2, nal);
+                budget3 = BudgetFunctions.backward(value2, p);
             } else if (sentence.isQuest()) {
                /* budget1 = BudgetFunctions.backwardWeak(value2, nal);
                 budget2 = BudgetFunctions.backward(value2, nal);*/
-                budget3 = BudgetFunctions.backwardWeak(value2, nal);
+                budget3 = BudgetFunctions.backwardWeak(value2, p);
             } else {
                 if (sentence.isGoal()) {
                   /*  truth1 = TruthFunctions.desireStrong(value1, value2);
@@ -411,7 +411,7 @@ public final class SyllogisticRules {
 
                 /*budget1 = BudgetFunctions.forward(truth1, nal);
                 budget2 = BudgetFunctions.forward(truth2, nal);*/
-                budget3 = BudgetFunctions.forward(truth3, nal);
+                budget3 = BudgetFunctions.forward(truth3, p);
             }
 
             /* Bridge to higher order statements:
@@ -426,7 +426,7 @@ public final class SyllogisticRules {
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1),
                     truth2, budget2.clone(),false, false);*/
-            s2 = null != nal.deriveDouble(
+            s2 = null != p.deriveDouble(
                     Statement.make(Op.SIMILARITY, term1, term2, true, TemporalRules.ORDER_NONE),
                     sentence.getPunctuation(),
                     truth3, budget3.clone(), sentence, belief, false, false);

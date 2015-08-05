@@ -18,12 +18,12 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
-import org.apache.jena.rdf.model.test.helpers.ModelHelper ;
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.rdf.model.test.helpers.ModelHelper;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
 import org.junit.Assert;
 
 public class TestContains extends AbstractModelTestBase

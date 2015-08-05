@@ -1,12 +1,10 @@
 package org.projog.core.udp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.term.PTerm;
+
+import static org.junit.Assert.*;
 
 public class DefiniteClauseGrammerConvertorTest {
    @Test

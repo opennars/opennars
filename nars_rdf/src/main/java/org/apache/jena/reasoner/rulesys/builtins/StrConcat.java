@@ -18,10 +18,10 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.reasoner.rulesys.BuiltinException ;
-import org.apache.jena.reasoner.rulesys.RuleContext ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.reasoner.rulesys.BuiltinException;
+import org.apache.jena.reasoner.rulesys.RuleContext;
 
 /**
  * Builtin which concatenates a set of strings. It binds the last argument to 

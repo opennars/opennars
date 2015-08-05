@@ -24,7 +24,7 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.apache.jena.rdfxml.xmlinput.ParseException ;
+import org.apache.jena.rdfxml.xmlinput.ParseException;
 
 /**
  */

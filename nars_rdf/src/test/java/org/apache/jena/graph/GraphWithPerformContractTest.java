@@ -18,20 +18,15 @@
 
 package org.apache.jena.graph;
 
-import static org.apache.jena.testing_framework.GraphHelper.graphWith;
-import static org.apache.jena.testing_framework.GraphHelper.triple;
-import static org.apache.jena.testing_framework.GraphHelper.txnBegin;
-import static org.apache.jena.testing_framework.GraphHelper.txnCommit;
-
-import static org.junit.Assert.*;
-
+import org.apache.jena.graph.impl.GraphWithPerform;
 import org.junit.After;
 import org.xenei.junit.contract.Contract;
 import org.xenei.junit.contract.ContractTest;
-
-import org.apache.jena.graph.impl.GraphWithPerform;
-
 import org.xenei.junit.contract.IProducer;
+
+import static org.apache.jena.testing_framework.GraphHelper.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * GraphWithPerform is an implementation interface that extends Graph with the

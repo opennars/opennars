@@ -12,9 +12,7 @@ import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.premise.Premise;
 import nars.task.Task;
-import nars.term.Term;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
@@ -25,7 +23,7 @@ import nars.term.Term;
  * */
 public class ConceptProcess extends NAL  {
 
-    protected final TaskLink currentTaskLink;
+    protected final TaskLink taskLink;
     protected final Concept concept;
     private final int termlinksToReason;
 
@@ -42,9 +40,9 @@ public class ConceptProcess extends NAL  {
     private long now;
 
     public ConceptProcess(Memory memory, Concept concept, TaskLink taskLink, int termlinksFired) {
-        super(memory, taskLink.getTask());
+        super(memory);
 
-        this.currentTaskLink = taskLink;
+        this.taskLink = taskLink;
         this.concept = concept;
         this.termlinksToReason = termlinksFired;
     }
@@ -74,7 +72,7 @@ public class ConceptProcess extends NAL  {
     }
 
     @Override
-    protected void onFinished() {
+    protected void afterDerive() {
         beforeFinish();
 
         if (derived!=null)
@@ -170,12 +168,12 @@ public class ConceptProcess extends NAL  {
     }
 
     @Override
-    protected void onStart() {
+    protected void beforeDerive() {
         memory.emotion.busy(this);
     }
 
     @Override
-    protected void process() {
+    protected void derive() {
 
         emit(Events.ConceptProcessed.class, this);
         memory.logic.TASKLINK_FIRE.hit();
@@ -183,7 +181,7 @@ public class ConceptProcess extends NAL  {
         final long now = this.now = memory.time();
 
         concept.setUsed(now);
-        currentTaskLink.setUsed(now);
+        taskLink.setUsed(now);
 
         final Bag<TermLinkKey, TermLink> tl = concept.getTermLinks();
         if (tl!=null)
@@ -191,11 +189,11 @@ public class ConceptProcess extends NAL  {
 
         processTask();
 
-        if (currentTaskLink.type != TermLink.TRANSFORM) {
+        if (taskLink.type != TermLink.TRANSFORM) {
             processTerms();
         }
 
-        currentTaskLink.setFired(now);
+        taskLink.setFired(now);
     }
 
 
@@ -233,7 +231,7 @@ public class ConceptProcess extends NAL  {
      */
     @Override
     public TaskLink getTaskLink() {
-        return currentTaskLink;
+        return taskLink;
     }
 
 
@@ -264,7 +262,7 @@ public class ConceptProcess extends NAL  {
     @Override
     public String toString() {
         return new StringBuilder()
-        .append("ConceptProcess[").append(concept.toString()).append(':').append(currentTaskLink).append(',').append(currentTermLink).append(']')
+        .append("ConceptProcess[").append(concept.toString()).append(':').append(taskLink).append(',').append(currentTermLink).append(']')
         .toString();
     }
 

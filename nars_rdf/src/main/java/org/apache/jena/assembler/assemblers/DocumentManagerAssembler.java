@@ -18,10 +18,13 @@
 
 package org.apache.jena.assembler.assemblers;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.ontology.OntDocumentManager ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.* ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.ontology.OntDocumentManager;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.ResourceUtils;
 
 public class DocumentManagerAssembler extends AssemblerBase 
     {    

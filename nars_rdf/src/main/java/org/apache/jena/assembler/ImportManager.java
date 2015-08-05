@@ -18,13 +18,16 @@
 
 package org.apache.jena.assembler;
 
-import java.util.*;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.vocabulary.OWL;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.vocabulary.* ;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class ImportManager
     {

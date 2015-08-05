@@ -18,7 +18,7 @@
 
 package org.apache.jena.util.iterator;
 
-import java.util.*;
+import java.util.Iterator;
 
 /**
     a WrappedIterator is an ExtendedIterator wrapping around a plain (or

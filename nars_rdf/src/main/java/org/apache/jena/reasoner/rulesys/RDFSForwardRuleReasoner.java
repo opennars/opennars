@@ -18,11 +18,11 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.*;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.reasoner.BaseInfGraph;
+import org.apache.jena.reasoner.ReasonerFactory;
 
-import org.apache.jena.graph.Capabilities ;
-import org.apache.jena.reasoner.BaseInfGraph ;
-import org.apache.jena.reasoner.ReasonerFactory ;
+import java.util.List;
 
 /** 
  * A pure forward chaining implementation of the RDFS closure rules

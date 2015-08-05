@@ -18,14 +18,14 @@
 
 package org.apache.jena.testing_framework.manifest;
 
-import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.runner.Description;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
 
 public class ManifestTestRunner extends BlockJUnit4ClassRunner {
 

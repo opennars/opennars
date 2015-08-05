@@ -18,9 +18,9 @@
 
 package org.apache.jena.graph.compose;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 /**
      DisjointUnion - a version of Union that assumes the graphs are disjoint, and

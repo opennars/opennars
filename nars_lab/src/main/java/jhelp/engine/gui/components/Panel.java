@@ -7,14 +7,14 @@
  */
 package jhelp.engine.gui.components;
 
-import java.awt.Dimension;
-import java.util.Enumeration;
-import java.util.Hashtable;
-
 import jhelp.engine.Texture;
 import jhelp.engine.gui.layout.Constraints;
 import jhelp.engine.gui.layout.Layout;
 import jhelp.engine.gui.layout.LayoutElement;
+
+import java.awt.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * A panel (Contains other components with a layout) <br>

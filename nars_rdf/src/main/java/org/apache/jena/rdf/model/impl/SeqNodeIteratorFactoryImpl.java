@@ -18,9 +18,12 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import java.util.Iterator;
+import org.apache.jena.rdf.model.Container;
+import org.apache.jena.rdf.model.NodeIterator;
+import org.apache.jena.rdf.model.Seq;
+import org.apache.jena.rdf.model.Statement;
 
-import org.apache.jena.rdf.model.* ;
+import java.util.Iterator;
 
 /** An internal class not normally of interest to application developers.
  *  A factory for sequence node iterators.

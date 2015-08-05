@@ -1,10 +1,10 @@
 package jhelp.util.text;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 import jhelp.util.Utilities;
 import jhelp.util.list.Pair;
+
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 /**
  * Cut string with separator, like {@link StringTokenizer}, but in addition it can detect Strings and not cut on them, it can

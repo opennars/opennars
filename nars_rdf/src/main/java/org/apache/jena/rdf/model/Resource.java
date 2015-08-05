@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.shared.PropertyNotFoundException ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.shared.PropertyNotFoundException;
 
 
 /** An RDF Resource.

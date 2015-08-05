@@ -18,12 +18,8 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.apache.jena.rdfxml.xmlinput.SAX2RDF ;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.apache.jena.rdfxml.xmlinput.SAX2RDF;
+import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
 /**
  * This class is public merely to reduce the amount of irrelevant documentation

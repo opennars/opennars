@@ -18,9 +18,11 @@
 
 package org.apache.jena.vocabulary;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.ReasonerRegistry ;
-import org.apache.jena.reasoner.rulesys.RDFSRuleReasoner ;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.reasoner.rulesys.RDFSRuleReasoner;
 
 /**
  * A collection of RDF terms used in driving or configuring some of the

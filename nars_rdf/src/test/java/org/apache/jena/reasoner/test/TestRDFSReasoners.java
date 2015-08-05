@@ -18,19 +18,26 @@
 
 package org.apache.jena.reasoner.test;
 
-import java.io.*;
-import java.util.Iterator;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.ValidityReport.Report ;
-import org.apache.jena.reasoner.rulesys.RDFSFBRuleReasonerFactory ;
-import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.ValidityReport;
+import org.apache.jena.reasoner.ValidityReport.Report;
+import org.apache.jena.reasoner.rulesys.RDFSFBRuleReasonerFactory;
+import org.apache.jena.reasoner.rulesys.RDFSRuleReasonerFactory;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
 
 /**
  * Test the set of admissable RDFS reasoners.

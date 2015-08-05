@@ -17,7 +17,7 @@
  */
 package jurls.reinforcementlearning.domains.arcade.screen;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /** Converts a ScreenMatrix to a BufferedImage, using a ColorMap.

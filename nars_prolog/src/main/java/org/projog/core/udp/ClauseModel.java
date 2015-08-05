@@ -1,10 +1,10 @@
 package org.projog.core.udp;
 
-import static org.projog.core.KnowledgeBaseUtils.IMPLICATION_PREDICATE_NAME;
-
 import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
+
+import static org.projog.core.KnowledgeBaseUtils.IMPLICATION_PREDICATE_NAME;
 
 /**
  * Represents a clause.

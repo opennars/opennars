@@ -18,13 +18,20 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.AssemblerBase ;
-import org.apache.jena.assembler.exceptions.CannotConstructException ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.vocabulary.* ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.AssemblerBase;
+import org.apache.jena.assembler.exceptions.CannotConstructException;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.shared.BrokenException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.vocabulary.LocationMappingVocab;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 
 /**
     A convenient base class for Assembler tests. The instance methods

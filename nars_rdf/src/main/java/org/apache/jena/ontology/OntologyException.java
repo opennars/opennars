@@ -20,7 +20,7 @@
 ///////////////
 package org.apache.jena.ontology;
 
-import org.apache.jena.shared.* ;
+import org.apache.jena.shared.JenaException;
 
 
 // Imports

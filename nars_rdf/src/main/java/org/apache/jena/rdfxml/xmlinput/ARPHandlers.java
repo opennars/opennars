@@ -18,8 +18,8 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
-import org.apache.jena.rdfxml.xmlinput.impl.DefaultErrorHandler ;
-import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler ;
+import org.apache.jena.rdfxml.xmlinput.impl.DefaultErrorHandler;
+import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler;
 import org.xml.sax.ErrorHandler;
 
 

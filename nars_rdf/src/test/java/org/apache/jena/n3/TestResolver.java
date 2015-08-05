@@ -20,8 +20,6 @@ package org.apache.jena.n3;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.n3.IRIResolver ;
-import org.apache.jena.n3.JenaURIException ;
 @SuppressWarnings("deprecation")
 public class TestResolver extends TestCase
 {

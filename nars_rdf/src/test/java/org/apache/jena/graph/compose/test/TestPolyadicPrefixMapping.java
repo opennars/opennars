@@ -19,10 +19,13 @@
 package org.apache.jena.graph.compose.test;
 
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.compose.* ;
-import org.apache.jena.shared.AbstractTestPrefixMapping ;
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.graph.compose.Polyadic;
+import org.apache.jena.graph.compose.PolyadicPrefixMappingImpl;
+import org.apache.jena.shared.AbstractTestPrefixMapping;
+import org.apache.jena.shared.PrefixMapping;
 
 public class TestPolyadicPrefixMapping extends AbstractTestPrefixMapping
     {

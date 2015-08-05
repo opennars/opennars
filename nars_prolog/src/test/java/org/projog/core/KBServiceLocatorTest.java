@@ -1,16 +1,12 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-import static org.projog.TestUtils.createKnowledgeBase;
+import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.createKnowledgeBase;
 
 public class KBServiceLocatorTest {
    /** Tests one-to-one relationship between KnowledgeBase and KnowledgeBaseServiceLocator instances */

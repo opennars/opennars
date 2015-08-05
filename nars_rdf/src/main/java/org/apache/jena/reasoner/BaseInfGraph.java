@@ -18,13 +18,15 @@
 
 package org.apache.jena.reasoner;
 
-import java.util.Iterator;
+import org.apache.jena.graph.*;
+import org.apache.jena.graph.compose.MultiUnion;
+import org.apache.jena.graph.impl.AllCapabilities;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.graph.impl.TransactionHandlerBase;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.compose.MultiUnion ;
-import org.apache.jena.graph.impl.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
 
 /**
  * A base level implementation of the InfGraph interface.

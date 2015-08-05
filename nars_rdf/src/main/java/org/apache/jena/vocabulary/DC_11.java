@@ -18,8 +18,11 @@
 
 /* CVS $Id: DC_11.java,v 1.1 2009-06-29 08:55:36 castagna Exp $ */
 package org.apache.jena.vocabulary;
- 
-import org.apache.jena.rdf.model.* ;
+
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
  
 /**
  * Vocabulary definitions from file:vocabularies/dublin-core_11.xml

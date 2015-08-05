@@ -1,14 +1,5 @@
 package org.projog.core.function.kb;
 
-import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
-import static org.projog.core.KnowledgeBaseUtils.getPredicateKeysByName;
-import static org.projog.core.KnowledgeBaseUtils.getTermFormatter;
-import static org.projog.core.term.TermUtils.getAtomName;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.projog.core.FileHandles;
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractSingletonPredicate;
@@ -16,6 +7,13 @@ import org.projog.core.term.PTerm;
 import org.projog.core.term.TermFormatter;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.UserDefinedPredicateFactory;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.projog.core.KnowledgeBaseUtils.*;
+import static org.projog.core.term.TermUtils.getAtomName;
 
 /* TEST
  test(X) :- X < 3.

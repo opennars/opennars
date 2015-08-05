@@ -1,7 +1,9 @@
 package org.projog;
 
-import static org.junit.Assert.assertTrue;
-import static org.projog.core.KnowledgeBaseUtils.getOperands;
+import org.projog.core.*;
+import org.projog.core.parser.SentenceParser;
+import org.projog.core.term.*;
+import org.projog.core.udp.ClauseModel;
 
 import java.io.File;
 import java.io.FileReader;
@@ -10,23 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.projog.core.KB;
-import org.projog.core.KnowledgeBaseUtils;
-import org.projog.core.Operands;
-import org.projog.core.PredicateKey;
-import org.projog.core.ProjogProperties;
-import org.projog.core.ProjogSystemProperties;
-import org.projog.core.parser.SentenceParser;
-import org.projog.core.term.PAtom;
-import org.projog.core.term.DecimalFraction;
-import org.projog.core.term.IntegerNumber;
-import org.projog.core.term.PList;
-import org.projog.core.term.ListFactory;
-import org.projog.core.term.PStruct;
-import org.projog.core.term.PTerm;
-import org.projog.core.term.TermFormatter;
-import org.projog.core.term.PVar;
-import org.projog.core.udp.ClauseModel;
+import static org.junit.Assert.assertTrue;
+import static org.projog.core.KnowledgeBaseUtils.getOperands;
 
 /**
  * Helper methods for performing unit tests.

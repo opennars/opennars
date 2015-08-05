@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdf.model;
 
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.GraphExtract ;
-import org.apache.jena.graph.TripleBoundary ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphExtract;
+import org.apache.jena.graph.TripleBoundary;
 
 /**
      ModelExtract - a wrapper for GraphExtract, allowing rooted sub-models to be

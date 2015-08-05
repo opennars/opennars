@@ -18,7 +18,8 @@
 
 package org.apache.jena.shared;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
 /**
      Exception to throw if a Description has no root of a specified type

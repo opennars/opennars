@@ -18,9 +18,9 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.rdf.model.test.helpers.TestingModelFactory ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.junit.Assert ;
+import org.apache.jena.rdf.model.test.helpers.TestingModelFactory;
+import org.apache.jena.shared.PrefixMapping;
+import org.junit.Assert;
 
 public class TestHiddenStatements extends AbstractModelTestBase
 {

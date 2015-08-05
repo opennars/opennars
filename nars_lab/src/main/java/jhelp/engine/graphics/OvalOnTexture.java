@@ -7,10 +7,10 @@
  */
 package jhelp.engine.graphics;
 
-import java.awt.Color;
-import java.awt.geom.Ellipse2D;
-
 import jhelp.engine.Texture;
+
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
 
 /**
  * Rectangle on texture<br>

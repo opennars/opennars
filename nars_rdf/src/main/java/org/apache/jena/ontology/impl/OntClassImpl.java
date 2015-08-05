@@ -24,22 +24,23 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.util.* ;
 
-import org.apache.jena.enhanced.EnhGraph ;
-import org.apache.jena.enhanced.EnhNode ;
-import org.apache.jena.enhanced.Implementation ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.UniqueFilter ;
-import org.apache.jena.util.iterator.WrappedIterator ;
-import org.apache.jena.vocabulary.OWL ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.enhanced.Implementation;
+import org.apache.jena.graph.Node;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.UniqueFilter;
+import org.apache.jena.util.iterator.WrappedIterator;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
+
+import java.util.*;
 
 
 /**

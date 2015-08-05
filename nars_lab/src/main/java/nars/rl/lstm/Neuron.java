@@ -1,7 +1,5 @@
 package nars.rl.lstm;
 
-import nars.rl.lstm.IdentityNeuron;
-
 public abstract class Neuron
 {
 	public static Neuron Factory(NeuronType neuron_type)

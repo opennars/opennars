@@ -18,12 +18,12 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.vocabulary.RDFS ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+import org.apache.jena.vocabulary.RDFS;
 
 /**
  * Tests whether the first argument is an instance of the datatype defined

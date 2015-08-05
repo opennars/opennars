@@ -18,8 +18,8 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.RuleContext;
 
 /**
  * Returns false if the first argument is a list which contains the second argument.

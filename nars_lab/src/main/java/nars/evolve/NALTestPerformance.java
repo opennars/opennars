@@ -1,9 +1,9 @@
 package nars.evolve;
 
-import nars.nar.Default;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.meter.condition.OutputCondition;
+import nars.nar.Default;
 import nars.util.data.random.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;

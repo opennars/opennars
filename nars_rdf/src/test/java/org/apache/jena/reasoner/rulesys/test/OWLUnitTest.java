@@ -20,13 +20,14 @@ package org.apache.jena.reasoner.rulesys.test;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.reasoner.ReasonerException;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.reasoner.rulesys.OWLFBRuleReasonerFactory;
+import org.apache.jena.reasoner.rulesys.OWLMicroReasonerFactory;
+import org.apache.jena.reasoner.rulesys.OWLMiniReasonerFactory;
 
 import java.io.IOException;
-
-import org.apache.jena.rdf.model.ResourceFactory ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.test.OWLWGTester ;
 
 /**
  * Version of the OWL unit tests used during development of the mini ruleset.

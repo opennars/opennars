@@ -24,13 +24,19 @@ package org.apache.jena.ontology.impl;
 
 // Imports
 ///////////////
-import java.util.Iterator;
 
-import org.apache.jena.enhanced.EnhGraph ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.graph.Node;
+import org.apache.jena.ontology.BooleanClassDescription;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.Profile;
+import org.apache.jena.ontology.ProfileException;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFList;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.Iterator;
 
 
 

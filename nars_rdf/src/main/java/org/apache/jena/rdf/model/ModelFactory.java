@@ -18,25 +18,25 @@
 
 package org.apache.jena.rdf.model;
 
-import java.util.Set ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.AssemblerHelp;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.compose.Union;
+import org.apache.jena.graph.impl.SimpleGraphMaker;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.ProfileRegistry;
+import org.apache.jena.ontology.impl.OntModelImpl;
+import org.apache.jena.rdf.model.impl.InfModelImpl;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.rdf.model.impl.ModelMakerImpl;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
+import org.apache.jena.shared.PrefixMapping;
 
-import org.apache.jena.assembler.Assembler ;
-import org.apache.jena.assembler.AssemblerHelp ;
-import org.apache.jena.graph.Factory ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.compose.Union ;
-import org.apache.jena.graph.impl.SimpleGraphMaker ;
-import org.apache.jena.ontology.OntModel ;
-import org.apache.jena.ontology.OntModelSpec ;
-import org.apache.jena.ontology.ProfileRegistry ;
-import org.apache.jena.ontology.impl.OntModelImpl ;
-import org.apache.jena.rdf.model.impl.InfModelImpl ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
-import org.apache.jena.rdf.model.impl.ModelMakerImpl ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.ReasonerRegistry ;
-import org.apache.jena.shared.PrefixMapping ;
+import java.util.Set;
 
 /**
     ModelFactory provides methods for creating standard kinds of Model.

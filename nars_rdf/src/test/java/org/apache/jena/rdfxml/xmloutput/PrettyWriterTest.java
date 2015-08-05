@@ -23,18 +23,14 @@ package org.apache.jena.rdfxml.xmloutput;
 // Imports
 ///////////////
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.regex.Pattern;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.test.ModelTestBase;
 
-import org.apache.jena.ontology.OntModel ;
-import org.apache.jena.ontology.OntModelSpec ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.test.ModelTestBase ;
+import java.io.*;
+import java.util.regex.Pattern;
 
 public class PrettyWriterTest extends ModelTestBase {
 

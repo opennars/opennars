@@ -1,14 +1,10 @@
 package org.projog.core.udp.interpreter;
 
-import java.util.Iterator;
-
-import org.projog.core.CutException;
-import org.projog.core.Predicate;
-import org.projog.core.PredicateKey;
-import org.projog.core.ProjogException;
-import org.projog.core.SpyPoints;
+import org.projog.core.*;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
+
+import java.util.Iterator;
 
 /**
  * Represents a user defined predicate.

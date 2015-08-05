@@ -18,9 +18,10 @@
 
 package org.apache.jena.assembler.exceptions;
 
-import java.util.*;
+import org.apache.jena.rdf.model.Resource;
 
-import org.apache.jena.rdf.model.Resource ;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
     Exception to throw when an AssemblerGroup has a choice of types

@@ -4,8 +4,9 @@ package nars.ca;// Mirek's Java Cellebration
 // Favourite patterns list
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
 
 //import java.io.*;
 

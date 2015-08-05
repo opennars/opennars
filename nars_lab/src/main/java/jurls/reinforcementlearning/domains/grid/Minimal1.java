@@ -1,9 +1,5 @@
 package jurls.reinforcementlearning.domains.grid;
 
-import jurls.reinforcementlearning.domains.grid.Agent;
-import jurls.reinforcementlearning.domains.grid.RandomAgent;
-import jurls.reinforcementlearning.domains.grid.World;
-
 /*
     Simplest one-dimensional grid task
     

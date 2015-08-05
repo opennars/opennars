@@ -18,29 +18,29 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import java.util.* ;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.graph.*;
+import org.apache.jena.graph.impl.LiteralLabel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.reasoner.rulesys.impl.*;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveEngine;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveGraphCache;
+import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasoner;
+import org.apache.jena.shared.impl.JenaParameters;
+import org.apache.jena.util.OneToManyMap;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.UniqueFilter;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.jena.datatypes.RDFDatatype ;
-import org.apache.jena.datatypes.TypeMapper ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.impl.LiteralLabel ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.RDFNode ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.impl.* ;
-import org.apache.jena.reasoner.transitiveReasoner.TransitiveEngine ;
-import org.apache.jena.reasoner.transitiveReasoner.TransitiveGraphCache ;
-import org.apache.jena.reasoner.transitiveReasoner.TransitiveReasoner ;
-import org.apache.jena.shared.impl.JenaParameters ;
-import org.apache.jena.util.OneToManyMap ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.UniqueFilter ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
+import java.util.*;
 
 /**
  * An inference graph that uses a mixture of forward and backward

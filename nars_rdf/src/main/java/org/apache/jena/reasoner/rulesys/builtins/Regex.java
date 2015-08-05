@@ -18,14 +18,14 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.reasoner.rulesys.BindingEnvironment;
+import org.apache.jena.reasoner.rulesys.BuiltinException;
+import org.apache.jena.reasoner.rulesys.RuleContext;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.reasoner.rulesys.BindingEnvironment ;
-import org.apache.jena.reasoner.rulesys.BuiltinException ;
-import org.apache.jena.reasoner.rulesys.RuleContext ;
 
 public class Regex extends BaseBuiltin {
 

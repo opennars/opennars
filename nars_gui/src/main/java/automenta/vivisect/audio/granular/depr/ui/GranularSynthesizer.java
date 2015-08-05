@@ -10,13 +10,13 @@ import automenta.vivisect.audio.granular.depr.Granulator;
 import automenta.vivisect.audio.granular.depr.io.TextToWave;
 import automenta.vivisect.audio.granular.depr.io.WaveToText;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  *

@@ -18,7 +18,7 @@
 
 package org.apache.jena.datatypes.xsd;
 
-import org.apache.jena.shared.* ;
+import org.apache.jena.shared.JenaException;
 
 /**
  * Exception thrown when attempting to access a field of an XSDDateTime 

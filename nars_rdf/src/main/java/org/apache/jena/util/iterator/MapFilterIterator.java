@@ -18,7 +18,7 @@
 
 package org.apache.jena.util.iterator;
 
-import java.util.*;
+import java.util.NoSuchElementException;
 
 /**
     A MapFilterIterator takes a MapFilter and an [Extended]Iterator and returns a new 

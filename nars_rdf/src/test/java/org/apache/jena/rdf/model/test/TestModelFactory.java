@@ -18,19 +18,19 @@
 
 package org.apache.jena.rdf.model.test;
 
-import org.apache.jena.graph.compose.Union ;
-import org.apache.jena.rdf.model.InfModel ;
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.rdf.model.ModelFactory ;
-import org.apache.jena.rdf.model.impl.ModelCom ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.rulesys.GenericRuleReasoner ;
-import org.apache.jena.reasoner.rulesys.Rule ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.test.JenaTestBase ;
-import org.junit.Assert;
 import junit.framework.TestCase;
+import org.apache.jena.graph.compose.Union;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.impl.ModelCom;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.test.JenaTestBase;
+import org.junit.Assert;
 
 /**
  * Tests the ModelFactory code. Very skeletal at the moment. It's really

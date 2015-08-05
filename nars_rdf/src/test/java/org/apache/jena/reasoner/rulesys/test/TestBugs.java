@@ -18,30 +18,30 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.io.StringReader ;
-import java.util.* ;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.impl.LiteralLabelFactory;
+import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.listeners.StatementListener;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.*;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
+import org.apache.jena.reasoner.test.TestUtil;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.PrintUtil;
+import org.apache.jena.util.iterator.ClosableIterator;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
-import junit.framework.TestCase ;
-import junit.framework.TestSuite ;
-import org.apache.jena.graph.Node ;
-import org.apache.jena.graph.NodeFactory ;
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.graph.impl.LiteralLabelFactory ;
-import org.apache.jena.ontology.* ;
-import org.apache.jena.rdf.listeners.StatementListener ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin ;
-import org.apache.jena.reasoner.test.TestUtil ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.PrintUtil ;
-import org.apache.jena.util.iterator.ClosableIterator ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.vocabulary.OWL ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.RDFS ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
+import java.io.StringReader;
+import java.util.*;
 
 
 /**

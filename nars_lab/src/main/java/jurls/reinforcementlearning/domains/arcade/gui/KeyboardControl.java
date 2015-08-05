@@ -18,6 +18,7 @@
 package jurls.reinforcementlearning.domains.arcade.gui;
 
 import jurls.reinforcementlearning.domains.arcade.io.Actions;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

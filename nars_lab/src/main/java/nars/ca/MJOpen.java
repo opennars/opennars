@@ -3,7 +3,9 @@ package nars.ca;// Mirek's Java Cellebration
 //
 // Open the CA pattern file
 
-import java.util.*;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class MJOpen {
 	private final MJCellUI mjUI;

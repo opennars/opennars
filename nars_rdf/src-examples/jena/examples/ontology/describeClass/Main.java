@@ -23,10 +23,11 @@ package jena.examples.ontology.describeClass;
 
 // Imports
 ///////////////
-import java.util.Iterator;
 
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+
+import java.util.Iterator;
 
 
 /**

@@ -5,10 +5,6 @@ import com.jogamp.opengl.GL2;
 import org.jbox2d.common.IViewportTransform;
 import org.jbox2d.common.Vec2;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.jogamp.opengl.GL2.*;

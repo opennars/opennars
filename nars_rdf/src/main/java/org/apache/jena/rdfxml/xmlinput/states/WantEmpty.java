@@ -18,7 +18,7 @@
 
 package org.apache.jena.rdfxml.xmlinput.states;
 
-import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext ;
+import org.apache.jena.rdfxml.xmlinput.impl.AbsXMLContext;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
 

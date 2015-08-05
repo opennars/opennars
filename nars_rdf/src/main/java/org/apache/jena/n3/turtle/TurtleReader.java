@@ -18,10 +18,10 @@
 
 package org.apache.jena.n3.turtle;
 
-import java.io.Reader;
+import org.apache.jena.n3.JenaReaderBase;
+import org.apache.jena.rdf.model.Model;
 
-import org.apache.jena.n3.JenaReaderBase ;
-import org.apache.jena.rdf.model.Model ;
+import java.io.Reader;
 
 
 public class TurtleReader extends JenaReaderBase

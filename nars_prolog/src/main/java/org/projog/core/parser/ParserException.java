@@ -1,8 +1,8 @@
 package org.projog.core.parser;
 
-import java.io.PrintStream;
-
 import org.projog.core.ProjogException;
+
+import java.io.PrintStream;
 
 /**
  * Signals a failure to successfully parse Prolog syntax.

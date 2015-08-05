@@ -1,12 +1,12 @@
 package jhelp.util.io;
 
+import jhelp.util.debug.Debug;
+import jhelp.util.list.Pair;
+import jhelp.util.text.StringCutter;
+import jhelp.util.text.UtilText;
+
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -16,11 +16,6 @@ import java.util.Stack;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import jhelp.util.debug.Debug;
-import jhelp.util.list.Pair;
-import jhelp.util.text.StringCutter;
-import jhelp.util.text.UtilText;
 
 /**
  * Utilities for Input/Output streams

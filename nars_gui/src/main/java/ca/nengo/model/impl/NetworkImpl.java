@@ -37,7 +37,6 @@ import ca.nengo.util.*;
 import ca.nengo.util.impl.ProbeTask;
 import ca.nengo.util.impl.ScriptGenerator;
 
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;

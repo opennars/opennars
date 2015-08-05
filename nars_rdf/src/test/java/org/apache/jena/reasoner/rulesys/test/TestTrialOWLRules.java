@@ -18,16 +18,16 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.GenericRuleReasonerFactory;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.ReasonerVocabulary;
 
 import java.io.IOException;
-
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.jena.vocabulary.ReasonerVocabulary ;
 
 /**
  * Test suite to test experimental versions of the OWL reasoner, not 

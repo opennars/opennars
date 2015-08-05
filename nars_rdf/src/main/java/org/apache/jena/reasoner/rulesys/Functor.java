@@ -18,13 +18,17 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.datatypes.* ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.util.PrintUtil ;
+import org.apache.jena.datatypes.BaseDatatype;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Node_ANY;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.PrintUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 /**

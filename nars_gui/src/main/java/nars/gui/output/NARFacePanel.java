@@ -2,7 +2,6 @@ package nars.gui.output;
 
 import automenta.vivisect.face.HumanoidFacePanel;
 import nars.NAR;
-import nars.Global;
 
 
 

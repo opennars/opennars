@@ -7,22 +7,18 @@
  */
 package jhelp.util.gui;
 
-import java.awt.Toolkit;
+import jhelp.util.debug.Debug;
+
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.Reader;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
-
-import jhelp.util.debug.Debug;
 
 /**
  * Manage clip board<br>

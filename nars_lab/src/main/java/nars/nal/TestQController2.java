@@ -3,15 +3,16 @@ package nars.nal;
 
 import nars.NAR;
 import nars.Param;
-import nars.event.FrameReaction;
 import nars.io.Texts;
 import nars.io.in.LibraryInput;
-import nars.io.out.TextOutput;
 import nars.nar.Default;
 
 import java.io.PrintStream;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * Dynamic logic controller experiment, using QLearning

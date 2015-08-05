@@ -5,7 +5,6 @@ import nars.rl.horde.functions.StateToStateAction;
 import nars.rl.horde.functions.Traces;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
-import processing.core.PVector;
 
 /**
  * Created by me on 5/3/15.

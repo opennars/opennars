@@ -4,7 +4,10 @@
 package ca.nengo.model.impl;
 
 import ca.nengo.TestUtil;
-import ca.nengo.model.*;
+import ca.nengo.model.RealSource;
+import ca.nengo.model.SimulationException;
+import ca.nengo.model.StructuralException;
+import ca.nengo.model.Units;
 import ca.nengo.neural.SpikeOutput;
 import ca.nengo.neural.impl.SpikeOutputImpl;
 import ca.nengo.util.MU;

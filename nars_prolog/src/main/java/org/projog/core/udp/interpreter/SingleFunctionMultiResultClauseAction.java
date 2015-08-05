@@ -1,12 +1,12 @@
 package org.projog.core.udp.interpreter;
 
-import java.util.Map;
-
 import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
+
+import java.util.Map;
 
 /**
  * A functions whose body is a retryable predicate.

@@ -18,10 +18,11 @@
 
 package org.apache.jena.n3;
 
-import java.io.* ;
+import org.apache.jena.JenaRuntime;
+import org.apache.jena.shared.JenaException;
 
-import org.apache.jena.JenaRuntime ;
-import org.apache.jena.shared.JenaException ;
+import java.io.IOException;
+import java.io.Writer;
 
 /** Simple class that provides output with moving left margin.
  *  Does not cope with tabs or newlines in output strings.

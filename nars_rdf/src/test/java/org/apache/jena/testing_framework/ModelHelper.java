@@ -19,27 +19,15 @@
 package org.apache.jena.testing_framework;
 
 import org.apache.jena.graph.Node;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.shared.PrefixMapping;
 import org.apache.jena.util.CollectionFactory;
-
-import static org.junit.Assert.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 import org.junit.Assert;
 import org.xenei.junit.contract.IProducer;
+
+import java.util.*;
+
+import static org.junit.Assert.fail;
 
 /**
  * provides useful functionality for testing models, eg building small models

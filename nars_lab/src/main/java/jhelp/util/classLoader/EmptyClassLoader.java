@@ -7,6 +7,13 @@
  */
 package jhelp.util.classLoader;
 
+import jhelp.util.compiler.Compiler;
+import jhelp.util.compiler.Compiler.NameCode;
+import jhelp.util.debug.Debug;
+import jhelp.util.debug.DebugLevel;
+import jhelp.util.io.UtilIO;
+import jhelp.util.text.UtilText;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,13 +26,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.WeakHashMap;
 import java.util.jar.JarFile;
-
-import jhelp.util.compiler.Compiler;
-import jhelp.util.compiler.Compiler.NameCode;
-import jhelp.util.debug.Debug;
-import jhelp.util.debug.DebugLevel;
-import jhelp.util.io.UtilIO;
-import jhelp.util.text.UtilText;
 
 /**
  * Class loader that make loaded class empty.<br>

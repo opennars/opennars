@@ -115,23 +115,24 @@ package org.apache.jena.rdfxml.xmloutput.impl;
  * 
  * [6.34] literal ::= (any well-formed XML)
  */
+
+import org.apache.jena.iri.IRI;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.impl.PropertyImpl;
+import org.apache.jena.rdf.model.impl.Util;
+import org.apache.jena.shared.BrokenException;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PropertyNotFoundException;
+import org.apache.jena.util.iterator.*;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.xerces.util.XMLChar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.PrintWriter;
+import java.util.*;
+
 import static org.apache.jena.util.iterator.WrappedIterator.create;
-
-import java.io.PrintWriter ;
-import java.util.* ;
-
-import org.apache.jena.iri.IRI ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.rdf.model.impl.PropertyImpl ;
-import org.apache.jena.rdf.model.impl.Util ;
-import org.apache.jena.shared.BrokenException ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PropertyNotFoundException ;
-import org.apache.jena.util.iterator.* ;
-import org.apache.jena.vocabulary.RDF ;
-import org.apache.xerces.util.XMLChar ;
-import org.slf4j.Logger ;
-import org.slf4j.LoggerFactory ;
 
 /**
  * An Unparser will output a model in the abbreviated syntax. *

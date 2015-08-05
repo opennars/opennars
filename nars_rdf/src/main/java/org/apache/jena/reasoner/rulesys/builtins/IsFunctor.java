@@ -18,8 +18,9 @@
 
 package org.apache.jena.reasoner.rulesys.builtins;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.* ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.Functor;
+import org.apache.jena.reasoner.rulesys.RuleContext;
 
 /**
  * Tests the single argument to make sure it is not a Functor.

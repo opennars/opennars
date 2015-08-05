@@ -18,9 +18,10 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.util.FileManager ;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerFactory;
+import org.apache.jena.util.FileManager;
 
 /**
     WrappedReasonerFactory - a wrapper round ReasonerFactories that

@@ -23,17 +23,18 @@ package org.apache.jena.graph.compose;
 
 // Imports
 ///////////////
-import java.util.ArrayList ;
-import java.util.Collections;
-import java.util.Iterator ;
-import java.util.List ;
 
-import org.apache.jena.graph.Capabilities ;
-import org.apache.jena.graph.Graph ;
-import org.apache.jena.graph.TransactionHandler ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.util.iterator.ClosableIterator ;
+import org.apache.jena.graph.Capabilities;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.TransactionHandler;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.util.iterator.ClosableIterator;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * <p>

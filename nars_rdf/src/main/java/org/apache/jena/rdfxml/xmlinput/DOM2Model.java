@@ -18,18 +18,18 @@
 
 package org.apache.jena.rdfxml.xmlinput;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.shared.JenaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXParseException;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
-
-import org.apache.jena.rdf.model.Model ;
-import org.apache.jena.shared.JenaException ;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXParseException;
 
 /**
  * Transform DOM nodes of RDF.XML into Jena Models. Known not to work with Java

@@ -18,9 +18,10 @@
 
 package org.apache.jena.reasoner.rulesys;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.InfGraph ;
-import org.apache.jena.util.iterator.ClosableIterator ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.reasoner.InfGraph;
+import org.apache.jena.util.iterator.ClosableIterator;
 
 /**
  * Interface used to convey context information from a rule engine

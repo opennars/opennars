@@ -8,11 +8,11 @@ import nars.Events.OUT;
 import nars.Events.TaskRemove;
 import nars.Global;
 import nars.NAR;
+import nars.concept.Concept;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
 import nars.task.Task;
 import nars.truth.Truth;
-import nars.concept.Concept;
 import nars.util.event.Reaction;
 
 import javax.swing.*;

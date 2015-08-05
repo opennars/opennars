@@ -16,8 +16,11 @@
  * limitations under the License.
  */
 
-package org.apache.jena.vocabulary; 
-import org.apache.jena.rdf.model.* ;
+package org.apache.jena.vocabulary;
+
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
  
 /**
  * Vocabulary definitions from vocabularies/dublin-core_types.xml

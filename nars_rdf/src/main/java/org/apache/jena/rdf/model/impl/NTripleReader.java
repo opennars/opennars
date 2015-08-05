@@ -18,16 +18,18 @@
 
 package org.apache.jena.rdf.model.impl;
 
-import org.apache.jena.graph.GraphEvents ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.FileUtils ;
+import org.apache.jena.graph.GraphEvents;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.shared.SyntaxError;
+import org.apache.jena.shared.UnknownPropertyException;
+import org.apache.jena.util.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.io.*;
-import java.util.*;
+import java.net.URL;
+import java.util.Hashtable;
 
 /** N-Triple Reader
  */

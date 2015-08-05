@@ -18,11 +18,11 @@
 
 package org.apache.jena.shared.uuid ;
 
-import java.net.NetworkInterface ;
-import java.util.Enumeration ;
-import java.util.Locale ;
+import org.apache.jena.shared.uuid.JenaUUID.UUIDFormatException;
 
-import org.apache.jena.shared.uuid.JenaUUID.UUIDFormatException ;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+import java.util.Locale;
 
 /* RFC 4122  "A Universally Unique IDentifier (UUID) URN Namespace"
    ftp://ftp.rfc-editor.org/in-notes/rfc4122.txt

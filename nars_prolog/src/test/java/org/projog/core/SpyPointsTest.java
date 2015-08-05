@@ -1,29 +1,21 @@
 package org.projog.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.projog.TestUtils.atom;
-import static org.projog.TestUtils.integerNumber;
-import static org.projog.TestUtils.list;
-import static org.projog.TestUtils.structure;
-import static org.projog.TestUtils.variable;
-import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
-
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.event.ProjogEvent;
 import org.projog.core.event.ProjogEventType;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.PTerm;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+
+import static org.junit.Assert.*;
+import static org.projog.TestUtils.*;
+import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
+import static org.projog.core.term.TermUtils.createAnonymousVariable;
 
 public class SpyPointsTest {
    private final KB kb = TestUtils.createKnowledgeBase();

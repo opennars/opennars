@@ -18,10 +18,13 @@
 
 package org.apache.jena.mem;
 
-import java.util.*;
+import org.apache.jena.shared.BrokenException;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NiceIterator;
 
-import org.apache.jena.shared.BrokenException ;
-import org.apache.jena.util.iterator.* ;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
 
 /**
     Shared stuff for our hashing implementations: does the base work for

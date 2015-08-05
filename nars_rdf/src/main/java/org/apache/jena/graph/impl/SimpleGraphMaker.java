@@ -18,12 +18,16 @@
 
 package org.apache.jena.graph.impl;
 
-import java.util.*;
+import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.mem.GraphMemBase;
+import org.apache.jena.shared.AlreadyExistsException;
+import org.apache.jena.shared.DoesNotExistException;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.WrappedIterator;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.mem.* ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.iterator.* ;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
     A SimpleGraphFactory produces memory-based graphs and records them

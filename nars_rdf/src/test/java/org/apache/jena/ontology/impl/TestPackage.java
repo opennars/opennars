@@ -19,7 +19,7 @@
 package org.apache.jena.ontology.impl;
 
 
-import junit.framework.*;
+import junit.framework.TestSuite;
 
 /**
     Collected test suite for the .ontology.impl package.

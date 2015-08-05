@@ -6,7 +6,6 @@ import io.undertow.server.handlers.resource.FileResourceManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
 
 import static io.undertow.Handlers.resource;
 

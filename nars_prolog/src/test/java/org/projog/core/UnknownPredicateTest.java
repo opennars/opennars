@@ -1,9 +1,9 @@
 package org.projog.core;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-
-import org.junit.Test;
 
 public class UnknownPredicateTest {
    @Test

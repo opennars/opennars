@@ -18,17 +18,17 @@
 
 package org.apache.jena.reasoner.rulesys.test;
 
-import java.io.IOException;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.jena.reasoner.* ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.test.ReasonerTester ;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.FBRuleReasoner;
+import org.apache.jena.reasoner.rulesys.Rule;
+import org.apache.jena.reasoner.test.ReasonerTester;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.List;
 
 /**
  *  Test an FB hyrid using the emerging LP engine on the basic RDFS tests.

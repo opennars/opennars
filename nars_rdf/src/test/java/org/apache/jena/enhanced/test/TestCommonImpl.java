@@ -17,11 +17,14 @@
  */
 
 package org.apache.jena.enhanced.test;
-import org.apache.jena.enhanced.* ;
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.shared.JenaException ;
-import org.apache.jena.util.iterator.* ;
+
+import org.apache.jena.enhanced.EnhGraph;
+import org.apache.jena.enhanced.EnhNode;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.*;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.iterator.ClosableIterator;
 
 class TestCommonImpl extends EnhNode implements TestNode {
 

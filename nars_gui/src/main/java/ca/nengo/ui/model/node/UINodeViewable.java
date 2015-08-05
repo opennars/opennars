@@ -27,10 +27,10 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.model.node;
 
 import ca.nengo.model.Node;
-import ca.nengo.ui.model.brain.BrainViewer;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.lib.world.piccolo.object.Window.WindowState;
 import ca.nengo.ui.model.UINeoNode;
+import ca.nengo.ui.model.brain.BrainViewer;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;
 import ca.nengo.ui.model.viewer.NodeViewer;
 

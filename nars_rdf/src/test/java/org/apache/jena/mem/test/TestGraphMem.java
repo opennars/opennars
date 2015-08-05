@@ -19,11 +19,14 @@
 package org.apache.jena.mem.test;
 
 import junit.framework.TestSuite;
-import org.apache.jena.graph.* ;
-import org.apache.jena.graph.test.* ;
-import org.apache.jena.mem.GraphMem ;
-import org.apache.jena.shared.* ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Graph;
+import org.apache.jena.graph.GraphStatisticsHandler;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.graph.test.AbstractTestGraph;
+import org.apache.jena.mem.GraphMem;
+import org.apache.jena.shared.JenaException;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 public class TestGraphMem extends AbstractTestGraph
     {

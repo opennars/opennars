@@ -18,13 +18,12 @@
 
 package org.apache.jena.util.iterator.test;
 
-import java.util.*;
-import java.util.function.Predicate;
-
 import junit.framework.TestSuite;
+import org.apache.jena.rdf.model.test.ModelTestBase;
+import org.apache.jena.util.iterator.FilterIterator;
 
-import org.apache.jena.rdf.model.test.ModelTestBase ;
-import org.apache.jena.util.iterator.* ;
+import java.util.Iterator;
+import java.util.function.Predicate;
 
 public class TestFilters extends ModelTestBase
     {

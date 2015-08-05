@@ -7,7 +7,11 @@
  */
 package jhelp.engine.graphics;
 
-import java.awt.Image;
+import jhelp.engine.Texture;
+import jhelp.util.debug.Debug;
+import jhelp.util.io.UtilIO;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 import java.io.IOException;
@@ -16,10 +20,6 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import jhelp.engine.Texture;
-import jhelp.util.debug.Debug;
-import jhelp.util.io.UtilIO;
 
 /**
  * Image compress auto update on decompression, so we see image appear.<br>

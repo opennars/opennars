@@ -18,10 +18,11 @@
 
 package org.apache.jena.assembler.test;
 
-import org.apache.jena.assembler.* ;
-import org.apache.jena.assembler.assemblers.PrefixMappingAssembler ;
-import org.apache.jena.rdf.model.Resource ;
-import org.apache.jena.shared.PrefixMapping ;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.JA;
+import org.apache.jena.assembler.assemblers.PrefixMappingAssembler;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.shared.PrefixMapping;
 
 /**
    Tests for prefix-mapping assembler. Note that the basic atom is a

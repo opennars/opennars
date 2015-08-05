@@ -1,7 +1,5 @@
 package nars.rl;
 
-import nars.Memory;
-
 import java.util.AbstractList;
 import java.util.List;
 

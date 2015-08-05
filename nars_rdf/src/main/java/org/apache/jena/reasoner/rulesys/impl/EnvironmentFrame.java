@@ -18,8 +18,8 @@
 
 package org.apache.jena.reasoner.rulesys.impl;
 
-import org.apache.jena.graph.* ;
-import org.apache.jena.reasoner.rulesys.Rule ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.reasoner.rulesys.Rule;
 
 /**
  * Represents a single frame in the LP interpreter's environment stack. The

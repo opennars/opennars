@@ -18,12 +18,12 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.graph.impl.GraphBase ;
-import org.apache.jena.shared.AddDeniedException ;
-import org.apache.jena.shared.DeleteDeniedException ;
-import org.apache.jena.shared.PrefixMapping ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
-import org.apache.jena.util.iterator.NullIterator ;
+import org.apache.jena.graph.impl.GraphBase;
+import org.apache.jena.shared.AddDeniedException;
+import org.apache.jena.shared.DeleteDeniedException;
+import org.apache.jena.shared.PrefixMapping;
+import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.util.iterator.NullIterator;
 
 /**
     The interface to be satisfied by implementations maintaining collections
