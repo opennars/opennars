@@ -5,8 +5,8 @@ import org.apache.commons.math3.util.MathUtils;
 
 public class MyPerception  {
 
-    public static final int RADAR_ANGLES = 7;
-    public static final int RADAR_DISTS = 2; //rows
+    public static final int RADAR_ANGLES = 15;
+    public static final int RADAR_DISTS = 4; //rows
     private static final long serialVersionUID = 1L;
     public static final double RADAR_R = Math.PI*2.0 / RADAR_ANGLES; //0.6 = mostly front
     public static final double RADAR_D = 25;
@@ -28,7 +28,7 @@ public class MyPerception  {
 
         //input[j++] = (player.angle % (Math.PI*2) / (Math.PI*2) - 0.5);
 
-        input[j++] = 0.5f * (MathUtils.normalizeAngle(player.angle,0)/(Math.PI) - 1.0);
+        input[j++] = 0.8f * (MathUtils.normalizeAngle(player.angle,0)/(Math.PI) - 1.0);
 
         for (int d = RADAR_D0; d <= RADAR_DISTS; d++) {
             for (int a = -RADAR_ANGLES; a <= RADAR_ANGLES; a++) {

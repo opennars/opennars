@@ -15,26 +15,27 @@ public abstract class AGENT {
 
     // variable for Q learning
 
-    public double QAlpha = (double) 0.5;
+    //public double QAlpha = (double) 0.5;
 
     //  default QGamma suitable for Immediate Reward Scheme
 //	To be overriden for Delayed reward 
     public double QGamma = (double) 0.1;
 
-    public static final double minQEpsilon = (double) 0.00500;
+
     public double initialQ = (double) 0.5;
 
     // 	default QEpsilonDecay and initialQEpsilon for TD-FALCON
 // 	The values are to be override when using RFALCON, BPN and DNDP in the setParameters method     
-    public double QEpsilonDecay = (double) 0.00050;
+    public double QEpsilonDecay = (double) 0.005;
     public double QEpsilon = (double) 0.50000;
+    public double minQEpsilon = (double) 0.05;
 
-    public boolean forgetting = false;
+    public boolean forgetting = true;
 
     public static boolean INTERFLAG = false;
     //   public static boolean detect_loop=false;
     //   public static boolean look_ahead =false;
-    public static boolean Trace = true;
+    public boolean Trace = false;
 
     abstract public void saveAgent(String outfile);
 
