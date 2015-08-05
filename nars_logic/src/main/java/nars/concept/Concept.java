@@ -62,7 +62,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     TermLink activateTermLink(TermLinkBuilder termLinkBuilder);
 
-    void updateTermLinks();
+    void updateLinks();
 
     void setUsed(long time);
 
@@ -252,11 +252,11 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     public boolean processBelief(Premise nal, Task task);
 
-    public boolean processGoal(TaskProcess nal, Task task);
+    public boolean processGoal(Premise nal, Task task);
 
-    public Task processQuestion(TaskProcess nal, Task task);
+    public Task processQuestion(Premise nal, Task task);
 
-    default public Task processQuest(TaskProcess nal, Task task) {
+    default public Task processQuest(Premise nal, Task task) {
         return processQuestion(nal, task);
     }
 

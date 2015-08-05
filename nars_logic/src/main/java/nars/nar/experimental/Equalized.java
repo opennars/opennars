@@ -92,15 +92,12 @@ public class Equalized extends Default {
 
 
             //1 concept if (memory.newTasks.isEmpty())*/
-
-            float tasklinkForgetDurations = memory.param.taskLinkForgetDurations.floatValue();
             float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
-            for (int i = 0; i < conceptsToFire; i++) {
-                ConceptProcess f = newProcess(nextConceptToProcess(conceptForgetDurations), tasklinkForgetDurations);
-                if (f != null) {
-                    f.run();
-                }
-            }
+            ConceptProcess.run(memory,
+                    () -> nextConceptToProcess(conceptForgetDurations),
+                    conceptsToFire, f -> f.run()
+            );
+
 
             int added = commitNewTasks();
 

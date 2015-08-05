@@ -57,7 +57,7 @@ public class Global {
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean DEBUG_TASK_HISTORY = true; //false disables task history completely
     public static boolean EXIT_ON_EXCEPTION = true;
-    public static boolean DEBUG_TERMLINK_SELECTED = false;
+
 
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //

@@ -5,13 +5,13 @@ import nars.nal.LogicStage;
 import nars.process.ConceptProcess;
 
 /** when a concept fires a tasklink that fires a termlink */
-abstract public class ConceptFireTaskTerm implements LogicStage<ConceptProcess> {
+abstract public class ConceptFireTaskTerm<C extends ConceptProcess> implements LogicStage<C> {
 
 
-    abstract public boolean apply(ConceptProcess f, TermLink termLink);
+    abstract public boolean apply(C f, TermLink termLink);
 
     @Override
-    public final boolean test(final ConceptProcess f) {
+    public final boolean test(final C f) {
 
         final TermLink ftl = f.getTermLink();
 

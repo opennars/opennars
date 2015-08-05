@@ -615,7 +615,7 @@ public interface Premise {
     }
 
 
-    default Concept concept(Compound x) {
+    default Concept concept(Term x) {
         return getMemory().concept(x);
     }
 

@@ -24,7 +24,7 @@ public class LogicMetrics extends NARReaction {
 
     public final Memory m;
 
-    public final HitMeter TASK_IMMEDIATE_PROCESS = new HitMeter("task.immediate_process");
+    public final HitMeter TASK_PROCESS = new HitMeter("task.immediate_process");
 
     public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
 

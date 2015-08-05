@@ -179,7 +179,7 @@ public class DefaultConcept extends AbstractConcept {
     /**
      * called by concept before it fires to update any pending changes
      */
-    public void updateTermLinks() {
+    public void updateLinks() {
 
 
         getTermLinks().forgetNext(
@@ -298,7 +298,7 @@ public class DefaultConcept extends AbstractConcept {
      * @param goal The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processGoal(final TaskProcess nal, Task goal) {
+    public boolean processGoal(final Premise nal, Task goal) {
 
         float successBefore = getSuccess();
 
@@ -328,7 +328,7 @@ public class DefaultConcept extends AbstractConcept {
             memory.emotion.happy(delta);
 
         //long then = goal.getOccurrenceTime();
-        int dur = nal.memory.duration();
+        int dur = nal.duration();
 
 //        //this task is not up to date (now is ahead of then) we have to project it first
 //        if(TemporalRules.after(then, now, dur)) {
@@ -370,14 +370,14 @@ public class DefaultConcept extends AbstractConcept {
         return true;
     }
 
-    protected static void executeGoal(Task goal, Concept c, NAL nal) {
+    protected static void executeGoal(Task goal, Concept c, Premise nal) {
 
         questionFromGoal(goal, nal);
 
         //TODO
         //InternalExperience.experienceFromTask(nal, task, false);
 
-        nal.memory.execute(c, goal);
+        nal.getMemory().execute(c, goal);
 
     }
 
@@ -426,7 +426,7 @@ public class DefaultConcept extends AbstractConcept {
      * @param q The task to be processed
      * @return the matching task if it was not a new task to be added
      */
-    public Task processQuestion(final TaskProcess nal, Task q) {
+    public Task processQuestion(final Premise nal, Task q) {
 
 
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();

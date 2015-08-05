@@ -157,7 +157,7 @@ public class EmotionMeter implements Serializable {
         busy(nal.getTask(), nal);
     }
 
-    protected void busy(Task cause, Premise p) {
+    public void busy(Task cause, Premise p) {
         this.busy += cause.getPriority();
     }
 

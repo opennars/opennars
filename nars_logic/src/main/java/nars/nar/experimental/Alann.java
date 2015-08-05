@@ -154,7 +154,7 @@ public class Alann extends NARSeed {
         }
 
         @Override
-        public Task processQuestion(TaskProcess nal, Task task) {
+        public Task processQuestion(Premise nal, Task task) {
             System.out.println(this + " processQuestion " + task);
 
 
@@ -186,9 +186,9 @@ public class Alann extends NARSeed {
         /**  Local Inference on belief (revision/Choice/Decision) */
         protected void inferLocal(TaskLink t) {
 
-            //???
+            //TODO ???
 
-            new AlannConceptProcess(memory, this, t).run();
+
 
         }
 
@@ -199,7 +199,7 @@ public class Alann extends NARSeed {
         }*/
 
         @Override
-        public boolean processGoal(TaskProcess nal, Task task) {
+        public boolean processGoal(Premise nal, Task task) {
             System.out.println(this + " processGoal " + task);
             lastTask = task;
             return false;
@@ -308,11 +308,8 @@ public class Alann extends NARSeed {
                 for each newtask
                 addTask(newTask)
                 */
-                AlannConceptProcess cp = new AlannConceptProcess(memory, AlannConcept.this, taskLink);
 
-
-                cp.setBelief(b);
-                cp.run(termLink);
+                //TODO
 
             });
 
@@ -352,7 +349,7 @@ public class Alann extends NARSeed {
         }
 
         @Override
-        public void updateTermLinks() {
+        public void updateLinks() {
 
         }
 
@@ -399,38 +396,38 @@ public class Alann extends NARSeed {
 
     }
 
-    static class AlannConceptProcess extends ConceptProcess {
-
-        public AlannConceptProcess(Memory memory, Concept concept, TaskLink taskLink) {
-            super(memory, concept, taskLink);
-        }
-
-        @Override
-        protected void afterDerive() {
-            super.afterDerive();
-
-            if (derived!=null && !derived.isEmpty())
-                System.out.println(this + " derived " + derived);
-        }
-
-        public void run(TermLink tl) {
-
-            beforeDerive();
-
-            derive();
-
-            if (tl != null)
-                processTerm(tl);
-
-            afterDerive();
-
-        }
-
-        @Override
-        protected void processTerms() {
-            //nothing
-        }
-    }
+//    static class AlannConceptProcess extends ConceptProcess {
+//
+//        public AlannConceptProcess(Memory memory, Concept concept, TaskLink taskLink) {
+//            super(memory, concept, taskLink);
+//        }
+//
+//        @Override
+//        protected void afterDerive() {
+//            super.afterDerive();
+//
+//            if (derived!=null && !derived.isEmpty())
+//                System.out.println(this + " derived " + derived);
+//        }
+//
+//        public void run(TermLink tl) {
+//
+//            beforeDerive();
+//
+//            derive();
+//
+//            if (tl != null)
+//                processTerm(tl);
+//
+//            afterDerive();
+//
+//        }
+//
+//        @Override
+//        protected void processTerms() {
+//            //nothing
+//        }
+//    }
 
     class AlannCycle extends AbstractCycle {
 

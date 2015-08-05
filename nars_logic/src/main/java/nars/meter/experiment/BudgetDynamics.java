@@ -58,7 +58,7 @@ public class BudgetDynamics {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        Global.DEBUG_TERMLINK_SELECTED = true;
+
 
         Default d = new Default() {
 

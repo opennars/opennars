@@ -190,8 +190,10 @@ public class Solid extends Default implements CycleProcess {
 
         processNewTasks();
 
+        final float tlfd = this.taskLinkForgetDurations.floatValue();
+
         //2. fire all concepts
-        for (Concept c : concepts) {
+        for (final Concept c : concepts) {
 
             if (c == null) break;
 
@@ -207,7 +209,12 @@ public class Solid extends Default implements CycleProcess {
             for (int i = 0; i < fires; i++) {
                 TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
                 if (tl == null) break;
-                new ConceptProcess(memory, c, tl, termFires).run();
+
+                ConceptProcess.run(c, tl,
+                        termFires*2, termFires,
+                        tlfd,
+                        cp -> cp.run()
+                );
             }
 
         }

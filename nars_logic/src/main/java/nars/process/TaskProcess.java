@@ -29,25 +29,23 @@ public class TaskProcess extends NAL {
         this.task = task;
     }
 
-
-    @Override
-    public Task getTask() {
+    @Override public Task getTask() {
         return task;
     }
 
+    @Override public final Term getTerm() {
+        return getTask().getTerm();
+    }
 
-    @Override
-    public TermLink getTermLink() {
+    @Override public TermLink getTermLink() {
         return null;
     }
 
-    @Override
-    public TaskLink getTaskLink() {
+    @Override public TaskLink getTaskLink() {
         return null;
     }
 
-    @Override
-    public Concept getConcept() {
+    @Override public Concept getConcept() {
         return memory.concept(getTerm());
     }
 
@@ -67,36 +65,25 @@ public class TaskProcess extends NAL {
 
 
 
-    @Override
-    public void derive() {
+    @Override public void derive() {
         Concept c = memory.conceptualize(getTask().getTerm(), getTask());
-        if (c!=null)
-            process(c);
-        
-    }
-
-    @Override
-    public final Term getTerm() {
-        return getTask().getTerm();
-    }
-
-    protected void process(final Concept c) {
-
-
+        if (c==null) return;
 
         if (processConcept(c)) {
 
-            memory.emotion.busy(this);
-
             final Task t = getTask();
 
-            emit(TaskProcess.class, getTask(), this, c);
+            emit(TaskProcess.class, t, this, c);
 
             c.link(t);
 
-            memory.logic.TASK_IMMEDIATE_PROCESS.hit();
+            memory.logic.TASK_PROCESS.hit();
+            memory.emotion.busy(t, this);
         }
+        
     }
+
+
 
     /**
      * Directly process a new task. Called exactly once on each task. Using
@@ -105,8 +92,6 @@ public class TaskProcess extends NAL {
      * <p>
      * called in Memory.immediateProcess only
      *
-     * @param nal  reasoning context it is being processed in
-     * @param task The task to be processed
      * @return whether it was processed
      */
     protected boolean processConcept(final Concept c) {
@@ -121,10 +106,10 @@ public class TaskProcess extends NAL {
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
         task.setSharedTerm((Compound) c.getTerm());
 
-
         final LogicMetrics logicMeter = memory.logic;
 
         switch (task.getPunctuation()) {
+
             case Symbols.JUDGMENT:
 
                 if (c.hasBeliefs() && c.isConstant())
@@ -135,21 +120,30 @@ public class TaskProcess extends NAL {
 
                 logicMeter.JUDGMENT_PROCESS.hit();
                 break;
+
             case Symbols.GOAL:
+
                 if (!c.processGoal(this, task))
                     return false;
                 logicMeter.GOAL_PROCESS.hit();
+
                 break;
+
             case Symbols.QUESTION:
+
                 c.processQuest(this, task);
                 logicMeter.QUESTION_PROCESS.hit();
+
                 break;
+
             case Symbols.QUEST:
+
                 c.processQuestion(this, task);
                 logicMeter.QUESTION_PROCESS.hit();
+
                 break;
-            default:
-                throw new RuntimeException("Invalid sentence type: " + task);
+
+            default: throw new RuntimeException("Invalid sentence type: " + task);
         }
 
         return true;
@@ -157,13 +151,10 @@ public class TaskProcess extends NAL {
     }
 
     @Override
-    public void run() {
-
-        super.run();
-
-        if (derived!=null)
-            for (final Task t : derived)
-                memory.add(t);
+    protected void afterDerive() {
+        if (derived!=null) {
+            memory.add(derived);
+        }
     }
 
     public static Premise run(final NAR nar, final String task) {

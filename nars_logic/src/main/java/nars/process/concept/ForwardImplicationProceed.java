@@ -7,7 +7,7 @@ import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
-import nars.process.ConceptProcess;
+import nars.process.ConceptProcessTaskTermLink;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Terms;
@@ -27,7 +27,7 @@ import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
     |-
     <pick(a) =/> <goal --> reached>>. :|:
 */
-public class ForwardImplicationProceed extends ConceptFireTaskTerm {
+public class ForwardImplicationProceed extends ConceptFireTaskTerm<ConceptProcessTaskTermLink> {
 
     /**
      * //new inference rule accelerating decision making: https://groups.google.com/forum/#!topic/open-nars/B8veE-WDd8Q
@@ -35,7 +35,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
     public static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1;
 
     @Override
-    public boolean apply(ConceptProcess f, TermLink termLink) {
+    public boolean apply(ConceptProcessTaskTermLink f, TermLink termLink) {
         if (!f.nal(7)) return true;
         if (PERCEPTION_DECISION_ACCEL_SAMPLES == 0) return true;
 

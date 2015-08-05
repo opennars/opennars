@@ -6,7 +6,6 @@ import nars.bag.Bag;
 import nars.budget.ItemAccumulator;
 import nars.concept.Concept;
 import nars.io.Perception;
-import nars.link.TaskLink;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
@@ -129,20 +128,23 @@ public class DefaultCycle extends SequentialCycle {
 
 
         //1 concept if (memory.newTasks.isEmpty())*/
-        int conceptsToFire = newTasks.isEmpty() ? conceptsFiredPerCycle.get() : 0;
+        final int conceptsToFire = newTasks.isEmpty() ? conceptsFiredPerCycle.get() : 0;
+        if (conceptsToFire > 0) {
 
-        float tasklinkForgetDurations = memory.param.taskLinkForgetDurations.floatValue();
-        float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
-        for (int i = 0; i < conceptsToFire; i++) {
-            ConceptProcess f = newProcess(nextConceptToProcess(conceptForgetDurations), tasklinkForgetDurations);
-            if (f != null) {
-                f.run();
-            }
+            final float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
+
+            ConceptProcess.run(memory,
+                    () ->  nextConceptToProcess(conceptForgetDurations),
+                    conceptsToFire,
+                    p->p.run()
+            );
+
         }
 
         memory.runNextTasks();
 
     }
+
 
     private void runNewTasks() {
 
@@ -246,18 +248,7 @@ public class DefaultCycle extends SequentialCycle {
     }
 
 
-    protected ConceptProcess newProcess(final Concept concept, float taskLinkForgetDurations) {
-        if (concept == null) return null;
 
-
-        TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
-        if (taskLink!=null)
-            return new ConceptProcess(memory, concept, taskLink);
-        else {
-            return null;
-        }
-
-    }
 
 
     @Override
