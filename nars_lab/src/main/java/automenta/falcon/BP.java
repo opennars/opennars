@@ -16,7 +16,7 @@ package automenta.falcon; /*****************************************************
  ******************************************************************************/
 
 
-import automenta.falcon.minefield.Maze;
+
 import jurls.reinforcementlearning.domains.RLEnvironment;
 
 import java.io.PrintWriter;
@@ -86,7 +86,7 @@ public class BP extends AGENT {
 
     ;
 
-    public int doDirectAccessAction(int agt, boolean train, RLEnvironment maze) {
+    public int doDirectAccessAction(boolean train, RLEnvironment env) {
         return 0;
     }
 
@@ -100,7 +100,7 @@ public class BP extends AGENT {
     public void saveAgent(String outfile) {
     }
 
-    public void setParameters(int AVTYPE, boolean immediateReward) {
+    public void init(int AVTYPE, boolean immediateReward) {
         QEpsilonDecay = 0.00001;
         QEpsilon = 0.50000;
 
@@ -213,7 +213,7 @@ public class BP extends AGENT {
         return (QValue);
     }
 
-    public double getMaxQValue(int method, boolean train, RLEnvironment maze) {
+    public double getMaxQValue(int method, boolean train, RLEnvironment env) {
         int QLEARNING = 0;
         int SARSA = 1;
         double return_Q = 0.0;
@@ -227,7 +227,7 @@ public class BP extends AGENT {
                     return_Q = tmp_Q;
             }
         } else {                               //sarsa
-            int next_a = doSelectAction(train, maze);
+            int next_a = act(train, env);
             setAction(next_a);  // set action
             return_Q = doSearchQValue(PERFORM, 0);
         }
@@ -245,7 +245,7 @@ public class BP extends AGENT {
             return( -1 );
         }
     */
-    public int doSelectValidAction(boolean train, RLEnvironment maze) {
+    public int actDirect(RLEnvironment env, boolean train) {
         double d;
         double[] qValues = new double[numAction];
         int selectedAction = -1;
@@ -310,7 +310,7 @@ public class BP extends AGENT {
         return selectedAction;
     }
 
-    public int doSelectAction(boolean train, RLEnvironment maze) {
+    public int act(boolean train, RLEnvironment env) {
         double d;
         double[] qValues = new double[numAction];
         int selectedAction = -1;
@@ -658,7 +658,7 @@ public class BP extends AGENT {
 
     ;
 
-    public double computeJ(RLEnvironment maze) {
+    public double computeJ(RLEnvironment env) {
         return 0.0;
     }
 

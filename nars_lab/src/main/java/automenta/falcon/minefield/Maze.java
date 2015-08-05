@@ -228,7 +228,7 @@ class Maze implements RLEnvironment  {
         currentBearing[i] = b;
     }
 
-    public double getReward(int agt, int[] pos, boolean actual, boolean immediate) {
+    public double getRewards(int agt, int[] pos, boolean actual, boolean immediate) {
         int x = pos[0];
         int y = pos[1];
 
@@ -258,17 +258,17 @@ class Maze implements RLEnvironment  {
         return 0.0; //no intermediate reward
     }
 
-    public double getReward(int i, boolean immediate) {
-        return (getReward(i, current[i], true, immediate));
+    public double getRewards(int i, boolean immediate) {
+        return (getRewards(i, current[i], true, immediate));
     }
 
-    public double[] getReward(boolean immediate) {
+    public double[] getRewards(boolean immediate) {
         int k;
         double[] r;
 
         r = new double[agent_num];
         for (k = 0; k < agent_num; k++) {
-            r[k] = getReward(k, immediate);
+            r[k] = getRewards(k, immediate);
         }
         return (r);
     }
@@ -707,7 +707,7 @@ class Maze implements RLEnvironment  {
         int[] next_pos = new int[2];
 
         virtual_move(agt, d, next_pos);
-        r = this.getReward(agt, next_pos, false, immediate); //consider revise
+        r = this.getRewards(agt, next_pos, false, immediate); //consider revise
         // this.undoMove();
         return r;
     }

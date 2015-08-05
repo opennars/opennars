@@ -159,7 +159,7 @@ public abstract class DNDP extends AGENT {
     public void reinforce() {
     }
 
-    public double getMaxQValue(int i, boolean f, RLEnvironment m) {
+    public double getMaxQValue(int i, boolean f, RLEnvironment env) {
         return (0);
     }
 
@@ -173,13 +173,13 @@ public abstract class DNDP extends AGENT {
 
     ;
 
-    public int doSelectValidAction(boolean f, RLEnvironment m) {
+    public int actDirect(RLEnvironment env, boolean f) {
         return 0;
     }
 
     ;
 
-    public int doDirectAccessAction(int agt, boolean train, RLEnvironment maze) {
+    public int doDirectAccessAction(boolean train, RLEnvironment env) {
         return 0;
     }
 
@@ -208,7 +208,7 @@ public abstract class DNDP extends AGENT {
         return (Math.random() * (High - Low) + Low);
     }
 
-    public void setParameters(int AVTYPE, boolean immediateReward) {
+    public void init(int AVTYPE, boolean immediateReward) {
         QEpsilonDecay = 0.00001;
         QEpsilon = 0.50000;
 
@@ -530,7 +530,7 @@ public abstract class DNDP extends AGENT {
         return (id);
     }
 
-    public double computeJ(RLEnvironment maze) {
+    public double computeJ(RLEnvironment env) {
 
         setx(Input, N);
         propagateAN();
@@ -578,14 +578,14 @@ public abstract class DNDP extends AGENT {
     }
 
 
-    public int doSelectAction(boolean train, RLEnvironment maze) {
+    public int act(boolean train, RLEnvironment env) {
         int action = 2;
 
         int[] validActions = new int[numAction];
         int maxVA = 0;
 
         for (int i = 0; i < numAction; i++)
-            if (validAction(i, maze)) {
+            if (validAction(i, env)) {
                 validActions[maxVA] = i;
                 maxVA++;
             }
@@ -602,7 +602,7 @@ public abstract class DNDP extends AGENT {
             else if (u[0] >= 0.25 && u[0] < 0.75) action = 3;
             else if (u[0] >= 0.75) action = 4;
 
-            if (validAction(action, maze)) {
+            if (validAction(action, env)) {
                 if (Trace) System.out.println("Chosen Action= " + action + " u=" + u[0]);
             } else {       // if chosen action is not valid, select a random action
                 int randomIndex = (int) (Math.random() * maxVA);
@@ -618,9 +618,9 @@ public abstract class DNDP extends AGENT {
         } else {
             if (Trace) displayVector("u", u, A);
 
-            action = findMax(u, A, maze);
+            action = findMax(u, A, env);
 
-            if (!validAction(action, maze)) {       // if chosen action is not valid, select a random action
+            if (!validAction(action, env)) {       // if chosen action is not valid, select a random action
                 int randomIndex = (int) (Math.random() * maxVA);
                 action = validActions[randomIndex];
             }
@@ -632,7 +632,7 @@ public abstract class DNDP extends AGENT {
 
         if (explore) {
 
-            if (Math.random() < QEpsilon || !validAction(action, maze)) {
+            if (Math.random() < QEpsilon || !validAction(action, env)) {
                 // Select random action if exploring or invalid action.
                 if (Trace)
                     System.out.println("random action selected!");

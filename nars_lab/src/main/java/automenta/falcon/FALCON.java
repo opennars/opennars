@@ -7,21 +7,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
+import java.util.Arrays;
 
-public abstract class FALCON extends AGENT {
+public class FALCON extends AGENT {
     final static int RFALCON = 0;
     final static int TDFALCON = 1;
-    public static boolean forgetting = false;
+    public static boolean forgetting = true;
     public static boolean INTERFLAG = false;
     public static boolean detect_loop = false;
     public static boolean look_ahead = false;
     public static boolean Trace = true;
     final int numSpace = 4; // 0-State 1-Action 2-Reward 3-New State
-    final int numSonarInput = 10;
-    final int numAVSonarInput = 0;
-    final int numBearingInput = 8;
-    final int numRangeInput = 0;
-    final int numAction = 5;
+
     final int numReward = 2;
     final int complementCoding = 1;
     final int CURSTATE = 0;
@@ -39,10 +36,10 @@ public abstract class FALCON extends AGENT {
     private final double initConfidence = (double) 0.5;
     private final double reinforce_rate = (double) 0.5;
     private final double penalize_rate = (double) 0.2;
-    private final double decay_rate = (double) 0.0005;
+    private final double decay_rate = (double) 0.001;
     private final double threshold = (double) 0.01;
     private final int capacity = 9999;
-    private final double beta = (double) 1.0;
+    private final double beta = (double)0.95f;
     private final double epilson = (double) 0.001;
     private final double[] gamma = {1.0, 1.0, 1.0, 0.0};
     private final double[] alpha = {0.1, 0.1, 0.1};
@@ -50,7 +47,6 @@ public abstract class FALCON extends AGENT {
 
     // Action enumeration
     private final double[] p_rho = {0.0, 0.0, 0.0, 0.0}; // fuzzy ART performance vigilances
-    protected final int agentID;
     private final int[] current;
 
     // Direct Access
@@ -64,7 +60,8 @@ public abstract class FALCON extends AGENT {
     private double beta=(double)0.5;
     private double b_rho[]={(double)0.5,(double)0.2,(double)0.0,(double)0.0};
 	*/
-    private final NumberFormat df = NumberFormat.getInstance();
+    public static final NumberFormat df = NumberFormat.getInstance();
+    private final RLEnvironment env;
     private int numCode;
     private double prevReward = 0;
     private double[] activityF2;
@@ -75,18 +72,16 @@ public abstract class FALCON extends AGENT {
     private boolean end_state;
     private int max_step;
     private int step;
-    private int currentBearing;
-    private int targetBearing;
-    private int[][] path;
 
-    public FALCON(int av_num) {
+    public FALCON(RLEnvironment env) {
+
+        this.env = env;
 
         df.setMaximumFractionDigits(1);
 
-        agentID = av_num;
         numInput = new int[numSpace];
-        numInput[0] = numSonarInput + numAVSonarInput + numBearingInput + numRangeInput;
-        numInput[1] = numAction;
+        numInput[0] = env.numStates();
+        numInput[1] = env.numActions();
         numInput[2] = numReward;
         numInput[3] = numInput[0];
 
@@ -117,13 +112,15 @@ public abstract class FALCON extends AGENT {
         current = new int[2];
     }
 
-    public void setParameters(int AVTYPE, boolean immediateReward) {
+    public void init(int AVTYPE, boolean immediateReward) {
+
+        //clear?
 
         if (AVTYPE == RFALCON) {
             QEpsilonDecay = 0.00000;
             QEpsilon = 0.00000;
         } else { //  QEpsilonDecay rate for TD-FALCON
-            QEpsilonDecay = 0.00050;
+            QEpsilonDecay = 0.0001;
             QEpsilon = 0.50000;
         }
 
@@ -131,6 +128,14 @@ public abstract class FALCON extends AGENT {
             QGamma = 0.5;
         else
             QGamma = 0.9;
+
+        initAction();
+
+        initReward();
+        setReward(1);
+
+        //createNewCode();
+
     }
 
     public void stop() {
@@ -221,6 +226,11 @@ public abstract class FALCON extends AGENT {
         prevReward = r;
     }
 
+    @Override
+    public void init_path(int maxStep) {
+
+    }
+
     public void createNewCode() {
         numCode++;
 
@@ -250,6 +260,8 @@ public abstract class FALCON extends AGENT {
         }
         weight = new_weight;
     }
+
+
 
     public void reinforce() {
         confidence[J] += (1.0 - confidence[J]) * reinforce_rate;
@@ -305,51 +317,13 @@ public abstract class FALCON extends AGENT {
         }
     }
 
-    public void setState(double[] sonar, double[] av_sonar, int bearing, double range) {
-        int index;
 
-        for (int i = 0; i < (numSonarInput / 2); i++) {
-            activityF1[0][i] = sonar[i];
-            activityF1[0][i + numSonarInput / 2] = 1 - sonar[i];
-        }
-        index = numSonarInput;
-
-        for (int i = 0; i < (numAVSonarInput / 2); i++) {
-            activityF1[0][index + i] = av_sonar[i];
-            activityF1[0][index + i + numSonarInput / 2] = 1 - av_sonar[i];
-        }
-        index += numAVSonarInput;
-
-        for (int i = 0; i < numBearingInput; i++)
-            activityF1[0][index + i] = 0.0;
-        activityF1[0][index + bearing] = 1.0;
-        index += numBearingInput;
-
-        for (int i = 0; i < (numRangeInput / 2); i++) {
-            activityF1[0][index + i] = range;
-            activityF1[0][index + i + (numRangeInput / 2)] = 1 - range;
-        }
-    }
 
     public void initAction() {
         for (int i = 0; i < numInput[ACTION]; i++)
             activityF1[ACTION][i] = 1;
     }
 
-    public void init_path(int maxstep) {
-        int k;
-
-        max_step = maxstep;
-        step = 0;
-        currentBearing = 0;
-        path = new int[max_step + 1][2];
- /*       for( k = 0; k < 2; k++ )
-        {
-            current[k] = 0;
-            path[step][k] = 0;
-        }
-*/
-    }
 
     public void resetAction() {
         for (int i = 0; i < numInput[ACTION]; i++)
@@ -372,30 +346,11 @@ public abstract class FALCON extends AGENT {
         activityF1[REWARD][1] = 1;
     }
 
-    public void setNewState(double[] sonar, double[] av_sonar, int bearing, double range) {
-        int index;
+    public double[] getState() { return activityF1[0]; }
 
-        for (int i = 0; i < numSonarInput / 2; i++) {
-            activityF1[NEWSTATE][i] = sonar[i];
-            activityF1[NEWSTATE][i + (numSonarInput / 2)] = 1 - sonar[i];
-        }
-        index = numSonarInput;
 
-        for (int i = 0; i < (numAVSonarInput / 2); i++) {
-            activityF1[NEWSTATE][i] = av_sonar[i];
-            activityF1[NEWSTATE][i + numSonarInput / 2] = 1 - av_sonar[i];
-        }
-        index += numAVSonarInput;
-
-        for (int i = 0; i < numBearingInput; i++)
-            activityF1[NEWSTATE][index + i] = 0.0;
-        activityF1[NEWSTATE][index + bearing] = 1.0;
-        index += numBearingInput;
-
-        for (int i = 0; i < (numRangeInput / 2); i++) {
-            activityF1[NEWSTATE][index + i] = range;
-            activityF1[NEWSTATE][index + i + (numRangeInput / 2)] = 1 - range;
-        }
+    protected double[] getNewState() {
+        return activityF1[NEWSTATE];
     }
 
     public void computeChoice(int type, int numSpace) {
@@ -433,7 +388,7 @@ public abstract class FALCON extends AGENT {
     }
 
     public int doChoice() {
-        double max_act = -1.0;
+        double max_act = Double.NEGATIVE_INFINITY;
         int c = -1;
 
         for (int j = 0; j <= numCode; j++)
@@ -497,21 +452,23 @@ public abstract class FALCON extends AGENT {
     }
 
     public void doLearn(int J, int type) {
-        double rate;
+        double learningRate;
 
         if (!newCode[J] || numCode < capacity) {
 
-            if (newCode[J]) rate = 1;
-            else rate = beta; //*Math.abs(r-reward);
+            if (newCode[J]) learningRate = 1;
+            else learningRate = beta; //*Math.abs(r-reward);
 
             for (int k = 0; k < numSpace; k++) {
                 for (int i = 0; i < numInput[k]; i++) {
-                    if (type == FUZZYART)
-                        weight[J][k][i] = (1 - rate) * weight[J][k][i] +
-                                rate * Math.min(weight[J][k][i], activityF1[k][i]);
+                    final double w = weight[J][k][i];
+                    if (type == FUZZYART) {
+                        weight[J][k][i] = (1 - learningRate) * w +
+                                learningRate * Math.min(w, activityF1[k][i]);
+                    }
                     else if (type == ART2)
-                        weight[J][k][i] = (1 - rate) * weight[J][k][i] +
-                                rate * activityF1[k][i];
+                        weight[J][k][i] = (1 - learningRate) * w +
+                                learningRate * activityF1[k][i];
                 }
             }
 
@@ -538,37 +495,22 @@ public abstract class FALCON extends AGENT {
     }
 
     public void displayActivity2(PrintWriter pw, int k) {
-        pw.print("AV" + agentID + " Space " + k + " : ");
+        //pw.print("AV" + agentID + " Space " + k + " : ");
         for (int i = 0; i < numInput[k] - 1; i++)
             pw.print(df.format(activityF1[k][i]) + ", ");
         pw.println(df.format(activityF1[k][numInput[k] - 1]));
     }
 
-    public void displayVector(String s, double[] x, int n) {
+    public static void displayVector(String s, double[] x, int n) {
         System.out.print(s + " : ");
         for (int i = 0; i < n - 1; i++)
             System.out.print(df.format(x[i]) + ", ");
         System.out.println(df.format(x[n - 1]));
     }
 
-    public void displayState(String s, double[] x, int n) {
-        System.out.print(s + "   Sonar: [");
-        int index = 0;
-        for (int i = 0; i < numSonarInput; i++)
-            System.out.print(df.format(x[index + i]) + ", ");
-        System.out.print(df.format(x[index + numSonarInput - 1]));
 
-        System.out.println("]");
-        System.out.print("TargetBearing: [");
-        index = numSonarInput;
-        for (int i = 0; i < numBearingInput; i++)
-            System.out.print(df.format(x[index + i]) + ", ");
-        System.out.println(df.format(x[index + numBearingInput - 1]) + "]");
-
-    }
-
-    public void displayVector2(PrintWriter pw, String s, double[] x, int n) {
-        pw.print("AV" + agentID + " " + s + " : ");
+    public static void displayVector2(PrintWriter pw, String s, double[] x, int n) {
+        //pw.print("AV" + agentID + " " + s + " : ");
         for (int i = 0; i < n - 1; i++)
             pw.print(df.format(x[i]) + ", ");
         pw.println(df.format(x[n - 1]));
@@ -593,7 +535,7 @@ public abstract class FALCON extends AGENT {
 //        System.out.println ("Running searchQValue:");
         computeChoice(type, 2); //map from state action to reward
 
-        while (reset && !perfectMismatch) {
+        while (numCode > 0 && reset && !perfectMismatch) {
             reset = false;
             J = doChoice();
             for (int k = 0; k < numSpace; k++)
@@ -621,7 +563,9 @@ public abstract class FALCON extends AGENT {
                 QValue = activityF1[REWARD][0];
         } else if (mode == LEARN) {
             if (!perfectMismatch) doLearn(J, type);
-            else doOverwrite(J);
+            else {
+                doOverwrite(J);
+            }
         }
         return (QValue);
     }
@@ -644,7 +588,7 @@ public abstract class FALCON extends AGENT {
                     if (tmp_Q > Q) Q = tmp_Q;
                 }
             } else {                               //sarsa
-                int next_a = doSelectAction(train, env);
+                int next_a = act(train, env);
                 setAction(next_a);  // set action
                 Q = doSearchQValue(PERFORM, FUZZYART);
             }
@@ -671,8 +615,8 @@ public abstract class FALCON extends AGENT {
 
 //        System.out.println ("Running searchAction");
         if (Trace) {
-            System.out.println("\nInput activities:");
-            displayState("STATE", activityF1[CURSTATE], numInput[CURSTATE]);
+            //System.out.println("\nInput activities:");
+            //displayState("STATE", activityF1[CURSTATE], numInput[CURSTATE]);
             displayActivity(ACTION);
             displayActivity(REWARD);
         }
@@ -697,9 +641,9 @@ public abstract class FALCON extends AGENT {
                 match[k] = doMatch(k, J);
             if (Trace) {
                 System.out.println("winner = " + J);
-                displayState("weight[J][STATE] ", weight[J][CURSTATE], numInput[CURSTATE]);
+                /*displayState("weight[J][STATE] ", weight[J][CURSTATE], numInput[CURSTATE]);
                 displayVector("weight[J][ACTION]", weight[J][ACTION], numInput[ACTION]);
-                displayVector("weight[J][REWARD]", weight[J][REWARD], numInput[REWARD]);
+                displayVector("weight[J][REWARD]", weight[J][REWARD], numInput[REWARD]);*/
                 System.out.println("Winner " + J + " act " + df.format(activityF2[J]) +
                         " match[State] = " + df.format(match[CURSTATE]) +
                         " match[action] = " + df.format(match[ACTION]) +
@@ -738,75 +682,67 @@ public abstract class FALCON extends AGENT {
         return (action);
     }
 
-    private int loop_path() {
-        int k;
 
-        for (k = (step - 1); k >= 0; k--)
-            if ((current[0] == path[k][0]) && (current[1] == path[k][1]))
-                return (k);
-        return (-1);
-    }
+    public int act(boolean train, RLEnvironment env) {
 
-    private int get_except_action() {
-        int rep_step;
-        int a;
-        int[] new_pos;
-
-        new_pos = new int[2];
-        rep_step = loop_path();
-        if (rep_step < 0)
-            return (-1);
-        for (a = 0; a < numAction; a++) {
-            virtual_move(a - 2, new_pos);
-            if ((new_pos[0] == path[rep_step + 1][0]) && (new_pos[1] == path[rep_step + 1][1]))
-                return (a);
-        }
-        return (-1);
-    }
-
-    public int doSelectAction(boolean train, RLEnvironment maze) {
-
-        double[] qValues = new double[numAction];
+        double[] qValues = new double[env.numActions()];
         int selectedAction = -1;
+
+        final double rrr = env.getReward();
+
+        //initAction();
+        setReward(rrr);
+        setState( env.observe() );
+
 
 
         //get qValues for all available actions
-        for (int i = 0; i < numAction; i++) {
+        for (int i = 0; i < env.numActions(); i++) {
             setAction(i);
             qValues[i] = doSearchQValue(PERFORM, FUZZYART);
         }
 
-        double maxQ = -Double.MAX_VALUE;
-        int[] doubleValues = new int[qValues.length];
-        int maxDV = 0;
+        if (Trace) {
+            System.out.println(Arrays.toString(qValues));
+            //displayActivity(1);
+        }
+
+
 
         //Explore
         if (Math.random() < QEpsilon && train == true) {
+            if (Trace)
+                System.out.println("exploring");
             selectedAction = -1;
         } else {
 
-            for (int action = 0; action < qValues.length; action++) {
-			  /*  if(maze.nextReward(action-2)>0.5){ //add in rules
-			    	selectedAction = action;
-			    	maxDV=0;
-			    	break;
-			    } */
-                if (qValues[action] > maxQ) {
-                    selectedAction = action;
-                    maxQ = qValues[action];
-                    maxDV = 0;
-                    doubleValues[maxDV] = selectedAction;
-                } else if (qValues[action] == maxQ) {
-                    maxDV++;
-                    doubleValues[maxDV] = action;
+            selectedAction = doSearchAction(PERFORM, FUZZYART);
+
+            if (selectedAction == -1) {
+
+                double maxQ = -Double.MAX_VALUE;
+                int[] doubleValues = new int[qValues.length];
+                int maxDV = 0;
+
+                for (int action = 0; action < qValues.length; action++) {
+                    if (qValues[action] > maxQ) {
+                        selectedAction = action;
+                        maxQ = qValues[action];
+                        maxDV = 0;
+                        doubleValues[maxDV] = selectedAction;
+                    } else if (qValues[action] == maxQ) {
+                        doubleValues[++maxDV] = action;
+                    }
+                }
+
+                if (maxDV > 0) {
+                    int randomIndex = (int) (Math.random() * (maxDV + 1));
+                    selectedAction = doubleValues[randomIndex];
                 }
             }
 
-            if (maxDV > 0) {
-                int randomIndex = (int) (Math.random() * (maxDV + 1));
-                selectedAction = doubleValues[randomIndex];
-            }
         }
+
         // Select random action if all qValues == 0 or exploring.
         if (selectedAction == -1) {
             if (Trace)
@@ -814,37 +750,71 @@ public abstract class FALCON extends AGENT {
 
             selectedAction = (int) (Math.random() * qValues.length);
         }
+        else {
+            if (Trace)
+                System.out.println("action=" + selectedAction);
+        }
+
+        if (selectedAction == -1) {
+            System.out.println("No action selected");
+        }
+        else {
+
+            System.out.println("execute: " + selectedAction);
+
+            env.takeAction(selectedAction);
+            env.frame();
+
+            setNewState(env.observe());
+            setAction(selectedAction);
+
+            doSearchQValue(LEARN, FUZZYART);
+            doSearchAction(LEARN, FUZZYART);
+
+            age();
+
+        }
+
+        setPrevReward(rrr);
+
         return selectedAction;
     }
 
-    public int doSelectValidAction(boolean train, RLEnvironment maze) {
+    public int act(boolean train) {
+        return act(train, this.env);
+    }
+
+    @Deprecated public int actDirect(RLEnvironment env, boolean train) {
         double d;
-        double[] qValues = new double[numAction];
         int selectedAction = -1;
         int except_action = -1;
         int k;
+
+        initAction();
+        setReward( env.getReward() );
+        setState( env.observe() );
 
 //        if (detect_loop)
 //        except_action = get_except_action();
 
         //get qValues for all available actions
 
-        int[] validActions = new int[qValues.length];
-        int maxVA = 0;
+        int validActionCount = 0;
+        int[] validActions = new int[env.numActions()];
+        double[] qValues = new double[env.numActions()];
 
-        for (int i = 0; i < numAction; i++) {
-            if (!validAction(maze, i)) {
+        for (int i = 0; i < validActionCount; i++) {
+            if (!validAction(env, i)) {
                 qValues[i] = -1.0;
 //      			System.out.println ( "action " + i + " invalid");
             } else {
                 setAction(i);
                 qValues[i] = doSearchQValue(PERFORM, FUZZYART);
-                validActions[maxVA] = i;
-                maxVA++;
+                validActions[validActionCount++] = i;
             }
         }
 
-        if (maxVA == 0) {
+        if (validActionCount == 0) {
 // 	        System.out.println ( "current = ("+current[0]+","+current[1]+")  Bearing = " + currentBearing);
 // 	        System.out.println ( "*** No valid action *** ");
 
@@ -856,7 +826,7 @@ public abstract class FALCON extends AGENT {
             // Select random action if all qValues == 0 or exploring.
             if (Trace)
                 System.out.println("random action selected!");
-            int randomIndex = (int) (Math.random() * maxVA);
+            int randomIndex = (int) (Math.random() * validActionCount);
             selectedAction = validActions[randomIndex];
             ;
         } else {
@@ -864,7 +834,7 @@ public abstract class FALCON extends AGENT {
             int[] doubleValues = new int[qValues.length];
             int maxDV = 0;
 
-            for (int vAction = 0; vAction < maxVA; vAction++) {
+            for (int vAction = 0; vAction < validActionCount; vAction++) {
                 int action = validActions[vAction];
 //            	System.out.print ( "action[" + action + "] = " + qValues[action]);
 /*				if (detect_loop)
@@ -897,18 +867,31 @@ public abstract class FALCON extends AGENT {
 //        	System.out.println ( "Best valid action is " + selectedAction + " with maxQ =" + maxQ);
         }
 
-        if (selectedAction == -1)
+        if (selectedAction == -1) {
             System.out.println("No action selected");
+        }
+        else {
+            env.takeAction(selectedAction);
+            age();
+        }
 
         return selectedAction;
     }
 
-    // Direct Access
-    public int doDirectAccessAction(int agt, boolean train, RLEnvironment maze) {
-        int selectedAction; // from 0 to 4
+    private void setState(double[] observe) {
+        System.arraycopy(observe, 0, getState(), 0, observe.length);
+    }
+    private void setNewState(double[] observe) {
+        System.arraycopy(observe, 0, getNewState(), 0, observe.length);
+    }
 
-        if (agt != agentID)
-            System.out.println("ID not consistent");
+//    private void flipstate() {
+//        System.arraycopy(getNewState(), 0, getState(), 0, getState().length);
+//    }
+
+    // Direct Access
+    @Deprecated public int doDirectAccessAction(boolean train, RLEnvironment env) {
+        int selectedAction; // from 0 to 4
 
         // first try to select an action
         //setState (maze.getSonar(), (maze.getTargetBearing()-maze.getCurrentBearing()+10)%8);
@@ -918,17 +901,17 @@ public abstract class FALCON extends AGENT {
 
         if (Math.random() < QEpsilon ||
                 (selectedAction = doSearchAction(PERFORM, FUZZYART)) == -1 || // no close match
-                !validAction(maze, selectedAction)) { // not valid action
+                !validAction(env, selectedAction)) { // not valid action
 
             if (Trace)
                 System.out.println("random action selected!");
 
-            int[] validActions = new int[numAction];
+            int[] validActions = new int[env.numActions()];
             int maxVA = 0;
 
 //            System.out.print ("Valid actions :");
-            for (int i = 0; i < numAction; i++)
-                if (validAction(maze, i - 2)) {   // valid action
+            for (int i = 0; i < env.numActions(); i++)
+                if (validAction(env, i - 2)) {   // valid action
 //					System.out.print (" " + i);
                     validActions[maxVA] = i;
                     maxVA++;
@@ -953,7 +936,13 @@ public abstract class FALCON extends AGENT {
         return selectedAction;
     }
 
-    protected abstract boolean validAction(RLEnvironment env, int selectedAction);
+    /**
+     * allows domain-specific subclasses to override known invalid actions
+     * to preven their selection
+     */
+    protected boolean validAction(RLEnvironment env, int selectedAction) {
+        return true;
+    }
 
     public int[] findKMax(double[] v, int n, int K) {
         int temp;
@@ -1037,104 +1026,7 @@ public abstract class FALCON extends AGENT {
         return (action);
     }
 
-    public void virtual_move(int a, int[] res) {
 
-        int k;
-        int bearing = (currentBearing + a + 8) % 8;
-
-        res[0] = current[0];
-        res[1] = current[1];
-
-        switch (bearing) {
-            case 0:
-                res[1]--;
-                break;
-            case 1:
-                res[0]++;
-                res[1]--;
-                break;
-            case 2:
-                res[0]++;
-                break;
-            case 3:
-                res[0]++;
-                res[1]++;
-                break;
-            case 4:
-                res[1]++;
-                break;
-            case 5:
-                res[0]--;
-                res[1]++;
-                break;
-            case 6:
-                res[0]--;
-                break;
-            case 7:
-                res[0]--;
-                res[1]--;
-                break;
-            default:
-                break;
-        }
-        return;
-    }
-
-    public void turn(int d) {
-        currentBearing = (currentBearing + d + 8) % 8;
-    }
-
-    public void move(int a, boolean succ) {
-        int k;
-
-        currentBearing = (currentBearing + a + 8) % 8;
-        ++step;
-        if (!succ) {
-            path[step][0] = current[0];
-            path[step][1] = current[1];
-            return;
-        }
-
-        switch (currentBearing) {
-            case 0:
-                current[1]--;
-                break;
-            case 1:
-                current[0]++;
-                current[1]--;
-                break;
-            case 2:
-                current[0]++;
-                break;
-            case 3:
-                current[0]++;
-                current[1]++;
-                break;
-            case 4:
-                current[1]++;
-                break;
-            case 5:
-                current[0]--;
-                current[1]++;
-                break;
-            case 6:
-                current[0]--;
-                break;
-            case 7:
-                current[0]--;
-                current[1]--;
-                break;
-            default:
-                break;
-        }
-        path[step][0] = current[0];
-        path[step][1] = current[1];
-        return;
-    }
-
-    int get_J() {
-        return (J);
-    }
 
     // dummy methods required by abstract AGENT class
 
@@ -1148,11 +1040,21 @@ public abstract class FALCON extends AGENT {
 
     ;
 
-    public double computeJ(RLEnvironment maze) {
+    public double computeJ(RLEnvironment env) {
         return 0.0;
     }
 
     public void setNextJ(double J) {
+    }
+
+    @Override
+    public void turn(int d) {
+
+    }
+
+    @Override
+    public void move(int d, boolean actual) {
+
     }
 
     ;
