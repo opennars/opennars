@@ -124,7 +124,7 @@ public abstract class Param implements Serializable {
 
 
 
-    /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
+    /** Maximum TermLinks checked for novelty for each TermTaskLinkPremise generated */
     public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
 
 

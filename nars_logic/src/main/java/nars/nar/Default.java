@@ -41,6 +41,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
+import nars.premise.BloomPremiseGenerator;
 import nars.premise.UniquePerCyclePremiseGenerator;
 import nars.process.CycleProcess;
 import nars.process.concept.*;
@@ -145,8 +146,9 @@ public class Default extends NARSeed  {
 
     public Default level(int maxNALlevel) {
         super.level(maxNALlevel);
-        if (maxNALlevel < 8)
-            setInternalExperience(null);
+        if (maxNALlevel < 8) {
+            this.internalExperience = InternalExperience.InternalExperienceMode.None;
+        }
         return this;
     }
 
@@ -167,7 +169,7 @@ public class Default extends NARSeed  {
 
         conceptTaskTermProcessPerCycle.set(termLinksPerCycle);
 
-        termLinkMaxMatched.set(8);
+        termLinkMaxMatched.set(5);
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
@@ -455,7 +457,8 @@ public class Default extends NARSeed  {
         return new DefaultConcept(t, b,
                 taskLinks, termLinks,
                 getConceptBeliefGoalRanking(),
-                new UniquePerCyclePremiseGenerator(termLinkMaxMatched),
+                //new UniquePerCyclePremiseGenerator(termLinkMaxMatched),
+                new BloomPremiseGenerator(termLinkMaxMatched),
                 mem
         );
     }

@@ -1,104 +1,121 @@
 package nars.premise;
 
-import com.google.common.hash.BloomFilter;
-import com.google.common.hash.Funnel;
-import com.google.common.hash.PrimitiveSink;
-import com.gs.collections.api.tuple.Pair;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.task.Sentence;
-import nars.term.Term;
+import nars.util.data.bloom.BloomFilter;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static nars.util.data.Util.int2Bytes;
 
 /**
  * Applies a BloomFilter as a lossy short-term memory
  * to decide the novelty of termlink/tasklink pairs
  * https://code.google.com/p/guava-libraries/wiki/HashingExplained#BloomFilter
+ * <p>
+ * Not thread safe unless validTermLinkTarget were synch or hashBuffer is threadlocal
  */
-public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator implements Funnel<Pair<Term, Sentence>> {
+public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator {
 
-    BloomFilter<Pair<Term,Sentence>> history;
+    private final int clearAfterCycles;
+    long lastClear;
 
-    final double maxFPP = 0.1;
-    static final int attempts = 12;
+    final BloomFilter history;
 
-    final int expectedMemorySize = 24;
-    final double desiredFPP = 0.02;
+    //for statistics:
+    //private int novel, nonnovel;
 
-    //final float allowedRepeatRate = 0; //TODO allow a premise which is suspected of being non-novel to be applied anyway
+    final byte[] hashBuffer = new byte[3 * 4];
 
-    private int novel;
-    private int nonnovel;
-
-    /** clear the bloom filter when it becomes too dirty (too high FPP) */
-    protected void reset() {
-        history = BloomFilter.create(this, expectedMemorySize, desiredFPP);
-        novel = nonnovel = 0;
+    /**
+     * clear the bloom filter when it becomes too dirty (too high FPP)
+     */
+    protected void reset(long now) {
+        //novel = nonnovel = 0;
+        history.clear();
+        lastClear = now;
     }
 
-    public BloomPremiseGenerator() {
-        super(new AtomicInteger(attempts));
-        reset();
+    public BloomPremiseGenerator(AtomicInteger maxSelectionAttempts) {
+        this(maxSelectionAttempts, 1, 32, 0.005);
+    }
+
+    public BloomPremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles, int expectedSize, double fpp) {
+        super(maxSelectionAttempts);
+
+        this.history = new BloomFilter(expectedSize, fpp);
+
+        this.clearAfterCycles = clearAfterCycles;
+    }
+
+    protected byte[] bytes(final Concept c, final TermLink term, final TaskLink task) {
+        final byte[] b = this.hashBuffer;
+
+        int p = 0;
+
+        //simple hash function: just use each int (32 bit) hashCode's:
+        p = int2Bytes(c.hashCode(), b, p);
+        p = int2Bytes(term.hashCode(), b, p);
+        p = int2Bytes(task.hashCode(), b, p);
+
+
+//                .putLong(term.structuralHash()).putInt(term.hashCode())
+//
+//                .putLong(task.getTerm().structuralHash()).putInt(task.getTerm().hashCode())
+//                .putChar(task.getPunctuation())
+//                .putLong(task.getOccurrenceTime())
+//                .putInt(task.getTruth() != null ? task.hashCode() : 0);
+//
+
+
+        return b;
     }
 
     @Override
     public boolean validTermLinkTarget(Concept c, TermLink term, TaskLink taskLink) {
         if (!super.validTermLinkTarget(c, term, taskLink)) return false;
 
-        final Pair<Term, Sentence> s = PremiseGenerator.pair(taskLink, term);
+        final long now = c.getMemory().time();
 
-        final boolean mightContain = history.mightContain(s);
+        if (now - lastClear >= clearAfterCycles) {
+            reset(now);
+        }
+
+
+        final boolean mightContain = history.testBytes(bytes(c, term, taskLink));
 
         if (mightContain) {
-            nonnovel++;
+            //nonnovel++;
+            //print(now);
+
             return false;
         }
-        else {
-
-            //System.out.println(c + " " + s + " " + mightContain + " #" + novel + "/" + nonnovel + " ~"+ history.expectedFpp());;
-
-            double fpp = history.expectedFpp();
-            if (fpp > maxFPP) {
-
-                //System.out.println(this + " fpp limit, reset " + fpp + " with " + novel);
-                reset();
-            }
-            history.put(s);
-            novel++;
-            return true;
-        }
-    }
 
 
+        history.add(hashBuffer);
 
-    @Override
-    public void funnel(Pair<Term, Sentence> from, PrimitiveSink into) {
-        funnelSimple(from, into);
-    }
-
-    public static void funnelSimple(Pair<Term, Sentence> from, PrimitiveSink into) {
-        into.putInt(from.getOne().hashCode()).putInt(from.getTwo().hashCode());
-    }
-
-    public static void funnelDetailed(Pair<Term, Sentence> from, PrimitiveSink into) {
-        //into.putBytes(from.getOne().bytes()).put
-        final Term term = from.getOne();
-        final Sentence task = from.getTwo();
+        //novel++;
+        //print(now);
 
 
-        into
-            .putLong(term.structuralHash()).putInt(term.hashCode())
-
-            .putLong(task.getTerm().structuralHash()).putInt(task.getTerm().hashCode())
-            .putChar(task.getPunctuation())
-            .putLong(task.getOccurrenceTime())
-            .putInt(task.getTruth() != null ? task.hashCode() : 0);
-
-        for (long l : task.getEvidentialSet())
-            into.putLong(l);
+        return true;
 
 
     }
+
+//    protected void print(long now) {
+//        System.out.println(now + ": " + novel + "/" + nonnovel + ": " + Arrays.toString(hashBuffer) + " <- " + history.getBitSet().toString());
+//    }
 }
+
+
+
+//System.out.println(c + " " + s + " " + mightContain + " #" + novel + "/" + nonnovel + " ~"+ history.expectedFpp());;
+
+//            double fpp = history.getEstimatedFalsePositiveProbability();
+//            if (fpp > maxFPP) {
+//
+//                //System.out.println(this + " fpp limit, reset " + fpp + " with " + novel);
+//                reset();
+//            }

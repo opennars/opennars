@@ -13,7 +13,7 @@ import java.lang.ref.SoftReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by me on 7/18/15.
+ * Untested - may have a bug since it currently does not include the Concept as part of the uniqueness
  */
 public class UniquePerCyclePremiseGenerator extends TermLinkBagPremiseGenerator {
 

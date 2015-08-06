@@ -22,6 +22,7 @@
 
     <build>
 
+
         <resources>
             <resource>
                 <directory>${basedir}/src/main/java/</directory>
@@ -66,20 +67,20 @@
             </plugin>
 
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                <!--<version>3.3</version>-->
-                <!--<configuration>-->
-                    <!--<compilerId>javac-with-errorprone</compilerId>-->
-                    <!--<forceJavacCompilerUse>true</forceJavacCompilerUse>-->
-                <!--</configuration>-->
-                <!--<dependencies>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.codehaus.plexus</groupId>-->
-                        <!--<artifactId>plexus-compiler-javac-errorprone</artifactId>-->
-                        <!--<version>2.5</version>-->
-                    <!--</dependency>-->
-                <!--</dependencies>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-compiler-plugin</artifactId>-->
+            <!--<version>3.3</version>-->
+            <!--<configuration>-->
+            <!--<compilerId>javac-with-errorprone</compilerId>-->
+            <!--<forceJavacCompilerUse>true</forceJavacCompilerUse>-->
+            <!--</configuration>-->
+            <!--<dependencies>-->
+            <!--<dependency>-->
+            <!--<groupId>org.codehaus.plexus</groupId>-->
+            <!--<artifactId>plexus-compiler-javac-errorprone</artifactId>-->
+            <!--<version>2.5</version>-->
+            <!--</dependency>-->
+            <!--</dependencies>-->
             <!--</plugin>-->
 
             <!--<plugin>-->
@@ -169,31 +170,31 @@
 
             <!--&lt;!&ndash;Proguard SOMEWHAT WORKING&ndash;&gt;-->
             <!--<plugin>-->
-                <!--<groupId>com.github.wvengen</groupId>-->
-                <!--<artifactId>proguard-maven-plugin</artifactId>-->
-                <!--<version>2.0.8</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>proguard</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<obfuscate>true</obfuscate>-->
-                    <!--&lt;!&ndash;<injar>${project.build.finalName}${project.build.finalName}-capsule-fat.jar</injar>&ndash;&gt;-->
-                    <!--<injar>${project.build.finalName}.jar</injar>-->
-                    <!--<outjar>${project.build.finalName}-small.jar</outjar>-->
-                    <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
-                    <!--<proguardInclude>${basedir}/proguard.conf</proguardInclude>-->
-                    <!--<includeDependency>true</includeDependency>-->
-                    <!--<includeDependencyInjar>true</includeDependencyInjar>-->
-                    <!--<libs>-->
-                        <!--<lib>${java.home}/lib/rt.jar</lib>-->
-                        <!--<lib>${java.home}/lib/jsse.jar</lib>-->
-                    <!--</libs>-->
-                <!--</configuration>-->
+            <!--<groupId>com.github.wvengen</groupId>-->
+            <!--<artifactId>proguard-maven-plugin</artifactId>-->
+            <!--<version>2.0.8</version>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+            <!--<goal>proguard</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<obfuscate>true</obfuscate>-->
+            <!--&lt;!&ndash;<injar>${project.build.finalName}${project.build.finalName}-capsule-fat.jar</injar>&ndash;&gt;-->
+            <!--<injar>${project.build.finalName}.jar</injar>-->
+            <!--<outjar>${project.build.finalName}-small.jar</outjar>-->
+            <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
+            <!--<proguardInclude>${basedir}/proguard.conf</proguardInclude>-->
+            <!--<includeDependency>true</includeDependency>-->
+            <!--<includeDependencyInjar>true</includeDependencyInjar>-->
+            <!--<libs>-->
+            <!--<lib>${java.home}/lib/rt.jar</lib>-->
+            <!--<lib>${java.home}/lib/jsse.jar</lib>-->
+            <!--</libs>-->
+            <!--</configuration>-->
             <!--</plugin>-->
 
 
@@ -300,10 +301,7 @@
     <!--</reporting>-->
 
 
-
-
     <dependencies>
-
 
 
         <dependency>
@@ -323,14 +321,15 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 
+
     </dependencies>
+
 
 
 </project>

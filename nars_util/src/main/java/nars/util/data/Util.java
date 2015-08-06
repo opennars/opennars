@@ -445,4 +445,25 @@ public final class Util {
    /* End Of AP Hash Function */
 
 //    }
+
+
+    /** returns the next index */
+    public static int long2Bytes(long l, final byte[] target, final int offset) {
+        for (int i = offset+7; i >= offset; i--) {
+            target[i] = (byte)(l & 0xFF);
+            l >>= 8;
+        }
+        return offset+8;
+    }
+
+    /** returns the next index */
+    public static int int2Bytes(int l, final byte[] target, final int offset) {
+        for (int i = offset+3; i >= offset; i--) {
+            target[i] = (byte)(l & 0xFF);
+            l >>= 8;
+        }
+        return offset+4;
+    }
+
+
 }

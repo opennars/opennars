@@ -38,7 +38,7 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
             return ParametricBagForgetting.ForgetAction.SelectAndForget;
         }
         else {
-            return ParametricBagForgetting.ForgetAction.Ignore;
+            return ParametricBagForgetting.ForgetAction.IgnoreAndForget;
         }
 
     }
@@ -89,6 +89,8 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
 
         if (termlinks == 1)
             return 1;
+
+        //TODO use # of termlinks as a guesstimate
 
         return maxSelectionAttempts.get();
     }
