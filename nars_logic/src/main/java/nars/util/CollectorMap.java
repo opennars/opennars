@@ -35,7 +35,7 @@ public abstract class CollectorMap<K, V extends Item<K>> {
         final K key = value.name();
         final V valPrev = putKey(key, value);
 
-        if (!BudgetFunctions.merge(value, valPrev) && (value == valPrev))
+        if (!value.mergeIfChanges(valPrev, Global.BUDGET_EPSILON))
             return;
 
         //TODO check before and after removal index and if the same just replace

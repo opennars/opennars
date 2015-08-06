@@ -32,7 +32,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.truth.Truth;
 
-import static java.lang.Math.max;
 import static java.lang.Math.pow;
 
 
@@ -52,7 +51,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static float truthToQuality(final Truth t) {
         final float exp = t.getExpectation();
-        return max(exp, (1f - exp) * 0.75f);
+        return Math.max(exp, (1f - exp) * 0.75f);
     }
 
 
@@ -82,7 +81,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             bLink.andDurability(1f - difB);
         }
 
-        float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
+        float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
         
         //TODO determine if this is correct
         if (dif < 0) dif = 0;  
@@ -142,8 +141,9 @@ public final class BudgetFunctions extends UtilityFunctions {
         return new Budget(newPriority, b.getDurability(), b.getQuality());
     }
 
+
     public enum Activating {
-        Classic, Accum, Max, WTF
+        Classic, Accum, WTF
     }
     
     
@@ -158,9 +158,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public static void activate(final Budget receiver, final Budget amount, final Activating mode, final float factor) {
         switch (mode) {
-            case Max:
-                BudgetFunctions.merge(receiver, amount);
-                break;
+            /*case Max:
+                receiver.max(amount);
+                break;*/
 
             case Accum:
                 receiver.accumulate(amount);
@@ -198,11 +198,6 @@ public final class BudgetFunctions extends UtilityFunctions {
                 break;
         }
         
-    }
-
-    /** linear interpolate between target & current, factor is between 0 and 1.0 */
-    public static float lerp(final float target, final float current, final float factor) {
-        return target * factor + current * (1f - factor);
     }
 
     /**
@@ -272,31 +267,11 @@ public final class BudgetFunctions extends UtilityFunctions {
         
     }
 
-    
-    /**
-     * Merge an item into another one in a bag, when the two are identical
-     * except in budget values
-     *
-     * @param target The budget baseValue to be modified
-     * @param source The budget adjustValue doing the adjusting
-     * @return whether the merge had any effect in changing any of the budget components
-     */
-    public final static boolean merge(final Budget target, final Budget source) {
-        if (target == source) return false;
-        return target.maxPriority(source.getPriority()) ||
-                        target.maxDurability(source.getDurability()) ||
-                        target.maxQuality(source.getQuality());
-    }
 
-    /** merge just priority value from a scalar source */
-    public final static boolean merge(final Budget target, final Prioritized source) {
-        return target.maxPriority(source.getPriority());
-    }
-
-    /** maximum, simpler and faster than Math.max without its additional tests */
-    public final static float m(final float a, final float b) {
-        return (a > b) ? a : b;
-    }
+    /*public final static float abs(final float a, final float b) {
+        float c = (a - b);
+        return (c >= 0) ? c : -c;
+    }*/
 
     /* ----- Task derivation in LocalRules and SyllogisticRules ----- */
     /**

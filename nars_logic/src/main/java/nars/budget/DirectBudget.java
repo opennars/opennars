@@ -10,17 +10,14 @@ public class DirectBudget extends Budget {
         super(Float.NaN, Float.NaN, Float.NaN);
     }
 
-    @Override public boolean setDurability(float d) {
+    @Override public void setDurability(float d) {
         this.durability = d;
-        return true;
     }
-    @Override public boolean setPriority(float p) {
+    @Override public void setPriority(float p) {
         this.priority = p;
-        return true;
     }
-    @Override public boolean setQuality(float q) {
+    @Override public void setQuality(float q) {
         this.quality = q;
-        return true;
     }
 
     @Override

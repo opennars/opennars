@@ -1,5 +1,6 @@
 package nars.bag;
 
+import nars.Global;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 
@@ -31,7 +32,7 @@ public interface BagTransaction<K,V extends Itemized<K>> extends Budget.Budgetab
         //1. merge the budget, if specified
         Budget b = getBudgetRef();
         if (b!=null) {
-            changed = v.getBudget().merge(b);
+            changed = v.getBudget().mergeIfChanges(b, Global.BUDGET_EPSILON);
         }
 
         //2. perform the update defined by implementations

@@ -6,6 +6,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Item;
+import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
@@ -133,7 +134,7 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
 
             if (y < 0) return 0;
 
-            int i= (int) Math.floor(y * size);
+            int i= UtilityFunctions.floorInt(y * size);
 
             if (i >= size) return size-1;
 

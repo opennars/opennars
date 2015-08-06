@@ -31,8 +31,11 @@ import nars.truth.Truth;
 import java.io.Serializable;
 import java.util.Objects;
 
+
+import static java.lang.Math.abs;
 import static nars.Global.BUDGET_EPSILON;
-import static nars.budget.BudgetFunctions.m;
+import static nars.nal.UtilityFunctions.max;
+import static nars.nal.UtilityFunctions.mean;
 import static nars.nal.UtilityFunctions.*;
 
 /**
@@ -150,24 +153,40 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     public Budget accumulate(final float addPriority, final float otherDurability, final float otherQuality) {
-        addPriority(addPriority);
-        maxDurability(otherDurability);
-        maxQuality(otherQuality);
-        return this;
+
+        return set(
+                getPriority() + addPriority,
+                max(getDurability(), otherDurability),
+                max(getQuality(), otherQuality)
+        );
+    }
+    public boolean accumulateIfChanges(Budget target, float budgetEpsilon) {
+        if (this == target) return false;
+
+        final float p = clamp(getPriority() + target.getPriority());
+        final float d = max(getDurability(), target.getDurability());
+        final float q = max(getQuality(), target.getQuality());
+
+        return setIfChanges(p, d, q, budgetEpsilon);
     }
 
     @Override
-    public boolean addPriority(final float v) {
-        return setPriority( v + getPriority() );
+    public void addPriority(final float v) {
+        setPriority( v + getPriority() );
     }
 
     /** set all quantities to zero */
     public Budget zero() {
-        /* avoids tests, slightly faster than set(0,0,0) */
-        this.priority = 0;
-        this.durability = 0;
-        this.quality = 0;
+        this.priority = this.durability = this.quality = 0f;
         return this;
+    }
+
+    protected static float clamp(final float p) {
+        if(p > 1f)
+            return 1f;
+        else if (p < 0f)
+            return 0f;
+        return p;
     }
 
     /**
@@ -185,56 +204,24 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * @return whether the operation had any effect
      */
     @Override
-    public boolean setPriority(float p) {
-        if(p>1.0)
-            p=1.0f;
-        else if (p < 0)
-            p = 0;
-
-
-        final float current = priority;
-        final float dp = (current >= p) ? (current - p) : (p - current);
-        if (dp < BUDGET_EPSILON)
-            return false;
-
-        this.priority = p;
-        return true;
+    public void setPriority(final float p) {
+        this.priority = clamp(p);
     }
 
     /**
      * Change durability value
      * @param d The new durability
      */
-    public boolean setDurability(float d) {
-        if (d > 1.0f)
-            d = 1.0f; //max value
-        else if (d < 0)
-            d = 0; //min value
-
-        final float current = durability;
-        final float dp = (current >= d) ? (current - d) : (d - current);
-        if (dp < BUDGET_EPSILON)
-            return false;
-
-        this.durability = d;
-        return true;
+    public void setDurability(final float d) {
+        this.durability = clamp(d);
     }
 
     /**
      * Change quality value
      * @param q The new quality
      */
-    public boolean setQuality(float q) {
-        if (q > 1.0f) q = 1.0f;
-        else if (q < 0f) q = 0f;
-
-        final float current = quality;
-        final float dp = (current >= q) ? (current - q) : (q - current);
-        if (dp < BUDGET_EPSILON)
-            return false;
-
-        quality = q;
-        return true;
+    public void setQuality(final float q) {
+        this.quality = clamp(q);
     }
 
     public static void ensureBetweenZeroAndOne(float v) {
@@ -257,11 +244,11 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
 
 
-    public boolean maxDurability(final float otherDurability) {
-        return setDurability(m(getDurability(), otherDurability)); //max durab
+    public void maxDurability(final float otherDurability) {
+        setDurability(max(getDurability(), otherDurability)); //max durab
     }
-    public boolean maxQuality(final float otherQuality) {
-        return setQuality(m(getQuality(), otherQuality)); //max durab
+    public void maxQuality(final float otherQuality) {
+        setQuality(max(getQuality(), otherQuality)); //max durab
     }
 
     /** AND's (multiplies) priority with another value */
@@ -335,12 +322,34 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * @return whether the merge had any effect
      */
     @Override
-    public boolean merge(final Prioritized that) {
-        return BudgetFunctions.merge(this, that);
+    public void merge(final Prioritized that) {
+        setPriority( mean(getPriority(), that.getPriority() ) );
     }
 
-    public boolean merge(final Budget that) {
-        return BudgetFunctions.merge(this, that);
+    /** merges another budget into this one, averaging each component */
+    public void merge(final Budget that) {
+        if (this == that) return;
+
+        set(
+                mean(getPriority(), that.getPriority()),
+                mean(getDurability(), that.getDurability()),
+                mean(getQuality(), that.getQuality())
+        );
+    }
+
+    /**
+     * applies a merge only if the changes would be significant
+     * (the difference in value equal to or exceeding the budget epsilon parameter)
+     * @return whether change occurred
+     */
+    public boolean mergeIfChanges(Budget target, float budgetEpsilon) {
+        if (this == target) return false;
+
+        final float p = mean(getPriority(), target.getPriority());
+        final float d = mean(getDurability(), target.getDurability());
+        final float q = mean(getQuality(), target.getQuality());
+
+        return setIfChanges(p, d, q, budgetEpsilon);
     }
 
 
@@ -616,6 +625,29 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
             return budgetDirect(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
+    /** returns this budget, after being modified */
+    protected Budget set(final float p, final float d, final float q) {
+        setPriority(p);
+        setDurability(d);
+        setQuality(q);
+        return this;
+    }
+
+    /** modifies the budget if any of the components are signifiantly different
+     * returns whether the budget was changed
+     */
+    protected boolean setIfChanges(final float p, final float d, final float q, float budgetEpsilon) {
+        float dp = abs(getPriority() - p);
+        float dd = abs(getDurability() - d);
+        float dq = abs(getQuality() - q);
+
+        if (dp < budgetEpsilon && dd < budgetEpsilon && dq < budgetEpsilon)
+            return false;
+
+        set(p, d, q);
+        return true;
+    }
+
 
 
     public boolean isNew() {
@@ -641,17 +673,19 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     @Override
-    public boolean mulPriority(final float factor) {
-        return setPriority(getPriority() * factor);
+    public void mulPriority(final float factor) {
+        setPriority(getPriority() * factor);
     }
 
-    public boolean mulDurability(final float factor) {
-        return setDurability(getDurability() * factor);
+    public void mulDurability(final float factor) {
+        setDurability(getDurability() * factor);
     }
 
     public boolean summaryLessThan(final float s) {
         return !summaryNotLessThan(s);
     }
+
+
 
 
     /** indicates an implementation has, or is associated with a specific BudgetValue */
