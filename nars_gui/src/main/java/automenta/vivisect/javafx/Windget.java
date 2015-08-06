@@ -373,11 +373,23 @@ public class Windget extends DefaultWindow {
         autosize();
     }
 
-    public Windget move(double x, double y) {
+    final public Windget move(final double x, final double y) {
         setLayoutX(x);
         setLayoutY(y);
         return this;
     }
+    final public boolean move(final double[] v, final double threshold) {
+        final double x = getLayoutX();
+        final double y = getLayoutY();
+        final double nx = v[0];
+        final double ny = v[1];
+        if (!((Math.abs(x-nx) < threshold) && (Math.abs(y-ny) < threshold))) {
+            move(nx, ny);
+            return true;
+        }
+        return false;
+    }
+
     public final double getCenterX() {
         return getLayoutX() + getWidth()/2d;
     }

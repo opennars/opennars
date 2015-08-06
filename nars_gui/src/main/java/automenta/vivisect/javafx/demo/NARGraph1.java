@@ -77,6 +77,10 @@ public class NARGraph1 extends Application {
         }
 
 
+        public void getPosition(final double[] v) {
+            v[0] = getLayoutX();
+            v[1] = getLayoutY();
+        }
     }
 
 
@@ -170,15 +174,18 @@ public class NARGraph1 extends Application {
     }
 
     final Map<Term, TermNode> terms = new LinkedHashMap();
+    final Map<Term, TermNode> termToAdd = new LinkedHashMap();
     final Table<Term, Term, TermEdge> edges = HashBasedTable.create();
-    final List<TermNode> termToAdd = Global.newArrayList();
     final Table<Term, Term, TermEdge> edgeToAdd = HashBasedTable.create();
 
     public TermNode getTermNode(final Term t) {
         TermNode tn = terms.get(t);
         if (tn == null) {
-            terms.put(t, tn = new TermNode(t));
-            termToAdd.add(tn);
+            tn = termToAdd.get(t);
+            if (tn == null) {
+                tn = new TermNode(t);
+                termToAdd.put(t, tn);
+            }
         }
         return tn;
     }
@@ -219,18 +226,23 @@ public class NARGraph1 extends Application {
         }
 
         if (!termToAdd.isEmpty()) {
-            TermNode[] x = termToAdd.toArray(new TermNode[termToAdd.size()]);
-            runLater(() -> space.addNodes(x));
+            TermNode[] x = termToAdd.values().toArray(new TermNode[termToAdd.size()]);
             termToAdd.clear();
+            runLater(() -> {
+                for (TermNode tn : x)
+                    terms.put(tn.term, tn);
+                space.addNodes(x);
+            });
         }
+
         if (!edgeToAdd.isEmpty()) {
             TermEdge[] x = edgeToAdd.values().toArray(new TermEdge[edgeToAdd.size()]);
+            edgeToAdd.clear();
             runLater(() -> {
                 for (TermEdge te: x)
                     edges.put(te.from.term, te.to.term, te);
                 space.addEdges(x);
             });
-            edgeToAdd.clear();
         }
 
 
@@ -245,10 +257,13 @@ public class NARGraph1 extends Application {
 
                 @Override
                 public void getPosition(final TermNode node, final double[] v) {
-                    v[0] = node.getLayoutX();
-                    v[1] = node.getLayoutY();
+                    node.getPosition(v);
                 }
 
+                @Override
+                public void apply(TermNode node, double[] dataRef) {
+                    node.move(dataRef, 0.02);
+                }
 
                 @Override
                 protected Iterator<TermNode> getVertices() {
@@ -263,14 +278,16 @@ public class NARGraph1 extends Application {
                 }
 
             };
-            h.setScale(90);
+
+            h.setScale(250);
+            h.setEquilibriumDistance(3);
         }
 
         h.align();
 
-        for (Map.Entry<TermNode, ArrayRealVector> v : h.coordinates.entrySet()) {
-            v.getKey().move(v.getValue());
-        }
+        h.apply();
+
+
 
     }
 

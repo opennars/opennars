@@ -18,7 +18,6 @@ import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealVector;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -128,6 +127,16 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
     public double getRepulsiveWeakness() {
         return repulsiveWeakness;
     }
+
+
+    /** commit computed coordinates to the objects */
+    public void apply() {
+        for (Entry<N, ArrayRealVector> x : coordinates.entrySet()) {
+            apply(x.getKey(), x.getValue().getDataRef());
+        }
+    }
+
+    abstract public void apply(N node, double[] coord);
 
     private class Align implements Callable<ArrayRealVector> {
 
