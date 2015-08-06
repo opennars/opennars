@@ -9,7 +9,7 @@ import za.co.knonchalant.builder.TaggedParameters;
 public interface IValueFieldConverter<T> {
     public void setTag(String tag);
 
-    public Node convert(T object, boolean readOnly, TaggedParameters parameters);
+    public Node toNode(T object, boolean readOnly, TaggedParameters parameters);
 
-    public T parse(Node node, boolean readOnly);
+    public T toValue(Node node, boolean readOnly);
 }

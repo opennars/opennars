@@ -14,7 +14,7 @@ import za.co.knonchalant.builder.TaggedParameters;
 public class IntegerConverter extends BaseConverter<Integer> {
 
     @Override
-    public Node convert(Integer object, boolean readOnly, TaggedParameters parameters) {
+    public Node toNode(Integer object, boolean readOnly, TaggedParameters parameters) {
         Node returned;
         String stringVersion = object == null ? "0" : object.toString();
         if (!readOnly) {
@@ -32,7 +32,7 @@ public class IntegerConverter extends BaseConverter<Integer> {
     }
 
     @Override
-    public Integer parse(Node node, boolean readOnly) {
+    public Integer toValue(Node node, boolean readOnly) {
         return Integer.parseInt(parseString(node));
     }
 

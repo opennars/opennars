@@ -11,7 +11,7 @@ import za.co.knonchalant.builder.TaggedParameters;
  */
 public class StandardTextFieldConverter extends BaseConverter<String> {
     @Override
-    public Node convert(String object, boolean readOnly, TaggedParameters parameters) {
+    public Node toNode(String object, boolean readOnly, TaggedParameters parameters) {
         Node returned;
         if (!readOnly) {
             String prompt = (String) parameters.get("prompt");
@@ -30,7 +30,7 @@ public class StandardTextFieldConverter extends BaseConverter<String> {
     }
 
     @Override
-    public String parse(Node node, boolean readOnly) {
+    public String toValue(Node node, boolean readOnly) {
         if (TextInputControl.class.isAssignableFrom(node.getClass())) {
             TextInputControl field = (TextInputControl) node;
             return field.getText();

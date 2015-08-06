@@ -176,7 +176,7 @@ public class POJONode {
         }
 
         IValueFieldConverter converter = getConverter(method);
-        Object value = converter.parse(valueNode, false);
+        Object value = converter.toValue(valueNode, false);
 
         try {
             setter.invoke(result, value);
@@ -382,8 +382,9 @@ public class POJONode {
             }
             return setterMethod;
         } catch (NoSuchMethodException e) {
+            return null;
             // should not be able to happen
-            throw new ComponentException("No such method exception invoking setter: " + name);
+            //throw new ComponentException("No such method exception invoking setter: " + name);
         }
     }
 
@@ -405,9 +406,12 @@ public class POJONode {
         Object result = getValue(object, method);
 
         IValueFieldConverter converter = getConverter(method);
+        if (converter == null) {
+            return new Label("Unknown: " + method);
+        }
         String prompt = getPrompt(method);
         params.addTag("prompt", prompt);
-        Node returned = converter.convert(result, readOnly, params);
+        Node returned = converter.toNode(result, readOnly, params);
         returned.getStyleClass().addAll("value", getStyleClass(name));
 
         return returned;
@@ -427,6 +431,8 @@ public class POJONode {
             converter.setTag(annotation.tag());
         } else {
             EType converterForClass = EType.getConverterForClass(method.getReturnType());
+            if (converterForClass == null)
+                return null;
             converter = converterForClass.getFieldConverter();
         }
         return converter;

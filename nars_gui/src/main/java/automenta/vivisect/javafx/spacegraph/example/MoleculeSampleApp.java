@@ -32,6 +32,7 @@
 
 package automenta.vivisect.javafx.spacegraph.example;
 
+import automenta.vivisect.javafx.spacegraph.Xform;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;

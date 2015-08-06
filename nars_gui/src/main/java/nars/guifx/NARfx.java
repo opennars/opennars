@@ -24,7 +24,7 @@ public class NARfx extends Application {
 //    }
 
     /** NAR instances -> GUI windows */
-    public static Map<NAR, NARWindow> window = Global.newHashMap();
+    public static Map<NARPane, Stage> window = Global.newHashMap();
 
 //    public void start_(Stage primaryStage) {
 //        primaryStage.setTitle("Tree View Sample");
@@ -74,8 +74,9 @@ public class NARfx extends Application {
 
         NAR n = new NAR(new Default());
 
-        NARWindow w = NARfx.window(n);
-        w.show();
+        NARPane w = NARfx.window(n);
+        Stage ws = w.newStage();
+        ws.show();
 
         for (String s : getParameters().getRaw()) {
             try {
@@ -130,10 +131,10 @@ public class NARfx extends Application {
 
     }
 
-    public static NARWindow window(NAR nar) {
-        NARWindow wn = new NARWindow(nar);
+    public static NARPane window(NAR nar) {
+        NARPane wn = new NARPane(nar);
 
-        NARWindow removed = window.put(nar, wn);
+        Stage removed = window.put(wn, wn.newStage());
 
         if (removed!=null)
             removed.close();

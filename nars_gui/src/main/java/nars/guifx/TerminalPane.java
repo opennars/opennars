@@ -17,9 +17,9 @@ public class TerminalPane extends SplitPane {
 
 
         setOrientation(Orientation.VERTICAL);
-        getItems().addAll(NARWindow.scrolled(
+        getItems().addAll(NARPane.scrolled(
 
-                NARWindow.scrolled(new LogPane(nar))),
+                NARPane.scrolled(new LogPane(nar))),
 
                 (new CodeInput() {
                     @Override

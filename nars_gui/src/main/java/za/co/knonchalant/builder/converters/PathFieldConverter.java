@@ -17,20 +17,20 @@ import java.io.File;
  */
 public class PathFieldConverter extends StandardTextFieldConverter {
     @Override
-    public String parse(Node node, boolean readOnly) {
+    public String toValue(Node node, boolean readOnly) {
         Node actualPath = node.lookup(".actual-path");
 
         if (actualPath != null) {
-            return super.parse(actualPath, false);
+            return super.toValue(actualPath, false);
         }
 
-        return super.parse(node, true);
+        return super.toValue(node, true);
     }
 
     @Override
-    public Node convert(String object, boolean readOnly, TaggedParameters parameters) {
+    public Node toNode(String object, boolean readOnly, TaggedParameters parameters) {
         if (readOnly) {
-            return super.convert(object, true, parameters);
+            return super.toNode(object, true, parameters);
         }
 
         VBox vbox = new VBox();

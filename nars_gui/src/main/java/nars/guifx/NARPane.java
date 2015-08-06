@@ -15,10 +15,12 @@ import javafx.stage.Stage;
 import nars.NAR;
 import nars.event.NARReaction;
 
+import javax.swing.*;
+
 /**
  * Created by me on 1/21/15.
  */
-public class NARWindow extends Stage {
+public class NARPane extends SplitPane {
 
 
     private final BorderPane menu = new BorderPane();
@@ -26,7 +28,6 @@ public class NARWindow extends Stage {
     private final TabPane content = new TabPane();
     public final NARControlFX controlStrip;
     private final BorderPane f;
-    private final SplitPane g;
 
     Tab console = null;
 
@@ -133,10 +134,9 @@ public class NARWindow extends Stage {
     private final NAR nar;
 
 
-    public NARWindow(NAR n) {
+    public NARPane(NAR n) {
         super();
         this.nar = n;
-        setTitle(n.toString());
 
 
         controlStrip = new NARControlFX(nar, true, true, true) {
@@ -176,25 +176,35 @@ public class NARWindow extends Stage {
         content.setMaxHeight(Double.MAX_VALUE);
 
 
-        g = new SplitPane(f);
+        getChildren().add(f);
+
         //g.setDividerPositions(0.5f);
         f.setMaxWidth(Double.MAX_VALUE);
-
-        g.setMaxWidth(Double.MAX_VALUE);
-        g.setMaxHeight(Double.MAX_VALUE);
-
 
         setMaxWidth(Double.MAX_VALUE);
         setMaxHeight(Double.MAX_VALUE);
 
 
-        Scene scene = new Scene(g);
+        setMaxWidth(Double.MAX_VALUE);
+        setMaxHeight(Double.MAX_VALUE);
+
+    }
+
+    public Stage newStage() {
+
+        Stage s = new Stage();
+
+        Scene scene = new Scene(this);
+        s.setTitle(nar.toString());
         scene.getStylesheets().addAll(NARfx.css, "dark.css" );
 
         contentUpdate();
 
-        setScene(scene);
+        s.setScene(scene);
+
+        return s;
     }
+
 
 
 
@@ -203,23 +213,23 @@ public class NARWindow extends Stage {
             Platform.runLater(() -> {
                 if (content.getTabs().size() == 0) {
                     content.setVisible(false);
-                    g.getItems().setAll(f);
+                    getItems().setAll(f);
                 }
                 else {
                     content.setVisible(true);
-                    g.getItems().setAll(f, content);
+                    getItems().setAll(f, content);
 
                 }
 
 
 
-                g.layout();
+                layout();
                 //g.autosize();
 
-                g.setDividerPosition(0, 0.25);
+                setDividerPosition(0, 0.25);
 
-                if (!isMaximized())
-                    sizeToScene();
+//                if (!isMaximized())
+//                    sizeToScene();
             });
 
     }

@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 public class CollectionConverter extends BaseConverter<String> {
     @Override
-    public Node convert(String object, boolean readOnly, TaggedParameters parameters) {
+    public Node toNode(String object, boolean readOnly, TaggedParameters parameters) {
         if (readOnly) {
             return new Label(object);
         }
@@ -34,7 +34,7 @@ public class CollectionConverter extends BaseConverter<String> {
     }
 
     @Override
-    public String parse(Node node, boolean readOnly) {
+    public String toValue(Node node, boolean readOnly) {
         if (ComboBoxBase.class.isAssignableFrom(node.getClass())) {
             ComboBoxBase combo = (ComboBoxBase) node;
             return combo.getValue() == null ? "" : combo.getValue().toString();
