@@ -19,3 +19,16 @@
 .menubuttonLabel {
     -fx-fill: #fff;
 }
+
+/* from: http://www.e-zest.net/blog/gradients-in-javafx-2/#prettyPhoto */
+.grad-repeat-1{
+   -fx-background-color: radial-gradient(center 50% 50% , radius 12% , repeat, #fffaf0, #008080, #90ee90);
+}
+
+.grad-repeat-2{
+   -fx-background-color: radial-gradient(focus-distance -59%, center 97% 50% , radius 36% , #ff8c00, #dc143c, #008b8b);
+}
+
+.grad-repeat-3{
+   -fx-background-color: radial-gradient(focus-angle 45deg , focus-distance 20% , center 25% 25% , radius 50% , reflect, #808080, #a9a9a9 75% , #696969);
+}

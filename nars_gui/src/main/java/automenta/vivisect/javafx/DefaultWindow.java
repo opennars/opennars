@@ -82,7 +82,7 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
     private boolean RESIZE_LEFT;
     private boolean RESIZE_BOTTOM;
     private boolean RESIZE_RIGHT;
-    private Button titleBar;
+    public Button titleBar;
     public final StackPane root = new StackPane();
     private double contentScale = 1.0;
     private double oldHeight;

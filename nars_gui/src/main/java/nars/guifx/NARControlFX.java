@@ -86,10 +86,10 @@ abstract public class NARControlFX extends VBox {
         }
 
 
-        getChildren().forEach(c -> {
+        /*getChildren().forEach(c -> {
             if (c instanceof Control)
                 ((Control) c).setMaxWidth(Double.MAX_VALUE);
-        });
+        });*/
         //b.setFillWidth(true);
 
 

@@ -20,6 +20,8 @@
 
 .windget {
 
-    -fx-background-color: linear-gradient(to top right, #ff7f50d0, #6a5acdd0);
+    -fx-background-color: linear-gradient(to top right, #555, #333);
     -fx-padding: 0.5em;
+       /*-fx-background-color: radial-gradient(focus-distance -19%, center 50% 50% , radius 36% , #ff8c00, #dc143c, #008b8b);*/
+
 }

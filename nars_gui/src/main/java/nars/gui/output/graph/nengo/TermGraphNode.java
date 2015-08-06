@@ -82,60 +82,61 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
 
             };
-    final HyperassociativeMap<UIVertex,UIEdge<UIVertex>> haLayout =
-            new HyperassociativeMap<UIVertex,UIEdge<UIVertex>>(2) {
+
+//    final HyperassociativeMap<UIVertex,UIEdge<UIVertex>> haLayout =
+//            new HyperassociativeMap<UIVertex,UIEdge<UIVertex>>(2) {
+//
+//
+//                @Override
+//                public ArrayRealVector getPosition(UIVertex node) {
+//
+//                    return node.getCoordinates();
+//                }
+//
+//                @Override
+//                public void pre(Collection<UIVertex> vertices) {
+//
+//                    setScale(96);
+//                    setRepulsiveWeakness(3);
+//                    setAttractionStrength(2.2);
+//                    setEquilibriumDistance(4);
+//                    setMaxRepulsionDistance(1000);
+//                    updateCoordinates(vertices);
+//                }
+//
+//
+//                @Override
+//                public double getSpeedFactor() {
+//                    return 0.02;
+//                }
+//
+//                @Override
+//                public double getEdgeWeight(UIEdge e) {
+//                    /*if (e.e instanceof TermLink) {
+//                        return 4.0;
+//                    }*/
+//                    return 0.25 + 0.75 * e.getTermlinkPriority();
+//                    //return 1;
+//                }
+//
+//
+//                @Override
+//                public double getRadius(UIVertex narGraphVertex) {
+//                    double r = 1 + narGraphVertex.getRadius();
+//                    return r * 3;
+//                }
+//
+//                @Override
+//                protected Iterator<UIVertex> getVertices() {
+//                    return Iterators.filter(nodes().iterator(), UIVertex.class);
+//                }
+//
+//
+//            };
+//
 
 
-                @Override
-                public ArrayRealVector getPosition(UIVertex node) {
-
-                    return node.getCoordinates();
-                }
-
-                @Override
-                public void pre(Collection<UIVertex> vertices) {
-
-                    setScale(96);
-                    setRepulsiveWeakness(3);
-                    setAttractionStrength(2.2);
-                    setEquilibriumDistance(4);
-                    setMaxRepulsionDistance(1000);
-                    updateCoordinates(vertices);
-                }
-
-
-                @Override
-                public double getSpeedFactor() {
-                    return 0.02;
-                }
-
-                @Override
-                public double getEdgeWeight(UIEdge e) {
-                    /*if (e.e instanceof TermLink) {
-                        return 4.0;
-                    }*/
-                    return 0.25 + 0.75 * e.getTermlinkPriority();
-                    //return 1;
-                }
-
-
-                @Override
-                public double getRadius(UIVertex narGraphVertex) {
-                    double r = 1 + narGraphVertex.getRadius();
-                    return r * 3;
-                }
-
-                @Override
-                protected Iterator<UIVertex> getVertices() {
-                    return Iterators.filter(nodes().iterator(), UIVertex.class);
-                }
-
-
-            };
-
-
-
-    IterativeLayout<UIVertex, UIEdge<UIVertex>> hmap = haLayout;
+//    IterativeLayout<UIVertex, UIEdge<UIVertex>> hmap = haLayout;
 
 //    SubCycle narCycle = new SubCycle() {
 //        @Override
@@ -177,8 +178,8 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             layoutBounds.setRect(-layoutRad / 2, -layoutRad / 2, layoutRad, layoutRad);
             //hmap.setInitialTemp(200, 0.5f);
             //hmap.setForceConstant(100);
-            hmap.resetLearning();
-            hmap.run(1);
+            //hmap.resetLearning();
+            //hmap.run(1);
 
 
         }

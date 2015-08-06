@@ -30,6 +30,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.function.Consumer;
 
 /** for displaying any generic Graph */
 public class GraphPanelNengo<V extends Named, E> extends Nengrow {
@@ -63,38 +64,44 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
         private final Graph graph;
         private DefaultUINetwork ui;
 
-        final HyperassociativeMap hyperLayout = new HyperassociativeMap(2) {
-            @Override
-            public ArrayRealVector getPosition(UIVertex node) {
-                updateCoordinates(Collections.singleton(node));
-                return node.getCoordinates();
-            }
-
-
-
-            @Override
-            public double getEdgeWeight(UIEdge e) {
-                    /*if (e.e instanceof TermLink) {
-                        return 4.0;
-                    }*/
-                //return 0.25 + 0.5 * e.get;
-                return 1;
-            }
-
-
-            @Override
-            public double getRadius(UIVertex narGraphVertex) {
-                double r = 1 + narGraphVertex.getRadius();
-                return r * 100;
-            }
-
-            @Override
-            protected Iterator<UIVertex> getVertices() {
-                return Iterators.filter(nodes().iterator(), UIVertex.class);
-            }
-
-        };
-
+//        final HyperassociativeMap hyperLayout = new HyperassociativeMap(2) {
+//
+//            @Override
+//            public ArrayRealVector getPosition(UIVertex node) {
+//                updateCoordinates(Collections.singleton(node));
+//                return node.getCoordinates();
+//            }
+//
+//
+//
+//            @Override
+//            public double getEdgeWeight(UIEdge e) {
+//                    /*if (e.e instanceof TermLink) {
+//                        return 4.0;
+//                    }*/
+//                //return 0.25 + 0.5 * e.get;
+//                return 1;
+//            }
+//
+//
+//            @Override
+//            public double getRadius(UIVertex narGraphVertex) {
+//                double r = 1 + narGraphVertex.getRadius();
+//                return r * 100;
+//            }
+//
+//            @Override
+//            protected Iterator<UIVertex> getVertices() {
+//                return Iterators.filter(nodes().iterator(), UIVertex.class);
+//            }
+//
+//            @Override
+//            protected void edges(Object nodeToQuery, Consumer updateFunc, boolean ins, boolean outs) {
+//
+//            }
+//
+//        };
+//
         final FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>> organicLayout =
                 new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(layoutBounds) {
 

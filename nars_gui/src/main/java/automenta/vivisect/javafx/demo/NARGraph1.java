@@ -1,15 +1,16 @@
 package automenta.vivisect.javafx.demo;
 
+import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.javafx.Spacegraph;
 import automenta.vivisect.javafx.Windget;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.transform.Transform;
@@ -18,15 +19,18 @@ import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.event.CycleReaction;
+import nars.guifx.NARfx;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
 
@@ -41,18 +45,25 @@ public class NARGraph1 extends Application {
 
     static final Random rng = new XORShiftRandom();
 
+
+    final AtomicBoolean edgeDirty = new AtomicBoolean(true);
+
     public static class TermNode extends Windget {
 
 
         private final Term term;
         Concept c = null;
 
+
+
         public TermNode(Term t) {
-            super(t.toStringCompact(), new Button(" "));
+            super(t.toStringCompact());
 
             this.term = t;
 
-            randomPosition(10, 10);
+            randomPosition(30, 30);
+
+            titleBar.setMouseTransparent(true);
         }
 
         public void randomPosition(double bx, double by) {
@@ -64,9 +75,12 @@ public class NARGraph1 extends Application {
         protected void update() {
 
         }
+
+
     }
 
-    public static class TermEdge extends Polygon {
+
+    public class TermEdge extends Polygon {
 
         final Set<TermLink> termLinks = new LinkedHashSet(); //should not exceed size two
         final Set<TaskLink> taskLinks = new LinkedHashSet();
@@ -74,15 +88,21 @@ public class NARGraph1 extends Application {
         private final TermNode from;
         private final TermNode to;
 
-        AtomicBoolean dirty = new AtomicBoolean(true);
+        final private AtomicBoolean dirty = new AtomicBoolean(true);
 
         private final ChangeListener<? super Transform> onNodeTransformed = new ChangeListener() {
 
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                dirty.set(true);
+                dirty(true);
             }
         };
+
+        final protected void dirty(boolean newValue) {
+            dirty.set(newValue);
+            if (newValue)
+                edgeDirty.set(true);
+        }
 
 
         public TermEdge(TermNode from, TermNode to) {
@@ -132,21 +152,27 @@ public class NARGraph1 extends Application {
             double cx = 0.5f * (x1 + x2);
             double cy = 0.5f * (y1 + y2);
 
+            double width = 5;
+
             getTransforms().setAll(
                     Transform.translate(cx, cy),
                     Transform.rotate(FastMath.toDegrees(rot), 0, 0),
-                    Transform.scale(len, 2)
+                    Transform.scale(len, width)
             );
 
-            dirty.set(false);
+            dirty(false);
         }
 
+        public TermNode otherNode(final TermNode x) {
+            if (from == x) return to;
+            return from;
+        }
     }
 
-    final Map<Term, TermNode> terms = new HashMap();
+    final Map<Term, TermNode> terms = new LinkedHashMap();
     final Table<Term, Term, TermEdge> edges = HashBasedTable.create();
     final List<TermNode> termToAdd = Global.newArrayList();
-    final List<TermEdge> edgeToAdd = Global.newArrayList();
+    final Table<Term, Term, TermEdge> edgeToAdd = HashBasedTable.create();
 
     public TermNode getTermNode(final Term t) {
         TermNode tn = terms.get(t);
@@ -161,8 +187,11 @@ public class NARGraph1 extends Application {
         TermEdge e = edges.get(s.term, t.term);
 
         if (e == null) {
-            edges.put(s.term, t.term, e = new TermEdge(s, t));
-            edgeToAdd.add(e);
+            e = edgeToAdd.get(s.term, t.term);
+            if (e == null) {
+                e = new TermEdge(s, t);
+                edgeToAdd.put(s.term, t.term, e);
+            }
         }
         return e;
     }
@@ -195,19 +224,63 @@ public class NARGraph1 extends Application {
             termToAdd.clear();
         }
         if (!edgeToAdd.isEmpty()) {
-            TermEdge[] x = edgeToAdd.toArray(new TermEdge[edgeToAdd.size()]);
-            runLater(() -> space.addEdges(x));
+            TermEdge[] x = edgeToAdd.values().toArray(new TermEdge[edgeToAdd.size()]);
+            runLater(() -> {
+                for (TermEdge te: x)
+                    edges.put(te.from.term, te.to.term, te);
+                space.addEdges(x);
+            });
             edgeToAdd.clear();
         }
 
 
     }
 
+    HyperassociativeMap<TermNode,TermEdge> h = null;
+
+    protected void layoutNodes() {
+
+        if (h == null) {
+            h = new HyperassociativeMap<TermNode,TermEdge>(2) {
+
+                @Override
+                public void getPosition(final TermNode node, final double[] v) {
+                    v[0] = node.getLayoutX();
+                    v[1] = node.getLayoutY();
+                }
+
+
+                @Override
+                protected Iterator<TermNode> getVertices() {
+                    return terms.values().iterator();
+                }
+
+                @Override
+                protected void edges(final TermNode nodeToQuery, Consumer<TermNode> updateFunc, boolean ins, boolean outs) {
+                    for (TermEdge te : edges.values()) {
+                        updateFunc.accept(te.otherNode(nodeToQuery));
+                    }
+                }
+
+            };
+            h.setScale(90);
+        }
+
+        h.align();
+
+        for (Map.Entry<TermNode, ArrayRealVector> v : h.coordinates.entrySet()) {
+            v.getKey().move(v.getValue());
+        }
+
+    }
 
     protected void updateEdges() {
-        for (TermEdge e : edges.values()) {
-            if (e.dirty.get())
-                e.update();
+        if (edgeDirty.get()) {
+            edgeDirty.set(false);
+            for (TermEdge e : edges.values()) {
+                if (e.dirty.get())
+                    e.update();
+            }
         }
     }
 
@@ -215,6 +288,8 @@ public class NARGraph1 extends Application {
     public void start(Stage primaryStage) {
 
         Scene scene = space.newScene(1200, 800);
+        scene.getStylesheets().addAll("dark.css" );
+
         primaryStage.setScene(scene);
         primaryStage.show();
 
@@ -223,12 +298,9 @@ public class NARGraph1 extends Application {
         nar.input("<a --> b>.");
         nar.input("<b --> c>.");
 
-        time = new Timeline( 10 );
-        time.setAutoReverse(true);
-        time.cycleCountProperty().addListener((observable, oldValue, newValue) -> {
-            updateEdges();
-        });
-        time.play();
+
+        new Animate(50, a -> { layoutNodes(); } ).start();
+        new Animate(10, a -> { updateEdges(); } ).start();
 
         new CycleReaction(nar) {
 
@@ -238,7 +310,31 @@ public class NARGraph1 extends Application {
             }
         };
 
-        new Thread(() -> nar.runAtRate(500)).start();
+        new Thread(() -> nar.runAtRate(750)).start();
+
+        primaryStage.setOnCloseRequest((e) -> System.exit(1));
+    }
+
+
+    public static class Animate extends AnimationTimer {
+
+        private final Consumer<Animate> run;
+        private long periodMS;
+        private long last;
+
+        public Animate(long periodMS, Consumer<Animate> r) {
+            super();
+            this.periodMS = periodMS;
+            this.run = r;
+        }
+
+        @Override
+        public void handle(final long now) {
+            if (now - last > periodMS) {
+                run.accept(this);
+                last = now;
+            }
+        }
     }
 
 
@@ -252,6 +348,7 @@ public class NARGraph1 extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+
     }
 
 }

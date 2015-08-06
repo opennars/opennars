@@ -16,8 +16,6 @@ package automenta.vivisect.dimensionalize;
 
 import com.google.common.collect.Iterators;
 import nars.Global;
-import nars.gui.output.graph.nengo.UIEdge;
-import nars.gui.output.graph.nengo.UIVertex;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -28,6 +26,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 /**
  * FROM:
@@ -54,7 +53,7 @@ import java.util.concurrent.Future;
  *   parameter for min attraction distance (cutoff)
  *   
  */
-abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N>> implements IterativeLayout<N,E> {
+abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> {
 
     private static final double DEFAULT_REPULSIVE_WEAKNESS = 2.0;
     private static final double DEFAULT_ATTRACTION_STRENGTH = 4.0;
@@ -75,7 +74,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
     private final int dimensions;
     private final ExecutorService threadExecutor;
     
-    private final Map<N, ArrayRealVector> coordinates;
+    public final Map<N, ArrayRealVector> coordinates;
     
     private static final Random RANDOM = new XORShiftRandom();
     private double equilibriumDistance;
@@ -103,15 +102,19 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
     }
 
 
+    public void getPosition(N node, double[] target) {
+        throw new RuntimeException("this should be overridden");
+    }
+
     @Override
-    public ArrayRealVector getPosition(N node) {
-        throw new RuntimeException("this should not be called");
-//        ArrayRealVector location = coordinates.get(node);
-//        if (location == null) {
-//            location = newPosition(node);
-//            coordinates.put(node, location);
-//        }
-//        return location;
+    @Deprecated public ArrayRealVector getPosition(N node) {
+        ArrayRealVector location = coordinates.get(node);
+        if (location == null) {
+            location = newVector();
+            coordinates.put(node, location);
+        }
+        getPosition(node, location.getDataRef());
+        return location;
     }
 
     public double getMaxRepulsionDistance() {
@@ -158,7 +161,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
             coordinates = Collections.synchronizedMap(new HashMap<N, ArrayRealVector>());
         }
         else {
-            coordinates = new HashMap<>();
+            coordinates = new LinkedHashMap<>();
         }
 
         reset();
@@ -347,61 +350,72 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
     public static enum EdgeWeightToDistanceFunction {
         Min, Max, Sum, SumOneDiv, OneDivSum, OneDivSumOneDiv
     }
-    
+
+
+    protected abstract void
+        edges(N nodeToQuery, Consumer<N> updateFunc, boolean ins, boolean outs);
+
     void getNeighbors(final N nodeToQuery, Map<N, Double> neighbors) {
         if (neighbors == null)
             neighbors = Global.newHashMap(vertices.size());
         else
             neighbors.clear();
-        
-        for (Object neighborEdge : nodeToQuery.getEdgesOut()) {
-            updateNeighbors(nodeToQuery, neighbors, (E) neighborEdge);
-        }
-        for (Object neighborEdge : nodeToQuery.getEdgesIn()) {
-            updateNeighbors(nodeToQuery, neighbors, (E) neighborEdge);
-        }
 
-        switch (edgeWeightToDistance) {
-            case OneDivSumOneDiv:
-            case OneDivSum:
-                for ( Entry<N, Double> e : neighbors.entrySet()) {
-                    e.setValue( 1.0 / e.getValue() );
-                }
-                break;
-        }
+        final Map<N, Double> finalNeighbors = neighbors;
+        edges(nodeToQuery, otherNode -> updateNeighbors(nodeToQuery, finalNeighbors, otherNode, 1f), true, true);
+//
+//  for (Object neighborEdge : outs(nodeToQuery, )) {
+//            updateNeighbors(nodeToQuery, neighbors, (E) neighborEdge);
+//        }
+//        for (Object neighborEdge : ins(nodeToQuery.getEdgesIn()) {
+//            updateNeighbors(nodeToQuery, neighbors, (E) neighborEdge);
+//        }
+//
+//        switch (edgeWeightToDistance) {
+//            case OneDivSumOneDiv:
+//            case OneDivSum:
+//                for ( Entry<N, Double> e : neighbors.entrySet()) {
+//                    e.setValue( 1.0 / e.getValue() );
+//                }
+//                break;
+//        }
 
         
     }
 
-    private void updateNeighbors(N nodeToQuery, Map<N, Double> neighbors, E neighborEdge) {
-        N s = neighborEdge.getSource();
-        N t = neighborEdge.getTarget();
-        N neighbor = s == nodeToQuery ? t : s;
-
-        Double existingWeight = neighbors.get(neighbor);
-
-        double currentWeight = getEdgeWeight(neighborEdge);
-
-        if (existingWeight!=null) {
-            switch (edgeWeightToDistance) {
-                case Min:
-                    currentWeight = Math.min(existingWeight, currentWeight);
-                    break;
-                case Max:
-                    currentWeight = Math.max(existingWeight, currentWeight);
-                    break;
-                case SumOneDiv:
-                case OneDivSumOneDiv:
-                    currentWeight = 1/currentWeight + existingWeight;
-                    break;
-                case Sum:
-                case OneDivSum:
-                    currentWeight += existingWeight;
-                    break;
 
 
-            }
-        }
+
+    private void updateNeighbors(N nodeToQuery, Map<N, Double> neighbors, N other, double currentWeight) {
+        //N s = neighborEdge.getSource();
+        //N t = neighborEdge.getTarget();
+        //N neighbor = s == nodeToQuery ? t : s;
+        N neighbor = other;
+
+//        Double existingWeight = neighbors.get(neighbor);
+//
+//        //double currentWeight = getEdgeWeight(neighborEdge);
+//
+//        if (existingWeight!=null) {
+//            switch (edgeWeightToDistance) {
+//                case Min:
+//                    currentWeight = Math.min(existingWeight, currentWeight);
+//                    break;
+//                case Max:
+//                    currentWeight = Math.max(existingWeight, currentWeight);
+//                    break;
+//                case SumOneDiv:
+//                case OneDivSumOneDiv:
+//                    currentWeight = 1/currentWeight + existingWeight;
+//                    break;
+//                case Sum:
+//                case OneDivSum:
+//                    currentWeight += existingWeight;
+//                    break;
+//
+//
+//            }
+//        }
 
         neighbors.put(neighbor, currentWeight);
     }
@@ -438,7 +452,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
 
         double nodeSpeed = getSpeedFactor(nodeToAlign);
 
-        ArrayRealVector originalPosition = getPosition(nodeToAlign);
+        ArrayRealVector originalPosition = new ArrayRealVector(getPosition(nodeToAlign), false);
         if (nodeSpeed == 0) return originalPosition;
 
         // calculate equilibrium with neighbors
@@ -446,11 +460,13 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
 
         getNeighbors(nodeToAlign, neighbors);
 
-        ArrayRealVector delta = new ArrayRealVector(dimensions);
+        ArrayRealVector delta = newVector();
 
         double radius = getRadius(nodeToAlign);
         double targetDistance = radius + equilibriumDistance;
-        
+
+        ArrayRealVector attractVector = newVector();
+
         // align with neighbours
         for (final Entry<N, Double> neighborEntry : neighbors.entrySet()) {
             
@@ -458,7 +474,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
             
             final double distToNeighbor = neighborEntry.getValue();
 
-            ArrayRealVector attractVector = (ArrayRealVector) getThePosition(neighbor).subtract(position);
+            attractVector = getThePosition(neighbor, attractVector).combineToSelf(1, -1, position);
             
             double oldDistance = magnitude(attractVector);
             
@@ -486,17 +502,18 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
             add(delta, attractVector, factor);
         }
         
-        ArrayRealVector repelVector = new ArrayRealVector(dimensions);
+        ArrayRealVector repelVector = newVector();
         double maxEffectiveDistance = targetDistance * maxRepulsionDistance;
-        
+
+
+        ArrayRealVector nodePos = newVector();
+
         // calculate repulsion with all non-neighbors
         for (final N node : vertices) {
             if (node == nodeToAlign) continue;
             if (neighbors.containsKey(node)) continue;
 
-            
-            
-            double oldDistance = distanceFunction.subtractIfLessThan((ArrayRealVector)getThePosition(node), position, repelVector, maxEffectiveDistance);
+            double oldDistance = distanceFunction.subtractIfLessThan(getThePosition(node, nodePos), position, repelVector, maxEffectiveDistance);
             if (oldDistance == Double.POSITIVE_INFINITY)
                 continue; //too far to matter
             if (oldDistance < minDistance)
@@ -550,8 +567,13 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
         return (ArrayRealVector) originalPosition.mapMultiplyToSelf(scale);
     }
 
-    private RealVector getThePosition(N n) {
-        return getPosition(n).mapMultiply(1.0/scale);
+    protected ArrayRealVector newVector() {
+        return new ArrayRealVector(dimensions);
+    }
+
+    private ArrayRealVector getThePosition(N n, ArrayRealVector v) {
+        getPosition(n, v.getDataRef());
+        return (ArrayRealVector) v.mapMultiply(1.0/scale);
     }
 
 
@@ -570,7 +592,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
      * @since 1.0
      */
     public static ArrayRealVector randomCoordinates(final int dimensions) {
-        return new ArrayRealVector(randomCoordinatesArray(2));
+        return new ArrayRealVector(randomCoordinatesArray(dimensions));
     }
     public static double[] randomCoordinatesArray(final int dimensions) {
         final double[] randomCoordinates = new double[dimensions];
@@ -607,7 +629,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
 
 
     protected synchronized ArrayRealVector processLocally() {
-        ArrayRealVector pointSum = new ArrayRealVector(dimensions);
+        ArrayRealVector pointSum = newVector();
          //new HashMap();
 
         vertices.clear();
@@ -649,7 +671,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
 
     private ArrayRealVector waitAndProcessFutures(final List<Future<ArrayRealVector>> futures) throws InterruptedException {
         // wait for all nodes to finish aligning and calculate the new center point
-        ArrayRealVector pointSum = new ArrayRealVector(dimensions);
+        ArrayRealVector pointSum = newVector();
         try {
             for (final Future<ArrayRealVector> future : futures) {
                 final ArrayRealVector newPoint = future.get();

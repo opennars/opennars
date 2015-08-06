@@ -12,6 +12,10 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import nars.NAR;
+import nars.guifx.NARPane;
+import nars.guifx.TerminalPane;
+import nars.nar.Default;
 import za.co.knonchalant.builder.POJONode;
 import za.co.knonchalant.builder.TaggedParameters;
 import za.co.knonchalant.sample.pojo.SampleClass;
@@ -95,6 +99,18 @@ public class RunSpacegraph extends Application {
                 cc,
                 wd
         );
+
+
+
+
+        TerminalPane np = new TerminalPane(new NAR(new Default()));
+
+        Windget nd = new Windget("NAR",
+                np, 200, 200
+                ).move(-200,300);
+
+        space.addNodes(nd);
+
     }
 
 

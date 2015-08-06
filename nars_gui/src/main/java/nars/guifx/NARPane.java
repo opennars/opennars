@@ -27,7 +27,7 @@ public class NARPane extends SplitPane {
 
     private final TabPane content = new TabPane();
     public final NARControlFX controlStrip;
-    private final BorderPane f;
+    public final BorderPane f;
 
     Tab console = null;
 
@@ -170,23 +170,19 @@ public class NARPane extends SplitPane {
         f.setRight(controlStrip);
 
         f.setMinWidth(250);
-        f.setMaxHeight(Double.MAX_VALUE);
+        //f.setMaxHeight(Double.MAX_VALUE);
 
-        content.setMaxWidth(Double.MAX_VALUE);
-        content.setMaxHeight(Double.MAX_VALUE);
+        //content.setMaxWidth(Double.MAX_VALUE);
+        //content.setMaxHeight(Double.MAX_VALUE);
 
 
         getChildren().add(f);
 
         //g.setDividerPositions(0.5f);
-        f.setMaxWidth(Double.MAX_VALUE);
-
-        setMaxWidth(Double.MAX_VALUE);
-        setMaxHeight(Double.MAX_VALUE);
+        //f.setMaxWidth(Double.MAX_VALUE);
 
 
-        setMaxWidth(Double.MAX_VALUE);
-        setMaxHeight(Double.MAX_VALUE);
+
 
     }
 
@@ -201,6 +197,9 @@ public class NARPane extends SplitPane {
         contentUpdate();
 
         s.setScene(scene);
+
+        setMaxWidth(Double.MAX_VALUE);
+        setMaxHeight(Double.MAX_VALUE);
 
         return s;
     }

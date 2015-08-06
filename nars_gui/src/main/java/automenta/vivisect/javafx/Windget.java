@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import jfxtras.scene.control.window.Window;
+import org.apache.commons.math3.linear.ArrayRealVector;
 
 /** window widget */
 public class Windget extends DefaultWindow {
@@ -341,7 +342,7 @@ public class Windget extends DefaultWindow {
 
 
 
-    public Windget(String title, Node content) {
+    public Windget(String title, Node... content) {
         super(title);
 
 
@@ -352,7 +353,8 @@ public class Windget extends DefaultWindow {
         overlay = new AnchorPane();
         overlay.setPickOnBounds(false);
 
-        root.getChildren().setAll(content, overlay);
+        root.getChildren().setAll(content);
+        root.getChildren().add(overlay);
 
         autosize();
     }
@@ -372,9 +374,20 @@ public class Windget extends DefaultWindow {
     }
 
     public Windget move(double x, double y) {
-        setTranslateX(x);
-        setTranslateY(y);
+        setLayoutX(x);
+        setLayoutY(y);
         return this;
+    }
+    public final double getCenterX() {
+        return getLayoutX() + getWidth()/2d;
+    }
+    public final double getCenterY() {
+        return getLayoutY() + getHeight()/2d;
+    }
+    public final void move(final ArrayRealVector centerPosition) {
+        double x = centerPosition.getEntry(0);
+        double y = centerPosition.getEntry(1);
+        move( x, y );
     }
 
 //        public Windget size(final double width, final double height) {
