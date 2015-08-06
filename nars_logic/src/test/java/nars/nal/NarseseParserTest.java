@@ -680,7 +680,7 @@ public class NarseseParserTest {
             if (content == null) throw new InvalidInputException("Content term missing");
             if (!(content instanceof Compound)) throw new InvalidInputException("Content term is not compound");
 
-            content = ((Compound) content).normalized();
+            content = content.normalized();
             if (content == null) return null;
 
             Sentence s = new Sentence((Compound)content, punc, truth);

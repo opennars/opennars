@@ -45,20 +45,7 @@ abstract public class DefaultCompound extends Compound {
 
 
 
-    @Override
-    public void invalidate() {
-        if (hasVar()) {
-            super.invalidate(); //invalidate name so it will be (re-)created lazily
 
-            for (final Term t : term) {
-                if (t instanceof Compound)
-                    ((Compound) t).invalidate();
-            }
-        }
-        else {
-            setNormalized();
-        }
-    }
 
 
     final static int maxSubTermsForNameCompare = 2; //tunable

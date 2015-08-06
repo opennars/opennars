@@ -42,22 +42,7 @@ abstract public class Compound1<T extends Term> extends Compound {
 //        this.hash = h;
 //    }
 
-    @Override
-    public void invalidate() {
-        if (hasVar()) {
 
-            super.invalidate();
-
-            T n = the();
-            if (n instanceof Compound) {
-                ((Compound)n).invalidate();
-            }
-
-        }
-        else {
-            setNormalized();
-        }
-    }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */
     @Override

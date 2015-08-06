@@ -137,7 +137,25 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             throw new RuntimeException("volume limit exceeded for new Compound term: " + operator() + " " + Arrays.toString(term));
         }
 
-        invalidate();
+        //invalidate();
+
+        if (!hasVar())
+            setNormalized();
+    }
+
+    @Override
+    public void invalidate() {
+        if (hasVar()) {
+            super.invalidate(); //invalidate name so it will be (re-)created lazily
+
+            for (final Term t : term) {
+                if (t instanceof Compound)
+                    ((Compound) t).invalidate();
+            }
+        }
+        else {
+            setNormalized();
+        }
     }
 
     /** allows implementations to include a 32 bit identifier within the struturehash
