@@ -34,7 +34,7 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
     @Override
     public ForgetAction apply(TermLink termLink) {
 
-        if (validTermLinkTarget(currentConcept, currentTaskLink, termLink)) {
+        if (validTermLinkTarget(currentConcept, termLink, currentTaskLink)) {
             return ParametricBagForgetting.ForgetAction.SelectAndForget;
         }
         else {

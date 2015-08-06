@@ -44,10 +44,10 @@ public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator implement
     }
 
     @Override
-    public boolean validTermLinkTarget(Concept c, TaskLink taskLink, TermLink t) {
-        if (!super.validTermLinkTarget(c, taskLink, t)) return false;
+    public boolean validTermLinkTarget(Concept c, TermLink term, TaskLink taskLink) {
+        if (!super.validTermLinkTarget(c, term, taskLink)) return false;
 
-        final Pair<Term, Sentence> s = PremiseGenerator.pair(taskLink, t);
+        final Pair<Term, Sentence> s = PremiseGenerator.pair(taskLink, term);
 
         final boolean mightContain = history.mightContain(s);
 

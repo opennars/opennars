@@ -1,7 +1,8 @@
 package nars.premise;
 
-import com.gs.collections.api.tuple.Pair;
-import nars.Global;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -9,7 +10,6 @@ import nars.task.Sentence;
 import nars.term.Term;
 
 import java.lang.ref.SoftReference;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -23,7 +23,9 @@ public class UniquePerCyclePremiseGenerator extends TermLinkBagPremiseGenerator 
     final int clearAfterCycles;
 
     /** use a soft reference so that this doesnt become attached to any term/sentence pair contents, if it becomes inactive */
-    transient SoftReference<Set<Pair<Term,Sentence>>> premisesThisCycle;
+    //transient SoftReference<Set<Pair<Term,Sentence>>> premisesThisCycle;
+    transient SoftReference<HashMultimap<Sentence,Term>> premisesThisCycle;
+    //use Sentence as key because it is more specific
 
     public UniquePerCyclePremiseGenerator(AtomicInteger maxSelectionAttempts) {
         this(maxSelectionAttempts, 1);
@@ -35,17 +37,17 @@ public class UniquePerCyclePremiseGenerator extends TermLinkBagPremiseGenerator 
     }
 
     @Override
-    public boolean validTermLinkTarget(Concept concept, TaskLink c, TermLink t) {
-        if (super.validTermLinkTarget(concept, c, t)) {
-            long now = concept.time();
+    public boolean validTermLinkTarget(Concept concept, TermLink term, TaskLink task) {
+        if (super.validTermLinkTarget(concept, term, task)) {
+            final long now = concept.time();
 
 
-            Set<Pair<Term,Sentence>> s = null;
+            SetMultimap<Sentence, Term> s = null;
             if (premisesThisCycle != null)
                 s = premisesThisCycle.get();
 
             if (s == null) {
-                s = Global.newHashSet(1);
+                s = MultimapBuilder.hashKeys().hashSetValues(1).build();
                 premisesThisCycle = new SoftReference(s);
             }
             else {
@@ -56,7 +58,7 @@ public class UniquePerCyclePremiseGenerator extends TermLinkBagPremiseGenerator 
 
             prevCycle = now;
 
-            return s.add(PremiseGenerator.pair(c, t));
+            return s.put(task.getTask(), term.getTerm());
         }
         return false;
     }
