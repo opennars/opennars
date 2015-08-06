@@ -183,7 +183,7 @@
 .slider:vertical > .track-background,
 .scroll-bar:vertical > .track-background,
 .scroll-bar:horizontal > .track-background{
-    -fx-background-color: derive(rgb(94.0, 203.0, 234.0), 50.0%);
+    -fx-background-color: derive(rgb(94.0, 103.0, 234.0), 50.0%);
     -fx-background-insets: 0.0;
 }
 

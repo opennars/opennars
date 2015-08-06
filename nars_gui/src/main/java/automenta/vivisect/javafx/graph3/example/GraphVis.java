@@ -1,4 +1,4 @@
-package automenta.vivisect.javafx.spacegraph.example;
+package automenta.vivisect.javafx.graph3.example;
 
 import org.apache.commons.math3.geometry.euclidean.oned.Interval;
 

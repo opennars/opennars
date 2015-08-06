@@ -21,9 +21,9 @@ import javafx.scene.shape.Rectangle;
 import jfxtras.scene.control.window.Window;
 
 /** window widget */
-public class Windget extends Window {
+public class Windget extends DefaultWindow {
 
-    private final StackPane wrap;
+
     private final AnchorPane overlay;
 
     public void addOverlay(Node n) {
@@ -156,7 +156,7 @@ public class Windget extends Window {
 
         @Override
         public Windget getWindow() {
-            return (Windget) getNode().getParent().getParent().getParent().getParent();
+            return (Windget) getNode().getParent().getParent().getParent();
         }
 
         @Override
@@ -344,13 +344,15 @@ public class Windget extends Window {
     public Windget(String title, Node content) {
         super(title);
 
-        wrap = new StackPane();
-        setContentPane(wrap);
+
+
+        getStyleClass().add("windget");
+
 
         overlay = new AnchorPane();
         overlay.setPickOnBounds(false);
 
-        getContentPane().getChildren().setAll(content, overlay);
+        root.getChildren().setAll(content, overlay);
 
         autosize();
     }

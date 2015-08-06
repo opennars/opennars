@@ -17,3 +17,9 @@
     -fx-background-color: #111;
     -fx-fill: white;
 }
+
+.windget {
+
+    -fx-background-color: linear-gradient(to top right, #ff7f50d0, #6a5acdd0);
+    -fx-padding: 0.5em;
+}

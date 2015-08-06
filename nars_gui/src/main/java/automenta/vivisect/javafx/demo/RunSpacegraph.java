@@ -1,5 +1,8 @@
-package automenta.vivisect.javafx;
+package automenta.vivisect.javafx.demo;
 
+import automenta.vivisect.javafx.CodeInput;
+import automenta.vivisect.javafx.Spacegraph;
+import automenta.vivisect.javafx.Windget;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

@@ -1,7 +1,7 @@
-package automenta.vivisect.javafx.spacegraph.example;
+package automenta.vivisect.javafx.graph3.example;
 
-import automenta.vivisect.javafx.spacegraph.SpaceNet;
-import automenta.vivisect.javafx.spacegraph.Xform;
+import automenta.vivisect.javafx.graph3.SpaceNet;
+import automenta.vivisect.javafx.graph3.Xform;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;

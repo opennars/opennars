@@ -30,9 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package automenta.vivisect.javafx.spacegraph.example;
+package automenta.vivisect.javafx.graph3.example;
 
-import automenta.vivisect.javafx.spacegraph.Xform;
+import automenta.vivisect.javafx.graph3.Xform;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;

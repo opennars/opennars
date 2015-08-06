@@ -1,15 +1,16 @@
-package automenta.vivisect.javafx.spacegraph.example;
+package automenta.vivisect.javafx.graph3.example;
 
-import automenta.vivisect.javafx.spacegraph.SpaceNet;
-import automenta.vivisect.javafx.spacegraph.Xform;
+import automenta.vivisect.javafx.graph3.SpaceNet;
+import automenta.vivisect.javafx.graph3.Xform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.PieChart;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.guifx.NARPane;
@@ -25,7 +26,7 @@ import java.util.List;
 public class Graph1 extends SpaceNet {
 
     final Xform g = new Xform();
-    private static final double HYDROGEN_ANGLE = 104.5;
+    private static final double HYDROGEN_ANGLE = 35.5;
 
 
     public static class RectNode extends Xform {
@@ -35,7 +36,7 @@ public class Graph1 extends SpaceNet {
         public RectNode() {
             super();
 
-            base = new Box(10, 10, 1);
+            base = new Box(25, 25, 1);
             base.setTranslateZ(4);
             base.setMouseTransparent(true);
 
@@ -88,48 +89,49 @@ public class Graph1 extends SpaceNet {
             //oxygenSphere.getChildren().add(new Button("fuck"));
 
             NARPane w = new NARPane(new NAR(new Default()));
-            w.setScaleX(0.1f);
-            w.setScaleY(0.1f);
+            w.setScaleX(0.05f);
+            w.setScaleY(0.03f);
             w.setScaleZ(0.1f);
-            oxygenSphere.getChildren().setAll(w);
+            oxygenSphere.getChildren().add(w);
         }
 
+        RectNode hydrogen1Sphere = new RectNode();
+        hydrogen1Sphere.base.setMaterial(redMaterial);
+        {
 
 
-        Sphere hydrogen1Sphere = new Sphere(5.0);
-        hydrogen1Sphere.setMaterial(whiteMaterial);
-        hydrogen1Sphere.setTranslateX(0.0);
+            ObservableList<PieChart.Data> pieChartData =
+                    FXCollections.observableArrayList(
+                            new PieChart.Data("Grapefruit", 13),
+                            new PieChart.Data("Oranges", 25),
+                            new PieChart.Data("Plums", 10),
+                            new PieChart.Data("Pears", 22),
+                            new PieChart.Data("Apples", 30));
+            final PieChart wc = new PieChart(pieChartData);
+            wc.setTitle("TEST");
+            //wc.setCacheHint(CacheHint.SPEED);
 
-        Sphere hydrogen2Sphere = new Sphere(5.0);
-        hydrogen2Sphere.setMaterial(whiteMaterial);
-        hydrogen2Sphere.setTranslateZ(0.0);
+            wc.autosize();
 
-        Cylinder bond1Cylinder = new Cylinder(2, 100);
-        bond1Cylinder.setMaterial(greyMaterial);
-        bond1Cylinder.setTranslateX(50.0);
-        bond1Cylinder.setRotationAxis(Rotate.Z_AXIS);
-        bond1Cylinder.setRotate(90.0);
+            wc.setTranslateX(40);
+            wc.setTranslateY(40);
 
-        Cylinder bond2Cylinder = new Cylinder(2, 100);
-        bond2Cylinder.setMaterial(greyMaterial);
-        bond2Cylinder.setTranslateX(50.0);
-        bond2Cylinder.setRotationAxis(Rotate.Z_AXIS);
-        bond2Cylinder.setRotate(90.0);
 
-        moleculeXform.getChildren().add(oxygenXform);
-        moleculeXform.getChildren().add(hydrogen1SideXform);
-        moleculeXform.getChildren().add(hydrogen2SideXform);
-        oxygenXform.getChildren().add(oxygenSphere);
-        hydrogen1SideXform.getChildren().add(hydrogen1Xform);
-        hydrogen2SideXform.getChildren().add(hydrogen2Xform);
-        hydrogen1Xform.getChildren().add(hydrogen1Sphere);
-        hydrogen2Xform.getChildren().add(hydrogen2Sphere);
-        hydrogen1SideXform.getChildren().add(bond1Cylinder);
-        hydrogen2SideXform.getChildren().add(bond2Cylinder);
+            wc.setTranslateZ(-0.2);
+            wc.setScaleX(0.08f);
+            wc.setScaleY(0.08f);
+            wc.setScaleZ(0.1f);
+            hydrogen1Sphere.getChildren().setAll(new AnchorPane(wc));
+        }
 
-        hydrogen1Xform.setTx(100.0);
-        hydrogen2Xform.setTx(100.0);
-        hydrogen2SideXform.setRotateY(HYDROGEN_ANGLE);
+        hydrogen1Sphere.setRotateY(HYDROGEN_ANGLE);
+        hydrogen1Sphere.setTx(8.0);
+        hydrogen1Sphere.setTy(8.0);
+
+
+
+        moleculeXform.getChildren().addAll(oxygenSphere, hydrogen1Sphere);
+
 
         g.getChildren().add(moleculeXform);
         return g;
