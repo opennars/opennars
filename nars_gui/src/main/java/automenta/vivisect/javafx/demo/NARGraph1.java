@@ -2,7 +2,6 @@ package automenta.vivisect.javafx.demo;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.javafx.Spacegraph;
-import automenta.vivisect.javafx.Windget;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import javafx.animation.AnimationTimer;
@@ -10,9 +9,15 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
@@ -46,49 +51,171 @@ public class NARGraph1 extends Application {
     static final Random rng = new XORShiftRandom();
 
 
-    final AtomicBoolean edgeDirty = new AtomicBoolean(true);
+    final AtomicBoolean nodeDirty = new AtomicBoolean(true),
+            edgeDirty = new AtomicBoolean(true);
 
-    public static class TermNode extends Windget {
+    public static Polygon newPoly(int sides, double d) {
+
+        Polygon polygon = new Polygon();
+        double da = (2 * Math.PI) / sides, a = 0;
+        double r = d/2;
+        for (int i = 0; i < sides; i++) {
+            polygon.getPoints().addAll(
+                     r * Math.cos(a),
+                     r * Math.sin(a)
+            );
+            a += da;
+        }
+        return polygon;
+    }
+
+    final static Font baseFont = new Font(1);
+
+    public class TermNode extends StackPane {
 
 
         private final Term term;
+        private final Label titleBar;
+        private final Polygon base;
         Concept c = null;
 
+        private double priorityDisplayed = -1;
 
+        /** granularity for discretizing displayed scales to reduces # of updates */
+        final static double priorityDisplayedResolution = 50;
+
+
+        double minSize = 16;
+        double maxSize = 96;
+
+        /** cached from last set */
+        private double scaled;
+        private double tx;
+        private double ty;
 
         public TermNode(Term t) {
-            super(t.toStringCompact());
+            super();
+
+            this.titleBar = new Label(t.toStringCompact());
+            titleBar.setFont(baseFont);
+            titleBar.setCache(true);
+            titleBar.setCacheHint(CacheHint.SCALE);
+            //titleBar.setLayoutX(-titleBar.getWidth());
+
+
+            base = newPoly(6, 1.0);
+
+
+            getChildren().add(base);
+            getChildren().add(titleBar);
+            //getChildren().add(new Rectangle(1,1));
+
 
             this.term = t;
+            this.c = nar.concept(t);
 
             randomPosition(30, 30);
 
+            titleBar.setTextFill(Color.WHITE);
+            titleBar.setScaleX(0.25);
+            titleBar.setScaleY(0.25);
+            titleBar.setAlignment(Pos.CENTER);
             titleBar.setMouseTransparent(true);
+
+            update();
         }
+
+
 
         public void randomPosition(double bx, double by) {
 
-            move(rng.nextDouble() * bx,
-                    rng.nextDouble() * by);
+            move(rng.nextDouble() * bx, rng.nextDouble() * by);
         }
 
-        protected void update() {
+        public void update() {
+
+            double priority = (c!=null ? c.getPriority() : 0);
+
+            if ( (int)(priorityDisplayedResolution * priorityDisplayed) !=
+                    (int)(priorityDisplayedResolution * priority) ) {
+                double scale = minSize + (maxSize - minSize) * priority;
+                this.scaled = scale;
+
+                setScaleX(scale);
+                setScaleY(scale);
+
+                float conf = c!=null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
+                base.setFill( getVertexColor( priority, conf ));
+
+                setOpacity(0.75f + 0.25f * priority);
+
+                this.priorityDisplayed = priority;
+                //System.out.println(scale + " " + priority + " " + (int)(priorityDisplayedResolution * priority));
+            }
 
         }
+
 
 
         public void getPosition(final double[] v) {
-            v[0] = getLayoutX();
-            v[1] = getLayoutY();
+            v[0] = getTranslateX();
+            v[1] = getTranslateY();
         }
+
+        final public TermNode move(final double x, final double y) {
+            setTranslateX(this.tx = x);
+            setTranslateY(this.ty = y);
+            return this;
+        }
+
+        final public boolean move(final double[] v, final double threshold) {
+            final double x = getTranslateX();
+            final double y = getTranslateY();
+            final double nx = v[0];
+            final double ny = v[1];
+            if (!((Math.abs(x-nx) < threshold) && (Math.abs(y-ny) < threshold))) {
+                move(nx, ny);
+                return true;
+            }
+            return false;
+        }
+
+        public double width() {
+            return scaled; //getScaleX();
+        }
+        public double height() {
+            return scaled; //getScaleY();
+        }
+
+        public double x() {
+            return tx; //getTranslateX();
+        }
+        public double y() {
+            return ty; //getTranslateY();
+        }
+    }
+
+    public static Color getVertexColor(double priority, float conf) {
+        // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
+
+        if (!Double.isFinite(conf)) {
+            conf = 0;
+        }
+
+        return Color.hsb(250.0 + 75.0 * ( conf ),
+                0.10f + 0.85f * priority,
+                0.10f + 0.5f * priority);
+
+
     }
 
     public static Color getEdgeColor(double termMean, double taskMean) {
         // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
 
-        return Color.hsb(1.0 + (termMean - taskMean), 0.5f,
-                0.85f,
-                0.5f + 0.5f * (termMean + taskMean)/2f );
+        return Color.hsb(25.0 + 100.0 * ( 1.0 + (termMean - taskMean)),
+                0.95f,
+                0.15f + 0.85f * (termMean + taskMean)/2f);
+
 
 //        return new Color(
 //                0.5f + 0.5f * termMean,
@@ -103,6 +230,10 @@ public class NARGraph1 extends Application {
         TermLink termLink = null;
         final Set<TaskLink> taskLinks = new LinkedHashSet();
 
+
+        //final double minPriVisiblityThresh = 0.1;
+        final double minThickVisibility = 1;
+
         private final TermNode from;
         private final TermNode to;
 
@@ -115,6 +246,8 @@ public class NARGraph1 extends Application {
 
         private double termlinkPriority;
         private double taskPrioSum;
+        private double thicks;
+        private Color color;
 
         final protected void dirty(boolean newValue) {
             dirty.set(newValue);
@@ -136,15 +269,9 @@ public class NARGraph1 extends Application {
 
             setManaged(false);
 
-            /*from.layoutXProperty().addListener(onNodeMoved);
-            from.layoutYProperty().addListener(onNodeMoved);
-            to.layoutXProperty().addListener(onNodeMoved);
-            to.layoutYProperty().addListener(onNodeMoved);*/
             from.localToSceneTransformProperty().addListener(this);
             to.localToSceneTransformProperty().addListener(this);
 
-            setFill(Color.ORANGE);
-            setOpacity(0.5);
 
             getPoints().setAll(0.5d, 0d, -0.5d, -0.5d, -0.5d, +0.5d); //isoceles triangle within -0.5,-0.5...0.5,0.5 (len/wid = 1)
 
@@ -156,10 +283,8 @@ public class NARGraph1 extends Application {
         }
 
 
-
-        public void update() {
-
-            //TODO move this to a TermNode specific subclass
+        @Override
+        public final void changed(ObservableValue observable, Object oldValue, Object newValue) {
 
 
             int numTasks = taskLinks.size();
@@ -173,31 +298,40 @@ public class NARGraph1 extends Application {
                 taskSum = taskMean = 0;
             }
 
-
-
             final double termPrio = termLink!=null ? termLink.getPriority() : 0;
+            this.thicks = ( taskSum + termPrio);
+            this.color = getEdgeColor(termPrio, taskMean);
 
+            dirty(true);
+        }
 
-            setFill(getEdgeColor(termPrio, taskMean));
+        public void update() {
 
-
+            setFill(color);
 
             if (!from.isVisible() || !to.isVisible()) {
                 setVisible(false);
                 return;
-            } else {
-                setVisible(true);
             }
 
-            double fw = from.getWidth();
-            double fh = from.getHeight();
-            double tw = to.getWidth();
-            double th = to.getHeight();
 
-            double x1 = from.getLayoutX() + fw / 2d;
-            double y1 = from.getLayoutY() + fh / 2d;
-            double x2 = to.getLayoutX() + tw / 2d;
-            double y2 = to.getLayoutY() + th / 2d;
+            double fw = from.width();
+            //double fh = from.height();
+            double tw = to.width();
+            //double th = to.height();
+            double thicks = this.thicks * Math.max(tw,fw)/4;
+
+            if (thicks < minThickVisibility) {
+                setVisible(false);
+                return;
+            }
+
+            setVisible(true);
+
+            double x1 = from.x();// + fw / 2d;
+            double y1 = from.y();// + fh / 2d;
+            double x2 = to.x();// + tw / 2d;
+            double y2 = to.y();// + th / 2d;
             double dx = (x1 - x2);
             double dy = (y1 - y2);
             double len = Math.sqrt(dx * dx + dy * dy);
@@ -206,9 +340,6 @@ public class NARGraph1 extends Application {
             double cx = 0.5f * (x1 + x2);
             double cy = 0.5f * (y1 + y2);
 
-            double thicks = 10 + 20 * ((0.5 * taskSum) + termPrio);
-            if (thicks > tw/2f) thicks = tw/2f;
-            if (thicks > th/2f) thicks = th/2f;
 
             translate.setX(cx); translate.setY(cy);
             rotate.setAngle(FastMath.toDegrees(rot));
@@ -224,10 +355,6 @@ public class NARGraph1 extends Application {
             return from;
         }
 
-        @Override
-        public final void changed(ObservableValue observable, Object oldValue, Object newValue) {
-            dirty(true);
-        }
     }
 
     final Map<Term, TermNode> terms = new LinkedHashMap();
@@ -310,6 +437,8 @@ public class NARGraph1 extends Application {
     protected void layoutNodes() {
 
         if (h == null) {
+            final double scaleFactor = 400;
+
             h = new HyperassociativeMap<TermNode,TermEdge>(2) {
 
                 @Override
@@ -317,9 +446,38 @@ public class NARGraph1 extends Application {
                     node.getPosition(v);
                 }
 
+                /*
+                @Override
+                public double getEdgeWeight(TermEdge termEdge) {
+                    ///doesnt do anything in this anymore
+                }
+                */
+
+                /*@Override
+                public double getRadius(TermNode termNode) {
+                    return super.getRadius(termNode);
+                }*/
+
+                @Override
+                public boolean normalize() {
+                    return false;
+                }
+
+
+                @Override
+                public double getRadius(TermNode termNode) {
+                    //return termNode.width() / 2 / scaleFactor / 2;
+                    return 0;
+                }
+
+                @Override
+                public double getSpeedFactor(TermNode termNode) {
+                    return 4 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
+                }
+
                 @Override
                 public void apply(TermNode node, double[] dataRef) {
-                    node.move(dataRef, 0.02);
+                    node.move(dataRef, 0.01);
                 }
 
                 @Override
@@ -330,21 +488,33 @@ public class NARGraph1 extends Application {
                 @Override
                 protected void edges(final TermNode nodeToQuery, Consumer<TermNode> updateFunc, boolean ins, boolean outs) {
                     for (TermEdge te : edges.values()) {
-                        updateFunc.accept(te.otherNode(nodeToQuery));
+                        if (te.isVisible())
+                            updateFunc.accept(te.otherNode(nodeToQuery));
                     }
                 }
 
             };
 
-            h.setScale(250);
-            h.setEquilibriumDistance(3);
+            h.setScale(scaleFactor);
+            h.setEquilibriumDistance(0.01);
+            h.setRepulsiveWeakness(6.0);
+            h.setAttractionStrength(6.0);
         }
 
         h.align();
 
         h.apply();
 
+        h.resetLearning();
 
+
+    }
+
+    protected void updateNodes() {
+
+        for (TermNode n : terms.values()) {
+            n.update();
+        }
 
     }
 
@@ -366,15 +536,23 @@ public class NARGraph1 extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setOnCloseRequest((e) -> System.exit(1));
 
 
-        NAR nar = this.nar = new NAR(new Default());
-        nar.input("<a --> b>.");
-        nar.input("<b --> c>.");
+        //Equalized d = new Equalized(1024,1,3);
+        Default d = new Default(64,1,1);
+        d.termLinkForgetDurations.set(1);
 
 
-        new Animate(50, a -> { layoutNodes(); } ).start();
-        new Animate(75, a -> { updateEdges(); } ).start();
+        NAR nar = this.nar = new NAR(d);
+
+        nar.input("$0.8;0.75;0.1$ <a --> b>. \n");
+        nar.input("$0.8;0.75;0.1$ <b --> c>. \n");
+
+
+
+        new Animate(60, a -> { layoutNodes(); } ).start();
+        new Animate(60, a -> { updateNodes(); updateEdges(); } ).start();
 
         new CycleReaction(nar) {
 
@@ -384,9 +562,8 @@ public class NARGraph1 extends Application {
             }
         };
 
-        new Thread(() -> nar.frameEvery(100)).start();
+        new Thread(() -> nar.frameEvery(75)).start();
 
-        primaryStage.setOnCloseRequest((e) -> System.exit(1));
     }
 
 

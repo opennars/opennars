@@ -159,8 +159,9 @@ public class Spacegraph extends ZoomFX {
 
         content().add(layers);
 
-        getStyleClass().add("dark");
         getStyleClass().add("spacegraph");
+        getStyleClass().add("dark");
+
 
 //        space.zoomFactorProperty().addListener((prop, oldVal, newVal) -> zoomFactor.setText(String.format("%d%%", Math.round(newVal.doubleValue() * 100))));
 //        bOne.setOnAction((event) -> space.zoomFactorProperty().set(1.0));

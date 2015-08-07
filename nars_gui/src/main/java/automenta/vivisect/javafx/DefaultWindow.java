@@ -29,13 +29,11 @@
 
 package automenta.vivisect.javafx;
 
-import javafx.animation.*;
-import javafx.animation.Animation.Status;
+import javafx.animation.Timeline;
+import javafx.animation.Transition;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,21 +43,18 @@ import javafx.scene.CacheHint;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
-import javafx.util.Duration;
 import jfxtras.labs.scene.control.window.SelectableNode;
 import jfxtras.labs.scene.control.window.Window;
 import jfxtras.labs.util.WindowUtil;
-import jfxtras.scene.control.window.WindowIcon;
 import jfxtras.util.NodeUtil;
 
 /**
@@ -82,7 +77,7 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
     private boolean RESIZE_LEFT;
     private boolean RESIZE_BOTTOM;
     private boolean RESIZE_RIGHT;
-    public Button titleBar;
+    public Label titleBar;
     public final StackPane root = new StackPane();
     private double contentScale = 1.0;
     private double oldHeight;
@@ -163,13 +158,12 @@ public class DefaultWindow extends BorderPane implements SelectableNode {
     public DefaultWindow(String title) {
         super();
 
-        titleBar = new Button(title);
+        titleBar = new Label(title);
 
         titleBar.setCache(true);
-        titleBar.setCacheHint(CacheHint.DEFAULT);
+        titleBar.setCacheHint(CacheHint.SCALE);
+        titleBar.getStyleClass().add("titlebar");
 
-
-        setTitle(title);
 
         init2();
 

@@ -2,7 +2,7 @@
 
     -fx-base: rgb(20, 20, 20);
 
-    -fx-background: rgb(20, 20, 20);
+    -fx-background: rgb(10, 10, 10);
 
     -fx-fill: #fff;
 
@@ -40,8 +40,8 @@
 /* Pasted from:  http://search.maven.org/#artifactdetails%7Ccom.guigarage%7Cflatter%7C0.7%7Cjar */
 
 .root {
-    -fx-text-base-color: rgb(252.0, 240.0, 237.0);
-    -fx-text-fill: -fx-text-base-color;
+    /*-fx-text-base-color: rgb(252.0, 240.0, 237.0);
+    -fx-text-fill: -fx-text-base-color;*/
 
      -dark: rgb(47.0, 52.0, 57.0);
      -fx-background-color: -dark;
@@ -50,7 +50,7 @@
     -fx-font-family: 'Monospaced';
     -fx-font-size: 16.0px;
     -fx-font-weight: 600;
-    -fx-disabled-opacity: 0.6;
+    -fx-disabled-opacity: 0.8;
 
     -flatter-red: rgb(237.0, 68.0, 37.0);
     -flatter-blue: rgb(0.0, 184.0, 222.0);
@@ -61,7 +61,7 @@
 }
 
 .text {
-    -fx-font-smoothing-type: lcd;
+    /*-fx-font-smoothing-type: lcd;*/
 }
 
 .emoji-text {
@@ -82,7 +82,7 @@
  * Label                                                                       *
  *                                                                             *
  ******************************************************************************/
-
+/*
 .label {
     -fx-text-fill: -fx-text-base-color;
 }
@@ -96,8 +96,9 @@
 }
 
 .text {
-    /*-fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);*/
+    -fx-effect:dropshadow(gaussian, rgb(0.0, 0.0, 0.0, 0.2), 0.0, 0.0, 0.0, 1.0);
 }
+*/
 
 /*******************************************************************************
  *                                                                             *

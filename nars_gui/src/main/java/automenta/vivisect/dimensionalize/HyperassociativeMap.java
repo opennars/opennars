@@ -15,6 +15,7 @@
 package automenta.vivisect.dimensionalize;
 
 import com.google.common.collect.Iterators;
+import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Global;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -84,14 +85,14 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
     private double speedFactor = 1.0;
     final double acceptableDistanceAdjustment = 0.01;
     final double minDistance = 0.01;
-    private EdgeWeightToDistanceFunction edgeWeightToDistance = EdgeWeightToDistanceFunction.OneDivSum;
+    //private EdgeWeightToDistanceFunction edgeWeightToDistance = EdgeWeightToDistanceFunction.OneDivSum;
     
     private DistanceMetric distanceFunction;
     final double[] zero;
     private double attractionStrength = DEFAULT_ATTRACTION_STRENGTH;
     private double repulsiveWeakness = DEFAULT_REPULSIVE_WEAKNESS;
 
-    transient final Map<N, Double> reusableNeighborData = new LinkedHashMap();
+    transient final ObjectDoubleHashMap<N> reusableNeighborData = new ObjectDoubleHashMap();
     transient final List<N> vertices = new ArrayList();
     //boolean normalizeRepulsion = true;
 
@@ -285,6 +286,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
         //LOGGER.debug("maxMove: " + maxMovement + ", Average Move: " + getAverageMovement());
 
+        //TODO use normalize max speed parameter, to control the speed it does this so it's not discontinuous and jumpy
         if (normalize()) {
 
             // divide each coordinate of the sum of all the points by the number of
@@ -347,7 +349,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
     
     /** speed scaling factor for a node; should be <= 1.0 */
     public double getSpeedFactor(N n) {
-        return getSpeedFactor();
+        return speedFactor;
     }
     
     /** edge "weight" which can be mapped in certain ways (via EdgeWeightToDistanceFunction) to distance */
@@ -356,21 +358,21 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         return 1.0;
     }
     
-    public static enum EdgeWeightToDistanceFunction {
-        Min, Max, Sum, SumOneDiv, OneDivSum, OneDivSumOneDiv
-    }
+//    public static enum EdgeWeightToDistanceFunction {
+//        Min, Max, Sum, SumOneDiv, OneDivSum, OneDivSumOneDiv
+//    }
 
 
     protected abstract void
         edges(N nodeToQuery, Consumer<N> updateFunc, boolean ins, boolean outs);
 
-    void getNeighbors(final N nodeToQuery, Map<N, Double> neighbors) {
+    void getNeighbors(final N nodeToQuery, ObjectDoubleHashMap<N> neighbors) {
         if (neighbors == null)
-            neighbors = Global.newHashMap(vertices.size());
+            neighbors = new ObjectDoubleHashMap(vertices.size());
         else
             neighbors.clear();
 
-        final Map<N, Double> finalNeighbors = neighbors;
+        final ObjectDoubleHashMap<N> finalNeighbors = neighbors;
         edges(nodeToQuery, otherNode -> updateNeighbors(nodeToQuery, finalNeighbors, otherNode, 1f), true, true);
 //
 //  for (Object neighborEdge : outs(nodeToQuery, )) {
@@ -395,7 +397,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
 
 
-    private void updateNeighbors(N nodeToQuery, Map<N, Double> neighbors, N other, double currentWeight) {
+    private void updateNeighbors(N nodeToQuery, ObjectDoubleHashMap<N> neighbors, N other, double currentWeight) {
         //N s = neighborEdge.getSource();
         //N t = neighborEdge.getTarget();
         //N neighbor = s == nodeToQuery ? t : s;
@@ -441,10 +443,6 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         this.attractionStrength = attractionStrength;
     }
 
-    public double getSpeedFactor() {
-        return speedFactor;
-    }
-
     public void setSpeedFactor(double speedFactor) {
         this.speedFactor = speedFactor;
     }
@@ -454,7 +452,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
     }
 
     /** vertices is passed as a list because the Set iterator from JGraphT is slow */
-    public ArrayRealVector align(final N nodeToAlign, Map<N, Double> neighbors, Collection<N> vertices) {
+    public ArrayRealVector align(final N nodeToAlign, ObjectDoubleHashMap<N> neighbors, Collection<N> vertices) {
         
         
 
@@ -474,16 +472,12 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         double radius = getRadius(nodeToAlign);
         double targetDistance = radius + equilibriumDistance;
 
-        ArrayRealVector attractVector = newVector();
+        final ArrayRealVector tmpAttractVector = newVector();
 
         // align with neighbours
-        for (final Entry<N, Double> neighborEntry : neighbors.entrySet()) {
-            
-            final N neighbor = neighborEntry.getKey();
-            
-            final double distToNeighbor = neighborEntry.getValue();
+        neighbors.forEachKeyValue( (neighbor, distToNeighbor) -> {
 
-            attractVector = getThePosition(neighbor, attractVector).combineToSelf(1, -1, position);
+            ArrayRealVector attractVector = getThePosition(neighbor, tmpAttractVector).combineToSelf(1, -1, position);
             
             double oldDistance = magnitude(attractVector);
             
@@ -509,7 +503,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
             }
             
             add(delta, attractVector, factor);
-        }
+        });
         
         ArrayRealVector repelVector = newVector();
         double maxEffectiveDistance = targetDistance * maxRepulsionDistance;
@@ -637,7 +631,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
 
 
-    protected synchronized ArrayRealVector processLocally() {
+    protected ArrayRealVector processLocally() {
         ArrayRealVector pointSum = newVector();
          //new HashMap();
 

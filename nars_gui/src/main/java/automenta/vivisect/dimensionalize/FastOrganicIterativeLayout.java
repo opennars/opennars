@@ -1,6 +1,7 @@
 package automenta.vivisect.dimensionalize;
 
 import com.google.common.collect.Iterators;
+import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.gui.output.graph.nengo.UIEdge;
 import nars.gui.output.graph.nengo.UIVertex;
@@ -63,7 +64,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
     /**
      * An array of all vertex to be laid out.
      */
-    protected List<N> vertices = new ArrayList();
+    protected final List<N> vertices = new ArrayList();
     /**
      * An array of locally stored X co-ordinate displacements for the vertex.
      */
@@ -96,11 +97,11 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
      * Maps from vertex to indices.
      */
 
-    protected ObjectIntHashMap<N> indices = new ObjectIntHashMap<>();
+    protected final ObjectIntHashMap<N> indices = new ObjectIntHashMap<>();
     double temperature;
     double temperatureDecay;
     double minTemperature;
-    private List<Double> edgeWeights = new ArrayList();
+    private final DoubleArrayList edgeWeights = new DoubleArrayList();
     private double[][] attractStrength;
 
 
@@ -265,7 +266,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
         final double cellLocation[][] = this.cellLocation;
         final int[][] neighbors = this.neighbors;
         final List<Object> cells = this.cells;
-        final List<Double> edgeWeights = this.edgeWeights;
+        final DoubleArrayList edgeWeights = this.edgeWeights;
         final double[] radii = this.radius;
 
 
@@ -439,7 +440,7 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
 
     }
 
-    private void updateEdge(List<Object> cells, List<Double> weights, N v, UIEdge e) {
+    private void updateEdge(List<Object> cells, DoubleArrayList weights, N v, UIEdge e) {
         Object source = e.getSource();
         Object target = e.getTarget();
         if (source != v) {
