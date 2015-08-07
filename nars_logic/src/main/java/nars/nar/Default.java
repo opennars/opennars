@@ -41,8 +41,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.premise.BloomPremiseGenerator;
-import nars.premise.UniquePerCyclePremiseGenerator;
+import nars.premise.BloomFilterNovelPremiseGenerator;
 import nars.process.CycleProcess;
 import nars.process.concept.*;
 import nars.task.Sentence;
@@ -440,7 +439,7 @@ public class Default extends NARSeed  {
 
 
     /** rank function used for concept belief and goal tables */
-    public BeliefTable.RankBuilder getConceptBeliefGoalRanking() {
+    public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
         return (c, b) ->
                 BeliefTable.BeliefConfidenceOrOriginality;
                 //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
@@ -456,13 +455,20 @@ public class Default extends NARSeed  {
     protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
         return new DefaultConcept(t, b,
                 taskLinks, termLinks,
-                getConceptBeliefGoalRanking(),
+                newConceptBeliefGoalRanking(),
                 //new UniquePerCyclePremiseGenerator(termLinkMaxMatched),
-                new BloomPremiseGenerator(termLinkMaxMatched),
+                newPremiseGenerator(),
                 mem
         );
     }
-    
+
+    /** construct a new premise generator for a concept */
+    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
+        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, 1 /* cycle to clear after */,
+                conceptTaskTermProcessPerCycle.get(),
+                0.01f /* false positive probability */ );
+    }
+
     public Bag<Term, Concept> newConceptBag() {
         //return new LevelBag((int)Math.sqrt(getActiveConcepts()), getActiveConcepts());
         return new CurveBag(rng, getActiveConcepts());

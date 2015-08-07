@@ -64,8 +64,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     void updateLinks();
 
-    void setUsed(long time);
-
     float getPriority();
 
     boolean link(Task currentTask);

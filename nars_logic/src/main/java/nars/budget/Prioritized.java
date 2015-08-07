@@ -19,8 +19,6 @@ public interface Prioritized {
 
     long getLastForgetTime();
 
-    void setUsed(long now);
-
     void mulPriority(float factor);
 
     default public void maxPriority(final float otherPriority) {

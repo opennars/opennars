@@ -79,15 +79,9 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     @Override
     public boolean equals(final Object x) {
         if (x == this) return true;
-
-        /*if (equalOnlyToSameClass())
-            if (!(x.getClass().equals(getClass()))) return false;
-        else*/
         if (!(x instanceof Identifier)) return false;
 
-        Identifier ix = (Identifier)x;
-        if (equalTo(ix)) {
-            share(ix);
+        if (equalTo((Identifier)x)) {
             return true;
         }
 

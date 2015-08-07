@@ -654,13 +654,6 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return this.lastForgetTime==-1;
     }
 
-    /** call this after an item has been used (ex: fired) to distinguish it from being
-        new. this allows new items to remain unforgotten until they are first used.  */
-    @Override
-    public void setUsed(long now) {
-        if (isNew())
-            setLastForgetTime(now);
-    }
 
     @Override
     public float receive(float amount) {
@@ -696,7 +689,6 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         default public float getDurability() { return getBudget().getDurability(); }
         default public float getQuality() { return getBudget().getQuality(); }
         default public long getLastForgetTime() { return getBudget().getLastForgetTime(); }
-        default public void setUsed(long now) { getBudget().setUsed(now); }
 
 
         default Object[] toBudgetArray() {

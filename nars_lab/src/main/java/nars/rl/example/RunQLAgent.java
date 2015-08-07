@@ -228,7 +228,7 @@ public class RunQLAgent extends JPanel {
 
 
             @Override
-            public BeliefTable.RankBuilder getConceptBeliefGoalRanking() {
+            public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
                 return (c, b) -> {
                     return new BeliefTable.BeliefConfidenceAndCurrentTime(c);
                 };

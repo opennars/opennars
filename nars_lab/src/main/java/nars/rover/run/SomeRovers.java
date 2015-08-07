@@ -60,19 +60,19 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Equalized(8192, 96, 16) {
+        Default d = new Equalized(8192, 96, 8) {
 
 
             @Override
             public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
                 Bag<Sentence, TaskLink> taskLinks =
-                        //new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());*/
-                        new ChainBag(rng,  getConceptTaskLinks());
+                        new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+                        //new ChainBag(rng,  getConceptTaskLinks());
 
                 Bag<TermLinkKey, TermLink> termLinks =
-                        //new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-                        new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+                        new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+                        //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
                 return newConcept(t, b, taskLinks, termLinks, m);
             }

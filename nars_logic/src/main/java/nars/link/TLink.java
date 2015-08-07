@@ -20,9 +20,6 @@ public interface TLink<T extends Termed> extends Budget.Budgetable, Serializable
         out.print(' ');
         out.print(t.getBudget());
 
-        if (t.getBudget().isNew()) {
-            out.print(" (new) ");
-        }
 
     }
 

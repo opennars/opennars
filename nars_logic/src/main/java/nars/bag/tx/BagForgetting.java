@@ -30,21 +30,6 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
         return null; //signals to the bag updater to use the next item
     }
 
-    protected static boolean forgettingCouldAffectItemBudget(final long now, final Itemized v) {
-
-        final Budget b = v.getBudget();
-        final long lastForgetTime = b.getLastForgetTime();
-
-        if (lastForgetTime == -1) {
-            b.setLastForgetTime(now);
-            return false;
-        }
-
-        ////there is >0 time across which forgetting would be applied
-        return (lastForgetTime != now);
-
-                //&& (b.getPriority() > b.getQuality() * Global.MIN_FORGETTABLE_PRIORITY); //there is sufficient priority for forgetting to occurr
-    }
 
     /** updates with current time, etc. call immediately before update() will be called */
     public void set(float forgetCycles, long now) {
@@ -62,13 +47,14 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
     public V update(final V v) {
         this.selected = v;
 
-        if (!forgettingCouldAffectItemBudget(now, v)) {
-            //unaffected; null means that the item's budget was not changed,
-            // so the bag knows it can avoid any reindexing it)
+        final float priorityStart = v.getPriority();
+
+        final float priorityEnd = Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
+        if (priorityStart == priorityEnd) {
+            /** null means it was not changed */
             return null;
         }
 
-        Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
 
         return v;
     }

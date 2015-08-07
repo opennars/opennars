@@ -58,13 +58,19 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
         this.selected = select ? v : null;
 
 
-        if (!forget || !forgettingCouldAffectItemBudget(now, v)) {
+        if (!forget) {
             //unaffected; null means that the item's budget was not changed,
             // so the bag knows it can avoid any reindexing it)
             return null;
         }
 
-        Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
+        final float priorityStart = v.getPriority();
+
+        final float priorityEnd = Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
+        if (priorityStart == priorityEnd) {
+            /** null means it was not changed */
+            return null;
+        }
 
         return v;
     }

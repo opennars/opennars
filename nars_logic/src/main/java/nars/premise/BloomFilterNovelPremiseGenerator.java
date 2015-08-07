@@ -16,7 +16,7 @@ import static nars.util.data.Util.int2Bytes;
  * <p>
  * Not thread safe unless validTermLinkTarget were synch or hashBuffer is threadlocal
  */
-public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator {
+public class BloomFilterNovelPremiseGenerator extends TermLinkBagPremiseGenerator {
 
     private final int clearAfterCycles;
     long lastClear;
@@ -26,7 +26,9 @@ public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator {
     //for statistics:
     //private int novel, nonnovel;
 
-    final byte[] hashBuffer = new byte[3 * 4];
+    final byte[] hashBuffer = new byte[2 * 4];
+    private TaskLink prevTask;
+    private TermLink prevTerm;
 
     /**
      * clear the bloom filter when it becomes too dirty (too high FPP)
@@ -35,13 +37,15 @@ public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator {
         //novel = nonnovel = 0;
         history.clear();
         lastClear = now;
+        prevTask = null;
+        prevTerm = null;
     }
 
-    public BloomPremiseGenerator(AtomicInteger maxSelectionAttempts) {
+    public BloomFilterNovelPremiseGenerator(AtomicInteger maxSelectionAttempts) {
         this(maxSelectionAttempts, 1, 32, 0.005);
     }
 
-    public BloomPremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles, int expectedSize, double fpp) {
+    public BloomFilterNovelPremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles, int expectedSize, double fpp) {
         super(maxSelectionAttempts);
 
         this.history = new BloomFilter(expectedSize, fpp);
@@ -55,7 +59,6 @@ public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator {
         int p = 0;
 
         //simple hash function: just use each int (32 bit) hashCode's:
-        p = int2Bytes(c.hashCode(), b, p);
         p = int2Bytes(term.hashCode(), b, p);
         p = int2Bytes(task.hashCode(), b, p);
 
@@ -73,17 +76,25 @@ public class BloomPremiseGenerator extends TermLinkBagPremiseGenerator {
     }
 
     @Override
-    public boolean validTermLinkTarget(Concept c, TermLink term, TaskLink taskLink) {
-        if (!super.validTermLinkTarget(c, term, taskLink)) return false;
+    public boolean validTermLinkTarget(Concept c, TermLink termLink, TaskLink taskLink) {
+        if (!super.validTermLinkTarget(c, termLink, taskLink)) return false;
 
         final long now = c.getMemory().time();
 
         if (now - lastClear >= clearAfterCycles) {
             reset(now);
         }
+        else {
+            /** quick eliminate of repeat */
+            if ((prevTerm == termLink) && (prevTask == taskLink))
+                return false;
+        }
+
+        this.prevTerm = termLink;
+        this.prevTask = taskLink;
 
 
-        final boolean mightContain = history.testBytes(bytes(c, term, taskLink));
+        final boolean mightContain = history.testBytes(bytes(c, termLink, taskLink));
 
         if (mightContain) {
             //nonnovel++;

@@ -60,9 +60,6 @@ abstract public class ConceptProcess extends NAL  {
 
     protected void beforeFinish(final long now) {
 
-        concept.setUsed(now);
-
-        taskLink.setUsed(now);
         taskLink.setFired(now);
 
         emit(Events.ConceptProcessed.class, this);

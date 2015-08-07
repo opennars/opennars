@@ -352,9 +352,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         if (index) {
             nameTable.put(x.name(), x);
         }
-        
-        if (x.getLastForgetTime() == -1)
-            x.getBudget().setLastForgetTime(now);
+
 
         /* return null since nothing was actually displaced yet */
         return null;

@@ -46,14 +46,6 @@ public class ConceptProcessTaskTermLink extends ConceptProcess {
         emit(Events.BeliefReason.class, this);
     }
 
-
-    @Override
-    protected void beforeFinish(long now) {
-        super.beforeFinish(now);
-
-        termLink.setUsed(now);
-    }
-
     /**
      * the current termlink / belieflink's concept
      */

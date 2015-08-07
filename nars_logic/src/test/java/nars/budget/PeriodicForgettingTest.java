@@ -1,4 +1,4 @@
-package nars.core;
+package nars.budget;
 
 
 import nars.budget.Budget;
@@ -6,11 +6,11 @@ import nars.budget.BudgetFunctions;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
-public class TestBudget {
+/** TODO make this into a utility for demonstrating budget dynamics */
+public class PeriodicForgettingTest {
 
-    @Test
-    public void testForgetPeriodic() {
+
+    public static void main(String[] args) {
 
         //TODO write some comparison tests for budgets of different durability after time T
 
@@ -18,9 +18,9 @@ public class TestBudget {
         int maxTime = 100;
 
         float initPriority = 1f;
-        float durability = 0.99f;
-        float quality = 0.5f;
-        float budgetThreshold = 0.1f;
+        float durability = 0.0f;
+        float quality = 0.01f;
+        float budgetThreshold = 0.01f;
 
         Budget b = new Budget(initPriority, durability, quality);
 

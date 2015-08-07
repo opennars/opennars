@@ -12,10 +12,8 @@ import nars.term.Term;
 import java.lang.ref.SoftReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Untested - may have a bug since it currently does not include the Concept as part of the uniqueness
- */
-public class UniquePerCyclePremiseGenerator extends TermLinkBagPremiseGenerator {
+
+public class HashTableNovelPremiseGenerator extends TermLinkBagPremiseGenerator {
 
     long prevCycle = -1;
 
@@ -27,11 +25,11 @@ public class UniquePerCyclePremiseGenerator extends TermLinkBagPremiseGenerator 
     transient SoftReference<HashMultimap<Sentence,Term>> premisesThisCycle;
     //use Sentence as key because it is more specific
 
-    public UniquePerCyclePremiseGenerator(AtomicInteger maxSelectionAttempts) {
+    public HashTableNovelPremiseGenerator(AtomicInteger maxSelectionAttempts) {
         this(maxSelectionAttempts, 1);
     }
 
-    public UniquePerCyclePremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles) {
+    public HashTableNovelPremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles) {
         super(maxSelectionAttempts);
         this.clearAfterCycles = clearAfterCycles;
     }

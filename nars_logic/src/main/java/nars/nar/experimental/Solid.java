@@ -18,6 +18,7 @@ import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.nar.Default;
+import nars.premise.BloomFilterNovelPremiseGenerator;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -93,8 +94,15 @@ public class Solid extends Default implements CycleProcess {
         //concepts = new LevelBag(32, activeConcepts);
     }
 
+    /** construct a new premise generator for a concept */
+    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
+        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, 1 /* cycle to clear after */,
+                maxTaskLink * maxTermLink,
+                0.01f /* false positive probability */ );
+    }
+
     @Override
-    public synchronized void init(NAR n) {
+    public void init(NAR n) {
         super.init(n);
         this.memory = n.memory;
 
