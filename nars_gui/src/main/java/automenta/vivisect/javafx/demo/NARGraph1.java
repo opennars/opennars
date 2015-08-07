@@ -15,8 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
@@ -24,11 +24,12 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import nars.NAR;
+import nars.NARStream;
 import nars.concept.Concept;
-import nars.event.CycleReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nar.Default;
+import nars.nar.experimental.Equalized;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.util.FastMath;
@@ -43,6 +44,15 @@ import static javafx.application.Platform.runLater;
  * Created by me on 8/6/15.
  */
 public class NARGraph1 extends Application {
+
+    public interface VisModel {
+
+        Color getEdgeColor(double termPrio, double taskMean);
+
+        Paint getVertexColor(double priority, float conf);
+
+        double getVertexScale(Concept c);
+    }
 
     final Spacegraph space = new Spacegraph();
     private NAR nar;
@@ -82,11 +92,11 @@ public class NARGraph1 extends Application {
         private double priorityDisplayed = -1;
 
         /** granularity for discretizing displayed scales to reduces # of updates */
-        final static double priorityDisplayedResolution = 50;
+        final static double priorityDisplayedResolution = 100;
 
 
-        double minSize = 16;
-        double maxSize = 96;
+        double minSize = 32;
+        double maxSize = 128;
 
         /** cached from last set */
         private double scaled;
@@ -97,9 +107,7 @@ public class NARGraph1 extends Application {
             super();
 
             this.titleBar = new Label(t.toStringCompact());
-            titleBar.setFont(baseFont);
-            titleBar.setCache(true);
-            titleBar.setCacheHint(CacheHint.SCALE);
+
             //titleBar.setLayoutX(-titleBar.getWidth());
 
 
@@ -122,7 +130,13 @@ public class NARGraph1 extends Application {
             titleBar.setAlignment(Pos.CENTER);
             titleBar.setMouseTransparent(true);
 
+
+            titleBar.setFont(baseFont);
+            titleBar.setCache(true);
+            titleBar.setCacheHint(CacheHint.SPEED);
+
             update();
+
         }
 
 
@@ -134,23 +148,24 @@ public class NARGraph1 extends Application {
 
         public void update() {
 
-            double priority = (c!=null ? c.getPriority() : 0);
+            double vertexScaling = visModel.getVertexScale(c);
 
             if ( (int)(priorityDisplayedResolution * priorityDisplayed) !=
-                    (int)(priorityDisplayedResolution * priority) ) {
-                double scale = minSize + (maxSize - minSize) * priority;
+                    (int)(priorityDisplayedResolution * vertexScaling) ) {
+
+                double scale = minSize + (maxSize - minSize) * vertexScaling;
                 this.scaled = scale;
 
                 setScaleX(scale);
                 setScaleY(scale);
 
                 float conf = c!=null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
-                base.setFill( getVertexColor( priority, conf ));
+                base.setFill( visModel.getVertexColor( vertexScaling, conf ));
 
-                setOpacity(0.75f + 0.25f * priority);
+                //setOpacity(0.75f + 0.25f * vertexScaling);
 
-                this.priorityDisplayed = priority;
-                //System.out.println(scale + " " + priority + " " + (int)(priorityDisplayedResolution * priority));
+                this.priorityDisplayed = vertexScaling;
+                //System.out.println(scale + " " + vertexScaling + " " + (int)(priorityDisplayedResolution * vertexScaling));
             }
 
         }
@@ -195,26 +210,44 @@ public class NARGraph1 extends Application {
         }
     }
 
-    public static Color getVertexColor(double priority, float conf) {
-        // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
+    public VisModel visModel = new VisModel() {
 
-        if (!Double.isFinite(conf)) {
-            conf = 0;
+        public Color getVertexColor(double priority, float conf) {
+            // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
+
+            if (!Double.isFinite(conf)) {
+                conf = 0;
+            }
+
+            return Color.hsb(250.0 + 75.0 * ( conf ),
+                    0.10f + 0.85f * priority,
+                    0.10f + 0.5f * priority);
+
+
         }
 
-        return Color.hsb(250.0 + 75.0 * ( conf ),
-                0.10f + 0.85f * priority,
-                0.10f + 0.5f * priority);
 
+        public double getVertexScaleByPri(Concept c) {
+            return (c!=null ? c.getPriority() : 0);
+        }
 
-    }
+        public double getVertexScaleByConf(Concept c) {
+            double conf = c.getBeliefs().getConfidenceMax(0, 1);
+            if (Double.isFinite(conf)) return conf;
+            return 0;
+        }
 
-    public static Color getEdgeColor(double termMean, double taskMean) {
-        // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
+        @Override
+        public double getVertexScale(Concept c) {
+            return getVertexScaleByConf(c);
+        }
 
-        return Color.hsb(25.0 + 100.0 * ( 1.0 + (termMean - taskMean)),
-                0.95f,
-                0.15f + 0.85f * (termMean + taskMean)/2f);
+        public Color getEdgeColor(double termMean, double taskMean) {
+            // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
+
+            return Color.hsb(25.0 + 100.0 * ( 1.0 + (termMean - taskMean)),
+                    0.95f,
+                    0.15f + 0.85f * (termMean + taskMean)/2f);
 
 
 //        return new Color(
@@ -223,7 +256,10 @@ public class NARGraph1 extends Application {
 //                0.5f + 0.5f * taskMean,
 //                0.5f + 0.5f * (termMean + taskMean)/2f
 //        );
-    }
+        }
+
+    };
+
 
     public class TermEdge extends Polygon implements ChangeListener {
 
@@ -267,7 +303,9 @@ public class NARGraph1 extends Application {
             this.from = from;
             this.to = to;
 
-            setManaged(false);
+            //setCache(true);
+
+            //setManaged(false);
 
             from.localToSceneTransformProperty().addListener(this);
             to.localToSceneTransformProperty().addListener(this);
@@ -300,7 +338,7 @@ public class NARGraph1 extends Application {
 
             final double termPrio = termLink!=null ? termLink.getPriority() : 0;
             this.thicks = ( taskSum + termPrio);
-            this.color = getEdgeColor(termPrio, taskMean);
+            this.color = visModel.getEdgeColor(termPrio, taskMean);
 
             dirty(true);
         }
@@ -387,7 +425,7 @@ public class NARGraph1 extends Application {
         return e;
     }
 
-    public void updateGraph() {
+    public synchronized void updateGraph() {
         for (Concept c : nar.memory.getControl()) {
 
             final Term source = c.getTerm();
@@ -467,12 +505,12 @@ public class NARGraph1 extends Application {
                 @Override
                 public double getRadius(TermNode termNode) {
                     //return termNode.width() / 2 / scaleFactor / 2;
-                    return 0;
+                    return 0.01;
                 }
 
                 @Override
                 public double getSpeedFactor(TermNode termNode) {
-                    return 4 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
+                    return 6 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
                 }
 
                 @Override
@@ -497,8 +535,9 @@ public class NARGraph1 extends Application {
 
             h.setScale(scaleFactor);
             h.setEquilibriumDistance(0.01);
-            h.setRepulsiveWeakness(6.0);
+            h.setRepulsiveWeakness(4.0);
             h.setAttractionStrength(6.0);
+            h.setMaxRepulsionDistance(0.1);
         }
 
         h.align();
@@ -519,13 +558,15 @@ public class NARGraph1 extends Application {
     }
 
     protected void updateEdges() {
-        if (edgeDirty.get()) {
-            edgeDirty.set(false);
+        //if (edgeDirty.get()) {
+            //edgeDirty.set(false);
+
             for (TermEdge e : edges.values()) {
                 if (e.dirty.get())
                     e.update();
             }
-        }
+
+        //}
     }
 
     @Override
@@ -539,30 +580,25 @@ public class NARGraph1 extends Application {
         primaryStage.setOnCloseRequest((e) -> System.exit(1));
 
 
-        //Equalized d = new Equalized(1024,1,3);
-        Default d = new Default(64,1,1);
+        //Equalized d = new Equalized(64,1,1);
+        Default d = new Default(96,1,1);
         d.termLinkForgetDurations.set(1);
+        d.conceptCreationExpectation.set(0);
 
 
-        NAR nar = this.nar = new NAR(d);
+        new NARStream( this.nar = new NAR(d) )
+                .input("$0.9;0.75;0.1$ <a --> b>. %1.00;0.5%",
+                        "$0.9;0.75;0.1$ <b --> c>. %1.00;0.5%")
+                .forEachCycle(this::updateGraph)
+                .spawnThread(60, t -> t.start());
 
-        nar.input("$0.8;0.75;0.1$ <a --> b>. \n");
-        nar.input("$0.8;0.75;0.1$ <b --> c>. \n");
+
+
+        new Animate(60, a -> {
+            layoutNodes(); updateNodes(); updateEdges(); } ).start();
 
 
 
-        new Animate(60, a -> { layoutNodes(); } ).start();
-        new Animate(60, a -> { updateNodes(); updateEdges(); } ).start();
-
-        new CycleReaction(nar) {
-
-            @Override
-            public void onCycle() {
-                updateGraph();
-            }
-        };
-
-        new Thread(() -> nar.frameEvery(75)).start();
 
     }
 

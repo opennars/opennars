@@ -23,7 +23,7 @@ public class NARStreamTest {
             conceptsIterated = new AtomicInteger(0);
         StringWriter sw = new StringWriter( );
 
-        new NARStream(new Default())
+        new Default().stream()
                 .input("<a --> b>.", "<b --> c>.")
                 .stopIf( () -> false )
                 .forEachCycle( cycled::incrementAndGet )

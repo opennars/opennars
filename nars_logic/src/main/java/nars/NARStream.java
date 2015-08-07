@@ -3,7 +3,6 @@ package nars;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.gs.collections.api.block.predicate.primitive.CharPredicate;
 import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.io.out.Output;
@@ -20,7 +19,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.LongPredicate;
@@ -81,9 +79,7 @@ public class NARStream  {
     public NAR loop(long periodMS) {
         ensureNotRunning();
 
-        nar.frameEvery(periodMS);
-
-        delete();
+        nar.loop(periodMS);
 
         return nar;
     }
@@ -302,7 +298,15 @@ public class NARStream  {
         return this;
     }
 
+    public NARStream spawnThread(long periodMS, Consumer<Thread> t) {
+        ensureNotRunning();
 
+        t.accept( new Thread(() -> {
+            loop(periodMS);
+        }) );
+
+        return this;
+    }
 
 
     abstract private class StreamNARReaction extends NARReaction {

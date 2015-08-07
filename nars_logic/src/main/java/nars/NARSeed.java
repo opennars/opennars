@@ -67,4 +67,8 @@ abstract public class NARSeed extends Param implements ConceptBuilder {
 
     abstract public Perception newPerception();
 
+    public NARStream stream() {
+        return new NARStream(new NAR(this));
+    }
+
 }
