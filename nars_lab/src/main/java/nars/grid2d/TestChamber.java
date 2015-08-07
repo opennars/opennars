@@ -58,7 +58,7 @@ public class TestChamber {
 
         new TestChamber(nar);
                 
-        nar.runAtRate(narUpdatePeriod);   
+        nar.frameEvery(narUpdatePeriod);
         
     }
 

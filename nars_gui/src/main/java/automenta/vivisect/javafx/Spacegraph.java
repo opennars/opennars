@@ -136,7 +136,7 @@ public class Spacegraph extends ZoomFX {
 
     final Group verts = new Group();
     final Group edges = new Group();
-    final Pane layers = new AnchorPane(verts, edges);
+    final Pane layers = new AnchorPane(edges, verts);
 
     public Spacegraph() {
         super();
@@ -159,8 +159,8 @@ public class Spacegraph extends ZoomFX {
 
         content().add(layers);
 
-        getStyleClass().add("spacegraph");
         getStyleClass().add("dark");
+        getStyleClass().add("spacegraph");
 
 //        space.zoomFactorProperty().addListener((prop, oldVal, newVal) -> zoomFactor.setText(String.format("%d%%", Math.round(newVal.doubleValue() * 100))));
 //        bOne.setOnAction((event) -> space.zoomFactorProperty().set(1.0));

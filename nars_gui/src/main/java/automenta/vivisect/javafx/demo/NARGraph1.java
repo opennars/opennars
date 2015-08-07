@@ -13,19 +13,19 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
-import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.event.CycleReaction;
-import nars.guifx.NARfx;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.util.FastMath;
 
 import java.util.*;
@@ -83,10 +83,24 @@ public class NARGraph1 extends Application {
         }
     }
 
+    public static Color getEdgeColor(double termMean, double taskMean) {
+        // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
 
-    public class TermEdge extends Polygon {
+        return Color.hsb(1.0 + (termMean - taskMean), 0.5f,
+                0.85f,
+                0.5f + 0.5f * (termMean + taskMean)/2f );
 
-        final Set<TermLink> termLinks = new LinkedHashSet(); //should not exceed size two
+//        return new Color(
+//                0.5f + 0.5f * termMean,
+//                0,
+//                0.5f + 0.5f * taskMean,
+//                0.5f + 0.5f * (termMean + taskMean)/2f
+//        );
+    }
+
+    public class TermEdge extends Polygon implements ChangeListener {
+
+        TermLink termLink = null;
         final Set<TaskLink> taskLinks = new LinkedHashSet();
 
         private final TermNode from;
@@ -94,13 +108,13 @@ public class NARGraph1 extends Application {
 
         final private AtomicBoolean dirty = new AtomicBoolean(true);
 
-        private final ChangeListener<? super Transform> onNodeTransformed = new ChangeListener() {
 
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                dirty(true);
-            }
-        };
+        private final Translate translate;
+        private final Rotate rotate;
+        private final Scale scale;
+
+        private double termlinkPriority;
+        private double taskPrioSum;
 
         final protected void dirty(boolean newValue) {
             dirty.set(newValue);
@@ -109,27 +123,63 @@ public class NARGraph1 extends Application {
         }
 
 
+        public void delete() {
+            from.localToSceneTransformProperty().removeListener(this);
+            to.localToSceneTransformProperty().removeListener(this);
+            taskLinks.clear();
+        }
+
         public TermEdge(TermNode from, TermNode to) {
             super();
             this.from = from;
             this.to = to;
 
+            setManaged(false);
 
             /*from.layoutXProperty().addListener(onNodeMoved);
             from.layoutYProperty().addListener(onNodeMoved);
             to.layoutXProperty().addListener(onNodeMoved);
             to.layoutYProperty().addListener(onNodeMoved);*/
-            from.localToSceneTransformProperty().addListener(onNodeTransformed);
-            to.localToSceneTransformProperty().addListener(onNodeTransformed);
+            from.localToSceneTransformProperty().addListener(this);
+            to.localToSceneTransformProperty().addListener(this);
 
             setFill(Color.ORANGE);
             setOpacity(0.5);
 
-            getPoints().setAll(0d, 0.5d, -0.5d, -0.5d, +0.5d, -0.5d); //isoceles triangle within -0.5,-0.5...0.5,0.5 (len/wid = 1)
+            getPoints().setAll(0.5d, 0d, -0.5d, -0.5d, -0.5d, +0.5d); //isoceles triangle within -0.5,-0.5...0.5,0.5 (len/wid = 1)
 
+            getTransforms().setAll(
+                    translate = Transform.translate(0,0),
+                    rotate = Transform.rotate(0,0,0),
+                    scale = Transform.scale(0,0)
+            );
         }
 
+
+
         public void update() {
+
+            //TODO move this to a TermNode specific subclass
+
+
+            int numTasks = taskLinks.size();
+            final double taskSum, taskMean;
+            if (numTasks > 0) {
+                this.taskPrioSum = taskSum = taskLinks.stream()
+                        .mapToDouble(t -> t.getPriority()).sum();//.orElse(0);
+                taskMean = taskSum/numTasks;
+            }
+            else {
+                taskSum = taskMean = 0;
+            }
+
+
+
+            final double termPrio = termLink!=null ? termLink.getPriority() : 0;
+
+
+            setFill(getEdgeColor(termPrio, taskMean));
+
 
 
             if (!from.isVisible() || !to.isVisible()) {
@@ -156,20 +206,27 @@ public class NARGraph1 extends Application {
             double cx = 0.5f * (x1 + x2);
             double cy = 0.5f * (y1 + y2);
 
-            double width = 5;
+            double thicks = 10 + 20 * ((0.5 * taskSum) + termPrio);
+            if (thicks > tw/2f) thicks = tw/2f;
+            if (thicks > th/2f) thicks = th/2f;
 
-            getTransforms().setAll(
-                    Transform.translate(cx, cy),
-                    Transform.rotate(FastMath.toDegrees(rot), 0, 0),
-                    Transform.scale(len, width)
-            );
+            translate.setX(cx); translate.setY(cy);
+            rotate.setAngle(FastMath.toDegrees(rot));
+            scale.setX(len);
+            scale.setY(thicks);
+
 
             dirty(false);
         }
 
-        public TermNode otherNode(final TermNode x) {
+        public final TermNode otherNode(final TermNode x) {
             if (from == x) return to;
             return from;
+        }
+
+        @Override
+        public final void changed(ObservableValue observable, Object oldValue, Object newValue) {
+            dirty(true);
         }
     }
 
@@ -220,7 +277,7 @@ public class NARGraph1 extends Application {
                 Term target = t.getTarget();
                 TermNode tn = getTermNode(target);
                 TermEdge e = getConceptEdge(sn, tn);
-                e.termLinks.add(t);
+                e.termLink = (t);
             }
 
         }
@@ -305,7 +362,7 @@ public class NARGraph1 extends Application {
     public void start(Stage primaryStage) {
 
         Scene scene = space.newScene(1200, 800);
-        scene.getStylesheets().addAll("dark.css" );
+        //scene.getStylesheets().addAll("dark.css" );
 
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -317,7 +374,7 @@ public class NARGraph1 extends Application {
 
 
         new Animate(50, a -> { layoutNodes(); } ).start();
-        new Animate(10, a -> { updateEdges(); } ).start();
+        new Animate(75, a -> { updateEdges(); } ).start();
 
         new CycleReaction(nar) {
 
@@ -327,7 +384,7 @@ public class NARGraph1 extends Application {
             }
         };
 
-        new Thread(() -> nar.runAtRate(750)).start();
+        new Thread(() -> nar.frameEvery(100)).start();
 
         primaryStage.setOnCloseRequest((e) -> System.exit(1));
     }

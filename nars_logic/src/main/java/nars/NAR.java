@@ -583,13 +583,13 @@ public class NAR extends Container implements Runnable {
      * Run until stopped, at full speed
      */
     public void run() {
-        runAtRate(0);
+        frameEvery(0);
     }
 
     /**
      * Runs until stopped, at a given delay period between frames (0= no delay). Main loop
      */
-    public void runAtRate(long minFramePeriodMS) {
+    public void frameEvery(long minFramePeriodMS) {
         //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
         running = true;
