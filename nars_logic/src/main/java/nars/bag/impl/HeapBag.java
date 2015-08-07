@@ -77,7 +77,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         public E remove(final K key) {
             E e = super.remove(key);
 
-            if (Global.DEBUG && Global.DEBUG_BAG)
+            if (Global.DEBUG)
                 HeapBag.this.size();
 
             return e;

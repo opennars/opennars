@@ -86,8 +86,6 @@ public abstract class CollectorMap<K, V extends Item<K>> {
             }
         }
 
-        if (Global.DEBUG && Global.DEBUG_BAG)  size();
-
         return removed;
     }
 

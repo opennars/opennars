@@ -89,7 +89,7 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
         public V remove(final K key) {
             final V e = super.remove(key);
 
-            if (Global.DEBUG && Global.DEBUG_BAG)  CurveBag.this.size();
+            if (Global.DEBUG)  validate();
 
             return e;
         }
@@ -221,11 +221,12 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
      */
     @Override
     public int size() {
+        return items.size();
+    }
 
+    public void validate() {
         int in = index.size();
-
-        if (Global.DEBUG) {
-            int is = items.size();
+        int is = items.size();
             if (Math.abs(is-in) > 2) {
 //                System.err.println("INDEX");
 //                for (Object o : index.values()) {
@@ -262,9 +263,6 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
 //                }*/
 //                throw new RuntimeException(this.getClass() + " inconsistent index: items=" + is + " names=" + in);
 //            }
-        }
-
-        return in;
     }
 
 

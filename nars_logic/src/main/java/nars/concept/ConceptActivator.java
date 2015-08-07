@@ -15,11 +15,12 @@ import nars.term.Term;
  */
 abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
-    final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
+    static final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
 
     private boolean createIfMissing;
     private long now;
     private static final nars.budget.BudgetFunctions.Activating activationFunction = BudgetFunctions.Activating.Accum;
+    private float conceptForgetCycles;
 
 
     abstract public Memory getMemory();
@@ -32,8 +33,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     @Override
     public Concept updateItem(Concept c) {
 
-        long cyclesSinceLastForgotten = now - c.getLastForgetTime();
-        Memory.forget(now, c, cyclesSinceLastForgotten, relativeThreshold);
+        Memory.forget(now, c, conceptForgetCycles, relativeThreshold);
 
 
         final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
@@ -45,6 +45,8 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     public ConceptActivator set(Budget b, boolean createIfMissing, long now) {
 
         setBudget(b);
+
+        this.conceptForgetCycles = getMemory().param.cycles( (getMemory().param.conceptForgetDurations ));
         this.createIfMissing = createIfMissing;
         this.now = now;
         return this;

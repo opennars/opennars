@@ -147,7 +147,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         removal.addValue(d.item.getPriority());
         V v = remove(d.item.name());
 
-        if (Global.DEBUG_BAG) size();
+        if (Global.DEBUG) validate();
 
         return v;
     }
@@ -230,7 +230,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
             overflow = remove(nextRemoval.name());
             if (overflow == null) {
                 //TODO not sure why this happens
-                if (Global.DEBUG_BAG) size();
+                if (Global.DEBUG) validate();
                 //throw new RuntimeException(this + " error removing nextRemoval=" + nextRemoval);
             }
             nextRemoval = null;
@@ -239,7 +239,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
         updatePercentile(newItem.getPriority());
 
-        if (Global.DEBUG_BAG) size();
+        if (Global.DEBUG) validate();
 
         return overflow;
     }
@@ -406,6 +406,10 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
     @Override
     public int size() {
+        return index.size();
+    }
+
+    public void validate() {
         final int s1 = index.size();
         if (Global.DEBUG) {
             final int s2 = chain.size();
@@ -414,7 +418,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
             if (s1 > capacity()+2)
                 throw new RuntimeException(this + " has exceeded capacity: " + s1 + " > " + capacity());
         }
-        return s1;
     }
 
 
@@ -453,7 +456,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
             V v = d.item; //save it here because chain.remove will nullify .item field
             chain.remove(d);
 
-            if (Global.DEBUG_BAG) size();
+            if (Global.DEBUG) validate();
 
             if (current!=null && v == current.item)
                 current = after(current);

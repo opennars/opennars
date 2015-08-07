@@ -95,7 +95,7 @@ abstract public class ConceptProcess extends NAL  {
     }
 
 
-    public static void run(final Memory memory, Supplier<Concept> conceptSource, int concepts, Consumer<ConceptProcess> proc) {
+    public static void forEachPremise(final Memory memory, Supplier<Concept> conceptSource, int concepts, Consumer<ConceptProcess> proc) {
 
         final Param p = memory.param;
         final float tasklinkForgetDurations = p.taskLinkForgetDurations.floatValue();
@@ -105,7 +105,7 @@ abstract public class ConceptProcess extends NAL  {
             Concept c = conceptSource.get();
             if (c==null) continue;
 
-            ConceptProcess.run(c,
+            ConceptProcess.forEachPremise(c,
                     termLinkSelections,
                     tasklinkForgetDurations,
                     proc
@@ -113,11 +113,11 @@ abstract public class ConceptProcess extends NAL  {
         }
     }
 
-    public static void run(@Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
-        run(concept, null, termLinks, taskLinkForgetDurations, proc);
+    public static void forEachPremise(@Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
+        forEachPremise(concept, null, termLinks, taskLinkForgetDurations, proc);
     }
 
-    public static void run(@Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
+    public static void forEachPremise(@Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
         if (concept == null) return;
 
         concept.updateLinks();
@@ -131,7 +131,7 @@ abstract public class ConceptProcess extends NAL  {
         proc.accept( new ConceptProcessTaskLink(concept, taskLink) );
 
         if ((termLinks > 0) && (taskLink.type!=TermLink.TRANSFORM))
-            ConceptProcess.getTermLinks(concept, taskLink,
+            ConceptProcess.forEachPremise(concept, taskLink,
                     termLinks,
                     proc
             );
@@ -141,7 +141,7 @@ abstract public class ConceptProcess extends NAL  {
      * from a concept's TermLink bag
      * @return how many processes generated
      * */
-    public static int getTermLinks(Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
+    public static int forEachPremise(Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
 
 
         int numTermLinks = concept.getTermLinks().size();
@@ -150,14 +150,12 @@ abstract public class ConceptProcess extends NAL  {
 
         final Memory memory = concept.getMemory();
 
-
-
-
-        /** use the time since last cycle as a sort of estimate for how to divide this cycle into subcycles;
-         * this isnt necessary for default mode but realtime mode and others may have
-         * irregular or unpredictable clocks.
-         */
-        //float cyclesSincePrevious = memory.timeSinceLastCycle();
+//      Idea:
+//        /** use the time since last cycle as a sort of estimate for how to divide this cycle into subcycles;
+//         * this isnt necessary for default mode but realtime mode and others may have
+//         * irregular or unpredictable clocks.
+//         */
+//        //float cyclesSincePrevious = memory.timeSinceLastCycle();
 
 
         int remainingProcesses = termlinksToReason;

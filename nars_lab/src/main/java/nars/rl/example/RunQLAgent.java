@@ -160,7 +160,7 @@ public class RunQLAgent extends JPanel {
 
         d.newWindow();
 
-        Global.DEBUG = Global.DEBUG_BAG = false;
+        Global.DEBUG = false;
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 

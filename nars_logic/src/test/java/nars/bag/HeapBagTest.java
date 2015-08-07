@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 public class HeapBagTest extends AbstractBagTest {
 
     static {
-        Global.DEBUG = Global.DEBUG_BAG = true;
+        Global.DEBUG = true;
 
     }
 

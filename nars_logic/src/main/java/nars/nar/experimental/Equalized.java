@@ -47,7 +47,7 @@ public class Equalized extends Default {
          *  2) optionally fire a concept
          **/
         @Override
-        public synchronized void cycle() {
+        public void cycle() {
 
             int conceptsToFire = conceptsFiredPerCycle.get();
 
@@ -93,7 +93,7 @@ public class Equalized extends Default {
 
             //1 concept if (memory.newTasks.isEmpty())*/
             float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
-            ConceptProcess.run(memory,
+            ConceptProcess.forEachPremise(memory,
                     () -> nextConceptToProcess(conceptForgetDurations),
                     conceptsToFire, f -> f.run()
             );

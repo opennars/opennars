@@ -49,7 +49,6 @@ public class Global {
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
-    public static boolean DEBUG_BAG = true; // for complete bag debugging
     public static final boolean DEBUG_BAG_MASS = false;
     public static boolean DEBUG_TRACE_EVENTS = false; //shows all emitted events
     public static boolean DEBUG_DERIVATION_STACKTRACES = false; //includes stack trace in task's derivation rule string

@@ -133,7 +133,7 @@ public class DefaultCycle extends SequentialCycle {
 
             final float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
 
-            ConceptProcess.run(memory,
+            ConceptProcess.forEachPremise(memory,
                     () ->  nextConceptToProcess(conceptForgetDurations),
                     conceptsToFire,
                     p->p.run()
