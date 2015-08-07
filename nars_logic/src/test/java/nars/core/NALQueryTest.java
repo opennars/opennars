@@ -5,7 +5,8 @@
 package nars.core;
 
 import nars.NAR;
-import nars.io.qa.Answered;
+import nars.NARStream;
+import nars.io.qa.AnswerReaction;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import nars.task.Sentence;
@@ -28,10 +29,10 @@ public class NALQueryTest {
         testQueryAnswered(16, 0);
     }
 
-    @Test
-    public void testQuery1() throws InvalidInputException {
-        testQueryAnswered(1, 32);
-    }
+//    @Test
+//    public void testQuery1() throws InvalidInputException {
+//        testQueryAnswered(1, 32);
+//    }
 
 
     public void testQueryAnswered(int cyclesBeforeQuestion, int cyclesAfterQuestion) throws InvalidInputException {
@@ -42,34 +43,18 @@ public class NALQueryTest {
                 "<a --> b>" /* unknown solution to be derived */ :
                 "<b --> a>" /* existing solution, to test finding existing solutions */;
 
-        NAR n = new NAR(new Default().setInternalExperience(null));
-        //new TextOutput(n, System.out);
-
-        n.believe("<a <-> b>", Eternal, 1.0f, 0.5f);
-
-        n.believe("<b --> a>", Eternal, 1.0f, 0.5f);
-
-        n.frame(cyclesBeforeQuestion);
-
-        new Answered(n, question) {
-
-            @Override
-            public void onSolution(Sentence belief) {
-                //System.out.println("solution: " + belief);
-                b.set(true);
-                off();
-            }
-
-            @Override
-            public void onChildSolution(Task child, Sentence belief) {
-                //System.out.println("  child: " +
-                //child + " solution: " + belief);
-            }
-        };
-
-        n.frame(cyclesAfterQuestion);
+        new NARStream(new Default().level(2))
+                .stdout()
+                .input("<a <-> b>. %1.0;0.5%",
+                       "<b --> a>. %1.0;0.5%")
+                .run(cyclesBeforeQuestion)
+                .answer(question, t -> b.set(true) )
+                .stopIf( n -> b.get() )
+                .run(cyclesAfterQuestion);
 
         assertTrue(b.get());
 
     }
+
+
 }

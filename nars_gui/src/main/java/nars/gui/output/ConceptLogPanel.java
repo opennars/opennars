@@ -186,7 +186,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         synchronized (buffer) {
 
             buffer.setLength(0);
-            CharSequence s = TextOutput.append(channel, o, true, showStamp, nar, buffer, 0f);
+            CharSequence s = TextOutput.append(buffer, channel, o, true, showStamp, 0f, nar);
             if (s == null)
                 return; //ex: too low priority
 

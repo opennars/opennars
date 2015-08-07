@@ -726,6 +726,10 @@ public class NAR extends Container implements Runnable {
         runWhileNewInput(0);
     }
 
+    public void emit(Throwable e) {
+        emit(Events.ERR.class, e);
+    }
+
 
 //    private void debugTime() {
 //        //if (running || stepsQueued > 0 || !finishedInputs) {

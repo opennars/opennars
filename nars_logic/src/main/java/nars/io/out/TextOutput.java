@@ -29,6 +29,7 @@ import nars.op.io.Echo;
 import nars.task.Task;
 
 import java.io.*;
+import java.nio.CharBuffer;
 
 /**
  * To read and write Task stream experiences in a Text (string) representation,
@@ -193,7 +194,7 @@ public class TextOutput extends Output {
                 buffer.setLength(0);
             }
 
-            return TextOutput.append(c, o, false, showStamp, nar, buffer, outputPriorityMin);
+            return TextOutput.append(buffer, c, o, false, showStamp, outputPriorityMin, nar);
         }
     }
 
@@ -238,10 +239,30 @@ public class TextOutput extends Output {
         this.outputPriorityMin = minPriority;
     }
 
+
+    public static Appendable append(
+            final Appendable out, final Class channel, Object signalOrSignals,
+            CharSequence delimeter,
+            final boolean showChannel, final boolean showStamp,
+            float outputMinPriority, final NAR nar) throws IOException {
+
+        StringBuilder buf = new StringBuilder();
+        append(buf, channel, signalOrSignals, showChannel, showStamp, outputMinPriority, nar);
+        out.append(buf);
+        if (delimeter!=null)
+            out.append(delimeter);
+
+        return out;
+    }
+
+
     /**
      * generates a human-readable string from an output channel and signals
      */
-    public static StringBuilder append(final Class channel, Object signalOrSignals, final boolean showChannel, final boolean showStamp, final NAR nar, final StringBuilder buffer, float outputMinPriority) {
+    public static StringBuilder append(
+            final StringBuilder buffer, final Class channel, Object signalOrSignals,
+            final boolean showChannel, final boolean showStamp,
+            float outputMinPriority, final NAR nar) {
 
 
         Object signal;
@@ -311,7 +332,7 @@ public class TextOutput extends Output {
     }*/
 
     public static StringBuilder append(Class channel, Object signal, final boolean showStamp, final NAR nar, final StringBuilder buffer) {
-        return append(channel, signal, false, showStamp, nar, buffer, 0);
+        return append(buffer, channel, signal, false, showStamp, 0, nar);
     }
 
 

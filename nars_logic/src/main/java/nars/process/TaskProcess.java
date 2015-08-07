@@ -10,7 +10,7 @@ import nars.Symbols;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.meter.LogicMetrics;
+import nars.meter.LogicMeter;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Compound;
@@ -106,7 +106,7 @@ public class TaskProcess extends NAL {
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
         task.setSharedTerm((Compound) c.getTerm());
 
-        final LogicMetrics logicMeter = memory.logic;
+        final LogicMeter logicMeter = memory.logic;
 
         switch (task.getPunctuation()) {
 

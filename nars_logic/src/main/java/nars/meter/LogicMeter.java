@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * <p>
  * TODO add the remaining meter types for NARS data structures (ex: Concept metrics)
  */
-public class LogicMetrics extends NARReaction {
+public class LogicMeter extends NARReaction {
 
 
 
@@ -92,7 +92,7 @@ public class LogicMetrics extends NARReaction {
     //private double[] conceptHistogram;
 
 
-    public LogicMetrics(Memory m) {
+    public LogicMeter(Memory m) {
         super(m, false, /*Events.IN.class, */Events.FrameStart.class, Events.FrameEnd.class);
         this.m = m;
         reset();

@@ -233,7 +233,7 @@ abstract public class BufferedOutput extends Output {
 
             buffer.setLength(0);
             StringBuilder content = TextOutput.append(
-                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, buffer, 0);
+                    buffer, i.channel, i.object, false /* showchannel*/, false /* show stamp */, 0, nar);
 
 
             String prefix = nextChannel + (": ");

@@ -2,10 +2,11 @@ package nars.bag;
 
 import nars.Global;
 import nars.io.in.LibraryInput;
-import nars.io.qa.Answered;
+import nars.io.qa.AnswerReaction;
 import nars.meter.TestNAR;
 import nars.nar.experimental.Solid;
 import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Term;
 import org.junit.Test;
 
@@ -43,10 +44,10 @@ public class SolidTest {
         Set<Sentence> solutions = new HashSet();
 
 
-        new Answered(n) {
+        new AnswerReaction(n) {
 
             @Override
-            public void onSolution(Sentence belief) {
+            public void onSolution(Task belief) {
                 solutions.add(belief);
                 solutionTerms.add(belief.getTerm());
                 if ((solutionTerms.size() >= 2) && (solutions.size() >= 2)) {

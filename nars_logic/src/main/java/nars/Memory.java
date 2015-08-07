@@ -33,7 +33,7 @@ import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
 import nars.io.in.Input;
 import nars.meter.EmotionMeter;
-import nars.meter.LogicMetrics;
+import nars.meter.LogicMeter;
 import nars.nal.LogicPolicy;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -91,7 +91,7 @@ public class Memory implements Serializable, AbstractMemory {
     public final EventEmitter<Class> event;
     public final EventEmitter<Term> exe;
     public final EmotionMeter emotion;
-    public final LogicMetrics logic;
+    public final LogicMeter logic;
     public final ResourceMeter resource;
     public final Param param;
     final List<ConceptBuilder> conceptBuilders;
@@ -149,7 +149,7 @@ public class Memory implements Serializable, AbstractMemory {
 
         //optional:
         this.resource = null; //new ResourceMeter();
-        this.logic = new LogicMetrics(this);
+        this.logic = new LogicMeter(this);
         this.emotion = new EmotionMeter(this);
 
 

@@ -7,7 +7,7 @@ abstract public class AbstractReaction implements Reaction<Class> {
 
     transient protected EventEmitter source;
     transient protected EventEmitter.Registrations active;
-    protected Class[] events;
+    protected final Class[] events;
 
     public AbstractReaction() {
         this(null);
@@ -25,6 +25,8 @@ abstract public class AbstractReaction implements Reaction<Class> {
 
         setActive(active);
     }
+
+
 
     /** called when added via zero-arg constructor, dont call directly, HACK */
     public void start(EventEmitter source) {
