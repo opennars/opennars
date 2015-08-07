@@ -3,6 +3,7 @@ package nars;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import com.gs.collections.api.block.predicate.primitive.CharPredicate;
 import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.io.out.Output;
@@ -19,6 +20,8 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
@@ -122,11 +125,45 @@ public class NARStream  {
         return this;
     }
 
-    public NARStream concepts(Consumer<Iterator<Concept>> recip) {
+    public NARStream inputAt(long time, String... tt) {
+        return at(t -> t == time, () -> input(tt) );
+    }
+
+    public NARStream inputAt(LongPredicate timeCondition, Task... tt) {
+        return at(timeCondition, () -> input(tt) );
+    }
+
+    public NARStream inputAt(long time, Task... tt) {
+        return at(t -> t == time, () -> input(tt) );
+    }
+
+    public NARStream forEachConceptTask(boolean b, boolean q, boolean g, boolean _q,
+                                        int maxPerConcept,
+                                        Consumer<Task> recip) {
+        forEachConcept(c -> {
+            if (b && c.hasBeliefs())   c.getBeliefs().top(maxPerConcept, recip);
+            if (q && c.hasQuestions()) c.getQuestions().top(maxPerConcept, recip);
+            if (g && c.hasBeliefs())   c.getGoals().top(maxPerConcept, recip);
+            if (_q && c.hasQuests())   c.getQuests().top(maxPerConcept, recip);
+        });
+        return this;
+    }
+
+    public NARStream forEachConcept(Consumer<Concept> recip) {
+        nar.memory.concepts.forEach(recip);
+        return this;
+    }
+
+    public NARStream forEachConceptActive(Consumer<Concept> recip) {
+        nar.memory.getControl().forEach(recip);
+        return this;
+    }
+
+    public NARStream conceptIterator(Consumer<Iterator<Concept>> recip) {
         recip.accept( nar.memory.concepts.iterator() );
         return this;
     }
-    public NARStream conceptsActive(Consumer<Iterator<Concept>> recip) {
+    public NARStream conceptActiveIterator(Consumer<Iterator<Concept>> recip) {
         recip.accept( nar.memory.getControl().iterator() );
         return this;
     }
@@ -169,21 +206,26 @@ public class NARStream  {
         return this;
     }
 
-    public NARStream stopIf(Predicate<NAR> stopCondition) {
+    public NARStream stopIf(BooleanSupplier stopCondition) {
         forEachCycle(() -> {
-            if (stopCondition.test(nar)) stop();
+            if (stopCondition.getAsBoolean()) stop();
         });
         return this;
     }
 
-    public NARStream stopIfTime(LongPredicate timeStopCondition) {
-        forEachCycle(() -> {
-            if (timeStopCondition.test(nar.time())) stop();
-        });
+    public NARStream stopAt(LongPredicate timeStopCondition) {
+        at(timeStopCondition, this::stop);
         return this;
     }
 
-
+    public NARStream at(LongPredicate timeCondition, Runnable action) {
+        forEachCycle(() -> {
+            if (timeCondition.test(nar.time())) {
+                action.run();
+            }
+        });
+        return this;
+    }
 
     protected void stop() {
         nar.stop();

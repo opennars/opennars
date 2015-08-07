@@ -6,6 +6,8 @@ import nars.task.Task;
 import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 
+import java.util.function.Consumer;
+
 /** holds a set of ranked question/quests tasks
  *  top ranking items are stored in the lower indexes so they will be first iterated
  * */
@@ -63,4 +65,14 @@ public interface TaskTable extends Iterable<Task> {
     default public UnivariateInterpolator getWaveConfidenceTime() {
         return null;
     }
+
+    default void top(int maxPerConcept, Consumer<Task> recip) {
+        int s = size();
+        if (s < maxPerConcept) maxPerConcept = s;
+        for (final Task t : this) {
+            recip.accept(t);
+            if (--maxPerConcept == 0) break;
+        }
+    }
+
 }

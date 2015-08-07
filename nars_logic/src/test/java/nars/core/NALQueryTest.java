@@ -49,7 +49,7 @@ public class NALQueryTest {
                        "<b --> a>. %1.0;0.5%")
                 .run(cyclesBeforeQuestion)
                 .answer(question, t -> b.set(true) )
-                .stopIf( n -> b.get() )
+                .stopIf( () -> b.get() )
                 .run(cyclesAfterQuestion);
 
         assertTrue(b.get());

@@ -25,11 +25,12 @@ public class NARStreamTest {
 
         new NARStream(new Default())
                 .input("<a --> b>.", "<b --> c>.")
-                .stopIf( (n) -> { return false; } )
-                .forEachCycle(() -> cycled.incrementAndGet() )
+                .stopIf( () -> false )
+                .forEachCycle( cycled::incrementAndGet )
                 .forEachEvent(new PrintWriter(sw), Events.OUT.class)
                 .run(frames)
-                .conceptsActive(i -> conceptsIterated.set(Iterators.size(i)));
+                .conceptActiveIterator(i -> conceptsIterated.set(Iterators.size(i)))
+                .forEachConceptTask(true, true, true, true, 1, System.out::println );
 
         //System.out.println(sw.getBuffer());
         assertTrue(sw.toString().length() > 0);
