@@ -246,8 +246,8 @@
     (&&,(M --> P), A_1..n), (M --> S), not_equal(S,P) |- (($Y --> S) ==> (&&,($Y --> P), A_1..n)), (Truth:Induction),
                                                          (&&,(#Y --> S), (#Y --> P), A_1..n), (Truth:Intersection)
 
-    (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction, Order:Derive),
-                                                                             (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection, Order:Derive)
+    (A ==> (P --> M)), (S --> M), not_equal(S,P), not_equal(A, (S --> M)) |- ((&&,A,(P --> $X)) ==> (S --> $X)), (Truth:Abduction),
+                                                                             (&&,(A ==> (P --> #Y)), (S --> #Y)), (Truth:Intersection)
 
     (&&,(P --> M), A_1..n), (S --> M), not_equal(S,P) |- ((S --> $Y) ==> (&&,(P --> $Y), A_1..n)), (Truth:Abduction),
                                                          (&&, (S --> #Y), (P --> #Y), A_1..n), (Truth:Intersection)
@@ -261,6 +261,9 @@
     (&&,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy)
     (&|,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&|,A_1..n), (Truth:AnonymousAnalogy)
     (&/,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
+
+//// independent variable elimination
+try:    ((&&,($1 --> M),A_1..n) ==> C), (S --> M), substitute($1,S) |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
 
 //NAL7/8 specific inference
 

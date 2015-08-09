@@ -283,12 +283,13 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                             long time1 = 0, time2 = 0;
                             if (arg1.equals(task.getTerm())) {
-                                return task.after(belief,nal.memory.getParam().duration.get());
+                                if(!task.after(belief,nal.memory.getParam().duration.get()))
+                                    return false;
                             }
                             if (arg1.equals(belief.getTerm())) {
-                                return belief.after(task,nal.memory.getParam().duration.get());
+                                if(!belief.after(task,nal.memory.getParam().duration.get()))
+                                    return false;
                             }
-                            return false;
                         }
                         case "concurrent":
                         {
@@ -300,12 +301,13 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                             long time1 = 0, time2 = 0;
                             if (arg1.equals(task.getTerm())) {
-                                return !task.after(belief,nal.memory.getParam().duration.get()) && !belief.after(task,nal.memory.getParam().duration.get());
+                                if(!(!task.after(belief,nal.memory.getParam().duration.get()) && !belief.after(task,nal.memory.getParam().duration.get())))
+                                    return false;
                             }
                             if (arg1.equals(belief.getTerm())) {
-                                return !task.after(belief,nal.memory.getParam().duration.get()) && !belief.after(task,nal.memory.getParam().duration.get());
+                                if(!(!task.after(belief,nal.memory.getParam().duration.get()) && !belief.after(task,nal.memory.getParam().duration.get())))
+                                    return false;
                             }
-                            return false;
                         }
                         case "substitute":
                         {
@@ -314,7 +316,6 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             //args[0] now encodes a variable which we want to replace with what M was assigned to
                             //(relevant for variable elimination rules)
                             precondsubs.put(args[0],with);
-                            return false;
                         }
                 }
             }
