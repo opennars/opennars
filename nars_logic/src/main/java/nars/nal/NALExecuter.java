@@ -72,6 +72,14 @@ public class NALExecuter extends ConceptFireTaskTerm {
 
         List<String> unparsed_rules = new ArrayList<>();
         StringBuilder current_rule = new StringBuilder();
+        boolean single_rule_test = false;
+
+        for (String s : lines) {
+            if(s.startsWith("try:")) {
+                single_rule_test=true;
+                break;
+            }
+        }
 
         for (String s : lines) {
             boolean currentRuleEmpty = current_rule.length() == 0;
@@ -79,7 +87,10 @@ public class NALExecuter extends ConceptFireTaskTerm {
             if (s.startsWith("//") || s.replace(" ", "").isEmpty()) {
 
                 if (!currentRuleEmpty) {
-                    unparsed_rules.add(current_rule.toString().trim()); //rule is finished, add it
+
+                    if(!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
+                        unparsed_rules.add(current_rule.toString().trim().replace("try:","")); //rule is finished, add it
+                    }
                     current_rule.setLength(0); //start identifying a new rule
                 }
 
@@ -88,7 +99,9 @@ public class NALExecuter extends ConceptFireTaskTerm {
                 //its already a new rule, in which case the old rule has to be added before we go on
                 if (!currentRuleEmpty && s.contains("|-")) {
 
-                    unparsed_rules.add(current_rule.toString().trim()); //rule is finished, add it
+                    if(!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
+                        unparsed_rules.add(current_rule.toString().trim().replace("try:","")); //rule is finished, add it
+                    }
                     current_rule.setLength(0); //start identifying a new rule
 
                 }
