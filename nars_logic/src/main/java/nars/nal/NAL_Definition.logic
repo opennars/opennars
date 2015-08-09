@@ -304,14 +304,14 @@
 //Temporal induction:
 
     P, S, no_common_subterm(S,P), event(P), event(S), measure_time(S,P,I) |- ((&/,S,I) =/> P), (Truth:Induction),
-                                                                             (P =\> (&/,S,I)), (Truth:Induction)
-    P, S, no_common_subterm(S,P), event(P), event(S), measure_time(S,P,I) |- ((&/,S,I) </> P), (Truth:Comparison)
-    P, S, no_common_subterm(S,P), event(P), event(S), measure_time(S,P,I) |- (&/,S,I,P), (Truth:Intersection)
+                                                                             (P =\> (&/,S,I)), (Truth:Abduction),
+                                                                             ((&/,S,I) </> P), (Truth:Comparison),
+                                                                             (&/,S,I,P), (Truth:Intersection)
 
     P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (S =|> P), (Truth:Induction),
                                                                          (P =|> S), (Truth:Induction)
-    P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (S <|> P), (Truth:Comparison)
-    P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (&|,S,P), (Truth:Intersection)
+                                                                         (S <|> P), (Truth:Comparison)
+                                                                         (&|,S,P), (Truth:Intersection)
 
 ////// Theorems in IL:
 //TODO Inheritance Theorems (needs to be carefully evaluated what is needed here)
