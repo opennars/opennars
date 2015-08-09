@@ -225,6 +225,9 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         if(arg1.equals(task.getTerm()) && task.getOccurrenceTime() == Stamp.ETERNAL) {
                             return false;
                         }
+                        if(arg2 == null) {
+                            return false;
+                        }
                         if(arg2.equals(beliefterm) && (belief == null || belief.getOccurrenceTime() == Stamp.ETERNAL)) {
                             return false;
                         }
