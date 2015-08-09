@@ -143,9 +143,7 @@
     (P =\> M), (S </> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
     (P =\> M), (S <|> M), not_equal(S,P) |- (P =\> S), (Truth:Analogy)
 
-    (M <=> P), (S <=> M), not_equal(S,P) |- (S <=> P), (Truth:Resemblance)
-    (M <|> P), (S <|> M), not_equal(S,P) |- (S <|> P), (Truth:Resemblance)
-    (M </> P), (S </> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
+    (M <=> P), (S <=> M), not_equal(S,P) |- (S <=> P), (Truth:Resemblance, Order:ForAllSame)
     (M </> P), (S <|> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
     (M <|> P), (S </> M), not_equal(S,P) |- (S </> P), (Truth:Resemblance)
 
@@ -254,13 +252,9 @@
 
 //// dependent variable elimination
 
-    (&&,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy)
-    (&|,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&|,A_1..n), (Truth:AnonymousAnalogy)
-    (&/,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
+    (&&,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
-    (&&,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy)
-    (&|,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&|,A_1..n), (Truth:AnonymousAnalogy)
-    (&/,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
+    (&&,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
 //// independent variable elimination
 
@@ -309,8 +303,8 @@
                                                                              (&/,S,I,P), (Truth:Intersection)
 
     P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (S =|> P), (Truth:Induction),
-                                                                         (P =|> S), (Truth:Induction)
-                                                                         (S <|> P), (Truth:Comparison)
+                                                                         (P =|> S), (Truth:Induction),
+                                                                         (S <|> P), (Truth:Comparison),
                                                                          (&|,S,P), (Truth:Intersection)
 
 ////// Theorems in IL:
@@ -324,7 +318,7 @@
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
 
 //TODO Implication Theorems (needs to be carefully evaluated what is needed here)
-(&&,A_1..n), A_i |- A_i, (Truth:Deduction, Desire:Strong)
+(&&,A_1..n), A_1 |- A_1, (Truth:Deduction, Desire:Strong)
 
 //TODO Equivalence Theorems
 //(S <-> P), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
