@@ -300,10 +300,10 @@
 (&&,A_1..n), A_i |- A_i, (Truth:Deduction, Desire:Strong)
 
 //TODO Equivalence Theorems
-(S <-> P), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
-(S <-> P), P |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
-(S <-> P), S |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
-(S <-> P), P |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
+//(S <-> P), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
+//(S <-> P), P |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
+//(S <-> P), S |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
+//(S <-> P), P |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
 (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)
 (S --> {P}), P |- (S <-> {P}), (Truth:Identity, Desire:Identity)
 ([S] --> P), S |- ([S] <-> P), (Truth:Identity, Desire:Identity)
