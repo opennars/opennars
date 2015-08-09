@@ -179,7 +179,7 @@
 
 //// conditional syllogism
 
-    M, (M ==> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame)
+    M, (M ==> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate)
 
     M, (P ==> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive, Order:ForAllSame)
 
