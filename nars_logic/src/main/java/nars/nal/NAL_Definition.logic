@@ -263,7 +263,7 @@
     (&/,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&/,A_1..n), (Truth:AnonymousAnalogy)
 
 //// independent variable elimination
-try:    ((&&,($1 --> M),A_1..n) ==> C), (S --> M), substitute($1,S) |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
+    ((&&,($1 --> M),A_1..n) ==> C), (S --> M), substitute($1,S) |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
 
 //NAL7/8 specific inference
 
