@@ -140,7 +140,7 @@ public class Default extends NARSeed  {
     
 
     InternalExperience.InternalExperienceMode internalExperience;
-    private int cyclesPerFrame = 1;
+    public int cyclesPerFrame = 1;
 
 
     public Default level(int maxNALlevel) {

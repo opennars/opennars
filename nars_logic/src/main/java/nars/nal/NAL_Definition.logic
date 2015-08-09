@@ -267,12 +267,12 @@
     C, ((&/,C,A_1..n) =\> B) |- ((&/,A_1..n) =\> B), (Truth:Deduction, Occurrence:Derive)
     C, ((&/,C,A_1..n) =/> B) |- ((&/,A_1..n) =/> B), (Truth:Deduction, Occurrence:Derive)
     C, ((&/,C,A_1..n) =|> B) |- ((&/,A_1..n) =|> B), (Truth:Deduction, Occurrence:Derive)
-    C, <(&/,C,I) =\> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
-    B, <(&/,C,I) =\> B>, interval(I) |- C, (Truth:Abduction, Desire:Induction, Occurrence:Derive)
-    C, <(&/,C,I) =/> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
-    B, <(&/,C,I) =/> B>, interval(I) |- C, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
-    C, <(&/,C,I) =|> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive)
-    B, <(&/,C,I) =|> B>, interval(I) |- C, (Truth:Abduction, Desire:Deduction, Occurrence:Derive)
+    C, <(&/,C,I) =\> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Event:Anticipate)
+    B, <(&/,C,I) =\> B>, interval(I) |- C, (Truth:Abduction, Desire:Induction, Occurrence:Derive, Event:Anticipate)
+    C, <(&/,C,I) =/> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Event:Anticipate)
+    B, <(&/,C,I) =/> B>, interval(I) |- C, (Truth:Abduction, Desire:Deduction, Occurrence:Derive, Event:Anticipate)
+    C, <(&/,C,I) =|> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Event:Anticipate)
+    B, <(&/,C,I) =|> B>, interval(I) |- C, (Truth:Abduction, Desire:Deduction, Occurrence:Derive, Event:Anticipate)
 
 //Temporal induction:
 
