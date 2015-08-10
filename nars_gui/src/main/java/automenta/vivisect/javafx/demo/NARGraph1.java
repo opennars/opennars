@@ -17,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
@@ -27,6 +28,7 @@ import nars.Global;
 import nars.NAR;
 import nars.NARStream;
 import nars.concept.Concept;
+import nars.guifx.NARfx;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nar.Default;
@@ -103,20 +105,18 @@ public class NARGraph1 extends Application {
         private double tx;
         private double ty;
 
+        private boolean hover = false;
+        private Color stroke;
+
         public TermNode(Term t) {
             super();
 
             this.titleBar = new Label(t.toStringCompact());
-
-            //titleBar.setLayoutX(-titleBar.getWidth());
-
-
             base = newPoly(6, 1.0);
 
 
-            getChildren().add(base);
-            getChildren().add(titleBar);
-            //getChildren().add(new Rectangle(1,1));
+            getChildren().addAll(base, titleBar);
+            //getChildren().add(new Rectangle(1,1))
 
 
             this.term = t;
@@ -129,11 +129,33 @@ public class NARGraph1 extends Application {
             titleBar.setScaleY(0.25);
             titleBar.setAlignment(Pos.CENTER);
             titleBar.setMouseTransparent(true);
-
-
             titleBar.setFont(baseFont);
             titleBar.setCache(true);
             titleBar.setCacheHint(CacheHint.SPEED);
+
+
+
+            base.setOnMouseClicked(e -> {
+                //System.out.println("click " + e.getClickCount());
+                if (e.getClickCount() == 2) {
+                    if (c!=null)
+                        NARfx.window(nar, c);
+                }
+            });
+
+            base.setOnMouseEntered(e -> {
+                base.setStroke(Color.ORANGE);
+                base.setStrokeWidth(0.05);
+                base.setStrokeType(StrokeType.INSIDE);
+                hover = true;
+            });
+            base.setOnMouseExited(e -> {
+                base.setStroke(null);
+                base.setStrokeWidth(0);
+                hover = false;
+            });
+
+            setPickOnBounds(true);
 
             update();
 
@@ -263,6 +285,7 @@ public class NARGraph1 extends Application {
 
     public class TermEdge extends Polygon implements ChangeListener {
 
+
         TermLink termLink = null;
         final Set<TaskLink> taskLinks = new LinkedHashSet();
 
@@ -307,6 +330,7 @@ public class NARGraph1 extends Application {
 
             //setManaged(false);
 
+
             from.localToSceneTransformProperty().addListener(this);
             to.localToSceneTransformProperty().addListener(this);
 
@@ -340,12 +364,17 @@ public class NARGraph1 extends Application {
             this.thicks = ( taskSum + termPrio);
             this.color = visModel.getEdgeColor(termPrio, taskMean);
 
+
+
             dirty(true);
         }
 
         public void update() {
 
+
+
             setFill(color);
+
 
             if (!from.isVisible() || !to.isVisible()) {
                 setVisible(false);

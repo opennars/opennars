@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Skinnable;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -188,22 +189,10 @@ public class NARPane extends SplitPane {
 
     public Stage newStage() {
 
-        Stage s = new Stage();
-
-        Scene scene = new Scene(this);
-        s.setTitle(nar.toString());
-        scene.getStylesheets().addAll(NARfx.css, "dark.css" );
-
         contentUpdate();
+        return NARfx.getStage(nar.toString(), this);
 
-        s.setScene(scene);
-
-        setMaxWidth(Double.MAX_VALUE);
-        setMaxHeight(Double.MAX_VALUE);
-
-        return s;
     }
-
 
 
 
