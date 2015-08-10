@@ -267,13 +267,12 @@ public class TestNAR extends NAR {
             TextOutput.out(this);
 
 
-        try {
+        //try {
             super.runWhileNewInput((int)(finalCycle - time()));
-        }
+        /*}
         catch (Exception e) {
-            e.printStackTrace();
             error = e;
-        }
+        }*/
 
 
         return this;

@@ -2,27 +2,28 @@ package nars.util.sort;
 
 import com.google.common.collect.Lists;
 import nars.Global;
+import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.util.data.sorted.SortedIndex;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
 //abstract public class SortedItemList<E> extends FastTable<E> {
 public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Serializable {
 
-
-    private transient List<E> reverse;
-
     int capacity = Integer.MAX_VALUE;
 
     public final List<E> list;
-    
+
+    final static private Comparator<Itemized> priorityComparator = new Comparator<Itemized>() {
+        @Override public int compare(final Itemized a, final Itemized b) {
+            return Float.compare(a.getPriority(), b.getPriority());
+        }
+    };
+
     public static <E> List<E> bestList(int capacity) {
         return //new ArrayList(capacity);
 
@@ -43,6 +44,21 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     }
 
     @Override
+    public boolean isSorted() {
+        Iterator<E> ii = this.iterator();
+        float pp = Float.MAX_VALUE;
+
+        while (ii.hasNext()) {
+            E c = ii.next();
+            if (c.getPriority() > pp)
+                return false;
+            pp = c.getPriority();
+        }
+
+        return true;
+    }
+
+    @Override
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
@@ -52,40 +68,65 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     }
 
     public final int positionOf(final E o) {
-        final float y = o.getPriority();
-//        if ((y < 0) || (y > 1.0f)) {
-//            System.err.println("Invalid priority value: " + o);
-//            System.exit(1);
-//        }
-        
-        final int s = size();
-        if (s > 0) {
+        int low = 0;
+        int high = size()-1;
 
-            //binary search
-            int low = 0;
-            int high = s - 1;
+        final float op = o.getPriority();
 
-            while (low <= high) {
-                int mid = (low + high) / 2;
-                /*if ((mid == low) && (mid == high))
-                    break;*/
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            E midVal = get(mid);
 
-                final float x = get(mid).getPriority();
+            final float mp = midVal.getPriority();
 
-                if (x < y) {
-                    low = mid + 1;
-                } else if (x == y) {
-                    return mid;
-                } else if (x > y) {
-                    high = mid - 1;
-                }
-
-            }
-            return low;
-        } else {
-            return 0;
+            if (mp > op)
+                low = mid + 1;
+            else if (mp < op)
+                high = mid - 1;
+            else
+                return mid; // key found
         }
+        return low;
+        //return -(low + 1);  // key not found
     }
+
+//    public final int positionOf(final E o) {
+//        final float y = o.getPriority();
+////        if ((y < 0) || (y > 1.0f)) {
+////            System.err.println("Invalid priority value: " + o);
+////            System.exit(1);
+////        }
+//
+//        final int s = size();
+//        if (s == 0) {
+//            return 0;
+//        }
+//
+//
+//        //binary search
+//        int low = 0;
+//        int high = s;
+//
+//        while (low < high) {
+//            int mid = (low + high) / 2;
+//            /*if ((mid == low) && (mid == high))
+//                break;*/
+//
+//            final float x = get(mid).getPriority();
+//
+//            if (x < y) {
+//                low = mid - 1;
+//                if (low < 0) low = 0;
+//            } else if (x == y) {
+//                return mid;
+//            } else /*if (x > y)*/ {
+//                high = mid + 1;
+//                if (high >= s)   high = s-1;
+//            }
+//
+//        }
+//        return low;
+//    }
 
     public int validStorePosition(final int i) {
         final int size = size();
@@ -94,12 +135,12 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         return i;
     }
 
-    public int validInsertionPosition(final int i) {
-        final int size = size();
-        if (i > size) return size; //allow i-size for inserting at the end
-        if (i < 0) return 0;
-        return i;
-    }
+//    public int validInsertionPosition(final int i) {
+//        final int size = size();
+//        if (i > size) return size; //allow i-size for inserting at the end
+//        if (i < 0) return 0;
+//        return i;
+//    }
     
     @Override
     public E get(int i) {
@@ -108,8 +149,11 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
         if (s == 0) return null;
 
-        if (i >= s) i = s - 1;
-        if (i < 0) i = 0;
+        /*if (i >= s)
+            i = s - 1;
+        if (i < 0)
+            i = 0;*/
+
         return list.get(i);
     }
 
@@ -123,21 +167,29 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
             list.add(o);
             return null;
         } else {
+
+            int insertPos = positionOf(o);
+
             if (size() >= capacity) {
 
-                if (positionOf(o) == 0) {
+                if (insertPos == 0) {
                     //priority too low to join this list
                     return o;
                 }
 
                 removed = remove(0);
+                if (insertPos > 0) insertPos--;
             }
             else {
                 removed = null;
             }
-            
-            list.add(validInsertionPosition(positionOf(o)), o);
+
+
+            list.add(insertPos, o);
+
         }
+
+
         return removed;
     }
 
@@ -172,10 +224,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
     @Override
     public Iterator<E> descendingIterator() {
-        if (reverse == null) {
-            reverse = Lists.reverse(list);
-        }
-        return reverse.iterator();
+        return list.iterator(); //stored in descending order
     }
 
 //    /**

@@ -124,14 +124,22 @@ public class NARgf extends GrammaticalFrameworkClient {
     }
 
     private Term termize(GfFun f) {
+        Atom subj = Atom.the(f.getName());
         if (f.hasArgs()) {
-            return Operation.make(
-                    Atom.the(f.getName()),
-                    Product.make( Lists.transform(f.getArgs(), a -> termize(a)))
-            );
+
+            List<Term> args = Lists.transform(f.getArgs(), a -> termize(a));
+            if (args.size() == 1) {
+                return Instance.make(args.get(0), subj);
+            }
+            else {
+                return Operation.make(
+                        subj,
+                        Product.make(args)
+                );
+            }
         }
         else {
-            return Atom.the(f.getName());
+            return subj;
         }
     }
 
@@ -189,7 +197,7 @@ public class NARgf extends GrammaticalFrameworkClient {
 
         NARgf g = new NARgf(n);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             n.input("<<{(#a, #b)} --> Is> <-> <#a <-> #b>>.");
 
             g.inputNatural("you are English");
@@ -207,7 +215,6 @@ public class NARgf extends GrammaticalFrameworkClient {
             g.inputNatural("Norwegian ");
 
             g.inputNatural("this good tea is very warm");
-            g.inputNatural("this beer is cold");
             g.inputNatural("don't sit");
             g.inputNatural("what time is it");
             g.inputNatural("how old are we");

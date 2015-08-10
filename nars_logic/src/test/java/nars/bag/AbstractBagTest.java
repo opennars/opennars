@@ -66,6 +66,9 @@ public class AbstractBagTest {
             float min = f.getPriorityMin();
             float max = f.getPriorityMax();
             if (requireOrder) {
+                if (min > max) {
+                    f.printAll();
+                }
                 assertTrue(max >= min);
             }
 

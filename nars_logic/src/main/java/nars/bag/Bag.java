@@ -101,8 +101,9 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
 
     public float getPriorityMean() {
-        if (size() == 0) return 0;
-        return getPrioritySum() / size();
+        final int s = size();
+        if (s == 0) return 0;
+        return getPrioritySum() / s;
     }
 
     /**
@@ -205,20 +206,15 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
     public void printAll(PrintStream p) {
-        Iterator<V> d = iterator();
-        while (d.hasNext()) {
-            p.println("  " + d.next());
-        }
+        this.forEach( x -> p.println(x.getPriority() + " " + x));
     }
 
 
 
     public float getPrioritySum() {
-        float total = 0;
-        for (V x : this) {
-            total += x.getPriority();
-        }
-        return total;
+        final float[] total = {0};
+        this.forEach(x -> total[0] += x.getPriority());
+        return total[0];
     }
 
 

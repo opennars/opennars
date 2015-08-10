@@ -17,6 +17,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.util.Collection;
+
 /**
  * Created by me on 8/2/15.
  */
@@ -39,6 +41,9 @@ public class Spacegraph extends ZoomFX {
 
     public void removeEdges(Node n) {
         edges.getChildren().remove(n);
+    }
+    public void removeEdges(Collection<Node> n) {
+        edges.getChildren().removeAll(n);
     }
 
 

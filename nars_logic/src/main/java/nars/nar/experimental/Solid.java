@@ -26,6 +26,7 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.util.sort.ArraySortedIndex;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -74,24 +75,55 @@ public class Solid extends Default implements CycleProcess {
         this.maxTaskLink = maxTaskLink;
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
-        duration.set(3);
-        termLinkForgetDurations.set(5);
-        taskLinkForgetDurations.set(5);
-        conceptForgetDurations.set(5);
-        conceptFireThreshold.set(0);
-        termLinkThreshold.set(0);
-        taskLinkThreshold.set(0);
+        duration.set(1);
+        termLinkForgetDurations.set(2);
+        taskLinkForgetDurations.set(2);
+        conceptForgetDurations.set(1);
+
 
         conceptCreationExpectation.set(0);
 
-        setTermLinkBagSize(64);
-        setTaskLinkBagSize(64);
+        setTermLinkBagSize(16);
+        setTaskLinkBagSize(32);
 
 
 
-        concepts = new CurveBag(rng, activeConcepts, new CurveBag.Power6BagCurve(),
-                new ArraySortedIndex<>(activeConcepts, new FastList<>(activeConcepts)/*.asSynchronized()*/)
-        );
+        concepts = new CurveBag<Term,Concept>(rng, activeConcepts, new CurveBag.Power6BagCurve(),
+                new ArraySortedIndex(activeConcepts, new FastList(activeConcepts)/*.asSynchronized()*/)
+        ) {
+//            @Override
+//            public boolean isSorted() {
+//                boolean b = super.isSorted();
+//                if (!b) {
+//                    System.out.println("concepts not sorted");
+//                    printAll();
+//                    System.out.println();
+//                }
+//                return b;
+//            }
+//
+//            @Override
+//            public Concept put(Concept i) {
+//                isSorted();
+//
+//                Concept e = super.put(i);
+//
+//                isSorted();
+//
+//                return e;
+//            }
+//
+//            @Override
+//            public Concept update(BagTransaction selector) {
+//                isSorted();
+//
+//                Concept i = super.update(selector);
+//
+//                isSorted();
+//
+//                return i;
+//            }
+        };
         //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
@@ -145,7 +177,8 @@ public class Solid extends Default implements CycleProcess {
     }
 
     protected int num(float p, int min, int max) {
-        return Math.round((p * (max - min)) + min);
+        if ((max == min) || (p == 0)) return min;
+        return Math.round((p * (max - min)))+min;
     }
 
 
@@ -204,25 +237,36 @@ public class Solid extends Default implements CycleProcess {
 
         final float tlfd = memory.param.cycles(this.termLinkForgetDurations);
 
-        final float maxPriority = concepts.getPriorityMax();
-        final float minPriority = concepts.getPriorityMin();
+        float maxPriority = concepts.getPriorityMax();
+        float minPriority = concepts.getPriorityMin();
 
+
+
+        if (!((CurveBag)concepts).isSorted())
+            System.err.println("not sorted");
 
         //2. fire all concepts
-        for (final Concept c : concepts) {
 
-            if (c == null) break;
-            temporaryC.add(c);
+        temporaryC.addAll((Collection)concepts.values());
+
+        for (final Concept c : temporaryC) {
 
             int conceptTaskLinks = c.getTaskLinks().size();
             if (conceptTaskLinks == 0)
                 continue;
 
-            float p = normalize(c.getPriority(), minPriority, maxPriority);
+            float cp = c.getPriority();
+            float p = normalize(cp, minPriority, maxPriority);
+            //the concept can become activated by other concepts during this iteration
+            if (p < minPriority) p = minPriority;
+            if (p > maxPriority) p = maxPriority;
+
+
             int fires = num(p, minTaskLink, maxTaskLink);
             if (fires < 1) continue;
             int termFires = num(p, minTermLink, maxTermLink);
             if (termFires < 1) continue;
+
 
             for (int i = 0; i < fires; i++) {
                 TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
@@ -231,29 +275,22 @@ public class Solid extends Default implements CycleProcess {
                 ConceptProcess.forEachPremise(c, tl,
                         termFires,
                         tlfd,
-                        cp -> cp.run()
+                        proc -> proc.run()
                 );
             }
 
         }
 
-
-        //forget all items in bag and resort it
-
-        concepts.clear();
-
-        final long now = memory.time();
-        final float cycs = memory.param.cycles(conceptForgetDurations);
-        for (Concept c : temporaryC) {
-            memory.forget(now, c, cycs, 0);
-            concepts.put(c);
-        }
         temporaryC.clear();
+
 
         memory.runNextTasks();
     }
 
+
+
     static float normalize(final float p, final float min, final float max) {
+        if (max == min) return 0f;
         return (p - min)/(max-min);
     }
 

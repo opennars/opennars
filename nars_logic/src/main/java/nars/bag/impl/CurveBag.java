@@ -6,6 +6,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Item;
+import nars.budget.Itemized;
 import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
@@ -28,7 +29,7 @@ import java.util.function.Consumer;
  * <p>
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
-public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
+public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     @Deprecated final float MASS_EPSILON = 1.0e-5f;
 
@@ -51,7 +52,7 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
     public final CurveSampler sampler;
 
 
-    public static <E extends Item> SortedIndex<E> defaultIndex(int capacity) {
+    public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {
         //if (capacity < 50)            
         return new ArraySortedIndex(capacity);
         //else
@@ -87,6 +88,7 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
 
         @Override
         public V remove(final K key) {
+
             final V e = super.remove(key);
 
             if (Global.DEBUG)  validate();
@@ -97,9 +99,11 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
 
         @Override
         protected V removeItem(final V removed) {
+
             if (items.remove(removed)) {
                 return removed;
             }
+
             return null;
         }
 
@@ -112,6 +116,9 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
         }
     }
 
+    public boolean isSorted() {
+        return items.isSorted();
+    }
 
     @FunctionalInterface
     public interface CurveSampler {
@@ -137,6 +144,7 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
             int i= UtilityFunctions.floorInt(y * size);
 
             if (i >= size) return size-1;
+            if (i < 0) return 0;
 
             return i;
 
@@ -336,71 +344,84 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
     @Override
     public float getPriorityMin() {
         if (items.isEmpty()) return 0;
-        return items.getFirst().getPriority();
+        return items.getLast().getPriority();
     }
 
     @Override
     public float getPriorityMax() {
         if (items.isEmpty()) return 0;
-        return items.getLast().getPriority();
+        return items.getFirst().getPriority();
     }
 
-    /**
-     * calls overflow() on an overflown object
-     * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
-     * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses
-     */
-    public V update(final BagTransaction<K, V> selector) {
-
-
-        K key = selector.name();
-        V item;
-        if (key != null) {
-            item = get(key);
-        }
-        else {
-            item = peekNext();
-        }
-
-        if (item == null) {
-            item = selector.newItem();
-            if (item == null)
-                return null;
-            else {
-                // put the (new or merged) item into itemTable
-                final V overflow = put(item);
-
-                if (overflow != null)
-                    selector.overflow(overflow);
-                else if (overflow == item)
-                    return null;
-
-
-                return item;
-            }
-        } else {
-
-            final V changed = selector.update(item);
-
-            if (changed == null)
-                return item;
-            else {
-                //it has changed
-
-                final V overflow = put(changed);
-
-                if (overflow == changed)
-                    return null;
-
-                if (overflow != null) // && !overflow.name().equals(changed.name()))
-                    selector.overflow(overflow);
-
-                return changed;
-            }
-        }
-
-
-    }
+//    /**
+//     * calls overflow() on an overflown object
+//     * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
+//     * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses
+//     */
+//    public V update(final BagTransaction<K, V> selector) {
+//
+//
+//        if (Global.DEBUG && !isSorted()) {
+//            throw new RuntimeException("not sorted");
+//        }
+//
+//        K key = selector.name();
+//        V item;
+//        if (key != null) {
+//            item = get(key);
+//        }
+//        else {
+//            item = peekNext();
+//        }
+//
+//        if (item == null) {
+//            item = selector.newItem();
+//            if (item == null)
+//                return null;
+//            else {
+//                // put the (new or merged) item into itemTable
+//                final V overflow = put(item);
+//
+//                if (overflow != null)
+//                    selector.overflow(overflow);
+//                else if (overflow == item)
+//                    return null;
+//
+//
+//                return item;
+//            }
+//        } else {
+//
+//
+//            remove(item.name());
+//
+//            final V changed = selector.update(item);
+//
+//
+//            if (changed == null) {
+//
+//                put(item);
+//
+//                return item;
+//            }
+//            else {
+//                //it has changed
+//
+//
+//                final V overflow = put(changed);
+//
+//                /*if (overflow == changed)
+//                    return null;*/
+//
+//                if (overflow != null) // && !overflow.name().equals(changed.name()))
+//                    selector.overflow(overflow);
+//
+//                return changed;
+//            }
+//        }
+//
+//
+//    }
 
     /**
      * Insert an item into the itemTable, and return the overflow
@@ -411,28 +432,28 @@ public class CurveBag<K, V extends Item<K>> extends Bag<K, V> {
     @Override
     public V put(final V i) {
 
+        boolean full = (size() >= capacity);
 
-        V overflow = index.get(i.name());
+        V overflow = index.remove(i.name());
+
         if (overflow!=null) {
-            index.merge(i);
-            return null;
+            i.getBudget().merge(overflow.getBudget());
+            full = false;
         }
-        else {
-            boolean full = (size() >= capacity);
 
-            if (full) {
+        if (full) {
 
-                if (getPriorityMin() > i.getPriority()) {
-                    //insufficient priority to enter the bag
-                    return i;
-                }
-
-                overflow = removeLowest();
+            if (getPriorityMin() > i.getPriority()) {
+                //insufficient priority to enter the bag
+                return i;
             }
 
-            index.put(i);
-            return overflow;
+            overflow = removeLowest();
         }
+
+        index.put(i);
+
+        return overflow;
 
     }
 

@@ -111,9 +111,9 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
             if (isActivatable(c)) {
 
-                getMemory().logic.CONCEPT_REMEMBER.hit();
-
                 on(c);
+
+                getMemory().logic.CONCEPT_REMEMBER.hit();
 
                 return true;
             }

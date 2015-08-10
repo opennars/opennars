@@ -13,10 +13,7 @@ import nars.meter.LogicMeter;
 import nars.task.Task;
 import nars.util.event.Reaction;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
@@ -101,7 +98,7 @@ public class NARStream  {
         ensureNotRunning();
         return this; //TODO
     }
-    public NARStream load(ObjectOutputStream clone) {
+    public NARStream load(ObjectInputStream clone) {
         ensureNotRunning();
         return this; //TODO
     }
@@ -243,6 +240,13 @@ public class NARStream  {
         return on(Events.FrameEnd.class, receiver);
     }
 
+    public NARStream forEachNthFrame(Runnable receiver, int frames) {
+        return forEachFrame(() -> {
+            if (nar.time() % frames == 0)
+                receiver.run();
+        });
+    }
+
     public NARStream forEachDerived(Consumer<Task> receiver) {
         NARReaction r = new ConsumedStreamNARReaction(receiver, Events.OUT.class);
         return this;
@@ -307,6 +311,8 @@ public class NARStream  {
 
         return this;
     }
+
+
 
 
     abstract private class StreamNARReaction extends NARReaction {
