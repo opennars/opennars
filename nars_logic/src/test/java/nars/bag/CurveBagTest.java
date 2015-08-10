@@ -90,12 +90,12 @@ public class CurveBagTest extends AbstractBagTest {
         //System.out.println(f);
         
         //sorted
-        assert(f.size() == 3);
-        assert(f.items.get(0).getPriority() < f.items.get(1).getPriority());
+        assertEquals(3, f.size());
+        assertTrue(f.items.toString(), f.items.get(0).getPriority() > f.items.get(1).getPriority());
 
         f.pop();
         
-        assert(f.size() == 2);
+        assertEquals(2, f.size());
         f.pop();
         assert(f.size() == 1);
         f.pop();
@@ -129,8 +129,6 @@ public class CurveBagTest extends AbstractBagTest {
         f.put(new NullItem(.8f)); //limit
 
         System.out.println("x\n"); f.printAll(); testOrder(f);
-
-        assertTrue(!f.contains(four)); //4 should get removed
         
         assertEquals(4, f.size());
     }
@@ -141,20 +139,20 @@ public class CurveBagTest extends AbstractBagTest {
 
         Iterator<NullItem> ii = f.iterator();
 
-        NullItem n = null;
+        NullItem last = null;
         do {
-            NullItem last = n;
-            n = ii.next();
+            NullItem n = ii.next();
             if (last == null)
                 assertEquals(max, n.getPriority(), 0.001);
             else {
                 assertTrue(n.getPriority() <= last.getPriority() );
             }
 
+            last = n;
 
         } while (ii.hasNext());
 
-        assertEquals(min, n.getPriority(), 0.001);
+        assertEquals(min, last.getPriority(), 0.001);
 
     }
 
@@ -170,6 +168,7 @@ public class CurveBagTest extends AbstractBagTest {
         //fill
         for (int i= 0; i < capacity; i++) {
             f.put(new NullItem());
+            assertTrue(f.isSorted());
         }
         
         assertEquals(f.size(), f.capacity());

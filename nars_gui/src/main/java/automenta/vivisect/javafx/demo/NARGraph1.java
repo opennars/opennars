@@ -17,19 +17,21 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
+import nars.Global;
 import nars.NAR;
 import nars.NARStream;
 import nars.concept.Concept;
+import nars.guifx.NARfx;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nar.Default;
-import nars.nar.experimental.Equalized;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.util.FastMath;
@@ -103,20 +105,18 @@ public class NARGraph1 extends Application {
         private double tx;
         private double ty;
 
+        private boolean hover = false;
+        private Color stroke;
+
         public TermNode(Term t) {
             super();
 
             this.titleBar = new Label(t.toStringCompact());
-
-            //titleBar.setLayoutX(-titleBar.getWidth());
-
-
             base = newPoly(6, 1.0);
 
 
-            getChildren().add(base);
-            getChildren().add(titleBar);
-            //getChildren().add(new Rectangle(1,1));
+            getChildren().addAll(base, titleBar);
+            //getChildren().add(new Rectangle(1,1))
 
 
             this.term = t;
@@ -129,11 +129,33 @@ public class NARGraph1 extends Application {
             titleBar.setScaleY(0.25);
             titleBar.setAlignment(Pos.CENTER);
             titleBar.setMouseTransparent(true);
-
-
             titleBar.setFont(baseFont);
             titleBar.setCache(true);
             titleBar.setCacheHint(CacheHint.SPEED);
+
+
+
+            base.setOnMouseClicked(e -> {
+                //System.out.println("click " + e.getClickCount());
+                if (e.getClickCount() == 2) {
+                    if (c!=null)
+                        NARfx.window(nar, c);
+                }
+            });
+
+            base.setOnMouseEntered(e -> {
+                base.setStroke(Color.ORANGE);
+                base.setStrokeWidth(0.05);
+                base.setStrokeType(StrokeType.INSIDE);
+                hover = true;
+            });
+            base.setOnMouseExited(e -> {
+                base.setStroke(null);
+                base.setStrokeWidth(0);
+                hover = false;
+            });
+
+            setPickOnBounds(true);
 
             update();
 
@@ -263,6 +285,7 @@ public class NARGraph1 extends Application {
 
     public class TermEdge extends Polygon implements ChangeListener {
 
+
         TermLink termLink = null;
         final Set<TaskLink> taskLinks = new LinkedHashSet();
 
@@ -307,6 +330,7 @@ public class NARGraph1 extends Application {
 
             //setManaged(false);
 
+
             from.localToSceneTransformProperty().addListener(this);
             to.localToSceneTransformProperty().addListener(this);
 
@@ -340,12 +364,17 @@ public class NARGraph1 extends Application {
             this.thicks = ( taskSum + termPrio);
             this.color = visModel.getEdgeColor(termPrio, taskMean);
 
+
+
             dirty(true);
         }
 
         public void update() {
 
+
+
             setFill(color);
+
 
             if (!from.isVisible() || !to.isVisible()) {
                 setVisible(false);
@@ -400,6 +429,8 @@ public class NARGraph1 extends Application {
     final Table<Term, Term, TermEdge> edges = HashBasedTable.create();
     final Table<Term, Term, TermEdge> edgeToAdd = HashBasedTable.create();
 
+    int maxTerms = 64;
+
     public TermNode getTermNode(final Term t) {
         TermNode tn = terms.get(t);
         if (tn == null) {
@@ -425,7 +456,13 @@ public class NARGraph1 extends Application {
         return e;
     }
 
+    final Set<Term> toRemove = Global.newHashSet(1);
+
     public synchronized void updateGraph() {
+        int n = 0;
+
+        toRemove.addAll(terms.keySet());
+
         for (Concept c : nar.memory.getControl()) {
 
             final Term source = c.getTerm();
@@ -445,6 +482,30 @@ public class NARGraph1 extends Application {
                 e.termLink = (t);
             }
 
+            toRemove.remove(source);
+
+            if (n++ > maxTerms)
+                break;
+        }
+
+        if (!toRemove.isEmpty()) {
+            final Term[] tr = toRemove.toArray(new Term[toRemove.size()]);
+            toRemove.clear();
+            runLater(() -> {
+                for (Term r : tr) {
+                    TermNode c = terms.remove(r);
+                    if (c!=null)
+                        space.removeNodes(c);
+
+                    Map<Term, TermEdge> er = edges.rowMap().remove(r);
+                    if (er!=null)
+                        space.removeEdges((Collection)er.values());
+
+                    Map<Term, TermEdge> ec = edges.columnMap().remove(r);
+                    if (ec!=null)
+                        space.removeEdges((Collection)ec.values());
+                }
+            });
         }
 
         if (!termToAdd.isEmpty()) {
@@ -475,9 +536,11 @@ public class NARGraph1 extends Application {
     protected void layoutNodes() {
 
         if (h == null) {
-            final double scaleFactor = 400;
+
+
 
             h = new HyperassociativeMap<TermNode,TermEdge>(2) {
+                float termRadius = 1;
 
                 @Override
                 public void getPosition(final TermNode node, final double[] v) {
@@ -505,12 +568,12 @@ public class NARGraph1 extends Application {
                 @Override
                 public double getRadius(TermNode termNode) {
                     //return termNode.width() / 2 / scaleFactor / 2;
-                    return 0.01;
+                    return termRadius;
                 }
 
                 @Override
                 public double getSpeedFactor(TermNode termNode) {
-                    return 6 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
+                    return 3 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
                 }
 
                 @Override
@@ -520,6 +583,13 @@ public class NARGraph1 extends Application {
 
                 @Override
                 protected Iterator<TermNode> getVertices() {
+                    double scaleFactor = 100 + 50 * Math.sqrt(1 + terms.size());
+                    setScale(scaleFactor);
+
+                    termRadius = (float)(1.0f / Math.sqrt(terms.size() + 1));
+
+                    setEquilibriumDistance(0); //termRadius * 1.5f);
+
                     return terms.values().iterator();
                 }
 
@@ -533,11 +603,10 @@ public class NARGraph1 extends Application {
 
             };
 
-            h.setScale(scaleFactor);
-            h.setEquilibriumDistance(0.01);
-            h.setRepulsiveWeakness(4.0);
+
+            h.setRepulsiveWeakness(6.0);
             h.setAttractionStrength(6.0);
-            h.setMaxRepulsionDistance(0.1);
+            h.setMaxRepulsionDistance(0.5);
         }
 
         h.align();
@@ -581,16 +650,16 @@ public class NARGraph1 extends Application {
 
 
         //Equalized d = new Equalized(64,1,1);
-        Default d = new Default(96,1,1);
+        Default d = new Default(96,1,3);
         d.termLinkForgetDurations.set(1);
         d.conceptCreationExpectation.set(0);
 
 
         new NARStream( this.nar = new NAR(d) )
-                .input("$0.9;0.75;0.1$ <a --> b>. %1.00;0.5%",
-                        "$0.9;0.75;0.1$ <b --> c>. %1.00;0.5%")
-                .forEachCycle(this::updateGraph)
-                .spawnThread(60, t -> t.start());
+                .input("$0.9;0.75;0.2$ <a --> b>. %1.00;0.5%",
+                        "$0.9;0.75;0.2$ <b --> c>. %1.00;0.5%")
+                .forEachNthFrame(this::updateGraph, 2)
+                .spawnThread(80, t -> t.start());
 
 
 

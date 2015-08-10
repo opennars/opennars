@@ -1,6 +1,8 @@
 package nars.util.data.sorted;
 
 
+import objenome.op.cas.E;
+
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -36,4 +38,5 @@ public interface SortedIndex<T> extends Collection<T> {
     }
 
 
+    public boolean isSorted();
 }

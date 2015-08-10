@@ -1,4 +1,4 @@
-package ptrman.DificultyEnvironment.View;
+package ptrman.dificultyEnvironment.view;
 
 import nars.rover.physics.ContactPoint;
 import nars.rover.physics.TestbedPanel;

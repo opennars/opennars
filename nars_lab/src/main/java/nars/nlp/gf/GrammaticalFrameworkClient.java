@@ -1,6 +1,8 @@
 package nars.nlp.gf;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Sets;
+import nars.util.language.JSON;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -49,48 +51,41 @@ public class GrammaticalFrameworkClient {
         this("localhost");
     }
 
-    public String get(String url) {
+    public JsonNode get(String url) {
         return get(new HttpGet(url));
     }
 
-    public String get(HttpUriRequest req) {
+    public JsonNode get(HttpUriRequest req) {
 
         try {
             CloseableHttpResponse resp = http.execute(req);
             String s =IOUtils.toString(resp.getEntity().getContent());
             resp.close();
-            return s;
+            return JSON.toJSON(s);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.err.println(e);
         }
 
         return null;
     }
 
-    protected void exe(String url, Consumer<String> recv) {
+    protected void exe(String url, Consumer<JsonNode> recv) {
         exe.submit( () -> {
-            recv.accept( exeBlock(url) );
+            recv.accept(get(url));
         } );
     }
 
-    protected String exeBlock(String url) {
-        return get(url);
-    }
-
-    protected String exeBlock(HttpUriRequest url) {
-        return get(url);
-    }
-
-    public void treeRandomAsync(String grammar, Consumer<String> recv) {
+    public void treeRandomAsync(String grammar, Consumer<JsonNode> recv) {
         //http://localhost:41296/grammars/Foods.pgf?command=random
         exe(getBaseURL() + "/grammars/" + grammar + ".pgf?command=random", recv);
     }
-    public String treeRandom(String grammar) {
+    public JsonNode treeRandom(String grammar) {
         //http://localhost:41296/grammars/Foods.pgf?command=random
-        return exeBlock(getBaseURL() + "/grammars/" + grammar + ".pgf?command=random");
+        return get(getBaseURL() + "/grammars/" + grammar + ".pgf?command=random");
     }
 
-    public String linearize(String grammar, String lang, String tree)  {
+    public JsonNode linearize(String grammar, String lang, String tree)  {
         // http://localhost:41296/grammars/Foods.pgf?command=linearize&tree=Pred+(That+Pizza)+(Very+Boring)&to=FoodsEng
 
 //        try {
@@ -106,15 +101,47 @@ public class GrammaticalFrameworkClient {
             //httpPost.setEntity(new UrlEncodedFormEntity(nvps));
             uu += URLEncodedUtils.format(nvps, (String)null);
 
-            return exeBlock(uu);
-//        }
+        return get(uu);
+        //        }
 //        catch (UnsupportedEncodingException e) {
 //            return null;
 //        }
 
     }
 
-    public String tree(String grammar, String lang, String linearized) {
+
+    /** to request next words, make sure the at linearized text ends with a ' ' char */
+    public JsonNode complete(String grammar, String lang, String linearized, String cat, int limit) {
+        //http://localhost:41296/grammars/Foods.pgf?command=complete&input=that+pizza+is+very+&from=FoodsEng
+        String uu = getBaseURL() +
+                "/grammars/" + grammar + ".pgf?";
+        //HttpPost httpPost = new HttpPost(uu);
+
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        nvps.add(new BasicNameValuePair("command", "complete"));
+        nvps.add(new BasicNameValuePair("input", linearized));
+        nvps.add(new BasicNameValuePair("limit", Integer.toString(limit)));
+
+        if (cat!=null)
+            nvps.add(new BasicNameValuePair("cat", cat));
+
+        if (lang == null) lang = "";
+
+        nvps.add(new BasicNameValuePair("from",
+                grammar + lang
+        ));
+
+        //httpPost.setEntity(new UrlEncodedFormEntity(nvps));
+        uu += URLEncodedUtils.format(nvps, (String)null);
+
+        return get(uu);
+    }
+
+    public JsonNode tree(String grammar, String lang, String linearized) {
+        return tree(grammar, lang, linearized, null);
+    }
+
+    public JsonNode tree(String grammar, String lang, String linearized, String startCat) {
         // http://localhost:41296/grammars/Foods.pgf
         //          ?command=parse&input=that+pizza+is+very+boring&from=FoodsEng
         String uu = getBaseURL() +
@@ -124,12 +151,20 @@ public class GrammaticalFrameworkClient {
         List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         nvps.add(new BasicNameValuePair("command", "parse"));
         nvps.add(new BasicNameValuePair("input", linearized));
-        nvps.add(new BasicNameValuePair("from", grammar + lang));
+
+        if (lang == null) lang = "";
+
+        nvps.add(new BasicNameValuePair("from",
+                grammar + lang
+        ));
+
+        if (startCat!=null)
+            nvps.add(new BasicNameValuePair("cat", startCat));
 
         //httpPost.setEntity(new UrlEncodedFormEntity(nvps));
         uu += URLEncodedUtils.format(nvps, (String)null);
 
-        return exeBlock(uu);
+        return get(uu);
     }
 
 //    public String linearize(String tree) {
@@ -143,9 +178,9 @@ public class GrammaticalFrameworkClient {
 
     public static void main(String[] args) {
         GrammaticalFrameworkClient h = new GrammaticalFrameworkClient();
-        System.out.println( h.treeRandom("Phrasebook") );
-        System.out.println( h.linearize("Foods", "Eng", "Pred (That Pizza) (Very Boring)") );
-        System.out.println( h.tree("Foods", "Eng", "that pizza is very boring") );
+        System.out.println( JSON.pretty( h.treeRandom("Phrasebook") ) );
+        System.out.println( JSON.pretty( h.linearize("Foods", "Eng", "Pred (That Pizza) (Very Boring)") ) );
+        System.out.println( JSON.pretty( h.tree("Foods", "Eng", "that pizza is very boring")  ) );
 
     }
 
@@ -191,17 +226,17 @@ public class GrammaticalFrameworkClient {
      *   - constructs GfTree from a strings, e.g. "a (b (c d)) e", some syntax errors are tolerated
      *   - getter for all function names and leaf names in the tree
      */
-    public class GfTree {
+    public static class GfTree {
 
 
         // [ \t\n\x0B\f\r]
 
 
-        private final GfFun mRoot;
-        private final int mSize;
-        private final Set<String> mFunctionNames;
-        private final Set<String> mLeafNames;
-        private final String mString;
+        public final GfFun mRoot;
+        public final int mSize;
+        public final Set<String> mFunctionNames;
+        public final Set<String> mLeafNames;
+        public final String mString;
 
 
 

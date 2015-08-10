@@ -301,9 +301,7 @@ public class NarseseIRCBot extends IRCBot {
             } catch (Throwable e) {
 
                 if (msg.indexOf('>')==-1 && msg.indexOf('<') == -1 && msg.indexOf('(') == -1) {
-                    List<Twokenize.Span> sp = Twokenize.tokenize(msg);
-
-                    List<Term> ll = Lists.transform(sp, x -> Twenglish.spanToTerm(x));
+                    List<Term> ll = Twenglish.tokenize(msg);
                     List<List<Term>> m = Lists.partition(ll, 8);
                     for (List<Term> l : m) {
 

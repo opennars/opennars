@@ -1,15 +1,14 @@
 package nars.util;
 
 import nars.Global;
-import nars.budget.BudgetFunctions;
-import nars.budget.Item;
+import nars.budget.Itemized;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 /** adapter to a Map for coordinating changes in a Map with another Collection */
-public abstract class CollectorMap<K, V extends Item<K>> {
+public abstract class CollectorMap<K, V extends Itemized<K>> {
 
 
     public final Map<K, V> map;
@@ -35,7 +34,7 @@ public abstract class CollectorMap<K, V extends Item<K>> {
         final K key = value.name();
         final V valPrev = putKey(key, value);
 
-        if (!value.mergeIfChanges(valPrev, Global.BUDGET_EPSILON))
+        if (!value.getBudget().mergeIfChanges(valPrev.getBudget(), Global.BUDGET_EPSILON))
             return;
 
         //TODO check before and after removal index and if the same just replace

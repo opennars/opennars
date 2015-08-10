@@ -6,7 +6,7 @@ import nars.budget.Item;
 import nars.util.data.sorted.SortedIndex;
 
 /**
- * EXPERIMENTAL - NOT READY YET - has a bug / leak
+ * EXPERIMENTAL - NOT READY YET - may have a bug / leak
  * @param <E> 
  */
 public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> implements SortedIndex<E> {
@@ -35,6 +35,11 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
             return t.name().equals(t1.name());
         }
 
+    }
+
+    @Override
+    public boolean isSorted() {
+        throw new RuntimeException("Not implemented yet");
     }
 
     int capacity;

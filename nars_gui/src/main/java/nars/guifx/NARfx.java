@@ -1,9 +1,14 @@
 package nars.guifx;
 
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
+import nars.concept.Concept;
 import nars.nar.Default;
 
 import java.io.File;
@@ -24,7 +29,7 @@ public class NARfx extends Application {
 //    }
 
     /** NAR instances -> GUI windows */
-    public static Map<NARPane, Stage> window = Global.newHashMap();
+    public static Map<Region, Stage> window = Global.newHashMap();
 
 //    public void start_(Stage primaryStage) {
 //        primaryStage.setTitle("Tree View Sample");
@@ -131,6 +136,24 @@ public class NARfx extends Application {
 
     }
 
+    public static Stage getStage(String title, Region n) {
+        Stage s = new Stage();
+
+        Scene scene = new Scene(n);
+        s.setTitle(title);
+        scene.getStylesheets().addAll(NARfx.css, "dark.css" );
+
+
+
+        s.setScene(scene);
+
+        n.setMaxWidth(Double.MAX_VALUE);
+        n.setMaxHeight(Double.MAX_VALUE);
+
+        return s;
+    }
+
+
     public static NARPane window(NAR nar) {
         NARPane wn = new NARPane(nar);
 
@@ -140,6 +163,26 @@ public class NARfx extends Application {
             removed.close();
 
         return wn;
+    }
+
+    public static class ConceptPane extends BorderPane {
+
+        public ConceptPane(NAR nar, Concept c) {
+            setCenter(new Label(c.toInstanceString()));
+        }
+    }
+
+    public static void window(NAR nar, Concept c) {
+        ConceptPane wn = new ConceptPane(nar, c);
+
+        Stage st;
+        Stage removed = window.put(wn, st = getStage(c.toString(), wn));
+
+        st.show();
+
+        if (removed!=null)
+            removed.close();
+
     }
 
 //   static void popup(Core core, Parent n) {

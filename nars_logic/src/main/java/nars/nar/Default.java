@@ -558,8 +558,9 @@ public class Default extends NARSeed  {
         return m;
     }
 
-    public void setCyclesPerFrame(int cyclesPerFrame) {
+    public NARSeed setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
+        return this;
     }
 
 

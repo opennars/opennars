@@ -26,6 +26,7 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.util.sort.ArraySortedIndex;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class Solid extends Default implements CycleProcess {
 
     /** stores sorted tasks temporarily */
     private List<Task> temporary = Global.newArrayList();
+    private List<Concept> temporaryC = Global.newArrayList();
 
 
     int tasksAddedThisCycle = 0;
@@ -74,9 +76,10 @@ public class Solid extends Default implements CycleProcess {
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
         duration.set(1);
-        termLinkForgetDurations.set(1);
-        taskLinkForgetDurations.set(1);
+        termLinkForgetDurations.set(2);
+        taskLinkForgetDurations.set(2);
         conceptForgetDurations.set(1);
+
 
         conceptCreationExpectation.set(0);
 
@@ -85,9 +88,42 @@ public class Solid extends Default implements CycleProcess {
 
 
 
-        concepts = new CurveBag(rng, activeConcepts, new CurveBag.Power6BagCurve(),
-                new ArraySortedIndex<>(activeConcepts, new FastList<>(activeConcepts)/*.asSynchronized()*/)
-        );
+        concepts = new CurveBag<Term,Concept>(rng, activeConcepts, new CurveBag.Power6BagCurve(),
+                new ArraySortedIndex(activeConcepts, new FastList(activeConcepts)/*.asSynchronized()*/)
+        ) {
+//            @Override
+//            public boolean isSorted() {
+//                boolean b = super.isSorted();
+//                if (!b) {
+//                    System.out.println("concepts not sorted");
+//                    printAll();
+//                    System.out.println();
+//                }
+//                return b;
+//            }
+//
+//            @Override
+//            public Concept put(Concept i) {
+//                isSorted();
+//
+//                Concept e = super.put(i);
+//
+//                isSorted();
+//
+//                return e;
+//            }
+//
+//            @Override
+//            public Concept update(BagTransaction selector) {
+//                isSorted();
+//
+//                Concept i = super.update(selector);
+//
+//                isSorted();
+//
+//                return i;
+//            }
+        };
         //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
         //concepts = new HeapBag(rng, activeConcepts);
@@ -141,7 +177,8 @@ public class Solid extends Default implements CycleProcess {
     }
 
     protected int num(float p, int min, int max) {
-        return Math.round((p * (max - min)) + min);
+        if ((max == min) || (p == 0)) return min;
+        return Math.round((p * (max - min)))+min;
     }
 
 
@@ -158,20 +195,20 @@ public class Solid extends Default implements CycleProcess {
         //int nt = tasks.size();
         //long now = memory.time();
 
-        float maxPriority = -1;
-        float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
+        //float maxPriority = -1;
+        //float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
 
         Iterator<Task> ii = tasks.iterateHighestFirst(temporary);
         while (ii.hasNext()) {
 
             Task task = ii.next();
 
-            float currentPriority = task.getPriority();
-            if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
+            //float currentPriority = task.getPriority();
+            //if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
 
-            float currentQuality = task.getQuality();
-            if (currentQuality < minQuality) minQuality = currentQuality;
-            else if (currentQuality > maxQuality) maxQuality = currentQuality;
+            //float currentQuality = task.getQuality();
+            //if (currentQuality < minQuality) minQuality = currentQuality;
+            //else if (currentQuality > maxQuality) maxQuality = currentQuality;
 
             if (TaskProcess.run(memory, task) != null) {
                 t++;
@@ -198,21 +235,38 @@ public class Solid extends Default implements CycleProcess {
 
         processNewTasks();
 
-        final float tlfd = this.taskLinkForgetDurations.floatValue();
+        final float tlfd = memory.param.cycles(this.termLinkForgetDurations);
+
+        float maxPriority = concepts.getPriorityMax();
+        float minPriority = concepts.getPriorityMin();
+
+
+
+        if (!((CurveBag)concepts).isSorted())
+            System.err.println("not sorted");
 
         //2. fire all concepts
-        for (final Concept c : concepts) {
 
-            if (c == null) break;
+        temporaryC.addAll((Collection)concepts.values());
+
+        for (final Concept c : temporaryC) {
 
             int conceptTaskLinks = c.getTaskLinks().size();
-            if (conceptTaskLinks == 0) continue;
+            if (conceptTaskLinks == 0)
+                continue;
 
-            float p = c.getPriority();
+            float cp = c.getPriority();
+            float p = normalize(cp, minPriority, maxPriority);
+            //the concept can become activated by other concepts during this iteration
+            if (p < minPriority) p = minPriority;
+            if (p > maxPriority) p = maxPriority;
+
+
             int fires = num(p, minTaskLink, maxTaskLink);
             if (fires < 1) continue;
             int termFires = num(p, minTermLink, maxTermLink);
             if (termFires < 1) continue;
+
 
             for (int i = 0; i < fires; i++) {
                 TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
@@ -221,13 +275,23 @@ public class Solid extends Default implements CycleProcess {
                 ConceptProcess.forEachPremise(c, tl,
                         termFires,
                         tlfd,
-                        cp -> cp.run()
+                        proc -> proc.run()
                 );
             }
 
         }
 
+        temporaryC.clear();
+
+
         memory.runNextTasks();
+    }
+
+
+
+    static float normalize(final float p, final float min, final float max) {
+        if (max == min) return 0f;
+        return (p - min)/(max-min);
     }
 
     @Override

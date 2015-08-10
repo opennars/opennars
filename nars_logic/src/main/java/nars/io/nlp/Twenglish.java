@@ -16,6 +16,7 @@
  */
 package nars.io.nlp;
 
+import com.google.common.collect.Lists;
 import nars.AbstractMemory;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
@@ -250,5 +251,12 @@ public class Twenglish {
         }
         
         return results;
+    }
+
+    public static List<Term> tokenize(String msg) {
+        List<Twokenize.Span> sp = Twokenize.tokenize(msg);
+
+        List<Term> ll = Lists.transform(sp, x -> Twenglish.spanToTerm(x));
+        return ll;
     }
 }
