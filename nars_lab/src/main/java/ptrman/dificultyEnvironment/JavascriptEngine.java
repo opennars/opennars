@@ -1,4 +1,4 @@
-package ptrman.DificultyEnvironment;
+package ptrman.dificultyEnvironment;
 
 import javax.script.*;
 import java.io.FileNotFoundException;
@@ -17,6 +17,10 @@ public class JavascriptEngine {
         bindings.put(name, value);
     }
 
+    public void resetBindings() {
+        bindings = new SimpleBindings();
+    }
+
     public void loadFile(String filename) {
         try {
             engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
@@ -26,6 +30,15 @@ public class JavascriptEngine {
         }
         catch (FileNotFoundException e) {
             throw new RuntimeException("JavascriptEngine.loadFile(): FileNotFoundException");
+        }
+    }
+
+    public void loadString(String script) {
+        try {
+            engine.setBindings(bindings, ScriptContext.GLOBAL_SCOPE);
+            engine.eval(script);
+        } catch (ScriptException e) {
+            throw new RuntimeException("JavascriptEngine.loadString(): ScriptException: " + e.getMessage());
         }
     }
 

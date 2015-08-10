@@ -1,4 +1,4 @@
-package ptrman.DificultyEnvironment;
+package ptrman.dificultyEnvironment.physics;
 
 import org.jbox2d.dynamics.Body;
 

@@ -1,13 +1,13 @@
-package ptrman.DificultyEnvironment.ScriptAccessors;
+package ptrman.dificultyEnvironment.scriptAccessors;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
-import ptrman.DificultyEnvironment.EntityDescriptor;
-import ptrman.DificultyEnvironment.Environment;
-import ptrman.DificultyEnvironment.Physics2dBody;
+import ptrman.dificultyEnvironment.EntityDescriptor;
+import ptrman.dificultyEnvironment.Environment;
+import ptrman.dificultyEnvironment.physics.Physics2dBody;
 
 /**
  *
@@ -38,10 +38,9 @@ public class EnvironmentScriptingAccessor {
 
 
 
-    public EntityDescriptor createNewEntityAndAdd(ArrayRealVector direction) {
+    public EntityDescriptor createNewEntity(ArrayRealVector direction) {
         EntityDescriptor createdEntity = new EntityDescriptor();
         // createdEntity.direction = direction
-        environment.entities.add(createdEntity);
 
         return createdEntity;
     }
