@@ -320,6 +320,11 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 }
             }
 
+            if(derive_occurrence) {
+                //the occurence time of  the event
+
+            }
+
             //now we have to apply this to the derive term
             derive = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
             if(!precondsubs.isEmpty()) {

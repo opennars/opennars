@@ -1,4 +1,4 @@
-// Pei Wang's "Non-Axiomatic Logic" specified with a math. notation inspired DSL: (TODO: So far only NAL1-6)
+// Pei Wang's "Non-Axiomatic Logic" specified with a math. notation inspired DSL:
 
 // revision (already handled by belief management in java)
 //    A, A |- A, (Truth:Revision)
@@ -258,13 +258,13 @@
 
 //// independent variable elimination
 
-    (($1 --> M) ==> C), (S --> M), substitute($1,S) |- C. (Truth.Deduction, Order:ForAllSame, Event:Anticipate)
-    ((M --> $1) ==> C), (M --> S), substitute($1,S) |- C. (Truth.Deduction, Order:ForAllSame, Event:Anticipate)
+    (($1 --> M) ==> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
+    ((M --> $1) ==> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
 
 //NAL7/8 specific inference
 
     C, ((&&,C,A_1..n) ==> B) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    C, <(&/,C,I) ==> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate),
+    C, <(&/,C,I) ==> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate)
     B, <(&/,C,I) ==> B>, interval(I) |- C, (Truth:Abduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame)
 
     (S --> M), ((&&,($1 --> M),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
@@ -301,18 +301,13 @@
 (&&,A_1..n), A_1 |- A_1, (Truth:Deduction, Desire:Strong)
 
 //TODO Equivalence Theorems
-//(S <-> P), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
-//(S <-> P), P |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
-//(S <-> P), S |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
-//(S <-> P), P |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
+({S} <-> {P}), S |- (S <-> P), (Truth:Identity, Desire:Identity)
+({S} <-> {P}), P |- (S <-> P), (Truth:Identity, Desire:Identity)
+([S] <-> [P]), S |- (S <-> P), (Truth:Identity, Desire:Identity)
+([S] <-> [P]), P |- (S <-> P), (Truth:Identity, Desire:Identity)
 (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)
 (S --> {P}), P |- (S <-> {P}), (Truth:Identity, Desire:Identity)
 ([S] --> P), S |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 
-////// Truth-value functions
-//java./flu
-
-
-// Utility functions
-//java
+////// Truth-value functions: see TruthFunctions.java
