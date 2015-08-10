@@ -12,12 +12,12 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nar.experimental.Equalized;
+import nars.nar.experimental.Solid;
 import nars.term.Atom;
+import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.ArrayList;
@@ -77,7 +77,9 @@ public class NARgf extends GrammaticalFrameworkClient {
             JsonNode y = complete(DefaultGrammar, DefaultLang, text, cat, 8);
             if (y != null && y.size() > 0) {
                 JsonNode completions = y.get(0).get("completions");
-                onCompletion(input, completions);
+                if (completions!=null) {
+                    onCompletion(input, completions);
+                }
             }
         }
 
@@ -94,19 +96,27 @@ public class NARgf extends GrammaticalFrameworkClient {
 
         nar.believe(
                 Implication.make(
-                        Sequence.makeForward( tokenize(input) ),
+                        sentence(tokenize(input)),
                         w((SetExt)SetExt.make(ss)),
                         TemporalRules.ORDER_FORWARD
                 )
         );
     }
 
+    private Term sentence(List<Term> tokens) {
+        //return Sequence.makeForward(tokens);
+        return Product.make(tokens);
+    }
+
+    public static Term w(String word) {
+        return w(Atom.the(word));
+    }
     public static Term w(Atom word) {
-        return w((SetExt)SetExt.make(word));
+        return word; //w((SetExt)SetExt.make(word));
     }
 
     public static Term w(SetExt words) {
-        return Inheritance.make(words, Atom.the("W"));
+        return words; //Inheritance.make(words, Atom.the("W"));
     }
 
     public Term termize(GfTree t) {
@@ -146,14 +156,16 @@ public class NARgf extends GrammaticalFrameworkClient {
     private Similarity getInputSimilarity(String input, Term tt) {
         List<Term> tokens = tokenize(input);;
         return Similarity.make(
-                Sequence.makeForward(tokens),
+                sentence(tokens),
                 tt
         );
     }
 
     private List<Term> tokenize(String input) {
+        /*return Lists.transform(Twenglish.tokenize(input),
+                        t -> Instance.make(t, Atom.the("W")));*/
         return Lists.transform(Twenglish.tokenize(input),
-                        t -> Instance.make(t, Atom.the("W")));
+                        t -> t);
     }
 
     private Operation<Atom> getHeardOperation(Term tt) {
@@ -163,31 +175,49 @@ public class NARgf extends GrammaticalFrameworkClient {
 
     public static void main(String[] arg) {
 
-        NAR n = new NAR(new Equalized(2000, 96, 8).setCyclesPerFrame(16));
+        NAR n = new NAR(
+                //new Equalized(2000, 96, 8).setCyclesPerFrame(16)
+                new Solid(1, 4000, 1, 3, 1, 8).setInternalExperience(null)
+        );
 
 
         new NARSwing(n);
+
 
         NARStream s = new NARStream(n);
         s.stdout();
 
         NARgf g = new NARgf(n);
 
-        n.input("<<{(#a, #b)} --> Is> <-> <#a <-> #b>>.");
+        for (int i = 0; i < 3; i++) {
+            n.input("<<{(#a, #b)} --> Is> <-> <#a <-> #b>>.");
 
-        g.inputNatural("you are English");
-        //g.inputNatural("I am one");
+            g.inputNatural("you are English");
+            //g.inputNatural("I am one");
 
-        g.inputNatural("hello");
-        g.inputNatural("what is your ");
-        g.inputNatural("what is your name");
+            g.inputNatural("hello");
+            g.inputNatural("what is your ");
+            g.inputNatural("what is your name");
 
-        g.inputNatural("what is ");
-        g.inputNatural("I am "); //must be capitalized
-        g.inputNatural("this "); //must be capitalized
+            g.inputNatural("what ");
+            g.inputNatural("what is ");
+            g.inputNatural("I am "); //I must be capitalized
 
-        g.inputNatural("this tea is very warm"); //must be capitalized
-        g.inputNatural("this good tea is suspect");
+            g.inputNatural("this ");
+            g.inputNatural("Norwegian ");
+
+            g.inputNatural("this good tea is very warm");
+            g.inputNatural("this beer is cold");
+            g.inputNatural("don't sit");
+            g.inputNatural("what time is it");
+            g.inputNatural("how old are we");
+            g.inputNatural("how far is the cheapest airport from the most popular Belgian restaurant by ferry");
+            g.inputNatural("where do you play");
+            g.inputNatural("a toilet is closed");
+            g.inputNatural("you don't understand");
+            n.frame(4);
+
+        }
 
     }
 }

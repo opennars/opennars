@@ -56,6 +56,7 @@ public class Solid extends Default implements CycleProcess {
 
     /** stores sorted tasks temporarily */
     private List<Task> temporary = Global.newArrayList();
+    private List<Concept> temporaryC = Global.newArrayList();
 
 
     int tasksAddedThisCycle = 0;
@@ -73,15 +74,18 @@ public class Solid extends Default implements CycleProcess {
         this.maxTaskLink = maxTaskLink;
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
-        duration.set(1);
-        termLinkForgetDurations.set(1);
-        taskLinkForgetDurations.set(1);
-        conceptForgetDurations.set(1);
+        duration.set(3);
+        termLinkForgetDurations.set(5);
+        taskLinkForgetDurations.set(5);
+        conceptForgetDurations.set(5);
+        conceptFireThreshold.set(0);
+        termLinkThreshold.set(0);
+        taskLinkThreshold.set(0);
 
         conceptCreationExpectation.set(0);
 
-        setTermLinkBagSize(16);
-        setTaskLinkBagSize(32);
+        setTermLinkBagSize(64);
+        setTaskLinkBagSize(64);
 
 
 
@@ -158,20 +162,20 @@ public class Solid extends Default implements CycleProcess {
         //int nt = tasks.size();
         //long now = memory.time();
 
-        float maxPriority = -1;
-        float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
+        //float maxPriority = -1;
+        //float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
 
         Iterator<Task> ii = tasks.iterateHighestFirst(temporary);
         while (ii.hasNext()) {
 
             Task task = ii.next();
 
-            float currentPriority = task.getPriority();
-            if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
+            //float currentPriority = task.getPriority();
+            //if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
 
-            float currentQuality = task.getQuality();
-            if (currentQuality < minQuality) minQuality = currentQuality;
-            else if (currentQuality > maxQuality) maxQuality = currentQuality;
+            //float currentQuality = task.getQuality();
+            //if (currentQuality < minQuality) minQuality = currentQuality;
+            //else if (currentQuality > maxQuality) maxQuality = currentQuality;
 
             if (TaskProcess.run(memory, task) != null) {
                 t++;
@@ -198,17 +202,23 @@ public class Solid extends Default implements CycleProcess {
 
         processNewTasks();
 
-        final float tlfd = this.taskLinkForgetDurations.floatValue();
+        final float tlfd = memory.param.cycles(this.termLinkForgetDurations);
+
+        final float maxPriority = concepts.getPriorityMax();
+        final float minPriority = concepts.getPriorityMin();
+
 
         //2. fire all concepts
         for (final Concept c : concepts) {
 
             if (c == null) break;
+            temporaryC.add(c);
 
             int conceptTaskLinks = c.getTaskLinks().size();
-            if (conceptTaskLinks == 0) continue;
+            if (conceptTaskLinks == 0)
+                continue;
 
-            float p = c.getPriority();
+            float p = normalize(c.getPriority(), minPriority, maxPriority);
             int fires = num(p, minTaskLink, maxTaskLink);
             if (fires < 1) continue;
             int termFires = num(p, minTermLink, maxTermLink);
@@ -227,7 +237,24 @@ public class Solid extends Default implements CycleProcess {
 
         }
 
+
+        //forget all items in bag and resort it
+
+        concepts.clear();
+
+        final long now = memory.time();
+        final float cycs = memory.param.cycles(conceptForgetDurations);
+        for (Concept c : temporaryC) {
+            memory.forget(now, c, cycs, 0);
+            concepts.put(c);
+        }
+        temporaryC.clear();
+
         memory.runNextTasks();
+    }
+
+    static float normalize(final float p, final float min, final float max) {
+        return (p - min)/(max-min);
     }
 
     @Override
