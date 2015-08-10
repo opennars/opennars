@@ -2,7 +2,10 @@ package nars.util.language;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -25,8 +28,12 @@ public class JSON {
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()))
             ;
+    static final ObjectWriter omPretty = om.copy().writerWithDefaultPrettyPrinter();
 
 //
+    public static JsonNode toJSON(String json) throws IOException {
+        return om.readTree(json);
+    }
 
     public static Map<String,Object> toMap(String json) {
         try {
@@ -53,6 +60,19 @@ public class JSON {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String pretty(JsonNode j) {
+        if (j == null)
+            return "['null']";
+
+        try {
+            return omPretty.writeValueAsString(j);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 //    public static String stringFromUnreflected(Object obj) {
 //        try {

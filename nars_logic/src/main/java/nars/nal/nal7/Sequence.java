@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import static java.lang.System.arraycopy;
 import static nars.Op.COMPOUND_TERM_OPENER;
@@ -98,6 +99,13 @@ public class Sequence extends Conjunction implements Intermval {
 
         return new nars.nal.nal7.Sequence(b, i);
     }
+
+
+    public static nars.nal.nal7.Sequence makeForward(final Collection<Term> a) {
+        //TODO make more efficient version of this that doesnt involve array copy
+        return makeForward(a.toArray(new Term[a.size()]));
+    }
+
 
     public static Term makeForward(Term term1, Term term2) {
         final Term[] components;
@@ -195,4 +203,5 @@ public class Sequence extends Conjunction implements Intermval {
         ni[s] = 0;
         return clone(term, ni);
     }
+
 }
