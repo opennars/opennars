@@ -87,8 +87,8 @@ public class DefaultConcept extends AbstractConcept {
     public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, PremiseGenerator ps, final Memory memory) {
         super(term, b, memory);
 
-
         this.premiseGenerator = ps;
+        ps.setConcept(this);
 
         this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
 
@@ -222,7 +222,7 @@ public class DefaultConcept extends AbstractConcept {
         Budget aggregateBudget = null;
         for (Task t : tasks) {
             if (linkTask(t)) {
-                if (aggregateBudget == null) aggregateBudget = new Budget(t);
+                if (aggregateBudget == null) aggregateBudget = new Budget(t, false);
                 else {
                     //aggregateBudget.merge(t);
                     aggregateBudget.accumulate(t);

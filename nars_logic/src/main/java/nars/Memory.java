@@ -275,13 +275,13 @@ public class Memory implements Serializable, AbstractMemory {
      * @return the resulting priority
      * TODO move to BudgetFunctions
      */
-    static public float forget(long now, final Itemized x, final float forgetCycles, final float relativeThreshold) {
+    static public float forget(long now, final Budget b, final float forgetCycles, final float relativeThreshold) {
         /*switch (param.forgetting) {
             case Iterative:
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:*/
-                return BudgetFunctions.forgetPeriodic(x.getBudget(), forgetCycles, relativeThreshold, now);
+                return BudgetFunctions.forgetPeriodic(b, forgetCycles, relativeThreshold, now);
                 //break;
         //}
     }

@@ -2,6 +2,7 @@ package nars.bag.tx;
 
 import nars.Global;
 import nars.Memory;
+import nars.budget.Budget;
 import nars.budget.Itemized;
 
 import java.util.function.Function;
@@ -26,7 +27,8 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
         this.model = model;
     }
 
-    public V update(V v) {
+    @Override
+    public Budget updateItem(V v, Budget result) {
 
         final boolean select, forget;
         final ForgetAction a;
@@ -66,13 +68,13 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
 
         final float priorityStart = v.getPriority();
 
-        final float priorityEnd = Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
+        final float priorityEnd = Memory.forget(now, result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
         if (priorityStart == priorityEnd) {
             /** null means it was not changed */
             return null;
         }
 
-        return v;
+        return result;
     }
 
 

@@ -21,6 +21,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     private long now;
     private static final nars.budget.BudgetFunctions.Activating activationFunction = BudgetFunctions.Activating.Accum;
     private float conceptForgetCycles;
+    private float activationFactor;
 
 
     abstract public Memory getMemory();
@@ -30,23 +31,33 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return getMemory().concept(t);
     }
 
-    @Override
-    public Concept updateItem(Concept c) {
 
-        Memory.forget(now, c, conceptForgetCycles, relativeThreshold);
-
-
-        final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
-        BudgetFunctions.activate(c.getBudget(), getBudgetRef(), activationFunction, activationFactor);
-
-        return c;
+    public float getForgetCycles() {
+        return conceptForgetCycles;
     }
+
+    @Override
+    public float getRelativeThreshold() {
+        return relativeThreshold;
+    }
+
+    @Override
+    public long time() {
+        return now;
+    }
+
+    @Override
+    public float getActivationFactor() {
+        return activationFactor;
+    }
+
 
     public ConceptActivator set(Budget b, boolean createIfMissing, long now) {
 
         setBudget(b);
 
         this.conceptForgetCycles = getMemory().param.cycles( (getMemory().param.conceptForgetDurations ));
+        this.activationFactor = getMemory().param.conceptActivationFactor.floatValue();
         this.createIfMissing = createIfMissing;
         this.now = now;
         return this;
@@ -69,7 +80,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     public Concept forgottenOrNewConcept() {
         final Memory memory = getMemory();
-        boolean belowThreshold = getPriority() < memory.param.newConceptThreshold.floatValue();
+        boolean belowThreshold = getBudget().getPriority() < memory.param.newConceptThreshold.floatValue();
 
         //try remembering from subconscious if activation is sufficient
         Concept concept = index().get(getKey());
@@ -89,7 +100,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
             //create it regardless, even if this returns null because it wasnt active enough
 
-            concept = memory.newConcept(/*(Budget)*/getKey(), this);
+            concept = memory.newConcept(/*(Budget)*/getKey(), getBudget());
 
             if (concept == null)
                 throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + memory.getConceptBuilders());

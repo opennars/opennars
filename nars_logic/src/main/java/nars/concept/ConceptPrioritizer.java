@@ -2,6 +2,7 @@ package nars.concept;
 
 import nars.Memory;
 import nars.bag.Bag;
+import nars.budget.Budget;
 import nars.term.Term;
 
 /**
@@ -17,9 +18,9 @@ public class ConceptPrioritizer extends ConceptActivator {
     }
 
     @Override
-    public Concept updateItem(Concept c) {
-        c.getBudget().setPriority(newPriority);
-        return c;
+    public Budget updateItem(Concept concept, Budget result) {
+        result.setPriority(newPriority);
+        return result;
     }
 
     public boolean update(Term c, float newPriority, Bag<Term, Concept> bag) {

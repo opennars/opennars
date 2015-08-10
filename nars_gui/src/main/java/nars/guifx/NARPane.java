@@ -4,19 +4,18 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Skinnable;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.NAR;
+import nars.NARStream;
 import nars.event.NARReaction;
-
-import javax.swing.*;
 
 /**
  * Created by me on 1/21/15.
@@ -36,7 +35,7 @@ public class NARPane extends SplitPane {
 
         if (enabled && console == null) {
 
-            //console = new Tab("I/O", new TerminalPane(nar));
+            console = new Tab("I/O", new TerminalPane(nar));
 
             Platform.runLater(() -> {
                 content.getTabs().add(console);
@@ -139,6 +138,7 @@ public class NARPane extends SplitPane {
         super();
         this.nar = n;
 
+        NARStream s = new NARStream(n);
 
         controlStrip = new NARControlFX(nar, true, true, true) {
             @Override protected void onConsole(boolean selected) {
@@ -146,44 +146,43 @@ public class NARPane extends SplitPane {
             }
         };
 
-        /*.root {
-            -fx-base: rgb(50, 50, 50);
-            -fx-background: rgb(50, 50, 50);
-            -fx-control-inner-background:  rgb(50, 50, 50);
-        }*/
-
-
-//        TitledPane tp1 = new TitledPane("Options", new Button("Button"));
-//
-//        SwingNode mn = new SwingNode();
-//        JPanel jp = new JPanel(new BorderLayout());
-//        jp.add(new NARControlPanel(nar, null, false));
-//        mn.setContent(jp);
-//        tp1.setContent(mn);
-
-
-        //f.getChildren().add(tp1);
-
-        //TitledPane tp2 = new TitledPane("Tasks", new Button("Button"));
 
         f = new BorderPane();
-        f.setCenter(scrolled(new NARTree(n)));
+
+
+        LinePlot lp = new LinePlot(
+                "Concepts",
+                () -> (nar.memory.getConcepts().size()),
+                300
+        );
+//        LinePlot lp2 = new LinePlot(
+//                "Happy",
+//                () -> nar.memory.emotion.happy(),
+//                300
+//        );
+//
+//        VBox vb = new VBox(lp, lp2);
+//        vb.autosize();
+
+
+        s.forEachCycle( lp::update );
+
+        f.setCenter( scrolled(lp)       );
+
         f.setRight(controlStrip);
 
-        f.setMinWidth(250);
-        //f.setMaxHeight(Double.MAX_VALUE);
+
+
+        f.setMaxHeight(Double.MAX_VALUE);
 
         //content.setMaxWidth(Double.MAX_VALUE);
-        //content.setMaxHeight(Double.MAX_VALUE);
+        content.setMaxHeight(Double.MAX_VALUE);
 
 
-        getChildren().add(f);
+        getChildren().setAll(f);
 
         //g.setDividerPositions(0.5f);
         //f.setMaxWidth(Double.MAX_VALUE);
-
-
-
 
     }
 
@@ -223,12 +222,25 @@ public class NARPane extends SplitPane {
     }
 
     public static final javafx.scene.control.ScrollPane scrolled(Node n) {
+        return scrolled(n, true, true);
+    }
+    public static final javafx.scene.control.ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
         javafx.scene.control.ScrollPane s = new javafx.scene.control.ScrollPane();
+        s.setHbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
+        s.setVbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
+
         s.setContent(n);
-        //s.setFitToHeight(true);
-        //s.setFitToWidth(true);
-        s.setMaxHeight(Double.MAX_VALUE);
-        s.setMaxWidth(Double.MAX_VALUE);
+
+        if (stretchhigh) {
+            s.setMaxHeight(Double.MAX_VALUE);
+        }
+        s.setFitToHeight(true);
+
+        if (stretchwide) {
+            s.setMaxWidth(Double.MAX_VALUE);
+        }
+        s.setFitToWidth(true);
+
         //s.autosize();
         return s;
     }

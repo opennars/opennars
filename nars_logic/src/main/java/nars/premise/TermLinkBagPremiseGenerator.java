@@ -31,10 +31,22 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
 
     }
 
+    public long time() { return currentConcept.time(); }
+
+    /** a general condition */
+    @Override public boolean validTermLinkTarget(final TermLink term, final TaskLink task) {
+        return !(term.getTarget().equals(task.getTerm()));
+    }
+
+    @Override
+    public void setConcept(Concept c) {
+        this.currentConcept = c;
+    }
+
     @Override
     public ForgetAction apply(TermLink termLink) {
 
-        if (validTermLinkTarget(currentConcept, termLink, currentTaskLink)) {
+        if (validTermLinkTarget(termLink, currentTaskLink)) {
             return ParametricBagForgetting.ForgetAction.SelectAndForget;
         }
         else {

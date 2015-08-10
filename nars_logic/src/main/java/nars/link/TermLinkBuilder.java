@@ -1,6 +1,7 @@
 package nars.link;
 
 import nars.Global;
+import nars.Memory;
 import nars.bag.tx.BagActivator;
 import nars.budget.Budget;
 import nars.nal.nal1.Negation;
@@ -26,6 +27,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     transient boolean incoming;
     private byte[] prefix;
     private int hash;
+    private float forgetCycles;
+    private long now;
 
     public TermLinkBuilder(Termed c) {
         super();
@@ -156,15 +159,36 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
 
+    @Override
+    public float getForgetCycles() {
+        return forgetCycles;
+    }
+
+    @Override
+    public long time() {
+        return now;
+    }
+
+    @Override
+    public float getRelativeThreshold() {
+        return 0;
+    }
+
+
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection) {
+    public TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory memory) {
         if ((temp != currentTemplate) || (this.incoming != initialDirection)) {
             this.currentTemplate = temp;
             this.incoming = initialDirection;
-            super.set(/*(Budget)*/temp);
+            super.setBudget(/*(Budget)*/temp);
             validate();
         }
+
+        this.forgetCycles = memory.param.cycles(
+                memory.param.termLinkForgetDurations.floatValue()
+        );
+        this.now = memory.time();
         return this;
     }
 
@@ -188,11 +212,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         this.hash = currentTemplate.hash(incoming);
     }
 
-
-
-    public Budget budget(Budget b) {
-        throw new RuntimeException("use: TermLinkBuilder budget(final TermLinkTemplate temp)");
-    }
 
 
 
@@ -246,11 +265,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTarget(), currentTemplate, this, prefix, hash);
+        return new TermLink(getTarget(), currentTemplate, getBudget(), prefix, hash);
     }
 
     public TermLink out(TermLinkTemplate tlt) {
-        return new TermLink(tlt.getTarget(), tlt, this,
+        return new TermLink(tlt.getTarget(), tlt, getBudget(),
                 tlt.prefix(false),
                 tlt.hash(false));
     }
@@ -272,9 +291,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return nonTransforms;
     }
 
-    @Override public TermLink updateItem(TermLink termLink) {
-        return null;
-    }
+
 
     @Override
     public String toString() {

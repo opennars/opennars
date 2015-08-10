@@ -163,14 +163,16 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
         E removed = o;
 
-        if (isEmpty()) {
+        final int s = size();
+
+        if (s == 0) {
             list.add(o);
             return null;
         } else {
 
             int insertPos = positionOf(o);
 
-            if (size() >= capacity) {
+            if (s >= capacity) {
 
                 if (insertPos == 0) {
                     //priority too low to join this list
@@ -195,17 +197,17 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
     @Override
     public E getFirst() {
-        if (isEmpty()) {
-            return null;
-        }
+//        if (isEmpty()) {
+//            return null;
+//        }
         return get(0);
     }
 
     @Override
     public E getLast() {
-        if (isEmpty()) {
-            return null;
-        }
+//        if (isEmpty()) {
+//            return null;
+//        }
         return get(size() - 1);
     }
 

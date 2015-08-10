@@ -35,9 +35,9 @@ public class HashTableNovelPremiseGenerator extends TermLinkBagPremiseGenerator 
     }
 
     @Override
-    public boolean validTermLinkTarget(Concept concept, TermLink term, TaskLink task) {
-        if (super.validTermLinkTarget(concept, term, task)) {
-            final long now = concept.time();
+    public boolean validTermLinkTarget(TermLink term, TaskLink task) {
+        if (super.validTermLinkTarget(term, task)) {
+            final long now = time();
 
 
             SetMultimap<Sentence, Term> s = null;

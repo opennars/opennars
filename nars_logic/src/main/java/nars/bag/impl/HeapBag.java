@@ -3,6 +3,7 @@ package nars.bag.impl;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
+import nars.budget.Budget;
 import nars.budget.Item;
 import nars.util.CollectorMap;
 import nars.util.data.CircularArrayList;
@@ -515,9 +516,13 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
         else  {
             //allow selector to modify it, then if it returns non-null, reinsert
-            final E c = selector.update(b);
-            if ((c!=null) && (c!=b)) {
-                return putReplacing(c, selector);
+            temp.set( b.getBudget() );
+
+            final Budget c = selector.updateItem(b, temp);
+
+            if ((c!=null) && (!c.equalsByPrecision(b))) {
+                b.getBudget().set(c);
+                return putReplacing(b, selector);
             }
             else
                 return b;

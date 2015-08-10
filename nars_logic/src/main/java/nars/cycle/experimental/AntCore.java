@@ -56,6 +56,11 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
+    public float getRelativeThreshold() {
+        return 0;
+    }
+
+    @Override
     public void off(Concept c) {
         concepts.remove(c.getTerm());
     }
@@ -85,6 +90,14 @@ public class AntCore extends ConceptWaveCore {
     public boolean reprioritize(Term term, float newPriority) {
         //TODO
         return false;
+    }
+
+
+
+    @Override
+    public float getForgetCycles() {
+        //TODO
+        return 0;
     }
 
     @Override
@@ -239,7 +252,7 @@ public class AntCore extends ConceptWaveCore {
                     }
                 }
 
-                concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
+                concepts.put(c);
 
                 if (tries++ == maxTries)
                     return;
@@ -401,10 +414,10 @@ public class AntCore extends ConceptWaveCore {
             }
             else {
                 if (viaLink instanceof TermLink) {
-                    c.getTermLinks().putBack((TermLink) viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+                    c.getTermLinks().put((TermLink) viaLink);
                 }
                 else if (viaLink instanceof TaskLink) {
-                    c.getTaskLinks().putBack((TaskLink) viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
+                    c.getTaskLinks().put((TaskLink) viaLink);
                 }
 
                 eta = viaLink.getPriority();

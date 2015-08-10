@@ -2,11 +2,12 @@ package nars.nlp.gf;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
+import javafx.application.Application;
+import javafx.stage.Stage;
 import nars.NAR;
 import nars.NARStream;
-import nars.gui.NARSwing;
+import nars.guifx.NARfx;
 import nars.io.nlp.Twenglish;
-import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
@@ -17,7 +18,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nar.experimental.Solid;
 import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.ArrayList;
@@ -189,7 +189,9 @@ public class NARgf extends GrammaticalFrameworkClient {
         );
 
 
-        new NARSwing(n);
+        //new NARSwing(n);
+                //NARfx.window(n);
+
 
 
         NARStream s = new NARStream(n);
@@ -225,6 +227,8 @@ public class NARgf extends GrammaticalFrameworkClient {
             n.frame(4);
 
         }
+
+        n.frame(100);
 
     }
 }

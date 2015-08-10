@@ -13,10 +13,9 @@ import nars.term.Term;
  */
 public interface PremiseGenerator {
 
-    /** a general condition */
-    default public boolean validTermLinkTarget(Concept concept, TermLink term, TaskLink task) {
-        return !(term.getTarget().equals(task.getTerm()));
-    }
+    public void setConcept(Concept c);
+
+    abstract public boolean validTermLinkTarget(final TermLink term, final TaskLink task);
 
     public static Pair<Term, Sentence> pair(TaskLink taskLink, TermLink t) {
         return Tuples.pair(t.getTerm(), taskLink.getTask());

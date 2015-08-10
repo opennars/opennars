@@ -156,6 +156,9 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         return size() == 0;
     }
 
+
+    protected final Budget temp = new Budget();
+
     /**
      * calls overflow() on an overflown object
      * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
@@ -177,8 +180,12 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
             item = selector.newItem();
             if (item == null) return null;
         } else {
-            V changed = selector.update(item);
-            if (changed == null)
+
+            Budget ib = item.getBudget();
+
+            Budget result = selector.updateItem(item, temp.set(ib));
+
+            if ((result == null) || (result.equalsByPrecision(ib)))
                 return item;
             else {
                 //it has changed
@@ -186,7 +193,9 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
                 //this PUT(TAKE( sequence can be optimized in particular impl
                 //the default is a non-optimal failsafe
                 remove(item.name());
-                item = changed;
+
+                //apply changed budget after removed and before re-insert
+                ib.set(result);
             }
         }
 
@@ -195,8 +204,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         if (overflow != null)
             selector.overflow(overflow);
 
-        if (overflow == item)
-            return null;
+//        if (overflow == item)
+//            return null;
 
         return item;
     }
@@ -226,23 +235,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         return baseForgetCycles;
     }
 
-    /**
-     * Put an item back into the itemTable
-     * <p/>
-     * The only place where the forgetting rate is applied
-     *
-     * @param oldItem The Item to put back
-     * @return the item which was removed, or null if none removed
-     */
-    public V putBack(final V oldItem, final float forgetCycles, final AbstractMemory m) {
-        if (forgetCycles > 0)
-            Memory.forget(m.time(), oldItem, getForgetCycles(forgetCycles, oldItem), Global.MIN_FORGETTABLE_PRIORITY);
-        return put(oldItem);
-    }
 
-    public V putBack(final V oldItem) {
-        return putBack(oldItem, 0, null);
-    }
 
     /**
      * accuracy determines the percentage of items which will be processNext().

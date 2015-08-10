@@ -9,10 +9,12 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -128,6 +130,7 @@ public class NARGraph1 extends Application {
             titleBar.setScaleX(0.25);
             titleBar.setScaleY(0.25);
             titleBar.setAlignment(Pos.CENTER);
+            titleBar.setPickOnBounds(false);
             titleBar.setMouseTransparent(true);
             titleBar.setFont(baseFont);
             titleBar.setCache(true);
@@ -143,19 +146,25 @@ public class NARGraph1 extends Application {
                 }
             });
 
-            base.setOnMouseEntered(e -> {
-                base.setStroke(Color.ORANGE);
-                base.setStrokeWidth(0.05);
-                base.setStrokeType(StrokeType.INSIDE);
-                hover = true;
-            });
+            EventHandler<MouseEvent> mouseActivity = e -> {
+                    if (!hover) {
+                        base.setStroke(Color.ORANGE);
+                        base.setStrokeWidth(0.05);
+                        base.setStrokeType(StrokeType.INSIDE);
+                        hover = true;
+                    }
+                };
+            //base.setOnMouseMoved(mouseActivity);
+            base.setOnMouseEntered(mouseActivity);
             base.setOnMouseExited(e -> {
-                base.setStroke(null);
-                base.setStrokeWidth(0);
-                hover = false;
+                if (hover) {
+                    base.setStroke(null);
+                    base.setStrokeWidth(0);
+                    hover = false;
+                }
             });
 
-            setPickOnBounds(true);
+            setPickOnBounds(false);
 
             update();
 
@@ -261,7 +270,8 @@ public class NARGraph1 extends Application {
 
         @Override
         public double getVertexScale(Concept c) {
-            return getVertexScaleByConf(c);
+            //return getVertexScaleByConf(c);
+            return getVertexScaleByPri(c);
         }
 
         public Color getEdgeColor(double termMean, double taskMean) {
@@ -335,7 +345,8 @@ public class NARGraph1 extends Application {
             to.localToSceneTransformProperty().addListener(this);
 
 
-            getPoints().setAll(0.5d, 0d, -0.5d, -0.5d, -0.5d, +0.5d); //isoceles triangle within -0.5,-0.5...0.5,0.5 (len/wid = 1)
+            //getPoints().setAll(0.5d, 0d, -0.5d, -0.5d, -0.5d, +0.5d); //isoceles triangle within -0.5,-0.5...0.5,0.5 (len/wid = 1)
+            getPoints().setAll(0.5d, 0d, -0.5d, 0d, -0.5d, -0.5d); //right triangle
 
             getTransforms().setAll(
                     translate = Transform.translate(0,0),
@@ -583,12 +594,12 @@ public class NARGraph1 extends Application {
 
                 @Override
                 protected Iterator<TermNode> getVertices() {
-                    double scaleFactor = 100 + 50 * Math.sqrt(1 + terms.size());
+                    double scaleFactor = 100 + 100 * Math.sqrt(1 + terms.size());
                     setScale(scaleFactor);
 
                     termRadius = (float)(1.0f / Math.sqrt(terms.size() + 1));
 
-                    setEquilibriumDistance(0); //termRadius * 1.5f);
+                    setEquilibriumDistance(0f); //termRadius * 1.5f);
 
                     return terms.values().iterator();
                 }
@@ -604,9 +615,9 @@ public class NARGraph1 extends Application {
             };
 
 
-            h.setRepulsiveWeakness(6.0);
-            h.setAttractionStrength(6.0);
-            h.setMaxRepulsionDistance(0.5);
+            h.setRepulsiveWeakness(8.0);
+            h.setAttractionStrength(8.0);
+            h.setMaxRepulsionDistance(2.5);
         }
 
         h.align();
@@ -649,16 +660,20 @@ public class NARGraph1 extends Application {
         primaryStage.setOnCloseRequest((e) -> System.exit(1));
 
 
-        //Equalized d = new Equalized(64,1,1);
-        Default d = new Default(96,1,3);
+        //Equalized d = new Equalized(64,1,3);
+        Default d = new Default(96,3,3);
         d.termLinkForgetDurations.set(1);
         d.conceptCreationExpectation.set(0);
+
+        d.conceptForgetDurations.set(1);
+        d.termLinkForgetDurations.set(1);
+        d.taskLinkForgetDurations.set(1);
 
 
         new NARStream( this.nar = new NAR(d) )
                 .input("$0.9;0.75;0.2$ <a --> b>. %1.00;0.5%",
                         "$0.9;0.75;0.2$ <b --> c>. %1.00;0.5%")
-                .forEachNthFrame(this::updateGraph, 2)
+                .forEachNthFrame(this::updateGraph, 1)
                 .spawnThread(80, t -> t.start());
 
 

@@ -2,6 +2,7 @@ package nars.bag;
 
 import nars.Global;
 import nars.io.in.LibraryInput;
+import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.meter.TestNAR;
 import nars.nar.experimental.Solid;
@@ -26,7 +27,7 @@ public class SolidTest {
 
         Global.DEBUG = false;
 
-        final int numConcepts = 128;
+        final int numConcepts = 96;
         Solid s = new Solid(1, numConcepts, 1, 1, 1, 3) {
 
         };

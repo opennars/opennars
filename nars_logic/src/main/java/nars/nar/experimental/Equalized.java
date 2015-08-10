@@ -14,6 +14,7 @@ import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

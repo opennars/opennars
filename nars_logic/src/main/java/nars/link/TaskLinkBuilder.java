@@ -2,6 +2,7 @@ package nars.link;
 
 import nars.Memory;
 import nars.bag.tx.BagActivator;
+import nars.budget.Budget;
 import nars.task.Sentence;
 import nars.task.Task;
 
@@ -11,6 +12,8 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     TermLinkTemplate template;
     private Task task;
     public final Memory memory;
+    private float forgetCycles;
+    private long now;
 
 
     public TaskLinkBuilder(Memory memory) {
@@ -26,6 +29,25 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 //            setKey(TaskLink.key(template.type, template.index, t));
         setKey(t.sentence);
         setBudget(t);
+        this.forgetCycles = memory.param.cycles(
+                memory.param.taskLinkForgetDurations.floatValue()
+        );
+        this.now = memory.time();
+    }
+
+    @Override
+    public long time() {
+        return now;
+    }
+
+    @Override
+    public float getRelativeThreshold() {
+        return 0;
+    }
+
+    @Override
+    public float getForgetCycles() {
+        return forgetCycles;
     }
 
     public Task getTask() {
@@ -39,16 +61,11 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     @Override
     public TaskLink newItem() {
         if (template == null)
-            return new TaskLink(getTask(), getBudgetRef());
+            return new TaskLink(getTask(), getBudget());
         else
-            return new TaskLink(getTask(), template, getBudgetRef());
+            return new TaskLink(getTask(), template, getBudget());
     }
 
-
-    @Override
-    public TaskLink updateItem(TaskLink taskLink) {
-        return null;
-    }
 
     @Override
     public String toString() {

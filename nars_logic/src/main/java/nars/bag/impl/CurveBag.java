@@ -232,7 +232,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         return items.size();
     }
 
-    public void validate() {
+    void validate() {
         int in = index.size();
         int is = items.size();
             if (Math.abs(is-in) > 2) {
@@ -343,17 +343,18 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     @Override
     public float getPriorityMin() {
-        if (items.isEmpty()) return 0;
+        if (isEmpty()) return 0;
         return items.getLast().getPriority();
     }
 
     @Override
     public float getPriorityMax() {
-        if (items.isEmpty()) return 0;
+        if (isEmpty()) return 0;
         return items.getFirst().getPriority();
     }
 
-//    /**
+
+    //    /**
 //     * calls overflow() on an overflown object
 //     * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
 //     * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses

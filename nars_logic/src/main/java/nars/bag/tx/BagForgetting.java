@@ -42,45 +42,24 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
     }
 
 
-
     @Override
-    public V update(final V v) {
+    public Budget updateItem(V v, Budget result) {
         this.selected = v;
 
-        final float priorityStart = v.getPriority();
+        //final float priorityStart = v.getPriority();
 
-        final float priorityEnd = Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
-        if (priorityStart == priorityEnd) {
-            /** null means it was not changed */
-            return null;
-        }
+        /*final float priorityEnd = */
+        Memory.forget(now, result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
 
-
-        return v;
+        return result;
     }
 
-    @Override
-    public V updateItem(final V v) {
-        throw new RuntimeException("should not be called since update() is overridden");
-    }
 
     @Override
     public V newItem() {
         return null;
     }
 
-    @Override
-    public Budget getBudget() {
-        //this returns null to avoid the default budget merging;
-        // budget manipulation happens entirely in this class's updateItem method
-        return null;
-
-    }
-
-    @Override
-    public Budget getBudgetRef() {
-        return null;
-    }
 
     public V getItem() {
         return null;

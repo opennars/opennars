@@ -106,26 +106,14 @@ abstract public interface Truth extends MetaTruth<Float> {
         return getFrequency() < 0.5;
     }
 
-    /** tests equivalence (according to epsilon precision) */
-    public static boolean isEqual(final float a, final float b, final float epsilon) {
-        final float he = epsilon/2f;
-        if (a > b) return ((a - b) < he);
-        else if ( a < b) return ((b - a) < he);
-        return true;
-    }
-
-
-
 
     /**
      * The hash code of a TruthValue
      * @return The hash code
      */
-    static public int hash(Truth t) {
-        int h = 0;
-        h += Float.floatToRawIntBits(t.getFrequency());
-        h += 31 * Float.floatToRawIntBits(t.getConfidence());
-        return h;
+    static public int hash(final Truth t) {
+        return Float.floatToRawIntBits(t.getFrequency()) +
+         31 * Float.floatToRawIntBits(t.getConfidence());
     }
 
 //    @Override

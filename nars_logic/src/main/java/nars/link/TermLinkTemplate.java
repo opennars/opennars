@@ -221,7 +221,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
         TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
 
-        Term otherTerm = termLinkBuilder.set(this, false).getOther();
+        Term otherTerm = termLinkBuilder.set(this, false, c.getMemory()).getOther();
 
         Concept otherConcept = c.getMemory().conceptualize(otherTerm, this);
         if (otherConcept == null) {
@@ -232,7 +232,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         c.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
         otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
-        Budget termlinkBudget = termLinkBuilder.getBudgetRef();
+        Budget termlinkBudget = termLinkBuilder.getBudget();
 
         if (otherTerm instanceof Compound) {
             otherConcept.linkTerms(termlinkBudget, false);

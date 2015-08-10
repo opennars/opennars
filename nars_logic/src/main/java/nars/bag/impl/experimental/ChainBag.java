@@ -4,6 +4,7 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
+import nars.budget.Budget;
 import nars.budget.Item;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
@@ -185,14 +186,14 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
         final V b = bx.item;
 
         //allow selector to modify it, then if it returns non-null, reinsert
-        final V c = selector.update(b);
-        if (c!=null) {
-            bx.item = c;
-            updatePercentile(c.getPriority());
-            return c;
+
+        final Budget c = selector.updateItem(b, temp.set( b.getBudget() ));
+        if ((c!=null) && (!c.equalsByPrecision(b.getBudget()))) {
+            b.getBudget().set(c);
+            updatePercentile(b.getPriority());
         }
-        else
-            return b;
+
+        return b;
 
     }
 

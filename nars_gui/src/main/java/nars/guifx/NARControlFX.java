@@ -42,6 +42,9 @@ abstract public class NARControlFX extends VBox {
 
             Button bs = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
             bs.setTooltip(new Tooltip("Step"));
+            bs.setOnAction(e -> {
+                n.frame();
+            });
             getChildren().add(bs);
         }
 
@@ -86,11 +89,11 @@ abstract public class NARControlFX extends VBox {
         }
 
 
-        /*getChildren().forEach(c -> {
+        getChildren().forEach(c -> {
             if (c instanceof Control)
                 ((Control) c).setMaxWidth(Double.MAX_VALUE);
-        });*/
-        //b.setFillWidth(true);
+        });
+        setFillWidth(true);
 
 
 

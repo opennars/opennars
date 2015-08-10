@@ -53,7 +53,7 @@ public class BloomFilterNovelPremiseGenerator extends TermLinkBagPremiseGenerato
         this.clearAfterCycles = clearAfterCycles;
     }
 
-    protected byte[] bytes(final Concept c, final TermLink term, final TaskLink task) {
+    protected byte[] bytes(final TermLink term, final TaskLink task) {
         final byte[] b = this.hashBuffer;
 
         int p = 0;
@@ -76,10 +76,10 @@ public class BloomFilterNovelPremiseGenerator extends TermLinkBagPremiseGenerato
     }
 
     @Override
-    public boolean validTermLinkTarget(Concept c, TermLink termLink, TaskLink taskLink) {
-        if (!super.validTermLinkTarget(c, termLink, taskLink)) return false;
+    public boolean validTermLinkTarget(TermLink termLink, TaskLink taskLink) {
+        if (!super.validTermLinkTarget(termLink, taskLink)) return false;
 
-        final long now = c.getMemory().time();
+        final long now = time();
 
         if (now - lastClear >= clearAfterCycles) {
             reset(now);
@@ -94,7 +94,7 @@ public class BloomFilterNovelPremiseGenerator extends TermLinkBagPremiseGenerato
         this.prevTask = taskLink;
 
 
-        final boolean mightContain = history.testBytes(bytes(c, termLink, taskLink));
+        final boolean mightContain = history.testBytes(bytes(termLink, taskLink));
 
         if (mightContain) {
             //nonnovel++;

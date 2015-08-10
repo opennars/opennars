@@ -440,22 +440,15 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         final float priPrev = b.getPriority();
 
         //allow selector to modify it, then if it returns non-null, reinsert
-        E c = selector.update(b);
-        if (c!=null) {
 
-            try {
-                relevel(bx, c);
-            }
-            catch (RuntimeException e) {
-                this.printAll(System.err);
-                throw e;
-            }
+        Budget c = selector.updateItem(b, temp.set( b.getBudget() ));
+        if ((c!=null && !c.equalsByPrecision(b))) {
 
-            return c;
+            b.getBudget().set(c);
+            relevel(bx, b);
         }
-        else
-            return b;
 
+        return b;
     }
 
     protected DD<E> rotateNext() {

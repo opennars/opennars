@@ -2,8 +2,6 @@ package nars.guifx;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import nars.Global;
@@ -80,8 +78,7 @@ public class NARfx extends Application {
         NAR n = new NAR(new Default());
 
         NARPane w = NARfx.window(n);
-        Stage ws = w.newStage();
-        ws.show();
+
 
         for (String s : getParameters().getRaw()) {
             try {
@@ -89,6 +86,12 @@ public class NARfx extends Application {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            n.input(new File("/tmp/h.nal")); //temporary
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         //startup defaults
@@ -157,19 +160,16 @@ public class NARfx extends Application {
     public static NARPane window(NAR nar) {
         NARPane wn = new NARPane(nar);
 
-        Stage removed = window.put(wn, wn.newStage());
+        Stage s;
+        wn.setPrefSize(900, 600);
+        Stage removed = window.put(wn, s = wn.newStage());
+
+        s.show();
 
         if (removed!=null)
             removed.close();
 
         return wn;
-    }
-
-    public static class ConceptPane extends BorderPane {
-
-        public ConceptPane(NAR nar, Concept c) {
-            setCenter(new Label(c.toInstanceString()));
-        }
     }
 
     public static void window(NAR nar, Concept c) {

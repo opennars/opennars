@@ -42,7 +42,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
      * @param budget The initial budget
      */
     protected Item( final Budget budget) {
-        super(budget);
+        super(budget, false);
     }
 
     /** sets the intial budget values */

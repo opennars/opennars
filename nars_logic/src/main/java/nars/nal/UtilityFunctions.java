@@ -163,5 +163,10 @@ public class UtilityFunctions {
     public final static float mean(final float a, final float b) {
         return (a+b)*0.5f;
     }
+
+    /** tests equivalence (according to epsilon precision) */
+    public static boolean isEqual(final float a, final float b, final float epsilon) {
+        return Math.abs(a-b) < epsilon;
+    }
 }
 

@@ -1,21 +1,22 @@
 package nars.bag.tx;
 
+import nars.Memory;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.budget.Itemized;
+import sun.rmi.server.Activation;
 
 /**
 * Created by me on 1/19/15.
 */
-abstract public class BagActivator<K,V extends Itemized<K>> extends Budget implements BagTransaction<K,V> {
+abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransaction<K,V> {
 
 
 
     protected K key;
+    Budget nextActivation = new Budget();
 
-    public BagActivator() {
-        super(0,0,0);
-    }
 
     public K getKey() {
         return key;
@@ -23,7 +24,11 @@ abstract public class BagActivator<K,V extends Itemized<K>> extends Budget imple
 
 
     public void setBudget(Budget budget) {
-        set(budget);
+        nextActivation.set(budget);
+    }
+
+    public Budget getBudget() {
+        return nextActivation;
     }
 
     public void setKey(K key) {
@@ -36,15 +41,24 @@ abstract public class BagActivator<K,V extends Itemized<K>> extends Budget imple
     }
 
 
-    @Override
-    public Budget getBudget() {
-        return clone();
+    public float getActivationFactor() {
+        return 1f;
     }
 
-    /** returns a reference to the budgetvalue; not a clone */
-    @Deprecated public Budget getBudgetRef() {
-        return this;
+    abstract public long time();
+
+    @Override public Budget updateItem(V v, Budget result) {
+        Memory.forget(time(), result, getForgetCycles(), getRelativeThreshold());
+
+        BudgetFunctions.activate(result, nextActivation, BudgetFunctions.Activating.Accum, getActivationFactor());
+
+        result.accumulate(nextActivation);
+        return result;
     }
+
+    abstract public float getForgetCycles();
+
+    abstract public float getRelativeThreshold();
 
     @Override
     public String toString() {

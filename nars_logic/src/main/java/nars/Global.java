@@ -82,7 +82,7 @@ public class Global {
 
 
     /** minimum difference necessary to cause a modifciation in budget components */
-    public static float BUDGET_EPSILON = 0.005f/2f;
+    public static float BUDGET_EPSILON = 0.01f/2f;
 
 
     /* ---------- default input values ---------- */
@@ -180,7 +180,7 @@ public class Global {
      * in which case the forgetting will have been applied some amount of time past
      * when it would have completed its forget descent.
      */
-    @Deprecated public static final float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.0f;
+    @Deprecated public static final float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.02f;
 
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
     @Deprecated public static final float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.0f;

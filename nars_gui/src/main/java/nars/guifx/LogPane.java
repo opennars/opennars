@@ -7,6 +7,7 @@ import javafx.scene.text.Text;
 import nars.NAR;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
+import nars.task.Task;
 
 import java.util.Arrays;
 
@@ -39,7 +40,12 @@ public class LogPane extends VBox {
     }
 
     public Node getNode(Output.Channel channel, Class event, Object[] args) {
-        StringBuilder sb = TextOutput.append(event, args, true, nar, new StringBuilder());
+
+        if (args[0] instanceof Task) {
+            return new TaskPane(channel, nar, (Task)args[0]);
+        }
+
+        StringBuilder sb = TextOutput.append(event, args, false, nar, new StringBuilder());
         final String s;
         if (sb != null)
             s = sb.toString();
