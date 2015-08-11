@@ -268,24 +268,6 @@ public class Memory implements Serializable, AbstractMemory {
         return null;
     }
 
-    /**
-     * this will not remove a concept. it is not good to use directly because it
-     * can disrupt the bag's priority order. it should only be used after it has
-     * been removed then before inserted
-     * @return the resulting priority
-     * TODO move to BudgetFunctions
-     */
-    static public float forget(long now, final Budget b, final float forgetCycles, final float relativeThreshold) {
-        /*switch (param.forgetting) {
-            case Iterative:
-                BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
-                break;
-            case Periodic:*/
-                return BudgetFunctions.forgetPeriodic(b, forgetCycles, relativeThreshold, now);
-                //break;
-        //}
-    }
-
     public void setLevel(int nalLevel) {
         if ((nalLevel < 1) || (nalLevel > 8))
             throw new RuntimeException("NAL level must be between 1 and 8 (inclusive)");

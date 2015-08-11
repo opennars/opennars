@@ -2,9 +2,9 @@ package nars.bag.tx;
 
 import nars.AbstractMemory;
 import nars.Global;
-import nars.Memory;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.budget.Itemized;
 
 /**
@@ -49,7 +49,14 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
         //final float priorityStart = v.getPriority();
 
         /*final float priorityEnd = */
-        Memory.forget(now, result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
+        /*switch (param.forgetting) {
+            case Iterative:
+                BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+                break;
+            case Periodic:*/
+        BudgetFunctions.forgetPeriodic(result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY, now);
+        //break;
+        //}
 
         return result;
     }

@@ -48,12 +48,12 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
     abstract public long time();
 
     @Override public Budget updateItem(V v, Budget result) {
-        Memory.forget(time(), result, getForgetCycles(), getRelativeThreshold());
 
-        BudgetFunctions.activate(result, nextActivation, BudgetFunctions.Activating.Accum, getActivationFactor());
 
-        result.accumulate(nextActivation);
-        return result;
+        nextActivation.mulPriority(getActivationFactor());
+        return result
+                .forget(time(), getForgetCycles(), getRelativeThreshold())
+                .accumulate(nextActivation);
     }
 
     abstract public float getForgetCycles();

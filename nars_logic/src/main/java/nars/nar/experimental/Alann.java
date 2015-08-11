@@ -9,6 +9,7 @@ import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.clock.CycleClock;
@@ -22,7 +23,6 @@ import nars.meter.NARTrace;
 import nars.nal.LogicPolicy;
 import nars.nar.Default;
 import nars.premise.Premise;
-import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.process.concept.TableDerivations;
@@ -208,18 +208,30 @@ public class Alann extends NARSeed {
 
         protected void forget() {
             //TODO make sure # cycles relative to duration are appropriately used
-            Memory.forget(memory.time(),
-                    this, memory.param.conceptForgetDurations.floatValue(), 0);
+            /*switch (param.forgetting) {
+                case Iterative:
+                    BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+                    break;
+                case Periodic:*/
+            BudgetFunctions.forgetPeriodic(this, memory.param.conceptForgetDurations.floatValue(), (float) 0, memory.time());
         }
         protected void forget(TermLink tl) {
             //TODO make sure # cycles relative to duration are appropriately used
-            Memory.forget(memory.time(),
-                    tl, memory.param.termLinkForgetDurations.floatValue(), 0);
+            /*switch (param.forgetting) {
+                case Iterative:
+                    BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+                    break;
+                case Periodic:*/
+            BudgetFunctions.forgetPeriodic(tl, memory.param.termLinkForgetDurations.floatValue(), (float) 0, memory.time());
         }
         protected void forget(TaskLink tl) {
             //TODO make sure # cycles relative to duration are appropriately used
-            Memory.forget(memory.time(),
-                    tl, memory.param.termLinkForgetDurations.floatValue(), 0);
+            /*switch (param.forgetting) {
+                case Iterative:
+                    BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+                    break;
+                case Periodic:*/
+            BudgetFunctions.forgetPeriodic(tl, memory.param.termLinkForgetDurations.floatValue(), (float) 0, memory.time());
         }
 
         protected void onSpike(TaskLink taskLink, float multiplier) {

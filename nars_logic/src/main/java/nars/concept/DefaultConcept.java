@@ -202,40 +202,40 @@ public class DefaultConcept extends AbstractConcept {
             return linkTerms(t, true);  // recursively insert TermLink
         return false;
     }
-
-    /**
-     * for batch processing a collection of tasks; more efficient than processing them individually
-     */
-    //TODO untested
-    public void link(Collection<Task> tasks) {
-
-        final int s = tasks.size();
-        if (s == 0) return;
-
-        if (s == 1) {
-            link(tasks.iterator().next());
-            return;
-        }
-
-
-        //aggregate a merged budget, allowing a maximum of (1,1,1)
-        Budget aggregateBudget = null;
-        for (Task t : tasks) {
-            if (linkTask(t)) {
-                if (aggregateBudget == null) aggregateBudget = new Budget(t, false);
-                else {
-                    //aggregateBudget.merge(t);
-                    aggregateBudget.accumulate(t);
-                }
-            }
-        }
-
-        //linkToTerms the aggregate budget, rather than each task's budget separately
-        if (aggregateBudget != null) {
-            linkTerms(aggregateBudget, true);
-        }
-    }
-
+//
+//    /**
+//     * for batch processing a collection of tasks; more efficient than processing them individually
+//     */
+//    //TODO untested
+//    public void link(Collection<Task> tasks) {
+//
+//        final int s = tasks.size();
+//        if (s == 0) return;
+//
+//        if (s == 1) {
+//            link(tasks.iterator().next());
+//            return;
+//        }
+//
+//
+//        //aggregate a merged budget, allowing a maximum of (1,1,1)
+//        Budget aggregateBudget = null;
+//        for (Task t : tasks) {
+//            if (linkTask(t)) {
+//                if (aggregateBudget == null) aggregateBudget = new Budget(t, false);
+//                else {
+//                    //aggregateBudget.merge(t);
+//                    aggregateBudget.accumulate(t);
+//                }
+//            }
+//        }
+//
+//        //linkToTerms the aggregate budget, rather than each task's budget separately
+//        if (aggregateBudget != null) {
+//            linkTerms(aggregateBudget, true);
+//        }
+//    }
+//
 
 
 
@@ -579,8 +579,9 @@ public class DefaultConcept extends AbstractConcept {
             //return false;
         }
 
-        float dur = 0, qua = 0;
-        if (taskBudget != null) {
+        boolean activity = false;
+        if ((taskBudget != null) && (recipients > 0)) {
+            float dur, qua;
             //TODO make this parameterizable
 
             //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
@@ -592,14 +593,7 @@ public class DefaultConcept extends AbstractConcept {
             subPriority = taskBudget.getPriority() / recipients;
             dur = taskBudget.getDurability();
             qua = taskBudget.getQuality();
-        } else {
-            subPriority = 0;
-        }
 
-
-        boolean activity = false;
-
-        if (recipients > 0) {
             final List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
             int numTemplates = templates.size();
@@ -609,13 +603,18 @@ public class DefaultConcept extends AbstractConcept {
 
                 //only apply this loop to non-transform termlink templates
                 if (template.type != TermLink.TRANSFORM) {
-                    if (template.link(this, subPriority, dur, qua, updateTLinks))
+                    template.accumulate(this);
+                    if (template.link(this, updateTLinks))
                         activity = true;
                 }
 
             }
-
+        } else {
+            subPriority = 0;
         }
+
+
+
 
         //TODO merge with above loop, or avoid altogether under certain conditions
 
@@ -637,7 +636,7 @@ public class DefaultConcept extends AbstractConcept {
     }
 
     boolean linkTerm(TermLinkTemplate template, boolean updateTLinks) {
-        return template.link(this, 0,0, 0, updateTLinks);
+        return template.link(this, updateTLinks);
         //return linkTerm(template, 0, 0, 0, updateTLinks);
     }
 

@@ -57,9 +57,9 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      */
     abstract public V put(V newItem);
 
-    protected boolean merge(Budget newBudget, Budget oldBudget) {
-        //return newBudget.mergeIfChanges( oldBudget, Global.BUDGET_EPSILON );
-        return newBudget.accumulateIfChanges( oldBudget, Global.BUDGET_EPSILON );
+    protected void merge(Budget newBudget, Budget oldBudget) {
+        newBudget.merge( oldBudget );
+        //newBudget.accumulate( oldBudget  );
     }
 
     /**
