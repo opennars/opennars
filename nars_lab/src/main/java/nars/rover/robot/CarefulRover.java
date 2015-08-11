@@ -1,9 +1,11 @@
 package nars.rover.robot;
 
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
+import nars.rover.obj.VisionRay;
 import nars.task.Task;
 import nars.term.Term;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -14,8 +16,8 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Motor with full and precise control over its sense input
@@ -29,10 +31,9 @@ public class CarefulRover extends AbstractPolygonBot {
     int numPixels = 8;
 
 
-
     final ArrayList<String> randomActions = new ArrayList<>();
     private float visionDistanceFactor = 1f;
-    List<VisionRay> pixels = new ArrayList();
+    Map<String,VisionRay> pixels = Global.newHashMap();
 
     public void randomAction() {
         int x = (int) (Math.random() * randomActions.size());
@@ -46,17 +47,17 @@ public class CarefulRover extends AbstractPolygonBot {
         //float priority = operation.getTask().getPriority();
 
         int al = args.length;
-        if (args[al-1].equals(memory.self()))
+        if (args[al - 1].equals(memory.self()))
             al--;
 
         String command = "";
-        if (al == 1 ) {
+        if (al == 1) {
             command = t1.toString();
         }
-        if (al == 2 ) {
+        if (al == 2) {
             Term t2 = args[1];
             command = t1.toString() + "," + t2.toString();
-        } else if (al == 3 ) {
+        } else if (al == 3) {
             Term t2 = args[1];
             Term t3 = args[2];
             command = t1.toString() + "," + t2.toString() + "," + t3.toString();
@@ -66,7 +67,33 @@ public class CarefulRover extends AbstractPolygonBot {
 
     public CarefulRover(String id, NAR nar) {
         super(id, nar);
+    }
 
+    protected void initSensors(Body torso) {
+        Vec2 center = new Vec2(0, 0);
+
+        float da = (float) (Math.PI * 2 / numPixels);
+        float a = 0;
+        for (int i = 0; i < numPixels; i++) {
+            VisionRay v = new VisionRay(this, torso,
+                        /*eats ?*/ center /*: new Vec2(0,0)*/,
+                    a, da, 3, 10, 8) {
+
+                @Override
+                protected float getDistance() {
+                    return distance * visionDistanceFactor;
+                }
+            };
+            pixels.put(v.angleTerm, v);
+
+            draw.addLayer(v);
+            senses.add(v);
+
+            a += da;
+        }
+
+    }
+    protected void initMotors(Body torso) {
         nar.on(new NullOperator("vision") {
             @Override
             protected List<Task> execute(Operation o, Memory memory) {
@@ -86,40 +113,37 @@ public class CarefulRover extends AbstractPolygonBot {
 //                        default:
 //                            return null;
 //                    }
-                    String[] angle = sections[0].split("a");
-                    System.out.println(Arrays.toString(angle));
-                    if (angle.length == 2) {
-                        int a = Integer.parseInt(angle[1]);
-                        if (a < pixels.size()) {
-                            float dist;
-                            dist = 5 + 20f * o.getTask().getTruth().getFrequency(); //getExpectation();
-                            pixels.get(a).setDistance(dist);
-                        }
-                    }
+                    String angle = sections[0];
+
+                    float dist;
+                    dist = 5 + 20f * o.getTask().getTruth().getExpectation();
+                    VisionRay vr = pixels.get(angle);
+                    if (vr != null)
+                        vr.setDistance(dist);
+
+
                 }
 
                 return null;
             }
         });
 
-        for (int i = 0; i < numPixels; i++) {
-            randomActions.add("vision(a" + i+")! :!: %1%");
-            randomActions.add("vision(a" + i+")! :|: %0%");
+        System.out.println(pixels);
+        for (String a : pixels.keySet()) {
+            randomActions.add("vision(" + a + ")! :!: %1%");
+            randomActions.add("vision(" + a + ")! :|: %0%");
         }
 
-        randomActions.add("vision(far)!");
-        randomActions.add("vision(near)!");
-
-        randomActions.add("motor(left)!");
+        randomActions.add("motor(left)! :|:");
         //randomActions.add("motor(left,left)!");
-        randomActions.add("motor(right)!");
+        randomActions.add("motor(right)! :|:");
         //randomActions.add("motor(right,right)!");
         //randomActions.add("motor(forward,forward)!"); //too much actions are not good,
-        randomActions.add("motor(forward)!"); //however i would agree if <motor(forward,forward) --> motor(forward)>.
+        randomActions.add("motor(forward)! :|:"); //however i would agree if <motor(forward,forward) --> motor(forward)>.
         //randomActions.add("motor(forward,forward)!");
         //randomActions.add("motor(forward)!");
-        randomActions.add("motor(reverse)!");
-        randomActions.add("motor(stop)!");
+        randomActions.add("motor(reverse)! :|:");
+        randomActions.add("motor(stop)! :|:");
         //randomActions.add("motor(random)!");
 
         nar.on(new NullOperator("motor") {
@@ -145,28 +169,30 @@ public class CarefulRover extends AbstractPolygonBot {
                     }
                 }
 
-                int rspeed = 15;
+                float strength = operation.getTaskExpectation();
+                float rotSpeed = 15 * strength;
+                float linSpeed = 1 * strength;
                 switch (command) {
                     case "right":
-                        rotateRelative(-rspeed);
+                        rotateRelative(-rotSpeed);
                         break;
                     case "right,right":
-                        rotateRelative(-rspeed*2);
+                        rotateRelative(-rotSpeed * 2);
                         break;
                     case "left":
-                        rotateRelative(+rspeed);
+                        rotateRelative(+rotSpeed);
                         break;
                     case "left,left":
-                        rotateRelative(+rspeed*2);
+                        rotateRelative(+rotSpeed * 2);
                         break;
                     case "forward,forward":
-                        thrustRelative(3);
+                        thrustRelative(+2 * linSpeed);
                         break;
                     case "forward":
-                        thrustRelative(1);
+                        thrustRelative(+linSpeed);
                         break;
                     case "reverse":
-                        thrustRelative(-1);
+                        thrustRelative(-linSpeed);
                         break;
                     case "stop":
                         stop();
@@ -203,8 +229,8 @@ public class CarefulRover extends AbstractPolygonBot {
         shape.set(vertices, vertices.length);
         //shape.m_centroid.set(bodyDef.position);
         BodyDef bd = new BodyDef();
-        bd.linearDamping=(linearDamping);
-        bd.angularDamping=(angularDamping);
+        bd.linearDamping = (linearDamping);
+        bd.angularDamping = (angularDamping);
         bd.type = BodyType.DYNAMIC;
         bd.position.set(0, 0);
 
@@ -213,28 +239,10 @@ public class CarefulRover extends AbstractPolygonBot {
         f.setRestitution(restitution);
         f.setFriction(friction);
 
-        Vec2 center = new Vec2(0,0);
+        initSensors(torso);
+        initMotors(torso);
 
-        float da = (float)(Math.PI*2/numPixels);
-        float a = 0;
-        for (int i = 0; i < numPixels; i++) {
-            VisionRay v = new VisionRay(torso,
-                        /*eats ?*/ center /*: new Vec2(0,0)*/,
-                    a, da, 3, 10, 8) {
-
-                @Override protected float getDistance() {
-                    return distance * visionDistanceFactor;
-                }
-            };
-            pixels.add(v);
-
-            draw.addLayer(v);
-            senses.add(v);
-
-            a += da;
-        }
-
-            return torso;
+        return torso;
 
     }
 

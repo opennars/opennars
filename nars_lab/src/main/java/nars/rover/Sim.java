@@ -31,7 +31,7 @@ public class Sim extends PhysicsModel {
     boolean wraparound = false;
 
     public final List<Robotic> robots = Global.newArrayList();
-    final int angleResolution = 24;
+    final static int angleResolution = 13;
 
 
     PhysicsRun phy = new PhysicsRun(10, this);
@@ -159,9 +159,9 @@ public class Sim extends PhysicsModel {
 
     public int cnt = 0;
 
-    String[] angleTerms = new String[angleResolution];
+    static String[] angleTerms = new String[angleResolution];
 
-    public String angleTerm(final float a) {
+    public static String angleTerm(final float a) {
         float h = (float) normalizeAngle(a);
         h /= MathUtils.PI*2.0f;
         int i = (int) (h * angleResolution / 1f);

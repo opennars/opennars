@@ -4,15 +4,11 @@
  */
 package nars.rover.robot;
 
-import nars.Memory;
 import nars.NAR;
 import nars.io.in.ChangedTextInput;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.NullOperator;
 import nars.rover.Sim;
+import nars.rover.obj.VisionRay;
 import nars.rover.physics.gl.JoglDraw;
-import nars.task.Task;
-import nars.term.Term;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
@@ -20,9 +16,6 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -138,7 +131,7 @@ public class Rover extends AbstractPolygonBot {
 
             //System.out.println(i + " " + angle + " " + eats);
 
-            VisionRay v = new VisionRay(torso,
+            VisionRay v = new VisionRay(this, torso,
                     /*eats ?*/ mouthPoint /*: new Vec2(0,0)*/,
                     angle, aStep, retinaRaysPerPixel, L, distanceResolution) {
 
@@ -208,7 +201,7 @@ public class Rover extends AbstractPolygonBot {
                 return desire;
             }
         };
-        /*new CycleDesire("motor(forward,SELF)", strongestTask, nar) {
+        /*new CycleDesire("motor(forward)", strongestTask, nar) {
             @Override
             float onFrame(float desire) {
                 thrustRelative(desire * linearThrustPerCycle);
@@ -216,14 +209,14 @@ public class Rover extends AbstractPolygonBot {
             }
 
         };*/
-        /*new CycleDesire("motor(reverse,SELF)", strongestTask, nar) {
+        /*new CycleDesire("motor(reverse)", strongestTask, nar) {
             @Override float onCycle(float desire) {
                 thrustRelative(desire * -linearThrustPerCycle);
                 return desire;
             }
         };*/
 
-        new BiCycleDesire("motor(forward,SELF)", "motor(reverse,SELF)", strongestTask,nar) {
+        new BiCycleDesire("motor(forward)", "motor(reverse)", strongestTask,nar) {
 
             @Override
             float onFrame(float desire, boolean positive) {
@@ -237,7 +230,7 @@ public class Rover extends AbstractPolygonBot {
             }
         };
 
-        new BiCycleDesire("motor(left,SELF)", "motor(right,SELF)", strongestTask,nar) {
+        new BiCycleDesire("motor(left)", "motor(right)", strongestTask,nar) {
 
             @Override
             float onFrame(float desire, boolean positive) {
@@ -252,13 +245,13 @@ public class Rover extends AbstractPolygonBot {
             }
         };
 //
-//        new CycleDesire("motor(left,SELF)", strongestTask, nar) {
+//        new CycleDesire("motor(left)", strongestTask, nar) {
 //            @Override float onCycle(float desire) {
 //
 //                return desire;
 //            }
 //        };
-//        new CycleDesire("motor(right,SELF)", strongestTask, nar) {
+//        new CycleDesire("motor(right)", strongestTask, nar) {
 //            @Override float onCycle(float desire) {
 //
 //                return desire;
