@@ -170,19 +170,14 @@
 //// implication-based decomposition
 
     (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
-
     (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
-
     (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
-
     (M ==> S), (M ==> (||,S,A_1..n)) |- (M ==> (||,A_1..n)), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
 
 //// conditional syllogism
 
     M, (M ==> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate)
-
     M, (P ==> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive, Order:ForAllSame)
-
     M, (S <=> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive, Order:ForAllSame)
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
@@ -200,15 +195,11 @@
 //// multi-conditional syllogism
 
     ((&&,M,A_1..n) ==> C), M |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
-
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
-
     ((&&,A_1..n) ==> C), M |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
 
     ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
-
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction, Order:ForAllSame)
-
     ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
 
 //// variable introduction
@@ -253,7 +244,6 @@
 //// dependent variable elimination
 
     (&&,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
-
     (&&,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
 //// independent variable elimination
