@@ -5,7 +5,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import nars.io.Texts;
 import org.apache.commons.math3.util.FastMath;
@@ -15,7 +15,7 @@ import java.util.function.DoubleSupplier;
 /**
  * Created by me on 8/10/15.
  */
-public class LinePlot extends StackPane {
+public class LinePlot extends Canvas {
 
     public static final ColorArray BlueRed = new ColorArray(128, Color.BLUE, Color.RED);
 
@@ -28,37 +28,34 @@ public class LinePlot extends StackPane {
     private String label;
     private double mean;
     int count;
-    Canvas canvas;
 
     public LinePlot(String name, DoubleSupplier valueFunc, int history) {
-        super();
+        super(300,300);
 
 
-        canvas = new Canvas();
-        canvas.widthProperty().bind(widthProperty());
-        canvas.heightProperty().bind(heightProperty());
-        ChangeListener sizechanged = new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                update();
-            }
-        };
-        canvas.widthProperty().addListener(sizechanged);
-        canvas.heightProperty().addListener(sizechanged);
+//        ChangeListener sizechanged = new ChangeListener() {
+//            @Override
+//            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+//                update();
+//            }
+//        };
+//        widthProperty().addListener(sizechanged);
+//        heightProperty().addListener(sizechanged);
 
-        getChildren().add(canvas);
 
         this.name = name;
         this.history = new DoubleArrayList(history);
         this.maxHistory = history;
         this.valueFunc = valueFunc;
 
-        //autosize();
+        update();
     }
+
+
 
     public void update() {
 
-        GraphicsContext g = canvas.getGraphicsContext2D();
+        GraphicsContext g = getGraphicsContext2D();
 
         final double W = g.getCanvas().getWidth();
         final double H = g.getCanvas().getHeight();
@@ -135,6 +132,7 @@ public class LinePlot extends StackPane {
         g.fillText(label, 10, 25);
 
         g.restore();
+
     }
 
 }

@@ -7,7 +7,8 @@ import nars.clock.SimulatedClock;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.io.in.ChangedTextInput;
-import nars.nal.nal2.Property;
+import nars.nal.nal2.Instance;
+import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.rl.gng.NeuralGasNet;
 import nars.rover.Material;
@@ -523,7 +524,7 @@ public abstract class AbstractPolygonBot extends Robotic {
         final ChangedTextInput sight =
                 //new SometimesChangedTextInput(nar, minVisionInputProbability);
                 new ChangedTextInput(nar);
-        private final String seenAngleTerm;
+        //private final String seenAngleTerm;
 
         RayCastClosestCallback ccallback = new RayCastClosestCallback();
         private final Body body;
@@ -548,7 +549,7 @@ public abstract class AbstractPolygonBot extends Robotic {
             this.point = point;
             this.angle = angle;
             this.angleTerm = sim.angleTerm(angle);
-            this.seenAngleTerm = "see_" + sim.angleTerm(angle);
+            //this.seenAngleTerm = //"see_" + sim.angleTerm(angle);
             this.arc = arc;
             this.resolution = resolution;
             this.distance = length;
@@ -567,7 +568,7 @@ public abstract class AbstractPolygonBot extends Robotic {
             float conceptQuality;
 
             if (angleConcept == null) {
-                angleConcept = nar.memory.concept(seenAngleTerm);
+                angleConcept = nar.memory.concept(angleTerm);
             }
 
             if (angleConcept!=null) {
@@ -743,8 +744,13 @@ public abstract class AbstractPolygonBot extends Robotic {
 
             //TODO move to constructor
             if (thisAngle == null)
-                thisAngle = Atom.the("see_" + angleTerm);
-            Compound tt = Property.make( thisAngle ,  Atom.the(material) );
+                thisAngle = Atom.the(angleTerm);
+            Compound tt =
+                    Instance.make(
+                        Product.make( thisAngle,  Atom.the(material) ),
+                        Atom.the("see")
+                    );
+
 
             nar.input(nar.task(tt).belief().present().truth(freq, conf).get());
         }
