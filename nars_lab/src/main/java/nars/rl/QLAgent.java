@@ -9,8 +9,9 @@ import nars.Op;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.OpReaction;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.DecideAllGoals;
 import nars.nal.nal8.decide.Decider;
@@ -76,7 +77,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         if (o == null) {
             //TODO avoid String here
             o = operationCache[i] =
-                    Operation.make( Product.make(Atom.the(i), nar.memory.self()), operator );
+                    Operation.make( Product.make(Atom.the(i)), operator );
             operationToAction.put(o, i);
         }
         return o;
@@ -129,7 +130,6 @@ public class QLAgent<S extends Term> extends NARAgent {
         this.actByQ = new ArrayRealVector(numActions);
         this.lastActByQ = new ArrayRealVector(numActions);
         this.combinedDesire = new ArrayRealVector(numActions);
-
 
         this.decision = new FrameDecisionOperator(operator, env.numActions());
 
@@ -334,7 +334,8 @@ public class QLAgent<S extends Term> extends NARAgent {
         ql.goalReward();
 
 
-        learn(nextAction, before, QLAgent.this.now, r);
+        if (nextAction!=null)
+            learn(nextAction, before, QLAgent.this.now, r);
 
         //System.out.println(nextAction + " " + lastAction);
 
@@ -389,7 +390,11 @@ public class QLAgent<S extends Term> extends NARAgent {
             double alpha = lastTask.getTruth().getExpectation();
             //double lastTaskExpectation = lastTask.getTruth().getExpectation();
 
-            double qLast = ql.q(lastState, lastAction, alpha);
+            final double qLast;
+            if (lastAction!=null)
+                qLast = ql.q(lastState, lastAction, alpha);
+            else
+                qLast = 0;
 
             for (Task i : currentStateTasks) {
 
@@ -582,8 +587,8 @@ public class QLAgent<S extends Term> extends NARAgent {
 
         boolean filterNegativeGoals = true;
 
-        public FrameDecisionOperator(Term operationTerm, int numActions) {
-            super(operationTerm);
+        public FrameDecisionOperator(Operator operationTerm, int numActions) {
+            super(operationTerm.the());
 
             this.actByPriority = new ArrayRealVector(numActions);
             this.actByExpectation = new ArrayRealVector(numActions);

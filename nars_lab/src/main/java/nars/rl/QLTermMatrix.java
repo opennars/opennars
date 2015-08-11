@@ -232,6 +232,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
     public Implication qterm(S s, A a) {
+        if (a == null)
+            throw new RuntimeException("action null");
         return Implication.make(s, a, implicationOrder);
         /*
         Implication i = termCache.get(s, a);

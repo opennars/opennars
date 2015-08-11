@@ -5,8 +5,8 @@ import org.apache.commons.math3.util.MathUtils;
 
 public class MyPerception  {
 
-    public static final int RADAR_ANGLES = 15;
-    public static final int RADAR_DISTS = 4; //rows
+    public static final int RADAR_ANGLES = 8;
+    public static final int RADAR_DISTS = 2; //rows
     private static final long serialVersionUID = 1L;
     public static final double RADAR_R = Math.PI*2.0 / RADAR_ANGLES; //0.6 = mostly front
     public static final double RADAR_D = 25;

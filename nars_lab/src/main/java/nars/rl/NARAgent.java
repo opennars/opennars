@@ -37,7 +37,7 @@ abstract public class NARAgent {
 
     /** call at the end of an implementation's constructor */
     protected void init() {
-        opReg = nar.on(getOperator(operator));
+        opReg = nar.on(getOperator(operator.the()));
     }
 
     protected abstract OpReaction getOperator(Term operator);

@@ -51,6 +51,7 @@ abstract public class OpReaction implements Reaction<Term> {
     public final Term term;
     protected NAR nar;
 
+
     public OpReaction(Term term) {
         this.term = term;
     }

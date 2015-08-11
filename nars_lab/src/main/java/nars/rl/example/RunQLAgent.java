@@ -99,7 +99,7 @@ public class RunQLAgent extends JPanel {
 
         nar = new NAR(dd);
 
-        agent = new QLAgent(nar, "A", "<n --> [g]>", env, p) {
+        agent = new QLAgent(nar, "O", "<n --> [g]>", env, p) {
 
             final QVis qvis = new QVis(this) {
 
