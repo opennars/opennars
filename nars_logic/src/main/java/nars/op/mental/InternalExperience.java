@@ -9,6 +9,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
@@ -92,11 +93,11 @@ public class InternalExperience extends NARReaction {
     //public static boolean enabled=true;
 
     private final AbstractMemory memory;
-    public final static Atom believe = Atom.the("believe");
-    public final static Atom want = Atom.the("want");;
-    public final static Atom wonder = Atom.the("wonder");;
-    public final static Atom evaluate = Atom.the("evaluate");;
-    public final static Atom anticipate = Atom.the("anticipate");
+    public final static Operator believe = Operator.the("believe");
+    public final static Operator want = Operator.the("want");;
+    public final static Operator wonder = Operator.the("wonder");;
+    public final static Operator evaluate = Operator.the("evaluate");;
+    public final static Operator anticipate = Operator.the("anticipate");
 
 
 
@@ -120,7 +121,7 @@ public class InternalExperience extends NARReaction {
     }
 
     public static Operation toTerm(final Sentence s, final NAL nal, boolean enableWantBelieve) {
-        Atom opTerm;
+        Operator opTerm;
         switch (s.punctuation) {
             case Symbols.JUDGMENT:
                 if(!enableWantBelieve)
@@ -152,7 +153,7 @@ public class InternalExperience extends NARReaction {
         }
         arg[k] = nal.self();
         
-        Operation operation = Operation.make(opTerm, Product.make(arg));
+        Operation operation = Operation.make( Product.make(arg), opTerm );
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }

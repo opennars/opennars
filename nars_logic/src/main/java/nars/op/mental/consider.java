@@ -22,6 +22,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.process.ConceptProcessTaskLink;
 import nars.task.Task;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
  */
 public class consider extends SynchOperator implements Mental {
 
-    public static Atom consider = Atom.the("consider");
+    public static Operator consider = Operator.the("consider");
 
     public static Budget budgetMentalConcept(final Operation o) {
         return o.getTask();

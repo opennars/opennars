@@ -21,8 +21,10 @@
 package nars.nal.nal1;
 
 import nars.Op;
+import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
@@ -79,12 +81,11 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
             return null;
         }
 
-        if (Operation.validOperatorTerm(predicate) && (subject.getVolume() > 2)) {
-            //subject mass > 1 means it is a compound, > 2 ensures that it is a set wrapping a product wrapping > 0 arguments
-            Product operationArgument = Operation.getArgumentProduct((Compound)subject);
-            if (operationArgument!=null) {
-                return Operation.make(predicate, operationArgument);
-            }
+        if (predicate instanceof Operator) {
+            if (subject instanceof Product)
+                return Operation.make( (Product)subject, (Operator)predicate );
+            else if ((subject instanceof SetExt1) && ((((SetExt1)subject).the()) instanceof Product))
+                return Operation.make( (SetExt1)subject, (Operator)predicate );
         }
 
         return new Inheritance(subject, predicate);

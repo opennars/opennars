@@ -16,7 +16,7 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.OpReaction;
 import nars.narsese.NarseseParser;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
@@ -423,7 +423,7 @@ public class Derivations extends DirectedMultigraph {
             //atomic term
             return genericLiteral(t, unique);
         }
-        else if (t instanceof Operator) {
+        else if (t instanceof OpReaction) {
             return t.toString();
         }
         else if (t instanceof Variable) {

@@ -26,6 +26,7 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
 import nars.task.Sentence;
@@ -420,6 +421,8 @@ public class NarseseParser extends BaseParser<Object> {
                         QuotedMultilineLiteral(),
                         QuotedLiteral(),
 
+                        Operator(),
+
                         RangeTerm(),
                         meta ? TaskRule() : nothing(),
 
@@ -434,7 +437,7 @@ public class NarseseParser extends BaseParser<Object> {
                                 includeOperation,
                                 NonOperationTerm(),
                                 Op.COMPOUND_TERM_OPENER.str,
-                                MultiArgTerm(Op.OPERATION, Op.COMPOUND_TERM_CLOSER, false, false, false, true)
+                                MultiArgTerm(Op.OPERATOR, Op.COMPOUND_TERM_CLOSER, false, false, false, true)
                         ),
 
 
@@ -504,6 +507,11 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
+
+    Rule Operator() {
+        return sequence(OPERATOR.ch, NonOperationTerm(),
+                push(new Operator((Term)pop())));
+    }
 
     final static String invalidAtomCharacters = " ,.!?" + Symbols.INTERVAL_PREFIX_OLD + "<>-=*|&()<>[]{}%#$@\'\"\t\n";
 
@@ -771,7 +779,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                 s(), Op.COMPOUND_TERM_OPENER.ch, s(), Op.COMPOUND_TERM_CLOSER.ch,
 
-                push(popTerm(Op.OPERATION, false))
+                push(popTerm(Op.OPERATOR, false))
         );
     }
 
@@ -824,7 +832,7 @@ public class NarseseParser extends BaseParser<Object> {
             }
 
             if (p == Operation.class) {
-                op = OPERATION;
+                op = OPERATOR;
                 break;
             }
 
@@ -867,15 +875,16 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 
-        if (op == OPERATION) {
+        if (op == OPERATOR) {
             //temporary
-            final Term self = Atom.the("SELF");//memory.self();
+            //final Term self = Atom.the("SELF");//memory.self();
 
             //automatically add SELF term to operations if in NAL8+
-            if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
-                vectorterms.add(self); //SELF in final argument*/
+            /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
+                vectorterms.add(self);*/ //SELF in final argument
 
-            return Operation.make(vectorterms.get(0), Product.make(vectorterms, 1, vectorterms.size()));
+            Operation o = Operation.make(  Product.make(vectorterms, 1, vectorterms.size()), new Operator(vectorterms.get(0)) );
+            return o;
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);

@@ -12,7 +12,7 @@ import nars.io.in.Input;
 import nars.io.in.TextInput;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.OpReaction;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.premise.Premise;
@@ -370,7 +370,7 @@ public class NAR extends Container implements Runnable {
         return memory.exe.on(o, c);
     }
 
-    public EventEmitter.Registrations on(Operator o) {
+    public EventEmitter.Registrations on(OpReaction o) {
         Term a = o.getTerm();
         EventEmitter.Registrations reg = on(o, a);
         o.setEnabled(this, true);

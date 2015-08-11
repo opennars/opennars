@@ -5,8 +5,7 @@ import nars.concept.ConceptBuilder;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicStage;
 import nars.nal.NALExecuter;
-import nars.nal.nal8.Operator;
-import nars.op.app.STMInduction;
+import nars.nal.nal8.OpReaction;
 import nars.op.mental.*;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.process.concept.FilterEqualSubtermsInRespectToImageAndProduct;
@@ -57,9 +56,9 @@ public class NewDefault extends Default {
 
             if (maxNALLevel >= 8) {
 
-                for (Operator o : defaultOperators)
+                for (OpReaction o : defaultOperators)
                     n.on(o);
-                for (Operator o : exampleOperators)
+                for (OpReaction o : exampleOperators)
                     n.on(o);
 
                 for (ConceptBuilder c : defaultConceptBuilders) {

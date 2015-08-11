@@ -27,13 +27,13 @@ public class NAL1ScriptTests extends ScriptNALTest {
                 new Default().setInternalExperience(null).level(1),
                 new DefaultMicro().setInternalExperience(null),
                 new Classic().setInternalExperience(null),
-                new Solid(1, 16, 1, 1, 1, 1).setInternalExperience(null)
+                new Solid(1, 64, 1, 1, 1, 2).setInternalExperience(null)
         );
     }
 
     public int getMaxCycles() {
         if (build instanceof Solid)
-            return 4; //yes needs only ONE cycle for these tests
+            return 8; //yes needs only ONE cycle for these tests
 
         return 200;
     }

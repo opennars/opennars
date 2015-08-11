@@ -11,6 +11,7 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
@@ -241,11 +242,10 @@ public class NarseseParserTest {
 
 
     protected void testBelieveAB(Operation t) {
-        assertEquals(3, t.arg().length());
+        assertEquals(2, t.arg().length());
         assertEquals("believe", t.getOperator().toString());
         assertEquals("a", t.arg(0).toString());
         assertEquals("b", t.arg(1).toString());
-        assertEquals("SELF", t.arg(2).toString());
     }
 
     @Test
@@ -259,9 +259,15 @@ public class NarseseParserTest {
     @Test
     public void testOperation2() throws InvalidInputException {
         testBelieveAB(term("believe(a,b)"));
-        testBelieveAB(term("believe(a,b,SELF)"));
-        //testBelieveAB(term("believe(a b)"));
+        testBelieveAB(term("believe(a, b)"));
+    }
 
+    @Test
+    public void testOperationEquivalence() throws InvalidInputException {
+        assertEquals(
+                term("a(b,c)"),
+                term("<{(b,c)} --> ^a>")
+        );
     }
 
     @Test
@@ -1206,4 +1212,11 @@ public class NarseseParserTest {
         }
     }
 
+    @Test
+    public void testOperatorTerm() {
+        Operator o = term("^op");
+        assertNotNull(o);
+        assertEquals("op", o.the().toString());
+        assertEquals(Atom.class, o.the().getClass());
+    }
 }

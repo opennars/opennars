@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.OpReaction;
 import nars.op.io.Echo;
 import nars.task.Task;
 
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Executes in the NAR's threadpool
  */
-abstract public class AsynchOperator extends Operator {
+abstract public class AsynchOperator extends OpReaction {
 
     @Override
     public boolean execute(Operation op, Concept c, Memory memory) {

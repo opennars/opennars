@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.OpReaction;
 import nars.op.io.Echo;
 import nars.task.Task;
 import nars.term.Term;
@@ -16,7 +16,7 @@ import java.util.List;
  * Should be used only if the operation procedure will not take long
  * and block the reasoner thread.
  */
-abstract public class SynchOperator extends Operator {
+abstract public class SynchOperator extends OpReaction {
 
     public SynchOperator(Term term) {
         super(term);

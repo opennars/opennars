@@ -2,12 +2,10 @@ package nars.nlp.gf;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
-import javafx.application.Application;
-import javafx.stage.Stage;
 import nars.NAR;
 import nars.NARStream;
-import nars.guifx.NARfx;
 import nars.io.nlp.Twenglish;
+import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
@@ -176,8 +174,8 @@ public class NARgf extends GrammaticalFrameworkClient {
                         t -> t);
     }
 
-    private Operation<Atom> getHeardOperation(Term tt) {
-        return Operation.make(Atom.the("say"), Product.make(tt, Atom.the("input")) );
+    private Inheritance getHeardOperation(Term tt) {
+        return Inheritance.make( Product.make(tt, Atom.the("input")), Atom.the("say") );
     }
 
 

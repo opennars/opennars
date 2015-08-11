@@ -3,11 +3,10 @@ package nars.rover.robot;
 import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.clock.SimulatedClock;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.io.in.ChangedTextInput;
-import nars.nal.nal2.Instance;
+import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.rl.gng.NeuralGasNet;
@@ -28,10 +27,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -205,7 +201,6 @@ public abstract class AbstractPolygonBot extends Robotic {
 
         nar.frame();
 
-        ((SimulatedClock)nar.memory.clock).add(1);
 
     }
 
@@ -520,7 +515,7 @@ public abstract class AbstractPolygonBot extends Robotic {
 
         final Vec2 point; //where the retina receives vision at
         final float angle;
-        protected final float distance;
+        protected float distance;
         final ChangedTextInput sight =
                 //new SometimesChangedTextInput(nar, minVisionInputProbability);
                 new ChangedTextInput(nar);
@@ -556,20 +551,22 @@ public abstract class AbstractPolygonBot extends Robotic {
         }
 
 
-        java.util.List<Runnable> toDraw = new CopyOnWriteArrayList();
+        Collection<Runnable> toDraw =
+                //new ConcurrentLinkedDeque<>();
+                new CopyOnWriteArrayList();
 
 
 
-        public synchronized void step(boolean feel, boolean drawing) {
+        public void step(boolean feel, boolean drawing) {
             toDraw.clear();
 
             float conceptPriority;
             float conceptDurability;
             float conceptQuality;
 
-            if (angleConcept == null) {
-                angleConcept = nar.memory.concept(angleTerm);
-            }
+
+            angleConcept = nar.memory.concept(angleTerm);
+
 
             if (angleConcept!=null) {
                 conceptPriority = angleConcept.getPriority();
@@ -734,7 +731,7 @@ public abstract class AbstractPolygonBot extends Robotic {
             float freq = 1f;
             String sdist = Sim.f(dist);
             //String ss = "<(*," + angleTerm + "," + dist + ") --> " + material + ">. :|: %" + Texts.n1(freq) + ";" + Texts.n1(conf) + "%";
-            return "see(" + material + "," + angleTerm + "," + sdist + "). :|: %" + freq + ";" + conf + "%";
+            return "see:(" + material + "," + angleTerm + "," + sdist + "). :|: %" + freq + ";" + conf + "%";
         }
 
         private void inputVisionFreq(float dist, String material) {
@@ -746,7 +743,7 @@ public abstract class AbstractPolygonBot extends Robotic {
             if (thisAngle == null)
                 thisAngle = Atom.the(angleTerm);
             Compound tt =
-                    Instance.make(
+                    Inheritance.make(
                         Product.make( thisAngle,  Atom.the(material) ),
                         Atom.the("see")
                     );
@@ -768,6 +765,10 @@ public abstract class AbstractPolygonBot extends Robotic {
         @Override
         public void drawSky(JoglDraw d, World w) {
 
+        }
+
+        public void setDistance(float d) {
+            this.distance = d;
         }
     }
 

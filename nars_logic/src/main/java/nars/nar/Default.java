@@ -24,7 +24,7 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicStage;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
 import nars.op.app.STMInduction;
@@ -239,7 +239,7 @@ public class Default extends NARSeed  {
 
 
 
-    public static final Operator[] exampleOperators = new Operator[] {
+    public static final OpReaction[] exampleOperators = new OpReaction[] {
         //new Wait(),
         new NullOperator("break"),
         new NullOperator("drop"),
@@ -258,7 +258,7 @@ public class Default extends NARSeed  {
 
 
 
-    public final Operator[] defaultOperators  = new Operator[] {
+    public final OpReaction[] defaultOperators  = new OpReaction[] {
 
                 new eval(),
 
@@ -396,9 +396,9 @@ public class Default extends NARSeed  {
 
             if (maxNALLevel >= 8) {
 
-                for (Operator o : defaultOperators)
+                for (OpReaction o : defaultOperators)
                     n.on(o);
-                for (Operator o : exampleOperators)
+                for (OpReaction o : exampleOperators)
                     n.on(o);
 
                 for (ConceptBuilder c : defaultConceptBuilders) {

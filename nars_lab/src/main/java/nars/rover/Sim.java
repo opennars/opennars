@@ -1,6 +1,7 @@
 package nars.rover;
 
 import nars.Global;
+import nars.clock.SimulatedClock;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.gl.JoglDraw;
@@ -23,7 +24,7 @@ import java.util.List;
 public class Sim extends PhysicsModel {
 
 
-
+    private final SimulatedClock clock;
     /* how often to input mission, in frames */
     public int missionPeriod = 8;
 
@@ -299,7 +300,8 @@ public class Sim extends PhysicsModel {
         }
     }
 
-    public Sim() {
+    public Sim(SimulatedClock clock) {
+        this.clock = clock;
         init();
     }
 
@@ -312,11 +314,10 @@ public class Sim extends PhysicsModel {
         super.step(timeStep, settings, panel);
 
         for (Robotic r : robots) {
-
             r.step(1);
-
-
         }
+
+        clock.add(1);
 
     }
 

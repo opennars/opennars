@@ -281,7 +281,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     public static void writeCompound1(final Op op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
-
         writer.append(COMPOUND_TERM_OPENER.ch);
         writer.append(op.str);
         writer.append(ARGUMENT_SEPARATOR);

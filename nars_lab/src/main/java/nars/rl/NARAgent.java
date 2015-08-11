@@ -3,6 +3,7 @@ package nars.rl;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
+import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.term.Term;
@@ -16,10 +17,10 @@ abstract public class NARAgent {
     public final RLEnvironment env;
 
     /** for fast lookup of operation terms, since they will be used frequently */
-    public final Operation<?>[] operationCache;
-    public final ObjectIntHashMap<Operation<?>> operationToAction = new ObjectIntHashMap();
+    public final Operation[] operationCache;
+    public final ObjectIntHashMap<Operation> operationToAction = new ObjectIntHashMap();
 
-    public final Term operator;
+    public final Operator operator;
     private EventEmitter.Registrations opReg;
     public final NAR nar;
 
@@ -30,7 +31,7 @@ abstract public class NARAgent {
         this.env = env;
         this.operationCache = new Operation[env.numActions()];
 
-        this.operator = operator;
+        this.operator = new Operator(operator);
 
     }
 
@@ -39,5 +40,5 @@ abstract public class NARAgent {
         opReg = nar.on(getOperator(operator));
     }
 
-    protected abstract Operator getOperator(Term operator);
+    protected abstract OpReaction getOperator(Term operator);
 }

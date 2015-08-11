@@ -110,7 +110,7 @@ public class SomeRovers {
         float fps = 90;
         boolean cpanels = true;
 
-        final Sim game = new Sim();
+        final Sim game = new Sim(clock);
 
 
         game.add(new Turret("turret"));
@@ -119,8 +119,11 @@ public class SomeRovers {
 
 
         {
+            int cycPerFrame = 8;
             Equalized e = new Equalized(1024, 32, 8);
+            e.setCyclesPerFrame(cycPerFrame);
             e.setClock(clock);
+            e.duration.set(5 * cycPerFrame);
             NAR nar = new NAR(e);
             TextOutput.out(nar);
             game.add(new CarefulRover("r2", nar));

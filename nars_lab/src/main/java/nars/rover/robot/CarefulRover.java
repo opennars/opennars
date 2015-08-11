@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
-import nars.rover.physics.gl.JoglDraw;
 import nars.task.Task;
 import nars.term.Term;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -15,6 +14,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,16 +26,17 @@ public class CarefulRover extends AbstractPolygonBot {
     float angularDamping = 0.6f;
     float restitution = 0.9f; //bounciness
     float friction = 0.5f;
+    int numPixels = 8;
 
 
 
     final ArrayList<String> randomActions = new ArrayList<>();
     private float visionDistanceFactor = 1f;
-
+    List<VisionRay> pixels = new ArrayList();
 
     public void randomAction() {
-        int candid = (int) (Math.random() * randomActions.size());
-        nar.input(randomActions.get(candid));
+        int x = (int) (Math.random() * randomActions.size());
+        nar.input(randomActions.get(x));
     }
 
     public static String command(Operation operation, Memory memory) {
@@ -72,18 +73,39 @@ public class CarefulRover extends AbstractPolygonBot {
 
                 final String command = command(o, memory);
 
-                switch (command) {
-                    case "far":
-                        visionDistanceFactor = 2f;
-                        break;
-                    case "near":
-                        visionDistanceFactor = 1f;
-                        break;
+                String[] sections = command.split(",");
+                if (sections.length == 1) {
+
+//                    switch (sections[0]) {
+//                        case "far":
+//                            dist = 20f;
+//                            break;
+//                        case "near":
+//                            dist = 10f;
+//                            break;
+//                        default:
+//                            return null;
+//                    }
+                    String[] angle = sections[0].split("a");
+                    System.out.println(Arrays.toString(angle));
+                    if (angle.length == 2) {
+                        int a = Integer.parseInt(angle[1]);
+                        if (a < pixels.size()) {
+                            float dist;
+                            dist = 5 + 20f * o.getTask().getTruth().getFrequency(); //getExpectation();
+                            pixels.get(a).setDistance(dist);
+                        }
+                    }
                 }
 
                 return null;
             }
         });
+
+        for (int i = 0; i < numPixels; i++) {
+            randomActions.add("vision(a" + i+")! :!: %1%");
+            randomActions.add("vision(a" + i+")! :|: %0%");
+        }
 
         randomActions.add("vision(far)!");
         randomActions.add("vision(near)!");
@@ -123,7 +145,7 @@ public class CarefulRover extends AbstractPolygonBot {
                     }
                 }
 
-                int rspeed = 30;
+                int rspeed = 15;
                 switch (command) {
                     case "right":
                         rotateRelative(-rspeed);
@@ -193,7 +215,6 @@ public class CarefulRover extends AbstractPolygonBot {
 
         Vec2 center = new Vec2(0,0);
 
-        int numPixels = 16;
         float da = (float)(Math.PI*2/numPixels);
         float a = 0;
         for (int i = 0; i < numPixels; i++) {
@@ -205,6 +226,7 @@ public class CarefulRover extends AbstractPolygonBot {
                     return distance * visionDistanceFactor;
                 }
             };
+            pixels.add(v);
 
             draw.addLayer(v);
             senses.add(v);

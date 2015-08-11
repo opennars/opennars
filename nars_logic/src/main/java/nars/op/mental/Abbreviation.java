@@ -11,6 +11,7 @@ import nars.event.NARReaction;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Atom;
@@ -28,7 +29,7 @@ import static nars.term.Compound.termArray;
 public class Abbreviation extends NARReaction {
 
     private static final float abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
-    public static final Term abbreviate = Atom.the("abbreviate");
+    public static final Operator abbreviate = Operator.the("abbreviate");
     public final Memory memory;
 
     //these two are AND-coupled:
@@ -92,7 +93,7 @@ public class Abbreviation extends NARReaction {
             final Compound termAbbreviating = task.sentence.getTerm();
 
             Operation compound = Operation.make(
-                    abbreviate, Product.make(termArray(termAbbreviating)));
+                    Product.make(termArray(termAbbreviating)), abbreviate);
 
             Concept concept = memory.concept(termAbbreviating);
 

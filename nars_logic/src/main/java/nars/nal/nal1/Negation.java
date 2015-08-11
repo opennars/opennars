@@ -112,7 +112,6 @@ public class Negation extends Compound1 {
 
     @Override
     public byte[] init() {
-
         return Compound.newCompound1Key(Op.NEGATION, the());
     }
 

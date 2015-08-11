@@ -10,7 +10,7 @@ import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.DecideAllGoals;
 import nars.nal.nal8.decide.Decider;
@@ -76,7 +76,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         if (o == null) {
             //TODO avoid String here
             o = operationCache[i] =
-                    Operation.make(operator, Product.make(Atom.the(i), nar.memory.self()) );
+                    Operation.make( Product.make(Atom.the(i), nar.memory.self()), operator );
             operationToAction.put(o, i);
         }
         return o;
@@ -145,7 +145,7 @@ public class QLAgent<S extends Term> extends NARAgent {
     }
 
     @Override
-    public Operator getOperator(Term operationTerm) {
+    public OpReaction getOperator(Term operationTerm) {
         return decision;
     }
 

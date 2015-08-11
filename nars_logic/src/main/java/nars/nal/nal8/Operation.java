@@ -45,25 +45,27 @@ import java.util.Arrays;
 /**
  * An operation is interpreted as an Inheritance relation with an operator.
  */
-public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> {
+public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
-
-    transient private Task<Operation<T>> task; //this is set automatically prior to executing
+    /**
+     * the invoking task.
+     * this is set automatically prior to execution
+     */
+    transient private Task<Operation> task;
 
 
     //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
 
-    protected Operation(SetExt1<Product> s, T operator) {
-        super(s, operator);
-        //this.arg = s.the();
+    protected Operation(Operator operator, SetExt1<Product> args) {
+        super(args, operator);
     }
 
     /**
      *
      * Constructor with partial values, called by make
      */
-    protected Operation(Product argProduct, T operator) {
-        this(new SetExt1(argProduct), operator);
+    protected Operation(Operator operator, Product argProduct) {
+        this(operator, new SetExt1(argProduct));
     }
 
 
@@ -73,12 +75,12 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Operation<T> clone() {
+    public Operation clone() {
         return clone(arg());
     }
 
-    public Operation<T> clone(Product args) {
-        Operation x = new Operation(args, getOperator());
+    public Operation clone(Product args) {
+        Operation x = new Operation(getPredicate(), args);
         x.setTask(getTask());
         return x;
     }
@@ -91,7 +93,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
      * @param self specify a SELF, or null to use memory's current self
      * @return A compound generated or null
      */
-    public static <T extends Term> Operation<T> make(final T oper, Product arg) {
+    public static Operation make(Product arg, final Operator oper) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
@@ -108,31 +110,34 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 //            arg=arg2;
 //        }
 
+        /*if (invalidStatement(subject, oper)) {
+            return null;
+        }*/
+
         SetExt1<Product> subject = new SetExt1(arg);
 
+        return make(subject, oper);
+    }
 
-        if (invalidStatement(subject, oper)) {
-            return null;
-        }
-
-
-        return new Operation<T>(subject, oper);
+    public static Operation make(SetExt1<Product> arg, final Operator oper) {
+        return new Operation( oper, arg );
     }
 
 
-    public T getOperator() {
-        return getPredicate();
+    /** gets the term wrapped by the Operator predicate */
+    public Term getOperator() {
+        return getPredicate().the();
     }
 
 
     /**
      * stores the currently executed task, which can be accessed by Operator execution
      */
-    public void setTask(final Task<Operation<T>> task) {
+    public void setTask(final Task<Operation> task) {
         this.task = task;
     }
 
-    public Task<Operation<T>> getTask() {
+    public Task<Operation> getTask() {
         return task;
     }
 
@@ -273,13 +278,6 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 //        return false;
 //    }
 
-    /**
-     * use this to restrict potential operator (predicate terms)
-     */
-    public static boolean validOperatorTerm(Term t) {
-        //return t instanceof Term;
-        return true;
-    }
 
     public int args() {
         return arg().length();
@@ -298,7 +296,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     @Override
     public byte[] init() {
 
-        byte[] op = getPredicate().bytes();
+        byte[] op = getOperator().bytes();
         //Term[] arg = argArray();
 
         int len = op.length + 1 + 1;
@@ -338,7 +336,9 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     @Override
     public void append(Writer p, boolean pretty) throws IOException {
 
-        if ((getPredicate().getVolume()!=1) || (getPredicate().hasVar())) {
+        Term predTerm = getOperator();
+
+        if ((predTerm.getVolume()!=1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
             super.append(p, pretty);
             return;
@@ -347,7 +347,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
         final Term[] xt = arg().terms();
 
-        getPredicate().append(p, pretty); //add the operator name without leading '^'
+        predTerm.append(p, pretty); //add the operator name without leading '^'
         p.append(Op.COMPOUND_TERM_OPENER.ch);
 
 

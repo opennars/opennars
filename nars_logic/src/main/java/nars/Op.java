@@ -18,6 +18,8 @@ public enum Op {
     VAR_DEPENDENT(Symbols.VAR_DEPENDENT,0,false),
     VAR_QUERY(Symbols.VAR_QUERY,0,false),
 
+    OPERATOR("^", 8),
+
     NEGATION("--", 5, false, true, 1),
 
     /* Relations */
@@ -73,7 +75,6 @@ public enum Op {
 
 
 
-    OPERATION("^", 8),
     SET_INT_CLOSER("]", 3, false, false),
     SET_EXT_CLOSER("}", 3, false, false),
 
