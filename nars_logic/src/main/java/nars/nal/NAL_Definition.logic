@@ -259,12 +259,12 @@
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (S --> M), ((&&,($1 --> M),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (S --> M), <(&&,($1 --> M),I) ==> B>, shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
-    (S --> M), <(&&,C,I) ==> ($1 --> M)>, shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    (S --> M), ((&&,($1 --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    (S --> M), ((&&,C,I) ==> ($1 --> M)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (M --> S), ((&&,(M --> $1),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (M --> S), <(&&,(M --> $1),I) ==> B>, shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
-    (M --> S), <(&&,C,I) ==> (M --> $1)>, shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    (M --> S), ((&&,(M --> $1),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    (M --> S), ((&&,C,I) ==> (M --> $1)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 //Temporal induction:
 

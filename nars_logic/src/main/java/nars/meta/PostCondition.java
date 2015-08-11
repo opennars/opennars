@@ -246,7 +246,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             if (Terms.shareAnySubTerms((Compound)arg1, (Compound)arg2))
                                 return false;
                         break;
-                    case "measure_time":
+                        case "measure_time":
                         {
                             if(belief == null) {
                                 return false;
@@ -283,6 +283,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                                     return false;
                             }
                         }
+                        break;
                         case "concurrent":
                         {
                             if(belief == null) {
@@ -301,6 +302,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                                     return false;
                             }
                         }
+                        break;
                         case "substitute":
                         {
                             Term M = args[1]; //this one got substituted, but with what?
@@ -309,16 +311,19 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             //(relevant for variable elimination rules)
                             precondsubs.put(args[0],with);
                         }
+                        break;
                         case "shift_occurrence_forward":
                         {
                             occurence_shift += timeOffsetForward(arg1,nal);
                             occurence_shift += timeOffsetForward(arg2,nal);
                         }
+                        break;
                         case "shift_occurrence_backward":
                         {
                             occurence_shift -= timeOffsetForward(arg1,nal);
                             occurence_shift -= timeOffsetForward(arg2,nal);
                         }
+                        break;
                 }
             }
 
