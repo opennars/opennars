@@ -176,9 +176,10 @@
 
 //// conditional syllogism
 
-    M, (M ==> P) |- P, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate)
-    M, (P ==> M) |- P, (Truth:Abduction, Desire:Deduction, Occurrence:Derive, Order:ForAllSame)
-    M, (S <=> M) |- S, (Truth:Analogy, Desire:Strong, Occurrence:Derive, Order:ForAllSame)
+    M, (M ==> P), shift_occurrence_forward("==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    M, (P ==> M), shift_occurrence_backward("==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
+    M, (S <=> M), shift_occurrence_backward("<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
+    M, (M <=> S), shift_occurrence_forward("==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 
 //// conditional composition Comment: Let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
 
@@ -254,16 +255,16 @@
 //NAL7/8 specific inference
 
     C, ((&&,C,A_1..n) ==> B) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    C, <(&/,C,I) ==> B>, interval(I) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate)
-    B, <(&/,C,I) ==> B>, interval(I) |- C, (Truth:Abduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame)
+    C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (S --> M), ((&&,($1 --> M),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (S --> M), <(&&,($1 --> M),I) ==> B>, interval(I), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate)
-    (S --> M), <(&&,C,I) ==> ($1 --> M)>, interval(I), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame)
+    (S --> M), ((&&,($1 --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    (S --> M), ((&&,C,I) ==> ($1 --> M)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (M --> S), ((&&,(M --> $1),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (M --> S), <(&&,(M --> $1),I) ==> B>, interval(I), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame, Event:Anticipate)
-    (M --> S), <(&&,C,I) ==> (M --> $1)>, interval(I), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Occurrence:Derive, Order:ForAllSame)
+    (M --> S), ((&&,(M --> $1),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    (M --> S), ((&&,C,I) ==> (M --> $1)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 //Temporal induction:
 

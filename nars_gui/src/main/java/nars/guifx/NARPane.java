@@ -35,7 +35,7 @@ public class NARPane extends SplitPane {
 
         if (enabled && console == null) {
 
-            console = new Tab("I/O", new TerminalPane(nar));
+            //console = new Tab("I/O", new TerminalPane(nar));
 
             Platform.runLater(() -> {
                 content.getTabs().add(console);

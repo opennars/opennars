@@ -7,8 +7,10 @@ import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Intermval;
 import nars.nal.nal7.Interval;
 import nars.process.ConceptProcess;
+import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -34,7 +36,6 @@ public class PostCondition //since there can be multiple tasks derived per rule
     public final DesireFunction desire;
     boolean single_premise = false;
     boolean negation = false;
-    boolean derive_occurrence = false;
 
     /* high-speed adaptive RETE-like precondition filtering:
 
@@ -109,15 +110,6 @@ public class PostCondition //since there can be multiple tasks derived per rule
                         }
                         break;
 
-                    case "Occurrence":
-                        if (swhich.equals("Derive")) {
-                            this.derive_occurrence = true;
-                        }
-                        else {
-                            throw new RuntimeException("unknown Occurrence " + which);
-                        }
-                        break;
-
                     case "Order":
                         break;
 
@@ -147,7 +139,6 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
         Truth truth = null;
         Truth desire = null;
-        boolean deriveOccurrence = false; //if false its just the occurence time of the parent
         boolean single_premise = this.single_premise;
 
         if (negation && task.truth.getFrequency() >= 0.5) { //its negation, it needs this additional information to be useful
@@ -178,9 +169,10 @@ public class PostCondition //since there can be multiple tasks derived per rule
         final Map<Term, Term> waste = Global.newHashMap();
 
         Term derive = term; //first entry is term
+        int occurence_shift = 0;
 
         //TODO checking the precondition again for every postcondition misses the point, but is easily fixable (needs to be moved down to Rule)
-        if (single_premise) { //only match precondition pattern with task
+        if (single_premise) { //only match precondition pattern with task //SINGLE_PREMISE MAY BE OBSOLETE; BUT DONT DELETE YET
 
             //match first rule pattern with task
             if (!Variables.findSubstitute(Symbols.VAR_PATTERN, preconditions[0], task.getTerm(), assign, waste, nal.memory.random))
@@ -254,7 +246,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             if (Terms.shareAnySubTerms((Compound)arg1, (Compound)arg2))
                                 return false;
                         break;
-                    case "measure_time":
+                        case "measure_time":
                         {
                             if(belief == null) {
                                 return false;
@@ -291,6 +283,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                                     return false;
                             }
                         }
+                        break;
                         case "concurrent":
                         {
                             if(belief == null) {
@@ -309,6 +302,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                                     return false;
                             }
                         }
+                        break;
                         case "substitute":
                         {
                             Term M = args[1]; //this one got substituted, but with what?
@@ -317,12 +311,20 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             //(relevant for variable elimination rules)
                             precondsubs.put(args[0],with);
                         }
+                        break;
+                        case "shift_occurrence_forward":
+                        {
+                            occurence_shift += timeOffsetForward(arg1,nal);
+                            occurence_shift += timeOffsetForward(arg2,nal);
+                        }
+                        break;
+                        case "shift_occurrence_backward":
+                        {
+                            occurence_shift -= timeOffsetForward(arg1,nal);
+                            occurence_shift -= timeOffsetForward(arg2,nal);
+                        }
+                        break;
                 }
-            }
-
-            if(derive_occurrence) {
-                //the occurence time of  the event
-
             }
 
             //now we have to apply this to the derive term
@@ -352,6 +354,12 @@ public class PostCondition //since there can be multiple tasks derived per rule
                     t.term((Compound) derive).punctuation(task.punctuation)
                             .truth(truth).budget(budget);
 
+                    if(t.getOccurrenceTime() != Stamp.ETERNAL) {
+                        t.occurr(t.getOccurrenceTime()+occurence_shift);
+                    }
+
+                    //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
+
                     if (t != null)
                         nal.deriveDouble(t);
                 }
@@ -363,12 +371,32 @@ public class PostCondition //since there can be multiple tasks derived per rule
                     t.term((Compound) derive).punctuation(task.punctuation)
                             .truth(truth).budget(budget);
 
+                    if(t.getOccurrenceTime() != Stamp.ETERNAL) {
+                        t.occurr(t.getOccurrenceTime()+occurence_shift);
+                    }
+
+                    //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
+
                     if (t != null)
                         nal.deriveSingle(t);
                 }
             }
         }
         return true;
+    }
+
+    public long timeOffsetForward(Term arg, ConceptProcess nal) {
+        if(arg instanceof Interval) {
+            return ((Interval)arg).cycles(nal.memory.param.duration);
+        }
+        int duration = nal.memory.param.duration.get();
+        if(arg.toString().equals("\"=/>\"")) {
+            return duration;
+        }
+        if(arg.toString().equals("\"=\\>\"")) {
+            return -duration;
+        }
+        return 0;
     }
 
     @Override
