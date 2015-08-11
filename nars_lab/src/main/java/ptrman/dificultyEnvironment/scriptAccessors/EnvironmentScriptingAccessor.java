@@ -9,6 +9,8 @@ import ptrman.dificultyEnvironment.EntityDescriptor;
 import ptrman.dificultyEnvironment.Environment;
 import ptrman.dificultyEnvironment.physics.Physics2dBody;
 
+import java.util.List;
+
 /**
  *
  */
@@ -86,6 +88,49 @@ public class EnvironmentScriptingAccessor {
         }
 
         return new Physics2dBody(body);
+    }
+
+    public Physics2dBody physics2dCreateBodyWithShape(boolean fixed, ArrayRealVector position, List verticesPoints, float linearDamping, float angularDamping,    float mass,    float restitution, float friction) {
+        PolygonShape shape = new PolygonShape();
+
+        Vec2[] vertices = convertVerticesFromArrayRealVectorGenericList(verticesPoints);
+        shape.set(vertices, vertices.length);
+        //shape.m_centroid.set(bodyDef.position);
+
+        BodyDef bodyDefinition = new BodyDef();
+        bodyDefinition.linearDamping = linearDamping;
+        bodyDefinition.angularDamping = angularDamping;
+
+        if( fixed ) {
+            bodyDefinition.type = BodyType.STATIC;
+        }
+        else {
+            bodyDefinition.type = BodyType.DYNAMIC;
+        }
+
+        bodyDefinition.position.set((float)position.getDataRef()[0], (float)position.getDataRef()[1]);
+
+        Body body = environment.physicsWorld2d.createBody(bodyDefinition);
+        Fixture fixture = body.createFixture(shape, mass);
+        fixture.setRestitution(restitution);
+        fixture.setFriction(friction);
+
+        return new Physics2dBody(body);
+    }
+
+    private static Vec2[] convertVerticesFromArrayRealVectorGenericList(List verticesPoints) {
+        Vec2[] vectorArray = new Vec2[verticesPoints.size()];
+
+        for( int i = 0; i < verticesPoints.size(); i++ ) {
+            if( !(verticesPoints.get(i) instanceof ArrayRealVector) ) {
+                throw new RuntimeException("element is a RealVector");
+            }
+
+            ArrayRealVector realVector = (ArrayRealVector)verticesPoints.get(i);
+            vectorArray[i] = new Vec2((float)realVector.getDataRef()[0], (float)realVector.getDataRef()[1]);
+        }
+
+        return vectorArray;
     }
 
     public void physics2dSetLinearDamping(Physics2dBody body, float damping) {

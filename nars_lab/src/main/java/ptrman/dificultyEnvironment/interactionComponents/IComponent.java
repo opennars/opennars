@@ -8,4 +8,5 @@ import ptrman.dificultyEnvironment.JavascriptDescriptor;
  */
 public interface IComponent {
     void frameInteraction(JavascriptDescriptor javascriptDescriptor, EntityDescriptor entityDescriptor, float timedelta);
+    String getLongName();
 }

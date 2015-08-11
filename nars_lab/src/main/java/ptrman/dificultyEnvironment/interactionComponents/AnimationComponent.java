@@ -45,4 +45,9 @@ public class AnimationComponent implements IComponent {
             currentIndex++;
         }
     }
+
+    @Override
+    public String getLongName() {
+        return "AnimationComponent";
+    }
 }
