@@ -74,10 +74,10 @@ public class TaskRule extends Rule<Premise,Task> {
     static {
         reservedPostconditions.add(Atom.the("Truth"));
         reservedPostconditions.add(Atom.the("Stamp"));
-        reservedPostconditions.add(Atom.the("Occurrence"));
         reservedPostconditions.add(Atom.the("Desire"));
         reservedPostconditions.add(Atom.the("Order"));
         reservedPostconditions.add(Atom.the("Info"));
+        reservedPostconditions.add(Atom.the("Event"));
     }
 
 
