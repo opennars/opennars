@@ -3,13 +3,12 @@ package nars.bag;
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.AbstractMemory;
-import nars.Global;
 import nars.Memory;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.budget.BudgetSource;
 import nars.budget.Itemized;
+import nars.concept.Concept;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
@@ -242,19 +241,17 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      * should be between 0 and 1.0
      * this is a way to apply the forgetting process applied in putBack.
      */
-    public int forgetNext(final float forgetCycles, final float accuracy, final AbstractMemory m) {
+    public void forgetNext(final float forgetCycles, final float accuracy, final AbstractMemory m) {
         final int conceptsToForget = (int)Math.ceil(size() * accuracy);
-        if (conceptsToForget == 0) return 0;
+        if (conceptsToForget == 0) return;
 
         forgetNext.set(forgetCycles, m);
 
         int affected = 0;
         for (int i = 0; i < conceptsToForget; i++) {
-            if ( update(forgetNext) != null)
-                affected++;
+            update(forgetNext);
         }
 
-        return affected;
     }
 
     public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {

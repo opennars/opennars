@@ -28,9 +28,6 @@ import static nars.nal.nal1.LocalRules.trySolution;
 
 public class DefaultConcept extends AbstractConcept {
 
-
-    long deletionTime;
-
     private final TaskTable questions;
     private final TaskTable quests;
     private final BeliefTable beliefs;
@@ -90,8 +87,6 @@ public class DefaultConcept extends AbstractConcept {
         this.premiseGenerator = ps;
         ps.setConcept(this);
 
-        this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
-
         this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue(), rb.get(this, true));
         this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue(), rb.get(this, false));
 
@@ -143,10 +138,6 @@ public class DefaultConcept extends AbstractConcept {
         return goals;
     }
 
-
-    public long getDeletionTime() {
-        return deletionTime;
-    }
 
 
 

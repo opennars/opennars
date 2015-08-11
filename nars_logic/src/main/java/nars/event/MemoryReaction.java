@@ -12,6 +12,30 @@ import nars.task.Task;
 
 public abstract class MemoryReaction extends NARReaction {
 
+    public static final Class[] memoryEvents = new Class[]{CycleStart.class,
+            CycleEnd.class,
+            //Events.ConceptNew.class,
+            Events.ConceptForget.class,
+            Events.ConceptBeliefAdd.class,
+            Events.ConceptBeliefRemove.class,
+            Events.ConceptProcessed.class,
+            Events.ConceptGoalAdd.class,
+            Events.ConceptGoalRemove.class,
+            Events.ConceptQuestionAdd.class,
+            Events.ConceptQuestionRemove.class,
+            //Events.ConceptUnification.class,
+            Events.ConceptActive.class,
+            Events.PluginsChange.class,
+            Events.OUT.class,
+            Events.TaskRemove.class,
+            Events.TaskDerive.class,
+            TaskProcess.class,
+            Events.TermLinkTransformed.class,
+            //Events.UnExecutedGoal.class,
+
+            //Output.OUT.class,
+
+            Events.Restart.class};
     private final AbstractMemory memory;
 
     public MemoryReaction(NAR n, boolean active) {
@@ -20,30 +44,7 @@ public abstract class MemoryReaction extends NARReaction {
 
     public MemoryReaction(Memory m, boolean active) {
         super(m.event, active,
-                Events.CycleStart.class,
-                Events.CycleEnd.class,
-                //Events.ConceptNew.class,
-                Events.ConceptForget.class,
-                Events.ConceptBeliefAdd.class,
-                Events.ConceptBeliefRemove.class,
-                Events.ConceptProcessed.class,
-                Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class,
-                Events.ConceptQuestionAdd.class,
-                Events.ConceptQuestionRemove.class,
-                //Events.ConceptUnification.class,
-                Events.ConceptActive.class,
-                Events.PluginsChange.class,
-                Events.OUT.class,
-                Events.TaskRemove.class,
-                Events.TaskDerive.class,
-                TaskProcess.class,
-                Events.TermLinkTransformed.class,
-                //Events.UnExecutedGoal.class,
-
-                //Output.OUT.class, 
-
-                Events.Restart.class);
+                memoryEvents);
         this.memory = m;
     }
 

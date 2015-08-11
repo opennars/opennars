@@ -400,10 +400,6 @@ public class Alann extends NARSeed {
             return null;
         }
 
-        @Override
-        public long getDeletionTime() {
-            return 0;
-        }
 
 
     }

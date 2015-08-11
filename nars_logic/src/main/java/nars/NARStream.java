@@ -4,12 +4,14 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import nars.concept.Concept;
+import nars.event.MemoryReaction;
 import nars.event.NARReaction;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
+import nars.meter.NARTrace;
 import nars.task.Task;
 import nars.util.event.Reaction;
 
@@ -264,6 +266,14 @@ public class NARStream  {
     public NARStream stdout() {
         try {
             forEachEvent(System.out, Output.DefaultOutputEvents);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+    public NARStream stdoutTrace() {
+        try {
+            forEachEvent(System.out, MemoryReaction.memoryEvents);
         } catch (Exception e) {
             e.printStackTrace();
         }

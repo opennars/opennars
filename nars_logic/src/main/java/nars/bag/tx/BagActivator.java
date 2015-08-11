@@ -51,9 +51,14 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
 
         nextActivation.mulPriority(getActivationFactor());
-        return result
+        result
                 .forget(time(), getForgetCycles(), getRelativeThreshold())
                 .accumulate(nextActivation);
+
+        /** even if budget is unchanged, we need to set the last forget time */
+        v.getBudget().setLastForgetTime(result.getLastForgetTime());
+
+        return result;
     }
 
     abstract public float getForgetCycles();

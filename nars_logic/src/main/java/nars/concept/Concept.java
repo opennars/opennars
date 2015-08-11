@@ -234,8 +234,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     public long getCreationTime();
-    public long getDeletionTime();
-
 
     public void delete();
 

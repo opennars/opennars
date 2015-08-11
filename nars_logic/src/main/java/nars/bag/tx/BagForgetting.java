@@ -58,6 +58,9 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
         //break;
         //}
 
+        /** even if budget is unchanged, we need to set the last forget time */
+        v.getBudget().setLastForgetTime(result.getLastForgetTime());
+
         return result;
     }
 

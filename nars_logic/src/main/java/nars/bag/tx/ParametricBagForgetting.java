@@ -81,6 +81,9 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
             return null;
         }
 
+        /** even if budget is unchanged, we need to set the last forget time */
+        v.getBudget().setLastForgetTime(result.getLastForgetTime());
+
         return result;
     }
 
