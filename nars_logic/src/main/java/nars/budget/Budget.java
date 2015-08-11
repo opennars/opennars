@@ -168,23 +168,20 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     public Budget accumulate(final float addPriority, final float otherDurability, final float otherQuality) {
+        final float currentPriority = getPriority();
+
+        /** influence factor determining LERP amount of blending durability and quality */
+        final float f = 1 - Math.abs(currentPriority - clamp(addPriority+currentPriority));
 
         return set(
-                getPriority() + addPriority,
-                max(getDurability(), otherDurability),
-                max(getQuality(), otherQuality)
+                currentPriority + addPriority,
+                lerp(getDurability(), otherDurability, f),
+                lerp(getQuality(), otherQuality, f)
+                //max(getDurability(), otherDurability),
+                //max(getQuality(), otherQuality)
         );
     }
 
-    public boolean accumulateIfChanges(Budget target, float budgetEpsilon) {
-        if (this == target) return false;
-
-        final float p = clamp(getPriority() + target.getPriority());
-        final float d = max(getDurability(), target.getDurability());
-        final float q = max(getQuality(), target.getQuality());
-
-        return setIfChanges(p, d, q, budgetEpsilon);
-    }
 
     @Override
     public void addPriority(final float v) {
@@ -731,6 +728,11 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
     public boolean summaryLessThan(final float s) {
         return !summaryNotLessThan(s);
+    }
+
+    public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
+        BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
+        return this;
     }
 
 

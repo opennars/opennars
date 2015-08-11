@@ -593,10 +593,11 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         if (existing != null) {
             Budget prevBudget = existing.item;
             existing.item = newItem;
-            if (merge(newItem, prevBudget)) {
-                //budget changed, adjust level
+            merge(newItem, prevBudget);
+//            if (merge(newItem, prevBudget)) {
+//                //budget changed, adjust level
                 relevel(existing, newItem);
-            }
+            //}
             return null;
         }
 

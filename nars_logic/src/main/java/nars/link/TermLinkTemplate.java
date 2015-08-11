@@ -209,15 +209,14 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         return hashOut;
     }
 
-    public boolean link(Concept c, float priInc, float durInc, float quaInc, boolean propagate) {
+    public boolean link(Concept c, boolean propagate) {
 
-        accumulate(priInc, durInc, quaInc);
         if (!propagate) {
             return false;
         }
 
-        if (summary() < Global.BUDGET_EPSILON)
-            return false;
+//        if (summary() < Global.BUDGET_EPSILON)
+//            return false;
 
         TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
 
@@ -240,8 +239,8 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
         }
 
-        //spent
-        zero();
+        //spent ?
+        //setPriority(0);
 
         return true;
 

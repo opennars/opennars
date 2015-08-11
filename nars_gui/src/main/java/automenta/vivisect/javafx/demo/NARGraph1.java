@@ -660,17 +660,18 @@ public class NARGraph1 extends Application {
         primaryStage.setOnCloseRequest((e) -> System.exit(1));
 
 
-        //Equalized d = new Equalized(64,1,3);
+        //Equalized d = new Equalized(1024,5,5);
         Default d = new Default(96,3,3);
-        d.termLinkForgetDurations.set(1);
+        //Default d = new Solid(1,16,1,1,1,3);
         d.conceptCreationExpectation.set(0);
 
-        d.conceptForgetDurations.set(1);
-        d.termLinkForgetDurations.set(1);
-        d.taskLinkForgetDurations.set(1);
+        d.conceptForgetDurations.set(5);
+        d.termLinkForgetDurations.set(10);
+        d.taskLinkForgetDurations.set(4);
 
 
         new NARStream( this.nar = new NAR(d) )
+                .stdout()
                 .input("$0.9;0.75;0.2$ <a --> b>. %1.00;0.5%",
                         "$0.9;0.75;0.2$ <b --> c>. %1.00;0.5%")
                 .forEachNthFrame(this::updateGraph, 1)

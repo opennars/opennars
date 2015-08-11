@@ -91,7 +91,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
             final V e = super.remove(key);
 
-            if (Global.DEBUG)  validate();
+
 
             return e;
         }
@@ -438,7 +438,8 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         V overflow = index.remove(i.name());
 
         if (overflow!=null) {
-            i.getBudget().merge(overflow.getBudget());
+            if (overflow!=i)
+                merge(i.getBudget(), overflow.getBudget());
             full = false;
         }
 

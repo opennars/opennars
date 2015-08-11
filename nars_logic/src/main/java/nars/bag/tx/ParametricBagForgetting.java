@@ -1,8 +1,8 @@
 package nars.bag.tx;
 
 import nars.Global;
-import nars.Memory;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.budget.Itemized;
 
 import java.util.function.Function;
@@ -68,7 +68,14 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
 
         final float priorityStart = v.getPriority();
 
-        final float priorityEnd = Memory.forget(now, result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
+        /*switch (param.forgetting) {
+            case Iterative:
+                BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
+                break;
+            case Periodic:*/
+        //break;
+        //}
+        final float priorityEnd = BudgetFunctions.forgetPeriodic(result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY, now);
         if (priorityStart == priorityEnd) {
             /** null means it was not changed */
             return null;
