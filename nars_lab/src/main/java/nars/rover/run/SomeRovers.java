@@ -7,12 +7,12 @@ import nars.NAR;
 import nars.NARSeed;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
-import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.clock.SimulatedClock;
 import nars.concept.Concept;
 import nars.event.CycleReaction;
 import nars.gui.NARSwing;
+import nars.io.out.TextOutput;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -20,6 +20,7 @@ import nars.nar.Default;
 import nars.nar.experimental.Equalized;
 import nars.nar.experimental.Solid;
 import nars.rover.Sim;
+import nars.rover.robot.CarefulRover;
 import nars.rover.robot.Rover;
 import nars.rover.robot.Spider;
 import nars.rover.robot.Turret;
@@ -34,17 +35,18 @@ import javax.swing.*;
  */
 public class SomeRovers {
 
-    private static SimulatedClock clock;
+    private static SimulatedClock clock = new SimulatedClock();
+
 
     static {
         Video.themeInvert();
     }
 
-    public static NARSeed newSolid() {
+    public NARSeed newSolid() {
         NARSeed d = new Solid(32, 599, 1, 1, 1, 3 ) {
 
 
-        }.setInternalExperience(null).setClock(clock = new SimulatedClock());
+        }.setInternalExperience(null).setClock(clock);
 
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
 
@@ -60,7 +62,7 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Equalized(8192, 96, 8) {
+        Default d = new Equalized(1024, 32, 8) {
 
 
             @Override
@@ -79,7 +81,7 @@ public class SomeRovers {
 
         };
         //d.setInternalExperience(null);
-        d.setClock(clock = new SimulatedClock());
+        d.setClock(clock);
 
 
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
@@ -116,12 +118,17 @@ public class SomeRovers {
                 3, 3, 0.618f, 30, 30));
 
 
-        int rovers = 1;
+        {
+            Equalized e = new Equalized(1024, 32, 8);
+            e.setClock(clock);
+            NAR nar = new NAR(e);
+            TextOutput.out(nar);
+            game.add(new CarefulRover("r2", nar));
 
-        for (int i = 0; i < rovers; i++)  {
+        }
+      {
 
             NAR nar;
-            SimulatedClock clock;
 
             //NARSeed d = newSolid();
             NARSeed d = newDefault();
@@ -149,7 +156,7 @@ public class SomeRovers {
 
 
 
-            game.add(new Rover("r" + i, nar));
+            game.add(new Rover("r1", nar));
 
             if (cpanels) {
                 SwingUtilities.invokeLater(() -> {

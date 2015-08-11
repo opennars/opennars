@@ -45,7 +45,7 @@ public abstract class AbstractPolygonBot extends Robotic {
 
     public final NAR nar;
     final Deque<Vec2> positions = new ArrayDeque();
-    final List<VisionRay> vision = new ArrayList();
+    final List<Sense> senses = new ArrayList();
     public float linearThrustPerCycle = 8f;
     public float angularSpeedPerCycle = 0.44f * 0.25f;
     int mission = 0;
@@ -187,7 +187,7 @@ public abstract class AbstractPolygonBot extends Robotic {
             inputMission();
         }
 
-        for (VisionRay v : vision) {
+        for (Sense v : senses) {
             v.step(true, true);
         }
         /*if(cnt>=do_sth_importance) {
@@ -508,11 +508,18 @@ public abstract class AbstractPolygonBot extends Robotic {
 
     }
 
-    public class VisionRay implements SwingDraw.LayerDraw {
+    public interface Sense {
+
+        void step(boolean input, boolean draw);
+
+    }
+
+
+    public class VisionRay implements Sense, SwingDraw.LayerDraw {
 
         final Vec2 point; //where the retina receives vision at
         final float angle;
-        private final float distance;
+        protected final float distance;
         final ChangedTextInput sight =
                 //new SometimesChangedTextInput(nar, minVisionInputProbability);
                 new ChangedTextInput(nar);
@@ -579,6 +586,8 @@ public abstract class AbstractPolygonBot extends Robotic {
 
             point1 = body.getWorldPoint(point);
             Body hit = null;
+
+            final float distance = getDistance();
             float minDist = distance * 1.1f; //far enough away
             float totalDist = 0;
             float dArc = arc / resolution;
@@ -677,6 +686,10 @@ public abstract class AbstractPolygonBot extends Robotic {
             }
 
             updatePerception();
+        }
+
+        protected float getDistance() {
+            return distance;
         }
 
         protected void perceiveDist(Body hit, float newConf, float nextHitDist) {

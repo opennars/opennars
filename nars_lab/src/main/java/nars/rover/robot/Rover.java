@@ -58,7 +58,6 @@ public class Rover extends AbstractPolygonBot {
 
     float linearDamping = 0.9f;
     float angularDamping = 0.6f;
-
     float restitution = 0.9f; //bounciness
     float friction = 0.5f;
 
@@ -93,17 +92,7 @@ public class Rover extends AbstractPolygonBot {
         //randomActions.add("motor($direction)!");
         //TODO : randomActions.add("motor($direction,$direction)!");
 
-        randomActions.add("motor(left)!");
-        //randomActions.add("motor(left,left)!");
-        randomActions.add("motor(right)!");
-        //randomActions.add("motor(right,right)!");
-        //randomActions.add("motor(forward,forward)!"); //too much actions are not good,
-        randomActions.add("motor(forward)!"); //however i would agree if <motor(forward,forward) --> motor(forward)>.
-        //randomActions.add("motor(forward,forward)!");
-        //randomActions.add("motor(forward)!");
-        randomActions.add("motor(reverse)!");
-        randomActions.add("motor(stop)!");
-        //randomActions.add("motor(random)!");
+
 
     }
 
@@ -178,20 +167,11 @@ public class Rover extends AbstractPolygonBot {
 
             ((JoglDraw)draw).addLayer(v);
 
-            vision.add(v);
+            senses.add(v);
         }
         return torso;
     }
 
-
-    final ArrayList<String> randomActions = new ArrayList<>();
-
-
-
-    public void randomAction() {
-        int candid = (int) (Math.random() * randomActions.size());
-        nar.input(randomActions.get(candid));
-    }
 
     public static final ConceptDesire strongestTask = (c ->  c.getGoals().getMeanProjectedExpectation(c.time()) );
 
@@ -286,86 +266,6 @@ public class Rover extends AbstractPolygonBot {
 //        };
     }
 
-    protected void addMotorOperator() {
-        nar.on(new NullOperator("motor") {
-
-            @Override
-            protected List<Task> execute(Operation operation, Memory memory) {
-
-                Term[] args = operation.argArray();
-                Term t1 = args[0];
-
-                float priority = operation.getTask().getPriority();
-
-                int al = args.length;
-                if (args[al-1].equals(memory.self()))
-                    al--;
-
-                String command = "";
-                if (al == 1 ) {
-                    command = t1.toString();
-                }
-                if (al == 2 ) {
-                    Term t2 = args[1];
-                    command = t1.toString() + "," + t2.toString();
-                } else if (al == 3 ) {
-                    Term t2 = args[1];
-                    Term t3 = args[2];
-                    command = t1.toString() + "," + t2.toString() + "," + t3.toString();
-                }
-
-                //System.out.println(operation + " "+ command);
-
-                if (command.equals("$1")) {
-                    //variable causes random movement
-                    double v = Math.random();
-                    if (v < 0.25f) {
-                        command = "left";
-                    } else if (v < 0.5f) {
-                        command = "right";
-                    } else if (v < 0.75f) {
-                        command = "forward";
-                    } else {
-                        command = "reverse";
-                    }
-                }
-
-                int rspeed = 30;
-                switch (command) {
-                    case "right":
-                        rotateRelative(-rspeed);
-                        break;
-                    case "right,right":
-                        rotateRelative(-rspeed*2);
-                        break;
-                    case "left":
-                        rotateRelative(+rspeed);
-                        break;
-                    case "left,left":
-                        rotateRelative(+rspeed*2);
-                        break;
-                    case "forward,forward":
-                        thrustRelative(3);
-                        break;
-                    case "forward":
-                        thrustRelative(1);
-                        break;
-                    case "reverse":
-                        thrustRelative(-1);
-                        break;
-                    case "stop":
-                        stop();
-                        break;
-                    case "random":
-                        randomAction();
-                        break;
-                }
-
-                return null;
-            }
-        });
-
-    }
 
 
     @Override
