@@ -3,6 +3,7 @@ package nars.guifx;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
@@ -183,6 +184,12 @@ public class NARfx extends Application {
         if (removed!=null)
             removed.close();
 
+    }
+
+    //final static public Font monospace = new Font("Monospace", 14);
+
+    public static Font mono(double v) {
+        return Font.font("Monospace", v);
     }
 
 //   static void popup(Core core, Parent n) {

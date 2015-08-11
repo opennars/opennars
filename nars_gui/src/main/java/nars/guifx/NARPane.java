@@ -1,5 +1,6 @@
 package nars.guifx;
 
+import automenta.vivisect.javafx.demo.NARGraph1;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -11,7 +12,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.NARStream;
@@ -27,26 +27,19 @@ public class NARPane extends SplitPane {
 
     private final TabPane content = new TabPane();
     public final NARControlFX controlStrip;
-    public final BorderPane f;
+
 
     Tab console = null;
 
     public void console(boolean enabled) {
 
-        if (enabled && console == null) {
-
-            //console = new Tab("I/O", new TerminalPane(nar));
-
+        if (enabled) {
             Platform.runLater(() -> {
-                content.getTabs().add(console);
-                contentUpdate();
+                contentUpdate(true);
             });
-        }
-        else if (console !=null) {
+        } else if (console != null) {
             Platform.runLater(() -> {
-                content.getTabs().remove(console);
-                console = null;
-                contentUpdate();
+                contentUpdate(false);
             });
         }
 
@@ -63,7 +56,6 @@ public class NARPane extends SplitPane {
             // Bind canvas size to stack pane size.
             widthProperty().bind(parent.widthProperty());
             heightProperty().bind(parent.heightProperty());
-
 
 
             final boolean bindRedraw = false; //TODO parameter to make this optional to avoid unnecessary event being attached
@@ -122,10 +114,9 @@ public class NARPane extends SplitPane {
         public void changed(ObservableValue observable, Object oldValue, Object newValue) {
             System.out.println(newValue);
 
-            if ((boolean)newValue == true) {
+            if ((boolean) newValue == true) {
                 setActive(true);
-            }
-            else {
+            } else {
                 setActive(false);
             }
         }
@@ -141,13 +132,15 @@ public class NARPane extends SplitPane {
         NARStream s = new NARStream(n);
 
         controlStrip = new NARControlFX(nar, true, true, true) {
-            @Override protected void onConsole(boolean selected) {
-                console(selected);
+            @Override
+            protected void onConsole(boolean selected) {
+                //console(selected);
+                content.getTabs().add(new Tab("Graph", new NARGraph1(nar)));
             }
         };
 
 
-        f = new BorderPane();
+        final BorderPane f = new BorderPane();
 
 
         LinePlot lp = new LinePlot(
@@ -165,65 +158,60 @@ public class NARPane extends SplitPane {
 //        vb.autosize();
 
 
-        s.forEachCycle( lp::update );
+        s.forEachCycle(lp::update);
 
-        f.setCenter( scrolled(lp)       );
-
+        //f.setCenter( scrolled(lp)       );
+        f.setCenter(scrolled(new TreePane(n)));
         f.setRight(controlStrip);
 
 
-
-        f.setMaxHeight(Double.MAX_VALUE);
-
-        //content.setMaxWidth(Double.MAX_VALUE);
-        content.setMaxHeight(Double.MAX_VALUE);
+        content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        content.getTabs().add(new Tab("I/O", new TerminalPane(nar)));
 
 
-        getChildren().setAll(f);
+        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        f.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        //g.setDividerPositions(0.5f);
-        //f.setMaxWidth(Double.MAX_VALUE);
+
+        getItems().addAll(f, content);
+        setDividerPositions(0.5f);
+
+        //autosize();
 
     }
 
     public Stage newStage() {
 
-        contentUpdate();
         return NARfx.getStage(nar.toString(), this);
 
     }
 
 
+    public void contentUpdate(boolean show) {
 
-    public void contentUpdate() {
+        Platform.runLater(() -> {
+            if (!show) {
+                content.setVisible(false);
+            } else {
+                content.setVisible(true);
+            }
 
-            Platform.runLater(() -> {
-                if (content.getTabs().size() == 0) {
-                    content.setVisible(false);
-                    getItems().setAll(f);
-                }
-                else {
-                    content.setVisible(true);
-                    getItems().setAll(f, content);
+            layout();
+            //g.autosize();
 
-                }
-
-
-
-                layout();
-                //g.autosize();
-
-                setDividerPosition(0, 0.25);
+            setDividerPosition(0, 0.25);
 
 //                if (!isMaximized())
 //                    sizeToScene();
-            });
+        });
 
     }
 
     public static final javafx.scene.control.ScrollPane scrolled(Node n) {
         return scrolled(n, true, true);
     }
+
     public static final javafx.scene.control.ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
         javafx.scene.control.ScrollPane s = new javafx.scene.control.ScrollPane();
         s.setHbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);

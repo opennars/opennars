@@ -42,7 +42,10 @@ public class LogPane extends VBox {
     public Node getNode(Output.Channel channel, Class event, Object[] args) {
 
         if (args[0] instanceof Task) {
-            return new TaskPane(channel, nar, (Task)args[0]);
+            TaskLabel tl = new TaskLabel(channel.getLinePrefix(event, args) + ' ',
+                    (Task)args[0], nar);
+            tl.enablePopupClickHandler();
+            return tl;
         }
 
         StringBuilder sb = TextOutput.append(event, args, false, nar, new StringBuilder());
@@ -50,7 +53,7 @@ public class LogPane extends VBox {
         if (sb != null)
             s = sb.toString();
         else
-            s = "null: " + channel + " " + event + " " + Arrays.toString(args);
+            s = "null: " + channel.get(event, args) + " " + event + " " + Arrays.toString(args);
 
         Text t = new Text(s.toString());
         t.setFill(Color.ORANGE);

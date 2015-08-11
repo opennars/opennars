@@ -3,6 +3,7 @@ package nars.guifx;
 import automenta.vivisect.javafx.CodeInput;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
+import nars.InputPane;
 import nars.NAR;
 import nars.io.in.TextInput;
 
@@ -21,21 +22,7 @@ public class TerminalPane extends SplitPane {
 
                 NARPane.scrolled(new LogPane(nar))),
 
-                (new CodeInput() {
-                    @Override
-                    public boolean onInput(String s) {
-                        TextInput i = null;
-
-                        if (!s.isEmpty()) {
-                            i = nar.input(s);
-                        }
-
-                        if (!nar.isRunning())
-                            nar.frame(1);
-
-                        return i!=null;
-                    }
-                }));
+                (new InputPane(nar)));
 
         setDividerPosition(0,0.85);
 
@@ -45,4 +32,5 @@ public class TerminalPane extends SplitPane {
 
 
     }
+
 }

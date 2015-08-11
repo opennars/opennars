@@ -6,13 +6,11 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
-import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -21,11 +19,11 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
-import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.NARStream;
@@ -33,7 +31,6 @@ import nars.concept.Concept;
 import nars.guifx.NARfx;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.nar.Default;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.util.FastMath;
@@ -47,7 +44,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class NARGraph1 extends Application {
+public class NARGraph1 extends Spacegraph {
 
     public interface VisModel {
 
@@ -58,7 +55,7 @@ public class NARGraph1 extends Application {
         double getVertexScale(Concept c);
     }
 
-    final Spacegraph space = new Spacegraph();
+
     private NAR nar;
     private Timeline time;
 
@@ -89,7 +86,7 @@ public class NARGraph1 extends Application {
 
 
         private final Term term;
-        private final Label titleBar;
+        private final Text titleBar;
         private final Polygon base;
         Concept c = null;
 
@@ -117,12 +114,10 @@ public class NARGraph1 extends Application {
         public TermNode(Term t) {
             super();
 
-            this.titleBar = new Label(t.toStringCompact());
+            this.titleBar = new Text(t.toStringCompact());
             base = newPoly(6, 1.0);
 
 
-            getChildren().addAll(base, titleBar);
-            //getChildren().add(new Rectangle(1,1))
 
 
             this.term = t;
@@ -130,10 +125,9 @@ public class NARGraph1 extends Application {
 
             randomPosition(30, 30);
 
-            titleBar.setTextFill(Color.WHITE);
+            titleBar.setFill(Color.WHITE);
             titleBar.setScaleX(0.25);
             titleBar.setScaleY(0.25);
-            titleBar.setAlignment(Pos.CENTER);
             titleBar.setPickOnBounds(false);
             titleBar.setMouseTransparent(true);
             titleBar.setFont(baseFont);
@@ -168,6 +162,9 @@ public class NARGraph1 extends Application {
             });
 
             setPickOnBounds(false);
+
+            getChildren().setAll(base, titleBar);
+            //getChildren().add(new Rectangle(1,1))
 
             update();
 
@@ -507,15 +504,15 @@ public class NARGraph1 extends Application {
                 for (Term r : tr) {
                     TermNode c = terms.remove(r);
                     if (c != null)
-                        space.removeNodes(c);
+                        removeNodes(c);
 
                     Map<Term, TermEdge> er = edges.rowMap().remove(r);
                     if (er != null)
-                        space.removeEdges((Collection) er.values());
+                        removeEdges((Collection) er.values());
 
                     Map<Term, TermEdge> ec = edges.columnMap().remove(r);
                     if (ec != null)
-                        space.removeEdges((Collection) ec.values());
+                        removeEdges((Collection) ec.values());
                 }
             });
         }
@@ -526,7 +523,7 @@ public class NARGraph1 extends Application {
             runLater(() -> {
                 for (TermNode tn : x)
                     terms.put(tn.term, tn);
-                space.addNodes(x);
+                addNodes(x);
             });
         }
 
@@ -536,7 +533,7 @@ public class NARGraph1 extends Application {
             runLater(() -> {
                 for (TermEdge te : x)
                     edges.put(te.from.term, te.to.term, te);
-                space.addEdges(x);
+                addEdges(x);
             });
         }
 
@@ -649,37 +646,19 @@ public class NARGraph1 extends Application {
         //}
     }
 
-    @Override
-    public void start(Stage primaryStage) {
 
-        Scene scene = space.newScene(1200, 800);
-        //scene.getStylesheets().addAll("dark.css" );
+    public NARGraph1(NAR n) {
 
-        primaryStage.setScene(scene);
-        primaryStage.show();
-        primaryStage.setOnCloseRequest((e) -> System.exit(1));
+        super();
 
 
-        //Equalized d = new Equalized(1024,5,5);
-        Default d = new Default(96, 1, 1);
-        //Default d = new Solid(1,16,1,1,1,3);
-        d.conceptCreationExpectation.set(0);
 
-        d.conceptForgetDurations.set(3);
-        d.termLinkForgetDurations.set(3);
-        d.taskLinkForgetDurations.set(3);
-
-
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 1.0f;
-        Global.TERMLINK_FORGETTING_EXTRA_DEPTH = 1.0f;
-        Global.TASKLINK_FORGETTING_EXTRA_DEPTH = 1.0f;
-
-        new NARStream(this.nar = new NAR(d))
-                .stdout()
+        new NARStream(this.nar = n)
+                //.stdout()
                 //.stdoutTrace()
-                .input("<a --> b>. %1.00;0.7%", //$0.9;0.75;0.2$
-                        "<b --> c>. %1.00;0.7%")
-                .forEachNthFrame(this::updateGraph, 1)
+//                .input("<a --> b>. %1.00;0.7%", //$0.9;0.75;0.2$
+//                        "<b --> c>. %1.00;0.7%")
+                .forEachNthFrame(this::updateGraph, 1);
                 /*.forEachCycle(() -> {
                     double[] dd = new double[4];
                     nar.memory.getControl().conceptPriorityHistogram(dd);
@@ -693,8 +672,6 @@ public class NARGraph1 extends Application {
                             nar.memory.getActivePrioritySum(false, false, true)  );
 
                 })*/
-                .spawnThread(60, t -> t.start());
-
 
         new Animate(60, a -> {
             layoutNodes();
@@ -728,17 +705,5 @@ public class NARGraph1 extends Application {
     }
 
 
-    /**
-     * The main() method is ignored in correctly deployed JavaFX application.
-     * main() serves only as fallback in case the application can not be
-     * launched through deployment artifacts, e.g., in IDEs with limited FX
-     * support. NetBeans ignores main().
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
-
-    }
 
 }

@@ -574,7 +574,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp) {
 
         String contentName;
-        if (term) {
+        if (term && getTerm()!=null) {
              contentName = getTerm().toString();
         }
         else contentName = "";

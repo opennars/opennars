@@ -26,8 +26,6 @@ import nars.Events.Restart;
 import nars.Events.TaskRemove;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
-import nars.budget.Itemized;
 import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
@@ -67,6 +65,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -726,6 +725,17 @@ public class Memory implements Serializable, AbstractMemory {
      */
     public void think(final long cycles) {
         inputPausedUntil = (time() + cycles);
+    }
+
+
+
+    public void forEachTask(boolean includeTaskLinks, Consumer<Task> each) {
+        getControl().forEach(c -> {
+            if (c.getTaskLinks() != null)
+                c.getTaskLinks().forEach(tl -> {
+                    each.accept(tl.getTask());
+                });
+        });
     }
 
     /**

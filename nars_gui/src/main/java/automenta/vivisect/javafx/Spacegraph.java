@@ -148,8 +148,6 @@ public class Spacegraph extends ZoomFX {
 
         getChildren().add(0, grid = new GridCanvas(true));
 
-
-
         verts.maxWidth(Double.MAX_VALUE);
         verts.maxHeight(Double.MAX_VALUE);
         edges.maxWidth(Double.MAX_VALUE);
@@ -164,8 +162,7 @@ public class Spacegraph extends ZoomFX {
 
         content().add(layers);
 
-        getStyleClass().add("spacegraph");
-        getStyleClass().add("dark");
+        getStyleClass().setAll("spacegraph","dark");
 
 
 //        space.zoomFactorProperty().addListener((prop, oldVal, newVal) -> zoomFactor.setText(String.format("%d%%", Math.round(newVal.doubleValue() * 100))));

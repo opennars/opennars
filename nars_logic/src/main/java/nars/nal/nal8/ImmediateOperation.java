@@ -33,6 +33,9 @@ abstract public class ImmediateOperation  {
             return operation;
         }
 
+        public CharSequence stampAsStringBuilder() {
+            return "";
+        }
 
         /**
          * @return true if it was immediate
