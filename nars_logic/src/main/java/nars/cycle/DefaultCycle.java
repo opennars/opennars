@@ -47,7 +47,7 @@ public class DefaultCycle extends SequentialCycle {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    protected final ItemAccumulator<Task> newTasks;
+    public final ItemAccumulator<Task> newTasks;
     protected Set<Task> newTasksTemp = Global.newHashSet(8);
     protected boolean executingNewTasks = false;
 

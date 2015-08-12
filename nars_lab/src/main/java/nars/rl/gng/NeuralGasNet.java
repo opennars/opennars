@@ -27,6 +27,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         return lambda;
     }
 
+    /** lifespan of a node */
     public void setLambda(int lambda) {
         this.lambda = lambda;
     }
@@ -94,7 +95,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
 
 
         for (int i = 0; i < maxNodes; i++) {
-            addVertex(new Node(i, dimension).randomizeUniform(0, 1.0));
+            addVertex(new Node(i, dimension).randomizeUniform(-1.0, 1.0));
         }
 
 

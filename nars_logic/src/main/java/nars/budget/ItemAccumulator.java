@@ -1,7 +1,9 @@
 package nars.budget;
 
+import com.gs.collections.api.block.procedure.Procedure;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
+import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -172,10 +174,17 @@ public class ItemAccumulator<I extends Item> {
     }
 
 
+    /** iterates in no-specific order */
+    public void forEach(Consumer<I> recv) {
+        items.forEachKey((I t) -> recv.accept(t));
+    }
+
     @Override
     public String toString() {
         return items.toString();
     }
+
+
 
 
     static final class HighestFirstComparator<I extends Item> implements Comparator<I> {
