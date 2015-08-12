@@ -180,7 +180,7 @@ public class NARPane extends SplitPane {
 //                s.maxHeight(Double.MAX_VALUE);
 
 
-                content.getTabs().add(new Tab("Graph", new StackPane(g, lp) ));
+               // content.getTabs().add(new Tab("Graph", new StackPane(g, lp) ));
 
                 System.out.println(lp.getLayoutBounds());
             }
@@ -213,7 +213,7 @@ public class NARPane extends SplitPane {
 
 
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        content.getTabs().add(new Tab("I/O", new TerminalPane(nar)));
+      //  content.getTabs().add(new Tab("I/O", new TerminalPane(nar)));
 
 
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
