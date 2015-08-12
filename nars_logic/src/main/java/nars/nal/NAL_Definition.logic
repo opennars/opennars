@@ -289,7 +289,6 @@
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
 
 //TODO Implication Theorems (needs to be carefully evaluated what is needed here)
-(&&,A_1..n), A_1 |- A_1, (Truth:Deduction, Desire:Strong)
 
 //TODO Equivalence Theorems
 ({S} <-> {P}), S |- (S <-> P), (Truth:Identity, Desire:Identity)
