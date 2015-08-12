@@ -46,7 +46,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class JoglDraw extends DebugDraw {
 
-    private final JoglPanel panel;
+    private JoglAbstractPanel panel;
     private final TextRenderer text;
     private static final int NUM_CIRCLE_POINTS = 13;
     public final java.util.List<SwingDraw.LayerDraw> layers = new CopyOnWriteArrayList();
@@ -54,13 +54,15 @@ public class JoglDraw extends DebugDraw {
     Transform xf = new Transform();
 
 
-    public JoglDraw(JoglPanel panel) {
+    public JoglDraw() {
         super(new OBBViewportTransform());
-        this.panel = panel;
         text = new TextRenderer(Video.monofont);
 
-
         viewportTransform.setCamera(0, 0, 50.0f);
+    }
+
+    public void setPanel(JoglAbstractPanel panel) {
+        this.panel = panel;
     }
 
     public void addLayer(SwingDraw.LayerDraw l) {
