@@ -223,7 +223,7 @@ public class Default extends NARSeed  {
         this.termLinkThreshold.set(Global.BUDGET_EPSILON);
         this.taskLinkThreshold.set(Global.BUDGET_EPSILON);
 
-        this.executionThreshold.set(0.01);
+        this.executionThreshold.set(0.6);
         //executionThreshold.set(0.60);
 
         setClock(new CycleClock());
