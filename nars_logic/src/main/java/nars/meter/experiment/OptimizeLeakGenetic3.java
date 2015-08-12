@@ -5,7 +5,6 @@ import nars.Symbols;
 import nars.event.CycleReaction;
 import nars.io.in.LibraryInput;
 import nars.meter.TestNAR;
-import nars.meter.performance.TestCompletionSpeed;
 import nars.nar.Default;
 import nars.task.TaskSeed;
 import objenome.op.Variable;

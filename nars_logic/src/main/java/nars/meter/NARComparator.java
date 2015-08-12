@@ -41,14 +41,21 @@ public class NARComparator {
             }
         };
 
+        new UselessProcess(a);
+        new UselessProcess(b);
+
     }
 
     private void output(NAR n, Output.Channel channel, Class event, Object[] args) {
         if (event == Events.OUT.class) {
             if (args[0] instanceof Task) {
-                outputs.put(n, (Task)args[0]);
+                addOutput(n, (Task)args[0]);
             }
         }
+    }
+
+    protected void addOutput(NAR n, Task t) {
+        outputs.put(n, t);
     }
 
     public void input(String s) {

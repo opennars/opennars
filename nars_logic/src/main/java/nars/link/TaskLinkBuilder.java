@@ -60,11 +60,17 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
     @Override
     public TaskLink newItem() {
-        if (template == null)
-            return new TaskLink(getTask(), getBudget());
-        else
-            return new TaskLink(getTask(), template, getBudget());
+        throw new RuntimeException("should not be necessary to call");
     }
+
+
+    //    @Override
+//    public TaskLink newItem() {
+//        if (template == null)
+//            return new TaskLink(getTask(), getBudget());
+//        else
+//            return new TaskLink(getTask(), template, getBudget());
+//    }
 
 
     @Override

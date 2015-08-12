@@ -1,4 +1,4 @@
-package nars.meter.performance;
+package nars.meter.experiment;
 
 import nars.io.in.LibraryInput;
 import nars.meter.TestNAR;

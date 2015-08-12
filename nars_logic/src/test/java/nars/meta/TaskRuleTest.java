@@ -1,11 +1,13 @@
 package nars.meta;
 
 import junit.framework.TestCase;
+import nars.NAR;
 import nars.meter.NARComparator;
 import nars.nal.NALExecuter;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
+import nars.task.Task;
 import org.junit.Test;
 
 /**
@@ -106,7 +108,10 @@ public class TaskRuleTest extends TestCase {
         NARComparator c = new NARComparator(
                 new Default().setInternalExperience(null),
                 new NewDefault().setInternalExperience(null)
-        );
+        ) {
+
+
+        };
         c.input("<x --> y>.\n<y --> z>.\n");
 
 

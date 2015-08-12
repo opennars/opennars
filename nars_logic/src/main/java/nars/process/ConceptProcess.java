@@ -13,6 +13,8 @@ import nars.link.TermLink;
 import nars.task.Task;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -78,6 +80,7 @@ abstract public class ConceptProcess extends NAL  {
         if (derived!=null) {
             memory.add(derived);
         }
+
     }
 
 
@@ -185,8 +188,9 @@ abstract public class ConceptProcess extends NAL  {
     }
 
 
-
-
-
-
+    public List<Task> getDerived() {
+        if (derived == null)
+            return Collections.emptyList();
+        return derived;
+    }
 }

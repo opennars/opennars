@@ -1,6 +1,7 @@
 package nars.meta;
 
 import nars.Global;
+import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -202,9 +203,14 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 Term[] args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
                 //ok apply substitution to both elements in args
 
-
                 final Term arg1 = args[0].substituted(assign);
-                final Term arg2 = args[1].substituted(assign);
+
+                final Term arg2;
+                //arg2 is optional
+                if (args.length > 1 && args[1]!=null)
+                    arg2 = args[1].substituted(assign);
+                else
+                    arg2 = null;
 
                 final String predicateNameStr = predicate_name.toString();
 
@@ -333,6 +339,11 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 derive = derive.substituted(precondsubs);
             }
         }
+
+        if (derive!=null && derive.toString().contains("%")) {
+            System.err.println("Reactor leak - Pattern variable detected in output");
+        }
+
 
         //TODO also allow substituted evaluation on output side (used by 2 rules I think)
 

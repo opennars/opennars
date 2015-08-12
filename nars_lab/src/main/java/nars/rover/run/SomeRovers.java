@@ -16,6 +16,7 @@ import nars.io.out.TextOutput;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.meter.UselessProcess;
 import nars.nar.Default;
 import nars.nar.experimental.Equalized;
 import nars.nar.experimental.Solid;
@@ -127,6 +128,8 @@ public class SomeRovers {
             NAR nar = new NAR(e);
             TextOutput.out(nar);
             game.add(new CarefulRover("r2", nar));
+
+            //new UselessProcess(nar);
 
         }
       {

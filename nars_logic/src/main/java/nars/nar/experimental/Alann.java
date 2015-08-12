@@ -139,15 +139,15 @@ public class Alann extends NARSeed {
         public boolean processBelief(Premise nal, Task task) {
             System.out.println(this + " processBelief " + task);
 
-            final TaskLink taskLink = new TaskLink(task, task.getBudget());
+            //final TaskLink taskLink = new TaskLink(task, task.getBudget());
 
 
-            believe(taskLink);
-
-            if (task.isInput()) {
-                //trigger spike event (spike const * truth.confidence)
-                onSpike(taskLink, 1f);
-            }
+            //believe(taskLink);
+//
+//            if (task.isInput()) {
+//                //trigger spike event (spike const * truth.confidence)
+//                onSpike(taskLink, 1f);
+//            }
 
 
             return false;
@@ -157,11 +157,11 @@ public class Alann extends NARSeed {
         public Task processQuestion(Premise nal, Task task) {
             System.out.println(this + " processQuestion " + task);
 
-
-            final TaskLink taskLink = new TaskLink(task, task.getBudget());
-            onSpike(taskLink, 1f);
-
-            lastTask = task;
+//
+//            final TaskLink taskLink = new TaskLink(task, task.getBudget());
+//            onSpike(taskLink, 1f);
+//
+//            lastTask = task;
 
 
             return null;
@@ -570,7 +570,7 @@ public class Alann extends NARSeed {
 
                         float bconf = b.getTruth().getConfidence();
 
-                        a.onSpike(new TaskLink(b, b.getBudget()), bconf);
+                        //a.onSpike(new TaskLink(b, b.getBudget()), bconf);
 
                     });
 

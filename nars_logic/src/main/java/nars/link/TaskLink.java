@@ -84,10 +84,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         this.type = type;
     }
 
-    public TaskLink(final Task t, final Budget v) {
-        this(t, v, null, TermLink.SELF);
-    }
-
+//    public TaskLink(final Task t, final Budget v) {
+//        this(t, v, null, TermLink.SELF);
+//    }
+//
     /**
      * Constructor
      * <p>
