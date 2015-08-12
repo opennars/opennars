@@ -72,6 +72,8 @@ public class Node extends ArrayRealVector implements Named<String> {
         return s;
     }
 
+
+
     public double getDistance(double[] x) {
         return Math.sqrt(getDistanceSq(x));
     }
@@ -79,9 +81,16 @@ public class Node extends ArrayRealVector implements Named<String> {
     /** 0 < rate < 1.0 */
     public void update(double rate, double[] x) {
         final double[] d = getDataRef();
-        for (int i = 0; i < getDimension(); i++) {
+        for (int i = 0; i < d.length; i++) {
             double c = d[i];
             d[i] =  ((1.0 - rate) * c ) + (rate * x[i]);
+        }
+    }
+
+    public void add(double[] x) {
+        final double[] d = getDataRef();
+        for (int i = 0; i < d.length; i++) {
+            d[i] += x[i];
         }
     }
 

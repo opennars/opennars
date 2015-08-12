@@ -3,6 +3,7 @@ package nars.rl.gng;
 import org.jgrapht.graph.SimpleGraph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -118,6 +119,12 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         }
 
         return closest;
+    }
+    /** translates all nodes uniformly */
+    public void addToNodes(double[] x) {
+        for (Node n : vertexSet() ) {
+            n.add(x);
+        }
     }
 
     public Node learn(double... x) {
@@ -298,5 +305,16 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         }
 
         return x;
+    }
+
+    /** pulls a dimension out of all the nodes, as an array, and sorts it  */
+    public double[] getDimension(int dim) {
+        double[] d = new double[vertexSet().size()];
+        int i = 0;
+        for (Node n : vertexSet()) {
+            d[i++] = n.getEntry(dim);
+        }
+        Arrays.sort(d);
+        return d;
     }
 }
