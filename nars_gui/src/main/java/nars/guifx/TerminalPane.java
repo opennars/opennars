@@ -18,11 +18,10 @@ public class TerminalPane extends SplitPane {
 
 
         setOrientation(Orientation.VERTICAL);
+
         getItems().addAll(NARPane.scrolled(
-
                 NARPane.scrolled(new LogPane(nar))),
-
-                (new InputPane(nar)));
+                new InputPane(nar));
 
         setDividerPosition(0,0.85);
 

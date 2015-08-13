@@ -25,7 +25,7 @@ public class NARPane extends SplitPane {
 
     private final BorderPane menu = new BorderPane();
 
-    private final TabPane content = new TabPane();
+    public final TabPane content = new TabPane();
     public final NARControlFX controlStrip;
 
 
@@ -122,7 +122,7 @@ public class NARPane extends SplitPane {
         }
     }
 
-    private final NAR nar;
+    public final NAR nar;
 
 
     public NARPane(NAR n) {
@@ -138,54 +138,6 @@ public class NARPane extends SplitPane {
             protected void onConsole(boolean selected) {
 
 
-                NARGraph1 g = new NARGraph1(nar);
-
-                final TilePane lp = new TilePane(4,4,
-//                        new LinePlot("Total Priority", () ->
-//                            nar.memory.getActivePrioritySum(true, true, true)
-//                        , 128),
-                        new LinePlot("Concept Priority", () -> {
-                            int c = nar.memory.getControl().size();
-                            if (c == 0) return 0;
-                            else return nar.memory.getActivePrioritySum(true, false, false) / (c);
-                        }, 128),
-                        new LinePlot("TermLink Priority", () ->
-                            nar.memory.getActivePrioritySum(false, true, false)
-                        , 128),
-                        new LinePlot("TaskLink Priority", () ->
-                            nar.memory.getActivePrioritySum(false, false, true)
-                        , 128)
-                );
-                lp.setPrefColumns(2);
-                lp.setPrefRows(2);
-
-                new CycleReaction(nar) {
-
-                    @Override
-                    public void onCycle() {
-                        for (Object o : lp.getChildren()) {
-                            if (o instanceof LinePlot)
-                                ((LinePlot)o).update();
-                        }
-                    }
-                };
-
-                lp.setOpacity(0.5f);
-                lp.setPrefSize(200,200);
-                lp.maxWidth(Double.MAX_VALUE);
-                lp.maxHeight(Double.MAX_VALUE);
-                lp.setMouseTransparent(true);
-                lp.autosize();
-
-
-//                StackPane s = new StackPane(lp);
-//                s.maxWidth(Double.MAX_VALUE);
-//                s.maxHeight(Double.MAX_VALUE);
-
-
-                content.getTabs().add(new Tab("Graph", new StackPane(g, lp) ));
-
-                System.out.println(lp.getLayoutBounds());
             }
         };
 

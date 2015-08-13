@@ -1,13 +1,18 @@
 package nars.guifx;
 
+import automenta.vivisect.javafx.demo.NARGraph1;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.event.CycleReaction;
 import nars.nar.Default;
 
 import java.io.File;
@@ -95,6 +100,56 @@ public class NARfx extends Application {
             e.printStackTrace();
         }
 
+        {
+
+            NARGraph1 g = new NARGraph1(w.nar);
+
+//            final TilePane lp = new TilePane(4,4,
+////                        new LinePlot("Total Priority", () ->
+////                            nar.memory.getActivePrioritySum(true, true, true)
+////                        , 128),
+//                    new LinePlot("Concept Priority", () -> {
+//                        int c = nar.memory.getControl().size();
+//                        if (c == 0) return 0;
+//                        else return nar.memory.getActivePrioritySum(true, false, false) / (c);
+//                    }, 128),
+//                    new LinePlot("TermLink Priority", () ->
+//                            nar.memory.getActivePrioritySum(false, true, false)
+//                            , 128),
+//                    new LinePlot("TaskLink Priority", () ->
+//                            nar.memory.getActivePrioritySum(false, false, true)
+//                            , 128)
+//            );
+//            lp.setPrefColumns(2);
+//            lp.setPrefRows(2);
+//
+//            new CycleReaction(w.nar) {
+//
+//                @Override
+//                public void onCycle() {
+//                    for (Object o : lp.getChildren()) {
+//                        if (o instanceof LinePlot)
+//                            ((LinePlot)o).update();
+//                    }
+//                }
+//            };
+//
+//            lp.setOpacity(0.5f);
+//            lp.setPrefSize(200,200);
+//            lp.maxWidth(Double.MAX_VALUE);
+//            lp.maxHeight(Double.MAX_VALUE);
+//            lp.setMouseTransparent(true);
+//            lp.autosize();
+
+
+//                StackPane s = new StackPane(lp);
+//                s.maxWidth(Double.MAX_VALUE);
+//                s.maxHeight(Double.MAX_VALUE);
+
+
+            w.content.getTabs().add(new Tab("Terminal", new TerminalPane(w.nar) ));
+            w.content.getTabs().add(new Tab("Graph", g ));
+        }
         //startup defaults
         w.console(true);
 

@@ -17,7 +17,7 @@ public class InputPane extends TabPane {
         setSide(Side.BOTTOM);
         setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 
-       // getTabs().add(new Tab("Narsese", new NarseseInput(n)));
+        getTabs().add(new Tab("Narsese", new NarseseInput(n)));
         getTabs().add(new Tab("En"));
         getTabs().add(new Tab("Es"));
         getTabs().add(new Tab("Fr"));
