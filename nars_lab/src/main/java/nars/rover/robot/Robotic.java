@@ -3,7 +3,7 @@ package nars.rover.robot;
 import nars.NAR;
 import nars.rover.Material;
 import nars.rover.Sim;
-import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
@@ -19,7 +19,7 @@ abstract public class Robotic {
     //public class ChangedNumericInput //discretizer
     public Sim sim;
     public final String id;
-    public JoglDraw draw;
+    public JoglAbstractDraw draw;
     float mass = 1f;
 
     public Robotic(String id) {
@@ -28,7 +28,7 @@ abstract public class Robotic {
 
     public void init(Sim p) {
         this.sim = p;
-        this.draw = (JoglDraw)p.draw();
+        this.draw = (JoglAbstractDraw)p.draw();
         this.torso = newTorso();
         this.torso.setUserData(getMaterial());
     }
@@ -68,7 +68,7 @@ abstract public class Robotic {
         }
 
         @Override
-        public void before(Body b, JoglDraw d, float time) {
+        public void before(Body b, JoglAbstractDraw d, float time) {
 //            color.set(color.x,
 //                    color.y,
 //                    color.z);
@@ -95,7 +95,7 @@ abstract public class Robotic {
         }
 
         @Override
-        public void before(Body b, JoglDraw d, float time) {
+        public void before(Body b, JoglAbstractDraw d, float time) {
             float bb = nar.memory.emotion.busy() * 0.5f + 0.5f;
             //color.set(c.getRed()/256.0f * bb, c.getGreen()/256.0f * bb, c.getBlue()/256.0f * bb);
             float hh = nar.memory.emotion.happy() * 0.5f + 0.5f;

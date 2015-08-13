@@ -1,7 +1,7 @@
 package nars.rover.robot;
 
 
-import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.util.Bodies;
 import nars.rover.util.Explosion;
 import nars.util.data.random.XORShiftRandom;
@@ -29,7 +29,7 @@ public class Turret extends Robotic {
 
         return new RoboticMaterial(this) {
 
-            @Override public void before(Body b, JoglDraw d, float time) {
+            @Override public void before(Body b, JoglAbstractDraw d, float time) {
                 super.before(b, d, time);
 
                 if (!explosions.isEmpty()) {

@@ -2,10 +2,7 @@ package ptrman.difficultyEnvironment.scriptAccessors;
 
 import ptrman.difficultyEnvironment.animation.AnimationEvent;
 import ptrman.difficultyEnvironment.animation.ExecuteJavascriptAnimationEvent;
-import ptrman.difficultyEnvironment.interactionComponents.AnimationComponent;
-import ptrman.difficultyEnvironment.interactionComponents.IComponent;
-import ptrman.difficultyEnvironment.interactionComponents.JavascriptComponent;
-import ptrman.difficultyEnvironment.interactionComponents.TopDownViewWheeledPhysicsComponent;
+import ptrman.difficultyEnvironment.interactionComponents.*;
 
 import java.util.List;
 
@@ -35,6 +32,14 @@ public class ComponentManipulationScriptingAccessor {
 
     public IComponent createJavascriptComponentWithScriptString(String spawnScript, String frameInteractionScript) {
         return JavascriptComponent.createFromRawSourcecode(spawnScript, frameInteractionScript);
+    }
+
+    public IComponent createTopDownViewWheeledControllerComponent(float maxSpeed) {
+        return new TopDownViewWheeledControllerComponent(maxSpeed);
+    }
+
+    public IComponent createBiasedRandomAIComponent(float timerNextMovechange, float ratioOfMoveRotation, float angleScale) {
+        return new BiasedRandomAIComponent(timerNextMovechange, ratioOfMoveRotation, angleScale);
     }
 
     // belongs into EvenManiputationScriptingAccessor

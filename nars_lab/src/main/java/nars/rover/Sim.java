@@ -4,7 +4,7 @@ import nars.Global;
 import nars.clock.SimulatedClock;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
-import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.robot.Robotic;
 import nars.rover.world.FoodSpawnWorld1;
 import org.jbox2d.common.Color3f;
@@ -265,7 +265,7 @@ public class Sim extends PhysicsModel {
         static final Color3f foodFill = new Color3f(0.15f, 0.6f, 0.15f);
 
         @Override
-        public void before(Body b, JoglDraw d, float time) {
+        public void before(Body b, JoglAbstractDraw d, float time) {
             d.setFillColor(foodFill);
         }
 
@@ -277,7 +277,7 @@ public class Sim extends PhysicsModel {
     public static class WallMaterial extends Material {
         static final Color3f wallFill = new Color3f(0.5f, 0.5f, 0.5f);
         @Override
-        public void before(Body b, JoglDraw d, float time) {
+        public void before(Body b, JoglAbstractDraw d, float time) {
             d.setFillColor(wallFill);
         }
 
@@ -291,7 +291,7 @@ public class Sim extends PhysicsModel {
         static final Color3f poisonFill = new Color3f(0.45f, 0.15f, 0.15f);
 
         @Override
-        public void before(Body b, JoglDraw d, float time) {
+        public void before(Body b, JoglAbstractDraw d, float time) {
             d.setFillColor(poisonFill);
         }
         @Override

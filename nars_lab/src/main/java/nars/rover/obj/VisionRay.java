@@ -1,11 +1,10 @@
 package nars.rover.obj;
 
 import nars.concept.Concept;
-import nars.io.in.ChangedTextInput;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.rover.Sim;
-import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.physics.j2d.SwingDraw;
 import nars.rover.robot.AbstractPolygonBot;
 import nars.rover.util.RayCastClosestCallback;
@@ -176,7 +175,7 @@ public class VisionRay implements AbstractPolygonBot.Sense, SwingDraw.LayerDraw 
 
                     @Override
                     public void run() {
-                        ((JoglDraw) abstractPolygonBot.getDraw()).drawSegment(abstractPolygonBot.point1, finalEndPoint, rc.x, rc.y, rc.z, alpha, 1f * thick);
+                        ((JoglAbstractDraw) abstractPolygonBot.getDraw()).drawSegment(abstractPolygonBot.point1, finalEndPoint, rc.x, rc.y, rc.z, alpha, 1f * thick);
                     }
                 });
 
@@ -262,14 +261,14 @@ public class VisionRay implements AbstractPolygonBot.Sense, SwingDraw.LayerDraw 
     }
 
     @Override
-    public void drawGround(JoglDraw d, World w) {
+    public void drawGround(JoglAbstractDraw d, World w) {
         for (Runnable r : toDraw) {
             r.run();
         }
     }
 
     @Override
-    public void drawSky(JoglDraw d, World w) {
+    public void drawSky(JoglAbstractDraw d, World w) {
 
     }
 

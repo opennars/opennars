@@ -56,7 +56,7 @@ public class DrawerRunnable implements Runnable {
             draw.drawSegment(p1, p2, mouseColor);
         }
 
-        if (settings.getSetting(TestbedSettings.DrawContactPoints).enabled) {
+        if (false /*settings.getSetting(TestbedSettings.DrawContactPoints).enabled*/) {
             final float k_impulseScale = 0.1f;
             final float axisScale = 0.3f;
 
@@ -100,7 +100,7 @@ public class DrawerRunnable implements Runnable {
 
     AtomicBoolean drawingQueued = new AtomicBoolean(false);
 
-    private TestbedPanel panel;
+    public TestbedPanel panel;
 
     // mouse physics
     private MouseJoint mouseJoint;

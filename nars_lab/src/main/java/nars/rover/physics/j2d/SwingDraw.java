@@ -25,7 +25,7 @@
  */
 package nars.rover.physics.j2d;
 
-import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.ChainShape;
@@ -79,8 +79,8 @@ public class SwingDraw extends DebugDraw {
 
 
     public interface LayerDraw {
-        public void drawGround(JoglDraw draw, World w);
-        public void drawSky(JoglDraw draw, World w);
+        public void drawGround(JoglAbstractDraw draw, World w);
+        public void drawSky(JoglAbstractDraw draw, World w);
     }
     
     public void addLayer(LayerDraw l) {

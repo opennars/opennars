@@ -5,30 +5,20 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
-import nars.io.in.ChangedTextInput;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.rl.gng.NeuralGasNet;
 import nars.rover.Material;
 import nars.rover.Sim;
-import nars.rover.physics.gl.JoglDraw;
-import nars.rover.physics.j2d.SwingDraw;
-import nars.rover.util.RayCastClosestCallback;
 import nars.task.Task;
 import nars.task.TaskSeed;
-import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import org.jbox2d.callbacks.DebugDraw;
-import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.World;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by me on 8/3/15.

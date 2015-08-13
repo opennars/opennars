@@ -69,7 +69,7 @@ public abstract class JoglAbstractPanel extends GLCanvas implements TestbedPanel
         addGLEventListener(this);
         enableInputMethods(true);
 
-        if( model != null ) {
+        if( model != null && controller != null ) {
             //AWTPanelHelper.addHelpAndPanelListeners(this, model, controller, SCREEN_DRAG_BUTTON);
             AWTPanelHelper.addHelpAndPanelListeners(this, model, controller, SCREEN_DRAG_BUTTON);
         }
@@ -120,7 +120,7 @@ public abstract class JoglAbstractPanel extends GLCanvas implements TestbedPanel
         gl.glAccum(GL2.GL_RETURN, 0.9f); //adding the current frame to the buffer
 
 
-        JoglDraw drawer = ((JoglDraw)getDebugDraw());
+        JoglAbstractDraw drawer = ((JoglAbstractDraw)getDebugDraw());
 
         float time = 0.0f; // what does this?
         if( model != null ) {
@@ -194,6 +194,9 @@ public abstract class JoglAbstractPanel extends GLCanvas implements TestbedPanel
 
     @Override
     public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
+        float width = (float)getWidth();
+        float height = (float)getHeight();
+
         GL2 gl2 = arg0.getGL().getGL2();
 
         gl2.glMatrixMode(GL2.GL_PROJECTION);
@@ -201,7 +204,7 @@ public abstract class JoglAbstractPanel extends GLCanvas implements TestbedPanel
 
         // coordinate system origin at lower left with width and height same as the window
         GLU glu = new GLU();
-        glu.gluOrtho2D(0.0f, getWidth(), 0.0f, getHeight());
+        glu.gluOrtho2D(0.0f, width, 0.0f, height);
 
 
         gl2.glMatrixMode(GL2.GL_MODELVIEW);
@@ -209,6 +212,8 @@ public abstract class JoglAbstractPanel extends GLCanvas implements TestbedPanel
 
         gl2.glViewport(0, 0, getWidth(), getHeight());
 
-        controller.updateExtents(arg3 / 2, arg4 / 2);
+        if( controller != null ) {
+            controller.updateExtents(arg3 / 2, arg4 / 2);
+        }
     }
 }

@@ -8,7 +8,7 @@ import nars.grid2d.*;
 import nars.grid2d.map.Maze;
 import nars.rover.PhysicsModel;
 import nars.rover.RoverWorld;
-import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.physics.j2d.SwingDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
 import org.jbox2d.dynamics.Body;
@@ -52,13 +52,13 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
     private final float ch;
     private final float worldWidth;
     private final float worldHeight;
-    private JoglDraw draw;
+    private JoglAbstractDraw draw;
 
 
     public GridSpaceWorld(PhysicsModel p, Grid2DSpace g) {
         super(p);
         
-        ((JoglDraw)p.draw()).addLayer(this);
+        ((JoglAbstractDraw)p.draw()).addLayer(this);
         
         this.grid = g;
         
@@ -145,14 +145,14 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
     };
 
     @Override
-    public void drawGround(JoglDraw draw, World w) {
+    public void drawGround(JoglAbstractDraw draw, World w) {
         this.draw = draw;
         //this.graphics = draw.getGraphics();
         cells(groundDrawer, true);
     }
 
     @Override
-    public void drawSky(JoglDraw draw, World w) {
+    public void drawSky(JoglAbstractDraw draw, World w) {
     
     }
     
