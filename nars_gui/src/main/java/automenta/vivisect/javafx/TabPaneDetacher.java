@@ -1,6 +1,5 @@
 package automenta.vivisect.javafx;
 
-import de.jensd.shichimifx.utils.MouseRobot;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
@@ -164,9 +163,9 @@ public class TabPaneDetacher {
         stage.setScene(scene);
         stage.setTitle(tab.getText());
         stage.setAlwaysOnTop(isAlwaysOnTop());
-        Point2D p = MouseRobot.getMousePosition();
-        stage.setX(p.getX());
-        stage.setY(p.getY());
+        //Point2D p = MouseRobot.getMousePosition();
+        //stage.setX(p.getX());
+        //stage.setY(p.getY());
         stage.setOnCloseRequest((WindowEvent t) -> {
             stage.close();
             tab.setContent(content);

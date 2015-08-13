@@ -29,7 +29,6 @@ public class NARPane extends BorderPane {
     public final TabPane content = new TabPane();
     public final NARControlFX controlStrip;
 
-
     Tab console = null;
 
     public void console(boolean enabled) {

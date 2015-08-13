@@ -3,8 +3,6 @@ package nars.guifx;
 import automenta.vivisect.javafx.demo.NARGraph1;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -13,8 +11,10 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.nar.Default;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 
@@ -145,8 +145,8 @@ public class NARfx extends Application {
 //                s.maxHeight(Double.MAX_VALUE);
 
 
-            w.content.getTabs().add(new Tab("Terminal", new TerminalPane(w.nar) ));
-            w.content.getTabs().add(new Tab("Graph", new BorderPane(g) ));
+            w.content.getTabs().add(new TabX("Terminal", new TerminalPane(w.nar) ));
+            w.content.getTabs().add(new TabX("Graph", g ));
         }
         //startup defaults
         w.console(true);
@@ -242,7 +242,8 @@ public class NARfx extends Application {
     //final static public Font monospace = new Font("Monospace", 14);
 
     public static Font mono(double v) {
-        return Font.font("Monospace", v);
+        //[Dialog, SansSerif, Serif, Monospaced, DialogInput]
+        return Font.font("Monospaced", v);
     }
 
 //   static void popup(Core core, Parent n) {

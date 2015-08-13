@@ -1,10 +1,10 @@
 package automenta.vivisect.javafx;
 
+import automenta.vivisect.javafx.demo.Animate;
 import dejv.commons.jfx.geometry.ObservableBounds;
 import dejv.commons.jfx.geometry.ObservableDimension2D;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Orientation;
@@ -33,15 +33,15 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 @DefaultProperty("content")
 public class ZoomFX extends StackPane {
 
-    @Deprecated private static final double SCROLLING_DIVISOR = 400.0d;
+    @Deprecated private static final double SCROLLING_DIVISOR = 200.0d;
     private static final double SCROLL_MIN = 0.0;
     private static final double SCROLL_MAX = 1.0;
     private static final double SCROLL_UNIT_INC = 0.1;
 
     // Properties
-    private final DoubleProperty zoomFactor = new SimpleDoubleProperty(1.0);
-    protected final DoubleProperty panX = new SimpleDoubleProperty(0);
-    protected final DoubleProperty panY = new SimpleDoubleProperty(0);
+    private final LerpDoubleProperty zoomFactor = new LerpDoubleProperty(1.0);
+    protected final LerpDoubleProperty panX = new LerpDoubleProperty(0);
+    protected final LerpDoubleProperty panY = new LerpDoubleProperty(0);
 
     //Sub-controls
     /*private final ScrollBar hscroll = new ScrollBar();
@@ -57,9 +57,25 @@ public class ZoomFX extends StackPane {
 
     final Scale scale = new Scale();
     final Translate translate = new Translate();
+    Animate positionAnimation = new Animate(50, a -> {
+        zoomFactor.update();
+        panX.update();
+        panY.update();
+    });
 
     public ZoomFX() {
         super();
+
+
+
+        visibleProperty().addListener(c -> {
+            if (isVisible()) {
+                positionAnimation.start();
+            }
+            else {
+                positionAnimation.stop();
+            }
+        });
 
         //setupScrollbar(hscroll, Orientation.HORIZONTAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
         //setupScrollbar(vscroll, Orientation.VERTICAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
@@ -148,16 +164,11 @@ public class ZoomFX extends StackPane {
             final double dY = (sceneY - panStart.getEntry(1)) / 1f; //(pivotLogicalExtent.heightProperty().get() * zoomFactor.get());
 
 
-            //System.out.println(dX + " " + dY);
             panStart.setEntry(0, sceneX);
             panStart.setEntry(1, sceneY);
 
-            panX.add(-dX);
-            panY.add(-dY);
-
-
-            //hscroll.setValue(hscroll.getValue() - dX);
-            //vscroll.setValue(vscroll.getValue() - dY);
+            panX.set(panX.getTarget() + -dX);
+            panY.set(panY.getTarget() + -dY);
 
         }
     }

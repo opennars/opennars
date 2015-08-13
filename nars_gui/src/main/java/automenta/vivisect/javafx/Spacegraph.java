@@ -148,7 +148,7 @@ public class Spacegraph extends ZoomFX {
 
 
         layers.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        layers.setPickOnBounds(true);
+        layers.setPickOnBounds(false);
         edges.setPickOnBounds(false);
         verts.setPickOnBounds(false);
 
@@ -175,15 +175,15 @@ public class Spacegraph extends ZoomFX {
                 .doOnDragStart((event) -> {
                     if (event.getButton() == MouseButton.SECONDARY)
                         startPan(event.getSceneX(), event.getSceneY());
-                    event.consume();
+                    //event.consume();
                 })
                 .doOnDrag((event) -> {
                     pan(event.getSceneX(), event.getSceneY());
-                    event.consume();
+                    //event.consume();
                 })
                 .doOnDragFinish((event) -> {
                     endPan();
-                    event.consume();
+                    //event.consume();
                 })
                 .register(getViewport());
 

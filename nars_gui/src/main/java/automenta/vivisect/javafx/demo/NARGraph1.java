@@ -4,22 +4,21 @@ import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.javafx.Spacegraph;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
-import javafx.scene.control.Label;
+import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
@@ -82,9 +81,11 @@ public class NARGraph1 extends Spacegraph {
         return polygon;
     }
 
-    final static Font baseFont = new Font(1);
 
-    public class TermNode extends StackPane {
+    final static Font nodeFont = NARfx.mono(1);
+
+    public class TermNode extends Group {
+
 
 
         private final Term term;
@@ -100,8 +101,8 @@ public class NARGraph1 extends Spacegraph {
         final static double priorityDisplayedResolution = 100;
 
 
-        double minSize = 32;
-        double maxSize = 128;
+        double minSize = 16;
+        double maxSize = 64;
 
         /**
          * cached from last set
@@ -117,7 +118,7 @@ public class NARGraph1 extends Spacegraph {
             super();
 
             this.titleBar = new Text(t.toStringCompact());
-            base = newPoly(6, 1.0);
+            base = newPoly(6, 2.0);
 
 
 
@@ -128,13 +129,12 @@ public class NARGraph1 extends Spacegraph {
             randomPosition(30, 30);
 
             titleBar.setFill(Color.WHITE);
-            titleBar.setScaleX(0.25);
-            titleBar.setScaleY(0.25);
+
             titleBar.setPickOnBounds(false);
             titleBar.setMouseTransparent(true);
-            titleBar.setFont(baseFont);
-            titleBar.setCache(true);
-            titleBar.setCacheHint(CacheHint.SPEED);
+            titleBar.setFont(nodeFont);
+            titleBar.setTextAlignment(TextAlignment.CENTER);
+            titleBar.setSmooth(true);
 
 
             base.setOnMouseClicked(e -> {
@@ -165,10 +165,39 @@ public class NARGraph1 extends Spacegraph {
 
             setPickOnBounds(false);
 
-            getChildren().setAll(base, titleBar);
-            //getChildren().add(new Rectangle(1,1))
+
+            getChildren().setAll(base, titleBar);//, titleBar);
+
+
 
             update();
+
+            base.setLayoutX(-0.5f);
+            base.setLayoutY(-0.5f);
+
+            /*titleBar.setScaleX(0.25f);
+            titleBar.setScaleY(0.25f);*/
+            titleBar.setFontSmoothingType(FontSmoothingType.LCD);
+            titleBar.setLayoutX(-getLayoutBounds().getWidth()/(2)+0.25);
+            //titleBar.setY(-getLayoutBounds().getHeight()/2);
+//            System.out.println(titleBar);
+//            System.out.println(titleBar.getLayoutBounds());
+//            System.out.println(titleBar.getLocalToParentTransform());
+//            System.out.println(titleBar.getLocalToSceneTransform());
+//            System.out.println(titleBar.getBoundsInLocal());
+
+
+            //setCache(true);
+            //setCacheHint(CacheHint.SPEED);
+            titleBar.setCache(true);
+            titleBar.setCacheHint(CacheHint.SPEED);
+
+            /*double s = 1.0 / titleBar.getBoundsInLocal().getWidth();
+
+            titleBar.setScaleX(s);
+            titleBar.setScaleY(s);*/
+
+            //getChildren().add(new Rectangle(1,1))
 
         }
 
@@ -686,29 +715,6 @@ public class NARGraph1 extends Spacegraph {
 
 
     }
-
-
-    public static class Animate extends AnimationTimer {
-
-        private final Consumer<Animate> run;
-        private long periodMS;
-        private long last;
-
-        public Animate(long periodMS, Consumer<Animate> r) {
-            super();
-            this.periodMS = periodMS;
-            this.run = r;
-        }
-
-        @Override
-        public void handle(final long now) {
-            if (now - last > periodMS) {
-                run.accept(this);
-                last = now;
-            }
-        }
-    }
-
 
 
 }
