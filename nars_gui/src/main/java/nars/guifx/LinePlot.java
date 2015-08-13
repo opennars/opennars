@@ -53,16 +53,17 @@ public class LinePlot extends Canvas {
 
 
 
-    public void update() {
+    public synchronized void update() {
 
         GraphicsContext g = getGraphicsContext2D();
 
         final double W = g.getCanvas().getWidth();
         final double H = g.getCanvas().getHeight();
 
+
         g.clearRect(0,0, W, H);
 
-        if (history.size() > maxHistory)
+        while (history.size() > maxHistory)
             history.remove(0);
         history.add(  valueFunc.getAsDouble() );
 
@@ -80,6 +81,8 @@ public class LinePlot extends Canvas {
             mean += v;
             count++;
         });
+
+        if (count == 0) return;
 
         if (count > 0) {
             mean /= count;
@@ -130,8 +133,6 @@ public class LinePlot extends Canvas {
         g.fillText(name, 10, 10);
         //g.setFont(NengoStyle.FONT_SMALL);
         g.fillText(label, 10, 25);
-
-        g.restore();
 
     }
 

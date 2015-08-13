@@ -53,8 +53,9 @@ public class NARMetrics extends NARReaction {
 
     }
 
-    public void addMeter(Signals m) {
+    public <S extends Signals> S addMeter(S m) {
         metrics.add(m);
+        return m;
     }
 
     public TemporalMetrics<Object> getMetrics() {

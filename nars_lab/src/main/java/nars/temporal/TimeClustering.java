@@ -281,7 +281,7 @@ public class TimeClustering extends CycleReaction {
             stage.show();
 
             //TextOutput.out(n);
-            new Thread( () ->  n.loop(50)  ).start();
+            new Thread( () ->  n.loop(100)  ).start();
         });
 
 

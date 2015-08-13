@@ -374,7 +374,7 @@ public class NARGraph1 extends Spacegraph {
             }
 
             final double termPrio = termLink != null ? termLink.getPriority() : 0;
-            this.thicks = (taskSum + termPrio);
+            this.thicks = (taskMean + termPrio);
             this.color = visModel.getEdgeColor(termPrio, taskMean);
 
 
@@ -424,6 +424,8 @@ public class NARGraph1 extends Spacegraph {
             rotate.setAngle(FastMath.toDegrees(rot));
             scale.setX(len);
             scale.setY(thicks);
+
+            setOpacity(thicks/2f);
 
 
             dirty(false);

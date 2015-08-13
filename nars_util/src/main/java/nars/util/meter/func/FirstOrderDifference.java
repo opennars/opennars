@@ -5,6 +5,7 @@
  */
 package nars.util.meter.func;
 
+import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import nars.util.meter.Metrics;
 import nars.util.meter.Signal;
 
@@ -34,8 +35,8 @@ public class FirstOrderDifference extends DependsOnColumn {
     public Number getValue(Object key, int ignored) {
         
         List nv = newestValues(sourceColumn, 2);
-                
-        List<Double> values = Metrics.doubles(nv);
+
+        DoubleArrayList values = Metrics.doubles(nv);
                 
         if (values.size()<2) return null;
                 

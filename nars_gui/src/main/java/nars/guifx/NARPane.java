@@ -10,10 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.NARStream;
@@ -143,13 +140,15 @@ public class NARPane extends SplitPane {
 
                 NARGraph1 g = new NARGraph1(nar);
 
-                final TilePane lp = new TilePane(
-                        new LinePlot("Total Priority", () ->
-                            nar.memory.getActivePrioritySum(true, true, true)
-                        , 128),
-                        new LinePlot("Concept Priority", () ->
-                            nar.memory.getActivePrioritySum(true, false, false)
-                        , 128),
+                final TilePane lp = new TilePane(4,4,
+//                        new LinePlot("Total Priority", () ->
+//                            nar.memory.getActivePrioritySum(true, true, true)
+//                        , 128),
+                        new LinePlot("Concept Priority", () -> {
+                            int c = nar.memory.getControl().size();
+                            if (c == 0) return 0;
+                            else return nar.memory.getActivePrioritySum(true, false, false) / (c);
+                        }, 128),
                         new LinePlot("TermLink Priority", () ->
                             nar.memory.getActivePrioritySum(false, true, false)
                         , 128),
@@ -157,6 +156,8 @@ public class NARPane extends SplitPane {
                             nar.memory.getActivePrioritySum(false, false, true)
                         , 128)
                 );
+                lp.setPrefColumns(2);
+                lp.setPrefRows(2);
 
                 new CycleReaction(nar) {
 

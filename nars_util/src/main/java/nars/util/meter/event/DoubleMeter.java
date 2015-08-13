@@ -5,15 +5,16 @@
  */
 package nars.util.meter.event;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import java.util.function.DoubleConsumer;
 
 /**
  * Stores the latest provided value for retrieval by a Metrics 
  */
-public class DoubleMeter extends SourceFunctionMeter<Double> {
+public class DoubleMeter extends SourceFunctionMeter<Double> implements DoubleConsumer {
     
     boolean autoReset;
-    final AtomicDouble val = new AtomicDouble();
+    //final AtomicDouble val = new AtomicDouble();
+    double val = 0;
     private final String name;
     
     
@@ -37,18 +38,18 @@ public class DoubleMeter extends SourceFunctionMeter<Double> {
     
     /** returns the previous value, or NaN if none were set  */
     public double set(double newValue) {
-        double oldValue = val.get();
-        val.set(newValue);
+        double oldValue = val;
+        val = (newValue);
         return oldValue;
     }
 
     /** current stored value */
-    public double get() { return val.get(); }
+    public double get() { return val; }
 
     
     @Override
     public Double getValue(Object key, int index) {
-        double c = val.get();
+        double c = val;
         if (autoReset) {
             reset();
         }
@@ -65,5 +66,10 @@ public class DoubleMeter extends SourceFunctionMeter<Double> {
     @Override
     public String toString() {
         return name + super.toString();
+    }
+
+    @Override
+    public void accept(double value) {
+        set(value);
     }
 }

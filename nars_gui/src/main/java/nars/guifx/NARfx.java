@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class NARfx extends Application {
 
-    static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
+    public static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
 
 //    static {
 //        Video.themeInvert();

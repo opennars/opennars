@@ -453,8 +453,8 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         return Iterators.transform(iterator(), new nColumnIterator(columns));
     }
 
-    public static List<Double> doubles(Iterable<Object> l) {
-        List<Double> r = new ArrayList();
+    public static DoubleArrayList doubles(Iterable<Object> l) {
+        DoubleArrayList r = new DoubleArrayList();
         for (Object o : l)
             if (o instanceof Number) r.add(((Number)o).doubleValue());
         return r;
@@ -472,6 +472,9 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     }
     public double[] doubleArray(String signal) {
         return doubleArray(indexOf(signal));
+    }
+    public double[] doubleArray(Signal s) {
+        return doubleArray(indexOf(s.id));
     }
 
 
