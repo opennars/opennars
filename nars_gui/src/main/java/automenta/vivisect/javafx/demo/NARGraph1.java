@@ -134,7 +134,7 @@ public class NARGraph1 extends Spacegraph {
             titleBar.setMouseTransparent(true);
             titleBar.setFont(nodeFont);
             titleBar.setTextAlignment(TextAlignment.CENTER);
-            titleBar.setSmooth(true);
+            titleBar.setSmooth(false);
 
 
             base.setOnMouseClicked(e -> {
@@ -177,7 +177,6 @@ public class NARGraph1 extends Spacegraph {
 
             /*titleBar.setScaleX(0.25f);
             titleBar.setScaleY(0.25f);*/
-            titleBar.setFontSmoothingType(FontSmoothingType.LCD);
             titleBar.setLayoutX(-getLayoutBounds().getWidth()/(2)+0.25);
             //titleBar.setY(-getLayoutBounds().getHeight()/2);
 //            System.out.println(titleBar);
@@ -190,7 +189,7 @@ public class NARGraph1 extends Spacegraph {
             //setCache(true);
             //setCacheHint(CacheHint.SPEED);
             titleBar.setCache(true);
-            titleBar.setCacheHint(CacheHint.SPEED);
+            titleBar.setCacheHint(CacheHint.SCALE);
 
             /*double s = 1.0 / titleBar.getBoundsInLocal().getWidth();
 
@@ -368,6 +367,7 @@ public class NARGraph1 extends Spacegraph {
             this.to = to;
 
             //setCache(true);
+            //setCacheHint(CacheHint.SCALE_AND_ROTATE);
 
             //setManaged(false);
             setStrokeWidth(0);
@@ -442,6 +442,8 @@ public class NARGraph1 extends Spacegraph {
             double dx = (x1 - x2);
             double dy = (y1 - y2);
             double len = Math.sqrt(dx * dx + dy * dy);
+            len-=fw/2;
+
             //double rot = Math.atan2(dy, dx);
             double rot = FastMath.atan2(dy, dx);
             double cx = 0.5f * (x1 + x2);

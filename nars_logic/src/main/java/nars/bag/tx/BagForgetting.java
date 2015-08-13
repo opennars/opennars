@@ -54,7 +54,7 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:*/
-        BudgetFunctions.forgetPeriodic(result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY, now);
+        BudgetFunctions.forgetPeriodic(result, forgetCycles, 0, now);
         //break;
         //}
 

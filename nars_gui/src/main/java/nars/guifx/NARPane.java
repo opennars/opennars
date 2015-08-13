@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -167,7 +166,7 @@ public class NARPane extends BorderPane {
         s.forEachCycle(lp::update);
 
         //f.setCenter( scrolled(lp)       );
-        f.setCenter(scrolled(new TreePane(n)));
+        f.setCenter(NARfx.scrolled(new TreePane(n)));
         f.setRight(controlStrip);
 
 
@@ -218,28 +217,4 @@ public class NARPane extends BorderPane {
 
     }
 
-    public static final javafx.scene.control.ScrollPane scrolled(Node n) {
-        return scrolled(n, true, true);
-    }
-
-    public static final javafx.scene.control.ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
-        javafx.scene.control.ScrollPane s = new javafx.scene.control.ScrollPane();
-        s.setHbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
-        s.setVbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
-
-        s.setContent(n);
-
-        if (stretchhigh) {
-            s.setMaxHeight(Double.MAX_VALUE);
-        }
-        s.setFitToHeight(true);
-
-        if (stretchwide) {
-            s.setMaxWidth(Double.MAX_VALUE);
-        }
-        s.setFitToWidth(true);
-
-        //s.autosize();
-        return s;
-    }
 }

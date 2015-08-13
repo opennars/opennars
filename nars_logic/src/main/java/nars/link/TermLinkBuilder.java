@@ -168,12 +168,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return now;
     }
 
-    @Override
-    public float getRelativeThreshold() {
-        return 0;
-    }
-
-
 
     /** configures this selector's current bag key for the next bag operation */
     public TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory memory) {

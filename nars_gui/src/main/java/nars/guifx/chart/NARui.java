@@ -1,29 +1,28 @@
 package nars.guifx.chart;
 
 import javafx.collections.ObservableList;
-import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import nars.NAR;
 import nars.NARSeed;
 import nars.NARStream;
-import nars.event.FrameReaction;
 import nars.guifx.NARfx;
-import nars.nar.Default;
-import nars.term.Atom;
 import nars.util.meter.TemporalMetrics;
-import nars.util.meter.event.DoubleMeter;
+import nars.util.meter.event.ObjectMeter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.lang.Double.MAX_VALUE;
 import static javafx.collections.FXCollections.observableArrayList;
 
 /**
@@ -31,13 +30,13 @@ import static javafx.collections.FXCollections.observableArrayList;
  */
 public class NARui extends NARStream {
 
-    final TemporalMetrics<Double> meter;
+    final List<TemporalMetrics<Double>> metrics = new ArrayList();
     private static final int DEFAULT_HISTORY_SIZE = 2048;
 
     public NARui(NAR n) {
         super(n);
 
-        meter = new TemporalMetrics(DEFAULT_HISTORY_SIZE);
+
     }
 
     public NARui(NARSeed s) {
@@ -51,52 +50,68 @@ public class NARui extends NARStream {
     }
 
 
-    public NARui meter(String id, ToDoubleFunction<NAR> nextCycleValue) {
-        DoubleMeter dm = meter.add(new DoubleMeter(id));
+    @FunctionalInterface public interface MetricsCollector<X> {
+        public MetricsCollector<X> set(String signal, X value);
+    }
+    public interface CollectNARMetrics<X> {
+        public void eachFrame(MetricsCollector<X> c, NAR n);
+    }
+
+    public <X> NARui meter(CollectNARMetrics<X> eachFrame) {
+        TemporalMetrics meter = new TemporalMetrics(DEFAULT_HISTORY_SIZE);
+        metrics.add(meter);
+
+        MetricsCollector<X> mc = new MetricsCollector<X>() {
+
+
+            Map<String, ObjectMeter<X>> m = new HashMap();
+
+            @Override
+            public MetricsCollector<X> set(String signal, X value) {
+                ObjectMeter<X> s = m.get(signal);
+                if (s == null) {
+                    s = new ObjectMeter<X>(signal);
+                    meter.add(s);
+                    m.put(signal, s);
+                }
+                s.set(value);
+                return this;
+            }
+        };
         forEachFrame(() -> {
-            dm.accept(nextCycleValue.applyAsDouble(nar));
+            eachFrame.eachFrame(mc, nar);
+            meter.update(nar.time());
         });
         return this;
     }
 
-    public NARui view(String... signals) {
-        if (signals.length == 0) {
+    public NARui viewAll() {
 
-            //add all signals, except the first 'key' signal
-            signals = meter.getSignals().subList(1, meter.getSignals().size())
-                    .stream().map( s -> s.id ).toArray(n -> new String[n]);
-        }
+        NARfx.run((a, s) -> {
 
-        final String[] _signals = signals;
+            VBox v = new VBox();
 
-        NARfx.run((a,s) -> {
+            metrics.forEach(meter -> {
 
+                v.getChildren().add(linePlot(meter));
 
-            s.setScene(new Scene(
-                    new ScrollPane(
-                            new BorderPane(
-                                new TilePane(Orientation.VERTICAL,
-                                        Stream.of(_signals).map(signal ->
-                                            lineplot(signal) ).toArray( (n) -> new Pane[n] ) )
-                            )
-                    )
-            ));
+            });
 
+            v.setMaxSize(MAX_VALUE, MAX_VALUE);
 
-
-
-            //s.getScene().getStylesheets().setAll(/*NARfx.css,*/ "dark.css");
+            s.setScene(new Scene(NARfx.scrolled(v)));
 
             s.sizeToScene();
 
             s.show();
 
         });
+
         return this;
     }
 
-    private Pane lineplot(String s) {
-        BorderPane b = new BorderPane();
+    private static Node linePlot(TemporalMetrics<Double> meter) {
+        //BorderPane b = new BorderPane();
 
         NumberAxis xAxis = new NumberAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -115,45 +130,50 @@ public class NARui extends NARStream {
         .default-color1.chart-series-line { -fx-stroke: #f0e68c; }
         .default-color2.chart-series-line { -fx-stroke: #dda0dd; }
          */
+
+        String[] signals = meter.getSignals().subList(1, meter.getSignals().size())
+                .stream().map(s -> s.id).toArray(n -> new String[n]);
+
+
+        final String[] _signals = signals;
+
+        LineChart<Double, Double> bc = new LineChart(xAxis, yAxis);
+
+        bc.setData( observableArrayList(
+                Stream.of(_signals).map(s -> series(meter, s)).collect(Collectors.toList())
+        ) );
+        yAxis.setAutoRanging(true);
+
+
+        //bc.setCenter(bc);
+
+        bc.autosize();
+
+        return bc;
+
+    }
+
+    private static XYChart.Series<Double,Double> series(TemporalMetrics<Double> meter, String s) {
+
         ObservableList<XYChart.Data<Double,Double>> data = observableArrayList();
         int i = 0;
         for(Double x : meter.doubleArray(s)) {
             data.add(new XYChart.Data(i++, x));
         }
-
-        AreaChart<Double, Double> bc = new AreaChart(xAxis, yAxis);
-
         XYChart.Series<Double, Double> series = new XYChart.Series<>(s, data);
         series.setName(s);
 
-        bc.getData().setAll( series );
-        yAxis.setAutoRanging(true);
-
-
-        b.setCenter(bc);
-
-        b.autosize();
-
-        return b;
+        return series;
     }
 
     @Override
     public NARui run(int frames) {
-
-        FrameReaction mc = new FrameReaction(nar) {
-            @Override
-            public void onFrame() {
-                meter.update(nar.time());
-            }
-        };
 
         //enable charting immediately before (to be called after all other chart handlers)
         // and disable immediately after the run
         {
             super.run(frames);
         }
-
-        mc.off();
 
         return this;
     }

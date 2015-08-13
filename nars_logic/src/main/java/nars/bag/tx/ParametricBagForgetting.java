@@ -75,7 +75,7 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
             case Periodic:*/
         //break;
         //}
-        final float priorityEnd = BudgetFunctions.forgetPeriodic(result, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY, now);
+        final float priorityEnd = BudgetFunctions.forgetPeriodic(result, forgetCycles, 0, now);
         if (priorityStart == priorityEnd) {
             /** null means it was not changed */
             return null;

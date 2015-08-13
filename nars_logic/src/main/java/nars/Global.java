@@ -116,7 +116,7 @@ public class Global {
     /* ---------- space management ---------- */
     /** lowest priority which can be considered for forgetting
      * if 0, then any budget value is subject to forgetting  */
-    public static float MIN_FORGETTABLE_PRIORITY = BUDGET_EPSILON;
+    //public static float MIN_FORGETTABLE_PRIORITY = BUDGET_EPSILON;
 
     
     

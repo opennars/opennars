@@ -260,6 +260,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             newPriority = currentPriority * (1.0f - forgetProportion) + minPriorityForgettingCanAffect * (forgetProportion);
         }
 
+
         budget.setPriority(newPriority);
 
         return newPriority;

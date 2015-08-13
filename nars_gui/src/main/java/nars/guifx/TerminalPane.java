@@ -19,8 +19,8 @@ public class TerminalPane extends BorderPane {
         SplitPane split = new SplitPane();
         split.setOrientation(Orientation.VERTICAL);
 
-        split.getItems().addAll(NARPane.scrolled(
-                NARPane.scrolled(new LogPane(nar))),
+        split.getItems().addAll(NARfx.scrolled(
+                NARfx.scrolled(new LogPane(nar))),
                 new InputPane(nar));
 
         split.setDividerPosition(0,0.85);

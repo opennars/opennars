@@ -40,11 +40,6 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     }
 
     @Override
-    public float getRelativeThreshold() {
-        return 0;
-    }
-
-    @Override
     public float getForgetCycles() {
         return forgetCycles;
     }

@@ -56,11 +56,6 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public float getRelativeThreshold() {
-        return 0;
-    }
-
-    @Override
     public void off(Concept c) {
         concepts.remove(c.getTerm());
     }

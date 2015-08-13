@@ -192,7 +192,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
             e = ee.getValue();
                            
             if (forgettable(e))
-                BudgetFunctions.forgetPeriodic(e.getBudget(), forgetCycles, Global.MIN_FORGETTABLE_PRIORITY, now);
+                BudgetFunctions.forgetPeriodic(e.getBudget(), forgetCycles, 0, now);
             
             float p = e.getPriority();
             

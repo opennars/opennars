@@ -222,7 +222,7 @@ public class Alann extends NARSeed {
                     BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                     break;
                 case Periodic:*/
-            BudgetFunctions.forgetPeriodic(tl, memory.param.termLinkForgetDurations.floatValue(), (float) 0, memory.time());
+            BudgetFunctions.forgetPeriodic(tl, memory.param.termLinkForgetDurations.floatValue(), 0, memory.time());
         }
         protected void forget(TaskLink tl) {
             //TODO make sure # cycles relative to duration are appropriately used
@@ -231,7 +231,7 @@ public class Alann extends NARSeed {
                     BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                     break;
                 case Periodic:*/
-            BudgetFunctions.forgetPeriodic(tl, memory.param.termLinkForgetDurations.floatValue(), (float) 0, memory.time());
+            BudgetFunctions.forgetPeriodic(tl, memory.param.termLinkForgetDurations.floatValue(), 0, memory.time());
         }
 
         protected void onSpike(TaskLink taskLink, float multiplier) {

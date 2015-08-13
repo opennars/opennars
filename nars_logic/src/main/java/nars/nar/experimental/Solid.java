@@ -218,6 +218,7 @@ public class Solid extends Default implements CycleProcess {
 
         for (final Concept c : temporaryC) {
 
+
             int conceptTaskLinks = c.getTaskLinks().size();
             if (conceptTaskLinks == 0)
                 continue;

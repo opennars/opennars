@@ -15,7 +15,7 @@ import nars.term.Term;
  */
 abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
-    static final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
+    //static final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
 
     private boolean createIfMissing;
     private long now;
@@ -37,10 +37,6 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return conceptForgetCycles;
     }
 
-    @Override
-    public float getRelativeThreshold() {
-        return relativeThreshold;
-    }
 
     @Override
     public long time() {

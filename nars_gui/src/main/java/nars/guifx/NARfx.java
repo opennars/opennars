@@ -2,7 +2,9 @@ package nars.guifx;
 
 import automenta.vivisect.javafx.demo.NARGraph1;
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -12,6 +14,7 @@ import nars.concept.Concept;
 import nars.nar.Default;
 
 import java.awt.*;
+import java.awt.ScrollPane;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,6 +35,31 @@ public class NARfx extends Application {
 
     /** NAR instances -> GUI windows */
     public static Map<Region, Stage> window = Global.newHashMap();
+
+    public static final javafx.scene.control.ScrollPane scrolled(Node n) {
+        return scrolled(n, true, true);
+    }
+
+    public static final javafx.scene.control.ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
+        javafx.scene.control.ScrollPane s = new javafx.scene.control.ScrollPane();
+        s.setHbarPolicy(stretchwide ? javafx.scene.control.ScrollPane.ScrollBarPolicy.AS_NEEDED : javafx.scene.control.ScrollPane.ScrollBarPolicy.NEVER);
+        s.setVbarPolicy(stretchwide ? javafx.scene.control.ScrollPane.ScrollBarPolicy.AS_NEEDED : javafx.scene.control.ScrollPane.ScrollBarPolicy.NEVER);
+
+        s.setContent(n);
+
+        if (stretchhigh) {
+            s.setMaxHeight(Double.MAX_VALUE);
+        }
+        s.setFitToHeight(true);
+
+        if (stretchwide) {
+            s.setMaxWidth(Double.MAX_VALUE);
+        }
+        s.setFitToWidth(true);
+
+        //s.autosize();
+        return s;
+    }
 
 //    public void start_(Stage primaryStage) {
 //        primaryStage.setTitle("Tree View Sample");
