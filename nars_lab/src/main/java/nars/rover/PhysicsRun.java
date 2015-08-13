@@ -33,6 +33,7 @@ import nars.rover.physics.PhysicsController.UpdateBehavior;
 import nars.rover.physics.TestbedErrorHandler;
 import nars.rover.physics.TestbedState;
 import nars.rover.physics.gl.JoglAbstractPanel;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.gl.JoglPanel;
 import nars.rover.physics.j2d.TestPanelJ2D;
@@ -88,7 +89,7 @@ public class PhysicsRun {
 
         };
 
-        JoglDraw joglDraw = new JoglDraw();
+        JoglAbstractDraw joglDraw = new JoglDraw(panel);
 
 
         joglDraw.setPanel(panel);

@@ -8,7 +8,7 @@ import nars.NAR;
 import nars.io.in.ChangedTextInput;
 import nars.rover.Sim;
 import nars.rover.obj.VisionRay;
-import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
@@ -158,7 +158,7 @@ public class Rover extends AbstractPolygonBot {
 
 
 
-            ((JoglDraw)draw).addLayer(v);
+            ((JoglAbstractDraw)draw).addLayer(v);
 
             senses.add(v);
         }
