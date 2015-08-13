@@ -19,6 +19,7 @@ public class TopDownViewWheeledPhysicsComponent implements IComponent {
 
     public float linearThrustPerCycle;
     public float angularSpeedPerCycle;
+    public boolean setRotationOfPhysics2dBody = true;
 
     public void thrustRelative(float f) {
         if( cachedPhysics2dBody == null ) {
@@ -46,6 +47,10 @@ public class TopDownViewWheeledPhysicsComponent implements IComponent {
         Vec2 v = new Vec2((float) Math.cos(angle) * force, (float) Math.sin(angle) * force);
         cachedPhysics2dBody.body.setLinearVelocity(v);
         //cachedPhysics2dBody.body..applyLinearImpulse(v, torso.getWorldCenter(), true);
+
+        if( setRotationOfPhysics2dBody ) {
+            cachedPhysics2dBody.body.setTransform(cachedPhysics2dBody.body.getPosition(), angle);
+        }
     }
 
     public void rotate(float v) {

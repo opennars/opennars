@@ -70,12 +70,22 @@ public class Test {
                 //        "" +
                 //        "resultEntity.components.add(componentManipulationScriptingAccessor.createAnimationComponent(eventList));" +
 
+                "   var physicsComponent = componentManipulationScriptingAccessor.createTopDownViewWheeledPhysicsComponent(8.0, 0.44 * 0.25);" +
+                "   resultEntity.components.addComponent(physicsComponent);\n" +
 
-                "   resultEntity.components.addComponent(componentManipulationScriptingAccessor.createTopDownViewWheeledPhysicsComponent(8.0, 0.44 * 0.25));\n" +
+                //"   var spawnScript = \"\";\n" +
+                //"   var frameInteractionScript = \"function frameInteraction(entityDescriptor) {   var wheeledPhysicsComponent = entityDescriptor.components.getComponentByName(\\\"TopDownViewWheeledPhysicsComponent\\\"); wheeledPhysicsComponent.thrust(0.0, 1.0);      }\";\n" +
+                //"   resultEntity.components.addComponent(componentManipulationScriptingAccessor.createJavascriptComponentWithScriptString(spawnScript, frameInteractionScript));\n" +
 
-                "   var spawnScript = \"\";\n" +
-                "   var frameInteractionScript = \"function frameInteraction(entityDescriptor) {   var wheeledPhysicsComponent = entityDescriptor.components.getComponentByName(\\\"TopDownViewWheeledPhysicsComponent\\\"); wheeledPhysicsComponent.thrust(0.0, 1.0);      }\";\n" +
-                "   resultEntity.components.addComponent(componentManipulationScriptingAccessor.createJavascriptComponentWithScriptString(spawnScript, frameInteractionScript));\n" +
+                "   var controllerComponent = componentManipulationScriptingAccessor.createTopDownViewWheeledControllerComponent(1.0);" +
+                "   controllerComponent.physicsComponent = physicsComponent;" +
+                "   resultEntity.components.addComponent(controllerComponent);\n" +
+
+
+
+                "   var biasedRandomAIComponent = componentManipulationScriptingAccessor.createBiasedRandomAIComponent(2.0, 0.5, 0.5);" +
+                "   biasedRandomAIComponent.topDownViewWheeledControllerComponent = controllerComponent;" +
+                "   resultEntity.components.addComponent(biasedRandomAIComponent);\n" +
 
 
                         "   " +
@@ -87,10 +97,9 @@ public class Test {
 
         final float timeDelta = 0.1f;
 
-        // TODO< physics camera >
         final float cameraZoomScaleDiff = 2.0f;
-        final float initScale = 100.0f;
-        final Vec2 initPosition = new Vec2(0.0f, 0.0f);
+        final float initScale = 50.0f;
+        final Vec2 initPosition = new Vec2(-10.0f, -10.0f);
         PhysicsCamera physicsCamera = new PhysicsCamera(initPosition, initScale, cameraZoomScaleDiff);
 
         JoglAbstractDraw debugDraw = new JoglDraw(physicsCamera);
