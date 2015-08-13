@@ -42,6 +42,10 @@ public class ComponentManipulationScriptingAccessor {
         return new BiasedRandomAIComponent(timerNextMovechange, ratioOfMoveRotation, angleScale);
     }
 
+    public IComponent createTwoDimensionalRaysComponent(float raysStartDistance, float raysLength, int numberOfRays, float raysSpreadAngleInRadiants) {
+        return new TwoDimensionalRaysComponent(raysStartDistance, raysLength, numberOfRays, raysSpreadAngleInRadiants);
+    }
+
     // belongs into EvenManiputationScriptingAccessor
     public ExecuteJavascriptAnimationEvent createExecuteJavascriptAnimationEventWithScriptString(String script) {
         return ExecuteJavascriptAnimationEvent.createWithScriptString(script);
