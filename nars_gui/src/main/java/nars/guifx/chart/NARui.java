@@ -1,20 +1,22 @@
 package nars.guifx.chart;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.TilePane;
 import nars.NAR;
 import nars.NARSeed;
 import nars.NARStream;
-import nars.event.CycleReaction;
+import nars.event.FrameReaction;
 import nars.guifx.NARfx;
 import nars.nar.Default;
+import nars.term.Atom;
 import nars.util.meter.TemporalMetrics;
 import nars.util.meter.event.DoubleMeter;
 
@@ -36,9 +38,6 @@ public class NARui extends NARStream {
         super(n);
 
         meter = new TemporalMetrics(DEFAULT_HISTORY_SIZE);
-
-
-
     }
 
     public NARui(NARSeed s) {
@@ -54,7 +53,7 @@ public class NARui extends NARStream {
 
     public NARui meter(String id, ToDoubleFunction<NAR> nextCycleValue) {
         DoubleMeter dm = meter.add(new DoubleMeter(id));
-        forEachCycle(() -> {
+        forEachFrame(() -> {
             dm.accept(nextCycleValue.applyAsDouble(nar));
         });
         return this;
@@ -72,12 +71,19 @@ public class NARui extends NARStream {
 
         NARfx.run((a,s) -> {
 
+
             s.setScene(new Scene(
-                    //new ScrollPane(
-                            new VBox( Stream.of(_signals).map(signal ->
-                                    lineplot(signal) ).toArray( (n) -> new Pane[n] ) )
-                    //)
+                    new ScrollPane(
+                            new BorderPane(
+                                new TilePane(Orientation.VERTICAL,
+                                        Stream.of(_signals).map(signal ->
+                                            lineplot(signal) ).toArray( (n) -> new Pane[n] ) )
+                            )
+                    )
             ));
+
+
+
 
             //s.getScene().getStylesheets().setAll(/*NARfx.css,*/ "dark.css");
 
@@ -118,6 +124,7 @@ public class NARui extends NARStream {
         AreaChart<Double, Double> bc = new AreaChart(xAxis, yAxis);
 
         XYChart.Series<Double, Double> series = new XYChart.Series<>(s, data);
+        series.setName(s);
 
         bc.getData().setAll( series );
         yAxis.setAutoRanging(true);
@@ -133,9 +140,9 @@ public class NARui extends NARStream {
     @Override
     public NARui run(int frames) {
 
-        CycleReaction mc = new CycleReaction(nar) {
+        FrameReaction mc = new FrameReaction(nar) {
             @Override
-            public void onCycle() {
+            public void onFrame() {
                 meter.update(nar.time());
             }
         };
@@ -151,22 +158,4 @@ public class NARui extends NARStream {
         return this;
     }
 
-    public static void main(String[] args) {
-
-        new NARui(new Default())
-                .meter("ConceptPriorityMean", (nar) -> {
-                    return nar.memory.getActivePriorityPerConcept(true,false,false);
-                })
-                .meter("TermLinkPriorityMean", (nar) -> {
-                    return nar.memory.getActivePriorityPerConcept(false,true,false);
-                })
-                .meter("TaskLinkPriorityMean", (nar) -> {
-                    return nar.memory.getActivePriorityPerConcept(false,false,true);
-                })
-                .then(n -> {
-                    n.input("<a-->b>.", "<b-->a>.").run(500);
-                })
-                .view();
-
-    }
 }

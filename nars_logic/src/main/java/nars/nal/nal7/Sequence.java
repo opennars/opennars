@@ -158,6 +158,11 @@ public class Sequence extends Conjunction implements Intermval {
         for (int i = 0; i < nterms+1; i++) {
 
 
+            if (ii.length <= i) {
+                System.err.println("Sequence has incorrect number of Intermvals " + Arrays.toString(intervals()) + " does not match terms " + Arrays.toString(term));
+                break;
+            }
+
             final long c = ii[i];
 
             if (c != 0) {
