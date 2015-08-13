@@ -29,7 +29,6 @@ import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.link.*;
 import nars.premise.Premise;
-import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -64,6 +63,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     void updateLinks();
 
+    @Override
     float getPriority();
 
     boolean link(Task currentTask);
@@ -235,6 +235,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     public long getCreationTime();
 
+    @Override
     public void delete();
 
 //    /** debugging utility */

@@ -14,7 +14,6 @@ import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +33,7 @@ public class Equalized extends Default {
     public static class EqualizedCycle extends DefaultCycle {
 
         /** stores sorted tasks temporarily */
-        private List<Task> temporary = Global.newArrayList();
+        private final List<Task> temporary = Global.newArrayList();
 
         public EqualizedCycle(ItemAccumulator taskAccumulator, Bag<Term, Concept> concepts, AtomicInteger conceptsFiredPerCycle) {
             super(taskAccumulator, concepts, null, null, null, conceptsFiredPerCycle);

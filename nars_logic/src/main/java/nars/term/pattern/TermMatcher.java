@@ -9,6 +9,7 @@ import java.util.function.Predicate;
  */
 public interface TermMatcher extends Predicate<Termed> {
 
+    @Override
     default boolean test(Termed t) {
         return match(t);
     }

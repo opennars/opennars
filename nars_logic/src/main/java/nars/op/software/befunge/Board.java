@@ -5,7 +5,7 @@ package nars.op.software.befunge;
  */
 public class Board {
 
-    private char[][] board;
+    private final char[][] board;
 
     Board(){
         board = new char[25][80];

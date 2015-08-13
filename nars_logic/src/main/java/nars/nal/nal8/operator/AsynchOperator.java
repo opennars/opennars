@@ -3,8 +3,8 @@ package nars.nal.nal8.operator;
 import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.concept.Concept;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.OpReaction;
+import nars.nal.nal8.Operation;
 import nars.op.io.Echo;
 import nars.task.Task;
 

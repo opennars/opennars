@@ -52,6 +52,7 @@ public class ProductN extends DefaultCompound implements Product {
     }
 
 
+    @Override
     public boolean appendOperator(Writer p) throws IOException {
         //skip
         return false;

@@ -46,6 +46,7 @@ abstract public class ConceptGraph<E> extends ConceptMap implements EdgeFactory<
 
 
     /** must override this to use graph.addEdge(source,target) method */
+    @Override
     public E createEdge(Concept source, Concept target) {
         return null;
     }

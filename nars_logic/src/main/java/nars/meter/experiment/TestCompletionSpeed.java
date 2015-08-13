@@ -30,7 +30,7 @@ public abstract class TestCompletionSpeed extends EGoal<TypedOrganism> {
 
     public List<Variable> var;
 
-    private List script;
+    private final List script;
     String scriptSrc;
 
     public TestCompletionSpeed(String path, int maxCycles) {

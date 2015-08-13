@@ -78,7 +78,7 @@ public abstract class TermFunction<O> extends SynchOperator {
         //      <2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%
         //transform to image for perception variable introduction rule (is more efficient representation
 
-        Product originalArgs =  ((Operation)operation.getTask().getTerm()).arg();
+        Product originalArgs =  operation.getTask().getTerm().arg();
         Inheritance inh=Inheritance.make(y,
                 ImageExt.make(originalArgs, operation.getPredicate(), (short)(numArgs))
                 );

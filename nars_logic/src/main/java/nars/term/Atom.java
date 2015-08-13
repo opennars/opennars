@@ -32,6 +32,7 @@ public class Atom extends ImmutableAtom {
         return false;
     }
 
+    @Override
     public Op operator() {
         return Op.ATOM;
     }
@@ -153,6 +154,7 @@ public class Atom extends ImmutableAtom {
 
 
 
+    @Override
     public Term cloneDeep() {
         return clone();
     }
@@ -190,14 +192,17 @@ public class Atom extends ImmutableAtom {
      * Alias for 'isNormalized'
      * @return A Term is constant by default
      */
+    @Override
     public boolean isConstant() {
         return true;
     }
 
+    @Override
     public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
     }
 
+    @Override
     public void recurseTerms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
     }
@@ -206,6 +211,7 @@ public class Atom extends ImmutableAtom {
         recurseSubtermsContainingVariables(v, null);
     }
 
+    @Override
     public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
         //TODO move to Variable subclass and leave this empty here
         if (hasVar())
@@ -219,10 +225,12 @@ public class Atom extends ImmutableAtom {
      *
      * @return The complexity of the term, an integer
      */
+    @Override
     public int getComplexity() {
         return 1;
     }
 
+    @Override
     public int containedTemporalRelations() {
         return 0;
     }
@@ -233,11 +241,13 @@ public class Atom extends ImmutableAtom {
      * @param target The term to be searched
      * @return Whether the two have the same content
      */
+    @Override
     public boolean containsTermRecursivelyOrEquals(final Term target) {
         return equals(target);
     }
 
     /** whether this contains a term in its components. */
+    @Override
     public boolean containsTerm(final Term target) {
         return equals(target);
     }

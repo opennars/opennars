@@ -1,7 +1,6 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.demo.NARGraph1;
-import javafx.application.Platform;
+import automenta.vivisect.javafx.TabPaneDetacher;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -10,17 +9,19 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.NARStream;
-import nars.event.CycleReaction;
 import nars.event.NARReaction;
+
+import static javafx.application.Platform.runLater;
 
 /**
  * Created by me on 1/21/15.
  */
-public class NARPane extends SplitPane {
+public class NARPane extends BorderPane {
 
 
     private final BorderPane menu = new BorderPane();
@@ -34,11 +35,11 @@ public class NARPane extends SplitPane {
     public void console(boolean enabled) {
 
         if (enabled) {
-            Platform.runLater(() -> {
+            runLater(() -> {
                 contentUpdate(true);
             });
         } else if (console != null) {
-            Platform.runLater(() -> {
+            runLater(() -> {
                 contentUpdate(false);
             });
         }
@@ -129,7 +130,11 @@ public class NARPane extends SplitPane {
         super();
         this.nar = n;
 
-        getStylesheets().addAll(NARfx.css, "dark.css" );
+        runLater(() -> {
+                    TabPaneDetacher tabDetacher = new TabPaneDetacher();
+                    tabDetacher.makeTabsDetachable(content);
+                    tabDetacher.stylesheets(getScene().getStylesheets().toArray(new String[getScene().getStylesheets().size()]));
+        });
 
         NARStream s = new NARStream(n);
 
@@ -177,8 +182,11 @@ public class NARPane extends SplitPane {
 
         content.setVisible(true);
 
-        getItems().setAll(f, content);
-        setDividerPositions(0.5f);
+        SplitPane p = new SplitPane();
+        p.getItems().setAll(f, content);
+        p.setDividerPositions(0.5f);
+
+        setCenter(p);
 
         //autosize();
 
@@ -193,7 +201,7 @@ public class NARPane extends SplitPane {
 
     public void contentUpdate(boolean show) {
 
-        Platform.runLater(() -> {
+        runLater(() -> {
             if (!show) {
                 content.setVisible(false);
             } else {
@@ -203,7 +211,7 @@ public class NARPane extends SplitPane {
             layout();
             //g.autosize();
 
-            setDividerPosition(0, 0.25);
+            //p.setDividerPosition(0, 0.25);
 
 //                if (!isMaximized())
 //                    sizeToScene();

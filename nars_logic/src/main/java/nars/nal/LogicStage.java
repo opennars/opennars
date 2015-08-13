@@ -15,6 +15,7 @@ public interface LogicStage<X> extends Predicate<X> {
     public static final boolean STOP = false;
 
     /** return false to stop subsequent rules for this item; true to continue */
+    @Override
     abstract public boolean test(X x);
 
 //    public LogicRule setAction(Consumer<Event<X>> action) {

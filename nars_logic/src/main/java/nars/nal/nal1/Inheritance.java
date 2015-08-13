@@ -25,7 +25,6 @@ import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
 

@@ -1,8 +1,6 @@
 package nars.util.sort;
 
-import com.google.common.collect.Lists;
 import nars.Global;
-import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.util.data.sorted.SortedIndex;
 

@@ -29,7 +29,6 @@ import nars.op.io.Echo;
 import nars.task.Task;
 
 import java.io.*;
-import java.nio.CharBuffer;
 
 /**
  * To read and write Task stream experiences in a Text (string) representation,

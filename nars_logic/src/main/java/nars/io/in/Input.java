@@ -44,6 +44,7 @@ public interface Input extends Source<Task> {
      * called when a NAR forcibly removes the inputs, allowing
      * this input to close any connections or free resources
      */
+    @Override
     default public void stop() {
 
     }

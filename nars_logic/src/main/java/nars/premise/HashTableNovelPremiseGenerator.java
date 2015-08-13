@@ -3,7 +3,6 @@ package nars.premise;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
-import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.task.Sentence;

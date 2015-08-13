@@ -31,10 +31,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     /**
      * metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated
      */
+    @Override
     public Map<Object, Object> getMeta() {
         return meta;
     }
 
+    @Override
     @Deprecated public void setMeta(Map<Object, Object> meta) {
         this.meta = meta;
     }
@@ -42,6 +44,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     /**
      * Reference to the memory to which the Concept belongs
      */
+    @Override
     public Memory getMemory() {
         return memory;
     }
@@ -49,10 +52,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     /**
      * The term is the unique ID of the concept
      */
+    @Override
     public Term getTerm() {
         return term;
     }
 
+    @Override
     public long getCreationTime() {
         return creationTime;
     }

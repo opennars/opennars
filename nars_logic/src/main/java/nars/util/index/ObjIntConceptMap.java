@@ -23,11 +23,13 @@ abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap
         return values.keySet().iterator();
     }
 
+    @Override
     public boolean include(Concept c) {
         T t = (T) c.getTerm();
         return values.getIfAbsentPut(t, 0) == 0;
     }
 
+    @Override
     public boolean exclude(Concept c) {
         return exclude(c.getTerm());
     }
@@ -39,6 +41,7 @@ abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap
     }
 
 
+    @Override
     public boolean contains(final T t) {
         if (!values.containsKey(t)) {
             return super.contains(t);
@@ -48,6 +51,7 @@ abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap
 
 
     /** set a term to be present always in this map, even if the conept disappears */
+    @Override
     public void include(T a) {
         super.include(a);
         values.getIfAbsentPut(a, 0);

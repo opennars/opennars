@@ -195,6 +195,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 //    }
 
     /** clones this Task with a new Term */
+    @Override
     public <X extends Compound> Task<X> clone(final X t) {
         return clone(t, true);
     }
@@ -299,6 +300,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
      *
      * @return Whether the Task is derived from another task
      */
+    @Override
     public boolean isInput() {
 
         return parentTask == null && cause == null;
@@ -370,6 +372,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         return appendTo(null, memory);
     }
 
+    @Override
     public StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
         if (sb == null) sb = new StringBuilder();
         return toString(sb, memory, false);
@@ -668,6 +671,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         serialize(jgen, provider);
     }
 
+    @Override
     public int getTemporalOrder() {
         return getTerm().getTemporalOrder();
     }

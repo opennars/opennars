@@ -2,7 +2,6 @@ package nars.link;
 
 import nars.Memory;
 import nars.bag.tx.BagActivator;
-import nars.budget.Budget;
 import nars.task.Sentence;
 import nars.task.Task;
 

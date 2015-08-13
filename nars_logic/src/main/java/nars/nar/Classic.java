@@ -9,7 +9,6 @@ import nars.concept.DefaultConcept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.premise.BloomFilterNovelPremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;

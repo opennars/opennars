@@ -14,7 +14,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.term.Atom;
 import nars.term.Term;
 
@@ -73,7 +72,7 @@ public class NALObjects implements MethodHandler {
 
         Term effect;
 
-        Term cause = Operation.make(Atom.the(overridden.getName()),
+        Term cause = Inheritance.make(Atom.the(overridden.getName()),
                 Product.make(instance, argterm));
 
         if (result!=null) {

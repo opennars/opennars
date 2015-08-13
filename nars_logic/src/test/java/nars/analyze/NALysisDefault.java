@@ -3,15 +3,13 @@ package nars.analyze;
 import nars.NARSeed;
 import org.junit.Ignore;
 
-import java.io.FileNotFoundException;
-
 
 @Ignore
 public class NALysisDefault extends NALysis {
 
     public NALysisDefault(NARSeed b) {        super(b);    }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
 
         //csvOut = System.out;
         //dataOut = new FileOutputStream("/tmp/out.arff");

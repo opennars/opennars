@@ -3,7 +3,6 @@ package nars.link;
 import nars.Global;
 import nars.Memory;
 import nars.bag.tx.BagActivator;
-import nars.budget.Budget;
 import nars.nal.nal1.Negation;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;

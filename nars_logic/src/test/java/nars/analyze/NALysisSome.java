@@ -9,8 +9,6 @@ import nars.task.Task;
 import nars.util.event.Reaction;
 import org.junit.Ignore;
 
-import java.io.FileNotFoundException;
-
 /**
  * report filtered by failures
  */
@@ -24,7 +22,7 @@ public class NALysisSome extends NALysis {
     }
 
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
 
         Global.DEBUG = true;
         Global.DEBUG_DERIVATION_STACKTRACES = true;

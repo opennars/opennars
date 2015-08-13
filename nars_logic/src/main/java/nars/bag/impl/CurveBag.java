@@ -2,10 +2,7 @@ package nars.bag.impl;
 
 import com.google.common.collect.Sets;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
-import nars.Global;
 import nars.bag.Bag;
-import nars.bag.BagTransaction;
-import nars.budget.Item;
 import nars.budget.Itemized;
 import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;

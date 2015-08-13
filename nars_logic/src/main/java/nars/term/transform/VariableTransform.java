@@ -14,6 +14,7 @@ public interface VariableTransform extends CompoundTransform<Compound, Variable>
         return (possiblyAVariable instanceof Variable);
     }
 
+    @Override
     default boolean testSuperTerm(Compound t) {
         //prevent executing on any superterms that contain no variables, because this would have no effect
         return t.hasVar();

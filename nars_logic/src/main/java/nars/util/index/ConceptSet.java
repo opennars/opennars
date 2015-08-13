@@ -23,10 +23,12 @@ abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> im
         return values.keySet().iterator();
     }
 
+    @Override
     public boolean include(Concept c) {
         Concept removed = values.put((T) c.getTerm(), c);
         return removed!=c; //different instance
     }
+    @Override
     public boolean exclude(Concept c) {
         return values.remove(c.getTerm())!=null;
     }
@@ -35,6 +37,7 @@ abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> im
     }
 
 
+    @Override
     public boolean contains(final T t) {
         if (!values.containsKey(t)) {
             return super.contains(t);
@@ -44,6 +47,7 @@ abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> im
 
 
     /** set a term to be present always in this map, even if the conept disappears */
+    @Override
     public void include(T a) {
         super.include(a);
         values.put(a, null);

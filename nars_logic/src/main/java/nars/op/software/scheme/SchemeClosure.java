@@ -68,11 +68,8 @@ public class SchemeClosure {
         if (bindings != null ? !bindings.equals(that.bindings) : that.bindings != null) {
             return false;
         }
-        if (enclosingEnvironment != null ? !enclosingEnvironment.equals(that.enclosingEnvironment) : that.enclosingEnvironment != null) {
-            return false;
-        }
+        return !(enclosingEnvironment != null ? !enclosingEnvironment.equals(that.enclosingEnvironment) : that.enclosingEnvironment != null);
 
-        return true;
     }
 
     @Override

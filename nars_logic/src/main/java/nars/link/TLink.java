@@ -13,6 +13,7 @@ public interface TLink<T extends Termed> extends Budget.Budgetable, Serializable
     
     public Term getTarget();
     
+    @Override
     public float getPriority();
 
     public static void print(TLink t, PrintStream out) {

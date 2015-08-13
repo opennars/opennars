@@ -19,7 +19,6 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static nars.budget.BudgetFunctions.divide;

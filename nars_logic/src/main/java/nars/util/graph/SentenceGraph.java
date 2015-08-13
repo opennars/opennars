@@ -67,10 +67,7 @@ abstract public class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRe
 
             @Override
             public boolean contains(Concept c) {
-                if (SentenceGraph.this.containsRelation(c)) {
-                    return true;
-                }
-                return false;
+                return SentenceGraph.this.containsRelation(c);
             }
 
             @Override

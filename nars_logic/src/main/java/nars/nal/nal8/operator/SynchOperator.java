@@ -3,8 +3,8 @@ package nars.nal.nal8.operator;
 import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.concept.Concept;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.OpReaction;
+import nars.nal.nal8.Operation;
 import nars.op.io.Echo;
 import nars.task.Task;
 import nars.term.Term;
@@ -37,6 +37,7 @@ abstract public class SynchOperator extends OpReaction {
      * @param memory The memory on which the operation is executed
      * @return true if successful, false if an error occurred
      */
+    @Override
     public boolean execute(final Operation op, final Concept c, final Memory memory) {
 
         //final Term[] args = op.arg().term;

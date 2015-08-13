@@ -24,6 +24,7 @@ public class InputPane extends TabPane {
         getTabs().add(new Tab("De"));
         getTabs().add(new Tab("Draw"));
         getTabs().add(new Tab("Webcam"));
+        getTabs().add(new Tab("Audio"));
 
     }
 }

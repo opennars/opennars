@@ -14,8 +14,8 @@ public class Pointer {
     private final Board board;
 
     //TODO use EnumMap
-    private Map<Character, Runnable> map;
-    private BefungeStack stack;
+    private final Map<Character, Runnable> map;
+    private final BefungeStack stack;
 
     public Pointer(Board board){
         x = y = 0;

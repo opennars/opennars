@@ -48,7 +48,7 @@ import java.util.*;
     static public boolean showTrace = false;
     static public boolean showReport = true;
     static public boolean requireSuccess = true;
-    private static boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
+    private static final boolean waitForEnterKeyOnStart = false; //useful for running profiler or some other instrumentation
       
 
     public static Map<String, Boolean> tests = new HashMap();

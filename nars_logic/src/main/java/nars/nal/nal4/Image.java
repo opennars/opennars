@@ -35,6 +35,7 @@ abstract public class Image extends DefaultCompound {
     /** apply the relation index as the additional structure code to differnetiate
      * images with different relations
      */
+    @Override
     public int additionalStructureCode() { return relationIndex; }
 
 

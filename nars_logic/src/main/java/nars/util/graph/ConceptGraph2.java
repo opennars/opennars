@@ -118,6 +118,7 @@ abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGra
         return null;
     }
 
+    @Override
     public E addEdge(Concept source, Concept target) {
         E e = createEdge(source, target);
         Vertex sv = source.get(this);

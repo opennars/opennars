@@ -26,7 +26,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.util.sort.ArraySortedIndex;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -57,12 +56,12 @@ public class Solid extends Default implements CycleProcess {
         /*final SortedSet<Task> tasks = new FastSortedSet(new WrapperComparatorImpl(new TaskComparator(TaskComparator.Duplication.Or))).atomic();*/
 
     /** stores sorted tasks temporarily */
-    private List<Task> temporary = Global.newArrayList();
-    private List<Concept> temporaryC = Global.newArrayList();
+    private final List<Task> temporary = Global.newArrayList();
+    private final List<Concept> temporaryC = Global.newArrayList();
 
 
     int tasksAddedThisCycle = 0;
-    private boolean normalizePriority = false;
+    private final boolean normalizePriority = false;
 
 
     public Solid(int inputsPerCycle, int activeConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
@@ -101,6 +100,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     /** construct a new premise generator for a concept */
+    @Override
     public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
         return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, 1 /* cycle to clear after */,
                 maxTaskLink * maxTermLink,

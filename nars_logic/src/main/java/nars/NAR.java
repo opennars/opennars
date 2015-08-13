@@ -70,8 +70,8 @@ public class NAR extends Container implements Runnable {
      * The name of the reasoner
      */
     protected String name;
-    private Perception perception;
-    private CycleProcess control;
+    private final Perception perception;
+    private final CycleProcess control;
     /**
      * Flag for running continuously
      */
@@ -582,6 +582,7 @@ public class NAR extends Container implements Runnable {
     /**
      * Run until stopped, at full speed
      */
+    @Override
     public void run() {
         loop(0);
     }

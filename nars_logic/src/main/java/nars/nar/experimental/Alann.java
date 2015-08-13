@@ -46,7 +46,7 @@ public class Alann extends NARSeed {
     final int subcyclesPerCycle = 3;
     static final float spikeDecay = 0.9f;
     static final float defaultBeliefPriority = 0.1f;
-    private double conceptActivationThreshold = 0.05f; //this will be automatically tuned by a busy metric
+    private final double conceptActivationThreshold = 0.05f; //this will be automatically tuned by a busy metric
     final int commandsPerCycle = 1;
 
     public Alann() {
@@ -592,7 +592,7 @@ public class Alann extends NARSeed {
 
         @Override
         public Concept conceptualize(final Term term, Budget budget, boolean createIfMissing) {
-            return (AlannConcept)conceptualize(term, budget, createIfMissing, memory.time(), concepts);
+            return conceptualize(term, budget, createIfMissing, memory.time(), concepts);
         }
 
 

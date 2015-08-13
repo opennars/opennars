@@ -32,6 +32,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     }
 
 
+    @Override
     public float getForgetCycles() {
         return conceptForgetCycles;
     }

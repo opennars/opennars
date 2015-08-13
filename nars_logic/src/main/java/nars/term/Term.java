@@ -35,6 +35,7 @@ import java.util.Map;
 public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable {
 
 
+    @Override
     default Term getTerm() {
         return this;
     }

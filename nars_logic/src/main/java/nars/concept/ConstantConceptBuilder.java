@@ -16,7 +16,7 @@ abstract public class ConstantConceptBuilder implements ConceptBuilder {
 
         Concept d = m.getConceptBuilderDefault().newConcept(t, b, m);
         d.getBeliefs().add(m.newTask((Compound) t).truth(tt).judgment().eternal().get(),
-                (BeliefTable.Ranker)null, d, null);
+                null, d, null);
         d.setConstant(true);
 
         return d;

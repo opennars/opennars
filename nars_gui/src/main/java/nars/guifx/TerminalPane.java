@@ -1,35 +1,36 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.CodeInput;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
 import nars.InputPane;
 import nars.NAR;
-import nars.io.in.TextInput;
 
 /**
  * Created by me on 8/2/15.
  */
-public class TerminalPane extends SplitPane {
+public class TerminalPane extends BorderPane {
 
 
     public TerminalPane(NAR nar) {
         super();
 
 
-        setOrientation(Orientation.VERTICAL);
+        SplitPane split = new SplitPane();
+        split.setOrientation(Orientation.VERTICAL);
 
-        getItems().addAll(NARPane.scrolled(
+        split.getItems().addAll(NARPane.scrolled(
                 NARPane.scrolled(new LogPane(nar))),
                 new InputPane(nar));
 
-        setDividerPosition(0,0.85);
+        split.setDividerPosition(0,0.85);
 
 
         setMinSize(400, 300);
-        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        split.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 
+        setCenter(split);
     }
 
 }

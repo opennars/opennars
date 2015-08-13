@@ -54,8 +54,7 @@ public class STMInduction extends NARReaction {
     public static boolean isInputOrTriggeredOperation(final Task newEvent, AbstractMemory mem) {
         if (newEvent.isInput()) return true;
         if (containsMentalOperator(newEvent)) return true;
-        if (newEvent.getCause()!=null) return true;
-        return false;
+        return newEvent.getCause() != null;
     }
 
     public int getStmSize() {

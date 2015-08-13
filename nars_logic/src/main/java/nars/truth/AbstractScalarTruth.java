@@ -20,6 +20,7 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     private float frequency;
 
 
+    @Override
     public void setConfidence(float c) {
         //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
         //final float maxConf = getConfidenceMax();
@@ -43,10 +44,12 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
 
 
+    @Override
     public float getFrequency() {
         return frequency;
     }
 
+    @Override
     public Truth setFrequency(float f) {
 
         final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();

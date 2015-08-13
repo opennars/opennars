@@ -1,11 +1,8 @@
 package nars.bag.tx;
 
-import nars.Memory;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.budget.Itemized;
-import sun.rmi.server.Activation;
 
 /**
 * Created by me on 1/19/15.

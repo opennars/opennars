@@ -1,17 +1,14 @@
 package nars.meta;
 
 import nars.Global;
-import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Intermval;
 import nars.nal.nal7.Interval;
 import nars.process.ConceptProcess;
-import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;

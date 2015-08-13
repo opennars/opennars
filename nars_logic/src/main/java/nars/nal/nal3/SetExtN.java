@@ -78,6 +78,7 @@ public class SetExtN extends AbstractSetN implements SetExt {
         return false;
     }
 
+    @Override
     public void appendCloser(Writer p) throws IOException {
         p.append(Op.SET_EXT_CLOSER.ch);
     }

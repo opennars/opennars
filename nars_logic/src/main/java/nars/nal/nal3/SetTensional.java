@@ -20,6 +20,7 @@ public interface SetTensional extends Term, Iterable<Term> {
         return true;
     }
 
+    @Override
     abstract public Op operator();
 
 
@@ -64,6 +65,7 @@ public interface SetTensional extends Term, Iterable<Term> {
         }
 
 
+        @Override
         default public void append(Writer p, boolean pretty) throws IOException {
 
             final int len = length();

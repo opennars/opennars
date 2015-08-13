@@ -70,6 +70,7 @@ public abstract class NAL implements Runnable, Premise {
     }
 
 
+    @Override
     public Task getBelief() {
         return null;
     }

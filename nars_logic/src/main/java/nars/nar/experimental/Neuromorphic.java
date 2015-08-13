@@ -26,7 +26,7 @@ public class Neuromorphic extends Default {
     private int numAnts;
 
     /** defaults to all inputs */
-    private int maxInputsPerCycle = -1;
+    private final int maxInputsPerCycle = -1;
 
     /** temporary: true=curve bag, false=fairdelaybag */
     private final boolean fairdelaybag = true;

@@ -43,6 +43,7 @@ public class HardRealtimeClock extends RealtimeClock {
         }
     }
 
+    @Override
     public long time() {
         return getRealTime();
     }

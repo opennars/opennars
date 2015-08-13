@@ -262,13 +262,10 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         /*if (activity < activityThreshold) {
             activity += (activityThreshold - activity) * (firingAge / (latencyCyclesMax*latencyScale));
         }*/
-                
-        if ((firingAge >= latencyMin*latencyScale) || (activity >= activityThreshold )) {
-            return true;
-        }
-        
 
-        return false;
+        return (firingAge >= latencyMin * latencyScale) || (activity >= activityThreshold);
+
+
     }
         
     

@@ -44,6 +44,7 @@ public class Product1<T extends Term> extends Compound1<T>  implements Product {
         return super.appendTermOpener();
     }
 
+    @Override
     public boolean appendOperator(Writer p) throws IOException {
         //skip
         return false;

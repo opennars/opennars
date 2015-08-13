@@ -21,7 +21,6 @@
 package nars.nal;
 
 import nars.Global;
-import nars.budget.BudgetFunctions;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;

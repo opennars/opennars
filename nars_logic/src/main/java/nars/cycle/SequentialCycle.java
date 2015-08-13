@@ -104,6 +104,7 @@ abstract public class SequentialCycle extends AbstractCycle {
         concepts.forEach(action);
     }
 
+    @Override
     public void conceptPriorityHistogram(double[] bins) {
         if (bins!=null)
             concepts.getPriorityHistogram(bins);

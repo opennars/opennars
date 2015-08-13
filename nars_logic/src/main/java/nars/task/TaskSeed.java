@@ -78,6 +78,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 //    }
 
 
+    @Override
     public TaskSeed setOccurrenceTime(long occurrenceTime) {
         this.occurrenceTime = occurrenceTime;
         return this;
@@ -89,6 +90,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
 
+    @Override
     public TaskSeed setCreationTime(long creationTime) {
         this.creationTime = creationTime;
         return this;
@@ -98,6 +100,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     /**
      * duration (in cycles) which any contained intervals are measured by
      */
+    @Override
     public int getDuration() {
         if (this.duration == 0) {
             int d;
@@ -117,6 +120,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
 
+    @Override
     public void applyToStamp(final Stamp target) {
 
 
@@ -198,6 +202,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         return this;
     }
 
+    @Override
     public TaskSeed<T> budget(float p, float d, float q) {
         budgetDirect(p, d, q);
         return this;
@@ -382,6 +387,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 //
 //    }
 
+    @Override
     public boolean isInput() {
         return getParentTask() == null;
     }
@@ -442,11 +448,13 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
 
+    @Override
     public TaskSeed setEvidentialSet(long[] evidentialSet) {
         this.evidentialSet = evidentialSet;
         return this;
     }
 
+    @Override
     public TaskSeed setDuration(int d) {
         this.duration = d;
         return this;
@@ -456,6 +464,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     /**
      * creation time of the stamp
      */
+    @Override
     public long getCreationTime() {
 //        if (creationTime == Stamp.ETERNAL) {
 //            throw new RuntimeException("creation time should be specified or timeless, not eternal");
@@ -470,6 +479,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     /**
      * estimated occurrence time of the event*
      */
+    @Override
     public long getOccurrenceTime() {
         return occurrenceTime;
     }
@@ -527,6 +537,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     public boolean isTimeless() {
         return getOccurrenceTime() == Stamp.TIMELESS;
     }
+    @Override
     public boolean isEternal() {
         return getOccurrenceTime() == Stamp.ETERNAL;
     }
@@ -536,6 +547,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
      * if a stamp exists, determine if it will be cyclic;
      * otherwise assume that it is not.
      */
+    @Override
     public boolean isCyclic() {
         if (getEvidentialSet() != null) {
             //HACK when Stamp and parents are unified the extra conditoins here will not be necessary:

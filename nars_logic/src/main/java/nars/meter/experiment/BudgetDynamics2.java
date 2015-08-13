@@ -1,6 +1,5 @@
 package nars.meter.experiment;
 
-import nars.Global;
 import nars.NARSeed;
 import nars.meter.MaxBeliefConfidence;
 import nars.nar.Default;

@@ -18,7 +18,7 @@ public class TrieMap {
      * another TrieMap node if more than one key shares the key prefix up to that point.
      * Null elements indicate unused, I.E. available slots.
      */
-    private Object[] mChars = new Object[256];
+    private final Object[] mChars = new Object[256];
     private Object mPrefixVal; // Used only for values of prefix keys.
     
     // Simple container for a string-value pair.

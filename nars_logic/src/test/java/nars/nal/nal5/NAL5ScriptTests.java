@@ -25,6 +25,7 @@ public class NAL5ScriptTests extends ScriptNALTest {
     }
 
 
+    @Override
     public int getMaxCycles() { return 900; }
 
 

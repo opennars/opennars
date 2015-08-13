@@ -348,6 +348,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
     }
 
+    @Override
     public boolean addEdge(V sourceVertex, V targetVertex, E e) {
         return addEdge(sourceVertex, targetVertex, e, false);
     }

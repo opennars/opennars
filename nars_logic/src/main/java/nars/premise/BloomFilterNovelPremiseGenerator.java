@@ -1,6 +1,5 @@
 package nars.premise;
 
-import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.util.data.bloom.BloomFilter;

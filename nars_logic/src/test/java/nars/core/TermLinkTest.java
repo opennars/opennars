@@ -3,7 +3,6 @@ package nars.core;
 import nars.NAR;
 import nars.Symbols;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.link.TermLink;

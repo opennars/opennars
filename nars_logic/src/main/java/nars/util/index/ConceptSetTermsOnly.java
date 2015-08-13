@@ -23,10 +23,12 @@ abstract public class ConceptSetTermsOnly<T extends Term> extends MutableConcept
         return values.iterator();
     }
 
+    @Override
     public boolean include(Concept c) {
         values.add((T)c.getTerm());
         return true;
     }
+    @Override
     public boolean exclude(Concept c) {
         return values.remove(c.getTerm());
     }
@@ -35,6 +37,7 @@ abstract public class ConceptSetTermsOnly<T extends Term> extends MutableConcept
     }
 
 
+    @Override
     public boolean contains(final T t) {
         if (!values.contains(t)) {
             return super.contains(t);
@@ -44,6 +47,7 @@ abstract public class ConceptSetTermsOnly<T extends Term> extends MutableConcept
 
 
     /** set a term to be present always in this map, even if the conept disappears */
+    @Override
     public void include(T a) {
         super.include(a);
         values.add(a);

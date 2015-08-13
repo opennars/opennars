@@ -31,6 +31,7 @@ public class NAL1ScriptTests extends ScriptNALTest {
         );
     }
 
+    @Override
     public int getMaxCycles() {
         if (build instanceof Solid)
             return 8; //yes needs only ONE cycle for these tests

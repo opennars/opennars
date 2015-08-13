@@ -292,6 +292,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
         this.includeSyntax = showSyntax ? 1 : 0;
     }
 
+    @Override
     public DefaultGrapher on(NARGraph g, Object vertex) {
         //return on(g, vertex);
         return this;

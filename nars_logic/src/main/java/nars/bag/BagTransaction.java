@@ -1,6 +1,5 @@
 package nars.bag;
 
-import nars.Global;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 

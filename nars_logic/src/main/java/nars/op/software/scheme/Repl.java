@@ -12,7 +12,7 @@ public class Repl {
     public static final PrintStream OUTPUT_STREAM = System.out;
     public static final InputStream INPUT_STREAM = System.in;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         repl(INPUT_STREAM, OUTPUT_STREAM);
     }
 

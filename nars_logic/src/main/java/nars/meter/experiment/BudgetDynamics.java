@@ -1,6 +1,5 @@
 package nars.meter.experiment;
 
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;

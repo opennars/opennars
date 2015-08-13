@@ -67,6 +67,7 @@ public class SetIntN extends AbstractSetN implements SetInt {
         return false;
     }
 
+    @Override
     public void appendCloser(Writer p) throws IOException {
         p.append(Op.SET_INT_CLOSER.ch);
     }

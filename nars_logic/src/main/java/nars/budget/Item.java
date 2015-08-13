@@ -55,6 +55,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
      * Get the current key
      * @return Current key value
      */
+    @Override
     abstract public K name();
 
 
@@ -62,6 +63,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
      *  attempts to completely erase the item and all its contained
      *  data structures.
      *  helps garbage collection as much as possible.  */
+    @Override
     public void delete() {
         
     }

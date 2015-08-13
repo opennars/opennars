@@ -1,11 +1,6 @@
 package nars.budget;
 
 
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
-import org.junit.Ignore;
-import org.junit.Test;
-
 /** TODO make this into a utility for demonstrating budget dynamics */
 public class PeriodicForgettingTest {
 

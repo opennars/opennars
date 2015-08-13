@@ -219,11 +219,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         Term tterm = task.getTerm();
 
         //require exact term
-        if (!tterm.equals(this.term)) {
-            return false;
-        }
-
-        return true;
+        return tterm.equals(this.term);
 
     }
 

@@ -33,6 +33,7 @@ abstract public class ImmediateOperation  {
             return operation;
         }
 
+        @Override
         public CharSequence stampAsStringBuilder() {
             return "";
         }
@@ -40,6 +41,7 @@ abstract public class ImmediateOperation  {
         /**
          * @return true if it was immediate
          */
+        @Override
         public boolean executeIfImmediate(Memory memory) {
 //            final Term taskTerm = get();
 //            if (taskTerm instanceof Operation) {

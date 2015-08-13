@@ -43,7 +43,7 @@ public class MethodVisitor extends EmptyVisitor {
     private final JavaClass visitedClass;
     private final MethodGen mg;
     private final MethodCallGraph graph;
-    private ArrayDeque<Object> stack = new ArrayDeque();
+    private final ArrayDeque<Object> stack = new ArrayDeque();
 
     public MethodVisitor(MethodCallGraph graph, MethodGen m, JavaClass jc) {
         this.graph = graph;

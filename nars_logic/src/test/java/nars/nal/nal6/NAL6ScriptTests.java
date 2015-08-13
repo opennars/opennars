@@ -28,6 +28,7 @@ public class NAL6ScriptTests extends ScriptNALTest {
         );
     }
 
+    @Override
     public int getMaxCycles() {
         if (build instanceof Solid) return 32;
         else

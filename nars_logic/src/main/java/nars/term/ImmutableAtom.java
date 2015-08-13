@@ -24,10 +24,12 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
         return 1;
     }
 
+    @Override
     public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
     }
 
+    @Override
     public void recurseTerms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
     }

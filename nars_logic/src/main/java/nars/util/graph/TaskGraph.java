@@ -89,8 +89,7 @@ public class TaskGraph  {
     }
 
     public boolean contains(Object t) {
-        if ((t instanceof Task) && (y.containsKey(t))) return true;
-        return false;
+        return (t instanceof Task) && (y.containsKey(t));
     }
 
     public static class TaskSequenceEdge extends DefaultEdge {

@@ -397,7 +397,7 @@ public class NARGraph1 extends Spacegraph {
             //double fh = from.height();
             double tw = to.width();
             //double th = to.height();
-            double thicks = this.thicks * Math.max(tw, fw) / 4;
+            double thicks = this.thicks * fw * 0.5f;
 
             if (thicks < minThickVisibility) {
                 setVisible(false);
@@ -425,7 +425,7 @@ public class NARGraph1 extends Spacegraph {
             scale.setX(len);
             scale.setY(thicks);
 
-            setOpacity(thicks/2f);
+            setOpacity(this.thicks/2f);
 
 
             dirty(false);

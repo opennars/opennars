@@ -4,18 +4,13 @@
  */
 package nars.core;
 
-import nars.NAR;
 import nars.NARStream;
-import nars.io.qa.AnswerReaction;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
-import nars.task.Sentence;
-import nars.task.Task;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static nars.nal.nal7.Tense.Eternal;
 import static org.junit.Assert.assertTrue;
 
 /**

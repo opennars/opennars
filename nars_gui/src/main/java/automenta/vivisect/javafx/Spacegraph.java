@@ -74,11 +74,12 @@ public class Spacegraph extends ZoomFX {
             gc.clearRect(0, 0, w, h);
 
 
+
             gc.setLineWidth(2);
             gc.setStroke(c);
             gc.strokeRect(0, 0, w, h);
 
-            double x = pan.getEntry(0), y = pan.getEntry(1);
+            double x = panX.doubleValue(), y = panY.doubleValue();
             double scale = getZoomFactor() * 10f;
 
             while (scale < minScale)
@@ -131,14 +132,6 @@ public class Spacegraph extends ZoomFX {
         return ((int) y) + .5;
     }
 
-
-    @Override
-    protected void updateTransform() {
-        super.updateTransform();
-        if (grid!=null)
-            grid.update();
-    }
-
     final Group verts = new Group();
     final Group edges = new Group();
     final Pane layers = new AnchorPane(edges, verts);
@@ -155,7 +148,7 @@ public class Spacegraph extends ZoomFX {
 
 
         layers.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        layers.setPickOnBounds(false);
+        layers.setPickOnBounds(true);
         edges.setPickOnBounds(false);
         verts.setPickOnBounds(false);
 
@@ -182,13 +175,20 @@ public class Spacegraph extends ZoomFX {
                 .doOnDragStart((event) -> {
                     if (event.getButton() == MouseButton.SECONDARY)
                         startPan(event.getSceneX(), event.getSceneY());
+                    event.consume();
                 })
-                .doOnDrag((event) -> pan(event.getSceneX(), event.getSceneY()))
-                .doOnDragFinish((event) -> endPan())
+                .doOnDrag((event) -> {
+                    pan(event.getSceneX(), event.getSceneY());
+                    event.consume();
+                })
+                .doOnDragFinish((event) -> {
+                    endPan();
+                    event.consume();
+                })
                 .register(getViewport());
 
 
-        updateTransform();
+
     }
 
     public Scene newScene(double width, double height) {

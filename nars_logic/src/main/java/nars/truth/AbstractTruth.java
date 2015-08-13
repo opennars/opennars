@@ -51,9 +51,7 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
 
             if (!equalsValue(t))
                 return false;
-            if (!UtilityFunctions.isEqual(getConfidence(), t.getConfidence(), e))
-                return false;
-            return true;
+            return UtilityFunctions.isEqual(getConfidence(), t.getConfidence(), e);
         }
         return false;
     }

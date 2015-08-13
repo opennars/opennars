@@ -35,7 +35,7 @@ public class EmotionMeter implements Serializable {
     /** happy = total happiness accumulated in this cycle */
     private float happy;
 
-    private float happinessFade = 0.95f;
+    private final float happinessFade = 0.95f;
 
     public float lasthappy = -1;
     public float lastbusy = -1;

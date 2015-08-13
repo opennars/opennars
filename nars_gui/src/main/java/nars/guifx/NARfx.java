@@ -4,15 +4,13 @@ import automenta.vivisect.javafx.demo.NARGraph1;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Tab;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.CycleReaction;
 import nars.nar.Default;
 
 import java.io.File;
@@ -148,7 +146,7 @@ public class NARfx extends Application {
 
 
             w.content.getTabs().add(new Tab("Terminal", new TerminalPane(w.nar) ));
-            w.content.getTabs().add(new Tab("Graph", g ));
+            w.content.getTabs().add(new Tab("Graph", new BorderPane(g) ));
         }
         //startup defaults
         w.console(true);
@@ -202,12 +200,12 @@ public class NARfx extends Application {
         s.setTitle(title);
 
 
+        scene.getStylesheets().setAll(NARfx.css, "dark.css" );
 
 
         s.setScene(scene);
 
-        n.setMaxWidth(Double.MAX_VALUE);
-        n.setMaxHeight(Double.MAX_VALUE);
+        n.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         return s;
     }

@@ -144,6 +144,7 @@ public class Derivations extends DirectedMultigraph {
             this.key = (conceptKey + "; " + taskLinkKey + "; " + termLinkKey + "; " + beliefKey).trim();
         }
 
+        @Override
         public String name() { return key; }
 
 

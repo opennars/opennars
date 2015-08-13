@@ -124,6 +124,7 @@ abstract public interface Truth extends MetaTruth<Float> {
 
 
 
+    @Override
     default public StringBuilder appendString(final StringBuilder sb) {
         return appendString(sb, 2);
     }
@@ -256,10 +257,12 @@ abstract public interface Truth extends MetaTruth<Float> {
 
 
     /** use getFrequency() when possible because this may box the result as a non-primitive */
+    @Override
     default public Float value() { return getFrequency(); }
 
 
     /** use setFrequency(v) when possible because this may box the result as a non-primitive */
+    @Override
     default public void setValue(Float v) { setFrequency(v); }
 
 }

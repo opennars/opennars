@@ -338,10 +338,8 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
             return true;
 
         Term pred = getPredicate();
-        if ((pred instanceof Variable) && (pred.hasVarIndep()))
-            return true;
+        return (pred instanceof Variable) && (pred.hasVarIndep());
 
-        return false;
     }
 
 

@@ -11,7 +11,6 @@ import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
-import nars.meter.NARTrace;
 import nars.task.Task;
 import nars.util.event.Reaction;
 

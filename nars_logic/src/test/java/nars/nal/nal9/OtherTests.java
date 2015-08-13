@@ -24,6 +24,7 @@ public class OtherTests extends ScriptNALTest {
         );
     }
 
+    @Override
     public int getMaxCycles() { return 600; }
 
 

@@ -23,7 +23,7 @@ public class ApplySubstituteTest {
     public void testApplySubstitute() throws InvalidInputException {
             
         String abS ="<a --> b>";
-        Compound ab = (Compound)n.term(abS);
+        Compound ab = n.term(abS);
         int originalComplexity = ab.getComplexity();
         
         String xyS ="<x --> y>";

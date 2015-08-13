@@ -1,6 +1,5 @@
 package nars.link;
 
-import nars.Global;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.term.Compound;

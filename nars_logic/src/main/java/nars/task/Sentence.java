@@ -298,6 +298,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return this;
     }
 
+    @Override
     public Sentence setOccurrenceTime(long occurrenceTime) {
         this.occurrenceTime = occurrenceTime;
         invalidateHash();
@@ -626,6 +627,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return punctuation == s.punctuation;
     }
 
+    @Override
     public final boolean isEternal() {
         return occurrenceTime == Stamp.ETERNAL;
     }
@@ -646,6 +648,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return duration;
     }
 
+    @Override
     public long getOccurrenceTime() {
         return occurrenceTime;
     }
@@ -663,6 +666,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
 
     /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
+    @Override
     public void applyToStamp(Stamp target) {
         target.setDuration(getDuration());
         target.setTime(getCreationTime(), getOccurrenceTime());
@@ -680,6 +684,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return this;
     }
 
+    @Override
     public Sentence setDuration(int duration) {
         this.duration = duration;
         return this;

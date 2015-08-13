@@ -1,9 +1,7 @@
 package nars.budget;
 
-import com.gs.collections.api.block.procedure.Procedure;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
-import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

@@ -99,9 +99,8 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
                 public boolean test(Concept concept) {
                     //prevent unification with itself
                     if (concept.getTerm().equals(firstTerm)) return false;
-                    if (!concept.hasBeliefs()) return false;
+                    return concept.hasBeliefs();
 
-                    return true;
                 }
 
             }, Global.DED_SECOND_UNIFICATION_DEPTH);

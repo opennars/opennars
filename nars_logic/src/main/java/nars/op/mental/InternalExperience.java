@@ -290,7 +290,7 @@ public class InternalExperience extends NARReaction {
 
                 if(valid) {
                     beliefReasonDerive(task,
-                            Operation.make(anticipate, Product.only(imp.getPredicate())),
+                            Inheritance.make(anticipate, Product.only(imp.getPredicate())),
                             nal);
                 }
             }

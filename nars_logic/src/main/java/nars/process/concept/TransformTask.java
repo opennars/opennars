@@ -39,7 +39,7 @@ public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
 
 
             if (f instanceof ConceptProcess)
-                ((ConceptProcess)f).setBelief(null);
+                f.setBelief(null);
 
 
             // to turn this into structural logic as below?

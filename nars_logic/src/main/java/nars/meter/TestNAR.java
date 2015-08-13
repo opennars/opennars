@@ -242,6 +242,7 @@ public class TestNAR extends NAR {
         return explainable(super.believe(termString, tense, freq, conf));
     }
 
+    @Override
     public void run() {
         long finalCycle = 0;
         for (OutputCondition oc : requires) {

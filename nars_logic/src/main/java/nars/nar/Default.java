@@ -143,6 +143,7 @@ public class Default extends NARSeed  {
     public int cyclesPerFrame = 1;
 
 
+    @Override
     public Default level(int maxNALlevel) {
         super.level(maxNALlevel);
         if (maxNALlevel < 8) {

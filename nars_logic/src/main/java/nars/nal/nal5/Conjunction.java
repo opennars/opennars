@@ -279,6 +279,7 @@ public class Conjunction extends Junction {
         return temporalOrder;
     }
 
+    @Override
     public Term first() {
         return term[0];
     }

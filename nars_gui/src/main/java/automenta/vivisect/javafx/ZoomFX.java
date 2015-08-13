@@ -40,6 +40,8 @@ public class ZoomFX extends StackPane {
 
     // Properties
     private final DoubleProperty zoomFactor = new SimpleDoubleProperty(1.0);
+    protected final DoubleProperty panX = new SimpleDoubleProperty(0);
+    protected final DoubleProperty panY = new SimpleDoubleProperty(0);
 
     //Sub-controls
     /*private final ScrollBar hscroll = new ScrollBar();
@@ -51,7 +53,6 @@ public class ZoomFX extends StackPane {
     private final ObservableBounds pivotLogicalExtent = new ObservableBounds();
 
     private ArrayRealVector panStart = null;
-    protected ArrayRealVector pan = new ArrayRealVector(new double[] { 0.5f, 0.5f }, false);
 
 
     final Scale scale = new Scale();
@@ -107,7 +108,6 @@ public class ZoomFX extends StackPane {
 
     public void setZoomFactor(double zoomFactor) {
         this.zoomFactor.set(zoomFactor);
-        updateTransform();
     }
 
 
@@ -152,10 +152,10 @@ public class ZoomFX extends StackPane {
             panStart.setEntry(0, sceneX);
             panStart.setEntry(1, sceneY);
 
-            pan.addToEntry(0, -dX);
-            pan.addToEntry(1, -dY);
+            panX.add(-dX);
+            panY.add(-dY);
 
-            updateTransform();
+
             //hscroll.setValue(hscroll.getValue() - dX);
             //vscroll.setValue(vscroll.getValue() - dY);
 
@@ -222,56 +222,64 @@ public class ZoomFX extends StackPane {
             viewportPhysicalSize.setHeight(newValue.getHeight());
         });
 
-        content.boundsInLocalProperty().addListener((sender, oldValue, newValue) -> {
-            contentLogicalBounds.setMinX(newValue.getMinX());
-            contentLogicalBounds.setMinY(newValue.getMinY());
-            contentLogicalBounds.setMaxX(newValue.getMaxX());
-            contentLogicalBounds.setMaxY(newValue.getMaxY());
-        });
-
-        updateTransform();
-    }
-
-    protected void updateTransform() {
-        final ObservableDimension2D viewportPhysicalSize = new ObservableDimension2D();
-        final ObservableBounds contentLogicalBounds = new ObservableBounds();
+//        content.boundsInLocalProperty().addListener((sender, oldValue, newValue) -> {
+//            contentLogicalBounds.setMinX(newValue.getMinX());
+//            contentLogicalBounds.setMinY(newValue.getMinY());
+//            contentLogicalBounds.setMaxX(newValue.getMaxX());
+//            contentLogicalBounds.setMaxY(newValue.getMaxY());
+//        });
 
 
+        scale.xProperty().bind(zoomFactor);
+        scale.yProperty().bind(zoomFactor);
 
-        final ObservableDimension2D viewportLogicalHalfSize = new ObservableDimension2D(
-                viewportPhysicalSize.widthProperty().divide(zoomFactor).multiply(0.5),
-                viewportPhysicalSize.heightProperty().divide(zoomFactor).multiply(0.5));
 
-//        pivotLogicalExtent.minXProperty().bind(contentLogicalBounds.minXProperty().add(viewportLogicalHalfSize.widthProperty()));
-//        pivotLogicalExtent.minYProperty().bind(contentLogicalBounds.minYProperty().add(viewportLogicalHalfSize.heightProperty()));
-//        pivotLogicalExtent.maxXProperty().bind(contentLogicalBounds.maxXProperty().subtract(viewportLogicalHalfSize.widthProperty()));
-//        pivotLogicalExtent.maxYProperty().bind(contentLogicalBounds.maxYProperty().subtract(viewportLogicalHalfSize.heightProperty()));
-
-//        final ObservablePoint2D pivotLogicalCoords = new ObservablePoint2D(
-//                pivotLogicalExtent.minXProperty().add(pivotLogicalExtent.widthProperty().multiply(pan.getX())), //hscroll.valueProperty())),
-//                pivotLogicalExtent.minYProperty().add(pivotLogicalExtent.heightProperty().multiply(pan.getY()))); //vscroll.valueProperty())));
-//
-//        final ObservableBounds viewportLogicalBounds = new ObservableBounds(
-//                pivotLogicalCoords.xProperty().subtract(viewportLogicalHalfSize.widthProperty()),
-//                pivotLogicalCoords.yProperty().subtract(viewportLogicalHalfSize.heightProperty()),
-//                pivotLogicalCoords.xProperty().add(viewportLogicalHalfSize.widthProperty()),
-//                pivotLogicalCoords.yProperty().add(viewportLogicalHalfSize.heightProperty()));
-
-        //hscroll.visibleAmountProperty().bind(viewportLogicalBounds.widthProperty().divide(contentLogicalBounds.widthProperty()));
-        //vscroll.visibleAmountProperty().bind(viewportLogicalBounds.heightProperty().divide(contentLogicalBounds.heightProperty()));
-
-        //System.out.println(pan + " " + zoomFactor.floatValue());
-
-        translate.setX(pan.getEntry(0));
-        translate.setY(pan.getEntry(1));
-        scale.xProperty().set(zoomFactor.floatValue());
-        scale.yProperty().set(zoomFactor.floatValue());
-
-        //translate.xProperty().bind(viewportLogicalBounds.minXProperty().multiply(-1));
-        //translate.yProperty().bind(viewportLogicalBounds.minYProperty().multiply(-1));
-        //scale.xProperty().bind(zoomFactor);
-        //scale.yProperty().bind(zoomFactor);
+        translate.xProperty().bind(panX);
+        translate.yProperty().bind(panY);
 
         content.getTransforms().setAll(scale, translate);
     }
+
+//    protected void updateTransform() {
+//        final ObservableDimension2D viewportPhysicalSize = new ObservableDimension2D();
+//        final ObservableBounds contentLogicalBounds = new ObservableBounds();
+//
+//
+//
+//        final ObservableDimension2D viewportLogicalHalfSize = new ObservableDimension2D(
+//                viewportPhysicalSize.widthProperty().divide(zoomFactor).multiply(0.5),
+//                viewportPhysicalSize.heightProperty().divide(zoomFactor).multiply(0.5));
+//
+////        pivotLogicalExtent.minXProperty().bind(contentLogicalBounds.minXProperty().add(viewportLogicalHalfSize.widthProperty()));
+////        pivotLogicalExtent.minYProperty().bind(contentLogicalBounds.minYProperty().add(viewportLogicalHalfSize.heightProperty()));
+////        pivotLogicalExtent.maxXProperty().bind(contentLogicalBounds.maxXProperty().subtract(viewportLogicalHalfSize.widthProperty()));
+////        pivotLogicalExtent.maxYProperty().bind(contentLogicalBounds.maxYProperty().subtract(viewportLogicalHalfSize.heightProperty()));
+//
+////        final ObservablePoint2D pivotLogicalCoords = new ObservablePoint2D(
+////                pivotLogicalExtent.minXProperty().add(pivotLogicalExtent.widthProperty().multiply(pan.getX())), //hscroll.valueProperty())),
+////                pivotLogicalExtent.minYProperty().add(pivotLogicalExtent.heightProperty().multiply(pan.getY()))); //vscroll.valueProperty())));
+////
+////        final ObservableBounds viewportLogicalBounds = new ObservableBounds(
+////                pivotLogicalCoords.xProperty().subtract(viewportLogicalHalfSize.widthProperty()),
+////                pivotLogicalCoords.yProperty().subtract(viewportLogicalHalfSize.heightProperty()),
+////                pivotLogicalCoords.xProperty().add(viewportLogicalHalfSize.widthProperty()),
+////                pivotLogicalCoords.yProperty().add(viewportLogicalHalfSize.heightProperty()));
+//
+//        //hscroll.visibleAmountProperty().bind(viewportLogicalBounds.widthProperty().divide(contentLogicalBounds.widthProperty()));
+//        //vscroll.visibleAmountProperty().bind(viewportLogicalBounds.heightProperty().divide(contentLogicalBounds.heightProperty()));
+//
+//        //System.out.println(pan + " " + zoomFactor.floatValue());
+//
+//
+//
+////        scale.xProperty().set(zoomFactor.floatValue());
+////        scale.yProperty().set(zoomFactor.floatValue());
+//
+//        //translate.xProperty().bind(viewportLogicalBounds.minXProperty().multiply(-1));
+//        //translate.yProperty().bind(viewportLogicalBounds.minYProperty().multiply(-1));
+//        //scale.xProperty().bind(zoomFactor);
+//        //scale.yProperty().bind(zoomFactor);
+//
+//
+//    }
 }
