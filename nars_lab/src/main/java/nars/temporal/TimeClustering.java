@@ -1,10 +1,13 @@
 package nars.temporal;
 
 import com.google.common.collect.Lists;
+import javafx.scene.Scene;
 import nars.Global;
 import nars.NAR;
 import nars.budget.ItemAccumulator;
 import nars.event.CycleReaction;
+import nars.guifx.NARPane;
+import nars.guifx.NARfx;
 import nars.io.out.TextOutput;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -20,7 +23,6 @@ import nars.term.Term;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Created by me on 8/12/15.
@@ -30,7 +32,7 @@ public class TimeClustering extends CycleReaction {
     final NeuralGasNet centroids = new NeuralGasNet(1, 6);
     private final NAR nar;
     private long lastUpdateTime;
-    int maxSize = 64;
+    int maxSize = 32;
     private final ItemAccumulator<Task> pending;
 
     final TreeSet<Task> timeline = new TreeSet<Task>(new Comparator<Task>() {
@@ -83,7 +85,7 @@ public class TimeClustering extends CycleReaction {
             Task t = ii.next();
             if (add(t, now)) {
                 //pull into this buffer from the pending queue
-                System.out.println("BUFFER: " + t.toString(nar.memory));
+                //System.out.println("BUFFER: " + t.toString(nar.memory));
                 ii.remove();
             }
         }
@@ -212,8 +214,8 @@ public class TimeClustering extends CycleReaction {
 
 
         private final Atom id;
-        int uniqueTerms = 5;
-        int tasksPerCycle = 4;
+        int uniqueTerms = 8;
+        int tasksPerCycle = 3;
         private final NAR nar;
         Random rng = new Random();
         int timeVariance = 60 * 1000; //milliseconds around now into past and future
@@ -247,18 +249,43 @@ public class TimeClustering extends CycleReaction {
 
     public static void main(String[] args) {
 
-        Equalized e = new Equalized(1024, 1, 1) {
+        Equalized e = new Equalized(1024, 1, 3) {
 
 
         };
         e.realTime();
+        e.duration.set(250);
+        e.conceptForgetDurations.set(10);
+        e.taskLinkForgetDurations.set(10);
+        e.termLinkForgetDurations.set(10);
+
         NAR n = new NAR(e);
 
         new RandomEventGenerator("x", n);
         new TimeClustering(n);
 
-        TextOutput.out(n);
-        n.loop(1000);
+
+        NARfx.run( (app, stage) -> {
+
+            NARPane p = new NARPane(n);
+
+            p.console(true);
+
+
+            stage.setWidth(900);
+            stage.setHeight(900);
+
+            Scene scene = new Scene(p);
+            stage.setScene(scene);
+
+            stage.show();
+
+            //TextOutput.out(n);
+            new Thread( () ->  n.loop(50)  ).start();
+        });
+
+
+
 
 
     }

@@ -25,7 +25,7 @@ import java.util.Collection;
 public class Spacegraph extends ZoomFX {
 
     static final String spacegraphCSS = Spacegraph.class.getResource("spacegraph.css").toExternalForm();
-    private final GridCanvas grid;
+    private final GridCanvas grid = null;
 
     public void addNodes(Node... n) {
         verts.getChildren().addAll(n);
@@ -146,7 +146,7 @@ public class Spacegraph extends ZoomFX {
     public Spacegraph() {
         super();
 
-        getChildren().add(0, grid = new GridCanvas(true));
+        //getChildren().add(0, grid = new GridCanvas(true));
 
         verts.maxWidth(Double.MAX_VALUE);
         verts.maxHeight(Double.MAX_VALUE);

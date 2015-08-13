@@ -132,6 +132,8 @@ public class NARPane extends SplitPane {
         super();
         this.nar = n;
 
+        getStylesheets().addAll(NARfx.css, "dark.css" );
+
         NARStream s = new NARStream(n);
 
         controlStrip = new NARControlFX(nar, true, true, true) {
@@ -180,7 +182,7 @@ public class NARPane extends SplitPane {
 //                s.maxHeight(Double.MAX_VALUE);
 
 
-               // content.getTabs().add(new Tab("Graph", new StackPane(g, lp) ));
+                content.getTabs().add(new Tab("Graph", new StackPane(g, lp) ));
 
                 System.out.println(lp.getLayoutBounds());
             }
@@ -220,8 +222,9 @@ public class NARPane extends SplitPane {
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         f.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
+        content.setVisible(true);
 
-        getItems().addAll(f, content);
+        getItems().setAll(f, content);
         setDividerPositions(0.5f);
 
         //autosize();

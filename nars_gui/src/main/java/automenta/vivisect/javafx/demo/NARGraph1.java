@@ -68,6 +68,8 @@ public class NARGraph1 extends Spacegraph {
     public static Polygon newPoly(int sides, double d) {
 
         Polygon polygon = new Polygon();
+        polygon.setStrokeWidth(0);
+        polygon.setStroke(null);
         double da = (2 * Math.PI) / sides, a = 0;
         double r = d / 2;
         for (int i = 0; i < sides; i++) {
@@ -339,7 +341,8 @@ public class NARGraph1 extends Spacegraph {
             //setCache(true);
 
             //setManaged(false);
-
+            setStrokeWidth(0);
+            setStroke(null);
 
             from.localToSceneTransformProperty().addListener(this);
             to.localToSceneTransformProperty().addListener(this);
