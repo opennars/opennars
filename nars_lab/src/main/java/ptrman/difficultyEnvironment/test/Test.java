@@ -1,5 +1,10 @@
 package ptrman.difficultyEnvironment.test;
 
+
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
+import nars.rover.physics.PhysicsCamera;
+import nars.rover.physics.gl.JoglAbstractDraw;
 import org.jbox2d.common.Vec2;
 import ptrman.difficultyEnvironment.EntityDescriptor;
 import ptrman.difficultyEnvironment.Environment;
@@ -10,7 +15,12 @@ import ptrman.difficultyEnvironment.initialisationScripts.world.WorldInitialisat
 import ptrman.difficultyEnvironment.scriptAccessors.ComponentManipulationScriptingAccessor;
 import ptrman.difficultyEnvironment.scriptAccessors.EnvironmentScriptingAccessor;
 import ptrman.difficultyEnvironment.scriptAccessors.HelperScriptingAccessor;
+import ptrman.difficultyEnvironment.view.DrawerRunnable;
+import ptrman.difficultyEnvironment.view.JoglDraw;
+import ptrman.difficultyEnvironment.view.JoglPanel;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -64,7 +74,7 @@ public class Test {
                 "   resultEntity.components.addComponent(componentManipulationScriptingAccessor.createTopDownViewWheeledPhysicsComponent(8.0, 0.44 * 0.25));\n" +
 
                 "   var spawnScript = \"\";\n" +
-                "   var frameInteractionScript = \"function frameInteraction(entityDescriptor) {   var wheeledPhysicsComponent = entityDescriptor.components.getComponentByName(\\\"TopDownViewWheeledPhysicsComponent\\\"); wheeledPhysicsComponent.thrust(0.0, 5.0);      }\";\n" +
+                "   var frameInteractionScript = \"function frameInteraction(entityDescriptor) {   var wheeledPhysicsComponent = entityDescriptor.components.getComponentByName(\\\"TopDownViewWheeledPhysicsComponent\\\"); wheeledPhysicsComponent.thrust(0.0, 1.0);      }\";\n" +
                 "   resultEntity.components.addComponent(componentManipulationScriptingAccessor.createJavascriptComponentWithScriptString(spawnScript, frameInteractionScript));\n" +
 
 
@@ -76,6 +86,42 @@ public class Test {
         environment.entities.add(entityDescriptor);
 
         final float timeDelta = 0.1f;
+
+        // TODO< physics camera >
+        final float cameraZoomScaleDiff = 2.0f;
+        final float initScale = 100.0f;
+        final Vec2 initPosition = new Vec2(0.0f, 0.0f);
+        PhysicsCamera physicsCamera = new PhysicsCamera(initPosition, initScale, cameraZoomScaleDiff);
+
+        JoglAbstractDraw debugDraw = new JoglDraw(physicsCamera);
+
+
+
+        GLCapabilities config = new GLCapabilities(GLProfile.getDefault());
+        config.setHardwareAccelerated(true);
+        config.setAlphaBits(8);
+        config.setAccumAlphaBits(8);
+        config.setAccumRedBits(8);
+        config.setAccumGreenBits(8);
+        config.setAccumBlueBits(8);
+
+        config.setNumSamples(1);
+        //config.setBackgroundOpaque(false);
+
+        JoglPanel panel = new JoglPanel(environment.physicsWorld2d, debugDraw, null, config);
+
+        debugDraw.setPanel(panel);
+
+        DrawerRunnable drawerRunnable = new DrawerRunnable();
+        drawerRunnable.panel = panel;
+
+        JFrame window = new JFrame();
+        window.setTitle("Testbed");
+        window.setLayout(new BorderLayout());
+        window.add(panel, "Center");
+        window.pack();
+        window.setVisible(true);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         for(;;) {
             environment.stepFrame(timeDelta, javascriptDescriptor);
@@ -90,6 +136,15 @@ public class Test {
                 System.out.print(" ");
                 System.out.print(physicsPosition.y);
                 System.out.println();
+            }
+
+            // draw
+            SwingUtilities.invokeLater(drawerRunnable);
+
+            try {
+                Thread.sleep((int)(timeDelta * 1000.0f));
+            } catch(InterruptedException ex) {
+                Thread.currentThread().interrupt();
             }
         }
     }
