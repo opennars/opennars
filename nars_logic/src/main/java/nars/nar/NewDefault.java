@@ -6,6 +6,7 @@ import nars.nal.LogicPolicy;
 import nars.nal.LogicStage;
 import nars.nal.NALExecuter;
 import nars.nal.nal8.OpReaction;
+import nars.op.app.STMEventInference;
 import nars.op.mental.Abbreviation;
 import nars.op.mental.Counting;
 import nars.op.mental.FullInternalExperience;
@@ -54,7 +55,7 @@ public class NewDefault extends Default {
 
         if (maxNALLevel >= 7) {
             //n.on(PerceptionAccel.class);
-            //n.on(STMInduction.class);
+            n.on(STMEventInference.class);
 
 
             if (maxNALLevel >= 8) {

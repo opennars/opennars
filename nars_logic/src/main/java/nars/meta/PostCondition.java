@@ -11,6 +11,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -130,7 +131,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
         this.modifiers = otherModifiers.toArray(new Term[otherModifiers.size()]);
     }
 
-    public boolean apply(Term[] preconditions, Task task, Sentence belief, Term beliefterm, ConceptProcess nal) {
+    public boolean apply(Term[] preconditions, Task task, Sentence belief, Term beliefterm, NAL nal) {
         if (task == null)
             throw new RuntimeException("null task");
 
@@ -413,7 +414,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
         return true;
     }
 
-    public long timeOffsetForward(Term arg, ConceptProcess nal) {
+    public long timeOffsetForward(Term arg, NAL nal) {
         if(arg instanceof Interval) {
             return ((Interval)arg).cycles(nal.memory.param.duration);
         }

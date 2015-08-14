@@ -107,7 +107,7 @@ public class Events {
     public static class UnexecutableOperation {   }
     public static class NewTaskExecution {    }
     public static class InduceSucceedingEvent {    }
-    
+    public static class EventBasedReasoningEvent {    }
 
     /*
     public static class TermLinkAdd { }

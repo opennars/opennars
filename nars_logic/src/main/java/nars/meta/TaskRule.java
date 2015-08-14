@@ -4,6 +4,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
@@ -117,7 +118,7 @@ public class TaskRule extends Rule<Premise,Task> {
         return this;
     }
 
-    public void forward(Task task, Sentence belief, Term beliefTerm, ConceptProcess nal) {
+    public void forward(Task task, Sentence belief, Term beliefTerm, NAL nal) {
         //if preconditions are met:
         for (PostCondition p : postconditions)
             p.apply(preconditions, task, belief, beliefTerm, nal);
