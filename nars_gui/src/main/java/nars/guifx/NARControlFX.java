@@ -83,6 +83,9 @@ abstract public class NARControlFX extends VBox implements Runnable {
             bp.setOnAction(e -> {
                 synchronized (n) {
                     if (!n.isRunning()) {
+
+                        //TODO make sure only one thread is running, maybe with singleThreadExecutor
+
                         new Thread(() -> {
                             n.loop(25);
                         }).start();

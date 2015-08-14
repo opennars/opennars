@@ -1,6 +1,6 @@
 package automenta.vivisect.javafx.graph3.example;
 
-import automenta.vivisect.javafx.graph3.SpaceNet;
+import automenta.vivisect.javafx.graph3.SpacenetApp;
 import automenta.vivisect.javafx.graph3.Xform;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -9,14 +9,14 @@ import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 
 
-public class Molecule extends SpaceNet {
+public class Molecule extends SpacenetApp {
 
-    final Xform g = new Xform();
     private static final double HYDROGEN_ANGLE = 104.5;
 
 
     @Override
     public Xform getRoot() {
+        final Xform g = new Xform();
 
         final PhongMaterial redMaterial = new PhongMaterial();
         redMaterial.setDiffuseColor(Color.DARKRED);

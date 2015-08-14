@@ -45,18 +45,18 @@ import javafx.stage.Stage;
  *
  * @author cmcastil
  */
-abstract public class SpaceNet extends Application {
+abstract public class SpaceNet extends Group {
 
-    final Group root = new Group();
+
     //final Xform axisGroup = new Xform();
-    final Xform world = new Xform();
+    public final Xform world = new Xform();
 
     final PerspectiveCamera camera = new PerspectiveCamera(true);
     final Xform cameraXform = new Xform();
     final Xform cameraXform2 = new Xform();
     final Xform cameraXform3 = new Xform();
 
-    private static final double CAMERA_INITIAL_DISTANCE = -450;
+    private static final double CAMERA_INITIAL_DISTANCE = -50;
     private static final double CAMERA_INITIAL_X_ANGLE = 70.0;
     private static final double CAMERA_INITIAL_Y_ANGLE = 320.0;
     private static final double CAMERA_NEAR_CLIP = 0.1;
@@ -69,7 +69,8 @@ abstract public class SpaceNet extends Application {
     private static final double ROTATION_SPEED = 2.0;
     private static final double TRACK_SPEED = 2.0;
     private static final double ZOOM_SPEED = 4.0;
-    
+
+
     double mousePosX;
     double mousePosY;
     double mouseOldX;
@@ -82,7 +83,7 @@ abstract public class SpaceNet extends Application {
     //       root.getChildren().add(world);
     //   }
     private void buildCamera() {
-        root.getChildren().add(cameraXform);
+        getChildren().add(cameraXform);
         cameraXform.getChildren().add(cameraXform2);
         cameraXform2.getChildren().add(cameraXform3);
         cameraXform3.getChildren().add(camera);
@@ -121,50 +122,16 @@ abstract public class SpaceNet extends Application {
 //        world.getChildren().addAll(axisGroup);
 //    }
 
-    private void handleMouse(Scene scene, final Node root) {
-        scene.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent me) {
-                mousePosX = me.getSceneX();
-                mousePosY = me.getSceneY();
-                mouseOldX = me.getSceneX();
-                mouseOldY = me.getSceneY();
-            }
-        });
-        scene.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent me) {
-                mouseOldX = mousePosX;
-                mouseOldY = mousePosY;
-                mousePosX = me.getSceneX();
-                mousePosY = me.getSceneY();
-                mouseDeltaX = (mousePosX - mouseOldX); 
-                mouseDeltaY = (mousePosY - mouseOldY); 
-                
-                double modifier = 1.0;
-                
-                if (me.isControlDown()) {
-                    modifier = CONTROL_MULTIPLIER;
-                } 
-                if (me.isShiftDown()) {
-                    modifier = SHIFT_MULTIPLIER;
-                }     
-                if (me.isPrimaryButtonDown()) {
-                    cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX*MOUSE_SPEED*modifier*ROTATION_SPEED);  
-                    cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY*MOUSE_SPEED*modifier*ROTATION_SPEED);  
-                }
-                else if (me.isMiddleButtonDown()) {
-                    double z = camera.getTranslateZ();
-                    double newZ = z + mouseDeltaX*MOUSE_SPEED*modifier*ZOOM_SPEED;
-                    camera.setTranslateZ(newZ);
-                }
-                else if (me.isSecondaryButtonDown()) {
-                    cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX*MOUSE_SPEED*modifier*TRACK_SPEED);
-                    cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY*MOUSE_SPEED*modifier*TRACK_SPEED);
-                }
-            }
-        });
+    public void handleMouse(Scene scene) {
+        scene.setOnMousePressed(new MousePressHandler());
+        scene.setOnMouseDragged(new MouseDragHandler());
+    }
+    public void handleMouse() {
+        setOnMousePressed(new MousePressHandler());
+        setOnMouseDragged(new MouseDragHandler());
     }
     
-    private void handleKeyboard(Scene scene, final Node root) {
+    public void handleKeyboard(Scene scene) {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -185,18 +152,19 @@ abstract public class SpaceNet extends Application {
 
     public abstract Xform getRoot();
 
-    @Override
-    public void start(Stage primaryStage) {
-        
 
-        root.getChildren().add(world);
+
+    public SpaceNet() {
+        super();
+
+        getChildren().add(world);
 
         buildCamera();
 
         world.getChildren().addAll(getRoot());
 
 
-        SubScene view = new SubScene(root, 1024, 768, true, SceneAntialiasing.DISABLED);
+        SubScene view = new SubScene(this, 1024, 768, true, SceneAntialiasing.DISABLED);
         view.setFill(Color.BLACK);
         view.setDepthTest(DepthTest.ENABLE);
 
@@ -209,20 +177,64 @@ abstract public class SpaceNet extends Application {
         view.setManaged(false);
 
 
+
         content.getChildren().add(view);
-
-
-        Scene scene = new Scene(content, 1024, 768, true);
-        handleKeyboard(scene, world);
-        handleMouse(scene, world);
-
-        primaryStage.setTitle("?");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         view.setCamera(camera);
+
+        initHandler();
     }
 
 
+    protected void initHandler() {
+        handleMouse();
+    }
 
+
+    private class MouseDragHandler implements EventHandler<MouseEvent> {
+        @Override public void handle(MouseEvent me) {
+            mouseOldX = mousePosX;
+            mouseOldY = mousePosY;
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+            mouseDeltaX = (mousePosX - mouseOldX);
+            mouseDeltaY = (mousePosY - mouseOldY);
+
+            double modifier = 1.0;
+
+            if (me.isControlDown()) {
+                modifier = CONTROL_MULTIPLIER;
+            }
+            if (me.isShiftDown()) {
+                modifier = SHIFT_MULTIPLIER;
+            }
+            if (me.isPrimaryButtonDown()) {
+                cameraXform.ry.setAngle(cameraXform.ry.getAngle() - mouseDeltaX*MOUSE_SPEED*modifier*ROTATION_SPEED);
+                cameraXform.rx.setAngle(cameraXform.rx.getAngle() + mouseDeltaY*MOUSE_SPEED*modifier*ROTATION_SPEED);
+            }
+            else if (me.isMiddleButtonDown()) {
+                double z = camera.getTranslateZ();
+                double newZ = z + mouseDeltaX*MOUSE_SPEED*modifier*ZOOM_SPEED;
+                camera.setTranslateZ(newZ);
+            }
+            else if (me.isSecondaryButtonDown()) {
+                cameraXform2.t.setX(cameraXform2.t.getX() + mouseDeltaX*MOUSE_SPEED*modifier*TRACK_SPEED);
+                cameraXform2.t.setY(cameraXform2.t.getY() + mouseDeltaY*MOUSE_SPEED*modifier*TRACK_SPEED);
+            }
+        }
+
+        protected void initHandler() {
+            //does not use superclass's behavior
+        }
+    }
+
+    private class MousePressHandler implements EventHandler<MouseEvent> {
+        @Override public void handle(MouseEvent me) {
+            mousePosX = me.getSceneX();
+            mousePosY = me.getSceneY();
+            mouseOldX = me.getSceneX();
+            mouseOldY = me.getSceneY();
+        }
+    }
 }

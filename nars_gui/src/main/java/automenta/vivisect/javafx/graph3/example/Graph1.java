@@ -1,6 +1,6 @@
 package automenta.vivisect.javafx.graph3.example;
 
-import automenta.vivisect.javafx.graph3.SpaceNet;
+import automenta.vivisect.javafx.graph3.SpacenetApp;
 import automenta.vivisect.javafx.graph3.Xform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by me on 8/5/15.
  */
-public class Graph1 extends SpaceNet {
+public class Graph1 extends SpacenetApp {
 
     final Xform g = new Xform();
     private static final double HYDROGEN_ANGLE = 35.5;
@@ -86,7 +86,7 @@ public class Graph1 extends SpaceNet {
         RectNode oxygenSphere = new RectNode();
         //oxygenSphere.setMaterial(redMaterial);
         {
-            //oxygenSphere.getChildren().add(new Button("fuck"));
+            //oxygenSphere.getChildren().add(new Button(""));
 
             NARPane w = new NARPane(new NAR(new Default()));
             w.setScaleX(0.05f);
@@ -155,10 +155,12 @@ public class Graph1 extends SpaceNet {
         return screen;
     }
 
-    public void start(Stage primaryStage) {
-        super.start(primaryStage);
-        content.getChildren().add(getControls());
-    }
+//    public void start(Stage primaryStage) {
+//        super.start(primaryStage);
+//        root.content.getChildren().add(getControls());
+//    }
+//
+
 
     public static void main(String[] args) {
         launch(args);
