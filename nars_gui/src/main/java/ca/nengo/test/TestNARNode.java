@@ -198,7 +198,7 @@ public class TestNARNode  {
 
                     double dx = 64;
                     boolean error = true;
-                    Term[] args = operation.argArray();
+                    Term[] args = operation.getArgs();
                     if (args.length > 1) {
                         Term param = args[0];
                         String ps = param.toString();
@@ -229,7 +229,7 @@ public class TestNARNode  {
                 protected List<Task> execute(Operation operation, Memory memory) {
                     double dA = Math.PI / 4; //radians
 
-                    Term[] args = operation.argArray();
+                    Term[] args = operation.getArgs();
                     boolean error = true;
                     if (args.length > 1) {
                         Term param = args[0];

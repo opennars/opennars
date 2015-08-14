@@ -65,7 +65,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
      *  helps garbage collection as much as possible.  */
     @Override
     public void delete() {
-        
+
     }
 
     /**
