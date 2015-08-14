@@ -37,6 +37,9 @@ public class ItemButton<I extends Item> extends Button implements Runnable {
         if (t!=null)
             setGraphic(new TaskSummaryIcon( t, this));
 
+
+        setText(labeler.apply(item));
+
         run();
     }
 
@@ -46,7 +49,8 @@ public class ItemButton<I extends Item> extends Button implements Runnable {
         if (g instanceof Runnable)
             ((Runnable)g).run();
 
-        setText(labeler.apply(item));
-        setFont(NARfx.mono(10 + 4 * item.getPriority()));
+        //if (!constantLabel() || getText().isEmpty())
+
+        setFont(NARfx.mono(10 + 8 * item.getPriority()));
     }
 }

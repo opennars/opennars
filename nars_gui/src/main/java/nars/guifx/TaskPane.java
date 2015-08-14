@@ -28,13 +28,14 @@ public class TaskPane extends BorderPane {
         conceptButton.setOnMouseClicked(e -> {
             Concept concept = nar.concept(c.getTerm());
             if (concept!=null) {
-                ConceptPane cp = new ConceptPane(nar, concept);
-                cp.setPrefSize(getWidth(), 300);
-                setCenter(cp);
-
-                conceptButton.setVisible(false);
-                autosize();
-                layout();
+                    NARfx.window(nar, concept);
+//                ConceptPane cp = new ConceptPane(nar, concept);
+//                cp.setPrefSize(getWidth(), 300);
+//                setCenter(cp);
+//
+//                conceptButton.setVisible(false);
+//                autosize();
+//                layout();
             }
         });
         conceptButton.setTooltip(new Tooltip("Goto Concept"));

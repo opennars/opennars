@@ -1,17 +1,14 @@
 package nars.guifx;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.util.Callback;
-import nars.Global;
 import nars.NAR;
 import nars.event.FrameReaction;
-import nars.nal.nal8.ImmediateOperation;
 import nars.op.io.Echo;
 import nars.task.Task;
 import org.infinispan.util.concurrent.ConcurrentHashSet;
@@ -19,6 +16,8 @@ import org.infinispan.util.concurrent.ConcurrentHashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.function.Function;
 
 /**
  * Created by me on 8/10/15.
@@ -31,21 +30,34 @@ public class TreePane extends BorderPane {
 
     final Set<Task> pendingTasks = new ConcurrentHashSet<>(); //Global.newHashSet(1);
 
-    final Map<Task, TreeItem<Task>> tasks = Global.newHashMap();
+    final Map<Task, TreeItem<Task>> tasks = new WeakHashMap(); //Global.newHashMap();
+    final Map<Task, TaskLabel> labels = new WeakHashMap();
+
     private final NAR nar;
+
+    final Function<Task,TaskLabel> labelBuilder;
+
+    private Node getLabel(final Task item) {
+        return labels.computeIfAbsent(item, labelBuilder);
+    }
 
     public TreePane(NAR n) {
         super();
 
         this.nar = n;
+        this.labelBuilder = (i) -> {
+            return new TaskLabel(i, nar);
+        };
 
-        rootNode = new TreeItem<Task>(new Echo("Tasks").newTask());
+        rootNode = new TreeItem(new Echo(""));
         tree = new TreeView<Task>(rootNode);
         tree.setCellFactory(new Callback<TreeView<Task>, TreeCell<Task>>() {
             @Override public TreeCell<Task> call(TreeView<Task> param) {
                 return new TaskCell();
             }
         });
+
+        tree.setShowRoot(false);
 
         setCenter(tree);
 
@@ -87,14 +99,15 @@ public class TreePane extends BorderPane {
 //            }
 
             if (getItem()!=null) {
-                setGraphic(new TaskLabel(getItem(), nar));
+                setGraphic(getLabel(getItem()));
             }
             else {
-                this.setTextFill(Color.WHITE);
+                //this.setTextFill(Color.WHITE);
                 setGraphic(null);
             }
 
         }
+
 
     }
 
@@ -133,9 +146,13 @@ public class TreePane extends BorderPane {
 
         TreeItem<Task> i = tasks.get(t);
         if (i == null) {
+            Task pt = t.getParentTask();
+            if (pt == t)
+                throw new RuntimeException(t + " is its own parent task");
+
             i = new TreeItem<Task>(t);
             tasks.put(t, i);
-            getItem(t.getParentTask()).getChildren().add(i);
+            getItem(pt).getChildren().add(i);
         }
 
         update(t, i);

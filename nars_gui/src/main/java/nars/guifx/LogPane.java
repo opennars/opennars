@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * Created by me on 8/2/15.
  */
@@ -59,12 +61,14 @@ public class LogPane extends VBox implements Runnable {
             getChildren().addAll(adding);
 
             if (scrollParent!=null) {
-                scrollParent.setVvalue(1f);
+                runLater(scrollBottom);
             }
 
 
         }
     }
+
+    final Runnable scrollBottom = () -> scrollParent.setVvalue(1f);
 
     void updateParent() {
         if (getParent()!=null) {
@@ -99,7 +103,7 @@ public class LogPane extends VBox implements Runnable {
                     pendingAdds.push(n);
 
                     if (!pending.getAndSet(true)) {
-                        Platform.runLater(LogPane.this);
+                        runLater(LogPane.this);
                     }
                 }
                 return false;

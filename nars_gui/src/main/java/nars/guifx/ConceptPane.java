@@ -6,6 +6,7 @@ import com.gs.collections.impl.set.mutable.UnifiedSet;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -22,15 +23,17 @@ import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
-import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nar.Default;
 import nars.task.Sentence;
+import nars.task.Task;
+import nars.truth.Truth;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static javafx.application.Platform.runLater;
@@ -43,16 +46,16 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     private final Concept concept;
     private final NAR nar;
-    private final LinkView links;
+    private final Scatter3D tasks;
     private final BagView<Sentence, TaskLink> taskLinkView;
     private final BagView<TermLinkKey, TermLink> termLinkView;
     private FrameReaction reaction;
 
-    public class LinkView extends SpaceNet {
+    abstract public class Scatter3D<X> extends SpaceNet {
 
         final ColorArray ca = new ColorArray(32, Color.BLUE, Color.RED);
 
-        public LinkView() {
+        public Scatter3D() {
             super();
 
 
@@ -64,149 +67,141 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
         @Override
         public Xform getRoot() {
-            final Xform g = new Xform();
-
-
-//            final PhongMaterial redMaterial = new PhongMaterial();
-//            redMaterial.setDiffuseColor(Color.DARKRED);
-//            redMaterial.setSpecularColor(Color.RED);
-//
-//            final PhongMaterial whiteMaterial = new PhongMaterial();
-//            whiteMaterial.setDiffuseColor(Color.WHITE);
-//            whiteMaterial.setSpecularColor(Color.LIGHTBLUE);
-//
-//            final PhongMaterial greyMaterial = new PhongMaterial();
-//            greyMaterial.setDiffuseColor(Color.DARKGREY);
-//            greyMaterial.setSpecularColor(Color.GREY);
-//
-//            // Molecule Hierarchy
-//            // [*] moleculeXform
-//            //     [*] oxygenXform
-//            //         [*] oxygenSphere
-//            //     [*] hydrogen1SideXform
-//            //         [*] hydrogen1Xform
-//            //             [*] hydrogen1Sphere
-//            //         [*] bond1Cylinder
-//            //     [*] hydrogen2SideXform
-//            //         [*] hydrogen2Xform
-//            //             [*] hydrogen2Sphere
-//            //         [*] bond2Cylinder
-//            Xform moleculeXform = new Xform();
-//            Xform oxygenXform = new Xform();
-//            Xform hydrogen1SideXform = new Xform();
-//            Xform hydrogen1Xform = new Xform();
-//            Xform hydrogen2SideXform = new Xform();
-//            Xform hydrogen2Xform = new Xform();
-//
-//            Sphere oxygenSphere = new Sphere(40.0);
-//            oxygenSphere.setMaterial(redMaterial);
-//
-//            Sphere hydrogen1Sphere = new Sphere(30.0);
-//            hydrogen1Sphere.setMaterial(whiteMaterial);
-//            hydrogen1Sphere.setTranslateX(0.0);
-//
-//            Sphere hydrogen2Sphere = new Sphere(30.0);
-//            hydrogen2Sphere.setMaterial(whiteMaterial);
-//            hydrogen2Sphere.setTranslateZ(0.0);
-//
-//            Cylinder bond1Cylinder = new Cylinder(5, 100);
-//            bond1Cylinder.setMaterial(greyMaterial);
-//            bond1Cylinder.setTranslateX(50.0);
-//            bond1Cylinder.setRotationAxis(Rotate.Z_AXIS);
-//            bond1Cylinder.setRotate(90.0);
-//
-//            Cylinder bond2Cylinder = new Cylinder(5, 100);
-//            bond2Cylinder.setMaterial(greyMaterial);
-//            bond2Cylinder.setTranslateX(50.0);
-//            bond2Cylinder.setRotationAxis(Rotate.Z_AXIS);
-//            bond2Cylinder.setRotate(90.0);
-//
-//            moleculeXform.getChildren().add(oxygenXform);
-//            moleculeXform.getChildren().add(hydrogen1SideXform);
-//            moleculeXform.getChildren().add(hydrogen2SideXform);
-//            oxygenXform.getChildren().add(oxygenSphere);
-//            hydrogen1SideXform.getChildren().add(hydrogen1Xform);
-//            hydrogen2SideXform.getChildren().add(hydrogen2Xform);
-//            hydrogen1Xform.getChildren().add(hydrogen1Sphere);
-//            hydrogen2Xform.getChildren().add(hydrogen2Sphere);
-//            hydrogen1SideXform.getChildren().add(bond1Cylinder);
-//            hydrogen2SideXform.getChildren().add(bond2Cylinder);
-//
-//            hydrogen1Xform.setTx(100.0);
-//            hydrogen2Xform.setTx(100.0);
-//            hydrogen2SideXform.setRotateY(156);
-//
-//            g.getChildren().add(moleculeXform);
-            return g;
-
+            return new Xform();
         }
 
 
 
-        public class TLinkNode extends Group {
+        public class DataPoint extends Group {
 
-            public final TLink link;
+            public final X x;
             private final Box shape;
-            private final PhongMaterial mat = new PhongMaterial();
+            private PhongMaterial mat;
+            private Color color = Color.WHITE;
 
-            public TLinkNode(TLink tl) {
+            public DataPoint(X tl) {
                 super();
 
                 shape = new Box(0.8, 0.8, 0.8);
-
+                mat = new PhongMaterial(color);
                 shape.setMaterial(mat);
                 //shape.onMouseEnteredProperty()
 
                 getChildren().add(shape);
 
-                this.link = tl;
+                this.x = tl;
 
                 frame();
 
+                shape.setOnMouseEntered(e -> {
+                    X x = ((DataPoint)e.getSource()).x;
+                    System.out.println("enter " + x);
+                });
+                shape.setOnMouseClicked(e -> {
+                    X x = ((DataPoint)e.getSource()).x;
+                    System.out.println("click " + x);
+                });
+                shape.setOnMouseExited(e -> {
+                    X x = ((DataPoint)e.getSource()).x;
+                    System.out.println("exit " + x);
+                });
+
+            }
+
+            public void setColor(Color nextColor) {
+                this.color = nextColor;
             }
 
             public void frame() {
-                mat.setDiffuseColor(ca.get(link.getPriority()));
+                mat.setDiffuseColor(color);
             }
+
+
+
         }
 
-        final Map<TLink, TLinkNode> linkShape = new LinkedHashMap();
 
-        final Set<TLink> dead = new UnifiedSet();
+        abstract Iterable<X>[] get();
+        protected abstract void update(X tl, double[] position, double[] size, Consumer<Color> color);
+
+        //ca.get(x.getPriority())
+        //concept.getTermLinks()
+
+        final Map<X, DataPoint> linkShape = new LinkedHashMap();
+
+        final Set<X> dead = new UnifiedSet();
         double n;
 
+        float spaceScale = 10;
+
         public void frame() {
+
+            if (!isVisible()) return;
 
             dead.addAll(linkShape.keySet());
 
             n = 0;
-            concept.getTermLinks().forEach(tl -> {
 
-                dead.remove(tl);
+            final double d[] = new double[3];
+            final double s[] = new double[3];
 
-                List<TLinkNode> toAdd = new ArrayList();
-                TLinkNode  b = linkShape.get(tl);
-                if (b==null) {
-                    b = new TLinkNode(tl);
-                    linkShape.put(tl, b);
-                    b.setTranslateX(n++);
-                    b.setTranslateY(tl.getPriority() * 4f);
+            List<DataPoint> toAdd = new ArrayList();
 
-                    toAdd.add(b);
+
+            Iterable<X>[] collects = get();
+            if (collects != null) {
+                for (final Iterable<X> ii : collects) {
+                    ii.forEach(tl -> {
+
+                        dead.remove(tl);
+
+                        DataPoint b = linkShape.get(tl);
+                        if (b == null) {
+                            b = new DataPoint(tl);
+                            linkShape.put(tl, b);
+
+                            final DataPoint _b = b;
+                            update(tl, d, s, c -> _b.setColor(c));
+                            b.setTranslateX(d[0] * spaceScale);
+                            b.setTranslateY(d[1] * spaceScale);
+                            b.setTranslateZ(d[2] * spaceScale);
+                            b.setScaleX(s[0]);
+                            b.setScaleY(s[1]);
+                            b.setScaleZ(s[2]);
+
+                            toAdd.add(b);
+                        }
+
+                        b.frame();
+
+                    });
                 }
+            }
 
-                b.frame();
-
-                runLater(() -> {
-                    getChildren().addAll(toAdd);
-                });
-            });
-
-            //TODO this may be inefficient
             linkShape.keySet().removeAll(dead);
+            final Object[] deads = dead.toArray(new Object[dead.size()]);
 
             dead.clear();
+
+            runLater(() -> {
+                getChildren().addAll(toAdd);
+                toAdd.clear();
+
+                for (Object x : deads) {
+                    DataPoint shape = linkShape.remove(x);
+                    if (shape!=null && shape.getParent()!=null) {
+                        getChildren().remove(shape);
+                    }
+                }
+            });
+
+
+
+
+
         }
+
+
     }
 
     public class BagView<X, Y extends Itemized<X>> extends FlowPane implements Runnable {
@@ -266,15 +261,55 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
         setTop(new Label(c.toInstanceString()));
 
+        final Iterable<Task>[] taskCollects = new Iterable[] {
+                c.getBeliefs(),
+                c.getGoals(),
+                c.getQuestions(),
+                c.getQuests()
+        };
+
         //Label termlinks = new Label("Termlinks diagram");
         //Label tasklinks = new Label("Tasklnks diagram");
-        links = new LinkView();
+        tasks = new Scatter3D<Task>() {
+
+
+
+            @Override
+            Iterable<Task>[] get() {
+                return taskCollects;
+            }
+
+            @Override
+            protected void update(Task tl, double[] position, double[] size, Consumer<Color> color) {
+
+                if (tl.isQuestOrQuestion()) {
+                    position[0] = -1;
+                    if (tl.getBestSolution()!=null) {
+                        position[1] = tl.getBestSolution().getConfidence();
+                    }
+                    else {
+                        position[1] = 0;
+                    }
+                }
+                else {
+                    Truth t = tl.getTruth();
+                    position[0] = t.getFrequency();
+                    position[1] = t.getConfidence();
+                }
+                final float pri = tl.getPriority();
+                position[2] = pri;
+
+                size[0] = size[1] = size[2] = 0.5f + pri;
+                color.accept(ca.get(pri));
+            }
+        };
+
         //TilePane links = new TilePane(links.content);
 
 //        Label beliefs = new Label("Beliefs diagram");
 //        Label goals = new Label("Goals diagram");
 //        Label questions = new Label("Questions diagram");
-        Pane tasks = new TilePane(8, 8,
+        SplitPane links = new SplitPane(
                 scrolled(termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
                                 (t) -> new ItemButton( t, (i) -> i.toString(),
                                         (i) -> {
@@ -292,10 +327,11 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                         )
                 ))
         );
-        tasks.maxHeight(Double.MAX_VALUE);
-        tasks.prefHeight(Double.MAX_VALUE);
+        links.setOrientation(Orientation.VERTICAL);
+        //links.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
-        setCenter(new SplitPane(tasks, links.content));
+
+        setCenter(new SplitPane(new BorderPane(links), tasks.content));
 
         Label controls = new Label("Control Panel");
         setBottom(controls);
@@ -308,7 +344,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
 
     protected void frame() {
-        links.frame();
+        tasks.frame();
         taskLinkView.frame();
         termLinkView.frame();
     }
@@ -335,6 +371,12 @@ public class ConceptPane extends BorderPane implements ChangeListener {
     public static void main(String[] args) {
         NAR n = new NAR(new Default());
         n.input("<a-->b>. <b-->c>. <c-->a>.");
+        n.input("<a --> b>!");
+        n.input("<a --> b>?");
+        n.input("<a --> b>. %0.10;0.95%");
+        n.input("<a --> b>! %0.35%");
+        n.input("<a --> b>. %0.75%");
+
         n.frame(516);
 
         NARfx.run((a,s) -> {

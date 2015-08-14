@@ -1,6 +1,8 @@
 package nars.guifx;
 
 import automenta.vivisect.javafx.demo.NARGraph1;
+import com.gs.collections.api.block.function.Function0;
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -122,6 +124,10 @@ public class NARfx extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        primaryStage.setOnCloseRequest(e -> {
+            n.stop();
+        });
 
         {
 
@@ -277,9 +283,20 @@ public class NARfx extends Application {
 
     //final static public Font monospace = new Font("Monospace", 14);
 
+    final static int fontPrecision = 4; //how many intervals per 1.0 to round to
+    static final IntObjectHashMap<Font> monoFonts = new IntObjectHashMap();
+
     public static Font mono(double v) {
         //[Dialog, SansSerif, Serif, Monospaced, DialogInput]
-        return Font.font("Monospaced", v);
+        if (v < 1) v = 1;
+
+        final int i = (int)Math.round(v * fontPrecision);
+
+        final double finalV = v;
+
+        return monoFonts.getIfAbsentPut(i, () -> {
+            return Font.font("Monospaced", finalV);
+        });
     }
 
 //   static void popup(Core core, Parent n) {

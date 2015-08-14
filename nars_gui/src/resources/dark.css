@@ -105,12 +105,23 @@
  *                                                                             *
  ******************************************************************************/
 
+.label, .toggle-button, .button, .tree-cell {
+    -fx-padding: 0.1em;
+    -fx-label-padding: 0em;
+}
+
+.tree-cell {
+    -fx-padding: 0.1em;
+}
+.tree-cell:focused {
+    -fx-background-color: #206;
+}
+
 .toggle-button, .button{
     -fx-background-color: #222;
     -fx-background-insets:  0.0;
     -fx-background-radius: 0.0;
     -fx-border-width: 0.0;
-    -fx-padding: 0.7em;
     -fx-text-fill: -fx-text-base-color;
     -fx-fill: -fx-text-base-color;
     -fx-alignment: CENTER;
