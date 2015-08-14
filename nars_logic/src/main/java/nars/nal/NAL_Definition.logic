@@ -46,10 +46,10 @@
 //               \         /
 //                (A --> C)
 //If A is a special case of B, and B is a special case of C, so is A a special case of C (strong), the other variations are hypotheses (weak)
-    (A --> B), (B --> C), not_equal(S,P) |- (A --> C), (Truth:Deduction, Desire:Strong)
-    (A --> B), (A --> C), not_equal(S,P) |- (B --> C), (Truth:Induction, Desire:Weak)
-    (A --> C), (B --> C), not_equal(S,P) |- (A --> B), (Truth:Abduction, Desire:Weak)
-    (A --> B), (B --> C), not_equal(S,P) |- (C --> A), (Truth:Exemplification, Desire:Weak)
+    (A --> B), (B --> C), not_equal(A,C) |- (A --> C), (Truth:Deduction, Desire:Strong)
+    (A --> B), (A --> C), not_equal(B,C) |- (B --> C), (Truth:Induction, Desire:Weak)
+    (A --> C), (B --> C), not_equal(A,B) |- (A --> B), (Truth:Abduction, Desire:Weak)
+    (A --> B), (B --> C), not_equal(C,A) |- (C --> A), (Truth:Exemplification, Desire:Weak)
 
 //// similarity from inheritance ////////////////////////////////////////////////////////////////////////////////////
 //If S is a special case of P, and P is a special case of S, then S and P are similar
@@ -198,7 +198,7 @@
 
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If after M, P usually happens, and M happens, it means P is expected to happen
-    M, (M ==> P), shift_occurrence_forward("==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    M, (M ==> P), shift_occurrence_forward("==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     M, (P ==> M), shift_occurrence_backward("==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
     M, (S <=> M), shift_occurrence_backward("<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
     M, (M <=> S), shift_occurrence_forward("==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
@@ -275,32 +275,32 @@
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
-    (($1 --> M) ==> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
-    ((M --> $1) ==> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame, Event:Anticipate)
+    (($1 --> M) ==> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    ((M --> $1) ==> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
 
 //NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
     C, ((&&,C,A_1..n) ==> B) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (S --> M), ((&&,($1 --> M),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (S --> M), ((&&,($1 --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    (S --> M), ((&&,($1 --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     (S --> M), ((&&,C,I) ==> ($1 --> M)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (M --> S), ((&&,(M --> $1),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (M --> S), ((&&,(M --> $1),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Event:Anticipate)
+    (M --> S), ((&&,(M --> $1),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     (M --> S), ((&&,C,I) ==> (M --> $1)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 //Temporal induction:
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
-    P, S, no_common_subterm(S,P), event(P), event(S), measure_time(S,P,I) |- ((&/,S,I) =/> P), (Truth:Induction),
+    P, S, no_common_subterm(S,P), measure_time(S,P,I) |- ((&/,S,I) =/> P), (Truth:Induction),
                                                                              (P =\> (&/,S,I)), (Truth:Abduction),
                                                                              ((&/,S,I) </> P), (Truth:Comparison),
                                                                              (&/,S,I,P), (Truth:Intersection)
 
-    P, S, no_common_subterm(S,P), event(P), event(S), concurrent(P,S) |- (S =|> P), (Truth:Induction),
+    P, S, no_common_subterm(S,P), concurrent(P,S) |- (S =|> P), (Truth:Induction),
                                                                          (P =|> S), (Truth:Induction),
                                                                          (S <|> P), (Truth:Comparison),
                                                                          (&|,S,P), (Truth:Intersection)

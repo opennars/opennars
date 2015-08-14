@@ -209,7 +209,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 else
                     arg2 = null;
 
-                final String predicateNameStr = predicate_name.toString();
+                final String predicateNameStr = predicate_name.toString().replace("^","");
 
                 switch (predicateNameStr) {
                     case "not_equal":
@@ -249,11 +249,15 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             if (Terms.shareAnySubTerms((Compound)arg1, (Compound)arg2))
                                 return false;
                         break;
-                        case "measure_time":
+                    case "measure_time":
                         {
                             if(belief == null) {
                                 return false;
                             }
+                            if(task.isEternal() || belief.isEternal()) {
+                                return false;
+                            }
+
                             long time1 = 0, time2 = 0;
                             if (arg1.equals(task.getTerm())) {
                                 time1 = task.getOccurrenceTime();
@@ -268,12 +272,12 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             assign.put(args[2], Interval.interval(time, nal.memory)); // I:=+8 for example
                         }
                         break;
-                        case "after":
+                    case "after":
                         {
                             if(belief == null) {
                                 return false;
                             }
-                            if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                            if(task.isEternal() || belief.isEternal()) {
                                 return false;
                             }
                             long time1 = 0, time2 = 0;
@@ -287,12 +291,12 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                         }
                         break;
-                        case "concurrent":
+                    case "concurrent":
                         {
                             if(belief == null) {
                                 return false;
                             }
-                            if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                            if(task.isEternal() || belief.isEternal()) {
                                 return false;
                             }
                             long time1 = 0, time2 = 0;
@@ -306,7 +310,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                         }
                         break;
-                        case "substitute":
+                    case "substitute":
                         {
                             Term M = args[1]; //this one got substituted, but with what?
                             Term with = assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
@@ -315,13 +319,13 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             precondsubs.put(args[0],with);
                         }
                         break;
-                        case "shift_occurrence_forward":
+                    case "shift_occurrence_forward":
                         {
                             occurence_shift += timeOffsetForward(arg1,nal);
                             occurence_shift += timeOffsetForward(arg2,nal);
                         }
                         break;
-                        case "shift_occurrence_backward":
+                    case "shift_occurrence_backward":
                         {
                             occurence_shift -= timeOffsetForward(arg1,nal);
                             occurence_shift -= timeOffsetForward(arg2,nal);
