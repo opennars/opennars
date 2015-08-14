@@ -610,4 +610,14 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     }
 
 
+    /** default implementation; more optimal implementations will avoid instancing an iterator */
+    public void forEach(final int max, final Consumer<V> action) {
+
+        final int n = Math.min(size(), max);
+        final List<V> l = items.getList();
+        for (int i = 0; i < n; i++){
+            action.accept(l.get(i));
+        }
+    }
+
 }

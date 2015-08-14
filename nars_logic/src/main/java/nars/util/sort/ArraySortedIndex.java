@@ -22,6 +22,11 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         }
     };
 
+    @Override
+    public List<E> getList() {
+        return list;
+    }
+
     public static <E> List<E> bestList(int capacity) {
         return //new ArrayList(capacity);
 
@@ -141,11 +146,11 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 //    }
     
     @Override
-    public E get(int i) {
+    final public E get(final int i) {
 
-        final int s = list.size();
+        //final int s = list.size();
 
-        if (s == 0) return null;
+        //if (s == 0) return null;
 
         /*if (i >= s)
             i = s - 1;

@@ -7,6 +7,7 @@ import dejv.commons.jfx.input.handler.DragActionHandler;
 import dejv.commons.jfx.input.handler.ScrollActionHandler;
 import dejv.commons.jfx.input.properties.GestureEventProperties;
 import dejv.commons.jfx.input.properties.MouseEventProperties;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 import java.util.Collection;
@@ -31,8 +33,11 @@ public class Spacegraph extends ZoomFX {
         verts.getChildren().addAll(n);
     }
 
-    public void removeNodes(Node n) {
-        verts.getChildren().remove(n);
+    public void removeNodes(Node... n) {
+        verts.getChildren().removeAll(n);
+    }
+    public void removeNodes(Collection<Node> n) {
+        verts.getChildren().removeAll(n);
     }
 
     public void addEdges(Node... n) {
@@ -132,7 +137,7 @@ public class Spacegraph extends ZoomFX {
         return ((int) y) + .5;
     }
 
-    final Group verts = new Group();
+    public final Group verts = new Group();
     final Group edges = new Group();
     final Pane layers = new AnchorPane(edges, verts);
 
@@ -154,6 +159,13 @@ public class Spacegraph extends ZoomFX {
 
 
         content().add(layers);
+
+
+
+        layers.setCenterShape(false);
+        edges.setAutoSizeChildren(false);
+        verts.setAutoSizeChildren(false);
+
 
         getStyleClass().setAll("spacegraph","dark");
 

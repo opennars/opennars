@@ -1,7 +1,6 @@
 package nars.guifx;
 
 import automenta.vivisect.javafx.demo.NARGraph1;
-import com.gs.collections.api.block.function.Function0;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
@@ -13,6 +12,7 @@ import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nar.Default;
+import nars.nar.experimental.Equalized;
 import nars.task.Task;
 
 import java.io.File;
@@ -105,8 +105,14 @@ public class NARfx extends Application {
     public void start(Stage primaryStage) {
 
 
+        //Default d = new Default();
 
-        NAR n = new NAR(new Default());
+        Default d = new Equalized(1024,4,5);
+        d.setCyclesPerFrame(4);
+        d.setTermLinkBagSize(96);
+        d.setTaskLinkBagSize(96);
+
+        NAR n = new NAR(d);
 
         NARPane w = NARfx.window(n);
 

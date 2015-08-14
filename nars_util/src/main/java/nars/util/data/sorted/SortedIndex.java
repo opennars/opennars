@@ -3,6 +3,7 @@ package nars.util.data.sorted;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -22,6 +23,7 @@ public interface SortedIndex<T> extends Collection<T> {
     public T getLast();
     public Iterator<T> descendingIterator();
     public void setCapacity(int capacity);
+    public List<T> getList();
     
     default public void reportPriority() {
         for (T t : this) {

@@ -11,6 +11,8 @@ import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Deque;
+import java.util.Iterator;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 
@@ -48,6 +50,14 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
         return null;
     }
 
+    default void forEach(int max, Consumer<Concept> action) {
+        Iterator<Concept> ii = iterator();
+        int n = 0;
+        while (ii.hasNext() && n < max) {
+            action.accept(ii.next());
+            n++;
+        }
+    }
 
     public Memory getMemory();
 

@@ -6,17 +6,10 @@ import dejv.commons.jfx.geometry.ObservableDimension2D;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
-import javafx.geometry.Orientation;
-import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollBar;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
@@ -31,7 +24,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
  * @since 1.0.0
  */
 @DefaultProperty("content")
-public class ZoomFX extends StackPane {
+public class ZoomFX extends AnchorPane {
 
     @Deprecated private static final double SCROLLING_DIVISOR = 200.0d;
     private static final double SCROLL_MIN = 0.0;
@@ -88,6 +81,10 @@ public class ZoomFX extends StackPane {
 
         //contentPane.getChildren().add(contentGroup);
         getChildren().addAll(content/*, hscroll, vscroll*/);
+
+
+        content.setAutoSizeChildren(false);
+        setCenterShape(false);
 
 
         //hscroll.setValue(0.5);
