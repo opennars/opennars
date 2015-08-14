@@ -202,7 +202,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         return this;
     }
 
-    @Override
     public TaskSeed<T> budget(float p, float d, float q) {
         budgetDirect(p, d, q);
         return this;

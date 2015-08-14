@@ -259,7 +259,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * @param v The increasing percent
      */
     public void orPriority(final float v) {
-        setPriority(Math.min(1.0f, or(priority, v)));
+        setPriority( or(priority, v) );
     }
 
 
@@ -508,10 +508,10 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      */
     @Override
     public String toString() {
-        return budgetAsString();
+        return getBudgetString();
     }
 
-    public String budgetAsString() {
+    public String getBudgetString() {
         return Budget.toString(this);
     }
 
@@ -649,12 +649,12 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         throw new RuntimeException("Unknown sentence type: " + punctuation);
     }
 
-    public Budget budget(final float p, final float d, final float q) {
-        setPriority(p);
-        setDurability(d);
-        setQuality(q);
-        return this;
-    }
+//    public Budget budget(final float p, final float d, final float q) {
+//        setPriority(p);
+//        setDurability(d);
+//        setQuality(q);
+//        return this;
+//    }
 
     /**
      * fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance

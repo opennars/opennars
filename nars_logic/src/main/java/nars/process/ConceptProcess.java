@@ -158,7 +158,7 @@ abstract public class ConceptProcess extends NAL  {
 //        //float cyclesSincePrevious = memory.timeSinceLastCycle();
 
 
-        int remainingProcesses = termlinksToReason;
+        int remainingProcesses = Math.min(termlinksToReason, numTermLinks);
 
         while (remainingProcesses > 0) {
 

@@ -361,33 +361,43 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget of the conclusion task
      */
     private static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
-        final Item t = nal.getTask();
-
-
-        ConceptProcess cp;
-        if (nal instanceof ConceptProcess) {
-            cp = (ConceptProcess) nal;
-        }
-        else {
-            cp = null;
-        }
+        final TaskLink nalTL = nal.getTaskLink();
+        final Budget t = (nalTL !=null) ? nalTL :  nal.getTask();
 
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
 
-        if (cp!=null) {
-            final TermLink bLink = nal.getTermLink();
-            if (bLink!=null) {
-                priority = or(priority, bLink.getPriority());
-                durability = and(durability, bLink.getDurability());
-                final float targetActivation = nal.conceptPriority(bLink.getTarget());
-                bLink.orPriority(or(quality, targetActivation));
-                bLink.orDurability(quality);
-            }
+        final TermLink bLink = nal.getTermLink();
+        if (bLink!=null) {
+            priority = or(priority, bLink.getPriority());
+            durability = and(durability, bLink.getDurability());
+            final float targetActivation = nal.conceptPriority(bLink.getTarget());
+            bLink.orPriority(or(quality, targetActivation));
+            bLink.orDurability(quality);
         }
 
-        return target.budget(priority, durability, quality);
+        return target.set(priority, durability, quality);
+
+
+        /* ORIGINAL: https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/inference/BudgetFunctions.java
+            Item t = memory.currentTaskLink;
+            if (t == null) {
+                t = memory.currentTask;
+            }
+            float priority = t.getPriority();
+            float durability = t.getDurability() / complexity;
+            float quality = qual / complexity;
+            TermLink bLink = memory.currentBeliefLink;
+            if (bLink != null) {
+                priority = or(priority, bLink.getPriority());
+                durability = and(durability, bLink.getDurability());
+                float targetActivation = memory.getConceptActivation(bLink.getTarget());
+                bLink.incPriority(or(quality, targetActivation));
+                bLink.incDurability(quality);
+            }
+            return new BudgetValue(priority, durability, quality);
+         */
     }
 
     @Deprecated static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final AbstractMemory memory) {

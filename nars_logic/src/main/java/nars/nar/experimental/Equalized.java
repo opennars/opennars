@@ -79,13 +79,15 @@ public class Equalized extends Default {
             int newTasksToFire = newTasks.size();
             Iterator<Task> ii = newTasks.iterateHighestFirst(temporary);
 
+            float priFactor = 1f / maxBusyness; //divide the procesesd priority by the expected busyness of this cycle to approximate 1.0 total
+
             float b = 0;
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
                 Task next = ii.next();
                 if (next == null) break;
                 float nextPri = next.getPriority();
 
-                TaskProcess tp = TaskProcess.get(memory, next);
+                TaskProcess tp = TaskProcess.get(memory, next, priFactor);
                 if (tp!=null) {
                     tp.run();
                     b += next.getPriority();
