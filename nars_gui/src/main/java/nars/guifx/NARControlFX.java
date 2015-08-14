@@ -32,7 +32,7 @@ abstract public class NARControlFX extends VBox implements Runnable {
     final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
 
     final Label clock = new Label("0");
-    final Button bp = JFX.newIconButton(FontAwesomeIcon.PLAY);
+    final Button bp;
 
     final AtomicBoolean pending = new AtomicBoolean(false);
 
@@ -45,7 +45,7 @@ abstract public class NARControlFX extends VBox implements Runnable {
                 pending.set(false);
                 boolean running = nar.isRunning();
                 if (running != wasRunning) {
-                    bp.setGraphic(running ? stop : play);
+                    //bp.setGraphic(running ? stop : play);
                     wasRunning = running;
                 }
 
@@ -73,13 +73,13 @@ abstract public class NARControlFX extends VBox implements Runnable {
 
         getChildren().add(clock);
 
+        bp = JFX.newIconButton(FontAwesomeIcon.PLAY);
         bp.setTooltip(new Tooltip("Toggle run/stop"));
 
 
         new NARStream(n).on(this, Events.FrameEnd.class, Events.ResetStart.class);
 
         if (runButtons) {
-            bp.setTooltip(new Tooltip("Play"));
             bp.setOnAction(e -> {
                 synchronized (n) {
                     if (!n.isRunning()) {

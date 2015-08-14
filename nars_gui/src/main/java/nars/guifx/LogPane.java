@@ -113,7 +113,7 @@ public class LogPane extends VBox implements Runnable {
         if (args[0] instanceof Task) {
             TaskLabel tl = new TaskLabel(channel.getLinePrefix(event, args) + ' ',
                     (Task)args[0], nar);
-            tl.enablePopupClickHandler();
+            tl.enablePopupClickHandler(nar);
             return tl;
         }
 

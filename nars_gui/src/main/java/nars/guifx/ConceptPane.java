@@ -3,6 +3,7 @@ package nars.guifx;
 import automenta.vivisect.javafx.graph3.SpaceNet;
 import automenta.vivisect.javafx.graph3.Xform;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Group;
@@ -10,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -26,10 +28,9 @@ import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nar.Default;
 import nars.task.Sentence;
-import nars.task.Task;
-import nars.term.Term;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import static javafx.application.Platform.runLater;
@@ -208,11 +209,13 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         }
     }
 
-    public class BagView<X, Y extends Itemized<X>> extends VBox {
+    public class BagView<X, Y extends Itemized<X>> extends VBox implements Runnable {
 
         final Map<X,Node> componentCache = new WeakHashMap<>();
         private final Bag<X, Y> bag;
         private Function<Y, Node> builder;
+        final List<Node> pending = new ArrayList();
+        final AtomicBoolean queued = new AtomicBoolean();
 
         public BagView(Bag<X, Y> bag, Function<Y,Node> builder) {
             super();
@@ -231,11 +234,28 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         }
 
         public void frame() {
-            List<Node> x = new ArrayList(bag.size());
-            bag.forEach(b -> {
-                x.add( getNode( b ) );
-            });
-            getChildren().setAll(x);
+            synchronized (pending) {
+                pending.clear();
+                bag.forEach(b -> {
+                    pending.add(getNode(b));
+                });
+            }
+
+            if (!getChildren().equals(pending) && queued.compareAndSet(false, true)) {
+                Platform.runLater(this);
+            }
+        }
+
+        @Override
+        public void run() {
+            synchronized (pending) {
+                getChildren().setAll(pending);
+                queued.set(false);
+            }
+
+            for (final Node n : getChildren())
+                if (n instanceof Runnable)
+                    ((Runnable) n).run();
         }
     }
 
@@ -254,15 +274,27 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 //        Label beliefs = new Label("Beliefs diagram");
 //        Label goals = new Label("Goals diagram");
 //        Label questions = new Label("Questions diagram");
-        TilePane tasks = new TilePane(
-                scrolled(termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
-                        (t) -> new Label(t.toString()))
-                ),
-                scrolled(taskLinkView = new BagView<Sentence, TaskLink>(c.getTaskLinks(),
-                        (t) -> new TaskLabel( t.getTask(), nar ))
-                ));
+        Pane tasks = new TilePane(8, 8,
+                (termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
+                                (t) -> new ItemButton( t, (i) -> i.toString(),
+                                        (i) -> {
 
-        setCenter(new SplitPane(tasks, links.content));
+                                        }
+
+                                )
+                        )
+                ),
+                (taskLinkView = new BagView<Sentence, TaskLink>(c.getTaskLinks(),
+                        (t) -> new ItemButton( t, (i) -> i.toString(),
+                                (i) -> {
+
+                                }
+                        )
+                ))
+        );
+        tasks.maxHeight(Double.MAX_VALUE);
+
+        setCenter(new SplitPane(scrolled(tasks), links.content));
 
         Label controls = new Label("Control Panel");
         setBottom(controls);
@@ -276,6 +308,8 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     protected void frame() {
         links.frame();
+        taskLinkView.frame();
+        termLinkView.frame();
     }
 
     @Override

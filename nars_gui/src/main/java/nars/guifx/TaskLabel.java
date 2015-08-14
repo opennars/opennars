@@ -15,12 +15,10 @@ import nars.term.Term;
 public class TaskLabel extends Label {
 
     private final Task task;
-    private final NAR nar;
 
     public TaskLabel(String prefix, Task task, NAR n) {
         super( );
 
-        this.nar = n;
         this.task = task;
 
         String s = prefix + task.toString(n.memory).toString();
@@ -29,6 +27,7 @@ public class TaskLabel extends Label {
         float pri = task.getPriority();
         this.setTextFill(Color.hsb(360.0 * pri, 0.75f, 0.85f));
 
+        setGraphic(new TaskSummaryIcon(task, this));
 
         setAlignment(Pos.CENTER_LEFT);
 
@@ -47,7 +46,7 @@ public class TaskLabel extends Label {
 
     }
 
-    public void enablePopupClickHandler() {
+    public void enablePopupClickHandler(NAR nar) {
 
         setOnMouseClicked(e -> {
             Term t = task.getTerm();

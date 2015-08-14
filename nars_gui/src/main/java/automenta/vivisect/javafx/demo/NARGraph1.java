@@ -48,6 +48,8 @@ import static javafx.application.Platform.runLater;
  */
 public class NARGraph1 extends Spacegraph {
 
+    private final Animate updater;
+
     public interface VisModel {
 
         Color getEdgeColor(double termPrio, double taskMean);
@@ -633,6 +635,8 @@ public class NARGraph1 extends Spacegraph {
     public synchronized void updateGraph() {
         int n = 0;
 
+        if (!isVisible()) return;
+
         toRemove.addAll(terms.keySet());
 
         final long now = nar.time();
@@ -922,17 +926,34 @@ public class NARGraph1 extends Spacegraph {
 
                 })*/
 
-        new Animate(60, a -> {
+
+        this.updater = new Animate(60, a -> {
             updateNodes();
             updateEdges();
             if (terms.size() > 0) {
                 layoutNodes();
             }
-        }).start();
+        });
 
+        visibleProperty().addListener(v -> {
+            checkVisibility();
+        });
 
     }
 
+    protected void checkVisibility() {
+        if (isVisible())
+            start();
+        else
+            stop();
+    }
+
+    protected void start() {
+        updater.start();
+    }
+    protected void stop() {
+        updater.stop();
+    }
 
     private class TermEdgeConsumer implements Consumer<TermEdge> {
         private final Consumer<TermNode> updateFunc;

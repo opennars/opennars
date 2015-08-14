@@ -9,7 +9,7 @@
     -fx-border-width: 0;
     -fx-border-style: none;
 
-    -fx-control-inner-background:  rgb(0, 0, 0);
+    -fx-control-inner-background:  rgb(10, 10, 10);
 
     /* A bright blue for highlighting/accenting objects.  For example: selected
      * text; selected items in menus, lists, trees, and tables; progress bars;
@@ -43,13 +43,12 @@
     /*-fx-text-base-color: rgb(252.0, 240.0, 237.0);
     -fx-text-fill: -fx-text-base-color;*/
 
-     -dark: rgb(47.0, 52.0, 57.0);
+     -dark: rgb(55.0, 55.0, 55.0);
      -fx-background-color: -dark;
 
     /*default font */
     -fx-font-family: 'Monospaced';
     -fx-font-size: 16.0px;
-    -fx-font-weight: 600;
     -fx-disabled-opacity: 0.8;
 
     -flatter-red: rgb(237.0, 68.0, 37.0);
@@ -69,13 +68,13 @@
 }
 
 /**** size variants **********************************************************/
-.size-variant-touch {
+/*.size-variant-touch {
     -fx-font-size: 9.0;
 }
 
 .size-variant-desktop {
     -fx-font-size: 16.0;
-}
+}*/
 
 /*******************************************************************************
  *                                                                             *
@@ -107,37 +106,45 @@
  ******************************************************************************/
 
 .toggle-button, .button{
-    /*-fx-background-color: -flatter-red;*/
+    -fx-background-color: #222;
     -fx-background-insets:  0.0;
     -fx-background-radius: 0.0;
     -fx-border-width: 0.0;
     -fx-padding: 0.7em;
     -fx-text-fill: -fx-text-base-color;
+    -fx-fill: -fx-text-base-color;
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
 }
 
-.toggle-button:hover, .button:hover {
-
+.toggle-button:hover, .button:hover, .slider:hover {
+    -fx-text-fill: #000;
+    -fx-background-color: #fb0;
+}
+.toggle-button:armed, .button:armed {
+    -fx-text-fill: #000;
+    -fx-fill: #000;
+    -fx-background-color: #f50;
 }
 
-.toggle-button:focused,
+/*.toggle-button:focused,
 .button:focused,
-.button:default:focused {
-       /*-fx-background-color: derive(-flatter-red, 50.0%);*/
-}
+.button:default:focused { }*/ /*-fx-background-color: derive(-flatter-red, 50.0%);*/
 
-.toggle-button:focused:selected {
+
+
+
+/*.toggle-button:focused:selected { }*/
        /*-fx-background-color: derive(-flatter-red, 50.0%), derive(-flatter-red, -20.0%);*/
        /*-fx-background-insets: 0.0, 0.2em;*/
-}
 
-.toggle-button:armed,
+
+/*.toggle-button:armed,
 .toggle-button:selected,
 .button:armed,
 .button:default:armed {
      -fx-background-color: derive(-flatter-red, -20.0%);
-}
+}*/
 
 
 /*******************************************************************************
@@ -176,22 +183,27 @@
 }
 
 .text-area:focused, .text-field:focused {
-    -fx-background-color: -flatter-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);
+    -fx-background-color: #333; /*-flatter-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);*/
     -fx-background-insets: 0.0, 0.2em;
     -fx-background-radius: 2.0;
 }
 
+.slider {
+    -fx-alignment: CENTER;
+   -fx-background-color: #333; /*-flatter-blue; */
+ }
+
 .slider:vertical > .track-background,
 .scroll-bar:vertical > .track-background,
 .scroll-bar:horizontal > .track-background{
-    -fx-background-color: derive(rgb(94.0, 103.0, 234.0), 50.0%);
+    -fx-background-color: #888; /*derive(rgb(94.0, 103.0, 234.0), 50.0%);*/
     -fx-background-insets: 0.0;
 }
 
 .slider:vertical > .thumb,
 .scroll-bar:vertical > .thumb,
 .scroll-bar:horizontal > .thumb {
-    -fx-background-color: -flatter-blue;
+    -fx-background-color: #ddd; /*-flatter-blue; */
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
 }
@@ -218,9 +230,9 @@
  * ComboBox                                                                    *
  *                                                                             *
  ******************************************************************************/
-.combo-box-base {
+/*.combo-box-base {
     -fx-skin: "com.guigarage.flatterfx.skin.FlatterComboBoxSkin";
-}
+}*/
 
 .popup-overlay {
     -fx-background-color: -flatter-red;
@@ -252,9 +264,9 @@
 
 
 .content-background {
-    -fx-background-color: -flatter-red;
+    /*-fx-background-color: -flatter-red;
     -fx-background-radius:0.0 0.0 11.0 11.0;
-    -fx-padding: 0 10 10 10;
+    -fx-padding: 0 10 10 10;*/
 }
 
 

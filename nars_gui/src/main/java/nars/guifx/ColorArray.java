@@ -42,4 +42,12 @@ public class ColorArray {
             throw new RuntimeException("Out of bounds color range: " + p);
         return c[ (int)Math.round(p*(c.length-1)) ];
     }
+
+    public Color get(double p, double opacity) {
+        Color c = get(p);
+        if (opacity == 1f) return c;
+        if (opacity < 0.01) return Color.TRANSPARENT;
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), opacity);
+    }
+
 }
