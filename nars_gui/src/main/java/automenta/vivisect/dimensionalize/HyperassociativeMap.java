@@ -14,6 +14,7 @@
  */
 package automenta.vivisect.dimensionalize;
 
+import automenta.vivisect.javafx.demo.NARGraph1;
 import com.google.common.collect.Iterators;
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Global;
@@ -153,7 +154,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         }
     }
 
-    abstract protected Iterator<N> getVertices();
+    abstract protected Collection<N> getVertices();
 
     public HyperassociativeMap(final int dimensions, final double equilibriumDistance, DistanceMetric distance, final ExecutorService threadExecutor) {
         if (dimensions <= 0) {
@@ -636,7 +637,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
          //new HashMap();
 
         vertices.clear();
-        Iterators.addAll(vertices, getVertices());
+        vertices.addAll(getVertices());
 
         pre(vertices);
 

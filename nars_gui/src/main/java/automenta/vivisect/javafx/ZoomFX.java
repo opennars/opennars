@@ -80,7 +80,7 @@ public class ZoomFX extends StackPane {
         //setupScrollbar(hscroll, Orientation.HORIZONTAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
         //setupScrollbar(vscroll, Orientation.VERTICAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
 
-        setupConstraints();
+        //setupConstraints();
         setupStyle();
         setupClipping();
         setupBindings();
@@ -183,33 +183,34 @@ public class ZoomFX extends StackPane {
     }
 
 
-    @Deprecated private void setupScrollbar(final ScrollBar scroll, final Orientation orientation, final double min, final double max, final double unitIncrement) {
-        scroll.setOrientation(orientation);
-        scroll.setMin(min);
-        scroll.setMax(max);
-        scroll.setUnitIncrement(unitIncrement);
-    }
-
-
-    @Deprecated private void setupConstraints() {
-        final ColumnConstraints c1 = new ColumnConstraints(0.0, 0.0, Double.MAX_VALUE, Priority.ALWAYS, HPos.CENTER, true);
-        final ColumnConstraints c2 = new ColumnConstraints(0.0, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE, Priority.NEVER, HPos.RIGHT, false);
-        final RowConstraints r1 = new RowConstraints(0.0, 0.0, Double.MAX_VALUE, Priority.ALWAYS, VPos.CENTER, true);
-        final RowConstraints r2 = new RowConstraints(0.0, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE, Priority.NEVER, VPos.BOTTOM, false);
-
-//        getColumnConstraints().addAll(c1, c2);
-//        getRowConstraints().addAll(r1, r2);
+//    @Deprecated private void setupScrollbar(final ScrollBar scroll, final Orientation orientation, final double min, final double max, final double unitIncrement) {
+//        scroll.setOrientation(orientation);
+//        scroll.setMin(min);
+//        scroll.setMax(max);
+//        scroll.setUnitIncrement(unitIncrement);
+//    }
 //
-//        GridPane.setConstraints(contentPane, 0, 0);
-//        GridPane.setConstraints(hscroll, 0, 1);
-//        GridPane.setConstraints(vscroll, 1, 0);
-    }
+
+//    @Deprecated private void setupConstraints() {
+//        final ColumnConstraints c1 = new ColumnConstraints(0.0, 0.0, Double.MAX_VALUE, Priority.ALWAYS, HPos.CENTER, true);
+//        final ColumnConstraints c2 = new ColumnConstraints(0.0, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE, Priority.NEVER, HPos.RIGHT, false);
+//        final RowConstraints r1 = new RowConstraints(0.0, 0.0, Double.MAX_VALUE, Priority.ALWAYS, VPos.CENTER, true);
+//        final RowConstraints r2 = new RowConstraints(0.0, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE, Priority.NEVER, VPos.BOTTOM, false);
+//
+////        getColumnConstraints().addAll(c1, c2);
+////        getRowConstraints().addAll(r1, r2);
+////
+////        GridPane.setConstraints(contentPane, 0, 0);
+////        GridPane.setConstraints(hscroll, 0, 1);
+////        GridPane.setConstraints(vscroll, 1, 0);
+//    }
 
 
     private void setupClipping() {
         clip.widthProperty().bind(widthProperty());
         clip.heightProperty().bind(heightProperty());
         setClip(clip);
+        setNeedsLayout(false);
     }
 
 

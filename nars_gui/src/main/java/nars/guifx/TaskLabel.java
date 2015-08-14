@@ -1,6 +1,7 @@
 package nars.guifx;
 
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import nars.NAR;
@@ -40,7 +41,10 @@ public class TaskLabel extends Label {
 
         autosize();
 
+
+        setCacheHint(CacheHint.SCALE);
         setCache(true);
+
     }
 
     public void enablePopupClickHandler() {

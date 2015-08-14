@@ -155,6 +155,8 @@ public class NARui extends NARStream {
 
     }
 
+    //http://tiwulfx.panemu.com/2013/01/07/provide-more-colors-for-chart-series/
+
     private static XYChart.Series<Double,Double> series(TemporalMetrics<Double> meter, String s) {
 
         ObservableList<XYChart.Data<Double,Double>> data = observableArrayList();
