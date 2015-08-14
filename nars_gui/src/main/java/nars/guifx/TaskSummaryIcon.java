@@ -88,7 +88,6 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
 
             g.setFill(getBudgetColor(p));
             g.fillRect(0, 0, W/3, H);
-            System.out.println(W + " " + p);
 
             this.lastPriority = p;
         }

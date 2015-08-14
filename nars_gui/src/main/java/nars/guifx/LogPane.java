@@ -111,9 +111,18 @@ public class LogPane extends VBox implements Runnable {
     public Node getNode(Output.Channel channel, Class event, Object[] args) {
 
         if (args[0] instanceof Task) {
-            TaskLabel tl = new TaskLabel(channel.getLinePrefix(event, args) + ' ',
-                    (Task)args[0], nar);
-            tl.enablePopupClickHandler(nar);
+            /*TaskLabel tl = new TaskLabel(channel.getLinePrefix(event, args) + ' ',
+                    (Task)args[0], nar);*/
+
+            Task t = (Task)args[0];
+            ItemButton tl = new ItemButton( t, (i) -> i.toString(),
+                    (i) -> {
+                        NARfx.window(nar, t);
+                    }
+            );
+            tl.setCache(true);
+
+            //tl.enablePopupClickHandler(nar);
             return tl;
         }
 
@@ -126,6 +135,7 @@ public class LogPane extends VBox implements Runnable {
 
         Text t = new Text(s.toString());
         t.setFill(Color.ORANGE);
+        t.setCache(true);
         return t;
     }
 

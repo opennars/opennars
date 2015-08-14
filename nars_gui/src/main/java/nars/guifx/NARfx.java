@@ -4,7 +4,6 @@ import automenta.vivisect.javafx.demo.NARGraph1;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -12,12 +11,10 @@ import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nar.Default;
+import nars.task.Task;
 
-import java.awt.*;
-import java.awt.ScrollPane;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 
@@ -264,7 +261,18 @@ public class NARfx extends Application {
 
         if (removed!=null)
             removed.close();
+    }
 
+    public static void window(NAR nar, Task c) {
+        TaskPane wn = new TaskPane(nar, c);
+
+        Stage st;
+        Stage removed = window.put(wn, st = getStage(c.toString(), wn));
+
+        st.show();
+
+        if (removed!=null)
+            removed.close();
     }
 
     //final static public Font monospace = new Font("Monospace", 14);

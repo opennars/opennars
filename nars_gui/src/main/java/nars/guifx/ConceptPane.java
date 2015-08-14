@@ -11,9 +11,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -209,7 +209,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         }
     }
 
-    public class BagView<X, Y extends Itemized<X>> extends VBox implements Runnable {
+    public class BagView<X, Y extends Itemized<X>> extends FlowPane implements Runnable {
 
         final Map<X,Node> componentCache = new WeakHashMap<>();
         private final Bag<X, Y> bag;
@@ -275,7 +275,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 //        Label goals = new Label("Goals diagram");
 //        Label questions = new Label("Questions diagram");
         Pane tasks = new TilePane(8, 8,
-                (termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
+                scrolled(termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
                                 (t) -> new ItemButton( t, (i) -> i.toString(),
                                         (i) -> {
 
@@ -284,7 +284,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                                 )
                         )
                 ),
-                (taskLinkView = new BagView<Sentence, TaskLink>(c.getTaskLinks(),
+                scrolled(taskLinkView = new BagView<Sentence, TaskLink>(c.getTaskLinks(),
                         (t) -> new ItemButton( t, (i) -> i.toString(),
                                 (i) -> {
 
@@ -293,8 +293,9 @@ public class ConceptPane extends BorderPane implements ChangeListener {
                 ))
         );
         tasks.maxHeight(Double.MAX_VALUE);
+        tasks.prefHeight(Double.MAX_VALUE);
 
-        setCenter(new SplitPane(scrolled(tasks), links.content));
+        setCenter(new SplitPane(tasks, links.content));
 
         Label controls = new Label("Control Panel");
         setBottom(controls);

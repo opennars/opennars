@@ -29,10 +29,13 @@ public class ItemButton<I extends Item> extends Button implements Runnable {
         else if (i instanceof TaskLink)
             t = ((TaskLink)i).getTask();
 
+        if (clicked!=null) {
+            setOnMouseClicked(e -> {
+                clicked.accept(i);
+            });
+        }
         if (t!=null)
             setGraphic(new TaskSummaryIcon( t, this));
-
-        maxWidth(Double.MAX_VALUE);
 
         run();
     }

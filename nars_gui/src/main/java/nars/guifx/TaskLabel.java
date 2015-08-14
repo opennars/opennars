@@ -49,13 +49,15 @@ public class TaskLabel extends Label {
     public void enablePopupClickHandler(NAR nar) {
 
         setOnMouseClicked(e -> {
-            Term t = task.getTerm();
-            if (t!=null) {
-                Concept c = nar.concept(t);
-                if (c != null) {
-                    NARfx.window(nar, c);
-                }
-            }
+            NARfx.window(nar, task);
+//            Term t = task.getTerm();
+//            if (t!=null) {
+////                Concept c = nar.concept(t);
+////                if (c != null) {
+////                    NARfx.window(nar, c);
+////                }
+//
+//            }
         });
 
     }
