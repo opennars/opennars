@@ -79,6 +79,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
     protected TaskLink(Task t, Budget v, short[] index, short type) {
         super(v);
+
+        if (t == null)
+            throw new RuntimeException(this + " null task");
+
         this.targetTask = t;
         this.index = index;
         this.type = type;

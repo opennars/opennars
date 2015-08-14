@@ -23,7 +23,7 @@ public class NarseseInput extends CodeInput {
         }
 
         if (!nar.isRunning())
-            nar.frame(1);
+            nar.frame();
 
         return i != null;
     }

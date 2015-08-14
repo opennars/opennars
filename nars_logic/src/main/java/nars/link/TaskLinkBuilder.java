@@ -55,10 +55,11 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
     @Override
     public TaskLink newItem() {
+        final Task t = getTask();
         if (template == null)
-            return new TaskLink(getTask(), getBudget());
+            return new TaskLink(t, getBudget());
         else
-            return new TaskLink(getTask(), template, getBudget());
+            return new TaskLink(t, template, getBudget());
     }
 
 

@@ -1,26 +1,63 @@
 package nars.guifx;
 
 import automenta.vivisect.javafx.JFX;
+import de.jensd.fx.glyphs.GlyphIcon;
+import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import nars.Events;
 import nars.NAR;
+import nars.NARStream;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * small VBox vertically oriented component which can be attached
  * to the left or right of anything else, which contains a set of
  * buttons for controlling a nar
  */
-abstract public class NARControlFX extends VBox {
+abstract public class NARControlFX extends VBox implements Runnable {
 
     public final ToggleButton consoleButton;
 
     //private final NARWindow.FXReaction busyBackgroundColor;
 
+    boolean wasRunning = false;
+
+    final static Text play = GlyphsDude.createIcon(FontAwesomeIcon.PLAY, GlyphIcon.DEFAULT_FONT_SIZE);
+    final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
+
+    final Label clock = new Label("0");
+    final Button bp = JFX.newIconButton(FontAwesomeIcon.PLAY);
+
+    final AtomicBoolean pending = new AtomicBoolean(false);
+
+    final NAR nar;
+
+    public void run() {
+        if (pending.getAndSet(true)==false) {
+
+            Platform.runLater(() -> {
+                pending.set(false);
+                boolean running = nar.isRunning();
+                if (running != wasRunning) {
+                    bp.setGraphic(running ? stop : play);
+                    wasRunning = running;
+                }
+
+                clock.setText("" + nar.time());
+            });
+        }
+    }
+
     public NARControlFX(NAR n, boolean runButtons, boolean memoryButtons, boolean guiButtons) {
         super();
 
+        this.nar = n;
         //Canvas canvas = new NARWindow.ResizableCanvas(this);
         //canvas.maxWidth(Double.MAX_VALUE);
         //canvas.maxHeight(Double.MAX_VALUE);
@@ -34,16 +71,34 @@ abstract public class NARControlFX extends VBox {
         //b.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
 
+        getChildren().add(clock);
+
+        bp.setTooltip(new Tooltip("Toggle run/stop"));
+
+
+        new NARStream(n).on(this, Events.FrameEnd.class, Events.ResetStart.class);
+
         if (runButtons) {
-            Button bp = JFX.newIconButton(FontAwesomeIcon.PLAY);
             bp.setTooltip(new Tooltip("Play"));
+            bp.setOnAction(e -> {
+                synchronized (n) {
+                    if (!n.isRunning()) {
+                        new Thread(() -> {
+                            n.loop(25);
+                        }).start();
+                    } else {
+                        n.stop();
+                    }
+                }
+            });
             getChildren().add(bp);
 
 
             Button bs = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
             bs.setTooltip(new Tooltip("Step"));
             bs.setOnAction(e -> {
-                n.frame();
+                if (!n.isRunning())
+                    n.frame();
             });
             getChildren().add(bs);
         }
@@ -130,6 +185,7 @@ abstract public class NARControlFX extends VBox {
 //            }
 //        };
 
+        run();
 
     }
 

@@ -158,7 +158,7 @@ public class Solid extends Default implements CycleProcess {
         ii.inputAll(memory);
     }
 
-    protected void processNewTasks() {
+    protected int processNewTasks() {
         int t = 0;
         final int mt = maxTasksPerCycle;
 
@@ -196,7 +196,10 @@ public class Solid extends Default implements CycleProcess {
 
         tasks.clear();
         tasksAddedThisCycle = 0;
+        return t;
     }
+
+
 
     @Override
     public void cycle() {
@@ -205,7 +208,7 @@ public class Solid extends Default implements CycleProcess {
 
         //System.out.println("before: " + Arrays.toString(concepts.getPriorityHistogram(4)));
 
-        processNewTasks();
+        int newTasks = processNewTasks();
 
         final float tlfd = memory.param.cycles(this.termLinkForgetDurations);
 
@@ -216,8 +219,24 @@ public class Solid extends Default implements CycleProcess {
 
         temporaryC.addAll((Collection)concepts.values());
 
-        for (final Concept c : temporaryC) {
 
+        /*
+        {
+            //clear the bag, it will be repopulated by task activity to follow
+            concepts.clear();
+
+            //crude forgetting, TODO improve
+            final float forgetScale = 1.0f - newTasks * (1.0f / memory.param.cycles(memory.param.conceptForgetDurations));
+            final long now = memory.time();
+            System.out.println(forgetScale);
+            for (final Concept c : temporaryC) {
+                c.getBudget().mulPriority(forgetScale);
+                c.getBudget().setLastForgetTime(now);
+            }
+        }
+        */
+
+        for (final Concept c : temporaryC) {
 
             int conceptTaskLinks = c.getTaskLinks().size();
             if (conceptTaskLinks == 0)

@@ -148,11 +148,11 @@ public class NARPane extends BorderPane {
         final BorderPane f = new BorderPane();
 
 
-        LinePlot lp = new LinePlot(
+        /*LinePlot lp = new LinePlot(
                 "Concepts",
                 () -> (nar.memory.getConcepts().size()),
                 300
-        );
+        );*/
 //        LinePlot lp2 = new LinePlot(
 //                "Happy",
 //                () -> nar.memory.emotion.happy(),
@@ -163,7 +163,7 @@ public class NARPane extends BorderPane {
 //        vb.autosize();
 
 
-        s.forEachCycle(lp::update);
+        //s.forEachCycle(lp::update);
 
         //f.setCenter( scrolled(lp)       );
         f.setCenter(NARfx.scrolled(new TreePane(n)));

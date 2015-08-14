@@ -476,7 +476,7 @@ public class NAR extends Container implements Runnable {
      */
     public void stop() {
         running = false;
-        enabled = false;
+        //enabled = false;
     }
 
     /**

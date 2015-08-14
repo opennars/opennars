@@ -465,8 +465,9 @@ public class Default extends NARSeed  {
 
     /** construct a new premise generator for a concept */
     public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
-        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, 1 /* cycle to clear after */,
-                conceptTaskTermProcessPerCycle.get(),
+        int novelCycles = 1;
+        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
+                novelCycles * conceptTaskTermProcessPerCycle.get(),
                 0.01f /* false positive probability */ );
     }
 

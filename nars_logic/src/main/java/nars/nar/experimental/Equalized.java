@@ -8,6 +8,7 @@ import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nar.Default;
+import nars.premise.BloomFilterNovelPremiseGenerator;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -74,18 +75,26 @@ public class Equalized extends Default {
 
 
             //new tasks
-            int newTasksToFire = Math.min(newTasks.size(), conceptsFiredPerCycle.get());
+            float maxBusyness = conceptsFiredPerCycle.get(); //interpret concepts fired per cycle as business limit
+            int newTasksToFire = newTasks.size();
             Iterator<Task> ii = newTasks.iterateHighestFirst(temporary);
 
+            float b = 0;
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
                 Task next = ii.next();
                 if (next == null) break;
+                float nextPri = next.getPriority();
 
-                TaskProcess tp = TaskProcess.get(memory, next, getPriority(next, conceptsToFire));
-                if (tp!=null)
+                TaskProcess tp = TaskProcess.get(memory, next);
+                if (tp!=null) {
                     tp.run();
+                    b += next.getPriority();
+                }
 
                 ii.remove();
+
+                if (b > maxBusyness)
+                    break;
             }
             temporary.clear();
 
@@ -130,9 +139,9 @@ public class Equalized extends Default {
             // # of concepts
             // concept forget rate
             // concept bag priority sum and distribution
-            float targetBusyness = 5;
+            //float targetBusyness = 5;
 
-            float f = targetBusyness/(conceptsToFire);
+            float f = (conceptsToFire);
             if (f > 1f) f = 1f;
 
 
@@ -168,6 +177,14 @@ public class Equalized extends Default {
         }
 
 
+    }
+
+    @Override
+    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
+        int novelCycles = duration.get();
+        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
+                novelCycles * conceptTaskTermProcessPerCycle.get(),
+                0.01f /* false positive probability */ );
     }
 
     @Override

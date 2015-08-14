@@ -64,7 +64,7 @@ public class LinePlot extends Canvas {
         g.clearRect(0,0, W, H);
 
         while (history.size() > maxHistory)
-            history.remove(0);
+            history.removeAtIndex(0);
         history.add(  valueFunc.getAsDouble() );
 
 

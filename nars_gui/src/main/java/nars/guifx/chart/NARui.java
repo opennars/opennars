@@ -63,7 +63,6 @@ public class NARui extends NARStream {
 
         MetricsCollector<X> mc = new MetricsCollector<X>() {
 
-
             Map<String, ObjectMeter<X>> m = new HashMap();
 
             @Override
@@ -143,6 +142,9 @@ public class NARui extends NARStream {
                 Stream.of(_signals).map(s -> series(meter, s)).collect(Collectors.toList())
         ) );
         yAxis.setAutoRanging(true);
+        bc.setCreateSymbols(false);
+        bc.setHorizontalGridLinesVisible(true);
+        bc.setVerticalGridLinesVisible(true);
 
 
         //bc.setCenter(bc);
@@ -162,6 +164,8 @@ public class NARui extends NARStream {
         }
         XYChart.Series<Double, Double> series = new XYChart.Series<>(s, data);
         series.setName(s);
+
+        series.setNode(null);
 
         return series;
     }

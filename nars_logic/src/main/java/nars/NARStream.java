@@ -257,6 +257,12 @@ public class NARStream  {
         NARReaction r = new ConsumedStreamNARReaction(receiver, signal);
         return this;
     }
+
+    public NARStream on(Runnable receiver, Class... signal) {
+        NARReaction r = new RunnableStreamNARReaction(receiver, signal);
+        return this;
+    }
+
     public NARStream on(Class signal, Runnable receiver) {
         NARReaction r = new RunnableStreamNARReaction(receiver, signal);
         return this;

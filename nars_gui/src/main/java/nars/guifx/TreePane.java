@@ -14,6 +14,7 @@ import nars.event.FrameReaction;
 import nars.nal.nal8.ImmediateOperation;
 import nars.op.io.Echo;
 import nars.task.Task;
+import org.infinispan.util.concurrent.ConcurrentHashSet;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class TreePane extends BorderPane {
     private final TreeView<Task> tree;
     private final FrameReaction onFrame;
 
-    final Set<Task> pendingTasks = Global.newHashSet(1);
+    final Set<Task> pendingTasks = new ConcurrentHashSet<>(); //Global.newHashSet(1);
 
     final Map<Task, TreeItem<Task>> tasks = Global.newHashMap();
     private final NAR nar;
