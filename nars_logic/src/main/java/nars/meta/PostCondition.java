@@ -9,6 +9,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Interval;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
@@ -264,15 +265,17 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             long time1 = 0, time2 = 0;
                             if (arg1.equals(task.getTerm())) {
                                 time1 = task.getOccurrenceTime();
-                            }
-                            if (arg2.equals(belief.getTerm())) {
                                 time2 = belief.getOccurrenceTime();
                             }
-                            long time = time2 - time1;
+                            if (arg1.equals(belief.getTerm())) {
+                                time1 = task.getOccurrenceTime();
+                                time2 = belief.getOccurrenceTime();
+                            }
+                            long time = time1 - time2;
                             if (time < 0) {
                                 return false;
                             }
-                            assign.put(args[2], Interval.interval(time, nal.memory)); // I:=+8 for example
+                            assign.put(args[2], CyclesInterval.make(time, nal.memory)); // I:=+8 for example
                         }
                         break;
                     case "after":
