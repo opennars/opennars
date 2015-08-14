@@ -220,9 +220,12 @@
 
 //// multi-conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Inference about the pre/postconditions
-    ((&&,M,A_1..n) ==> C), M |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
+
+    ((&&,M,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
-    ((&&,A_1..n) ==> C), M |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
+//this one doesn't hold for all same orders, only if M happens before A_1 in case of forward,
+//this result can also come by the NAL7/8 specific rules so we remove Order:ForAllSame here:
+    ((&&,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
 
     ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction, Order:ForAllSame)

@@ -7,6 +7,8 @@ import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal5.Equivalence;
+import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.process.ConceptProcess;
 import nars.task.Sentence;
@@ -291,6 +293,20 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                         }
                         break;
+                    case "not_implication_or_equivalence":
+                    {
+                        if (arg1.equals(task.getTerm())) {
+                            if(task.getTerm() instanceof Implication || task.getTerm() instanceof Equivalence) {
+                                return false;
+                            }
+                        }
+                        if (belief != null && arg1.equals(belief.getTerm())) {
+                            if(belief.getTerm() instanceof Implication || belief.getTerm() instanceof Equivalence) {
+                                return false;
+                            }
+                        }
+                    }
+                    break;
                     case "concurrent":
                         {
                             if(belief == null) {
