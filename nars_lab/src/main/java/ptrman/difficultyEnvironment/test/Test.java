@@ -5,11 +5,13 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import nars.rover.physics.PhysicsCamera;
 import nars.rover.physics.gl.JoglAbstractDraw;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jbox2d.common.Vec2;
 import ptrman.difficultyEnvironment.EntityDescriptor;
 import ptrman.difficultyEnvironment.Environment;
 import ptrman.difficultyEnvironment.JavascriptDescriptor;
 import ptrman.difficultyEnvironment.JavascriptEngine;
+import ptrman.difficultyEnvironment.entity.RandomSampler;
 import ptrman.difficultyEnvironment.initialisationScripts.entity.EntitySpawner;
 import ptrman.difficultyEnvironment.initialisationScripts.world.WorldInitialisation;
 import ptrman.difficultyEnvironment.scriptAccessors.ComponentManipulationScriptingAccessor;
@@ -22,6 +24,7 @@ import ptrman.difficultyEnvironment.view.JoglPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -83,7 +86,7 @@ public class Test {
 
 
 
-                "   var biasedRandomAIComponent = componentManipulationScriptingAccessor.createBiasedRandomAIComponent(2.0, 0.5, 0.5);" +
+                "   var biasedRandomAIComponent = componentManipulationScriptingAccessor.createBiasedRandomAIComponent(3.0, 0.5, 0.5);" +
                 "   biasedRandomAIComponent.topDownViewWheeledControllerComponent = controllerComponent;" +
                 "   resultEntity.components.addComponent(biasedRandomAIComponent);\n" +
 
@@ -94,6 +97,35 @@ public class Test {
 
         EntityDescriptor entityDescriptor = EntitySpawner.spawn(javascriptDescriptor, spawnScript, new ArrayList<>());
         environment.entities.add(entityDescriptor);
+
+
+
+        // spawn testboxes manually
+        final List<ArrayRealVector> boxPositions = RandomSampler.sample(new ArrayRealVector(new double[]{10.0, 10.0}), 10);
+        for( final ArrayRealVector boxPosition : boxPositions ) {
+            EntityDescriptor createdEntity = javascriptDescriptor.environmentScriptingAccessor.createNewEntity(javascriptDescriptor.helperScriptingAccessor.create2dArrayRealVector(0.0f, 0.0f));
+
+            // create physics body of a rover body and set physics parameters
+            List verticesPoints = javascriptDescriptor.helperScriptingAccessor.createList();
+            verticesPoints.add(javascriptDescriptor.helperScriptingAccessor.create2dArrayRealVector(-.5f, 0.5f));
+            verticesPoints.add(javascriptDescriptor.helperScriptingAccessor.create2dArrayRealVector(0.5f, 0.5f));
+            verticesPoints.add(javascriptDescriptor.helperScriptingAccessor.create2dArrayRealVector(0.5f, -0.5f));
+            verticesPoints.add(javascriptDescriptor.helperScriptingAccessor.create2dArrayRealVector(-0.5f, -0.5f));
+
+            float linearDamping = 0.9f;
+            float angularDamping = 0.6f;
+            float restitution = 0.9f;
+            float friction = 0.5f;
+            float mass = 5.0f;
+            boolean isStatic = false;
+            ArrayRealVector position = boxPosition;
+            createdEntity.physics2dBody = javascriptDescriptor.environmentScriptingAccessor.physics2dCreateBodyWithShape(isStatic, position, verticesPoints, linearDamping, angularDamping, mass, restitution, friction);
+
+
+            environment.entities.add(createdEntity);
+        }
+
+
 
         final float timeDelta = 0.1f;
 
@@ -139,12 +171,6 @@ public class Test {
                 if( iterationEntity.physics2dBody == null ) {
                     continue;
                 }
-
-                final Vec2 physicsPosition = iterationEntity.physics2dBody.body.getPosition();
-                System.out.print(physicsPosition.x);
-                System.out.print(" ");
-                System.out.print(physicsPosition.y);
-                System.out.println();
             }
 
             // draw
