@@ -25,6 +25,7 @@ import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.task.Task;
+import nars.util.data.FasterList;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -227,7 +228,7 @@ public class Global {
 
 
     public static <X> List<X> newArrayList() {
-        return new FastList(); //GS
+        return new FasterList<>(); //GS
         //return new ArrayList();
     }
 
@@ -239,7 +240,7 @@ public class Global {
     }
 
     public static <X> List<X> newArrayList(int capacity) {
-        return new FastList(capacity);
+        return new FasterList(capacity);
         //return new ArrayList(capacity);
     }
 

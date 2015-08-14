@@ -5,6 +5,8 @@ import javolution.util.function.Equality;
 import nars.budget.Item;
 import nars.util.data.sorted.SortedIndex;
 
+import java.util.List;
+
 /**
  * EXPERIMENTAL - NOT READY YET - may have a bug / leak
  * @param <E> 
@@ -35,6 +37,11 @@ public class FractalSortedItemList<E extends Item> extends FastSortedTable<E> im
             return t.name().equals(t1.name());
         }
 
+    }
+
+    @Override
+    public List<E> getList() {
+        return this;
     }
 
     @Override

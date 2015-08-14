@@ -8,6 +8,7 @@ import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.BudgetSource;
 import nars.budget.Itemized;
+import nars.concept.Concept;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
@@ -368,6 +369,18 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         }
 
         return n; //return the new instance
+    }
+
+    /** default implementation; more optimal implementations will avoid instancing an iterator */
+    public void forEach(int max, Consumer<V> action) {
+
+        Iterator<V> ii = iterator();
+        int n = 0;
+        while (ii.hasNext() && n < max) {
+            action.accept(ii.next());
+            n++;
+        }
+
     }
 
 //    /**

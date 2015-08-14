@@ -134,4 +134,7 @@ abstract public class SequentialCycle extends AbstractCycle {
 //        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
 //    }
 
+    @Override public void forEach(int max, Consumer<Concept> action) {
+        concepts.forEach(max, action);
+    }
 }
