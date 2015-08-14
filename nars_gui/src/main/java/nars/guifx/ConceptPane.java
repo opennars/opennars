@@ -11,18 +11,29 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import nars.NAR;
+import nars.bag.Bag;
+import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.link.TLink;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.link.TermLinkKey;
 import nars.nar.Default;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.Term;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static javafx.application.Platform.runLater;
+import static nars.guifx.NARfx.scrolled;
 
 /**
  * Created by me on 8/10/15.
@@ -32,6 +43,8 @@ public class ConceptPane extends BorderPane implements ChangeListener {
     private final Concept concept;
     private final NAR nar;
     private final LinkView links;
+    private final BagView<Sentence, TaskLink> taskLinkView;
+    private final BagView<TermLinkKey, TermLink> termLinkView;
     private FrameReaction reaction;
 
     public class LinkView extends SpaceNet {
@@ -195,6 +208,37 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         }
     }
 
+    public class BagView<X, Y extends Itemized<X>> extends VBox {
+
+        final Map<X,Node> componentCache = new WeakHashMap<>();
+        private final Bag<X, Y> bag;
+        private Function<Y, Node> builder;
+
+        public BagView(Bag<X, Y> bag, Function<Y,Node> builder) {
+            super();
+            this.bag = bag;
+            this.builder = builder;
+            frame();
+        }
+
+        Node getNode(Y c) {
+            final X n = c.name();
+            Node existing = componentCache.get(n);
+            if (existing == null) {
+                componentCache.put(n, existing = builder.apply(c));
+            }
+            return existing;
+        }
+
+        public void frame() {
+            List<Node> x = new ArrayList(bag.size());
+            bag.forEach(b -> {
+                x.add( getNode( b ) );
+            });
+            getChildren().setAll(x);
+        }
+    }
+
     public ConceptPane(NAR nar, Concept c) {
 
         this.concept = c;
@@ -207,10 +251,16 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         links = new LinkView();
         //TilePane links = new TilePane(links.content);
 
-        Label beliefs = new Label("Beliefs diagram");
-        Label goals = new Label("Goals diagram");
-        Label questions = new Label("Questions diagram");
-        TilePane tasks = new TilePane(beliefs, goals, questions);
+//        Label beliefs = new Label("Beliefs diagram");
+//        Label goals = new Label("Goals diagram");
+//        Label questions = new Label("Questions diagram");
+        TilePane tasks = new TilePane(
+                scrolled(termLinkView = new BagView<TermLinkKey, TermLink>(c.getTermLinks(),
+                        (t) -> new Label(t.toString()))
+                ),
+                scrolled(taskLinkView = new BagView<Sentence, TaskLink>(c.getTaskLinks(),
+                        (t) -> new TaskLabel( t.getTask(), nar ))
+                ));
 
         setCenter(new SplitPane(tasks, links.content));
 
@@ -219,6 +269,30 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
         visibleProperty().addListener(this);
         changed(null, null, null);
+    }
+
+
+
+
+    protected void frame() {
+        links.frame();
+    }
+
+    @Override
+    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+        if (isVisible()) {
+            reaction = new FrameReaction(nar) {
+                @Override public void onFrame() {
+                    frame();
+                }
+            };
+        }
+        else {
+            if (reaction!=null) {
+                reaction.off();
+                reaction = null;
+            }
+        }
     }
 
 
@@ -241,24 +315,4 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     }
 
-    protected void frame() {
-        links.frame();
-    }
-
-    @Override
-    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-        if (isVisible()) {
-            reaction = new FrameReaction(nar) {
-                @Override public void onFrame() {
-                    frame();
-                }
-            };
-        }
-        else {
-            if (reaction!=null) {
-                reaction.off();
-                reaction = null;
-            }
-        }
-    }
 }
