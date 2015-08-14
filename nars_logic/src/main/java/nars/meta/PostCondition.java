@@ -7,8 +7,11 @@ import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal5.Equivalence;
+import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -128,7 +131,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
         this.modifiers = otherModifiers.toArray(new Term[otherModifiers.size()]);
     }
 
-    public boolean apply(Term[] preconditions, Task task, Sentence belief, Term beliefterm, ConceptProcess nal) {
+    public boolean apply(Term[] preconditions, Task task, Sentence belief, Term beliefterm, NAL nal) {
         if (task == null)
             throw new RuntimeException("null task");
 
@@ -209,7 +212,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 else
                     arg2 = null;
 
-                final String predicateNameStr = predicate_name.toString();
+                final String predicateNameStr = predicate_name.toString().replace("^","");
 
                 switch (predicateNameStr) {
                     case "not_equal":
@@ -249,11 +252,15 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             if (Terms.shareAnySubTerms((Compound)arg1, (Compound)arg2))
                                 return false;
                         break;
-                        case "measure_time":
+                    case "measure_time":
                         {
                             if(belief == null) {
                                 return false;
                             }
+                            if(task.isEternal() || belief.isEternal()) {
+                                return false;
+                            }
+
                             long time1 = 0, time2 = 0;
                             if (arg1.equals(task.getTerm())) {
                                 time1 = task.getOccurrenceTime();
@@ -268,12 +275,12 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             assign.put(args[2], Interval.interval(time, nal.memory)); // I:=+8 for example
                         }
                         break;
-                        case "after":
+                    case "after":
                         {
                             if(belief == null) {
                                 return false;
                             }
-                            if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                            if(task.isEternal() || belief.isEternal()) {
                                 return false;
                             }
                             long time1 = 0, time2 = 0;
@@ -287,12 +294,26 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                         }
                         break;
-                        case "concurrent":
+                    case "not_implication_or_equivalence":
+                    {
+                        if (arg1.equals(task.getTerm())) {
+                            if(task.getTerm() instanceof Implication || task.getTerm() instanceof Equivalence) {
+                                return false;
+                            }
+                        }
+                        if (belief != null && arg1.equals(belief.getTerm())) {
+                            if(belief.getTerm() instanceof Implication || belief.getTerm() instanceof Equivalence) {
+                                return false;
+                            }
+                        }
+                    }
+                    break;
+                    case "concurrent":
                         {
                             if(belief == null) {
                                 return false;
                             }
-                            if(task.getOccurrenceTime() == Stamp.ETERNAL || belief.getOccurrenceTime() == Stamp.ETERNAL) {
+                            if(task.isEternal() || belief.isEternal()) {
                                 return false;
                             }
                             long time1 = 0, time2 = 0;
@@ -306,7 +327,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             }
                         }
                         break;
-                        case "substitute":
+                    case "substitute":
                         {
                             Term M = args[1]; //this one got substituted, but with what?
                             Term with = assign.get(M); //with what assign assigned it to (the match between the rule and the premises)
@@ -315,13 +336,13 @@ public class PostCondition //since there can be multiple tasks derived per rule
                             precondsubs.put(args[0],with);
                         }
                         break;
-                        case "shift_occurrence_forward":
+                    case "shift_occurrence_forward":
                         {
                             occurence_shift += timeOffsetForward(arg1,nal);
                             occurence_shift += timeOffsetForward(arg2,nal);
                         }
                         break;
-                        case "shift_occurrence_backward":
+                    case "shift_occurrence_backward":
                         {
                             occurence_shift -= timeOffsetForward(arg1,nal);
                             occurence_shift -= timeOffsetForward(arg2,nal);
@@ -393,7 +414,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
         return true;
     }
 
-    public long timeOffsetForward(Term arg, ConceptProcess nal) {
+    public long timeOffsetForward(Term arg, NAL nal) {
         if(arg instanceof Interval) {
             return ((Interval)arg).cycles(nal.memory.param.duration);
         }

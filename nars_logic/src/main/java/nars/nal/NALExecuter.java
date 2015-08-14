@@ -5,6 +5,7 @@ import nars.link.TermLink;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
 import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -23,6 +24,8 @@ import java.util.List;
  */
 public class NALExecuter extends ConceptFireTaskTerm {
 
+
+    public static NALExecuter THIS; //<-- Seh help please :D
 
     public final TaskRule[] rules;
 
@@ -256,8 +259,9 @@ public class NALExecuter extends ConceptFireTaskTerm {
     }
 
 
-    public boolean reason(final Task task, final Sentence belief, Term beliefterm, final ConceptProcess nal) {
+    public boolean reason(final Task task, final Sentence belief, Term beliefterm, final NAL nal) {
 
+        THIS=this;
         if (task.isJudgment() || task.isGoal()) {
 
             //forward inference
