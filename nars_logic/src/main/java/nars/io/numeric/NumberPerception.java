@@ -1,7 +1,10 @@
 package nars.io.numeric;
 
+import com.gs.collections.api.tuple.primitive.DoubleDoublePair;
 import com.gs.collections.impl.map.mutable.primitive.LongDoubleHashMap;
+import com.gs.collections.impl.tuple.primitive.PrimitiveTuples;
 import nars.*;
+import nars.io.out.TextOutput;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nar.experimental.Equalized;
@@ -33,7 +36,7 @@ public class NumberPerception extends NullOperator {
             Term variable = x[0];
             Term value = x[1];
             double n = getValue(value);
-            if (!Double.isFinite(n)) {
+            if (Double.isFinite(n)) {
                 observe(variable, n);
             }
             else {
@@ -56,12 +59,49 @@ public class NumberPerception extends NullOperator {
         onObserved(variable, now, n);
     }
 
-    private void onObserved(Term variable, long now, double value) {
+    public DoubleDoublePair getHistory1(Term variable, int offset) {
+        LongDoubleHashMap dd = data.get(variable);
+        long[] h = dd.keysView().toSortedArray();
+        if (h.length < offset+1) return null;
+        long t = h[h.length - 1 - offset];
+        return PrimitiveTuples.pair( (double)t, dd.get(t) );
+    }
 
+    private void onObserved(Term variable, long now, double value) {
+        DoubleDoublePair prev = getHistory1(variable, 1);
+        if (prev!=null) {
+            double dt = (now - prev.getOne());
+            float freq = (float)(getRelativeChange(prev.getTwo(), value / dt));
+            String sign = getChangeSign(prev.getTwo(), value);
+            nar.input("<" + variable.toStringCompact() + " --> [" + sign + "]>. :|: %1.00;0.95%");
+        }
+        else {
+            nar.input("<{" + variable.toStringCompact() + "} --> variable>. %1.00;0.95%");
+
+        }
+        //nar.input("<" + variable.toStringCompact() + " --> [observed]>. :|: 1.00;0.95%");
     }
 
     private void onRevised(Term variable, long now, double prev, double value) {
+        float freq = getRelativeChange(prev, value);
 
+        String sign = getChangeSign(prev, value);
+
+        nar.input("<" + variable.toStringCompact() + " --> [revised, " + sign + "]]>. :|: %" +
+                freq + "%0.95%");
+
+    }
+
+    private String getChangeSign(double prev, double value) {
+        return (prev > value) ? "decrease" : "increase";
+    }
+
+    private float getRelativeChange(double prev, double value) {
+        float pctChange = (float)((value - prev) / Math.max(Math.abs(prev), Math.abs(value)));
+        float freq = Math.abs(pctChange);
+        if (freq > 1f) freq = 1f;
+        if (freq < 0f) freq = 0f;
+        return freq;
     }
 
     private double getValue(Term value) {
@@ -80,12 +120,18 @@ public class NumberPerception extends NullOperator {
         NAR n = new NAR(e);
         n.on(new NumberPerception());
 
+        TextOutput.out(n);
+
         n.input("observe(x,0)!");
         n.frame();
         n.input("observe(x,1)!");
         n.frame();
         n.input("observe(x,0.5)!");
         n.frame();
+
+        n.frame(8);
+
+
 
     }
 

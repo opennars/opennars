@@ -1212,57 +1212,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
     public Term applySubstitute(final Substitution S) {
-
-        if (S.impossible(this))
-            return this;
-
-
-        Term[] in = this.term;
-        Term[] out = in;
-
-        final int subterms = in.length;
-
-        final int minVolumeOfMatch = S.minMatchVolume;
-
-        for (int i = 0; i < subterms; i++) {
-            Term t1 = in[i];
-
-            int m = t1.getVolume();
-
-            if (m < minVolumeOfMatch) {
-                //too small to be any of the keys or hold them in a subterm
-                continue;
-            }
-
-            Term t2;
-            if ((t2 = S.get(t1))!=null) {
-
-
-                //prevents infinite recursion
-                if (!t2.containsTerm(t1)) {
-
-                    if (out == in) out = copyOf(in, subterms);
-                    out[i] = t2; //t2.clone();
-                }
-
-            } else if (t1 instanceof Compound) {
-
-                //additional constraint here?
-
-                Term t3 = ((Compound) t1).applySubstitute(S);
-                if ((t3 != null) && (!t3.equals(in[i]))) {
-                    //modification
-
-                    if (out == in) out = copyOf(in, subterms);
-                    out[i] = t3;
-                }
-            }
-        }
-
-        if (out == in) //nothing changed
-            return this;
-
-        return this.clone(out);
+        return S.apply(this);
     }
 
 

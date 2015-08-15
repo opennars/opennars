@@ -7,6 +7,8 @@ import nars.term.Variable;
 import java.util.Collections;
 import java.util.Map;
 
+import static java.util.Arrays.copyOf;
+
 /** holds a substitution and any metadata that can eliminate matches as early as possible */
 public class Substitution {
     final Map<Term, Term> subs;
@@ -94,12 +96,60 @@ public class Substitution {
     }
 
 
-    public Term get(final Term t) {
+    final public Term get(final Term t) {
         return subs.get(t);
     }
 
-    public Term apply(Compound t) {
-        return t.applySubstitute(this);
+    public Term apply(final Compound t) {
+        if (impossible(t))
+            return t;
+
+
+        Term[] in = t.term;
+        Term[] out = in;
+
+        final int subterms = in.length;
+
+        final int minVolumeOfMatch = minMatchVolume;
+
+        for (int i = 0; i < subterms; i++) {
+            final Term t1 = in[i];
+
+            if (t1.getVolume() < minVolumeOfMatch) {
+                //too small to be any of the keys or hold them in a subterm
+                continue;
+            }
+
+            Term t2;
+            if ((t2 = get(t1))!=null) {
+
+
+                //prevents infinite recursion
+                if (!t2.containsTerm(t1)) {
+
+                    if (out == in) out = copyOf(in, subterms);
+                    out[i] = t2; //t2.clone();
+                }
+
+            } else if (t1 instanceof Compound) {
+
+                //additional constraint here?
+
+                Term t3 = ((Compound) t1).applySubstitute(this);
+                if ((t3 != null) && (!t3.equals(in[i]))) {
+                    //modification
+
+                    if (out == in) out = copyOf(in, subterms);
+                    out[i] = t3;
+                }
+            }
+        }
+
+        if (out == in) //nothing changed
+            return t;
+
+        return t.clone(out);
+
     }
 
 }

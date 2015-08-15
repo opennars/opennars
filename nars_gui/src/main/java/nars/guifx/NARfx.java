@@ -12,7 +12,7 @@ import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.nar.Default;
-import nars.nar.experimental.Equalized;
+import nars.nar.NewDefault;
 import nars.task.Task;
 
 import java.io.File;
@@ -107,10 +107,12 @@ public class NARfx extends Application {
 
         //Default d = new Default();
 
-        Default d = new Equalized(1024,4,5);
+        /*Default d = new Equalized(1024,4,5);
         d.setCyclesPerFrame(4);
         d.setTermLinkBagSize(96);
-        d.setTaskLinkBagSize(96);
+        d.setTaskLinkBagSize(96);*/
+
+        Default d = new NewDefault();
 
         NAR n = new NAR(d);
 
@@ -148,7 +150,7 @@ public class NARfx extends Application {
 //                        if (c == 0) return 0;
 //                        else return nar.memory.getActivePrioritySum(true, false, false) / (c);
 //                    }, 128),
-//                    new LinePlot("TermLink Priority", () ->
+//                    new LinePlot("Link Priority", () ->
 //                            nar.memory.getActivePrioritySum(false, true, false)
 //                            , 128),
 //                    new LinePlot("TaskLink Priority", () ->

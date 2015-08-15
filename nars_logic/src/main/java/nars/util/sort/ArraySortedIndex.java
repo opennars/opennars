@@ -73,14 +73,11 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
     public final int positionOf(final E o) {
         int low = 0;
         int high = size()-1;
-
         final float op = o.getPriority();
 
         while (low <= high) {
-            int mid = (low + high) >>> 1;
-            E midVal = get(mid);
-
-            final float mp = midVal.getPriority();
+            final int mid = (low + high) >>> 1;
+            final float mp = get(mid).getPriority();
 
             if (mp > op)
                 low = mid + 1;
@@ -280,13 +277,14 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
     @Override
     public boolean remove(final Object _o) {
-                
-        if (size() == 0) return false;
 
-        E o = (E)_o;
+        final int s = size();
+        if (s == 0) return false;
+
+        final E o = (E)_o;
         final Object on = o.name();
         
-        if (size() == 1) {
+        if (s == 1) {
             if (get(0).name().equals(on)) {
                 clear();
                 return true;
@@ -296,31 +294,30 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         
         
         //estimated position according to current priority
-        int p = validStorePosition(positionOf(o));
+        final int p = validStorePosition(positionOf(o));
         
-        int s = size();
-        
+
         int i = p, j = p - 1;
-        boolean finishedUp = false, finishedDown = false;
+        int finished = 0;
         do {
             
             if (i < s) {
                 if (attemptRemoval(o, /*on, */i))
                     return true;
                 i++;
+                if (i == s)
+                    finished++;
             }
-            if (i == s)
-                finishedUp = true;
 
             if (j >= 0) {
                 if (attemptRemoval(o, /*on, */j))
                     return true;
                 j--;
+                if (j < 0)
+                    finished++;
             }
-            if (j < 0)
-                finishedDown = true;
-            
-        } while ( (!finishedUp) || (!finishedDown) );
+
+        } while ( finished<2 );
 
 
         //try exhaustive removal as a final option

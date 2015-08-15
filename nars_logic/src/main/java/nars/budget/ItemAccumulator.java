@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /** priority queue which merges equal tasks and accumulates their budget.
@@ -41,22 +42,20 @@ public class ItemAccumulator<I extends Item> {
         items.clear();
     }
 
-    public boolean add(I t) {
 
-        I accumulated = items.remove(t);
+    final BiFunction<I,I,I> accumulateFunc = ((t, accumulated) -> {
 
-        if (accumulated!=null)
+        if (accumulated!=null) {
             accumulated.accumulate(t.getBudget());
+            return accumulated;
+        }
         else
-            accumulated = t;
+            return t;
 
-        items.put(accumulated, accumulated);
+    });
 
-//        buffer.updateValue(t, 0, v -> {
-//
-//            return v + t.getPriority();
-//        });
-
+    public boolean add(I t0) {
+        items.compute(t0, accumulateFunc);
         return true;
     }
 
@@ -69,14 +68,12 @@ public class ItemAccumulator<I extends Item> {
     }
 
     public I removeHighest() {
-        if (items.isEmpty()) return null;
-        I i = highest();
+        final I i = highest();
         items.remove(i);
         return i;
     }
     public I removeLowest() {
-        if (items.isEmpty()) return null;
-        I i = lowest();
+        final I i = lowest();
         items.remove(i);
         return i;
     }
@@ -153,9 +150,8 @@ public class ItemAccumulator<I extends Item> {
         return r;
     }
 
-    public void addAll(Collection<I> x) {
-        for (I i : x)
-            add(i);
+    public void addAll(final Collection<I> x) {
+        x.forEach( this::add );
     }
 
     /** if size() capacity, remove lowest elements until size() is at capacity
@@ -163,7 +159,7 @@ public class ItemAccumulator<I extends Item> {
      * */
     public int limit(int capacity, Consumer<I> onRemoved, @Nullable List<I> temporary) {
 
-        int numToRemove = size() - capacity;
+        final int numToRemove = size() - capacity;
 
         if (numToRemove > 0)
             return removeLowest(numToRemove, temporary);
@@ -174,7 +170,7 @@ public class ItemAccumulator<I extends Item> {
 
     /** iterates in no-specific order */
     public void forEach(Consumer<I> recv) {
-        items.forEachKey((I t) -> recv.accept(t));
+        items.forEachKey(recv::accept);
     }
 
     @Override

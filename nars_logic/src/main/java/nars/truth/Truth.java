@@ -112,8 +112,16 @@ abstract public interface Truth extends MetaTruth<Float> {
      * @return The hash code
      */
     static public int hash(final Truth t) {
-        return Float.floatToRawIntBits(t.getFrequency()) +
-         31 * Float.floatToRawIntBits(t.getConfidence());
+        final int discreteness = (int)(1.0f / DefaultTruth.DEFAULT_TRUTH_EPSILON);
+        return (31 + hash(t.getFrequency(), discreteness))
+                * 91 + hash(t.getConfidence(), discreteness);
+//
+//        return Float.floatToRawIntBits(t.getFrequency()) +
+//         31 * Float.floatToRawIntBits(t.getConfidence());
+    }
+
+    static int hash(float f, int discretness) {
+        return (int)(f * discretness);
     }
 
 //    @Override

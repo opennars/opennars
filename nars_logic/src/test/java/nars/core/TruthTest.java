@@ -55,4 +55,18 @@ public class TruthTest {
 //        Truth aNotWithinThresh = BasicTruth.get(1.0f - a.getEpsilon(), 0.9f, e);
 //        assertNotEquals(a, aNotWithinThresh);
 //    }
+
+    @Test public void testTruthHash() {
+        assertEquals( new DefaultTruth(0.5f, 0.5f).hashCode(), new DefaultTruth(0.5f, 0.5f).hashCode() );
+        assertNotEquals( new DefaultTruth(1.0f, 0.5f).hashCode(), new DefaultTruth(0.5f, 0.5f).hashCode() );
+        assertNotEquals( new DefaultTruth(0.51f, 0.5f).hashCode(), new DefaultTruth(0.5f, 0.5f).hashCode() );
+        assertEquals( new DefaultTruth(0.504f, 0.5f).hashCode(), new DefaultTruth(0.5f, 0.5f).hashCode() );
+        assertNotEquals( new DefaultTruth(0.506f, 0.5f).hashCode(), new DefaultTruth(0.5f, 0.5f).hashCode() );
+
+
+        assertEquals( new DefaultTruth(0, 0).hashCode(), new DefaultTruth(0, 0).hashCode() );
+        assertEquals( new DefaultTruth(0.004f, 0).hashCode(), new DefaultTruth(0, 0).hashCode() );
+        assertNotEquals( new DefaultTruth(0.006f, 0).hashCode(), new DefaultTruth(0, 0).hashCode() );
+
+    }
 }

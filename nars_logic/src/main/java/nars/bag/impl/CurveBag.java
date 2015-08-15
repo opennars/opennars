@@ -28,8 +28,6 @@ import java.util.function.Consumer;
  */
 public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
-    @Deprecated final float MASS_EPSILON = 1.0e-5f;
-
     /**
      * mapping from key to item
      */
@@ -83,15 +81,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             super(map);
         }
 
-        @Override
-        public V remove(final K key) {
-
-            final V e = super.remove(key);
-
-
-
-            return e;
-        }
 
 
         @Override
@@ -107,7 +96,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         @Override
         protected V addItem(final V i) {
 
-            final V e =items.insert(i);
+            final V e = items.insert(i);
 
             return e;
         }

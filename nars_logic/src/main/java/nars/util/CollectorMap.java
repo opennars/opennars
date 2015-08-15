@@ -27,7 +27,8 @@ public abstract class CollectorMap<K, V extends Itemized<K>> {
 
 
 
-    public void merge(final V value) {
+    //not used anymore
+    @Deprecated public void merge(final V value) {
 
 
 
@@ -122,7 +123,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> {
         map.clear();
     }
 
-    public V get(K key) {
+    final public V get(final K key) {
         return map.get(key);
     }
 
