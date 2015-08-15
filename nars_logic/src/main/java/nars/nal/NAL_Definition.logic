@@ -315,7 +315,7 @@
     (M --> S), ((&&,(M --> $1),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     (M --> S), ((&&,C,I) ==> (M --> $1)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-//Temporal induction:
+//Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
     P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
@@ -328,9 +328,10 @@
                                                                          (S <|> P), (Truth:Comparison),
                                                                          (&|,S,P), (Truth:Intersection)
 
-////// Theorems in IL:
+////// Theorems in IL: ////////////////////////////////////////////////////////////////////////////////////
 //TODO Inheritance Theorems (needs to be carefully evaluated what is needed here)
 //Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
+
 ((*,A_1..n) --> M), M |- (A_i --> (/,M, A_1..A_i.substitute(_)..A_n )), (Truth:Identity, Desire:Identity)
 ((*,A_1..n) --> M), M |- (M --> (/,_, A_1..n )), (Truth:Identity, Desire:Identity)
 (M --> (*,A_1..n)), M |- ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), (Truth:Identity, Desire:Identity)
@@ -343,14 +344,19 @@
 (&&,A_1..n), A_1 |- A_1, (Truth:Deduction, Desire:Strong)
 
 //TODO Equivalence Theorems
+
 ({S} <-> {P}), S |- (S <-> P), (Truth:Identity, Desire:Identity)
 ({S} <-> {P}), P |- (S <-> P), (Truth:Identity, Desire:Identity)
 ([S] <-> [P]), S |- (S <-> P), (Truth:Identity, Desire:Identity)
 ([S] <-> [P]), P |- (S <-> P), (Truth:Identity, Desire:Identity)
+
 //Nothing is more specific than a instance, so its similar
+
 (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)
 (S --> {P}), P |- (S <-> {P}), (Truth:Identity, Desire:Identity)
+
 //nothing is more general than a property, so its similar
+
 ([S] --> P), S |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 
