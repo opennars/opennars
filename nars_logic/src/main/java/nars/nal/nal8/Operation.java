@@ -170,7 +170,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
     }
 
     public Term[] arg(Memory memory, boolean evaluate, boolean removeSelf) {
-        final Term[] rawArgs = argArray();
+        final Term[] rawArgs = getArgs();
         int numInputs = rawArgs.length;
 
         if (removeSelf) {
@@ -215,7 +215,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
      * if Product1.terms() is called
      */
     @Deprecated
-    public Term[] argArray() {
+    public Term[] getArgs() {
         return arg().terms();
     }
 

@@ -126,7 +126,7 @@ public class SomeRovers {
             e.setClock(clock);
             e.duration.set(5 * cycPerFrame);
             NAR nar = new NAR(e);
-            TextOutput.out(nar);
+            //TextOutput.out(nar);
             game.add(new CarefulRover("r2", nar));
 
             //new UselessProcess(nar);
