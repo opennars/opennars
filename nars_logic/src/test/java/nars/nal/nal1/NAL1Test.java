@@ -6,6 +6,7 @@ import nars.nal.JavaNALTest;
 import nars.nar.Classic;
 import nars.nar.Default;
 import nars.nar.DefaultMicro;
+import nars.nar.NewDefault;
 import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -24,6 +25,10 @@ public class NAL1Test extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()},
                 {new Default().setInternalExperience(null)},
+
+                {new NewDefault()},
+                {new NewDefault().setInternalExperience(null)},
+
                 {new Default().level(2)}, //why does this need level 2 for some tests?
                 {new DefaultMicro() },
                 {new Classic()},

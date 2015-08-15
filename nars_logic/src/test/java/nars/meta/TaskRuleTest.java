@@ -101,36 +101,5 @@ public class TaskRuleTest extends TestCase {
         assertEquals('x', abc0x.to);
     }
 
-    public void testDerivationComparator() {
 
-        NARComparator c = new NARComparator(
-                new Default().setInternalExperience(null),
-                new NewDefault().setInternalExperience(null)
-        ) {
-
-
-        };
-        c.input("<x --> y>.\n<y --> z>.\n");
-
-
-
-        int cycles = 64;
-        for (int i = 0; i < cycles; i++) {
-            if (!c.areEqual()) {
-
-                System.out.println("\ncycle: " + c.time());
-                c.printTasks("Original:", c.a);
-                c.printTasks("Rules:", c.b);
-
-//                System.out.println(c.getAMinusB());
-//                System.out.println(c.getBMinusA());
-            }
-            c.frame(1);
-        }
-
-        System.out.println("\nDifference: " + c.time());
-        System.out.println("Original - Rules:\n" + c.getAMinusB());
-        System.out.println("Rules - Original:\n" + c.getBMinusA());
-
-    }
 }

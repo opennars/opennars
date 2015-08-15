@@ -1,0 +1,93 @@
+package nars.meta;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import nars.meter.NARComparator;
+import nars.nal.NALExecuter;
+import nars.nar.Default;
+import nars.nar.NewDefault;
+import org.apache.commons.math3.stat.Frequency;
+import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static org.jgroups.util.Util.assertEquals;
+
+/**
+ * Created by me on 8/15/15.
+ */
+public class RuleDerivationsTest {
+
+    @Test
+    public void testRuleStatistics() {
+        NALExecuter d = NALExecuter.defaults;
+
+        int registeredRules = d.rules.length;
+
+
+        Frequency f = new Frequency();
+        for (TaskRule t : d.rules)
+            f.addValue(t);
+        Iterator<Map.Entry<Comparable<?>, Long>> ii = f.entrySetIterator();
+        while (ii.hasNext()) {
+            Map.Entry<Comparable<?>, Long> e = ii.next();
+            if (e.getValue() > 1) {
+                System.err.println("duplicate: " + e);
+            }
+        }
+        System.out.println("total: " + f.getSumFreq() + ", unique=" + f.getUniqueCount());
+
+        HashSet<TaskRule> setRules = Sets.newHashSet(d.rules);
+
+        assertEquals("no duplicates", registeredRules, setRules.size());
+
+        /*for (TaskRule s : d.rules) {
+            System.out.println(s);
+        }*/
+    }
+
+    @Test public void testPostconditionSingletons() {
+//        System.out.println(PostCondition.postconditions.size() + " unique postconditions " + PostCondition.totalPostconditionsRequested);
+//        for (PostCondition p : PostCondition.postconditions.values()) {
+//            System.out.println(p);
+//        }
+
+    }
+
+    @Test
+    public void testDerivationComparator() {
+
+        NARComparator c = new NARComparator(
+                new Default().setInternalExperience(null),
+                new NewDefault().setInternalExperience(null)
+        ) {
+
+
+        };
+        c.input("<x --> y>.\n<y --> z>.\n");
+
+
+
+        int cycles = 64;
+        for (int i = 0; i < cycles; i++) {
+            if (!c.areEqual()) {
+
+                /*System.out.println("\ncycle: " + c.time());
+                c.printTasks("Original:", c.a);
+                c.printTasks("Rules:", c.b);*/
+
+//                System.out.println(c.getAMinusB());
+//                System.out.println(c.getBMinusA());
+            }
+            c.frame(1);
+        }
+
+        System.out.println("\nDifference: " + c.time());
+        System.out.println("Original - Rules:\n" + c.getAMinusB());
+        System.out.println("Rules - Original:\n" + c.getBMinusA());
+
+    }
+}

@@ -455,7 +455,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     @Override
-    final public boolean equals(final Object that) {
+    public boolean equals(final Object that) {
         if (this == that)
             return true;
         if (!(that instanceof Compound)) return false;

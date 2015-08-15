@@ -1,5 +1,7 @@
 package nars.nal;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.meta.TaskRule;
@@ -17,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -25,11 +28,11 @@ import java.util.List;
 public class NALExecuter extends ConceptFireTaskTerm {
 
 
-    public static NALExecuter THIS; //<-- Seh help please :D
-
     public final TaskRule[] rules;
 
     public static final NALExecuter defaults;
+
+    Multimap<Term, TaskRule> ruleByPreconditions = HashMultimap.create();
 
     static {
 
@@ -60,7 +63,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
     }
 
     public NALExecuter(Iterable<String> ruleStrings) {
-        List<TaskRule> r = parseRules(loadRuleStrings(ruleStrings));
+        Collection<TaskRule> r = parseRules(loadRuleStrings(ruleStrings));
         rules = r.toArray(new TaskRule[r.size()]);
     }
 
@@ -120,14 +123,23 @@ public class NALExecuter extends ConceptFireTaskTerm {
 
         String ret = "<" + rule + ">";
 
-        while (ret.contains("  ")) {
+        /*while (ret.contains("  ")) {
             ret = ret.replace("  ", " ");
-        }
+        }*/
 
-        return ret.replace("\n", "")/*.replace("A_1..n","\"A_1..n\"")*/; //TODO: implement A_1...n notation, needs dynamic term construction before matching
+        return ret;//.replace("\n", "")/*.replace("A_1..n","\"A_1..n\"")*/; //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
 
-    public static void AddWithPotentialForAllSameOrder(NarseseParser meta,List<TaskRule> uninterpreted_rules,String parsable) {
+
+
+    /**
+     * //TODO do this on the parsed rule, because string contents could be unpredictable:
+     * permute(rule, Map<Op,Op[]> alternates)
+     * @param meta
+     * @param uninterpreted_rules
+     * @param parsable
+     */
+    public static void AddWithPotentialForAllSameOrder(NarseseParser meta, Collection<TaskRule> uninterpreted_rules,String parsable) {
         if(parsable.contains("Order:ForAllSame")) {
 
             ArrayList<String> equs = new ArrayList<>();
@@ -170,10 +182,12 @@ public class NALExecuter extends ConceptFireTaskTerm {
     }
 
 
-    static List<TaskRule> parseRules(Collection<String> not_yet_parsed_rules) {
+    static Collection<TaskRule> parseRules(final Collection<String> not_yet_parsed_rules) {
         //2. ok we have our unparsed rules, lets parse them to terms now
-        NarseseParser meta = NarseseParser.the();
-        List<TaskRule> uninterpreted_rules = new ArrayList<>(not_yet_parsed_rules.size() /* approximately */);
+        final NarseseParser meta = NarseseParser.the();
+        final Collection<TaskRule> rules
+                //= new ArrayList<>(not_yet_parsed_rules.size() /* approximately */);
+                = new LinkedHashSet<>(not_yet_parsed_rules.size() /* approximately */);
 
         /*
         ArrayList<String> fails = new ArrayList();
@@ -215,28 +229,28 @@ public class NALExecuter extends ConceptFireTaskTerm {
 
         for (String rule : not_yet_parsed_rules) {
 
-            String parsable = preprocess(rule);
+            final String p = preprocess(rule);
             try {
 
                 //there might be now be A_1..n in it, if this is the case we have to add up to n rules
                 int n=5;
-                if(parsable.contains("A_1..n") || parsable.contains("A_1..A_i.substitute(_)..A_n")) {
+                if(p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
                     String str="A_1";
                     String str2="B_1";
                     for(int i=0; i < n; i++) {
-                        if(parsable.contains("A_i")) {
+                        if(p.contains("A_i")) {
                             for(int j=0; j <= i; j++) {
                                 String A_i = "A_" + String.valueOf(j + 1);
                                 String strrep = str;
-                                if(parsable.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
+                                if(p.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
                                     strrep = str.replace(A_i,"_");
                                 }
-                                String parsable_unrolled = parsable.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..n", str2).replace("A_i",A_i);
-                                AddWithPotentialForAllSameOrder(meta, uninterpreted_rules, parsable_unrolled);
+                                String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..n", str2).replace("A_i",A_i);
+                                AddWithPotentialForAllSameOrder(meta, rules, parsable_unrolled);
                             }
                         } else {
-                            String parsable_unrolled = parsable.replace("A_1..n", str).replace("B_1..n", str2);
-                            AddWithPotentialForAllSameOrder(meta, uninterpreted_rules, parsable_unrolled);
+                            String parsable_unrolled = p.replace("A_1..n", str).replace("B_1..n", str2);
+                            AddWithPotentialForAllSameOrder(meta, rules, parsable_unrolled);
                         }
 
                         str+=", A_"+String.valueOf(i+2);
@@ -244,24 +258,24 @@ public class NALExecuter extends ConceptFireTaskTerm {
                     }
                 }
                 else {
-                    AddWithPotentialForAllSameOrder(meta,uninterpreted_rules,parsable);
+                    AddWithPotentialForAllSameOrder(meta,rules,p);
                 }
             } catch (Exception ex) {
                 System.err.println("Ignoring Invalid rule:");
                 System.err.print("  ");
-                System.err.println(parsable);
+                System.err.println(p);
                 System.err.println();
                 //ex.printStackTrace();
             }
         }
 
-        return uninterpreted_rules;
+        return rules;
     }
 
 
     public boolean reason(final Task task, final Sentence belief, Term beliefterm, final NAL nal) {
 
-        THIS=this;
+
         if (task.isJudgment() || task.isGoal()) {
 
             //forward inference

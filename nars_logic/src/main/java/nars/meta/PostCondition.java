@@ -1,5 +1,7 @@
 package nars.meta;
 
+import com.gs.collections.api.tuple.Pair;
+import com.gs.collections.impl.tuple.Tuples;
 import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -11,7 +13,6 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Interval;
-import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -20,16 +21,44 @@ import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.Truth;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by me on 7/31/15.
+ * Describes a derivation postcondition
+ * Immutable
  */
 public class PostCondition //since there can be multiple tasks derived per rule
 {
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PostCondition that = (PostCondition) o;
+
+        if (single_premise != that.single_premise) return false;
+        if (negation != that.negation) return false;
+        if (!term.equals(that.term)) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(modifiers, that.modifiers)) return false;
+        if (truth != that.truth) return false;
+        return desire == that.desire;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = term.hashCode();
+        result = 31 * result + Arrays.hashCode(modifiers);
+        result = 31 * result + (truth != null ? truth.hashCode() : 0);
+        result = 31 * result + (desire != null ? desire.hashCode() : 0);
+        result = 31 * result + (single_premise ? 1 : 0);
+        result = 31 * result + (negation ? 1 : 0);
+        return result;
+    }
 
     private final Term term;
     private final Term[] modifiers;
@@ -59,10 +88,21 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
      */
 
+//    public static int totalPostconditionsRequested = 0;
+//    public static final Map<Pair<Term,Term[]>, PostCondition> postconditions = Global.newHashMap();
+//
+//    /** this allows all unique postconditions to be stored and re-used by multiple rules */
+//    public static PostCondition get(Term term, Term... modifiers) {
+//        totalPostconditionsRequested++;
+//        return postconditions.computeIfAbsent(Tuples.pair(term, modifiers), t -> {
+//            return new PostCondition(t.getOne(), t.getTwo());
+//        });
+//    }
+
     public PostCondition(Term term, Term... modifiers) {
         this.term = term;
 
-        @Deprecated List<Term> otherModifiers = new ArrayList();
+        @Deprecated List<Term> otherModifiers = Global.newArrayList();
         TruthFunction truthFunc = null;
         DesireFunction desireFunc = null;
 
@@ -431,9 +471,20 @@ public class PostCondition //since there can be multiple tasks derived per rule
         return 0;
     }
 
+//    @Override
+//    public String toString() {
+//        return term + "(" + Arrays.toString(modifiers) + ")";
+//    }
+
     @Override
     public String toString() {
-        return term + "(" + Arrays.toString(modifiers) + ")";
+        return "PostCondition{" +
+                "term=" + term +
+                ", modifiers=" + Arrays.toString(modifiers) +
+                ", truth=" + truth +
+                ", desire=" + desire +
+                ", single_premise=" + single_premise +
+                ", negation=" + negation +
+                '}';
     }
-
 }

@@ -24,11 +24,13 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 public class STMEventInference extends NARReaction {
 
     public final Deque<Task> stm;
+    private final NALExecuter deriver;
     int stmSize;
     //public static STMEventInference I=null;
 
-    public STMEventInference(NAR nar) {
+    public STMEventInference(NAR nar, NALExecuter deriver) {
         super(nar);
+        this.deriver = deriver;
         this.stmSize = 1;
         stm = Global.THREADS == 1 ? new ArrayDeque() : new ConcurrentLinkedDeque<>();
         //I=this; //hm there needs to be a way to query plugins from the NAR/NAL object like in 1.6.x, TODO find out
@@ -106,9 +108,6 @@ public class STMEventInference extends NARReaction {
 
         for (Task previousTask : stmCopy) {
 
-
-
-
             //nal.setCurrentTask(currentTask);
 
             //nal.setBelief(previousTask);
@@ -117,7 +116,7 @@ public class STMEventInference extends NARReaction {
             //TemporalRules.temporalInduction(currentTask, previousTask,
                     //nal.newStamp(currentTask.sentence, previousTask.sentence),
             //        nal);
-            NALExecuter.THIS.reason(currentTask, previousTask.getSentence(), previousTask.getTerm(), nal);
+            deriver.reason(currentTask, previousTask.getSentence(), previousTask.getTerm(), nal);
         }
 
         ////for this heuristic, only use input events & task effects of operations
