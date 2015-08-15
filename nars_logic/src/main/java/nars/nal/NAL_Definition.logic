@@ -8,6 +8,7 @@
 //// Revision ////////////////////////////////////////////////////////////////////////////////////
 // When a given belief is challenged by new experience, a new belief2 with same content (and disjoint evidental base),
 // a new revised task, which sums up the evidence of both belief and belief2 is derived:
+
 //   A, A |- A, (Truth:Revision) (Commented out because it is already handled by belief management in java)
 
 //// Immediate Inference ////////////////////////////////////////////////////////////////////////////////////
@@ -66,6 +67,7 @@
 
     (P --> M), (S --> M), not_equal(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak)
     (M --> P), (M --> S), not_equal(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak)
+
 //If M is a special case of P and S and M are similar, then S is also a special case of P (strong)
 
     (M --> P), (S <-> M), not_equal(S,P) |- (S --> P), (Truth:Analogy, Desire:Strong)
