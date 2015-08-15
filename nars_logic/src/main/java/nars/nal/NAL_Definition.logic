@@ -241,11 +241,12 @@
 
     ((&&,M,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
     ((&&,M,A_1..n) ==> C), ((&&,A_1..n) ==> C) |- M, (Truth:Abduction, Order:ForAllSame)
-    ((&&,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
+//Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
+    ((&&,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
 
-    ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
-    ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction, Order:ForAllSame)
-    ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
+      ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
+      ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction, Order:ForAllSame)
+      ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate
