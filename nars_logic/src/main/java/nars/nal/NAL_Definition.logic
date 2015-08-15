@@ -13,6 +13,7 @@
 //// Immediate Inference ////////////////////////////////////////////////////////////////////////////////////
 //If S can stand for P, P can to a certain low degree also represent the class S
 //If after S usually P happens, then it might be a good guess that usually before P happens, S happens.
+
     (S --> P), S |- (P --> S), (Truth:Conversion)
     (S --> P), P |- (P --> S), (Truth:Conversion)
     (S ==> P), S |- (P ==> S), (Truth:Conversion)
@@ -25,6 +26,7 @@
     (S =\> P), P |- (P =/> S), (Truth:Conversion)
 
 // "If not smoking lets you be healthy, being not healthy may be the result of smoking"
+
     ( --S ==> P), P |- ( --P ==> S), (Truth:Contraposition)
     ( --S ==> P), S |- ( --P ==> S), (Truth:Contraposition)
     ( --S =|> P), P |- ( --P =|> S), (Truth:Contraposition)
@@ -35,6 +37,7 @@
     ( --S =\> P), S |- ( --P =/> S), (Truth:Contraposition)
 
 //A belief b <f,c> is equal to --b <1-f,c>, which is the negation rule:
+
     --S, negative(--S) |- S, (Truth:Negation, Desire:Negation)
     S, negative(S) |- --S, (Truth:Negation, Desire:Negation)
 
@@ -46,6 +49,7 @@
 //               \         /
 //                (A --> C)
 //If A is a special case of B, and B is a special case of C, so is A a special case of C (strong), the other variations are hypotheses (weak)
+
     (A --> B), (B --> C), not_equal(A,C) |- (A --> C), (Truth:Deduction, Desire:Strong)
     (A --> B), (A --> C), not_equal(B,C) |- (B --> C), (Truth:Induction, Desire:Weak)
     (A --> C), (B --> C), not_equal(A,B) |- (A --> B), (Truth:Abduction, Desire:Weak)
@@ -53,20 +57,24 @@
 
 //// similarity from inheritance ////////////////////////////////////////////////////////////////////////////////////
 //If S is a special case of P, and P is a special case of S, then S and P are similar
+
     (S --> P), (P --> S) |- (S <-> P), (Truth:Intersection, Desire:Strong)
 
 //// similarity-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If P and S are a special case of M, then they might be similar (weak),
 //also if P and S are a general case of M
+
     (P --> M), (S --> M), not_equal(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak)
     (M --> P), (M --> S), not_equal(S,P) |- (S <-> P), (Truth:Comparison, Desire:Weak)
 //If M is a special case of P and S and M are similar, then S is also a special case of P (strong)
+
     (M --> P), (S <-> M), not_equal(S,P) |- (S --> P), (Truth:Analogy, Desire:Strong)
     (P --> M), (S <-> M), not_equal(S,P) |- (P --> S), (Truth:Analogy, Desire:Strong)
     (M <-> P), (S <-> M), not_equal(S,P) |- (S <-> P), (Truth:Resemblance, Desire:Strong)
 
 //// inheritance-based composition ////////////////////////////////////////////////////////////////////////////////////
 //If P and S are in the intension/extension of M, then union/difference and intersection can be built:
+
     (P --> M), (S --> M), not_equal(S,P), no_common_subterm(S,P) |- ((S | P) --> M), (Truth:Intersection),
                                                                     ((S & P) --> M), (Truth:Union),
                                                                     ((P ~ S) --> M), (Truth:Difference)
@@ -77,6 +85,7 @@
 
 //// inheritance-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //if (S --> M) is the case, and ((|,S,A_1..n) --> M) is not the case, then ((|,A_1..n) --> M) is not the case, hence Truth:DecomposePositiveNegativeNegative
+
     (S --> M), ((|,S,A_1..n) --> M) |- ((|,A_1..n) --> M), (Truth:DecomposePositiveNegativeNegative)
     (S --> M), ((&,S,A_1..n) --> M) |- ((&,A_1..n) --> M), (Truth:DecomposeNegativePositivePositive)
     (S --> M), ((~,S,P) --> M) |- (P --> M), (Truth:DecomposePositiveNegativePositive)
@@ -95,6 +104,7 @@
 //               \         /
 //                (A ==> C)
 //If after S M happens, and after M P happens, so P happens after S
+
     (M ==> P), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Deduction, Order:ForAllSame)
     
 //"Please note that the temporal order in the conclusion of a weak rule is
@@ -129,6 +139,7 @@
 
 //// implication to equivalence ////////////////////////////////////////////////////////////////////////////////////
 //If when S happens, P happens, and before P happens, S has happened, then they are truth-related equivalent
+
     (S ==> P), (P ==> S), not_equal(S,P) |- (S <=> P), (Truth:Intersection)
     (S =|> P), (P =|> S), not_equal(S,P) |- (S <|> P), (Truth:Intersection)
     (S =/> P), (P =\> S), not_equal(S,P) |- (S </> P), (Truth:Intersection)
@@ -136,6 +147,7 @@
 
 //// equivalence-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
+
     (P ==> M), (S ==> M), not_equal(S,P) |- (S <=> P), (Truth:Comparison)
     (P =/> M), (S =/> M), not_equal(S,P) |- (S <|> P), (Truth:Comparison),
                                             (S </> P), (Truth:Comparison),
@@ -152,6 +164,7 @@
     (M =|> P), (M =|> S), not_equal(S,P) |- (S <|> P), (Truth:Comparison)
 
 //Same as for inheritance again
+
     (M ==> P), (S <=> M), not_equal(S,P) |- (S ==> P), (Truth:Analogy)
     (M =/> P), (S </> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
     (M =/> P), (S <|> M), not_equal(S,P) |- (S =/> P), (Truth:Analogy)
@@ -171,6 +184,7 @@
 
 //// implication-based composition ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
+
     (P ==> M), (S ==> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) ==> M), (Truth:Intersection),
                                                                     ((P && S) ==> M), (Truth:Union)
     (P =|> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
@@ -191,6 +205,7 @@
 
 //// implication-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
+
     (S ==> M), ((||,S,A_1..n) ==> M) |- ((||,A_1..n) ==> M), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     (S ==> M), ((&&,S,A_1..n) ==> M) |- ((&&,A_1..n) ==> M), (Truth:DecomposeNegativePositivePositive, Order:ForAllSame)
     (M ==> S), (M ==> (&&,S,A_1..n)) |- (M ==> (&&,A_1..n)), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
@@ -198,6 +213,7 @@
 
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If after M, P usually happens, and M happens, it means P is expected to happen
+
     M, (M ==> P), shift_occurrence_forward("==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     M, (P ==> M), shift_occurrence_backward("==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
     M, (S <=> M), shift_occurrence_backward("<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
@@ -208,6 +224,7 @@
 //For this there needs to be a semantic dependence between both, either by the predicate or by the subject,
 //or a temporal dependence which acts as special case of semantic dependence
 //These cases are handled by "Variable Introduction" and "Temporal Induction"
+
 //   P, S, no_common_subterm(S,P) |- (S ==> P), (Truth:Induction)
 //   P, S, no_common_subterm(S,P) |- (S <=> P), (Truth:Comparison)
 //   P, S, no_common_subterm(S,P) |- (P && S), (Truth:Intersection)
@@ -215,6 +232,7 @@
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
+
     S, (&&,S,A_1..n) |- (&&,A_1..n), (Truth:DecomposePositiveNegativeNegative, Order:ForAllSame)
     S, (||,S,A_1..n) |- (||,A_1..n), (Truth:DecomposeNegativePositivePositive)
 
@@ -231,6 +249,7 @@
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate
+
     (P --> M), (S --> M), not_equal(S,P) |- ((P --> $X) ==> (S --> $X)), (Truth:Abduction),
                                             ((P --> $X) <=> (S --> $X)), (Truth:Comparison),
                                             (&&,(S --> #Y),(P --> #Y)), (Truth:Intersection)
@@ -271,11 +290,13 @@
 
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
+
     (&&,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
     (&&,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
+
     (($1 --> M) ==> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
     ((M --> $1) ==> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
 
@@ -296,12 +317,13 @@
 
 //Temporal induction:
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
-    P, S, no_common_subterm(S,P), measure_time(S,P,I) |- ((&/,S,I) =/> P), (Truth:Induction),
-                                                                             (P =\> (&/,S,I)), (Truth:Abduction),
-                                                                             ((&/,S,I) </> P), (Truth:Comparison),
-                                                                             (&/,S,I,P), (Truth:Intersection)
 
-    P, S, no_common_subterm(S,P), concurrent(P,S) |- (S =|> P), (Truth:Induction),
+    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+                                                                                                       (P =\> (&/,S,I)), (Truth:Abduction),
+                                                                                                       ((&/,S,I) </> P), (Truth:Comparison),
+                                                                                                       (&/,S,I,P), (Truth:Intersection)
+
+    P, S, concurrent(P,S), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction),
                                                                          (P =|> S), (Truth:Induction),
                                                                          (S <|> P), (Truth:Comparison),
                                                                          (&|,S,P), (Truth:Intersection)
