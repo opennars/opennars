@@ -1,5 +1,0 @@
-# Test query for transitive reasoner
-# List all the data
-####################################
-<var:a> <var:b> <var:c>.
-

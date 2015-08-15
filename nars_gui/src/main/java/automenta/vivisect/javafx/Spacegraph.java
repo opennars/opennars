@@ -7,7 +7,7 @@ import dejv.commons.jfx.input.handler.DragActionHandler;
 import dejv.commons.jfx.input.handler.ScrollActionHandler;
 import dejv.commons.jfx.input.properties.GestureEventProperties;
 import dejv.commons.jfx.input.properties.MouseEventProperties;
-import javafx.geometry.Pos;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,7 +16,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 import java.util.Collection;
@@ -51,6 +50,9 @@ public class Spacegraph extends ZoomFX {
         edges.getChildren().removeAll(n);
     }
 
+    public ObservableList<Node> getVertices() {
+        return verts.getChildren();
+    }
 
     public class GridCanvas extends Canvas {
 
@@ -141,6 +143,9 @@ public class Spacegraph extends ZoomFX {
     final Group edges = new Group();
     final Pane layers = new AnchorPane(edges, verts);
 
+    public void print() {
+        System.out.println(this + " " + verts.getChildren().size() + " verts, " + edges.getChildren().size() + " edges");
+    }
     public Spacegraph() {
         super();
 
@@ -185,7 +190,7 @@ public class Spacegraph extends ZoomFX {
         DragActionHandler.with(zoomFXPan)
 
                 .doOnDragStart((event) -> {
-                    if (event.getButton() == MouseButton.SECONDARY)
+                     if (event.getButton() == MouseButton.SECONDARY)
                         startPan(event.getSceneX(), event.getSceneY());
                     //event.consume();
                 })

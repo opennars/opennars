@@ -1,6 +1,6 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.demo.NARGraph1;
+import automenta.vivisect.javafx.graph2.NARGraph1;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;

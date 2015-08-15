@@ -38,7 +38,6 @@
         <module>nars_prolog</module>
         <module>nars_gui</module>
         <module>nars_web</module>
-	<module>nars_rdf</module>
     </modules>
 
     <build>

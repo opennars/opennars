@@ -14,10 +14,7 @@
  */
 package automenta.vivisect.dimensionalize;
 
-import automenta.vivisect.javafx.demo.NARGraph1;
-import com.google.common.collect.Iterators;
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
-import nars.Global;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 

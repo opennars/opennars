@@ -23,7 +23,6 @@ import org.apache.commons.math3.linear.ArrayRealVector;
  * @author dejv78 (dejv78.github.io)
  * @since 1.0.0
  */
-@DefaultProperty("content")
 public class ZoomFX extends AnchorPane {
 
     @Deprecated private static final double SCROLLING_DIVISOR = 200.0d;
@@ -50,25 +49,13 @@ public class ZoomFX extends AnchorPane {
 
     final Scale scale = new Scale();
     final Translate translate = new Translate();
-    Animate positionAnimation = new Animate(50, a -> {
-        zoomFactor.update();
-        panX.update();
-        panY.update();
-    });
+    Animate positionAnimation;
 
     public ZoomFX() {
         super();
 
 
 
-        visibleProperty().addListener(c -> {
-            if (isVisible()) {
-                positionAnimation.start();
-            }
-            else {
-                positionAnimation.stop();
-            }
-        });
 
         //setupScrollbar(hscroll, Orientation.HORIZONTAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
         //setupScrollbar(vscroll, Orientation.VERTICAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
@@ -89,6 +76,43 @@ public class ZoomFX extends AnchorPane {
 
         //hscroll.setValue(0.5);
         //vscroll.setValue(0.5);
+
+        visibleProperty().addListener(c -> {
+            if (isVisible()) {
+                start();
+            }
+            else {
+                stop();
+            }
+        });
+        checkVisibility();
+
+    }
+
+    private void checkVisibility() {
+        if (isVisible()) start();
+        else stop();
+    }
+
+    private void start() {
+        synchronized (content) {
+            if (positionAnimation == null) {
+                positionAnimation = new Animate(50, a -> {
+                    zoomFactor.update();
+                    panX.update();
+                    panY.update();
+                });
+                positionAnimation.start();
+            }
+        }
+    }
+    private void stop() {
+        synchronized (content) {
+            if (positionAnimation!=null) {
+                positionAnimation.stop();
+                positionAnimation = null;
+            }
+        }
     }
 
 
