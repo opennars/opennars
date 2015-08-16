@@ -56,45 +56,45 @@ public class Variables {
 
             final Term t = map[0].get(term1Var);
 
-            if (t != null) {
+            if (t != null)
                 return findSubstitute(type, t, term2, map, random);
+
+            if (term2Var!=null && term2Var.getType() == type) {
+                Variable CommonVar = makeCommonVariable(term1, term2);
+                map[0].put(term1Var, CommonVar);
+                map[1].put(term2Var, CommonVar);
             } else {
+                if (term2Var!=null) {
+                    //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
 
-                if (term2Var!=null && term2Var.getType() == type) {
-                    Variable CommonVar = makeCommonVariable(term1, term2);
-                    map[0].put(term1Var, CommonVar);
-                    map[1].put(term2Var, CommonVar);
-                } else {
-                    if (term2Var!=null) {
-                        //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
+                    boolean t1Query = term1Var.getType() == Symbols.VAR_QUERY;
+                    boolean t2Query = term2Var.getType() == Symbols.VAR_QUERY;
 
-                        boolean t1Query = term1Var.getType() == Symbols.VAR_QUERY;
-                        boolean t2Query = term2Var.getType() == Symbols.VAR_QUERY;
-
-                        if ((t2Query && !t1Query) || (!t2Query && t1Query)) {
-                            return false;
-                        }
-                    }
-
-                    map[0].put(term1Var, term2);
-                    if (term1Var.isCommon()) {
-                        map[1].put(term1Var, term2);
+                    if ((t2Query && !t1Query) || (!t2Query && t1Query)) {
+                        return false;
                     }
                 }
-                return true;
+
+                map[0].put(term1Var, term2);
+                if (term1Var.isCommon()) {
+                    map[1].put(term1Var, term2);
+                }
             }
+            return true;
         } else if (term2Var!=null && term2Var.getType() == type) {
+
             final Term t = map[1].get(term2Var);
 
-            if (t != null) {
+            if (t != null)
                 return findSubstitute(type, term1, t, map, random);
-            } else {
-                map[1].put(term2Var, term1);
-                if (term2Var.isCommon()) {
-                    map[0].put(term2Var, term1);
-                }
-                return true;
+
+            map[1].put(term2Var, term1);
+            if (term2Var.isCommon()) {
+                map[0].put(term2Var, term1);
             }
+
+            return true;
+
         } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && ((term1.operator() == term2.operator()))) {
             final Compound cTerm1 = (Compound) term1;
             final Compound cTerm2 = (Compound) term2;
@@ -112,8 +112,8 @@ public class Variables {
             }
 
             for (int i = 0; i < list.length; i++) {
-                Term t1 = list[i];
-                Term t2 = cTerm2.term[i];
+                final Term t1 = list[i];
+                final Term t2 = cTerm2.term[i];
                 if (!findSubstitute(type, t1, t2, map, random)) {
                     return false;
                 }

@@ -11,6 +11,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
+import org.apache.commons.collections.map.Flat3Map;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,8 @@ public class RuleMatch {
 
     public long occurence_shift;
     public TaskRule rule;
-    public final Map<Term, Term> assign = Global.newHashMap();
+
+
 //        new HashMap<Term,Term>() {
 //
 //            @Override
@@ -32,8 +34,17 @@ public class RuleMatch {
 //            }
 //        };
 
-    public final Map<Term, Term> precondsubs = Global.newHashMap();
-    public final Map<Term, Term> waste = new BlackHoleMap();
+    public final Map<Term, Term> assign =
+            //new Flat3Map();
+            Global.newHashMap();
+
+    public final Map<Term, Term> precondsubs =
+            Global.newHashMap();
+            //new Flat3Map();
+
+    public final Map<Term, Term> waste =
+            //new Flat3Map();
+            Global.newHashMap();
 
     public Premise premise;
 

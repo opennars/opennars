@@ -21,10 +21,9 @@
 package nars;
 
 
-import com.gs.collections.impl.list.mutable.FastList;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.task.Task;
+import nars.util.data.FasterHashMap;
 import nars.util.data.FasterList;
 
 import java.lang.ref.Reference;
@@ -226,17 +225,22 @@ public class Global {
         return Math.abs(a - b) <= Float.MIN_VALUE*2;
     }
 
+    public static <K,V> Map<K, V> newHashMap() {
+        return newHashMap(0);
+    }
+
+    public static <K, V> Map<K,V> newHashMap(int capacity) {
+        //return new UnifiedMap(capacity);
+        return new FasterHashMap(capacity);
+        //return new FastMap<>(); //javolution http://javolution.org/apidocs/javolution/util/FastMap.html
+        //return new HashMap<>(capacity);
+        //return new LinkedHashMap(capacity);
+    }
+
 
     public static <X> List<X> newArrayList() {
         return new FasterList<>(); //GS
         //return new ArrayList();
-    }
-
-    public static <K, V> Map<K,V> newHashMap(int capacity) {
-        //return new FastMap<>(); //javolution http://javolution.org/apidocs/javolution/util/FastMap.html
-        return new UnifiedMap<K,V>(capacity);
-        //return new HashMap<>(capacity);
-        //return new LinkedHashMap(capacity);
     }
 
     public static <X> List<X> newArrayList(int capacity) {
@@ -268,9 +272,6 @@ public class Global {
 //        return new HugeHashMap(config, xClass, yClass);
 //    }
 
-    public static <K,V> Map<K, V> newHashMap() {
-        return newHashMap(0);
-    }
 
 
     public static Reference<Task> reference(Task t) {
