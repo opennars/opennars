@@ -616,7 +616,7 @@ public class RuleTables {
      * @param nal        Reference to the memory
      */
     public static void compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
-        if (Terms.equalType(taskTerm, beliefTerm)) {
+        if ((taskTerm.operator() == beliefTerm.operator())) {
             if (taskTerm.length() >= beliefTerm.length()) {
                 compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
             } else if (taskTerm.length() < beliefTerm.length()) {
@@ -643,7 +643,7 @@ public class RuleTables {
         Term component = compound.term[index];
 
         Task task = nal.getTask();
-        if (Terms.equalType(component, statement)) {
+        if ((component.operator() == statement.operator())) {
             if ((compound instanceof Conjunction) && (nal.getBelief() != null)) {
                 final Random r = nal.memory.random;
 

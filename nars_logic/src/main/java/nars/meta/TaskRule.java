@@ -7,8 +7,8 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Interval;
+import nars.nal.nal8.Operation;
 import nars.premise.Premise;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -87,7 +87,7 @@ public class TaskRule extends Rule<Premise,Task> {
             Inheritance predicate = (Inheritance) precon[i];
             Term predicate_name = predicate.getPredicate();
             Term[] args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
-            final String predicateNameStr = predicate_name.toString().replace("^", "");
+            final String predicateNameStr = predicate_name.toString().substring(1);//.replace("^", "");
 
             PreCondition next = null;
 
@@ -111,7 +111,7 @@ public class TaskRule extends Rule<Premise,Task> {
                     next = new MeasureTime(arg1, arg2, args[2]);
                     break;
                 case "after":
-                    next = new After(arg1, arg2, args);
+                    next = new After(arg1/*, arg2*/);
                     break;
                 case "not_implication_or_equivalence":
                     next = new NotImplicationOrEquivalence(arg1);

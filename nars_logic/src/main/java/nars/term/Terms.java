@@ -29,11 +29,6 @@ public class Terms {
 
     public final static Term[] EmptyTermArray = new Term[0];
 
-    public static final boolean equalType(final Term a, final Term b) {
-        return (a.operator()==b.operator());
-    }
-
-
 
 //    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type */
 //    public static final boolean equalType(final Term a, final Term b, final boolean operator, final boolean temporalOrder) {
@@ -185,7 +180,7 @@ public class Terms {
 
         final Term[] list;
 
-        if (Terms.equalType(t1, t2))  {
+        if ((t1.operator() == t2.operator()))  {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, t2);
@@ -208,7 +203,7 @@ public class Terms {
 
     public static Term reduceComponentOneLayer(Compound t1, Term t2, AbstractMemory memory) {
         Term[] list;
-        if (Terms.equalType(t1, t2)) {
+        if ((t1.operator() == t2.operator())) {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, t2);

@@ -269,6 +269,13 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         return this;
     }
 
+    public TaskSeed<T> termIfValid(T t) {
+        term(t);
+        if (this.term == null)
+            return null;
+        return this;
+    }
+
     public TaskSeed<T> truth(boolean freqAsBoolean, float conf) {
         return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
     }

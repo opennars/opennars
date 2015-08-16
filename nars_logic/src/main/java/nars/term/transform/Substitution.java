@@ -36,6 +36,8 @@ public class Substitution {
         for (final Map.Entry<Term,Term> e : subs.entrySet()) {
 
             final Term m = e.getKey();
+            if (m == null)
+                throw new RuntimeException("null key");
 
             final int v = m.getVolume();
             if (minMatchVolume > v) minMatchVolume = v;

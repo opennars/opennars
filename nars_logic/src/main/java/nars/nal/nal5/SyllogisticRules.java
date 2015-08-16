@@ -630,7 +630,7 @@ public final class SyllogisticRules {
             premise1 = (Implication) u[0];
             premise2 = u[1];
 
-            if (!match && (Terms.equalType(commonComponent, oldCondition))) {
+            if (!match && ((commonComponent.operator() == oldCondition.operator()))) {
 
                 Compound compoundCommonComponent = ((Compound) commonComponent);
 
@@ -801,7 +801,7 @@ public final class SyllogisticRules {
         premise1 = (Equivalence) u[0];
         premise2 = u[1];
 
-        if (!match && (Terms.equalType(commonComponent, oldCondition))) {
+        if (!match && ((commonComponent.operator() == oldCondition.operator()))) {
             u = new Term[]{premise1, premise2};
             match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u, r);
             premise1 = (Equivalence) u[0];

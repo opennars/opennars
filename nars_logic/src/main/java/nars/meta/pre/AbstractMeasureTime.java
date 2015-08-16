@@ -32,7 +32,7 @@ abstract public class AbstractMeasureTime extends PreCondition3 {
             time1 = task.getOccurrenceTime();
             time2 = belief.getOccurrenceTime();
         }
-        if (a.equals(belief.getTerm())) {
+        else if (a.equals(belief.getTerm())) {
             time1 = task.getOccurrenceTime();
             time2 = belief.getOccurrenceTime();
         }

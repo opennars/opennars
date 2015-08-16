@@ -12,6 +12,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,9 +22,21 @@ public class RuleMatch {
     public long occurence_shift;
     public TaskRule rule;
     public final Map<Term, Term> assign = Global.newHashMap();
+//        new HashMap<Term,Term>() {
+//
+//            @Override
+//            public Term put(Term key, Term value) {
+//                if (key == null)
+//                    throw new RuntimeException("null key");
+//                return super.put(key, value);
+//            }
+//        };
+
     public final Map<Term, Term> precondsubs = Global.newHashMap();
-    public final Map<Term, Term> waste = Global.newHashMap();
+    public final Map<Term, Term> waste = new BlackHoleMap();
+
     public Premise premise;
+
     @Deprecated public Term derive;
     @Deprecated public boolean single;
 
@@ -42,7 +55,6 @@ public class RuleMatch {
         occurence_shift = 0;
         assign.clear();
         precondsubs.clear();
-        waste.clear();
 
         this.rule = rule;
         return this;
@@ -126,9 +138,12 @@ public class RuleMatch {
 
         //}
 
-        if (derive != null && derive.toString().contains("%")) {
+        if (!(derive instanceof Compound))
+            return false;
+
+        /*if (derive != null && derive.toString().contains("%")) {
             System.err.println("Reactor leak - Pattern variable detected in output");
-        }
+        }*/
 
 
         //TODO also allow substituted evaluation on output side (used by 2 rules I think)
@@ -143,32 +158,27 @@ public class RuleMatch {
 
         boolean allowOverlap = false; //to be refined
 
-        if (derive instanceof Compound) {
 
+        TaskSeed<Compound> t = premise.newTask((Compound)derive, task, belief, allowOverlap);
+        if (t != null) {
+            t.punctuation(task.punctuation).truth(truth).budget(budget);
 
-            TaskSeed<Compound> t = premise.newDoublePremise(task, belief, allowOverlap);
-            if (t != null) {
-                t.term((Compound) derive).punctuation(task.punctuation)
-                        .truth(truth).budget(budget);
-
-                if (t.getOccurrenceTime() != Stamp.ETERNAL) {
-                    t.occurr(t.getOccurrenceTime() + occurence_shift);
-                }
-
-                //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
-
-                if (belief!=null) {
-                    premise.deriveDouble(t);
-                } else {
-                    premise.deriveSingle(t);
-                }
-
-                return true;
-
+            if (t.getOccurrenceTime() != Stamp.ETERNAL) {
+                t.occurr(t.getOccurrenceTime() + occurence_shift);
             }
 
+            //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
+
+            if (belief!=null) {
+                premise.deriveDouble(t);
+            } else {
+                premise.deriveSingle(t);
+            }
+
+            return true;
 
         }
+
         return false;
     }
 
@@ -185,4 +195,32 @@ public class RuleMatch {
         }
     }
 
+    private static class BlackHoleMap<K,V> extends HashMap<K,V> {
+
+        public BlackHoleMap() {
+            super(1);
+        }
+
+        @Override
+        public V put(K key, V value) {
+            //do nothing.
+            //this isn't a perfect solution but at least it prevents some unnecessary activity
+            return null;
+        }
+
+        @Override
+        public V remove(Object key) {
+            return null;
+        }
+
+        @Override
+        public V get(Object key) {
+            return null;
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+    }
 }

@@ -38,7 +38,6 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.truth.AnalyticTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -125,7 +124,7 @@ public final class StructuralRules {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
 
-        if (!Terms.equalType(subj, pred)) {
+        if (!(subj.operator() == pred.operator())) {
             return;
         }
         

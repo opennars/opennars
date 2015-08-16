@@ -1068,7 +1068,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * true if equal operate and all terms contained
      */
     public boolean containsAllTermsOf(final Term t) {
-        if (Terms.equalType(this, t)) {
+        if ((operator() == t.operator())) {
             return Terms.containsAll(term, ((Compound) t).term);
         } else {
             return this.containsTerm(t);
@@ -1084,7 +1084,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     public Term cloneReplacingSubterm(final int index, final Term subterm) {
 
-        final boolean e = (subterm != null) && Terms.equalType(this, subterm);
+        final boolean e = (subterm != null) && (operator() == subterm.operator());
 
         //if the subterm is alredy equivalent, just return this instance because it will be equivalent
         if (subterm != null && (e) && (term[index].equals(subterm)))
@@ -1243,7 +1243,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * compare subterms where any variables matched are not compared
      */
     public boolean equalsVariablesAsWildcards(final Compound c) {
-        if (!Terms.equalType(this, c)) return false;
+        if (!(operator() == c.operator())) return false;
         if (length() != c.length()) return false;
         for (int i = 0; i < length(); i++) {
             Term a = term[i];

@@ -210,7 +210,7 @@ public interface Premise {
     default public <C extends Compound> TaskSeed<C> newTask(C content, Task task, Sentence belief, boolean allowOverlap) {
         TaskSeed s = newDoublePremise(task, belief, allowOverlap);
         if (s == null) return null;
-        return s.term(content);
+        return s.termIfValid(content);
     }
 
     default public boolean unify(char varType, Term a, Term b, Term[] u) {
