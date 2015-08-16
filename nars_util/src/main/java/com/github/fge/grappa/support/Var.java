@@ -20,11 +20,11 @@ import com.github.fge.grappa.misc.Reference;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import nars.util.data.FasterList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -52,7 +52,7 @@ public class Var<T>
     extends Reference<T>
 {
     private final Supplier<T> supplier;
-    private final Deque<T> stack = new ArrayDeque();
+    private final List<T> stack = new FasterList(); //new LinkedList(); /* able to hold null items */
     private int level;
     private String name;
 
@@ -143,7 +143,7 @@ public class Var<T>
     public final boolean exitFrame()
     {
         if (--level > 0)
-            set(stack.removeLast());
+            set(stack.remove(stack.size()-1)); //removeLast());
         return true;
     }
 

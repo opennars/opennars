@@ -59,14 +59,17 @@ public final class OneOrMoreMatcher
         int afterMatch;
         while (subMatcher.getSubContext(context).runMatcher()) {
             afterMatch = context.getCurrentIndex();
-            if (afterMatch != beforeMatch) {
-                beforeMatch = afterMatch;
-                continue;
-            }
-            throw new GrappaException("The inner rule of oneOrMore rule '"
-                + getLabel() + "' must not allow empty matches");
+
+            if (afterMatch == beforeMatch) err();
+
+            beforeMatch = afterMatch;
         }
 
         return true;
+    }
+
+    private void err() {
+        throw new GrappaException("The inner rule of oneOrMore rule '"
+                + getLabel() + "' must not allow empty matches");
     }
 }

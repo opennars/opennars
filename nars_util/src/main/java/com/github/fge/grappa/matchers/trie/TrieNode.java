@@ -61,6 +61,11 @@ public final class TrieNode
         return doSearch(CharBuffer.wrap(needle), fullWord ? 0 : -1, 0,
             ignoreCase);
     }
+    public int search(final char[] needle, final boolean ignoreCase)
+    {
+        return doSearch(CharBuffer.wrap(needle), fullWord ? 0 : -1, 0,
+                ignoreCase);
+    }
 
     /**
      * Core search method

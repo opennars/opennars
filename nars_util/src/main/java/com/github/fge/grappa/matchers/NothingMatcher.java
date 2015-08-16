@@ -38,7 +38,7 @@ public final class NothingMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    final public <V> boolean match(final MatcherContext<V> context)
     {
         return false;
     }

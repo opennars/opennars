@@ -53,6 +53,8 @@ public interface InputBuffer
      */
     int codePointAt(int index);
 
+    char[] extractChars(int start, int end);
+
     /**
      * Constructs a new {@link String} from all character between the given
      * indices. Invalid indices are automatically adjusted to their respective

@@ -86,6 +86,11 @@ public final class Trie
         return node.search(needle, ignoreCase);
     }
 
+    public int search(final char[] needle, final boolean ignoreCase)
+    {
+        return node.search(needle, ignoreCase);
+    }
+
     Trie(final TrieBuilder builder)
     {
         nrWords = builder.nrWords;

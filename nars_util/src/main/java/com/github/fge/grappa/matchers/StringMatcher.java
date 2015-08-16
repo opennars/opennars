@@ -16,6 +16,7 @@
 
 package com.github.fge.grappa.matchers;
 
+import com.github.fge.grappa.buffers.InputBuffer;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.matchers.delegate.SequenceMatcher;
 import com.github.fge.grappa.run.context.MatcherContext;
@@ -48,10 +49,17 @@ public final class StringMatcher
     {
         final int len = input.length();
         final int index = context.getCurrentIndex();
-        final String s = context.getInputBuffer().extract(index, index + len);
+        final InputBuffer ib = context.getInputBuffer();
 
-        if (!s.equals(input))
-            return false;
+//        final String s = ib.extract(index, index + len);
+//
+//        if (!s.equals(input))
+//            return false;
+
+        for (int i = 0; i < len; i++) {
+            if (input.charAt(i)!=ib.charAt(index+i))
+                return false;
+        }
 
         context.advanceIndex(len);
         return true;

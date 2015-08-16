@@ -18,108 +18,102 @@ package com.github.fge.grappa.stack;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
+import nars.util.data.DirectCopyOnWriteArrayList;
 import nars.util.data.FasterList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 public final class DefaultValueStack<V>
-    extends ValueStackBase<V>
-{
+        extends ValueStackBase<V> {
     private FasterList<V> stack = new FasterList<>();
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return stack.isEmpty();
     }
 
     @Override
-    public int size()
-    {
+    public int size() {
         return stack.size();
     }
 
     @Override
-    public void clear()
-    {
+    public void clear() {
         stack.clear();
     }
 
     @Nonnull
     @Override
-    public Object takeSnapshot()
-    {
+    public Object takeSnapshot() {
+        if (stack.isEmpty()) return null; //avoid creating an empty collection
         return new FasterList<>(stack);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void restoreSnapshot(final Object snapshot)
-    {
-        Objects.requireNonNull(snapshot);
-        //Preconditions.checkState(snapshot.getClass() == ArrayList.class);
-        stack = (FasterList<V>) snapshot;
+    public void restoreSnapshot(final Object snapshot) {
+        if (snapshot==null) {
+            stack.clear();
+        }
+        else {
+            //Objects.requireNonNull(snapshot);
+            //Preconditions.checkState(snapshot.getClass() == ArrayList.class);
+            stack = (FasterList<V>) snapshot;
+        }
     }
 
     @Override
-    protected void doPush(final int down, final V value)
-    {
+    protected void doPush(final int down, final V value) {
         stack.add(down, value);
     }
 
     @Nonnull
     @Override
-    protected V doPop(final int down)
-    {
+    protected V doPop(final int down) {
         return stack.remove(down);
     }
 
     @Nonnull
     @Override
-    protected V doPeek(final int down)
-    {
+    protected V doPeek(final int down) {
         return stack.get(down);
     }
 
     @Override
-    protected void doPoke(final int down, final V value)
-    {
+    protected void doPoke(final int down, final V value) {
         stack.set(down, value);
     }
 
     @Override
-    protected void doDup()
-    {
+    protected void doDup() {
         final V element = stack.get(0);
         stack.add(0, element);
     }
 
     @Override
-    protected void doSwap(final int n)
-    {
+    protected void doSwap(final int n) {
         Collections.reverse(stack.subList(0, n));
     }
 
     @Override
-    public Iterator<V> iterator()
-    {
+    public Iterator<V> iterator() {
         return Iterators.unmodifiableIterator(stack.iterator());
     }
 
     @Nonnull
     @Override
-    public String toString()
-    {
+    public String toString() {
         return stack.toString();
     }
 
     @Override
-    protected void checkIndex(final int index)
-    {
+    protected void checkIndex(final int index) {
         Preconditions.checkState(index < stack.size(),
-            "not enough elements in stack");
+                "not enough elements in stack");
     }
 }

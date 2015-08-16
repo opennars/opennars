@@ -34,6 +34,7 @@ public final class Chars {
         ESCAPE_MAP.put('\t', "\\t");
         ESCAPE_MAP.put('\f', "\\f");
         ESCAPE_MAP.put(EOI, "EOI");
+        ESCAPE_MAP.compact();
     }
 //            = ImmutableMap.<Character, String>builder()
 //            .put('\r', "\\r")

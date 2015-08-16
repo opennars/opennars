@@ -78,13 +78,13 @@ public final class CharSequenceInputBuffer
     }
 
     @Override
-    public char charAt(final int index)
+    final public char charAt(final int index)
     {
-        if (index < 0)
-            throw new IllegalArgumentException("index is negative");
+        /*if (index < 0)
+           throw new IllegalArgumentException("index is negative");*/
 
-        return index < charSequence.length() ? charSequence.charAt(index)
-            : Chars.EOI;
+        return index < charSequence.length() ?
+                charSequence.charAt(index) : Chars.EOI;
     }
 
     @SuppressWarnings("ImplicitNumericConversion")
@@ -104,6 +104,18 @@ public final class CharSequenceInputBuffer
             return c;
         final char c2 = charSequence.charAt(index + 1);
         return Character.isLowSurrogate(c2) ? Character.toCodePoint(c, c2) : c;
+    }
+
+    @Override
+    public char[] extractChars(final int start, final int end)
+    {
+        final int realStart = Math.max(start, 0);
+        final int realEnd = Math.min(end, charSequence.length());
+        char[] x = new char[realEnd - realStart];
+        int j = 0;
+        for (int i = realStart; i < realEnd; i++)
+            x[j++] = charSequence.charAt(i);
+        return x;
     }
 
     @Override

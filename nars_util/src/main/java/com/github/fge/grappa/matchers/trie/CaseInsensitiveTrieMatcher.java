@@ -64,8 +64,8 @@ public final class CaseInsensitiveTrieMatcher
          */
         final int maxLength = trie.getMaxLength();
         final int index = context.getCurrentIndex();
-        final String input = context.getInputBuffer()
-            .extract(index, index + maxLength);
+        final char[] input = context.getInputBuffer()
+            .extractChars(index, index + maxLength);
 
         /*
          * We now just have to trie and search... (pun intended)

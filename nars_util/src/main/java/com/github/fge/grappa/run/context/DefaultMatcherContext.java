@@ -252,11 +252,9 @@ public final class DefaultMatcherContext<V>
     //////////////////////////////// PUBLIC ////////////////////////////////////
 
     @Override
-    public void setMatcher(final Matcher matcher)
-    {
-        if (matcher == null)
+    final public void setMatcher(final Matcher matcher)     {
+        if ((this.matcher = matcher) == null)
             throw new RuntimeException("null matcher");
-        this.matcher = matcher;
     }
 
     @Override
@@ -274,8 +272,7 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    public void advanceIndex(final int delta)
-    {
+    final public void advanceIndex(final int delta) {
         currentIndex += delta;
     }
 
@@ -306,7 +303,7 @@ public final class DefaultMatcherContext<V>
     }
 
     @Override
-    public boolean runMatcher()
+    final public boolean runMatcher()
     {
         try {
             final boolean ret = matchHandler.match(this);

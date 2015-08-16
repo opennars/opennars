@@ -65,7 +65,7 @@ public abstract class BaseActions<V>
      */
     public final int currentIndex()
     {
-        check();
+        //check();
         return context.getCurrentIndex();
     }
 
@@ -79,7 +79,7 @@ public abstract class BaseActions<V>
      */
     public String match()
     {
-        check();
+        //check();
         return context.getMatch();
     }
 
@@ -93,7 +93,7 @@ public abstract class BaseActions<V>
      */
     public IndexRange matchRange()
     {
-        check();
+        //check();
         return context.getMatchRange();
     }
 
@@ -111,7 +111,7 @@ public abstract class BaseActions<V>
      */
     public String matchOrDefault(final String defaultString)
     {
-        check();
+        //check();
         final String match = context.getMatch();
         return match.isEmpty() ? defaultString : match;
     }
@@ -131,7 +131,7 @@ public abstract class BaseActions<V>
     // TODO: can't return null; check what _really_ happens.
     public char matchedChar()
     {
-        check();
+        //check();
         return context.getFirstMatchChar();
     }
 
@@ -146,7 +146,7 @@ public abstract class BaseActions<V>
      */
     public int matchStart()
     {
-        check();
+        //check();
         return context.getMatchStartIndex();
     }
 
@@ -162,7 +162,7 @@ public abstract class BaseActions<V>
      */
     public int matchEnd()
     {
-        check();
+        //check();
         return context.getMatchEndIndex();
     }
 
@@ -176,7 +176,7 @@ public abstract class BaseActions<V>
      */
     public int matchLength()
     {
-        check();
+        //check();
         return context.getMatchLength();
     }
 
@@ -188,7 +188,7 @@ public abstract class BaseActions<V>
      */
     public Position position()
     {
-        check();
+        //check();
         return context.getPosition();
     }
 
@@ -201,7 +201,7 @@ public abstract class BaseActions<V>
      */
     public boolean push(final V value)
     {
-        check();
+        //check();
         context.getValueStack().push(value);
         return true;
     }
@@ -220,7 +220,7 @@ public abstract class BaseActions<V>
      */
     public boolean push(final int down, final V value)
     {
-        check();
+        //check();
         context.getValueStack().push(down, value);
         return true;
     }
@@ -234,7 +234,7 @@ public abstract class BaseActions<V>
      */
     public V pop()
     {
-        check();
+        //check();
         return context.getValueStack().pop();
     }
 
@@ -251,7 +251,7 @@ public abstract class BaseActions<V>
      */
     public V pop(final int down)
     {
-        check();
+        //check();
         return context.getValueStack().pop(down);
     }
 
@@ -264,7 +264,7 @@ public abstract class BaseActions<V>
      */
     public boolean drop()
     {
-        check();
+        //check();
         context.getValueStack().pop();
         return true;
     }
@@ -282,7 +282,7 @@ public abstract class BaseActions<V>
      */
     public boolean drop(final int down)
     {
-        check();
+        //check();
         context.getValueStack().pop(down);
         return true;
     }
@@ -296,7 +296,7 @@ public abstract class BaseActions<V>
      */
     public V peek()
     {
-        check();
+        //check();
         return context.getValueStack().peek();
     }
 
@@ -312,7 +312,7 @@ public abstract class BaseActions<V>
      */
     public V peek(final int down)
     {
-        check();
+        //check();
         return context.getValueStack().peek(down);
     }
 
@@ -327,7 +327,7 @@ public abstract class BaseActions<V>
      */
     public boolean poke(final V value)
     {
-        check();
+        //check();
         context.getValueStack().poke(value);
         return true;
     }
@@ -346,7 +346,7 @@ public abstract class BaseActions<V>
      */
     public boolean poke(final int down, final V value)
     {
-        check();
+        //check();
         context.getValueStack().poke(down, value);
         return true;
     }
@@ -360,7 +360,7 @@ public abstract class BaseActions<V>
      */
     public boolean dup()
     {
-        check();
+        //check();
         context.getValueStack().dup();
         return true;
     }
@@ -375,7 +375,7 @@ public abstract class BaseActions<V>
      */
     public boolean swap()
     {
-        check();
+        //check();
         context.getValueStack().swap();
         return true;
     }
@@ -391,7 +391,7 @@ public abstract class BaseActions<V>
      */
     public boolean swap(final int n)
     {
-        check();
+        //check();
         context.getValueStack().swap(n);
         return true;
     }
@@ -401,9 +401,9 @@ public abstract class BaseActions<V>
      *
      * @return the next input character about to be matched
      */
-    public Character currentChar()
+    public char currentChar()
     {
-        check();
+        //check();
         return context.getCurrentChar();
     }
 
@@ -423,7 +423,7 @@ public abstract class BaseActions<V>
      */
     public boolean inPredicate()
     {
-        check();
+        //check();
         return context.inPredicate();
     }
 
@@ -444,7 +444,7 @@ public abstract class BaseActions<V>
      */
     public boolean hasError()
     {
-        check();
+        //check();
         return context.hasError();
     }
 
