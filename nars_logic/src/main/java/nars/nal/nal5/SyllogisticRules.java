@@ -749,14 +749,17 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        return nal.deriveDouble(newTask.term((Compound)content)
-                        .punctuation(task.getPunctuation())
-                        .truth(truth)
-                        .budget(budget)
-                        .occurr(occ),
-
-                deduction
-        );
+        TaskSeed nt = newTask.termIfValid((Compound) content);
+        if (nt!=null) {
+            return nal.deriveDouble(nt
+                            .punctuation(task.getPunctuation())
+                            .truth(truth)
+                            .budget(budget)
+                            .occurr(occ),
+                    deduction
+            );
+        }
+        return null;
     }
 
     /**

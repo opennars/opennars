@@ -72,10 +72,10 @@ public class TaskRuleTest extends TestCase {
 
 
 
-        TaskRule y = p.term("<(S --> P) |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
-        assertEquals("((<%S --> %P>), (<%P --> %S>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
-        assertEquals(16, y.getVolume());
-        assertEquals(16, y.getComplexity());
+        TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
+        assertEquals("((<%S --> %P>, (--,%S)), (<%P --> %S>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
+        assertEquals(18, y.getVolume());
+        assertEquals(18, y.getComplexity());
 
 
     }

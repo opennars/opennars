@@ -64,7 +64,28 @@ public class Variables {
             return new Map[] { map0, map1 };
         }
 
-        public boolean get(Term term1, Term term2) {
+        public final boolean get(final Term term1, final Term term2) {
+            //print("Before", term1, term2);
+            boolean r = next(term1, term2);
+            //print("  " + r + " After", null, null);
+            return r;
+        }
+
+        @Override
+        public String toString() {
+            return type + ":" + map0 + ","+ map1;
+        }
+
+        private void print(String prefix, Term a, Term b) {
+            System.out.print(prefix);
+            if (a!=null)
+                System.out.println(" " + a + " ||| " + b);
+            else
+                System.out.println();
+            System.out.println("     " + this);
+        }
+
+        protected boolean next(Term term1, Term term2) {
 
             final boolean term1HasVar = term1.hasVar(type);
             final boolean term2HasVar = term2.hasVar(type);
@@ -82,7 +103,7 @@ public class Variables {
                 final Term t = map0.get(term1Var);
 
                 if (t != null)
-                    return get(t, term2);
+                    return next(t, term2);
 
                 if (term2Var!=null && term2Var.getType() == type) {
                     Variable commonVar = CommonVariable.make(term1, term2);
@@ -113,7 +134,7 @@ public class Variables {
                 final Term t = map1.get(term2Var);
 
                 if (t != null)
-                    return get(term1, t);
+                    return next(term1, t);
 
                 map1.put(term2Var, term1);
                 if (term2Var instanceof CommonVariable) {
@@ -133,23 +154,57 @@ public class Variables {
                     return false;
                 }
 
-                final Term[] list = cTerm1.cloneTerms();
-                if (cTerm1.isCommutative()) {
-                    Compound.shuffle(list, random);
-                }
-
-                for (int i = 0; i < list.length; i++) {
-                    final Term t1 = list[i];
-                    final Term t2 = cTerm2.term[i];
-                    if (!get(t1, t2)) {
-                        return false;
+                final Term[] list;
+                final int clen = cTerm1.length();
+                if (cTerm1.isCommutative() && clen > 1) {
+                    if (clen == 2) {
+                        list = new Term[2];
+                        boolean order = random.nextBoolean();
+                        int tries = 0;
+                        boolean solved;
+                        do {
+                            if (order) {
+                                list[0] = cTerm1.term[0];
+                                list[1] = cTerm1.term[1];
+                            } else {
+                                list[0] = cTerm1.term[1];
+                                list[1] = cTerm1.term[0];
+                            }
+                            order = !order;
+                            solved = next(cTerm2, list);
+                            tries++;
+                        } while (tries < 2 && !solved);
+//                        if (solved) {
+//                            if (tries > 1)
+//                                System.out.println("got it " + tries);
+//                        }
+                        return solved;
+                    }
+                    else {
+                        list = cTerm1.cloneTerms();
+                        Compound.shuffle(list, random);
                     }
                 }
+                else {
+                    list = cTerm1.term;
+                }
 
-                return true;
+                return next(cTerm2, list);
             }
 
             return termsEqual;
+        }
+
+        protected boolean next(Compound c, Term[] list) {
+            for (int i = 0; i < list.length; i++) {
+                final Term t1 = list[i];
+                final Term t2 = c.term[i];
+                if (!next(t1, t2)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 
