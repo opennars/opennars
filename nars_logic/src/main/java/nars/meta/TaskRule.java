@@ -1,20 +1,18 @@
 package nars.meta;
 
+import nars.meta.pre.*;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Interval;
 import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 import nars.term.transform.CompoundTransform;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A rule which produces a Task
@@ -22,43 +20,123 @@ import java.util.Set;
  */
 public class TaskRule extends Rule<Premise,Task> {
 
-    private final Term[] preconditions; //the terms to match
+    //match first rule pattern with task
+
+
+    private final PreCondition[] preconditions;
+    //private final Term[] preconditions; //the terms to match
 
     private final PostCondition[] postconditions;
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
-
+    public static long timeOffsetForward(Term arg, Premise nal) {
+        if (arg instanceof Interval) {
+            return ((Interval) arg).cycles(nal.getMemory().param.duration);
+        }
+        int duration = nal.getMemory().param.duration.get();
+        if (arg.toString().equals("\"=/>\"")) {
+            return duration;
+        }
+        if (arg.toString().equals("\"=\\>\"")) {
+            return -duration;
+        }
+        return 0;
+    }
 
 
     public TaskRule(Product premises, Product result) {
         super(premises, result);
 
+        //The last entry is the postcondition
+        normalizeDestructively();
 
         //1. construct precondition term array
         //Term[] terms = terms();
 
-        Term[] precon = this.preconditions = premises.terms();
+        Term[] precon = premises.terms();
         Term[] postcons = result.terms();
 
-        //The last entry is the postcondition
-        this.normalizeDestructively();
         postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
+
+        //extract preconditions
+        List<PreCondition> early = new ArrayList(precon.length);
+        List<PreCondition> late = new ArrayList(precon.length);
+
+        early.add(new MatchTaskTerm(precon[0]));
+        if (precon.length > 1) {
+            early.add(new MatchBeliefTerm(precon[1]));
+        }
+
+        //additional modifiers: either early or late, classify them here
+        for (int i = 2; i < precon.length; i++) {
+            Inheritance predicate = (Inheritance) precon[i];
+            Term predicate_name = predicate.getPredicate();
+            Term[] args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
+            final String predicateNameStr = predicate_name.toString().replace("^", "");
+
+            PreCondition next = null;
+
+            final Term arg1 = args[0];
+            final Term arg2 = (args.length > 1) ? args[1] : null;
+
+            switch (predicateNameStr) {
+                case "not_equal":
+                    next = new NotEqual(arg1, arg2);
+                    break;
+                case "event":
+                    next = new IsEvent(arg1, arg2);
+                    break;
+                case "negative":
+                    next = new IsNegative(arg1, arg2);
+                    break;
+                case "no_common_subterm":
+                    next = new NoCommonSubterm(arg1, arg2);
+                    break;
+                case "measure_time":
+                    next = new MeasureTime(arg1, arg2, args[2]);
+                    break;
+                case "after":
+                    next = new After(arg1, arg2, args);
+                    break;
+                case "not_implication_or_equivalence":
+                    next = new NotImplicationOrEquivalence(arg1);
+                    break;
+                case "concurrent":
+                    next = new Concurrent(arg1);
+                    break;
+                case "substitute":
+                    next = new Substitute(arg1, arg2);
+                    break;
+                case "shift_occurrence_forward":
+                    next = new TimeOffset(arg1, arg2, true);
+                    break;
+                case "shift_occurrence_backward": {
+                    next = new TimeOffset(arg1, arg2, false);
+                    break;
+                }
+
+            }
+
+            if (next != null)
+                early.add(next);
+        }
+
+        //store as arrays
+        this.preconditions = early.toArray(new PreCondition[early.size()]);
+        final PreCondition[] _late = late.toArray(new PreCondition[late.size()]);
 
         int k = 0;
         for (int i = 0; i < postcons.length; ) {
             Term t = postcons[i++];
             if (i >= postcons.length)
                 throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
+
             postconditions[k++] = new PostCondition(t,
+                    _late,
                     ((Product)postcons[i++]).terms() );
         }
 
-    }
-
-    @Override
-    protected void init(Term... term) {
-        super.init(term);
     }
 
     public Product premise() {
@@ -123,8 +201,8 @@ public class TaskRule extends Rule<Premise,Task> {
 
     public void forward(Task task, Sentence belief, Term beliefTerm, NAL nal) {
         //if preconditions are met:
-        for (PostCondition p : postconditions)
-            p.apply(preconditions, task, belief, beliefTerm, nal);
+        /*for (PostCondition p : postconditions)
+            p.apply(preconditions, task, belief, beliefTerm, nal);*/
     }
 
 
