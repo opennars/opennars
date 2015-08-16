@@ -44,6 +44,7 @@ import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.*;
+import nars.term.transform.Substitution;
 import nars.truth.Truth;
 
 import java.util.Map;
@@ -519,11 +520,13 @@ public final class CompositionalRules {
 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    term22 = ((Compound) term22).applySubstitute(subs);
+
+                    Substitution ss = new Substitution(subs);
+                    term22 = ((Compound) term22).applySubstitute(ss);
                     if(!(term12 instanceof Compound)) {
                         term12 = varInd2;
                     } else {
-                        term12 = ((Compound) term12).applySubstitute(subs);
+                        term12 = ((Compound) term12).applySubstitute(ss);
                     }
                 }
             }
@@ -559,11 +562,14 @@ public final class CompositionalRules {
 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    term21 = ((Compound) term21).applySubstitute(subs);
+
+                    Substitution ss = new Substitution(subs);
+
+                    term21 = ((Compound) term21).applySubstitute(ss);
                     if (!(term11 instanceof Compound)) {
                         term11 = varInd2;
                     } else {
-                        term11 = ((Compound) term11).applySubstitute(subs);
+                        term11 = ((Compound) term11).applySubstitute(ss);
                     }
                 }
             }
@@ -589,11 +595,13 @@ public final class CompositionalRules {
 
                 if (commonTerm != null) {
                     subs.put(commonTerm, varInd2);
-                    term11 = ((Compound) term11).applySubstitute(subs);
+
+                    Substitution ss = new Substitution(subs);
+                    term11 = ((Compound) term11).applySubstitute(ss);
                     if(!(term21 instanceof Compound)) {
                         term21 = varInd2;
                     } else {
-                        term21 = ((Compound) term21).applySubstitute(subs);
+                        term21 = ((Compound) term21).applySubstitute(ss);
                     }
                 }
             }

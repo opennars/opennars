@@ -12,6 +12,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
 
+import java.util.List;
 import java.util.Map;
 
 /** rule matching context, re-recyclable if thread local */
@@ -23,13 +24,18 @@ public class RuleMatch {
     public final Map<Term, Term> precondsubs = Global.newHashMap();
     public final Map<Term, Term> waste = Global.newHashMap();
     public Premise premise;
-    public Term derive;
-    public boolean single;
+    @Deprecated public Term derive;
+    @Deprecated public boolean single;
+
+    /** set the next premise */
+    public void start(Premise nal) {
+        this.premise = nal;
+    }
 
     /**
      * clear and re-use with a new rule
      */
-    public RuleMatch start(Premise p, TaskRule rule) {
+    public RuleMatch start(TaskRule rule) {
 
         single = false;
         derive = null;
@@ -38,7 +44,6 @@ public class RuleMatch {
         precondsubs.clear();
         waste.clear();
 
-        this.premise = p;
         this.rule = rule;
         return this;
     }
@@ -84,6 +89,8 @@ public class RuleMatch {
 
         //by now, assign should have entries from the early preconditions being matched
         derive = p.term.substituted(assign);
+        if (derive == null)
+            return false;
 
         //test and apply late preconditions
         for (PreCondition c : p.precond) {
@@ -93,12 +100,17 @@ public class RuleMatch {
 
             //now we have to apply this to the derive term
 
-            //check if this is redundant
-            derive = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
-
-            if (!precondsubs.isEmpty())
-                derive = derive.substituted(precondsubs);
         }
+
+        //check if this is redundant
+        Term nextDerived = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
+        if (nextDerived == null)
+            return false;
+
+        derive = nextDerived;
+
+        if (!precondsubs.isEmpty())
+            derive = derive.substituted(precondsubs);
 
 //                //ok apply substitution to both elements in args
 //
@@ -133,6 +145,7 @@ public class RuleMatch {
 
         if (derive instanceof Compound) {
 
+
             TaskSeed<Compound> t = premise.newDoublePremise(task, belief, allowOverlap);
             if (t != null) {
                 t.term((Compound) derive).punctuation(task.punctuation)
@@ -144,7 +157,7 @@ public class RuleMatch {
 
                 //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
-                if (!single_premise) {
+                if (belief!=null) {
                     premise.deriveDouble(t);
                 } else {
                     premise.deriveSingle(t);
@@ -162,6 +175,14 @@ public class RuleMatch {
     //TODO cache?
     public Term resolve(final Term t) {
         return t.substituted(assign);
+    }
+
+
+    public final void run(final List<TaskRule> u) {
+        for (int i = 0; i < u.size(); i++) {
+            TaskRule tr = u.get(i);
+            tr.run(this);
+        }
     }
 
 }

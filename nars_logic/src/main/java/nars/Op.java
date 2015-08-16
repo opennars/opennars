@@ -85,7 +85,8 @@ public enum Op {
     STATEMENT_CLOSER(">", 0, false, false),
 
 
-    VAR_PATTERN(Symbols.VAR_PATTERN,0, false);
+    VAR_PATTERN(Symbols.VAR_PATTERN,0, false),
+    NONE('\u2205', 0, false);
 
     //-----------------------------------------------------
 

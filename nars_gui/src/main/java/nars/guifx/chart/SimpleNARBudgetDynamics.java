@@ -3,9 +3,8 @@ package nars.guifx.chart;
 import nars.Global;
 import nars.NARStream;
 import nars.nar.Default;
-import nars.nar.experimental.Equalized;
+import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
-import nars.term.Atom;
 import nars.term.Term;
 
 import java.util.HashMap;
@@ -35,7 +34,7 @@ public class SimpleNARBudgetDynamics {
     public static void main(String[] args) {
 
 
-        int cycles = 5000;
+        int cycles = 1000;
 
         Consumer<NARStream> execution = n -> {
             n
@@ -45,14 +44,14 @@ public class SimpleNARBudgetDynamics {
 
 
         //Default d = new Default(1024, 1, 3).setInternalExperience(null);
-        Default d = new Equalized(1024, 5, 7).setInternalExperience(null);
-        //Default d = new NewDefault().setInternalExperience(null);
+        //Default d = new Equalized(1024, 5, 7).setInternalExperience(null);
+        Default d = new NewDefault().setInternalExperience(null);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0f;
+        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.95f;
         //d.conceptActivationFactor.set(0.5f);
         d.setCyclesPerFrame(1);
         d.duration.set(5);
-        d.level(3);
+        //d.level(3);
         d.conceptForgetDurations.set(2);
         //d.taskLinkForgetDurations.set(1);
         //d.termLinkForgetDurations.set(2);

@@ -57,9 +57,9 @@ public class RuleDerivationsTest {
 
 
 
-        /*for (TaskRule s : d.rules) {
+        for (TaskRule s : d.rules) {
             System.out.println(s);
-        }*/
+        }
     }
 
     @Test public void testPostconditionSingletons() {

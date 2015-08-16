@@ -1204,12 +1204,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             return this;
         }
 
-
-        Substitution S = new Substitution(subs);
-
-        return applySubstitute(S);
+        return applySubstitute(new Substitution(subs));
     }
-
 
     public Term applySubstitute(final Substitution S) {
         return S.apply(this);

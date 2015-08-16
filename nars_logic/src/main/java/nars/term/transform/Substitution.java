@@ -29,6 +29,9 @@ public class Substitution {
         this.subs = subs;
 
         numSubs = subs.size();
+        if (numSubs == 0) {
+            throw new RuntimeException("Empty substitution");
+        }
 
         for (final Map.Entry<Term,Term> e : subs.entrySet()) {
 

@@ -1,18 +1,25 @@
 package nars.meta;
 
+import nars.Global;
+import nars.Op;
 import nars.meta.pre.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Interval;
 import nars.premise.Premise;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.*;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.CompoundTransform;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A rule which produces a Task
@@ -35,15 +42,19 @@ public class TaskRule extends Rule<Premise,Task> {
             return ((Interval) arg).cycles(nal.getMemory().param.duration);
         }
         int duration = nal.getMemory().param.duration.get();
-        if (arg.toString().equals("\"=/>\"")) {
+        String a = arg.toString();
+        if (a.equals("\"=/>\"")) {
             return duration;
         }
-        if (arg.toString().equals("\"=\\>\"")) {
+        if (a.equals("\"=\\>\"")) {
             return -duration;
         }
         return 0;
     }
 
+    public Product getPremises() {
+        return (Product)term(0);
+    }
 
     public TaskRule(Product premises, Product result) {
         super(premises, result);
@@ -60,13 +71,16 @@ public class TaskRule extends Rule<Premise,Task> {
         postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
 
         //extract preconditions
-        List<PreCondition> early = new ArrayList(precon.length);
-        List<PreCondition> late = new ArrayList(precon.length);
+        List<PreCondition> early = Global.newArrayList(precon.length);
+        List<PreCondition> late = Global.newArrayList(precon.length);
 
-        early.add(new MatchTaskTerm(precon[0]));
-        if (precon.length > 1) {
-            early.add(new MatchBeliefTerm(precon[1]));
-        }
+
+        Term taskTermMatch = precon[0];
+        early.add(new MatchTaskTerm(taskTermMatch));
+        //if (precon.length > 1) {
+        early.add(new MatchBeliefTerm(precon[1]));
+        //}
+
 
         //additional modifiers: either early or late, classify them here
         for (int i = 2; i < precon.length; i++) {
@@ -162,6 +176,20 @@ public class TaskRule extends Rule<Premise,Task> {
         reservedPostconditions.add(Atom.the("Event"));
     }
 
+    /** non-null;
+     *  if it returns Op.VAR_PATTERN this means that any type can apply */
+    public Op getTaskTermType() {
+        return getPremises().term(0).operator();
+    }
+
+    /** returns Op.NONE if there is no belief term type;
+     if it returns Op.VAR_PATTERN this means that any type can apply */
+    public Op getBeliefTermType() {
+//        if (getPremises().length() < 2)
+//            return Op.NONE;
+        return getPremises().term(1).operator();
+    }
+
 
     public static class TaskRuleNormalization implements CompoundTransform<Compound,Term> {
 
@@ -199,10 +227,9 @@ public class TaskRule extends Rule<Premise,Task> {
         return this;
     }
 
-    public void forward(Task task, Sentence belief, Term beliefTerm, Premise nal) {
+    public void run(RuleMatch m) {
 
-        RuleMatch m = new RuleMatch();
-        m.start(nal, this);
+        m.start(this);
 
         //temporary brute-force early phase
         for (PreCondition p : preconditions) {

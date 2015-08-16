@@ -2,12 +2,16 @@ package nars.nal;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.sun.istack.internal.Nullable;
+import nars.Global;
+import nars.Op;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
+import nars.premise.Premise;
 import nars.process.ConceptProcess;
-import nars.process.NAL;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -17,10 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by patrick.hammer on 30.07.2015.
@@ -31,6 +32,8 @@ public class Deriver extends ConceptFireTaskTerm {
     public final TaskRule[] rules;
 
     public static final Deriver defaults;
+    private final EnumMap<Op, EnumMap<Op, List<TaskRule>>> taskTypeMap;
+    private final EnumMap<Op, List<TaskRule>> beliefTypeMap;
 
     Multimap<Term, TaskRule> ruleByPreconditions = HashMultimap.create();
 
@@ -65,6 +68,76 @@ public class Deriver extends ConceptFireTaskTerm {
     public Deriver(Iterable<String> ruleStrings) {
         Collection<TaskRule> r = parseRules(loadRuleStrings(ruleStrings));
         rules = r.toArray(new TaskRule[r.size()]);
+
+        taskTypeMap = new EnumMap(Op.class);
+        beliefTypeMap = new EnumMap(Op.class);
+
+        for (TaskRule tr : rules) {
+            Op o = tr.getTaskTermType();
+            Op o2 = tr.getBeliefTermType();
+            if (o!=Op.VAR_PATTERN) {
+                EnumMap<Op, List<TaskRule>> subtypeMap = taskTypeMap.computeIfAbsent(o, op -> {
+                    return new EnumMap(Op.class);
+                });
+
+                List<TaskRule> lt = subtypeMap.computeIfAbsent(o2, x -> {
+                    return Global.newArrayList();
+                });
+                lt.add(tr);
+            }
+            else {
+                List<TaskRule> lt = beliefTypeMap.computeIfAbsent(o2, x -> {
+                    return Global.newArrayList();
+                });
+                lt.add(tr);
+            }
+        }
+
+        //printSummary();
+
+    }
+
+    public void printSummary() {
+        taskTypeMap.entrySet().forEach(k -> {
+            k.getValue().entrySet().forEach(m -> {
+                System.out.println(k.getKey() + "," + m.getKey() + ": " + m.getValue().size());
+            });
+        });
+        beliefTypeMap.entrySet().forEach(k -> {
+            System.out.println("%," + k.getKey() + ": " + k.getValue().size());
+        });
+    }
+
+    public void forEach(Term taskTerm, @Nullable Term beliefTerm, RuleMatch match) {
+        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.operator());
+
+        if (taskSpecific!=null) {
+            if (beliefTerm != null) {
+                // <T>,<B>
+                List<TaskRule> u = taskSpecific.get(beliefTerm.operator());
+                if (u != null)
+                    match.run(u);
+            }
+
+            // <T>,%
+            List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
+            if (taskSpecificBeliefAny != null)
+                match.run(taskSpecificBeliefAny);
+        }
+
+        if (beliefTerm!=null) {
+            // %,<B>
+            List<TaskRule> beliefSpecific = beliefTypeMap.get(Op.VAR_PATTERN);
+            if (beliefSpecific!=null)
+                match.run(beliefSpecific);
+        }
+
+        // %,%
+        List<TaskRule> bAny = beliefTypeMap.get(Op.VAR_PATTERN);
+        if (bAny!=null)
+            match.run(bAny);
+
+
     }
 
     @Override
@@ -273,15 +346,14 @@ public class Deriver extends ConceptFireTaskTerm {
     }
 
 
-    public boolean reason(final Task task, final Sentence belief, Term beliefterm, final NAL nal) {
+    public boolean reason(final Task task, final Sentence belief, Term beliefterm, final Premise nal) {
 
+        RuleMatch m = new RuleMatch();
+        m.start(nal);
 
         if (task.isJudgment() || task.isGoal()) {
 
-            //temporary brute force match
-            for (TaskRule r : rules) {
-                r.forward(task, belief, beliefterm,  nal);
-            }
+            forEach(task.getTerm(), belief!=null? belief.getTerm() : null, m);
 
             //TODO also allow backward inference by traversing
         }
