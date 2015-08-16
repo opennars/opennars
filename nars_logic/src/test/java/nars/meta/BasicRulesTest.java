@@ -25,15 +25,15 @@ public class BasicRulesTest {
 
         NAR n = new NAR(d);
 
-        new NARStream(n).forEachCycle(() -> {
+        /*new NARStream(n).forEachCycle(() -> {
             n.memory.getControl().forEach(p -> {
                 System.out.println(p.getBudget().getBudgetString() + " " + p);
             });
-        });
+        });*/
 
         n.input("<a --> b>. <b --> c>.");
 
-        NARTrace.out(n);
+        //NARTrace.out(n);
         TextOutput.out(n);
 
 

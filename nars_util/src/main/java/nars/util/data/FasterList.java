@@ -2,8 +2,10 @@ package nars.util.data;
 
 import com.gs.collections.impl.list.mutable.FastList;
 
+import java.util.Collection;
+
 /**
- * Unsafe faster FastList with direct array access
+ * Less-safe faster FastList with direct array access
  */
 public class FasterList<X> extends FastList<X> {
 
@@ -13,6 +15,10 @@ public class FasterList<X> extends FastList<X> {
 
     public FasterList(int capacity) {
         super(capacity);
+    }
+
+    public FasterList(Collection<X> x) {
+        super(x);
     }
 
     @Override

@@ -934,9 +934,9 @@ public class NARGraph1 extends Spacegraph {
             };
 
 
-            h.setLearningRate(0.5f);
-            h.setRepulsiveWeakness(10.0);
-            h.setAttractionStrength(10.0);
+            h.setLearningRate(0.4f);
+            h.setRepulsiveWeakness(7.0);
+            h.setAttractionStrength(7.0);
             h.setMaxRepulsionDistance(4f);
 
         }

@@ -1,6 +1,7 @@
 package nars.io;
 
 import nars.AbstractMemory;
+import nars.Global;
 import nars.NAR;
 import nars.Symbols;
 import nars.narsese.NarseseParser;
@@ -8,7 +9,6 @@ import nars.op.io.Echo;
 import nars.op.io.SetVolume;
 import nars.task.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -42,7 +42,7 @@ public class TextPerception  {
 
         //this.englisch = new Englisch();
         //this.twenglish = new Twenglish(memory);
-        this.parsers = new ArrayList();
+        this.parsers = Global.newArrayList();
 
 //        //integer, # of cycles to step
 //        parsers.add(new TextReaction<Task>() {
@@ -255,14 +255,10 @@ public class TextPerception  {
     }
 
 
-    public void perceive(final String line, Consumer<Task> receiver) {
-
-        
-        for (final TextReaction p : parsers) {            
-            
-            p.react(line, receiver);
+    public void perceive(final String line, final Consumer<Task> receiver) {
+        for (int i = 0; i < parsers.size(); i++) {
+            parsers.get(i).react(line, receiver);
         }
-
     }
 
 }

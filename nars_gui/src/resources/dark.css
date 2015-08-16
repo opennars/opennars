@@ -48,7 +48,7 @@
 
     /*default font */
     -fx-font-family: 'Monospaced';
-    -fx-font-size: 16.0px;
+    /*-fx-font-size: 16.0px;*/
     -fx-disabled-opacity: 0.8;
 
     -flatter-red: rgb(237.0, 68.0, 37.0);

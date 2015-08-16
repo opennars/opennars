@@ -1,7 +1,8 @@
 package nars.guifx;
 
 import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import nars.budget.Item;
 import nars.link.TaskLink;
 import nars.task.Task;
@@ -12,7 +13,7 @@ import java.util.function.Function;
 /**
  * Created by me on 8/14/15.
  */
-public class ItemButton<I extends Item> extends Button implements Runnable {
+public class ItemButton<I extends Item> extends Label implements Runnable {
 
     private final I item;
     private final Function<I, String> labeler;
@@ -37,20 +38,25 @@ public class ItemButton<I extends Item> extends Button implements Runnable {
         if (t!=null)
             setGraphic(new TaskSummaryIcon( t, this));
 
+        run();
 
         setText(labeler.apply(item));
-
-        run();
     }
 
     @Override
     public void run() {
+        //if (!constantLabel() || getText().isEmpty())
+
+
+        //setFont(NARfx.mono(10 + 8 * item.getPriority()));
+        float p = item.getPriority() * 0.5f + 0.5f;
+        setTextFill(Color.rgb(255,255,255,p));
+
+        setStyle("-fx-font-size: " + 1 + 2 * item.getPriority());
+
         Node g = getGraphic();
         if (g instanceof Runnable)
             ((Runnable)g).run();
 
-        //if (!constantLabel() || getText().isEmpty())
-
-        setFont(NARfx.mono(10 + 8 * item.getPriority()));
     }
 }
