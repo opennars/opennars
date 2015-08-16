@@ -25,21 +25,21 @@ import java.util.List;
 /**
  * Created by patrick.hammer on 30.07.2015.
  */
-public class NALExecuter extends ConceptFireTaskTerm {
+public class Deriver extends ConceptFireTaskTerm {
 
 
     public final TaskRule[] rules;
 
-    public static final NALExecuter defaults;
+    public static final Deriver defaults;
 
     Multimap<Term, TaskRule> ruleByPreconditions = HashMultimap.create();
 
     static {
 
-        NALExecuter r;
+        Deriver r;
 
         try {
-            r = new NALExecuter();
+            r = new Deriver();
         } catch (Exception e) {
             r = null;
             e.printStackTrace();
@@ -50,19 +50,19 @@ public class NALExecuter extends ConceptFireTaskTerm {
     }
 
 
-    public NALExecuter() throws IOException, URISyntaxException {
+    public Deriver() throws IOException, URISyntaxException {
         this("NAL_Definition.logic");
     }
 
-    public NALExecuter(String ruleFile) throws IOException, URISyntaxException {
+    public Deriver(String ruleFile) throws IOException, URISyntaxException {
 
         this(Files.readAllLines(Paths.get(
-                NALExecuter.class.getResource(ruleFile).toURI()
+                Deriver.class.getResource(ruleFile).toURI()
         )));
 
     }
 
-    public NALExecuter(Iterable<String> ruleStrings) {
+    public Deriver(Iterable<String> ruleStrings) {
         Collection<TaskRule> r = parseRules(loadRuleStrings(ruleStrings));
         rules = r.toArray(new TaskRule[r.size()]);
     }
@@ -123,11 +123,11 @@ public class NALExecuter extends ConceptFireTaskTerm {
 
         String ret = "<" + rule + ">";
 
-        /*while (ret.contains("  ")) {
+        while (ret.contains("  ")) {
             ret = ret.replace("  ", " ");
-        }*/
+        }
 
-        return ret;//.replace("\n", "")/*.replace("A_1..n","\"A_1..n\"")*/; //TODO: implement A_1...n notation, needs dynamic term construction before matching
+        return ret.replace("\n", "");/*.replace("A_1..n","\"A_1..n\"")*/ //TODO: implement A_1...n notation, needs dynamic term construction before matching
     }
 
 
@@ -278,7 +278,7 @@ public class NALExecuter extends ConceptFireTaskTerm {
 
         if (task.isJudgment() || task.isGoal()) {
 
-            //forward inference
+            //temporary brute force match
             for (TaskRule r : rules) {
                 r.forward(task, belief, beliefterm,  nal);
             }

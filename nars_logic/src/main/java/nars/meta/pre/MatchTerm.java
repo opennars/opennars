@@ -10,20 +10,23 @@ import nars.term.Variables;
 /**
  * Created by me on 8/15/15.
  */
-abstract public class MatchFirstTermWithTerm extends PreCondition {
+abstract public class MatchTerm extends PreCondition {
     private final Term pattern;
 
-    public MatchFirstTermWithTerm(Term pattern) {
+    public MatchTerm(Term pattern) {
         this.pattern = pattern;
     }
 
     @Override
-    public boolean test(RuleMatch m) {
+    public final boolean test(final RuleMatch m) {
 
         final Premise premise = m.premise;
 
+        Term t = getTerm(premise);
+        if (t == null) return false;
+
         return Variables.findSubstitute(Symbols.VAR_PATTERN,
-                pattern, getTerm(premise),
+                pattern, t,
                 m.assign, m.waste, premise.getRandom());
     }
 
@@ -33,4 +36,9 @@ abstract public class MatchFirstTermWithTerm extends PreCondition {
     }
 
     protected abstract Term getTerm(Premise p);
+
+    @Override
+    public boolean isEarly() {
+        return true;
+    }
 }

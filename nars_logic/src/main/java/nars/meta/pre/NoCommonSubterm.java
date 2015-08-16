@@ -28,4 +28,9 @@ public class NoCommonSubterm extends PreCondition2 {
 
         return true;
     }
+
+    @Override
+    public boolean isEarly() {
+        return true;
+    }
 }

@@ -4,7 +4,7 @@ import nars.premise.Premise;
 import nars.term.Term;
 
 /** for use with precondtiion term 0 */
-final public class MatchTaskTerm extends MatchFirstTermWithTerm {
+final public class MatchTaskTerm extends MatchTerm {
     public MatchTaskTerm(Term pattern) {
         super(pattern);
     }

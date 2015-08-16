@@ -33,4 +33,9 @@ public class NotImplicationOrEquivalence extends PreCondition1 {
         }
         return true;
     }
+
+    @Override
+    public boolean isEarly() {
+        return true;
+    }
 }

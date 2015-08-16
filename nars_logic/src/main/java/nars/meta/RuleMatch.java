@@ -29,8 +29,8 @@ public class RuleMatch {
     /**
      * clear and re-use with a new rule
      */
-    public void start(Premise p, TaskRule rule) {
-        this.premise = p;
+    public RuleMatch start(Premise p, TaskRule rule) {
+
         single = false;
         derive = null;
         occurence_shift = 0;
@@ -38,7 +38,9 @@ public class RuleMatch {
         precondsubs.clear();
         waste.clear();
 
+        this.premise = p;
         this.rule = rule;
+        return this;
     }
 
     public boolean apply(PostCondition p) {

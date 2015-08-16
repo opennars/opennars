@@ -24,4 +24,8 @@ abstract public class PreCondition implements Predicate<RuleMatch> {
     public boolean equals(Object obj) {
         return toString().equals(obj.toString());
     }
+
+    /** can this precondition be tested in the early phase */
+    public boolean isEarly() { return false; }
+    
 }

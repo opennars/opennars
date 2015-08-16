@@ -23,10 +23,10 @@ public class TaskRule extends Rule<Premise,Task> {
     //match first rule pattern with task
 
 
-    private final PreCondition[] preconditions;
+    public final PreCondition[] preconditions;
     //private final Term[] preconditions; //the terms to match
 
-    private final PostCondition[] postconditions;
+    public final PostCondition[] postconditions;
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
@@ -199,10 +199,22 @@ public class TaskRule extends Rule<Premise,Task> {
         return this;
     }
 
-    public void forward(Task task, Sentence belief, Term beliefTerm, NAL nal) {
+    public void forward(Task task, Sentence belief, Term beliefTerm, Premise nal) {
+
+        RuleMatch m = new RuleMatch();
+        m.start(nal, this);
+
+        //temporary brute-force early phase
+        for (PreCondition p : preconditions) {
+            if (!p.test(m))
+                return;
+        }
+
         //if preconditions are met:
-        /*for (PostCondition p : postconditions)
-            p.apply(preconditions, task, belief, beliefTerm, nal);*/
+        for (PostCondition p : postconditions) {
+            m.apply(p);
+        }
+
     }
 
 

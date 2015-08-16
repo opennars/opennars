@@ -16,4 +16,9 @@ public class NotEqual extends PreCondition2 {
     public boolean test(RuleMatch m, Term a, Term b) {
         return !a.equals(b);
     }
+
+    @Override
+    public boolean isEarly() {
+        return true;
+    }
 }

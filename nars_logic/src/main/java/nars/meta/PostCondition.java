@@ -144,6 +144,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
 
 
+
 //    @Override
 //    public String toString() {
 //        return term + "(" + Arrays.toString(modifiers) + ")";

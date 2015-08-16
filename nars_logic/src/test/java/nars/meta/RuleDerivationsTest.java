@@ -1,9 +1,8 @@
 package nars.meta;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import nars.meter.NARComparator;
-import nars.nal.NALExecuter;
+import nars.nal.Deriver;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import org.apache.commons.math3.stat.Frequency;
@@ -11,8 +10,8 @@ import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jgroups.util.Util.assertEquals;
 
@@ -23,7 +22,7 @@ public class RuleDerivationsTest {
 
     @Test
     public void testRuleStatistics() {
-        NALExecuter d = NALExecuter.defaults;
+        Deriver d = Deriver.defaults;
 
         int registeredRules = d.rules.length;
 
@@ -43,6 +42,20 @@ public class RuleDerivationsTest {
         HashSet<TaskRule> setRules = Sets.newHashSet(d.rules);
 
         assertEquals("no duplicates", registeredRules, setRules.size());
+
+        Set<PreCondition> preconds = new HashSet();
+        int totalPrecond = 0;
+        for (TaskRule t : d.rules) {
+            for (PreCondition p : t.preconditions) {
+                totalPrecond++;
+                preconds.add(p);
+            }
+        }
+        System.out.println("total precondtions = " + totalPrecond + ", unique=" + preconds.size());
+
+        //preconds.forEach(p -> System.out.println(p));
+
+
 
         /*for (TaskRule s : d.rules) {
             System.out.println(s);

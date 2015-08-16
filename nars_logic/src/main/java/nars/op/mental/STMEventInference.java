@@ -5,8 +5,7 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.NALExecuter;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.Deriver;
 import nars.process.TaskProcess;
 import nars.task.Task;
 
@@ -24,11 +23,11 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 public class STMEventInference extends NARReaction {
 
     public final Deque<Task> stm;
-    private final NALExecuter deriver;
+    private final Deriver deriver;
     int stmSize;
     //public static STMEventInference I=null;
 
-    public STMEventInference(NAR nar, NALExecuter deriver) {
+    public STMEventInference(NAR nar, Deriver deriver) {
         super(nar);
         this.deriver = deriver;
         this.stmSize = 1;

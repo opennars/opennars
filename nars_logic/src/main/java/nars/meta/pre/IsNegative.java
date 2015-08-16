@@ -28,4 +28,5 @@ public class IsNegative extends PreCondition2 {
         return true;
     }
 
+
 }

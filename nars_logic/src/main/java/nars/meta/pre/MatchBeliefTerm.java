@@ -1,15 +1,17 @@
 package nars.meta.pre;
 
 import nars.premise.Premise;
+import nars.task.Task;
 import nars.term.Term;
 
 /** constructed for preconditoin term 1 */
-final public class MatchBeliefTerm extends MatchFirstTermWithTerm {
+final public class MatchBeliefTerm extends MatchTerm {
     public MatchBeliefTerm(Term pattern) {
         super(pattern);
     }
 
-    @Override protected final Term getTerm(Premise p) {
-        return p.getBelief().getTerm();
+    @Override protected final Term getTerm(final Premise p) {
+        final Task b = p.getBelief();
+        return (b!=null) ? b.getTerm() : null;
     }
 }

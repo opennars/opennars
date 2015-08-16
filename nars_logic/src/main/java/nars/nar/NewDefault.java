@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.concept.ConceptBuilder;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicStage;
-import nars.nal.NALExecuter;
+import nars.nal.Deriver;
 import nars.nal.nal8.OpReaction;
 import nars.op.app.STMEventInference;
 import nars.op.mental.Abbreviation;
@@ -26,8 +26,8 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 public class NewDefault extends Default {
 
     //
-    public NALExecuter getDeriver() {
-        return NALExecuter.defaults;
+    public Deriver getDeriver() {
+        return Deriver.defaults;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class NewDefault extends Default {
     /** initialization after NAR is constructed */
     @Override public void init(NAR n) {
 
-        n.the(NALExecuter.class, getDeriver());
+        n.the(Deriver.class, getDeriver());
 
         n.setCyclesPerFrame(cyclesPerFrame);
 
