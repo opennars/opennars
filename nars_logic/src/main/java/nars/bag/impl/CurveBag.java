@@ -127,7 +127,8 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
             if (y < 0) return 0;
 
-            int i= UtilityFunctions.floorInt(y * size);
+            /** using 1-y because the list of items is stored top priority first */
+            int i= UtilityFunctions.floorInt((1-y) * size);
 
             if (i >= size) return size-1;
             if (i < 0) return 0;

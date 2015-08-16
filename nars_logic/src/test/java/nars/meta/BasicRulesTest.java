@@ -1,8 +1,12 @@
 package nars.meta;
 
+import nars.Global;
 import nars.NAR;
+import nars.NARStream;
+import nars.cycle.DefaultCycle;
 import nars.io.out.TextOutput;
 import nars.meter.NARTrace;
+import nars.nar.Default;
 import nars.nar.NewDefault;
 import org.junit.Test;
 
@@ -15,13 +19,25 @@ public class BasicRulesTest {
     public void testNAL1() {
         //Deriver d = Deriver.defaults;
 
-        NAR n = new NAR(new NewDefault().setInternalExperience(null).level(3));
+        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0f;
+        Default d = new NewDefault().setInternalExperience(null).level(3);
+        d.conceptsFiredPerCycle.set(1);
+
+        NAR n = new NAR(d);
+
+        new NARStream(n).forEachCycle(() -> {
+            n.memory.getControl().forEach(p -> {
+                System.out.println(p.getBudget().getBudgetString() + " " + p);
+            });
+        });
 
         n.input("<a --> b>. <b --> c>.");
 
         NARTrace.out(n);
         TextOutput.out(n);
-        n.frame(550);
+
+
+        n.frame(250);
     }
 
     @Test public void testSubstitution() {

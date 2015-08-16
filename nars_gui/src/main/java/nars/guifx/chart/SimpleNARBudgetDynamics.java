@@ -1,6 +1,7 @@
 package nars.guifx.chart;
 
 import nars.Global;
+import nars.NAR;
 import nars.NARStream;
 import nars.nar.Default;
 import nars.nar.NewDefault;
@@ -47,12 +48,12 @@ public class SimpleNARBudgetDynamics {
         //Default d = new Equalized(1024, 5, 7).setInternalExperience(null);
         Default d = new NewDefault().setInternalExperience(null);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.95f;
+        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
         //d.conceptActivationFactor.set(0.5f);
         d.setCyclesPerFrame(1);
         d.duration.set(5);
         //d.level(3);
-        d.conceptForgetDurations.set(2);
+        //d.conceptForgetDurations.set(2);
         //d.taskLinkForgetDurations.set(1);
         //d.termLinkForgetDurations.set(2);
 
