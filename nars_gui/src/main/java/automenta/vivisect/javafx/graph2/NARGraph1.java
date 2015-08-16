@@ -916,7 +916,7 @@ public class NARGraph1 extends Spacegraph {
 
                 @Override
                 protected Collection<TermNode> getVertices() {
-                    double scaleFactor = 250 + 100 * Math.sqrt(1 + termList.size());
+                    double scaleFactor = 150 + 75 * Math.sqrt(1 + termList.size());
                     setScale(scaleFactor);
 
                     //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
@@ -935,9 +935,9 @@ public class NARGraph1 extends Spacegraph {
 
 
             h.setLearningRate(0.4f);
-            h.setRepulsiveWeakness(7.0);
-            h.setAttractionStrength(7.0);
-            h.setMaxRepulsionDistance(4f);
+            h.setRepulsiveWeakness(10.0);
+            h.setAttractionStrength(10.0);
+            h.setMaxRepulsionDistance(6f);
 
         }
 

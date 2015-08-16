@@ -23,7 +23,7 @@ public class Variables {
     }
 
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Random random) {
-        return findSubstitute(type, term1, term2, new Map[]{map1, map2}, random);
+        return new FindSubst(type, map1, map2, random).get(term1, term2);
     }
 
     /**
@@ -32,97 +32,128 @@ public class Variables {
      * this is to delay the instantiation of the 2 HashMap until necessary to avoid
      * wasting them if they are not used.
      */
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, final Random random) {
+    @Deprecated public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, final Random random) {
+        FindSubst f = new FindSubst(type, map[0], map[1], random);
+        boolean b = f.get(term1, term2);
+        map[0] = f.map0;
+        map[1] = f.map1;
+        return b;
+    }
 
-        if (map[0] == null)
-            map[0] = Global.newHashMap(0);
-        if (map[1] == null)
-            map[1] = Global.newHashMap(0);
+    private static class FindSubst {
+        private final char type;
+        private final Map<Term, Term> map0, map1;
+        private final Random random;
 
+        /**
+         */
+        private FindSubst(char type, Map map0, Map map1, Random random) {
+            if (map0 == null)
+                map0 = Global.newHashMap(0);
+            if (map1 == null)
+                map1 = Global.newHashMap(0);
 
-        final boolean term1HasVar = term1.hasVar(type);
-        final boolean term2HasVar = term2.hasVar(type);
+            this.type = type;
+            this.map0 = map0;
+            this.map1 = map1;
+            this.random = random;
 
-
-        final Variable term1Var = term1 instanceof Variable ? (Variable)term1 : null;
-        final Variable term2Var = term2 instanceof Variable ? (Variable)term2 : null;
-
-        final boolean termsEqual = term1.equals(term2);
-        if (term1Var!=null && term2Var!=null && termsEqual) {
-            return true;
         }
 
-        if (term1Var!=null && term1Var.getType() == type) {
+        @Deprecated public Map<Term, Term>[] getMap() {
+            return new Map[] { map0, map1 };
+        }
 
-            final Term t = map[0].get(term1Var);
+        public boolean get(Term term1, Term term2) {
 
-            if (t != null)
-                return findSubstitute(type, t, term2, map, random);
+            final boolean term1HasVar = term1.hasVar(type);
+            final boolean term2HasVar = term2.hasVar(type);
 
-            if (term2Var!=null && term2Var.getType() == type) {
-                Variable CommonVar = makeCommonVariable(term1, term2);
-                map[0].put(term1Var, CommonVar);
-                map[1].put(term2Var, CommonVar);
-            } else {
-                if (term2Var!=null) {
-                    //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
+            final Variable term1Var = term1 instanceof Variable ? (Variable) term1 : null;
+            final Variable term2Var = term2 instanceof Variable ? (Variable) term2 : null;
 
-                    boolean t1Query = term1Var.getType() == Symbols.VAR_QUERY;
-                    boolean t2Query = term2Var.getType() == Symbols.VAR_QUERY;
+            final boolean termsEqual = term1.equals(term2);
+            if (term1Var!=null && term2Var!=null && termsEqual) {
+                return true;
+            }
 
-                    if ((t2Query && !t1Query) || (!t2Query && t1Query)) {
+            if (term1Var!=null && term1Var.getType() == type) {
+
+                final Term t = map0.get(term1Var);
+
+                if (t != null)
+                    return get(t, term2);
+
+                if (term2Var!=null && term2Var.getType() == type) {
+                    Variable commonVar = CommonVariable.make(term1, term2);
+                    map0.put(term1Var, commonVar);
+                    map1.put(term2Var, commonVar);
+                } else {
+                    if (term2Var!=null) {
+                        //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
+
+                        boolean t1Query = term1Var.getType() == Symbols.VAR_QUERY;
+                        boolean t2Query = term2Var.getType() == Symbols.VAR_QUERY;
+
+                        if ((t2Query && !t1Query) || (!t2Query && t1Query)) {
+                            return false;
+                        }
+                    }
+
+                    map0.put(term1Var, term2);
+                    if (term1Var instanceof CommonVariable) {
+                        map1.put(term1Var, term2);
+                    }
+                }
+
+                return true;
+
+            } else if (term2Var!=null && term2Var.getType() == type) {
+
+                final Term t = map1.get(term2Var);
+
+                if (t != null)
+                    return get(term1, t);
+
+                map1.put(term2Var, term1);
+                if (term2Var instanceof CommonVariable) {
+                    map0.put(term2Var, term1);
+                }
+
+                return true;
+
+            } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && ((term1.operator() == term2.operator()))) {
+                final Compound cTerm1 = (Compound) term1;
+                final Compound cTerm2 = (Compound) term2;
+                if (cTerm1.length() != cTerm2.length()) {
+                    return false;
+                }
+                //TODO simplify comparison with Image base class
+                if ((cTerm1 instanceof Image) && (((Image) cTerm1).relationIndex != ((Image) cTerm2).relationIndex)) {
+                    return false;
+                }
+
+                final Term[] list = cTerm1.cloneTerms();
+                if (cTerm1.isCommutative()) {
+                    Compound.shuffle(list, random);
+                }
+
+                for (int i = 0; i < list.length; i++) {
+                    final Term t1 = list[i];
+                    final Term t2 = cTerm2.term[i];
+                    if (!get(t1, t2)) {
                         return false;
                     }
                 }
 
-                map[0].put(term1Var, term2);
-                if (term1Var.isCommon()) {
-                    map[1].put(term1Var, term2);
-                }
-            }
-            return true;
-        } else if (term2Var!=null && term2Var.getType() == type) {
-
-            final Term t = map[1].get(term2Var);
-
-            if (t != null)
-                return findSubstitute(type, term1, t, map, random);
-
-            map[1].put(term2Var, term1);
-            if (term2Var.isCommon()) {
-                map[0].put(term2Var, term1);
+                return true;
             }
 
-            return true;
-
-        } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && ((term1.operator() == term2.operator()))) {
-            final Compound cTerm1 = (Compound) term1;
-            final Compound cTerm2 = (Compound) term2;
-            if (cTerm1.length() != cTerm2.length()) {
-                return false;
-            }
-            //TODO simplify comparison with Image base class
-            if ((cTerm1 instanceof Image) && (((Image) cTerm1).relationIndex != ((Image) cTerm2).relationIndex)) {
-                return false;
-            }
-
-            final Term[] list = cTerm1.cloneTerms();
-            if (cTerm1.isCommutative()) {
-                Compound.shuffle(list, random);
-            }
-
-            for (int i = 0; i < list.length; i++) {
-                final Term t1 = list[i];
-                final Term t2 = cTerm2.term[i];
-                if (!findSubstitute(type, t1, t2, map, random)) {
-                    return false;
-                }
-            }
-            return true;
+            return termsEqual;
         }
-
-        return termsEqual;
     }
+
+
 
 
 //    public static final boolean containVar(final Term[] t) {
@@ -222,18 +253,31 @@ public class Variables {
 //        return Texts.containsChar(n, Symbols.VAR_DEPENDENT);
 //    }
 
-    public static Variable makeCommonVariable(final Term v1, final Term v2) {
-        //TODO use more efficient string construction
-        byte[] bv1 = v1.bytes();
-        byte[] bv2 = v2.bytes();
-        int len = bv1.length + bv2.length + 1;
-        byte[] c = new byte[len];
-        System.arraycopy(bv1, 0, c, 0, bv1.length);
-        System.arraycopy(bv2, 0, c, bv1.length, bv2.length);
-        c[c.length-1] = '$';
-        return new Variable(c);
+//    public static Variable makeCommonVariable(final Term v1, final Term v2) {
+//
+//        return
+//        //return new Variable(v1.toString() + v2.toString() + '$');
+//    }
 
-        //return new Variable(v1.toString() + v2.toString() + '$');
+
+    public static class CommonVariable extends Variable {
+
+        public static CommonVariable make(Term v1, Term v2) {
+            //TODO use more efficient string construction
+            byte[] bv1 = v1.bytes();
+            byte[] bv2 = v2.bytes();
+            int len = bv1.length + bv2.length + 1;
+            byte[] c = new byte[len];
+            System.arraycopy(bv1, 0, c, 0, bv1.length);
+            System.arraycopy(bv2, 0, c, bv1.length, bv2.length);
+            c[c.length-1] = '$';
+            return new CommonVariable(c);
+        }
+
+        CommonVariable(byte[] b) {
+            super(b);
+        }
+
     }
 
 //    public static boolean containVarDepOrIndep(final CharSequence n) {

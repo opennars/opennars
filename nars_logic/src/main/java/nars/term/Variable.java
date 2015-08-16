@@ -258,12 +258,12 @@ public class Variable extends Atom {
     @Override public int varQuery() { return hasVarQuery() ? 1 : 0;    }
 
 
-    public boolean isCommon() {
-        //TODO there is a faster way to make this test rather than forming the String
-        byte[] n = bytes();
-        int l = n.length;
-        return n[l - 1] == '$';
-    }
+//    public boolean isCommon() {
+//        //TODO there is a faster way to make this test rather than forming the String
+//        final byte[] n = bytes();
+//        final int l = n.length;
+//        return n[l - 1] == '$';
+//    }
 
 
     public boolean isScoped() { return scope; }
