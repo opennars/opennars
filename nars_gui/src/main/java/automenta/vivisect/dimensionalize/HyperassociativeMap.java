@@ -137,6 +137,11 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
     abstract public void apply(N node, double[] coord);
 
+    public void align(final int iterations) {
+        for (int i = iterations;i > 0; i--)
+            align();
+    }
+
     private class Align implements Callable<ArrayRealVector> {
 
         private final N node;

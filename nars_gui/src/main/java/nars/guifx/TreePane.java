@@ -11,12 +11,9 @@ import nars.NAR;
 import nars.event.FrameReaction;
 import nars.op.io.Echo;
 import nars.task.Task;
-import org.infinispan.util.concurrent.ConcurrentHashSet;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 /**
@@ -28,9 +25,9 @@ public class TreePane extends BorderPane {
     private final TreeView<Task> tree;
     private final FrameReaction onFrame;
 
-    final Set<Task> pendingTasks = new ConcurrentHashSet<>(); //Global.newHashSet(1);
+    final Set<Task> pendingTasks = new LinkedHashSet<>(); //Global.newHashSet(1);
 
-    final Map<Task, TreeItem<Task>> tasks = new WeakHashMap(); //Global.newHashMap();
+    final Map<Task, TreeItem<Task>> tasks = new LinkedHashMap(); //Global.newHashMap();
     final Map<Task, TaskLabel> labels = new WeakHashMap();
 
     private final NAR nar;
@@ -40,6 +37,8 @@ public class TreePane extends BorderPane {
     private Node getLabel(final Task item) {
         return labels.computeIfAbsent(item, labelBuilder);
     }
+
+    final AtomicBoolean ready = new AtomicBoolean(true);
 
     public TreePane(NAR n) {
         super();
@@ -63,6 +62,7 @@ public class TreePane extends BorderPane {
 
         onFrame = new FrameReaction(n) {
             @Override public void onFrame() {
+
                 update();
             }
         };
@@ -114,54 +114,72 @@ public class TreePane extends BorderPane {
 
 
     protected void update() {
-        nar.memory.forEachTask(true, t -> {
-            pendingTasks.add(t);
-        });
+
+        if (!ready.compareAndSet(true, false))
+            return;
+
+        synchronized (pendingTasks) {
+            pendingTasks.clear();
+            nar.memory.forEachTask(true, t -> {
+                pendingTasks.add(t);
+            });
+        }
+
         Platform.runLater(() -> {
 
+
             Iterator<Map.Entry<Task, TreeItem<Task>>> ii = tasks.entrySet().iterator();
-            while (ii.hasNext()) {
-                Map.Entry<Task, TreeItem<Task>> t = ii.next();
-                Task k = t.getKey();
-                if (!pendingTasks.remove(k)) {
-                    TreeItem<Task> tt = t.getValue();
-                    tt.getParent().getChildren().remove(tt);
-                    ii.remove();
+
+            synchronized (pendingTasks) {
+                while (ii.hasNext()) {
+                    Map.Entry<Task, TreeItem<Task>> ent = ii.next();
+                    Task k = ent.getKey();
+                    if (!pendingTasks.remove(k)) {
+                        //task removed
+                        TreeItem<Task> tt = ent.getValue();
+                        tt.getParent().getChildren().remove(tt);
+                        ii.remove();
+                    } else {
+                        //existing task
+                        getItem(k);
+                    }
                 }
-                else {
-                    getItem(k);
+
+                //new task
+                for (Task p : pendingTasks) {
+                    getItem(p);
                 }
             }
 
-            for (Task p : pendingTasks) {
-                getItem(p);
-            }
-            pendingTasks.clear();
+            tasks.entrySet().forEach(
+                    t -> update(t.getKey(), t.getValue()));
+
+            ready.set(true);
+
         });
     }
 
-    protected TreeItem<Task> getItem(Task t) {
+    protected TreeItem<Task> getItem(final Task t) {
         if (t == null)
             return rootNode;
 
-        TreeItem<Task> i = tasks.get(t);
-        if (i == null) {
-            Task pt = t.getParentTask();
-            if (pt == t)
+        TreeItem<Task> i = tasks.computeIfAbsent(t, _t -> {
+            Task pt = _t.getParentTask();
+            if (pt == _t)
                 throw new RuntimeException(t + " is its own parent task");
 
-            i = new TreeItem<Task>(t);
-            tasks.put(t, i);
-            getItem(pt).getChildren().add(i);
-        }
-
-        update(t, i);
-
+            final TreeItem<Task> ii = new TreeItem<Task>(_t);
+            getItem(pt).getChildren().add(ii);
+            return ii;
+        });
 
         return i;
     }
 
-    private void update(Task t, TreeItem<Task> i) {
+    private static void update(final Task t, final TreeItem<Task> i) {
+        final Node g = i.getGraphic();
+        if (g instanceof Runnable)
+            ((Runnable)g).run();
     }
 
 

@@ -88,6 +88,7 @@ public class SomeRovers {
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
 
         d.setTermLinkBagSize(64);
+        d.setTaskLinkBagSize(64);
 
         //N/A for solid
         //nar.param.inputsMaxPerCycle.set(32);
