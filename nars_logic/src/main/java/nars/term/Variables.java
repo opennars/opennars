@@ -85,6 +85,7 @@ public class Variables {
             System.out.println("     " + this);
         }
 
+        // <sseehh_> next recursess into the next sublevel of the term
         protected boolean next(Term term1, Term term2) {
 
             final boolean term1HasVar = term1.hasVar(type);
