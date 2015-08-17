@@ -128,7 +128,7 @@ public class TraceWriter extends MemoryReaction {
 
     @Override
     public void onTaskAdd(Task task) {
-        output(OUT.class, task, task.getHistory());
+        output(OUT.class, task, task.getLog());
     }
 
     @Override

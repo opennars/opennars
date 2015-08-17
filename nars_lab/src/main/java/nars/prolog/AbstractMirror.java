@@ -9,6 +9,7 @@ import nars.NAR;
 import nars.budget.Budget;
 import nars.event.NARReaction;
 import nars.process.TaskProcess;
+import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
 
@@ -50,7 +51,7 @@ abstract public class AbstractMirror extends NARReaction {
         }
         else if ((mode == InputMode.InputTask)|| (mode == InputMode.ImmediateProcess)) {
 
-            Task t = new Task(s, Budget.newDefault(s, nar.memory), parent, null );
+            Task t = new DefaultTask(s, Budget.newDefault(s, nar.memory), parent, null );
 
             //System.err.println("  " + t);
 

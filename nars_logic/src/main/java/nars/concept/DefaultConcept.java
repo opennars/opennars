@@ -398,14 +398,16 @@ public class DefaultConcept extends AbstractConcept {
 
             if (qu.isEmpty()) return;
 
-            TaskSeed<Compound> t = p.newTask()
-                    .question()
-                    .parent(task)
-                    .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
-                    .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
+            for (Compound q : qu) {
+                TaskSeed<Compound> t = p.newTask(q)
+                        .question()
+                        .parent(task)
+                        .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
+                        .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
 
-            for (Compound q : qu)
+
                 p.deriveSingle(t.term(q));
+            }
         }
     }
 

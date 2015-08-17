@@ -23,7 +23,6 @@ package nars.task;
 import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
-import nars.budget.Budgeted;
 import nars.budget.Itemized;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
@@ -57,7 +56,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         for (int i = 0; i < indent; i++)
             sb.append("  ");
 
-        task.appendTo(sb).append(" history=").append(task.getHistory());
+        task.appendTo(sb).append(" history=").append(task.getLog());
 
         if (task.getCause() != null)
             sb.append(" cause=").append(task.getCause());
@@ -207,12 +206,12 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
         //tt.setLastForgetTime(getLastForgetTime());
 
-        tt.setEvidentialSet(getEvidentialSet());
+        tt.setEvidence(getEvidence());
         tt.setCyclic(isCyclic());
 
         tt.setCreationTime(getCreationTime());
         tt.setOccurrenceTime(occ);
-        tt.log(getHistory());
+        tt.log(getLog());
         return tt;
     }
 
@@ -381,7 +380,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
     public void log(String reason);
     public Task log(List<String> historyToCopy);
-    public List<String> getHistory();
+    public List<String> getLog();
 
 
 
@@ -413,8 +412,8 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             //return false;
         }
 
-        if (getEvidentialSet() == null)
-            setEvidentialSet(memory.newStampSerial());
+        if (getEvidence() == null)
+            setEvidence(memory.newStampSerial());
 
         //if a task has an unperceived creationTime,
         // set it to the memory's current time here,
@@ -454,7 +453,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return getTerm().getTemporalOrder();
     }
 
-    public void setEvidentialSet(long serial);
     public void setTruth(Truth t);
     public void discountConfidence();
 

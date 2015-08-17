@@ -39,37 +39,24 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * Judgment, Question, Goal, or Quest.
      * Represented by characters: '.', '?', '!', or '@'
      */
-    public final char punctuation;
-    /**
-     * The truth value of Judgment, or desire value of Goal
-     * TODO can we make this final eventually like it was before.. Concept.discountBeliefConfidence needed to mutate the truth on discount
-     */
-    public Truth truth;
-    protected T term;
-    transient private int hash;
-
-    private long[] evidentialSet = null;
-
-
-    private long creationTime = Stamp.TIMELESS;
-
-    private long occurrenceTime = Stamp.ETERNAL;
-
-    private int duration = 0;
-    private boolean cyclic;
-
-
+    private char punctuation;
     /**
      * Task from which the Task is derived, or null if input
      */
-    transient public final Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
-
+    transient public Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    transient public final Reference<Task> parentBelief;
+    transient public Reference<Task> parentBelief;
 
-
+    public Truth truth;
+    protected T term;
+    transient private int hash;
+    private long[] evidentialSet = null;
+    private long creationTime = Stamp.TIMELESS;
+    private long occurrenceTime = Stamp.ETERNAL;
+    private int duration = 0;
+    private boolean cyclic;
     /**
      * TODO move to SolutionTask subclass
      * For Question and Goal: best solution found so far
@@ -156,24 +143,29 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         }
 
 
-        this.hash = getHash();
-
 
     }
 
-    @Override
-    public void setCyclic(boolean cyclic) {
-        this.cyclic = cyclic;
+    public DefaultTask(Sentence<T> s, Budget budget, Task parentTask, Task parentBelief) {
+        this(s.getTerm(), s.getPunctuation(), s.getTruth(), budget, parentTask, parentBelief, null);
     }
 
-    private int getHash() {
+    protected void setPunctuation(char punctuation) {
+        this.punctuation = punctuation;
+    }
+
+    private final int getHash() {
         //stamp (evidentialset, occurrencetime), truth, term, punctuation
 
-        int hashStamp = Util.hash(Arrays.hashCode(getEvidentialSet()), (int) this.getOccurrenceTime());
+        int hashStamp = Util.hash(Arrays.hashCode(getEvidence()), (int) this.getOccurrenceTime());
 
         final int truthHash = (getTruth() != null) ? getTruth().hashCode() : 0;
 
-        return (Util.hash(hashStamp, getTerm().hashCode(), truthHash) * 31) + getPunctuation();
+        int h = (Util.hash(hashStamp, getTerm().hashCode(), truthHash) * 31) + getPunctuation();
+
+        if (h == 0) h = 1; //reserve 0 for non-hashed
+
+        return h;
     }
 
     public void setTermShared(final T equivalentInstance) {
@@ -197,19 +189,30 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return truth;
     }
 
+    public void setTruth(Truth t) {
+        this.truth = t;
+        invalidate();
+    }
+
     @Override
     public boolean isCyclic() {
         return cyclic;
     }
 
     @Override
-    public void applyToStamp(Stamp target) {
-
+    public void setCyclic(boolean cyclic) {
+        this.cyclic = cyclic;
     }
 
     @Override
-    public Task<T> setEvidentialSet(long[] evidentialSet) {
+    public void applyToStamp(Stamp target) {
+        throw new RuntimeException("is this necessar");
+    }
+
+    @Override
+    public Task<T> setEvidence(long[] evidentialSet) {
         this.evidentialSet = evidentialSet;
+        invalidate();
         return this;
     }
 
@@ -224,14 +227,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
-
     @Override
     public char getPunctuation() {
         return punctuation;
     }
 
     @Override
-    public long[] getEvidentialSet() {
+    public long[] getEvidence() {
         return evidentialSet;
     }
 
@@ -253,36 +255,49 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public Sentence<T> setCreationTime(long creationTime) {
         if ((this.creationTime <= Stamp.TIMELESS) && (this.occurrenceTime > Stamp.TIMELESS)) {
             //use the occurrence time as the delta, now that this has a "finite" creationTime
-            this.occurrenceTime = this.occurrenceTime + creationTime;
+            setOccurrenceTime(this.occurrenceTime + creationTime);
         }
-        this.creationTime = creationTime;
+        if (this.creationTime!=creationTime) {
+            this.creationTime = creationTime;
+            //does not need invalidated since creation time is not part of hash
+        }
         return this;
+    }
+
+    protected void invalidate() {
+        this.hash = 0;
     }
 
     @Override
     public Sentence setOccurrenceTime(long o) {
-        setOccurrenceTime(o);
+        if (o!=occurrenceTime) {
+            this.occurrenceTime = o;
+            invalidate();
+        }
         return this;
     }
 
     @Override
     public Sentence setDuration(int d) {
-        setDuration(d);
+        this.duration = d;
         return this;
     }
 
-
-    public DefaultTask(Sentence<T> s, Budget budget, Task parentTask, Task parentBelief) {
-        this(s.getTerm(), s.getPunctuation(), s.getTruth(), budget, parentTask, parentBelief, null);
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            this.hash = getHash();
+        }
+        return hash;
     }
 
     /**
      * To check whether two sentences are equal
+     * Must be consistent with the values calculated in getHash()
      *
      * @param that The other sentence
      * @return Whether the two sentences have the same content
      */
-
     @Override
     public boolean equals(final Object that) {
         if (this == that) return true;
@@ -338,7 +353,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return temporallyInductable;
     }
 
-
     /**
      * add to this task's log history
      * useful for debugging but can also be applied to meta-analysis
@@ -354,10 +368,16 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         this.history.add(reason);
     }
 
-    public List<String> getHistory() {
+    public List<String> getLog() {
         return history;
     }
 
+    public void setParentTask(Task parentTask) {
+        this.parentTask = reference(parentTask);
+    }
+    public void setParentBelief(Task parentBelief) {
+        this.parentBelief = reference(parentBelief);
+    }
 
     /**
      * Get the parent belief of a task
@@ -388,14 +408,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return appendTo(null, null).toString();
     }
 
-
     /**
      * the causing Operation, or null if not applicable.
      */
     public Operation getCause() {
         return cause;
     }
-
 
     @Override
     public Task setCause(final Operation op) {
@@ -407,15 +425,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         this.cause = op;
 
         return this;
-    }
-
-    public void setEvidentialSet(long serial) {
-        setEvidentialSet(new long[]{serial});
-    }
-
-
-    public void setTruth(Truth t) {
-        this.truth = t;
     }
 
     public void discountConfidence() {

@@ -53,7 +53,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
                             ||
 
                     //differnt evidence
-                    (!Arrays.equals(t.getEvidentialSet(), task.getEvidentialSet()))
+                    (!Arrays.equals(t.getEvidence(), task.getEvidence()))
 
                 )
                 return VALID;

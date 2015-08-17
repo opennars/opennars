@@ -400,7 +400,7 @@ public class Memory implements Serializable, AbstractMemory {
 //    }
         t.setCreationTime(time());
         t.setDuration(duration());
-        t.setEvidentialSet(new long[]{newStampSerial()});
+        t.setEvidence(new long[]{newStampSerial()});
     }
 
     /** sets the random seed which will be used in the next reset(), then reset() */
@@ -773,7 +773,7 @@ public class Memory implements Serializable, AbstractMemory {
     }
 
     public <T extends Compound> TaskSeed<T> newTask(T t) {
-        return new TaskSeed(this, t);
+        return TaskSeed.make(this, t);
     }
 
 

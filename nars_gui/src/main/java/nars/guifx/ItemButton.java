@@ -3,7 +3,7 @@ package nars.guifx;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import nars.budget.Item;
+import nars.budget.Itemized;
 import nars.link.TaskLink;
 import nars.task.Task;
 
@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Created by me on 8/14/15.
  */
-public class ItemButton<I extends Item> extends Label implements Runnable {
+public class ItemButton<I extends Itemized> extends Label implements Runnable {
 
     private final I item;
     private final Function<I, String> labeler;

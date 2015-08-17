@@ -504,13 +504,13 @@ public class ConceptPanelBuilder extends NARReaction {
 
             minTime = maxTime = time;
             for (Task s : belief) {
-                if (s == null || s.getSentence().isEternal()) continue;
+                if (s == null || s.isEternal()) continue;
                 long when = s.getOccurrenceTime();
                 if (minTime > when) minTime = when;
                 if (maxTime < when) maxTime = when;
             }
             for (Task s : goal) {
-                if (s == null || s.getSentence().isEternal()) continue;
+                if (s == null || s.isEternal()) continue;
                 long when = s.getOccurrenceTime();
                 if (minTime > when) minTime = when;
                 if (maxTime < when) maxTime = when;
@@ -536,9 +536,9 @@ public class ConceptPanelBuilder extends NARReaction {
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
             for (Task s : belief)
-                draw(g, s.sentence, true);
+                draw(g, s, true);
             for (Task s : goal)
-                draw(g, s.sentence, false);
+                draw(g, s, false);
 
 
             // "now" axis

@@ -238,7 +238,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         
         if (o instanceof Task) {
             
-            Sentence s = ((Task) o).sentence;
+            Sentence s = ((Task) o);
             if (s!=null) {
                 if (s.isQuestion() && !showQuestions) {
                     return;

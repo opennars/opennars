@@ -89,7 +89,7 @@ public class TestNARNode  {
                     if (event == Events.OUT.class) {
                         Task t= (Task)args[0];
                         if (t.getPriority() > speakThreshold)
-                            say(t.sentence.toString());
+                            say(t.toString());
                     }
 
                 }

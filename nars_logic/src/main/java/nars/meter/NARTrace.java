@@ -99,11 +99,11 @@ public class NARTrace extends MemoryReaction {
 
         @Override
         public String toString() {
-            return "Task " + type + " (" + task.getHistory() + "): " + task.getBudget().getBudgetString();
+            return "Task " + type + " (" + task.getLog() + "): " + task.getBudget().getBudgetString();
         }
         @Override
         public String toLabel() {
-            return "Task " + type + " (" + task.getHistory()  + "):\n" + task.name();
+            return "Task " + type + " (" + task.getLog()  + "):\n" + task.name();
         }
     }
 

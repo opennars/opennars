@@ -17,6 +17,7 @@ import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
+import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -92,44 +93,44 @@ public class NarseseParserTest {
         assertEquals('!', t.getPunctuation());
         assertEquals(0.99f, t.getPriority(), 0.001);
         assertEquals(0.95f, t.getDurability(), 0.001);
-        assertEquals(0.93f, t.sentence.getTruth().getFrequency(), 0.001);
-        assertEquals(0.95f, t.sentence.getTruth().getConfidence(), 0.001);
+        assertEquals(0.93f, t.getFrequency(), 0.001);
+        assertEquals(0.95f, t.getConfidence(), 0.001);
     }
 
     @Test
     public void testIncompleteTask() throws InvalidInputException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
-        assertEquals(Op.INHERITANCE, t.sentence.getTerm().operator());
+        assertEquals(Op.INHERITANCE, t.getTerm().operator());
         Inheritance i = (Inheritance) t.getTerm();
         assertEquals("a", i.getSubject().toString());
         assertEquals("b", i.getPredicate().toString());
         assertEquals('.', t.getPunctuation());
         assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
         assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
-        assertEquals(1f, t.sentence.getTruth().getFrequency(), 0.001);
-        assertEquals(Global.DEFAULT_JUDGMENT_CONFIDENCE, t.sentence.getTruth().getConfidence(), 0.001);
+        assertEquals(1f, t.getTruth().getFrequency(), 0.001);
+        assertEquals(Global.DEFAULT_JUDGMENT_CONFIDENCE, t.getTruth().getConfidence(), 0.001);
     }
 
     @Test
     public void testPropertyInstance() {
 
-        taskEqualsOldParser("<a --] b>.");
-        taskEqualsOldParser("<a {-- b>.");
-        taskEqualsOldParser("<a {-] b>.");
+        taskParses("<a --] b>.");
+        taskParses("<a {-- b>.");
+        taskParses("<a {-] b>.");
     }
 
     @Test
     public void testNoBudget() throws InvalidInputException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
-        assertEquals(Op.EQUIVALENCE, t.sentence.getTerm().operator());
+        assertEquals(Op.EQUIVALENCE, t.getTerm().operator());
 
         assertEquals('.', t.getPunctuation());
         assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
         assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
-        assertEquals(0f, t.sentence.getTruth().getFrequency(), 0.001);
-        assertEquals(0.93f, t.sentence.getTruth().getConfidence(), 0.001);
+        assertEquals(0f, t.getFrequency(), 0.001);
+        assertEquals(0.93f, t.getConfidence(), 0.001);
     }
 
     @Test
@@ -137,10 +138,10 @@ public class NarseseParserTest {
         String tt = "<<a <=> b> --> <c ==> d>>";
         Task t = task(tt + "?");
         assertNotNull(t);
-        assertEquals(Op.INHERITANCE, t.sentence.getTerm().operator());
+        assertEquals(Op.INHERITANCE, t.getTerm().operator());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('?', t.getPunctuation());
-        assertNull(t.sentence.truth);
+        assertNull(t.getTruth());
         assertEquals(7, t.getTerm().getComplexity());
     }
 
@@ -169,10 +170,10 @@ public class NarseseParserTest {
         String tt = "(a, b, c)";
         Task t = task(tt + "@");
         assertNotNull(t);
-        assertEquals(Op.PRODUCT, t.sentence.getTerm().operator());
+        assertEquals(Op.PRODUCT, t.getTerm().operator());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('@', t.getPunctuation());
-        assertNull(t.sentence.truth);
+        assertNull(t.getTruth());
 
     }
 
@@ -223,17 +224,17 @@ public class NarseseParserTest {
     @Test
     public void testShortFloat() {
 
-        taskEqualsOldParser("<{a} --> [b]>. %0%");
-        taskEqualsOldParser("<a --> b>. %0.95%");
-        taskEqualsOldParser("<a --> b>. %0.9%");
-        taskEqualsOldParser("<a --> b>. %1%");
-        taskEqualsOldParser("<a --> b>. %1.0%");
+        taskParses("<{a} --> [b]>. %0%");
+        taskParses("<a --> b>. %0.95%");
+        taskParses("<a --> b>. %0.9%");
+        taskParses("<a --> b>. %1%");
+        taskParses("<a --> b>. %1.0%");
     }
 
     @Test
     public void testNegation() throws InvalidInputException {
-        taskEqualsOldParser("(--,negated).");
-        taskEqualsOldParser("(--, negated).");
+        taskParses("(--,negated).");
+        taskParses("(--, negated).");
 
         assertEquals("(--,negated)", term("(--, negated)").toString());
 
@@ -250,8 +251,8 @@ public class NarseseParserTest {
 
     @Test
     public void testOperationNoArgs() {
-        taskEqualsOldParser("believe()!");
-        taskEqualsOldParser("believe( )!");
+        taskParses("believe()!");
+        taskParses("believe( )!");
     }
 
 
@@ -272,7 +273,7 @@ public class NarseseParserTest {
 
     @Test
     public void testOperationTask() {
-        taskEqualsOldParser("break({t001},SELF)! %1.00;0.95%");
+        taskParses("break({t001},SELF)! %1.00;0.95%");
     }
 
     @Test
@@ -366,7 +367,7 @@ public class NarseseParserTest {
 
     @Test
     public void testEscape() throws InvalidInputException {
-        taskEqualsOldParser("<a --> \"a\">.");
+        taskParses("<a --> \"a\">.");
         assertTrue(task("<a --> \"a\">.").toString().contains("<a --> \"a\">."));
     }
 
@@ -396,13 +397,13 @@ public class NarseseParserTest {
 
     @Test
     public void testSimpleTask() {
-        taskEqualsOldParser("(-,mammal,swimmer). %0.00;0.90%");
+        taskParses("(-,mammal,swimmer). %0.00;0.90%");
 
     }
 
     @Test
     public void testCompleteTask() {
-        taskEqualsOldParser("$0.80;0.50;0.95$ <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.90%");
+        taskParses("$0.80;0.50;0.95$ <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.90%");
     }
 
     @Test
@@ -413,16 +414,16 @@ public class NarseseParserTest {
         assertEquals("index psuedo-term should not count toward its size", 2, t.length());
     }
 
-    private void taskEqualsOldParser(String s) {
+    private void taskParses(String s) {
         Task t = task(s);
         assertNotNull(t);
-        Task u = oldParser.parseTaskOld(s, true);
-        assertNotNull(u);
-
-        assertEquals(u.getTerm() + " != " + t.getTerm(), u.getTerm(), t.getTerm());
-        assertEquals("(truth) " + t.getTruth() + " != " + u.getTruth(), u.getTruth(), t.getTruth());
-        //assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), u.getCreationTime(), t.getCreationTime());
-        assertEquals("(occurrencetime) " + u.getOccurrenceTime() + " != " + t.getOccurrenceTime(), u.getOccurrenceTime(), t.getOccurrenceTime());
+//        Task u = oldParser.parseTaskOld(s, true);
+//        assertNotNull(u);
+//
+//        assertEquals(u.getTerm() + " != " + t.getTerm(), u.getTerm(), t.getTerm());
+//        assertEquals("(truth) " + t.getTruth() + " != " + u.getTruth(), u.getTruth(), t.getTruth());
+//        //assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), u.getCreationTime(), t.getCreationTime());
+//        assertEquals("(occurrencetime) " + u.getOccurrenceTime() + " != " + t.getOccurrenceTime(), u.getOccurrenceTime(), t.getOccurrenceTime());
         //TODO budget:
         //TODO punctuation:
     }
@@ -654,8 +655,8 @@ public class NarseseParserTest {
             Sentence sentence = parseSentenceOld(buffer, newStamp, Stamp.TIMELESS);
             if (sentence == null) return null;
 
-            Budget budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
-            Task task = new Task(sentence, budget, null, null);
+            Budget budget = parseBudget(budgetString, sentence.getPunctuation(), sentence.getTruth());
+            Task task = new DefaultTask(sentence, budget, null, null);
             return task;
 
         }

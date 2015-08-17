@@ -304,7 +304,7 @@ public class LocalRules {
      */
     public static Task matchReverse(final Premise p) {
         final Task task = p.getTask();
-        final Sentence belief = p.getBelief();
+        final Task belief = p.getBelief();
 
         if (TemporalRules.matchingOrder(task.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
             if (task.isJudgment()) {

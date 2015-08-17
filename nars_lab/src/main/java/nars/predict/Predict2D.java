@@ -185,7 +185,7 @@ public class Predict2D extends JPanel {
                 if (!c.getBeliefs().isEmpty()) {
                     for (Task s : c.getBeliefs()) {
 
-                        if (s.getSentence().isEternal()) continue;
+                        if (s.isEternal()) continue;
                         long o = s.getOccurrenceTime();
                         if (o < whenStart) continue;
                         if (o > whenStop) continue;
@@ -220,7 +220,7 @@ public class Predict2D extends JPanel {
 
                 if (!c.getBeliefs().isEmpty()) {
                     for (Task t : c.getBeliefs()) {
-                        final Sentence s = t.sentence;
+                        final Sentence s = t;
 
                         if (s.isEternal()) continue;
                         long o = s.getOccurrenceTime();
@@ -228,7 +228,7 @@ public class Predict2D extends JPanel {
                         if (o < when) continue;
 
                         float futureFactor = 1.0f / (1.0f + Math.abs(o - when));
-                        expect[level] += s.truth.getFrequency() * s.truth.getConfidence() * futureFactor;
+                        expect[level] += s.getFrequency() * s.getConfidence() * futureFactor;
                     }
                 }
 

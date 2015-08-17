@@ -75,13 +75,13 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
                 concept.getBeliefs().top();
         if (s == null) return 0f;
 
-        return getQSentence(s.sentence);
+        return getQSentence(s);
     }
 
     /** gets the Q-value scalar from the best belief or goal of a state=/>action concept */
     public static double getQSentence(Sentence s) {
 
-        Truth t = s.truth;
+        Truth t = s.getTruth();
         if (t == null) return 0f;
 
         //TODO try expectation
@@ -148,7 +148,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
             ).present().truth(nextFreq, qUpdateConfidence).get();
 
-            t.mulPriority(priorityGain);
+            t.getBudget().mulPriority(priorityGain);
 
             commitDirect(t);
 

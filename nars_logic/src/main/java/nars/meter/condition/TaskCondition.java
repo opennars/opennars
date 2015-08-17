@@ -379,7 +379,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
             x += "Similar:\n";
             for (Map.Entry<Double,Task> et : similar.entrySet()) {
                 Task tt = et.getValue();
-                x += Texts.n4(et.getKey().floatValue()) + ' ' + tt.toString() + ' ' + tt.getHistory() + '\n';
+                x += Texts.n4(et.getKey().floatValue()) + ' ' + tt.toString() + ' ' + tt.getLog() + '\n';
             }
         }
         else {
@@ -388,7 +388,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         if (removals!=null) {
             x += " Matching removals:\n";
             for (Task t : removals)
-                x += t.toString() + ' ' + t.getHistory() + '\n';
+                x += t.toString() + ' ' + t.getLog() + '\n';
         }
         return x;
     }

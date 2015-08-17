@@ -116,7 +116,7 @@ public class PerceptionAccel extends NARReaction {
                     break;
                 }
                 Task current = eventbuffer.get(j);
-                evBase.addAll(current.getEvidentialSet());
+                evBase.addAll(current.getEvidence());
 
                 relterms[k++] = current.getTerm();
                 if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
@@ -241,7 +241,7 @@ public class PerceptionAccel extends NARReaction {
                             .budget(UtilityFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
                             .parent(task, newEvent)
                             .occurrNow()
-                            .setEvidentialSet(Stamp.toSetArray(evBase.toArray()))
+                            .setEvidence(Stamp.toSetArray(evBase.toArray()))
                             .temporalInductable(!longest_result_derived_already)
             );
 

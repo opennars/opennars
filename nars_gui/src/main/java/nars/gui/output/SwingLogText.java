@@ -180,19 +180,19 @@ public class SwingLogText extends SwingText {
         } else {
             if (o instanceof Task) {
                 Task t = (Task) o;
-                Sentence s = t.sentence;
+                Sentence s = t;
                 if (s != null) {
                     priority = t.getPriority();
                     printBlock(LogPanel.getPriorityColor(priority), "  ");
 
-                    Truth tv = s.truth;
+                    Truth tv = s.getTruth();
                     if (tv != null) {
                         printBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
                         printBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");
                     } else if (t.getBestSolution() != null) {
                         printBlock(LogPanel.getStatementColor('=', priority), "    ");
                     } else {
-                        printBlock(LogPanel.getStatementColor(s.punctuation, priority), "    ");
+                        printBlock(LogPanel.getStatementColor(s.getPunctuation(), priority), "    ");
                     }
                 }
             }

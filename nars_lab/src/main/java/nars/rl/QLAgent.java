@@ -350,11 +350,11 @@ public class QLAgent<S extends Term> extends NARAgent {
 
     public void sense(Task environmentState) {
         if (ql.stateChanged(environmentState)) {
-            environmentState.mulPriority(ql.sensedStatePriorityChanged);
+            environmentState.getBudget().mulPriority(ql.sensedStatePriorityChanged);
         }
         else {
             //float sensedStatePrioritySame = 1.0f - environmentState.getTruth().getConfidence();
-            environmentState.mulPriority(ql.sensedStatePrioritySame);
+            environmentState.getBudget().mulPriority(ql.sensedStatePrioritySame);
         }
         ql.input(environmentState);
     }
@@ -402,7 +402,7 @@ public class QLAgent<S extends Term> extends NARAgent {
                 //float confidence = i.sentence.truth.getConfidence();
                 //double currentTaskExpectation = freq * confidence;
 
-                S state = (S) i.sentence.getTerm();
+                S state = (S) i.getTerm();
 
 
                 //brain.qlearn(lastAction, , reward, nextAction, freq * confidence);

@@ -81,7 +81,7 @@ public class MultiModePanel extends NPanel implements Reaction<Class> {
         
         
         if (object instanceof Task) {
-            label = ((Task)object).sentence.toString();
+            label = ((Task)object).toString();
         }
         else {
             label = object.toString();

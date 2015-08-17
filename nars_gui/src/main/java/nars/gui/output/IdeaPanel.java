@@ -231,7 +231,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction<Class> {
         Idea i = ideas.get(t);
         if (i==null)
             return;
-        update(i, t);
+        update(i, t.getBudget());
     }
 
     protected void update(Idea i, Budget currentTaskBudget) {
@@ -264,7 +264,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction<Class> {
     protected void onOutputConcept(Concept c, Task t) {
         Idea i = ideas.get(c);
         if (t!=null)
-            update(i, t);
+            update(i, t.getBudget());
         else
             update(i, null);
     }

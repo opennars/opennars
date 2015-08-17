@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.budget.DirectBudget;
 import nars.io.JSONOutput;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -23,49 +22,24 @@ import java.util.Arrays;
  * <p>
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
-public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp {
-
-    transient public final Memory memory;
-
-    protected int duration;
-
-    protected long creationTime = Stamp.TIMELESS;
-    protected long occurrenceTime = Stamp.TIMELESS;
-
-    private long[] evidentialSet;
+public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stamp {
 
 
-    private T term;
-    private char punc;
-    private Truth truth;
+    private final Memory memory;
 
-    private Task parent;
-    private Task parentBelief;
-    private Task solutionBelief;
-
-    private Operation cause;
-    private String reason;
-
-    private boolean temporalInducatable = true;
-    private boolean cyclic = false;
-
-
-
-    //@Deprecated private long occDelta = 0;
-
-
-
-
-    public TaskSeed(Memory memory) {
-        super();
-        this.memory = memory;
+    public static <C extends Compound> TaskSeed<C> make(Memory memory, C t) {
+        t = t.normalized();
+        if (t == null)
+            return null;
+        return new TaskSeed(memory, t);
     }
 
-    public TaskSeed(Memory memory, T t) {
+    TaskSeed(Memory memory, T t) {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
-        this(memory);
+        super(t, (char)0, null, 0, 0, 0);
 
-        this.duration = memory.duration();
+        this.memory = memory;
+        setDuration(memory.duration());
         this.term = t.normalized();
     }
 
@@ -79,8 +53,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
 
     @Override
-    public TaskSeed setOccurrenceTime(long occurrenceTime) {
-        this.occurrenceTime = occurrenceTime;
+    public TaskSeed<T> setOccurrenceTime(long occurrenceTime) {
+        super.setOccurrenceTime(occurrenceTime);
         return this;
     }
 
@@ -91,8 +65,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
 
     @Override
-    public TaskSeed setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
+    public TaskSeed<T> setCreationTime(long creationTime) {
+        super.setCreationTime(creationTime);
         return this;
     }
 
@@ -102,50 +76,49 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
      */
     @Override
     public int getDuration() {
-        if (this.duration == 0) {
-            int d;
+        int duration = super.getDuration();
+        if (duration == 0) {
+            int d = 0;
             if (getParentBelief() !=null) {
-                d = (this.duration = getParentBelief().getDuration());
+                d = getParentBelief().getDuration();
                 if (d!=0) return d;
             }
-            if (getParentTask() !=null) {
-                d = (this.duration = getParentTask().getDuration());
-                if (d!=0) return d;
+            else if (d == 0 && getParentTask() !=null) {
+                d = getParentTask().getDuration();
             }
-            else {
-                return memory.duration();
-            }
+
+            if (d!=0) setDuration(d);
         }
         return duration;
     }
 
 
-    @Override
+    @Deprecated @Override
     public void applyToStamp(final Stamp target) {
         target.setDuration(getDuration())
                 .setTime(getCreationTime(), getOccurrenceTime())
-                .setEvidence(getEvidentialSet())
+                .setEvidence(getEvidence())
                 .setCyclic(isCyclic());
 
     }
 
     @Override
-    public long[] getEvidentialSet() {
+    public long[] getEvidence() {
         updateEvidence();
-        return evidentialSet;
+        return super.getEvidence();
     }
 
 
 
     protected void updateEvidence() {
-        if (evidentialSet== null) {
+        if (super.getEvidence() == null) {
 
             if ((getParentTask() == null) && (getParentBelief() == null)) {
                 //supplying no evidence will be assigned a new serial
                 //but this should only happen for input tasks (with no parent)
             } else if (isDouble()) {
-                long[] as = getParentTask().getEvidentialSet();
-                long[] bs = getParentBelief().getEvidentialSet();
+                long[] as = getParentTask().getEvidence();
+                long[] bs = getParentBelief().getEvidence();
 
                 //temporary
                 if (as == null)
@@ -153,7 +126,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
                 if (bs == null)
                     throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
 
-                setEvidentialSet(Stamp.toSetArray(Stamp.zip(as, bs)));
+                setEvidence(Stamp.toSetArray(Stamp.zip(as, bs)));
 
                 if (getParentTask().isInput() || getParentBelief().isInput()) {
                     setCyclic(false);
@@ -167,7 +140,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
                     */
                     boolean bothParentsCyclic = getParentTask().isCyclic() && getParentBelief().isCyclic();
 
-                    boolean overlapBetweenParents = ((as.length + bs.length) > evidentialSet.length);
+                    boolean overlapBetweenParents = ((as.length + bs.length) > getEvidence().length);
 
                     //if the sum of the two parents length is greater than the result then there was some overlap
                     setCyclic(bothParentsCyclic || overlapBetweenParents);
@@ -182,7 +155,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
                 else if (getParentBelief() == null) p = getParentTask();
 
                 if (p!=null) {
-                    setEvidentialSet(p.getEvidentialSet());
+                    setEvidence(p.getEvidence());
                     setCyclic(p.isCyclic());
                 }
             }
@@ -221,15 +194,16 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
     protected boolean ensureBudget() {
-        if (isBudgetValid()) return true;
-        if (truth == null) return false;
+        //if (getBudget().isBudgetValid()) return true;
+        if (getTruth() == null) return false;
 
-        this.priority = Budget.newDefaultPriority(punc);
-        this.durability = Budget.newDefaultDurability(punc);
+        final char punc = getPunctuation();
+        setPriority( Budget.newDefaultPriority(punc) );
+        setDurability( Budget.newDefaultDurability(punc) );
 
         /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
         if (Float.isNaN(quality)) {
-            quality = BudgetFunctions.truthToQuality(truth);
+            setQuality( BudgetFunctions.truthToQuality(truth) );
         }
 
         return true;
@@ -296,22 +270,22 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
     public TaskSeed<T> judgment() {
-        this.punc = Symbols.JUDGMENT;
+        setPunctuation( Symbols.JUDGMENT );
         return this;
     }
 
     public TaskSeed<T> question() {
-        this.punc = Symbols.QUESTION;
+        setPunctuation( Symbols.QUESTION );
         return this;
     }
 
     public TaskSeed<T> quest() {
-        this.punc = Symbols.QUEST;
+        setPunctuation( Symbols.QUEST );
         return this;
     }
 
     public TaskSeed<T> goal() {
-        this.punc = Symbols.GOAL;
+        setPunctuation( Symbols.GOAL );
         return this;
     }
 
@@ -400,15 +374,13 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
      * attempt to build the task. returns non-null if successful
      */
     public Task get() {
+        final char punc = getPunctuation();
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
         if ((truth == null) && !((punc == Symbols.QUEST) || (punc == Symbols.QUESTION))) {
             truth = new DefaultTruth(punc);
         }
-
-//
-
 
 
         Compound sentenceTerm = getTerm();
@@ -422,45 +394,50 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
             }
         }
 
-        if (getEvidentialSet() == null) {
+        if (getEvidence() == null) {
             if (getParentTask() != null)
                 throw new RuntimeException(this + " has parent " + getParentTask() + " and " + getParentBelief() + " yet no evidentialBase was supplied");
 
-            setEvidentialSet(new long[]{memory.newStampSerial()});
+            setEvidence(new long[]{memory.newStampSerial()});
 
         } else {
             if (getParentTask() == null && getParentBelief()==null)
-                throw new RuntimeException(this + " has no parent task or belief so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialSet()));
+                throw new RuntimeException(this + " has no parent task or belief so where did the evidentialBase originate?: " + Arrays.toString(getEvidence()));
         }
 
 
-        Task t = new DefaultTask(sentenceTerm, punc,
+        /*Task t = new DefaultTask(sentenceTerm, punc,
                 (truth != null) ? new DefaultTruth(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
                 getBudget(),
                 getParentTask(),
                 getParentBelief(),
-                solutionBelief);
+                solutionBelief);*/
 
-        applyToStamp(t);
+        setDuration(getDuration())
+                .setTime(getCreationTime(), getOccurrenceTime())
+                .setEvidence(getEvidence())
+                .setCyclic(isCyclic());
 
-        t.setTemporalInducting(temporalInducatable);
+        //applyToStamp(t);
 
-        if (this.cause != null) t.setCause(cause);
-        if (this.reason != null) t.log(reason);
+        //setTemporalInducting(temporallyInductable);
 
-        return t;
+        //if (this.cause != null) t.setCause(cause);
+        //if (this.reason != null) t.log(reason);
+
+        return this;
     }
 
 
     @Override
-    public TaskSeed setEvidentialSet(long[] evidentialSet) {
-        this.evidentialSet = evidentialSet;
+    public TaskSeed setEvidence(long[] evidentialSet) {
+        super.setEvidence(evidentialSet);
         return this;
     }
 
     @Override
     public TaskSeed setDuration(int d) {
-        this.duration = d;
+        super.setDuration(d);
         return this;
     }
 
@@ -470,6 +447,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
      */
     @Override
     public long getCreationTime() {
+        long creationTime = super.getCreationTime();
 //        if (creationTime == Stamp.ETERNAL) {
 //            throw new RuntimeException("creation time should be specified or timeless, not eternal");
 //        }
@@ -477,16 +455,10 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
             //Default: created now
             return memory.time();
         }
-        return  creationTime;
+        return creationTime;
     }
 
-    /**
-     * estimated occurrence time of the event*
-     */
-    @Override
-    public long getOccurrenceTime() {
-        return occurrenceTime;
-    }
+
 
 
     @Override
@@ -503,22 +475,13 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
 
 
-    private Budget getBudget() {
+    @Override public Budget getBudget() {
         ensureBudget();
-        return this;
+        return super.getBudget();
     }
-
-    public Task getParentTask() {
-        return parent;
-    }
-
-    public Task getParentBelief() {
-        return parentBelief;
-    }
-
 
     public TaskSeed<T> punctuation(final char punctuation) {
-        this.punc = punctuation;
+        setPunctuation(punctuation);
         return this;
     }
 
@@ -529,12 +492,12 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
     public TaskSeed<T> cause(Operation operation) {
-        this.cause = operation;
+        setCause(operation);
         return this;
     }
 
     public TaskSeed<T> reason(String reason) {
-        this.reason = reason;
+        log(reason);
         return this;
     }
 
@@ -547,13 +510,12 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
 
-    /**
-     * if a stamp exists, determine if it will be cyclic;
-     * otherwise assume that it is not.
-     */
-    @Override
-    public boolean isCyclic() {
-        if (getEvidentialSet() != null) {
+    protected boolean calculateCyclic() {
+
+        if (getEvidence() != null) {
+
+            boolean cyclic = true;
+
             //HACK when Stamp and parents are unified the extra conditoins here will not be necessary:
             if (getParentTask()!=null && getParentTask().isInput()) {
                 cyclic = false;
@@ -565,25 +527,18 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
             return cyclic;
         }
 
-//        if ((stamp != null) && (stamp instanceof StampEvidence))
-//            return ((StampEvidence) stamp).isCyclic();
-
-        throw new RuntimeException(this + " has no evidence to determine cyclicity");
+        return false;
     }
 
-    @Override
-    public void setCyclic(boolean cyclic) {
-        this.cyclic = cyclic;
-    }
 
     public TaskSeed<T> parent(final Task parentTask, final Task parentBelief) {
-        this.parent = parentTask;
-        this.parentBelief = parentBelief;
+        setParentTask(parentTask);
+        setParentBelief(parentBelief);
         return this;
     }
 
     public TaskSeed<T> solution(Task solutionBelief) {
-        this.solutionBelief = solutionBelief;
+        setBestSolution(memory, solutionBelief);
         return this;
     }
 
@@ -592,37 +547,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         return this;
     }
 
-
-
-    public boolean isGoal() {
-        return punc == Symbols.GOAL;
-    }
-
-    public boolean isJudgment() {
-        return punc == Symbols.JUDGMENT;
-    }
-
-    public boolean isQuestion() {
-        return punc == Symbols.QUESTION;
-    }
-
-    public boolean isQuest() {
-        return punc == Symbols.QUEST;
-    }
-
-    public T getTerm() {
-        return this.term;
-    }
-
-    public Truth getTruth() {
-        return truth;
-    }
-
-
-
-    public char getPunctuation() {
-        return punc;
-    }
 
 //    @Override
 //    public void applyToStamp(Stamp target) {
@@ -646,7 +570,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
 
     public TaskSeed<T> temporalInductable(boolean b) {
-        this.temporalInducatable = b;
+        setTemporalInducting(b);
         return this;
     }
 
@@ -670,10 +594,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
     public TaskSeed<T> occurrNow() {
         return setOccurrenceTime(memory.time());
-    }
-
-    public boolean temporalInductable() {
-        return temporalInducatable;
     }
 
 

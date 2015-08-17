@@ -44,8 +44,8 @@ public class Vision extends JFrame {
         String narsese = PerceptionToNarseseTransformer.translateToNarsese(perceptionDescriptor.sampleSensors(), "primitivevision");
 
         Task t = nar.task(narsese);
-        t.truth.setFrequency(1f);
-        t.truth.setConfidence(0.5f);
+        t.getTruth().setFrequency(1f);
+        t.getTruth().setConfidence(0.5f);
 
         nar.frame(1);
         nar.frame(1);

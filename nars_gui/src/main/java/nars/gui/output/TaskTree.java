@@ -163,9 +163,9 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
     }
 
     protected boolean isVisible(final Task t) {
-        if ((t.sentence.isJudgment()) && (!showingJudgments)) return false;
-        if ((t.sentence.isQuestion()) && (!showingQuestions)) return false;
-        if ((t.sentence.isGoal()) && (!showingGoals)) return false;
+        if ((t.isJudgment()) && (!showingJudgments)) return false;
+        if ((t.isQuestion()) && (!showingQuestions)) return false;
+        if ((t.isGoal()) && (!showingGoals)) return false;
         return t.getPriority() >= priorityThreshold;
     }
 
@@ -326,7 +326,7 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
                 priSlider = new NSlider(0.5f, 0, 1f) {
                     @Override
                     public void onChange(float v) {
-                        t.setPriority(v);
+                        t.getBudget().setPriority(v);
                     }
                 };
                 priSlider.setPrefix("Pri");

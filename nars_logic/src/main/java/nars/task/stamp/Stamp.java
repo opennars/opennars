@@ -165,7 +165,7 @@ public interface Stamp extends Cloneable, Serializable {
 
         if (a == b) return true;
 
-        return overlapping(a.getEvidentialSet(), b.getEvidentialSet());
+        return overlapping(a.getEvidence(), b.getEvidence());
     }
 
 
@@ -247,7 +247,7 @@ public interface Stamp extends Cloneable, Serializable {
     }
 
     default public float getOriginality() {
-        return 1.0f / (getEvidentialSet().length + 1);
+        return 1.0f / (getEvidence().length + 1);
     }
 //
 //    /**
@@ -296,7 +296,7 @@ public interface Stamp extends Cloneable, Serializable {
             if (a.length != b.length) return false;
             for (int i = a.length - 1; i >= 0; i--)
                 if (a[i] != b[i]) return false;*/
-            return Arrays.equals(getEvidentialSet(), s.getEvidentialSet());
+            return Arrays.equals(getEvidence(), s.getEvidence());
         }
 
 
@@ -355,7 +355,7 @@ public interface Stamp extends Cloneable, Serializable {
 
     default public CharSequence stampAsStringBuilder() {
 
-        final int len = getEvidentialSet().length;
+        final int len = getEvidence().length;
         final int estimatedInitialSize = 8 + (len * 3);
 
         final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
@@ -371,7 +371,7 @@ public interface Stamp extends Cloneable, Serializable {
         buffer.append(Symbols.STAMP_STARTER).append(' ');
         for (int i = 0; i < len; i++) {
 
-            buffer.append(Long.toString(getEvidentialSet()[i], 36));
+            buffer.append(Long.toString(getEvidence()[i], 36));
             if (i < (len - 1)) {
                 buffer.append(Symbols.STAMP_SEPARATOR);
             }
@@ -390,9 +390,9 @@ public interface Stamp extends Cloneable, Serializable {
     /** deduplicated and sorted version of the evidentialBase.
      * this can always be calculated deterministically from the evidentialBAse
      * since it is the deduplicated and sorted form of it. */
-    abstract public long[] getEvidentialSet();
+    abstract public long[] getEvidence();
 
-    abstract public Stamp setEvidentialSet(long[] evidentialSet);
+    abstract public Stamp setEvidence(long... evidentialSet);
 
     public boolean isCyclic();
 
@@ -476,10 +476,6 @@ public interface Stamp extends Cloneable, Serializable {
 //
 //    }
 
-    default Stamp setEvidence(long[] evidentialSet) {
-        setEvidentialSet(evidentialSet);
-        return this;
-    }
 
     default Stamp setTime(long creation, long occurrence) {
         setCreationTime(creation);

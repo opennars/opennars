@@ -48,7 +48,7 @@ import java.util.*;
 public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Serializable {
 
     public char getPunctuation();
-    public long[] getEvidentialSet();
+    public long[] getEvidence();
     public long getCreationTime();
     public long getOccurrenceTime();
     public int getDuration();

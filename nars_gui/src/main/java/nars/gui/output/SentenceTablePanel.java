@@ -188,27 +188,27 @@ public class SentenceTablePanel extends TablePanel {
             Task t = (Task) o;
             float priority = t.getPriority();
 
-            Sentence s = t.sentence;
+
 
             float freq = -1;
             float conf = -1;
-            Truth truth = s.truth;
+            Truth truth = t.getTruth();
             if (truth != null) {
                 freq = truth.getFrequency();
                 conf = truth.getConfidence();
             }
 
             Task pt = t.getParentTask();
-            String parentTask = (pt != null) ? pt.toStringWithBudget() : "";
+            String parentTask = (pt != null) ? pt.getBudget().toBudgetString() : "";
 
             //TODO use table sorted instead of formatting numbers with leading '0's
             data.addRow(new Object[]{
                 String.format("%08d", nar.time()),
-                s,
-                s.punctuation,
+                t,
+                t.getPunctuation(),
                 freq == -1 ? "" : freq,
                 conf == -1 ? "" : conf,
-                String.format("%03d", s.getTerm().getComplexity()),
+                String.format("%03d", t.getTerm().getComplexity()),
                 priority,
                 parentTask
             });

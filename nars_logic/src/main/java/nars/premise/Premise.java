@@ -176,9 +176,6 @@ public interface Premise {
         return newTask(term).punctuation(punc);
     }
 
-    default public <C extends Compound> TaskSeed<C> newTask() {
-        return new TaskSeed<C>(getMemory());
-    }
 
     /** queues a derivation during a reasoning process.
      * this is in order to combine duplicates at the end before inputting to memory */

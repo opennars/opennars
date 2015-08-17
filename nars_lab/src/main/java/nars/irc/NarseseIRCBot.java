@@ -84,7 +84,7 @@ public class NarseseIRCBot extends IRCBot {
             }
 
             Task t = (Task)args[0];
-            float pri = t.summary();
+            float pri = t.getBudget().summary();
 
             prioritiesSendable.addValue(pri);
 

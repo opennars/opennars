@@ -213,7 +213,7 @@ public interface BeliefTable extends TaskTable {
 
     default void print(PrintStream out) {
         for (Task t : this) {
-            System.out.println(t + " " + t.getHistory());
+            System.out.println(t + " " + t.getLog());
         }
     }
 

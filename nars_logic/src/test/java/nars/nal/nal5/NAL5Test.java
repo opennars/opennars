@@ -147,7 +147,7 @@ public class NAL5Test extends JavaNALTest {
 
         @Override public void event(Class event, Object[] args) {
             Task t = (Task)args[0];
-            System.out.println("Derived: " + t + " " + t.getSentence() + " "  + t.getHistory());
+            System.out.println("Derived: " + t + " "  + t.getLog());
         }
 
     }

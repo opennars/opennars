@@ -69,7 +69,7 @@ public class LogicPerformance {
             addVertex(t);
             at(t, t.getCreationTime());
             
-            Sentence s = t.sentence;
+            final Sentence s = t;
             if (!s.isEternal()) {
                 at(t, s.getOccurrenceTime(), "o");
             }

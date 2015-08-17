@@ -29,6 +29,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
+import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -253,12 +254,12 @@ public class NarseseParser extends BaseParser<Object> {
         if (ccontent==null) return null;
 
 
-        Task ttt = new Task(ccontent, p, t, B, null, null, null);
+        Task ttt = new DefaultTask(ccontent, p, t, B, null, null, null);
         ttt.setCreationTime(Stamp.TIMELESS);
 
         //TODO support some way of allowing memory to be null using non-Memory interfaces supplied to constructor
         ttt.setOccurrenceTime(tense, memory.duration());
-        ttt.setEvidentialSet(new long[] { memory.newStampSerial() });
+        ttt.setEvidence(new long[] { memory.newStampSerial() });
 
         return ttt;
 
