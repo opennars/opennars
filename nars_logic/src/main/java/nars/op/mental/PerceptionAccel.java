@@ -60,7 +60,7 @@ public class PerceptionAccel extends NARReaction {
     public void event(Class event, Object[] args) {
         if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
             Task newEvent = (Task) args[0];
-            if (/*newEvent.isInput() &&*/ newEvent.sentence.isJudgment() && !newEvent.sentence.isEternal()) {
+            if (/*newEvent.isInput() &&*/ newEvent.isJudgment() && !newEvent.isEternal()) {
 
                 NAL nal = (NAL) args[1];
 
@@ -103,7 +103,7 @@ public class PerceptionAccel extends NARReaction {
             //thus it are 2*Len-1] terms
 
             Task newEvent = eventbuffer.get(eventbuffer.size() - 1);
-            Truth truth = newEvent.sentence.truth;
+            Truth truth = newEvent.getTruth();
 
             evBase.clear();
 
@@ -116,11 +116,11 @@ public class PerceptionAccel extends NARReaction {
                     break;
                 }
                 Task current = eventbuffer.get(j);
-                evBase.addAll(current.sentence.getEvidentialSet());
+                evBase.addAll(current.getEvidentialSet());
 
-                relterms[k++] = current.sentence.getTerm();
+                relterms[k++] = current.getTerm();
                 if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
-                    truth = TruthFunctions.deduction(truth, current.sentence.truth);
+                    truth = TruthFunctions.deduction(truth, current.getTruth());
                     Task next = eventbuffer.get(j + 1);
 
                     long dt = next.getOccurrenceTime() - current.getOccurrenceTime();
@@ -145,7 +145,7 @@ public class PerceptionAccel extends NARReaction {
 
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
-            boolean after = newEvent.sentence.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)).sentence, nal.memory.param.duration.get());
+            boolean after = newEvent.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)).sentence, nal.memory.param.duration.get());
 
             //critical part: (not checked for correctness yet):
             //we now have to look at if the first half + the second half already exists as concept, before we add it

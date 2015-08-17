@@ -163,10 +163,10 @@ public class TemporalRules {
     public static boolean containsMentalOperator(final Task t) {
         return containsMentalOperator(t.getTerm(), true);
         /*
-        if(!(t.sentence.term instanceof Operation))
+        if(!(t.term instanceof Operation))
             return false;
 
-        Operation o= (Operation)t.sentence.term;
+        Operation o= (Operation)t.term;
         return (o.getOperator() instanceof Mental);
         */
     }
@@ -248,7 +248,7 @@ public class TemporalRules {
 
     public static void temporalInduction(final Sentence snext, final Sentence sprev, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
 
-        if ((snext.truth==null) || (sprev.truth==null) || (!snext.isJudgment()) || (!sprev.isJudgment()))
+        if (!snext.isJudgment() || !sprev.isJudgment())
             return;
 
         Term t1 = snext.getTerm();
@@ -392,8 +392,8 @@ public class TemporalRules {
 
 
         int order = order(timeDiff, durationCycles);
-        Truth givenTruth1 = snext.truth;
-        Truth givenTruth2 = sprev.truth;
+        Truth givenTruth1 = snext.getTruth();
+        Truth givenTruth2 = sprev.getTruth();
         //   TruthFunctions.
         Truth truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
         Budget budget1 = truth1!=null ? BudgetFunctions.forward(truth1, nal) : null;
@@ -547,14 +547,14 @@ public class TemporalRules {
         
         */
         if (s1.isJudgment()) { //necessary check?
-            Sentence belief=task.sentence;
+            Sentence belief=task;
             Concept S1_State_C=nal.memory.concept(s1.getTerm());
             if(S1_State_C != null && S1_State_C.hasGoals() &&
                     !(((Statement) belief.getTerm()).getPredicate() instanceof Operation)) {
                 Task a_desire = S1_State_C.getGoals().top();
 
 //                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
-//                        new DefaultTruth(1.0f,0.99f), a_desire.sentence);
+//                        new DefaultTruth(1.0f,0.99f), a_desire);
 //
 //
 //                g.setOccurrenceTime(s1.getOccurrenceTime());
@@ -565,9 +565,9 @@ public class TemporalRules {
                 Task strongest_desireT = S1_State_C.getGoals().top(S1_State_C.getTerm().hasVarQuery(), now, s1.getOccurrenceTime(), s1.getTruth());
 
                 Task strongest_desire = strongest_desireT.projectTask(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
-                Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.getTruth());
+                Truth T=TruthFunctions.desireDed(belief.getTruth(), strongest_desire.getTruth());
 
-                //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
+                //Stamp st=new Stamp(strongest_desire.stamp.clone(),belief.stamp, nal.memory.time());
 
                 final long occ;
                 
@@ -575,7 +575,7 @@ public class TemporalRules {
                     occ = Stamp.ETERNAL;
                 } else {
                     long shift=0;
-                    if(task.sentence.getTerm().getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                    if(task.getTerm().getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                         shift=nal.memory.duration();
                     }
                     occ = (strongest_desire.getOccurrenceTime()-shift);
@@ -604,17 +604,17 @@ public class TemporalRules {
 
 
     private static Task questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
-        if(!(task.sentence.getTerm() instanceof Implication)) return null;
+        if(!(task.getTerm() instanceof Implication)) return null;
 
         if(nal.memory.emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
                 && Global.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF
-                && task.sentence.punctuation==Symbols.JUDGMENT
+                && task.isJudgment()
                 && conf<Global.CURIOSITY_CONFIDENCE_THRESHOLD
                 && task.getPriority()>Global.CURIOSITY_PRIORITY_THRESHOLD) {
 
                 boolean valid=false;
 
-                Implication equ=(Implication) task.sentence.getTerm();
+                Implication equ=(Implication) task.getTerm();
                 if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
                     valid=true;
                 }
@@ -661,7 +661,7 @@ public class TemporalRules {
             throw new RuntimeException("problem or solution is null");
         }*/
 
-        Truth truth = solution.truth;
+        Truth truth = solution.getTruth();
         if (problem.getOccurrenceTime()!=solution.getOccurrenceTime()) {
             truth = solution.projection(problem.getOccurrenceTime(), time);
         }
@@ -732,17 +732,17 @@ public class TemporalRules {
             task = nal.getCurrentTask();
             feedbackToLinks = true;
         }*/
-        boolean judgmentTask = task.sentence.isJudgment();
+        boolean judgmentTask = task.isJudgment();
         final float quality = TemporalRules.solutionQuality(problem, solution, p.time());
         if (quality <= 0)
             return null;
 
         if (judgmentTask) {
-            task.orPriority(quality);
+            task.getBudget().orPriority(quality);
         } else {
             float taskPriority = task.getPriority();
-            budget = new Budget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));
-            task.setPriority(Math.min(1 - quality, taskPriority));
+            budget = new Budget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.getTruth()));
+            task.getBudget().setPriority(Math.min(1 - quality, taskPriority));
         }
         /*
         if (feedbackToLinks) {

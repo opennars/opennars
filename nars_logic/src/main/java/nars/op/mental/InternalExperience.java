@@ -122,7 +122,7 @@ public class InternalExperience extends NARReaction {
 
     public static Operation toTerm(final Sentence s, final NAL nal, boolean enableWantBelieve) {
         Operator opTerm;
-        switch (s.punctuation) {
+        switch (s.getPunctuation()) {
             case Symbols.JUDGMENT:
                 if(!enableWantBelieve)
                     return null;
@@ -143,13 +143,13 @@ public class InternalExperience extends NARReaction {
                 return null;
         }
         
-        Term[] arg = new Term[ 1 + (s.truth==null ? 1 : 2) ];
+        Term[] arg = new Term[ 1 + (s.getTruth()==null ? 1 : 2) ];
         arg[0]=s.getTerm();
         int k = 1;
 
-        if (s.truth != null) {
+        if (s.getTruth() != null) {
             final float t = nal.memory.param.conceptCreationExpectation.floatValue();
-            arg[k++] = s.truth.toWordTerm(t);
+            arg[k++] = s.getTruth().toWordTerm(t);
         }
         arg[k] = nal.self();
         
@@ -171,7 +171,7 @@ public class InternalExperience extends NARReaction {
             TaskProcess tp = (TaskProcess)a[1];
 
             //old strategy always, new strategy only for QUESTION and QUEST:
-            char punc = task.sentence.punctuation;
+            char punc = task.getPunctuation();
             if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (punc == Symbols.QUESTION || punc == Symbols.QUEST))) {
                 experienceFromTaskInternal(tp, task, isFull());
             }
@@ -202,14 +202,14 @@ public class InternalExperience extends NARReaction {
        // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
        //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
         {
-            char punc = task.sentence.punctuation;
+            char punc = task.getPunctuation();
             if(punc == Symbols.QUESTION || punc == Symbols.QUEST) {
-                if(task.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+                if(task.getBudget().summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
                     return null;
                 }
             }
             else
-            if(task.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
+            if(task.getBudget().summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
                 return null;
             }
         }
@@ -219,8 +219,8 @@ public class InternalExperience extends NARReaction {
         if (content instanceof Operation/* ||  Memory.randomNumber.nextFloat()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
             return null;
         }
-        Sentence sentence = task.sentence;
-        Operation ret = toTerm(sentence, nal);
+
+        Operation ret = toTerm(task, nal);
         if (ret==null) {
             return null;
         }

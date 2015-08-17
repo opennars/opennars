@@ -189,7 +189,7 @@ public class DefaultConcept extends AbstractConcept {
 
     public boolean link(Task t) {
         if (linkTask(t))
-            return linkTerms(t, true);  // recursively insert TermLink
+            return linkTerms(t.getBudget(), true);  // recursively insert TermLink
         return false;
     }
 //
@@ -327,7 +327,7 @@ public class DefaultConcept extends AbstractConcept {
 //
 //        }
 
-        if (goal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
+        if (goal.getBudget().summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
             // check if the Goal is already satisfied
             Task beliefSatisfied = getBeliefs().topRanked();
@@ -376,14 +376,16 @@ public class DefaultConcept extends AbstractConcept {
 
             ArrayList<Compound> qu = new ArrayList(3);
 
-            if (Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-                if (!(task.sentence.getTerm() instanceof Equivalence) && !(task.sentence.getTerm() instanceof Implication)) {
+            final Compound term = task.getTerm();
 
-                    Implication i1 = Implication.make(how, task.sentence.getTerm(), TemporalRules.ORDER_CONCURRENT);
+            if (Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+                if (!(term instanceof Equivalence) && !(term instanceof Implication)) {
+
+                    Implication i1 = Implication.make(how, term, TemporalRules.ORDER_CONCURRENT);
                     if (i1 != null)
                         qu.add(i1);
 
-                    Implication i2 = Implication.make(how, task.sentence.getTerm(), TemporalRules.ORDER_FORWARD);
+                    Implication i2 = Implication.make(how, term, TemporalRules.ORDER_FORWARD);
                     if (i2 != null)
                         qu.add(i2);
 
@@ -391,7 +393,7 @@ public class DefaultConcept extends AbstractConcept {
             }
 
             if (Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
-                qu.add(task.sentence.getTerm());
+                qu.add(term);
             }
 
             if (qu.isEmpty()) return;
@@ -399,7 +401,7 @@ public class DefaultConcept extends AbstractConcept {
             TaskSeed<Compound> t = p.newTask()
                     .question()
                     .parent(task)
-                    .occurr(task.sentence.getOccurrenceTime()) //set tense of question to goal tense)
+                    .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
                     .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
 
             for (Compound q : qu)
@@ -420,10 +422,10 @@ public class DefaultConcept extends AbstractConcept {
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
 
         if (Global.DEBUG) {
-            if (q.sentence.truth != null) {
-                System.err.println(q.sentence + " has non-null truth");
+            if (q.getTruth() != null) {
+                System.err.println(q + " has non-null truth");
                 System.err.println(q.getExplanation());
-                throw new RuntimeException(q.sentence + " has non-null truth");
+                throw new RuntimeException(q + " has non-null truth");
             }
         }
 
@@ -466,10 +468,12 @@ public class DefaultConcept extends AbstractConcept {
      */
     protected boolean linkTask(final Task task) {
 
-        if (!task.summaryGreaterOrEqual(memory.param.taskLinkThreshold))
+        final Budget taskBudget = task.getBudget();
+
+        if (!taskBudget.summaryGreaterOrEqual(memory.param.taskLinkThreshold))
             return false;
 
-        Budget taskBudget = task;
+
         taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setTask(task);
 

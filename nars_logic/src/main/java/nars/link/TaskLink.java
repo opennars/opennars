@@ -23,7 +23,6 @@ package nars.link;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.task.Sentence;
-import nars.task.Sentenced;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
@@ -36,7 +35,7 @@ import nars.term.Termed;
  * <p>
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sentenced {
+public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
 
     /**
      * The Task linked
@@ -106,7 +105,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
 
     @Override
-    public Sentence name() { return getSentence(); }
+    public Sentence name() { return targetTask; }
 
 
 //    @Override
@@ -125,7 +124,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
             TaskLink t = (TaskLink) obj;
-            return getSentence().equals(t.getSentence());
+            return targetTask.equals(t.targetTask);
         }
         return false;
 //
@@ -193,10 +192,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         return getTarget();
     }
 
-    @Override
-    public Sentence getSentence() {
-        return targetTask.sentence;
-    }
 
 
 }

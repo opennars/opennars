@@ -3,6 +3,7 @@ package nars.meter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import nars.meter.condition.TaskCondition;
+import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 /** wrapper class for a Task that holds its explained meaning in zero
  *  or more natural languages. */
-public class ExplainableTask extends Task {
+public class ExplainableTask extends DefaultTask {
 
     public final Multimap<String,String> means = HashMultimap.create();
 
@@ -27,7 +28,7 @@ public class ExplainableTask extends Task {
     }
 
     @Deprecated public ExplainableTask(Task t) {
-        super(t.sentence, t.getBudget(), t.getParentTask(), t.getParentBelief());
+        super(t, t.getBudget(), t.getParentTask(), t.getParentBelief());
         this.task = t;
     }
 
@@ -52,7 +53,7 @@ public class ExplainableTask extends Task {
     public void printMeaning(PrintStream p) {
         if (means.isEmpty()) return;
 
-        p.println(sentence);
+        p.println(this);
 
         for (Map.Entry<String,String> x : means.entries()) {
             p.println("  " + x.getKey() + ": " + x.getValue());

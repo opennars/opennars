@@ -107,7 +107,7 @@ public class LocalRules {
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
-        Truth oldBeliefTruth = oldBelief.truth;
+        Truth oldBeliefTruth = oldBelief.getTruth();
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
@@ -172,14 +172,13 @@ public class LocalRules {
      * @param memory       Reference to the memory
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(Task belief, final Truth projectedTruth, final Task questionTask, final Premise nal) {
+    public static Task trySolution(Task belief, final Truth projectedTruth, final Task question, final Premise nal) {
 
         if (belief == null) return null;
 
 
         final Task inputBelief = belief;
 
-        Sentence question = questionTask.sentence;
         Memory memory = nal.getMemory();
 
         if (!TemporalRules.matchingOrder(question, belief)) {
@@ -225,12 +224,12 @@ public class LocalRules {
 //        }
 
 
-        Sentence oldBest = questionTask.getBestSolution();
+        Sentence oldBest = question.getBestSolution();
         if (oldBest != null) {
             float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
             if (oldQ >= newQ) {
                 //if (question.isGoal()) {
-                    memory.emotion.happy(oldQ, questionTask, nal);
+                    memory.emotion.happy(oldQ, question, nal);
                 //}
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");
@@ -239,15 +238,15 @@ public class LocalRules {
         }
 
 
-        questionTask.setBestSolution(memory, belief);
+        question.setBestSolution(memory, belief);
 
         memory.logic.SOLUTION_BEST.set(newQ);
 
         //if (question.isGoal()) {
-            memory.emotion.happy(newQ, questionTask, nal);
+            memory.emotion.happy(newQ, question, nal);
         //}
 
-        Budget budget = TemporalRules.solutionEval(question, belief, questionTask, nal);
+        Budget budget = TemporalRules.solutionEval(question, belief, question, nal);
 
 
         /*memory.output(task);
@@ -277,19 +276,19 @@ public class LocalRules {
             nal.getMemory().add(belief);
         }
         else {
-            belief.accumulate(budget);
+            belief.getBudget().accumulate(budget);
             belief.log(/*Global.DEBUG ? "Solution " + question : */"Solution");
         }
 
-        question.decPriority(budget.getPriority());
+        question.getBudget().decPriority(budget.getPriority());
 
         //Solution Activated
-        if (questionTask.sentence.punctuation == Symbols.QUESTION || questionTask.sentence.punctuation == Symbols.QUEST) {
+        if (question.isQuestOrQuestion()) {
             //if (questionTask.isInput()) { //only show input tasks as solutions
-            memory.emit(Answer.class, belief, questionTask);
+            memory.emit(Answer.class, belief, question);
         } else {
             //goal quests only show silence related
-            memory.emit(Output.class, belief, questionTask);
+            memory.emit(Output.class, belief, question);
         }
 
         return belief;
@@ -304,11 +303,11 @@ public class LocalRules {
      * @param p Reference to the memory
      */
     public static Task matchReverse(final Premise p) {
-        Task task = p.getTask();
-        Sentence belief = p.getBelief();
-        Sentence sentence = task.sentence;
-        if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
-            if (sentence.isJudgment()) {
+        final Task task = p.getTask();
+        final Sentence belief = p.getBelief();
+
+        if (TemporalRules.matchingOrder(task.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
+            if (task.isJudgment()) {
                 return NAL2.inferToSym(task, belief, p);
             } else {
                 return conversion(p);
@@ -326,7 +325,7 @@ public class LocalRules {
      * @param p    Reference to the memory
      */
     public static void matchAsymSym(final Task asym, final Sentence sym, int figure, final Premise p) {
-        if (p.getTask().sentence.isJudgment()) {
+        if (p.getTask().isJudgment()) {
             inferToAsym(asym, sym, p);
         } else {
             convertRelation(p);
@@ -355,7 +354,7 @@ public class LocalRules {
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return null;
 
-        Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
+        Truth truth = TruthFunctions.reduceConjunction(sym.getTruth(), asym.getTruth());
 
 
             return p.deriveDouble(
@@ -378,7 +377,7 @@ public class LocalRules {
      * @param p Reference to the memory
      */
     private static Task conversion(final Premise p) {
-        Truth truth = TruthFunctions.conversion(p.getBelief().truth);
+        Truth truth = TruthFunctions.conversion(p.getBelief().getTruth());
         Budget budget = BudgetFunctions.forward(truth, p);
         return convertedJudgment(truth, budget, p);
     }
@@ -390,7 +389,7 @@ public class LocalRules {
      * @param p Reference to the memory
      */
     private static Task convertRelation(final Premise p) {
-        final Truth beliefTruth = p.getBelief().truth;
+        final Truth beliefTruth = p.getBelief().getTruth();
         final AnalyticTruth truth;
         if ((p.getTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(beliefTruth, 1.0f);

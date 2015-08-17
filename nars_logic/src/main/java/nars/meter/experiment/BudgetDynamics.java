@@ -76,7 +76,7 @@ public class BudgetDynamics {
 
                     float totalCost = 0;
                     for (final Task t : derived) {
-                        t.mulPriority( parentConceptPriority );
+                        t.getBudget().mulPriority( parentConceptPriority );
 
                         //TODO threshold detect
 

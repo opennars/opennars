@@ -18,6 +18,7 @@ import nars.narsese.NarseseParser;
 import nars.premise.Premise;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
+import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
@@ -184,10 +185,10 @@ public class NAR extends Container implements Runnable {
         Task t = narsese.task(memory, taskText);
 
         long now = time();
-        if (!t.sentence.isEternal()) {
-            t.getSentence().setTime(now, now + t.sentence.getOccurrenceTime());
+        if (!t.isEternal()) {
+            t.setTime(now, now + t.getOccurrenceTime());
         } else {
-            t.getSentence().setTime(now, Stamp.ETERNAL);
+            t.setTime(now, Stamp.ETERNAL);
         }
         return t;
     }
@@ -238,7 +239,7 @@ public class NAR extends Container implements Runnable {
 
         final Truth tv;
 
-        Task t = new Task(
+        Task t = new DefaultTask(
 
                 narsese.compound(goalTerm),
                 Symbols.GOAL,
@@ -299,11 +300,11 @@ public class NAR extends Container implements Runnable {
         return believe(pri, dur, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
     }
 
-    public Task believe(float pri, float dur, Compound belief, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+    public <C extends Compound> Task<C> believe(float pri, float dur, C belief, long occurrenceTime, float freq, float conf) throws InvalidInputException {
 
         final Truth tv;
 
-        Task t = new Task(belief,
+        Task<C> t = new DefaultTask<C>(belief,
                 Symbols.JUDGMENT,
                 tv = new DefaultTruth(freq, conf),
                 pri, dur, BudgetFunctions.truthToQuality(tv));
@@ -320,7 +321,7 @@ public class NAR extends Container implements Runnable {
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
-        final Task t = new Task(
+        final Task t = new DefaultTask(
                 narsese.compound(termString),
                 questionOrQuest,
                 null,

@@ -73,7 +73,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
                         Task s = next.getBeliefs().top();
                         if (s!=null) {
                             temporalInductionChain(s, belief, f);
-                            temporalInductionChain(beliefTask, s.sentence, f);
+                            temporalInductionChain(beliefTask, s, f);
                         }
                     }
                 }
@@ -90,7 +90,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
     public static Task temporalInductionChain(final Task s1, final Sentence s2, final NAL nal) {
 
         //prevent trying question sentences, causes NPE
-        if ((s1.getTruth() == null) || (s2.truth == null))
+        if ((s1.getTruth() == null) || (s2.getTruth() == null))
             return null;
 
         //try if B1 unifies with B2, if yes, create new judgement

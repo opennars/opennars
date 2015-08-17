@@ -65,7 +65,7 @@ public class EmotionMeter implements Serializable {
     }
 
     public void happy(final float solution, final Task task, @Deprecated final Premise p) {
-        this.happy += ( task.summary() * solution );
+        this.happy += ( task.getBudget().summary() * solution );
     }
 
     protected void commitHappy() {

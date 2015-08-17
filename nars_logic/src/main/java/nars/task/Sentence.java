@@ -54,7 +54,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     public int getDuration();
     public Sentence setCreationTime(long c);
     public Sentence setOccurrenceTime(long o);
-    public Sentence setDuration(int d);
+    //public Sentence setDuration(int d);
 
 
 
@@ -565,6 +565,9 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
     default public boolean isQuestOrQuestion() {
         return isQuestion() || isQuest();
+    }
+    default public boolean isJudgmentOrGoal() {
+        return isJudgment() || isGoal();
     }
 
     public static final class ExpectationComparator implements Comparator<Sentence> {

@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * TODO reimplement merging functions (currently uses default Plus method)
  *
  * */
-public class ItemAccumulator<I extends Item> {
+public class ItemAccumulator<I extends Budgeted> {
 
 
     public final UnifiedMap<I,I> items = new UnifiedMap();
@@ -28,8 +28,8 @@ public class ItemAccumulator<I extends Item> {
 //        }
 //    };
 
-    final static Comparator<Item> highestFirst = new HighestFirstComparator();
-    final static Comparator<Item> lowestFirst = new LowestFirstComparator();
+    final static Comparator<Budgeted> highestFirst = new HighestFirstComparator();
+    final static Comparator<Budgeted> lowestFirst = new LowestFirstComparator();
 
 
     public ItemAccumulator(@Deprecated ItemComparator comp) {
@@ -46,7 +46,7 @@ public class ItemAccumulator<I extends Item> {
     final BiFunction<I,I,I> accumulateFunc = ((t, accumulated) -> {
 
         if (accumulated!=null) {
-            accumulated.accumulate(t.getBudget());
+            accumulated.getBudget().accumulate(t.getBudget());
             return accumulated;
         }
         else
@@ -104,7 +104,7 @@ public class ItemAccumulator<I extends Item> {
         return sortedKeyValues(highestFirst, result);
     }
 
-    private List<I> sortedKeyValues(Comparator<Item> c, List<I> result) {
+    private List<I> sortedKeyValues(Comparator<Budgeted> c, List<I> result) {
         if (result == null)
             result = Global.newArrayList(items.size());
         else {

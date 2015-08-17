@@ -326,7 +326,7 @@ public class Memory implements Serializable, AbstractMemory {
 
     /** attempt to answer a question task with an Operator execution */
     public boolean answer(Concept c, Task t) {
-        if (t.sentence.isQuestion()) {
+        if (t.isQuestion()) {
             Term term = t.getTerm();
             if (term instanceof Operation) {
                 Operation o = (Operation) term;
@@ -590,7 +590,7 @@ public class Memory implements Serializable, AbstractMemory {
             return false;
         }
 
-        if (!Terms.levelValid(t.sentence, nal())) {
+        if (!Terms.levelValid(t, nal())) {
             removed(t, "Insufficient NAL level");
             return false;
         }

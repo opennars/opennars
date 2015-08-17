@@ -191,7 +191,7 @@ public interface Premise {
     /**
      * for producing a non-cyclic derivation; returns null if the premise is cyclic
      */
-    default public <C extends Compound> TaskSeed<?> newDoublePremise(Task asym, Sentence sym) {
+    default public <C extends Compound> TaskSeed<?> newDoublePremise(Task asym, Task sym) {
         return newDoublePremise(asym, sym, false);
     }
 
@@ -199,7 +199,7 @@ public interface Premise {
         return newDoublePremise(parentTask, null, allowOverlap);
     }
 
-    default public <C extends Compound> TaskSeed<C> newDoublePremise(Task parentTask, Sentence parentBelief, boolean allowOverlap) {
+    default public <C extends Compound> TaskSeed<C> newDoublePremise(Task parentTask, Task parentBelief, boolean allowOverlap) {
         TaskSeed x = newTask();
         x.parent(parentTask, parentBelief);
         if (!allowOverlap && x.isCyclic())
@@ -207,7 +207,7 @@ public interface Premise {
         return x;
     }
 
-    default public <C extends Compound> TaskSeed<C> newTask(C content, Task task, Sentence belief, boolean allowOverlap) {
+    default public <C extends Compound> TaskSeed<C> newTask(C content, Task task, Task belief, boolean allowOverlap) {
         TaskSeed s = newDoublePremise(task, belief, allowOverlap);
         if (s == null) return null;
         return s.termIfValid(content);
@@ -321,7 +321,7 @@ public interface Premise {
     }
 
 
-    default public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence parentBelief, final boolean temporalAdd, boolean allowOverlap) {
+    default public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Task parentBelief, final boolean temporalAdd, boolean allowOverlap) {
 
 
         newTaskContent = Sentence.termOrNull(newTaskContent);

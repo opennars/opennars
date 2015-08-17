@@ -66,8 +66,8 @@ public final class BudgetFunctions extends UtilityFunctions {
     public static Budget revise(final Truth tTruth, final Truth bTruth, final Truth truth, final Premise p) {
         final float difT = truth.getExpDifAbs(tTruth);
         final Task task = p.getTask();
-        task.decPriority(1f - difT);
-        task.andDurability(1f - difT);
+        task.getBudget().decPriority(1f - difT);
+        task.getBudget().andDurability(1f - difT);
 
         boolean feedbackToLinks = (p instanceof ConceptProcess);
         if (feedbackToLinks) {

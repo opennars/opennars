@@ -40,8 +40,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     private Truth truth;
 
     private Task parent;
-    private Sentence parentBelief;
-    private Sentence solutionBelief;
+    private Task parentBelief;
+    private Task solutionBelief;
 
     private Operation cause;
     private String reason;
@@ -109,7 +109,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
                 if (d!=0) return d;
             }
             if (getParentTask() !=null) {
-                d = (this.duration = getParentTask().sentence.getDuration());
+                d = (this.duration = getParentTask().getDuration());
                 if (d!=0) return d;
             }
             else {
@@ -122,8 +122,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
     @Override
     public void applyToStamp(final Stamp target) {
-
-
         target.setDuration(getDuration())
                 .setTime(getCreationTime(), getOccurrenceTime())
                 .setEvidence(getEvidentialSet())
@@ -181,7 +179,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
                 Stamp p = null; //parent to inherit some properties from
                 if (getParentTask() == null) p = getParentBelief();
-                else if (getParentBelief() == null) p = getParentTask().sentence;
+                else if (getParentBelief() == null) p = getParentTask();
 
                 if (p!=null) {
                     setEvidentialSet(p.getEvidentialSet());
@@ -342,7 +340,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
 
     public TaskSeed<T> stamp(Task t) {
         //should this set parent too?
-        t.sentence.applyToStamp(this);
+        t.applyToStamp(this);
         return this;
     }
 
@@ -436,7 +434,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         }
 
 
-        Task t = new Task(sentenceTerm, punc,
+        Task t = new DefaultTask(sentenceTerm, punc,
                 (truth != null) ? new DefaultTruth(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
                 getBudget(),
                 getParentTask(),
@@ -514,7 +512,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         return parent;
     }
 
-    public Sentence getParentBelief() {
+    public Task getParentBelief() {
         return parentBelief;
     }
 
@@ -578,13 +576,13 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
         this.cyclic = cyclic;
     }
 
-    public TaskSeed<T> parent(final Task parentTask, final Sentence<?> parentBelief) {
+    public TaskSeed<T> parent(final Task parentTask, final Task parentBelief) {
         this.parent = parentTask;
         this.parentBelief = parentBelief;
         return this;
     }
 
-    public TaskSeed<T> solution(Sentence<?> solutionBelief) {
+    public TaskSeed<T> solution(Task solutionBelief) {
         this.solutionBelief = solutionBelief;
         return this;
     }
@@ -653,7 +651,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Stamp 
     }
 
 
-    public TaskSeed<T> parent(Task parentTask, Sentence parentBelief, long occurrence) {
+    public TaskSeed<T> parent(Task parentTask, Task parentBelief, long occurrence) {
         parent(parentTask, parentBelief);
         setOccurrenceTime(occurrence);
         return this;

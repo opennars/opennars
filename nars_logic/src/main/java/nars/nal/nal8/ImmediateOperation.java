@@ -3,7 +3,7 @@ package nars.nal.nal8;
 
 import nars.Memory;
 import nars.Symbols;
-import nars.task.Task;
+import nars.task.DefaultTask;
 import nars.term.Compound;
 
 /** an operation that executes immediately, and without logical consequences;
@@ -19,7 +19,7 @@ abstract public class ImmediateOperation  {
 
 
     //TODO make Task an interface so this is lightweight
-    public static class ImmediateTask extends Task.DefaultTask<Compound> {
+    public static class ImmediateTask extends DefaultTask<Compound> {
 
         public final ImmediateOperation operation;
 
@@ -50,7 +50,7 @@ abstract public class ImmediateOperation  {
 //
 //
 //                if (o instanceof ImmediateOperation) {
-                    if (getSentence()!=null && getPunctuation()!= Symbols.GOAL)
+                    if (getPunctuation()!= Symbols.GOAL)
                         throw new RuntimeException("ImmediateOperation " + immediateOperation() + " was not specified with goal punctuation");
 
                     immediateOperation().execute(memory);

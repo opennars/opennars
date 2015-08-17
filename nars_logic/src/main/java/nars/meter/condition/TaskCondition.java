@@ -79,21 +79,21 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
 
-        if (t.sentence.isEternal()) {
+        if (t.isEternal()) {
             setEternal();
-            t.getSentence().setTime(creationTimeOffset, Stamp.ETERNAL);
+            t.setTime(creationTimeOffset, Stamp.ETERNAL);
         }
         else {
             long oc = t.getOccurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
             setRelativeOccurrenceTime(oc, n.memory.duration());
-            t.getSentence().setTime(creationTimeOffset, oc);
+            t.setTime(creationTimeOffset, oc);
         }
 
 
         this.cycleStart = this.cycleEnd = -1;
-        if (t.sentence.truth!=null) {
-            float f = t.sentence.truth.getFrequency();
-            float c = t.sentence.truth.getConfidence();
+        if (t.isJudgmentOrGoal()) {
+            float f = t.getFrequency();
+            float c = t.getConfidence();
             float e = Global.TESTS_TRUTH_ERROR_TOLERANCE/ 2.0f; //error tolerance epsilon
             this.freqMin = f - e;
             this.freqMax = f + e;
@@ -103,7 +103,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         else {
             this.freqMin = this.freqMax =this.confMin = this.confMax = -1;
         }
-        this.punc = t.sentence.punctuation;
+        this.punc = t.getPunctuation();
         this.term = t.getTerm();
     }
 
@@ -209,10 +209,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public boolean isEternal() { return this.tense == Tense.Eternal; }
 
     public boolean matches(Task task) {
-        if (task == null || task.sentence == null) {
+        if (task == null) {
             return false;
         }
-        if (task.sentence.punctuation != punc)
+        if (task.getPunctuation() != punc)
             return false;
         //long now = nar.time();
 
@@ -273,13 +273,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 //require right kind of tense
                 if (isEternal()) {
-                    if (!task.sentence.isEternal()) {
+                    if (!task.isEternal()) {
                         distance += temporalityCost;
                         match = false;
                     }
                 }
                 else {
-                    if (task.sentence.isEternal()) {
+                    if (task.isEternal()) {
                         distance += temporalityCost - 0.01;
                         match = false;
                     }
@@ -287,7 +287,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                             final long oc = task.getOccurrenceTime();
 
-                            final int durationWindow = task.sentence.getStamp().getDuration();
+                            final int durationWindow = task.getDuration();
 
                             final int durationWindowNear = durationWindow / 2;
                             final int durationWindowFar = strictDurationWindow ? durationWindowNear : durationWindow;
@@ -323,12 +323,12 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
                 if ((punc == '.') || (punc == '!')) {
-                    float fr = task.sentence.truth.getFrequency();
-                    float co = task.sentence.truth.getConfidence();
+                    float fr = task.getFrequency();
+                    float co = task.getConfidence();
 
                     if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
                         match = false;
-                        distance += getTruthDistance(task.sentence.truth);
+                        distance += getTruthDistance(task.getTruth());
                     }
                 }
 
