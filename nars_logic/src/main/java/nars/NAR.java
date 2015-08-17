@@ -55,10 +55,11 @@ public class NAR extends Container implements Runnable {
      * The project web sites.
      */
     public static final String WEBSITE =
-            " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
-                    + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
-                    "    Github website:  http://github.com/opennars/ \n" +
-                    "    IRC:  http://webchat.freenode.net/?channels=nars \n";
+            " Open-NARS website:  http://code.google.com/p/open-nars/ \n" +
+            "      NARS website:  http://sites.google.com/site/narswang/ \n" +
+            "    Github website:  http://github.com/opennars/ \n" +
+            "               IRC:  http://webchat.freenode.net/?channels=nars \n";
+
     public final NarseseParser narsese;
     public final TextPerception textPerception;
     /**
