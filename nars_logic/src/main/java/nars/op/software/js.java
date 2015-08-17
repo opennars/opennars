@@ -3,7 +3,9 @@ package nars.op.software;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.ConstantConceptBuilder;
+import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.io.Echo;
@@ -70,18 +72,18 @@ public class js extends TermFunction implements Mental {
 
     /** create dynamic javascript functions */
     //TODO make this an ImmediateOperator that will not conceptualize its subterms
-    public class jsop extends SynchOperator {
+    public class jsop extends NullOperator {
 
         @Override
-        protected List<Task> execute(Operation operation, Memory memory) {
-            Term[] x = operation.getArgs();
+        public List<Task> apply(Operation op) {
+            Term[] x = op.args();
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
-            nar.input(new Echo(nars.op.software.js.class, "JS Operator Bind: " + funcName + " = " + functionCode));
+            nar.input( Echo.make(nars.op.software.js.class, "JS Operator Bind: " + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode.toString());
             nar.on(d);
 
-            operation.stop(memory);
+            op.stop();
 
             return null;
         }
@@ -142,18 +144,18 @@ public class js extends TermFunction implements Mental {
 
 
     /** create dynamic javascript functions */
-    public class jsbelief extends SynchOperator {
+    public class jsbelief extends NullOperator {
 
 
         @Override
-        protected List<Task> execute(Operation operation, Memory memory) {
-            Term[] x = operation.getArgs();
+        public List<Task> apply(Operation op) {
+            Term[] x = op.args();
 
             String functionCode = Atom.unquote(x[0]);
 
             nar.on(new JSBelievedConceptBuilder(functionCode));
 
-            operation.stop(memory);
+            op.stop();
 
             return null;
         }

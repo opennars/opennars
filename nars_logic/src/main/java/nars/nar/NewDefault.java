@@ -46,7 +46,7 @@ public class NewDefault extends Default {
                 } ,
 
                 new DerivationFilter[] {
-                        new FilterBelowConfidence(),
+                        new FilterBelowConfidence(0.01),
                         new FilterDuplicateExistingBelief(),
                 }
 

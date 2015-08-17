@@ -11,6 +11,8 @@ import java.io.Writer;
  * Created by me on 5/20/15.
  */
 public class ProductN extends DefaultCompound implements Product {
+
+
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term

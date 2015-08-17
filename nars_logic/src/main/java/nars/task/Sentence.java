@@ -363,6 +363,10 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         return (getPunctuation() == Symbols.QUEST);
     }
 
+    default public boolean isCommand()  {
+        return (getPunctuation() == Symbols.COMMAND);
+    }
+
     default public boolean hasQueryVar() {
         return getTerm().hasVarQuery();
     }

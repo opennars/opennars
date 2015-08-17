@@ -315,7 +315,11 @@ public class Memory implements Serializable, AbstractMemory {
         if (term instanceof Operation) {
             Operation o = (Operation)term;
             o.setTask(goal);
+            if (!o.setMemory(this)) {
+                throw new RuntimeException("operation " + o + " already executing");
+            }
             exe.emit(o.getOperator(), o);
+            o.setMemory(null /* signals finished */);
         }
         /*else {
             System.err.println("Unexecutable: " + goal);

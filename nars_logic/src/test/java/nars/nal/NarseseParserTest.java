@@ -9,7 +9,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Default;
@@ -471,13 +471,13 @@ public class NarseseParserTest {
         String a = "<a --> b>.\n//comment1234\n<b-->c>.";
         List<Task> l = tasks(a);
         assertEquals(3, l.size());
-        ImmediateOperation op = ((ImmediateOperation.ImmediateTask) l.get(1)).operation;
+        ImmediateOperator op = ((ImmediateOperator.ImmediateTask) l.get(1)).operation;
         assertEquals(Echo.class, op.getClass());
         assertEquals("comment1234", ((Echo)op).signal);
     }
 
-    protected static final ImmediateOperation immediate(Task t) {
-        return ((ImmediateOperation.ImmediateTask)t).operation;
+    protected static final ImmediateOperator immediate(Task t) {
+        return ((ImmediateOperator.ImmediateTask)t).operation;
     }
 
     @Test
@@ -485,7 +485,7 @@ public class NarseseParserTest {
         String a = "<a --> b>.\n'comment1234\n<b-->c>.";
         List<Task> l = tasks(a);
         assertEquals(3, l.size());
-        ImmediateOperation op = immediate(l.get(1));
+        ImmediateOperator op = immediate(l.get(1));
         assertEquals(Echo.class, op.getClass());
         assertEquals("comment1234", ((Echo)op).signal);
     }
@@ -495,7 +495,7 @@ public class NarseseParserTest {
         String a = "100\n<a-->b>.";
         List<Task> l = tasks(a);
         assertEquals(2, l.size());
-        ImmediateOperation op = immediate(l.get(0));
+        ImmediateOperator op = immediate(l.get(0));
         assertEquals(PauseInput.class, op.getClass());
         assertEquals(100, ((PauseInput)op).cycles);
     }

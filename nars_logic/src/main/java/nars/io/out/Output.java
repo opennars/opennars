@@ -5,7 +5,7 @@ import nars.Events.Answer;
 import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
 import nars.op.io.Echo;
 import nars.op.io.say;
 import nars.util.event.EventEmitter;
@@ -64,7 +64,7 @@ public abstract class Output extends NARReaction {
             Events.IN.class,
             Events.EXE.class,
             Events.ERR.class,
-            ImmediateOperation.class,
+            ImmediateOperator.class,
             Echo.class,
             say.class,
             Answer.class,
@@ -81,7 +81,7 @@ public abstract class Output extends NARReaction {
         channel.put(Events.EXE.class, new DefaultChannel("ERR"));
         channel.put(Events.OUT.class, new DefaultChannel("OUT"));
         channel.put(Events.TaskDerive.class, new DefaultChannel("OUT2"));
-        channel.put(ImmediateOperation.class, new Channel() {
+        channel.put(ImmediateOperator.class, new Channel() {
 
             @Override
             public String getLinePrefix(Class c, Object[] args) {

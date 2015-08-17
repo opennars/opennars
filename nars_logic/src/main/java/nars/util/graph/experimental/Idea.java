@@ -262,8 +262,9 @@ public class Idea implements Iterable<Concept> {
         }
         return false;
     }
-    
-    public static class IdeaSet extends HashMap<CharSequence,Idea> implements Reaction<Class> {
+
+    //TODO should implement NARReaction probably
+    public static class IdeaSet extends HashMap<CharSequence,Idea> implements Reaction<Class,Object[]> {
         private final NAR nar;
         private EventEmitter.Registrations reg;
 

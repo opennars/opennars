@@ -24,9 +24,6 @@ abstract public class TermPredicate extends ConstantConceptBuilder {
         if (t instanceof Operation) {
             Operation o = (Operation)t;
 
-            if (eval.ENABLED)
-                o = o.inline(m, false);
-
             return truth(o.getPredicate(), o.arg().terms());
         }
         return null;

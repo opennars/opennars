@@ -25,7 +25,9 @@ abstract public class SynchOperator extends OpReaction {
         super(name);
     }
 
+    /** uses the implementation class's simpleName as the term */
     public SynchOperator() {
+        super((Term)null);
     }
 
     /**
@@ -41,7 +43,7 @@ abstract public class SynchOperator extends OpReaction {
         try {
             executed(op, apply(op));
         } catch (Exception e) {
-            executed(op, new Echo(Events.ERR.class, e.toString()).newTask());
+            executed(op, Echo.make(Events.ERR.class, e.toString()));
             e.printStackTrace();
             return false;
         }

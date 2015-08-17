@@ -41,7 +41,7 @@ public class CarefulRover extends AbstractPolygonBot {
     }
 
     public static String command(Operation operation, Memory memory) {
-        Term[] args = operation.getArgs();
+        Term[] args = operation.args();
         Term t1 = args[0];
 
         //float priority = operation.getTask().getPriority();

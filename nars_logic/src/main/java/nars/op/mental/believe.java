@@ -48,14 +48,14 @@ public class believe extends SynchOperator implements Mental {
      *
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public ArrayList<Task> apply(Operation op) {
 
         //TODO convert to TaskSeed
 
-        Compound content = Sentence.termOrException(operation.arg(0));
+        Compound content = Sentence.termOrException(op.arg(0));
 
         Truth truth;
-        return Lists.newArrayList( operation.newSubTask(memory,
+        return Lists.newArrayList( op.newSubTask(op.getMemory(),
                 content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE), memory.time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
 

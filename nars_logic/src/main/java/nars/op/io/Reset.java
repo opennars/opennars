@@ -2,20 +2,20 @@ package nars.op.io;
 
 import nars.Memory;
 import nars.NAR;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
+import nars.nal.nal8.Operation;
 
 /**
  * Resets memory, @see memory.reset()
  */
-public class Reset extends ImmediateOperation {
+public class Reset extends ImmediateOperator {
 
+    private NAR nar = null;
 
-    private final NAR nar;
-
-    public Reset(NAR n) {
+    public Reset() {
         super();
 
-        this.nar = n;
+        //this.nar = n;
 
     }
 
@@ -25,7 +25,7 @@ public class Reset extends ImmediateOperation {
     }
 
     @Override
-    public void execute(Memory m) {
-        nar.reset();
+    public void accept(Operation terms) {
+        //nar.reset()
     }
 }

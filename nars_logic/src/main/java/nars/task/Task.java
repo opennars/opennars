@@ -25,7 +25,6 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Itemized;
-import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
@@ -259,6 +258,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             case Symbols.QUESTION:
             case Symbols.QUEST:
             case Symbols.GOAL:
+            case Symbols.COMMAND:
                 break;
             default:
                 throw new RuntimeException("Invalid sentence punctuation");
@@ -469,4 +469,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
     void setBestSolution(AbstractMemory memory, Task belief);
+
+
 }

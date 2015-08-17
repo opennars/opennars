@@ -20,7 +20,6 @@
  */
 package nars.nal.nal8;
 
-import nars.AbstractMemory;
 import nars.Memory;
 import nars.Op;
 import nars.Symbols;
@@ -171,7 +170,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
     }
 
     public Term[] arg(Memory memory, boolean evaluate, boolean removeSelf) {
-        final Term[] rawArgs = getArgs();
+        final Term[] rawArgs = args();
         int numInputs = rawArgs.length;
 
         if (removeSelf) {
@@ -215,8 +214,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
      * avoid using this because it may involve creation of unnecessary array
      * if Product1.terms() is called
      */
-    @Deprecated
-    public Term[] getArgs() {
+    public Term[] args() {
         return arg().terms();
     }
 
@@ -253,8 +251,8 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
      * deletes the concept of this operation, preventing it from
      * being executed again (unless invoked again by input).
      */
-    public void stop(Memory memory) {
-        memory.delete(getTerm());
+    public void stop() {
+        getMemory().delete(getTerm());
     }
 
 //    /**
@@ -282,7 +280,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 //    }
 
 
-    public int args() {
+    public int numArgs() {
         return arg().length();
     }
 
@@ -403,4 +401,9 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         return getMemory()!=null;
     }
 
+    public boolean setMemory(Memory memory) {
+        if (this.memory!=null) return false;
+        this.memory = memory;
+        return true;
+    }
 }

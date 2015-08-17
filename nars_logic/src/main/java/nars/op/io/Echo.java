@@ -1,41 +1,34 @@
 package nars.op.io;
 
-import nars.Events;
-import nars.Memory;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
+import nars.nal.nal8.Operation;
+import nars.task.Task;
+
+import java.util.Arrays;
 
 /**
  * explicitly repeated input (repetition of the content of input ECHO commands)
  */
-public class Echo extends ImmediateOperation {
+public class Echo extends ImmediateOperator {
 
-    public final Object signal;
-    public final Class channel;
+    /** singleton */
+    public static final Echo the = new Echo();
 
-    public Echo(Class channel, Object signal) {
+    protected Echo() {
         super();
-        this.channel = channel;
-        this.signal = signal;
     }
 
-    public Echo(Exception ex) {
-        this(Events.ERR.class, ex);
+    public static Task make(Object signal) {
+        return the.newTask(signal.toString());
     }
 
-    public Echo(String ex) {
-        this(Echo.class, ex);
+    public static Task make(Class channel, Object signal) {
+        return the.newTask(channel.toString(), signal.toString());
     }
-
 
     @Override
-    public String toString() {
-        return channel.getSimpleName() + ": " + signal.toString();
-    }
-
-
-    @Override
-    public void execute(Memory m) {
-        m.emit(channel, signal);
+    public void accept(Operation o) {
+        o.getMemory().emit(Echo.class, Arrays.toString( o.args() ) );
     }
 
 }

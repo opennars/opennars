@@ -22,6 +22,7 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /** 
@@ -165,11 +166,11 @@ public abstract class TermFunction<O> extends SynchOperator {
     }
 
     @Override
-    protected ArrayList<Task> execute(final Operation operation, Memory memory) {
+    public List<Task> apply(final Operation operation) {
 
+        final Memory memory = operation.getMemory();
 
-
-        Term[] rawArgs = operation.getArgs();
+        Term[] rawArgs = operation.args();
 
         int numInputs = rawArgs.length;
         if (rawArgs[numInputs - 1].equals(memory.self()))

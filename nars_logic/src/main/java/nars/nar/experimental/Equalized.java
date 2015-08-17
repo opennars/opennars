@@ -6,7 +6,7 @@ import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
 import nars.nar.Default;
 import nars.premise.BloomFilterNovelPremiseGenerator;
 import nars.process.ConceptProcess;
@@ -63,7 +63,7 @@ public class Equalized extends Default {
                 //input all available percepts
                 Task t;
                 while ((t = percepts.get())!=null) {
-                    if (t instanceof ImmediateOperation.ImmediateTask)
+                    if (t.isCommand())
                         memory.add(t);
                     else
                         newTasks.add(t);

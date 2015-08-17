@@ -1,12 +1,13 @@
 package nars.op.io;
 
 import nars.Memory;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
+import nars.nal.nal8.Operation;
 
 /**
  * Sets the global volume / noise level, =(100% - "silence level")
  */
-public class SetVolume extends ImmediateOperation {
+public class SetVolume extends ImmediateOperator {
     public final int volume;
 
     public SetVolume(int volume) {
@@ -20,7 +21,8 @@ public class SetVolume extends ImmediateOperation {
     }
 
     @Override
-    public void execute(Memory m) {
-        m.param.outputVolume.set(volume);
+    public void accept(Operation terms) {
+//        m.param.outputVolume.set(volume);
     }
+
 }

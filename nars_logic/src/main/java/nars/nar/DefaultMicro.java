@@ -21,8 +21,6 @@ public class DefaultMicro extends Default {
 
         //Runtime Initial Values
 
-        confidenceThreshold.set(0.02);
-
         temporalRelationsMax.set(4);
 
 

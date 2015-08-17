@@ -31,8 +31,7 @@ import nars.op.app.STMInduction;
 import nars.op.data.Flat;
 import nars.op.data.json;
 import nars.op.data.similaritree;
-import nars.op.io.say;
-import nars.op.io.schizo;
+import nars.op.io.*;
 import nars.op.math.add;
 import nars.op.math.count;
 import nars.op.math.lessThan;
@@ -114,7 +113,7 @@ public class Default extends NARSeed  {
                 } ,
 
                 new DerivationFilter[] {
-                        new FilterBelowConfidence(),
+                        new FilterBelowConfidence(0.01),
                         new FilterDuplicateExistingBelief(),
                         //param.getDefaultDerivationFilters().add(new BeRational());
                 }
@@ -254,6 +253,11 @@ public class Default extends NARSeed  {
 
 
     public final OpReaction[] defaultOperators  = new OpReaction[] {
+
+                //system control
+                Echo.the,
+                PauseInput.the,
+                new Reset(),
 
                 new eval(),
 

@@ -23,16 +23,20 @@ package nars.nal.nal4;
 
 import com.google.common.collect.Iterables;
 import nars.Op;
+import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A Product is a sequence of 1 or more terms.
  */
 public interface Product extends Term, Iterable<Term> {
+
+    public final static Product empty = new ProductN();
 
     /**
      * Get the operate of the term.
@@ -113,4 +117,12 @@ public interface Product extends Term, Iterable<Term> {
     }
 
 
+    /** apply Atom.quoteI */
+    public static Product arrayToStringAtomProduct(final Object[] args) {
+        if (args.length == 0) return Product.empty;
+        Term[] x = new Term[args.length];
+        for (int i = 0; i < args.length; i++)
+            x[i] = Atom.quote(args[i].toString() );
+        return Product.make(x);
+    }
 }

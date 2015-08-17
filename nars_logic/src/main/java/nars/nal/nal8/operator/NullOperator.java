@@ -20,43 +20,33 @@
  */
 package nars.nal.nal8.operator;
 
+import nars.Events;
 import nars.Global;
-import nars.Memory;
 import nars.nal.nal8.Operation;
 import nars.task.Task;
+import nars.term.Term;
 
 import java.util.List;
 
 /**
  *  A class used as a template for Operator definition.
+ *  Can also be extended for purely procedural operators.
  */
 public class NullOperator extends SynchOperator {
-    private final String name;
 
-    
-    /*public NullOperator() {
-        this("^sample");
-    }*/
-    
     public NullOperator(String name) {
         super(name);
-        this.name = name;
     }
+
+    /** uses the implementation class's simpleName as the term */
     public NullOperator() {
         super();
-        this.name = getClass().getSimpleName();
     }
 
-
-
     @Override
-    protected List<Task> execute(Operation o, Memory memory) {
+    public List<Task> apply(Operation o) {
         if (Global.DEBUG) {
-            memory.emit(getClass(),
-                    //HACK
-                    name,
-                    o.arg()
-            );
+            o.getMemory().emit(Events.OUT.class, o );
         }
         return null;
     }

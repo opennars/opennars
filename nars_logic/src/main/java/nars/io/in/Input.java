@@ -20,7 +20,7 @@
 package nars.io.in;
 
 import nars.Memory;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
 
@@ -77,7 +77,7 @@ public interface Input extends Source<Task> {
 
         final Deque<Task> queue = new ArrayDeque();
 
-        protected int accept(ImmediateOperation o) {
+        protected int accept(ImmediateOperator o) {
             accept(o.newTask());
             return 1;
         }

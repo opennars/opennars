@@ -53,6 +53,9 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
 
     public OpReaction(Term term) {
+        if (term == null) {
+            term = Atom.the(getClass().getSimpleName());
+        }
         this.term = term;
     }
 

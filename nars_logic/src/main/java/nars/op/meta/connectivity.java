@@ -18,11 +18,11 @@ import java.util.Set;
 public class connectivity extends SynchOperator {
 
     @Override
-    protected List<Task> execute(Operation o, Memory memory) {
+    public List<Task> apply(Operation o) {
 
         TermLinkGraph g = new TermLinkGraph(nar);
 
-        g.add(memory);
+        g.add(o.getMemory());
 
         ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
         int set = 0;
@@ -32,7 +32,7 @@ public class connectivity extends SynchOperator {
             set++;
         }
 
-        o.stop(memory);
+        o.stop();
         return null;
     }
 }

@@ -24,7 +24,7 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.op.io.Echo;
@@ -170,13 +170,13 @@ public class NarseseParser extends BaseParser<Object> {
     @Cached
     public Rule LineCommentEchoed() {
         return sequence( zeroOrMore(noneOf("\n")),
-                push(new Echo(match()) ), "\n");
+                push(Echo.make(match()) ), "\n");
     }
 
     @Cached
     public Rule PauseInput() {
         return sequence(IntegerNonNegative(),
-                push( new PauseInput( (Integer) pop() ) ), "\n" );
+                push( PauseInput.make( (Integer) pop() ) ), "\n" );
     }
     @Cached
     public Rule Immediate() {
@@ -929,20 +929,20 @@ public class NarseseParser extends BaseParser<Object> {
         int size = r.getValueStack().size();
 
         if (size == 0) {
-            c.accept(new Echo(Events.ERR.class, "Unrecognized input: " + input).newTask());
+            c.accept( Echo.make(Events.ERR.class, "Unrecognized input: " + input) );
             return;
         }
         for (int i = size-1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);
 
-            if (o instanceof ImmediateOperation) {
-                c.accept( ((ImmediateOperation)o).newTask() );
+            if (o instanceof ImmediateOperator) {
+                c.accept( ((ImmediateOperator)o).newTask() );
             }
             else if (o instanceof Object[]) {
                 c.accept( o );
             }
             else {
-                c.accept(new Echo(Echo.class, o.toString()).newTask());
+                c.accept( Echo.make(Echo.class, o.toString()) );
                 //throw new RuntimeException("unrecognized input result: " + o);
             }
         }

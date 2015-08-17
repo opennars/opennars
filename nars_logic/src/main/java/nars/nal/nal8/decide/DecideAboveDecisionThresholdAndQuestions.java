@@ -12,11 +12,11 @@ public class DecideAboveDecisionThresholdAndQuestions extends DecideAboveDecisio
     public final static DecideAboveDecisionThresholdAndQuestions the = new DecideAboveDecisionThresholdAndQuestions();
 
     @Override
-    public boolean decide(Concept c, Operation task) {
+    public boolean test(Operation task) {
         if (task.getTask().getPunctuation() == Symbols.QUESTION)
             return true;
 
-        return super.decide(c, task);
+        return super.test(task);
     }
 
 

@@ -30,8 +30,8 @@ public class NumberPerception extends NullOperator {
     }
 
     @Override
-    protected List<Task> execute(Operation o, Memory memory) {
-        Term[] x = o.getArgs();
+    public List<Task> apply(Operation o) {
+        Term[] x = o.args();
         if (x.length == 2) {
             Term variable = x[0];
             Term value = x[1];
@@ -40,7 +40,7 @@ public class NumberPerception extends NullOperator {
                 observe(variable, n);
             }
             else {
-                memory.emit(Events.ERR.class, "Invalid number for observation: " + o);
+                o.getMemory().emit(Events.ERR.class, "Invalid number for observation: " + o);
             }
         }
         return null;

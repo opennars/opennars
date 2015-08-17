@@ -76,7 +76,7 @@ public class Events {
     /** if a concept is completely removed from both main, and subconcepts (or if subconcepts has capacity 0) */
     @Deprecated public static class ConceptDelete { }
     
-    abstract public static class ConceptBeliefAdd implements Reaction<Class> {
+    abstract public static class ConceptBeliefAdd implements Reaction<Class,Object[]> {
         
         abstract public void onBeliefAdd(Concept c, Task t, Object[] extra);
         
@@ -86,7 +86,7 @@ public class Events {
         
     }
     
-    abstract public static class ConceptBeliefRemove implements Reaction<Class> {
+    abstract public static class ConceptBeliefRemove implements Reaction<Class,Object[]> {
 
         abstract public void onBeliefRemove(Concept c, Sentence removed, Task t, Object[] extra);
         
@@ -120,7 +120,7 @@ public class Events {
 
     
     /** fired at the START of a ConceptFire task */
-    abstract public static class ConceptProcessed implements Reaction<Class> {
+    abstract public static class ConceptProcessed implements Reaction<Class,Object[]> {
         
         /**
          * use:

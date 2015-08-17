@@ -1,9 +1,6 @@
 package nars.io;
 
-import nars.AbstractMemory;
-import nars.Global;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.SetVolume;
@@ -184,7 +181,7 @@ public class TextPerception  {
                         try {
                             parser.tasks(memory, input, recv);
                         } catch (Exception ex) {
-                            recv.accept( new Echo(ex).newTask() );
+                            memory.emit(Events.ERR.class, ex.toString());
                         }
                     }
                 }

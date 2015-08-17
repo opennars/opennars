@@ -11,8 +11,9 @@ import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.OpReaction;
+import nars.nal.nal8.Operation;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.premise.Premise;
@@ -127,7 +128,7 @@ public class NAR extends Container implements Runnable {
         memory.think(delay);
     }
 
-    public NAR input(ImmediateOperation o) {
+    public NAR input(ImmediateOperator o) {
         input(o.newTask());
         return this;
     }
@@ -358,17 +359,17 @@ public class NAR extends Container implements Runnable {
     /**
      * attach event handler to one or more event (classes)
      */
-    public EventEmitter.Registrations on(Reaction<Class> o, Class... c) {
+    public EventEmitter.Registrations on(Reaction<Class,Object[]> o, Class... c) {
         return memory.event.on(o, c);
     }
 
-    public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {
-        Reaction<Class> v = the(c);
+    public EventEmitter.Registrations on(Class<? extends Reaction<Class,Object[]>> c) {
+        Reaction<Class,Object[]> v = the(c);
         the(c, v); //register singleton
         return on(v);
     }
 
-    public EventEmitter.Registrations on(Reaction<Term> o, Term... c) {
+    public EventEmitter.Registrations on(Reaction<Term,Operation> o, Term... c) {
         return memory.exe.on(o, c);
     }
 

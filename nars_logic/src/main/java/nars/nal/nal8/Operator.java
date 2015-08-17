@@ -59,7 +59,11 @@ public class Operator<T extends Term> extends Compound1<T> {
         return 1;
     }
 
-    public static Operator the(String name) {
-        return new Operator(Atom.the(name));
+    public static Operator the(final String name) {
+        return the(Atom.the(name));
     }
+    public static Operator the(final Term x) {
+        return new Operator(x);
+    }
+
 }
