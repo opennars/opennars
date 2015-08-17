@@ -166,7 +166,9 @@ public interface Premise {
 
     /* --------------- new task building --------------- */
 
-
+    default public <T extends Compound> TaskSeed newTask() {
+        return getMemory().newTask();
+    }
 
     default public <T extends Compound> TaskSeed newTask(final T term) {
         return getMemory().newTask(term);
@@ -199,6 +201,7 @@ public interface Premise {
     default public <C extends Compound> TaskSeed<C> newDoublePremise(Task parentTask, Task parentBelief, boolean allowOverlap) {
         TaskSeed x = newTask();
         x.parent(parentTask, parentBelief);
+        x.updateCyclic();
         if (!allowOverlap && x.isCyclic())
             return null;
         return x;

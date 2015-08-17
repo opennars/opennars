@@ -9,9 +9,10 @@ public class DecideAboveDecisionThreshold extends DecideAllGoals {
     public final static DecideAboveDecisionThreshold the = new DecideAboveDecisionThreshold();
 
     @Override
-    public boolean decide(Concept c, Operation task) {
-        if (super.decide(c, task))
-            return c.isDesired();
+    public boolean test(Operation task) {
+        if (super.test(task)) {
+            return task.getConcept().isDesired();
+        }
         return false;
     }
 

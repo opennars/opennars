@@ -10,7 +10,7 @@ import nars.util.event.EventEmitter;
  * with an EventEmitter. it may be enabled and disabled repeatedly with
  * different event classes as selector keys for event bus messages.
  */
-public abstract class NARReaction extends AbstractReaction {
+public abstract class NARReaction extends AbstractReaction<Class,Object[]> {
 
 
 

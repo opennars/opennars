@@ -87,8 +87,8 @@ public class Memory implements Serializable, AbstractMemory {
     public final Random random;
 
     private CycleProcess control;
-    public final EventEmitter<Class> event;
-    public final EventEmitter<Term> exe;
+    public final EventEmitter<Class,Object[]> event;
+    public final EventEmitter<Term,Operation> exe;
     public final EmotionMeter emotion;
     public final LogicMeter logic;
     public final ResourceMeter resource;
@@ -309,34 +309,20 @@ public class Memory implements Serializable, AbstractMemory {
     /**
      * Entry point for all potentially executable tasks.
      * Enters a task and determine if there is a decision to execute.
-     * Returns true if the Task has a Term which can be executed
      */
-    public void execute(Concept c, Task t) {
-        Term term = t.getTerm();
+    public void execute(final Task goal) {
+        Term term = goal.getTerm();
         if (term instanceof Operation) {
             Operation o = (Operation)term;
-            o.setTask(t);
-            Term e = o.getOperator();
-            exe.emit(e, o, c, this);
+            o.setTask(goal);
+            exe.emit(o.getOperator(), o);
         }
         /*else {
-            System.err.println("Unexecutable: " + t);
+            System.err.println("Unexecutable: " + goal);
         }*/
     }
 
-    /** attempt to answer a question task with an Operator execution */
-    public boolean answer(Concept c, Task t) {
-        if (t.isQuestion()) {
-            Term term = t.getTerm();
-            if (term instanceof Operation) {
-                Operation o = (Operation) term;
-                o.setTask(t);
-                Term e = o.getOperator();
-                exe.emit(e, o, c, this);
-            }
-        }
-        return false;
-    }
+
 
     /** prepend a conceptbuilder to the conceptbuilder handler chain */
     public void on(ConceptBuilder c) {
@@ -573,10 +559,10 @@ public class Memory implements Serializable, AbstractMemory {
         getControl().onInput(ii);
     }
 
-    public void add(final Iterable<Task> source) {
-        for (final Task t : source)
-            add((Task) t);
-    }
+//    public void add(final Iterable<Task> source) {
+//        for (final Task t : source)
+//            add((Task) t);
+//    }
 
 
     /**
@@ -585,8 +571,12 @@ public class Memory implements Serializable, AbstractMemory {
      */
     public boolean add(final Task t) {
 
-        /* process ImmediateOperation and Operations of ImmediateOperators */
-        if (t.executeIfImmediate(this)) {
+        if (Global.DEBUG) {
+            t.ensureValid();
+        }
+
+        if (t.getPunctuation() == Symbols.COMMAND) {
+            execute(t);
             return false;
         }
 
@@ -776,6 +766,9 @@ public class Memory implements Serializable, AbstractMemory {
         return TaskSeed.make(this, t);
     }
 
+    public <T extends Compound> TaskSeed<T> newTask() {
+        return newTask(null);
+    }
 
 
     /**

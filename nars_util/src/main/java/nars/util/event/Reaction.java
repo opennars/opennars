@@ -1,8 +1,9 @@
 package nars.util.event;
 
 /** Observes events emitted by EventEmitter */
-public interface Reaction<K> {
+@FunctionalInterface
+public interface Reaction<K,V> {
 
-    public void event(K event, Object... args);
+    public void event(K event, V args);
 
 }

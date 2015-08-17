@@ -620,7 +620,7 @@ public class QLAgent<S extends Term> extends NARAgent {
 
 
         @Override
-        protected void noticeExecuted(Operation operation, Memory memory) {
+        protected void noticeExecuted(Operation operation) {
             //dont notice
         }
 

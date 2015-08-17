@@ -77,4 +77,12 @@ public abstract class NAL extends AbstractPremise implements Runnable {
         derived.add(derivedTask);
     }
 
+    protected void inputDerivations() {
+        if (derived!=null) {
+            for (int i = 0; i < derived.size(); i++) {
+                memory.add(derived.get(i));
+            }
+        }
+    }
+
 }

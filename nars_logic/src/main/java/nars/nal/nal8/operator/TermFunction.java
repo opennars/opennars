@@ -160,7 +160,7 @@ public abstract class TermFunction<O> extends SynchOperator {
     }
 
     @Override
-    protected void noticeExecuted(Operation operation, Memory memory) {
+    protected void noticeExecuted(Operation operation) {
         //no notice
     }
 

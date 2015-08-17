@@ -28,19 +28,27 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     private final Memory memory;
 
     public static <C extends Compound> TaskSeed<C> make(Memory memory, C t) {
-        t = t.normalized();
-        if (t == null)
-            return null;
-        return new TaskSeed(memory, t);
+        TaskSeed<C> x = make(memory);
+        if (t!=null) {
+            t = t.normalized();
+            if (t == null)
+                return null;
+            x.setTerm(t);
+        }
+        return x;
     }
 
-    TaskSeed(Memory memory, T t) {
+
+    public static <C extends Compound> TaskSeed<C> make(Memory memory) {
+        return new TaskSeed(memory);
+    }
+
+    TaskSeed(Memory memory) {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
-        super(t, (char)0, null, 0, 0, 0);
+        super(null, (char)0, null, 0, 0, 0);
 
         this.memory = memory;
         setDuration(memory.duration());
-        this.term = t.normalized();
     }
 
 //    @Deprecated
@@ -95,10 +103,11 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 
     @Deprecated @Override
     public void applyToStamp(final Stamp target) {
-        target.setDuration(getDuration())
-                .setTime(getCreationTime(), getOccurrenceTime())
-                .setEvidence(getEvidence())
-                .setCyclic(isCyclic());
+        throw new RuntimeException("untested / depr");
+//        target.setDuration(getDuration())
+//                .setTime(getCreationTime(), getOccurrenceTime())
+//                .setEvidence(getEvidence())
+//                .setCyclic(isCyclic());
 
     }
 
@@ -415,8 +424,10 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 
         setDuration(getDuration())
                 .setTime(getCreationTime(), getOccurrenceTime())
-                .setEvidence(getEvidence())
-                .setCyclic(isCyclic());
+                .setEvidence(getEvidence());
+
+        updateCyclic();
+
 
         //applyToStamp(t);
 
@@ -510,7 +521,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
 
-    protected boolean calculateCyclic() {
+    public boolean updateCyclic() {
 
         if (getEvidence() != null) {
 

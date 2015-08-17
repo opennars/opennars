@@ -71,15 +71,13 @@ abstract public class ConceptProcess extends NAL  {
     }
 
     @Override
-    protected void afterDerive() {
+    final protected void afterDerive() {
 
         final long now = memory.time();
 
         beforeFinish(now);
 
-        if (derived!=null) {
-            memory.add(derived);
-        }
+        inputDerivations();
 
     }
 

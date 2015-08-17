@@ -351,22 +351,18 @@ public class DefaultConcept extends AbstractConcept {
 
             if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
 */
-                executeGoal(goal, this, nal);
+
+            questionFromGoal(goal, nal);
+
+            //TODO
+            //InternalExperience.experienceFromTask(nal, task, false);
+
+            nal.getMemory().execute(goal);
+
             //}
         }
 
         return true;
-    }
-
-    protected static void executeGoal(Task goal, Concept c, Premise nal) {
-
-        questionFromGoal(goal, nal);
-
-        //TODO
-        //InternalExperience.experienceFromTask(nal, task, false);
-
-        nal.getMemory().execute(c, goal);
-
     }
 
 
@@ -432,9 +428,8 @@ public class DefaultConcept extends AbstractConcept {
         }
 
 
-        if (getMemory().answer(this, q)) {
-
-        }
+        /** execute the question, for any attached operators that will handle it */
+        //getMemory().execute(q);
 
         if (!isConstant()) {
             //boolean newQuestion = table.isEmpty();

@@ -1,8 +1,7 @@
 package nars.nal.nal8.operator;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
-import nars.concept.Concept;
+import nars.Events;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
 import nars.op.io.Echo;
@@ -34,26 +33,20 @@ abstract public class SynchOperator extends OpReaction {
      * method defined for the operate, and handles feedback tasks as input
      *
      * @param op     The operate to be executed
-     * @param memory The memory on which the operation is executed
      * @return true if successful, false if an error occurred
      */
     @Override
-    public boolean execute(final Operation op, final Concept c, final Memory memory) {
+    public boolean execute(final Operation op) {
 
-        //final Term[] args = op.arg().term;
-
-        List<Task> feedback;
         try {
-            feedback = execute(op, memory);
+            executed(op, apply(op));
         } catch (Exception e) {
-            feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());
+            executed(op, new Echo(Events.ERR.class, e.toString()).newTask());
             e.printStackTrace();
+            return false;
         }
 
-        executed(op, feedback, memory);
-
         return true;
-
     }
 
 }

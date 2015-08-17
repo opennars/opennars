@@ -152,10 +152,8 @@ public class TaskProcess extends NAL {
     }
 
     @Override
-    protected void afterDerive() {
-        if (derived!=null) {
-            memory.add(derived);
-        }
+    final protected void afterDerive() {
+        inputDerivations();
     }
 
     public static Premise run(final NAR nar, final String task) {

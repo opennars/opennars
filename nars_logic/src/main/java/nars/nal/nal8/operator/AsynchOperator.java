@@ -1,8 +1,6 @@
 package nars.nal.nal8.operator;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
-import nars.concept.Concept;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
 import nars.op.io.Echo;
@@ -16,7 +14,7 @@ import java.util.List;
 abstract public class AsynchOperator extends OpReaction {
 
     @Override
-    public boolean execute(Operation op, Concept c, Memory memory) {
+    public boolean execute(Operation op) {
 
         memory.taskLater(new Runnable() {
 
@@ -31,7 +29,7 @@ abstract public class AsynchOperator extends OpReaction {
                     e.printStackTrace();
                 }
 
-                executed(op, feedback, memory);
+                executed(op, feedback);
 
             }
         });

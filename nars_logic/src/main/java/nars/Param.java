@@ -27,8 +27,6 @@ public abstract class Param implements Serializable {
        The range of "now" is [-DURATION/2, +DURATION/2];      */
     public final AtomicDuration duration = new AtomicDuration();
 
-    public final AtomicDouble confidenceThreshold = new AtomicDouble();
-
     public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
 
     public AtomicInteger temporalRelationsMax = new AtomicInteger();
@@ -85,9 +83,6 @@ public abstract class Param implements Serializable {
      *   budgets are propagated or otherwise measured, which can result
      *   in a performance gain.      */
 
-
-    /** budget summary necessary for perception  */
-    public final AtomicDouble perceptThreshold = new AtomicDouble();
 
     /** budget summary necessary to Conceptualize */
     public final AtomicDouble newConceptThreshold = new AtomicDouble(0);

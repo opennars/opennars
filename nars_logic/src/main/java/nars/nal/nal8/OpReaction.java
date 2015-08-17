@@ -21,12 +21,11 @@
 
 package nars.nal.nal8;
 
-import nars.AbstractMemory;
+import com.google.common.collect.Lists;
 import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.concept.Concept;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
 import nars.task.Task;
@@ -35,6 +34,7 @@ import nars.term.Term;
 import nars.util.event.Reaction;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * An individual operate that can be execute by the system, which can be either
@@ -45,7 +45,7 @@ import java.util.List;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-abstract public class OpReaction implements Reaction<Term> {
+abstract public class OpReaction implements Function<Operation,List<Task>>, Reaction<Term,Operation> {
 
 
     public final Term term;
@@ -89,13 +89,10 @@ abstract public class OpReaction implements Reaction<Term> {
 
 
     @Override
-    public void event(Term event, Object... args) {
-        Operation o = ((Operation) args[0]);
-        Concept c = (Concept) args[1];
-        Memory m = (Memory) args[2];
-        if (decider().decide(c, o)) {
-            o = o.inline(getMemory(), false);
-            execute(o, c, m);
+    public void event(Term event, Operation o) {
+        Memory m = o.getMemory();
+        if (decider().test(o)) {
+            execute(o);
         }
     }
 
@@ -108,14 +105,10 @@ abstract public class OpReaction implements Reaction<Term> {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Operation input, Memory memory);
+    @Deprecated /* just use the apply method */
+    protected abstract boolean execute(Operation input);
 
 
-    @Override
-    public OpReaction clone() {
-        //do not clone operators, just use as-is since it's effectively immutable
-        return this;
-    }
 
     public Term getTerm() {
         return term;
@@ -133,19 +126,23 @@ abstract public class OpReaction implements Reaction<Term> {
     <patham9_> 5. the system wont pursue a goal it already pursued for the same reason (due to revision, it is related to 1)
     */
 
-    abstract public boolean execute(final Operation op, final Concept c, final Memory memory);
+    //abstract public boolean decide(final Operation op);
 
-
+    protected void executed(Operation op, Task... feedback) {
+        executed(op, Lists.newArrayList(feedback));
+    }
     /**
      * called after execution completed
      */
-    protected void executed(Operation op, List<Task> feedback, Memory memory) {
+    protected void executed(Operation op, List<Task> feedback) {
+
+        final Memory memory = op.getMemory();
 
         //Display a message in the output stream to indicate the reportExecution of an operation
         memory.emit(EXE.class, new ExecutionResult(op, feedback, memory));
 
 
-        noticeExecuted(op, memory);
+        noticeExecuted(op);
 
         //feedback tasks as input
         //should we allow immediate tasks to create feedback?
@@ -162,17 +159,14 @@ abstract public class OpReaction implements Reaction<Term> {
     }
 
 
-    public boolean isExecutable(final AbstractMemory mem) {
-        return true;
-    }
-
-
     /**
      * internal notice of the execution
      */
-    protected void noticeExecuted(final Operation operation, final Memory memory) {
+    protected void noticeExecuted(final Operation operation) {
         final Task opTask = operation.getTask();
         //if (opTask == null) return;
+
+        final Memory memory = operation.getMemory();
 
         memory.logic.TASK_EXECUTED.hit();
 

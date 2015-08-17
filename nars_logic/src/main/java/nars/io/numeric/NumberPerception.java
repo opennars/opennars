@@ -136,7 +136,7 @@ public class NumberPerception extends NullOperator {
     }
 
     @Override
-    protected void noticeExecuted(Operation operation, Memory memory) {
+    protected void noticeExecuted(Operation operation) {
         //no reaction
         operation.getTask().delete();
     }

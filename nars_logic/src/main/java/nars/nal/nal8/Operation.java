@@ -52,6 +52,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
      * this is set automatically prior to execution
      */
     transient private Task<Operation> task;
+    transient private Memory memory = null;
 
 
     //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
@@ -219,18 +220,20 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         return arg().terms();
     }
 
-    public Concept getConcept(AbstractMemory memory) {
-        return memory.concept(getTerm());
+    public Concept getConcept() {
+        final Memory m = getMemory();
+        if (m == null) return null;
+        return m.concept(getTerm());
     }
 
-    public Truth getConceptDesire(AbstractMemory m) {
-        Concept c = getConcept(m);
+    public Truth getConceptDesire() {
+        Concept c = getConcept();
         if (c == null) return null;
         return c.getDesire();
     }
 
-    public float getConceptExpectation(AbstractMemory m) {
-        Truth tv = getConceptDesire(m);
+    public float getConceptExpectation() {
+        Truth tv = getConceptDesire();
         if (tv == null) return 0;
         return tv.getExpectation();
     }
@@ -254,17 +257,17 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         memory.delete(getTerm());
     }
 
-    /**
-     * if any of the arguments are 'eval' operations, replace its result
-     * in that position in a cloned Operation instance
-     *
-     * @return
-     */
-    public Operation inline(Memory memory, boolean removeSelf) {
-        //TODO avoid clone if it does not involve any eval()
-        //if (!hasEval()) return this;
-        return clone(Product.make(arg(memory, true, removeSelf /* keep SELF term at this point */)));
-    }
+//    /**
+//     * if any of the arguments are 'eval' operations, replace its result
+//     * in that position in a cloned Operation instance
+//     *
+//     * @return
+//     */
+//    public Operation inline(Memory memory, boolean removeSelf) {
+//        //TODO avoid clone if it does not involve any eval()
+//        //if (!hasEval()) return this;
+//        return clone(Product.make(arg(memory, true, removeSelf /* keep SELF term at this point */)));
+//    }
 
 //    protected boolean hasEval() {
 //        for (Term x : arg().term) {
@@ -390,4 +393,14 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         }
         return null;
     }
+
+    /** null until the operation is executed, and null again afterward */
+    public Memory getMemory() {
+        return memory;
+    }
+
+    public boolean isExecuting() {
+        return getMemory()!=null;
+    }
+
 }

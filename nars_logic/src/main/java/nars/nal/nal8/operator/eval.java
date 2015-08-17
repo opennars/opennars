@@ -70,11 +70,11 @@ public class eval extends TermFunction {
 
     /** gets the first available term function if it exists for the given term */
     static TermFunction getTheTermFunction(Term op, Memory m) {
-        List<Reaction<Term>> r = m.exe.all(op);
+        List<Reaction<Term,Operation>> r = m.exe.all(op);
         if (r != null) {
             int s = r.size();
             for (int i = 0; i < s; i++) {
-                Reaction<Term> rr = r.get(i);
+                Reaction<Term,Operation> rr = r.get(i);
                 if (rr instanceof TermFunction)
                     return ((TermFunction) rr);
             }

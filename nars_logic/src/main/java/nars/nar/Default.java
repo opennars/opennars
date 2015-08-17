@@ -189,8 +189,6 @@ public class Default extends NARSeed  {
 
         duration.set(5);
 
-        confidenceThreshold.set(0.01);
-
         shortTermMemoryHistory.set(1);
         temporalRelationsMax.set(4);
 
@@ -212,10 +210,6 @@ public class Default extends NARSeed  {
         conceptsFiredPerCycle.set(conceptsFirePerCycle);
         novelMaxPerCycle.set(conceptsFirePerCycle);
 
-
-
-
-        this.perceptThreshold.set(0.0);
 
         this.activeConceptThreshold.set(0.0);
         this.goalThreshold.set(0.01);

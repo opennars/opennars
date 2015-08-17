@@ -23,6 +23,7 @@ package nars.task;
 import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
+import nars.Symbols;
 import nars.budget.Itemized;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
@@ -250,6 +251,34 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return getParentTask() == null && getCause() == null;
     }
 
+    /** safety checks which should not ordinarily be ncessary but maybe for debugging */
+    default public void ensureValid() {
+
+        switch (getPunctuation()) {
+            case Symbols.JUDGMENT:
+            case Symbols.QUESTION:
+            case Symbols.QUEST:
+            case Symbols.GOAL:
+                break;
+            default:
+                throw new RuntimeException("Invalid sentence punctuation");
+        }
+
+        if (isJudgmentOrGoal() && (getTruth() == null)) {
+            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
+        }
+
+        if ((getParentTaskRef() != null && getParentTask() == null))
+            throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+
+        ///*if (this.equals(getParentTask())) {
+        if (this == getParentTask()) {
+            throw new RuntimeException(this + " has parentTask equal to itself");
+        }
+
+    }
+
+
     /**
      * Check if a Task is derived by a StructuralRule
      *
@@ -392,28 +421,10 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return !isInput() && getParentTask() == null;
     }
 
-    default public boolean executeIfImmediate(Memory memory) {
-        return false;
-    }
 
 
-    default public boolean perceivable(final Memory memory) {
-        if (!getBudget().summaryGreaterOrEqual(memory.param.perceptThreshold))
-            return false;
 
-
-        //confidence threshold filter
-        if (getTruth()!=null) {
-            if (getTruth().getConfidence() < memory.param.confidenceThreshold.floatValue())
-                return false;
-        }
-        if (!(this instanceof ImmediateOperation.ImmediateTask) && getTerm() == null) {
-            throw new RuntimeException(this + " null term");
-            //return false;
-        }
-
-        if (getEvidence() == null)
-            setEvidence(memory.newStampSerial());
+    @Deprecated default public boolean perceivable(final Memory memory) {
 
         //if a task has an unperceived creationTime,
         // set it to the memory's current time here,

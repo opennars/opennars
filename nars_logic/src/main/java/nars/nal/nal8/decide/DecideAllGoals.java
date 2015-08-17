@@ -12,7 +12,7 @@ public class DecideAllGoals implements Decider {
     public final static DecideAllGoals the = new DecideAllGoals();
 
     @Override
-    public boolean decide(Concept c, Operation task) {
+    public boolean test(Operation task) {
         return (task.getTask().getPunctuation() == Symbols.GOAL);
     }
 

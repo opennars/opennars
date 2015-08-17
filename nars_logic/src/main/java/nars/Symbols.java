@@ -38,6 +38,7 @@ abstract public class Symbols {
     public static final char QUESTION = '?';
     public static final char GOAL = '!';
     public static final char QUEST = '@';
+    public static final char COMMAND = ';';
 
     
     

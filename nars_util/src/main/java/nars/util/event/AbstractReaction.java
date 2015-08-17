@@ -1,23 +1,23 @@
 package nars.util.event;
 
 /**
- * Created by me on 5/5/15.
+ * Reaction that manages its registration state
  */
-abstract public class AbstractReaction implements Reaction<Class> {
+abstract public class AbstractReaction<K,V> implements Reaction<K,V> {
 
-    transient protected EventEmitter source;
+    transient protected EventEmitter<K,V> source;
     transient protected EventEmitter.Registrations active;
-    protected final Class[] events;
+    protected final K[] events;
 
     public AbstractReaction() {
         this(null);
     }
 
-    public AbstractReaction(EventEmitter source, Class... events) {
+    public AbstractReaction(EventEmitter<K,V> source, K... events) {
         this(source, true, events);
     }
 
-    public AbstractReaction(EventEmitter source, boolean active, Class... events) {
+    public AbstractReaction(EventEmitter<K,V> source, boolean active, K... events) {
         super();
 
         this.events = events;
@@ -29,14 +29,14 @@ abstract public class AbstractReaction implements Reaction<Class> {
 
 
     /** called when added via zero-arg constructor, dont call directly, HACK */
-    public void start(EventEmitter source) {
+    public void start(EventEmitter<K,V> source) {
         if (getSource() == null) {
             this.source = source;
             setActive(true);
         }
     }
 
-    public Class[] getEvents() {
+    public K[] getEvents() {
         return this.events;
     }
 
@@ -55,7 +55,7 @@ abstract public class AbstractReaction implements Reaction<Class> {
 
     }
 
-    public EventEmitter getSource() {
+    public EventEmitter<K,V> getSource() {
         return source;
     }
 
@@ -65,7 +65,7 @@ abstract public class AbstractReaction implements Reaction<Class> {
 
     public void off() { setActive(false); }
 
-    protected void emit(Class channel, Object... signal) {
+    protected void emit(K channel, V signal) {
         source.emit(channel, signal);
     }
 

@@ -1,0 +1,18 @@
+(&/, <SELF --> [dead]>, ?x)?
+
+(&/, <SELF --> [dead]>, ":(").
+
+'Have I ever experienced something after death?
+(&/, <SELF --> [dead]>, #x)?
+
+'Will I experience something after death?
+<<SELF --> [dead]> =/> #x>?
+
+'What will I experience after death?
+<<SELF --> [dead]> =/> ?afterlifeExperience>?
+
+'What may cause my death?
+<#deathCause =/> <SELF --> [dead]>>?
+
+'"Is there a observation which after observing it, will make me die?"   <- this one doesn't ask for "what will make me die"
+(&&,<#deadlyObservation --> observation>, <<#deadlyObservation --> [observed]> =/> <SELF --> [dead]>>)?

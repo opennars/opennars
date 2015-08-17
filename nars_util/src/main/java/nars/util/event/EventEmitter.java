@@ -1,21 +1,21 @@
 
 package nars.util.event;
 
-import nars.util.data.DirectCopyOnWriteArrayList;
+import nars.util.data.FasterList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * TODO separate this into a single-thread and multithread implementation
  */
-abstract public class EventEmitter<K>  {
+abstract public class EventEmitter<K,V>  {
 
-    abstract public List<Reaction<K>> all(K op);
+    abstract public List<Reaction<K,V>> all(K op);
 
     public interface EventRegistration {
         public void off();
@@ -162,17 +162,19 @@ abstract public class EventEmitter<K>  {
     /** single-thread synchronous (in-thread) event emitter with direct array access
      * NOT WORKING YET
      * */
-    public static class DefaultEventEmitter<K,L extends List<Reaction<K>>> extends EventEmitter<K> {
+    public static class DefaultEventEmitter<K,V> extends EventEmitter<K,V> {
 
-        final Map<K,L> reactions = new HashMap(64);
+        final Map<K,List<Reaction<K,V>>> reactions = new HashMap(64);
+
+        final Function<K, List<Reaction<K,V>>> getNewChannel = k -> { return newChannelList(); };
 
 
-        public class DefaultEventRegistration<K> implements EventRegistration {
+        public class DefaultEventRegistration<K,V> implements EventRegistration {
 
             final K key;
-            final Reaction reaction;
+            final Reaction<K,V> reaction;
 
-            DefaultEventRegistration(K key, Reaction o) {
+            DefaultEventRegistration(K key, Reaction<K,V> o) {
                 this.key= key;
                 this.reaction = o;
             }
@@ -185,38 +187,31 @@ abstract public class EventEmitter<K>  {
 
 
         @Override
-        public List<Reaction<K>> all(K c) {
+        public List<Reaction<K,V>> all(K c) {
             return reactions.get(c);
         }
 
         @Override
-        public void notify(final K channel, final Object... arg) {
-            List<Reaction<K>> c = all(channel);
-            if (c!=null) {
-                c.forEach(new Consumer<Reaction<K>>() {
-                    @Override
-                    public void accept(Reaction<K> x) {
-                        x.event(channel, arg);
-                    }
-                });
+        public void notify(final K channel, final V arg) {
+            List<Reaction<K,V>> c = all(channel);
+            if (c==null) return;
+            for (int i = 0, cSize = c.size(); i < cSize; i++) {
+                c.get(i).event(channel, arg);
             }
         }
 
         @Override
-        public EventRegistration on(K channel, Reaction o) {
+        public EventRegistration on(K channel, Reaction<K,V> o) {
             DefaultEventRegistration d = new DefaultEventRegistration(channel, o);
-            List<Reaction<K>> cl = all(channel);
-            if (cl == null)
-                reactions.put(channel,
-                        (L) (cl = newChannelList()));
 
-            //PROBLEM IS HERE
+            List<Reaction<K,V>> cl = reactions.computeIfAbsent(channel, getNewChannel);
             cl.add(o);
+
             return d;
         }
 
-        protected List<Reaction<K>> newChannelList() {
-            return new CopyOnWriteArrayList<Reaction<K>>();
+        protected List<Reaction<K,V>> newChannelList() {
+            return new CopyOnWriteArrayList<Reaction<K,V>>();
         }
 
         @Override
@@ -225,63 +220,63 @@ abstract public class EventEmitter<K>  {
         }
 
         @Override
-        public boolean isActive(Class event) {
+        public boolean isActive(K event) {
             return reactions.containsKey(event);
         }
     }
 
-    /** uses DirectCopyOnWriteArrayList for direct access to its array, for
-     * fast non-Lambda, non-Itrator iteration
-     * NOT WORKING YET
-     * */
-    public static class FastDefaultEventEmitter<K> extends DefaultEventEmitter<K,DirectCopyOnWriteArrayList<Reaction<K>>> {
+//    /** uses DirectCopyOnWriteArrayList for direct access to its array, for
+//     * fast non-Lambda, non-Itrator iteration
+//     * NOT WORKING YET
+//     * */
+//    public static class FastDefaultEventEmitter<K> extends DefaultEventEmitter<K,DirectCopyOnWriteArrayList<Reaction<K>>> {
+//
+//
+//        static final private Reaction[] nullreactionlist = null;
+//
+//        @Override
+//        public DirectCopyOnWriteArrayList<Reaction<K>> all(K c) {
+//            return reactions.get(c);
+//        }
+//
+//        @Override
+//        public void notify(final K channel, final Object... arg) {
+//
+//            final DirectCopyOnWriteArrayList<Reaction<K>> c = all(channel);
+//            if (c != null) {
+//                for (final Reaction<K> x : c.getArray()) {
+//                    x.event(channel, arg);
+//                }
+//            }
+//
+//        }
+//
+//        @Override
+//        protected List<Reaction<K>> newChannelList() {
+//            return new DirectCopyOnWriteArrayList<Reaction<K>>(Reaction.class);
+//        }
+//    }
+//
+    abstract void notify(K channel, V arg);
+//
+    abstract public EventRegistration on(K k, Reaction<K,V> o);
+//
+    abstract public boolean isActive(final K event);
+//
+//
+//    /** for enabling many events at the same time */
+//    @Deprecated public void set(final Reaction<K> o, final boolean enable, final K... events) {
+//
+//        for (final K c : events) {
+//            if (enable)
+//                on(c, o);
+//            else
+//                off(c, o);
+//        }
+//    }
 
 
-        static final private Reaction[] nullreactionlist = null;
-
-        @Override
-        public DirectCopyOnWriteArrayList<Reaction<K>> all(K c) {
-            return reactions.get(c);
-        }
-
-        @Override
-        public void notify(final K channel, final Object... arg) {
-
-            final DirectCopyOnWriteArrayList<Reaction<K>> c = all(channel);
-            if (c != null) {
-                for (final Reaction<K> x : c.getArray()) {
-                    x.event(channel, arg);
-                }
-            }
-
-        }
-
-        @Override
-        protected List<Reaction<K>> newChannelList() {
-            return new DirectCopyOnWriteArrayList<Reaction<K>>(Reaction.class);
-        }
-    }
-
-    abstract void notify(K channel, Object[] arg);
-
-    abstract public EventRegistration on(K k, Reaction o);
-
-    abstract public boolean isActive(final Class event);
-
-
-    /** for enabling many events at the same time */
-    @Deprecated public void set(final Reaction<K> o, final boolean enable, final K... events) {
-        
-        for (final K c : events) {
-            if (enable)
-                on(c, o);
-            else
-                off(c, o);
-        }
-    }
-
-
-    public static class Registrations extends ArrayList<EventRegistration> {
+    public static class Registrations extends FasterList<EventRegistration> {
 
         Registrations(int length) {
             super(length);
@@ -300,16 +295,18 @@ abstract public class EventEmitter<K>  {
 //                r.cancelAfterUse();
 //        }
 
-        public void off() {
-            for (EventRegistration r : this)
-                r.off();
+        public synchronized void off() {
+            for (int i = 0; i < this.size(); i++) {
+                this.get(i).off();
+            }
+            clear();
         }
         
     }
 
 
     
-    public Registrations on(final Reaction o, final K... events) {
+    public Registrations on(final Reaction<K,V> o, final K... events) {
         Registrations r = new Registrations(events.length);
     
         for (final K c : events)
@@ -333,7 +330,7 @@ abstract public class EventEmitter<K>  {
         notify(channel, null);
     }
 
-    public void emit(final K channel, final Object... args) {
+    public void emit(final K channel, final V args) {
 //        if (args.length == 0) {
 //            //notify(channel);
 //            throw new RuntimeException("event to " + channel + " with zero arguments");
@@ -350,7 +347,7 @@ abstract public class EventEmitter<K>  {
      * @param o
      * @return  whether it was removed
      */
-    @Deprecated public void off(final K event, final Reaction<? extends K> o) {
+    @Deprecated public void off(final K event, final Reaction<K,V> o) {
         throw new RuntimeException("off() not supported; use the returned Registration object to .cancel()");
     }
 

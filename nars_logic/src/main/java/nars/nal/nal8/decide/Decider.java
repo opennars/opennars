@@ -1,11 +1,11 @@
 package nars.nal.nal8.decide;
 
-import nars.concept.Concept;
 import nars.nal.nal8.Operation;
+
+import java.util.function.Predicate;
 
 /**
  * A method of deciding if an execution should proceed.
  */
-public interface Decider {
-    public boolean decide(Concept c, Operation op);
+public interface Decider extends Predicate<Operation> {
 }

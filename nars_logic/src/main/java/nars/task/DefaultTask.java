@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.AbstractMemory;
 import nars.Global;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.nal.nal7.Sequence;
@@ -43,11 +44,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /**
      * Task from which the Task is derived, or null if input
      */
-    transient public Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
+    transient protected Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    transient public Reference<Task> parentBelief;
+    transient protected Reference<Task> parentBelief;
 
     public Truth truth;
     protected T term;
@@ -97,20 +98,16 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         );
     }
 
+    protected void setTerm(T t) {
+        term = t;
+    }
+
+
     public DefaultTask(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Task> solution) {
         super(p, d, q);
         //super(term, punctuation, truth, p, d, q);
 
         this.punctuation = punctuation;
-
-        boolean isQuestionOrQuest = isQuestion() || isQuest();
-        if (isQuestionOrQuest) {
-            this.truth = null;
-        } else if (truth == null) {
-            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-        } else {
-            this.truth = truth;
-        }
 
         if (term instanceof Sequence) {
             this.term = (T) ((Sequence) term).cloneRemovingSuffixInterval();
@@ -119,31 +116,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         }
 
         this.parentTask = parentTask;
-
-        if (parentTask == null)
-            log("Input");
-
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
-
-        if (Global.DEBUG) {
-            if ((parentTask != null && parentTask.get() == null))
-                throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
-
-            ///*if (this.equals(getParentTask())) {
-            if (this == getParentTask()) {
-                throw new RuntimeException(this + " has parentTask equal to itself");
-            }
-        /*
-        //IS THERE SOME WAY TO MERGE EQUIVALENT BELIEFS HERE?
-        if (this.sentence.equals(parentBelief)) {
-            throw new RuntimeException(this + " has parentBelief equal to its sentence");
-        }
-        */
-        }
-
-
-
     }
 
     public DefaultTask(Sentence<T> s, Budget budget, Task parentTask, Task parentBelief) {
