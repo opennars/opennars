@@ -90,7 +90,7 @@ public class Abbreviation extends NARReaction {
         //is it complex and also important? then give it a name:
         if (canAbbreviate(task)) {
 
-            final Compound termAbbreviating = task.sentence.getTerm();
+            final Compound termAbbreviating = task.getTerm();
 
             Operation compound = Operation.make(
                     Product.make(termArray(termAbbreviating)), abbreviate);

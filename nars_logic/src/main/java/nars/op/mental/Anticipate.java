@@ -113,7 +113,7 @@ public class Anticipate extends NARReaction implements Mental {
             return;
         }
 
-        if(t.sentence.truth.getExpectation()< Global.DEFAULT_CONFIRMATION_EXPECTATION) {
+        if(t.getTruth().getExpectation()< Global.DEFAULT_CONFIRMATION_EXPECTATION) {
             return;
         }
 
@@ -283,7 +283,7 @@ public class Anticipate extends NARReaction implements Mental {
 
             Task newEvent = (Task) args[0];
             this.nal = (NAL)args[1];
-            if (newEvent.sentence.truth != null)
+            if (newEvent.getTruth() != null)
                 newTaskTerms.add(newEvent.getTerm()); //new: always add but keep truth value in mind
 
         } else if (nal != null && event == CycleEnd.class) {
@@ -400,7 +400,7 @@ public class Anticipate extends NARReaction implements Mental {
         }
 
         public Budget getBudget() {
-            return task;
+            return task.getBudget();
         }
     }
 }

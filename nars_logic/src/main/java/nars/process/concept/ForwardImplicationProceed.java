@@ -45,11 +45,11 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm<ConceptProces
         Task taskLinkTask = f.getTask();// taskLink.getTask();
 
 
-        if (!(taskLinkTask.sentence.isJudgment() || taskLinkTask.sentence.isGoal())) return true;
+        if (!(taskLinkTask.isJudgment() || taskLinkTask.isGoal())) return true;
 
-        Term taskTerm = taskLinkTask.sentence.getTerm();
+        Term taskTerm = taskLinkTask.getTerm();
         if (!(taskTerm instanceof Implication)) return true;
-        Implication imp = (Implication) taskLinkTask.sentence.getTerm();
+        Implication imp = (Implication) taskLinkTask.getTerm();
 
         if (!((imp.getTemporalOrder() == ORDER_FORWARD || (imp.getTemporalOrder() == ORDER_CONCURRENT))))
             return true;
@@ -83,10 +83,10 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm<ConceptProces
             if (conj.getTemporalOrder() == conj2.getTemporalOrder() && alreadyInducted.add(t)) {
 
                 Task s = null;
-                if ((taskLinkTask.sentence.punctuation == Symbols.JUDGMENT) && (next.hasBeliefs())) {
+                if ((taskLinkTask.isJudgment()) && (next.hasBeliefs())) {
                     s = next.getBeliefs().top();
                 }
-                else if ((taskLinkTask.sentence.punctuation == Symbols.GOAL) && (next.hasGoals())) {
+                else if ((taskLinkTask.isGoal()) && (next.hasGoals())) {
                     s = next.getGoals().top();
                 }
                 if (s == null) continue;
@@ -112,7 +112,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm<ConceptProces
                         continue;
 
                     //todo add
-                    Truth truth = TruthFunctions.deduction(s.getTruth(), taskLinkTask.sentence.truth);
+                    Truth truth = TruthFunctions.deduction(s.getTruth(), taskLinkTask.getTruth());
 
 
 //                    Task newTask = new Task(

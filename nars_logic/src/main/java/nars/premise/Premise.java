@@ -316,7 +316,7 @@ public interface Premise {
         return deriveDouble(newTaskContent, getTask().getPunctuation(), newTruth, newBudget, getTask(), getBelief(), false, allowOverlap);
     }
 
-    default public Task deriveDoubleTemporal(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence previousBelief) {
+    default public Task deriveDoubleTemporal(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Task parentTask, Task previousBelief) {
         return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, previousBelief, true, false);
     }
 

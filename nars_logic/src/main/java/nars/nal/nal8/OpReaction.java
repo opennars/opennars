@@ -179,7 +179,7 @@ abstract public class OpReaction implements Reaction<Term> {
         memory.add(memory.newTask(operation).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
-                budget(operation.getTask()).
+                budget(operation.getTask().getBudget()).
                 present().
                 parent(opTask).
                 cause(operation).

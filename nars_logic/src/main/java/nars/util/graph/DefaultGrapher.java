@@ -143,7 +143,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
         }
         if (includeBeliefs) {
             for (final Task belief : c.getBeliefs()) {
-                sentenceTerms.put(onBelief(belief.sentence), c);
+                sentenceTerms.put(onBelief(belief), c);
             }
         }
         if (includeQuestions) {

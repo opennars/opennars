@@ -38,7 +38,7 @@ public class consider extends SynchOperator implements Mental {
     public static Operator consider = Operator.the("consider");
 
     public static Budget budgetMentalConcept(final Operation o) {
-        return o.getTask();
+        return o.getTask().getBudget();
     }
     
 

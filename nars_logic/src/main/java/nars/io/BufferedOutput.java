@@ -16,12 +16,11 @@ import java.util.*;
  * remains in order but without high-cost items
  * according to constraint parameters limting throughput
  * in both quantity and time.
-*/
+ */
 abstract public class BufferedOutput extends Output {
 
 
     final SummaryStatistics itemCosts = new SummaryStatistics();
-
 
 
     public static class OutputItem implements Comparable<OutputItem> {
@@ -44,7 +43,7 @@ abstract public class BufferedOutput extends Output {
         public boolean equals(final Object obj) {
             if (this == obj) return true;
             if (obj instanceof OutputItem) {
-                OutputItem oi = (OutputItem)obj;
+                OutputItem oi = (OutputItem) obj;
                 return channel.equals(oi.channel) && object.equals(oi.object);
             }
             return false;
@@ -107,7 +106,10 @@ abstract public class BufferedOutput extends Output {
     }
 
     //TODO make this a pluggable function
-    /** cost of emitting this signal; return Float.NaN to discard it completely */
+
+    /**
+     * cost of emitting this signal; return Float.NaN to discard it completely
+     */
     public float cost(Class event, Object o) {
 
         if (!showInput && event == Events.IN.class)
@@ -133,36 +135,36 @@ abstract public class BufferedOutput extends Output {
 
         float c = 1.0f;
         if (o instanceof Task) {
-            Task t = (Task)o;
-            if (t.sentence != null) {
+            Task t = (Task) o;
 
-                float conf;
-                if (t.sentence.truth!=null)
-                    conf = (t.sentence.truth.getConfidence());
-                else
-                    conf = 1.0f;
+            float conf;
+            if (t.getTruth() != null)
+                conf = (t.getConfidence());
+            else
+                conf = 1.0f;
 
-                c = 1.0f + 0.2f * (1.0f - t.getPriority());
-                c *= 1.0f + 0.02f * (float) Math.sqrt(t.getTerm().getComplexity());
-                c *= 1.0f + 0.2f * (1.0f - conf);
-                c *= 1.0f + 0.1f * t.sentence.getOriginality();
-            }
+            c = 1.0f + 0.2f * (1.0f - t.getPriority());
+            c *= 1.0f + 0.02f * (float) Math.sqrt(t.getTerm().getComplexity());
+            c *= 1.0f + 0.2f * (1.0f - conf);
+            c *= 1.0f + 0.1f * t.getOriginality();
         }
-
 
 
         if (event == Events.Answer.class) {
-            c/=0.5f;
+            c /= 0.5f;
         }
         if (event == Events.ERR.class) {
-            c*= 2.0f;
+            c *= 2.0f;
         }
 
         return c;
     }
 
-    protected void included(OutputItem o) { }
-    protected void excluded(OutputItem o) { }
+    protected void included(OutputItem o) {
+    }
+
+    protected void excluded(OutputItem o) {
+    }
 
     public void queue(long now, Class channel, Object signal, float cost) {
         OutputItem i = new OutputItem(channel, signal, cost);
@@ -175,8 +177,7 @@ abstract public class BufferedOutput extends Output {
                 throw new RuntimeException("buffer fault when trying to add: " + signal); //should have added a unique value to the set and so both should be +1 item
             }
             itemCosts.addValue(cost);
-        }
-        else {
+        } else {
             return; //duplicated
         }
 
@@ -184,7 +185,7 @@ abstract public class BufferedOutput extends Output {
             return;
 
         //create output
-        float totalCost = (float)itemCosts.getSum();
+        float totalCost = (float) itemCosts.getSum();
 
         if (totalCost > maxBudgetToEmit) {
             Iterator<OutputItem> f = bufferCosts.iterator();
@@ -251,8 +252,7 @@ abstract public class BufferedOutput extends Output {
                         sb.append(content);
 
                     lastChannel = nextChannel;
-                }
-                else {
+                } else {
                     sb.append(content); //just the content
                 }
 
@@ -263,11 +263,11 @@ abstract public class BufferedOutput extends Output {
 
 
         //optional: removing " %1.00;"
-        String s = sb.toString().replace(" %1.00;0."," 1;");
+        String s = sb.toString().replace(" %1.00;0.", " 1;");
 
 
-        if (charLimit!=-1 && sb.length() > charLimit) {
-            return sb.substring(0, charLimit-2) + "..";
+        if (charLimit != -1 && sb.length() > charLimit) {
+            return sb.substring(0, charLimit - 2) + "..";
         }
 
         return s;

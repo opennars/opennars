@@ -70,7 +70,7 @@ public class STMInduction extends NARReaction {
         }
 
 
-        if (currentTask.sentence.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory) && !anticipation)) {
+        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory) && !anticipation)) {
             return false;
         }
 
@@ -89,7 +89,7 @@ public class STMInduction extends NARReaction {
             Task stmLast = ss.next();
 
 
-            if (!equalSubTermsInRespectToImageAndProduct(currentTask.sentence.getTerm(), stmLast.sentence.getTerm())) {
+            if (!equalSubTermsInRespectToImageAndProduct(currentTask.getTerm(), stmLast.getTerm())) {
                 continue;
             }
 

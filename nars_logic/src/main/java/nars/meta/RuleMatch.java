@@ -5,7 +5,6 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.premise.Premise;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
@@ -17,6 +16,8 @@ import nars.truth.Truth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+
+
 
 /** rule matching context, re-recyclable if thread local */
 public class RuleMatch extends FindSubst {
@@ -83,20 +84,20 @@ public class RuleMatch extends FindSubst {
 
     public boolean apply(final PostCondition p) {
         final Task task = premise.getTask();
-        final Sentence belief = premise.getBelief();
+        final Task belief = premise.getBelief();
 
 
         if (task == null)
             throw new RuntimeException("null task");
 
-        final Truth T = task.truth;
-        final Truth B = belief == null ? null : belief.truth;
+        final Truth T = task.getTruth();
+        final Truth B = belief == null ? null : belief.getTruth();
 
         Truth truth = null;
         Truth desire = null;
         boolean single_premise = p.single_premise;
 
-        if (p.negate && task.truth.getFrequency() >= PostCondition.HALF) { //its negation, it needs this additional information to be useful
+        if (p.negate && task.getFrequency() >= PostCondition.HALF) { //its negation, it needs this additional information to be useful
             return false;
         }
 
@@ -179,7 +180,7 @@ public class RuleMatch extends FindSubst {
 
         TaskSeed<Compound> t = premise.newTask((Compound)derive, task, belief, allowOverlap);
         if (t != null) {
-            t.punctuation(task.punctuation).truth(truth).budget(budget);
+            t.punctuation(task.getPunctuation()).truth(truth).budget(budget);
 
             if (t.getOccurrenceTime() != Stamp.ETERNAL) {
                 t.occurr(t.getOccurrenceTime() + occurence_shift);

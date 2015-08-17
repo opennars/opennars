@@ -231,7 +231,7 @@ public interface BeliefTable extends TaskTable {
 
         float d = 0;
         for (Task t : this) {
-            d += t.projectionTruthQuality(time, time, false) * t.truth.getExpectation();
+            d += t.projectionTruthQuality(time, time, false) * t.getExpectation();
         }
 
         return d/size;

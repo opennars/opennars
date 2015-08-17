@@ -26,12 +26,13 @@ public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable
     public final boolean apply(final ConceptProcess f, final TermLink bLink) {
 
 
+        final Task task = f.getTask();
         final TaskLink tLink = f.getTaskLink();
-        final Sentence taskSentence = tLink.getSentence();
+
         final Term taskTerm = tLink.getTerm();
 
         final Task beliefTask = f.getBelief();
-        @Deprecated final Sentence belief = f.getBelief();
+        @Deprecated final Task belief = f.getBelief();
         final Term beliefTerm = bLink.getTerm();
 
 
@@ -69,7 +70,7 @@ public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
                             if (belief.getTerm() instanceof Statement)
-                                SyllogisticRules.detachment(beliefTask, taskSentence, bIndex, f);
+                                SyllogisticRules.detachment(beliefTask, task, bIndex, f);
                             /*else {
                                 new RuntimeException(belief + " not a statement via termlink " + tLink).printStackTrace();
                             }*/
@@ -107,7 +108,7 @@ public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable
                                     if (u[0] instanceof Compound) {
                                         Task<Statement> newBelief = beliefTask.clone((Compound) u[0]/*, Statement.class*/);
                                         if (newBelief != null) {
-                                            Sentence newTaskSentence = taskSentence.clone((Compound) u[1]);
+                                            Task newTaskSentence = task.clone((Compound) u[1]);
                                             if (newTaskSentence != null) {
                                                 RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, f);
                                             }
@@ -170,7 +171,7 @@ public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable
                             {
                                 Term subj = ((Statement) taskTerm).getSubject();
                                 if (subj instanceof Negation) {
-                                    if (taskSentence.isJudgment()) {
+                                    if (task.isJudgment()) {
                                         RuleTables.componentAndStatement((Compound) subj, bIndex, (Statement) taskTerm, tIndex, f);
                                     } else {
                                         RuleTables.componentAndStatement((Compound) subj, tIndex, (Statement) beliefTerm, bIndex, f);

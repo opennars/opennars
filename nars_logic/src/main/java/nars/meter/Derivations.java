@@ -255,10 +255,10 @@ public class Derivations extends DirectedMultigraph {
     public String genericString(Task t, ObjectIntHashMap<Term> unique, long now, boolean includeDerivedTruth, boolean includeDerivedBudget) {
         StringBuilder tempTaskString = new StringBuilder(128);
 
-        String s = genericString(t.sentence, unique, now, includeDerivedTruth);
+        String s = genericString(t, unique, now, includeDerivedTruth);
 
         if (includeDerivedBudget)
-            tempTaskString.append(t.toStringExternalBudget1(false));
+            tempTaskString.append(t.getBudget().toBudgetString());
 
         tempTaskString.append(s);
 
@@ -317,7 +317,7 @@ public class Derivations extends DirectedMultigraph {
         newEdge(conceptTerm, premise);
 
         TermPattern taskLinkTerm = addTermPattern(tasklink.getTerm(), unique);
-        SentencePattern taskLinkSentence = addSentencePattern(tasklink.getSentence(), unique, now);
+        SentencePattern taskLinkSentence = addSentencePattern(tasklink.getTask(), unique, now);
         newEdge(taskLinkTerm, taskLinkSentence);
         newEdge(taskLinkSentence, premise);
 
@@ -396,12 +396,12 @@ public class Derivations extends DirectedMultigraph {
     public static String genericString(Sentence s, ObjectIntHashMap<Term> unique, long now, boolean includeTruth) {
         String t = genericString(s.getTerm(), unique);
 
-        t += "; " + Symbols.getPunctuationWord( s.punctuation ) + " ";
+        t += "; " + Symbols.getPunctuationWord( s.getPunctuation() ) + " ";
 
         t += "; ";
         if (includeTruth) {
-            if (s.truth != null)
-                t += Texts.n2(s.truth.getFrequency()) + ";" + Texts.n2(s.truth.getConfidence());
+            if (s.getTruth() != null)
+                t += Texts.n2(s.getFrequency()) + ";" + Texts.n2(s.getConfidence());
             else
                 t += "?;?";
         }

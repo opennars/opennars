@@ -324,7 +324,7 @@ public class LocalRules {
      * @param figure location of the shared term
      * @param p    Reference to the memory
      */
-    public static void matchAsymSym(final Task asym, final Sentence sym, int figure, final Premise p) {
+    public static void matchAsymSym(final Task asym, final Task sym, int figure, final Premise p) {
         if (p.getTask().isJudgment()) {
             inferToAsym(asym, sym, p);
         } else {
@@ -342,7 +342,7 @@ public class LocalRules {
      * @param sym  The symmetric premise
      * @param p  Reference to the memory
      */
-    private static Task inferToAsym(Task asym, Sentence sym, Premise p) {
+    private static Task inferToAsym(Task asym, Task sym, Premise p) {
         TaskSeed s = p.newDoublePremise(asym, sym);
         if (s == null)
             return null;

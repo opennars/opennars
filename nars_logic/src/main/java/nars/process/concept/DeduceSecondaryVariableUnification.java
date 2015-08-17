@@ -11,6 +11,7 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.process.ConceptProcess;
+import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -117,7 +118,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
             //getBeliefRandomByConfidence(task.sentence.isEternal());
 
-            final Truth truthSecond = second_belief.truth;
+            final Truth truthSecond = second_belief.getTruth();
 
             if (terms_dependent == null) {
                 terms_dependent = Global.newArrayList(0);
@@ -173,7 +174,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         }
 
 
-        if (task.truth == null)
+        if (task.getTruth() == null)
             throw new RuntimeException("Task sentence truth must be non-null: " + task);
 
 
@@ -295,7 +296,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         }
     }
 
-    private static void dedSecondLayerVariableUnificationTerms(final ConceptProcess nal, Task task, Sentence second_belief, List<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final ConceptProcess nal, Task task, Task second_belief, List<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
 
         final int tds = terms_dependent.size();
 
@@ -313,9 +314,9 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         }
     }
 
-    private static Truth unifySecondLayerVariable(Compound result, Task task, Sentence second_belief, Truth truth, Truth t1, Truth t2, boolean strong, ConceptProcess nal) {
+    private static Truth unifySecondLayerVariable(Compound result, Task task, Task second_belief, Truth truth, Truth t1, Truth t2, boolean strong, ConceptProcess nal) {
         final char punc;
-        if (task.sentence.isGoal()) {
+        if (task.isGoal()) {
             if (strong) {
                 truth = desireInd(t1, t2);
             } else {
@@ -336,7 +337,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         }
 
 
-        Task dummy = new Task(second_belief, budget, task, null);
+        Task dummy = new DefaultTask(second_belief, budget, task, null);
 
         nal.setBelief(task);
 

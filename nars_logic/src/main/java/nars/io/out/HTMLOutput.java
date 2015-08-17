@@ -23,10 +23,10 @@ class HTMLOutput {
                 Task t = (Task)signal;
                 Sentence s = t.getBestSolution();
                 if (s == null)
-                    s = t.sentence;
+                    s = t;
 
-                if (s.truth!=null) {
-                    buffer.append(getTruthHTML(s.truth));
+                if (s.getTruth()!=null) {
+                    buffer.append(getTruthHTML(s.getTruth()));
                 }
                 buffer.append("<div style='float:left'><pre>").append(escapeHTML(s.toString(nar, showStamp))).append("</pre></div>");
                 buffer.append("<br/>");

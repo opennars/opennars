@@ -180,7 +180,7 @@ public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
             return null;
 
         final Task currentTask = nal.getTask();
-        final Truth truth = currentTask.truth;
+        final Truth truth = currentTask.getTruth();
         final Budget budget;
         if (currentTask.isQuestOrQuestion()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
@@ -202,7 +202,7 @@ public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
      * @param nal Reference to the memory
      */
     private static void transformSubjectPI(Compound subject, Term predicate, Premise nal) {
-        Truth truth = nal.getTask().sentence.truth;
+        Truth truth = nal.getTask().getTruth();
         Budget budget;
         Inheritance inheritance;
         Term newSubj, newPred;
@@ -257,7 +257,7 @@ public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
      * @param nal Reference to the memory
      */
     private static void transformPredicatePI(Term subject, Compound predicate, Premise nal) {
-        Truth truth = nal.getTask().sentence.truth;
+        Truth truth = nal.getTask().getTruth();
         Budget budget;
         Inheritance inheritance;
         Term newSubj, newPred;

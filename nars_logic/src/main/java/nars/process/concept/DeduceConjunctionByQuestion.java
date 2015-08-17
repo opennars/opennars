@@ -41,7 +41,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
      * @param belief   The second premise
      * @param nal      Reference to the memory
      */
-    static void dedConjunctionByQuestion(final Task sentence, final Sentence belief, final NAL nal) {
+    static void dedConjunctionByQuestion(final Task sentence, final Task belief, final NAL nal) {
         if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
@@ -122,8 +122,8 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
             if (Variables.containVarDepOrIndep(conj.name()))
                 continue;
              */
-                Truth truthT = nal.getTask().sentence.truth;
-                Truth truthB = nal.getBelief().truth;
+                Truth truthT = nal.getTask().getTruth();
+                Truth truthB = nal.getBelief().getTruth();
             /*if(truthT==null || truthB==null) {
                 //continue; //<- should this be return and not continue?
                 return;

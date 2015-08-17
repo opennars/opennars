@@ -21,21 +21,21 @@ public class Contraposition extends ConceptFireTask {
 
     @Override
     public boolean apply(Premise f, TaskLink taskLink) {
-        final Sentence taskSentence = taskLink.getSentence();
+        final Task task = taskLink.getTask();
 
-        final Term taskTerm = taskSentence.getTerm();
+        final Term taskTerm = task.getTerm();
 
         if ((taskLink.type!= TermLink.TRANSFORM) && (taskTerm instanceof Implication)) {
             //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
 
             //Concept d=memory.concepts.sampleNextConcept();
-            //if(d!=null && d.term.equals(taskSentence.term)) {
+            //if(d!=null && d.term.equals(task.term)) {
 
             float n = taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
             float w = 1.0f / ((n * (n - 1)) / 2.0f); //let's assume hierachical tuple (triangle numbers) amount for this
             if (f.getRandom().nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
 
-                contraposition(taskSentence, f);
+                contraposition(task, f);
                 //}
             }
         }
@@ -66,7 +66,7 @@ public class Contraposition extends ConceptFireTask {
 
         if (content == null) return null;
 
-        Truth truth = sentence.truth;
+        Truth truth = sentence.getTruth();
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (content instanceof Implication) {
@@ -84,7 +84,7 @@ public class Contraposition extends ConceptFireTask {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
 
-        return nal.deriveSingle(content, sentence.punctuation, truth, budget);
+        return nal.deriveSingle(content, sentence.getPunctuation(), truth, budget);
     }
 
 

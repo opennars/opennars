@@ -24,6 +24,7 @@ import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budgeted;
+import nars.budget.Itemized;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
@@ -47,7 +48,7 @@ import java.util.Set;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public interface Task<T extends Compound> extends Sentence<T>, Budgeted, Truthed {
+public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence<T>>, Truthed {
 
 
     public static void getExplanation(Task task, int indent, StringBuilder sb) {

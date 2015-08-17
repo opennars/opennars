@@ -202,12 +202,12 @@ public class DefaultCycle extends SequentialCycle {
 
     /** returns whether the task was run */
     protected boolean run(Task task) {
-        final Sentence sentence = task.sentence;
+
 
         //memory.emotion.busy(task);
 
-        if (task.isInput() || !(sentence.isJudgment())
-                || (memory.concept(sentence.getTerm()) != null)
+        if (task.isInput() || !(task.isJudgment())
+                || (memory.concept(task.getTerm()) != null)
                 ) {
 
             //it is a question/quest or a judgment for a concept which exists:
@@ -217,11 +217,10 @@ public class DefaultCycle extends SequentialCycle {
             //it is a judgment or goal which would create a new concept:
 
 
-            final Sentence s = sentence;
 
             //if (s.isJudgment() || s.isGoal()) {
 
-            final double exp = s.truth.getExpectation();
+            final double exp = task.getExpectation();
             if (exp > memory.param.conceptCreationExpectation.floatValue()) {//Global.DEFAULT_CREATION_EXPECTATION) {
 
                 // new concept formation

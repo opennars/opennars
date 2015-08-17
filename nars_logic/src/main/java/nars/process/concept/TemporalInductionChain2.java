@@ -100,7 +100,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     }
 
 
-    boolean induct(Task task, Sentence prev, Sentence current, ConceptProcess f) {
+    boolean induct(Task task, Task prev, Task current, ConceptProcess f) {
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
         TemporalRules.temporalInduction(current, prev,
@@ -113,8 +113,8 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
     static class InductableImplication extends ConceptByOperator {
 
-        Set<Sentence> alreadyInducted = new HashSet();
-        private Sentence current, prev;
+        Set<Task> alreadyInducted = Global.newHashSet(1);
+        private Task current, prev;
         private Task task;
         private int duration;
 
@@ -169,11 +169,11 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             prev = current = null;
         }
 
-        public Sentence getPrevious() {
+        public Task getPrevious() {
             return prev;
         }
 
-        public Sentence getCurrent() {
+        public Task getCurrent() {
             return current;
         }
     }

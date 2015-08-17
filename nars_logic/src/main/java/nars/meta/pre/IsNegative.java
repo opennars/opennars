@@ -19,9 +19,9 @@ public class IsNegative extends PreCondition2 {
     public boolean test(RuleMatch m, Term a, Term b) {
         Task task = m.premise.getTask();
         Task belief = m.premise.getBelief();
-        if (a.equals(task.getTerm()) && task.truth.getFrequency() >= PostCondition.HALF) {
+        if (a.equals(task.getTerm()) && task.getFrequency() >= PostCondition.HALF) {
             return false;
-        } else if (b.equals(belief.getTerm()) && (belief == null || belief.truth.getFrequency() >= PostCondition.HALF)) {
+        } else if (b.equals(belief.getTerm()) && (belief == null || belief.getFrequency() >= PostCondition.HALF)) {
             return false;
         }
         m.single = true;

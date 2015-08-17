@@ -135,7 +135,7 @@ public abstract class TermFunction<O> extends SynchOperator {
         Compound actual_dep_part = lastTerm!=null ? Similarity.make(lastTerm, y) : null;
 
 
-        float confidence = operation.getTask().sentence.truth.getConfidence();
+        float confidence = operation.getTask().getConfidence();
         //TODO add a delay discount/projection for executions that happen further away from creation time
 
         return Lists.newArrayList(

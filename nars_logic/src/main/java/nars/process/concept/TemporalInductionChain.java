@@ -39,8 +39,8 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
         if (!f.nal(7)) return true;
 
-        final Task beliefTask = f.getBelief();
-        final Sentence belief = f.getBelief();
+
+        final Task belief = f.getBelief();
         if (belief == null) return true;
 
         final Memory memory = f.memory;
@@ -73,7 +73,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
                         Task s = next.getBeliefs().top();
                         if (s!=null) {
                             temporalInductionChain(s, belief, f);
-                            temporalInductionChain(beliefTask, s, f);
+                            temporalInductionChain(belief, s, f);
                         }
                     }
                 }
@@ -87,7 +87,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static Task temporalInductionChain(final Task s1, final Sentence s2, final NAL nal) {
+    public static Task temporalInductionChain(final Task s1, final Task s2, final NAL nal) {
 
         //prevent trying question sentences, causes NPE
         if ((s1.getTruth() == null) || (s2.getTruth() == null))

@@ -283,18 +283,18 @@ public class TextOutput extends Output {
         if ((channel == Answer.class) && (signals != null)) {
             Task question = (Task) signals[1];
             Task answer = (Task) signals[0];
-            question.sentence.toString(buffer, nar.memory, showStamp).append("= ");
-            answer.sentence.toString(buffer, nar.memory, !question.getTerm().equals(answer.getTerm()), showStamp);
+            question.toString(buffer, nar.memory, showStamp).append("= ");
+            answer.toString(buffer, nar.memory, !question.getTerm().equals(answer.getTerm()), showStamp);
 
         } else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class))) {
 
 
             Task t = (Task) signal;
-            if (t.sentence != null) {
+            if (t != null) {
                 if (channel == Events.OUT.class && t.getPriority() < outputMinPriority)
                     return null;
 
-                t.sentence.toString(buffer, nar.memory, showStamp);
+                t.toString(buffer, nar.memory, showStamp);
             } else {
                 buffer.append(t.toString());
             }

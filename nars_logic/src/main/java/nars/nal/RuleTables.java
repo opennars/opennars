@@ -113,10 +113,9 @@ public class RuleTables {
      */
     public static void syllogisms(TaskLink tLink, TermLink bLink, Task<Statement> task, Statement beliefTerm, NAL nal) {
         //final Task task = nal.getCurrentTask();
-        Sentence<Statement> taskSentence = task;
 
-        Task beliefTask = nal.getBelief();
-        Sentence belief = nal.getBelief();
+
+        Task belief = nal.getBelief();
 
         if (!(belief.getTerm() instanceof Statement)) return;
 
@@ -137,14 +136,14 @@ public class RuleTables {
 
             if (beliefTerm instanceof Inheritance) {
                 figure = indexToFigure(bLink, tLink);
-                asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
+                asymmetricSymmetric(belief, task, figure, nal);
             } else if (beliefTerm instanceof Similarity) {
                 figure = indexToFigure(bLink, tLink);
                 symmetricSymmetric(task, belief, figure, nal);
             } else if (beliefTerm instanceof Implication) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
+                asymmetricSymmetric(belief, task, figure, nal);
             } else if (beliefTerm instanceof Equivalence) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
@@ -168,7 +167,7 @@ public class RuleTables {
         } else if (taskTerm instanceof Equivalence) {
             if (beliefTerm instanceof Implication) {
                 figure = indexToFigure(bLink, tLink);
-                asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
+                asymmetricSymmetric(belief, task, figure, nal);
             } else if (beliefTerm instanceof Equivalence) {
                 figure = indexToFigure(bLink, tLink);
                 symmetricSymmetric(task, belief, figure, nal);
@@ -204,7 +203,7 @@ public class RuleTables {
      * @param figure       The location of the shared term
      * @param nal          Reference to the memory
      */
-    public static void asymmetricAsymmetric(final Task<Statement> taskSentence, final Sentence<Statement> belief, int figure, final NAL nal) {
+    public static void asymmetricAsymmetric(final Task<Statement> taskSentence, final Task<Statement> belief, int figure, final NAL nal) {
         final Random r = nal.memory.random;
 
         Statement taskStatement = taskSentence.getTerm();
@@ -353,7 +352,7 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param nal    Reference to the memory
      */
-    public static void asymmetricSymmetric(final Task asym, final Sentence sym, final int figure, final NAL nal) {
+    public static void asymmetricSymmetric(final Task asym, final Task sym, final int figure, final NAL nal) {
         final Random r = nal.memory.random;
 
         Statement asymSt = (Statement) asym.getTerm();
@@ -401,7 +400,7 @@ public class RuleTables {
         }
     }
 
-    private static void asymmetricSymmetric(Task asym, Sentence sym, int figure, NAL nal, Random r, Term t1, Term t2, Term[] u) {
+    private static void asymmetricSymmetric(Task asym, Task sym, int figure, NAL nal, Random r, Term t1, Term t2, Term[] u) {
         if (Variables.unify(VAR_QUERY, t1, t2, u, r)) {
             LocalRules.matchAsymSym(asym, sym, figure, nal);
         } else {
@@ -425,7 +424,7 @@ public class RuleTables {
      * @param figure       The location of the shared term
      * @param nal          Reference to the memory
      */
-    public static void symmetricSymmetric(final Task<Statement> taskSentence, final Sentence<Statement> belief, int figure, final NAL nal) {
+    public static void symmetricSymmetric(final Task<Statement> taskSentence, final Task<Statement> belief, int figure, final NAL nal) {
         Statement s1 = belief.getTerm();
         Statement s2 = taskSentence.getTerm();
 
@@ -500,7 +499,7 @@ public class RuleTables {
      * @param index                The location of the second premise in the first
      * @param nal                  Reference to the memory
      */
-    public static void detachmentWithVar(Task<Statement> mainSentence, Sentence subSentence, int index, NAL nal) {
+    public static void detachmentWithVar(Task<Statement> mainSentence, Task subSentence, int index, NAL nal) {
         if (mainSentence == null)
             return;
 

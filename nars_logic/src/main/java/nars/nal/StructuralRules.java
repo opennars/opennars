@@ -153,10 +153,10 @@ public final class StructuralRules {
             return;
         }
         Task task = p.getTask();
-        Sentence sentence = task.sentence;
-        Truth truth = sentence.truth;
+
+        Truth truth = task.getTruth();
         Budget budget;
-        if (sentence.isQuestion() || sentence.isQuest()) {
+        if (task.isQuestion() || task.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, p);
         } else {
             budget = BudgetFunctions.compoundForward(truth, content, p);
@@ -191,9 +191,9 @@ public final class StructuralRules {
         }
         Term component = compound.term[index];
         Task task = nal.getTask();
-        Sentence sentence = task.sentence;
-        int order = sentence.getTemporalOrder();
-        Truth truth = sentence.truth;
+
+        int order = task.getTemporalOrder();
+        Truth truth = task.getTruth();
         
         final float reliance = nal.memory.param.reliance.floatValue();
 
@@ -250,10 +250,10 @@ public final class StructuralRules {
 //        }
 
         Term component = compound.term[index];
-        Task task = nal.getTask();
-        Sentence sentence = task.sentence;
-        int order = sentence.getTemporalOrder();
-        Truth truth = sentence.truth;
+        final Task task = nal.getTask();
+
+        int order = task.getTemporalOrder();
+        Truth truth = task.getTruth();
         
         if (truth == null) {
             return null;
@@ -352,10 +352,10 @@ public final class StructuralRules {
         }
 
         Task task = p.getTask();
-        Sentence sentence = task.sentence;
-        Truth truth = sentence.truth;
+
+        Truth truth = task.getTruth();
         Budget budget;
-        if (sentence.isJudgment()) {
+        if (task.isJudgment()) {
             budget = BudgetFunctions.compoundForward(truth, content, p);
         } else {
             budget = BudgetFunctions.compoundBackward(content, p);
@@ -446,13 +446,13 @@ public final class StructuralRules {
      * @param p Reference to the memory
      */
     public static Task transformNegation(final Compound content, final Premise p) {
-        Task task = p.getTask();
-        Sentence sentence = task.sentence;
-        Truth truth = sentence.truth;
+
+        final Task task = p.getTask();
+        Truth truth = task.getTruth();
 
         Budget budget;
         
-        if (sentence.isJudgment() || sentence.isGoal()) {
+        if (task.isJudgment() || task.isGoal()) {
             truth = TruthFunctions.negation(truth);
             budget = BudgetFunctions.compoundForward(truth, content, p);
         } else {

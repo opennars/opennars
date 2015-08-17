@@ -26,8 +26,8 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 //            setKey(TaskLink.key(TermLink.SELF, null, t));
 //        else
 //            setKey(TaskLink.key(template.type, template.index, t));
-        setKey(t.sentence);
-        setBudget(t);
+        setKey(t);
+        setBudget(t.getBudget());
         this.forgetCycles = memory.param.cycles(
                 memory.param.taskLinkForgetDurations.floatValue()
         );

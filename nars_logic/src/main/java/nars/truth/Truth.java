@@ -211,7 +211,7 @@ abstract public interface Truth extends MetaTruth<Float> {
             if (targetTime != Stamp.ETERNAL) {
                 long occurrenceTime = s.getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
-                float projectedConfidence = factor * s.truth.getConfidence();
+                float projectedConfidence = factor * s.getConfidence();
                 if (projectedConfidence > conf) {
                     conf = projectedConfidence;
                 }

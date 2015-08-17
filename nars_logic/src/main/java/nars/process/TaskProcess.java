@@ -7,6 +7,7 @@ package nars.process;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -56,7 +57,7 @@ public class TaskProcess extends NAL {
 
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
-        getTask().appendWithBudget(sb);
+        getTask().getBudget().toStringBuilderExternal(sb);
         sb.append(']');
 
         return sb.toString();
@@ -66,7 +67,7 @@ public class TaskProcess extends NAL {
 
 
     @Override public void derive() {
-        Concept c = memory.conceptualize(getTask().getTerm(), getTask());
+        Concept c = memory.conceptualize(getTask());
         if (c==null) return;
 
         if (processConcept(c)) {
@@ -173,10 +174,13 @@ public class TaskProcess extends NAL {
 
     public static TaskProcess get(final Memory m, final Task task, float inputPriorityFactor) {
 
-        if (inputPriorityFactor!=1f)
-            task.mulPriority( inputPriorityFactor );
+        final Budget taskBudget = task.getBudget();
 
-        if (!task.summaryGreaterOrEqual(m.param.taskProcessThreshold)) {
+        if (inputPriorityFactor!=1f) {
+            taskBudget.mulPriority( inputPriorityFactor );
+        }
+
+        if (!taskBudget.summaryGreaterOrEqual(m.param.taskProcessThreshold)) {
             m.removed(task, "Insufficient budget");
             return null;
         }

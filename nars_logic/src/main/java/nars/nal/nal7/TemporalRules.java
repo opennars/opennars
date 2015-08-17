@@ -238,7 +238,7 @@ public class TemporalRules {
     }*/
 
 
-    public static void temporalInduction(final Sentence snext, final Sentence sprev, final NAL nal) {
+    public static void temporalInduction(final Task snext, final Task sprev, final NAL nal) {
         temporalInduction(snext, sprev, nal, nal.getTask(), true);
     }
 
@@ -246,7 +246,7 @@ public class TemporalRules {
     final static Variable v91 = new Variable("$91");
     final static Variable v92 = new Variable("$92");
 
-    public static void temporalInduction(final Sentence snext, final Sentence sprev, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
+    public static void temporalInduction(final Task snext, final Task sprev, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
 
         if (!snext.isJudgment() || !sprev.isJudgment())
             return;

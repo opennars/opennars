@@ -120,7 +120,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget value of the updating task
      */
     static Budget update(final Task task, final Truth bTruth) {
-        final Truth tTruth = task.sentence.truth;
+        final Truth tTruth = task.getTruth();
         final float dif = tTruth.getExpDifAbs(bTruth);
         final float priority = or(dif, task.getPriority());
         final float durability = aveAri(dif, task.getDurability());
@@ -362,7 +362,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     private static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
         final TaskLink nalTL = nal.getTaskLink();
-        final Budget t = (nalTL !=null) ? nalTL :  nal.getTask();
+        final Budget t = (nalTL !=null) ? nalTL :  nal.getTask().getBudget();
 
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;

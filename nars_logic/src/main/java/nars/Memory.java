@@ -546,6 +546,10 @@ public class Memory implements Serializable, AbstractMemory {
         return getControl().conceptualize(term, budget, true);
     }
 
+    public Concept conceptualize(final Task t) {
+        return conceptualize(t.getTerm(), t.getBudget());
+    }
+
     private boolean validConceptTerm(Term term) {
         return !((term instanceof Variable) || (term instanceof AbstractInterval));
     }
