@@ -18,6 +18,11 @@ public class IsEvent extends PreCondition2 {
 
 
     @Override
+    public boolean isEarly() {
+        return true;
+    }
+
+    @Override
     public boolean test(final RuleMatch m, Term a, Term b) {
         Task task = m.premise.getTask();
         if (b == null) {

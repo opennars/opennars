@@ -86,10 +86,7 @@ public class Variables {
         }
 
         /** recursess into the next sublevel of the term */
-        protected boolean next(Term term1, Term term2) {
-
-            final boolean term1HasVar = term1.hasVar(type);
-            final boolean term2HasVar = term2.hasVar(type);
+        protected boolean next(final Term term1, final Term term2) {
 
             final Variable term1Var = term1 instanceof Variable ? (Variable) term1 : null;
             final Variable term2Var = term2 instanceof Variable ? (Variable) term2 : null;
@@ -144,7 +141,7 @@ public class Variables {
 
                 return true;
 
-            } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && ((term1.operator() == term2.operator()))) {
+            } else if ((term1.hasVar(type) || term2.hasVar(type)) && (term1 instanceof Compound) && ((term1.operator() == term2.operator()))) {
                 final Compound cTerm1 = (Compound) term1;
                 final Compound cTerm2 = (Compound) term2;
                 if (cTerm1.length() != cTerm2.length()) {
@@ -196,6 +193,7 @@ public class Variables {
             return termsEqual;
         }
 
+        /** a branch for comparing a particular permutation, called from the main next() */
         protected boolean next(Compound c, Term[] list) {
             for (int i = 0; i < list.length; i++) {
                 final Term t1 = list[i];

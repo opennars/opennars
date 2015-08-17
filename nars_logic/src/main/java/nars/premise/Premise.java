@@ -623,4 +623,8 @@ public interface Premise {
         return getMemory().param;
     }
 
+    default boolean isEvent() {
+        return !(getTask().isEternal() || (getBelief()!=null && getBelief().isEternal()));
+    }
+
 }

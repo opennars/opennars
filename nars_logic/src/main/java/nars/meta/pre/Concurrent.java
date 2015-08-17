@@ -15,26 +15,28 @@ public class Concurrent extends PreCondition1 {
     }
 
     @Override
-    public boolean test(RuleMatch m, Term arg1) {
+    public boolean isEarly() {
+        return true;
+    }
+
+    @Override
+    public boolean test(RuleMatch m, Term a) {
         final Task task = m.premise.getTask();
         final Task belief = m.premise.getBelief();
 
-        if (belief == null) {
+        if (belief == null || !m.premise.isEvent())
             return false;
-        }
-        if (task.isEternal() || belief.isEternal()) {
-            return false;
-        }
-        long time1 = 0, time2 = 0;
-        final int dur = m.premise.duration();
-        if (arg1.equals(task.getTerm())) {
-            if (!(!task.after(belief, dur) && !belief.after(task, dur)))
-                return false;
-        }
-        if (arg1.equals(belief.getTerm())) {
-            if (!(!task.after(belief, dur) && !belief.after(task, dur)))
-                return false;
-        }
-        return true;
+
+        return task.concurrent(belief, m.premise.duration());
+
+//        if (a.equals(task.getTerm())) {
+//            if (!(!task.after(belief, dur) && !belief.after(task, dur)))
+//                return false;
+//        }
+//        if (a.equals(belief.getTerm())) {
+//            if (!(!task.after(belief, dur) && !belief.after(task, dur)))
+//                return false;
+//        }
+//        return true;
     }
 }

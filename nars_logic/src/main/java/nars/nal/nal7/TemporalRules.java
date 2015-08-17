@@ -814,4 +814,7 @@ public class TemporalRules {
     public static boolean occurrsAfter(Stamp a, Stamp b) {
         return after(a.getOccurrenceTime(), b.getOccurrenceTime(), a.getDuration());
     }
+
+
+
 }

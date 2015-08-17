@@ -659,11 +659,13 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return TemporalRules.occurrsAfter(s, this);
     }
 
-    public boolean before(Sentence s, int duration) {
+    public boolean before(final Sentence s, final int duration) {
         return TemporalRules.occurrsAfter(this, s);
     }
 
-
+    public boolean concurrent(final Sentence s, final int duration) {
+        return TemporalRules.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
+    }
 
     /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
     @Override

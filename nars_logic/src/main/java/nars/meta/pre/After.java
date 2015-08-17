@@ -16,9 +16,18 @@ public class After extends PreCondition1 {
     }
 
     @Override
+    public boolean isEarly() {
+        return true;
+    }
+
+    @Override
     public boolean test(RuleMatch m, Term a) {
         final Task task = m.premise.getTask();
         final Task belief = m.premise.getBelief();
+
+        if (belief==null || !m.premise.isEvent())
+            return false;
+
         int dur = m.premise.duration();
         if (a.equals(task.getTerm())) {
             if (!task.after(belief, dur))

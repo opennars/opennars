@@ -17,8 +17,8 @@ public class NotEqual extends PreCondition2 {
         return !a.equals(b);
     }
 
-    @Override
+    /*@Override
     public boolean isEarly() {
         return true;
-    }
+    }*/
 }

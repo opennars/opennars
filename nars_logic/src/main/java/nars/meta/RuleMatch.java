@@ -66,12 +66,13 @@ public class RuleMatch {
         occurence_shift = 0;
         assign.clear();
         precondsubs.clear();
+        waste.clear();
 
         this.rule = rule;
         return this;
     }
 
-    public boolean apply(PostCondition p) {
+    public boolean apply(final PostCondition p) {
         final Task task = premise.getTask();
         final Sentence belief = premise.getBelief();
 
@@ -116,13 +117,12 @@ public class RuleMatch {
             return false;
 
         //test and apply late preconditions
-        for (PreCondition c : p.precond) {
+        for (final PreCondition c : p.precond) {
 
             if (!c.test(this))
                 return false;
 
             //now we have to apply this to the derive term
-
         }
 
         //check if this is redundant
