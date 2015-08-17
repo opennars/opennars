@@ -12,6 +12,7 @@ import nars.util.sort.ArraySortedIndex;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.ToIntFunction;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -107,10 +108,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     }
 
     @FunctionalInterface
-    public interface CurveSampler {
-        /** which index to select */
-        public int next(CurveBag b);
-    }
+    public interface CurveSampler extends ToIntFunction<CurveBag> {    }
 
     public static class RandomSampler implements CurveSampler {
 
@@ -125,7 +123,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         /** maps y in 0..1.0 to an index in 0..size */
         final int index(final float y, final int size) {
 
-            if (y < 0) return 0;
+            if (y <= 0) return 0;
 
             /** using 1-y because the list of items is stored top priority first */
             int i= UtilityFunctions.floorInt((1-y) * size);
@@ -144,8 +142,9 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         }
 
+
         @Override
-        public int next(final CurveBag b) {
+        public int applyAsInt(final CurveBag b) {
             final int s = b.size();
             if (s == 1) return 0;
 
@@ -301,7 +300,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     public V pop() {
 
         if (isEmpty()) return null; // empty bag
-        return removeItem(sampler.next(this));
+        return removeItem(sampler.applyAsInt(this));
 
     }
 
@@ -310,7 +309,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     public V peekNext() {
 
         if (isEmpty()) return null; // empty bag
-        return items.get(sampler.next(this));
+        return items.get(sampler.applyAsInt(this));
 
     }
 

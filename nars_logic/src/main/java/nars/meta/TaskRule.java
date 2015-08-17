@@ -231,22 +231,19 @@ public class TaskRule extends Rule<Premise,Task> {
 
         m.start(this);
 
-        //temporary brute-force early phase
-        for (PreCondition p : preconditions) {
+        for (final PreCondition p : preconditions) {
             if (!p.test(m))
                 return;
         }
 
         //if preconditions are met:
-        for (PostCondition p : postconditions) {
+        for (final PostCondition p : postconditions)
             m.apply(p);
-        }
-
     }
 
 
     //TEMPORARY for testing, to make sure the postcondition equality guarantees rule equality
-    public boolean deepEquals(Object obj) {
+    boolean deepEquals(Object obj) {
         /*
         the precondition uniqueness is guaranted because they exist as the terms of the rule meta-term which equality is already tested for
          */

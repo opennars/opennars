@@ -4,9 +4,15 @@ import nars.AbstractMemory;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
+import nars.concept.Concept;
 import nars.event.NARReaction;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.Deriver;
+import nars.process.AbstractPremise;
+import nars.process.NAL;
 import nars.process.TaskProcess;
+import nars.task.Sentence;
 import nars.task.Task;
 
 import java.util.ArrayDeque;
@@ -46,7 +52,7 @@ public class STMEventInference extends NARReaction {
         if (event == TaskProcess.class) {
             Task t = (Task) args[0];
             TaskProcess n = (TaskProcess) args[1];
-            inductionOnSucceedingEvents(t, n, false);
+            inductionOnSucceedingEvents(n, false);
         }
         else if (event == Events.ResetStart.class) {
             stm.clear();
@@ -63,7 +69,9 @@ public class STMEventInference extends NARReaction {
         return stmSize;
     }
 
-    public boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal, boolean anticipation) {
+    public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {
+
+        final Task currentTask = nal.getTask();
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
@@ -115,7 +123,8 @@ public class STMEventInference extends NARReaction {
             //TemporalRules.temporalInduction(currentTask, previousTask,
                     //nal.newStamp(currentTask.sentence, previousTask.sentence),
             //        nal);
-            deriver.reason(currentTask, previousTask.getSentence(), previousTask.getTerm(), nal);
+            deriver.reason(new STMPremise(nal, previousTask));
+
         }
 
         ////for this heuristic, only use input events & task effects of operations
@@ -130,4 +139,43 @@ public class STMEventInference extends NARReaction {
         return true;
     }
 
+
+    public static class STMPremise extends AbstractPremise {
+
+        private final Task previousTask;
+        private final NAL parent;
+
+        //deriver.reason(new STMPremise(currentTask, previousTask.getSentence(), previousTask.getTerm())
+        public STMPremise(NAL parent, Task previousTask) {
+            super(parent.getMemory());
+            this.parent = parent;
+            this.previousTask = previousTask;
+        }
+
+
+        @Override
+        public Concept getConcept() {
+            return getMemory().concept(getTask().getTerm());
+        }
+
+        @Override
+        public Task getBelief() {
+            return previousTask;
+        }
+
+        @Override
+        public TermLink getTermLink() {
+            return parent.getTermLink();
+        }
+
+        @Override
+        public TaskLink getTaskLink() {
+            return parent.getTaskLink();
+        }
+
+        @Override
+        public Task getTask() {
+            return parent.getTask();
+        }
+    }
 }

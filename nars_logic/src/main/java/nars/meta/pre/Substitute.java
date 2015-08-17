@@ -20,7 +20,7 @@ public class Substitute extends PreCondition2 {
         //args[0] now encodes a variable which we want to replace with what M was assigned to
         //(relevant for variable elimination rules)
         if (b!=null) {
-            m.precondsubs.put(this.arg1, b);
+            m.map0.put(this.arg1, b);
             return true;
         }
         return false;

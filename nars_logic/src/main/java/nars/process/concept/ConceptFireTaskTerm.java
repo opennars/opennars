@@ -8,7 +8,7 @@ import nars.process.ConceptProcess;
 abstract public class ConceptFireTaskTerm<C extends ConceptProcess> implements LogicStage<C> {
 
 
-    abstract public boolean apply(C f, TermLink termLink);
+    abstract public boolean apply(C f, @Deprecated TermLink termLink);
 
     @Override
     public final boolean test(final C f) {

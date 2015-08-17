@@ -22,9 +22,8 @@ import java.util.List;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL implements Runnable, Premise {
+public abstract class NAL extends AbstractPremise implements Runnable {
 
-    public final Memory memory;
 
 
     /** derivation queue (this might also work as a Set) */
@@ -36,7 +35,7 @@ public abstract class NAL implements Runnable, Premise {
      */
     //protected SortedSet<Task> newTasks; //lazily instantiated
     public NAL(final Memory m) {
-        this.memory = m;
+        super(m);
     }
 
 
@@ -64,10 +63,6 @@ public abstract class NAL implements Runnable, Premise {
     protected abstract void derive();
 
 
-    @Override
-    public Memory getMemory() {
-        return memory;
-    }
 
 
     @Override

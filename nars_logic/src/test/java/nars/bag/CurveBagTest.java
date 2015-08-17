@@ -175,7 +175,7 @@ public class CurveBagTest extends AbstractBagTest {
 
         
         for (int i= 0; i < samples; i++) {
-            count[f.sampler.next(f)]++;
+            count[f.sampler.applyAsInt(f)]++;
         }
         
         //System.out.println(capacity +"," + random + " = " + Arrays.toString(count));

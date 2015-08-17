@@ -12,9 +12,9 @@ import nars.narsese.NarseseParser;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.concept.ConceptFireTaskTerm;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
+import nars.util.data.random.XORShiftRandom;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -107,10 +107,14 @@ public class Deriver extends ConceptFireTaskTerm {
         });
     }
 
-    public void forEach(Term taskTerm, Term beliefTerm, RuleMatch match) {
+    public void forEachRule(final Term taskTerm, final RuleMatch match) {
         EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.operator());
 
+        final Task belief = match.premise.getBelief();
+        final Term beliefTerm = belief!=null ? belief.getTerm() : null;
+
         if (taskSpecific!=null) {
+
             if (beliefTerm != null) {
                 // <T>,<B>
                 List<TaskRule> u = taskSpecific.get(beliefTerm.operator());
@@ -139,11 +143,14 @@ public class Deriver extends ConceptFireTaskTerm {
 
     }
 
+    final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
+        //TODO use the memory's RNG for complete deterministic reproducibility
+        return new RuleMatch(new XORShiftRandom());
+    });
+
     @Override
     public final boolean apply(final ConceptProcess f, final TermLink bLink) {
-        final TaskLink tLink = f.getTaskLink();
-        final Task belief = f.getBelief();
-        return reason(tLink.getTask(), belief, bLink.getTerm(), f);
+        return reason(f);
     }
 
     static List<String> loadRuleStrings(Iterable<String> lines) {
@@ -345,14 +352,17 @@ public class Deriver extends ConceptFireTaskTerm {
     }
 
 
-    public boolean reason(final Task task, final Sentence belief, Term beliefterm, final Premise nal) {
+    public boolean reason(final Premise premise) {
+        ///final Task task, final Sentence belief, Term beliefterm,
+        //tLink.getTask(), belief, bLink.getTerm(),
 
-        RuleMatch m = new RuleMatch();
-        m.start(nal);
+        RuleMatch m = matchers.get();
+        m.start(premise);
 
+        final Task task = premise.getTask();
         if (task.isJudgment() || task.isGoal()) {
 
-            forEach(task.getTerm(), belief!=null? belief.getTerm() : null, m);
+            forEachRule(task.getTerm(), m);
 
             //TODO also allow backward inference by traversing
         }

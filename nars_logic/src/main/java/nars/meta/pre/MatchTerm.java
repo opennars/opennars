@@ -25,9 +25,10 @@ abstract public class MatchTerm extends PreCondition {
         Term t = getTerm(premise);
         if (t == null) return false;
 
-        return Variables.findSubstitute(Symbols.VAR_PATTERN,
+        /*return Variables.findSubstitute(Symbols.VAR_PATTERN,
                 pattern, t,
-                m.assign, m.waste, premise.getRandom());
+                m.assign, m.waste, premise.getRandom());*/
+        return m.get(pattern, t);
     }
 
     @Override

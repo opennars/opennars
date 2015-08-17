@@ -1,6 +1,7 @@
 package nars.meta;
 
 import nars.Global;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.premise.Premise;
@@ -10,15 +11,15 @@ import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.transform.FindSubst;
 import nars.truth.Truth;
-import org.apache.commons.collections.map.Flat3Map;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 /** rule matching context, re-recyclable if thread local */
-public class RuleMatch {
+public class RuleMatch extends FindSubst {
 
     public long occurence_shift;
     public TaskRule rule;
@@ -34,22 +35,32 @@ public class RuleMatch {
 //            }
 //        };
 
-    public final Map<Term, Term> assign =
-            //new Flat3Map();
-            Global.newHashMap();
-
-    public final Map<Term, Term> precondsubs =
-            Global.newHashMap();
-            //new Flat3Map();
-
-    public final Map<Term, Term> waste =
-            //new Flat3Map();
-            Global.newHashMap();
+//    public final Map<Term, Term> assign =
+//            //new Flat3Map();
+//            Global.newHashMap();
+//
+//    public final Map<Term, Term> precondsubs =
+//            Global.newHashMap();
+//            //new Flat3Map();
+//
+//    public final Map<Term, Term> waste =
+//            //new Flat3Map();
+//            Global.newHashMap();
 
     public Premise premise;
 
     @Deprecated public Term derive;
     @Deprecated public boolean single;
+
+    /**
+     * @param type
+     * @param map0
+     * @param map1
+     * @param random
+     */
+    public RuleMatch(Random random) {
+        super(Symbols.VAR_PATTERN, Global.newHashMap(8), Global.newHashMap(8), random);
+    }
 
     /** set the next premise */
     public void start(Premise nal) {
@@ -61,12 +72,10 @@ public class RuleMatch {
      */
     public RuleMatch start(TaskRule rule) {
 
+        super.clear();
         single = false;
         derive = null;
         occurence_shift = 0;
-        assign.clear();
-        precondsubs.clear();
-        waste.clear();
 
         this.rule = rule;
         return this;
@@ -112,7 +121,7 @@ public class RuleMatch {
         //TODO checking the precondition again for every postcondition misses the point, but is easily fixable (needs to be moved down to Rule)
 
         //by now, assign should have entries from the early preconditions being matched
-        derive = p.term.substituted(assign);
+        derive = p.term.substituted(map0);
         if (derive == null)
             return false;
 
@@ -125,15 +134,13 @@ public class RuleMatch {
             //now we have to apply this to the derive term
         }
 
-        //check if this is redundant
-        Term nextDerived = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
-        if (nextDerived == null)
-            return false;
-
-        derive = nextDerived;
-
-        if (!precondsubs.isEmpty())
-            derive = derive.substituted(precondsubs);
+//        //check if this is redundant
+//        Term nextDerived = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
+//        if (nextDerived == null)
+//            return false;
+//        derive = nextDerived;
+//        if (!precondsubs.isEmpty())
+//            derive = derive.substituted(precondsubs);
 
 //                //ok apply substitution to both elements in args
 //
@@ -195,15 +202,13 @@ public class RuleMatch {
 
     //TODO cache?
     public Term resolve(final Term t) {
-        return t.substituted(assign);
+        return t.substituted(map0);
     }
 
 
     public final void run(final List<TaskRule> u) {
-        for (int i = 0; i < u.size(); i++) {
-            TaskRule tr = u.get(i);
-            tr.run(this);
-        }
+        for (int i = 0; i < u.size(); i++)
+            u.get(i).run(this);
     }
 
     private static class BlackHoleMap<K,V> extends HashMap<K,V> {
