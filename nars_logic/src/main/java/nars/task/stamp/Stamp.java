@@ -366,9 +366,6 @@ public interface Stamp extends Cloneable, Serializable {
     }
 
 
-    public Stamp setCreationTime(long c);
-    public Stamp setOccurrenceTime(long o);
-    public Stamp setDuration(int d);
 
 
 

@@ -73,17 +73,18 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void abduction() throws InvalidInputException {
-        n.believe("<sport --> competition>")
-                .en("sport is a type of competition.");
-        n.believe("<chess --> competition>", 0.90f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                .en("chess is a type of competition.");
-
         n.mustBelieve(123, "<sport --> chess>", 1.0f, 0.42f)
                 .en("I guess sport is a type of chess.")
                 .en("sport is possibly a type of chess.")
                 .es("es posible que sport es un tipo de chess.");
         n.mustBelieve(123, "<chess --> sport>", 0.90f, 0.45f)
                 .en("I guess chess is a type of sport");
+
+        n.believe("<sport --> competition>")
+                .en("sport is a type of competition.");
+        n.believe("<chess --> competition>", 0.90f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                .en("chess is a type of competition.");
+
         n.run();
     }
 
@@ -116,7 +117,7 @@ public class NAL1Test extends JavaNALTest {
     public void conversion() throws InvalidInputException {
         //TextOutput.out(nar);
 
-        long time = n.nal() == 1 ? 15 : 305;
+        long time = n.nal() <= 2 ? 15 : 305;
         n.believe("<bird --> swimmer>");
         n.ask("<swimmer --> bird>")
                 .en("Is swimmer a type of bird?");

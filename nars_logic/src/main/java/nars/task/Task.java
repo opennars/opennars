@@ -30,25 +30,26 @@ import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
+import nars.budget.Budgeted;
+import nars.budget.Item;
+import nars.nal.nal7.Sequence;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
-import nars.term.Termed;
+import nars.term.TermMetadata;
 import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 import nars.truth.Truthed;
+import nars.util.data.Util;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.Reference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static nars.Global.dereference;
 import static nars.Global.reference;
@@ -61,107 +62,208 @@ import static nars.Global.reference;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-@JsonSerialize(using = ToStringSerializer.class)
-public class Task<T extends Compound> extends Sentence<T> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable {
+public interface Task<T extends Compound> extends Sentence<T>, Budgeted, Truthed {
 
 
-    /**
-     * The sentence of the Task
-     */
-    @Deprecated public final Sentence<T> sentence = this;
+    @JsonSerialize(using = ToStringSerializer.class)
+    public static class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
+        /**
+         * The punctuation also indicates the type of the Sentence:
+         * Judgment, Question, Goal, or Quest.
+         * Represented by characters: '.', '?', '!', or '@'
+         */
+        public final char punctuation;
+        /**
+         * The truth value of Judgment, or desire value of Goal
+         * TODO can we make this final eventually like it was before.. Concept.discountBeliefConfidence needed to mutate the truth on discount
+         */
+        public Truth truth;
+        protected T term;
+        transient private int hash;
 
-    /**
-     * Task from which the Task is derived, or null if input
-     */
-    transient public final Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
-
-    /**
-     * Belief from which the Task is derived, or null if derived from a theorem
-     */
-    transient public final Reference<Sentence> parentBelief;
-
-
-    /**
-     * TODO move to SolutionTask subclass
-     * For Question and Goal: best solution found so far
-     */
-    private Reference<Sentence> bestSolution;
-
-    /**
-     * TODO move to DesiredTask subclass
-     * causal factor if executed; an instance of Operation
-     */
-    private Operation cause;
-
-    private List<String> history = null;
-
-    /** indicates this Task can be used in Temporal induction
-     */
-    private boolean temporallyInductable = true;
+        private long[] evidentialSet = null;
 
 
-    public Task(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(term, punctuation, truth,
-                bv != null ? bv.getPriority() : 0,
-                bv != null ? bv.getDurability() : 0,
-                bv != null ? bv.getQuality() : 0,
-                parentTask, parentBelief, solution);
-    }
+        private long creationTime = Stamp.TIMELESS;
 
-    public Task(T term, final char punc, final Truth truth, final float p, final float d, final float q) {
-        this(term, punc, truth, p, d, q, (Task)null, null, null);
-    }
+        private long occurrenceTime = Stamp.ETERNAL;
 
-    public Task(T term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Sentence parentBelief, Sentence solution) {
-        this(term, punc, truth,
-                p,d,q,
-                Global.reference(parentTask),
-                reference(parentBelief),
-                reference(solution)
-        );
-    }
-    public Task(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Sentence> parentBelief, final Reference<Sentence> solution) {
-        super(term, punctuation, truth, p, d, q);
+        private int duration = 0;
+        private boolean cyclic;
+        /**
+         * The sentence of the Task
+         */
+        @Deprecated public final Sentence<T> sentence = this;
+
+        /**
+         * Task from which the Task is derived, or null if input
+         */
+        transient public final Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
+
+        /**
+         * Belief from which the Task is derived, or null if derived from a theorem
+         */
+        transient public final Reference<Task> parentBelief;
 
 
-        this.parentTask = parentTask;
+        /**
+         * TODO move to SolutionTask subclass
+         * For Question and Goal: best solution found so far
+         */
+        private Reference<Sentence> bestSolution;
 
+        /**
+         * TODO move to DesiredTask subclass
+         * causal factor if executed; an instance of Operation
+         */
+        private Operation cause;
 
-        if (parentTask == null)
-            log("Input");
+        private List<String> history = null;
 
-        this.parentBelief = parentBelief;
-        this.bestSolution = solution;
+        /** indicates this Task can be used in Temporal induction
+         */
+        private boolean temporallyInductable = true;
 
+        public DefaultTask(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Sentence solution) {
+            this(term, punctuation, truth,
+                    bv != null ? bv.getPriority() : 0,
+                    bv != null ? bv.getDurability() : 0,
+                    bv != null ? bv.getQuality() : 0,
+                    parentTask, parentBelief, solution);
+        }
 
-        if (Global.DEBUG) {
-            if ((parentTask != null && parentTask.get() == null))
-                throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+        public DefaultTask(T term, final char punc, final Truth truth, final float p, final float d, final float q) {
+            this(term, punc, truth, p, d, q, (Task)null, null, null);
+        }
 
-            ///*if (this.equals(getParentTask())) {
-            if (this == getParentTask()) {
-                throw new RuntimeException(this + " has parentTask equal to itself");
+        public DefaultTask(T term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Task parentBelief, Sentence solution) {
+            this(term, punc, truth,
+                    p,d,q,
+                    Global.reference(parentTask),
+                    reference(parentBelief),
+                    reference(solution)
+            );
+        }
+
+        public DefaultTask(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Sentence> solution) {
+            super(p, d, q);
+            //super(term, punctuation, truth, p, d, q);
+
+            this.punctuation = punctuation;
+
+            boolean isQuestionOrQuest = isQuestion() || isQuest();
+            if (isQuestionOrQuest) {
+                this.truth = null;
             }
+            else if ( truth == null ) {
+                throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
+            }
+            else {
+                this.truth = truth;
+            }
+
+            if (term instanceof Sequence) {
+                this.term = (T) ((Sequence)term).cloneRemovingSuffixInterval();
+            }
+            else {
+                this.term = term;
+            }
+
+            invalidateHash();
+
+
+            this.parentTask = parentTask;
+
+
+            if (parentTask == null)
+                log("Input");
+
+            this.parentBelief = parentBelief;
+            this.bestSolution = solution;
+
+
+            if (Global.DEBUG) {
+                if ((parentTask != null && parentTask.get() == null))
+                    throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+
+                ///*if (this.equals(getParentTask())) {
+                if (this == getParentTask()) {
+                    throw new RuntimeException(this + " has parentTask equal to itself");
+                }
             /*
             //IS THERE SOME WAY TO MERGE EQUIVALENT BELIEFS HERE?
             if (this.sentence.equals(parentBelief)) {
                 throw new RuntimeException(this + " has parentBelief equal to its sentence");
             }
             */
+            }
+
+
+
+            this.hash = getHash();
+
+
+
+        }
+
+        private int getHash() {
+            //stamp (evidentialset, occurrencetime), truth, term, punctuation
+
+            int hashStamp = Util.hash(Arrays.hashCode(getEvidentialSet()), (int)this.getOccurrenceTime());
+
+            final int truthHash = (getTruth() != null) ? getTruth().hashCode() : 0;
+
+            return (Util.hash(hashStamp, getTerm().hashCode(), truthHash) * 31) + getPunctuation();
+        }
+
+        public void setTermShared(final T equivalentInstance) {{
+
+            //intermval generally contains unique information that should not be replaced
+            if (this.term instanceof TermMetadata)
+                return;
+
+            //if debug, check that they are equal..
+
+            this.term = equivalentInstance;
+        }
+
+        @Override
+        public Sentence setCreationTime(long creationTime) {
+            if ((this.creationTime <= Stamp.TIMELESS) && (this.occurrenceTime>Stamp.TIMELESS)) {
+                //use the occurrence time as the delta, now that this has a "finite" creationTime
+                this.occurrenceTime = this.occurrenceTime + creationTime;
+            }
+            this.creationTime = creationTime;
+            invalidateHash();
+            return this;
+        }
+
+
+        public DefaultTask(Sentence<T> s, Budget budget, Task parentTask, Task parentBelief) {
+            this(s.getTerm(), s.getPunctuation(), s.getTruth(), budget, parentTask, parentBelief, null);
+        }
+        /**
+         * To check whether two sentences are equal
+         *
+         * @param that The other sentence
+         * @return Whether the two sentences have the same content
+         */
+
+        @Override
+        public boolean equals(final Object that) {
+            if (this == that) return true;
+            if (that instanceof Sentence) {
+                //if (that.hashCode()!=hashCode()) return false;
+                return equivalentTo((Sentence)that, true, true, true, true, false);
+            }
+            return false;
         }
 
 
     }
 
-    public Task(Sentence<T> s, Budget budget, Task parentTask, Sentence parentBelief) {
-        this(s.getTerm(), s.punctuation, s.truth, budget, parentTask, parentBelief, null);
-    }
 
-    @Deprecated protected Task(char punctuation) {
-        super(punctuation);
-        this.parentTask = null;
-        this.parentBelief = null;
-    }
+
 
 //    /**
 //     * Constructor for an activated task
@@ -348,7 +450,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
      *
      * @return The belief from which the task is derived
      */
-    public Sentence getParentBelief() {
+    public Task getParentBelief() {
         return dereference(parentBelief);
     }
 

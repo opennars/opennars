@@ -19,12 +19,12 @@ abstract public class ImmediateOperation  {
 
 
     //TODO make Task an interface so this is lightweight
-    public static class ImmediateTask extends Task<Compound> {
+    public static class ImmediateTask extends Task.DefaultTask<Compound> {
 
         public final ImmediateOperation operation;
 
         ImmediateTask(ImmediateOperation o) {
-            super(Symbols.GOAL);
+            super(null,null,null,null);
             this.operation = o;
         }
 
@@ -50,7 +50,7 @@ abstract public class ImmediateOperation  {
 //
 //
 //                if (o instanceof ImmediateOperation) {
-                    if (sentence!=null && getPunctuation()!= Symbols.GOAL)
+                    if (getSentence()!=null && getPunctuation()!= Symbols.GOAL)
                         throw new RuntimeException("ImmediateOperation " + immediateOperation() + " was not specified with goal punctuation");
 
                     immediateOperation().execute(memory);

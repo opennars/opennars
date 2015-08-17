@@ -616,8 +616,8 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      */
     public static Budget newDefault(Sentence s, AbstractMemory memory) {
         float priority, durability;
-        priority = newDefaultPriority(s.punctuation);
-        durability = newDefaultDurability(s.punctuation);
+        priority = newDefaultPriority(s.getPunctuation());
+        durability = newDefaultDurability(s.getPunctuation());
         return new Budget(priority, durability, s.getTruth());
     }
 
@@ -736,35 +736,4 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
 
-    /**
-     * indicates an implementation has, or is associated with a specific BudgetValue
-     */
-    public interface Budgetable {
-        public Budget getBudget();
-
-        default public float getPriority() {
-            return getBudget().getPriority();
-        }
-
-        default public float getDurability() {
-            return getBudget().getDurability();
-        }
-
-        default public float getQuality() {
-            return getBudget().getQuality();
-        }
-
-        default public long getLastForgetTime() {
-            return getBudget().getLastForgetTime();
-        }
-
-
-        default Object[] toBudgetArray() {
-            return new Object[]{
-                    getPriority(), getDurability(), getQuality()
-            };
-        }
-
-
-    }
 }

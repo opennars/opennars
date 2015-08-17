@@ -689,15 +689,17 @@ public class NarseseParserTest {
             content = content.normalized();
             if (content == null) return null;
 
-            Sentence s = new Sentence((Compound)content, punc, truth);
-            s.setCreationTime(creationTime);
-            s.setOccurrenceTime(tense, memory.duration());
 
-            //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
-            //    sentence.setRevisible(false);
-            //}
-
-            return s;
+            return null;
+//            Sentence s = new Sentence((Compound)content, punc, truth);
+//            s.setCreationTime(creationTime);
+//            s.setOccurrenceTime(tense, memory.duration());
+//
+//            //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
+//            //    sentence.setRevisible(false);
+//            //}
+//
+//            return s;
         }
 
     /* ---------- react values ---------- */

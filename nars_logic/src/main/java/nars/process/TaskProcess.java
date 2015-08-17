@@ -104,7 +104,7 @@ public class TaskProcess extends NAL {
         }
 
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
-        task.setSharedTerm((Compound) c.getTerm());
+        task.setTermShared((Compound) c.getTerm());
 
         final LogicMeter logicMeter = memory.logic;
 

@@ -45,221 +45,47 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends Compound> extends Item<Sentence<T>> implements Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Sentenced, Serializable {
+public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Serializable {
 
-
-    protected T term;
-    
-    /**
-     * The punctuation also indicates the type of the Sentence: 
-     * Judgment, Question, Goal, or Quest.
-     * Represented by characters: '.', '?', '!', or '@'
-     */
-    public final char punctuation;
-    
-    /**
-     * The truth value of Judgment, or desire value of Goal
-     * TODO can we make this final eventually like it was before.. Concept.discountBeliefConfidence needed to mutate the truth on discount
-     */
-    public Truth truth;
-    
-
-    transient private int hash;
+    public char getPunctuation();
+    public long[] getEvidentialSet();
+    public long getCreationTime();
+    public long getOccurrenceTime();
+    public int getDuration();
+    public Sentence setCreationTime(long c);
+    public Sentence setOccurrenceTime(long o);
+    public Sentence setDuration(int d);
 
 
 
-    /**
-     * Partial record of the derivation path
-     */
-    private long[] evidentialSet = null;
-
-
-    private long creationTime = Stamp.TIMELESS;
-
-    private long occurrenceTime = Stamp.ETERNAL;
-
-    private int duration = 0;
-    private boolean cyclic;
-
-
-    @Deprecated Sentence(char punctuation) {
-        super((float) 0, (float) 0, (float) 0);
-        this.punctuation = punctuation;
-        this.truth = null;
-        this.term = null;
-    }
-
-
-    @Deprecated
-    public Sentence(T seedTerm, final char punctuation, final Truth truth) {
-        this(seedTerm, punctuation, truth, 0, 0, 0);
-    }
-    Sentence(T term, final char punctuation, final Truth truth, float p, float d, float q) {
-        super(p, d, q);
-        this.punctuation = punctuation;
-
-        boolean isQuestionOrQuest = isQuestion() || isQuest();
-        if (isQuestionOrQuest) {
-            this.truth = null;
-        }
-        else if ( truth == null ) {
-            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-        }
-        else {
-            this.truth = truth;
-        }
-
-        if (term instanceof Sequence) {
-            this.term = (T) ((Sequence)term).cloneRemovingSuffixInterval();
-        }
-        else {
-            this.term = term;
-        }
-
-        invalidateHash();
-
-    }
-
-    /**
-     * Create a Sentence with the given fields
-     *
-     * @param seedTerm The Term that forms the content of the sentence
-     * @param punctuation The punctuation indicating the type of the sentence
-     * @param truth The truth value of the sentence, null for question
-     * @param copyStampFrom The stamp of the sentence indicating its derivation time and
-     * @param normalize if false, normalization is not attempted and the compound will be used as-is
-     * base
-     */
-    public Sentence(T seedTerm, final char punctuation, final Truth truth, Sentence copyStampFrom) {
-        this(seedTerm, punctuation, truth);
-
-
-        //apply the stamp to this
-        copyStampFrom.applyToStamp(this);
-
-
-//        if ((isQuestion() || isQuest()) && !isEternal()) {
-//            //need to clone in case this stamp is shared by others which are not to eternalize it
-//            //stamp = stamp.cloneEternal();
-//            if (Global.DEBUG_NONETERNAL_QUESTIONS)
-//                throw new RuntimeException("Questions and Quests require eternal tense");
-//        }
-
-
-
-    }
-
-
-    public char getPunctuation() {
-        return punctuation;
-    }
-
-    
-    /**
-     * To check whether two sentences are equal
-     *
-     * @param that The other sentence
-     * @return Whether the two sentences have the same content
-     */
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        if (that instanceof Sentence) {
-            return equivalentTo((Sentence) that);
-        }
-        return false;
-    }
-
-    /** compares all sentence fields, after comparing hash (which includes them all) */
-    private final boolean equivalentTo(final Sentence that) {
-        //if (that.hashCode()!=hashCode()) return false;
-        return equivalentTo(that, true, true, true, true, false);
-    }
-
-    /**
-     * To produce the hashcode of a sentence, which consists of:
-     *
-     *
-     * @return A hashcode
-     */
-    @Override
-    public int hashCode() {
-        if (this.hash == 0) {
-
-            //stamp (evidentialset, occurrencetime), truth, term, punctuation
-
-            int hashStamp = Util.hash(Arrays.hashCode(getEvidentialSet()), (int)this.occurrenceTime);
-
-            if (truth == null)
-                this.hash = (Util.hash(hashStamp, getTerm().hashCode()) * 31) + punctuation;
-            else
-                this.hash = (Util.hash(hashStamp, getTerm().hashCode(), truth.hashCode()) * 31) + punctuation;
-
-        }
-
-        return hash;
-    }
-
-//    public void hash(PrimitiveSink into) {
+//    /**
+//     * Create a Sentence with the given fields
+//     *
+//     * @param seedTerm The Term that forms the content of the sentence
+//     * @param punctuation The punctuation indicating the type of the sentence
+//     * @param truth The truth value of the sentence, null for question
+//     * @param copyStampFrom The stamp of the sentence indicating its derivation time and
+//     * @param normalize if false, normalization is not attempted and the compound will be used as-is
+//     * base
+//     */
+//    public Sentence(T seedTerm, final char punctuation, final Truth truth, Sentence copyStampFrom) {
+//        this(seedTerm, punctuation, truth);
 //
-//        into.putBytes(getTerm().bytes());
-//        into.putByte((byte)punctuation);
 //
-//        getStamp().hash(into);
+//        //apply the stamp to this
+//        copyStampFrom.applyToStamp(this);
 //
-//        Truth t = truth;
-//        if (t != null) {
-//            into.putFloat(t.getFrequency());
-//            into.putFloat(t.getConfidence());
-//        }
-//        into.putLong(occurrenceTime);
-//        for (long e : getEvidentialSet())
-//            into.putLong(e);
+//
+////        if ((isQuestion() || isQuest()) && !isEternal()) {
+////            //need to clone in case this stamp is shared by others which are not to eternalize it
+////            //stamp = stamp.cloneEternal();
+////            if (Global.DEBUG_NONETERNAL_QUESTIONS)
+////                throw new RuntimeException("Questions and Quests require eternal tense");
+////        }
+//
+//
+//
 //    }
-
-
-    /**
-     * Check whether different aspects of sentence are equivalent to another one
-     *
-     * @param that The other judgment
-     * @return Whether the two are equivalent
-     */
-    public boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
-
-        if (this == that) return true;
-
-        final char thisPunc = this.punctuation;
-
-        if (truth) {
-            if (this.truth==null) {
-                if (that.truth!=null) return false;
-            }
-            else {
-                if (!this.truth.equals(that.truth)) return false;
-            }
-        }
-
-        if (punctuation) {
-            if (thisPunc!=that.punctuation) return false;
-        }
-
-        if (term) {
-            if (!equalTerms(that)) return false;
-        }
-
-        if (stamp) {
-            //uniqueness includes every aspect of stamp except creation time
-            //<patham9> if they are only different in creation time, then they are the same
-            if (!this.equalStamp(that, true, creationTime, true))
-                return false;
-        }
-
-
-
-        return true;
-    }
-
-
 
     /** returns a valid sentence CompoundTerm, or throws an exception */
     public static Compound termOrException(Term t) {
@@ -287,41 +113,112 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return (X)x;
     }
 
-    @Override
-    public Sentence setCreationTime(long creationTime) {
-        if ((this.creationTime <= Stamp.TIMELESS) && (this.occurrenceTime>Stamp.TIMELESS)) {
-            //use the occurrence time as the delta, now that this has a "finite" creationTime
-            this.occurrenceTime = this.occurrenceTime + creationTime;
+    public static List<Sentence> sortExpectation(Collection<Sentence> s) {
+        List<Sentence> l = new ArrayList(s);
+        Collections.sort(l, ExpectationComparator.the);
+        return l;
+    }
+
+    public static List<Sentence> sortConfidence(Collection<Sentence> s) {
+        List<Sentence> l = new ArrayList(s);
+        Collections.sort(l, ConfidenceComparator.the);
+        return l;
+    }
+
+//    public void hash(PrimitiveSink into) {
+//
+//        into.putBytes(getTerm().bytes());
+//        into.putByte((byte)punctuation);
+//
+//        getStamp().hash(into);
+//
+//        Truth t = truth;
+//        if (t != null) {
+//            into.putFloat(t.getFrequency());
+//            into.putFloat(t.getConfidence());
+//        }
+//        into.putLong(occurrenceTime);
+//        for (long e : getEvidentialSet())
+//            into.putLong(e);
+//    }
+
+    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
+     * returns true if the term is invalid for use as sentence content term
+     * */
+    static public boolean invalidSentenceTerm(final Term t) {
+        if (!(t instanceof Compound)) { //(t instanceof Interval) || (t instanceof Variable)
+            return true;
         }
-        this.creationTime = creationTime;
-        invalidateHash();
-        return this;
+
+        if (t instanceof Statement) {
+            Statement st = (Statement) t;
+
+            /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
+            if (st.subjectOrPredicateIsIndependentVar())
+                return true;
+
+            if (Statement.invalidStatement(st))
+                return true;
+
+        }
+
+
+        //ok valid
+        return false;
     }
 
-    @Override
-    public Sentence setOccurrenceTime(long occurrenceTime) {
-        this.occurrenceTime = occurrenceTime;
-        invalidateHash();
-        return this;
+
+
+
+
+
+    /**
+     * Check whether different aspects of sentence are equivalent to another one
+     *
+     * @param that The other judgment
+     * @return Whether the two are equivalent
+     */
+    default public boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
+
+        if (this == that) return true;
+
+        final char thisPunc = this.getPunctuation();
+
+        if (truth) {
+            if (this.getTruth()==null) {
+                if (that.getTruth()!=null) return false;
+            }
+            else {
+                if (!this.getTruth().equals(that.getTruth())) return false;
+            }
+        }
+
+        if (punctuation) {
+            if (thisPunc!=that.getPunctuation()) return false;
+        }
+
+        if (term) {
+            if (!equalTerms(that)) return false;
+        }
+
+        if (stamp) {
+            //uniqueness includes every aspect of stamp except creation time
+            //<patham9> if they are only different in creation time, then they are the same
+            if (!this.equalStamp(that, true, creationTime, true))
+                return false;
+        }
+
+        return true;
     }
 
-    public Sentence setOccurrenceTime(Tense tense, int duration) {
+    default public Sentence setOccurrenceTime(Tense tense, int duration) {
         return setOccurrenceTime(getCreationTime(), tense, duration);
     }
 
-    public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
+    default public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
         return setOccurrenceTime(Stamp.getOccurrenceTime(creation, tense, duration));
     }
 
-
-    protected void invalidateHash() {
-        this.hash = 0;
-    }
-
-    public Sentence setEternal() {
-        setTime(getCreationTime(), Stamp.ETERNAL);
-        return this;
-    }
 
 //
 //    public Sentence clone(final boolean makeEternal) {
@@ -333,14 +230,9 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 //        return clon;
 //    }
 
-    /**
-     * Clone the Sentence
-     *
-     * @return The clone
-     */
-    @Override
-    public Sentence clone() {
-        return clone(getTerm());
+    default public Sentence setEternal() {
+        setTime(getCreationTime(), Stamp.ETERNAL);
+        return this;
     }
 
 //    public final <X extends Compound> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
@@ -357,24 +249,30 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 //
 //    }
 //
-    /** Clone with a different Term */
-    public <X extends Compound> Sentence<X> clone(X t) {
-        X ct = termOrNull(t);
-        if (ct == null) return null;
 
-        if (ct.equals(getTerm())) {
-            //throw new RuntimeException("Clone with " + t + " would produces exact sentence");
-            return (Sentence<X>) this;
-        }
+//    /**
+//     * Clone the Sentence
+//     *
+//     * @return The clone
+//     */
+//    default public Sentence clone() {
+//        return clone(getTerm());
+//    }
 
-        return clone_(ct);
-    }
-
-    protected <X extends Compound> Sentence<X> clone_(X t) {
-        return new Sentence(t, punctuation,
-                truth!=null ? new DefaultTruth(truth) : null,
-                this);
-    }
+//    /** Clone with a different Term */
+//    default public <X extends Compound> Sentence<X> clone(X t) {
+//        X ct = termOrNull(t);
+//        if (ct == null) return null;
+//
+//        if (ct.equals(getTerm())) {
+//            //throw new RuntimeException("Clone with " + t + " would produces exact sentence");
+//            return (Sentence<X>) this;
+//        }
+//
+//        return new Sentence<X>((X)ct, punctuation,
+//                truth!=null ? new DefaultTruth(truth) : null,
+//                getPriority(), getDurability(), getQuality());
+//    }
 
 //    public final Sentence clone(final CompoundTerm t) {
 //        //sentence content must be compoundterm
@@ -405,12 +303,11 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 //        return s;
 //    }
 
+    default public ProjectedTruth projection(final long targetTime, final long currentTime) {
 
-    public ProjectedTruth projection(final long targetTime, final long currentTime) {
+        final Truth currentTruth = getTruth();
 
-        final Truth currentTruth = truth;
 
-                        
         if (!isEternal() && (targetTime != Stamp.ETERNAL)) {
             ProjectedTruth eternalTruth  = TruthFunctions.eternalize(currentTruth);
 
@@ -431,25 +328,22 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }
 
     /** calculates projection truth quality without creating new TruthValue instances */
-    public float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
-        return projectionTruthQuality(truth, targetTime, currentTime, problemHasQueryVar);
-
+    default public float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
+        return projectionTruthQuality(getTruth(), targetTime, currentTime, problemHasQueryVar);
     }
 
     /** calculates projection truth quality without creating new TruthValue instances */
-    public float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
+    default public float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
         return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
     }
-
-
 
     /**
      * Recognize a Question
      *
      * @return Whether the object is a Question
      */
-    public boolean isQuestion() {
-        return (punctuation == Symbols.QUESTION);
+    default public boolean isQuestion() {
+        return (getPunctuation() == Symbols.QUESTION);
     }
 
     /**
@@ -457,28 +351,27 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      *
      * @return Whether the object is a Judgment
      */
-    public final boolean isJudgment() {
-        return (punctuation == Symbols.JUDGMENT);
+    default public boolean isJudgment() {
+        return (getPunctuation() == Symbols.JUDGMENT);
     }
 
-    public final boolean isGoal() {
-        return (punctuation == Symbols.GOAL);
+    default public boolean isGoal() {
+        return (getPunctuation() == Symbols.GOAL);
     }
- 
-    public final boolean isQuest() {
-        return (punctuation == Symbols.QUEST);
-    }    
     
-    public final boolean hasQueryVar() {
+    default public boolean isQuest() {
+        return (getPunctuation() == Symbols.QUEST);
+    }
+
+    default public boolean hasQueryVar() {
         return getTerm().hasVarQuery();
     }
 
-    public boolean isRevisible() {
+    default public boolean isRevisible() {
         return !((getTerm() instanceof Conjunction) && getTerm().hasVarDep());
     }
 
-
-    public int getTemporalOrder() {
+    default public int getTemporalOrder() {
         int t = getTerm().getTemporalOrder();
         if (t == TemporalRules.ORDER_INVALID)
             throw new RuntimeException(this + " has INVALID temporal order");
@@ -486,27 +379,15 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }
 
 
-
-    /**
-     * Overridden in Task
-     */
-    @Override
-    public String toString() { throw new RuntimeException("unsupported");    }
-
-    public StringBuilder appendTo(StringBuilder sb) {
+    default public StringBuilder appendTo(StringBuilder sb) {
         return appendTo(sb, null);
     }
 
     /**
      * Overridden in Task
      */
-    public StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
+    default public StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
         throw new RuntimeException("unsupported");    }
-
-    @Override
-    public Sentence name() {
-        return this;
-    }
 
 //    /**
 //     * Get a String representation of the sentence for key of Task and TaskLink
@@ -554,17 +435,23 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 //        //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
 //    }
 
-    public CharSequence toString(NAR nar, boolean showStamp) {
+    @Override
+    default public Sentence name() {
+        return this;
+    }
+
+    default public CharSequence toString(NAR nar, boolean showStamp) {
         return toString(nar.memory, showStamp);
     }
 
-    public CharSequence toString(final Memory memory, final boolean showStamp) {
+    default public CharSequence toString(final Memory memory, final boolean showStamp) {
         return toString(new StringBuilder(), memory, showStamp);
     }
 
-    @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
+    default @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         return toString(buffer, memory, true, true);
     }
+
     /**
      * Get a String representation of the sentence for display purpose
      *
@@ -572,7 +459,8 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
      * @return The String
      */
-    @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp) {
+    @Deprecated
+    default public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp) {
 
         String contentName;
         if (term && getTerm()!=null) {
@@ -593,7 +481,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
 
-        if (truth != null)
+        if (getTruth() != null)
             stringLength += 11;
 
         if (showStamp)
@@ -603,14 +491,14 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             buffer = new StringBuilder(stringLength);
         else
             buffer.ensureCapacity(stringLength);
-        buffer.append(contentName).append(punctuation);
+        buffer.append(contentName).append(getPunctuation());
 
         if (tenseString.length() > 0)
             buffer.append(' ').append(tenseString);
 
-        if (truth != null) {
+        if (getTruth()!= null) {
             buffer.append(' ');
-            truth.appendString(buffer, 2);
+            getTruth().appendString(buffer, 2);
         }
 
         if (showStamp)
@@ -619,91 +507,65 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return buffer;
     }
 
-    final public boolean equalTerms(final Sentence s) {
+    default public boolean equalTerms(final Sentence s) {
         return getTerm().equals(s.getTerm());
     }
 
-    final public boolean equalPunctuations(Sentence s) {
-        return punctuation == s.punctuation;
+    default public boolean equalPunctuations(Sentence s) {
+        return getPunctuation() == s.getPunctuation();
     }
 
-    @Override
-    public final boolean isEternal() {
-        return occurrenceTime == Stamp.ETERNAL;
-    }
-
-
-    @Override
-    public long[] getEvidentialSet() {
-        return evidentialSet;
-    }
-
-    @Override
-    public long getCreationTime() {
-        return creationTime;
-    }
-
-    @Override
-    public int getDuration() {
-        return duration;
-    }
-
-    @Override
-    public long getOccurrenceTime() {
-        return occurrenceTime;
+    default public boolean isEternal() {
+        return getOccurrenceTime() == Stamp.ETERNAL;
     }
 
 
 
-    public boolean after(Sentence s, int duration) {
+//    @Override
+//    public Sentence setEvidentialSet(long[] evidentialSet) {
+//        if (evidentialSet!=null) {
+//            this.evidentialSet = evidentialSet;
+//        }
+//
+//        invalidateHash();
+//        return this;
+//    }
+
+
+
+    default public boolean after(Sentence s, int duration) {
         return TemporalRules.occurrsAfter(s, this);
     }
 
-    public boolean before(final Sentence s, final int duration) {
+    default public boolean before(final Sentence s, final int duration) {
         return TemporalRules.occurrsAfter(this, s);
     }
 
-    public boolean concurrent(final Sentence s, final int duration) {
+    default public boolean concurrent(final Sentence s, final int duration) {
         return TemporalRules.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
-    /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
-    @Override
-    public void applyToStamp(Stamp target) {
-        target.setDuration(getDuration());
-        target.setTime(getCreationTime(), getOccurrenceTime());
-        target.setEvidentialSet(getEvidentialSet());
-        target.setCyclic(isCyclic());
-    }
-
-    @Override
-    public Sentence setEvidentialSet(long[] evidentialSet) {
-        if (evidentialSet!=null) {
-            this.evidentialSet = evidentialSet;
-        }
-
-        invalidateHash();
-        return this;
-    }
-
-    @Override
-    public Sentence setDuration(int duration) {
-        this.duration = duration;
-        return this;
-    }
-
+//    /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
+//    @Override
+//    public void applyToStamp(Stamp target) {
+//        target.setDuration(getDuration());
+//        target.setTime(getCreationTime(), getOccurrenceTime());
+//        target.setEvidentialSet(getEvidentialSet());
+//        target.setCyclic(isCyclic());
+//    }
+    
     /** WARNING: calling this should not change the value of equivalentInstance, but just the
      * particular instance that it references
      */
-    public void setSharedTerm(final T equivalentInstance) {
+    public void setTermShared(final T equivalentInstance);
 
-        //intermval generally contains unique information that should not be replaced
-        if (this.term instanceof TermMetadata)
-            return;
+    public T getTerm();
+    public Truth getTruth();
+    public boolean isCyclic();
 
-        this.term = equivalentInstance;
+    default public boolean isQuestOrQuestion() {
+        return isQuestion() || isQuest();
     }
-
 
     public static final class ExpectationComparator implements Comparator<Sentence> {
         final static Comparator the = new ExpectationComparator();
@@ -711,62 +573,13 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             return Float.compare(a.getExpectation(), b.getExpectation());
         }
     }
+
     public static final class ConfidenceComparator implements Comparator<Sentence> {
         final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.getConfidence(), b.getConfidence());
         }
     }
-    
-    public static List<Sentence> sortExpectation(Collection<Sentence> s) {
-        List<Sentence> l = new ArrayList(s);
-        Collections.sort(l, ExpectationComparator.the);
-        return l;
-    }
-    public static List<Sentence> sortConfidence(Collection<Sentence> s) {
-        List<Sentence> l = new ArrayList(s);
-        Collections.sort(l, ConfidenceComparator.the);
-        return l;
-    }
-    
-    /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
-     * returns true if the term is invalid for use as sentence content term
-     * */
-    public static final boolean invalidSentenceTerm(final Term t) {
-        if (!(t instanceof Compound)) { //(t instanceof Interval) || (t instanceof Variable)
-            return true;
-        }
-
-        if (t instanceof Statement) {
-            Statement st = (Statement) t;
-
-            /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
-            if (st.subjectOrPredicateIsIndependentVar())
-                return true;
-
-            if (Statement.invalidStatement(st))
-                return true;
-
-        }
-
-
-        //ok valid
-        return false;
-    }
-
-    /**
-     * The content of a Sentence is a Term
-     */
-    @Override
-    public final T getTerm() {
-        return term;
-    }
-
-    @Override
-    public Truth getTruth() {
-        return truth;
-    }
-
 
     @Deprecated public static class SubTermVarCollector implements TermVisitor {
         private final List<Variable> vars;
@@ -781,28 +594,5 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
                 vars.add(v);
             }
         }
-    }
-
-    public Sentence getStamp() {
-        return this;
-    }
-
-    @Override
-    public Sentence getSentence() {
-        return this;
-    }
-
-    @Override
-    public boolean isCyclic() {
-        return cyclic;
-    }
-
-    @Override
-    public void setCyclic(boolean cyclic) {
-        this.cyclic = cyclic;
-    }
-
-    final public boolean isQuestOrQuestion() {
-        return isQuestion() || isQuest();
     }
 }

@@ -3,7 +3,7 @@ package nars.util.graph;
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.task.Sentence;
-import nars.task.Sentenced;
+import nars.task.Task;
 import nars.task.Task;
 import org.jgrapht.graph.DirectedMultigraph;
 
@@ -14,7 +14,7 @@ import org.jgrapht.graph.DirectedMultigraph;
  * These incude all known tasks forming the premises of the ancestry
  * of the target task.
  */
-public class DerivationTree extends DirectedMultigraph<Sentenced, String> {
+public class DerivationTree extends DirectedMultigraph<Task, String> {
 
     public DerivationTree() {
         super(String.class);
@@ -25,7 +25,7 @@ public class DerivationTree extends DirectedMultigraph<Sentenced, String> {
         return this;
     }
 
-    public static String edge(String label, Sentenced from, Sentenced to) {
+    public static String edge(String label, Task from, Task to) {
         return label + "[" + from + "," + to + "]";
     }
 
@@ -41,7 +41,7 @@ public class DerivationTree extends DirectedMultigraph<Sentenced, String> {
                 addEdge(parent, t, edge("Parent", parent, t));
         }
 
-        Sentence belief = t.getParentBelief();
+        Task belief = t.getParentBelief();
         if (belief != null) {
             addVertex(belief);
             addEdge(belief, t, edge("Belief", belief, t));

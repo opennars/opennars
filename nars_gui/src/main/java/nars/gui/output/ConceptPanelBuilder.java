@@ -11,7 +11,7 @@ import nars.Events;
 import nars.Events.FrameEnd;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.Budget.Budgetable;
+import nars.budget.Budgeted;
 import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.event.NARReaction;
@@ -455,13 +455,13 @@ public class ConceptPanelBuilder extends NARReaction {
             update(Collections.EMPTY_LIST);
         }
 
-        public void update(Iterable<? extends Budgetable> i) {
+        public void update(Iterable<? extends Budgeted> i) {
             Graphics g = g();
             if (g == null) return;
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
-            for (Budgetable s : i) {
+            for (Budgeted s : i) {
                 float pri = s.getBudget().getPriority();
                 float dur = s.getBudget().getDurability();
 

@@ -3,7 +3,7 @@ package nars.util.graph;
 import nars.Global;
 import nars.NAR;
 import nars.budget.Budget;
-import nars.budget.Budget.Budgetable;
+import nars.budget.Budgeted;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -188,7 +188,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
     }
 
-    public static class TermLinkEdge extends NAREdge<TermLink> implements Budgetable, Termed {
+    public static class TermLinkEdge extends NAREdge<TermLink> implements Budgeted, Termed {
 
         public TermLinkEdge(TermLink t) {
             super(t);
@@ -216,7 +216,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
     }
 
-    public static class TaskLinkEdge extends NAREdge<TaskLink> implements Termed, Budgetable {
+    public static class TaskLinkEdge extends NAREdge<TaskLink> implements Termed, Budgeted {
 
         public TaskLinkEdge(TaskLink t) {
             super(t);

@@ -2,7 +2,7 @@ package nars.meter;
 
 import nars.Events;
 import nars.Memory;
-import nars.budget.Budget;
+import nars.budget.Budgeted;
 import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.util.meter.event.DoubleMeter;
@@ -115,7 +115,7 @@ public class LogicMeter extends NARReaction {
 
     }
 
-    public static class ItemMeter<I extends Budget.Budgetable> implements Consumer<I> {
+    public static class ItemMeter<I extends Budgeted> implements Consumer<I> {
 
         double prioritySum = 0;
         double prioritySumSq = 0;

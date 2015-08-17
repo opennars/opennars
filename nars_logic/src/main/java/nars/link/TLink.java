@@ -1,13 +1,13 @@
 package nars.link;
 
-import nars.budget.Budget;
+import nars.budget.Budgeted;
 import nars.term.Term;
 import nars.term.Termed;
 
 import java.io.PrintStream;
 import java.io.Serializable;
 
-public interface TLink<T extends Termed> extends Budget.Budgetable, Serializable {
+public interface TLink<T extends Termed> extends Budgeted, Serializable {
 
     public short getIndex(final int i);
     
