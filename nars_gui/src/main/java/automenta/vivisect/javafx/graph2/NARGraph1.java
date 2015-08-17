@@ -400,8 +400,8 @@ public class NARGraph1 extends Spacegraph {
 
             setNeedsLayout(false);
             setCacheShape(true);
-            setCache(true);
-            setCacheHint(CacheHint.DEFAULT);
+            //setCache(true);
+            //setCacheHint(CacheHint.DEFAULT);
         }
 
         public void delete() {

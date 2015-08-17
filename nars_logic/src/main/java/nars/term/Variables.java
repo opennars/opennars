@@ -85,6 +85,7 @@ public class Variables {
             System.out.println("     " + this);
         }
 
+        /** recursess into the next sublevel of the term */
         protected boolean next(Term term1, Term term2) {
 
             final boolean term1HasVar = term1.hasVar(type);
@@ -195,6 +196,7 @@ public class Variables {
             return termsEqual;
         }
 
+        /** a branch for comparing a particular permutation, called from the main next() */
         protected boolean next(Compound c, Term[] list) {
             for (int i = 0; i < list.length; i++) {
                 final Term t1 = list[i];

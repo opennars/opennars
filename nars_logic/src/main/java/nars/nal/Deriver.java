@@ -2,7 +2,6 @@ package nars.nal;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.sun.istack.internal.Nullable;
 import nars.Global;
 import nars.Op;
 import nars.link.TaskLink;
@@ -108,7 +107,7 @@ public class Deriver extends ConceptFireTaskTerm {
         });
     }
 
-    public void forEach(Term taskTerm, @Nullable Term beliefTerm, RuleMatch match) {
+    public void forEach(Term taskTerm, Term beliefTerm, RuleMatch match) {
         EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.operator());
 
         if (taskSpecific!=null) {
