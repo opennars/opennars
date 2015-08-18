@@ -52,12 +52,14 @@ import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
+import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.util.event.EventEmitter;
+import nars.util.event.Observed;
 import nars.util.meter.ResourceMeter;
 
 import java.io.Serializable;
@@ -87,8 +89,13 @@ public class Memory implements Serializable, AbstractMemory {
     public final Random random;
 
     private CycleProcess control;
+
     public final EventEmitter<Class,Object[]> event;
+    public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
+
     public final EventEmitter<Term,Operation> exe;
+
+
     public final EmotionMeter emotion;
     public final LogicMeter logic;
     public final ResourceMeter resource;

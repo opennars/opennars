@@ -428,7 +428,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
                 .setTime(getCreationTime(), getOccurrenceTime())
                 .setEvidence(getEvidence());
 
-        updateCyclic();
 
 
         //applyToStamp(t);

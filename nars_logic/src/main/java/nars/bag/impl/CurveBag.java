@@ -1,7 +1,7 @@
 package nars.bag.impl;
 
 import com.google.common.collect.Sets;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
+import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.nal.UtilityFunctions;
@@ -194,8 +194,8 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         index = new CurveMap(
                 //new HashMap(capacity)
-                //Global.newHashMap(capacity)
-                new UnifiedMap(capacity)
+                Global.newHashMap(capacity)
+                //new UnifiedMap(capacity)
                 //new CuckooMap(capacity)
         );
 

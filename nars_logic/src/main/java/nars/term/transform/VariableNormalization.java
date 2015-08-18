@@ -5,6 +5,7 @@ import nars.term.Variable;
 import nars.util.data.FastPutsArrayMap;
 
 import java.util.Comparator;
+import java.util.Map;
 
 /**
  * Variable normalization
@@ -18,19 +19,19 @@ import java.util.Comparator;
  */
 public class VariableNormalization implements VariableTransform {
 
-
+//    final static Comparator<Map.Entry<Variable, Variable>> comp = new Comparator<Map.Entry<Variable, Variable>>() {
+//        @Override
+//        public int compare(Map.Entry<Variable, Variable> c1, Map.Entry<Variable, Variable> c2) {
+//            return c1.getKey().compareTo(c2.getKey());
+//        }
+//    };
 
     /**
      * overridden keyEquals necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap
      */
     static final class VariableMap extends FastPutsArrayMap<Variable, Variable> {
 
-        final static Comparator<Entry<Variable, Variable>> comp = new Comparator<Entry<Variable, Variable>>() {
-            @Override
-            public int compare(Entry<Variable, Variable> c1, Entry<Variable, Variable> c2) {
-                return c1.getKey().compareTo(c2.getKey());
-            }
-        };
+
 
         public VariableMap(int initialCapacity) {
             super(initialCapacity);
@@ -45,13 +46,13 @@ public class VariableNormalization implements VariableTransform {
             return a.name().equals(b.name());
         }
 
-        @Override
-        public Variable put(Variable key, Variable value) {
-            Variable removed = super.put(key, value);
-            /*if (size() > 1)
-                Collections.sort(entries, comp);*/
-            return removed;
-        }
+//        @Override
+//        public Variable put(Variable key, Variable value) {
+//            Variable removed = super.put(key, value);
+//            /*if (size() > 1)
+//                Collections.sort(entries, comp);*/
+//            return removed;
+//        }
     }
 
 

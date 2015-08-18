@@ -11,9 +11,6 @@ abstract public class DequePool<X> implements Pool<X> {
     protected final Deque<X> data;
     private int capacity;
 
-    public DequePool() {
-        this(16);
-    }
 
     public DequePool(int initialCapacity) {
         data = new ArrayDeque(initialCapacity);
@@ -33,7 +30,7 @@ abstract public class DequePool<X> implements Pool<X> {
         //synchronized (data) {
 
 
-        if (data.size() < capacity)
+        //if (data.size() < capacity)
             data.offer(i);
 
         //else: it is forgotten

@@ -266,6 +266,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
 
 
+
     @Override
     public E pollFirst() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -300,7 +301,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     @Override
     public boolean offer(E e) {
-        return add(e);
+        addFirst(e);
+        return true;
     }
 
     @Override
@@ -310,7 +312,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     @Override
     public E poll() {
-        return remove();
+        return removeLast();
     }
 
     @Override

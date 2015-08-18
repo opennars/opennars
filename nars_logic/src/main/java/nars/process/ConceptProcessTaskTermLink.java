@@ -1,6 +1,6 @@
 package nars.process;
 
-import nars.Events;
+import nars.Memory;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.link.TaskLink;
@@ -36,14 +36,18 @@ public class ConceptProcessTaskTermLink extends ConceptProcess {
     @Override
     protected void derive() {
 
+        final Memory memory = getMemory();
+
         final Bag<TermLinkKey, TermLink> tl = concept.getTermLinks();
         if (tl != null)
             tl.setForgetNext(memory.param.termLinkForgetDurations, memory);
 
 
-        getMemory().rules.fire(this);
+        memory.rules.fire(this);
 
-        emit(Events.BeliefReason.class, this);
+
+        memory.eventBeliefReason.emit(this);
+        //emit(Events.BeliefReason.class, this);
     }
 
     /**

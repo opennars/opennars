@@ -19,10 +19,11 @@ public class FasterHashMap extends AbstractHashedMap {
             return this;
         }
 
-        public void clear() {
-            this.key = this.value = this.next = null;
+        public final void clear() {
+            this.key = this.value = null; //this.next = null;
         }
     }
+
 
     final DequePool<CachedHashEntry> pool;
 
@@ -30,7 +31,7 @@ public class FasterHashMap extends AbstractHashedMap {
     public FasterHashMap(int size) {
         super(Math.max(1,size));
 
-        pool = new CachedHashEntryDequePool(size);
+        pool = new CachedHashEntryDequePool(size+1);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class FasterHashMap extends AbstractHashedMap {
     }
 
 
-    public void clear() {
+    public final void clear() {
         modCount++;
 
         HashEntry[] data = this.data;
@@ -72,9 +73,7 @@ public class FasterHashMap extends AbstractHashedMap {
 
     @Override
     final protected void destroyEntry(final HashEntry entry) {
-        final CachedHashEntry c = (CachedHashEntry) entry;
-        c.clear();
-        pool.put(c);
+        pool.put((CachedHashEntry) entry);
     }
 
 
@@ -101,5 +100,10 @@ public class FasterHashMap extends AbstractHashedMap {
             return new CachedHashEntry();
         }
 
+        @Override
+        public void put(final CachedHashEntry i) {
+            i.clear();
+            data.offer(i);
+        }
     }
 }

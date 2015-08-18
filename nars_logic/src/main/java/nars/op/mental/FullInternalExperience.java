@@ -13,7 +13,7 @@ import nars.process.TaskProcess;
 public class FullInternalExperience extends InternalExperience {
 
     public FullInternalExperience(NAR n) {
-        super(n, TaskProcess.class, Events.BeliefReason.class);
+        super(n, TaskProcess.class);
     }
 
 

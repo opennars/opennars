@@ -22,6 +22,7 @@ import nars.term.Term;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  *
@@ -31,7 +32,7 @@ import java.util.Random;
  * <p>
  * called from Concept
  */
-public class InternalExperience extends NARReaction {
+public class InternalExperience extends NARReaction implements Consumer<ConceptProcess> {
         
     
     
@@ -92,7 +93,7 @@ public class InternalExperience extends NARReaction {
     
     //public static boolean enabled=true;
 
-    private final AbstractMemory memory;
+
     public final static Operator believe = Operator.the("believe");
     public final static Operator want = Operator.the("want");;
     public final static Operator wonder = Operator.the("wonder");;
@@ -110,8 +111,9 @@ public class InternalExperience extends NARReaction {
 
     protected InternalExperience(NAR n, Class... events) {
         super(n, events);
-        this.memory = n.memory;
+        n.memory.eventBeliefReason.on(this);
     }
+
     public InternalExperience(NAR n) {
         this(n, TaskProcess.class);
     }
@@ -162,6 +164,27 @@ public class InternalExperience extends NARReaction {
 
 
     @Override
+    public void accept(final ConceptProcess p) {
+        final Sentence belief = p.getBelief();
+        if (belief == null) return;
+
+        final Task task = p.getTask();
+        final Memory m = p.memory;
+        final Random r = m.random;
+
+        if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY ) {
+            nonInnate(belief, task, p, m.the(nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)]), nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)]);
+        }
+
+        final Term beliefTerm = belief.getTerm();
+
+        if (beliefTerm instanceof Implication && m.random.nextFloat()<=INTERNAL_EXPERIENCE_PROBABILITY){
+            internalizeImplication(task, p, (Implication) beliefTerm);
+        }
+
+    }
+
+    @Override
     public void event(Class event, Object[] a) {
 
 
@@ -175,12 +198,6 @@ public class InternalExperience extends NARReaction {
             if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (punc == Symbols.QUESTION || punc == Symbols.QUEST))) {
                 experienceFromTaskInternal(tp, task, isFull());
             }
-        }
-        else if (event == Events.BeliefReason.class) {
-            //belief, beliefTerm, taskTerm, nal
-
-            ConceptProcess nal = (ConceptProcess)a[0];
-            beliefReason(nal.getBelief(), nal.getTask(), nal);
         }
     }
 
@@ -244,56 +261,47 @@ public class InternalExperience extends NARReaction {
 
     final static String[] nonInnateBeliefOperators = new String[] {
         "remind","doubt","consider","evaluate","hestitate","wonder","belief","want"
-    }; 
-    
-    /** used in full internal experience mode only */
-    protected void beliefReason(Sentence belief, Task task, NAL nal) {
+    };
 
+    private void internalizeImplication(Task task, NAL nal, Implication beliefTerm) {
         Term taskTerm = task.getTerm();
-        Term beliefTerm = belief.getTerm();
-        Memory memory = nal.memory;
-        Random r = memory.random;
+        Implication imp= beliefTerm;
+        if(imp.getTemporalOrder()== TemporalRules.ORDER_FORWARD) {
+            //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
+            boolean valid=true;
+            if(imp.getSubject() instanceof Conjunction) {
+                Conjunction conj=(Conjunction) imp.getSubject();
+                if(!conj.term[0].equals(taskTerm)) {
+                    valid=false; //the expected needed term is not included
+                }
+                for(int i=1;i<conj.term.length;i++) {
+                    if(!(conj.term[i] instanceof AbstractInterval)) {
+                        valid=false;
+                        break;
+                    }
+                }
+            } else {
+                if(!imp.getSubject().equals(taskTerm)) {
+                    valid=false;
+                }
+            }
 
-        if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY ) {
-
-            //the operators which dont have a innate belief
-            //also get a chance to reveal its effects to the system this way
-            Atom op = memory.the(nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)]);
-            if(op!=null) {
+            if(valid) {
                 beliefReasonDerive(task,
-                        Inheritance.make(Product.only(belief.getTerm()), op),
-                nal);
+                        Inheritance.make(anticipate, Product.only(imp.getPredicate())),
+                        nal);
             }
         }
+    }
 
-        if (beliefTerm instanceof Implication && memory.random.nextFloat()<=INTERNAL_EXPERIENCE_PROBABILITY) {
-            Implication imp=(Implication) beliefTerm;
-            if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
-                boolean valid=true;
-                if(imp.getSubject() instanceof Conjunction) {
-                    Conjunction conj=(Conjunction) imp.getSubject();
-                    if(!conj.term[0].equals(taskTerm)) {
-                        valid=false; //the expected needed term is not included
-                    }
-                    for(int i=1;i<conj.term.length;i++) {
-                        if(!(conj.term[i] instanceof AbstractInterval)) {
-                            valid=false;
-                            break;
-                        }
-                    }
-                } else {
-                    if(!imp.getSubject().equals(taskTerm)) {
-                        valid=false;
-                    }
-                }
-
-                if(valid) {
-                    beliefReasonDerive(task,
-                            Inheritance.make(anticipate, Product.only(imp.getPredicate())),
-                            nal);
-                }
-            }
+    private void nonInnate(Sentence belief, Task task, NAL nal, Atom the, String nonInnateBeliefOperator) {
+        //the operators which dont have a innate belief
+        //also get a chance to reveal its effects to the system this way
+        Atom op = the;
+        if(op!=null) {
+            beliefReasonDerive(task,
+                    Inheritance.make(Product.only(belief.getTerm()), op),
+            nal);
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 abstract public class NARControlFX extends VBox implements Runnable {
 
     public final ToggleButton consoleButton;
+    private final long defaultNARPeriodMS = 75;
 
     //private final NARWindow.FXReaction busyBackgroundColor;
 
@@ -87,7 +88,7 @@ abstract public class NARControlFX extends VBox implements Runnable {
                         //TODO make sure only one thread is running, maybe with singleThreadExecutor
 
                         new Thread(() -> {
-                            n.loop(25);
+                            n.loop(defaultNARPeriodMS);
                         }).start();
                     } else {
                         n.stop();

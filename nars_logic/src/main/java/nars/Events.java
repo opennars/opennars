@@ -140,8 +140,8 @@ public class Events {
 
     public static class BeliefSelect { }
     
-    /** called from RuleTables.rule for a given Belief */
-    public static class BeliefReason {    }
+//    /** called from RuleTables.rule for a given Belief */
+//    public static class BeliefReason {    }
     
     public static class ConceptUnification { } //2nd level unification in CompositionalRules
 
