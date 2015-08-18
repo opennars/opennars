@@ -2,22 +2,14 @@ package nars.rover.run;
 
 import automenta.vivisect.Video;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
-import nars.bag.Bag;
-import nars.bag.impl.CurveBag;
-import nars.budget.Budget;
 import nars.clock.SimulatedClock;
-import nars.concept.Concept;
 import nars.event.CycleReaction;
 import nars.gui.NARSwing;
 import nars.io.out.TextOutput;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-import nars.link.TermLinkKey;
-import nars.meter.UselessProcess;
 import nars.nar.Default;
+import nars.nar.NewDefault;
 import nars.nar.experimental.Equalized;
 import nars.nar.experimental.Solid;
 import nars.rover.Sim;
@@ -25,8 +17,6 @@ import nars.rover.robot.CarefulRover;
 import nars.rover.robot.Rover;
 import nars.rover.robot.Spider;
 import nars.rover.robot.Turret;
-import nars.task.Sentence;
-import nars.term.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import javax.swing.*;
@@ -63,24 +53,25 @@ public class SomeRovers {
         return d;
     }
     public static NARSeed newDefault() {
-        Default d = new Equalized(1024, 32, 8) {
 
-
-            @Override
-            public Concept newConcept(final Term t, final Budget b, final Memory m) {
-
-                Bag<Sentence, TaskLink> taskLinks =
-                        new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-                        //new ChainBag(rng,  getConceptTaskLinks());
-
-                Bag<TermLinkKey, TermLink> termLinks =
-                        new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-                        //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-
-                return newConcept(t, b, taskLinks, termLinks, m);
-            }
-
-        };
+        Default d = new Equalized(1024, 32, 8);
+//
+//
+//            @Override
+//            public Concept newConcept(final Term t, final Budget b, final Memory m) {
+//
+//                Bag<Sentence, TaskLink> taskLinks =
+//                        new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+//                        //new ChainBag(rng,  getConceptTaskLinks());
+//
+//                Bag<TermLinkKey, TermLink> termLinks =
+//                        new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+//                        //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+//
+//                return newConcept(t, b, taskLinks, termLinks, m);
+//            }
+//
+//        };
         //d.setInternalExperience(null);
         d.setClock(clock);
 
@@ -122,11 +113,15 @@ public class SomeRovers {
 
         {
             int cycPerFrame = 8;
-            Equalized e = new Equalized(1024, 32, 8);
-            e.setCyclesPerFrame(cycPerFrame);
+            NARSeed e = newDefault();
+
+            //e.setCyclesPerFrame(cycPerFrame);
+            //e.duration.set(5 * cycPerFrame);
             e.setClock(clock);
-            e.duration.set(5 * cycPerFrame);
+
             NAR nar = new NAR(e);
+            TextOutput.out(nar);
+
             //TextOutput.out(nar);
             game.add(new CarefulRover("r2", nar));
 
@@ -138,8 +133,10 @@ public class SomeRovers {
             NAR nar;
 
             //NARSeed d = newSolid();
-            NARSeed d = newDefault();
+            Equalized d = new Equalized(1024, 32, 8);
             nar = new NAR(d);
+
+
 
             //new InputActivationController(nar);
 
