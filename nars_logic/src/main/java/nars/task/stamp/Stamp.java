@@ -355,7 +355,8 @@ public interface Stamp extends Cloneable, Serializable {
 
     default public CharSequence stampAsStringBuilder() {
 
-        final int len = getEvidence().length;
+        final long[] ev = getEvidence();
+        final int len = ev != null ? ev.length : 0;
         final int estimatedInitialSize = 8 + (len * 3);
 
         final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
@@ -371,7 +372,7 @@ public interface Stamp extends Cloneable, Serializable {
         buffer.append(Symbols.STAMP_STARTER).append(' ');
         for (int i = 0; i < len; i++) {
 
-            buffer.append(Long.toString(getEvidence()[i], 36));
+            buffer.append(Long.toString(ev[i], 36));
             if (i < (len - 1)) {
                 buffer.append(Symbols.STAMP_SEPARATOR);
             }

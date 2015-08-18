@@ -523,6 +523,10 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         return getOccurrenceTime() == Stamp.ETERNAL;
     }
 
+    default public boolean isTimeless() {
+        return getOccurrenceTime() == Stamp.TIMELESS;
+    }
+
 
 
 //    @Override

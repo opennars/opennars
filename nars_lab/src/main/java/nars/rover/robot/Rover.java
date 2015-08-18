@@ -89,14 +89,6 @@ public class Rover extends AbstractPolygonBot {
 
     }
 
-    @Override
-    public void init(Sim p) {
-        super.init(p);
-
-
-
-
-    }
 
     @Override
     public RoboticMaterial getMaterial() {

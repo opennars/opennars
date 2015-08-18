@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stamp {
 
 
-    private final Memory memory;
+    transient private final Memory memory;
 
     public static <C extends Compound> TaskSeed<C> make(Memory memory, C t) {
         TaskSeed<C> x = make(memory);
@@ -47,8 +47,10 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         super(null, (char)0, null, 0, 0, 0);
 
+
         this.memory = memory;
         setDuration(memory.duration());
+        setOccurrenceTime(TIMELESS);
     }
 
 //    @Deprecated
@@ -472,17 +474,17 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 
 
 
-    @Override
-    public String toString() {
-        try {
-            return JSONOutput.stringFromFields(this);
-        }
-        catch (StackOverflowError e) {
-            e.printStackTrace();
-            //TODO prevent this
-            return getClass().getSimpleName() + "[JSON_Error]";
-        }
-    }
+//    @Override
+//    public String toString() {
+//        try {
+//            return JSONOutput.stringFromFields(this);
+//        }
+//        catch (StackOverflowError e) {
+//            e.printStackTrace();
+//            //TODO prevent this
+//            return getClass().getSimpleName() + "[JSON_Error]";
+//        }
+//    }
 
 
 
@@ -510,14 +512,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     public TaskSeed<T> reason(String reason) {
         log(reason);
         return this;
-    }
-
-    public boolean isTimeless() {
-        return getOccurrenceTime() == Stamp.TIMELESS;
-    }
-    @Override
-    public boolean isEternal() {
-        return getOccurrenceTime() == Stamp.ETERNAL;
     }
 
 

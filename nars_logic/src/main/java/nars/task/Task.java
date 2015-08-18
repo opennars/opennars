@@ -442,6 +442,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         if (getDuration() == 0)
             setDuration(memory.duration());
 
+        if (getEvidence() == null && getParentTask() == null) {
+            setEvidence(memory.newStampSerial());
+        }
         return true;
     }
 

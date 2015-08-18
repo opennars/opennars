@@ -71,14 +71,15 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
     @Override
     protected void init(Term... t) {
-        if (t.length != 2)
-            throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
-        if (t[0] == null)
-            throw new RuntimeException("Null subject: " + this);
-        if (t[1] == null)
-            throw new RuntimeException("Null predicate: " + this);
         if (Global.DEBUG) {
-            if (/*t.length > 1 && */isCommutative()) {
+            if (t.length != 2)
+                throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
+            if (t[0] == null)
+                throw new RuntimeException("Null subject: " + this);
+            if (t[1] == null)
+                throw new RuntimeException("Null predicate: " + this);
+
+            if (isCommutative()) {
                 if (t[0].compareTo(t[1]) > 0) {
                     throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
                 }

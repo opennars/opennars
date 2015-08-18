@@ -471,7 +471,7 @@ public class NarseseParserTest {
         String a = "<a --> b>.\n//comment1234\n<b-->c>.";
         List<Task> l = tasks(a);
         assertEquals(3, l.size());
-        Operation op = ((Operation)l.get(1));
+        Operation op = ((Task<Operation>)l.get(1)).getTerm();
         ensureIsEcho(op);
         assertEquals("[\"comment1234\"]", op.argString());
     }
@@ -487,7 +487,7 @@ public class NarseseParserTest {
         String a = "<a --> b>.\n'comment1234\n<b-->c>.";
         List<Task> l = tasks(a);
         assertEquals(3, l.size());
-        Operation op = ((Operation)l.get(1));
+        Operation op = ((Task<Operation>)l.get(1)).getTerm();
         ensureIsEcho(op);
         assertEquals("[\"comment1234\"]", op.argString());
     }

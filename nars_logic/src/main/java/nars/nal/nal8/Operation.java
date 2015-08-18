@@ -402,7 +402,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
     }
 
     public boolean setMemory(Memory memory) {
-        if (this.memory!=null) return false;
+        if (memory!=null && this.memory!=null) return false;
         this.memory = memory;
         return true;
     }

@@ -91,6 +91,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
 
+    final private static int PRIME1 = 31;
+    final private static int PRIME2 = 92821;
 
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
@@ -103,12 +105,9 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         final int opOrdinal = operator().ordinal();
         int subt = (1 << opOrdinal);
 
-        final int PRIME1 = 31;
-        final int PRIME2 = 92821;
 
-        int asc = additionalStructureCode();
-        long contentHash = opOrdinal + PRIME1 * asc;
-
+        final long asc = additionalStructureCode();
+        long contentHash = (PRIME2 * asc) + opOrdinal;
 
         int p = 0;
         for (final Term t : term) {
@@ -119,7 +118,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             indeps += t.varIndep();
             queries += t.varQuery();
             subt |= t.structuralHash();
-            contentHash = (contentHash + t.hashCode()+p) * PRIME2;
+            contentHash = (PRIME1 * contentHash) + (t.hashCode()+p) * PRIME2;
 
             p++;
         }

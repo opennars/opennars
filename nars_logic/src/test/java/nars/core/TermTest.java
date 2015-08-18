@@ -293,7 +293,7 @@ public class TermTest {
         try {
             Term x = n.term("wonder(a,b)");
             assertEquals(Operation.class, x.getClass());
-            assertEquals("wonder(a,b,SELF)", x.toString());
+            assertEquals("wonder(a, b)", x.toString());
 
         } catch (InvalidInputException ex) {
             ex.printStackTrace();
@@ -377,10 +377,18 @@ public class TermTest {
 
 
         statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(8)>");
-        statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(9)>");
-
 
         statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(7)>");
+
+    }
+
+    @Test
+    public void statementHash2() {
+        statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(9)>");
+    }
+
+    @Test
+    public void statementHash3() {
 
         //this is a case where a faulty hash function produced a collision
         statementHash("<<{i0} --> r> ==> A(8)>", "<<{i1} --> r> ==> A(7)>");
@@ -397,7 +405,8 @@ public class TermTest {
         Term tb = n.term(b);
 
         assertNotEquals(ta, tb);
-        assertNotEquals(ta.hashCode(), tb.hashCode());
+        assertNotEquals(ta.toString() + " vs. " + tb.toString(),
+                ta.hashCode(), tb.hashCode());
 
 
     }
@@ -457,8 +466,8 @@ public class TermTest {
 
         Term a3 = n.term("c");
 
-        Compound a = testStructure("<<a --> b> </> c>", "10000000000000000000100001");
-        Compound b = testStructure("<<$a --> #b> </> ?c>", "10000000000000000000101110");
+        Compound a = testStructure("<<a --> b> </> c>", "100000000000000000001000001");
+        Compound b = testStructure("<<$a --> #b> </> ?c>", "100000000000000000001001110");
 
         assertTrue( a.impossibleSubStructure(b) );
         assertFalse( a.impossibleSubStructure(a3));
@@ -477,8 +486,8 @@ public class TermTest {
 
         String i1 = "(/,x, y, _)";
         String i2 = "(/,x, _, y)";
-        Compound a = testStructure(i1, "100000000000000000001000000000001");
-        Compound b = testStructure(i2,                     "1000000000001");
+        Compound a = testStructure(i1, "100000000000000000010000000000001");
+        Compound b = testStructure(i2,                     "10000000000001");
         assertNotEquals("additional structure code in upper bits",
                 a.structuralHash(), a.subtermStructure());
         assertNotEquals("structure code influenced contentHash",

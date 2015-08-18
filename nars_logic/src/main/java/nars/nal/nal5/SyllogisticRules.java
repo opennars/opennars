@@ -180,7 +180,9 @@ public final class SyllogisticRules {
             } else {
                 // isJudgment
                 truth1 = TruthFunctions.abduction(value1, value2);
+                if (truth1 == null) return;
                 truth2 = TruthFunctions.abduction(value2, value1);
+                if (truth2 == null) return;
                 truth3 = TruthFunctions.comparison(value1, value2);
             }
 

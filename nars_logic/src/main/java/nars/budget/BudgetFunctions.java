@@ -50,6 +50,8 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The quality of the judgment, according to truth value only
      */
     public final static float truthToQuality(final Truth t) {
+        if (t == null)
+            throw new RuntimeException("truth null");
         final float exp = t.getExpectation();
         return Math.max(exp, (1f - exp) * 0.75f);
     }

@@ -155,12 +155,15 @@ public class AbstractBagTest {
     }
 
 
-    /** removal rates are approximately monotonically increasing function; tests first, mid and last for this  ordering */
+    /** removal rates are approximately monotonically increasing function;
+     * tests first, mid and last for this  ordering
+     * first items are highest, so it is actually descending order
+     * */
     public static boolean semiMonotonicallyIncreasing(int[] count) {
 
         int cl = count.length;
         return
-                (count[0] <= count[cl-1]) &&
-                (count[cl/2] <= count[cl-1]);
+                (count[0] >= count[cl-1]) &&
+                (count[cl/2] >= count[cl-1]);
     }
 }

@@ -107,6 +107,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         super(p, d, q);
         //super(term, punctuation, truth, p, d, q);
 
+        this.truth = truth;
         this.punctuation = punctuation;
 
         if (term instanceof Sequence) {
