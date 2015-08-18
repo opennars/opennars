@@ -124,10 +124,11 @@ public class FindSubst {
 
             return true;
 
-        } else if ((term1.hasVar(type) || term2.hasVar(type)) && (term1 instanceof Compound) && ((term1.operator() == term2.operator()))) {
+        } else if ((term1 instanceof Compound) && ((term1.operator() == term2.operator())) && (term1.hasVar(type) || term2.hasVar(type))) {
             final Compound cTerm1 = (Compound) term1;
             final Compound cTerm2 = (Compound) term2;
-            if (cTerm1.length() != cTerm2.length()) {
+            final int c1Len = cTerm1.length();
+            if (c1Len != cTerm2.length()) {
                 return false;
             }
             //TODO simplify comparison with Image base class
@@ -136,30 +137,11 @@ public class FindSubst {
             }
 
             final Term[] list;
-            final int clen = cTerm1.length();
-            if (cTerm1.isCommutative() && clen > 1) {
-                if (clen == 2) {
-                    list = new Term[2];
-                    boolean order = random.nextBoolean();
-                    int tries = 0;
-                    boolean solved;
-                    do {
-                        if (order) {
-                            list[0] = cTerm1.term[0];
-                            list[1] = cTerm1.term[1];
-                        } else {
-                            list[0] = cTerm1.term[1];
-                            list[1] = cTerm1.term[0];
-                        }
-                        order = !order;
-                        solved = next(cTerm2, list);
-                        tries++;
-                    } while (tries < 2 && !solved);
-//                        if (solved) {
-//                            if (tries > 1)
-//                                System.out.println("got it " + tries);
-//                        }
-                    return solved;
+            if (cTerm1.isCommutative() && c1Len > 1) {
+                if (c1Len == 2) {
+                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2);
+                } else if (c1Len ==3) {
+                    return permute3(cTerm1.term, cTerm2);
                 } else {
                     list = cTerm1.cloneTerms();
                     Compound.shuffle(list, random);
@@ -174,18 +156,71 @@ public class FindSubst {
         return termsEqual;
     }
 
+    private boolean permute3(final Term[] c3, final Compound cTerm2) {
+        int order = random.nextInt(6);
+        final Term a = c3[0];
+        final Term b = c3[1];
+        final Term c = c3[2];
+        final int maxTries = 6;
+        int tries = 0;
+        final Term[] list = new Term[3];
+        boolean solved;
+        do {
+            switch (order) {
+                case 0: list[0] = a; list[1] = b; list[2] = c; break;
+                case 1: list[0] = a; list[1] = c; list[2] = b; break;
+                case 2: list[0] = b; list[1] = a; list[2] = c; break;
+                case 3: list[0] = b; list[1] = c; list[2] = a; break;
+                case 4: list[0] = c; list[1] = a; list[2] = b; break;
+                case 5: list[0] = c; list[1] = b; list[2] = a; break;
+            }
+            solved = next(cTerm2, list);
+            order = (order + 1) % 6;
+            tries++;
+        } while (tries < maxTries && !solved);
+        /*if (solved && tries > 1) {
+            System.out.println("solved true after " + tries);
+        }*/
+        return solved;
+    }
+
+    private boolean permute2(final Term cTerm1_0, final Term cTerm1_1, final Compound cTerm2) {
+        Term[] list = new Term[2];
+        boolean order = random.nextBoolean();
+        int tries = 0;
+        boolean solved;
+        do {
+            if (order) {
+                list[0] = cTerm1_0;
+                list[1] = cTerm1_1;
+            } else {
+                list[0] = cTerm1_1;
+                list[1] = cTerm1_0;
+            }
+            order = !order;
+            solved = next(cTerm2, list);
+            tries++;
+        } while (tries < 2 && !solved);
+
+//   if (solved) {
+//      if (tries > 1)
+    //   System.out.println("got it " + tries);
+//   }
+
+        return solved;
+    }
+
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    protected boolean next(Compound c, Term[] list) {
-        for (int i = 0; i < list.length; i++) {
-            final Term t1 = list[i];
-            final Term t2 = c.term[i];
-            if (!next(t1, t2)) {
+    final protected boolean next(final Compound x, final Term[] t) {
+        final Term X[] = x.term;
+        final int tlen = t.length;
+        for (int i = 0; i < tlen; i++) {
+            if (!next(t[i], X[i])) {
                 return false;
             }
         }
-
         return true;
     }
 

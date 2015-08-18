@@ -1,16 +1,19 @@
 package nars.term.transform;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
+import nars.util.data.FasterHashMap;
+import org.apache.commons.collections.map.HashedMap;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 
 import static java.util.Arrays.copyOf;
 
 /** holds a substitution and any metadata that can eliminate matches as early as possible */
-public class Substitution {
+public class Substitution<C extends Compound> implements Function<C,Term> {
     final Map<Term, Term> subs;
 
     public int minMatchVolume = Integer.MAX_VALUE;
@@ -22,7 +25,7 @@ public class Substitution {
 
     /** creates a substitution of one variable; more efficient than supplying a Map */
     public Substitution(Term termFrom, Term termTo) {
-        this(Collections.singletonMap(termFrom, termTo));
+        this(UnifiedMap.newWithKeysValues(termFrom, termTo));
     }
 
     public Substitution(final Map<Term, Term> subs) {
@@ -32,6 +35,7 @@ public class Substitution {
         if (numSubs == 0) {
             throw new RuntimeException("Empty substitution");
         }
+
 
         for (final Map.Entry<Term,Term> e : subs.entrySet()) {
 
@@ -105,7 +109,7 @@ public class Substitution {
         return subs.get(t);
     }
 
-    public Term apply(final Compound t) {
+    public Term apply(final C t) {
         if (impossible(t))
             return t;
 
