@@ -625,7 +625,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         }
 
         @Override
-        protected List<Task> execute(Operation operation, Memory memory) {
+        public List<Task> apply(Operation operation) {
 
             if (operation.numArgs() != 2) { // || args.length==3) { //left, self
                 //System.err.println(this + " ?? " + Arrays.toString(args));

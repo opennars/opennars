@@ -55,7 +55,7 @@ import static java.awt.BorderLayout.NORTH;
 
 
 
-public class NARControlPanel extends TimeControl implements Reaction<Class> {
+public class NARControlPanel extends TimeControl implements Reaction<Class,Object[]> {
 
 
     /**

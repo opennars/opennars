@@ -55,8 +55,10 @@ public class believe extends SynchOperator implements Mental {
         Compound content = Sentence.termOrException(op.arg(0));
 
         Truth truth;
-        return Lists.newArrayList( op.newSubTask(op.getMemory(),
-                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE), memory.time(),
+        return Lists.newArrayList( op.newSubTask(
+                op.getMemory(),
+                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),
+                op.getMemory().time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
 
 

@@ -1,8 +1,6 @@
 package nars.gui.output.graph.nengo;
 
 import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
-import automenta.vivisect.dimensionalize.HyperassociativeMap;
-import automenta.vivisect.dimensionalize.IterativeLayout;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.ui.model.UIBuilder;
@@ -12,6 +10,7 @@ import nars.Events;
 import nars.Memory;
 import nars.concept.Concept;
 import nars.event.ConceptReaction;
+import nars.event.NARReaction;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
@@ -224,7 +223,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                 remove(c);
             }
         };
-        this.conceptReaction2 = new AbstractReaction(memory.event, Events.ConceptProcessed.class) {
+        this.conceptReaction2 = new NARReaction(memory, Events.ConceptProcessed.class) {
 
             @Override
             public void event(Class event, Object... args) {

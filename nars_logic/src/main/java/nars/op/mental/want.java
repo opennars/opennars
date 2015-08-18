@@ -31,6 +31,7 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operator that creates a goal with a given statement
@@ -45,7 +46,7 @@ public class want extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
 
         Term content = operation.arg(0);
         
@@ -53,8 +54,9 @@ public class want extends SynchOperator implements Mental {
 
         Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
 
+        final Memory m = operation.getMemory();
         return Lists.newArrayList(
-                operation.newSubTask(nar.memory, (Compound)content, Symbols.GOAL, truth, memory.time(), budget)
+                operation.newSubTask(m, (Compound)content, Symbols.GOAL, truth, m.time(), budget)
         );
     }
 

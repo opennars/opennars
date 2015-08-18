@@ -25,6 +25,7 @@ import nars.task.Task;
 import nars.term.Term;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operator that activates a concept
@@ -41,7 +42,7 @@ public class doubt extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
         Term term = operation.arg();
         Concept concept = nar.memory.conceptualize(term, consider.budgetMentalConcept(operation));
         concept.discountBeliefConfidence();

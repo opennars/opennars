@@ -32,7 +32,7 @@ import static java.awt.BorderLayout.NORTH;
 /**
  * @author me
  */
-public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable {
+public class TaskTree extends ReactionPanel implements Reaction<Class,Object[]>, Runnable {
 
     final WeakHashMap<Task, TaskComponent> components = new WeakHashMap<>();
     final Set<TreeNode> needRefresh = Collections.synchronizedSet(new HashSet());

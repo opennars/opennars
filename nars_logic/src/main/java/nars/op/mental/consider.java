@@ -50,7 +50,7 @@ public class consider extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public ArrayList<Task> apply(Operation operation) {
         Term term = operation.arg(0);
         
         Concept concept = nar.memory.conceptualize(term, budgetMentalConcept(operation));

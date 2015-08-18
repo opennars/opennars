@@ -30,6 +30,7 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operator that creates a question with a given statement
@@ -43,7 +44,7 @@ public class wonder extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
         Term content = operation.arg(0);
 
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);

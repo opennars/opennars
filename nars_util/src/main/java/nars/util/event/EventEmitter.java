@@ -265,15 +265,15 @@ abstract public class EventEmitter<K,V>  {
 //
 //
 //    /** for enabling many events at the same time */
-//    @Deprecated public void set(final Reaction<K> o, final boolean enable, final K... events) {
-//
-//        for (final K c : events) {
-//            if (enable)
-//                on(c, o);
-//            else
-//                off(c, o);
-//        }
-//    }
+    @Deprecated public void set(final Reaction<K,V> o, final boolean enable, final K... events) {
+
+        for (final K c : events) {
+            if (enable)
+                on(c, o);
+            else
+                off(c, o);
+        }
+    }
 
 
     public static class Registrations extends FasterList<EventRegistration> {

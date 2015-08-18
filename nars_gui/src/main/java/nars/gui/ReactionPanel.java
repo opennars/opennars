@@ -7,7 +7,7 @@ import nars.util.event.Reaction;
 
 import java.awt.*;
 
-abstract public class ReactionPanel extends NPanel implements Reaction<Class> {
+abstract public class ReactionPanel extends NPanel implements Reaction<Class,Object[]> {
 
     public final NAR nar;
     private EventEmitter.Registrations reg;

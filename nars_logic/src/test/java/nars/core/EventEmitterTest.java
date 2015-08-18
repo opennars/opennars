@@ -38,12 +38,12 @@ public class EventEmitterTest {
         testEmitter(e);
     }
 
-    @Test
-    @Ignore //not working yet
-    public void testFast() throws InterruptedException {
-        EventEmitter e = new EventEmitter.FastDefaultEventEmitter();
-        testEmitter(e);
-    }
+//    @Test
+//    @Ignore //not working yet
+//    public void testFast() throws InterruptedException {
+//        EventEmitter e = new EventEmitter.FastDefaultEventEmitter();
+//        testEmitter(e);
+//    }
 
     public void testEmitter(EventEmitter e) {
 
@@ -51,7 +51,7 @@ public class EventEmitterTest {
         AtomicBoolean b = new AtomicBoolean();
 
 
-        e.on(Events.CycleEnd.class,new Reaction<Class>() {
+        e.on(Events.CycleEnd.class,new Reaction<Class,Object[]>() {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -72,13 +72,13 @@ public class EventEmitterTest {
         AtomicBoolean b = new AtomicBoolean();
 
 
-        e.on(Events.CycleEnd.class, new Reaction<Class>() {
+        e.on(Events.CycleEnd.class, new Reaction<Class, Object[]>() {
             @Override
             public void event(Class event, Object[] args) {
                 throw new RuntimeException("Exception generated for testing purposes; everything is OK");
             }
         });
-        e.on(Events.ERR.class, new Reaction<Class>() {
+        e.on(Events.ERR.class, new Reaction<Class, Object[]>() {
             @Override
             public void event(Class event, Object[] args) {
                 b.set(true);

@@ -31,7 +31,7 @@ import static nars.Symbols.JUDGMENT;
  *
  * @author me
  */
-public class IdeaPanel extends VerticalPanel implements Reaction<Class> {
+public class IdeaPanel extends VerticalPanel implements Reaction<Class,Object[]> {
 
     
     private NAR nar;

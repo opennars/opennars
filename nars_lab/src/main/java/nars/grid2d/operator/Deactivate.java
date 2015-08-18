@@ -42,7 +42,7 @@ public class Deactivate extends SynchOperator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
 

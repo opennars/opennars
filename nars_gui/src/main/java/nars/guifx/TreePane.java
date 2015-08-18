@@ -48,7 +48,7 @@ public class TreePane extends BorderPane {
             return new TaskLabel(i, nar);
         };
 
-        rootNode = new TreeItem(new Echo(""));
+        rootNode = new TreeItem(Echo.make("root"));
         tree = new TreeView<Task>(rootNode);
         tree.setCellFactory(new Callback<TreeView<Task>, TreeCell<Task>>() {
             @Override public TreeCell<Task> call(TreeView<Task> param) {

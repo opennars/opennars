@@ -92,7 +92,7 @@ public class TicTacToe extends JPanel {
         (nar.param).outputVolume.set(0);
 
         new NARSwing(nar);    
-        nar.on(new Reaction<Class>() {
+        nar.on(new Reaction<Class,Object[]>() {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -223,7 +223,7 @@ public class TicTacToe extends JPanel {
         }
 
         @Override
-        protected List<Task> execute(Operation operation, Memory memory) {
+        public List<Task> apply(Operation operation) {
             
             int i = -1;
             try {

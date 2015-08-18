@@ -14,7 +14,7 @@ import java.util.List;
 public class Counting extends SynchOperator {
 
     @Override
-    protected List<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
         //TODO upgrade code below to new api
         return null;
     }

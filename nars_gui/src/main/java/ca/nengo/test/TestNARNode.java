@@ -23,6 +23,7 @@ import nars.io.out.Output;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.nal8.operator.TermFunction;
 import nars.nar.Default;
@@ -107,9 +108,7 @@ public class TestNARNode  {
 
             //access to world objects
             nar.on(new SynchOperator("object") {
-
-                @Override
-                protected List<Task> execute(Operation operation, Memory memory) {
+                @Override public List<Task> apply(Operation operation) {
                     return null;
                 }
             });
@@ -193,8 +192,8 @@ public class TestNARNode  {
 
             nar.on(new SynchOperator("move") {
 
-                @Override
-                protected List<Task> execute(Operation operation, Memory memory) {
+
+                @Override public List<Task> apply(Operation operation) {
 
                     double dx = 64;
                     boolean error = true;
@@ -225,8 +224,7 @@ public class TestNARNode  {
             });
             nar.on(new SynchOperator("turn") {
 
-                @Override
-                protected List<Task> execute(Operation operation, Memory memory) {
+                @Override public List<Task> apply(Operation operation) {
                     double dA = Math.PI / 4; //radians
 
                     Term[] args = operation.args();

@@ -406,4 +406,8 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         this.memory = memory;
         return true;
     }
+
+    public String argString() {
+        return Arrays.toString(args());
+    }
 }

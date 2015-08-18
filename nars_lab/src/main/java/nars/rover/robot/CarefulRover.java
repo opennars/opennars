@@ -96,9 +96,9 @@ public class CarefulRover extends AbstractPolygonBot {
     protected void initMotors(Body torso) {
         nar.on(new NullOperator("vision") {
             @Override
-            protected List<Task> execute(Operation o, Memory memory) {
+            public List<Task> apply(Operation o) {
 
-                final String command = command(o, memory);
+                final String command = command(o, o.getMemory());
 
                 String[] sections = command.split(",");
                 if (sections.length == 1) {
@@ -149,9 +149,9 @@ public class CarefulRover extends AbstractPolygonBot {
         nar.on(new NullOperator("motor") {
 
             @Override
-            protected List<Task> execute(Operation operation, Memory memory) {
+            public List<Task> apply(Operation operation) {
 
-                String command = command(operation, memory);
+                String command = command(operation, operation.getMemory());
 
                 //System.out.println(operation + " "+ command);
 

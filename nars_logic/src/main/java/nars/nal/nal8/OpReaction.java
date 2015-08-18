@@ -49,7 +49,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
 
     public final Term term;
-    protected NAR nar;
+    @Deprecated protected NAR nar;
 
 
     public OpReaction(Term term) {

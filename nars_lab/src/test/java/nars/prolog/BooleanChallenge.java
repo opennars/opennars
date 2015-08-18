@@ -27,7 +27,7 @@ import static nars.io.Texts.n4;
 /**
  * @author me
  */
-public class BooleanChallenge implements Reaction<Class> {
+public class BooleanChallenge implements Reaction<Class,Object[]> {
 
     final float freqThresh = 0.2f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
     private final double complete;
@@ -166,7 +166,7 @@ public class BooleanChallenge implements Reaction<Class> {
         if (!(arguments[0] instanceof Task)) return;
 
         Task answer = (Task) arguments[0];
-        if (!answer.sentence.isJudgment())
+        if (!answer.isJudgment())
             return;
 
         if (answer.isInput()) {
@@ -199,7 +199,7 @@ public class BooleanChallenge implements Reaction<Class> {
                 }
                 */
 
-        if (answer.sentence.truth.getConfidence() < confThreshold)
+        if (answer.getConfidence() < confThreshold)
             return;
 
         Term t = answer.getTerm();
@@ -232,8 +232,8 @@ public class BooleanChallenge implements Reaction<Class> {
                             return;
                     }
 
-                    float freq = answer.sentence.truth.getFrequency();
-                    float conf = answer.sentence.truth.getConfidence();
+                    float freq = answer.getFrequency();
+                    float conf = answer.getConfidence();
 
                     if (freq < freqThresh) {
                         correct = !correct; //invert
@@ -382,7 +382,7 @@ public class BooleanChallenge implements Reaction<Class> {
 
 
 
-        System.out.println(questionTime + "," + delay + ": " + a.sentence + "  " + n4(s) + "  " +
+        System.out.println(questionTime + "," + delay + ": " + a + "  " + n4(s) + "  " +
                 n4(totalScoreCorrect) + "-" + n4(totalScoreWrong) + "=" + n4(totalScoreCorrect - totalScoreWrong));
 
 

@@ -27,6 +27,7 @@ import nars.task.Task;
 import nars.term.Term;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operator that activates a concept
@@ -42,11 +43,11 @@ public class remind extends SynchOperator implements Mental {
      * @param memory
      * @return Immediate results as Tasks
      */
-    @Override    
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    @Override
+    public List<Task> apply(Operation operation) {
         Term term = operation.arg(0);
 
-        remind(term, memory);
+        remind(term, operation.getMemory());
 
         return null;
     }

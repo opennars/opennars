@@ -4,12 +4,11 @@ import automenta.vivisect.Video;
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.io.in.ChangedTextInput;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.NullOperator;
+import nars.nal.nal8.operator.SynchOperator;
 import nars.nar.Default;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
@@ -92,10 +91,10 @@ public class NARio extends Run implements RLEnvironment {
         for (final int kk : keys) {
             String ko = "^keyboard" + kk;
 
-                nar.on(new NullOperator("keyboard" + kk) {
+                nar.on(new SynchOperator("keyboard" + kk) {
 
                     @Override
-                    protected List<Task> execute(Operation operation, Memory memory) {
+                    public List<Task> apply(Operation operation) {
 
                         String state = operation.arg(0).toString();
 
@@ -105,8 +104,7 @@ public class NARio extends Run implements RLEnvironment {
 
 
                         mario.keys[kk] = state.equals("on");
-
-                        return super.execute(operation, memory);
+                        return null;
                     }
 
                 });

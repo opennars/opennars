@@ -23,6 +23,7 @@ import nars.nal.nal8.operator.SynchOperator;
 import nars.task.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operator that creates a quest with a given statement
@@ -36,7 +37,7 @@ public class evaluate extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
         throw new RuntimeException("TODO convert this to new API");
 
 //        Compound content = Sentence.termOrException(operation.arg(0));

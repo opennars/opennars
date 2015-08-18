@@ -31,6 +31,7 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Operator that give a CompoundTerm a new name
@@ -45,14 +46,17 @@ public class name extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
         Term compound = operation.arg(0);
         Term atomic = operation.arg(1);
         Similarity content = Similarity.make(compound, atomic);
 
-        Truth truth;
+        final Truth truth;
+        final Memory memory = operation.getMemory();
+
         return Lists.newArrayList( operation.newSubTask(memory,
-                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, 0.9999f), memory.time(),
+                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, 0.9999f),
+                memory.time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
     }
 }

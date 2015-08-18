@@ -47,10 +47,10 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
-        n.on(new Reaction<Term>() {
+        n.on(new Reaction<Term,Operation>() {
 
             @Override
-            public void event(Term event, Object... args) {
+            public void event(Term event, Operation args) {
                 //System.out.println("executed: " + Arrays.toString(args));
                 executed.set(true);
             }
@@ -71,10 +71,8 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         n.on(new SynchOperator("exe") {
-
-
             @Override
-            protected List<Task> execute(Operation operation, Memory memory) {
+            public List<Task> apply(Operation operation) {
                 executed.set(true);
                 return null;
             }
@@ -93,7 +91,7 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         n.on(new SynchOperator((Term)n.term("<a --> b>")) {
-            @Override protected List<Task> execute(Operation operation, Memory memory) {
+            public List<Task> apply(Operation operation) {
                 executed.set(true);
                 return null;
             }

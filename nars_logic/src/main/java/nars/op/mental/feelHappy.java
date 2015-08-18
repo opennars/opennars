@@ -22,6 +22,7 @@ import nars.nal.nal8.Operation;
 import nars.task.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Feeling happy value
@@ -36,7 +37,7 @@ public class feelHappy extends feel implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Memory memory) {
+    public List<Task> apply(Operation operation) {
         return feeling(nar.memory.emotion.happy(), nar.memory);
     }    
 }
