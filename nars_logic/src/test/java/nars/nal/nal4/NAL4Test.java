@@ -5,6 +5,7 @@ import nars.nal.JavaNALTest;
 import nars.nar.Classic;
 import nars.nar.Default;
 import nars.nar.DefaultDeep;
+import nars.nar.NewDefault;
 import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -25,6 +26,8 @@ public class NAL4Test extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()},
                 {new DefaultDeep()},
+                {new NewDefault()},
+                {new NewDefault().setInternalExperience(null)},
                 {new Default().setInternalExperience(null) },
                 {new Default().level(5)},
                 {new Classic().setInternalExperience(null) },
