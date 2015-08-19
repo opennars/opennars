@@ -245,16 +245,22 @@ public class TaskRule extends Rule<Premise,Task> {
 
     public void run(RuleMatch m) {
 
-        m.start(this);
+        try {
+            m.start(this);
 
-        for (final PreCondition p : preconditions) {
-            if (!p.test(m))
-                return;
+            for (final PreCondition p : preconditions) {
+                if (!p.test(m))
+                    return;
+            }
+
+            //if preconditions are met:
+            for (final PostCondition p : postconditions)
+                m.apply(p);
         }
-
-        //if preconditions are met:
-        for (final PostCondition p : postconditions)
-            m.apply(p);
+        catch (Exception e) {
+            System.err.println(this);
+            System.err.println("  " + e);
+        }
     }
 
 

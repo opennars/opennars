@@ -1,6 +1,7 @@
 package nars.guifx;
 
 import javafx.scene.Node;
+import javafx.scene.SubScene;
 import javafx.scene.control.Tab;
 
 /**
@@ -14,6 +15,7 @@ public class TabX extends Tab {
         });
         update();
     }
+
 
     protected void update() {
         Node c = getContent();

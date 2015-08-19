@@ -6,6 +6,8 @@ import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
+import nars.nal.Deriver;
+import nars.nal.LogicPolicy;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nar.Default;
 import nars.premise.BloomFilterNovelPremiseGenerator;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import static nars.nar.NewDefault.nalex;
+
 /**
  * Created by me on 7/21/15.
  */
@@ -30,6 +34,12 @@ public class Equalized extends Default {
     public Equalized(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
     }
+
+    @Override
+    public LogicPolicy getLogicPolicy() {
+        return nalex(Deriver.defaults);
+    }
+
 
     public static class EqualizedCycle extends DefaultCycle {
 

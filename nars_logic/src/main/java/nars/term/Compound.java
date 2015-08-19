@@ -124,6 +124,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         }
 
         this.structureHash = subt | (((long)asc) << 32);
+
         this.contentHash = (int)contentHash;
 
         this.hasVarDeps = (byte) deps;
@@ -133,7 +134,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.complexity = (short) compl;
 
         if ((this.volume = (short)(varTotal + complexity)) > Global.COMPOUND_VOLUME_MAX) {
-            throw new RuntimeException("volume limit exceeded for new Compound term: " + operator() + " " + Arrays.toString(term));
+            throw new RuntimeException("volume limit exceeded for new Compound[" + operator() + "] " + Arrays.toString(term));
         }
 
         //invalidate();

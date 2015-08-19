@@ -25,14 +25,12 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
  */
 public class NewDefault extends Default {
 
-    //
-    public Deriver getDeriver() {
-        return Deriver.defaults;
-    }
+
+    final Deriver der = Deriver.defaults;
 
     @Override
     public LogicPolicy getLogicPolicy() {
-        return nalex(getDeriver());
+        return nalex(der);
     }
 
     public static LogicPolicy nalex(ConceptFireTaskTerm ruletable) {
@@ -56,7 +54,7 @@ public class NewDefault extends Default {
     /** initialization after NAR is constructed */
     @Override public void init(NAR n) {
 
-        n.the(Deriver.class, getDeriver());
+        n.the(Deriver.class, der);
 
         n.setCyclesPerFrame(cyclesPerFrame);
 

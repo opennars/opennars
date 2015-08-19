@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
@@ -212,6 +213,10 @@ public class Spacegraph extends ZoomFX {
     public Scene newScene(double width, double height) {
         Scene s = new Scene(this, width, height);
         s.getStylesheets().add(Spacegraph.spacegraphCSS);
+        return s;
+    }
+    public SubScene newSubScene(double width, double height) {
+        SubScene s = new SubScene(this, width, height);
         return s;
     }
 }

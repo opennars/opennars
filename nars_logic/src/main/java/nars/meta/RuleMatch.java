@@ -106,7 +106,7 @@ public class RuleMatch extends FindSubst {
         //TODO checking the precondition again for every postcondition misses the point, but is easily fixable (needs to be moved down to Rule)
 
         //by now, assign should have entries from the early preconditions being matched
-        derive = p.term.substituted(map0);
+        derive = resolve(p.term);
         if (derive == null)
             return false;
 
