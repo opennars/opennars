@@ -20,7 +20,7 @@ public class Cons<T> implements Iterable<T> {
         return new Cons<>(car, cdr);
     }
 
-    public static <T> Cons<T> copyOf(T[] items) {
+    public static <T> Cons<T> copyOf(T... items) {
         return copyOf(Arrays.asList(items));
     }
 

@@ -3,7 +3,7 @@ package nars.checkers;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nar.Default;
-import nars.util.bind.NALObjects;
+import nars.util.java.NALObjects;
 
 /**
  * Created by me on 7/17/15.

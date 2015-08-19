@@ -168,6 +168,12 @@ abstract public class EventEmitter<K,V>  {
         final Function<K, List<Reaction<K,V>>> getNewChannel = k -> { return newChannelList(); };
 
 
+        @Override
+        public String toString() {
+            return reactions.toString();
+        }
+
+
         public class DefaultEventRegistration<K,V> implements EventRegistration {
 
             final K key;

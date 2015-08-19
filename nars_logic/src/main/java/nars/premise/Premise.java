@@ -624,7 +624,7 @@ public interface Premise {
     }
 
     default boolean isEvent() {
-        return !(getTask().isEternal() || (getBelief()!=null && getBelief().isEternal()));
+        return (!getTask().isEternal() && (getBelief()!=null && !getBelief().isEternal()));
     }
 
 }

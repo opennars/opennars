@@ -3,11 +3,10 @@ package nars.op.scheme;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import nars.NAR;
 import nars.clock.HardRealtimeClock;
-import nars.io.out.TextOutput;
 import nars.nar.Default;
 import nars.op.software.scheme.SchemeClosure;
 import nars.op.software.scheme.expressions.Expression;
-import nars.util.bind.NALObjects;
+import nars.util.java.NALObjects;
 import org.junit.Test;
 
 import java.util.List;
@@ -43,7 +42,7 @@ public class TestNALScheme {
 
         NAR n = new NAR(new Default().clock(new HardRealtimeClock(false)) );
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         SchemeClosure env = new NALObjects(n).build("scm", SchemeClosure.class);
 

@@ -27,7 +27,7 @@ public class TestEvalScheme extends JavaNALTest {
     @Test
     public void testCAR() {
 
-        n.input("scheme((*, car, (*, quote, (*, 2, 3))), #x)!");
+        n.input("scheme((car, (quote, (*, 2, 3))), #x)!");
 
         n.requires.add(new OutputContainsCondition(n, "<2 --> (/, scheme, (car, (quote, (2, 3))), _, SELF)>. :|: %1.00;0.99%", 1));
 

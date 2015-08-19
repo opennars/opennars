@@ -1,9 +1,11 @@
-package nars.util.bind;
+package nars.util.java;
 
 import junit.framework.TestCase;
 import nars.NAR;
+import nars.io.out.TextOutput;
 import nars.meter.CountIOEvents;
 import nars.nar.Default;
+import nars.term.Atom;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,6 +53,31 @@ public class NALObjectsTest extends TestCase {
         assertNotEquals(tc.getClass(), TestClass.class);
         assertEquals(3, count.numInputs());
 
+
+    }
+
+    @Test public void testMethodOperators() throws Exception {
+        AtomicInteger statements = new AtomicInteger(0);
+
+        NAR n = new NAR(new Default());
+
+        CountIOEvents count = new CountIOEvents(n);
+
+        String instance = "obj";
+        TestClass tc = new NALObjects(n).build(instance, TestClass.class);
+
+        assertNotNull( n.memory.exe.all(Atom.the("TestClass_multiply")) );
+
+        //TextOutput.out(n);
+
+        n.input("TestClass_multiply(" + instance + ", 1, 2, #x)!");
+
+        /*(tc.multiply(0, 1);
+        tc.multiply(1, 2);
+        tc.multiply(2, 1);
+        tc.multiply(2, 0);*/
+
+        n.frame(160);
 
     }
 

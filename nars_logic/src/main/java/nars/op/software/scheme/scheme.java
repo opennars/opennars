@@ -7,6 +7,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal4.Product1;
 import nars.nal.nal4.ProductN;
 import nars.nal.nal8.operator.TermFunction;
+import nars.op.io.echo;
 import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.Expression;
 import nars.op.software.scheme.expressions.ListExpression;
@@ -15,6 +16,7 @@ import nars.op.software.scheme.expressions.SymbolExpression;
 import nars.term.Atom;
 import nars.term.Term;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -51,11 +53,18 @@ public class scheme extends TermFunction {
     /** adapter class for NARS term -> Scheme expression; temporary until the two API are merged better */
     public static class SchemeProduct extends ListExpression {
 
+        public SchemeProduct(Product1 p) {
+            super(Cons.copyOf(narsToScheme.apply(p.the())));
+        }
+
         public SchemeProduct(ProductN p) {
             super(Cons.copyOf(Iterables.transform(p, narsToScheme)));
         }
     }
 
+    public Expression eval(Product1 p) {
+        return Evaluator.evaluate(new SchemeProduct(p), env);
+    }
     public Expression eval(ProductN p) {
         return Evaluator.evaluate(new SchemeProduct(p), env);
     }
@@ -84,21 +93,20 @@ public class scheme extends TermFunction {
         Term code = x[0];
 
         if (code instanceof Product1) {
-            throw new RuntimeException("TODO");
+            return schemeToNars.apply(eval( ((Product1) code)  ));
         }
         else if (code instanceof ProductN) {
-            //evaluate as an s-expression
-            //System.out.println( ((Product) code).first() );
-            //System.out.println( ((Product) code).rest() );
-
             return schemeToNars.apply(eval( ((ProductN) code)  ));
         }
-        //Set = evaluate as a cond?
         else {
-
+            return schemeToNars.apply(eval( new ProductN(x) ));
         }
+        //Set = evaluate as a cond?
+//        else {
+//
+//        }
 
-        return null;
+        //return null;
     }
 
 
