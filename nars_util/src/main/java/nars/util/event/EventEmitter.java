@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -192,12 +191,14 @@ abstract public class EventEmitter<K,V>  {
         }
 
         @Override
-        public void notify(final K channel, final V arg) {
+        public int emit(final K channel, final V arg) {
             List<Reaction<K,V>> c = all(channel);
-            if (c==null) return;
-            for (int i = 0, cSize = c.size(); i < cSize; i++) {
+            if (c==null) return 0;
+            final int cSize=c.size();
+            for (int i = 0; i < cSize; i++) {
                 c.get(i).event(channel, arg);
             }
+            return cSize;
         }
 
         @Override
@@ -257,7 +258,7 @@ abstract public class EventEmitter<K,V>  {
 //        }
 //    }
 //
-    abstract void notify(K channel, V arg);
+    public abstract int emit(K channel, V arg);
 //
     abstract public EventRegistration on(K k, Reaction<K,V> o);
 //
@@ -327,17 +328,10 @@ abstract public class EventEmitter<K,V>  {
 
 
     public void emit(final K channel) {
-        notify(channel, null);
+        emit(channel, null);
     }
 
-    public void emit(final K channel, final V args) {
-//        if (args.length == 0) {
-//            //notify(channel);
-//            throw new RuntimeException("event to " + channel + " with zero arguments");
-//        }
-//        else
-            notify(channel, args);
-    }
+
 
     
             

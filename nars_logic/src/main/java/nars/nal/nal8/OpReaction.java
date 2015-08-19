@@ -94,7 +94,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
     @Override
     public void event(Term event, Operation o) {
         Memory m = o.getMemory();
-        if (decider().test(o)) {
+        if (o.getTask().isCommand() || decider().test(o)) {
             execute(o);
         }
     }
@@ -145,7 +145,9 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
         memory.emit(EXE.class, new ExecutionResult(op, feedback, memory));
 
 
-        noticeExecuted(op);
+        if (!op.getTask().isCommand()) {
+            noticeExecuted(op);
+        }
 
         //feedback tasks as input
         //should we allow immediate tasks to create feedback?

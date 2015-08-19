@@ -386,7 +386,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule SentencePunctuation(Var<Character> punc) {
-        return sequence(anyOf(".?!@"), punc.set(matchedChar()));
+        return sequence(anyOf(".?!@;"), punc.set(matchedChar()));
     }
 
     static Term the(Term predicate, Op op, Term subject) {

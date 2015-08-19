@@ -316,8 +316,9 @@ public class Memory implements Serializable, AbstractMemory {
     /**
      * Entry point for all potentially executable tasks.
      * Enters a task and determine if there is a decision to execute.
+     * @return number of invoked handlers
      */
-    public void execute(final Task goal) {
+    public int execute(final Task goal) {
         Term term = goal.getTerm();
         if (term instanceof Operation) {
             Operation o = (Operation)term;
@@ -325,12 +326,14 @@ public class Memory implements Serializable, AbstractMemory {
             if (!o.setMemory(this)) {
                 throw new RuntimeException("operation " + o + " already executing");
             }
-            exe.emit(o.getOperator(), o);
+            int n = exe.emit(o.getOperator(), o);
             o.setMemory(null /* signals finished */);
+            return n;
         }
         /*else {
             System.err.println("Unexecutable: " + goal);
         }*/
+        return 0;
     }
 
 
@@ -582,13 +585,16 @@ public class Memory implements Serializable, AbstractMemory {
      */
     public boolean add(final Task t) {
 
-        if (Global.DEBUG) {
-            t.ensureValid();
+        if (t.isCommand()) {
+            int n = execute(t);
+            if (n == 0) {
+                emit(Events.ERR.class, "Unknown command: " + t);
+            }
+            return false;
         }
 
-        if (t.getPunctuation() == Symbols.COMMAND) {
-            execute(t);
-            return false;
+        if (Global.DEBUG) {
+            t.ensureValid();
         }
 
         if (!t.perceivable(this)) {
