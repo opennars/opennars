@@ -20,6 +20,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextBoundsType;
 import nars.Global;
 import nars.NAR;
 import nars.NARStream;
@@ -85,7 +86,7 @@ public class NARGraph1 extends Spacegraph {
     }
 
 
-    final static Font nodeFont = NARfx.mono(1);
+    final static Font nodeFont = NARfx.mono(0.5);
 
     public class TermNode extends Group {
 
@@ -129,13 +130,16 @@ public class NARGraph1 extends Spacegraph {
             randomPosition(150, 150);
 
             titleBar.setFill(Color.WHITE);
+            titleBar.setBoundsType(TextBoundsType.VISUAL);
 
             titleBar.setPickOnBounds(false);
             titleBar.setMouseTransparent(true);
             titleBar.setFont(nodeFont);
             titleBar.setTextAlignment(TextAlignment.CENTER);
             titleBar.setSmooth(false);
+            titleBar.setManaged(false);
 
+            base.setStrokeType(StrokeType.INSIDE);
 
             base.setOnMouseClicked(e -> {
                 //System.out.println("click " + e.getClickCount());
@@ -149,7 +153,6 @@ public class NARGraph1 extends Spacegraph {
                 if (!hover) {
                     base.setStroke(Color.ORANGE);
                     base.setStrokeWidth(0.05);
-                    base.setStrokeType(StrokeType.INSIDE);
                     hover = true;
                 }
             };
@@ -187,10 +190,10 @@ public class NARGraph1 extends Spacegraph {
 
             //setCache(true);
             //setCacheHint(CacheHint.SPEED);
-            base.setCacheHint(CacheHint.DEFAULT);
+            base.setCacheHint(CacheHint.SCALE_AND_ROTATE);
             base.setCache(true);
 
-            titleBar.setCacheHint(CacheHint.DEFAULT);
+            titleBar.setCacheHint(CacheHint.SCALE_AND_ROTATE);
             titleBar.setCache(true);
 
 
@@ -468,10 +471,17 @@ public class NARGraph1 extends Spacegraph {
 
         double[] xp = new double[3];
         double[] yp = new double[3];
+        double[] xr = new double[3];
+        double[] yr = new double[3];
 
         public boolean render(final GraphicsContext g) {
 
             if (!aSrc.isVisible() || !bSrc.isVisible()) {
+                return false;
+            }
+
+            boolean aVis = a.update(),bVis = b.update();
+            if (!aVis && !bVis) {
                 return false;
             }
 
@@ -485,10 +495,14 @@ public class NARGraph1 extends Spacegraph {
             //len-=fw/2;
 
             //double rot = Math.atan2(dy, dx);
-            double rot = FastMath.atan2(dy, dx);
-            double cx = 0.5f * (x1 + x2);
-            double cy = 0.5f * (y1 + y2);
+            double rot = /*Fast*/Math.atan2(dy, dx);
 
+            //double cx = 0.5f * (x1 + x2);
+            //double cy = 0.5f * (y1 + y2);
+
+            //norm vector
+            double nx = Math.sin(rot);
+            double ny = Math.cos(rot);
 
             //Affine.translate(cx,cy).rotate(rot, 0,0).scale(len,len)
 //            translate.setY(cy);
@@ -497,18 +511,27 @@ public class NARGraph1 extends Spacegraph {
 //            scale.setY(len);
 
 
-            xp[0] = x1; yp[0] = y1;
-            xp[1] = x1+20; yp[1] = y1+20;
-            xp[2] = x2; yp[2] = y2;
-
-
-            a.update();
-            g.setStroke(null);
-            g.setLineWidth(0);
-            g.setFill(a.fill);
-            g.fillPolygon(xp, yp, 3);
+            if (aVis) {
+                render(g, a, x1, y1, x2, y2, nx, ny, xp, yp);
+            }
+            if (bVis) {
+                render(g, b, x2, y2, x1, y1, -nx, -ny, xr, yr);
+            }
 
             return true;
+        }
+
+        protected void render(GraphicsContext g, TermEdgeHalf e, double x1, double y1, double x2, double y2, double nx, double ny, double[] X, double[] Y ) {
+            final double t = e.thickness;
+            X[0] = x1;
+            Y[0] = y1;
+            X[1] = x1 + nx * t;
+            Y[1] = y1 + ny * t;
+            X[2] = x2;
+            Y[2] = y2;
+
+            g.setFill(e.fill);
+            g.fillPolygon(X, Y, 3);
         }
     }
 
@@ -517,8 +540,7 @@ public class NARGraph1 extends Spacegraph {
         private final TermEdge edge;
         long lastUpdate = -1;
 
-        //final double minPriVisiblityThresh = 0.1;
-        final double minThickVisibility = 0.05;
+        final double minThickVisibility = 0.25;
 
         private final TermNode from;
         private final TermNode to;
@@ -528,6 +550,7 @@ public class NARGraph1 extends Spacegraph {
 
         //SimpleDoubleProperty thickness = new SimpleDoubleProperty();
         public Color fill;
+        private double thickness;
 
         public void set(TaskLink t, long when) {
             if (lastUpdate != when) {
@@ -593,20 +616,19 @@ public class NARGraph1 extends Spacegraph {
             double t = 0.5f * (taskPriMean + termPri);
 
             boolean vis = (t > minThickVisibility);
-
-
-            double T = t;
+            if (!vis)
+                return false;
 
             double fw = from.width();
             //double fh = from.height();
             double tw = to.width();
             //double th = to.height();
-            double thickness = T * edgeThickness * Math.min(fw, tw);
-
+            double thickness = t * Math.min(fw, tw);
+            this.thickness = thickness;
 
             this.fill = visModel.getEdgeColor(termPri, taskPri / tasks);
 
-            return vis;
+            return true;
         }
 
 //        public final void updateIfVisible() {
@@ -774,8 +796,11 @@ public class NARGraph1 extends Spacegraph {
                     TermNode r = (TermNode)nn;
                     if (!active.contains(r)) {
                         TermNode c = terms.remove(r.term);
-                        if (c!=null)
+
+                        if (c!=null) {
+                            c.setVisible(false);
                             toDetach.add(c);
+                        }
 
                         Map<Term, TermEdge> er = edges.rowMap().remove(r.term);
                         /*if (er != null)
@@ -864,6 +889,7 @@ public class NARGraph1 extends Spacegraph {
     HyperassociativeMap<TermNode, TermEdge> h = null;
 
     protected void layoutNodes() {
+        //layoutNodesCircle();
         layoutNodesHyper();
     }
 
@@ -936,22 +962,23 @@ public class NARGraph1 extends Spacegraph {
 
                 @Override
                 public double getSpeedFactor(TermNode termNode) {
-                    return 60 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
+                    return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
                 }
 
                 @Override
                 public void apply(final TermNode node, final double[] dataRef) {
-                    node.move(dataRef, 0.75, 0.05);
+
+                    node.move(dataRef[0], dataRef[1]);//, 1.0, 0);
                 }
 
                 @Override
                 protected Collection<TermNode> getVertices() {
-                    scaleFactor = 100 + 50 * Math.sqrt(1 + termList.size());
+                    scaleFactor = 150 + 70 * Math.sqrt(1 + termList.size());
                     setScale(scaleFactor);
 
                     //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
 
-                    setEquilibriumDistance(0.5f); //termRadius * 1.5f);
+                    setEquilibriumDistance(0.8f); //termRadius * 1.5f);
 
                     return termList;
                 }
@@ -972,13 +999,13 @@ public class NARGraph1 extends Spacegraph {
 
 
             h.setLearningRate(0.4f);
-            h.setRepulsiveWeakness(10.0);
+            h.setRepulsiveWeakness(5.0);
             h.setAttractionStrength(10.0);
-            h.setMaxRepulsionDistance(0.25f);
+            h.setMaxRepulsionDistance(0.05f);
 
         }
 
-        h.align(2);
+        h.align(1);
 
         h.apply();
 
@@ -993,13 +1020,11 @@ public class NARGraph1 extends Spacegraph {
 
     final List<TermEdge> removable = Global.newArrayList();
 
-    final Color FADEOUT = new Color(0,0,0,0.25);
+    final Color FADEOUT = new Color(0,0,0,0.5);
 
     protected void renderEdges() {
         //if (edgeDirty.get()) {
         //edgeDirty.set(false);
-
-
 
         if (floorGraphics == null) floorGraphics = floorCanvas.getGraphicsContext2D();
 
@@ -1008,6 +1033,10 @@ public class NARGraph1 extends Spacegraph {
 
         edges.values().forEach(e -> {
             //if (e.changed.get())
+
+            floorGraphics.setStroke(null);
+            floorGraphics.setLineWidth(0);
+
             if (!e.render(floorGraphics)) {
                 removable.add(e);
             }
@@ -1016,9 +1045,6 @@ public class NARGraph1 extends Spacegraph {
         removable.forEach(x -> {
             edges.remove(x.aSrc.term, x.bSrc.term);
         });
-
-        removeEdges((Collection)removable);
-
 
         removable.clear();
 

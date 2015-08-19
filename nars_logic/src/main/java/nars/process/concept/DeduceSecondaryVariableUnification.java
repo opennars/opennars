@@ -20,6 +20,7 @@ import nars.term.Term;
 import nars.term.Variables;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
+import org.apache.commons.collections.map.Flat3Map;
 
 import java.util.List;
 import java.util.Map;
@@ -364,7 +365,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
     private static Map<Term, Term> newVariableSubstitutionMap() {
         //TODO give appropraite size
-        return Global.newHashMap();
+        //return Global.newHashMap();
+        return new Flat3Map();
     }
 
 }

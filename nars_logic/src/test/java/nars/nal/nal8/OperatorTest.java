@@ -1,7 +1,8 @@
 package nars.nal.nal8;
 
-import nars.Memory;
 import nars.NAR;
+import nars.Op;
+import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nar.Default;
 import nars.task.Task;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static junit.framework.TestCase.assertTrue;
+import static org.jgroups.util.Util.assertEquals;
 
 public class OperatorTest {
 
@@ -42,6 +44,10 @@ public class OperatorTest {
 //                "<2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%");
 //    }
 
+    @Test public void testOperationIsInheritance() {
+        Operation o = Operation.make(Product.make(), Operator.the("x"));
+        assertEquals(Op.INHERITANCE, o.operator());
+    }
 
     @Test public void testTermReactionRegistration() {
 

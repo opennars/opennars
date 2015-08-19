@@ -180,6 +180,7 @@ public class LocalRules {
         final Task inputBelief = belief;
 
         Memory memory = nal.getMemory();
+        Term content = belief.getTerm();
 
         if (!TemporalRules.matchingOrder(question, belief)) {
             //System.out.println("Unsolved: Temporal order not matching");
@@ -193,8 +194,7 @@ public class LocalRules {
         /** temporary for comparing the result before unification and after */
         //float newQ0 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
 
-        Term content = belief.getTerm();
-        if (content.hasVarIndep()) {
+        if (content.hasVarIndep() && !content.equals(question.getTerm())) {
 
             Term u[] = new Term[]{content, question.getTerm()};
 
@@ -229,7 +229,7 @@ public class LocalRules {
             float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
             if (oldQ >= newQ) {
                 //if (question.isGoal()) {
-                    memory.emotion.happy(oldQ, question, nal);
+                    //memory.emotion.happy(oldQ, question, nal);
                 //}
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");

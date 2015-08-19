@@ -114,16 +114,19 @@ public class SomeRovers {
         {
             int cycPerFrame = 8;
             NARSeed e = newDefault();
+            e.conceptTaskTermProcessPerCycle.set(4);
+
 
             //e.setCyclesPerFrame(cycPerFrame);
             //e.duration.set(5 * cycPerFrame);
             e.setClock(clock);
 
             NAR nar = new NAR(e);
-            TextOutput.out(nar);
+            TextOutput.out(nar).setOutputPriorityMin(0.9f);
 
             //TextOutput.out(nar);
-            game.add(new CarefulRover("r2", nar));
+
+            game.add(new Rover("r1", nar));
 
             //new UselessProcess(nar);
 
@@ -160,13 +163,13 @@ public class SomeRovers {
 
 
 
-            game.add(new Rover("r1", nar));
+            game.add(new CarefulRover("r2", nar));
 
-            if (cpanels) {
+            /*if (cpanels) {
                 SwingUtilities.invokeLater(() -> {
                     new NARSwing(nar, false);
                 });
-            }
+            }*/
         }
 
         game.run(fps);

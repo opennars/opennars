@@ -151,10 +151,13 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
 
     public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
+        return newSubTask(m, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
+    }
+    public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
         return  m.newTask(content)
                 .punctuation(punctuation)
                 .truth(truth)
-                .budget(budget)
+                .budget(p, d, q)
                 .parent(getTask())
                 .occurr(occ)
                 .get();

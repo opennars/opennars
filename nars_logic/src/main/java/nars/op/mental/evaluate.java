@@ -17,12 +17,19 @@
 
 package nars.op.mental;
 
-import nars.Memory;
+import com.google.common.collect.Lists;
+import nars.Global;
+import nars.Symbols;
+import nars.budget.Budget;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
+import nars.task.DefaultTask;
+import nars.task.Sentence;
 import nars.task.Task;
+import nars.term.Compound;
+import nars.truth.DefaultTruth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,15 +44,25 @@ public class evaluate extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Operation operation) {
-        throw new RuntimeException("TODO convert this to new API");
+    public List<Task> apply(Operation op) {
 
-//        Compound content = Sentence.termOrException(operation.arg(0));
-//
-//        Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamper(operation, nar.memory, Tense.Present));
-//        Budget budget = new Budget(Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
-//
-//        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
+
+        Compound content = Sentence.termOrException(op.arg(0));
+
+        //Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamper(op, nar.memory, Tense.Present));
+
+        return Lists.newArrayList( op.newSubTask(
+                op.getMemory(),
+                content, Symbols.QUEST, null,
+                op.getMemory().time(),
+                Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1
+        ) );
+
+
+//        return Lists.newArrayList( new DefaultTask<>(content, Symbols.QUEST, null,
+//                Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1,
+//                op.getTask(), null, null
+//        ) );
 
     }
         

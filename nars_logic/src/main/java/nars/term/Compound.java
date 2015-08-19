@@ -174,7 +174,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
     @Override
-    public long structuralHash() {
+    final public long structuralHash() {
         return structureHash;
     }
 
@@ -905,7 +905,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
     public <T extends Compound> T transform(CompoundTransform trans) {
         transform(trans, 0);
-        rehash();
         return (T)this;
     }
 

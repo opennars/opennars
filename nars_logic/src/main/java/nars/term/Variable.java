@@ -31,6 +31,14 @@ import static nars.Symbols.*;
  */
 public class Variable extends Atom {
 
+    /** returns a bitvector representing the presence of ths term and its subterms */
+    @Override
+    public long structuralHash() {
+        final int o = operator().ordinal();
+        if (o <= 31)
+            return (1 << o);
+        return 0;
+    }
 
     @Override
     public int compareTo(Object that) {
@@ -67,7 +75,7 @@ public class Variable extends Atom {
     }
 
     @Override
-    public Op operator() {
+    final public Op operator() {
         switch (type) {
             case VAR_INDEPENDENT: return Op.VAR_INDEPENDENT;
             case VAR_DEPENDENT: return Op.VAR_DEPENDENT;
@@ -76,7 +84,6 @@ public class Variable extends Atom {
             default:
                 throw new RuntimeException("Invalid variable type");
         }
-
     }
 
     /**

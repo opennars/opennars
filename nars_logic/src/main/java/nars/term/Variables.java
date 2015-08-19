@@ -1,10 +1,13 @@
 package nars.term;
 
+import com.google.common.base.Utf8;
 import nars.Memory;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Junction;
 import nars.term.transform.FindSubst;
+import nars.util.data.id.LiteralUTF8Identifier;
+import org.infinispan.commons.equivalence.ByteArrayEquivalence;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -149,10 +152,19 @@ public class Variables {
             //TODO use more efficient string construction
             byte[] bv1 = v1.bytes();
             byte[] bv2 = v2.bytes();
+
+            //lexical ordering: swap
+            if (ByteArrayEquivalence.INSTANCE.compare(bv1, bv2) > 0) {
+                byte[] t = bv1;
+                bv1 = bv2;
+                bv2 = t;
+            }
+
             int len = bv1.length + bv2.length + 1;
             byte[] c = new byte[len];
             System.arraycopy(bv1, 0, c, 0, bv1.length);
             System.arraycopy(bv2, 0, c, bv1.length, bv2.length);
+
             c[c.length-1] = '$';
             return new CommonVariable(c);
         }

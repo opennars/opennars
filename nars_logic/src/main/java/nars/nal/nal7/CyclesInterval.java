@@ -74,6 +74,10 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     }
 
 
+    @Override
+    public long structuralHash() {
+        return 0;
+    }
 
     @Override
     public Op operator() {

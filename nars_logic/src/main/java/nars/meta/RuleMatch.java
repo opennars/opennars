@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
 
 
 /** rule matching context, re-recyclable if thread local */
@@ -184,15 +185,17 @@ public class RuleMatch extends FindSubst {
         return false;
     }
 
+    final Function<Term,Term> resolver = k -> {
+        return k.substituted(map0);
+    };
+
     public Term resolve(final Term t) {
         //int before = resolutions.size();
 
         if (t == null) return null;
 
         //caches result
-        Term x = resolutions.computeIfAbsent(t, k -> {
-            return k.substituted(map0);
-        });
+        Term x = resolutions.computeIfAbsent(t, resolver);
 
         /*if (resolutions.size()==before) {
             System.out.println("cache");

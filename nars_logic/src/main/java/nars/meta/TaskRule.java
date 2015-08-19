@@ -228,12 +228,13 @@ public class TaskRule extends Rule<Premise,Task> {
     public TaskRule normalizeDestructively() {
         this.transform(taskRuleNormalization);
 
-        //this may not be necessary:
-        for (final Term t : term) {
-            if (t instanceof Compound)
-                ((Compound) t).invalidate();
-        }
+//        //this may not be necessary:
+//        for (final Term t : term) {
+//            if (t instanceof Compound)
+//                ((Compound) t).invalidate();
+//        }
 
+        rehash();
 
         return this;
     }

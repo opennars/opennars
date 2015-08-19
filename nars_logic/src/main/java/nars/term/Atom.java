@@ -37,6 +37,14 @@ public class Atom extends ImmutableAtom {
         return Op.ATOM;
     }
 
+    final static int atomOrdinal = (1 << Op.ATOM.ordinal());
+
+    @Override
+    public long structuralHash() {
+        return atomOrdinal;
+    }
+
+
 
     @Override
     public int length() {

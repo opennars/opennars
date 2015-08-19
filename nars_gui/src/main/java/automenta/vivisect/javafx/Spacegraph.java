@@ -39,16 +39,6 @@ public class Spacegraph extends ZoomFX {
         verts.getChildren().removeAll(n);
     }
 
-    public void addEdges(Node... n) {
-        edges.getChildren().addAll(n);
-    }
-
-    public void removeEdges(Node n) {
-        edges.getChildren().remove(n);
-    }
-    public void removeEdges(Collection<Node> n) {
-        edges.getChildren().removeAll(n);
-    }
 
     public ObservableList<Node> getVertices() {
         return verts.getChildren();
@@ -142,12 +132,12 @@ public class Spacegraph extends ZoomFX {
     public final Group verts = new Group();
 
     public final Canvas floorCanvas = new Canvas();
-    public final Group edges = new Group();
 
-    public final Pane layers = new AnchorPane(/*edges,*/ verts);
+
+    public final Pane layers = new AnchorPane(verts);
 
     public void print() {
-        System.out.println(this + " " + verts.getChildren().size() + " verts, " + edges.getChildren().size() + " edges");
+        System.out.println(this + " " + verts.getChildren().size() + " verts");
     }
     public Spacegraph() {
         super();
@@ -156,13 +146,10 @@ public class Spacegraph extends ZoomFX {
 
         verts.maxWidth(Double.MAX_VALUE);
         verts.maxHeight(Double.MAX_VALUE);
-        edges.maxWidth(Double.MAX_VALUE);
-        edges.maxHeight(Double.MAX_VALUE);
 
 
         layers.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         layers.setPickOnBounds(false);
-        edges.setPickOnBounds(false);
         verts.setPickOnBounds(false);
 
 
@@ -180,7 +167,6 @@ public class Spacegraph extends ZoomFX {
 
 
         layers.setCenterShape(false);
-        edges.setAutoSizeChildren(false);
         verts.setAutoSizeChildren(false);
 
 
