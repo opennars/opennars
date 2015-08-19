@@ -100,11 +100,6 @@ public class Alann extends NARSeed {
         return Default.newPolicy(new TableDerivations());
     }
 
-    @Override
-    public Perception newPerception() {
-        return new DefaultPerception();
-    }
-
 
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
@@ -478,8 +473,8 @@ public class Alann extends NARSeed {
         }
 
         @Override
-        public void reset(Memory m, Perception p) {
-            super.reset(m, p);
+        public void reset(Memory m) {
+            super.reset(m);
 
             if (concepts == null)
                 concepts = new CurveBag(memory.random, MAX_CONCEPTS);

@@ -1,6 +1,7 @@
 package nars.concept;
 
 import javolution.util.function.Equality;
+import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;

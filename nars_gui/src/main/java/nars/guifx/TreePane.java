@@ -9,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.util.Callback;
 import nars.NAR;
 import nars.event.FrameReaction;
-import nars.op.io.Echo;
+import nars.op.io.echo;
 import nars.task.Task;
 
 import java.util.*;
@@ -48,7 +48,7 @@ public class TreePane extends BorderPane {
             return new TaskLabel(i, nar);
         };
 
-        rootNode = new TreeItem(Echo.make("root"));
+        rootNode = new TreeItem(echo.echo("root"));
         tree = new TreeView<Task>(rootNode);
         tree.setCellFactory(new Callback<TreeView<Task>, TreeCell<Task>>() {
             @Override public TreeCell<Task> call(TreeView<Task> param) {

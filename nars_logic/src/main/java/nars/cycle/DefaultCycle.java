@@ -71,8 +71,8 @@ public class DefaultCycle extends SequentialCycle {
     }
 
     @Override
-    public void reset(Memory m, Perception p) {
-        super.reset(m, p);
+    public void reset(Memory m) {
+        super.reset(m);
 
         newTasksTemp.clear();
         newTasks.clear();

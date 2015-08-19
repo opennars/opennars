@@ -76,7 +76,7 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
     /** Invoked during a memory reset to empty all concepts
      * @param delete  whether to finalize everything (deallocate as much as possible)
      * @param perception */
-    public void reset(Memory memory, Perception perception);
+    public void reset(Memory memory);
 
     /** Maps Term to a Concept active in this Cycle. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known and active.

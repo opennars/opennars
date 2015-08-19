@@ -2,6 +2,7 @@ package nars.cycle;
 
 import nars.Memory;
 import nars.concept.ConceptActivator;
+import nars.io.DefaultPerception;
 import nars.io.Perception;
 import nars.io.in.Input;
 import nars.process.CycleProcess;
@@ -11,15 +12,17 @@ import nars.task.Task;
  * Basic CycleProcess that can buffer perceptions
  */
 public abstract class AbstractCycle extends ConceptActivator implements CycleProcess {
-    protected Perception percepts;
+    final protected Perception percepts = new DefaultPerception();
     protected Memory memory;
 
     @Override
-    public void reset(Memory m, Perception p) {
+    public void reset(Memory m) {
 
+        /* If the doors of perception were cleansed every thing would
+        appear to NARS as it is, Infinite */
+        percepts.clear();
 
         memory = m;
-        percepts = p;
 
     }
 

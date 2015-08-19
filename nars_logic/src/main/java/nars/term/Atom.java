@@ -115,7 +115,8 @@ public class Atom extends ImmutableAtom {
         return x;
     }
     public final static Atom the(Number o) {
-        return quote(String.valueOf(o));
+        if (o instanceof Integer) return the(o.intValue());
+        return the(String.valueOf(o), true);
     }
 
     /** gets the atomic term given a name */
@@ -132,22 +133,18 @@ public class Atom extends ImmutableAtom {
     }
     */
 
+    final static Atom[] digits = new Atom[10];
+
     /** gets the atomic term of an integer */
-    public final static Term the(final int i) {
+    public final static Atom the(final int i) {
         //fast lookup for single digits
-        switch (i) {
-            case 0: return the("0");
-            case 1: return the("1");
-            case 2: return the("2");
-            case 3: return the("3");
-            case 4: return the("4");
-            case 5: return the("5");
-            case 6: return the("6");
-            case 7: return the("7");
-            case 8: return the("8");
-            case 9: return the("9");
+        if ((i >= 0) && (i <= 9)) {
+            Atom a = digits[i];
+            if (a == null)
+                a = digits[i] = the(Integer.toString(i));
+            return a;
         }
-        return the(Integer.toString(i));
+        return the(Integer.toString(i), true);
     }
 
 

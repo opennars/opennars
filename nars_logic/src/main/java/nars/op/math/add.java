@@ -16,6 +16,7 @@
  */
 package nars.op.math;
 
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
@@ -47,5 +48,11 @@ public class add extends TermFunction<Integer> implements Mental {
         
         return n1 + n2;
     }
+
+    @Override
+    public Tense getResultTense() {
+        return Tense.Eternal;
+    }
+
 
 }

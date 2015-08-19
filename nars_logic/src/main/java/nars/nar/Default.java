@@ -255,9 +255,9 @@ public class Default extends NARSeed  {
     public final OpReaction[] defaultOperators  = new OpReaction[] {
 
                 //system control
-                Echo.the,
+                echo.the,
                 PauseInput.the,
-                new Reset(),
+                new reset(),
 
                 new eval(),
 
@@ -375,10 +375,6 @@ public class Default extends NARSeed  {
         };
 
 
-    @Override
-    public Perception newPerception() {
-        return new DefaultPerception();
-    }
 
     /** initialization after NAR is constructed */
     @Override public void init(NAR n) {

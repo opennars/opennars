@@ -27,7 +27,7 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.op.io.Echo;
+import nars.op.io.echo;
 import nars.op.io.PauseInput;
 import nars.task.DefaultTask;
 import nars.task.Sentence;
@@ -170,7 +170,7 @@ public class NarseseParser extends BaseParser<Object> {
     @Cached
     public Rule LineCommentEchoed() {
         return sequence( zeroOrMore(noneOf("\n")),
-                push(Echo.make(match()) ), "\n");
+                push(echo.echo(match()) ), "\n");
     }
 
     @Cached
@@ -929,7 +929,7 @@ public class NarseseParser extends BaseParser<Object> {
         int size = r.getValueStack().size();
 
         if (size == 0) {
-            c.accept( Echo.make(Events.ERR.class, "Unrecognized input: " + input) );
+            c.accept( echo.echo("ERROR: Unrecognizable input: " + input) );
             return;
         }
         for (int i = size-1; i >= 0; i--) {
@@ -942,8 +942,8 @@ public class NarseseParser extends BaseParser<Object> {
                 c.accept( o );
             }
             else {
-                c.accept( Echo.make(Echo.class, o.toString()) );
-                //throw new RuntimeException("unrecognized input result: " + o);
+                //c.accept( echo.newTask( o.toString()) );
+                throw new RuntimeException("Unrecognized input result: " + o);
             }
         }
     }

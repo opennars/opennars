@@ -25,7 +25,7 @@ import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
 import nars.io.Texts;
-import nars.op.io.Echo;
+import nars.op.io.echo;
 import nars.task.Task;
 
 import java.io.*;
@@ -81,7 +81,7 @@ public class TextOutput extends Output {
         channel.put(Events.IN.class, new TaskChannel("IN"));
         channel.put(Events.OUT.class, new TaskChannel("OUT"));
         channel.put(Events.Answer.class, new TaskChannel("ANS"));
-        channel.put(Echo.class, new TaskChannel("ECH"));
+        channel.put(echo.class, new TaskChannel("ECH"));
         channel.put(Events.EXE.class, new TaskChannel("EXE"));
 
         this.out = outExp;
@@ -286,7 +286,7 @@ public class TextOutput extends Output {
             question.toString(buffer, nar.memory, showStamp).append("= ");
             answer.toString(buffer, nar.memory, !question.getTerm().equals(answer.getTerm()), showStamp);
 
-        } else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class))) {
+        } else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == echo.class) || (channel == Events.EXE.class))) {
 
 
             Task t = (Task) signal;

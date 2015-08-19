@@ -73,7 +73,6 @@ public class NAR extends Container implements Runnable {
      * The name of the reasoner
      */
     protected String name;
-    private final Perception perception;
     private final CycleProcess control;
     /**
      * Flag for running continuously
@@ -91,16 +90,14 @@ public class NAR extends Container implements Runnable {
      */
     public NAR(NARSeed b) {
         this( b.newCycleProcess(),
-              b.newPerception(),
               b.newMemory(b, b.getLogicPolicy()));
 
         b.init(this);
     }
 
-    protected NAR(final CycleProcess c, final Perception p, final Memory m) {
+    protected NAR(final CycleProcess c, final Memory m) {
         super();
         this.control = c;
-        this.perception = p;
         this.memory = m;
         this.param = m.param;
 
@@ -140,12 +137,9 @@ public class NAR extends Container implements Runnable {
      */
     public void reset() {
 
-        /* If the doors of perception were cleansed every thing would
-        appear to NARS as it is, Infinite */
-        perception.clear();
+
 
         memory.reset(control);
-        control.reset(memory, perception);
     }
 
     /**
@@ -155,7 +149,6 @@ public class NAR extends Container implements Runnable {
 
         control.delete();
         memory.delete();
-        perception.clear();
 
     }
 

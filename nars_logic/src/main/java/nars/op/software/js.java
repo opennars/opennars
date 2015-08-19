@@ -3,12 +3,10 @@ package nars.op.software;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.ConstantConceptBuilder;
-import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
-import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.nal8.operator.TermFunction;
-import nars.op.io.Echo;
+import nars.op.io.echo;
 import nars.op.mental.Mental;
 import nars.task.Task;
 import nars.term.Atom;
@@ -79,7 +77,7 @@ public class js extends TermFunction implements Mental {
             Term[] x = op.args();
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
-            nar.input( Echo.make(nars.op.software.js.class, "JS Operator Bind: " + funcName + " = " + functionCode));
+            //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode.toString());
             nar.on(d);
 

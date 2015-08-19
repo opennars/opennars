@@ -1,5 +1,6 @@
 package nars.op.mental;
 
+import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.Events.TaskDerive;
 import nars.Global;
@@ -9,18 +10,14 @@ import nars.Symbols;
 import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static nars.term.Compound.termArray;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
@@ -60,11 +57,11 @@ public class Abbreviation extends NARReaction {
         final Term t = task.getTerm();
 
         if (t instanceof Operation) return false;
-        if (t instanceof Similarity) {
+        /*if (t instanceof Similarity) {
             Similarity s = (Similarity)t;
             if (Operation.isA(s.getSubject(), abbreviate)) return false;
             if (Operation.isA(s.getPredicate(), abbreviate)) return false;
-        }
+        }*/
         return  (t.getComplexity() > abbreviationComplexityMin.get()) &&
                 (task.getQuality() > abbreviationQualityMin.get());
     }
@@ -92,24 +89,26 @@ public class Abbreviation extends NARReaction {
 
             final Compound termAbbreviating = task.getTerm();
 
-            Operation compound = Operation.make(
-                    Product.make(termArray(termAbbreviating)), abbreviate);
+            /*Operation compound = Operation.make(
+                    Product.make(termArray(termAbbreviating)), abbreviate);*/
 
             Concept concept = memory.concept(termAbbreviating);
 
             if (concept!=null && concept.get(Abbreviation.class)==null) {
 
-                compound.setTask(task);
+                //compound.setTask(task);
 
                 Term atomic = newSerialTerm();
 
-                TaskProcess.run(memory, memory.newTask(Similarity.make(compound, atomic))
-                        .judgment().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                        .parent(compound.getTask()).occurrNow()
-                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
-                                Global.DEFAULT_JUDGMENT_DURABILITY).get());
-
                 concept.put(Abbreviation.class, atomic);
+
+                memory.add( memory.newTask(Similarity.make(termAbbreviating, atomic))
+                        .judgment().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                        .parent(task).occurrNow()
+                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
+                                Global.DEFAULT_JUDGMENT_DURABILITY).get()
+                );
+
             }
             else {
                 //already abbreviated, remember it

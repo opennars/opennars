@@ -3,7 +3,7 @@ package nars.io.out;
 import nars.Events;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.op.io.Echo;
+import nars.op.io.echo;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.truth.Truth;
@@ -61,7 +61,7 @@ class HTMLOutput {
             }
 
         }
-        else if ((channel == Events.IN.class) || (channel == Echo.class)) {
+        else if ((channel == Events.IN.class) || (channel == echo.class)) {
             buffer.append(signal.toString());
         }
         else if (channel == Events.EXE.class) {

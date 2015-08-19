@@ -52,7 +52,8 @@ abstract public class ConceptWaveCore extends ConceptActivator implements CycleP
     }
 
     @Override
-    public void reset(Memory m, Perception perception) {
+    public void reset(Memory m) {
+
         this.memory = m;
 
         this.concepts = new FairDelayBag(m, m.param.conceptForgetDurations, maxConcepts);

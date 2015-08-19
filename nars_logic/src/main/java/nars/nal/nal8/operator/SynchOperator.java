@@ -1,14 +1,10 @@
 package nars.nal.nal8.operator;
 
-import com.google.common.collect.Lists;
 import nars.Events;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
-import nars.op.io.Echo;
-import nars.task.Task;
+import nars.op.io.echo;
 import nars.term.Term;
-
-import java.util.List;
 
 /**
  * Operator which executes synchronously (in current reasoner thread).
@@ -43,7 +39,7 @@ abstract public class SynchOperator extends OpReaction {
         try {
             executed(op, apply(op));
         } catch (Exception e) {
-            executed(op, Echo.make(Events.ERR.class, e.toString()));
+            op.getMemory().emit(Events.ERR.class, e.toString());
             e.printStackTrace();
             return false;
         }

@@ -27,8 +27,8 @@ abstract public class SequentialCycle extends AbstractCycle {
     }
 
     @Override
-    public void reset(Memory m, Perception p) {
-        super.reset(m, p);
+    public void reset(Memory m) {
+        super.reset(m);
         concepts.clear();
     }
 

@@ -463,6 +463,9 @@ public class Memory implements Serializable, AbstractMemory {
 
     public synchronized void reset() {
 
+        control.reset(this);
+
+
         nextTasks.clear();
 
         if (laterTasks!=null) {

@@ -6,7 +6,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.nal.nal8.ImmediateOperator;
-import nars.op.io.Echo;
+import nars.op.io.echo;
 import nars.op.io.say;
 import nars.util.event.EventEmitter;
 
@@ -65,7 +65,7 @@ public abstract class Output extends NARReaction {
             Events.EXE.class,
             Events.ERR.class,
             ImmediateOperator.class,
-            Echo.class,
+            echo.class,
             say.class,
             Answer.class,
             Events.OUT.class,
@@ -78,7 +78,7 @@ public abstract class Output extends NARReaction {
 
         channel.put(Events.IN.class, new DefaultChannel("IN"));
         channel.put(Events.EXE.class, new DefaultChannel("EXE"));
-        channel.put(Events.EXE.class, new DefaultChannel("ERR"));
+        channel.put(Events.ERR.class, new DefaultChannel("ERR"));
         channel.put(Events.OUT.class, new DefaultChannel("OUT"));
         channel.put(Events.TaskDerive.class, new DefaultChannel("OUT2"));
         channel.put(ImmediateOperator.class, new Channel() {
@@ -93,7 +93,7 @@ public abstract class Output extends NARReaction {
                 return args[0].toString();
             }
         });
-        channel.put(Echo.class, new DefaultChannel("ECHO"));
+        channel.put(echo.class, new DefaultChannel("ECHO"));
         channel.put(say.class, new DefaultChannel("SAY"));
 
     }

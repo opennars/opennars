@@ -113,9 +113,6 @@ public class TaskProcess extends NAL {
 
             case Symbols.JUDGMENT:
 
-                if (c.hasBeliefs() && c.isConstant())
-                    return false;
-
                 if (!c.processBelief(this, task))
                     return false;
 

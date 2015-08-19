@@ -71,8 +71,8 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public void reset(Memory m, Perception perception) {
-        super.reset(m, perception);
+    public void reset(Memory m) {
+        super.reset(m);
         concepts.setTargetActivated((int) (ants.size() * 0.1f));
     }
 

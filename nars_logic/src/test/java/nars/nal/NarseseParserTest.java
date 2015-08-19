@@ -9,14 +9,12 @@ import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
-import nars.op.io.Echo;
-import nars.op.io.PauseInput;
+import nars.op.io.echo;
 import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -477,7 +475,7 @@ public class NarseseParserTest {
     }
 
     protected void ensureIsEcho(Operation op) {
-        assertEquals(Atom.the(Echo.class.getSimpleName()),
+        assertEquals(Atom.the(echo.class.getSimpleName()),
                 op.getTerm());
     }
 

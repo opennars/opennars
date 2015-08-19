@@ -11,6 +11,7 @@ import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.process.TaskProcess;
 import nars.task.Task;
@@ -89,11 +90,11 @@ public abstract class TermFunction<O> extends SynchOperator {
         float confidence = 0.99f;
         return Lists.newArrayList(
                 nar.memory.newTask(inh).
-                        truth(1f, confidence).
+                        truth(getResultFrequency(), getResultConfidence()).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
-                        present().
-                            get()
+                        tense(getResultTense()).
+                        get()
             );
 
             /*float equal = equals(lastTerm, y);
@@ -118,6 +119,25 @@ public abstract class TermFunction<O> extends SynchOperator {
 
 
     }
+
+    /** default tense applied to result tasks */
+    public Tense getResultTense() {
+        return Tense.Present;
+    }
+
+    /** default confidence applied to result tasks */
+    public float getResultFrequency() {
+        return 1f;
+    }
+
+
+    /** default confidence applied to result tasks */
+    public float getResultConfidence() {
+        return 0.99f;
+    }
+
+
+
     protected ArrayList<Task> result2(Operation operation, Term y, Term[] x0, Term lastTerm) {
         //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
         //which wont happen on temporal induction with dependent variable for good rule,
@@ -143,9 +163,9 @@ public abstract class TermFunction<O> extends SynchOperator {
 
                 nar.memory.newTask(actual).judgment()
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                        .truth(1f, confidence)
-                        .present()
+                        .truth(getResultFrequency(), getResultConfidence())
                         .parent(operation.getTask())
+                        .tense(getResultTense())
                         .get(),
 
                 actual_dep_part != null ?

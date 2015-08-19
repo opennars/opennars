@@ -282,7 +282,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public void reset(Memory memory, Perception perception) {
+    public void reset(Memory memory) {
 
         tasks.clear();
 

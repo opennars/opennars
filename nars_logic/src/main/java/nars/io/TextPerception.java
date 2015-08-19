@@ -2,7 +2,6 @@ package nars.io;
 
 import nars.*;
 import nars.narsese.NarseseParser;
-import nars.op.io.Echo;
 import nars.op.io.SetVolume;
 import nars.task.Task;
 
