@@ -11,7 +11,6 @@ final public class MatchBeliefTerm extends MatchTerm {
     }
 
     @Override protected final Term getTerm(final Premise p) {
-        final Task b = p.getBelief();
-        return (b!=null) ? b.getTerm() : null;
+        return p.getTermLink().getTerm();
     }
 }

@@ -56,8 +56,8 @@ public class NAL1Test extends JavaNALTest {
         n.run();
     }
 
-    @Test public void deduction() throws InvalidInputException {
-
+    @Test
+    public void deduction() throws InvalidInputException {
 
         n.believe("<bird --> animal>")
                 .en("bird is a type of animal.")
