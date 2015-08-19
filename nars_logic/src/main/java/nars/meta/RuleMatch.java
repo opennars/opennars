@@ -1,5 +1,7 @@
 package nars.meta;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -13,10 +15,10 @@ import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-
 
 
 /** rule matching context, re-recyclable if thread local */
@@ -26,28 +28,7 @@ public class RuleMatch extends FindSubst {
     public TaskRule rule;
 
 
-//        new HashMap<Term,Term>() {
-//
-//            @Override
-//            public Term put(Term key, Term value) {
-//                if (key == null)
-//                    throw new RuntimeException("null key");
-//                return super.put(key, value);
-//            }
-//        };
-
-//    public final Map<Term, Term> assign =
-//            //new Flat3Map();
-//            Global.newHashMap();
-//
-//    public final Map<Term, Term> precondsubs =
-//            Global.newHashMap();
-//            //new Flat3Map();
-//
-//    public final Map<Term, Term> waste =
-//            //new Flat3Map();
-//            Global.newHashMap();
-
+    final Map<Term,Term> resolutions = Global.newHashMap();
     public Premise premise;
 
     @Deprecated public Term derive;
@@ -74,6 +55,8 @@ public class RuleMatch extends FindSubst {
     public RuleMatch start(TaskRule rule) {
 
         super.clear();
+
+        resolutions.clear();
         single = false;
         derive = null;
         occurence_shift = 0;
@@ -201,43 +184,35 @@ public class RuleMatch extends FindSubst {
         return false;
     }
 
-    //TODO cache?
     public Term resolve(final Term t) {
-        return t.substituted(map0);
+        //int before = resolutions.size();
+
+        if (t == null) return null;
+
+        //caches result
+        Term x = resolutions.computeIfAbsent(t, k -> {
+            return k.substituted(map0);
+        });
+
+        /*if (resolutions.size()==before) {
+            System.out.println("cache");
+            if (!Objects.equals(x, t.substituted(map0)))
+                System.err.println("not equal should not have caached");
+        }
+        else
+            System.out.println("new");*/
+        return x;
     }
+
+
 
 
     public final void run(final List<TaskRule> u) {
-        for (int i = 0; i < u.size(); i++)
-            u.get(i).run(this);
-    }
 
-    private static class BlackHoleMap<K,V> extends HashMap<K,V> {
-
-        public BlackHoleMap() {
-            super(1);
-        }
-
-        @Override
-        public V put(K key, V value) {
-            //do nothing.
-            //this isn't a perfect solution but at least it prevents some unnecessary activity
-            return null;
-        }
-
-        @Override
-        public V remove(Object key) {
-            return null;
-        }
-
-        @Override
-        public V get(Object key) {
-            return null;
-        }
-
-        @Override
-        public int size() {
-            return 0;
+        for (int i = 0; i < u.size(); i++) {
+            final TaskRule uu = u.get(i);
+            uu.run(this);
         }
     }
+
 }

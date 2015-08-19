@@ -82,8 +82,9 @@ public class VariableNormalization implements VariableTransform {
 
         Compound result1;
 
-        if (destructively)
+        if (destructively) {
             result1 = target.transform(tx);
+        }
         else
             result1 = target.cloneTransforming(tx);
 

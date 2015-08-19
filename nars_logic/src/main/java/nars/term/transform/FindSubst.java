@@ -46,9 +46,15 @@ public class FindSubst {
     }
 
     public final boolean get(final Term term1, final Term term2) {
+
         //print("Before", term1, term2);
         boolean r = next(term1, term2);
         //print("  " + r + " After", null, null);
+
+        /*System.err.println(
+                (term1.getVolume() > term2.getVolume()) + " " +
+                " match?=" + r + " " + "=" + term1.getVolume() + " " + "=" + term2.getVolume());*/
+
         return r;
     }
 

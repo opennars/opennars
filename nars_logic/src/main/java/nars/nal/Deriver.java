@@ -1,13 +1,16 @@
 package nars.nal;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.gs.collections.api.list.MutableList;
+import com.gs.collections.impl.multimap.list.FastListMultimap;
 import nars.Global;
 import nars.Op;
-import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
+import nars.meta.pre.BeliefTermType;
+import nars.meta.pre.TaskTermMinVolume;
+import nars.meta.pre.TaskTermType;
 import nars.narsese.NarseseParser;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
@@ -34,7 +37,9 @@ public class Deriver extends ConceptFireTaskTerm {
     private final EnumMap<Op, EnumMap<Op, List<TaskRule>>> taskTypeMap;
     private final EnumMap<Op, List<TaskRule>> beliefTypeMap;
 
-    Multimap<Term, TaskRule> ruleByPreconditions = HashMultimap.create();
+    //Multimap<Term, TaskRule> ruleByPreconditions = HashMultimap.create();
+
+    FastListMultimap<PreCondition,TaskRule> dependencies = new FastListMultimap<>();
 
     static {
 
@@ -64,6 +69,8 @@ public class Deriver extends ConceptFireTaskTerm {
 
     }
 
+
+
     public Deriver(Iterable<String> ruleStrings) {
         Collection<TaskRule> r = parseRules(loadRuleStrings(ruleStrings));
         rules = r.toArray(new TaskRule[r.size()]);
@@ -71,11 +78,31 @@ public class Deriver extends ConceptFireTaskTerm {
         taskTypeMap = new EnumMap(Op.class);
         beliefTypeMap = new EnumMap(Op.class);
 
-        for (TaskRule tr : rules) {
-            Op o = tr.getTaskTermType();
+        for (final TaskRule tr : rules) {
+
+            final PreCondition[] trpre = tr.preconditions;
+            for (int i = 0; i < trpre.length; i++) {
+                dependencies.put(trpre[i], tr);
+            }
+
+            Op o1 = tr.getTaskTermType();
+            if (o1!=Op.VAR_PATTERN) {
+                dependencies.put(new TaskTermType(o1), tr);
+                int o1v = tr.getTaskTermVolumeMin();
+                dependencies.put(new TaskTermMinVolume(o1v), tr);
+            }
+
+
             Op o2 = tr.getBeliefTermType();
-            if (o!=Op.VAR_PATTERN) {
-                EnumMap<Op, List<TaskRule>> subtypeMap = taskTypeMap.computeIfAbsent(o, op -> {
+            if (o2!=Op.VAR_PATTERN) {
+                dependencies.put(new BeliefTermType(o2), tr);
+                int o2v = tr.getBeliefTermVolumeMin();
+                dependencies.put(new TaskTermMinVolume(o2v), tr);
+            }
+
+
+            if (o1!=Op.VAR_PATTERN) {
+                EnumMap<Op, List<TaskRule>> subtypeMap = taskTypeMap.computeIfAbsent(o1, op -> {
                     return new EnumMap(Op.class);
                 });
 
@@ -91,6 +118,16 @@ public class Deriver extends ConceptFireTaskTerm {
                 lt.add(tr);
             }
         }
+
+        MutableList<PreCondition> sortedDeps = dependencies.keysView().toSortedListBy(p -> {
+            return -dependencies.get(p).size();
+        });
+        /*for (int i = 0; i < sortedDeps.size(); i++) {
+            PreCondition k = sortedDeps.get(i);
+            System.out.println(dependencies.get(k).size() + "\t" + k);
+        }*/
+
+
 
         //printSummary();
 
@@ -141,6 +178,7 @@ public class Deriver extends ConceptFireTaskTerm {
             match.run(bAny);
 
 
+        //match.run();
     }
 
     final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
@@ -340,10 +378,10 @@ public class Deriver extends ConceptFireTaskTerm {
                     AddWithPotentialForAllSameOrder(meta,rules,p);
                 }
             } catch (Exception ex) {
-                System.err.println("Ignoring Invalid rule:");
+                System.err.println("Ignoring Invalid rule: ");
                 System.err.print("  ");
                 System.err.println(p);
-                System.err.println();
+                System.err.println("  " + ex);
                 //ex.printStackTrace();
             }
         }

@@ -1,8 +1,10 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
-import nars.meta.TaskRule;
-import nars.meta.pre.PreCondition2;
+import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.Interval;
+import nars.premise.Premise;
+import nars.term.Atom;
 import nars.term.Term;
 
 /**
@@ -20,9 +22,28 @@ public class TimeOffset extends PreCondition2 {
     @Override
     public boolean test(RuleMatch m, Term arg1, Term arg2) {
         long s = positive ? +1 : -1;
-        m.occurence_shift += s * TaskRule.timeOffsetForward(arg1, m.premise);
-        m.occurence_shift += s * TaskRule.timeOffsetForward(arg2, m.premise);
+        m.occurence_shift += s * timeOffsetForward(arg1, m.premise);
+        m.occurence_shift += s * timeOffsetForward(arg2, m.premise);
         return true;
+    }
+
+    final static Atom forwardImpl = Atom.the("\"==/>\"");
+    final static Atom backImpl = Atom.the("\"==\\>\"");
+
+
+    static long timeOffsetForward(final Term arg, final Premise nal) {
+
+        if (arg instanceof AbstractInterval) {
+            return ((Interval) arg).cycles(nal.getMemory());
+        }
+        else if (arg instanceof Atom) {
+            if (arg.equals(forwardImpl))
+                return nal.duration();
+            else if (arg.equals(backImpl))
+                return -nal.duration();
+        }
+
+        return 0;
     }
 
     @Override

@@ -140,8 +140,11 @@ public class Spacegraph extends ZoomFX {
     }
 
     public final Group verts = new Group();
+
+    final Canvas edgeCanvas = new Canvas();
     final Group edges = new Group();
-    final Pane layers = new AnchorPane(edges, verts);
+
+    final Pane layers = new AnchorPane(edges, edgeCanvas, verts);
 
     public void print() {
         System.out.println(this + " " + verts.getChildren().size() + " verts, " + edges.getChildren().size() + " edges");

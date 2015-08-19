@@ -967,10 +967,10 @@ public class NARGraph1 extends Spacegraph {
             }
         });
 
-
         removable.forEach(x -> {
             edges.remove(x.aSrc.term, x.bSrc.term);
         });
+
         removeEdges((Collection)removable);
     }
 

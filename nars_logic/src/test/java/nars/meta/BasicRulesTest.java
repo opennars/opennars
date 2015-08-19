@@ -37,7 +37,7 @@ public class BasicRulesTest {
         TextOutput.out(n);
 
 
-        n.frame(250);
+        n.frame(1500);
     }
 
     @Test public void testSubstitution() {

@@ -37,20 +37,8 @@ public class TaskRule extends Rule<Premise,Task> {
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
-    public static long timeOffsetForward(Term arg, Premise nal) {
-        if (arg instanceof Interval) {
-            return ((Interval) arg).cycles(nal.getMemory().param.duration);
-        }
-        int duration = nal.getMemory().param.duration.get();
-        String a = arg.toString();
-        if (a.equals("\"=/>\"")) {
-            return duration;
-        }
-        if (a.equals("\"=\\>\"")) {
-            return -duration;
-        }
-        return 0;
-    }
+
+
 
     public Product getPremises() {
         return (Product)term(0);
@@ -75,15 +63,29 @@ public class TaskRule extends Rule<Premise,Task> {
         List<PreCondition> late = Global.newArrayList(precon.length);
 
 
+        int start = 0;
+
         Term taskTermMatch = precon[0];
         early.add(new MatchTaskTerm(taskTermMatch));
-        //if (precon.length > 1) {
-        early.add(new MatchBeliefTerm(precon[1]));
-        //}
+        start++;
 
+
+        Term beliefTermMatch = precon[1];
+        if (!beliefTermMatch.has(Op.ATOM)) {
+            //if it contains an atom term, this means it is a modifier,
+            //and not a belief term pattern
+            //(which will not reference any particular atoms)
+            early.add(new MatchBeliefTerm(beliefTermMatch));
+            start++;
+        }
 
         //additional modifiers: either early or late, classify them here
-        for (int i = 2; i < precon.length; i++) {
+        for (int i = start; i < precon.length; i++) {
+            if (!(precon[i] instanceof Inheritance)) {
+                System.err.println("unknown precondition type: " + precon[i] + " in rule: " + this);
+                continue;
+            }
+
             Inheritance predicate = (Inheritance) precon[i];
             Term predicate_name = predicate.getPredicate();
             Term[] args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
@@ -153,6 +155,7 @@ public class TaskRule extends Rule<Premise,Task> {
 
     }
 
+
     public Product premise() {
         return (Product)term(0);
     }
@@ -181,6 +184,9 @@ public class TaskRule extends Rule<Premise,Task> {
     public Op getTaskTermType() {
         return getPremises().term(0).operator();
     }
+    public int getTaskTermVolumeMin() {
+        return getPremises().term(0).getVolume();
+    }
 
     /** returns Op.NONE if there is no belief term type;
      if it returns Op.VAR_PATTERN this means that any type can apply */
@@ -189,7 +195,9 @@ public class TaskRule extends Rule<Premise,Task> {
 //            return Op.NONE;
         return getPremises().term(1).operator();
     }
-
+    public int getBeliefTermVolumeMin() {
+        return getPremises().term(1).getVolume();
+    }
 
     public static class TaskRuleNormalization implements CompoundTransform<Compound,Term> {
 
@@ -219,7 +227,14 @@ public class TaskRule extends Rule<Premise,Task> {
     @Override
     public TaskRule normalizeDestructively() {
         this.transform(taskRuleNormalization);
-        this.invalidate();
+
+        //this may not be necessary:
+        for (final Term t : term) {
+            if (t instanceof Compound)
+                ((Compound) t).invalidate();
+        }
+
+
         return this;
     }
 

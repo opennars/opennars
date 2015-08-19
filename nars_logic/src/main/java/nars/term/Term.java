@@ -171,11 +171,14 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
     /** returns a bitvector representing the presence of ths term and its subterms */
     default long structuralHash() {
-        return (1 << operator().ordinal());
+        final int o = operator().ordinal();
+        if (o <= 31)
+            return (1 << o);
+        return 0;
     }
 
 
-    /** lower 32 bits of structure hash */
+    /** lower 31 bits of structure hash (32nd bit reserved for +/-) */
     default public int subtermStructure() {
         return (int)(structuralHash() & 0xffffffff);
     }
@@ -211,6 +214,55 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         return this;
     }
 
+
+    default public boolean impossibleSubterm(final Term target) {
+        return ((impossibleSubStructure(target.subtermStructure())) ||
+                (impossibleSubTermVolume(target.getVolume())));
+    }
+    default public boolean impossibleSubTermOrEquality(final Term target) {
+        return ((impossibleSubStructure(target.subtermStructure())) ||
+                (impossibleSubTermOrEqualityVolume(target.getVolume())));
+    }
+
+
+
+    default public boolean impossibleSubStructure(final Term c) {
+        return impossibleSubStructure(c.subtermStructure());
+    }
+    default public boolean impossibleSubStructure(final int possibleSubtermStructure) {
+        final int existingStructure = subtermStructure();
+
+        //if the OR produces a different result compared to subterms,
+        // it means there is some component of the other term which is not found
+        return ((possibleSubtermStructure | existingStructure) != existingStructure);
+    }
+
+    default public boolean impossibleSubTermVolume(final int otherTermVolume) {
+        return otherTermVolume >
+                getVolume()
+                        - 1 /* for the compound itself */
+                        - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
+                ;
+    }
+
+    /** if it's larger than this term it can not be equal to this.
+     * if it's larger than some number less than that, it can't be a subterm.
+     */
+    default public boolean impossibleSubTermOrEqualityVolume(int otherTermsVolume) {
+        return otherTermsVolume > getVolume();
+    }
+
+
+    /** tests if contains a term in the structural hash */
+    default public boolean has(final Op op) {
+        return (subtermStructure() & (1<<op.ordinal())) > 0;
+    }
+//    default public boolean hasAll(final Op... op) {
+//        //TODO
+//    }
+//    default public boolean hasAny(final Op... op) {
+//        //TODO
+//    }
 
 }
 

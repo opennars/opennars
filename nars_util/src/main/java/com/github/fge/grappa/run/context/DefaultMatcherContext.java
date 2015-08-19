@@ -320,6 +320,7 @@ public final class DefaultMatcherContext<V>
                 "exception thrown when parsing %s '%s' at input position %s",
                 matcher instanceof ActionMatcher ? "action" : "rule", getPath(),
                 inputBuffer.getPosition(currentIndex));
+            e.printStackTrace();
             throw new GrappaException(msg, e);
         }
     }

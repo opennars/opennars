@@ -64,7 +64,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
 
     /** bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm */
-    long structureHash;
+    protected long structureHash;
     int contentHash;
 
 
@@ -140,6 +140,13 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         if (!hasVar())
             setNormalized();
+    }
+
+    public void rehash() {
+        for (Term t : term)
+            if (t instanceof Compound) ((Compound)t).rehash();
+
+        init(term);
     }
 
     @Override
@@ -898,6 +905,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
     public <T extends Compound> T transform(CompoundTransform trans) {
         transform(trans, 0);
+        rehash();
         return (T)this;
     }
 
@@ -943,44 +951,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             return false;
         return Terms.contains(term, t);
     }
-
-    public boolean impossibleSubterm(final Term target) {
-        return ((impossibleSubStructure(target.subtermStructure())) ||
-        (impossibleSubTermVolume(target.getVolume())));
-    }
-    public boolean impossibleSubTermOrEquality(final Term target) {
-        return ((impossibleSubStructure(target.subtermStructure())) ||
-                (impossibleSubTermOrEqualityVolume(target.getVolume())));
-    }
-
-
-
-    public boolean impossibleSubStructure(final Term c) {
-        return impossibleSubStructure(c.subtermStructure());
-    }
-    public boolean impossibleSubStructure(final int possibleSubtermStructure) {
-        final int existingStructure = subtermStructure();
-
-        //if the OR produces a different result compared to subterms,
-        // it means there is some component of the other term which is not found
-        return ((possibleSubtermStructure | existingStructure) != existingStructure);
-    }
-
-    public boolean impossibleSubTermVolume(final int otherTermVolume) {
-        return otherTermVolume >
-                getVolume()
-                        - 1 /* for the compound itself */
-                        - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
-                ;
-    }
-
-    /** if it's larger than this term it can not be equal to this.
-     * if it's larger than some number less than that, it can't be a subterm.
-     */
-    public boolean impossibleSubTermOrEqualityVolume(int otherTermsVolume) {
-        return otherTermsVolume > getVolume();
-    }
-
 
 
     
