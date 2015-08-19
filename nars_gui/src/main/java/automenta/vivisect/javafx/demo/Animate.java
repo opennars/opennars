@@ -20,7 +20,7 @@ public class Animate extends AnimationTimer {
     }
 
     @Override
-    public synchronized void handle(final long now) {
+    public void handle(final long now) {
         if (now - last > periodMS) {
             run.accept(this);
             last = now;

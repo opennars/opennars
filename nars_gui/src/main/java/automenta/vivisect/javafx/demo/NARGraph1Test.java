@@ -23,8 +23,7 @@ public class NARGraph1Test {
         n.input("<a-->b>.");
         n.input("<b-->c>.");
 
-        //TextOutput.out(n);
-        new Thread(() -> n.loop(50)).start();
+
 
         NARfx.run( (a, s) -> {
 
@@ -43,7 +42,11 @@ public class NARGraph1Test {
                 System.exit(1);
             });
 
+            //TextOutput.out(n);
+            new Thread(() -> n.loop(50)).start();
 
         });
+
+
     }
 }
