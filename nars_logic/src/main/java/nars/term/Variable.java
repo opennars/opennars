@@ -23,6 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.Symbols;
+import nars.util.utf8.Utf8;
 
 import static nars.Symbols.*;
 
@@ -320,15 +321,20 @@ public class Variable extends Atom {
     
     protected static byte[] newName(final char type, final int index) {
 
-        byte x;
-        if (index < 10)
-            x = (byte)('0' + index);
-        else if (index < (10+26))
-            x = (byte)(index + 'a');
-        else
+        if (index < 36) {
+            byte x = Utf8.base36(index);
+            return new byte[] { (byte)type, x};
+        }
+        else if (index < (36*36)){
+            byte x1 = Utf8.base36(index%36);
+            byte x2 = Utf8.base36(index/36);
+            return new byte[] { (byte)type, x2, x1};
+        }
+        else {
             throw new RuntimeException("variable index out of range for this method");
+        }
 
-        return new byte[] { (byte)type, x};
+
 
 //        int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
 //        StringBuilder cb  = new StringBuilder(1 + digits).append(type);
@@ -339,7 +345,7 @@ public class Variable extends Atom {
 
     }
 
-//    /** returns the part of the variable name beyond the intial type indicator character */
+    //    /** returns the part of the variable name beyond the intial type indicator character */
 //    public String getIdentifier() {
 //        return toString().substring(1);
 //    }

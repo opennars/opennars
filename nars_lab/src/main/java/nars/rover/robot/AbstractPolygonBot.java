@@ -225,7 +225,7 @@ public abstract class AbstractPolygonBot extends Robotic {
      *  determined by a history window of readings
      * */
     public static class AutoRangeTruthFrequency {
-        NeuralGasNet net;
+        final NeuralGasNet net;
         float threshold;
 
         public AutoRangeTruthFrequency(float thresho) {
@@ -320,8 +320,11 @@ public abstract class AbstractPolygonBot extends Robotic {
             //System.out.println(b);
 
             float conf = 0.75f;
-            Task t;
-            nar.input(t = nar.task(term).belief().present().truth(freq, conf).get());
+
+            TaskSeed ts = nar.task(term).belief().present().truth(freq, conf);
+            Task t = ts.get();
+            if (t!=null)
+                nar.input(t);
 
             //System.out.println(t);
         }

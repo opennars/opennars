@@ -102,6 +102,15 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
 
     final static char[] emptyChars = new char[0];
 
+    public static byte base36(final int index) {
+        if (index < 10)
+            return (byte) ('0' + index);
+        else if (index < (10 + 26))
+            return (byte) ((index - 10) + 'a');
+        else
+            throw new RuntimeException("out of bounds");
+    }
+
     public char[] toChars() {
         if (this.length == 0) {
             return emptyChars;

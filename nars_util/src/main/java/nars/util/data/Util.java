@@ -37,6 +37,15 @@ public final class Util {
     final static int PRIME2 = 92821;
     final static int PRIME1 = 31;
 
+    /**
+     * It is basically the same as a lookup table with 2048 entries and linear interpolation between the entries, but all this with IEEE floating point tricks.
+     * http://stackoverflow.com/questions/412019/math-optimization-in-c-sharp#412988
+     */
+    public static double expFast(final double val) {
+        final long tmp = (long) (1512775 * val + (1072693248 - 60801));
+        return Double.longBitsToDouble(tmp << 32);
+    }
+
     public static String UUIDbase64() {
         long low = UUID.randomUUID().getLeastSignificantBits();
         long high = UUID.randomUUID().getMostSignificantBits();

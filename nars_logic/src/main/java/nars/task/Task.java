@@ -276,6 +276,13 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             throw new RuntimeException(this + " has parentTask equal to itself");
         }
 
+
+        if (Global.DEBUG) {
+            if (Sentence.invalidSentenceTerm(getTerm())) {
+                throw new RuntimeException("Invalid sentence content term: " + getTerm());
+            }
+        }
+
     }
 
 

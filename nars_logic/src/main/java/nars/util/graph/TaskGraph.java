@@ -33,7 +33,7 @@ public class TaskGraph  {
         reaction = new MemoryReaction(n.memory, false) {
 
             @Override
-            public void output(Class channel, Object... args) {
+            public void output(Object channel, Object... args) {
 
             }
 
@@ -58,7 +58,7 @@ public class TaskGraph  {
             }
 
             @Override
-            public void onTaskRemove(Task task, String reason) {
+            public void onTaskRemove(Task task) {
 
             }
         };

@@ -99,6 +99,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     protected void setTerm(T t) {
+        //if (Global.DEBUG) {
+            if (Sentence.invalidSentenceTerm(t)) {
+                throw new RuntimeException("Invalid sentence content term: " + t);
+            }
+        //}
+
         term = t;
     }
 
@@ -338,7 +344,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         //TODO parameter for max history length, although task history should not grow after they are crystallized with a concept
         if (this.history == null)
-            this.history = Global.newArrayList(2);
+            this.history = Global.newArrayList(1);
 
         this.history.add(reason);
     }

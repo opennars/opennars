@@ -5,12 +5,12 @@ import automenta.vivisect.swing.NSlider;
 import nars.Events;
 import nars.Events.FrameEnd;
 import nars.Events.OUT;
-import nars.Events.TaskRemove;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
+import nars.guifx.TaskLabel;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.util.event.Reaction;
@@ -133,7 +133,9 @@ public class TaskTree extends ReactionPanel implements Reaction<Class,Object[]>,
     @Override
     public Class[] getEvents() {
 
-        return new Class[]{OUT.class, TaskRemove.class, FrameEnd.class, Events.Restart.class /*, TaskRemove.class*/};
+        return new Class[]{OUT.class,
+                //TaskRemove.class,
+                FrameEnd.class, Events.Restart.class /*, TaskRemove.class*/};
     }
 
     public void add(Task t) {
@@ -297,9 +299,10 @@ public class TaskTree extends ReactionPanel implements Reaction<Class,Object[]>,
 
         if (channel == OUT.class) {
             add((Task) arguments[0]);
-        } else if (channel == TaskRemove.class) {
+        }
+        /*} else if (channel == TaskRemove.class) {
             remove((Task) arguments[0]);
-        } else if (channel == FrameEnd.class) {
+        } */else if (channel == FrameEnd.class) {
             update();
         } else if (channel == Events.Restart.class) {
             update();

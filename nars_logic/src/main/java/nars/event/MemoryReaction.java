@@ -9,6 +9,7 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.process.TaskProcess;
 import nars.task.Task;
+import nars.util.event.Observed;
 
 public abstract class MemoryReaction extends NARReaction {
 
@@ -27,7 +28,7 @@ public abstract class MemoryReaction extends NARReaction {
             Events.ConceptActive.class,
             Events.PluginsChange.class,
             Events.OUT.class,
-            Events.TaskRemove.class,
+            //Events.TaskRemove.class,
             Events.TaskDerive.class,
             TaskProcess.class,
             Events.TermLinkTransformed.class,
@@ -37,6 +38,7 @@ public abstract class MemoryReaction extends NARReaction {
 
             Events.Restart.class};
     private final AbstractMemory memory;
+    private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
     public MemoryReaction(NAR n, boolean active) {
         this(n.memory, active);
@@ -46,6 +48,10 @@ public abstract class MemoryReaction extends NARReaction {
         super(m.event, active,
                 memoryEvents);
         this.memory = m;
+
+        taskRemoved = m.eventTaskRemoved.on(t -> {
+            onTaskRemove(t);
+        });
     }
 
     @Override
@@ -75,7 +81,7 @@ public abstract class MemoryReaction extends NARReaction {
     /**
      * Add new text to display
      */
-    abstract public void output(Class channel, Object... args);
+    abstract public void output(Object channel, Object... args);
 
     public void output(String s) {
         output(String.class, s);
@@ -98,6 +104,6 @@ public abstract class MemoryReaction extends NARReaction {
 
     abstract public void onTaskAdd(Task task);
 
-    abstract public void onTaskRemove(Task task, String reason);
+    abstract public void onTaskRemove(Task task);
 
 }

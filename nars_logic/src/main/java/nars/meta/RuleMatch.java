@@ -32,8 +32,8 @@ public class RuleMatch extends FindSubst {
     final Map<Term,Term> resolutions = Global.newHashMap();
     public Premise premise;
 
-    @Deprecated public Term derive;
-    @Deprecated public boolean single;
+
+
 
     /**
      * @param type
@@ -58,8 +58,6 @@ public class RuleMatch extends FindSubst {
         super.clear();
 
         resolutions.clear();
-        single = false;
-        derive = null;
         occurence_shift = 0;
 
         this.rule = rule;
@@ -77,38 +75,33 @@ public class RuleMatch extends FindSubst {
         final Truth T = task.getTruth();
         final Truth B = belief == null ? null : belief.getTruth();
 
-        Truth truth = null;
-        Truth desire = null;
-        boolean single_premise = p.single_premise;
 
         if (p.negate && task.getFrequency() >= PostCondition.HALF) { //its negation, it needs this additional information to be useful
             return false;
         }
 
-        if (!single_premise && belief == null) {  //at this point single_premise is already decided, if its double premise and belief is null, we can stop already here
-            return false;
-        }
 
-        if (p.truth != null) {
+
+        final Truth truth;
+        if (task.isJudgment()) {
             truth = p.truth.get(T, B);
         }
-
-        if (truth == null && task.isJudgment()) {
-            System.err.println("truth rule not specified, deriving nothing: \n" + this);
-            return false; //not specified!!
+        else if (task.isGoal()) {
+            if (p.desire != null)
+                truth = p.desire.get(T, B);
+            else
+                truth = null;
+        }
+        else {
+            truth = null;
         }
 
-        if (desire == null && task.isGoal()) {
-            System.out.println("desire rule not specified, deriving nothing: \n" + this);
+        if (truth == null && task.isJudgmentOrGoal()) {
+            /*if (Global.DEBUG) {
+                System.err.println("truth rule missing: " + this);
+            }*/
             return false; //not specified!!
         }
-
-        //TODO checking the precondition again for every postcondition misses the point, but is easily fixable (needs to be moved down to Rule)
-
-        //by now, assign should have entries from the early preconditions being matched
-        derive = resolve(p.term);
-        if (derive == null)
-            return false;
 
         //test and apply late preconditions
         for (final PreCondition c : p.precond) {
@@ -118,6 +111,10 @@ public class RuleMatch extends FindSubst {
 
             //now we have to apply this to the derive term
         }
+
+        Term derive = resolve(p.term);
+        if (derive == null)
+            return false;
 
 //        //check if this is redundant
 //        Term nextDerived = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
@@ -141,18 +138,11 @@ public class RuleMatch extends FindSubst {
 
         //}
 
-        if (!(derive instanceof Compound))
-            return false;
-
         /*if (derive != null && derive.toString().contains("%")) {
             System.err.println("Reactor leak - Pattern variable detected in output");
         }*/
 
-
         //TODO also allow substituted evaluation on output side (used by 2 rules I think)
-
-        Budget budget = BudgetFunctions.compoundForward(truth, derive, premise);
-
 
         //TODO on occurenceDerive, for example consider ((&/,<a --> b>,+8) =/> (c --> k)), (a --> b) |- (c --> k)
         // or ((a --> b) =/> (c --> k)), (a --> b) |- (c --> k) where the order makes a difference,
@@ -164,6 +154,9 @@ public class RuleMatch extends FindSubst {
 
         TaskSeed<Compound> t = premise.newTask((Compound)derive, task, belief, allowOverlap);
         if (t != null) {
+
+            Budget budget = BudgetFunctions.compoundForward(truth, derive, premise);
+
             t.punctuation(task.getPunctuation()).truth(truth).budget(budget);
 
             if (t.getOccurrenceTime() != Stamp.ETERNAL) {
@@ -190,21 +183,22 @@ public class RuleMatch extends FindSubst {
     };
 
     public Term resolve(final Term t) {
-        //int before = resolutions.size();
+        Term r = resolver.apply(t);
 
+        /* temporary */
+        Term existing = resolutions.put(t, r);
+        if ((existing!=null) && (!existing.equals(r))) {
+            throw new RuntimeException("inconsistent resolution: " + r + "!= existing" + existing + "... in " + this);
+        }
+
+        return r;
+    }
+
+    /** provides the cached result if it exists, otherwise computes it and adds to cache */
+    public Term resolveCached(final Term t) {
         if (t == null) return null;
 
-        //caches result
-        Term x = resolutions.computeIfAbsent(t, resolver);
-
-        /*if (resolutions.size()==before) {
-            System.out.println("cache");
-            if (!Objects.equals(x, t.substituted(map0)))
-                System.err.println("not equal should not have caached");
-        }
-        else
-            System.out.println("new");*/
-        return x;
+        return resolutions.computeIfAbsent(t, resolver);
     }
 
 

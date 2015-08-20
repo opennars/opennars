@@ -22,11 +22,13 @@ public enum TruthFunction {
     },
     Deduction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.deduction(T, B);
         }
     },
     Induction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.induction(T, B);
         }
     },

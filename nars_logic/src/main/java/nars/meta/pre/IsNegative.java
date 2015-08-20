@@ -24,7 +24,6 @@ public class IsNegative extends PreCondition2 {
         } else if (b.equals(belief.getTerm()) && (belief == null || belief.getFrequency() >= PostCondition.HALF)) {
             return false;
         }
-        m.single = true;
         return true;
     }
 

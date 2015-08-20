@@ -10,7 +10,7 @@ public class DefaultMicro extends Default {
 
         setInternalExperience(null);
 
-        setActiveConcepts(128);
+        setActiveConcepts(256);
 
         setTaskLinkBagSize(16);
 
@@ -28,6 +28,7 @@ public class DefaultMicro extends Default {
         conceptGoalsMax.set(5);
         conceptQuestionsMax.set(3);
 
+        duration.set(20); //slower forgets
 
         conceptTaskTermProcessPerCycle.set(3);
         termLinkMaxMatched.set(5);

@@ -248,14 +248,14 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 //    }
 
     public TaskSeed<T> term(T t) {
-        this.term = t.normalized();
+        this.term = t;
         return this;
     }
 
     public TaskSeed<T> termIfValid(T t) {
+        t = Sentence.termOrNull(t);
+        if (t == null) return null;
         term(t);
-        if (this.term == null)
-            return null;
         return this;
     }
 
@@ -398,12 +398,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
         if (sentenceTerm == null)
             return null;
 
-        if (Global.DEBUG) {
-            if (Sentence.invalidSentenceTerm(sentenceTerm)) {
-                System.err.println("Invalid sentence content term: " + sentenceTerm + ", seedTerm=" + term);
-                return null;
-            }
-        }
 
         if (getEvidence() == null) {
             if (getParentTask() != null)

@@ -87,6 +87,7 @@ public class Equalized extends Default {
             //new tasks
             float maxBusyness = conceptsFiredPerCycle.get(); //interpret concepts fired per cycle as business limit
             int newTasksToFire = newTasks.size();
+
             Iterator<Task> ii = newTasks.iterateHighestFirst(temporary);
 
             float priFactor = 1f / maxBusyness; //divide the procesesd priority by the expected busyness of this cycle to approximate 1.0 total
@@ -94,6 +95,8 @@ public class Equalized extends Default {
             float b = 0;
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
                 Task next = ii.next();
+                newTasks.items.removeKey(next); //remove from new items
+
                 if (next == null) break;
                 float nextPri = next.getPriority();
 
@@ -102,8 +105,6 @@ public class Equalized extends Default {
                     tp.run();
                     b += next.getPriority();
                 }
-
-                ii.remove();
 
                 if (b > maxBusyness)
                     break;

@@ -47,7 +47,9 @@ public class evaluate extends SynchOperator implements Mental {
     public List<Task> apply(Operation op) {
 
 
-        Compound content = Sentence.termOrException(op.arg(0));
+        Compound content = Sentence.termOrNull(op.arg(0));
+        if (content == null)
+            return null;
 
         //Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamper(op, nar.memory, Tense.Present));
 

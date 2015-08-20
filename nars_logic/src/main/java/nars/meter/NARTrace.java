@@ -53,10 +53,10 @@ public class NARTrace extends MemoryReaction {
 
     public static class OutputEvent extends InferenceEvent {
 
-        public final Class channel;
+        public final Object channel;
         public final Object[] signal;
 
-        public OutputEvent(long when, Class channel, Object... signal) {
+        public OutputEvent(long when, Object channel, Object... signal) {
             super(when);
             this.channel = channel;
             this.signal = signal;
@@ -64,12 +64,12 @@ public class NARTrace extends MemoryReaction {
 
         @Override
         public String toString() {
-            return channel.getSimpleName() + ": " +
+            return channel/*.getSimpleName()*/ + ": " +
                     (signal.length > 1 ? Arrays.toString(signal) : signal[0]);
         }
         
         @Override
-        public Class getType() {
+        public Object getType() {
             return channel;
         }
         
@@ -127,8 +127,8 @@ public class NARTrace extends MemoryReaction {
             }
 
             @Override
-            public void output(Class channel, Object... signal) {
-                p.print(channel.getSimpleName());
+            public void output(Object channel, Object... signal) {
+                p.print(channel/*.getSimpleName()*/);
                 p.print(": ");
 
                 if (signal !=null && (signal.length == 1) && (signal[0] instanceof Concept)) {
@@ -166,9 +166,9 @@ public class NARTrace extends MemoryReaction {
         if (event == Events.OUT.class) {
             onTaskAdd((Task)arguments[0]);
         }
-        else if (event == Events.TaskRemove.class) {
+        /*else if (event == Events.TaskRemove.class) {
             onTaskRemove((Task)arguments[0], (String)arguments[1]);
-        }
+        }*/
         else
             super.event(event, arguments);
 
@@ -202,13 +202,13 @@ public class NARTrace extends MemoryReaction {
     }
 
     @Override
-    public void onTaskRemove(Task task, String reason) {
+    public void onTaskRemove(Task task) {
         TaskEvent tr = new TaskEvent(task, t, AddOrRemove.Remove);
         addEvent(tr);
     }
 
     @Override
-    public void output(Class channel, Object... signal) {
+    public void output(Object channel, Object... signal) {
         addEvent(new OutputEvent(t, channel, signal));
     }
     

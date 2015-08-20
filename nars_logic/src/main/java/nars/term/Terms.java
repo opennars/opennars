@@ -616,7 +616,7 @@ public class Terms {
         */
     }
 
-    /** tests if any subterms are in common, effectively abidirectional Terms.contains(Term[], Term) */
+    /** tests if any subterms are in common, effectively a bidirectional Terms.contains(Term[], Term) */
     public static boolean shareAnyTerms(Term[] a, Term[] b) {
 
         //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}

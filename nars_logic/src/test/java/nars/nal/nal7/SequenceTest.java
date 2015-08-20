@@ -1,7 +1,9 @@
 package nars.nal.nal7;
 
 import nars.NAR;
+import nars.nal.nal5.Conjunction;
 import nars.nar.Default;
+import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
@@ -16,6 +18,15 @@ import static org.junit.Assert.assertNotNull;
  * Created by me on 7/1/15.
  */
 public class SequenceTest {
+
+    @Test public void testParallel() {
+        String seq = "(&|, <a-->b>, <a-->b>, <b-->c> )";
+
+        Conjunction x = NarseseParser.the().term(seq);
+
+        assertEquals(2, x.length());
+
+    }
 
     @Test public void testConstuction() {
         NAR nar = new NAR(new Default());

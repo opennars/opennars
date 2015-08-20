@@ -5,6 +5,7 @@ import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import nars.nar.Classic;
 import nars.nar.Default;
+import nars.nar.NewDefault;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -23,6 +24,8 @@ public class NAL3ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(3),
+                new NewDefault().setInternalExperience(null),
+                //new NewDefault().setInternalExperience(null).level(3),
                 new Classic()
         );
     }

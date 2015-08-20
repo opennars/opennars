@@ -72,8 +72,8 @@ public class PostCondition //since there can be multiple tasks derived per rule
         this.term = term;
 
         @Deprecated List<Term> mods = Global.newArrayList();
-        TruthFunction truthFunc = null;
-        DesireFunction desireFunc = null;
+        TruthFunction beliefTruth = null;
+        DesireFunction goalTruth = null;
 
         for (final Term m : modifiers) {
             if (!(m instanceof Inheritance)) {
@@ -93,18 +93,15 @@ public class PostCondition //since there can be multiple tasks derived per rule
 
             negate = which.equals(negation);
 
-            //TODO compare by Atom, and avoid generating switch String (UTF8 will be slightly more efficient than UTF16)
-            single_premise = (negate || which.equals(conversion) || which.equals(contraposition) || which.equals(identity));
-
 
             switch (type.toString()) {
 
                 case "Truth":
                     TruthFunction tm = TruthFunction.get(which);
                     if (tm != null) {
-                        if (truthFunc != null) //only allow one
-                            throw new RuntimeException("truthFunc " + truthFunc + " already specified; attempting to set to " + tm);
-                        truthFunc = tm;
+                        if (beliefTruth != null) //only allow one
+                            throw new RuntimeException("beliefTruth " + beliefTruth + " already specified; attempting to set to " + tm);
+                        beliefTruth = tm;
                     } else {
                         throw new RuntimeException("unknown TruthFunction " + which);
                     }
@@ -113,11 +110,11 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 case "Desire":
                     DesireFunction dm = DesireFunction.get(which);
                     if (dm != null) {
-                        if (desireFunc != null) //only allow one
-                            throw new RuntimeException("desireFunc " + desireFunc + " already specified; attempting to set to " + dm);
-                        desireFunc = dm;
+                        if (goalTruth != null) //only allow one
+                            throw new RuntimeException("goalTruth " + goalTruth + " already specified; attempting to set to " + dm);
+                        goalTruth = dm;
                     } else {
-                        throw new RuntimeException("unknown TruthFunction " + which);
+                        throw new RuntimeException("unknown DesireFunction " + which);
                     }
                     break;
 
@@ -135,11 +132,19 @@ public class PostCondition //since there can be multiple tasks derived per rule
         }
 
 
-        this.truth = truthFunc;
-        this.desire = desireFunc;
+
+        this.truth = beliefTruth;
+        this.desire = goalTruth;
 
         this.modifiers = mods.toArray(new Term[mods.size()]);
         this.precond = latePreconditions;
+
+        if (beliefTruth == null) {
+            System.err.println("missing truth function: " + this);
+        }
+        /*if (goalTruth == null) {
+            System.err.println("missing desire function: " + this);
+        }*/
     }
 
 
@@ -158,7 +163,6 @@ public class PostCondition //since there can be multiple tasks derived per rule
                 ", modifiers=" + Arrays.toString(modifiers) +
                 ", truth=" + truth +
                 ", desire=" + desire +
-                ", single_premise=" + single_premise +
                 ", negation=" + negate +
                 '}';
     }

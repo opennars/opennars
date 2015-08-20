@@ -23,7 +23,6 @@ package nars;
 import com.google.common.collect.Iterators;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
-import nars.Events.TaskRemove;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.clock.Clock;
@@ -92,6 +91,7 @@ public class Memory implements Serializable, AbstractMemory {
 
     public final EventEmitter<Class,Object[]> event;
     public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
+    public final Observed<Task> eventTaskRemoved = new Observed.DefaultObserved();
 
     public final EventEmitter<Term,Operation> exe;
 
@@ -641,7 +641,7 @@ public class Memory implements Serializable, AbstractMemory {
         task.log(removalReason);
         if (Global.DEBUG_TASK_HISTORY && Global.DEBUG_DERIVATION_STACKTRACES)
             task.log(Premise.getStack());
-        emit(TaskRemove.class, task, removalReason);
+        eventTaskRemoved.emit(task);
         task.delete();
     }
 

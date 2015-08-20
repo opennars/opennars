@@ -157,7 +157,9 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                             existing.decPriority(0);    // duplicated task
                         }   // else: activated belief*/
 
-                    memory.removed(t, "Duplicated");
+                    if (t!=existing)
+                        memory.removed(t, "Duplicated");
+
                     return null;
 
                 } else if (revisibleTermsAlreadyEqual(t, existing)) {

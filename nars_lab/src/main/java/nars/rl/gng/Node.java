@@ -20,7 +20,7 @@ public class Node extends ArrayRealVector implements Named<String> {
 
     @Override
     public boolean equals(Object other) {
-        return ((Node)other).id == id;
+        return (this == other) || ((Node)other).id == id;
     }
 
     @Override
@@ -62,11 +62,11 @@ public class Node extends ArrayRealVector implements Named<String> {
         this.localError = localError;
     }
 
-    public double getDistanceSq(double[] x) {
+    public double getDistanceSq(final double[] x) {
         double s = 0;
-        double[] y = getDataRef();
+        final double[] y = getDataRef();
         for (int i = 0; i < getDimension(); i++) {
-            double d = y[i] - x[i];
+            final double d = y[i] - x[i];
             s += d*d;
         }
         return s;
@@ -74,20 +74,20 @@ public class Node extends ArrayRealVector implements Named<String> {
 
 
 
-    public double getDistance(double[] x) {
+    public double getDistance(final double[] x) {
         return Math.sqrt(getDistanceSq(x));
     }
 
     /** 0 < rate < 1.0 */
-    public void update(double rate, double[] x) {
+    public void update(final double rate, final double[] x) {
         final double[] d = getDataRef();
+        final double ir = (1.0 - rate);
         for (int i = 0; i < d.length; i++) {
-            double c = d[i];
-            d[i] =  ((1.0 - rate) * c ) + (rate * x[i]);
+            d[i] =  (ir * d[i] ) + (rate * x[i]);
         }
     }
 
-    public void add(double[] x) {
+    public void add(final double[] x) {
         final double[] d = getDataRef();
         for (int i = 0; i < d.length; i++) {
             d[i] += x[i];
@@ -100,8 +100,7 @@ public class Node extends ArrayRealVector implements Named<String> {
     }
 
     public double updateDistanceSq(double[] x) {
-        this.localDistanceSq = getDistanceSq(x);
-        return localDistanceSq;
+        return (this.localDistanceSq = getDistanceSq(x));
     }
 
     public double getLocalDistanceSq() {

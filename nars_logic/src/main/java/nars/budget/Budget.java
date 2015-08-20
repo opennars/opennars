@@ -731,7 +731,8 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
-        BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
+        //BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
+        BudgetFunctions.forgetAlann(this, forgetCycles, now);
         return this;
     }
 

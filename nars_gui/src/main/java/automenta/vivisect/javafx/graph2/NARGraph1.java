@@ -909,8 +909,8 @@ public class NARGraph1 extends Spacegraph {
     HyperassociativeMap<TermNode, TermEdge> h = null;
 
     protected void layoutNodes() {
-        //layoutNodesCircle();
-        layoutNodesHyper();
+        layoutNodesCircle();
+        //layoutNodesHyper();
     }
 
     protected void layoutNodesCircle() {
@@ -932,12 +932,13 @@ public class NARGraph1 extends Spacegraph {
                             return r * (max - min) + min;
                         },
                         (v) -> {
-                            return Math.PI * 2 * (v.term.hashCode() % 8192) / 8192.0;
-                /*i[0] += numFraction;
-                return i[0];*/
+                            //return Math.PI * 2 * (v.term.hashCode() % 8192) / 8192.0;
+
+                            i[0] += numFraction;
+                            return i[0];
                         },
                         (v, d) -> {
-                            v.move(d, 0.5f, 1f);
+                            v.move(d[0], d[1]);//, 0.5f, 1f);
                         });
 
 

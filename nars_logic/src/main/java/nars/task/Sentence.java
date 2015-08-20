@@ -87,12 +87,12 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //
 //    }
 
-    /** returns a valid sentence CompoundTerm, or throws an exception */
-    public static Compound termOrException(Term t) {
-        if (invalidSentenceTerm(t))
-            throw new RuntimeException(t + " not valid sentence content");
-        return ((Compound)t);
-    }
+//    /** returns a valid sentence CompoundTerm, or throws an exception */
+//    public static Compound termOrException(Term t) {
+//        if (invalidSentenceTerm(t))
+//            throw new RuntimeException(t + " not valid sentence content");
+//        return ((Compound)t);
+//    }
 
     /** returns a valid sentence CompoundTerm, or returns null */
     public static <X extends Compound> X termOrNull(Term t) {

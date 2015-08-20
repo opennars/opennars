@@ -15,9 +15,11 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.util.event.Observed;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class TaskCondition extends OutputCondition implements Serializable {
 
@@ -45,6 +47,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final long cycleEnd;  //-1 for not compared
 
     protected final boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
+    private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
     //@Expose
     protected long creationTime;
@@ -78,6 +81,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.relativeToCondition = relativeToCondition;
 
 
+        this.taskRemoved = getTaskRemoved(n);
 
         if (t.isEternal()) {
             setEternal();
@@ -107,10 +111,28 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.term = t.getTerm();
     }
 
+    protected Observed.DefaultObserved.DefaultObservableRegistration getTaskRemoved(NAR n) {
+        return n.memory.eventTaskRemoved.on(new Consumer<Task>() {
+
+            @Override
+            public void accept(Task task) {
+                if (!succeeded) {
+                    if (matches(task)) {
+                        ensureRemovals();
+                        removals.addLast(task);
+                        if (removals.size() > maxRemovals)
+                            removals.removeFirst();
+                    }
+                }
+            }
+        });
+    }
+
     public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         super(n, TaskCondition.outAndAnswer(channel));
 
         this.relativeToCondition = false;
+        this.taskRemoved = getTaskRemoved(n);
 
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
@@ -129,6 +151,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.punc = punc;
         this.term = n.term(sentenceTerm);
     }
+
 
     private static Class[] outAndAnswer(Class channel) {
         if (channel == Events.OUT.class) {
@@ -223,24 +246,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     }
 
-    @Override
-    public void event(Class channel, Object... args) {
-        if (!succeeded && (channel == Events.TaskRemove.class)) {
-            Task task = (Task)args[0];
-            //String rule = (String)args[1];
 
-            if (matches(task)) {
-                ensureRemovals();
-                removals.addLast(task);
-                if (removals.size() > maxRemovals)
-                    removals.removeFirst();
-            }
-        }
-
-        super.event(channel, args);
-
-
-    }
 
     @Override
     public boolean condition(Class channel, Object signal) {

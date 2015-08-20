@@ -157,6 +157,7 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
         if (out == in) //nothing changed
             return t;
 
+
         return t.clone(out);
 
     }

@@ -52,7 +52,9 @@ public class believe extends SynchOperator implements Mental {
 
         //TODO convert to TaskSeed
 
-        Compound content = Sentence.termOrException(op.arg(0));
+        Compound content = Sentence.termOrNull(op.arg(0));
+        if (content == null)
+            return null;
 
         Truth truth;
         return Lists.newArrayList( op.newSubTask(

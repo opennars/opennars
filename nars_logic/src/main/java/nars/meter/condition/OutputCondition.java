@@ -143,7 +143,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
                     if (t != null)
                         conditions.add(new TaskCondition(n, t, Events.OUT.class,
                                 -Stamp.TIMELESS, /* to cancel it */
-                                false, Events.OUT.class, Events.TaskRemove.class, Events.Answer.class));
+                                false, Events.OUT.class, Events.Answer.class));
                     else
                         conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
                 }

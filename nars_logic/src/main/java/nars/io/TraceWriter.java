@@ -22,7 +22,6 @@ package nars.io;
 
 import nars.Events;
 import nars.Events.OUT;
-import nars.Events.TaskRemove;
 import nars.NAR;
 import nars.clock.Clock;
 import nars.concept.Concept;
@@ -42,7 +41,7 @@ public class TraceWriter extends MemoryReaction {
 
 
     public static interface LogOutput {
-        public void traceAppend(Class channel, String msg);
+        public void traceAppend(Object channel, String msg);
     }
     
     private final List<LogOutput> outputs = new CopyOnWriteArrayList<>();
@@ -84,8 +83,8 @@ public class TraceWriter extends MemoryReaction {
         }
 
         @Override
-        public void traceAppend(final Class channel, final String s) {
-            p.print(channel.getSimpleName());
+        public void traceAppend(final Object channel, final String s) {
+            p.print(channel instanceof Class ? ((Class)channel).getSimpleName() : channel.toString());
             p.print(": ");
             p.println(s);
         }
@@ -101,7 +100,7 @@ public class TraceWriter extends MemoryReaction {
     }
 
     @Override
-    public void output(Class channel, Object... args) {
+    public void output(Object channel, Object... args) {
         if (outputs.isEmpty())
             return;
         
@@ -132,8 +131,8 @@ public class TraceWriter extends MemoryReaction {
     }
 
     @Override
-    public void onTaskRemove(Task task, String reason) {        
-        output(TaskRemove.class, reason, task);
+    public void onTaskRemove(Task task) {
+        output("TaskRemoved", task);
     }
     
     @Override

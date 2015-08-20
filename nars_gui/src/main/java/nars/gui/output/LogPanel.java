@@ -308,8 +308,8 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
     
     @Override
-    public void traceAppend(Class channel, String s) {
-        output(LOG.class, channel.getSimpleName() + ": " + s);
+    public void traceAppend(Object channel, String s) {
+        output(LOG.class, channel + ": " + s);
     }
 
     public void setTrace(boolean b) {

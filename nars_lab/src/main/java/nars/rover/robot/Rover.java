@@ -71,7 +71,7 @@ public class Rover extends AbstractPolygonBot {
         feltSpeedAvg = new ChangedTextInput(nar);
 
 
-        linearVelocity = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[linear]>"), new AutoRangeTruthFrequency(0.02f));
+        linearVelocity = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[linear]>"), new AutoRangeTruthFrequency(0.0f));
         motionAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[angle]>"), new BipolarAutoRangeTruthFrequency());
         facingAngle = new SimpleAutoRangeTruthFrequency(nar, nar.term("<motion-->[facing]>"), new BipolarAutoRangeTruthFrequency());
 
@@ -304,9 +304,9 @@ public class Rover extends AbstractPolygonBot {
 
 
 
-        facingAngle.observe( torso.getAngle() );
+        facingAngle.observe( angVelocity ); // );
         //nar.inputDirect(nar.task("<facing-->[" +  + "]>. :|:"));
-        nar.input(nar.task("<angvel-->[" + Sim.f(angVelocity) + "]>. :|:"));
+        nar.input(nar.task("<A-->[w" + Sim.angleTerm(torso.getAngle()) + "]>. :|:"));
 
         //System.out.println("  " + motion);
         //feltSpeed.set(motion);

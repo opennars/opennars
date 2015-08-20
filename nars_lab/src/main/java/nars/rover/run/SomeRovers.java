@@ -52,7 +52,7 @@ public class SomeRovers {
 
         return d;
     }
-    public static NARSeed newDefault() {
+    public static Default newDefault() {
 
         Default d = new Equalized(1024, 32, 8);
 //
@@ -113,16 +113,16 @@ public class SomeRovers {
 
         {
             int cycPerFrame = 8;
-            NARSeed e = newDefault();
+            Default e = newDefault();
             e.conceptTaskTermProcessPerCycle.set(4);
 
 
-            //e.setCyclesPerFrame(cycPerFrame);
-            //e.duration.set(5 * cycPerFrame);
+            e.setCyclesPerFrame(cycPerFrame);
+            e.duration.set(5 * cycPerFrame);
             e.setClock(clock);
 
             NAR nar = new NAR(e);
-            TextOutput.out(nar).setOutputPriorityMin(0.9f);
+            TextOutput.out(nar).setOutputPriorityMin(0.5f);
 
             //TextOutput.out(nar);
 

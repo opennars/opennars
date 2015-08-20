@@ -60,6 +60,13 @@ public class Conjunction extends Junction {
 
         temporalOrder = order;
 
+        if (Global.DEBUG) {
+            if (isCommutative()) {
+                if (Terms.toSortedSetArray(arg).length!=arg.length)
+                    throw new RuntimeException("duplicates in commutative: " + this);
+            }
+        }
+
         init(arg);
 
     }
@@ -126,7 +133,8 @@ public class Conjunction extends Junction {
                 ret[k++] = a;
             }
         }
-        return ret;
+
+        return Terms.toSortedSetArray(ret);
     }
 
 

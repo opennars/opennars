@@ -26,6 +26,7 @@ public class NALPerfLoop {
         int randomExtraCycles = 512;
         Global.THREADS = 1;
         Global.EXIT_ON_EXCEPTION = true;
+        Global.DEBUG = true;
 
           
         NAR n = new NAR(new Equalized(maxConcepts,1,3).setInternalExperience(null) );
@@ -49,8 +50,6 @@ public class NALPerfLoop {
                 Object x = o;
                 String examplePath = (x instanceof Object[]) ? (String)(((Object[])x)[1]) : (String)x;
 
-
-                Global.DEBUG = false;
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,false);
             }
         }        

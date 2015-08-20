@@ -145,7 +145,7 @@ public class Events {
     
     public static class ConceptUnification { } //2nd level unification in CompositionalRules
 
-    public static class TaskRemove { }
+
 
     /** when a task has been derived */
     public static class TaskDerive {    }
@@ -193,7 +193,7 @@ public class Events {
             }
         }
 
-        public Class getType() {
+        public Object getType() {
             return getClass();
         }
 

@@ -31,6 +31,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.Truth;
+import nars.util.data.Util;
 
 import static java.lang.Math.pow;
 
@@ -231,6 +232,25 @@ public final class BudgetFunctions extends UtilityFunctions {
         return newPri;
     }
 
+
+    public static float forgetAlann(final Budget budget, final float forgetPeriod /* cycles */, final long currentTime) {
+        // priority * e^(-lambda*t)
+        //     lambda is (1 - durabilty) / forgetPeriod
+        //     t is the delta
+        final float currentPriority = budget.getPriority();
+        final long t = budget.setLastForgetTime(currentTime);
+
+        final double lambda = (1 - budget.getDurability()) / forgetPeriod;
+
+        final float nextPriority = currentPriority *
+                (float)Util.expFast(-lambda * t);
+                //(float)Math.exp(-lambda * t);
+
+        //self limiting to [0,1] interval so no need for checks
+        budget.setPriority(nextPriority);
+
+        return nextPriority;
+    }
 
     /** forgetting calculation for real-time timing */
     public static float forgetPeriodic(final Budget budget, final float forgetPeriod /* cycles */, float minPriorityForgettingCanAffect, final long currentTime) {
