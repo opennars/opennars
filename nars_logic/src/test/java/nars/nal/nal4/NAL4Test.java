@@ -38,38 +38,7 @@ public class NAL4Test extends JavaNALTest {
         });
     }
 
-    @Test public void recursionSmall() throws InvalidInputException {
-        /*
-        <0 --> num>. %1.00;0.90% {0 : 1}
 
-        <<$1 --> num> ==> <($1) --> num>>. %1.00;0.90% {0 : 2}
-
-        <(((0))) --> num>?  {0 : 3}
-
-        1200
-
-        ''outputMustContain('<(0) --> num>.')
-        ''outputMustContain('<((0)) --> num>.')
-        ''outputMustContain('<(((0))) --> num>.')
-        ''outputMustContain('<(((0))) --> num>. %1.00;0.26%')
-        */
-
-        //TextOutput.out(nar);
-
-
-        long time = seed instanceof Solid ? 100 : 2500;
-
-        float minConf = 0.66f;
-        n.believe("<0 --> num>", 1.0f, 0.9f);
-        n.believe("<<$1 --> num> ==> <($1) --> num>>", 1.0f, 0.9f);
-        n.ask("<(((0))) --> num>");
-        n.mustBelieve(time, "<(0) --> num>", 1.0f, 1.0f, 0.81f, 1.0f);
-        n.mustBelieve(time, "<((0)) --> num>", 1.0f, 1.0f, 0.73f, 1.0f);
-        n.mustBelieve(time, "<(((0))) --> num>", 1.0f, 1.0f, minConf, 1.0f);
-        n.run();
-
-    }
-    
     @Test public void recursionSmall2() throws InvalidInputException {
     /*
         <0 --> n>. %1.0000;0.9000%  {0 : 1<0 --> n>}

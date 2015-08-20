@@ -24,7 +24,6 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.op.io.echo;
@@ -176,7 +175,7 @@ public class NarseseParser extends BaseParser<Object> {
     @Cached
     public Rule PauseInput() {
         return sequence(IntegerNonNegative(),
-                push( PauseInput.make( (Integer) pop() ) ), "\n" );
+                push( PauseInput.pause( (Integer) pop() ) ), "\n" );
     }
     @Cached
     public Rule Immediate() {
@@ -935,8 +934,8 @@ public class NarseseParser extends BaseParser<Object> {
         for (int i = size-1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);
 
-            if (o instanceof ImmediateOperator) {
-                c.accept( ((ImmediateOperator)o).newTask() );
+            if (o instanceof Task) {
+                c.accept( ((Task)o) );
             }
             else if (o instanceof Object[]) {
                 c.accept( o );

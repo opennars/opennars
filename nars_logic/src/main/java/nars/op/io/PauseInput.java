@@ -16,13 +16,18 @@ public class PauseInput extends ImmediateOperator {
         super();
     }
 
-    public static Task make(int cycles) {
+    public static Task pause(int cycles) {
         return the.newTask(Integer.toString(cycles));
     }
 
     @Override
     public void accept(Operation o) {
-        int cycles = Integer.parseInt( o.args()[0].toString() );
+        //HACK natural number atom should not need quotes
+        String cs = o.args()[0].toString();
+        if (cs.startsWith("\"") && cs.endsWith("\""))
+            cs = cs.substring(1, cs.length()-1);
+
+        int cycles = Integer.parseInt( cs );
         o.getMemory().think(cycles);
     }
 }

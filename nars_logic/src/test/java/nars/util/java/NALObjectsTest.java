@@ -52,7 +52,7 @@ public class NALObjectsTest extends TestCase {
 
 
         assertNotEquals(tc.getClass(), TestClass.class);
-        assertEquals(3, count.numInputs());
+        assertEquals(8, count.numInputs());
 
 
     }

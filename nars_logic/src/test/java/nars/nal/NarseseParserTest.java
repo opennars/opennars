@@ -476,7 +476,7 @@ public class NarseseParserTest {
 
     protected void ensureIsEcho(Operation op) {
         assertEquals(Atom.the(echo.class.getSimpleName()),
-                op.getTerm());
+                op.getOperator());
     }
 
 
