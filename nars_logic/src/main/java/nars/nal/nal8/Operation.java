@@ -28,6 +28,7 @@ import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
+import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.eval;
 import nars.task.Task;
@@ -412,5 +413,12 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
     public String argString() {
         return Arrays.toString(args());
+    }
+
+    /** creates a result term in the conventional format */
+    public static Inheritance result(Operator op, Product x, Term y) {
+        return Inheritance.make(y,
+                ImageExt.make(x, op, (short)(x.length()-1) /* position of the variable */)
+        );
     }
 }

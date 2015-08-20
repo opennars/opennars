@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class DefaultTermizer implements Termizer {
 
 
-    final Map<Package,Atom> packages = new HashMap();
+    final Map<Package, Atom> packages = new HashMap();
     final Map<Class, Term> classes = new HashMap();
     final HashBiMap<Object, Term> objects = new HashBiMap();
 
@@ -27,12 +27,11 @@ public class DefaultTermizer implements Termizer {
                 String s = t.toStringCompact();
                 try {
                     return Integer.parseInt(s);
+                } catch (Exception e) {
                 }
-                catch (Exception e) {  }
 
                 return s;
-            }
-            else {
+            } else {
                 //TODO handle Products as lists/array, etc
                 return null;
             }
@@ -40,26 +39,24 @@ public class DefaultTermizer implements Termizer {
     }
 
 
-    public Term term(Object o) {
+    Term _term(Object o) {
         if (o == null) return NULL;
         if (o instanceof String) {
-            return Atom.the((String)o, true);
+            return Atom.the((String) o, true);
         }
         if (o instanceof Boolean) {
             boolean b = ((Boolean) o).booleanValue();
             if (b) return TRUE;
             else return FALSE;
-        }
-        else if (o  instanceof Number) {
-            return Atom.the((Number)o);
-        }
-        else if (o instanceof Class) {
-            Class oc = (Class)o;
+        } else if (o instanceof Number) {
+            return Atom.the((Number) o);
+        } else if (o instanceof Class) {
+            Class oc = (Class) o;
             String cname = oc.getSimpleName();
             if (cname.isEmpty()) cname = oc.getName();
 
             Package p = oc.getPackage();
-            if (p!=null) {
+            if (p != null) {
 
                 Term cterm = Atom.quote(cname);
 
@@ -73,22 +70,19 @@ public class DefaultTermizer implements Termizer {
                 return cterm;
             }
             return Atom.the("primitive");
-        }
-        else if (o instanceof int[]) {
+        } else if (o instanceof int[]) {
             final List<Term> arg = Arrays.stream((int[]) o).boxed().map(e -> term(e)).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
             );
-        }
-        else if (o instanceof Object[]) {
+        } else if (o instanceof Object[]) {
             final List<Term> arg = Arrays.stream((Object[]) o).map(e -> term(e)).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
             );
-        }
-        else if (o instanceof List) {
+        } else if (o instanceof List) {
             Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> term(e)).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
@@ -99,7 +93,7 @@ public class DefaultTermizer implements Termizer {
         }*/
         }
 
-        Term i = termizeInstance(o);
+        Term i = Atom.the(instanceString(o));
 
         return i;
 
@@ -125,9 +119,11 @@ public class DefaultTermizer implements Termizer {
 //        }
 
 
+    }
 
 
-
+    public static String instanceString(Object o) {
+        return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());
     }
 
     protected void onClassInPackage(Term classs, Atom packagge) {
@@ -135,43 +131,46 @@ public class DefaultTermizer implements Termizer {
 
     }
 
-    private Term termizeInstance(Object o) {
+    public Term term(Object o) {
         //        String cname = o.getClass().toString().substring(6) /* "class " */;
 //        int slice = cname.length();
 //
-        //TODO decide to use toString or System object id
-        String instanceName = o.toString();
-//        if (instanceName.length() > slice)
-//            instanceName = instanceName.substring(slice);
+        return objects.computeIfAbsent(o, O -> {
 
-        final Term oterm = Atom.quote(instanceName);
-
-        Term prevOterm = objects.put(o, oterm);
-        if (prevOterm == null) {
-
-
+            Term oterm = _term(O);
 
             Term clas = classes.get(o.getClass());
             if (clas == null) {
-                clas = term(o.getClass());
+                clas = _term(o.getClass());
             }
 
             onInstanceOfClass(oterm, clas);
 
-        }
-        else {
-            if (!oterm.equals(prevOterm)) {
-                //toString value has changed, create similarity to associate
-                onInstanceChange(oterm, prevOterm);
-            }
-        }
+            return oterm;
 
-        return oterm;
+        });
+
+        //TODO decide to use toString or System object id
+        //String instanceName = o.toString();
+//        if (instanceName.length() > slice)
+//            instanceName = instanceName.substring(slice);
+
+        //final Term oterm = Atom.quote(instanceName);
+
+//        Term prevOterm = objects.put(o, oterm);
+        //if (prevOterm == null) {
+
+
+        //}
+//        else {
+//            if (!oterm.equals(prevOterm)) {
+//                //toString value has changed, create similarity to associate
+//                onInstanceChange(oterm, prevOterm);
+//            }
+//        }
+
+        //return oterm;
     }
-
-
-
-
 
 
     protected void onInstanceChange(Term oterm, Term prevOterm) {

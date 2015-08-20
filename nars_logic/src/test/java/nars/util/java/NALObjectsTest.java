@@ -8,6 +8,7 @@ import nars.nar.Default;
 import nars.term.Atom;
 import org.junit.Test;
 
+import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertNotEquals;
@@ -56,29 +57,40 @@ public class NALObjectsTest extends TestCase {
 
     }
 
+    /** test that the methods of invoking an instance method are indistinguishable
+     * whether it occurred from outside, or from a NAR goal
+     */
     @Test public void testMethodOperators() throws Exception {
-        AtomicInteger statements = new AtomicInteger(0);
 
         NAR n = new NAR(new Default());
-
-        CountIOEvents count = new CountIOEvents(n);
+        NAR m = new NAR(new Default());
 
         String instance = "obj";
-        TestClass tc = new NALObjects(n).build(instance, TestClass.class);
+        TestClass nc = new NALObjects(n).build(instance, TestClass.class);
+        TestClass mc = new NALObjects(m).build(instance, TestClass.class);
 
         assertNotNull( n.memory.exe.all(Atom.the("TestClass_multiply")) );
 
-        //TextOutput.out(n);
+        StringWriter ns, ms;
+        new TextOutput(n, ns = new StringWriter());
+        new TextOutput(m, ms = new StringWriter());
 
-        n.input("TestClass_multiply(" + instance + ", 1, 2, #x)!");
+        n.input("TestClass_multiply(" + instance + ", 2, 3, #x)!");
 
-        /*(tc.multiply(0, 1);
-        tc.multiply(1, 2);
-        tc.multiply(2, 1);
-        tc.multiply(2, 0);*/
+        n.frame(16);
 
-        n.frame(160);
 
+        mc.multiply(2,3);
+
+        m.frame(32);
+
+        System.out.println(ns.getBuffer().toString());
+        System.out.println();
+        System.out.println(ms.getBuffer().toString());
+
+        String expect = "IN: <\"6.0\" --> (/, ^TestClass_multiply, obj, \"2.0\", \"3.0\", _)>. :|: %1.00;";
+        assertTrue(ns.getBuffer().toString().contains(expect));
+        assertTrue(ms.getBuffer().toString().contains(expect));
     }
 
 }

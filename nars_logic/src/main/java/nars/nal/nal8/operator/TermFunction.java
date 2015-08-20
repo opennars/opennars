@@ -65,7 +65,6 @@ public abstract class TermFunction<O> extends SynchOperator {
 
     protected ArrayList<Task> result(Operation operation, Term y, Term[] x0, Term lastTerm) {
 
-        final int numArgs = x0.length;
 
         //Variable var=new Variable("$1");
         //  Term actual_part = Similarity.make(var, y);
@@ -81,9 +80,9 @@ public abstract class TermFunction<O> extends SynchOperator {
         //transform to image for perception variable introduction rule (is more efficient representation
 
         Product originalArgs =  operation.getTask().getTerm().arg();
-        Inheritance inh=Inheritance.make(y,
-                ImageExt.make(originalArgs, operation.getPredicate(), (short)(numArgs))
-                );
+        //final int numArgs = x0.length;
+
+        Inheritance inh = Operation.result(operation.getPredicate(), originalArgs, y);
 
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 

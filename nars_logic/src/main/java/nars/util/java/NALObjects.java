@@ -8,22 +8,25 @@ import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 import nars.Global;
 import nars.NAR;
+import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.term.Variable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 
 /**
@@ -35,7 +38,7 @@ import java.util.Set;
  */
 public class NALObjects extends DefaultTermizer implements MethodHandler, Termizer {
 
-    public final Termizer termizer = new DefaultTermizer();
+
 
     private final NAR nar;
     final MutableMap<Class, ProxyFactory> proxyCache = new UnifiedMap().asSynchronized();
@@ -77,6 +80,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         nar.believe(Similarity.make(oterm, prevOterm));
     }
 
+    AtomicBoolean lock = new AtomicBoolean(false);
 
     /** when a proxy wrapped instance method is called, this can
      *  parametrically intercept arguments and return value
@@ -90,13 +94,22 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         if (methodExclusions.contains(overridden.getName()))
             return result;
 
-        Term instance = instances.get(object);
-        Term argterm = term(args);
+        if (!lock.compareAndSet(false,true)) {
+            return result;
+        }
 
+
+
+        final Term instance = term(object);
+        final Term[] argterm = Stream.of(args).map(x -> term(x)).toArray(n -> new Term[n]);
         Term effect;
 
-        Term cause = Inheritance.make(SetExt.make(Product.make(instance, argterm)),
-                Atom.the(overridden.getName()));
+        //String opName =
+        final Operator op = Operator.the(
+                overridden.getDeclaringClass().getSimpleName() + "_" + overridden.getName()
+        );
+        /*Term cause = Operation.make(Product.make(instance, argterm),
+                op);*/
 
         if (result!=null) {
             effect = term(result);
@@ -105,10 +118,24 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
             effect = VOID;
         }
 
+        Term[] instancePlusArgs = new Term[argterm.length+2];
+        instancePlusArgs[0] = instance;
+        System.arraycopy(argterm, 0, instancePlusArgs, 1, argterm.length);
+        instancePlusArgs[instancePlusArgs.length-1] = Variable.the(Symbols.VAR_DEPENDENT + "1");
+
+        //TODO use task of callee as Parent task, if self-invoked
+        nar.believe(
+                Operation.result(op, Product.make(instancePlusArgs), effect ),
+                Tense.Present,
+                1f, 0.9f);
+        /*
         nar.believe(Implication.make(cause, effect, TemporalRules.ORDER_FORWARD),
                 Tense.Present,
                 1f, 0.9f
-        );
+        );*/
+
+        lock.set(false);
+
         return result;
     }
 
@@ -163,13 +190,13 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     }
 
 
-    @Override
-    public Term term(Object o) {
-        Term i = instances.get(o);
-        if (i!=null)
-            return i;
-        return termizer.term(o);
-    }
+//    @Override
+//    public Term term(Object o) {
+//        Term i = instances.get(o);
+//        if (i!=null)
+//            return i;
+//        return super.term(o);
+//    }
 
 
 }

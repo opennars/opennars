@@ -14,6 +14,7 @@ public class MethodOperator extends TermFunction {
     private final Method method;
     private final Termizer termizer;
     private final static Object[] empty = new Object[0];
+    boolean feedback = false;
 
     public MethodOperator(Termizer termizer, Method m) {
         super(m.getDeclaringClass().getSimpleName() + "_" + m.getName());
@@ -23,7 +24,7 @@ public class MethodOperator extends TermFunction {
 
     @Override
     public Object function(Term... x) {
-        System.out.println("method: " + method + " w/ " + x);
+        //System.out.println("method: " + method + " w/ " + x);
 
         int pc = method.getParameterCount();
         final int requires, paramOffset;
@@ -59,11 +60,14 @@ public class MethodOperator extends TermFunction {
 
         try {
             Object result = method.invoke(instance, args);
-            return termizer.term(result);
+            if (feedback)
+                return termizer.term(result);
         } catch (Exception e) {
             e.printStackTrace();
             return termizer.term(e);
         }
+
+        return null;
     }
 
 }
