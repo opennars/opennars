@@ -1,0 +1,126 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{ tipa }
+\usepackage{amsfonts}
+\usepackage{graphicx}
+
+\title{Inference Rule specification in OpenNARS}
+\author{Patrick Hammer}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\begin{abstract}
+Implementing the Non-Axiomatic Logic (NAL) rules as needed for the NARS AGI system and guaranteeing their correctness according to what is specified in "Non-Axiomatic Logic: A Model of Intelligent Reasoning" \cite{wp:book2} turned out to be a big implementation challenge. And altough we succeeded here, the fact that one of our goals is also making the implementation a literate program which at the same time presents the ideas to the user in an eye-pleasing manner, did convince us to go a different path. Instead of trying to use general-purpose programming languages to express the inference rules, we decided to ask ourselves the question how we would write the inference rules in a beautiful notation without considering the implementation or a programming language, and started from this point. This resulted in a domain specific language which ensures the correct implementation of the NAL inference rules through the use of a rule definition file. The details about this domain specific language are specified here.
+
+\end{abstract}
+
+\section{Rule Specification}
+
+\subsection{Rule Format}
+
+All inference rules take the form:
+$$T, B, P_1, ..., P_k \vdash (C_1,...,C_n)$$
+where
+
+$T$ represents the selected task premise,
+
+$B$ represents the selected belief premise,
+
+and $P_1, ..., P_k$ represent logical predicates dependent on $T$, $B$, $C1, ..., C_n$.
+
+Each "conclusion" $C_i$ of $C_1, .., C_n$ has the form $(D,M)$
+where
+
+$D$ represents the term of the derived task the conclusion $C_i$ defines, and
+
+$M$ provides additional meta-information, like what truth function will be used to decide the truth of the conclusion, how the time information will be processed, and so on, which we will see in a later section.
+
+\subsection{Task}
+A task in NARS is a sentence, with additional budget value assigned.
+A sentence in NARS is a term defined according to the Narsese grammar rules in \cite{wp:book2}, with additional truth value assigned as also there defined,
+with additional punctuation "?", "!", ".", "@", denoting whether it is a question, a goal, a judgement, or a quest task.
+
+\subsection{Belief}
+A belief is a judgement sentence ("." punctuation) which is stored in a concept in the memory of NARS, more details are irrelevant in respect to this specification.
+
+\subsection{Predicates}
+$not\_equal(A,B)$ is defined to be true if and only if $A$ and $B$ are different terms.
+
+$no\_common\_subterm(A,B)$ is defined to be true if and only if $A$ and $B$ contain no common subterm.
+
+$not\_implication\_or\_equivalence(A)$ is defined to be true if and only if the term $A$ is neither an equivalence nor an implication.
+
+$after(A,B)$ is defined to be true if and only if $A$ happens after $B$, and both are events.
+
+$concurrent(A,B)$ is defined to be true if and only if $A$ at the same time as $B$, defined by whether the occurence time difference is bigger than the duration constant.
+
+$shift\_occurrence\_forward(I_1,...,I_h)$ is defined to be true if and only if the task premise is an event and the occurence time of the derived task is $\sum_{i=1}^{h} t(I_i)$ in the future measured according to the task premise occurence time, where $t(x)$ is equal to the interval duration of $x$ if $x$ is an interval, and equal to the system duration constant if $x$ is an copula with forward temporal order, else $0$. From implementation perspective, when this predicate is evaluated, the occurence time of the derived task can already be defined.
+
+$shift\_occurrence\_forward(I_1,...,I_h)$ is defined analogous.
+
+$substitute(A,B)$ is defined to be true if and only if the derived task term has all occurences of $A$ substituted with $B$. In order to fullfill this criteria, the implementation can here add the substitution $A \mapsto B$ to its conclusion substitution set.
+
+\subsection{Meta-Information}
+
+$Truth:Name$ specifies the truth function which should be used to decide the truth of the derived task according to the truth value of the task and belief premise.
+
+$Desire:Name$ same for desire value.
+
+$Derive:ForwardOnly$ specifies that the rule is only used for forward inference.
+
+$Order:ForAllSame$ specifies that the rule works for all same temporal orders,
+namely that the same rule also works if the temporal order of all copulas of a given copula type is replaced with another one in the premises as well as in the conclusion.
+
+
+\subsection{Ellipsis Notation}
+Especially for compound terms it would be unpractical if for example the same rule would have to be specified multiple times, one times with 2 elements in the compound term and another time with 3 elements and so on. In order to overcome this, the ellipsis term is introduced, written as for example $A_1..n$. This way, for example $(\&\&,A_1..n)$ can unify with for example $(\&\&,a_1,a_2)$ by $A_1 \mapsto a_1$ and $A_2 \mapsto a_2$.
+Also if this is used, the term $A_i$ can be used individually, a rule holds for all $i \in \{1,...,n\}$, for all $n \in \mathbb{N}$. Note that it is the commutativity property of the used operator, "\&\&" in this case, which decides whether match permutations will be tried or not on unification.
+
+\subsection{Individual Term Transformation}
+Additionally, if $A_1..n$ is used in the conclusion term again, it can also be specified to substitute the i-th term with another term, specified with $A_1..A_i.substitute(c)..A_n$. This was the only use-case for individual term transformations we faced in NAL (image transformation rules), so a generalization of such a term transformation to all terms turned out to be unnecessary.
+
+\section{Inference}
+
+\subsection{Inference Step}
+The job of the control mechanism is to select a task and a belief from its memory for inference, but how this happens is irrelevant for the rule language.
+Once a task which is a judgement or a goal, and belief premise is selected, the execution of a rule is as follows:
+
+1. Match the $T$ with the task term and keep track of the assigments needed for the unification in the conclusion substitution set $L$.
+
+2. Under the now given assigment constraints $L$, try to unify $B$ with the belief term.
+
+3. Apply the assigments $L$ also to the preconditions and check them, in case of substitute add the $A \mapsto B$ substitution defined by $substitute(A,B)$ to $L$ as the predicate demands to be true.
+
+4. Go through the list of conclusions, and for each $C_i=(D_i,M_i)$ apply all the assigments $L$ to $D_i$, and then process the meta-information as specified in the last chapter in order to derive a task with term $D_i$ and details of the task defined according to the meta-informations $M_i$.
+
+\subsection{Backward Inference}
+
+Except for rules where a precondition predicate can not be meaningfully inverted, like in case of substitute, the following scheme can be applied to create a backward inference rule from the specified forward inference rules, this way there is no need to specify backward inference rules anymore, and the resulting rule works again for the first premise being a task (in this case a question or quest), and the second premise being a belief:
+
+Each inference rule $A, B \vdash C$, leading to the two backward inference rules
+$C, B \vdash A$ and $C, A \vdash B$ which are used to derive goals and quests.
+
+\subsection{Defaults}
+The predicates and meta-informations, dependent on the rule, don't always give all the informations needed to derive the task in an inference step. In this case the derivation fails. However, there are a handful of gaps which are filled by default without the need to specify them in the inference rules:
+
+1. If not otherwise specified, the punctuation of the derived conclusion task is always the same as the punctuation of the premise task.
+
+2. The occurence time of the derived task also is the same except if a $shift\_occurence\_time$ predicate exists in the rule then it is shifted by the offsets of the arguments as specified, this is for example an important language feature for the detachment rule.
+
+
+\section{NAL Rules Example}
+
+\begin{tiny}
+
+NAL_Definition.logic
+
+\end{tiny}
+
+\bibliographystyle{splncs03}
+\bibliography{../_BIBTEX/all,../_BIBTEX/Wang}
+\end{document}
