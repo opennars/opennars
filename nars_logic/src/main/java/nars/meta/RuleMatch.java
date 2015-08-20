@@ -182,7 +182,7 @@ public class RuleMatch extends FindSubst {
         return k.substituted(map0);
     };
 
-    public Term resolve(final Term t) {
+    public Term resolveTest(final Term t) {
         Term r = resolver.apply(t);
 
         /* temporary */
@@ -195,7 +195,7 @@ public class RuleMatch extends FindSubst {
     }
 
     /** provides the cached result if it exists, otherwise computes it and adds to cache */
-    public Term resolveCached(final Term t) {
+    public Term resolve(final Term t) {
         if (t == null) return null;
 
         return resolutions.computeIfAbsent(t, resolver);
