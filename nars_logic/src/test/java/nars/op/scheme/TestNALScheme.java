@@ -36,7 +36,7 @@ public class TestNALScheme {
 //
 //    }
 
-
+/*
     @Test @Ignore
     public void testDynamicSchemeProxy() throws Exception {
 
@@ -57,7 +57,8 @@ public class TestNALScheme {
         n.frame(50);
 
         n.frame(1660);
-
+        }
+*/
 
 //
 //
@@ -79,6 +80,6 @@ public class TestNALScheme {
 //        System.out.println(x);
 //
 //        ((TestClass)x).callable();
-    }
+
 
 }

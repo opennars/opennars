@@ -4,10 +4,11 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Events.OUT;
 import nars.Global;
 import nars.NAR;
+import nars.io.out.TextOutput;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nar.experimental.Solid;
+import nars.nar.experimental.Equalized;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.term.Compound;
@@ -38,15 +39,15 @@ public class BooleanChallenge implements Reaction<Class,Object[]> {
     float inputConf = 0.99f;
 
     public static void main(String[] args) {
-        Global.DEBUG = false;
-        NAR n = new NAR(new Solid(32, 2048, 1, 2, 1, 7).setInternalExperience(null));
+        Global.DEBUG = true;
+        NAR n = new NAR(new Equalized(1024, 4, 3).setInternalExperience(null));
 
         //NAR n = new NAR(new Discretinuous());
         //new NARPrologMirror(n, 0.95f, true, true, false);
         //NAR n = new CurveBagNARBuilder().build();
 
         //new TraceWriter(n, System.out);
-        //new TextOutput(n, System.out);
+        new TextOutput(n, System.out);
 
         new BooleanChallenge(n, 2, 122550, 0.65f).getScore();
 
@@ -332,7 +333,7 @@ public class BooleanChallenge implements Reaction<Class,Object[]> {
 
         String a = "<{";
         for (int i = 1; i < (1 << bits); i++)
-            a += 'b' + i + ",";
+            a += "b" + i + ",";
         a += "b0} --> number>";
         nar.believe(a, inputConf);
     }

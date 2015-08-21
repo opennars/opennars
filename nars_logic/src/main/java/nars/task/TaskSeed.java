@@ -1,11 +1,9 @@
 package nars.task;
 
-import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.io.JSONOutput;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
@@ -47,6 +45,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         super(null, (char)0, null, 0, 0, 0);
 
+        budgetDirect(Float.NaN, Float.NaN, Float.NaN);
 
         this.memory = memory;
         setDuration(memory.duration());
@@ -204,7 +203,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
         return budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
     }
 
-    protected boolean ensureBudget() {
+    protected boolean applyDefaultBudget() {
         //if (getBudget().isBudgetValid()) return true;
         if (getTruth() == null) return false;
 
@@ -226,7 +225,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     public TaskSeed<T> budgetScaled(float priorityFactor, float durFactor) {
 
         //TODO maybe lift this to Budget class
-        if (!ensureBudget()) {
+        if (!applyDefaultBudget()) {
             throw new RuntimeException("budgetScaled unable to determine original budget values");
         }
 
@@ -423,6 +422,10 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
                 .setEvidence(getEvidence());
 
 
+        if (!Float.isFinite(getQuality())) {
+            applyDefaultBudget();
+        }
+
 
         //applyToStamp(t);
 
@@ -479,12 +482,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 //        }
 //    }
 
-
-
-    @Override public Budget getBudget() {
-        ensureBudget();
-        return super.getBudget();
-    }
 
     public TaskSeed<T> punctuation(final char punctuation) {
         setPunctuation(punctuation);

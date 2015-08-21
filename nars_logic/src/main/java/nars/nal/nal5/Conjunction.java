@@ -47,11 +47,11 @@ public class Conjunction extends Junction {
      * @param arg The component list of the term
      */
     protected Conjunction(Term[] arg, final int order) {
-        super(arg = flatten(arg, order));
+        super(flatten(arg, order));
 
         if ((order == TemporalRules.ORDER_BACKWARD) ||
                 (order == TemporalRules.ORDER_INVALID)) {
-            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));
+            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(this.term));
         }
 
         if (((order == TemporalRules.ORDER_FORWARD) && (!(this instanceof Sequence)))) {
@@ -62,12 +62,12 @@ public class Conjunction extends Junction {
 
         if (Global.DEBUG) {
             if (isCommutative()) {
-                if (Terms.toSortedSetArray(arg).length!=arg.length)
+                if (Terms.toSortedSetArray(this.term).length!=this.term.length)
                     throw new RuntimeException("duplicates in commutative: " + this);
             }
         }
 
-        init(arg);
+        init(this.term);
 
     }
 

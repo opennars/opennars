@@ -1,10 +1,12 @@
 package nars.util.java;
 
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by me on 8/19/15.
@@ -14,12 +16,21 @@ public class MethodOperator extends TermFunction {
     private final Method method;
     private final Termizer termizer;
     private final static Object[] empty = new Object[0];
+    private final AtomicBoolean enable;
     boolean feedback = false;
 
-    public MethodOperator(Termizer termizer, Method m) {
+    public MethodOperator(AtomicBoolean enable, Termizer termizer, Method m) {
         super(m.getDeclaringClass().getSimpleName() + "_" + m.getName());
         this.method = m;
         this.termizer = termizer;
+        this.enable = enable;
+    }
+
+    @Override
+    public boolean execute(Operation op) {
+        if (!enable.get())
+            return false;
+        return super.execute(op);
     }
 
     @Override

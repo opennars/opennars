@@ -16,6 +16,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Variable;
@@ -58,6 +59,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         add("wait");
         add("finalize");
     }};
+    private AtomicBoolean goalInvoke = new AtomicBoolean(true);
 
 
     public NALObjects(NAR n) {
@@ -108,8 +110,16 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         final Operator op = Operator.the(
                 overridden.getDeclaringClass().getSimpleName() + "_" + overridden.getName()
         );
-        /*Term cause = Operation.make(Product.make(instance, argterm),
-                op);*/
+
+        Term[] instancePlusArgs = new Term[argterm.length+2];
+        instancePlusArgs[0] = instance;
+        System.arraycopy(argterm, 0, instancePlusArgs, 1, argterm.length);
+        instancePlusArgs[instancePlusArgs.length-1] = Variable.the(Symbols.VAR_DEPENDENT + "1");
+
+
+        nar.input(nar.memory.newTask(
+                Operation.make(Product.make(instancePlusArgs), op )
+        ).goal().present().truth(1f, 0.9f).get());
 
         if (result!=null) {
             effect = term(result);
@@ -118,21 +128,12 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
             effect = VOID;
         }
 
-        Term[] instancePlusArgs = new Term[argterm.length+2];
-        instancePlusArgs[0] = instance;
-        System.arraycopy(argterm, 0, instancePlusArgs, 1, argterm.length);
-        instancePlusArgs[instancePlusArgs.length-1] = Variable.the(Symbols.VAR_DEPENDENT + "1");
 
         //TODO use task of callee as Parent task, if self-invoked
-        nar.believe(
-                Operation.result(op, Product.make(instancePlusArgs), effect ),
-                Tense.Present,
-                1f, 0.9f);
-        /*
-        nar.believe(Implication.make(cause, effect, TemporalRules.ORDER_FORWARD),
-                Tense.Present,
-                1f, 0.9f
-        );*/
+        nar.input(nar.memory.newTask(
+                Operation.result(op, Product.make(instancePlusArgs), effect )
+        ).belief().present().truth(1f, 0.9f).get());
+
 
         lock.set(false);
 
@@ -179,7 +180,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         for (Method m :  classs.getMethods()) {
             if (!methodExclusions.contains(m.toString()) && Modifier.isPublic(m.getModifiers())) {
                 MethodOperator op = methodOps.computeIfAbsent(m, _m -> {
-                    MethodOperator mo = new MethodOperator(this, m);
+                    MethodOperator mo = new MethodOperator(goalInvoke, this, m);
                     nar.on(mo);
                     return mo;
                 });
@@ -187,6 +188,10 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         }
 
         return (T) instance;
+    }
+
+    public void setGoalInvoke(boolean b) {
+        this.goalInvoke.set(b);
     }
 
 

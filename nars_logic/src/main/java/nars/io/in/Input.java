@@ -77,16 +77,14 @@ public interface Input extends Source<Task> {
 
         final Deque<Task> queue = new ArrayDeque();
 
-        protected int accept(ImmediateOperator o) {
-            accept(o.newTask());
-            return 1;
-        }
-
         protected int accept(Iterator<Task> tasks) {
             if (tasks == null) return 0;
             int count = 0;
             while (tasks.hasNext()) {
-                queue.add(tasks.next());
+                Task t = tasks.next();
+                if (t==null)
+                    continue;
+                queue.add(t);
                 count++;
             }
             return count;
@@ -94,7 +92,8 @@ public interface Input extends Source<Task> {
 
         @Override
         public void accept(Task task) {
-            queue.add(task);
+            if (task!=null)
+                queue.add(task);
         }
 
         @Override
