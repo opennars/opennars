@@ -2,6 +2,7 @@ package nars.meta;
 
 import nars.Global;
 import nars.Op;
+import nars.Symbols;
 import nars.meta.pre.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
@@ -218,7 +219,7 @@ public class TaskRule extends Rule<Premise,Task> {
             if ((containingCompound instanceof Inheritance) && reservedPostconditions.contains(((Inheritance)containingCompound).getPredicate()))
                 return v;
 
-            return new Variable("%" + v.toString());
+            return new Variable(Symbols.VAR_PATTERN + v.toString(), true);
         }
     }
 
@@ -259,7 +260,8 @@ public class TaskRule extends Rule<Premise,Task> {
         }
         catch (Exception e) {
             System.err.println(this);
-            System.err.println("  " + e);
+            //System.err.println("  " + e);
+            e.printStackTrace();
         }
     }
 

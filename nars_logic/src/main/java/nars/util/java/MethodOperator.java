@@ -26,16 +26,13 @@ public class MethodOperator extends TermFunction {
         this.enable = enable;
     }
 
-    @Override
-    public boolean execute(Operation op) {
-        if (!enable.get())
-            return false;
-        return super.execute(op);
-    }
 
     @Override
     public Object function(Term... x) {
         //System.out.println("method: " + method + " w/ " + x);
+
+        if (!enable.get())
+            return null;
 
         int pc = method.getParameterCount();
         final int requires, paramOffset;

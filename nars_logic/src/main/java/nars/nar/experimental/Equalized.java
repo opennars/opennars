@@ -95,9 +95,10 @@ public class Equalized extends Default {
             float b = 0;
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
                 Task next = ii.next();
+                if (next == null) break;
+
                 newTasks.items.removeKey(next); //remove from new items
 
-                if (next == null) break;
                 float nextPri = next.getPriority();
 
                 TaskProcess tp = TaskProcess.get(memory, next, priFactor);

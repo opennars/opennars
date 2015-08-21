@@ -7,7 +7,6 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -20,6 +19,7 @@ public enum DesireFunction {
     },
     Strong() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.desireStrong(T,B);
         }
     },
@@ -50,7 +50,7 @@ public enum DesireFunction {
      * @param B beliefTruth (possibly null)
      * @return
      */
-    abstract public Truth get(Truth T, @Nullable Truth B);
+    abstract public Truth get(Truth T, Truth B);
 
     public final Truth get(final Truth t) {
         return get(t, null);

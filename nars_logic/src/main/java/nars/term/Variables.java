@@ -170,8 +170,9 @@ public class Variables {
         }
 
         CommonVariable(byte[] b) {
-            super(b);
+            super(b, true /* scoped, so that CommonVariables with equal names can be considered equal */);
         }
+
 
     }
 

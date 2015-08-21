@@ -83,16 +83,15 @@ public class RuleMatch extends FindSubst {
 
 
         final Truth truth;
+
         if (task.isJudgment()) {
             truth = p.truth.get(T, B);
-        }
-        else if (task.isGoal()) {
+        } else if (task.isGoal()) {
             if (p.desire != null)
                 truth = p.desire.get(T, B);
             else
                 truth = null;
-        }
-        else {
+        } else {
             truth = null;
         }
 
@@ -115,6 +114,7 @@ public class RuleMatch extends FindSubst {
         Term derive = resolve(p.term);
         if (derive == null)
             return false;
+        if (!(derive instanceof Compound)) return false;
 
 //        //check if this is redundant
 //        Term nextDerived = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
@@ -150,6 +150,8 @@ public class RuleMatch extends FindSubst {
         //CALCULATE OCCURENCE TIME HERE AND SET DERIVED TASK OCCURENCE TIME ACCORDINGLY!
 
         boolean allowOverlap = false; //to be refined
+
+
 
 
         TaskSeed<Compound> t = premise.newTask((Compound)derive, task, belief, allowOverlap);

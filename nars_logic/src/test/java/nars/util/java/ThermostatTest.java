@@ -1,10 +1,12 @@
 package nars.util.java;
 
+import nars.Events;
 import nars.Global;
 import nars.NAR;
+import nars.concept.BeliefTable;
 import nars.io.out.TextOutput;
+import nars.nal.nal8.ExecutionResult;
 import nars.nar.experimental.Equalized;
-import org.junit.Test;
 
 import java.util.Random;
 
@@ -19,11 +21,6 @@ public class ThermostatTest  {
         public int increment;
         public boolean log = false;
 
-        public void reset(int current, int target) {
-            if (log) System.out.println("reset: " + current + " " + target);
-            this.current = current;
-            this.target = target;
-        }
 
         public boolean valid() {
             return Math.abs(current-target) <= increment;
@@ -43,31 +40,43 @@ public class ThermostatTest  {
 
     }
 
-    Random rng = new Random();
-    public void demonstrate(NAR n, Thermostat t, int maxRange) {
+    static final Random rng = new Random();
+    public static void demonstrate(NAR n, Thermostat t, int maxRange) {
 
         t.increment = 1;
 
-        t.reset(rng.nextInt(maxRange), rng.nextInt(maxRange));
+        reset(t, maxRange);
 
 
         while (!t.valid()) {
-            n.frame();
             if (t.above()) t.down();
-            n.frame();
             if (t.below()) t.up();
-            n.frame();
+            n.frame(10);
         }
 
     }
 
-    //@Test
-    public void testThermostat1() throws Exception {
+    private static void reset(Thermostat t, int maxRange) {
+        do {
+            t.current = rng.nextInt(maxRange);
+            t.target = rng.nextInt(maxRange);
+        } while ( Math.abs(t.current - t.target) < maxRange/3 );
+
+        if (t.log) System.out.println("reset: " + t.current + " " + t.target);
+    }
+
+    //@Test public void testThermostat1() throws Exception {
+    public static void main(String[] arg) throws Exception {
 
         Global.DEBUG = true;
         Global.EXIT_ON_EXCEPTION = true;
 
-        NAR n = new NAR(new Equalized(1024, 10, 3).setInternalExperience(null));
+        NAR n = new NAR(new Equalized(1024, 2, 8) {
+            public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
+                return (c, b) ->
+                     new BeliefTable.BeliefConfidenceAndCurrentTime(c);
+            }
+        }.setInternalExperience(null));
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
         NALObjects nobj = new NALObjects(n);
@@ -76,21 +85,57 @@ public class ThermostatTest  {
         nobj.setGoalInvoke(false);
 
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
+        //TextOutput.out(n).setOutputPriorityMin(0.5f);
         //NARTrace.out(n);
 
-        for (int i = 0; i < 100; i++) {
-            demonstrate(n, tc, 10);
-            n.frame(100);
+        int range = 20;
 
+        new TextOutput(n, System.out)
+        {
+
+            @Override
+            protected boolean output(Channel channel, Class event, Object... args) {
+                if (event == Events.EXE.class) {
+                    ExecutionResult t = (ExecutionResult)args[0];
+                    System.out.println( t.getTask().getExplanation() );
+                    return super.output(channel, event, args);
+
+                }
+                return false;
+            }
+        };
+
+        for (int i = 0; i < 2; i++) {
+            demonstrate(n, tc, range);
             //n.memory.getControl().iterator().forEachRemaining(c -> System.out.println(c));
+            n.frame(1000);
         }
+
+        n.memory.getControl().iterator().forEachRemaining(c -> System.out.println(c));
 
         tc.log = true;
         nobj.setGoalInvoke(true);
 
 
-        n.frame(1000);
+
+
+        //TextOutput.out(n);
+
+        /*n.input("Thermostat_valid(t, #1)! :|: %0.50;0.99%");
+        n.input("Thermostat_up(t, #1)! :|: %0.50;0.99%");
+        n.input("Thermostat_down(t, #1)! :|: %0.50;0.99%");*/
+
+        for (int i = 0; i < 1; i++) {
+            n.input("<true --> (/, ^Thermostat_valid, t, _)>!");
+
+            reset(tc, range);
+
+
+            //n.input("<(--,true) --> (/, ^Thermostat_valid, t, _)>! %0%");
+            n.frame(1000);
+            System.out.println(tc.valid());
+        }
 
 
 

@@ -102,30 +102,26 @@ public class Conjunction extends Junction {
     }
 
     /**
-     * flatten a embedded conjunction subterms if they are of a specific order
+     * recursively flatten a embedded conjunction subterms if they are of a specific order
      */
     public static Term[] flatten(Term[] args, int order) {
         //determine how many there are with same order
-        int sz = 0;
-        for (int i = 0; i < args.length; i++) {
-            Term a = args[i];
-            Conjunction c = isConjunction(a, order);
-            if (c != null)
-                sz += c.length();
-            else
-                sz += 1;
+        int currentLen = args.length;
+        int expandedSize;
+        while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
+            args = _flatten(args, order, expandedSize);
         }
-        if (sz == args.length) {
-            //no change
-            return args;
-        }
+        return args;
+    }
 
-        final Term[] ret = new Term[sz];
+    private static Term[] _flatten(Term[] args, int order, int expandedSize) {
+        final Term[] ret = new Term[expandedSize];
         int k = 0;
         for (int i = 0; i < args.length; i++) {
             Term a = args[i];
             Conjunction c = isConjunction(a, order);
             if (c != null) {
+                //arraycopy?
                 for (Term t : c.term) {
                     ret[k++] = t;
                 }
@@ -135,6 +131,19 @@ public class Conjunction extends Junction {
         }
 
         return Terms.toSortedSetArray(ret);
+    }
+
+    protected static int getFlattenedLength(Term[] args, int order) {
+        int sz = 0;
+        for (int i = 0; i < args.length; i++) {
+            Term a = args[i];
+            Conjunction c = isConjunction(a, order);
+            if (c != null)
+                sz += c.length();
+            else
+                sz += 1;
+        }
+        return sz;
     }
 
 
