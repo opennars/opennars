@@ -154,7 +154,7 @@ public class NAL2Test extends JavaNALTest {
     @Test
     public void setDefinition3() throws InvalidInputException {
         n.believe("<{Birdie} <-> {Tweety}>").en("Birdie is similar to Tweety.");
-        n.mustBelieve(50,"<[bright] <-> [smart]>",1.0f,0.9f).en("Birdie is similar to Tweety.");
+        n.mustBelieve(50,"<Birdie <-> Tweety>",1.0f,0.9f).en("Birdie is similar to Tweety.");
         n.mustBelieve(50,"<{Tweety} --> {Birdie}>",1.0f,0.9f).en("Tweety is Birdie.");
         n.run();
     }
