@@ -192,19 +192,19 @@
     (P ==> M), (S ==> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) ==> M), (Truth:Intersection),
                                                                     ((P && S) ==> M), (Truth:Union)
     (P =|> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
-                                                                    ((P && S) =|> M), (Truth:Union)
+                                                                    ((P &| S) =|> M), (Truth:Union)
     (P =/> M), (S =/> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =/> M), (Truth:Intersection),
-                                                                    ((P && S) =/> M), (Truth:Union)
+                                                                    ((P &| S) =/> M), (Truth:Union)
     (P =\> M), (S =\> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =\> M), (Truth:Intersection),
-                                                                    ((P && S) =\> M), (Truth:Union)
+                                                                    ((P &| S) =\> M), (Truth:Union)
 
     (M ==> P), (M ==> S), not_equal(S,P), no_common_subterm(S,P) |- (M ==> (P && S)), (Truth:Intersection),
                                                                     (M ==> (P || S)), (Truth:Union)
-    (M =/> P), (M =/> S), not_equal(S,P), no_common_subterm(S,P) |- (M =/> (P && S)), (Truth:Intersection),
+    (M =/> P), (M =/> S), not_equal(S,P), no_common_subterm(S,P) |- (M =/> (P &| S)), (Truth:Intersection),
                                                                     (M =/> (P || S)), (Truth:Union)
-    (M =|> P), (M =|> S), not_equal(S,P), no_common_subterm(S,P) |- (M =|> (P && S)), (Truth:Intersection),
+    (M =|> P), (M =|> S), not_equal(S,P), no_common_subterm(S,P) |- (M =|> (P &| S)), (Truth:Intersection),
                                                                     (M =|> (P || S)), (Truth:Union)
-    (M =\> P), (M =\> S), not_equal(S,P), no_common_subterm(S,P) |- (M =\> (P && S)), (Truth:Intersection),
+    (M =\> P), (M =\> S), not_equal(S,P), no_common_subterm(S,P) |- (M =\> (P &| S)), (Truth:Intersection),
                                                                     (M =\> (P || S)), (Truth:Union)
 
 //// implication-based decomposition ////////////////////////////////////////////////////////////////////////////////////
