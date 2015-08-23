@@ -89,9 +89,15 @@ public class Memory implements Serializable, AbstractMemory {
 
     private CycleProcess control;
 
-    public final EventEmitter<Class,Object[]> event;
+    @Deprecated public final EventEmitter<Class,Object[]> event;
     public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
     public final Observed<Task> eventTaskRemoved = new Observed.DefaultObserved();
+    public final Observed<ConceptProcess> eventConceptProcessed = new Observed.DefaultObserved();
+    public final Observed<Memory>
+            /** fired at the beginning of each memory cycle */
+            eventCycleStart = new Observed.DefaultObserved(),
+            /** fired at the end of each memory cycle */
+            eventCycleEnd = new Observed.DefaultObserved();
 
     public final EventEmitter<Term,Operation> exe;
 
@@ -849,11 +855,13 @@ public class Memory implements Serializable, AbstractMemory {
 
         clock.preCycle();
 
-        event.emit(Events.CycleStart.class);
+        //event.emit(Events.CycleStart.class);
+        eventCycleStart.emit(this);
 
         getControl().cycle();
 
-        event.emit(Events.CycleEnd.class);
+        //event.emit(Events.CycleEnd.class);
+        eventCycleEnd.emit(this);
 
         inCycle = false;
 

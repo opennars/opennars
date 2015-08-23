@@ -7,6 +7,7 @@ import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.event.NARReaction;
 import nars.task.Task;
+import nars.util.event.Observed;
 
 import java.util.Iterator;
 
@@ -27,6 +28,7 @@ public class Commander extends NARReaction {
 
     public final ItemAccumulator<Task> commands;
     public final Iterator<Task> commandIterator;
+    private final Observed.DefaultObserved.DefaultObservableRegistration cycleEnd;
     float priorityPerCycle = 1,
             priorityRemaining = 0; //change left over from last cycle
 
@@ -35,7 +37,10 @@ public class Commander extends NARReaction {
     }
 
     public Commander(NAR nar, ItemAccumulator<Task> buffer) {
-        super(nar, Events.CycleEnd.class, Events.IN.class);
+        super(nar, Events.IN.class);
+        this.cycleEnd = nar.memory.eventCycleEnd.on(m -> {
+            cycle();
+        });
         this.commands = buffer;
         commandIterator = Iterators.cycle(commands.items);
     }
@@ -50,10 +55,7 @@ public class Commander extends NARReaction {
 
     @Override
     public void event(Class event, Object... args) {
-        if (event == Events.CycleEnd.class) {
-            cycle();
-        }
-        else if (event == Events.IN.class) {
+        if (event == Events.IN.class) {
             Task t = (Task)args[0];
             input(t);
         }

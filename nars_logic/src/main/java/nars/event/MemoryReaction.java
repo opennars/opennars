@@ -2,8 +2,6 @@ package nars.event;
 
 import nars.AbstractMemory;
 import nars.Events;
-import nars.Events.CycleEnd;
-import nars.Events.CycleStart;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
@@ -13,13 +11,14 @@ import nars.util.event.Observed;
 
 public abstract class MemoryReaction extends NARReaction {
 
-    public static final Class[] memoryEvents = new Class[]{CycleStart.class,
-            CycleEnd.class,
+    public static final Class[] memoryEvents = new Class[]{
+            /*CycleStart.class,
+            CycleEnd.class,*/
             //Events.ConceptNew.class,
             Events.ConceptForget.class,
             Events.ConceptBeliefAdd.class,
             Events.ConceptBeliefRemove.class,
-            Events.ConceptProcessed.class,
+            //Events.ConceptProcessed.class,
             Events.ConceptGoalAdd.class,
             Events.ConceptGoalRemove.class,
             Events.ConceptQuestionAdd.class,
@@ -39,6 +38,8 @@ public abstract class MemoryReaction extends NARReaction {
             Events.Restart.class};
     private final AbstractMemory memory;
     private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
+    private final Observed.DefaultObserved.DefaultObservableRegistration cycleStart;
+    private final Observed.DefaultObserved.DefaultObservableRegistration cycleEnd;
 
     public MemoryReaction(NAR n, boolean active) {
         this(n.memory, active);
@@ -52,6 +53,17 @@ public abstract class MemoryReaction extends NARReaction {
         taskRemoved = m.eventTaskRemoved.on(t -> {
             onTaskRemove(t);
         });
+
+        cycleStart = m.eventCycleStart.on(c -> {
+            onCycleStart(memory.time());
+        });
+        cycleEnd = m.eventCycleEnd.on(c -> {
+            onCycleEnd(memory.time());
+        });
+
+        /*conceptProcessed = m.eventConceptProcessed.on(t-> {
+
+        });*/
     }
 
     @Override
@@ -62,10 +74,6 @@ public abstract class MemoryReaction extends NARReaction {
             output(event, arguments[0].toString());
         } else if (event == Events.Restart.class) {
             output(event);        
-        } else if (event == CycleStart.class) {
-            onCycleStart(memory.time());
-        } else if (event == CycleEnd.class) {
-            onCycleEnd(memory.time());
         } else if (event == Events.OUT.class) {
             onTaskAdd((Task)arguments[0]);
         } else {

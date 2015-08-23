@@ -37,7 +37,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE = 0.92f;
 
     //internal experience has less durability?
-    public static final float INTERNAL_EXPERIENCE_PROBABILITY = 0.05f;
+    public static final float INTERNAL_EXPERIENCE_PROBABILITY = 0.01f;
 
     //less probable form
     public static final float INTERNAL_EXPERIENCE_RARE_PROBABILITY =

@@ -12,10 +12,13 @@ import nars.io.qa.AnswerReaction;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
 import nars.task.Task;
+import nars.util.event.Observed;
 import nars.util.event.Reaction;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -30,6 +33,7 @@ public class NARStream  {
     public final NAR nar;
 
     private final Multimap<Set<Class>, Reaction> reactions = HashMultimap.create();
+    private List<Object> regs = new ArrayList();
 
 
     public NARStream(NAR nar) {
@@ -235,8 +239,12 @@ public class NARStream  {
     }
 
     public NARStream forEachCycle(Runnable receiver) {
-        return on(Events.CycleEnd.class, receiver);
+        regs.add(nar.memory.eventCycleEnd.on( m -> {
+            receiver.run();
+        }));
+        return this;
     }
+
     public NARStream forEachFrame(Runnable receiver) {
         return on(Events.FrameEnd.class, receiver);
     }

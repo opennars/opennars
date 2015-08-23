@@ -5,16 +5,15 @@
 
 package nars.op.app.farg;
 
-import nars.Events.CycleEnd;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.NARReaction;
+import nars.event.CycleReaction;
 
 /**
  *
  * @author patrick.hammer
  */
-public class Workspace extends NARReaction {
+public class Workspace extends CycleReaction {
 
     private final FluidAnalogiesAgents farg;
     public double temperature=0.0;
@@ -22,7 +21,7 @@ public class Workspace extends NARReaction {
     public int n_concepts=0;
     
     public Workspace(FluidAnalogiesAgents farg, NAR nar) {
-        super(nar, CycleEnd.class);
+        super(nar);
 
         this.farg = farg;
         this.nar=nar;
@@ -31,7 +30,7 @@ public class Workspace extends NARReaction {
     }
 
     @Override
-    public void event(Class event, Object[] args) {
+    public void onCycle() {
         for(int i=0;i<10;i++) { //process 10 codelets in each step
             Codelet cod=farg.coderack.pop();
             if(cod!=null) {

@@ -9,8 +9,8 @@ import nars.util.event.Reaction;
 import java.util.Arrays;
 import java.util.List;
 
-/* NAR reasoner events */
-public class Events {
+/* NAR reasoner events - to be replaced with individual Observed event emittters */
+@Deprecated public class Events {
 
 
     /** implicitly repeated input (a repetition of all input) */
@@ -34,11 +34,6 @@ public class Events {
     /** fired at the end of each NAR frame */
     public static class FrameEnd {     }
     
-    /** fired at the beginning of each memory cycle */
-    public static class CycleStart {     } 
-    
-    /** fired at the end of each memory cycle */
-    public static class CycleEnd {     }
 
     /** fired at the beginning of each individual Memory work cycle */
     public static class WorkCycleStart {
@@ -118,22 +113,6 @@ public class Events {
     
     public static class Answer { }
 
-    
-    /** fired at the START of a ConceptFire task */
-    abstract public static class ConceptProcessed implements Reaction<Class,Object[]> {
-        
-        /**
-         * use:
-         * Concept n.getCurrentConcept()
-         * TaskLink n.getCurrentTaskLink()
-         */
-        abstract public void onFire(Premise n);
-        
-        @Override public void event(Class event, Object... args) {
-            onFire((Premise)args[0]);
-        }
-        
-    }
 
     public static class TermLinkTransformed {    }
 

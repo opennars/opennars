@@ -64,7 +64,7 @@ abstract public class ConceptProcess extends NAL  {
 
         taskLink.setFired(now);
 
-        emit(Events.ConceptProcessed.class, this);
+        memory.eventConceptProcessed.emit(this);
         memory.logic.TASKLINK_FIRE.hit();
         memory.emotion.busy(getTask(), this);
 

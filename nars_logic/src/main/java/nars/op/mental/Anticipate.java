@@ -26,7 +26,6 @@ package nars.op.mental;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import nars.Events;
-import nars.Events.CycleEnd;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -43,6 +42,7 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.util.event.Observed;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -77,6 +77,7 @@ public class Anticipate extends NARReaction implements Mental {
     /** buffers the terms of new incoming tasks */
     final Set<Compound> newTaskTerms = Global.newHashSet(16);
     private final NAR nar;
+    private final Observed.DefaultObserved.DefaultObservableRegistration onCycleEnd;
 
     NAL nal;
     TaskProcess tp;
@@ -98,10 +99,13 @@ public class Anticipate extends NARReaction implements Mental {
     public Anticipate(NAR nar, STMInduction stm) {
         super(nar, Events.TaskDeriveFuture.class,
                 Events.InduceSucceedingEvent.class,
-                TaskProcess.class,
-                Events.CycleEnd.class);
+                TaskProcess.class);
         this.nar = nar;
         this.stm = stm;
+
+        this.onCycleEnd = nar.memory.eventCycleEnd.on(c -> {
+            updateAnticipations();
+        });
     }
 
 
@@ -285,10 +289,6 @@ public class Anticipate extends NARReaction implements Mental {
             this.nal = (NAL)args[1];
             if (newEvent.getTruth() != null)
                 newTaskTerms.add(newEvent.getTerm()); //new: always add but keep truth value in mind
-
-        } else if (nal != null && event == CycleEnd.class) {
-
-            updateAnticipations();
 
         } else if(event == TaskProcess.class) { //we also need Mr task process to be able to have the task process, this is a hack..
             this.tp = (TaskProcess)args[1];

@@ -31,7 +31,8 @@ public abstract class BeliefPrediction extends NARReaction {
     }
     
     public BeliefPrediction(NAR n, List<Concept> concepts) {
-        super(n, true, Events.CycleEnd.class);
+        super(n, true/*, Events.CycleEnd.class*/);
+
         this.nar = n;
         this.concepts = concepts;
         
@@ -46,14 +47,14 @@ public abstract class BeliefPrediction extends NARReaction {
     @Override
     public void event(Class event, Object[] args) {
         long time = nar.time();
-        if (event == Events.CycleEnd.class) {
-            if (time % cyclesPerTrain == 0) {
-                train();
-            }
-            if (time % cyclesPerPredict == 0) {
-                predict();
-            }
-        }
-    }
+//        if (event == Events.CycleEnd.class) {
+//            if (time % cyclesPerTrain == 0) {
+//                train();
+//            }
+//            if (time % cyclesPerPredict == 0) {
+//                predict();
+//            }
+//        }
+   }
     
 }

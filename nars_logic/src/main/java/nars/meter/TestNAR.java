@@ -3,7 +3,7 @@ package nars.meter;
 import nars.Events;
 import nars.NAR;
 import nars.NARSeed;
-import nars.event.NARReaction;
+import nars.event.CycleReaction;
 import nars.io.in.TextInput;
 import nars.io.out.TextOutput;
 import nars.meter.condition.OutputCondition;
@@ -62,18 +62,18 @@ public class TestNAR extends NAR {
         return OutputCondition.cost(requires);
     }
 
-    class EarlyExit extends NARReaction {
+    class EarlyExit extends CycleReaction {
 
         final int checkResolution; //every # cycles to check for completion
         int cycle = 0;
 
         public EarlyExit(int checkResolution) {
-            super(TestNAR.this, Events.CycleEnd.class);
+            super(TestNAR.this);
             this.checkResolution = checkResolution;
         }
 
         @Override
-        public void event(Class event, Object[] args) {
+        public void onCycle() {
             cycle++;
             if (cycle % checkResolution == 0) {
 

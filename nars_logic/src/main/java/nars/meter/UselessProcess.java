@@ -4,6 +4,7 @@ import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.process.ConceptProcess;
+import nars.util.event.Observed;
 
 /**
  * Meter utility for analyzing useless inference processes
@@ -14,17 +15,18 @@ import nars.process.ConceptProcess;
 public class UselessProcess extends NARReaction {
 
     private final NAR nar;
+    private final Observed.DefaultObserved.DefaultObservableRegistration conceptProcessed;
 
     public UselessProcess(NAR n) {
-        super(n, Events.ConceptProcessed.class);
+        super(n);
+        conceptProcessed = n.memory.eventConceptProcessed.on(c -> {
+            onConceptProcessed(c);
+        });
         this.nar = n;
     }
 
     @Override
     public void event(Class event, Object... args) {
-        if (event == Events.ConceptProcessed.class) {
-            onConceptProcessed((ConceptProcess)args[0]);
-        }
     }
 
     void onConceptProcessed(ConceptProcess arg) {

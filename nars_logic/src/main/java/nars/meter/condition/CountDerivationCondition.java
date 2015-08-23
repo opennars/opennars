@@ -5,6 +5,7 @@ import nars.NAR;
 import nars.event.NARReaction;
 import nars.task.Task;
 import nars.util.data.CuckooMap;
+import nars.util.event.Observed;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.HitMeter;
 
@@ -16,6 +17,7 @@ public class CountDerivationCondition extends NARReaction {
     //SM = success method
     final static String methodInvolvedInSuccessfulDerivation_Prefix = "D";
     final static String methodInvolvedInDerivation_Prefix = "d";
+    private final Observed.DefaultObserved.DefaultObservableRegistration cycleEnd;
 
     boolean includeNonSuccessDerivations = true;
 
@@ -26,7 +28,30 @@ public class CountDerivationCondition extends NARReaction {
     final List<OutputCondition> successesThisCycle = new ArrayList();
 
     public CountDerivationCondition(NAR nar, Metrics m) {
-        super(nar, Events.TaskDerive.class, OutputCondition.class, Events.CycleEnd.class);
+        super(nar, Events.TaskDerive.class, OutputCondition.class);
+        this.cycleEnd = nar.memory.eventCycleEnd.on(memory -> {
+
+            /** usually true rule tasks should only be one, because
+             * this event will be triggered only the first time it has
+             * become successful. */
+            for (OutputCondition o : successesThisCycle) {
+                for (Task tt : o.getTrueReasons()) {
+                    traceStack(tt, true);
+                }
+            }
+
+            /** any successful derivations will be counted again in the
+             * general meters */
+            if (includeNonSuccessDerivations) {
+                for (Task x : derived.keySet()) {
+                    traceStack(x, false);
+                }
+            }
+
+            //reset everything for next cycle
+            derived.clear();
+            successesThisCycle.clear();
+        });
         this.metrics = m;
     }
 
@@ -49,29 +74,6 @@ public class CountDerivationCondition extends NARReaction {
         else if (event == Events.TaskDerive.class) {
             Task t = (Task)args[0];
             derived.put(t, Thread.currentThread().getStackTrace());
-        }
-        else if (event == Events.CycleEnd.class) {
-
-            /** usually true rule tasks should only be one, because
-             * this event will be triggered only the first time it has
-             * become successful. */
-            for (OutputCondition o : successesThisCycle) {
-                for (Task tt : o.getTrueReasons()) {
-                    traceStack(tt, true);
-                }
-            }
-
-            /** any successful derivations will be counted again in the
-             * general meters */
-            if (includeNonSuccessDerivations) {
-                for (Task x : derived.keySet()) {
-                    traceStack(x, false);
-                }
-            }
-
-            //reset everything for next cycle
-            derived.clear();
-            successesThisCycle.clear();
         }
     }
 

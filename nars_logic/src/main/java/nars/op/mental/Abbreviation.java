@@ -29,6 +29,8 @@ public class Abbreviation extends NARReaction {
     public static final Operator abbreviate = Operator.the("abbreviate");
     public final Memory memory;
 
+    final float abbreviationConfidence = 0.99f;
+
     //these two are AND-coupled:
     //when a concept is important and exceeds a syntactic complexity, let NARS name it:
     public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(24);
@@ -96,14 +98,12 @@ public class Abbreviation extends NARReaction {
 
             if (concept!=null && concept.get(Abbreviation.class)==null) {
 
-                //compound.setTask(task);
-
                 Term atomic = newSerialTerm();
 
                 concept.put(Abbreviation.class, atomic);
 
                 memory.add( memory.newTask(Similarity.make(termAbbreviating, atomic))
-                        .judgment().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                        .judgment().truth(1, abbreviationConfidence)
                         .parent(task).occurrNow()
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
                                 Global.DEFAULT_JUDGMENT_DURABILITY).get()

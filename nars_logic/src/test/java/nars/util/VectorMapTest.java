@@ -1,7 +1,7 @@
 package nars.util;
 
-import nars.Events.CycleStart;
 import nars.NAR;
+import nars.event.CycleReaction;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;
 import nars.nar.Default;
@@ -66,10 +66,11 @@ public class VectorMapTest {
         v.update();
         
         n.runWhileNewInput(16);
-        
-        n.on(new Reaction<Class,Object[]>() {
 
-            @Override public void event(Class event, Object[] arguments) {
+        new CycleReaction(n) {
+
+            @Override
+            public void onCycle() {
 
                 long t = n.time();
                 if (t % 100 != 0)  return;
@@ -79,9 +80,8 @@ public class VectorMapTest {
                     v.input.data[i] = 0.5 * (1.0 + Math.sin((t+i)/20f));
                 v.update();
             }
+        };
 
-        }, CycleStart.class);
-        
         v.update();
         
         n.runWhileNewInput(16);

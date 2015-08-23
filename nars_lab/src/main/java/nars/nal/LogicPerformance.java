@@ -7,7 +7,6 @@ package nars.nal;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import nars.Events.ConceptProcessed;
 import nars.Global;
 import nars.NAR;
 import nars.gui.output.JGraphXGraphPanel;
@@ -22,6 +21,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.util.event.Observed;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.TimeNode;
 import nars.util.graph.NARGraph.UniqueEdge;
@@ -37,6 +37,7 @@ import java.util.*;
  * @see http://jgrapht.org/javadoc/org/jgrapht/alg/package-summary.html
  */
 public class LogicPerformance {
+
     private final TaskReasonGraph essential;
     private final Collection<Task> solutionTask;
     
@@ -274,15 +275,11 @@ public class LogicPerformance {
 //                //process.explain(t, analysisDepth, nal.produced);
 //            }
 //        }, TaskImmediateProcessed.class);
-         n.on(new ConceptProcessed() {
 
-            @Override
-            public void onFire(Premise f) {
+        Observed.DefaultObserved.DefaultObservableRegistration conceptProcessed = n.memory.eventConceptProcessed.on(f -> {
+            process.explain(n.time(), f);
+        });
 
-                process.explain(n.time(), f);
-            }
-        }, ConceptProcessed.class);
-        
         n.runWhileNewInput(1);
         
         Set<Task> solutionTasks = new HashSet();

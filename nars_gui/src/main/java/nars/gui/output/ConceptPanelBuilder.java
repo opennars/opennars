@@ -62,8 +62,8 @@ public class ConceptPanelBuilder extends NARReaction {
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
                 Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class,
-                Events.ConceptProcessed.class);
+                Events.ConceptGoalRemove.class
+                );
 
         this.nar = n;
 
@@ -125,10 +125,10 @@ public class ConceptPanelBuilder extends NARReaction {
         if (concept.size() == 0) return;
 
         Concept c = null;
-        if (event == Events.ConceptProcessed.class) {
+        /*if (event == Events.ConceptProcessed.class) {
             c = ((Premise)args[0]).getConcept();
         }
-        else {
+        else */{
             if (args[0] instanceof Concept)
             c = (Concept)args[0];
         }

@@ -24,7 +24,7 @@ public abstract class AbstractController extends CycleReaction {
     /** adjust parameter values */
 
     public void start() {
-        this.reg = nar.on(this, Events.CycleEnd.class);
+        //this.reg = nar.on(this /*Events.CycleEnd.class*/);
     }
 
     /** read sensor values as input */

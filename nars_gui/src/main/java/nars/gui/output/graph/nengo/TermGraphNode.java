@@ -6,17 +6,15 @@ import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import com.google.common.collect.Iterators;
-import nars.Events;
 import nars.Memory;
 import nars.concept.Concept;
 import nars.event.ConceptReaction;
-import nars.event.NARReaction;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.data.id.Named;
-import nars.util.event.AbstractReaction;
+import nars.util.event.Observed;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -188,7 +186,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             return "layout";
         }
     };
-    private AbstractReaction conceptReaction2;
+    private Observed.DefaultObserved.DefaultObservableRegistration conceptReaction2;
 
     public boolean filter() {
         return false;
@@ -223,13 +221,17 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                 remove(c);
             }
         };
-        this.conceptReaction2 = new NARReaction(memory, Events.ConceptProcessed.class) {
+        /*this.conceptReaction2 = new NARReaction(memory, Events.ConceptProcessed.class) {
 
             @Override
             public void event(Class event, Object... args) {
                 refresh(((Premise)args[0]).getConcept());
             }
-        };
+        };*/
+        this.conceptReaction2 = memory.eventConceptProcessed.on( p-> {
+            refresh(p.getConcept());
+        });
+
 
     }
 
