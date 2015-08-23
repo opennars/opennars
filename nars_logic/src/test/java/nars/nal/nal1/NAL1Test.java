@@ -2,6 +2,7 @@ package nars.nal.nal1;
 
 import nars.Global;
 import nars.NARSeed;
+import nars.io.out.TextOutput;
 import nars.nal.JavaNALTest;
 import nars.nar.Classic;
 import nars.nar.Default;
@@ -23,18 +24,18 @@ public class NAL1Test extends JavaNALTest {
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-               /* {new Default()},
+                {new Default()},
                 {new Default().setInternalExperience(null)},
 
-                {new NewDefault()},*/
+                {new NewDefault()},
                 {new NewDefault().setInternalExperience(null)},
-                /*
+
                 {new Default().level(2)}, //why does this need level 2 for some tests?
                 {new DefaultMicro().level(2) },
                 {new Classic()},
                 {new Solid(1, 64, 1, 4, 1, 3).setInternalExperience(null)},
                 {new Solid(1, 64, 1, 4, 1, 3).level(2)},
-                {new Solid(1, 64, 1, 4, 1, 3)}*/
+                {new Solid(1, 64, 1, 4, 1, 3)}
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
     }

@@ -1,5 +1,6 @@
 package nars.meta.pre;
 
+import nars.link.TermLink;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
@@ -11,6 +12,10 @@ final public class MatchBeliefTerm extends MatchTerm {
     }
 
     @Override protected final Term getTerm(final Premise p) {
-        return p.getTermLink().getTerm();
+
+        final TermLink tl = p.getTermLink();
+        if (tl == null) return null;
+
+        return tl.getTerm();
     }
 }

@@ -23,13 +23,13 @@ public class NAL2Test extends JavaNALTest {
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-               /* {new Default()}, //NAL8 + NAL9 didnt solve it
+                {new Default()}, //NAL8 + NAL9 didnt solve it
                 {new Default().level(3)}, //needs 3 for sets
                 {new Default().setInternalExperience(null)},
-                {new NewDefault()},*/
+                {new NewDefault()},
                 {new NewDefault().setInternalExperience(null)},
-               /* {new DefaultMicro() },
-                {new Classic()}*/
+                {new DefaultMicro() },
+                {new Classic()}
 
                 //{new Neuromorphic(4)},
         });
@@ -102,9 +102,9 @@ public class NAL2Test extends JavaNALTest {
 
     @Test
     public void inheritanceToSimilarity3() throws InvalidInputException {
+        n.mustBelieve(50,"<bird <-> swan>",0.9f,0.47f).en("I guess that bird is similar to swan.");
         n.believe("<swan --> bird>",0.9f,0.9f).en("Swan is a type of bird.");
         n.ask("<bird <-> swan>").en("Is bird similar to swan?");
-        n.mustBelieve(50,"<bird <-> swan>",0.9f,0.47f).en("I guess that bird is similar to swan.");
         n.run();
     }
 

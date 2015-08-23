@@ -34,7 +34,6 @@ import nars.op.data.similaritree;
 import nars.op.io.*;
 import nars.op.math.add;
 import nars.op.math.count;
-import nars.op.math.lessThan;
 import nars.op.mental.*;
 import nars.op.meta.complexity;
 import nars.op.meta.reflect;
@@ -246,10 +245,6 @@ public class Default extends NARSeed  {
         new NullOperator("deactivate")
     };
 
-    public ConceptBuilder[] defaultConceptBuilders = new ConceptBuilder[] {
-            new lessThan()
-    };
-
 
 
     public final OpReaction[] defaultOperators  = new OpReaction[] {
@@ -396,9 +391,6 @@ public class Default extends NARSeed  {
                 for (OpReaction o : exampleOperators)
                     n.on(o);
 
-                for (ConceptBuilder c : defaultConceptBuilders) {
-                    n.on(c);
-                }
 
                 //n.on(Anticipate.class);      // expect an event
 

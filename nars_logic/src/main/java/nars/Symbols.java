@@ -63,7 +63,6 @@ abstract public class Symbols {
     
     //?any asks for a concrete thing
     public static final char VAR_QUERY = '?';
-    //public static final String VAR_QUERY_DEFAULT = VAR_QUERY + "any";
 
 
     /** used in MetaNAL structure matching */

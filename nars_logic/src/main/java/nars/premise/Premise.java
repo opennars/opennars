@@ -181,7 +181,7 @@ public interface Premise {
 
     /** queues a derivation during a reasoning process.
      * this is in order to combine duplicates at the end before inputting to memory */
-    default void queue(Task derivedTask) {
+    default void accept(Task derivedTask) {
         throw new RuntimeException("unsupported");
     }
 
@@ -400,7 +400,7 @@ public interface Premise {
                 taskCreated.log(Premise.getStack());
             }
 
-            queue(taskCreated);
+            accept(taskCreated);
 
             return taskCreated;
         }

@@ -1,10 +1,9 @@
 package nars.nar;
 
 import nars.NAR;
-import nars.concept.ConceptBuilder;
+import nars.nal.Deriver;
 import nars.nal.LogicPolicy;
 import nars.nal.LogicStage;
-import nars.nal.Deriver;
 import nars.nal.nal8.OpReaction;
 import nars.op.app.STMEventInference;
 import nars.op.mental.Abbreviation;
@@ -13,6 +12,7 @@ import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.process.concept.FilterEqualSubtermsInRespectToImageAndProduct;
+import nars.process.concept.QueryVariableExhaustiveResults;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
@@ -39,6 +39,7 @@ public class NewDefault extends Default {
 
                 new LogicStage /* <ConceptProcess> */ [] {
                         new FilterEqualSubtermsInRespectToImageAndProduct(),
+                        //new QueryVariableExhaustiveResults(),
                         ruletable
                         //---------------------------------------------
                 } ,
@@ -69,10 +70,6 @@ public class NewDefault extends Default {
                     n.on(o);
                 for (OpReaction o : exampleOperators)
                     n.on(o);
-
-                for (ConceptBuilder c : defaultConceptBuilders) {
-                    n.on(c);
-                }
 
                 //n.on(Anticipate.class);      // expect an event
 

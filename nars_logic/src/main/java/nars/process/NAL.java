@@ -6,10 +6,10 @@ package nars.process;
 
 import nars.Global;
 import nars.Memory;
-import nars.premise.Premise;
 import nars.task.Task;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -22,7 +22,7 @@ import java.util.List;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL extends AbstractPremise implements Runnable {
+public abstract class NAL extends AbstractPremise implements Runnable, Consumer<Task> {
 
 
 
@@ -70,7 +70,7 @@ public abstract class NAL extends AbstractPremise implements Runnable {
         return null;
     }
 
-    @Override public void queue(Task derivedTask) {
+    @Override public void accept(Task derivedTask) {
         if (derived == null)
             derived = Global.newArrayList(1);
 

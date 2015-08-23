@@ -417,7 +417,8 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
     /** creates a result term in the conventional format */
     public static Inheritance result(Operator op, Product x, Term y) {
-        return Inheritance.make(y,
+        return Inheritance.make(
+                SetExt.make(y),
                 ImageExt.make(x, op, (short)(x.length()-1) /* position of the variable */)
         );
     }

@@ -20,8 +20,10 @@ public class FindSubst {
     public final Map<Term, Term> map1;
     private final Random random;
 
-    /**
-     */
+    public FindSubst(char type, Random random) {
+        this(type, null, null, random);
+    }
+
     public FindSubst(char type, Map map0, Map map1, Random random) {
         if (map0 == null)
             map0 = Global.newHashMap(0);
