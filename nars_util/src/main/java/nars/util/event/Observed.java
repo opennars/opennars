@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 /**
  * notifies subscribers when a value is emitted
  */
-abstract public class Observed<V>  {
+abstract public interface Observed<V>  {
 
     abstract void delete();
 
@@ -26,9 +26,7 @@ abstract public class Observed<V>  {
     /** single-thread synchronous (in-thread) event emitter with direct array access
      * NOT WORKING YET
      * */
-    public static class DefaultObserved<V> extends Observed<V> {
-
-        final List<Consumer<V>> reactions = new CopyOnWriteArrayList();
+    public static class DefaultObserved<V> extends CopyOnWriteArrayList<Consumer<V>> implements Observed<V> {
 
 
         public class DefaultObservableRegistration<V>  {
@@ -40,33 +38,33 @@ abstract public class Observed<V>  {
             }
 
             public void off() {
-                reactions.remove(reaction);
+                remove(reaction);
             }
         }
 
 
         @Override
         public List<Consumer<V>> all() {
-            return reactions;
+            return this;
         }
 
         @Override
         public void emit(final V arg) {
-            for (int i = 0, cSize = reactions.size(); i < cSize; i++) {
-                reactions.get(i).accept(arg);
+            for (int i = 0, cSize = size(); i < cSize; i++) {
+                get(i).accept(arg);
             }
         }
 
         @Override
         public DefaultObservableRegistration on(Consumer<V> o) {
             DefaultObservableRegistration d = new DefaultObservableRegistration(o);
-            reactions.add(o);
+            add(o);
             return d;
         }
 
         @Override
         public void delete() {
-            reactions.clear();
+            clear();
         }
 
     }
