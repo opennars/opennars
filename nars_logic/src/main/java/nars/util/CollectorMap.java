@@ -143,7 +143,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> {
     /**
      * put key in index, do not add value
      */
-    protected V putKey(final K key, final V value) {
+    public V putKey(final K key, final V value) {
         return map.put(key, value);
     }
 

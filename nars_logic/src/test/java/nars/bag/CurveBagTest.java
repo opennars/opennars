@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 
@@ -48,7 +49,7 @@ public class CurveBagTest extends AbstractBagTest {
         //assertTrue(Arrays.equals(d1, d2));
         //assertTrue(Arrays.equals(d2, d3));
         
-        for (int capacity : new int[] { 4, 7, 13, 16, 100 } ) {
+        for (int capacity : new int[] { 6, 7, 13, 16, 100 } ) {
             testRemovalDistribution(capacity);
             testRemovalDistribution(capacity);
         }
@@ -178,7 +179,7 @@ public class CurveBagTest extends AbstractBagTest {
             count[f.sampler.applyAsInt(f)]++;
         }
         
-        //System.out.println(capacity +"," + random + " = " + Arrays.toString(count));
+        //System.out.println(capacity +"," + " = " + Arrays.toString(count));
                 
         assert(semiMonotonicallyIncreasing(count));
         
@@ -299,5 +300,66 @@ public class CurveBagTest extends AbstractBagTest {
         assertEquals(1, c.size());
 
     }
+
+
+    @Test public void testMerge() {
+        int capacity = 3;
+
+        final AtomicInteger putKey = new AtomicInteger(0);
+        final AtomicInteger removeKey = new AtomicInteger(0);
+
+        ArraySortedIndex<NullItem> as = new ArraySortedIndex<NullItem>(capacity);
+        CurveBag<CharSequence, NullItem> c = new CurveBag<CharSequence, NullItem>(rng, capacity, curve, as) {
+
+            protected CurveMap newIndex(int capacity) {
+                return new CurveMap(
+                        //new HashMap(capacity)
+                        Global.newHashMap(capacity)
+                ) {
+                    @Override
+                    public NullItem put(NullItem value) {
+                        return super.put(value);
+                    }
+
+                    @Override
+                    public NullItem putKey(CharSequence key, NullItem value) {
+                        putKey.incrementAndGet();
+                        return super.putKey(key, value);
+                    }
+
+                    @Override
+                    public NullItem remove(CharSequence key) {
+                        removeKey.incrementAndGet();
+                        return super.remove(key);
+                    }
+                };
+            }
+        };
+        c.mergePlus();
+
+        NullItem a = new NullItem(0.5f);
+
+        c.put(a);
+
+        assertEquals(1, putKey.get()); assertEquals(0, removeKey.get());
+        assertEquals(1, c.size());
+
+        c.put(a);
+
+        assertEquals(2, putKey.get()); assertEquals(0, removeKey.get());
+        assertEquals(1, c.size());
+
+        c.forEach(n -> System.out.println(n));
+
+        c.remove(a.name());
+
+        assertEquals(2, putKey.get()); assertEquals(1, removeKey.get());
+        assertEquals(0, c.size());
+
+        c.validate();
+
+
+    }
+
 
 }

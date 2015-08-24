@@ -298,7 +298,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         
 
         int i = p, j = p - 1;
-        int finished = 0;
+        int finished = (j == -1) ? 1 : 0;
         do {
             
             if (i < s) {

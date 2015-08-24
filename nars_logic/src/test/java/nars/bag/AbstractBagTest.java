@@ -49,12 +49,18 @@ public class AbstractBagTest {
 
             //remove some, adjust their priority, and re-insert
             for (int i= 0; i < insertsPerLoop * adjustFraction; i++) {
+                f.size();
+
                 NullItem t = f.pop();
+
+                f.size();
+
                 if (t == null) break;
                 if (i % 2 == 0)
                     t.setPriority(t.getPriority() * 0.99f);
                 else
                     t.setPriority(Math.min(1.0f, t.getPriority() * 1.01f));
+
                 f.put(t);
             }
 
@@ -165,5 +171,13 @@ public class AbstractBagTest {
         return
                 (count[0] >= count[cl-1]) &&
                 (count[cl/2] >= count[cl-1]);
+    }
+
+    public static boolean semiMonotonicallyDecreasing(int[] count) {
+
+        int cl = count.length;
+        return
+                (count[0] <= count[cl-1]) &&
+                        (count[cl/2] <= count[cl-1]);
     }
 }

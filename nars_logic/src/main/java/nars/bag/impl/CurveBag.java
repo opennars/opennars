@@ -76,7 +76,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     }
 
-    class CurveMap extends CollectorMap<K, V> {
+    public class CurveMap extends CollectorMap<K, V> {
 
         public CurveMap(Map<K, V> map) {
             super(map);
@@ -192,13 +192,17 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         this.items = items;
 
 
-        index = new CurveMap(
+        index = newIndex(capacity);
+
+    }
+
+    protected CurveMap newIndex(int capacity) {
+        return new CurveMap(
                 //new HashMap(capacity)
                 Global.newHashMap(capacity)
                 //new UnifiedMap(capacity)
                 //new CuckooMap(capacity)
         );
-
     }
 
 
@@ -215,13 +219,15 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      */
     @Override
     public int size() {
+        /*if (Global.DEBUG)
+            validate();*/
         return items.size();
     }
 
-    void validate() {
+    public void validate() {
         int in = index.size();
         int is = items.size();
-            if (Math.abs(is-in) > 2) {
+            if (Math.abs(is-in) > 0) {
 //                System.err.println("INDEX");
 //                for (Object o : index.values()) {
 //                    System.err.println(o);
@@ -421,28 +427,37 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         boolean full = (size() >= capacity);
 
-        V overflow = index.remove(i.name());
+        V overflow = index.putKey(i.name(), i);
 
         if (overflow!=null) {
-            if (overflow!=i)
-                merge(i.getBudget(), overflow.getBudget());
-            full = false;
+
+            index.removeItem(overflow);
+
+            /*if (index.removeItem(overflow) == null)
+                throw new RuntimeException("put fault");*/
+
+            merge(i.getBudget(), overflow.getBudget());
+
+            index.addItem(i);
+
+            return overflow;
         }
+
 
         if (full) {
 
             if (getPriorityMin() > i.getPriority()) {
                 //insufficient priority to enter the bag
+                index.removeKey(i.name());
                 return i;
             }
 
             overflow = removeLowest();
         }
 
-        index.put(i);
+        index.addItem(i);
 
         return overflow;
-
     }
 
 
@@ -458,12 +473,16 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      */
     protected V removeItem(final int index) {
 
-        V ii = items.get(index);
+        final V ii = items.get(index);
         if (ii == null)
             return null;
 
-        return remove( ii.name() );
+        final V jj = remove( ii.name() );
+        if (ii!=jj) {
+            throw new RuntimeException("removal fault");
+        }
 
+        return jj;
     }
 
 

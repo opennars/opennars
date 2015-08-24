@@ -2,6 +2,7 @@ package nars.bag;
 
 import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.AtomicDouble;
+import com.gs.collections.api.block.procedure.Procedure2;
 import nars.AbstractMemory;
 import nars.Memory;
 import nars.bag.tx.BagForgetting;
@@ -56,9 +57,30 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      */
     abstract public V put(V newItem);
 
+
+    static final Procedure2<Budget,Budget> average = new Procedure2<Budget,Budget>() {
+        @Override public void value(Budget newBudget, Budget oldBudget) {
+            newBudget.merge( oldBudget );
+        }
+    };
+    static final Procedure2<Budget,Budget> plus = new Procedure2<Budget,Budget>() {
+        @Override public void value(Budget newBudget, Budget oldBudget) {
+            newBudget.accumulate( oldBudget );
+        }
+    };
+
+    Procedure2<Budget,Budget> mergeFunction = average;
+
+    /** set the merging function to 'average' */
+    public void mergeAverage() {  mergeFunction = average;    }
+
+    /** set the merging function to 'plus' */
+    public void mergePlus() {  mergeFunction = plus;    }
+
     protected void merge(Budget newBudget, Budget oldBudget) {
-        newBudget.merge( oldBudget );
-        //newBudget.accumulate( oldBudget  );
+        if (newBudget == oldBudget) return;
+
+        mergeFunction.value(newBudget, oldBudget);
     }
 
     /**
