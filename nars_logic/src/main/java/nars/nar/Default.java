@@ -458,8 +458,9 @@ public class Default extends NARSeed  {
     }
 
     public Bag<Term, Concept> newConceptBag() {
-        //return new LevelBag((int)Math.sqrt(getActiveConcepts()), getActiveConcepts());
-        return new CurveBag(rng, getActiveConcepts());
+        CurveBag<Term,Concept> b = new CurveBag(rng, getActiveConcepts());
+        b.mergePlus();
+        return b;
     }
 
     @Override

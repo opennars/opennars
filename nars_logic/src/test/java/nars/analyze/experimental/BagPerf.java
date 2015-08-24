@@ -59,7 +59,7 @@ public class BagPerf {
 
             @Override
             public void run(boolean warmup) {
-                LevelBag<NullItem,CharSequence> b = new LevelBag(levels, capacity) {
+                LevelBag<CharSequence, NullItem> b = new LevelBag(levels, capacity) {
 
 //                    @Override
 //                    protected ArrayDeque<NullItem> newLevel() {

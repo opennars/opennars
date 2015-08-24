@@ -194,7 +194,7 @@ public class CurveBagTest extends AbstractBagTest {
         final float priorityEpsilon = 0.01f;
         
         CurveBag<CharSequence, NullItem> c = new CurveBag(rng, capacity, curve, items);
-        LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
+        LevelBag<CharSequence, NullItem> d = new LevelBag<>(capacity, 10);
         
         assertEquals(c.getPrioritySum(), d.getPrioritySum(), 0);
         assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);
@@ -337,7 +337,7 @@ public class CurveBagTest extends AbstractBagTest {
         };
         c.mergePlus();
 
-        NullItem a = new NullItem(0.5f);
+        NullItem a = new NullItem(0.5f, "a");
 
         c.put(a);
 
@@ -349,15 +349,37 @@ public class CurveBagTest extends AbstractBagTest {
         assertEquals(2, putKey.get()); assertEquals(0, removeKey.get());
         assertEquals(1, c.size());
 
-        c.forEach(n -> System.out.println(n));
 
-        c.remove(a.name());
 
-        assertEquals(2, putKey.get()); assertEquals(1, removeKey.get());
-        assertEquals(0, c.size());
+        //merged with plus, 0.5 + 0.5 = 1.0
+        assertEquals(1f, c.iterator().next().getPriority(), 0.001);
+
 
         c.validate();
 
+        c.mergeAverage();
+
+        //for average merge, we need a new instance of same key
+        //but with different priority so that it doesnt modify itself (having no effect)
+        NullItem a2 = new NullItem(0.5f, "a");
+
+        c.put(a2);
+
+        //still only one element
+        assertEquals(1, c.size());
+
+        //but the merge should have decreased the priority from 1.0
+        assertEquals(0.75f, c.iterator().next().getPriority(), 0.001);
+
+
+        //finally, remove everything
+
+        c.remove(a.name());
+
+        assertEquals(3, putKey.get()); assertEquals(1, removeKey.get());
+        assertEquals(0, c.size());
+
+        c.validate();
 
     }
 

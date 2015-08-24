@@ -49,7 +49,9 @@ public class Classic extends Default {
 
     @Override
     public Bag<Term, Concept> newConceptBag() {
-        return new LevelBag(getConceptBagLevels(), getActiveConcepts()); //.setNextNonEmptyMode(Fast);
+        LevelBag<Term, Concept> b = new LevelBag<Term, Concept>(getConceptBagLevels(), getActiveConcepts()); //.setNextNonEmptyMode(Fast);
+        b.mergePlus();
+        return b;
     }
 
     public int getConceptBagLevels() { return conceptBagLevels; }

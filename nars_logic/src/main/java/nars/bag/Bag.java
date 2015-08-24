@@ -77,9 +77,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     /** set the merging function to 'plus' */
     public void mergePlus() {  mergeFunction = plus;    }
 
-    protected void merge(Budget newBudget, Budget oldBudget) {
-        if (newBudget == oldBudget) return;
-
+    final protected void merge(final Budget newBudget, final Budget oldBudget) {
         mergeFunction.value(newBudget, oldBudget);
     }
 

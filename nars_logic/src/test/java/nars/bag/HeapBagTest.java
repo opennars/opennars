@@ -154,7 +154,7 @@ public class HeapBagTest extends AbstractBagTest {
         final float priorityEpsilon = 0.01f;
         
         HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
-        LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
+        LevelBag<CharSequence, NullItem> d = new LevelBag<>(capacity, 10);
         
         assertEquals(c.getPrioritySum(), d.getPrioritySum(), 0);
         assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);

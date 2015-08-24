@@ -29,6 +29,7 @@ import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
 import nars.budget.Item;
+import nars.budget.Itemized;
 import nars.util.data.ReversibleRecyclableArrayIterator;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
@@ -44,7 +45,7 @@ import java.util.function.Consumer;
  *
  * TODO recycle Level[] arrays in an object pool when a LevelBag is finished, or just recycle anentire Concept
  */
-public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
+public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
 
     /**
@@ -144,7 +145,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /** high performance linkedhashset/deque for use as a levelbag level */
-    public static class Level<KK,EE extends Item<KK>> extends DDList<EE> {
+    public static class Level<KK,EE extends Itemized<KK>> extends DDList<EE> {
 
 
         private final boolean[] levelEmpty;
@@ -442,7 +443,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         //allow selector to modify it, then if it returns non-null, reinsert
 
         Budget c = selector.updateItem(b, temp.set( b.getBudget() ));
-        if ((c!=null && !c.equalsByPrecision(b))) {
+        if ((c!=null && !c.equalsByPrecision(b.getBudget()))) {
 
             b.getBudget().set(c);
             relevel(bx, b);
@@ -591,9 +592,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         //if (Parameters.DEBUG_BAG) size();
         DD<E> existing = index.get(newItem.name());
         if (existing != null) {
-            Budget prevBudget = existing.item;
+            Budget prevBudget = existing.item.getBudget();
             existing.item = newItem;
-            merge(newItem, prevBudget);
+            merge(newItem.getBudget(), prevBudget);
 //            if (merge(newItem, prevBudget)) {
 //                //budget changed, adjust level
                 relevel(existing, newItem);
