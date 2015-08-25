@@ -123,7 +123,9 @@ public class Atom extends ImmutableAtom {
     public final static Atom the(String o) {
         return new Atom(o);
     }
-
+    public final static Atom the(byte c) {
+        return new Atom(new byte[] { c });
+    }
     /*
     // similar to String.intern()
     public final static Atom the(final String name) {

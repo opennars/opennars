@@ -283,7 +283,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public boolean equals(final Object that) {
         if (this == that) return true;
         if (that instanceof Sentence) {
-            //if (that.hashCode()!=hashCode()) return false;
             return equivalentTo((Sentence) that, true, true, true, true, false);
         }
         return false;

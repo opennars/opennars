@@ -1,11 +1,11 @@
 package nars.util.java;
 
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -71,6 +71,8 @@ public class MethodOperator extends TermFunction {
             if (feedback)
                 return termizer.term(result);
         } catch (Exception e) {
+            System.err.println(method + " <- " + instance);
+            System.err.println(Arrays.toString(args));
             e.printStackTrace();
             return termizer.term(e);
         }

@@ -26,7 +26,7 @@ public class NALPerfLoop {
         int randomExtraCycles = 512;
         Global.THREADS = 1;
         Global.EXIT_ON_EXCEPTION = true;
-        Global.DEBUG = true;
+        Global.DEBUG = false;
 
           
         NAR n = new NAR(new Equalized(maxConcepts,1,3).setInternalExperience(null) );

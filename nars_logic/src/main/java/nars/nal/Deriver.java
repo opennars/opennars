@@ -18,6 +18,7 @@ import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Task;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.data.random.XorShift1024StarRandom;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -183,7 +184,7 @@ public class Deriver extends ConceptFireTaskTerm {
 
     final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
         //TODO use the memory's RNG for complete deterministic reproducibility
-        return new RuleMatch(new XORShiftRandom());
+        return new RuleMatch(new XorShift1024StarRandom(1));
     });
 
     @Override

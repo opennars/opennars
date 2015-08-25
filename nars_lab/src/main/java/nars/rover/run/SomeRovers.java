@@ -122,7 +122,7 @@ public class SomeRovers {
             e.setClock(clock);
 
             NAR nar = new NAR(e);
-            TextOutput.out(nar).setOutputPriorityMin(0.5f);
+            //TextOutput.out(nar).setOutputPriorityMin(0.5f);
 
             //TextOutput.out(nar);
 

@@ -222,11 +222,15 @@ public class NAR extends Container implements Runnable {
 
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
-        return ask(termString, Symbols.QUESTION);
+        return ask((Compound)narsese.compound(termString));
+    }
+    public Task ask(Compound c) throws InvalidInputException {
+        //TODO remove '?' if it is attached at end
+        return ask(c, Symbols.QUESTION);
     }
 
     public Task quest(String questString) throws InvalidInputException {
-        return ask(questString, Symbols.QUEST);
+        return ask(narsese.term(questString), Symbols.QUEST);
     }
 
     public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
@@ -310,13 +314,13 @@ public class NAR extends Container implements Runnable {
         return t;
     }
 
-    public Task ask(String termString, char questionOrQuest) throws InvalidInputException {
+    public Task ask(Compound term, char questionOrQuest) throws InvalidInputException {
 
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
         final Task t = new DefaultTask(
-                narsese.compound(termString),
+                term,
                 questionOrQuest,
                 null,
                 Global.DEFAULT_QUESTION_PRIORITY,

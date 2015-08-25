@@ -16,12 +16,15 @@ public class DefaultTermizer implements Termizer {
 
     final Map<Package, Atom> packages = new HashMap();
     final Map<Class, Term> classes = new HashMap();
-    final HashBiMap<Object, Term> objects = new HashBiMap();
+
+    final Map<Object, Term> objects = new HashMap();
+    final Map<Term, Object> termed = new HashMap();
 
 
     @Override
-    public Object object(final Term _t) {
-        return objects.inverse().computeIfAbsent(_t, t -> {
+    public Object object(final Term t) {
+        Object x = termed.get(t);
+        if (x == null) {
             //compute it
             if (t instanceof Atom) {
                 String s = t.toStringCompact();
@@ -30,12 +33,15 @@ public class DefaultTermizer implements Termizer {
                 } catch (Exception e) {
                 }
 
-                return s;
+                x = s;
             } else {
                 //TODO handle Products as lists/array, etc
-                return null;
+                x = null;
             }
-        });
+
+            termed.put(t, x);
+        }
+        return x;
     }
 
 
@@ -123,7 +129,8 @@ public class DefaultTermizer implements Termizer {
 
 
     public static String instanceString(Object o) {
-        return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());
+        //return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());
+        return o.toString();
     }
 
     protected void onClassInPackage(Term classs, Atom packagge) {
@@ -131,13 +138,17 @@ public class DefaultTermizer implements Termizer {
 
     }
 
-    public Term term(Object o) {
+    public Term term(final Object o) {
+        if (o == null) return NULL;
+
         //        String cname = o.getClass().toString().substring(6) /* "class " */;
 //        int slice = cname.length();
 //
-        return objects.computeIfAbsent(o, O -> {
+        Term oo = objects.get(o);
+        if (oo == null) {
 
-            Term oterm = _term(O);
+
+            Term oterm = _term(o);
 
             Term clas = classes.get(o.getClass());
             if (clas == null) {
@@ -146,9 +157,12 @@ public class DefaultTermizer implements Termizer {
 
             onInstanceOfClass(oterm, clas);
 
-            return oterm;
+            oo = oterm;
 
-        });
+            objects.put(o, oo);
+        }
+
+        return oo;
 
         //TODO decide to use toString or System object id
         //String instanceName = o.toString();
