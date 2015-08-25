@@ -38,21 +38,80 @@ public class NAL4Test extends JavaNALTest {
         });
     }
 
+    @Test
+    public void structural_transformation() throws InvalidInputException {
+        n.believe("<(*,acid,base) --> reaction>",1.0f,0.9f).en("An acid and a base can have a reaction.");
+        n.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f).en("Acid can react with base.");
+        n.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f).en("A base is something that has a reaction with an acid.");
+        n.run();
+    }
 
+    @Test
+     public void structural_transformation2() throws InvalidInputException {
+        n.believe("<acid --> (/,reaction,_,base)>",1.0f,0.9f).en("Acid can react with base.");
+        n.mustBelieve(100, "<(*,acid,base) --> reaction>", 1.0f, 0.9f).en("Acid can react with base.");
+        n.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f).en("A base is something that has a reaction with an acid.");
+        n.run();
+    }
+
+    @Test
+    public void structural_transformation3() throws InvalidInputException {
+        n.believe("<base --> (/,reaction,acid,_)>",1.0f,0.9f).en("A base is something that has a reaction with an acid.");
+        n.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f).en("Acid can react with base.");
+        n.mustBelieve(100, "<(*,acid,base) --> reaction>", 1.0f, 0.9f).en("An acid and a base can have a reaction.");
+        n.run();
+    }
+
+    @Test
+    public void structural_transformation4() throws InvalidInputException {
+        n.believe("<neutralization --> (*,acid,base)>",1.0f,0.9f).en("Neutralization is a relation between an acid and a base. ");
+        n.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>.", 1.0f, 0.9f).en("Something that can neutralize a base is an acid.");
+        n.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f).en("Something that can be neutralized by an acid is a base.");
+        n.run();
+    }
+
+    @Test
+    public void structural_transformation5() throws InvalidInputException {
+        n.believe("<(\\,neutralization,_,base) --> acid>",1.0f,0.9f).en("Something that can neutralize a base is an acid.");
+        n.mustBelieve(100, "<neutralization --> (*,acid,base)>", 1.0f, 0.9f).en("Neutralization is a relation between an acid and a base.");
+        n.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f).en("Something that can be neutralized by an acid is a base.");
+        n.run();
+    }
+
+    @Test
+    public void structural_transformation6() throws InvalidInputException {
+        n.believe("<(\\,neutralization,acid,_) --> base>",1.0f,0.9f).en("Something that can be neutralized by an acid is a base.");
+        n.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>", 1.0f, 0.9f).en("Something that can neutralize a base is an acid.");
+        n.mustBelieve(100, "<neutralization --> (*,acid,base)>", 1.0f, 0.9f).en("Neutralization is a relation between an acid and a base.");
+        n.run();
+    }
+
+    @Test
+    public void composition_on_both_sides_of_a_statement() throws InvalidInputException {
+        n.believe("<bird --> animal>",1.0f,0.9f).en("Bird is a type of animal.");
+        n.ask("<(*,bird,plant) --> ?x>").en("What is the relation between a bird and a plant?");
+        n.mustBelieve(100, "<(*,bird,plant) --> (*,animal,plant)>", 1.0f, 0.81f).en("The relation between bird and plant is a type of relation between animal and plant.");
+        n.run();
+    }
+
+    @Test
+    public void composition_on_both_sides_of_a_statement2() throws InvalidInputException {
+        n.believe("<neutralization --> reaction>",1.0f,0.9f).en("Neutralization is a type of reaction.");
+        n.ask("<(\\,neutralization,acid,_) --> ?x>").en("What can be neutralized by acid?");
+        n.mustBelieve(100, "<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>", 1.0f, 0.81f).en("What can be neutralized by acid can react with acid.");
+        n.run();
+    }
+
+    @Test
+    public void composition_on_both_sides_of_a_statement3() throws InvalidInputException {
+        n.believe("<soda --> base>",1.0f,0.9f).en("Soda is a type of base.");
+        n.ask("<(/,neutralization,_,base) --> ?x>").en("What is something that can neutralize a base?");
+        n.mustBelieve(100, "<(/,neutralization,_,base) --> (/,neutralization,_,soda)>", 1.0f, 0.81f).en("What can neutraliz base can react with base.");
+        n.run();
+    }
+
+    /* NAL6
     @Test public void recursionSmall2() throws InvalidInputException {
-    /*
-        <0 --> n>. %1.0000;0.9000%  {0 : 1<0 --> n>}
-        <<$1 --> n> ==> <(/,next,$1,_) --> n>>. %1.0000;0.9000%  {0 : 2 : }
-        <(/,next,(/,next,0,_),_) --> n>?  {0 : 3 : }
-
-        27
-
-        ''outputMustContain('<(/,next,0,_) --> n>.')
-        ''outputMustContain('<(/,next,(/,next,0,_),_) --> n>.')
-        ''outputMustContain('<(/,next,(/,next,0,_),_) --> n>. %1.00;0.73%')
-
-
-     */
         long time;
         final float finalConf = 0.73f;
 
@@ -74,5 +133,6 @@ public class NAL4Test extends JavaNALTest {
         n.mustBelieve(time, "<(/,next,(/,next,0,_),_) --> n>", 1.0f, 1.0f, finalConf, 1.0f);
         n.run();
     }
+    */
 
 }
