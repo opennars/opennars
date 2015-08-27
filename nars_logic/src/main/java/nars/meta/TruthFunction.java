@@ -79,6 +79,11 @@ public enum TruthFunction {
             return TruthFunctions.analogy(T,B);
         }
     },
+    ReduceConjunction() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return TruthFunctions.reduceConjunction(T,B);
+        }
+    },
     AnonymousAnalogy() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.anonymousAnalogy(T,B);

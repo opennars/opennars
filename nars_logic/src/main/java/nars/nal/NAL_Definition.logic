@@ -63,6 +63,10 @@
 
     (S --> P), (P --> S) |- (S <-> P), (Truth:Intersection, Desire:Strong)
 
+//// inheritance from similarty <- TODO check why this one was missing ////////////////////////////////////////////////////////////////////////////////////
+
+    (S <-> P), (P --> S) |- (S --> P), (Truth:ReduceConjunction, Desire:Strong)
+
 //// similarity-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If P and S are a special case of M, then they might be similar (weak),
 //also if P and S are a general case of M
