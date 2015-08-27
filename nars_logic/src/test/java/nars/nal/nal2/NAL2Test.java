@@ -25,8 +25,8 @@ public class NAL2Test extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 /*{new Default()}, //NAL8 + NAL9 didnt solve it
                 {new Default().level(3)}, //needs 3 for sets
-                {new Default().setInternalExperience(null)},
-                {new NewDefault()},*/
+                {new Default().setInternalExperience(null)},*/
+              //  {new NewDefault()},
                 {new NewDefault().setInternalExperience(null)},
                 /*{new DefaultMicro() },
                 {new Classic()}*/
@@ -102,9 +102,9 @@ public class NAL2Test extends JavaNALTest {
 
     @Test
     public void inheritanceToSimilarity3() throws InvalidInputException {
-        n.mustBelieve(50,"<bird <-> swan>",0.9f,0.47f).en("I guess that bird is similar to swan.");
         n.believe("<swan --> bird>",0.9f,0.9f).en("Swan is a type of bird.");
         n.ask("<bird <-> swan>").en("Is bird similar to swan?");
+        n.mustBelieve(50,"<bird <-> swan>",0.9f,0.47f).en("I guess that bird is similar to swan.");
         n.run();
     }
 
@@ -116,26 +116,26 @@ public class NAL2Test extends JavaNALTest {
         n.run();
     }
 
-    @Test
+   /* @Test
     public void instanceToInheritance() throws InvalidInputException {
         n.believe("<Tweety {-- bird>").en("Tweety is a bird.");
         n.mustBelieve(50,"<{Tweety} --> bird>",1.0f,0.9f).en("Tweety is a bird.");
         n.run();
-    }
+    }*/
 
-    @Test
+   /*@Test
     public void propertyToInheritance() throws InvalidInputException {
         n.believe("<raven --] black>").en("Ravens are black.");
         n.mustBelieve(50,"<raven --> [black]>",1.0f,0.9f).en("Ravens are black.");
         n.run();
-    }
+    }*/
 
-    @Test
+   /* @Test
     public void instancePropertyToInheritance() throws InvalidInputException {
         n.believe("<Tweety {-] yellow>").en("Tweety is yellow.");
         n.mustBelieve(50,"<{Tweety} --> [yellow]>",1.0f,0.9f).en("Tweety is yellow.");
         n.run();
-    }
+    }*/
 
     @Test
     public void setDefinition() throws InvalidInputException {
