@@ -337,10 +337,17 @@
 //TODO Inheritance Theorems (needs to be carefully evaluated what is needed here)
 //Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
 
-((*,A_1..n) --> M), M |- (A_i --> (/,M, A_1..A_i.substitute(_)..A_n )), (Truth:Identity, Desire:Identity)
+((*,A_1..n) --> M), A_i |- (A_i --> (/,M, A_1..A_i.substitute(_)..A_n )), (Truth:Identity, Desire:Identity)
 ((*,A_1..n) --> M), M |- (M --> (/,_, A_1..n )), (Truth:Identity, Desire:Identity)
-(M --> (*,A_1..n)), M |- ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), (Truth:Identity, Desire:Identity)
+
+(M --> (*,A_1..n)), A_i |- ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), (Truth:Identity, Desire:Identity)
 (M --> (*,A_1..n)), M |- ((\,_, A_1..n ) --> M), (Truth:Identity, Desire:Identity)
+
+(A_i --> (/,M,A_1..A_i.substitute(_)..A_n )), M |- ((*,A_1..n) --> M), (Truth:Identity, Desire:Identity)
+(M --> (/,_, A_1..n )), M |- ((*,A_1..n) --> M), (Truth:Identity, Desire:Identity)
+
+((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
+((\,_, A_1..n ) --> M), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
 
 //TODO Similarity Theorems (needs to be carefully evaluated what is needed here)
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
