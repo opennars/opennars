@@ -7,13 +7,23 @@ import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Term;
 
+import java.util.EnumMap;
+
 
 public class BeliefTermType extends PreCondition {
 
     final Op op;
+    transient private final String id;
 
-    public BeliefTermType(Op o) {
+    public final static EnumMap<Op,BeliefTermType> the = new EnumMap(Op.class);
+
+    public static BeliefTermType the(final Op o) {
+        return the.computeIfAbsent(o, k -> new BeliefTermType(k));
+    }
+
+    BeliefTermType(Op o) {
         this.op = o;
+        this.id = getClass().getSimpleName() + "[" + op.toString() + "]";
     }
 
     @Override public boolean test(final RuleMatch ruleMatch) {
@@ -33,8 +43,7 @@ public class BeliefTermType extends PreCondition {
 
     @Override
     public String toString() {
-        //return getClass().getSimpleName() + "[" + op.toString() + "]";
-        return getClass().getSimpleName() + "[" + op.toString() + "]";
+        return id;
     }
 
 

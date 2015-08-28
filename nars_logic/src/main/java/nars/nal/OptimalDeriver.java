@@ -35,7 +35,7 @@ abstract public class OptimalDeriver extends Deriver {
             }
 
             if (o1 != Op.VAR_PATTERN) {
-                dependencies.put(new TaskTermType(o1), r);
+                dependencies.put(TaskTermType.the(o1), r);
                 int o1v = r.getTaskTermVolumeMin();
                 dependencies.put(new TaskTermMinVolume(o1v), r);
             }
@@ -43,7 +43,7 @@ abstract public class OptimalDeriver extends Deriver {
 
 
             if (o2 != Op.VAR_PATTERN) {
-                dependencies.put(new BeliefTermType(o2), r);
+                dependencies.put(BeliefTermType.the(o2), r);
                 int o2v = r.getBeliefTermVolumeMin();
                 dependencies.put(new TaskTermMinVolume(o2v), r);
             }

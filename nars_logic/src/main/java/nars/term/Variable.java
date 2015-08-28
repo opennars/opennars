@@ -23,6 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.Symbols;
+import nars.term.transform.TermVisitor;
 import nars.util.utf8.Utf8;
 
 import static nars.Symbols.*;
@@ -368,4 +369,20 @@ public class Variable extends Atom {
     }
 
 
+    /** necessary because VAR_PATTERN are hidden from substructure */
+    public static boolean hasPatternVariable(Term t) {
+        final boolean[] has = {false};
+        t.recurseTerms(new TermVisitor() {
+
+            @Override
+            public void visit(Term t, Term superterm) {
+                if (!has[0]) {
+                    if (t instanceof Variable)
+                        if ((((Variable)t).type == Symbols.VAR_PATTERN))
+                            has[0] = true;
+                }
+            }
+        });
+        return has[0];
+    }
 }

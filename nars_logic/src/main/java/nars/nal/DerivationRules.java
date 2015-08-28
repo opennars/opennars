@@ -1,5 +1,6 @@
 package nars.nal;
 
+import nars.Global;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
 
@@ -7,10 +8,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Holds an array of derivation rules
@@ -37,7 +35,7 @@ public class DerivationRules {
 
     static List<String> loadRuleStrings(Iterable<String> lines) {
 
-        List<String> unparsed_rules = new ArrayList<>();
+        List<String> unparsed_rules = Global.newArrayList();
         StringBuilder current_rule = new StringBuilder();
         boolean single_rule_test = false;
 
@@ -97,53 +95,87 @@ public class DerivationRules {
      * //TODO do this on the parsed rule, because string contents could be unpredictable:
      * permute(rule, Map<Op,Op[]> alternates)
      * @param meta
-     * @param uninterpreted_rules
-     * @param parsable
+     * @param rules
+     * @param ruleString
      */
-    public static void AddWithPotentialForAllSameOrder(NarseseParser meta, Collection<TaskRule> uninterpreted_rules, String parsable) {
-        if(parsable.contains("Order:ForAllSame")) {
+    static void preAdd(NarseseParser meta,
+                       Collection<TaskRule> rules /* results collection */,
+                       String ruleString,
+                       Set<String> variations /* temporary */) {
 
-            ArrayList<String> equs = new ArrayList<>();
+        variations.clear();
+
+        if(ruleString.contains("Order:ForAllSame")) {
+
+            List<String> equs = Global.newArrayList(3);
             equs.add("<=>");
-            if(parsable.contains("<=>")) {
+            if(ruleString.contains("<=>")) {
                 equs.add("</>");
                 equs.add("<|>");
             }
 
-            ArrayList<String> impls = new ArrayList<>();
+            List<String> impls = Global.newArrayList(3);
             impls.add("==>");
-            if(parsable.contains("==>")) {
+            if(ruleString.contains("==>")) {
                 impls.add("=/>");
                 impls.add("=|>");
-                impls.add("==>");
             }
 
-            ArrayList<String> conjs = new ArrayList<>();
+            List<String> conjs = Global.newArrayList(3);
             conjs.add("&&");
-            if(parsable.contains("&&")) {
+            if(ruleString.contains("&&")) {
                 conjs.add("&|");
                 conjs.add("&/");
             }
 
+            variations.add(ruleString);
+
             for(String equ : equs) {
+
+                String p1 = ruleString.replace("<=>",equ);
+
                 for(String imp : impls) {
+
+                    String p2 = p1.replace("==>",imp);
+
                     for(String conj : conjs) {
-                        String variation = parsable.replace("<=>",equ).replace("==>",imp).replace("&&",conj);
-                        TaskRule r = meta.term(variation);
-                        uninterpreted_rules.add(r); //try to parse it
+
+                        String p3 = p2.replace("&&",conj);
+
+                        variations.add( p3 );
+
                     }
                 }
             }
 
         }
         else {
-            TaskRule r = meta.term(parsable);
-            uninterpreted_rules.add(r); //try to parse it
+            variations.add(ruleString);
+        }
+
+        for (final String v : variations) {
+            TaskRule r = meta.term(v);
+            if (r == null)
+                System.err.println("parse error: " + v);
+            else {
+                rules.add(r); //try to parse it
+                addReverseQuestions( rules, r );
+            }
         }
     }
 
+    static void addReverseQuestions(
+            Collection<TaskRule> rules /* results collection */,
+            TaskRule r) {
 
-    static Collection<TaskRule> parseRules(final Collection<String> not_yet_parsed_rules) {
+        r.forEachReverseQuestion( R -> {
+            rules.add(R);
+        });
+
+    }
+
+
+        static Collection<TaskRule> parseRules(final Collection<String> not_yet_parsed_rules) {
         //2. ok we have our unparsed rules, lets parse them to terms now
         final NarseseParser meta = NarseseParser.the();
         final Collection<TaskRule> rules
@@ -151,7 +183,7 @@ public class DerivationRules {
                 = new LinkedHashSet<>(not_yet_parsed_rules.size() /* approximately */);
 
         /*
-        ArrayList<String> fails = new ArrayList();
+        List<String> fails = new ArrayList();
 
         ListeningParseRunner lpr = new ListeningParseRunner(meta.Term());
 
@@ -188,6 +220,8 @@ public class DerivationRules {
         });
         */
 
+        final Set<String> temp = Global.newHashSet(16);
+
         for (String rule : not_yet_parsed_rules) {
 
             final String p = preprocess(rule);
@@ -207,11 +241,11 @@ public class DerivationRules {
                                     strrep = str.replace(A_i,"_");
                                 }
                                 String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..n", str2).replace("A_i",A_i);
-                                AddWithPotentialForAllSameOrder(meta, rules, parsable_unrolled);
+                                preAdd(meta, rules, parsable_unrolled, temp);
                             }
                         } else {
                             String parsable_unrolled = p.replace("A_1..n", str).replace("B_1..n", str2);
-                            AddWithPotentialForAllSameOrder(meta, rules, parsable_unrolled);
+                            preAdd(meta, rules, parsable_unrolled, temp);
                         }
 
                         str+=", A_"+String.valueOf(i+2);
@@ -219,10 +253,10 @@ public class DerivationRules {
                     }
                 }
                 else {
-                    AddWithPotentialForAllSameOrder(meta,rules,p);
+                    preAdd(meta,rules,p, temp);
                 }
             } catch (Exception ex) {
-                System.err.println("Ignoring Invalid rule: ");
+                System.err.println("Ignoring invalid input rule: ");
                 System.err.print("  ");
                 System.err.println(p);
                 System.err.println("  " + ex);

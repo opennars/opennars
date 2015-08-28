@@ -18,7 +18,7 @@ import static org.jgroups.util.Util.assertEquals;
 /**
  * Created by me on 8/15/15.
  */
-public class RuleDerivationsTest {
+public class RuleDerivationGraphTest {
 
     @Test
     public void testRuleStatistics() {

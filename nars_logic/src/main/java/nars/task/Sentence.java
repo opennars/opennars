@@ -592,18 +592,18 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         }
     }
 
-    @Deprecated public static class SubTermVarCollector implements TermVisitor {
-        private final List<Variable> vars;
-
-        public SubTermVarCollector(List<Variable> vars) {
-            this.vars = vars;
-        }
-
-        @Override public void visit(final Term t, final Term parent) {
-            if (t instanceof Variable) {
-                Variable v = ((Variable)t);
-                vars.add(v);
-            }
-        }
-    }
+//    @Deprecated public static class SubTermVarCollector implements TermVisitor {
+//        private final List<Variable> vars;
+//
+//        public SubTermVarCollector(List<Variable> vars) {
+//            this.vars = vars;
+//        }
+//
+//        @Override public void visit(final Term t, final Term parent) {
+//            if (t instanceof Variable) {
+//                Variable v = ((Variable)t);
+//                vars.add(v);
+//            }
+//        }
+//    }
 }

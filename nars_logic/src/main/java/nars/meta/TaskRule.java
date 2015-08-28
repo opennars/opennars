@@ -7,8 +7,6 @@ import nars.meta.pre.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Interval;
-import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Atom;
@@ -21,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A rule which produces a Task
@@ -43,6 +42,9 @@ public class TaskRule extends Rule<Premise,Task> {
 
     public Product getPremises() {
         return (Product)term(0);
+    }
+    public Product getConclusion() {
+        return (Product)term(1);
     }
 
     public TaskRule(Product premises, Product result) {
@@ -154,6 +156,16 @@ public class TaskRule extends Rule<Premise,Task> {
                     ((Product)postcons[i++]).terms() );
         }
 
+        ensureValid();
+    }
+
+    protected void ensureValid() {
+        if (!Variable.hasPatternVariable(getTask()))
+            throw new RuntimeException("rule's task term pattern has no pattern variable");
+        if (!Variable.hasPatternVariable(getBelief()))
+            throw new RuntimeException("rule's task belief pattern has no pattern variable");
+        if (!Variable.hasPatternVariable(getResult()))
+            throw new RuntimeException("rule's conclusion belief pattern has no pattern variable");
     }
 
 
@@ -183,10 +195,15 @@ public class TaskRule extends Rule<Premise,Task> {
     /** non-null;
      *  if it returns Op.VAR_PATTERN this means that any type can apply */
     public Op getTaskTermType() {
-        return getPremises().term(0).operator();
+        return getTask().operator();
     }
+
+    protected Term getTask() {
+        return getPremises().term(0);
+    }
+
     public int getTaskTermVolumeMin() {
-        return getPremises().term(0).getVolume();
+        return getTask().getVolume();
     }
 
     /** returns Op.NONE if there is no belief term type;
@@ -194,10 +211,19 @@ public class TaskRule extends Rule<Premise,Task> {
     public Op getBeliefTermType() {
 //        if (getPremises().length() < 2)
 //            return Op.NONE;
-        return getPremises().term(1).operator();
+        return getBelief().operator();
     }
+
+    protected Term getBelief() {
+        return getPremises().term(1);
+    }
+
+    protected Term getResult() {
+        return getConclusion().term(0);
+    }
+
     public int getBeliefTermVolumeMin() {
-        return getPremises().term(1).getVolume();
+        return getBelief().getVolume();
     }
 
     public static class TaskRuleNormalization implements CompoundTransform<Compound,Term> {
@@ -279,6 +305,25 @@ public class TaskRule extends Rule<Premise,Task> {
             return true;
         }
         return false;
+    }
+
+    /** for each calculable "question reverse" rule,
+     *  supply to the consumer
+     */
+    public void forEachReverseQuestion(Consumer<TaskRule> c) {
+        /*
+        %T, %B, [pre] |- %C, [post] ||--
+
+              %C, %B, [pre], task_is_question() |- %T , [post]
+              %C, [pre], task_is_question() |- %B, [post]
+              %T, %C, [pre], task_is_question() |- %B, [post]
+        */
+
+        Term T = this.getTask();
+        Term B = this.getBelief();
+        Term C = this.getResult();
+
+
     }
 
 }

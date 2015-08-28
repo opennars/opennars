@@ -3,7 +3,7 @@ package nars.meter.experiment;
 import nars.Global;
 import nars.NAR;
 import nars.io.in.LibraryInput;
-import nars.meter.Derivations;
+import nars.meter.DerivationGraph;
 import nars.meter.TestNAR;
 import nars.nar.Default;
 
@@ -17,7 +17,7 @@ public class Derivations1  {
 
         Global.DEBUG = true;
 
-        Derivations d = new Derivations(false, false);
+        DerivationGraph d = new DerivationGraph(false, false);
 
 
         int maxCycles = 500;

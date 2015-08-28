@@ -55,7 +55,7 @@ import java.util.*;
  *
  * TODO add all removed tasks and their reasons as extra metadata
  */
-public class Derivations extends DirectedMultigraph {
+public class DerivationGraph extends DirectedMultigraph {
 
 
     public final Multimap<PremiseKey, Set<TaskResult>> premiseResult;
@@ -80,7 +80,7 @@ public class Derivations extends DirectedMultigraph {
         return s;
     }
 
-    public Derivations(boolean includeDerivedBudget, boolean includeDerivedTruth) {
+    public DerivationGraph(boolean includeDerivedBudget, boolean includeDerivedTruth) {
         super((Class)null);
 
         premiseResult = MultimapBuilder.treeKeys().hashSetValues().build();
@@ -366,8 +366,7 @@ public class Derivations extends DirectedMultigraph {
         c.recurseTerms(new TermVisitor() {
             @Override public void visit(Term t, Term superterm) {
                 if (t instanceof Atom) {
-                    if (!unique.containsKey(t))
-                        unique.put(t, unique.size());
+                    unique.getIfAbsentPut(t, unique.size());
                 }
             }
         });
