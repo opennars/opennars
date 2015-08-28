@@ -289,10 +289,10 @@ public interface Premise {
         final Task currentBelief = getBelief();
         if (currentTask.isJudgment() || currentBelief == null) {
             ptask = currentTask;
-        } else {
+        } /*else { nope no cheats. NAL5 is not for now and this cheating is not specified.
             // to answer a question with negation in NAL-5 --- move to activated task?
             ptask = currentBelief;
-        }
+        }*/
 
 
         return deriveSingle(newTask(newContent, punctuation)

@@ -354,8 +354,8 @@
 ((\,_, A_1..n ) --> M), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
 
 //NAL3 specific:
-((|,A_1..n) --> M), A_i |- (A_i --> M), (Truth:AnalyticDeduction)
-(M --> (&,A_1..n)), A_i |- (M --> A_i), (Truth:AnalyticDeduction)
+((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
+(M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
 
 ((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
 (R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
