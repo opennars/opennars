@@ -170,14 +170,13 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
 
-    long structuralHash();
-
-
+    public long structureHash();
 
     /** lower 31 bits of structure hash (32nd bit reserved for +/-) */
-    default public int subtermStructure() {
-        return (int)(structuralHash() & 0xffffffff);
-    }
+    public int structure();
+
+
+
 
 
     default public void append(Writer w, boolean pretty) throws IOException {
@@ -212,34 +211,25 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
     default public boolean impossibleSubterm(final Term target) {
-        return ((impossibleSubStructure(target.subtermStructure())) ||
+        return ((impossibleStructure(target.structure())) ||
                 (impossibleSubTermVolume(target.volume())));
     }
     default public boolean impossibleSubTermOrEquality(final Term target) {
-        return ((impossibleSubStructure(target.subtermStructure())) ||
+        return ((impossibleStructure(target.structure())) ||
                 (impossibleSubTermOrEqualityVolume(target.volume())));
     }
 
 
 
-    default public boolean impossibleSubStructure(final Term c) {
-        return impossibleSubStructure(c.subtermStructure());
-    }
-    default public boolean impossibleSubStructure(final int possibleSubtermStructure) {
-        final int existingStructure = subtermStructure();
-
-        //if the OR produces a different result compared to subterms,
-        // it means there is some component of the other term which is not found
-        return ((possibleSubtermStructure | existingStructure) != existingStructure);
+    default public boolean impossibleStructure(final Term c) {
+        return impossibleStructure(c.structure());
     }
 
-    default public boolean impossibleSubTermVolume(final int otherTermVolume) {
-        return otherTermVolume >
-                volume()
-                        - 1 /* for the compound itself */
-                        - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
-                ;
-    }
+    public boolean impossibleStructure(final int possibleSubtermStructure);
+
+
+    public boolean impossibleSubTermVolume(final int otherTermVolume);
+
 
     /** if it's larger than this term it can not be equal to this.
      * if it's larger than some number less than that, it can't be a subterm.
@@ -251,7 +241,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
     /** tests if contains a term in the structural hash */
     default public boolean has(final Op op) {
-        return (subtermStructure() & (1<<op.ordinal())) > 0;
+        return (structure() & (1<<op.ordinal())) > 0;
     }
 
     default boolean levelValid(final int nal) {

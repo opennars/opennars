@@ -60,7 +60,7 @@ public class BasicRulesTest {
         //<<$1 --> drunk> ==> <$1--> dead>>. <S --> drunk>.     |-  <S --> dead>.
         //OUT: <S --> dead>. %1.00;0.81% {58: 1;2}
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
         n.frame(550);
 
 

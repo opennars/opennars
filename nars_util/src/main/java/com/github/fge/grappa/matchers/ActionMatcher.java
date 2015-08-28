@@ -20,6 +20,7 @@ import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.matchers.base.Matcher;
 import com.github.fge.grappa.rules.Action;
 import com.github.fge.grappa.rules.SkippableAction;
+import com.github.fge.grappa.stack.ValueStack;
 import com.google.common.collect.Lists;
 import com.github.fge.grappa.run.context.ContextAware;
 import com.github.fge.grappa.run.context.MatcherContext;
@@ -112,15 +113,17 @@ public final class ActionMatcher
             return true;
 
         // actions need to run in the parent context
-        final MatcherContext<V> parentContext = context.getParent();
-        for (final ContextAware<?> contextAware: contextAwares)
-            ((ContextAware<V>) contextAware).setContext(parentContext);
+        final MatcherContext parentContext = context.getParent();
+        for (final ContextAware contextAware: contextAwares)
+            contextAware.setContext(parentContext);
 
-        final Object valueStackSnapshot
-            = context.getValueStack().takeSnapshot();
-        if (!((Action<V>) action).run(parentContext)) {
+        final ValueStack valueStack = context.getValueStack();
+
+        final Object valueStackSnapshot  = valueStack.takeSnapshot();
+
+        if (!(/*(Action<V>)*/ action).run(parentContext)) {
             // failing actions are not allowed to change the ValueStack
-            context.getValueStack().restoreSnapshot(valueStackSnapshot);
+            valueStack.restoreSnapshot(valueStackSnapshot);
             return false;
         }
 

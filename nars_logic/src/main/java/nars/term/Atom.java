@@ -39,11 +39,15 @@ public class Atom extends ImmutableAtom {
 
     final static int atomOrdinal = (1 << Op.ATOM.ordinal());
 
-    @Override
-    public long structuralHash() {
-        return atomOrdinal;
+    @Override public long structureHash() {
+        return structure(); // & 0xffffffff);
     }
 
+    @Override
+    public int structure() {
+        //atomic terms should not need to store data in the upper 32 bits, like Image and other compound terms may need
+        return atomOrdinal;
+    }
 
 
     @Override
@@ -72,7 +76,6 @@ public class Atom extends ImmutableAtom {
 
     }
 
-    @Override public int volume() { return 1; }
 
     public int compareHash(final Term that) {
         return Integer.compare(hashCode(), that.hashCode());
@@ -227,15 +230,6 @@ public class Atom extends ImmutableAtom {
 
 
 
-    /**
-     * The syntactic complexity, for constant atomic Term, is 1.
-     *
-     * @return The complexity of the term, an integer
-     */
-    @Override
-    public int complexity() {
-        return 1;
-    }
 
     @Override
     public int containedTemporalRelations() {
@@ -308,8 +302,10 @@ public class Atom extends ImmutableAtom {
     public static Term the(final Object o) {
 
         if (o instanceof Term) return ((Term)o);
-        else if (o instanceof String) return the((String)o);
-        else if (o instanceof Number) return the((Number)o);
+        else if (o instanceof String)
+            return the((String)o);
+        else if (o instanceof Number)
+            return the((Number)o);
         return null;
     }
 

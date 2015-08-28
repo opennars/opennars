@@ -26,7 +26,6 @@ import nars.nal.nal8.Operation;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
-import nars.term.*;
 import org.junit.Test;
 
 import java.util.TreeSet;
@@ -455,7 +454,7 @@ public class TermTest {
 
     public Compound testStructure(String term, String bits) {
         Compound a = n.term(term);
-        assertEquals(bits, toBinaryString(a.structuralHash()));
+        assertEquals(bits, toBinaryString(a.structureHash()));
         return a;
     }
 
@@ -469,14 +468,14 @@ public class TermTest {
         Compound a = testStructure("<<a --> b> </> c>", "100000000000000000001000001");
         Compound b = testStructure("<<$a --> #b> </> ?c>", "100000000000000000001001110");
 
-        assertTrue( a.impossibleSubStructure(b) );
-        assertFalse( a.impossibleSubStructure(a3));
+        assertTrue( a.impossibleStructure(b) );
+        assertFalse( a.impossibleStructure(a3));
 
 
         assertEquals("no additional structure code in upper bits",
-                 a.structuralHash(), a.subtermStructure());
+                 a.structureHash(), a.structure());
         assertEquals("no additional structure code in upper bits",
-                b.structuralHash(), b.subtermStructure());
+                b.structureHash(), b.structure());
 
 
     }
@@ -489,7 +488,7 @@ public class TermTest {
         Compound a = testStructure(i1, "100000000000000000010000000000001");
         Compound b = testStructure(i2,                     "10000000000001");
         assertNotEquals("additional structure code in upper bits",
-                a.structuralHash(), a.subtermStructure());
+                a.structureHash(), a.structure());
         assertNotEquals("structure code influenced contentHash",
                 b.hashCode(), a.hashCode());
 
@@ -510,8 +509,19 @@ public class TermTest {
 
         assertNotNull( Operation.getArgumentProduct(n.term("{(a)}")) );
         assertNotNull( Operation.getArgumentProduct(n.term("{(a,b)}")) );
-        assertNull(Operation.getArgumentProduct(n.term("(a,b)")));
-        assertNull( Operation.getArgumentProduct(n.term("({a})")) );
+
+        try {
+            Operation.getArgumentProduct(n.term("(a,b)"));
+            assertTrue(false); //should throw exception
+        }
+        catch (Exception e) {  }
+
+        try {
+            assertNull( Operation.getArgumentProduct(n.term("({a})")) );
+            assertTrue(false); //should throw exception
+        }
+        catch (Exception e) {  }
+
     }
 
     @Test public void testSubTermStructure() {
@@ -523,7 +533,7 @@ public class TermTest {
                 )
         );
         assertTrue(
-                ((Compound)n.term("<a --> b>")).impossibleSubStructure(
+                ((Compound)n.term("<a --> b>")).impossibleStructure(
                         n.term("<a-->#b>")
                 )
         );

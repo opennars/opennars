@@ -11,9 +11,9 @@ abstract public class PreCondition1 extends PreCondition {
     public PreCondition1(Term var1) {
         this.arg1 = var1;
     }
-    @Override public boolean test(RuleMatch m) {
-        //these should not resolve to null
-        Term a = m.resolve(arg1);
+
+    @Override public boolean test(final RuleMatch m) {
+        final Term a = m.resolve(arg1);
         return test(m, a);
     }
 

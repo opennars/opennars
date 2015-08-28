@@ -49,12 +49,6 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
         this.duration = duration;
     }
 
-    @Override
-    public int volume() {
-        return 1;
-    }
-
-
 
     public static CyclesInterval intervalLog(long mag) {
         long time = Math.round( Interval.time(mag, 5 /* memory.duration()*/) );
@@ -74,10 +68,12 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     }
 
 
-    @Override
-    public long structuralHash() {
+    @Override public long structureHash() {
         return 0;
     }
+
+    public int structure() { return 0;     }
+
 
     @Override
     public Op operator() {

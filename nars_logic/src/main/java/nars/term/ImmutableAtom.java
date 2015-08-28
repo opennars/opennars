@@ -51,8 +51,20 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
         return true;
     }
 
+    @Override public int volume() { return 1; }
 
+    public boolean impossibleSubTermVolume(final int otherTermVolume) {
+        return true;
+    }
 
+    @Override public boolean impossibleStructure(int possibleSubtermStructure) {
+        /*
+        for atomic terms, there will be only one
+        bit set in this (for the operator). if it does not equal
+        the parameter, then the structure can not match.
+        */
+        return structure()!=possibleSubtermStructure;
+    }
 
     @Override
     public boolean containsTerm(Term target) {

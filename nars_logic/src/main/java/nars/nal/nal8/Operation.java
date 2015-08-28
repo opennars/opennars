@@ -384,18 +384,18 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
                     Op.PRODUCT);
 
     public static Product getArgumentProduct(Compound c) {
-        if (!c.impossibleSubStructure(ProductInSetExtPattern)) {
-            if (c instanceof SetExt) {
-                SetExt sc = ((SetExt) c);
-                if (sc.length() == 1) {
-                    final Term scp = sc.term(0);
-                    if (scp instanceof Product) {
+        /*if (!c.impossibleStructure(ProductInSetExtPattern)) {
+            if (c instanceof SetExt) {*/
+                SetExt1 sc = ((SetExt1) c);
+                //if (sc.length() == 1) {
+                    final Term scp = sc.the(); //term(0);
+                    //if (scp instanceof Product) {
                         return (Product) scp;
-                    }
-                }
-            }
-        }
-        return null;
+                    //}
+                //}
+            /*}
+        }*/
+        //return null;
     }
 
     /**

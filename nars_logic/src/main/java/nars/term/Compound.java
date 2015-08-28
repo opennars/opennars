@@ -88,6 +88,22 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.term = components;
     }
 
+    public boolean impossibleSubTermVolume(final int otherTermVolume) {
+        return otherTermVolume >
+                volume()
+                        - 1 /* for the compound itself */
+                        - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
+                ;
+    }
+
+    public boolean impossibleStructure(final int possibleSubtermStructure) {
+        final int existingStructure = structure();
+
+        //if the OR produces a different result compared to subterms,
+        // it means there is some component of the other term which is not found
+        return ((possibleSubtermStructure | existingStructure) != existingStructure);
+    }
+
 
 
     final private static int PRIME1 = 31;
@@ -117,7 +133,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             deps += t.varDep();
             indeps += t.varIndep();
             queries += t.varQuery();
-            subt |= t.structuralHash();
+            subt |= t.structureHash();
             contentHash = (PRIME1 * contentHash) + (t.hashCode()+p) * PRIME2;
 
             p++;
@@ -175,8 +191,11 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
     @Override
-    final public long structuralHash() {
+    public long structureHash() {
         return structureHash;
+    }
+    public int structure() {
+        return (int)(structureHash() & 0xffffffff);
     }
 
 

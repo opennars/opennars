@@ -49,15 +49,27 @@ public class Operator<T extends Term> extends Compound1<T> {
         the().append(p, pretty);
     }
 
+    final static int operatorOrdinal = (1 << Op.OPERATOR.ordinal());
+
     @Override
-    public int complexity() {
+    public long structureHash() {
+        /** only the operator bit */
+        //TODO this may need changed if we use non-atomic operators
+        return structure();
+    }
+
+    @Override
+    public int structure() {
+        return operatorOrdinal;
+    }
+
+    @Override
+    final public int complexity() {
         return 1;
     }
 
     @Override
-    public int volume() {
-        return 1;
-    }
+    final public int volume() {  return 1;    }
 
     public static Operator the(final String name) {
         return the(Atom.the(name));

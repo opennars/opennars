@@ -44,6 +44,7 @@ public enum TruthFunction {
     },
     Comparison() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.comparison(T, B);
         }
     },
@@ -72,6 +73,7 @@ public enum TruthFunction {
     },
     Intersection() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.intersection(T,B);
         }
     },

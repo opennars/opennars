@@ -356,8 +356,8 @@
 ////// NAL3: ////////////////////////////////////////////////////////////////////////////////////
 
 //TODO: why does this format not work, why these rules fail to parse?
-((|,P,A_1..n) --> M), (P --> M), |- ((|,A_1..n) --> M), (Truth:ReduceDisjunction)
-((&,P,A_1..n) --> M), (P --> M), |- ((&,A_1..n) --> M), (Truth:ReduceConjunction)
+((|,P,A_1..n) --> M), (P --> M) |- ((|,A_1..n) --> M), (Truth:ReduceDisjunction)
+((&,P,A_1..n) --> M), (P --> M) |- ((&,A_1..n) --> M), (Truth:ReduceConjunction)
 
 ((|,A_1..n) --> M), A_i |- (A_i --> M), (Truth:AnalyticDeduction)
 (M --> (&,A_1..n)), A_i |- (M --> A_i), (Truth:AnalyticDeduction)

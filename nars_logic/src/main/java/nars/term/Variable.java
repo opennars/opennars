@@ -35,12 +35,17 @@ public class Variable extends Atom {
 
     /** returns a bitvector representing the presence of ths term and its subterms */
     @Override
-    public long structuralHash() {
+    public long structureHash() {
+        return structure();
+    }
+
+    @Override
+    public int structure() {
         final int o = operator().ordinal();
+
         if (o <= 31)
             return (1 << o);
-        return 0;
-    }
+        return 0;    }
 
     @Override
     public int compareTo(Object that) {

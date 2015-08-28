@@ -21,7 +21,7 @@ abstract public class MatchTerm extends PreCondition {
 
         this.pattern = pattern;
 
-        int pHash = pattern.subtermStructure();
+        int pHash = pattern.structure();
         this.minVolume = pattern.volume();
         this.pStructure = pHash;// & ~(1<< Op.VAR_PATTERN.ordinal()); VAR_PATTERN ordinal should not even be included in the substrcture 32 bits
 
@@ -55,7 +55,7 @@ abstract public class MatchTerm extends PreCondition {
         }
 
 
-        if ((t.volume() < minVolume) || (t.impossibleSubStructure(pStructure))) {
+        if ((t.volume() < minVolume) || (t.impossibleStructure(pStructure))) {
             //if (t.impossibleSubStructure(pStructure)) {
             //System.err.println("impossible: " + t + " in " + pattern);
             return false;
