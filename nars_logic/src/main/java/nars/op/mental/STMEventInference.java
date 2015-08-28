@@ -8,11 +8,12 @@ import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.meta.RuleMatch;
 import nars.nal.Deriver;
+import nars.premise.Premise;
 import nars.process.AbstractPremise;
 import nars.process.NAL;
 import nars.process.TaskProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 
 import java.util.ArrayDeque;
@@ -32,6 +33,10 @@ public class STMEventInference extends NARReaction {
     private final Deriver deriver;
     int stmSize;
     //public static STMEventInference I=null;
+
+    /** use a separate matching context in case this is invoked by a Deriver process so as not to interrupt it */
+    static final ThreadLocal<RuleMatch> matchers = Deriver.newThreadLocalRuleMatches();
+
 
     public STMEventInference(NAR nar, Deriver deriver) {
         super(nar);
@@ -69,6 +74,7 @@ public class STMEventInference extends NARReaction {
         return stmSize;
     }
 
+
     public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {
 
         final Task currentTask = nal.getTask();
@@ -78,7 +84,6 @@ public class STMEventInference extends NARReaction {
         if (currentTask == null || (!currentTask.isTemporalInductable() && !anticipation)) { //todo refine, add directbool in task
             return false;
         }
-
 
         if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory) && !anticipation)) {
             return false;
@@ -113,6 +118,8 @@ public class STMEventInference extends NARReaction {
         //iterate on a copy because temporalInduction seems like it sometimes calls itself recursively and this will cause a concurrent modification exception otherwise
         Task[] stmCopy = stm.toArray(new Task[stm.size()]);
 
+        RuleMatch m = matchers.get();
+
         for (Task previousTask : stmCopy) {
 
             //nal.setCurrentTask(currentTask);
@@ -123,7 +130,23 @@ public class STMEventInference extends NARReaction {
             //TemporalRules.temporalInduction(currentTask, previousTask,
                     //nal.newStamp(currentTask.sentence, previousTask.sentence),
             //        nal);
-            deriver.reason(new STMPremise(nal, previousTask));
+            final Premise premise = new STMPremise(nal, previousTask);
+            ///final Task task, final Sentence belief, Term beliefterm,
+            //tLink.getTask(), belief, bLink.getTerm(),
+
+
+            m.start(premise);
+
+            final Task task = premise.getTask();
+
+            if (task.isJudgment() || task.isGoal()) {
+
+                deriver.forEachRule(m);
+
+                //TODO also allow backward inference by traversing
+            }
+
+            m.clear();
 
         }
 

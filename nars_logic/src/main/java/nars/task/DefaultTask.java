@@ -182,6 +182,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     @Override
     public void setCyclic(boolean cyclic) {
+        if (Global.OVERLAP_ALLOW) cyclic = false;
         this.cyclic = cyclic;
     }
 

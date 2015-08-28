@@ -1,9 +1,10 @@
 package nars.meter.experiment;
 
+import nars.Global;
 import nars.NAR;
 import nars.io.qa.AnswerReaction;
 import nars.nal.nal1.Inheritance;
-import nars.nar.Default;
+import nars.nar.experimental.Equalized;
 import nars.task.Task;
 import nars.term.Atom;
 
@@ -22,16 +23,13 @@ public class DeductiveChainTest {
 
     public static void main(String[] args) {
 
-        int length = 20;
+        int length = 5;
         NAR n = new NAR(
-                //new Equalized(1000, 1, 3)
-                new Default()
-                        .level(1));
+                new Equalized(1000, 1, 3).level(1)
+                //new Default().level(1)
+        );
 
-
-
-
-
+        Global.OVERLAP_ALLOW = true;
         //TextOutput.out(n);
 
         for (int x = 0; x < length; x++) {

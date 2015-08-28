@@ -147,6 +147,8 @@ public class SomeRovers {
             nar.setCyclesPerFrame(nc);
             nar.param.duration.set(nc/2);
 
+          TextOutput.out(nar).setOutputPriorityMin(0.5f);
+
 
             //nar.param.shortTermMemoryHistory.set(3);
 

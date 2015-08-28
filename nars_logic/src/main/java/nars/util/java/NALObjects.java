@@ -13,8 +13,10 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Variable;
@@ -42,18 +44,13 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     private final NAR nar;
     final MutableMap<Class, ProxyFactory> proxyCache = new UnifiedMap().asSynchronized();
 
-//    final Map<Object, Term> instances = new com.google.common.collect.MapMaker()
+    //    final Map<Object, Term> instances = new com.google.common.collect.MapMaker()
 //            .concurrencyLevel(4).weakKeys().makeMap();
     final HashBiMap<Object,Term> instances = new HashBiMap();
 
     final Map<Method,MethodOperator> methodOps = Global.newHashMap();
 
-    /*
-     * Acceleration mechanism because we assume that the Method.toString() method is slower than Method.hashCode()
-     *
-     * Assumtion: hashes of Object methods are always the same for all Classes
-     */
-    public static Set<Integer> methodExclusionsHashes = null;
+
 
     public static Set<String> methodExclusions = new HashSet<String>() {{
         add("hashCode");
@@ -94,10 +91,9 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     @Override
     public Object invoke(Object object, Method overridden, Method forwarder,
                          Object[] args) throws Throwable {
-        initializeExcludedMethodHashesIfNecessary();
 
         Object result = forwarder.invoke(object, args);
-        if (methodExclusionsHashes.contains(overridden.hashCode()) && methodExclusions.contains(overridden.getName()))
+        if (methodExclusions.contains(overridden.getName()))
             return result;
 
         if (!lock.compareAndSet(false,true)) {
@@ -166,7 +162,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
     /** the id will be the atom term label for the created instance */
     public <T> T build(String id, Class<T> classs) throws Exception {
-        initializeExcludedMethodHashesIfNecessary();
+
 
         ProxyFactory factory = proxyCache.getIfAbsentPut(classs, () -> new ProxyFactory());
         factory.setSuperclass(classs);
@@ -182,7 +178,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         //add operators for public methods
         for (Method m :  classs.getMethods()) {
-            if (!(methodExclusionsHashes.contains(m.hashCode()) && methodExclusions.contains(m.toString())) && Modifier.isPublic(m.getModifiers())) {
+            if (!methodExclusions.contains(m.toString()) && Modifier.isPublic(m.getModifiers())) {
                 MethodOperator op = methodOps.computeIfAbsent(m, _m -> {
                     MethodOperator mo = new MethodOperator(goalInvoke, this, m);
                     nar.on(mo);
@@ -207,17 +203,5 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 //        return super.term(o);
 //    }
 
-    private static void initializeExcludedMethodHashesIfNecessary() {
-        if( methodExclusionsHashes != null ) {
-            return;
-        }
 
-        methodExclusionsHashes = new HashSet<>();
-
-        for( final Method iterationMethod : Object.class.getMethods() ) {
-            if( methodExclusions.contains(iterationMethod.toString()) ) {
-                methodExclusionsHashes.add(iterationMethod.hashCode());
-            }
-        }
-    }
 }

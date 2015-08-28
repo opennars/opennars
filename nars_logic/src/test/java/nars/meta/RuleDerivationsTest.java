@@ -24,11 +24,12 @@ public class RuleDerivationsTest {
     public void testRuleStatistics() {
         Deriver d = Deriver.defaults;
 
-        int registeredRules = d.rules.length;
+        TaskRule[] R = d.rules.rules;
+        int registeredRules = R.length;
 
 
         Frequency f = new Frequency();
-        for (TaskRule t : d.rules)
+        for (TaskRule t : R)
             f.addValue(t);
         Iterator<Map.Entry<Comparable<?>, Long>> ii = f.entrySetIterator();
         while (ii.hasNext()) {
@@ -39,13 +40,13 @@ public class RuleDerivationsTest {
         }
         System.out.println("total: " + f.getSumFreq() + ", unique=" + f.getUniqueCount());
 
-        HashSet<TaskRule> setRules = Sets.newHashSet(d.rules);
+        HashSet<TaskRule> setRules = Sets.newHashSet(R);
 
         assertEquals("no duplicates", registeredRules, setRules.size());
 
         Set<PreCondition> preconds = new HashSet();
         int totalPrecond = 0;
-        for (TaskRule t : d.rules) {
+        for (TaskRule t : R) {
             for (PreCondition p : t.preconditions) {
                 totalPrecond++;
                 preconds.add(p);
@@ -57,7 +58,7 @@ public class RuleDerivationsTest {
 
 
 
-        for (TaskRule s : d.rules) {
+        for (TaskRule s : R) {
             System.out.println(s);
         }
     }
