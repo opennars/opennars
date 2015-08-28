@@ -26,15 +26,15 @@ public class NAL6Test extends JavaNALTest {
         @Parameterized.Parameters(name= "{0}")
         public static Collection configurations() {
             return Arrays.asList(new Object[][]{
-                    {new Default()},
-                    {new DefaultDeep()},
+                    /*{new Default()},
+                    {new DefaultDeep()},*/
                     {new NewDefault()},
                     {new NewDefault().setInternalExperience(null)},
-                    {new Default().setInternalExperience(null) },
+                    /*{new Default().setInternalExperience(null) },
                     {new Default().level(6)},
                     {new Classic().setInternalExperience(null) },
 
-                    {new Solid(1, 128, 1, 1, 1, 2).level(6)}
+                    {new Solid(1, 128, 1, 1, 1, 2).level(6)}*/
 
 
             });
@@ -210,8 +210,8 @@ public class NAL6Test extends JavaNALTest {
         n.believe("<swan --> swimmer>",0.80f,0.9f).en("A swan is usually a swimmer.");
         n.mustBelieve(100,"<<$1 --> bird> ==> <$1 --> swimmer>>",0.80f,0.45f).en("I guess a bird is usually a swimmer.");
         n.mustBelieve(100,"<<$1 --> swimmer> ==> <$1 --> bird>>",1.00f,0.39f).en("I guess a swimmer is a bird.");
-        n.mustBelieve(100,"<<$1 --> bird> <=> <$1 --> swimmer>>",0.80f,0.45f).en("I guess a bird is usually a swimmer, and the other way around.");
-        n.mustBelieve(100,"(&&,<#1 --> bird>,<#1 --> swimmer>)",0.80f,0.81f).en("Some bird can swim.");
+        n.mustBelieve(100,"<<$1 --> swimmer> <=> <$1 --> bird>>",0.80f,0.45f).en("I guess a bird is usually a swimmer, and the other way around.");
+        n.mustBelieve(100,"(&&, <#1 --> swimmer>, <#1 --> bird>)",0.80f,0.81f).en("Some bird can swim.");
         n.run();
     }
 
