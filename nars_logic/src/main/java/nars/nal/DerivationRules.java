@@ -193,7 +193,7 @@ public class DerivationRules {
             final String p = preprocess(rule);
 
             //there might be now be A_1..maxVarArgsToMatch in it, if this is the case we have to add up to maxVarArgsToMatch rules
-            if (p.contains("A_1..maxVarArgsToMatch") || p.contains("A_1..A_i.substitute(_)..A_n")) {
+            if (p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
                 addUnrolledVarArgs(parser, expanded, p, maxVarArgsToMatch);
             } else {
                 addAndPermuteTenses(parser, expanded, p);
@@ -256,11 +256,11 @@ public class DerivationRules {
                     if (p.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
                         strrep = str.replace(A_i, "_");
                     }
-                    String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..maxVarArgs", str).replace("B_1..maxVarArgs", str2).replace("A_i", A_i);
+                    String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..n", str2).replace("A_i", A_i);
                     addAndPermuteTenses(parser, expanded, parsable_unrolled);
                 }
             } else {
-                String parsable_unrolled = p.replace("A_1..maxVarArgs", str).replace("B_1..maxVarArgs", str2);
+                String parsable_unrolled = p.replace("A_1..n", str).replace("B_1..n", str2);
                 addAndPermuteTenses(parser, expanded, parsable_unrolled);
             }
 
