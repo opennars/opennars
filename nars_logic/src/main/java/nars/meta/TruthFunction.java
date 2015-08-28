@@ -19,6 +19,12 @@ public enum TruthFunction {
             return TruthFunctions.revision(T, B);
         }
     },
+    AnalyticDeduction() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
+            return TruthFunctions.deduction(T, new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE));
+        }
+    },
     Deduction() {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
@@ -82,6 +88,16 @@ public enum TruthFunction {
     ReduceConjunction() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.reduceConjunction(T,B);
+        }
+    },
+    ReduceDisjunction() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return TruthFunctions.reduceDisjunction(T, B);
+        }
+    },
+    ReduceConjunctionNeg() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return TruthFunctions.reduceConjunctionNeg(T, B);
         }
     },
     AnonymousAnalogy() {
