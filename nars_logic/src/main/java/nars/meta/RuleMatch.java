@@ -76,12 +76,6 @@ public class RuleMatch extends FindSubst {
         final Truth B = belief == null ? null : belief.getTruth();
 
 
-        if (p.negate && task.getFrequency() >= PostCondition.HALF) { //its negation, it needs this additional information to be useful
-            return false;
-        }
-
-
-
         final Truth truth;
 
         if (task.isJudgment()) {

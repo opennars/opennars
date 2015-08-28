@@ -11,8 +11,7 @@ import nars.op.mental.Counting;
 import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
 import nars.process.concept.ConceptFireTaskTerm;
-import nars.process.concept.FilterEqualSubtermsInRespectToImageAndProduct;
-import nars.process.concept.QueryVariableExhaustiveResults;
+import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
@@ -38,7 +37,7 @@ public class NewDefault extends Default {
         return new LogicPolicy(
 
                 new LogicStage /* <ConceptProcess> */ [] {
-                        new FilterEqualSubtermsInRespectToImageAndProduct(),
+                        new FilterEqualSubtermsAndSetPremiseBelief(),
                         //new QueryVariableExhaustiveResults(),
                         ruletable
                         //---------------------------------------------

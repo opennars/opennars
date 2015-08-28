@@ -51,7 +51,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
 
-    public void recurseTerms(final TermVisitor v, Term parent);
+    void recurseTerms(final TermVisitor v, Term parent);
 
     public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
 

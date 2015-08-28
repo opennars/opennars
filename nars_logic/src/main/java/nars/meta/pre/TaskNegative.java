@@ -25,4 +25,10 @@ final public class TaskNegative extends PreCondition {
     public String toString() {
         return getClass().getSimpleName();
     }
+
+
+    @Override
+    public boolean isEarly() {
+        return true;
+    }
 }

@@ -2,22 +2,43 @@ package nars.meta.pre;
 
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
+import nars.meta.TaskRule;
 import nars.premise.Premise;
 import nars.term.Term;
+import nars.term.Variable;
 
 /**
  * Created by me on 8/15/15.
  */
 abstract public class MatchTerm extends PreCondition {
-    private final Term pattern;
-    private final int pStructure;
 
-    public MatchTerm(Term pattern) {
+    private final Term pattern;
+    private final int minVolume;
+    private final int pStructure;
+    private final boolean allowNull;
+
+    public MatchTerm(Term pattern, TaskRule rule) {
 
         this.pattern = pattern;
 
         int pHash = pattern.subtermStructure();
+        this.minVolume = pattern.volume();
         this.pStructure = pHash;// & ~(1<< Op.VAR_PATTERN.ordinal()); VAR_PATTERN ordinal should not even be included in the substrcture 32 bits
+
+        if (pStructure == 0) {
+
+            // if nothing else in the rule involves this term
+            // which will be a singular VAR_PATTERN variable
+            // then allow null
+            if (((Variable)pattern).getType()!='%')
+                throw new RuntimeException("not what was expected");
+
+            allowNull = (rule.countOccurrences(pattern) == 1);
+
+        }
+        else {
+            allowNull = false;
+        }
 
         /*System.out.println( Long.toBinaryString(
                         pStructure) + " " + pattern
@@ -27,25 +48,19 @@ abstract public class MatchTerm extends PreCondition {
     @Override
     public final boolean test(final RuleMatch m) {
 
-        final Premise premise = m.premise;
+        final Term t = getTerm(m.premise);
 
-        Term t = getTerm(premise);
-        if (t == null) return false;
+        if (t == null) {
+            return allowNull;
+        }
 
-        if (pStructure!=0 && t.impossibleSubStructure(pStructure)) {
+
+        if ((t.volume() < minVolume) || (t.impossibleSubStructure(pStructure))) {
             //if (t.impossibleSubStructure(pStructure)) {
             //System.err.println("impossible: " + t + " in " + pattern);
             return false;
         }
 
-
-        if (t.volume() < pattern.volume()) return false;
-
-        //TODO check structural hash impossibility, with VAR_PATTERN bit removed
-
-        /*return Variables.findSubstitute(Symbols.VAR_PATTERN,
-                pattern, t,
-                m.assign, m.waste, premise.getRandom());*/
         return m.get(pattern, t);
     }
 

@@ -14,11 +14,8 @@ import nars.clock.HardRealtimeClock;
 import nars.clock.RealtimeMSClock;
 import nars.concept.BeliefTable;
 import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
 import nars.concept.DefaultConcept;
 import nars.cycle.DefaultCycle;
-import nars.io.DefaultPerception;
-import nars.io.Perception;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -92,7 +89,7 @@ public class Default extends NARSeed  {
                         new Contraposition(),
 
                         //B. concept fire tasklink termlink (pre-filter)
-                        new FilterEqualSubtermsInRespectToImageAndProduct(),
+                        new FilterEqualSubtermsAndSetPremiseBelief(),
                         new MatchTaskBelief(),
 
                         //C. concept fire tasklink termlink derivation ---------

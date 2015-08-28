@@ -68,7 +68,7 @@ public class TaskRule extends Rule<Premise,Task> {
         int start = 0;
 
         Term taskTermMatch = precon[0];
-        early.add(new MatchTaskTerm(taskTermMatch));
+        early.add(new MatchTaskTerm(taskTermMatch, this));
 
 
         Term beliefTermMatch = precon[1];
@@ -76,7 +76,7 @@ public class TaskRule extends Rule<Premise,Task> {
             //if it contains an atom term, this means it is a modifier,
             //and not a belief term pattern
             //(which will not reference any particular atoms)
-            early.add(new MatchBeliefTerm(beliefTermMatch));
+            early.add(new MatchBeliefTerm(beliefTermMatch, this));
         }
         else {
             throw new RuntimeException("belief term must be a pattern");

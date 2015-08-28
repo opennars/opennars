@@ -207,18 +207,18 @@ public class DerivationRules {
         for (final String s : expanded) {
             try {
 
-                System.out.println(s);
+                //System.out.println(s);
 
                 final TaskRule r = parser.term(s);
 
                 boolean added = rules.add(r);
                 if (added) {
 
-                    System.out.println("  " + r);
+                    //System.out.println("  " + r);
 
                     //add reverse questions
                     r.forEachQuestionReversal(_r -> {
-                        System.out.println("  " + _r);
+                        //System.out.println("  " + _r);
                         rules.add(_r);
                     });
                 }

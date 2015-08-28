@@ -40,11 +40,10 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.util.Arrays.copyOf;
 import static nars.Symbols.*;
-import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.Symbols.COMPOUND_TERM_OPENER;
 
 /**
  * a compound term
@@ -1386,6 +1385,19 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     @Override
     public Object setRest(Object rest) {
         throw new RuntimeException(this + " not modifiable");
+    }
+
+    public int countOccurrences(final Term t) {
+        final AtomicInteger o = new AtomicInteger(0);
+
+        if (equals(t)) return 1;
+
+        recurseTerms((n, p) -> {
+            if (n.equals(t))
+                o.incrementAndGet();
+        });
+
+        return o.get();
     }
 
 

@@ -6,10 +6,11 @@ import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Terms;
 
-public class FilterEqualSubtermsInRespectToImageAndProduct extends ConceptFireTaskTerm {
+public class FilterEqualSubtermsAndSetPremiseBelief extends ConceptFireTaskTerm {
 
     @Override
     public boolean apply(ConceptProcess f, TermLink termLink) {
+        
         if(Terms.equalSubTermsInRespectToImageAndProduct(f.getTaskLink().getTerm(), termLink.getTerm()))
             return false;
 
