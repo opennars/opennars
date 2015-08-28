@@ -72,7 +72,7 @@ public class Atom extends ImmutableAtom {
 
     }
 
-    @Override public int getVolume() { return 1; }
+    @Override public int volume() { return 1; }
 
     public int compareHash(final Term that) {
         return Integer.compare(hashCode(), that.hashCode());
@@ -233,7 +233,7 @@ public class Atom extends ImmutableAtom {
      * @return The complexity of the term, an integer
      */
     @Override
-    public int getComplexity() {
+    public int complexity() {
         return 1;
     }
 

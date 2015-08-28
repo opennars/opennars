@@ -1,4 +1,4 @@
-package nars.core;
+package nars.term;
 
 
 import nars.Global;
@@ -34,10 +34,10 @@ public class NALLevelTest {
         String productSentence = "<(*,a,b) --> c>.\n<c <-> a>?\n";
 
         n1.input(productSentence);
-        n1.runWhileNewInput(5);
+        n1.runWhileInputting(5);
 
         n8.input(productSentence);
-        n8.runWhileNewInput(5);
+        n8.runWhileInputting(5);
 
         assertTrue("NAL8 will accept sentence containing a Product", n8Count.getOutputs() >= 1);
         assertEquals("NAL1 will NOT accept sentence containing a Product", 0, n1Count.getOutputs() + n1Count.getOthers());

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.core;
+package nars.term;
 
 import nars.Global;
 import nars.NAR;
@@ -109,8 +109,8 @@ public class TermTest {
         Term term2 = n.term("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
 
         assertEquals(term1a.toString(), term1.toString());
-        assertTrue(term1.getComplexity() > 1);
-        assertTrue(term1.getComplexity() == term2.getComplexity());
+        assertTrue(term1.complexity() > 1);
+        assertTrue(term1.complexity() == term2.complexity());
 
         assertTrue(term1.getClass().equals(Inheritance.class));
         assertTrue(term1.getClass().equals(Inheritance.class));
@@ -437,8 +437,8 @@ public class TermTest {
         Term t = n.term(x);
 
         assertNotNull(t);
-        assertEquals(complexity, t.getComplexity());
-        assertEquals(mass, t.getVolume());
+        assertEquals(complexity, t.complexity());
+        assertEquals(mass, t.volume());
 
         assertEquals(varDep, t.varDep());
         assertEquals(varDep != 0, t.hasVarDep());

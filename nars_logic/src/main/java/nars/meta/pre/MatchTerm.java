@@ -1,6 +1,5 @@
 package nars.meta.pre;
 
-import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.premise.Premise;
@@ -40,7 +39,7 @@ abstract public class MatchTerm extends PreCondition {
         }
 
 
-        if (t.getVolume() < pattern.getVolume()) return false;
+        if (t.volume() < pattern.volume()) return false;
 
         //TODO check structural hash impossibility, with VAR_PATTERN bit removed
 

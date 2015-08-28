@@ -40,7 +40,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         if (host instanceof Compound) {
 
 
-            int complexity = host.getComplexity();
+            int complexity = host.complexity();
 
 
             template = Global.newArrayList(complexity + 1);

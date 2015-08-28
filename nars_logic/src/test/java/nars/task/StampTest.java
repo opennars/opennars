@@ -1,4 +1,4 @@
-package nars.core;
+package nars.task;
 
 import nars.task.stamp.Stamp;
 import org.junit.Test;

@@ -26,7 +26,6 @@ import com.google.common.primitives.UnsignedLongs;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
-import nars.Symbols;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
@@ -101,7 +100,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     protected void init(final Term... term) {
 
         int deps = 0, indeps = 0, queries = 0;
-        int compl = 1;
+        int compl = 1, vol = 1;
 
         final int opOrdinal = operator().ordinal();
         int subt = (1 << opOrdinal);
@@ -114,7 +113,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         for (final Term t : term) {
             /*if (t == null)
                 throw new RuntimeException("null subterm");*/
-            compl += t.getComplexity();
+            compl += t.complexity();
+            vol += t.volume();
             deps += t.varDep();
             indeps += t.varIndep();
             queries += t.varQuery();
@@ -134,7 +134,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.varTotal = (short)(deps + indeps + queries);
         this.complexity = (short) compl;
 
-        if ((this.volume = (short)(varTotal + complexity)) > Global.COMPOUND_VOLUME_MAX) {
+        if ((this.volume = (short)vol) > Global.COMPOUND_VOLUME_MAX) {
             throw new RuntimeException("volume limit exceeded for new Compound[" + operator() + "] " + Arrays.toString(term));
         }
 
@@ -588,7 +588,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     @Override
-    public int getVolume() {
+    public int volume() {
         return volume;
     }
 
@@ -708,7 +708,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * @return the complexity value
      */
     @Override
-    public int getComplexity() {
+    public int complexity() {
         return complexity;
     }
 
@@ -750,7 +750,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * Gives a set of all (unique) contained term, recursively
      */
     public Set<Term> getContainedTerms() {
-        Set<Term> s = Global.newHashSet(getComplexity());
+        Set<Term> s = Global.newHashSet(complexity());
         for (Term t : term) {
             s.add(t);
             if (t instanceof Compound)

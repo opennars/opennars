@@ -229,7 +229,7 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
     public int getTaskTermVolumeMin() {
-        return getTask().getVolume();
+        return getTask().volume();
     }
 
     /** returns Op.NONE if there is no belief term type;
@@ -249,7 +249,7 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
     public int getBeliefTermVolumeMin() {
-        return getBelief().getVolume();
+        return getBelief().volume();
     }
 
     /** test applicability of this rule with a specific maximum NAL level */

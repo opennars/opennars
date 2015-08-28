@@ -44,7 +44,7 @@ public class TermGraphPanelNengo extends Nengrow {
         nar.input("<a-->b>.");
         nar.input("<b-->c>.");
         nar.input("<c-->d>.");
-        nar.runWhileNewInput(16);
+        nar.runWhileInputting(16);
         new TermGraphPanelNengo(nar).newWindow(800, 600);
     }
 

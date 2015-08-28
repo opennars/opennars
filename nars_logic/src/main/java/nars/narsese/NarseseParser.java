@@ -59,7 +59,7 @@ public class NarseseParser extends BaseParser<Object>  {
     /** MetaNAL enable/disable */
     public static final boolean meta = true;
 
-    final static char[] variables = new char[] { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY };
+    final static char[] variables = new char[] { Symbols.VAR_INDEPENDENT, Symbols.VAR_DEPENDENT, Symbols.VAR_QUERY, Symbols.VAR_PATTERN };
 
     //These should be set to something like RecoveringParseRunner for performance
     private final ParseRunner inputParser = new ListeningParseRunner3(Input());

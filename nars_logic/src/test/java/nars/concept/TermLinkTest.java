@@ -1,10 +1,8 @@
-package nars.core;
+package nars.concept;
 
 import nars.NAR;
 import nars.Symbols;
 import nars.bag.Bag;
-import nars.concept.Concept;
-import nars.concept.DefaultConcept;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
@@ -78,7 +76,7 @@ public class TermLinkTest {
         String task = term + ". %1.00;0.90%";
         NAR n = new NAR(new Default());
         n.input(task);
-        n.runWhileNewInput(16);
+        n.runWhileInputting(16);
         return n;
     }
 
@@ -116,7 +114,7 @@ public class TermLinkTest {
     public void testStatementComponent() {
         NAR n = new NAR(new Default());
         n.input("<a --> b>.");
-        n.runWhileNewInput(1);
+        n.runWhileInputting(1);
 
         Set<String> tl = getTermLinks(n.concept("<a --> b>").getTermLinks());
         assertEquals("[Cb:b, Ca:a]", tl.toString());
@@ -131,7 +129,7 @@ public class TermLinkTest {
         n.input("<c --> <a --> b>>.");
         n.input("<c --> d>.");
         n.input("<f --> <a --> b>>.");
-        n.runWhileNewInput(6);
+        n.runWhileInputting(6);
 
 
         Set<String> ainhb = getTermLinks(n.concept("<a --> b>").getTermLinks());

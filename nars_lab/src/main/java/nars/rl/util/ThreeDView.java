@@ -290,7 +290,7 @@ public class ThreeDView extends JFXPanel {
         Color c = Color.hsb(255.0*Video.hashFloat(o.toString().hashCode()), 0.75f, 0.85f);
         mat.setDiffuseColor(c);
         System.out.println(o.getClass());
-        Sphere point = new Sphere(radius / t.getComplexity());
+        Sphere point = new Sphere(radius / t.complexity());
         point.setOpacity(0.85);
         point.setTranslateX(x);
         point.setTranslateY(y);

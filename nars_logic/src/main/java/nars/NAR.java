@@ -532,7 +532,7 @@ public class NAR extends Container implements Runnable {
 
     }
 
-    public NAR runWhileNewInput(int extraCycles) {
+    public NAR runWhileInputting(int extraCycles) {
         frame(extraCycles);
         return this;
     }
@@ -718,8 +718,8 @@ public class NAR extends Container implements Runnable {
         return memory.the(s);
     }
 
-    public void runWhileNewInput() {
-        runWhileNewInput(0);
+    public void runWhileInputting() {
+        runWhileInputting(0);
     }
 
     public void emit(Throwable e) {

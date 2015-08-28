@@ -12,13 +12,15 @@ public class DerivationRuleTest extends TestCase {
 
     static final Deriver executer = Deriver.defaults; //all the inference rules have to pass of course
 
+    static final NarseseParser p = NarseseParser.the();
 
+ 
 
     @Test
     public void testParser() {
 
 
-        NarseseParser p = NarseseParser.the();
+
         //NAR p = new NAR(new Default());
 
         assertNotNull("metaparser can is a superset of narsese", p.termRaw("<A --> b>"));
@@ -27,20 +29,25 @@ public class DerivationRuleTest extends TestCase {
 
         {
             TaskRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
-            assertEquals("((%A, %A), (%A, (<Revision --> Truth>, %Desire_Weak)))", x.toString());
+            assertEquals("((%A, %A), (%A, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
 
         {
-            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (Truth_Revision, Desire_Weak)>");
-            assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (%Truth_Revision, %Desire_Weak)))", x.toString());
-            assertEquals(15, x.getVolume());
+            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
+            assertEquals(19, x.volume());
+            assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
+        }
+        {
+            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
+            assertEquals(19, x.volume()); //same volume as previous block
+            assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> nonvar>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
         }
 
         {
             TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
+            assertEquals(16, x.volume());
             assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (<%Nonsense --> %Test>)))", x.toString());
-            assertEquals(16, x.getVolume());
         }
 
 //        {
@@ -53,7 +60,7 @@ public class DerivationRuleTest extends TestCase {
             //and the first complete rule:
             TaskRule x = p.termRaw("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
             assertEquals("((<%S --> %M>, <%P --> %M>), (<%P <-> %S>, (%TruthComparison, %DesireStrong)))", x.toString());
-            assertEquals(15, x.getVolume());
+            assertEquals(15, x.volume());
         }
 
 
@@ -74,8 +81,8 @@ public class DerivationRuleTest extends TestCase {
 
         TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
         assertEquals("((<%S --> %P>, (--,%S)), (<%P --> %S>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
-        assertEquals(13, y.getVolume());
-        assertEquals(13, y.getComplexity());
+        assertEquals(18, y.volume());
+        assertEquals(13, y.complexity());
 
 
     }

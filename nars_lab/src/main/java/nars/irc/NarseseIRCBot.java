@@ -20,7 +20,6 @@ import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.util.language.Twokenize;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.List;
@@ -209,7 +208,7 @@ public class NarseseIRCBot extends IRCBot {
 
 
 
-        n.runWhileNewInput(1);
+        n.runWhileInputting(1);
         n.frame(1); //one more to be sure
 
     }

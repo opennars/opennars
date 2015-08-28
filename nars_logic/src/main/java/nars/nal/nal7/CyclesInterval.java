@@ -50,7 +50,7 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     }
 
     @Override
-    public int getVolume() {
+    public int volume() {
         return 1;
     }
 

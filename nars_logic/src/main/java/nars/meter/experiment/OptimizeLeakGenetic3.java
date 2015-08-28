@@ -81,7 +81,7 @@ public class OptimizeLeakGenetic3  {
             derGoal.set(p == Symbols.GOAL ? 1 : 0);
             derQuest.set(((p == Symbols.QUEST) || (p == Symbols.QUESTION)) ? 1 : 0);
 
-            derComplex.set(d.getTerm().getComplexity());
+            derComplex.set(d.getTerm().complexity());
 
         }
 

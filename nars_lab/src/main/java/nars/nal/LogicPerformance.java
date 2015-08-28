@@ -280,7 +280,7 @@ public class LogicPerformance {
             process.explain(n.time(), f);
         });
 
-        n.runWhileNewInput(1);
+        n.runWhileInputting(1);
         
         Set<Task> solutionTasks = new HashSet();
         

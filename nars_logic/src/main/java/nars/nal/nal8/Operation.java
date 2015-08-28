@@ -346,7 +346,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
         Term predTerm = getOperator();
 
-        if ((predTerm.getVolume() != 1) || (predTerm.hasVar())) {
+        if ((predTerm.volume() != 1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
             super.append(p, pretty);
             return;

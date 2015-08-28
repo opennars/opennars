@@ -1,7 +1,6 @@
 package nars.gui.output;
 
 import nars.NAR;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.truth.Truth;
 
@@ -208,7 +207,7 @@ public class SentenceTablePanel extends TablePanel {
                 t.getPunctuation(),
                 freq == -1 ? "" : freq,
                 conf == -1 ? "" : conf,
-                String.format("%03d", t.getTerm().getComplexity()),
+                String.format("%03d", t.getTerm().complexity()),
                 priority,
                 parentTask
             });

@@ -20,7 +20,7 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
     }
 
     @Override
-    public int getComplexity() {
+    public int complexity() {
         return 1;
     }
 

@@ -65,7 +65,7 @@ public class HaiSOMPerception implements Perception {
     public boolean isState(Term t) {
         //TODO better pattern recognizer
         String s = t.toString();
-        int complexity = t.getComplexity();
+        int complexity = t.complexity();
 
         //allow complxity to increase to a certain amount to include aggregate states
         if ((t instanceof Inheritance) && (complexity >= 6) && (complexity <= 9)) {

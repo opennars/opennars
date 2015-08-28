@@ -566,7 +566,7 @@ public class QLAgent<S extends Term> extends NARAgent {
 
         @Override
         public boolean isCol(Term a) {
-            if ((a.getComplexity() == 5) && (!a.hasVar())) //"act(X)"
+            if ((a.complexity() == 5) && (!a.hasVar())) //"act(X)"
                 if (a instanceof Operation)
                     return cols.contains((Operation)a);
             return false;

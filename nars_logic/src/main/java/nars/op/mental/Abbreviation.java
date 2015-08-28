@@ -1,6 +1,5 @@
 package nars.op.mental;
 
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.Events.TaskDerive;
 import nars.Global;
@@ -64,7 +63,7 @@ public class Abbreviation extends NARReaction {
             if (Operation.isA(s.getSubject(), abbreviate)) return false;
             if (Operation.isA(s.getPredicate(), abbreviate)) return false;
         }*/
-        return  (t.getComplexity() > abbreviationComplexityMin.get()) &&
+        return  (t.complexity() > abbreviationComplexityMin.get()) &&
                 (task.getQuality() > abbreviationQualityMin.get());
     }
 

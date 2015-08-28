@@ -1,4 +1,4 @@
-package nars.nal.nal6;
+package nars.term;
 
 import nars.NAR;
 import nars.nal.nal5.Conjunction;

@@ -19,7 +19,6 @@ package nars.nal.nal7;
 
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
@@ -668,7 +667,7 @@ public class TemporalRules {
 
         //if (problem.hasQueryVar()) {
         if (hasQueryVar) {
-            return truth.getExpectation() / solution.getTerm().getComplexity();
+            return truth.getExpectation() / solution.getTerm().complexity();
         } else {
             return truth.getConfidence();
         }

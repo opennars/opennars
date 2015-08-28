@@ -1,38 +1,24 @@
-package nars.nal;
+package nars.io;
 
 import nars.*;
-import nars.budget.Budget;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.nal7.Interval;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.op.io.echo;
-import nars.task.DefaultTask;
-import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 import nars.term.*;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 
-import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
-import static nars.Symbols.*;
-import static nars.budget.BudgetFunctions.truthToQuality;
 import static nars.term.Statement.make;
 import static org.junit.Assert.*;
 
@@ -139,7 +125,7 @@ public class NarseseParserTest {
         assertEquals(tt, t.getTerm().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.getTruth());
-        assertEquals(7, t.getTerm().getComplexity());
+        assertEquals(7, t.getTerm().complexity());
     }
 
     protected void testProductABC(Product p) throws InvalidInputException {
@@ -213,7 +199,7 @@ public class NarseseParserTest {
         Compound c = term("(<a -->b> && y)");
         assertEquals(Op.CONJUNCTION, c.operator());
         assertEquals(2, c.length());
-        assertEquals(5, c.getComplexity());
+        assertEquals(5, c.complexity());
         assertEquals(Op.INHERITANCE, c.term[1].operator());
     }
 

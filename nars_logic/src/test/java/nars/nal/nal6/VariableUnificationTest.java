@@ -24,10 +24,10 @@ import java.util.Collection;
  TODO convert this to AbstractNALTest
  */
 @RunWith(Parameterized.class)
-public class VariableTest extends JavaNALTest {
+public class VariableUnificationTest extends JavaNALTest {
 
 
-    public VariableTest(NARSeed b) {
+    public VariableUnificationTest(NARSeed b) {
         super(b);
     }
 

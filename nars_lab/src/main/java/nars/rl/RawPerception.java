@@ -120,7 +120,7 @@ public class RawPerception implements Perception {
 
     @Override
     public boolean isState(Term t) {
-        if ((t instanceof Inheritance) && (t.getComplexity() == 4) ) {
+        if ((t instanceof Inheritance) && (t.complexity() == 4) ) {
             Inheritance ii = (Inheritance)t;
             if (!ii.getPredicate().equals(idTerm))
                 return false;

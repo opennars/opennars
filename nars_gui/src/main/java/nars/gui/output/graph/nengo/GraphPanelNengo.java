@@ -1,7 +1,6 @@
 package nars.gui.output.graph.nengo;
 
 import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
-import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
@@ -30,7 +29,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.function.Consumer;
 
 /** for displaying any generic Graph */
 public class GraphPanelNengo<V extends Named, E> extends Nengrow {
@@ -600,7 +598,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
         n.input("<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>.");
         n.input("<<$y --> [withwings]> ==> <$y --> flyer>>.");
 
-        n.runWhileNewInput(5);
+        n.runWhileInputting(5);
 
         TermLinkGraph g = new TermLinkGraph();
         g.add(n.concept("<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>"), true);

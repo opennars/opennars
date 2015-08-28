@@ -22,7 +22,7 @@ public class TaskTermMinVolume extends PreCondition {
         final Task b = getTask(ruleMatch.premise);
         if (b == null) return false;
         final Term t = b.getTerm();
-        return t.getVolume() >= minVolume;
+        return t.volume() >= minVolume;
     }
 
     protected Task getTask(final Premise p) {

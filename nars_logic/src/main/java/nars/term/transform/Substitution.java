@@ -4,8 +4,6 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
-import nars.util.data.FasterHashMap;
-import org.apache.commons.collections.map.HashedMap;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -43,7 +41,7 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
             if (m == null)
                 throw new RuntimeException("null key");
 
-            final int v = m.getVolume();
+            final int v = m.volume();
             if (minMatchVolume > v) minMatchVolume = v;
             if (maxMatchVolume < v) maxMatchVolume = v;
 
@@ -124,7 +122,7 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
         for (int i = 0; i < subterms; i++) {
             final Term t1 = in[i];
 
-            if (t1.getVolume() < minVolumeOfMatch) {
+            if (t1.volume() < minVolumeOfMatch) {
                 //too small to be any of the keys or hold them in a subterm
                 continue;
             }

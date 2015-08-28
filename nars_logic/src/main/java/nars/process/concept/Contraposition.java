@@ -31,7 +31,7 @@ public class Contraposition extends ConceptFireTask {
             //Concept d=memory.concepts.sampleNextConcept();
             //if(d!=null && d.term.equals(task.term)) {
 
-            float n = taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
+            float n = taskTerm.complexity(); //don't let this rule apply every time, make it dependent on complexity
             float w = 1.0f / ((n * (n - 1)) / 2.0f); //let's assume hierachical tuple (triangle numbers) amount for this
             if (f.getRandom().nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
 

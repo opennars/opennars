@@ -50,12 +50,12 @@ public class Operator<T extends Term> extends Compound1<T> {
     }
 
     @Override
-    public int getComplexity() {
+    public int complexity() {
         return 1;
     }
 
     @Override
-    public int getVolume() {
+    public int volume() {
         return 1;
     }
 

@@ -27,7 +27,7 @@ public class TestMultistepEdited {
         n.memory.setRecorder(logger);*/
         //System.out.println(n.memory.concepts);
         
-        n.runWhileNewInput(100);
+        n.runWhileInputting(100);
         
         
         assertEquals(100, n.time()); //was 997

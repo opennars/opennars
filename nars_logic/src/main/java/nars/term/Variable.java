@@ -161,7 +161,7 @@ public class Variable extends Atom {
      *
      * @return The complexity of the term, an integer
      */
-    @Override public int getComplexity() {
+    @Override public int complexity() {
         return 0;
     }
 

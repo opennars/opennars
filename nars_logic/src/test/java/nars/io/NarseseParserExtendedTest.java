@@ -1,4 +1,4 @@
-package nars.nal;
+package nars.io;
 
 import nars.Op;
 import nars.Symbols;
@@ -13,8 +13,8 @@ import nars.term.Compound;
 import nars.term.Term;
 import org.junit.Test;
 
-import static nars.nal.NarseseParserTest.task;
-import static nars.nal.NarseseParserTest.term;
+import static nars.io.NarseseParserTest.task;
+import static nars.io.NarseseParserTest.term;
 import static nars.nal.nal7.Tense.*;
 import static org.junit.Assert.*;
 

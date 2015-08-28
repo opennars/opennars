@@ -27,9 +27,9 @@ public class AttentionTest {
         int numConcepts = 32;
         NAR n = new NAR(new Default());
         for (int i = 0; i < numConcepts; i++)
-            n.input("<x" + i + " <-> x" + (i + 1) + ">.");
+            n.believe("<x" + i + " <-> x" + (i + 1) + ">");
         
-        n.runWhileNewInput(100);
+        n.runWhileInputting(100);
         
         int c = Iterables.size(n.memory.getControl());
         assertTrue(c > 16);

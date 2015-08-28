@@ -23,7 +23,6 @@ package nars.term;
 
 import nars.Op;
 import nars.Symbols;
-import nars.meta.TaskRule;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.Identified;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.Map;
-import java.util.function.Predicate;
 
 public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable {
 
@@ -46,10 +44,10 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
     /** volume = total number of terms = complexity + # total variables */
-    public int getVolume();
+    public int volume();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
-    public int getComplexity();
+    public int complexity();
 
 
 
@@ -215,11 +213,11 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
     default public boolean impossibleSubterm(final Term target) {
         return ((impossibleSubStructure(target.subtermStructure())) ||
-                (impossibleSubTermVolume(target.getVolume())));
+                (impossibleSubTermVolume(target.volume())));
     }
     default public boolean impossibleSubTermOrEquality(final Term target) {
         return ((impossibleSubStructure(target.subtermStructure())) ||
-                (impossibleSubTermOrEqualityVolume(target.getVolume())));
+                (impossibleSubTermOrEqualityVolume(target.volume())));
     }
 
 
@@ -237,7 +235,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
     default public boolean impossibleSubTermVolume(final int otherTermVolume) {
         return otherTermVolume >
-                getVolume()
+                volume()
                         - 1 /* for the compound itself */
                         - (length() - 1) /* each subterm has a volume >= 1, so if there are more than 1, each reduces the potential space of the insertable */
                 ;
@@ -247,7 +245,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
      * if it's larger than some number less than that, it can't be a subterm.
      */
     default public boolean impossibleSubTermOrEqualityVolume(int otherTermsVolume) {
-        return otherTermsVolume > getVolume();
+        return otherTermsVolume > volume();
     }
 
 

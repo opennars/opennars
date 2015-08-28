@@ -1,4 +1,4 @@
-package nars.nal;
+package nars.task;
 
 
 public class PunctuationTest {

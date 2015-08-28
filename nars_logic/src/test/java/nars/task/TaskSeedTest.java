@@ -1,4 +1,4 @@
-package nars.core;
+package nars.task;
 
 import nars.NAR;
 import nars.nar.Default;

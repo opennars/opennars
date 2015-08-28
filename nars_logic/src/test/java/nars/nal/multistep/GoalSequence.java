@@ -48,15 +48,15 @@ public class GoalSequence {
         while (n.time() < maxCycles) {
            
             n.believe("<a --> word>", Tense.Present, 1.0f, 0.9f);
-            n.runWhileNewInput(pause);
+            n.runWhileInputting(pause);
             n.believe("<b --> word>", Tense.Present, 1.0f, 0.9f);
-            n.runWhileNewInput(pause);
+            n.runWhileInputting(pause);
             n.believe("<c --> word>", Tense.Present, 1.0f, 0.9f);
-            n.runWhileNewInput(pause);
+            n.runWhileInputting(pause);
             
             n.ask("<?what =/> <c --> meta-word>>");
             
-            n.runWhileNewInput(interSeqPause);
+            n.runWhileInputting(interSeqPause);
         }
         
         System.out.println(c);

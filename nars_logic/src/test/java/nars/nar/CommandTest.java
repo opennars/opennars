@@ -1,4 +1,4 @@
-package nars.core;
+package nars.nar;
 
 import nars.NAR;
 import nars.Symbols;

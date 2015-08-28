@@ -5,7 +5,6 @@ import nars.event.CycleReaction;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;
 import nars.nar.Default;
-import nars.util.event.Reaction;
 import nars.util.signal.Autoencoder;
 import org.junit.Test;
 
@@ -28,14 +27,14 @@ public class VectorMapTest {
         
         //new TextOutput(n, System.out);
         
-        n.runWhileNewInput(16);
+        n.runWhileInputting(16);
         
         d[1] = 1.0f;
         d[2] = 0.5f;
         
         v.update();
 
-        n.runWhileNewInput(16);
+        n.runWhileInputting(16);
         
         //TODO assert that NAR has > 1 concepts
     }
@@ -65,7 +64,7 @@ public class VectorMapTest {
         
         v.update();
         
-        n.runWhileNewInput(16);
+        n.runWhileInputting(16);
 
         new CycleReaction(n) {
 
@@ -84,7 +83,7 @@ public class VectorMapTest {
 
         v.update();
         
-        n.runWhileNewInput(16);
+        n.runWhileInputting(16);
         
         //new NARSwing(n);
 

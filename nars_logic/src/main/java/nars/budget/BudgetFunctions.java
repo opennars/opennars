@@ -346,7 +346,7 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal) {
-        final int complexity = (content == null) ? 1 : content.getComplexity();
+        final int complexity = (content == null) ? 1 : content.complexity();
         return budgetInference(target, truthToQuality(truth), complexity, nal);
     }
 
@@ -357,7 +357,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundBackward(final Term content, final Premise nal) {
-        return budgetInference(1, content.getComplexity(), nal);
+        return budgetInference(1, content.complexity(), nal);
     }
 
     /**
@@ -368,7 +368,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundBackwardWeak(final Term content, final Premise nal) {
-        return budgetInference(w2c(1), content.getComplexity(), nal);
+        return budgetInference(w2c(1), content.complexity(), nal);
     }
 
     private static Budget budgetInference(final float qual, final int complexity, final Premise nal) {

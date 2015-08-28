@@ -1,4 +1,4 @@
-package nars.core;
+package nars.term;
 
 import nars.Global;
 import nars.NAR;
@@ -24,7 +24,7 @@ public class ApplySubstituteTest {
             
         String abS ="<a --> b>";
         Compound ab = n.term(abS);
-        int originalComplexity = ab.getComplexity();
+        int originalComplexity = ab.complexity();
         
         String xyS ="<x --> y>";
         Term xy = n.term(xyS);
@@ -33,7 +33,7 @@ public class ApplySubstituteTest {
         h.put(n.term("b"), xy);
         Compound c = ab.applySubstituteToCompound(h);
                 
-        assertTrue(c.getComplexity() > originalComplexity);
+        assertTrue(c.complexity() > originalComplexity);
         
         assertEquals(abS, ab.toString()); //ab unmodified
 
