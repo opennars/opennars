@@ -1,6 +1,7 @@
 package nars.nal.nal3;
 
 import nars.Op;
+import nars.Symbols;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
@@ -20,12 +21,11 @@ public interface SetExt extends SetTensional {
     }
 
 
-    public static Compound make(Term... t) {
-        t = Terms.toSortedSetArray(t);
+    public static Compound make(final Term... t) {
         switch (t.length) {
             case 0: return null;
             case 1: return new SetExt1(t[0]);
-            default: return new SetExtN(t);
+            default: return new SetExtN( Terms.toSortedSetArray(t));
         }
     }
 
@@ -34,6 +34,6 @@ public interface SetExt extends SetTensional {
     }
 
     default void appendCloser(Writer p) throws IOException {
-        p.append(Op.SET_EXT_CLOSER.ch);
+        p.append(Symbols.SET_EXT_CLOSER);
     }
 }

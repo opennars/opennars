@@ -21,17 +21,18 @@
 package nars.nal;
 
 import nars.Global;
+import nars.util.data.Util;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
 /**
- * Common functions on real numbers, mostly in [0,1].
+ * Common (static) functions on real numbers, mostly in [0,1].
  */
-public class UtilityFunctions {
+public class UtilityFunctions extends Util {
 
-    
-    
+    protected UtilityFunctions() { super();    }
+
     /**
      * A function where the output is conjunctively determined by the inputs
      * @param arr The inputs, each in [0, 1]
@@ -139,33 +140,5 @@ public class UtilityFunctions {
         return Global.HORIZON * c / (1 - c);
     }
 
-    /** http://www.java-gaming.org/index.php?topic=24194.0 */
-    public static int floorInt(final float x) {
-        return (int) (x + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
-    }
-    private static final int    BIG_ENOUGH_INT   = 16 * 1024;
-    private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
-    private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5;
-
-
-
-    /** linear interpolate between target & current, factor is between 0 and 1.0 */
-    public static float lerp(final float target, final float current, final float factor) {
-        return target * factor + current * (1f - factor);
-    }
-
-    /** maximum, simpler and faster than Math.max without its additional tests */
-    public final static float max(final float a, final float b) {
-        return (a > b) ? a : b;
-    }
-
-    public final static float mean(final float a, final float b) {
-        return (a+b)*0.5f;
-    }
-
-    /** tests equivalence (according to epsilon precision) */
-    public static boolean isEqual(final float a, final float b, final float epsilon) {
-        return Math.abs(a-b) < epsilon;
-    }
 }
 

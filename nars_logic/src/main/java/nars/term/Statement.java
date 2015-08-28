@@ -38,8 +38,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 
-import static nars.Op.STATEMENT_CLOSER;
-import static nars.Op.STATEMENT_OPENER;
+import static nars.Symbols.*;
 
 /**
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
@@ -233,14 +232,14 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
                 .add(subjBytes)
                 .add((byte)Symbols.STAMP_SEPARATOR)
                 .add(predBytes)
-                .add((byte) STATEMENT_CLOSER.ch).toBytes();
+                .add((byte) STATEMENT_CLOSER).toBytes();
     }
 
 
     @Override
     public void append(final Writer w, final boolean pretty) throws IOException {
 
-        w.append(STATEMENT_OPENER.ch);
+        w.append(STATEMENT_OPENER);
 
         getSubject().name().append(w, pretty);
 
@@ -252,7 +251,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
         getPredicate().name().append(w, pretty);
 
-        w.append(STATEMENT_CLOSER.ch);
+        w.append(STATEMENT_CLOSER);
     }
 
 

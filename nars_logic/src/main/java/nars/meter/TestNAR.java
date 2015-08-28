@@ -152,7 +152,7 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustEmit(long withinCycles, String task, Class channel) throws InvalidInputException {
-        Task t = narsese.task(memory, task);
+        Task t = narsese.task(task, memory);
         //TODO avoid reparsing term from string
 
         final long now = time();
@@ -368,16 +368,22 @@ public class TestNAR extends NAR {
 
     public void inputTest(String script) {
 
-        final TextInput i = new TextInput(textPerception, script) {
-            @Override
-            public void accept(Task task) {
-                super.accept(task);
-                inputs.add(task);
-            }
-        };
+        if (script == null)
+            throw new RuntimeException("null input");
 
-        input(i);
+        input( new TestInput(script) );
 
+    }
 
+    private class TestInput extends TextInput {
+        public TestInput(String script) {
+            super(TestNAR.this, script);
+        }
+
+        @Override
+        public void accept(Task task) {
+            super.accept(task);
+            inputs.add(task);
+        }
     }
 }

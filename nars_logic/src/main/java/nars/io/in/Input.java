@@ -20,13 +20,12 @@
 package nars.io.in;
 
 import nars.Memory;
-import nars.nal.nal8.ImmediateOperator;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.function.Consumer;
 
 /**
@@ -72,41 +71,4 @@ public interface Input extends Source<Task> {
 //    }
 
 
-    /** an input that generates tasks in batches, which are stored in a buffer */
-    public static class BufferedInput implements Input , Consumer<Task> {
-
-        final Deque<Task> queue = new ArrayDeque();
-
-        protected int accept(Iterator<Task> tasks) {
-            if (tasks == null) return 0;
-            int count = 0;
-            while (tasks.hasNext()) {
-                Task t = tasks.next();
-                if (t==null)
-                    continue;
-                queue.add(t);
-                count++;
-            }
-            return count;
-        }
-
-        @Override
-        public void accept(Task task) {
-            if (task!=null)
-                queue.add(task);
-        }
-
-        @Override
-        public Task get() {
-            if (!queue.isEmpty()) {
-                return queue.removeFirst();
-            }
-            return null;
-        }
-
-        @Override
-        public void stop() {
-            queue.clear();
-        }
-    }
 }

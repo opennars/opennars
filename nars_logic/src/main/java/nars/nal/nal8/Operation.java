@@ -41,6 +41,7 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import static nars.Symbols.*;
 
 /**
  * An operation is interpreted as an Inheritance relation with an operator.
@@ -319,7 +320,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
         final ByteBuf b = ByteBuf.create(len);
         b.append(op); //add the operator name without leading '^'
-        b.append((byte) Op.COMPOUND_TERM_OPENER.ch);
+        b.append((byte) COMPOUND_TERM_OPENER);
 
 
         n = 0;
@@ -335,7 +336,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
             n++;
         }
 
-        b.append((byte) Op.COMPOUND_TERM_CLOSER.ch);
+        b.append((byte) COMPOUND_TERM_CLOSER);
 
         return b.toBytes();
     }
@@ -355,7 +356,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         final Term[] xt = arg().terms();
 
         predTerm.append(p, pretty); //add the operator name without leading '^'
-        p.append(Op.COMPOUND_TERM_OPENER.ch);
+        p.append(COMPOUND_TERM_OPENER);
 
 
         int n = 0;
@@ -372,7 +373,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
             n++;
         }
 
-        p.append(Op.COMPOUND_TERM_CLOSER.ch);
+        p.append(COMPOUND_TERM_CLOSER);
 
     }
 

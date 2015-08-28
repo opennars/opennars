@@ -20,32 +20,29 @@
  */
 package nars.io.in;
 
-import nars.io.TextPerception;
+import nars.NAR;
+import nars.task.Task;
+
+import java.util.Collection;
 
 /**
  * Process experience from a string into zero or more input tasks
  */
-public class TextInput extends Input.BufferedInput {
+public class TextInput extends TaskQueue {
 
 
-    private final TextPerception perception;
-    /**
-     * Input experience from a file
-     */
-    protected final String input;
-    
-    //private boolean isLooping = false;
-    
-    public TextInput(TextPerception p, String input) {
-        this.perception = p;
-        this.input = input;
-        perception.perceive(process(input), this);
+    public TextInput(final NAR n, final String input) {
+        super();
+        process(n, input);
     }
 
-
+    protected void process(final NAR n, final String input) {
+        n.narsese.tasks(process(input), n.memory,
+                (Collection<Task>)this);
+    }
 
     /** can be overridden in subclasses to preprocess addInput */
-    public String process(String input) {
+    public String process(final String input) {
         return input;
     }
 

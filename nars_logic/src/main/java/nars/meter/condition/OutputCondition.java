@@ -92,7 +92,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
 
 
     public static List<OutputCondition> getConditions(NAR n, String example, int similarResultsToSave)  {
-        return getConditions(n, example, similarResultsToSave, x -> n.narsese.task(n.memory, x));
+        return getConditions(n, example, similarResultsToSave, x -> n.narsese.task(x, n.memory));
     }
 
     /** with caching, useful for repeated tests to avoid re-parsing the same text */
@@ -104,7 +104,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
 
             if (t == null) {
                 try {
-                    t = n.narsese.task(n.memory, x);
+                    t = n.narsese.task(x, n.memory);
                     conditionCache.put(x, t);
                 }
                 catch (Exception e) {

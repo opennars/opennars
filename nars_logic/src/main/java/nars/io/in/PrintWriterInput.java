@@ -1,6 +1,6 @@
 package nars.io.in;
 
-import nars.io.TextPerception;
+import nars.NAR;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +20,8 @@ public class PrintWriterInput extends ReaderInput {
     public final PipedWriter out;
     boolean outClosed = false;
 
-    public PrintWriterInput(TextPerception t) throws IOException {
-        super(t);
+    public PrintWriterInput(NAR n) throws IOException {
+        super(n);
 
         out = new PipedWriter();
         setInput(new BufferedReader(new PipedReader(out)));

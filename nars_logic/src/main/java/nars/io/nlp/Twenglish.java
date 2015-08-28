@@ -240,10 +240,10 @@ public class Twenglish {
             if (!languageBooted) {
                 
                 
-                results.add(0, narsese.task(m, new StringBuilder(
-                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString()));
-                results.add(0, narsese.task(m, new StringBuilder(
-                        "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString()));
+                results.add(0, narsese.task(new StringBuilder(
+                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString(), m));
+                results.add(0, narsese.task(new StringBuilder(
+                        "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString(), m));
                 
                 languageBooted = true;
             }

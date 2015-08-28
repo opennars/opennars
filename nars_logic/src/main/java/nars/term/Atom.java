@@ -313,6 +313,8 @@ public class Atom extends ImmutableAtom {
         return null;
     }
 
+
+
     public static Negation notThe(String untrue) {
         return (Negation) Negation.make(Atom.the(untrue));
     }

@@ -21,6 +21,7 @@
 package nars.nal.nal3;
 
 import nars.Op;
+import nars.Symbols;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -69,7 +70,7 @@ public class SetIntN extends AbstractSetN implements SetInt {
 
     @Override
     public void appendCloser(Writer p) throws IOException {
-        p.append(Op.SET_INT_CLOSER.ch);
+        p.append(Symbols.SET_INT_CLOSER);
     }
 
     @Override

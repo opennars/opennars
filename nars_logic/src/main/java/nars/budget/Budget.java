@@ -27,6 +27,7 @@ import nars.Symbols;
 import nars.io.Texts;
 import nars.task.Sentence;
 import nars.truth.Truth;
+import nars.util.data.Util;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -158,6 +159,15 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return new Budget(this, true);
     }
 
+    /** the max priority, durability, and quality of two tasks */
+    public Budget max(final Budget b) {
+        return set(
+                Util.max(getPriority(), b.getPriority()),
+                Util.max(getDurability(), b.getDurability()),
+                Util.max(getQuality(), b.getQuality())
+        );
+    }
+
     /**
      * priority: adds the value of another budgetvalue to this; all components max at 1.0
      * durability: max(this, b) (similar to merge)
@@ -264,11 +274,11 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
 
     public void maxDurability(final float otherDurability) {
-        setDurability(max(getDurability(), otherDurability)); //max durab
+        setDurability(Util.max(getDurability(), otherDurability)); //max durab
     }
 
     public void maxQuality(final float otherQuality) {
-        setQuality(max(getQuality(), otherQuality)); //max durab
+        setQuality(Util.max(getQuality(), otherQuality)); //max durab
     }
 
     /**

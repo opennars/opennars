@@ -149,7 +149,7 @@ public class Memory implements Serializable, AbstractMemory {
         this.param = narParam;
         this.rules = policy;
 
-        this.self = Symbols.DEFAULT_SELF; //default value
+        this.self = Global.DEFAULT_SELF; //default value
 
         this.event = new EventEmitter.DefaultEventEmitter();
         //this.event = new EventEmitter.FastDefaultEventEmitter();

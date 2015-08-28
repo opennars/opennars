@@ -1,6 +1,7 @@
 package nars.nal.nal3;
 
 import nars.Op;
+import nars.Symbols;
 import nars.term.Term;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt {
 
     @Override
     public void appendCloser(Writer p) throws IOException {
-        p.append(Op.SET_EXT_CLOSER.ch);
+        p.append(Symbols.SET_EXT_CLOSER);
     }
 
 

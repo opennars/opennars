@@ -10,9 +10,7 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 
-import static nars.Op.COMPOUND_TERM_CLOSER;
-import static nars.Op.COMPOUND_TERM_OPENER;
-import static nars.Symbols.ARGUMENT_SEPARATOR;
+import static nars.Symbols.*;
 
 /**
  *
@@ -117,7 +115,7 @@ abstract public class Image extends DefaultCompound {
             }
 
             ByteBuf b = ByteBuf.create(bytes)
-                    .add((byte) COMPOUND_TERM_OPENER.ch)
+                    .add((byte) COMPOUND_TERM_OPENER)
                     .add(this.operator().bytes)
                     .add((byte) ARGUMENT_SEPARATOR)
                     .add(this.relation().bytes());
@@ -133,7 +131,7 @@ abstract public class Image extends DefaultCompound {
                     b.add(tt.bytes());
                 }
             }
-            b.add((byte) COMPOUND_TERM_CLOSER.ch);
+            b.add((byte) COMPOUND_TERM_CLOSER);
 
             return b.toBytes();
 
@@ -144,7 +142,7 @@ abstract public class Image extends DefaultCompound {
 
             final int len = this.length();
 
-            p.append(COMPOUND_TERM_OPENER.ch);
+            p.append(COMPOUND_TERM_OPENER);
             p.append(this.operator().str);
 
             p.append(ARGUMENT_SEPARATOR);
@@ -168,7 +166,7 @@ abstract public class Image extends DefaultCompound {
                     tt.append(p, pretty);
                 }
             }
-            p.append(COMPOUND_TERM_CLOSER.ch);
+            p.append(COMPOUND_TERM_CLOSER);
 
         }
 

@@ -23,6 +23,7 @@ package nars;
 
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.task.Task;
+import nars.term.Atom;
 import nars.util.data.FasterHashMap;
 import nars.util.data.FasterList;
 
@@ -42,6 +43,9 @@ import java.util.Set;
  */
 public class Global {
 
+
+    //TODO use 'I' for SELf, it is 3 characters shorter
+    public static final Atom DEFAULT_SELF = Atom.the("SELF");
 
 
     public static int DEFAULT_NAL_LEVEL = 8;

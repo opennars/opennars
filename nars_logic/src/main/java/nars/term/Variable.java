@@ -295,6 +295,7 @@ public class Variable extends Atom {
     private static final byte[][] vn1 = new byte[MAX_CACHED_VARNAME_INDEXES][];
     private static final byte[][] vn2 = new byte[MAX_CACHED_VARNAME_INDEXES][];
     private static final byte[][] vn3 = new byte[MAX_CACHED_VARNAME_INDEXES][];
+    private static final byte[][] vn4 = new byte[MAX_CACHED_VARNAME_INDEXES/2][];
     
     
     public static byte[] name(final char type, final int index) {
@@ -307,14 +308,14 @@ public class Variable extends Atom {
             case VAR_INDEPENDENT: cache = vn1; break;
             case VAR_DEPENDENT: cache = vn2; break;
             case VAR_QUERY: cache = vn3; break;
+            case VAR_PATTERN: cache = vn4; break;
             default:
                 throw new RuntimeException("Invalid variable type");
         }
 
         byte[] c = cache[index];
         if (c == null) {
-            c = newName(type, index);
-            cache[index] = c;
+            cache[index] = c = newName(type, index);
         }
             
         return c;

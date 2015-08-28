@@ -10,11 +10,9 @@ import nars.nal.nal4.Product;
 import nars.nal.nal4.ProductN;
 import nars.premise.Premise;
 import nars.task.Task;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 import nars.term.transform.CompoundTransform;
+import nars.term.transform.VariableNormalization;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -254,7 +252,14 @@ public class TaskRule extends Rule<Premise,Task> {
         return getBelief().getVolume();
     }
 
-    public static class TaskRuleNormalization implements CompoundTransform<Compound,Term> {
+    /** test applicability of this rule with a specific maximum NAL level */
+    public boolean levelValid(final int nalLevel) {
+        return Terms.levelValid(getTask(), nalLevel) &&
+                Terms.levelValid(getBelief(), nalLevel) &&
+                Terms.levelValid(getResult(), nalLevel);
+    }
+
+    static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound,Term> {
 
 
         @Override
@@ -277,17 +282,14 @@ public class TaskRule extends Rule<Premise,Task> {
         }
     }
 
-    final static TaskRuleNormalization taskRuleNormalization = new TaskRuleNormalization();
+    final static UppercaseAtomsToPatternVariables taskRuleNormalization = new UppercaseAtomsToPatternVariables();
 
     @Override
     public TaskRule normalizeDestructively() {
+
         this.transform(taskRuleNormalization);
 
-//        //this may not be necessary:
-//        for (final Term t : term) {
-//            if (t instanceof Compound)
-//                ((Compound) t).invalidate();
-//        }
+        new VariableNormalization(this, true);
 
         rehash();
 
@@ -340,7 +342,7 @@ public class TaskRule extends Rule<Premise,Task> {
     /** for each calculable "question reverse" rule,
      *  supply to the consumer
      */
-    public void forEachReverseQuestion(Consumer<TaskRule> w) {
+    public void forEachQuestionReversal(Consumer<TaskRule> w) {
 
         // %T, %B, [pre] |- %C, [post] ||--
 

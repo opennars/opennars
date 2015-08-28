@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static java.lang.System.arraycopy;
-import static nars.Op.COMPOUND_TERM_OPENER;
+import static nars.Symbols.COMPOUND_TERM_OPENER;
 
 /**
  * Created by me on 7/1/15.
@@ -144,7 +144,7 @@ public class Sequence extends Conjunction implements Intermval {
 
         boolean opener = appendTermOpener();
         if (opener)
-            p.append(COMPOUND_TERM_OPENER.ch);
+            p.append(COMPOUND_TERM_OPENER);
 
 
         final boolean appendedOperator = appendOperator(p);

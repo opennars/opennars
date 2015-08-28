@@ -9,14 +9,16 @@ import java.io.Writer;
 /** NAL symbol table */
 public enum Op {
 
+
+
     //TODO include min/max arity for each operate, if applicable
 
     /** an atomic term (includes interval and variables); this value is set if not a compound term */
-    ATOM(".", 0, false),
+    ATOM(".", Op.ANY, false),
 
-    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT,0,false),
-    VAR_DEPENDENT(Symbols.VAR_DEPENDENT,0,false),
-    VAR_QUERY(Symbols.VAR_QUERY,0,false),
+    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, Op.ANY, false),
+    VAR_DEPENDENT(Symbols.VAR_DEPENDENT, Op.ANY, false),
+    VAR_QUERY(Symbols.VAR_QUERY,Op.ANY,false),
 
     OPERATOR("^", 8),
 
@@ -63,7 +65,11 @@ public enum Op {
     EQUIVALENCE_WHEN("<|>", 7, true, 14),
 
 
-    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX_OLD), 0, false),
+    INTERVAL(
+            //TODO decide what this value should be, it overrides with IMAGE_EXT
+            //but otherwise it's not used
+            String.valueOf(Symbols.INTERVAL_PREFIX) + "/",
+            Op.ANY, false),
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
     // so that any of their ordinal values will not exceed 31
@@ -75,18 +81,8 @@ public enum Op {
 
 
 
-    SET_INT_CLOSER("]", 3, false, false),
-    SET_EXT_CLOSER("}", 3, false, false),
-
-    /* Syntactical, so is neither relation or isNative */
-    COMPOUND_TERM_OPENER("(", 0, false, false),
-    COMPOUND_TERM_CLOSER(")", 0, false, false),
-    STATEMENT_OPENER("<", 0, false, false),
-    STATEMENT_CLOSER(">", 0, false, false),
-
-
-    VAR_PATTERN(Symbols.VAR_PATTERN,0, false),
-    NONE('\u2205', 0, false);
+    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, false),
+    NONE('\u2205', Op.ANY, false);
 
     //-----------------------------------------------------
 
@@ -111,7 +107,7 @@ public enum Op {
     public final boolean closer;
 
     /** minimum NAL level required to use this operate, or 0 for N/A */
-    public final int level;
+    public final int minLevel;
 
     /** should be null unless a 1-character representation is not possible. */
     public final byte[] bytes;
@@ -165,7 +161,7 @@ public enum Op {
             this.byt = (byte)0;
         }
 
-        this.level = minLevel;
+        this.minLevel = minLevel;
         this.relation = relation;
         this.isNative = innate;
         this.ch = string.length() == 1 ? string.charAt(0) : 0;
@@ -202,4 +198,20 @@ public enum Op {
         }
         return bits;
     }
+
+    public boolean levelValid(final int nal) {
+        final int l = minLevel;
+
+        //if a minimum level is specified for the term..
+        if (l > ANY) {
+            //if nal is below the required minimum level
+            if (nal < l)
+                return false;
+        }
+
+        return true;
+    }
+
+    /** specifier for any NAL level */
+    public final static int ANY = 0;
 }

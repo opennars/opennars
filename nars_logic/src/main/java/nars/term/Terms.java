@@ -4,6 +4,7 @@ import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
+import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -20,6 +21,7 @@ import nars.task.Sentence;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Static utility class for static methods related to Terms
@@ -478,22 +480,12 @@ public class Terms {
         return false;
     }
 
-    public static boolean levelValid(Term t, int nal) {
-        Op o = t.operator();
-        int minLevel = o.level;
-        if (minLevel > 0) {
-            if (nal < minLevel)
-                return false;
-        }
+    public static Predicate<? super TaskRule> levelValid(int nalLevel) {
+        return (t) -> Terms.levelValid(t, nalLevel);
+    }
 
-        //TODO use structural hash
-        if (t instanceof Compound) {
-            for (Term sub : ((Compound)t).term) {
-                if (!levelValid(sub, nal))
-                    return false;
-            }
-        }
-        return true;
+    public static boolean levelValid(Term t, int nal) {
+        return t.levelValid(nal);
     }
 
     public static boolean levelValid(Sentence sentence, int nal) {

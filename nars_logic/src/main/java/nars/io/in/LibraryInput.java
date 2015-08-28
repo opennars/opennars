@@ -8,7 +8,6 @@ import nars.AbstractMemory;
 import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
-import nars.io.TextPerception;
 import nars.meter.condition.OutputCondition;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
@@ -25,14 +24,14 @@ import java.util.*;
  */
 public class LibraryInput extends TextInput {
 
+    private String input;
+
     public static final String[] directories =
             new String[] {
                     "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8",
                     "other",
                     "app/testchamber", "app/pattern_matching1", "app/metacat"
             };
-
-
 
 
     public static Iterable<String> getUnitTestPaths() {
@@ -49,9 +48,8 @@ public class LibraryInput extends TextInput {
     }
 
 
-    protected LibraryInput(TextPerception t, String path) throws IOException {
-        super(t, FileInput.load(path));
-
+    protected LibraryInput(NAR n, String path) throws IOException {
+        super(n, FileInput.load(path));
     }
     
     public static LibraryInput get(NAR n, String id) throws Exception {
@@ -60,7 +58,7 @@ public class LibraryInput extends TextInput {
 
         String path = getExamplePath(id);
                 
-        return new LibraryInput(n.textPerception, path);
+        return new LibraryInput(n, path);
     }
 
     final static String cwd;
@@ -116,6 +114,12 @@ public class LibraryInput extends TextInput {
         return l;
     }
 
+    @Override
+    protected void process(NAR n, String input) {
+        super.process(n, input);
+        this.input = input;
+    }
+
     public String getSource() {
         return input;
     }
@@ -167,16 +171,15 @@ public class LibraryInput extends TextInput {
     public static List rawTasks(String script) {
 
         List rr = Global.newArrayList();
-        final NarseseParser parser = NarseseParser.the();
 
-        parser.tasks(script, x -> rr.add(x));
+        NarseseParser.the().tasks(script, x -> rr.add(x));
 
         return rr;
     }
 
     public static List<Task> getExample(List raw, AbstractMemory m) {
 
-        List<Task> y = new ArrayList(raw.size());
+        List<Task> y = Global.newArrayList(raw.size());
         for (Object o : raw) {
             if (o instanceof Task) y.add((Task)o);
             else {
@@ -187,9 +190,7 @@ public class LibraryInput extends TextInput {
         return y;
     }
 
-    public static BufferedInput getExampleInput(List raw, AbstractMemory m) {
-        BufferedInput b = new BufferedInput();
-        b.accept(getExample(raw, m).iterator());
-        return b;
+    public static TaskQueue getExampleInput(List raw, AbstractMemory m) {
+        return new TaskQueue(getExample(raw, m));
     }
 }

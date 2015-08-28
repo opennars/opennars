@@ -1,6 +1,6 @@
 package nars.io.in;
 
-import nars.io.TextPerception;
+import nars.NAR;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,29 +13,30 @@ import java.util.stream.Collectors;
  * Process input from a Reader interface, which also provides
  * access to URLs and InputStream's
  */
-public class ReaderInput extends Input.BufferedInput {
+public class ReaderInput extends TaskQueue {
 
-    private final TextPerception perception;
+    public final NAR nar;
     protected BufferedReader input;
 
     protected void setInput(BufferedReader input) {
         this.input = input;
     }
 
-    public ReaderInput(TextPerception p) {
-        this.perception = p;
+    public ReaderInput(NAR nar) {
+        this.nar = nar;
     }
 
-    public ReaderInput(TextPerception p, InputStream i) {
-        this(p, new BufferedReader(new InputStreamReader(i)));
+    public ReaderInput(NAR nar, InputStream i) {
+
+        this(nar, new BufferedReader(new InputStreamReader(i)));
     }
 
-    public ReaderInput(TextPerception p, URL u) throws IOException {
-        this(p, u.openStream());
+    public ReaderInput(NAR nar, URL u) throws IOException {
+        this(nar, u.openStream());
     }
 
-    public ReaderInput(TextPerception p, BufferedReader input) {
-        this(p);
+    public ReaderInput(NAR nar, BufferedReader input) {
+        this(nar);
 
         setInput(input);
 

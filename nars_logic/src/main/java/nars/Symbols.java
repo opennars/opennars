@@ -102,6 +102,12 @@ abstract public class Symbols {
     private static final Op[] byteSymbols = new Op[numByteSymbols];
 
 
+    public final static char SET_INT_CLOSER = ']';
+    public final static char SET_EXT_CLOSER = '}';
+    public final static char COMPOUND_TERM_OPENER = '(';
+    public final static char COMPOUND_TERM_CLOSER = ')';
+    public final static char STATEMENT_OPENER = '<';
+    public final static char STATEMENT_CLOSER = '>';
 
 
     public static Op symbol(final byte b) {
@@ -111,20 +117,7 @@ abstract public class Symbols {
     }
 
 
-    /** expands a byte to multi-char representation, for output.
-     * if a special character, it prints the expanded string and returns true.
-     * otherwise it does nothing and returns false.;
-     *  */
-    public static boolean expand(final PrintWriter p, final byte b) {
-        if (b < numByteSymbols) {
-            p.write(symbol(b).str);
-            return true;
-        }
-        else {
-            //ordinary character,
-            return false;
-        }
-    }
+
     public static void compact(final ByteBuf b, final Op n) {
         if (n.has8BitRepresentation()) {
             b.append(n.byt);
@@ -174,9 +167,6 @@ abstract public class Symbols {
     protected static final CharObjectHashMap<Op> charToOperator
             = (_charToOperator);
 
-    //TODO use 'I' for SELf, it is 3 characters shorter
-    public static final Atom DEFAULT_SELF = Atom.the("SELF");
-
 
     /** separates prefix from the term in a termlink or tasklink */
     final public static char TLinkSeparator = ':';
@@ -189,14 +179,7 @@ abstract public class Symbols {
     public static Op getOperator(final String s) {
         return stringToOperator.get(s);
     }
-    
-    public static Op getRelation(final String s) {
-        Op o = getOperator(s);
-        if (o == null) return null;
-        if (o.relation)
-            return o;
-        return null;
-    }
+
 
     public static Op getOpener(final char c) {
         Op o = getOperator(c);
@@ -214,85 +197,21 @@ abstract public class Symbols {
         return null;
     }
     
-    /**
-     * Check Statement getRelation symbol, called in StringPaser
-     *
-     * @param s The String to be checked
-     * @return if the given String is a getRelation symbol
-     */
-    public static boolean isRelation(final String s) {
-        return getRelation(s)!=null;
-    }
-    
+
     
 
     /* experience line prefix */
     public static final String INPUT_LINE_PREFIX = Events.IN.class.getSimpleName();
     public static final String OUTPUT_LINE_PREFIX = Events.OUT.class.getSimpleName();
 
-    public static final char PREFIX_MARK = ':';
-    public static final char COMMENT_MARK = '/';
-    //public static final char URL_INCLUDE_MARK = '`';
-    public static final char ECHO_MARK = '\'';
-    //public static final char NATURAL_LANGUAGE_MARK = '\"';
 
-    /* control commands */
-    @Deprecated public static final String RESET_COMMAND = "*reset";
-    @Deprecated public static final String REBOOT_COMMAND = "*reboot";
-    @Deprecated public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
-    
+
     
     /* Stamp, display only */
     public static final char STAMP_OPENER = '{';
     public static final char STAMP_CLOSER = '}';
     public static final char STAMP_SEPARATOR = ';';
     public static final char STAMP_STARTER = ':';
-    
-
-
-
-
-    /*
-    @Deprecated public static NativeOperator opInnate(final String op) {
-        NativeOperator i = getOperator(op);
-        if (i == null) return null;
-        
-        final int length = op.length();
-        if (length == 1) {
-            final char c = op.charAt(0);
-            switch (c) {
-                case Symbols.SET_EXT_OPENER: 
-                case Symbols.SET_INT_OPENER: 
-                case Symbols.INTERSECTION_EXT_OPERATORc: 
-                case Symbols.INTERSECTION_INT_OPERATORc:
-                case Symbols.DIFFERENCE_EXT_OPERATORc:
-                case Symbols.DIFFERENCE_INT_OPERATORc:
-                case Symbols.PRODUCT_OPERATORc:
-                case Symbols.IMAGE_EXT_OPERATORc:
-                case Symbols.IMAGE_INT_OPERATORc:        
-                    return true;
-            }            
-        }
-        else if (length == 2) {
-            //since these symbols are the same character repeated, we only need to compare the first character
-            final char c1 = op.charAt(0);
-            final char c2 = op.charAt(1);
-            if (c1 == c2) {
-                switch (c1) {
-                    case Symbols.NEGATION_OPERATORc:
-                    case Symbols.DISJUNCTION_OPERATORc:
-                    case Symbols.CONJUNCTION_OPERATORc:
-                        return true;                        
-                }            
-            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
-                return true;
-            }
-            
-        }        
-        
-        return false;
-    }
-    */
 
 
     public static boolean isPunctuation(final char c) {
@@ -354,4 +273,63 @@ abstract public class Symbols {
         }
         return "UNKNOWN";
     }
+
+    /** expands a byte to multi-char representation, for output.
+     //     * if a special character, it prints the expanded string and returns true.
+     //     * otherwise it does nothing and returns false.;
+     //     *  */
+//    public static boolean expand(final PrintWriter p, final byte b) {
+//        if (b < numByteSymbols) {
+//            p.write(symbol(b).str);
+//            return true;
+//        }
+//        else {
+//            //ordinary character,
+//            return false;
+//        }
+//    }
+
+
+    /*
+    @Deprecated public static NativeOperator opInnate(final String op) {
+        NativeOperator i = getOperator(op);
+        if (i == null) return null;
+
+        final int length = op.length();
+        if (length == 1) {
+            final char c = op.charAt(0);
+            switch (c) {
+                case Symbols.SET_EXT_OPENER:
+                case Symbols.SET_INT_OPENER:
+                case Symbols.INTERSECTION_EXT_OPERATORc:
+                case Symbols.INTERSECTION_INT_OPERATORc:
+                case Symbols.DIFFERENCE_EXT_OPERATORc:
+                case Symbols.DIFFERENCE_INT_OPERATORc:
+                case Symbols.PRODUCT_OPERATORc:
+                case Symbols.IMAGE_EXT_OPERATORc:
+                case Symbols.IMAGE_INT_OPERATORc:
+                    return true;
+            }
+        }
+        else if (length == 2) {
+            //since these symbols are the same character repeated, we only need to compare the first character
+            final char c1 = op.charAt(0);
+            final char c2 = op.charAt(1);
+            if (c1 == c2) {
+                switch (c1) {
+                    case Symbols.NEGATION_OPERATORc:
+                    case Symbols.DISJUNCTION_OPERATORc:
+                    case Symbols.CONJUNCTION_OPERATORc:
+                        return true;
+                }
+            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+    */
+
 }

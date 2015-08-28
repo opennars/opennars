@@ -68,6 +68,11 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
             newBudget.accumulate( oldBudget );
         }
     };
+    static final Procedure2<Budget,Budget> max = new Procedure2<Budget,Budget>() {
+        @Override public void value(Budget newBudget, Budget oldBudget) {
+            newBudget.max( oldBudget );
+        }
+    };
 
     Procedure2<Budget,Budget> mergeFunction = average;
 
@@ -76,6 +81,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     /** set the merging function to 'plus' */
     public void mergePlus() {  mergeFunction = plus;    }
+
+    public void mergeMax() {  mergeFunction = max;    }
 
     final protected void merge(final Budget newBudget, final Budget oldBudget) {
         mergeFunction.value(newBudget, oldBudget);

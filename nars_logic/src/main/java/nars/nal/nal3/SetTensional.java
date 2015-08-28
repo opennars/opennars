@@ -39,8 +39,12 @@ public interface SetTensional extends Term, Iterable<Term> {
             final int len = length();
 
             final char opener, closer;
-            if (this instanceof SetExt) { opener = Op.SET_EXT_OPENER.ch; closer = Op.SET_EXT_CLOSER.ch;            }
-            else { opener = Op.SET_INT_OPENER.ch;  closer = Op.SET_INT_CLOSER.ch; }
+            if (this instanceof SetExt) {
+                opener = Op.SET_EXT_OPENER.ch; closer = Symbols.SET_EXT_CLOSER;
+            }
+            else {
+                opener = Op.SET_INT_OPENER.ch;  closer = Symbols.SET_INT_CLOSER;
+            }
 
             //calculate total size
             int bytes = 2;
@@ -72,8 +76,12 @@ public interface SetTensional extends Term, Iterable<Term> {
 
             //duplicated from above, dont want to store this as a field in the class
             final char opener, closer;
-            if (this instanceof SetExt) { opener = Op.SET_EXT_OPENER.ch; closer = Op.SET_EXT_CLOSER.ch;            }
-            else { opener = Op.SET_INT_OPENER.ch;  closer = Op.SET_INT_CLOSER.ch; }
+            if (this instanceof SetExt) {
+                opener = Op.SET_EXT_OPENER.ch; closer = Symbols.SET_EXT_CLOSER;
+            }
+            else {
+                opener = Op.SET_INT_OPENER.ch;  closer = Symbols.SET_INT_CLOSER;
+            }
 
             p.append(opener);
             for (int i = 0; i < len; i++) {

@@ -16,7 +16,7 @@
  */
 package nars.kif;
 
-import nars.io.TextPerception;
+import nars.NAR;
 import nars.io.in.PrintWriterInput;
 
 import java.io.IOException;
@@ -42,8 +42,8 @@ public class KIFInput extends PrintWriterInput implements Runnable {
     private boolean includeDisjoint;
     private boolean includeSubrelation;
 
-    public KIFInput(TextPerception input, String kifPath) throws Exception {
-        super(input);
+    public KIFInput(NAR nar, String kifPath) throws Exception {
+        super(nar);
 
         kif = new KIF(kifPath);
         formulaIterator = kif.getFormulas().iterator();

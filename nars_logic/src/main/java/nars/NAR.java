@@ -5,8 +5,6 @@ import nars.Events.FrameStart;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
-import nars.io.Perception;
-import nars.io.TextPerception;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
@@ -63,7 +61,7 @@ public class NAR extends Container implements Runnable {
             "               IRC:  http://webchat.freenode.net/?channels=nars \n";
 
     public final NarseseParser narsese;
-    public final TextPerception textPerception;
+
     /**
      * The memory of the reasoner
      */
@@ -104,7 +102,6 @@ public class NAR extends Container implements Runnable {
         the(NAR.class, this);
 
         this.narsese = NarseseParser.the();
-        this.textPerception = new TextPerception(this, narsese);
 
         reset();
     }
@@ -153,7 +150,7 @@ public class NAR extends Container implements Runnable {
     }
 
     public Input input(final File input) throws IOException {
-        return input(new FileInput(textPerception, input));
+        return input(new FileInput(this, input));
     }
 
 
@@ -176,7 +173,7 @@ public class NAR extends Container implements Runnable {
      * parses and forms a Task from a string but doesnt input it
      */
     public Task task(String taskText) {
-        Task t = narsese.task(memory, taskText);
+        Task t = narsese.task(taskText, memory);
 
         long now = time();
         if (!t.isEternal()) {
@@ -192,9 +189,7 @@ public class NAR extends Container implements Runnable {
     }
 
     public TextInput input(final String text) {
-        //final TextInput i = new TextInput(new TextPerception(this, narsese, narseseParser), text);
-        final TextInput i = new TextInput(textPerception, text);
-        //final TextInput i = new TextInput.CachingTextInput(textPerception, text);
+        final TextInput i = new TextInput(this, text);
         input(i);
         return i;
     }

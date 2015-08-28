@@ -26,6 +26,7 @@ import com.google.common.primitives.UnsignedLongs;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
+import nars.Symbols;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
@@ -42,9 +43,9 @@ import java.io.Writer;
 import java.util.*;
 
 import static java.util.Arrays.copyOf;
-import static nars.Op.COMPOUND_TERM_CLOSER;
-import static nars.Op.COMPOUND_TERM_OPENER;
+import static nars.Symbols.*;
 import static nars.Symbols.ARGUMENT_SEPARATOR;
+import static nars.Symbols.COMPOUND_TERM_OPENER;
 
 /**
  * a compound term
@@ -208,7 +209,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         }
 
-        b.add((byte)COMPOUND_TERM_CLOSER.byt);
+        b.add((byte) COMPOUND_TERM_CLOSER);
 
         return b.toBytes();
 
@@ -219,7 +220,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         boolean opener = appendTermOpener();
         if (opener)
-            p.append(COMPOUND_TERM_OPENER.ch);
+            p.append(COMPOUND_TERM_OPENER);
 
 
         final boolean appendedOperator = appendOperator(p);
@@ -252,7 +253,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     public void appendCloser(Writer p) throws IOException {
-        p.append(COMPOUND_TERM_CLOSER.ch);
+        p.append(COMPOUND_TERM_CLOSER);
     }
 
     public boolean appendTermOpener() {
@@ -274,25 +275,13 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return Arrays.asList((Term[]) t);
     }
 
-    /**
-     * single term version of makeCompoundName without iteration for efficiency
-     */
-    @Deprecated
-    protected static CharSequence makeCompoundName(final Op op, final Term singleTerm) {
-        int size = 2; // beginning and end parens
-        String opString = op.toString();
-        size += opString.length();
-        final CharSequence tString = singleTerm.toString();
-        size += tString.length();
-        return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
-    }
 
     public static void writeCompound1(final Op op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
-        writer.append(COMPOUND_TERM_OPENER.ch);
+        writer.append(COMPOUND_TERM_OPENER);
         writer.append(op.str);
         writer.append(ARGUMENT_SEPARATOR);
         singleTerm.append(writer, pretty);
-        writer.append(COMPOUND_TERM_CLOSER.ch);
+        writer.append(COMPOUND_TERM_CLOSER);
     }
 
     public static byte[] newCompound1Key(final Op op, final Term singleTerm) {
@@ -913,6 +902,19 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return (T)this;
     }
 
+    @Override
+    public boolean levelValid(final int nal) {
+        if (!operator().levelValid(nal))
+            return false;
+
+        //TODO use structural hash
+        for (Term sub : term) {
+            if (!sub.levelValid(nal))
+                return false;
+        }
+        return true;
+    }
+
     /** transforms destructively, may need to use on a new clone */
     protected <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans, int depth) {
         final int len = length();
@@ -1388,6 +1390,19 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         }
     }
 
+
+//    /**
+//     * single term version of makeCompoundName without iteration for efficiency
+//     */
+//    @Deprecated
+//    protected static CharSequence makeCompoundName(final Op op, final Term singleTerm) {
+//        int size = 2; // beginning and end parens
+//        String opString = op.toString();
+//        size += opString.length();
+//        final CharSequence tString = singleTerm.toString();
+//        size += tString.length();
+//        return new StringBuilder(size).append(COMPOUND_TERM_OPENER).append(opString).append(ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER).toString();
+//    }
 
     //    @Deprecated public static class UnableToCloneException extends RuntimeException {
 //

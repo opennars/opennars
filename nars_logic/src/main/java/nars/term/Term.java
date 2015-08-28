@@ -23,6 +23,7 @@ package nars.term;
 
 import nars.Op;
 import nars.Symbols;
+import nars.meta.TaskRule;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.Identified;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable {
 
@@ -253,6 +255,12 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
     default public boolean has(final Op op) {
         return (subtermStructure() & (1<<op.ordinal())) > 0;
     }
+
+    default boolean levelValid(final int nal) {
+        return operator().levelValid(nal);
+    }
+
+
 //    default public boolean hasAll(final Op... op) {
 //        //TODO
 //    }

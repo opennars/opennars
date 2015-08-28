@@ -1,7 +1,7 @@
 package nars.io.in;
 
 import com.google.common.io.Files;
-import nars.io.TextPerception;
+import nars.NAR;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 public class FileInput extends TextInput {
 
 
-    public FileInput(TextPerception p, File input) throws IOException {
+    public FileInput(NAR p, File input) throws IOException {
         super(p, load(input));
     }
 

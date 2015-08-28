@@ -3,17 +3,25 @@ package nars.nal;
 import nars.Global;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Holds an array of derivation rules
  */
 public class DerivationRules {
+
+    @Deprecated static final int maxVarArgsToMatch = 5;
 
     public final TaskRule[] rules;
 
@@ -28,14 +36,32 @@ public class DerivationRules {
         )));
     }
 
-    public DerivationRules(Iterable<String> ruleStrings) {
-        Collection<TaskRule> r = parseRules(loadRuleStrings(ruleStrings));
+    public DerivationRules(final Iterable<String> ruleStrings) {
+        this(parseRules(loadRuleStrings(ruleStrings)));
+    }
+
+    public DerivationRules(Set<TaskRule> r) {
         rules = r.toArray(new TaskRule[r.size()]);
     }
 
+    public DerivationRules(Set<TaskRule> r, Predicate<TaskRule> filter) {
+        rules = r.stream().filter(filter).toArray(n -> new TaskRule[n]);
+    }
+
+    public DerivationRules(DerivationRules master, Predicate<TaskRule> filter) {
+        rules = Stream.of(master.rules).filter(filter).toArray(n -> new TaskRule[n]);
+    }
+
+    public DerivationRules(DerivationRules master, int nalLevel) {
+        this(master, tr -> tr.levelValid(nalLevel));
+    }
+
+
+
     static List<String> loadRuleStrings(Iterable<String> lines) {
 
-        List<String> unparsed_rules = Global.newArrayList();
+        List<String> unparsed_rules = Global.newArrayList(2048);
+
         StringBuilder current_rule = new StringBuilder();
         boolean single_rule_test = false;
 
@@ -80,7 +106,7 @@ public class DerivationRules {
     @Deprecated /* soon */ static String preprocess(String rule) //minor things like Truth.Comparison -> Truth_Comparison
     {                                     //A_1..n ->  "A_1_n" and adding of "<" and ">" in order to be parsable
 
-        String ret = "<" + rule + ">";
+        String ret = '<' + rule + '>';
 
         while (ret.contains("  ")) {
             ret = ret.replace("  ", " ");
@@ -98,12 +124,9 @@ public class DerivationRules {
      * @param rules
      * @param ruleString
      */
-    static void preAdd(NarseseParser meta,
-                       Collection<TaskRule> rules /* results collection */,
-                       String ruleString,
-                       Set<String> variations /* temporary */) {
-
-        variations.clear();
+    static void addAndPermuteTenses(NarseseParser meta,
+                                    Collection<String> rules /* results collection */,
+                                    String ruleString) {
 
         if(ruleString.contains("Order:ForAllSame")) {
 
@@ -128,7 +151,7 @@ public class DerivationRules {
                 conjs.add("&/");
             }
 
-            variations.add(ruleString);
+            rules.add(ruleString);
 
             for(String equ : equs) {
 
@@ -142,7 +165,7 @@ public class DerivationRules {
 
                         String p3 = p2.replace("&&",conj);
 
-                        variations.add( p3 );
+                        rules.add( p3 );
 
                     }
                 }
@@ -150,121 +173,90 @@ public class DerivationRules {
 
         }
         else {
-            variations.add(ruleString);
+            rules.add(ruleString);
         }
 
-        for (final String v : variations) {
-            TaskRule r = meta.term(v);
-            if (r == null)
-                System.err.println("parse error: " + v);
-            else {
-                rules.add(r); //try to parse it
-                addReverseQuestions( rules, r );
-            }
-        }
-    }
-
-    static void addReverseQuestions(
-            Collection<TaskRule> rules /* results collection */,
-            TaskRule r) {
-
-        r.forEachReverseQuestion( R -> {
-            rules.add(R);
-        });
 
     }
 
 
-        static Collection<TaskRule> parseRules(final Collection<String> not_yet_parsed_rules) {
-        //2. ok we have our unparsed rules, lets parse them to terms now
-        final NarseseParser meta = NarseseParser.the();
-        final Collection<TaskRule> rules
-                //= new ArrayList<>(not_yet_parsed_rules.size() /* approximately */);
-                = new LinkedHashSet<>(not_yet_parsed_rules.size() /* approximately */);
-
-        /*
-        List<String> fails = new ArrayList();
-
-        ListeningParseRunner lpr = new ListeningParseRunner(meta.Term());
-
-        lpr.registerListener(new ParseRunnerListener() {
 
 
-            @Override
-            public void matchSuccess(MatchSuccessEvent event) {
-                fails.clear();
-            }
+    static Set<TaskRule> parseRules(final Collection<String> rawRules) {
 
-            @Override
-            public void matchFailure(MatchFailureEvent event) {
+        final NarseseParser parser = NarseseParser.the();
 
-                String es = event.getContext().toString();
-                es = es.replace("Term/firstOf/sequence", "term");
-                es = es.replace("Term/firstOf/Variable", "var");
+        final Set<String> expanded = Global.newHashSet(1024);
 
-
-                if (!fails.isEmpty()) {
-                    //replace the last one if it leads an extension of the current one
-                    final int f = fails.size() - 1;
-                    String last = fails.get(f);
-                    boolean contained = (last.indexOf(es) == 0);
-                    if (contained) {
-                        if (last.length() < es.length())
-                            fails.set(f, es);
-                        return;
-                    }
-                }
-                fails.add(es);
-            }
-
-        });
-        */
-
-        final Set<String> temp = Global.newHashSet(16);
-
-        for (String rule : not_yet_parsed_rules) {
+        for (String rule : rawRules) {
 
             final String p = preprocess(rule);
+
+            //there might be now be A_1..maxVarArgsToMatch in it, if this is the case we have to add up to maxVarArgsToMatch rules
+            if (p.contains("A_1..maxVarArgsToMatch") || p.contains("A_1..A_i.substitute(_)..A_n")) {
+                addUnrolledVarArgs(parser, expanded, p, maxVarArgsToMatch);
+            } else {
+                addAndPermuteTenses(parser, expanded, p);
+            }
+        }
+
+        //accumulate these in a set to eliminate duplicates
+        final Set<TaskRule> rules
+                = new LinkedHashSet<>(expanded.size() /* approximately */);
+
+        for (final String s : expanded) {
             try {
 
-                //there might be now be A_1..n in it, if this is the case we have to add up to n rules
-                int n=5;
-                if(p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
-                    String str="A_1";
-                    String str2="B_1";
-                    for(int i=0; i < n; i++) {
-                        if(p.contains("A_i")) {
-                            for(int j=0; j <= i; j++) {
-                                String A_i = "A_" + String.valueOf(j + 1);
-                                String strrep = str;
-                                if(p.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
-                                    strrep = str.replace(A_i,"_");
-                                }
-                                String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..n", str).replace("B_1..n", str2).replace("A_i",A_i);
-                                preAdd(meta, rules, parsable_unrolled, temp);
-                            }
-                        } else {
-                            String parsable_unrolled = p.replace("A_1..n", str).replace("B_1..n", str2);
-                            preAdd(meta, rules, parsable_unrolled, temp);
-                        }
+                final TaskRule r = parser.term(s);
 
-                        str+=", A_"+String.valueOf(i+2);
-                        str2+=", B_"+String.valueOf(i+2);
-                    }
-                }
-                else {
-                    preAdd(meta,rules,p, temp);
-                }
+                rules.add(r);
+
+                //add reverse questions
+                r.forEachQuestionReversal(_r -> {
+                    rules.add(_r);
+                });
+
             } catch (Exception ex) {
-                System.err.println("Ignoring invalid input rule: ");
-                System.err.print("  ");
-                System.err.println(p);
-                ex.printStackTrace();
-                //ex.printStackTrace();
+                System.err.println("Ignoring invalid input rule:  " + s);
+                ex.printStackTrace();//ex.printStackTrace();
             }
+
         }
 
         return rules;
+    }
+
+    private static void addUnrolledVarArgs(NarseseParser parser,
+                                           Set<String> expanded,
+                                           String p,
+
+                                           @Deprecated int maxVarArgs
+                                           //TODO replace this with a var arg matcher, to reduce # of rules that would need to be created
+    )
+
+    {
+        String str = "A_1";
+        String str2 = "B_1";
+        for (int i = 0; i < maxVarArgs; i++) {
+            if (p.contains("A_i")) {
+                for (int j = 0; j <= i; j++) {
+                    String A_i = "A_" + String.valueOf(j + 1);
+                    String strrep = str;
+                    if (p.contains("A_1..A_i.substitute(")) { //todo maybe allow others than just _ as argument
+                        strrep = str.replace(A_i, "_");
+                    }
+                    String parsable_unrolled = p.replace("A_1..A_i.substitute(_)..A_n", strrep).replace("A_1..maxVarArgs", str).replace("B_1..maxVarArgs", str2).replace("A_i", A_i);
+                    addAndPermuteTenses(parser, expanded, parsable_unrolled);
+                }
+            } else {
+                String parsable_unrolled = p.replace("A_1..maxVarArgs", str).replace("B_1..maxVarArgs", str2);
+                addAndPermuteTenses(parser, expanded, parsable_unrolled);
+            }
+
+            final int iPlus2 = i + 2;
+            str += ", A_" + iPlus2;
+            str2 += ", B_" + iPlus2;
+        }
     }
 
 
