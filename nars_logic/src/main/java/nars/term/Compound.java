@@ -1241,6 +1241,11 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         }
         return y;
     }
+    public Term[] cloneTermsReplacing(int index, final Term replaced) {
+        Term[] y = cloneTerms();
+        y[index] = replaced;
+        return y;
+    }
 
 
     protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I, T> trans, final int level) {

@@ -8,7 +8,7 @@ import org.junit.Test;
 /**
  * Created by me on 7/7/15.
  */
-public class TaskRuleTest extends TestCase {
+public class DerivationRuleTest extends TestCase {
 
     static final Deriver executer = Deriver.defaults; //all the inference rules have to pass of course
 

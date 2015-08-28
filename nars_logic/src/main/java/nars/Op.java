@@ -60,6 +60,7 @@ public enum Op {
     IMPLICATION_AFTER("=/>", 7, true, 9),
     IMPLICATION_WHEN("=|>", 7, true, 10),
     IMPLICATION_BEFORE("=\\>", 7, true, 11),
+
     EQUIVALENCE("<=>", 5, true, 12),
     EQUIVALENCE_AFTER("</>", 7, true, 13),
     EQUIVALENCE_WHEN("<|>", 7, true, 14),

@@ -1,35 +1,31 @@
 package nars.meta.pre;
 
+import nars.Op;
 import nars.meta.RuleMatch;
-import nars.meta.pre.PreCondition1;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.task.Task;
 import nars.term.Term;
 
-/**
- * Created by me on 8/15/15.
- */
-public class NotImplicationOrEquivalence extends PreCondition1 {
 
-    public NotImplicationOrEquivalence(Term arg1) {
+final public class NotImplicationOrEquivalence extends PreCondition1 {
+
+    public NotImplicationOrEquivalence(final Term arg1) {
         super(arg1);
     }
 
     @Override
-    public boolean test(RuleMatch m, Term arg1) {
-        final Task task = m.premise.getTask();
-        final Task belief = m.premise.getBelief();
-
-        if (arg1.equals(task.getTerm())) {
-            if (task.getTerm() instanceof Implication || task.getTerm() instanceof Equivalence) {
+    public boolean test(final RuleMatch m, final Term arg1) {
+        final Op o = arg1.operator();
+        switch (o) {
+            case IMPLICATION:
+            case IMPLICATION_AFTER:
+            case IMPLICATION_BEFORE:
+            case IMPLICATION_WHEN:
+            case EQUIVALENCE:
+            case EQUIVALENCE_AFTER:
+            case EQUIVALENCE_WHEN:
                 return false;
-            }
-        }
-        if (belief != null && arg1.equals(belief.getTerm())) {
-            if (belief.getTerm() instanceof Implication || belief.getTerm() instanceof Equivalence) {
-                return false;
-            }
         }
         return true;
     }

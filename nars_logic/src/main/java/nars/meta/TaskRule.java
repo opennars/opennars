@@ -42,8 +42,8 @@ public class TaskRule extends Rule<Premise,Task> {
     public Product getPremises() {
         return (Product)term(0);
     }
-    public Product conclusion() {
-        return (Product)term(1);
+    public ProductN conclusion() {
+        return (ProductN)term(1);
     }
 
     public TaskRule(Product premises, Product result) {
@@ -282,14 +282,14 @@ public class TaskRule extends Rule<Premise,Task> {
         }
     }
 
-    final static UppercaseAtomsToPatternVariables taskRuleNormalization = new UppercaseAtomsToPatternVariables();
+    final static UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
 
     @Override
     public TaskRule normalizeDestructively() {
 
-        this.transform(taskRuleNormalization);
+        this.transform(uppercaseAtomsToPatternVariables);
 
-        new VariableNormalization(this, true);
+        new VariableNormalization(this, false);
 
         rehash();
 
@@ -302,7 +302,7 @@ public class TaskRule extends Rule<Premise,Task> {
 
     public void run(RuleMatch m) {
 
-        try {
+        //try {
             m.start(this);
 
             for (final PreCondition p : preconditions) {
@@ -313,12 +313,12 @@ public class TaskRule extends Rule<Premise,Task> {
             //if preconditions are met:
             for (final PostCondition p : postconditions)
                 m.apply(p);
-        }
+        /*}
         catch (Exception e) {
             System.err.println(this);
             //System.err.println("  " + e);
             e.printStackTrace();
-        }
+        }*/
     }
 
 
@@ -337,7 +337,6 @@ public class TaskRule extends Rule<Premise,Task> {
         return false;
     }
 
-    final static Variable any = new Variable("%X");
 
     /** for each calculable "question reverse" rule,
      *  supply to the consumer
@@ -353,9 +352,6 @@ public class TaskRule extends Rule<Premise,Task> {
         //      %C, %B, [pre], task_is_question() |- %T , [post]
         w.accept( clone(C, B, T) );
 
-        //      %C, [%X], [pre], task_is_question() |- %B, [post]
-        w.accept( clone(C, any, B) );
-
         //      %T, %C, [pre], task_is_question() |- %B, [post]
         w.accept( clone(T, C, B) );
 
@@ -369,8 +365,7 @@ public class TaskRule extends Rule<Premise,Task> {
         newPremise.term[0] = newT;
         newPremise.term[1] = newB;
 
-        final ProductN newConclusion = (ProductN)conclusion().clone();
-        newConclusion.term[0] = newR;
+        final Product newConclusion = Product.make( conclusion().cloneTermsReplacing(0, newR) );
 
         return new TaskRule(newPremise, newConclusion);
     }
