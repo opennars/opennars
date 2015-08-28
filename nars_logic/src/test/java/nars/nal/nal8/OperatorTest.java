@@ -45,7 +45,7 @@ public class OperatorTest {
 //    }
 
     @Test public void testOperationIsInheritance() {
-        Operation o = Operation.make(Product.make(), Operator.the("x"));
+        Operation o = Operation.op(Product.make("x"), Operator.the("x"));
         assertEquals(Op.INHERITANCE, o.operator());
     }
 

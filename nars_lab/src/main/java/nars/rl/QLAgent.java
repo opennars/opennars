@@ -3,7 +3,6 @@ package nars.rl;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import nars.Memory;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
@@ -77,7 +76,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         if (o == null) {
             //TODO avoid String here
             o = operationCache[i] =
-                    Operation.make( Product.make(Atom.the(i)), operator );
+                    Operation.op( Product.make(Atom.the(i)), operator );
             operationToAction.put(o, i);
         }
         return o;

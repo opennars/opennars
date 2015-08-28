@@ -15,7 +15,6 @@ import nars.process.NAL;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -157,7 +156,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         }
         arg[k] = nal.self();
 
-        Operation operation = Operation.make(Product.make(arg), opTerm);
+        Operation operation = Operation.op(Product.make(arg), opTerm);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
@@ -299,7 +298,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 
             if (valid) {
                 beliefReasonDerive(task,
-                        Operation.make(Product.only(imp.getPredicate()), anticipate),
+                        Operation.op(Product.only(imp.getPredicate()), anticipate),
                         nal);
             }
         }
@@ -310,7 +309,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         //also get a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
-                    Operation.make(Product.only(belief.getTerm()), op),
+                    Operation.op(Product.only(belief.getTerm()), op),
                     nal);
     }
 

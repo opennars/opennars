@@ -39,8 +39,8 @@
 
 //A belief b <f,c> is equal to --b <1-f,c>, which is the negation rule:
 
-    --S, negative(--S) |- S, (Truth:Negation, Desire:Negation)
-    S, negative(S) |- --S, (Truth:Negation, Desire:Negation)
+    --S, X, task(negative) |- S, (Truth:Negation, Desire:Negation)
+    S, X, task(negative) |- --S, (Truth:Negation, Desire:Negation)
 
 //// inheritance-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //       (A --> B) ------- (B --> C)

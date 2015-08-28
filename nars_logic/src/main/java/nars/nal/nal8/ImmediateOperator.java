@@ -29,7 +29,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
         return newOperation(Product.make(args));
     }
     public Operation newOperation(Product args) {
-        return Operation.make(args, op);
+        return Operation.op(args, op);
     }
 
     /** create a new task that wraps this operation */

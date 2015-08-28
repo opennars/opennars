@@ -13,10 +13,8 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Variable;
@@ -118,7 +116,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
 
         nar.input(nar.memory.newTask(
-                Operation.make(Product.make(instancePlusArgs), op )
+                Operation.op(Product.make(instancePlusArgs), op )
         ).goal().present().truth(1f, 0.9f).get());
 
         if (result!=null) {

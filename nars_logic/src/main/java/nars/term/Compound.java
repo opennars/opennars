@@ -335,16 +335,20 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         final Term[] arr = new Term[L];
 
-        int j = 0;
-        Term[] srcArray = original;
-        for (int i = 0; i < L; i++) {
-            if (i == original.length) {
-                srcArray = additional;
-                j = 0;
-            }
+        final int l = original.length;
+        System.arraycopy(original, 0, arr, 0, l);
+        System.arraycopy(additional, 0, arr, l, additional.length);
 
-            arr[i] = srcArray[j++];
-        }
+//        int j = 0;
+//        Term[] srcArray = original;
+//        for (int i = 0; i < L; i++) {
+//            if (i == original.length) {
+//                srcArray = additional;
+//                j = 0;
+//            }
+//
+//            arr[i] = srcArray[j++];
+//        }
 
         return arr;
 

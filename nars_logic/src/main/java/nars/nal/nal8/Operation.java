@@ -62,7 +62,6 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
     }
 
     /**
-     *
      * Constructor with partial values, called by make
      */
     protected Operation(Operator operator, Product argProduct) {
@@ -94,7 +93,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
      * @param self specify a SELF, or null to use memory's current self
      * @return A compound generated or null
      */
-    public static Operation make(Product arg, final Operator oper) {
+    public static Operation op(Product arg, final Operator oper) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
@@ -117,15 +116,17 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
         SetExt1<Product> subject = new SetExt1(arg);
 
-        return make(subject, oper);
+        return op(subject, oper);
     }
 
-    public static Operation make(SetExt1<Product> arg, final Operator oper) {
-        return new Operation( oper, arg );
+    public static Operation op(SetExt1<Product> arg, final Operator oper) {
+        return new Operation(oper, arg);
     }
 
 
-    /** gets the term wrapped by the Operator predicate */
+    /**
+     * gets the term wrapped by the Operator predicate
+     */
     public Term getOperator() {
         return getPredicate().the();
     }
@@ -154,8 +155,9 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
     public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
         return newSubTask(m, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
     }
+
     public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
-        return  m.newTask(content)
+        return m.newTask(content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(p, d, q)
@@ -343,7 +345,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
 
         Term predTerm = getOperator();
 
-        if ((predTerm.getVolume()!=1) || (predTerm.hasVar())) {
+        if ((predTerm.getVolume() != 1) || (predTerm.hasVar())) {
             //if the predicate (operator) of this operation (inheritance) is not an atom, use Inheritance's append format
             super.append(p, pretty);
             return;
@@ -367,7 +369,6 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
             t.append(p, pretty);
 
 
-
             n++;
         }
 
@@ -384,8 +385,8 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
     public static Product getArgumentProduct(Compound c) {
         if (!c.impossibleSubStructure(ProductInSetExtPattern)) {
             if (c instanceof SetExt) {
-                SetExt sc = ((SetExt)c);
-                if (sc.length() ==1) {
+                SetExt sc = ((SetExt) c);
+                if (sc.length() == 1) {
                     final Term scp = sc.term(0);
                     if (scp instanceof Product) {
                         return (Product) scp;
@@ -396,17 +397,19 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         return null;
     }
 
-    /** null until the operation is executed, and null again afterward */
+    /**
+     * null until the operation is executed, and null again afterward
+     */
     public Memory getMemory() {
         return memory;
     }
 
     public boolean isExecuting() {
-        return getMemory()!=null;
+        return getMemory() != null;
     }
 
     public boolean setMemory(Memory memory) {
-        if (memory!=null && this.memory!=null) return false;
+        if (memory != null && this.memory != null) return false;
         this.memory = memory;
         return true;
     }
@@ -415,11 +418,20 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         return Arrays.toString(args());
     }
 
-    /** creates a result term in the conventional format */
+    /**
+     * creates a result term in the conventional format
+     */
     public static Inheritance result(Operator op, Product x, Term y) {
         return Inheritance.make(
                 SetExt.make(y),
-                ImageExt.make(x, op, (short)(x.length()-1) /* position of the variable */)
+                ImageExt.make(x, op, (short) (x.length() - 1) /* position of the variable */)
         );
     }
+
+    public static Operation op(String operator, String... args) {
+        return Operation.op(Product.make(args),
+                Operator.the(operator)
+        );
+    }
+
 }

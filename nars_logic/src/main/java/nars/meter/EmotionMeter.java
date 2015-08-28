@@ -109,8 +109,8 @@ public class EmotionMeter implements Serializable {
                     //this is a good candidate for innate belief for consider and remind:
 
                     if (InternalExperience.enabled && Global.CONSIDER_REMIND) {
-                        Operation op_consider = Operation.make(Product.only(inh), consider.consider);
-                        Operation op_remind = Operation.make(Product.only(inh), remind.remind);
+                        Operation op_consider = Operation.op(Product.only(inh), consider.consider);
+                        Operation op_remind = Operation.op(Product.only(inh), remind.remind);
 
                         //order important because usually reminding something
                         //means it has good chance to be considered after

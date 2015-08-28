@@ -259,7 +259,7 @@ public class DerivationRules {
                 System.err.println("Ignoring invalid input rule: ");
                 System.err.print("  ");
                 System.err.println(p);
-                System.err.println("  " + ex);
+                ex.printStackTrace();
                 //ex.printStackTrace();
             }
         }

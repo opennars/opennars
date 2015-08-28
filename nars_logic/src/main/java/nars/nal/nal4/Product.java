@@ -102,6 +102,9 @@ public interface Product extends Term, Iterable<Term> {
         return new ProductN(arg);
     }
 
+    public static Product make(final String... argAtoms) {
+        return Product.make( Atom.the(argAtoms) );
+    }
 
     public Term[] cloneTermsReplacing(final Term from, final Term to);
 

@@ -883,7 +883,7 @@ public class NarseseParser extends BaseParser<Object> {
             /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self);*/ //SELF in final argument
 
-            Operation o = Operation.make(  Product.make(vectorterms, 1, vectorterms.size()), new Operator(vectorterms.get(0)) );
+            Operation o = Operation.op(  Product.make(vectorterms, 1, vectorterms.size()), new Operator(vectorterms.get(0)) );
             return o;
         }
         else {

@@ -7,6 +7,7 @@ import nars.meta.pre.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal4.ProductN;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Atom;
@@ -43,7 +44,7 @@ public class TaskRule extends Rule<Premise,Task> {
     public Product getPremises() {
         return (Product)term(0);
     }
-    public Product getConclusion() {
+    public Product conclusion() {
         return (Product)term(1);
     }
 
@@ -70,7 +71,6 @@ public class TaskRule extends Rule<Premise,Task> {
 
         Term taskTermMatch = precon[0];
         early.add(new MatchTaskTerm(taskTermMatch));
-        start++;
 
 
         Term beliefTermMatch = precon[1];
@@ -79,11 +79,13 @@ public class TaskRule extends Rule<Premise,Task> {
             //and not a belief term pattern
             //(which will not reference any particular atoms)
             early.add(new MatchBeliefTerm(beliefTermMatch));
-            start++;
+        }
+        else {
+            throw new RuntimeException("belief term must be a pattern");
         }
 
         //additional modifiers: either early or late, classify them here
-        for (int i = start; i < precon.length; i++) {
+        for (int i = 2; i < precon.length; i++) {
             if (!(precon[i] instanceof Inheritance)) {
                 System.err.println("unknown precondition type: " + precon[i] + " in rule: " + this);
                 continue;
@@ -91,13 +93,24 @@ public class TaskRule extends Rule<Premise,Task> {
 
             Inheritance predicate = (Inheritance) precon[i];
             Term predicate_name = predicate.getPredicate();
-            Term[] args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
+
             final String predicateNameStr = predicate_name.toString().substring(1);//.replace("^", "");
 
             PreCondition next = null;
 
-            final Term arg1 = args[0];
-            final Term arg2 = (args.length > 1) ? args[1] : null;
+            final Term[] args;
+            final Term arg1, arg2;
+
+            if (predicate.getSubject() instanceof SetExt) {
+                //decode precondition predicate arguments
+                args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
+                arg1 = args[0];
+                arg2 = (args.length > 1) ? args[1] : null;
+            }
+            else {
+                args = null;
+                arg1 = arg2 = null;
+            }
 
             switch (predicateNameStr) {
                 case "not_equal":
@@ -105,9 +118,6 @@ public class TaskRule extends Rule<Premise,Task> {
                     break;
                 case "event":
                     next = new IsEvent(arg1, arg2);
-                    break;
-                case "negative":
-                    next = new IsNegative(arg1, arg2);
                     break;
                 case "no_common_subterm":
                     next = new NoCommonSubterm(arg1, arg2);
@@ -130,10 +140,28 @@ public class TaskRule extends Rule<Premise,Task> {
                 case "shift_occurrence_forward":
                     next = new TimeOffset(arg1, arg2, true);
                     break;
-                case "shift_occurrence_backward": {
+                case "shift_occurrence_backward":
                     next = new TimeOffset(arg1, arg2, false);
                     break;
-                }
+                case "task":
+                    switch (arg1.toString()) {
+                        case "negative":
+                            next = new TaskNegative();
+                            break;
+                        case "\"?\"":
+                            next = TaskPunctuation.TaskQuestion;
+                            break;
+                        case "\".\"":
+                            next = TaskPunctuation.TaskJudgment;
+                            break;
+                        case "\"!\"":
+                            next = TaskPunctuation.TaskGoal;
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown task punctuation type: " + predicate.getSubject());
+                    }
+                    break;
+
 
             }
 
@@ -169,8 +197,8 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
 
-    public Product premise() {
-        return (Product)term(0);
+    public ProductN premise() {
+        return (ProductN)term(0);
     }
 
     public Product result() {
@@ -219,7 +247,7 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
     protected Term getResult() {
-        return getConclusion().term(0);
+        return conclusion().term(0);
     }
 
     public int getBeliefTermVolumeMin() {
@@ -307,23 +335,42 @@ public class TaskRule extends Rule<Premise,Task> {
         return false;
     }
 
+    final static Variable any = new Variable("%X");
+
     /** for each calculable "question reverse" rule,
      *  supply to the consumer
      */
-    public void forEachReverseQuestion(Consumer<TaskRule> c) {
-        /*
-        %T, %B, [pre] |- %C, [post] ||--
+    public void forEachReverseQuestion(Consumer<TaskRule> w) {
 
-              %C, %B, [pre], task_is_question() |- %T , [post]
-              %C, [pre], task_is_question() |- %B, [post]
-              %T, %C, [pre], task_is_question() |- %B, [post]
-        */
+        // %T, %B, [pre] |- %C, [post] ||--
 
         Term T = this.getTask();
         Term B = this.getBelief();
         Term C = this.getResult();
 
+        //      %C, %B, [pre], task_is_question() |- %T , [post]
+        w.accept( clone(C, B, T) );
 
+        //      %C, [%X], [pre], task_is_question() |- %B, [post]
+        w.accept( clone(C, any, B) );
+
+        //      %T, %C, [pre], task_is_question() |- %B, [post]
+        w.accept( clone(T, C, B) );
+
+    }
+
+    private TaskRule clone(final Term newT, final Term newB, final Term newR) {
+
+
+        final ProductN newPremise =
+                (ProductN) Product.make(premise().cloneTerms(TaskPunctuation.TaskQuestionTerm));
+        newPremise.term[0] = newT;
+        newPremise.term[1] = newB;
+
+        final ProductN newConclusion = (ProductN)conclusion().clone();
+        newConclusion.term[0] = newR;
+
+        return new TaskRule(newPremise, newConclusion);
     }
 
 }

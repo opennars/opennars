@@ -25,6 +25,7 @@ import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.term.Atom;
 import nars.term.Statement;
 import nars.term.Term;
 
@@ -82,7 +83,7 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
 
         if (predicate instanceof Operator) {
             if ((subject instanceof SetExt1) && ((((SetExt1)subject).the()) instanceof Product))
-                return Operation.make( (SetExt1)subject, (Operator)predicate );
+                return Operation.op( (SetExt1)subject, (Operator)predicate );
         }
 
         return new Inheritance(subject, predicate);
@@ -97,6 +98,10 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
     @Override
     public Op operator() {
         return Op.INHERITANCE;
+    }
+
+    public static Inheritance<Atom,Atom> make(String subj, String pred) {
+        return Inheritance.make( Atom.the(subj), Atom.the(pred) );
     }
 
 }

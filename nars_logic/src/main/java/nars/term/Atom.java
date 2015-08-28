@@ -297,7 +297,16 @@ public class Atom extends ImmutableAtom {
         return x;
     }
 
+    public static Term[] the(final String... s) {
+        final int l = s.length;
+        final Term[] x = new Term[l];
+        for (int i = 0; i < l; i++)
+            x[i] = Atom.the(s[i]);
+        return x;
+    }
+
     public static Term the(final Object o) {
+
         if (o instanceof Term) return ((Term)o);
         else if (o instanceof String) return the((String)o);
         else if (o instanceof Number) return the((Number)o);
