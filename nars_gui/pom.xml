@@ -136,23 +136,23 @@
         <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-common</artifactId>
-            <version>8.0-r3</version>
+            <version>8.0-r4</version>
         </dependency>
 
         <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-controls</artifactId>
-            <version>8.0-r3</version>
+            <version>8.0-r4</version>
         </dependency>
         <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-labs</artifactId>
-            <version>8.0-r3</version>
+            <version>8.0-r4</version>
         </dependency>
         <dependency>
             <groupId>com.dooapp.fxform2</groupId>
             <artifactId>core</artifactId>
-            <version>8.0.10</version> <!-- Note: For JavaFX 8, use 2.2.6 -->
+            <version>8.0.11</version> <!-- Note: For JavaFX 8, use 2.2.6 -->
         </dependency>
 
         <dependency>
