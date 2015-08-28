@@ -357,6 +357,9 @@
 ((|,A_1..n) --> M), A_i |- (A_i --> M), (Truth:AnalyticDeduction)
 (M --> (&,A_1..n)), A_i |- (M --> A_i), (Truth:AnalyticDeduction)
 
+((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
+(R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
+
 //TODO Similarity Theorems (needs to be carefully evaluated what is needed here)
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
 
