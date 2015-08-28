@@ -66,15 +66,19 @@ public enum Op {
     EQUIVALENCE_WHEN("<|>", 7, true, 14),
 
 
+
+
+    // keep all items which are invlved in the lower 32 bit structuralHash above this line
+    // so that any of their ordinal values will not exceed 31
+    //-------------
+    NONE('\u2205', Op.ANY, false),
+
+
     INTERVAL(
             //TODO decide what this value should be, it overrides with IMAGE_EXT
             //but otherwise it's not used
             String.valueOf(Symbols.INTERVAL_PREFIX) + "/",
             Op.ANY, false),
-
-    // keep all items which are invlved in the lower 32 bit structuralHash above this line
-    // so that any of their ordinal values will not exceed 31
-    //-------------
 
     INSTANCE("{--", 2, true), //should not be given a compact representation because this will not exist internally after parsing
     PROPERTY("--]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
@@ -82,8 +86,8 @@ public enum Op {
 
 
 
-    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, false),
-    NONE('\u2205', Op.ANY, false);
+    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, false);
+
 
     //-----------------------------------------------------
 

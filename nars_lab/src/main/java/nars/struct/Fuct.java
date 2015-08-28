@@ -137,8 +137,8 @@ import java.nio.ByteOrder;
  *     from the leftmost to the rightmost bit (same as <code>BIG_ENDIAN</code>).
  *     </p>
  *
- * <p> Finally, it is possible to change the {@link #setByteBuffer ByteBuffer}
- *     and/or the Struct {@link #setByteBufferPosition position} in its
+ * <p> Finally, it is possible to change the {@link #set ByteBuffer}
+ *     and/or the Struct {@link #pos position} in its
  *     <code>ByteBuffer</code> to allow for a single {@link Fuct} object to
  *     encode/decode multiple memory mapped instances.</p>
  *
@@ -171,7 +171,7 @@ public class Fuct {
     /**
      * Holds the byte buffer backing the struct (top struct).
      */
-    ByteBuffer _byteBuffer;
+    protected ByteBuffer bb;
     /**
      * Holds the offset of this struct relative to the outer struct or
      * to the byte buffer if there is no outer.
@@ -204,17 +204,17 @@ public class Fuct {
      * Indicates if the index has to be reset for each new field (
      * <code>true</code> only for Union subclasses).
      */
-    boolean _resetIndex;
+    boolean resetIndex;
     /**
      * Holds bytes array for Stream I/O when byteBuffer has no intrinsic array.
      */
-    byte[] _bytes;
+    byte[] bytes;
 
     /**
      * Default constructor.
      */
     public Fuct() {
-        _resetIndex = isUnion();
+        resetIndex = isUnion();
     }
 
     /**
@@ -242,28 +242,34 @@ public class Fuct {
     /**
      * Returns the byte buffer for this struct. This method will allocate
      * a new <b>direct</b> buffer if none has been set.
-     *
+     * <p>
      * <p> Changes to the buffer's content are visible in this struct,
-     *     and vice versa.</p>
+     * and vice versa.</p>
      * <p> The buffer of an inner struct is the same as its parent struct.</p>
-     * <p> If no byte buffer has been {@link Fuct#setByteBuffer set},
-     *     a direct buffer is allocated with a capacity equals to this
-     *     struct's {@link Fuct#size() size}.</p>
+     * <p> If no byte buffer has been {@link Fuct#set set},
+     * a direct buffer is allocated with a capacity equals to this
+     * struct's {@link Fuct#size() size}.</p>
      *
      * @return the current byte buffer or a new direct buffer if none set.
-     * @see #setByteBuffer
+     * @see #set
      */
-    public final ByteBuffer getByteBuffer() {
-        if (outer != null) return outer.getByteBuffer();
-        return (_byteBuffer != null) ? _byteBuffer : newBuffer();
+    public ByteBuffer getByteBuffer() {
+        Fuct f = this;
+        while (true) {
+            if (f.outer != null) {
+                f = f.outer;
+                continue;
+            }
+            return (f.bb != null) ? f.bb : f.newBuffer();
+        }
     }
 
     private synchronized ByteBuffer newBuffer() {
-        if (_byteBuffer != null) return _byteBuffer; // Synchronized check.
+        if (bb != null) return bb; // Synchronized check.
         ByteBuffer bf = ByteBuffer.allocateDirect(size());
         bf.order(byteOrder());
-        setByteBuffer(bf, 0);
-        return _byteBuffer;
+        set(bf, 0);
+        return bb;
     }
 
     /**
@@ -282,16 +288,17 @@ public class Fuct {
      * @throws UnsupportedOperationException if this struct is an inner struct.
      * @see #byteOrder()
      */
-    public final Fuct setByteBuffer(ByteBuffer byteBuffer, int position) {
+    public final Fuct set(ByteBuffer byteBuffer, int position) {
         if (byteBuffer.order() != byteOrder()) throw new IllegalArgumentException(
                 "The byte order of the specified byte buffer"
                         + " is different from this struct byte order");
         if (outer != null) throw new UnsupportedOperationException(
                 "Inner struct byte buffer is inherited from outer");
-        _byteBuffer = byteBuffer;
+        bb = byteBuffer;
         outerOffset = position;
         return this;
     }
+
 
     /**
      * Sets the byte position of this struct within its byte buffer.
@@ -300,9 +307,18 @@ public class Fuct {
      * @return <code>this</code>
      * @throws UnsupportedOperationException if this struct is an inner struct.
      */
-    public final Fuct setByteBufferPosition(int position) {
-        return setByteBuffer(this.getByteBuffer(), position);
+    public final Fuct pos(final int position) {
+        //final ByteBuffer b = getByteBuffer();
+        /*if (byteBuffer.order() != byteOrder()) throw new IllegalArgumentException(
+                "The byte order of the specified byte buffer"
+                        + " is different from this struct byte order");*/
+        /*if (outer != null) throw new UnsupportedOperationException(
+                "Inner struct byte buffer is inherited from outer");*/
+        outerOffset = position;
+        return this;
     }
+
+
 
     /**
      * Returns the absolute byte position of this struct within its associated
@@ -311,8 +327,8 @@ public class Fuct {
      * @return the absolute position of this struct (can be an inner struct)
      *         in the byte buffer.
      */
-    public final int getByteBufferPosition() {
-        return (outer != null) ? outer.getByteBufferPosition() + outerOffset
+    public final int pos() {
+        return (outer != null) ? outer.pos() + outerOffset
                 : outerOffset;
     }
 
@@ -338,20 +354,20 @@ public class Fuct {
         if (remaining == 0) remaining = size;// at end so move to beginning
         int alreadyRead = size - remaining; // typically 0
         if (buffer.hasArray()) {
-            int offset = buffer.arrayOffset() + getByteBufferPosition();
+            int offset = buffer.arrayOffset() + pos();
             int bytesRead = in
                     .read(buffer.array(), offset + alreadyRead, remaining);
-            buffer.position(getByteBufferPosition() + alreadyRead + bytesRead
+            buffer.position(pos() + alreadyRead + bytesRead
                     - offset);
             return bytesRead;
         } else {
             synchronized (buffer) {
-                if (_bytes == null) {
-                    _bytes = new byte[size()];
+                if (bytes == null) {
+                    bytes = new byte[size()];
                 }
-                int bytesRead = in.read(_bytes, 0, remaining);
-                buffer.position(getByteBufferPosition() + alreadyRead);
-                buffer.put(_bytes, 0, bytesRead);
+                int bytesRead = in.read(bytes, 0, remaining);
+                buffer.position(pos() + alreadyRead);
+                buffer.put(bytes, 0, bytesRead);
                 return bytesRead;
             }
         }
@@ -368,16 +384,16 @@ public class Fuct {
     public void write(OutputStream out) throws IOException {
         ByteBuffer buffer = getByteBuffer();
         if (buffer.hasArray()) {
-            int offset = buffer.arrayOffset() + getByteBufferPosition();
+            int offset = buffer.arrayOffset() + pos();
             out.write(buffer.array(), offset, size());
         } else {
             synchronized (buffer) {
-                if (_bytes == null) {
-                    _bytes = new byte[size()];
+                if (bytes == null) {
+                    bytes = new byte[size()];
                 }
-                buffer.position(getByteBufferPosition());
-                buffer.get(_bytes);
-                out.write(_bytes);
+                buffer.position(pos());
+                buffer.get(bytes);
+                out.write(bytes);
             }
         }
     }
@@ -423,7 +439,7 @@ public class Fuct {
         TextBuilder tmp = new TextBuilder();
         final int size = size();
         final ByteBuffer buffer = getByteBuffer();
-        final int start = getByteBufferPosition();
+        final int start = pos();
         for (int i = 0; i < size; i++) {
             int b = buffer.get(start + i) & 0xFF;
             tmp.append(HEXA[b >> 4]);
@@ -518,7 +534,7 @@ public class Fuct {
         Member inner = new Member(struct.size() << 3, struct.alignment); // Update indexes.
         struct.outer = this;
         struct.outerOffset = inner.offset();
-        return (S) struct;
+        return struct;
     }
 
     /**
@@ -533,10 +549,10 @@ public class Fuct {
      */
     protected <S extends Fuct> S[] array(S[] structs) {
         Class<?> structClass = null;
-        boolean resetIndexSaved = _resetIndex;
-        if (_resetIndex) {
+        boolean resetIndexSaved = resetIndex;
+        if (resetIndex) {
             index = 0;
-            _resetIndex = false; // Ensures the array elements are sequential.
+            resetIndex = false; // Ensures the array elements are sequential.
         }
         for (int i = 0; i < structs.length;) {
             S struct = structs[i];
@@ -557,8 +573,8 @@ public class Fuct {
             }
             structs[i++] = inner(struct);
         }
-        _resetIndex = resetIndexSaved;
-        return (S[]) structs;
+        resetIndex = resetIndexSaved;
+        return structs;
     }
 
     /**
@@ -572,16 +588,16 @@ public class Fuct {
      *         inner structs.
      */
     protected <S extends Fuct> S[][] array(S[][] structs) {
-        boolean resetIndexSaved = _resetIndex;
-        if (_resetIndex) {
+        boolean resetIndexSaved = resetIndex;
+        if (resetIndex) {
             index = 0;
-            _resetIndex = false; // Ensures the array elements are sequential.
+            resetIndex = false; // Ensures the array elements are sequential.
         }
         for (int i = 0; i < structs.length; i++) {
             array(structs[i]);
         }
-        _resetIndex = resetIndexSaved;
-        return (S[][]) structs;
+        resetIndex = resetIndexSaved;
+        return structs;
     }
 
     /**
@@ -595,16 +611,16 @@ public class Fuct {
      *         inner structs.
      */
     protected <S extends Fuct> S[][][] array(S[][][] structs) {
-        boolean resetIndexSaved = _resetIndex;
-        if (_resetIndex) {
+        boolean resetIndexSaved = resetIndex;
+        if (resetIndex) {
             index = 0;
-            _resetIndex = false; // Ensures the array elements are sequential.
+            resetIndex = false; // Ensures the array elements are sequential.
         }
         for (int i = 0; i < structs.length; i++) {
             array(structs[i]);
         }
-        _resetIndex = resetIndexSaved;
-        return (S[][][]) structs;
+        resetIndex = resetIndexSaved;
+        return structs;
     }
 
     /**
@@ -618,10 +634,10 @@ public class Fuct {
      *         is empty and the member type is unknown.
      */
     protected <M extends Member> M[] array(M[] arrayMember) {
-        boolean resetIndexSaved = _resetIndex;
-        if (_resetIndex) {
+        boolean resetIndexSaved = resetIndex;
+        if (resetIndex) {
             index = 0;
-            _resetIndex = false; // Ensures the array elements are sequential.
+            resetIndex = false; // Ensures the array elements are sequential.
         }
         if (BOOL.isInstance(arrayMember)) {
             for (int i = 0; i < arrayMember.length;) {
@@ -668,8 +684,8 @@ public class Fuct {
                     "Cannot create member elements, the arrayMember should "
                             + "contain the member instances instead of null");
         }
-        _resetIndex = resetIndexSaved;
-        return (M[]) arrayMember;
+        resetIndex = resetIndexSaved;
+        return arrayMember;
     }
 
     private static final Class<? extends Bool[]> BOOL = new Bool[0].getClass();
@@ -703,16 +719,16 @@ public class Fuct {
      *         is empty and the member type is unknown.
      */
     protected <M extends Member> M[][] array(M[][] arrayMember) {
-        boolean resetIndexSaved = _resetIndex;
-        if (_resetIndex) {
+        boolean resetIndexSaved = resetIndex;
+        if (resetIndex) {
             index = 0;
-            _resetIndex = false; // Ensures the array elements are sequential.
+            resetIndex = false; // Ensures the array elements are sequential.
         }
         for (int i = 0; i < arrayMember.length; i++) {
             array(arrayMember[i]);
         }
-        _resetIndex = resetIndexSaved;
-        return (M[][]) arrayMember;
+        resetIndex = resetIndexSaved;
+        return arrayMember;
     }
 
     /**
@@ -726,16 +742,16 @@ public class Fuct {
      *         is empty and the member type is unknown.
      */
     protected <M extends Member> M[][][] array(M[][][] arrayMember) {
-        boolean resetIndexSaved = _resetIndex;
-        if (_resetIndex) {
+        boolean resetIndexSaved = resetIndex;
+        if (resetIndex) {
             index = 0;
-            _resetIndex = false; // Ensures the array elements are sequential.
+            resetIndex = false; // Ensures the array elements are sequential.
         }
         for (int i = 0; i < arrayMember.length; i++) {
             array(arrayMember[i]);
         }
-        _resetIndex = resetIndexSaved;
-        return (M[][][]) arrayMember;
+        resetIndex = resetIndexSaved;
+        return arrayMember;
     }
 
     /**
@@ -747,18 +763,20 @@ public class Fuct {
      * @return the specified string array.
      */
     protected UTF8String[] array(UTF8String[] array, int stringLength) {
-        boolean resetIndexSaved = _resetIndex;
-        if (_resetIndex) {
+        boolean resetIndexSaved = resetIndex;
+        if (resetIndex) {
             index = 0;
-            _resetIndex = false; // Ensures the array elements are sequential.
+            resetIndex = false; // Ensures the array elements are sequential.
         }
         for (int i = 0; i < array.length; i++) {
             array[i] = new UTF8String(stringLength);
         }
-        _resetIndex = resetIndexSaved;
+        resetIndex = resetIndexSaved;
         return array;
     }
 
+
+    
     /**
      * Reads the specified bits from this Struct as an long (signed) integer
      * value.
@@ -776,7 +794,7 @@ public class Fuct {
         int bitStart = bitOffset - (offset << 3);
         bitStart = (byteOrder() == ByteOrder.BIG_ENDIAN) ? bitStart : 64
                 - bitSize - bitStart;
-        int index = getByteBufferPosition() + offset;
+        int index = pos() + offset;
         long value = readByteBufferLong(index);
         value <<= bitStart; // Clears preceding bits.
         value >>= (64 - bitSize); // Signed shift.
@@ -833,7 +851,7 @@ public class Fuct {
         mask <<= 64 - bitSize - bitStart;
         value <<= (64 - bitSize - bitStart);
         value &= mask; // Protects against out of range values.
-        int index = getByteBufferPosition() + offset;
+        int index = pos() + offset;
         long oldValue = readByteBufferLong(index);
         long resetValue = oldValue & (~mask);
         long newValue = resetValue | value;
@@ -925,7 +943,7 @@ public class Fuct {
             _bitLength = bitLength;
 
             // Resets index if union.
-            if (_resetIndex) {
+            if (resetIndex) {
                 index = 0;
             }
 
@@ -973,6 +991,10 @@ public class Fuct {
             // size and index may differ because of {@link Union}
         }
 
+        final public int get(final int index) {
+            return getByteBuffer().get(index);
+        }
+
         /**
          * Returns the outer {@link Fuct struct} container.
          *
@@ -981,6 +1003,8 @@ public class Fuct {
         public final Fuct struct() {
             return Fuct.this;
         }
+
+
 
         /**
          * Returns the byte offset of this member in its struct.
@@ -1050,7 +1074,13 @@ public class Fuct {
             long mask = 0xFFFFFFFFFFFFFFFFL >>> (64 - bitLength());
             mask <<= shift;
             value <<= shift;
+
+            
             return (word & ~mask) | (value & mask);
+        }
+
+        public int index() {
+            return pos() + offset();
         }
     }
 
@@ -1076,7 +1106,7 @@ public class Fuct {
             final ByteBuffer buffer = getByteBuffer();
             synchronized (buffer) {
                 try {
-                    int index = getByteBufferPosition() + offset();
+                    int index = pos() + offset();
                     buffer.position(index);
                     _writer.setOutput(buffer);
                     if (string.length() < _length) {
@@ -1100,7 +1130,7 @@ public class Fuct {
             synchronized (buffer) {
                 TextBuilder tmp = new TextBuilder();
                 try {
-                    int index = getByteBufferPosition() + offset();
+                    int index = pos() + offset();
                     buffer.position(index);
                     _reader.setInput(buffer);
                     for (int i = 0; i < _length; i++) {
@@ -1140,14 +1170,14 @@ public class Fuct {
         }
 
         public boolean get() {
-            final int index = getByteBufferPosition() + offset();
-            int word = getByteBuffer().get(index);
+            final int index = index();
+            int word = get(index);
             word = (bitLength() == 8) ? word : get(1, word);
             return word != 0;
         }
 
         public void set(boolean value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (bitLength() == 8) {
                 getByteBuffer().put(index, (byte) (value ? -1 : 0));
             } else {
@@ -1177,18 +1207,18 @@ public class Fuct {
         }
 
         public byte get() {
-            final int index = getByteBufferPosition() + offset();
-            int word = getByteBuffer().get(index);
+            final int index = index();
+            int word = get(index);
             return (byte) ((bitLength() == 8) ? word : get(1, word));
         }
 
         public void set(byte value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (bitLength() == 8) {
                 getByteBuffer().put(index, value);
             } else {
                 getByteBuffer().put(index,
-                        (byte) set(value, 1, getByteBuffer().get(index)));
+                        (byte) set(value, 1, get(index)));
             }
         }
 
@@ -1211,19 +1241,22 @@ public class Fuct {
         }
 
         public short get() {
-            final int index = getByteBufferPosition() + offset();
-            int word = getByteBuffer().get(index);
+            final int index = index();
+            int word = get(index);
             return (short) (0xFF & ((bitLength() == 8) ? word : get(1, word)));
         }
 
         public void set(short value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
+
+            final byte v;
             if (bitLength() == 8) {
-                getByteBuffer().put(index, (byte) value);
+                v = (byte) value;
             } else {
-                getByteBuffer().put(index,
-                        (byte) set(value, 1, getByteBuffer().get(index)));
+                v = (byte) set(value, 1, get(index));
             }
+
+            getByteBuffer().put(index, v);
         }
 
         public String toString() {
@@ -1245,13 +1278,13 @@ public class Fuct {
         }
 
         public short get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getShort(index);
             return (short) ((bitLength() == 16) ? word : get(2, word));
         }
 
         public void set(short value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (bitLength() == 16) {
                 getByteBuffer().putShort(index, value);
             } else {
@@ -1279,13 +1312,13 @@ public class Fuct {
         }
 
         public int get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getShort(index);
             return 0xFFFF & ((bitLength() == 16) ? word : get(2, word));
         }
 
         public void set(int value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (bitLength() == 16) {
                 getByteBuffer().putShort(index, (short) value);
             } else {
@@ -1313,13 +1346,13 @@ public class Fuct {
         }
 
         public int get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getInt(index);
             return (bitLength() == 32) ? word : get(4, word);
         }
 
         public void set(int value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (bitLength() == 32) {
                 getByteBuffer().putInt(index, value);
             } else {
@@ -1347,13 +1380,13 @@ public class Fuct {
         }
 
         public long get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getInt(index);
             return 0xFFFFFFFFL & ((bitLength() == 32) ? word : get(4, word));
         }
 
         public void set(long value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (bitLength() == 32) {
                 getByteBuffer().putInt(index, (int) value);
             } else {
@@ -1381,13 +1414,13 @@ public class Fuct {
         }
 
         public long get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             long word = getByteBuffer().getLong(index);
             return (bitLength() == 64) ? word : get(8, word);
         }
 
         public void set(long value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (bitLength() == 64) {
                 getByteBuffer().putLong(index, value);
             } else {
@@ -1448,12 +1481,12 @@ public class Fuct {
         }
 
         public float get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             return getByteBuffer().getFloat(index);
         }
 
-        public void set(float value) {
-            final int index = getByteBufferPosition() + offset();
+        final public void set(final float value) {
+            final int index = index();
             getByteBuffer().putFloat(index, value);
         }
 
@@ -1472,12 +1505,12 @@ public class Fuct {
         }
 
         public double get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             return getByteBuffer().getDouble(index);
         }
 
         public void set(double value) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             getByteBuffer().putDouble(index, value);
         }
 
@@ -1505,7 +1538,7 @@ public class Fuct {
         }
 
         public void set(S struct) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (struct != null) {
                 getByteBuffer().putInt(index, (int) struct.address());
             } else {
@@ -1519,12 +1552,12 @@ public class Fuct {
         }
 
         public int value() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             return getByteBuffer().getInt(index);
         }
 
         public boolean isUpToDate() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (_struct != null) {
                 return getByteBuffer().getInt(index) == (int) _struct.address();
             } else {
@@ -1552,7 +1585,7 @@ public class Fuct {
         }
 
         public void set(S struct) {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (struct != null) {
                 getByteBuffer().putLong(index, struct.address());
             } else if (struct == null) {
@@ -1566,12 +1599,12 @@ public class Fuct {
         }
 
         public long value() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             return getByteBuffer().getLong(index);
         }
 
         public boolean isUpToDate() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             if (_struct != null) {
                 return getByteBuffer().getLong(index) == _struct.address();
             } else {
@@ -1598,8 +1631,8 @@ public class Fuct {
         }
 
         public T get() {
-            final int index = getByteBufferPosition() + offset();
-            int word = getByteBuffer().get(index);
+            final int index = index();
+            int word = get(index);
             return _values[0xFF & get(1, word)];
         }
 
@@ -1609,8 +1642,8 @@ public class Fuct {
                     "enum: "
                             + e
                             + ", ordinal value does not reflect enum values position");
-            final int index = getByteBufferPosition() + offset();
-            int word = getByteBuffer().get(index);
+            final int index = index();
+            int word = get(index);
             getByteBuffer().put(index, (byte) set(value, 1, word));
         }
 
@@ -1637,7 +1670,7 @@ public class Fuct {
         }
 
         public T get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getShort(index);
             return _values[0xFFFF & get(2, word)];
         }
@@ -1648,7 +1681,7 @@ public class Fuct {
                     "enum: "
                             + e
                             + ", ordinal value does not reflect enum values position");
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getShort(index);
             getByteBuffer().putShort(index, (short) set(value, 2, word));
         }
@@ -1676,7 +1709,7 @@ public class Fuct {
         }
 
         public T get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getInt(index);
             return _values[get(4, word)];
         }
@@ -1687,7 +1720,7 @@ public class Fuct {
                     "enum: "
                             + e
                             + ", ordinal value does not reflect enum values position");
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             int word = getByteBuffer().getInt(index);
             getByteBuffer().putInt(index, set(value, 4, word));
         }
@@ -1715,7 +1748,7 @@ public class Fuct {
         }
 
         public T get() {
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             long word = getByteBuffer().getLong(index);
             return _values[(int) get(8, word)];
         }
@@ -1726,7 +1759,7 @@ public class Fuct {
                     "enum: "
                             + e
                             + ", ordinal value does not reflect enum values position");
-            final int index = getByteBufferPosition() + offset();
+            final int index = index();
             long word = getByteBuffer().getLong(index);
             getByteBuffer().putLong(index, set(value, 8, word));
         }

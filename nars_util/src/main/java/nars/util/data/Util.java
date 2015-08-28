@@ -503,4 +503,11 @@ public class Util {
         return Math.abs(a-b) < epsilon;
     }
 
+    public static short f2s(float conf) {
+        return (short)(conf * Short.MAX_VALUE);
+    }
+
+    public static byte f2b(float conf) {
+        return (byte)(conf * Byte.MAX_VALUE);
+    }
 }
