@@ -3,7 +3,6 @@ package nars.link;
 import nars.term.Term;
 import nars.util.data.Util;
 import nars.util.utf8.Byted;
-import nars.util.utf8.Utf8;
 
 
 public interface TermLinkKey extends Byted /* byte[] holds the prefix part */ {
@@ -22,7 +21,7 @@ public interface TermLinkKey extends Byted /* byte[] holds the prefix part */ {
         if (this == obj) return true;
         if (!(obj instanceof TermLinkKey)) return false;
         final TermLinkKey tl = (TermLinkKey) obj;
-        return Utf8.equals(this, tl) && getTarget().equals(tl.getTarget());
+        return Byted.equals(this, tl) && getTarget().equals(tl.getTarget());
     }
 
 //    /** the result of this should be cached */

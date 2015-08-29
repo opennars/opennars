@@ -24,8 +24,7 @@ package nars.term;
 import nars.Op;
 import nars.Symbols;
 import nars.term.transform.TermVisitor;
-import nars.util.data.id.LiteralUTF8Identifier;
-import nars.util.utf8.FastByteComparisons;
+import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
 import static nars.Symbols.*;
@@ -200,7 +199,7 @@ public class Variable extends Atom {
         int hashCompare = Integer.compare(a.hashCode(), b.hashCode());
         if (hashCompare != 0) return hashCompare;
 
-        int nameCompare = FastByteComparisons.compare(a.bytes(), b.bytes());
+        int nameCompare = Byted.compare(a, b);
         if (nameCompare != 0)
             return nameCompare;
 
@@ -211,8 +210,8 @@ public class Variable extends Atom {
         if (!ascoped && !bscoped) {
             //if the two variables are each without scope, they are not equal.
             //so use their identityHashCode to determine a stable ordering
-            int as = System.identityHashCode(a.scope);
-            int bs = System.identityHashCode(b.scope);
+            int as = System.identityHashCode(a);
+            int bs = System.identityHashCode(b);
             return Integer.compare(as, bs);
         }
         else if (ascoped && !bscoped) {

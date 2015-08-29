@@ -5,6 +5,7 @@ import nars.Op;
 import nars.nal.nal1.Negation;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
+import nars.util.utf8.Byted;
 
 import java.util.Map;
 
@@ -63,12 +64,12 @@ public class Atom extends ImmutableAtom {
     public int compareTo(final Object that) {
         if (that==this) return 0;
 
-        // variables have earlier sorting order than non-variables
-        if (that instanceof Atom) {
-            if (that.getClass() == Variable.class)
-                return 1;
+        // group variables by earlier sorting order than non-variables
+        if (that instanceof Variable)
+            return 1;
 
-            return compareHash((Atom)that);
+        if (that instanceof Atom) {
+            return Byted.compare(this, (Atom)that);
         }
         else {
             return -1;
@@ -77,9 +78,6 @@ public class Atom extends ImmutableAtom {
     }
 
 
-    public int compareHash(final Term that) {
-        return Integer.compare(hashCode(), that.hashCode());
-    }
 
 //    /**
 //     * Default constructor that build an internal Term

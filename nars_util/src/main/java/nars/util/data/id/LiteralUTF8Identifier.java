@@ -31,8 +31,8 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         setData(d);
     }
 
-    protected void setData(byte[] d) {
-        this.data = d;
+    protected void setData(final byte[] d) {
+        setBytes(d);
         this.hash = makeHash();
     }
 
@@ -49,7 +49,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         int plen = prefix.length;
         int slen = suffix.length;
         int len = plen + slen + 1;
-        byte[] d = new byte[len];
+        final byte[] d = new byte[len];
         System.arraycopy(prefix, 0, d, 0, plen);
         d[plen] = separator;
         System.arraycopy(suffix, 0, d, plen+1, slen);
@@ -119,20 +119,16 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
     public boolean equals(Object x) {
         if (this == x) return true;
         if (!(x instanceof LiteralUTF8Identifier)) return false;
-        return Utf8.equals(this, (Byted)x);
+        return Byted.equals(this, (Byted)x);
     }
 
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(final Object o) {
         if (this == o ) return 0;
-        Class oc = o.getClass();
-        Class c = getClass();
+        final Class oc = o.getClass();
+        final Class c = getClass();
         if (o.getClass() == getClass()) {
-            int i = Integer.compare(hashCode(), o.hashCode());
-            if (i == 0) {
-                return FastByteComparisons.compare(bytes(), ((LiteralUTF8Identifier) o).bytes());
-            }
-            return 0;
+            return Byted.compare(this, (Byted)o);
         }
         return Integer.compare(oc.hashCode(), c.hashCode());
     }
@@ -177,8 +173,11 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         return Utf8.fromUtf8(bytes());
     }
 
-    @Override
-    public void setBytes(byte[] b) {
+    /** this should only be used when setting a value and the hash will be invalidated,
+     * or setting an equivalent value where the hash would remain the same.
+     * for all other purposes, use setData() which will do a complete update
+     */
+    @Override public void setBytes(byte[] b) {
         this.data = b;
     }
 }

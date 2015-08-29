@@ -497,26 +497,27 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     @Override
     public int compareTo(final Object o) {
         if (this == o) return 0;
-        if (!(o instanceof Compound)) return 1;
-
+        if (!(o instanceof Compound))
+            return 1;
 
         int diff;
-        if ((diff = UnsignedInts.compare(o.hashCode(), hashCode()))!=0)
+        if ((diff = Integer.compare(o.hashCode(), hashCode()))!=0)
             return diff;
 
         final Compound c = (Compound)o;
-        if ((diff = UnsignedLongs.compare(c.structureHash, structureHash))!=0)
-            return diff;
 
         final int s = this.length();
-        if ((diff = c.length() - s)!=0)
+        if ((diff = Integer.compare(s, c.length()))!=0)
+            return diff;
+
+        if ((diff = Long.compare(c.structureHash, structureHash))!=0)
             return diff;
 
         for (int i = 0; i < s; i++) {
-            Term a = term(i);
-            Term b = c.term(i);
-            diff = a.compareTo(b);
-            if (diff!=0) return diff;
+            final Term a = term(i);
+            final Term b = c.term(i);
+            final int d = a.compareTo(b);
+            if (d!=0) return d;
         }
 
         return 0;

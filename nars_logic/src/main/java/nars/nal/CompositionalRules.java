@@ -1011,7 +1011,7 @@ OUT: <lock1 --> lock>.
         else {
             //this should not occurr, but if it does we will know we can prune this path
             if (Global.DEBUG)
-                throw new RuntimeException("this could have been prevented by checking for analytic truth values of belief.truth and truth");
+                throw new RuntimeException("this case which invalidates the entire process could have been detected earlier by checking for analytic truth values of belief.truth and truth");
         }
     }
 

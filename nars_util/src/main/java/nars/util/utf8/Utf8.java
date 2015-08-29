@@ -188,43 +188,6 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
 
     /**
      * ordinary array equals comparison with some conditions removed
-     * instance equality between A and B will most likely already performed prior to calling this, so it is not done in this method
-     */
-    public static boolean equals(final Byted A, final Byted B) {
-        final byte[] a = A.bytes();
-        final byte[] b = B.bytes();
-
-        if (a == b)
-            return true;
-
-        if (A.hashCode() != B.hashCode())
-            return false;
-
-        return isEqualContentAndMergeIfTrue(A,a,B,b);
-    }
-
-    /** separate method so that the base equals() method can be more easily inlined */
-    static boolean isEqualContentAndMergeIfTrue(final Byted A, final byte[] a, final Byted B, final byte[] b) {
-
-        final int aLen = a.length;
-        if (b.length != aLen)
-            return false;
-
-        //backwards
-        for (int i = aLen - 1; i >= 0; i--)
-            if (a[i] != b[i]) {
-                //if this happens, it could indicate a BAD HASHING strategy
-                return false;
-            }
-
-        //merge the two instances
-        B.setBytes(a);
-
-        return true;
-    }
-
-    /**
-     * ordinary array equals comparison with some conditions removed
      */
     @Deprecated public static boolean equals2(final byte[] a, final byte[] a2) {
         /*if (a==null || a2==null)
@@ -257,10 +220,12 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
 
     @Override
     public int hashCode() {
-        if (hash == 0) {
-            hash = Arrays.hashCode(bytes);
-        }
-        return hash;
+        final int h = this.hash;
+        if (h != 0) return h;
+
+        int newHash = Arrays.hashCode(bytes);
+        if (newHash == 0) newHash = 1; //reserve 0
+        return this.hash = newHash;
     }
 
     @Override
@@ -275,7 +240,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
     public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Utf8)) return false;
-        return Utf8.equals(this, (Utf8)obj);
+        return Byted.equals(this, (Utf8)obj);
     }
 
     public void commit() {
