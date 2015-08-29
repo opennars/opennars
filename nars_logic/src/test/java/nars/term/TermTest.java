@@ -454,7 +454,7 @@ public class TermTest {
 
     public Compound testStructure(String term, String bits) {
         Compound a = n.term(term);
-        assertEquals(bits, toBinaryString(a.structureHash()));
+        assertEquals(bits, toBinaryString(a.structure()));
         return a;
     }
 
@@ -473,9 +473,9 @@ public class TermTest {
 
 
         assertEquals("no additional structure code in upper bits",
-                 a.structureHash(), a.structure());
+                 a.structure(), a.structure());
         assertEquals("no additional structure code in upper bits",
-                b.structureHash(), b.structure());
+                b.structure(), b.structure());
 
 
     }
@@ -488,7 +488,7 @@ public class TermTest {
         Compound a = testStructure(i1, "100000000000000000010000000000001");
         Compound b = testStructure(i2,                     "10000000000001");
         assertNotEquals("additional structure code in upper bits",
-                a.structureHash(), a.structure());
+                a.structure(), a.structure());
         assertNotEquals("structure code influenced contentHash",
                 b.hashCode(), a.hashCode());
 

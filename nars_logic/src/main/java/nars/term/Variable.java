@@ -34,19 +34,9 @@ import static nars.Symbols.*;
  */
 public class Variable extends Atom {
 
-    /** returns a bitvector representing the presence of ths term and its subterms */
-    @Override
-    public long structureHash() {
-        return structure();
-    }
 
-    @Override
-    public int structure() {
-        final int o = operator().ordinal();
-
-        if (o <= 31)
-            return (1 << o);
-        return 0;    }
+    private transient final Op op;
+    private final int structure;
 
     @Override
     public int compareTo(Object that) {
@@ -78,20 +68,42 @@ public class Variable extends Atom {
 
     public Variable(final byte[] n, final boolean scope) {
         super(n);
-        this.type = ensureValidVariableType((char)n[0]);
+        this.type = (char)n[0];
         this.scope = scope;
+
+        switch (type) {
+            case VAR_INDEPENDENT:
+                op = Op.VAR_INDEPENDENT;
+                break;
+            case VAR_DEPENDENT:
+                op = Op.VAR_DEPENDENT;
+                break;
+            case VAR_QUERY:
+                op = Op.VAR_QUERY;
+                break;
+            case VAR_PATTERN:
+                op = Op.VAR_PATTERN;
+                break;
+            default:
+                throw new RuntimeException("Invalid variable type");
+
+        }
+        if (type == VAR_PATTERN)
+            structure = 1 << operator().ordinal();
+        else
+            structure = 0;
+
+
     }
 
     @Override
     final public Op operator() {
-        switch (type) {
-            case VAR_INDEPENDENT: return Op.VAR_INDEPENDENT;
-            case VAR_DEPENDENT: return Op.VAR_DEPENDENT;
-            case VAR_QUERY: return Op.VAR_QUERY;
-            case VAR_PATTERN: return Op.VAR_PATTERN;
-            default:
-                throw new RuntimeException("Invalid variable type");
-        }
+        return op;
+    }
+
+    @Override
+    public int structure() {
+        return structure;
     }
 
     /**
@@ -100,21 +112,10 @@ public class Variable extends Atom {
      * @param name A String read from input
      */
     public Variable(final String n, final boolean scope) {
-        super(n);
-        this.type = ensureValidVariableType(n.charAt(0));
-        this.scope = scope;
+        this(Utf8.toUtf8(n), scope);
     }
 
 
-    public final static char ensureValidVariableType(final byte c) {
-        return ensureValidVariableType((char)c);
-    }
-
-    public final static char ensureValidVariableType(final char c) {
-        if (!validVariableType(c))
-            throw new RuntimeException("Invalid variable type: " + c);
-        return c;
-    }
 
 
     /**

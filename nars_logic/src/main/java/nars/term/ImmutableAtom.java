@@ -59,6 +59,11 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
         return true;
     }
 
+    @Override
+    public byte[] bytes() {
+        return data;
+    }
+
     @Override public boolean impossibleStructure(int possibleSubtermStructure) {
         /*
         for atomic terms, there will be only one

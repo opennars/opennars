@@ -13,7 +13,7 @@ import java.io.Writer;
  */
 public class LiteralUTF8Identifier extends UTF8Identifier {
 
-    private byte[] data = null;
+    protected byte[] data = null;
     transient protected int hash = 0;
 
 

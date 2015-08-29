@@ -171,13 +171,8 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 //    }
 
 
-
-    public long structureHash();
-
-    /** lower 31 bits of structure hash (32nd bit reserved for +/-) */
+    /** self+subterm types bitvector */
     public int structure();
-
-
 
 
     public void append(Writer w, boolean pretty) throws IOException;

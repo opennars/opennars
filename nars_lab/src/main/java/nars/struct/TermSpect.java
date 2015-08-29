@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.Op;
 import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.budget.Itemized;
 import nars.concept.BeliefTable;
 import nars.concept.Concept;
 import nars.concept.TaskTable;
@@ -14,7 +13,6 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.term.transform.TermVisitor;
-import nars.util.data.id.Identifier;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -157,7 +155,7 @@ public class TermSpect extends TermCept implements Term, Concept {
     }
 
     @Override
-    public long structureHash() {
+    public int structure() {
         return 0;
     }
 

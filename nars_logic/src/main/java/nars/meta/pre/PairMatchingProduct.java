@@ -44,21 +44,36 @@ public class PairMatchingProduct extends ProductN {
         rehash();
     }
 
-    public boolean substitutesMayExist(PairMatchingProduct pattern) {
+    public boolean substitutesMayExist(final PairMatchingProduct pattern) {
         if (impossibleStructure(pattern.structure()))
             return false;
         if (volume() < pattern.volume())
             return false;
 
+        return substitutesMayExistPart2(pattern);
+    }
+
+    /** separated into its own method to assist inlining */
+    protected boolean substitutesMayExistPart2(final PairMatchingProduct pattern) {
         final Term c = term[0];
-        final Term d = term[1];
         if (c.impossibleStructure(pattern.structureA)) return false;
+
+        final Term d = term[1];
         if (d.impossibleStructure(pattern.structureB)) return false;
         if (volA < pattern.volA) return false;
         if (volB < pattern.volB) return false;
 
         return true;
+    }
 
+    @Override
+    public <T extends Term> T normalizeDestructively() {
+        return (T)this;
+    }
+
+    @Override
+    protected <T extends Term> T normalized(boolean destructive) {
+        return (T) this;
     }
 
 }

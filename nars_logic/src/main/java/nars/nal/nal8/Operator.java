@@ -51,12 +51,6 @@ public class Operator<T extends Term> extends Compound1<T> {
 
     final static int operatorOrdinal = (1 << Op.OPERATOR.ordinal());
 
-    @Override
-    public long structureHash() {
-        /** only the operator bit */
-        //TODO this may need changed if we use non-atomic operators
-        return structure();
-    }
 
     @Override
     public int structure() {

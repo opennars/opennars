@@ -8,6 +8,7 @@ import nars.term.transform.TermVisitor;
 import nars.util.utf8.Byted;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Created by me on 4/25/15.
@@ -15,7 +16,9 @@ import java.util.Map;
 public class Atom extends ImmutableAtom {
 
     private static final Map<String,Atom> atoms = Global.newHashMap(4096);
-
+    public static final Function<String, Atom> AtomInterner = n -> {
+        return new Atom(n);
+    };
 
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
@@ -40,9 +43,6 @@ public class Atom extends ImmutableAtom {
 
     final static int atomOrdinal = (1 << Op.ATOM.ordinal());
 
-    @Override public long structureHash() {
-        return structure(); // & 0xffffffff);
-    }
 
     @Override
     public int structure() {
@@ -56,6 +56,8 @@ public class Atom extends ImmutableAtom {
         throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
         //return 0;
     }
+
+
 
     /**
      * @param that The Term to be compared with the current Term
@@ -96,12 +98,9 @@ public class Atom extends ImmutableAtom {
 
     protected Atom(final byte[] name) {  super(name);    }
 
-    /** gets the atomic term given a name, storing it in the static symbol table */
+    /** interns the atomic term given a name, storing it in the static symbol table */
     public final static Atom theCached(final String name) {
-        Atom x = atoms.get(name);
-        if (x != null) return x;
-        atoms.put(name, x = new Atom(name));
-        return x;
+        return atoms.computeIfAbsent(name, AtomInterner);
     }
 
     public final static Atom the(final String name, boolean quoteIfNecessary) {

@@ -21,8 +21,6 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
-import com.google.common.primitives.UnsignedInts;
-import com.google.common.primitives.UnsignedLongs;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
@@ -32,7 +30,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
-import nars.util.data.id.UTF8Identifier;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -63,7 +60,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
 
     /** bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm */
-    protected long structureHash;
+    int structureHash;
     int contentHash;
 
 
@@ -121,8 +118,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         int subt = (1 << opOrdinal);
 
 
-        final long asc = additionalStructureCode();
-        long contentHash = (PRIME2 * asc) + opOrdinal;
+        int contentHash = (PRIME2 * opOrdinal) + additionalStructureCode();;
 
         int p = 0;
         for (final Term t : term) {
@@ -133,15 +129,15 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             deps += t.varDep();
             indeps += t.varIndep();
             queries += t.varQuery();
-            subt |= t.structureHash();
+            subt |= t.structure();
             contentHash = (PRIME1 * contentHash) + (t.hashCode()+p) * PRIME2;
 
             p++;
         }
 
-        this.structureHash = subt | (((long)asc) << 32);
+        this.structureHash = subt;
 
-        this.contentHash = (int)contentHash;
+        this.contentHash = contentHash;
 
         this.hasVarDeps = (byte) deps;
         this.hasVarIndeps = (byte) indeps;
@@ -191,12 +187,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
     @Override
-    public long structureHash() {
+    public int structure() {
         return structureHash;
     }
-    public int structure() {
-        return (int)(structureHash() & 0xffffffff);
-    }
+
 
 
     @Override
@@ -510,7 +504,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         if ((diff = Integer.compare(s, c.length()))!=0)
             return diff;
 
-        if ((diff = Long.compare(c.structureHash, structureHash))!=0)
+        if ((diff = Integer.compare(structureHash, c.structureHash))!=0)
             return diff;
 
         for (int i = 0; i < s; i++) {
