@@ -76,15 +76,15 @@ public class VariableNormalization implements VariableTransform {
     public VariableNormalization(Compound target, boolean destructively) {
 
 
-        CompoundTransform tx = target.getTotalVariables() == 1 ?
-                singleVariableNormalization : this;
+        /*CompoundTransform tx = target.getTotalVariables() == 1 ?
+                singleVariableNormalization : this;*/
 
+        final CompoundTransform tx = this;
 
-        Compound result1;
+        final Compound result1;
 
-        if (destructively) {
+        if (destructively)
             result1 = target.transform(tx);
-        }
         else
             result1 = target.cloneTransforming(tx);
 
@@ -106,14 +106,21 @@ public class VariableNormalization implements VariableTransform {
 
         if (rename == null) this.rename = rename = new VariableMap(2); //lazy allocate
 
-        Variable vv = rename.get(vname);
+//        Variable vv = rename.get(vname);
+//        if (vv == null) {
+//            //type + id
+//            vv = newVariable(v.getType(), rename.size() + 1);
+//            rename.put(vname, vv);
+//            renamed = !vv.name().equals(v.name());
+//        }
 
-        if (vv == null) {
+        final VariableMap finalRename = rename;
+        Variable vv = rename.computeIfAbsent(vname, _vname -> {
             //type + id
-            vv = newVariable(v.getType(), rename.size() + 1);
-            rename.put(vname, vv);
-            renamed = !vv.name().equals(v.name());
-        }
+            Variable rvv = newVariable(v.getType(), finalRename.size() + 1);
+            renamed = !rvv.name().equals(v.name());
+            return rvv;
+        });
 
         return vv;
     }

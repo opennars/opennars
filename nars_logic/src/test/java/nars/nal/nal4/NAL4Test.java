@@ -24,15 +24,15 @@ public class NAL4Test extends JavaNALTest {
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-              /*  {new Default()},
-                {new DefaultDeep()},*/
+                {new Default()},
+                {new DefaultDeep()},
                 {new NewDefault()},
                 {new NewDefault().setInternalExperience(null)},
-                /*{new Default().setInternalExperience(null) },
+                {new Default().setInternalExperience(null) },
                 {new Default().level(5)},
                 {new Classic().setInternalExperience(null) },
 
-                {new Solid(1, 128, 1, 1, 1, 2).level(5)}*/
+                {new Solid(1, 128, 1, 1, 1, 2).level(5)}
 
 
         });

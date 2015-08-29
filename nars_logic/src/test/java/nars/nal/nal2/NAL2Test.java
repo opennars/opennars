@@ -26,8 +26,11 @@ public class NAL2Test extends JavaNALTest {
                 {new Default()}, //NAL8 + NAL9 didnt solve it
                 {new Default().level(3)}, //needs 3 for sets
                 {new Default().setInternalExperience(null)},
+
               //  {new NewDefault()},
                 {new NewDefault().setInternalExperience(null)},
+                {new NewDefault().setInternalExperience(null).level(4)},
+
                 {new DefaultMicro() },
                 {new Classic()}
 
@@ -72,7 +75,7 @@ public class NAL2Test extends JavaNALTest {
     public void analogy2() throws InvalidInputException {
         n.believe("<gull --> swimmer>").en("Gull is a type of swimmer.");
         n.believe("<gull <-> swan>").en("Gull is similar to swan.");
-        n.mustBelieve(30,"<swan --> swimmer>",1.0f,0.81f).en("I believe a swan is a type of swimmer.");
+        n.mustBelieve(100,"<swan --> swimmer>",1.0f,0.81f).en("I believe a swan is a type of swimmer.");
         n.run();
     }
 
@@ -88,7 +91,7 @@ public class NAL2Test extends JavaNALTest {
     public void inheritanceToSimilarity() throws InvalidInputException {
         n.believe("<swan --> bird>").en("Swan is a type of bird. ");
         n.believe("<bird --> swan>",0.1f,0.9f).en("Bird is not a type of swan.");
-        n.mustBelieve(50,"<bird <-> swan>",0.1f,0.81f).en("Bird is different from swan.");
+        n.mustBelieve(150,"<bird <-> swan>",0.1f,0.81f).en("Bird is different from swan.");
         n.run();
     }
 
@@ -96,7 +99,7 @@ public class NAL2Test extends JavaNALTest {
     public void inheritanceToSimilarity2() throws InvalidInputException {
         n.believe("<swan --> bird>").en("Swan is a type of bird.");
         n.believe("<bird <-> swan>",0.1f,0.9f).en("Bird is different from swan.");
-        n.mustBelieve(50,"<bird --> swan>",0.1f,0.73f).en("Bird is probably not a type of swan.");
+        n.mustBelieve(150,"<bird --> swan>",0.1f,0.73f).en("Bird is probably not a type of swan.");
         n.run();
     }
 
@@ -104,7 +107,7 @@ public class NAL2Test extends JavaNALTest {
     public void inheritanceToSimilarity3() throws InvalidInputException {
         n.believe("<swan --> bird>",0.9f,0.9f).en("Swan is a type of bird.");
         n.ask("<bird <-> swan>").en("Is bird similar to swan?");
-        n.mustBelieve(50,"<bird <-> swan>",0.9f,0.47f).en("I guess that bird is similar to swan.");
+        n.mustBelieve(150,"<bird <-> swan>",0.9f,0.47f).en("I guess that bird is similar to swan.");
         n.run();
     }
 
@@ -112,7 +115,7 @@ public class NAL2Test extends JavaNALTest {
     public void inheritanceToSimilarity4() throws InvalidInputException {
         n.believe("<bird <-> swan>",0.9f,0.9f).en("a bird is similar to a swan.");
         n.ask("<swan --> bird>").en("Is swan a type of bird?");
-        n.mustBelieve(50,"<swan --> bird>",0.9f,0.81f).en("A swan is a type of bird.");
+        n.mustBelieve(150,"<swan --> bird>",0.9f,0.81f).en("A swan is a type of bird.");
         n.run();
     }
 

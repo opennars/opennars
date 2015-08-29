@@ -207,25 +207,30 @@ public class DerivationRules {
         for (final String s : expanded) {
             try {
 
-                //System.out.println(s);
 
-                final TaskRule r = parser.term(s);
+                final TaskRule rUnnorm = parser.term(s);
 
-                boolean added = rules.add(r);
+                final TaskRule rNorm = rUnnorm.normalize();
+
+                boolean added = rules.add(rNorm);
                 if (added) {
 
-                    //System.out.println("  " + r);
+                    //System.out.println(s); System.out.println("  " + rNorm);
 
                     //add reverse questions
-                    r.forEachQuestionReversal(_r -> {
-                        //System.out.println("  " + _r);
-                        rules.add(_r);
+                    rUnnorm.forEachQuestionReversal(_r -> {
+
+                        _r = _r.normalize();
+
+                        if (rules.add(_r)) {
+                            //System.out.println("  " + _r);
+                        }
                     });
                 }
 
-                /*String s2 = r.toString();
+                /*String s2 = rUnnorm.toString();
                 if (!s2.equals(s1))
-                    System.err.println("r modified");*/
+                    System.err.println("rUnnorm modified");*/
 
             } catch (Exception ex) {
                 System.err.println("Ignoring invalid input rule:  " + s);

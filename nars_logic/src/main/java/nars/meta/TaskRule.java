@@ -29,10 +29,10 @@ public class TaskRule extends Rule<Premise,Task> {
     //match first rule pattern with task
 
 
-    public final PreCondition[] preconditions;
+    public PreCondition[] preconditions;
     //private final Term[] preconditions; //the terms to match
 
-    public final PostCondition[] postconditions;
+    public PostCondition[] postconditions;
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
@@ -48,15 +48,145 @@ public class TaskRule extends Rule<Premise,Task> {
 
     public TaskRule(Product premises, Product result) {
         super(premises, result);
+    }
 
-        //The last entry is the postcondition
-        normalizeDestructively();
+
+    protected void ensureValid() {
+        if (!Variable.hasPatternVariable(getTask()))
+            throw new RuntimeException("rule's task term pattern has no pattern variable");
+        if (!Variable.hasPatternVariable(getBelief()))
+            throw new RuntimeException("rule's task belief pattern has no pattern variable");
+        if (!Variable.hasPatternVariable(getResult()))
+            throw new RuntimeException("rule's conclusion belief pattern has no pattern variable");
+    }
+
+
+    public ProductN premise() {
+        return (ProductN)term(0);
+    }
+
+    public Product result() {
+        return (Product) term(1);
+    }
+
+    public int premiseCount() {
+        return premise().length();
+    }
+
+
+    public static final Set<Atom> reservedPostconditions = new HashSet(6);
+    static {
+        reservedPostconditions.add(Atom.the("Truth"));
+        reservedPostconditions.add(Atom.the("Stamp"));
+        reservedPostconditions.add(Atom.the("Desire"));
+        reservedPostconditions.add(Atom.the("Order"));
+        reservedPostconditions.add(Atom.the("Info"));
+        reservedPostconditions.add(Atom.the("Event"));
+    }
+
+    /** non-null;
+     *  if it returns Op.VAR_PATTERN this means that any type can apply */
+    public Op getTaskTermType() {
+        return getTask().operator();
+    }
+
+    protected Term getTask() {
+        return getPremises().term(0);
+    }
+
+    public int getTaskTermVolumeMin() {
+        return getTask().volume();
+    }
+
+    /** returns Op.NONE if there is no belief term type;
+     if it returns Op.VAR_PATTERN this means that any type can apply */
+    public Op getBeliefTermType() {
+//        if (getPremises().length() < 2)
+//            return Op.NONE;
+        return getBelief().operator();
+    }
+
+    protected Term getBelief() {
+        return getPremises().term(1);
+    }
+
+    protected Term getResult() {
+        return conclusion().term(0);
+    }
+
+    public int getBeliefTermVolumeMin() {
+        return getBelief().volume();
+    }
+
+    /** test applicability of this rule with a specific maximum NAL level */
+    public boolean levelValid(final int nalLevel) {
+        return Terms.levelValid(getTask(), nalLevel) &&
+                Terms.levelValid(getBelief(), nalLevel) &&
+                Terms.levelValid(getResult(), nalLevel);
+    }
+
+    static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound,Term> {
+
+
+        @Override
+        public boolean test(Term term) {
+            if (term instanceof Atom) {
+                String name = term.toString();
+                return (Character.isUpperCase(name.charAt(0)));
+            }
+            return false;
+        }
+
+        @Override
+        public Term apply(Compound containingCompound, Term v, int depth) {
+
+            //do not alter postconditions
+            if ((containingCompound instanceof Inheritance) && reservedPostconditions.contains(((Inheritance)containingCompound).getPredicate()))
+                return v;
+
+            return new Variable(Symbols.VAR_PATTERN + v.toString(), true);
+        }
+    }
+
+    final static UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
+
+    @Override
+    public TaskRule normalizeDestructively() {
+
+        this.transform(uppercaseAtomsToPatternVariables);
+
+        rehash();
+
+        return this;
+    }
+
+    public TaskRule normalize() {
+        TaskRule tr = (TaskRule) new VariableNormalization(this, false) {
+
+                    @Override
+                    public boolean testSuperTerm(Compound t) {
+                        //descend all, because VAR_PATTERN is not yet always considered a variable
+                        return true;
+                    }
+                }.getResult();
+
+        return tr.setup();
+    }
+
+
+    @Override
+    public TaskRule clone(Term[] replaced) {
+        return new TaskRule((Product)replaced[0], (Product)replaced[1]);
+    }
+
+    public TaskRule setup() {
+
 
         //1. construct precondition term array
         //Term[] terms = terms();
 
-        Term[] precon = premises.terms();
-        Term[] postcons = result.terms();
+        Term[] precon = ((Product)term(0)).terms();
+        Term[] postcons = ((Product)term(1)).terms();
 
         postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
 
@@ -183,120 +313,8 @@ public class TaskRule extends Rule<Premise,Task> {
         }
 
         ensureValid();
-    }
-
-    protected void ensureValid() {
-        if (!Variable.hasPatternVariable(getTask()))
-            throw new RuntimeException("rule's task term pattern has no pattern variable");
-        if (!Variable.hasPatternVariable(getBelief()))
-            throw new RuntimeException("rule's task belief pattern has no pattern variable");
-        if (!Variable.hasPatternVariable(getResult()))
-            throw new RuntimeException("rule's conclusion belief pattern has no pattern variable");
-    }
 
 
-    public ProductN premise() {
-        return (ProductN)term(0);
-    }
-
-    public Product result() {
-        return (Product) term(1);
-    }
-
-    public int premiseCount() {
-        return premise().length();
-    }
-
-
-    public static final Set<Atom> reservedPostconditions = new HashSet(6);
-    static {
-        reservedPostconditions.add(Atom.the("Truth"));
-        reservedPostconditions.add(Atom.the("Stamp"));
-        reservedPostconditions.add(Atom.the("Desire"));
-        reservedPostconditions.add(Atom.the("Order"));
-        reservedPostconditions.add(Atom.the("Info"));
-        reservedPostconditions.add(Atom.the("Event"));
-    }
-
-    /** non-null;
-     *  if it returns Op.VAR_PATTERN this means that any type can apply */
-    public Op getTaskTermType() {
-        return getTask().operator();
-    }
-
-    protected Term getTask() {
-        return getPremises().term(0);
-    }
-
-    public int getTaskTermVolumeMin() {
-        return getTask().volume();
-    }
-
-    /** returns Op.NONE if there is no belief term type;
-     if it returns Op.VAR_PATTERN this means that any type can apply */
-    public Op getBeliefTermType() {
-//        if (getPremises().length() < 2)
-//            return Op.NONE;
-        return getBelief().operator();
-    }
-
-    protected Term getBelief() {
-        return getPremises().term(1);
-    }
-
-    protected Term getResult() {
-        return conclusion().term(0);
-    }
-
-    public int getBeliefTermVolumeMin() {
-        return getBelief().volume();
-    }
-
-    /** test applicability of this rule with a specific maximum NAL level */
-    public boolean levelValid(final int nalLevel) {
-        return Terms.levelValid(getTask(), nalLevel) &&
-                Terms.levelValid(getBelief(), nalLevel) &&
-                Terms.levelValid(getResult(), nalLevel);
-    }
-
-    static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound,Term> {
-
-
-        @Override
-        public boolean test(Term term) {
-            if (term instanceof Atom) {
-                String name = term.toString();
-                return (Character.isUpperCase(name.charAt(0)));
-            }
-            return false;
-        }
-
-        @Override
-        public Term apply(Compound containingCompound, Term v, int depth) {
-
-            //do not alter postconditions
-            if ((containingCompound instanceof Inheritance) && reservedPostconditions.contains(((Inheritance)containingCompound).getPredicate()))
-                return v;
-
-            return new Variable(Symbols.VAR_PATTERN + v.toString(), true);
-        }
-    }
-
-    final static UppercaseAtomsToPatternVariables uppercaseAtomsToPatternVariables = new UppercaseAtomsToPatternVariables();
-
-    @Override
-    public TaskRule normalizeDestructively() {
-
-        this.transform(uppercaseAtomsToPatternVariables);
-
-        new VariableNormalization(this, false);
-
-        rehash();
-
-        return this;
-    }
-
-    public TaskRule normalize() {
         return this;
     }
 

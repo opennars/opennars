@@ -61,6 +61,10 @@ abstract public class MatchTerm extends PreCondition {
             return false;
         }
 
+        return subst(m, t);
+    }
+
+    final protected boolean subst(final RuleMatch m, final Term t) {
         return m.get(pattern, t);
     }
 

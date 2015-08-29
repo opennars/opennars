@@ -29,6 +29,7 @@ public class NAL1Test extends JavaNALTest {
 
                 {new NewDefault()},
                 {new NewDefault().setInternalExperience(null)},
+                {new NewDefault().setInternalExperience(null).level(2)},
 
                 {new Default().level(2)}, //why does this need level 2 for some tests?
                 {new DefaultMicro().level(2) },
@@ -140,10 +141,9 @@ public class NAL1Test extends JavaNALTest {
 //        TextOutput.out(n);
 //        NARTrace.out(n);
 
-        n.mustOutput(150, "<bird --> swimmer>. %1.00;0.80%");
         n.believe("<bird --> swimmer>", 1.0f, 0.8f);
-        n.ask("<?x --> swimmer>")
-                .en("What is a type of swimmer?");
+        n.ask("<?x --> swimmer>").en("What is a type of swimmer?");
+        n.mustOutput(150, "<bird --> swimmer>. %1.00;0.80%");
         n.run();
     }
 

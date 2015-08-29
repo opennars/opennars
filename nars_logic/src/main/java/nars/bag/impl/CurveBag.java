@@ -440,6 +440,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
             index.addItem(i);
 
+            if (i.name().equals(overflow.name())) return null;
             return overflow;
         }
 

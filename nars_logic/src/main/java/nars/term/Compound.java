@@ -1267,7 +1267,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
     protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I, T> trans, final int level) {
-        Term[] y = new Term[length()];
+        final Term[] y = new Term[length()];
         int i = 0;
         boolean mod = false;
         for (Term x : this.term) {

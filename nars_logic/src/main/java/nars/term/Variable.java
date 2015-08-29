@@ -360,8 +360,8 @@ public class Variable extends Atom {
     public static Variable the(char varDependent, int counter) {
         return new Variable(name(varDependent, counter));
     }
-    public static Variable theUnscoped(final char varDependent, final int counter) {
-        return new Variable(name(varDependent, counter), true);
+    public static Variable theUnscoped(final char type, final int counter) {
+        return new Variable(name(type, counter), true);
     }
 
     /** returns the default dependent variable */

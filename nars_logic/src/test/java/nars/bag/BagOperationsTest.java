@@ -63,6 +63,8 @@ public class BagOperationsTest {
     /** test with a bag of capacity 2 */
     public static void testBagSequence(Bag<String,Item<String>> b) {
 
+        b.mergePlus();
+
         assertEquals(0, b.size());
         assertEquals(2, b.capacity());
 
@@ -92,8 +94,10 @@ public class BagOperationsTest {
 
         assertEquals(2, b.size());
 
+        //b.printAll();
+
         //results in 0.2, not 0.1 if merged and not simply replaced B's budget
-        assertEquals("budget merge", 0.2f, b.getPriorityMin(),0.001f);
+        assertEquals(0.1f, b.getPriorityMin(),0.001f);
         assertEquals(0.4f, b.getPriorityMax(),0.001f);
         
         
@@ -104,7 +108,7 @@ public class BagOperationsTest {
         
         Item tc = b.pop();
         assertEquals(0, b.size());
-        assertEquals(0.2f, tc.getPriority(), 0.001f);
+        assertEquals(0.1f, tc.getPriority(), 0.001f);
         
         assertEquals(null, b.put(new NullConcept("a", 0.2f)));
         b.put(new NullConcept("b", 0.3f));
@@ -119,14 +123,14 @@ public class BagOperationsTest {
             //same id, different priority (lower, so budget will not be affected)
             assertEquals(null, b.put(new NullConcept("b", 0.1f)));
             assertEquals(0.2f, b.getPriorityMin(),0.001f); //affected, item budget merged to new value, 0.1 new lowest
-            assertEquals(0.3f, b.getPriorityMax(),0.001f); //affected, 0.4 highest
+            assertEquals(0.4f, b.getPriorityMax(),0.001f); //affected, 0.4 highest
             assertTrue(b.getPriorityMax() > b.getPriorityMin());
 
             //increasing b's priority should not cause 'a' to be removed
             Item zzz = b.put(new NullConcept("b", 0.4f));
             assertNull(null, zzz);
 
-            assertEquals(0.4f, b.getPriorityMax(),0.001f); //affected, 0.4 highest
+            assertEquals(0.8f, b.getPriorityMax(),0.001f); //affected, 0.4 highest
             assertNotNull(b.get("a"));
         }
         

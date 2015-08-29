@@ -11,7 +11,7 @@ final public class MatchTaskTerm extends MatchTerm {
         super(pattern, rule);
     }
 
-    @Override protected final Term getTerm(Premise p) {
+    @Override protected final Term getTerm(final Premise p) {
         return p.getTask().getTerm();
     }
 }

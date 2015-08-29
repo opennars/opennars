@@ -21,7 +21,6 @@ public enum TruthFunction {
     },
     AnalyticDeduction() {
         @Override public Truth get(final Truth T, final Truth B) {
-            if (B == null) return null;
             return TruthFunctions.deduction(T, new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
@@ -49,7 +48,7 @@ public enum TruthFunction {
         }
     },
     Conversion() {
-        @Override public Truth get(final Truth T, final Truth B) {
+        @Override public Truth get(final Truth T, /*nullable*/ final Truth B) {
             return TruthFunctions.conversion(T);
         }
     },
@@ -57,7 +56,7 @@ public enum TruthFunction {
         @Override public Truth get(final Truth T, final Truth B) { return TruthFunctions.negation(T); }
     },
     Contraposition() {
-        @Override public Truth get(final Truth T, final Truth B) {
+        @Override public Truth get(final Truth T, /* nullable */ final Truth B) {
             return TruthFunctions.contraposition(T);
         }
     },
@@ -68,6 +67,7 @@ public enum TruthFunction {
     },
     Union() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.union(T,B);
         }
     },
@@ -133,7 +133,7 @@ public enum TruthFunction {
         }
     },
     Identity() {
-        @Override public Truth get(final Truth T, final Truth B) {
+        @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
             return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
     }
