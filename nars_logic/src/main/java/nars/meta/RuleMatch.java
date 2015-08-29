@@ -1,21 +1,20 @@
 package nars.meta;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -28,11 +27,12 @@ public class RuleMatch extends FindSubst {
     public long occurence_shift;
     public TaskRule rule;
 
-
     final Map<Term,Term> resolutions = Global.newHashMap();
     public Premise premise;
 
 
+
+    final public PairMatchingProduct taskBelief = new PairMatchingProduct();
 
 
     /**
@@ -48,6 +48,10 @@ public class RuleMatch extends FindSubst {
     /** set the next premise */
     public void start(Premise nal) {
         this.premise = nal;
+
+        taskBelief.set(nal.getTask(), nal.getBelief());
+
+        //testCache.clear();
     }
 
     /**
@@ -98,6 +102,7 @@ public class RuleMatch extends FindSubst {
 
         //test and apply late preconditions
         for (final PreCondition c : p.precond) {
+
 
             if (!c.test(this))
                 return false;

@@ -197,20 +197,21 @@ public class TaskRule extends Rule<Premise,Task> {
 
         int start = 0;
 
-        Term taskTermMatch = precon[0];
-        early.add(new MatchTaskTerm(taskTermMatch, this));
+        Term taskTermPattern = precon[0];
 
 
-        Term beliefTermMatch = precon[1];
-        if (!beliefTermMatch.has(Op.ATOM)) {
+        Term beliefTermPattern = precon[1];
+        if (beliefTermPattern.has(Op.ATOM)) {
+            throw new RuntimeException("belief term must be a pattern");
+        }
             //if it contains an atom term, this means it is a modifier,
             //and not a belief term pattern
             //(which will not reference any particular atoms)
-            early.add(new MatchBeliefTerm(beliefTermMatch, this));
-        }
-        else {
-            throw new RuntimeException("belief term must be a pattern");
-        }
+
+
+        final MatchTaskBeliefPattern matcher = new MatchTaskBeliefPattern(taskTermPattern, beliefTermPattern, this);
+        early.add(matcher);
+
 
         //additional modifiers: either early or late, classify them here
         for (int i = 2; i < precon.length; i++) {
