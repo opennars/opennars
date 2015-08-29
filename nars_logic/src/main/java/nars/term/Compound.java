@@ -709,13 +709,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 //    }
 
 
-    @Override
-    public UTF8Identifier name() {
-        return this;
-    }
-
-
-
  
 
     /* ----- utilities for other fields ----- */

@@ -60,12 +60,12 @@ public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
         if (siz + 1 > cap) {
             // FIFO, remove oldest question (last)
             Task removed = remove(siz - 1);
-            m.emit(Events.ConceptQuestionRemove.class, c, removed /*, t*/);
+            //m.emit(Events.ConceptQuestionRemove.class, c, removed /*, t*/);
         }
 
         add(0, t);
 
-        m.emit(Events.ConceptQuestionAdd.class, c, t);
+        //m.emit(Events.ConceptQuestionAdd.class, c, t);
 
         return t;
     }

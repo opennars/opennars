@@ -93,6 +93,10 @@ public class Memory implements Serializable, AbstractMemory {
     public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
     public final Observed<Task> eventTaskRemoved = new Observed.DefaultObserved();
     public final Observed<ConceptProcess> eventConceptProcessed = new Observed.DefaultObserved();
+
+    public final Observed<Concept> eventConceptActive = new Observed.DefaultObserved();
+    public final Observed<Concept> eventConceptForget = new Observed.DefaultObserved();
+
     public final Observed<Memory>
             /** fired at the beginning of each memory cycle */
             eventCycleStart = new Observed.DefaultObserved(),
@@ -938,7 +942,7 @@ public class Memory implements Serializable, AbstractMemory {
         return total;
     }
 
-    public CycleProcess getControl() {
+    public CycleProcess<Memory> getControl() {
         return control;
     }
 

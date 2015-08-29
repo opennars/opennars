@@ -15,8 +15,6 @@ import nars.budget.ItemComparator;
 import nars.clock.CycleClock;
 import nars.concept.*;
 import nars.cycle.AbstractCycle;
-import nars.io.DefaultPerception;
-import nars.io.Perception;
 import nars.io.out.TextOutput;
 import nars.link.*;
 import nars.meter.NARTrace;

@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.ItemAccumulator;
 import nars.concept.Concept;
-import nars.io.Perception;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;

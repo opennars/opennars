@@ -13,6 +13,8 @@ abstract public class ConceptMap extends NARReaction {
 
     public final NAR nar;
     private final Observed.DefaultObserved.DefaultObservableRegistration onCycleEnd;
+    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptForget;
+    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptActive;
     int frame = -1;
     protected int cycleInFrame = -1;
 
@@ -23,8 +25,14 @@ abstract public class ConceptMap extends NARReaction {
     public void reset() { }
 
     public ConceptMap(NAR nar) {
-        super(nar, Events.ConceptActive.class,
-                Events.ConceptForget.class, Events.FrameEnd.class, Events.ResetStart.class);
+        super(nar, Events.FrameEnd.class, Events.ResetStart.class);
+
+        this.onConceptActive = nar.memory.eventConceptActive.on(c -> {
+            onConceptActive(c);
+        });
+        this.onConceptForget = nar.memory.eventConceptForget.on(c -> {
+            onConceptForget(c);
+        });
 
         this.onCycleEnd = nar.memory.eventCycleEnd.on(m -> {
             cycleInFrame++;
@@ -51,16 +59,7 @@ abstract public class ConceptMap extends NARReaction {
         if (event == Events.ResetStart.class) {
             frame = 0;
             reset();
-        } else if (event == Events.ConceptActive.class) {
-            Concept c = (Concept) args[0];
-            if (contains(c))
-                onConceptActive(c);
-        } else if (event == Events.ConceptForget.class) {
-            Concept c = (Concept) args[0];
-            if (contains(c))
-                onConceptForget(c);
         }
-
     }
 
     /** returns true if the concept was successfully removed (ie. it was already present and not permanently included) */

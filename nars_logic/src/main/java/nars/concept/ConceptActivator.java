@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.AbstractMemory;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -102,7 +103,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
             if (concept == null)
                 throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + memory.getConceptBuilders());
             else {
-                memory.emit(Events.ConceptNew.class, this);
+                //memory.emit(Events.ConceptNew.class, this);
                 if (memory.logic != null)
                     memory.logic.CONCEPT_NEW.hit();
             }
@@ -129,10 +130,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return false;
     }
 
-    protected final void forget(Concept c) {
-        //getMemory().logic.CONCEPT_FORGET.hit();
-        off(c);
-    }
+
 
     /** called when a Concept enters attention. its state should be set active prior to call */
     abstract protected void on(Concept c);
@@ -143,7 +141,8 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     @Override
     public final void overflow(Concept c) {
-        forget(c);
+        //getMemory().logic.CONCEPT_FORGET.hit();
+        off(c);
     }
 
     public Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {

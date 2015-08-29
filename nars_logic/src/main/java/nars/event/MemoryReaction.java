@@ -9,22 +9,15 @@ import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.util.event.Observed;
 
-public abstract class MemoryReaction extends NARReaction {
+public abstract class MemoryReaction extends ConceptReaction {
 
     public static final Class[] memoryEvents = new Class[]{
             /*CycleStart.class,
             CycleEnd.class,*/
             //Events.ConceptNew.class,
-            Events.ConceptForget.class,
-            Events.ConceptBeliefAdd.class,
-            Events.ConceptBeliefRemove.class,
             //Events.ConceptProcessed.class,
-            Events.ConceptGoalAdd.class,
-            Events.ConceptGoalRemove.class,
-            Events.ConceptQuestionAdd.class,
-            Events.ConceptQuestionRemove.class,
+
             //Events.ConceptUnification.class,
-            Events.ConceptActive.class,
             Events.PluginsChange.class,
             Events.OUT.class,
             //Events.TaskRemove.class,
@@ -46,8 +39,7 @@ public abstract class MemoryReaction extends NARReaction {
     }
 
     public MemoryReaction(Memory m, boolean active) {
-        super(m.event, active,
-                memoryEvents);
+        super(m, active, memoryEvents);
         this.memory = m;
 
         taskRemoved = m.eventTaskRemoved.on(t -> {
@@ -61,6 +53,8 @@ public abstract class MemoryReaction extends NARReaction {
             onCycleEnd(memory.time());
         });
 
+
+
         /*conceptProcessed = m.eventConceptProcessed.on(t-> {
 
         });*/
@@ -68,9 +62,7 @@ public abstract class MemoryReaction extends NARReaction {
 
     @Override
     public void event(final Class event, final Object[] arguments) {
-        if (event == Events.ConceptActive.class) {
-            onConceptActive((Concept) arguments[0]);
-        } else if (event == Events.OUT.class) {
+        if (event == Events.OUT.class) {
             output(event, arguments[0].toString());
         } else if (event == Events.Restart.class) {
             output(event);        
@@ -99,6 +91,10 @@ public abstract class MemoryReaction extends NARReaction {
      * when a concept is instantiated
      */
     abstract public void onConceptActive(Concept concept);
+
+    public void onConceptForget(Concept concept) {
+
+    }
 
     /**
      * called at the beginning of each logic clock cycle

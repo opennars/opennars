@@ -5,6 +5,7 @@ import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.util.event.Observed;
 
 import java.util.function.Consumer;
 
@@ -13,12 +14,28 @@ abstract public class ConceptReaction extends NARReaction {
 
     public final Memory memory;
 
+    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptActive;
+    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptForget;
+
+
     public ConceptReaction(NAR n) {
         this(n.memory);
     }
 
     public ConceptReaction(Memory m) {
-        super(m.event, true, Events.ConceptForget.class, Events.ResetStart.class, Events.ConceptActive.class, Events.ConceptDelete.class);
+        this(m, true);
+    }
+
+    public ConceptReaction(Memory m, boolean active, Class... additionalEvents) {
+        super(m.event, true, additionalEvents);
+
+
+        this.onConceptActive = m.eventConceptActive.on(c -> {
+            onConceptActive(c);
+        });
+        this.onConceptForget = m.eventConceptForget.on(c -> {
+            onConceptForget(c);
+        });
 
         this.memory = m;
         memory.taskLater(this::init);
@@ -38,19 +55,11 @@ abstract public class ConceptReaction extends NARReaction {
 
     @Override
     public void event(final Class event, final Object[] args) {
-        if (event == Events.ConceptActive.class) {
-            Concept c = (Concept)args[0];
-            onConceptActive(c);
-        }
-        else if (event == Events.ConceptForget.class) {
-            Concept c = (Concept)args[0];
-            onConceptForget(c);
-        }
-        else if (event == Events.ConceptDelete.class) {
-            Concept c = (Concept)args[0];
-            onConceptDelete(c);
-        }
-        else if (event == Events.ResetStart.class) {
+//        if (event == Events.ConceptDelete.class) {
+//            Concept c = (Concept)args[0];
+//            onConceptDelete(c);
+//        }
+        if (event == Events.ResetStart.class) {
             memory.getControl().forEach(new Consumer<Concept>() {
                 @Override
                 public void accept(Concept concept) {

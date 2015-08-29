@@ -10,7 +10,6 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.concept.Concept;
-import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TLink;
 import nars.link.TaskLink;

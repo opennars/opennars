@@ -6,7 +6,7 @@ import nars.budget.Budget;
 import nars.term.Term;
 
 /**
- * Created by me on 7/12/15.
+ * NOT TESTED
  */
 public class ConceptPrioritizer extends ConceptActivator {
 
@@ -49,7 +49,7 @@ public class ConceptPrioritizer extends ConceptActivator {
 
     @Override
     public void off(Concept c) {
-        activator.forget(c);
+        activator.overflow(c);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package nars.nar.experimental;
 
 import com.gs.collections.impl.list.mutable.FastList;
+import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -14,7 +15,6 @@ import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.ConceptBagActivator;
-import nars.io.Perception;
 import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.nar.Default;
@@ -122,7 +122,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public Memory getMemory() {
+    public AbstractMemory getMemory() {
         return memory;
     }
 
@@ -282,7 +282,7 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public void reset(Memory memory) {
+    public void reset(AbstractMemory memory) {
 
         tasks.clear();
 

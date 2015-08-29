@@ -1,6 +1,17 @@
 package nars.struct;
 
+import nars.Memory;
 import nars.Op;
+import nars.bag.Bag;
+import nars.budget.Budget;
+import nars.budget.Itemized;
+import nars.concept.BeliefTable;
+import nars.concept.Concept;
+import nars.concept.TaskTable;
+import nars.link.*;
+import nars.premise.Premise;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Term;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.Identifier;
@@ -8,11 +19,12 @@ import nars.util.data.id.Identifier;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.ByteBuffer;
+import java.util.Map;
 
 /** represents one particular Term "view" of a TermCept, at a time.
  *  a view is parameterized by an Op type
  */
-public class TermSpect extends TermCept implements Term /* Concept */ {
+public class TermSpect extends TermCept implements Term, Concept {
 
     private Op op = null;
 
@@ -29,9 +41,34 @@ public class TermSpect extends TermCept implements Term /* Concept */ {
         believe(f, c, op);
     }
 
+
+    public TermSpect the(ByteBuffer b, int offset, Op o) {
+        set(b, offset);
+        the(o);
+        return this;
+    }
+
+    public TermSpect the(TermCept t, Op o) {
+        set(t.getByteBuffer(), t.outerOffset);
+        this.op = o;
+        return this;
+    }
+
+    public TermSpect the(TermCore core, int a, Op o) {
+        set(core, a);
+        the(o);
+        return this;
+    }
+
+
+    public TermSpect the(Op op) {
+        this.op = op;
+        return this;
+    }
+
     @Override
     public Op operator() {
-        return null;
+        return op;
     }
 
     @Override
@@ -62,11 +99,6 @@ public class TermSpect extends TermCept implements Term /* Concept */ {
     @Override
     public int length() {
         return 0;
-    }
-
-    @Override
-    public boolean isConstant() {
-        return false;
     }
 
     @Override
@@ -154,36 +186,143 @@ public class TermSpect extends TermCept implements Term /* Concept */ {
         return false;
     }
 
-    public TermSpect the(ByteBuffer b, int offset, Op o) {
-        set(b, offset);
-        the(o);
-        return this;
-    }
-
-    public TermSpect the(TermCept t, Op o) {
-        set(t.getByteBuffer(), t.outerOffset);
-        this.op = o;
-        return this;
-    }
-
-    public TermSpect the(TermCore core, int a, Op o) {
-        set(core, a);
-        the(o);
-        return this;
-    }
-
     @Override
     public int compareTo(Object o) {
         return 0;
     }
 
     @Override
-    public Identifier name() {
+    public Bag<Sentence, TaskLink> getTaskLinks() {
         return null;
     }
 
-    public TermSpect the(Op op) {
-        this.op = op;
+    @Override
+    public Bag<TermLinkKey, TermLink> getTermLinks() {
+        return null;
+    }
+
+    @Override
+    public Map<Object, Object> getMeta() {
+        return null;
+    }
+
+    @Override
+    public void setMeta(Map<Object, Object> meta) {
+
+    }
+
+    @Override
+    public Memory getMemory() {
+        return null;
+    }
+
+    @Override
+    public TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder) {
+        return null;
+    }
+
+    @Override
+    public boolean linkTerms(Budget budgetRef, boolean b) {
+        return false;
+    }
+
+    @Override
+    public TermLink activateTermLink(TermLinkBuilder termLinkBuilder) {
+        return null;
+    }
+
+    @Override
+    public void updateLinks() {
+
+    }
+
+    @Override
+    public Budget getBudget() {
+        return null;
+    }
+
+    @Override
+    public float getPriority() {
+        return 0;
+    }
+
+    @Override
+    public boolean link(Task currentTask) {
+        return false;
+    }
+
+    @Override
+    public boolean isConstant() {
+        return false;
+    }
+
+    @Override
+    public boolean setConstant(boolean b) {
+        return false;
+    }
+
+    @Override
+    public TermLinkBuilder getTermLinkBuilder() {
+        return null;
+    }
+
+    @Override
+    public TermLink nextTermLink(TaskLink taskLink) {
+        return null;
+    }
+
+    @Override
+    public BeliefTable getBeliefs() {
+        return null;
+    }
+
+    @Override
+    public BeliefTable getGoals() {
+        return null;
+    }
+
+    @Override
+    public TaskTable getQuestions() {
+        return null;
+    }
+
+    @Override
+    public TaskTable getQuests() {
+        return null;
+    }
+
+    @Override
+    public long getCreationTime() {
+        return 0;
+    }
+
+    @Override
+    public void delete() {
+
+    }
+
+    @Override
+    public boolean processBelief(Premise nal, Task task) {
+        return false;
+    }
+
+    @Override
+    public boolean processGoal(Premise nal, Task task) {
+        return false;
+    }
+
+    @Override
+    public Task processQuestion(Premise nal, Task task) {
+        return null;
+    }
+
+    @Override
+    public Term name() {
+        return this;
+    }
+
+    @Override
+    public Term getTerm() {
         return this;
     }
 }

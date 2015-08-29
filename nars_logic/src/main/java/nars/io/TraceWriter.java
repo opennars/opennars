@@ -137,8 +137,11 @@ public class TraceWriter extends MemoryReaction {
     
     @Override
     public void onConceptActive(Concept concept) {
-        output(Events.ConceptActive.class, concept);
-    }    
-    
-    
+        output("ConceptActive", concept);
+    }
+    @Override
+    public void onConceptForget(Concept concept) {
+        output("ConceptForget", concept);
+    }
+
 }

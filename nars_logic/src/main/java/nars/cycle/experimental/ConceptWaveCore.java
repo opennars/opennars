@@ -4,12 +4,12 @@
  */
 package nars.cycle.experimental;
 
+import nars.AbstractMemory;
 import nars.Memory;
 import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
-import nars.io.Perception;
 import nars.process.CycleProcess;
 import nars.term.Term;
 
@@ -27,7 +27,7 @@ import java.util.List;
  *
  * TODO not tested
  */
-abstract public class ConceptWaveCore extends ConceptActivator implements CycleProcess {
+abstract public class ConceptWaveCore extends ConceptActivator implements CycleProcess<Memory> {
     
 
     public DelayBag<Term, Concept> concepts;

@@ -54,13 +54,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
 
     public ConceptPanelBuilder(NAR n) {
-        super(n, Events.FrameEnd.class,
-                Events.ConceptBeliefAdd.class,
-                Events.ConceptBeliefRemove.class,
-                Events.ConceptQuestionAdd.class,
-                Events.ConceptQuestionRemove.class,
-                Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class
+        super(n, Events.FrameEnd.class
                 );
 
         this.nar = n;

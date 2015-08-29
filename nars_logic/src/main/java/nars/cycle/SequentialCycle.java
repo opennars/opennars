@@ -6,7 +6,6 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.concept.ConceptPrioritizer;
-import nars.io.Perception;
 import nars.term.Term;
 
 import java.util.Iterator;
@@ -37,6 +36,8 @@ abstract public class SequentialCycle extends AbstractCycle {
         Concept overflown = concepts.put(c);
         if (overflown!=null)
             overflow(overflown);
+
+        getMemory().eventConceptActive.emit(c);
     }
 
     @Override
@@ -113,8 +114,7 @@ abstract public class SequentialCycle extends AbstractCycle {
     @Override
     public Concept remove(Concept cc) {
 
-        getMemory().emit(Events.ConceptForget.class, this);
-
+        getMemory().eventConceptForget.emit(cc);
 
         Concept c = concepts.remove(cc.getTerm());
         return c;

@@ -100,14 +100,6 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
     }
 
 
-
-
-    @Override
-    public Identifier name() {
-        return this;
-    }
-
-
     @Override
     public boolean isNormalized() {
         return true;

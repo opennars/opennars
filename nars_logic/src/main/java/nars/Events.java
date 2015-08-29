@@ -52,49 +52,11 @@ import java.util.List;
     }
     
     
-    public static class ConceptNew extends ParametricInferenceEvent<Concept> {
-        public ConceptNew(Concept c, long when) {
-            super(c, when);
-        }
-        
-        @Override public String toString() {
-            return "Concept Created: " + object;
-        }        
-    }
 
-    /** when remembered a previously forgotten concept from subconcepts, and after first intialized */
-    public static class ConceptActive {    }
-
-    /** when a concept leaves main memory and is either moved to subconcepts or ConceptDelete */
-    public static class ConceptForget { }
 
     /** if a concept is completely removed from both main, and subconcepts (or if subconcepts has capacity 0) */
     @Deprecated public static class ConceptDelete { }
     
-    abstract public static class ConceptBeliefAdd implements Reaction<Class,Object[]> {
-        
-        abstract public void onBeliefAdd(Concept c, Task t, Object[] extra);
-        
-        @Override public void event(Class event, Object... args) {
-            onBeliefAdd( (Concept)args[0], (Task)args[1], (Object[])args[2]);
-        }
-        
-    }
-    
-    abstract public static class ConceptBeliefRemove implements Reaction<Class,Object[]> {
-
-        abstract public void onBeliefRemove(Concept c, Sentence removed, Task t, Object[] extra);
-        
-        @Override public void event(Class event, Object... args) {
-            onBeliefRemove( (Concept)args[0], (Sentence)args[1], (Task)args[2], (Object[])args[3]);
-        }        
-
-    }
-    
-    public static class ConceptGoalAdd { }
-    public static class ConceptGoalRemove { }
-    public static class ConceptQuestionAdd { } //applied for Quests too
-    public static class ConceptQuestionRemove { } //applied for Quests too
 
     
     //Executive & Planning

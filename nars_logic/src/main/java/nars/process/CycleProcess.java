@@ -1,6 +1,7 @@
 package nars.process;
 
 import javolution.context.ConcurrentContext;
+import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
@@ -23,7 +24,7 @@ import java.util.function.Predicate;
  * may correspond to a region of activation or some other process which
  * is iteratively called a more or less continual basis
  * */
-public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plugin */ {
+public interface CycleProcess<M extends AbstractMemory> extends Iterable<Concept> /* TODO: implements Plugin */ {
 
 
     /** accept the task, return whether it was accepted */
@@ -59,7 +60,7 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
         }
     }
 
-    public Memory getMemory();
+    public M getMemory();
 
 
 
@@ -75,8 +76,9 @@ public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plug
 
     /** Invoked during a memory reset to empty all concepts
      * @param delete  whether to finalize everything (deallocate as much as possible)
-     * @param perception */
-    public void reset(Memory memory);
+     * @param perception
+     * @param memory */
+    public void reset(M memory);
 
     /** Maps Term to a Concept active in this Cycle. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known and active.

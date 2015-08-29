@@ -1,5 +1,6 @@
 package nars.cycle;
 
+import nars.AbstractMemory;
 import nars.Memory;
 import nars.concept.ConceptActivator;
 import nars.io.DefaultPerception;
@@ -11,8 +12,10 @@ import nars.task.Task;
 /**
  * Basic CycleProcess that can buffer perceptions
  */
-public abstract class AbstractCycle extends ConceptActivator implements CycleProcess {
+public abstract class AbstractCycle extends ConceptActivator implements CycleProcess<Memory> {
+
     final protected Perception percepts = new DefaultPerception();
+
     protected Memory memory;
 
     @Override

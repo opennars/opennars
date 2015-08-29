@@ -14,12 +14,14 @@ import nars.nal.UtilityFunctions;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
+import nars.nal.nal7.Sequence;
 import nars.process.NAL;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
+import nars.util.event.Observed;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,13 +36,14 @@ public class PerceptionAccel extends NARReaction {
 
     public final static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1; //new inference rule accelerating decision making: https://groups.google.com/forum/#!topic/open-nars/B8veE-WDd8Q
     public final static int ConjunctionMemorySize = 100;
+    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptActive;
+    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptForget;
 
     //mostly only makes sense if perception plugin is loaded
     //keep track of how many conjunctions with related amount of component terms there are:
 
 
     int[] sv = new int[ConjunctionMemorySize]; //use static array, should suffice for now
-    boolean debugMechanism = false;
     float partConceptsPrioThreshold = 0.1f;
     final List<Task> eventbuffer = Global.newArrayList();
     int cur_maxlen = 1;
@@ -48,7 +51,18 @@ public class PerceptionAccel extends NARReaction {
 
 
     public PerceptionAccel(NAR n) {
-        super(n, Events.InduceSucceedingEvent.class, Events.ConceptForget.class, Events.ConceptActive.class);
+        super(n, Events.InduceSucceedingEvent.class);
+
+        this.onConceptActive = n.memory.eventConceptActive.on(c -> {
+            Term t = c.getTerm();
+            if (t instanceof Sequence)
+                handleConjunctionSequence((Sequence)t, true);
+        });
+        this.onConceptForget = n.memory.eventConceptForget.on(c -> {
+            Term t = c.getTerm();
+            if (t instanceof Sequence)
+                handleConjunctionSequence((Sequence)t, false);
+        });
     }
 
     @Override
@@ -64,19 +78,13 @@ public class PerceptionAccel extends NARReaction {
 
                 NAL nal = (NAL) args[1];
 
-                while (eventbuffer.size()+1 > cur_maxlen + 1) {
+                while (eventbuffer.size() + 1 > cur_maxlen + 1) {
                     eventbuffer.remove(0);
                 }
                 eventbuffer.add(newEvent);
 
                 perceive(newEvent, nal);
             }
-        } else if (event == Events.ConceptForget.class) {
-            Concept forgot = (Concept) args[0];
-            handleConjunctionSequence(forgot.getTerm(), false);
-        } else if (event == Events.ConceptActive.class) {
-            Concept newC = (Concept) args[0];
-            handleConjunctionSequence(newC.getTerm(), true);
         }
     }
 
@@ -186,9 +194,9 @@ public class PerceptionAccel extends NARReaction {
             Concept C2 = nal.memory.concept(secondC);
 
             if (after && (C1 == null || C2 == null)) { //everything which happens now we can summarize for now on
-                if (debugMechanism) {                  //but only if the atomic events are also existing as concepts
-                    System.out.println("one didn't exist: " + firstC + " or " + secondC); //and are above partConcepts priority threshold
-                }
+//                if (debugMechanism) {                  //but only if the atomic events are also existing as concepts
+//                    System.out.println("one didn't exist: " + firstC + " or " + secondC); //and are above partConcepts priority threshold
+//                }
                 continue; //the components were not observed, so don't allow creating this compound
             }
 
@@ -250,17 +258,12 @@ public class PerceptionAccel extends NARReaction {
     }
 
 
-    public void handleConjunctionSequence(Term c, boolean add) {
-        if (c instanceof Conjunction)
-            handleConjunctionSequence((Conjunction)c, add);
-    }
-
-    public void handleConjunctionSequence(Conjunction c, boolean add) {
-
-        if (debugMechanism) {
-            System.out.println(this + " handleConjunctionSequence with " + c.toString() + " " + String.valueOf(add));
-            //nal.emit(Events.DEBUG.class, this, "handleConjunctionSequence", c, add);
-        }
+    public void handleConjunctionSequence(Sequence c, boolean add) {
+//
+//        if (debugMechanism) {
+//            System.out.println(this + " handleConjunctionSequence with " + c.toString() + " " + String.valueOf(add));
+//            //nal.emit(Events.DEBUG.class, this, "handleConjunctionSequence", c, add);
+//        }
 
         if (add) { //manage concept counter
             sv[c.length()]++;
@@ -276,10 +279,10 @@ public class PerceptionAccel extends NARReaction {
                 break;
             }
         }
-
-        if (debugMechanism) {
-            System.out.println("determined max len is " + String.valueOf(cur_maxlen));
-        }
+//
+//        if (debugMechanism) {
+//            System.out.println("determined max len is " + String.valueOf(cur_maxlen));
+//        }
     }
 
 }

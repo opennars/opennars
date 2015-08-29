@@ -90,9 +90,6 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
 
-    abstract Identifier name();
-
-
 //    default char[] chars(boolean pretty) {
 //        return name().chars(pretty);
 //    }
