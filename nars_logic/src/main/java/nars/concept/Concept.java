@@ -34,6 +34,7 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.truth.Truth;
+import nars.util.data.id.Identifier;
 
 import java.io.PrintStream;
 import java.io.Serializable;

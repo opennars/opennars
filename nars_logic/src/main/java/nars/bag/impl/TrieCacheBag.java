@@ -74,7 +74,7 @@ public class TrieCacheBag extends MapCacheBag<Term,Concept> {
 
     //TODO sequence by subterm as a whole, since each subterm is hashed
 
-    final static TrieSequencer termSequencer = new TermByteTrieSequencer();
+    public final static TrieSequencer termSequencer = new TermByteTrieSequencer();
 
     public TrieCacheBag() {
         super( new Trie(termSequencer) );

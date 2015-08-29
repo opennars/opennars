@@ -62,10 +62,10 @@ public class TermCept extends Fuct  {
         return Float.NaN;
     }
 
-    public void believe(final float f, final float c, final Op inheritance) {
+    public void believe(final float f, final float c, final Op o /* long times */) {
         final int tableIndex = 0; /* TODO determine index after possibly flushing and opening a hole */
 
-        beliefs[inheritance.ordinal()][tableIndex]
+        beliefs[o.ordinal()][tableIndex]
             .truth(f, c);
     }
 
@@ -73,4 +73,9 @@ public class TermCept extends Fuct  {
     //TODO scalar temporal directionality for all temporal compounds, ex: =/> =|> =\>
     //TODO negation polarity which weighs the term with its negated opposite
 
+
+    public TermCept set(TermCore core, int address) {
+        set(core.terms, address * core.s);
+        return this;
+    }
 }

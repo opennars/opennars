@@ -8,6 +8,7 @@
  */
 package nars.struct;
 
+import com.thoughtworks.xstream.core.util.Base64Encoder;
 import javolution.context.LocalContext;
 import javolution.io.UTF8ByteBufferReader;
 import javolution.io.UTF8ByteBufferWriter;
@@ -447,6 +448,13 @@ public class Fuct {
             tmp.append(((i & 0xF) == 0xF) ? '\n' : ' ');
         }
         return tmp.toString();
+    }
+
+    public String toStringBase64() {
+        byte[] b = new byte[size()];
+        getByteBuffer().get(b, pos(), size());
+        return new Base64Encoder().encode(b);
+
     }
 
     private static final char[] HEXA = { '0', '1', '2', '3', '4', '5', '6',
@@ -1100,6 +1108,25 @@ public class Fuct {
         public UTF8String(int length) {
             super(length << 3, 1);
             _length = length; // Takes into account 0 terminator.
+        }
+
+        public void set(byte[] b) {
+            final ByteBuffer buffer = getByteBuffer();
+            synchronized (buffer) {
+
+                if (b.length + 1 > _length)
+                    throw new Error("string overflow");
+
+                int i = index();
+                buffer.rewind();
+                buffer.position(i);
+                buffer.put(b);
+                buffer.position(i + b.length);
+                buffer.put((byte)0);
+
+
+            }
+
         }
 
         public void set(String string) {

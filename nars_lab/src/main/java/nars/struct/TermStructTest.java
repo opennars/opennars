@@ -1,10 +1,10 @@
 package nars.struct;
 
 
-import com.fasterxml.jackson.databind.ser.std.ByteArraySerializer;
 import nars.Op;
+import nars.term.Atom;
 
-import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Created by me on 8/28/15.
@@ -30,35 +30,47 @@ public class TermStructTest {
 
     public static void main(String[] args) {
 
-        ByteBuffer core = ByteBuffer.allocateDirect(64*1024);
+        TermCore core = new TermCore(1024*1024);
 
+        TermSpect a = core.term(Atom.the("a").bytes(), Op.ATOM);
 
-        TermCept a = new TermCept(core, 0);
-        a.name.set("a");
+        TermSpect b = core.term(Atom.the("b").bytes(), Op.ATOM);
 
+        TermSpect aIntB = core.term(Atom.the("a_b").bytes(), Op.INHERITANCE);
+        aIntB.believe(1f, 0.9f);
 
-        final int s = a.size();
+        TermSpect aSimB = aIntB.the(Op.SIMILARITY);
+        aSimB.believe(1f, 0.9f);
 
-        TermCept b = new TermCept(core, s * 1);
-        b.name.set("b");
+        System.out.println( core.index.size() );
 
-        TermCept aInhB = new TermCept(core, s * 2);
-        aInhB.name.set(a.pos(), b.pos());
-        aInhB.believe(1.0f, 0.9f, Op.INHERITANCE);
+        core.index.entrySet().forEach(e -> {
+            System.out.println(Arrays.toString(e.getKey()) + " " + e.getValue());
+        });
 
-
-
-        core.rewind();
-
-
-        int n;
-        for (n = 0, core.position(n); n < s * 3; n++) {
-            int bb = core.get();
-            System.out.print(Integer.toHexString(bb));
-            System.out.print(' ');
-            if (n % 60 == 0) System.out.println();
-        }
-        System.out.println();
+//
+//        final int s = a.size();
+//
+//        TermCept b = new TermCept(core, s * 1);
+//        b.name.set("b");
+//
+//        TermCept aInhB = new TermCept(core, s * 2);
+//        aInhB.name.set(a.pos(), b.pos());
+//        aInhB.believe(1.0f, 0.9f, Op.INHERITANCE);
+//
+//
+//
+//        core.rewind();
+//
+//
+//        int n;
+//        for (n = 0, core.position(n); n < s * 3; n++) {
+//            int bb = core.get();
+//            System.out.print(Integer.toHexString(bb));
+//            System.out.print(' ');
+//            if (n % 60 == 0) System.out.println();
+//        }
+//        System.out.println();
 
     }
 
