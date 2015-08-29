@@ -335,8 +335,15 @@ public class NARStream  {
         return this;
     }
 
+    public NARStream onConceptActive(final Consumer<Concept> c) {
+        regs.add( nar.memory.eventConceptActive.on(c) );
+        return this;
+    }
 
-
+    public NARStream onConceptForget(final Consumer<Concept> c) {
+        regs.add( nar.memory.eventConceptForget.on(c) );
+        return this;
+    }
 
     abstract private class StreamNARReaction extends NARReaction {
 
