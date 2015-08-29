@@ -36,7 +36,6 @@ import nars.gui.input.TextInputPanel;
 import nars.gui.input.image.SketchPointCloudPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterNode;
-import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.io.out.TextOutput;
 import nars.meter.NARMetrics;
 import nars.util.event.Reaction;
@@ -194,15 +193,15 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
             m.addSeparator();
 
 
-            JMenuItem mv = new JMenuItem("+ Concept Network");
-            mv.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    new NWindow("Concepts",
-                            new TermGraphPanelNengo(nar) ).show(800, 800, false);
-                }
-            });
-            m.add(mv);
+//            JMenuItem mv = new JMenuItem("+ Concept Network");
+//            mv.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    new NWindow("Concepts",
+//                            new TermGraphPanelNengo(nar) ).show(800, 800, false);
+//                }
+//            });
+//            m.add(mv);
             
 //            JMenuItem tlp = new JMenuItem("+ Timeline");
 //            tlp.addActionListener(new ActionListener() {

@@ -110,7 +110,7 @@ abstract public class Image extends DefaultCompound {
             int bytes = 2+2+2;
             for (int i = 0; i < len; i++) {
                 Term tt = this.term(i);
-                bytes += tt.name().bytes().length;
+                bytes += tt.bytes().length;
                 if (i!=0) bytes++; //comma
             }
 

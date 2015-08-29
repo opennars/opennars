@@ -77,14 +77,15 @@ public class TermIDTest {
     //@Test public void testInternalRepresentation2() { testInternalRepresentation("<a && b>", 5); }
 
 
-    public Identifier testInternalRepresentation(String expectedPrettyOutput, int expectedLength) {
+    public Term testInternalRepresentation(String expectedPrettyOutput, int expectedLength) {
         return testInternalRepresentation(null, expectedPrettyOutput, expectedLength);
     }
 
-    public Identifier testInternalRepresentation(String expectedCompactOutput, String expectedPrettyOutput, int expectedLength) {
+    public Term testInternalRepresentation(String expectedCompactOutput, String expectedPrettyOutput, int expectedLength) {
         //UTF8Identifier b = new UTF8Identifier(expectedPrettyOutput);
-        Identifier i = nar.term(expectedPrettyOutput).name();
+        Term i = nar.term(expectedPrettyOutput);
         byte[] b = i.bytes();
+        //byte[] b = i.bytes();
 
         if (expectedCompactOutput != null)
             assertEquals(expectedCompactOutput, i.toString(false));

@@ -22,7 +22,7 @@ public class TaskGraph  {
 
     final Deque<Task> log = new ArrayDeque();
     public final Map<Task, Float> y = new CuckooMap<>(); //TODO use ObjectDoubleMap
-    final DefaultGrapher extraGrapher = new DefaultGrapher(true, true, true, false, 1, true, true);
+    //final DefaultGrapher extraGrapher = new DefaultGrapher(true, true, true, false, 1, true, true);
 
     int maxItems = 32;
     private float earliestCreationTime = -1;
@@ -161,7 +161,6 @@ public class TaskGraph  {
 
             Concept c = nar.concept(o.getTerm());
             if (c!=null) {
-                extraGrapher.onConcept(c, true);
                 g.addEdge(o, c, new TaskConceptEdge(o, c));
             }
 

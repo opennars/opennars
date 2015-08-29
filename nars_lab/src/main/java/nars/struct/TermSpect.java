@@ -5,6 +5,8 @@ import nars.term.Term;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.Identifier;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 
 /** represents one particular Term "view" of a TermCept, at a time.
@@ -118,6 +120,11 @@ public class TermSpect extends TermCept implements Term /* Concept */ {
     }
 
     @Override
+    public byte[] bytes() {
+        return new byte[0];
+    }
+
+    @Override
     public long structureHash() {
         return 0;
     }
@@ -125,6 +132,16 @@ public class TermSpect extends TermCept implements Term /* Concept */ {
     @Override
     public int structure() {
         return 0;
+    }
+
+    @Override
+    public void append(Writer w, boolean pretty) throws IOException {
+
+    }
+
+    @Override
+    public StringBuilder toStringBuilder(boolean pretty) {
+        return null;
     }
 
     @Override

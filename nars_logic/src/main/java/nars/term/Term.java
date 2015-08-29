@@ -26,13 +26,14 @@ import nars.Symbols;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.Identified;
+import nars.util.data.id.Identifier;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.Map;
 
-public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable {
+public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
     @Override
@@ -89,9 +90,12 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
 
-    default char[] chars(boolean pretty) {
-        return name().chars(pretty);
-    }
+    abstract Identifier name();
+
+
+//    default char[] chars(boolean pretty) {
+//        return name().chars(pretty);
+//    }
 
     /** shallow clone, using the same subterm references */
     public Term clone();
@@ -163,10 +167,11 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         return (operator()== t.operator());
     }
 
+    public byte[] bytes();
 
-    default public byte[] bytes() {
-        return name().bytes();
-    }
+//    default public byte[] bytes() {
+//        return name().bytes();
+//    }
 
 
 
@@ -178,19 +183,25 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
 
+    public void append(Writer w, boolean pretty) throws IOException;
 
-    default public void append(Writer w, boolean pretty) throws IOException {
-        //try {
-            name().append(w, pretty);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+//    default public void append(Writer w, boolean pretty) throws IOException {
+//        //try {
+//            name().append(w, pretty);
+////        } catch (IOException e) {
+////            e.printStackTrace();
+////        }
+//    }
+
+    public StringBuilder toStringBuilder(boolean pretty);
+
+//    default public StringBuilder toStringBuilder(boolean pretty) {
+//        return name().toStringBuilder(pretty);
+//    }
+
+    default public String toString(boolean pretty) {
+        return toStringBuilder(pretty).toString();
     }
-
-    default public StringBuilder toStringBuilder(boolean pretty) {
-        return name().toStringBuilder(pretty);
-    }
-
 
     default String toStringCompact() {
         return toString();

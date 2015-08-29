@@ -17,8 +17,6 @@ import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.gui.ConceptMenu;
 import nars.gui.VerticalLayout;
-import nars.gui.output.graph.nengo.TermGraphNode;
-import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.link.TaskLink;
 import nars.premise.Premise;
 import nars.task.Sentence;
@@ -265,58 +263,57 @@ public class ConceptPanelBuilder extends NARReaction {
             if (full) {
                 setLayout(new BorderLayout());
 
-                TermGraphPanelNengo nengo;
-
-
-                add(nengo = new TermGraphPanelNengo(new TermGraphNode(nar.memory) {
-
-                    Set<Term> neighbors = new LinkedHashSet();
-
-                    @Override
-                    public boolean includeTerm(Term t) {
-
-                        if (t.equals(concept.getTerm())) return true;
-
-                        if (neighbors.contains(t)) return true;
-
-                        return false;
-
-                    }
-
-                    @Override
-                    public boolean filter() {
-                        return true;
-                    }
-
-
-                    @Override
-                    public void refresh(Object x) {
-                        if (x == concept) {
-                            neighbors.clear();
-                            Iterator<Term> neighborTerms = concept.adjacentTerms(true, true);
-                            Iterators.addAll(neighbors, neighborTerms);
-                        }
-
-                        super.refresh(x);
-                    }
-
-                    @Override
-                    public String name() {
-                        return concept.getTerm().toString();
-                    }
-
-                }, conceptGraphFPS), BorderLayout.CENTER);
-
-
-                FlowLayout fl = new FlowLayout(FlowLayout.RIGHT);
-
-                fl.setVgap(30);
-
-                nengo.getUniverse().setLayout(fl);
-
-                nengo.getUniverse().add(beliefGoalTime);
-                nengo.getUniverse().add(beliefGoalChart);
-                nengo.getUniverse().add(questionChart);
+//                TermGraphPanelNengo nengo;
+//
+//                add(nengo = new TermGraphPanelNengo(new TermGraphNode(nar.memory) {
+//
+//                    Set<Term> neighbors = new LinkedHashSet();
+//
+//                    @Override
+//                    public boolean includeTerm(Term t) {
+//
+//                        if (t.equals(concept.getTerm())) return true;
+//
+//                        if (neighbors.contains(t)) return true;
+//
+//                        return false;
+//
+//                    }
+//
+//                    @Override
+//                    public boolean filter() {
+//                        return true;
+//                    }
+//
+//
+//                    @Override
+//                    public void refresh(Object x) {
+//                        if (x == concept) {
+//                            neighbors.clear();
+//                            Iterator<Term> neighborTerms = concept.adjacentTerms(true, true);
+//                            Iterators.addAll(neighbors, neighborTerms);
+//                        }
+//
+//                        super.refresh(x);
+//                    }
+//
+//                    @Override
+//                    public String name() {
+//                        return concept.getTerm().toString();
+//                    }
+//
+//                }, conceptGraphFPS), BorderLayout.CENTER);
+//
+//
+//                FlowLayout fl = new FlowLayout(FlowLayout.RIGHT);
+//
+//                fl.setVgap(30);
+//
+//                nengo.getUniverse().setLayout(fl);
+//
+//                nengo.getUniverse().add(beliefGoalTime);
+//                nengo.getUniverse().add(beliefGoalChart);
+//                nengo.getUniverse().add(questionChart);
 
                 JPanel details = new JPanel(new GridLayout(0, 2));
                 details.add(termLinkChart = new ScatterPlotBagChart(c, c.getTermLinks()));

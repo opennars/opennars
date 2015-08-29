@@ -4,6 +4,8 @@ import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
+import nars.util.utf8.FastByteComparisons;
 
 /**
  *
@@ -97,21 +99,8 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
         return 0;
     }
 
-    @Override
-    public int compareTo(Object o) {
-        if (this == o ) return 0;
-        Class oc = o.getClass();
-        Class c = getClass();
-        if (o.getClass() == getClass()) {
-            return compare(((ImmutableAtom) o).name());
-        }
-        return Integer.compare(oc.hashCode(), c.hashCode());
-    }
 
-    @Override
-    public void identifierEquals(Identifier other) {
-        //ignore
-    }
+
 
     @Override
     public Identifier name() {

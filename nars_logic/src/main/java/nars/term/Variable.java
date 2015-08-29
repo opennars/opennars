@@ -24,6 +24,8 @@ package nars.term;
 import nars.Op;
 import nars.Symbols;
 import nars.term.transform.TermVisitor;
+import nars.util.data.id.LiteralUTF8Identifier;
+import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
 
 import static nars.Symbols.*;
@@ -195,7 +197,10 @@ public class Variable extends Atom {
     public static int compare(final Variable a, final Variable b) {
         if (a == b) return 0;
 
-        int nameCompare = a.name().compare(b.name());
+        int hashCompare = Integer.compare(a.hashCode(), b.hashCode());
+        if (hashCompare != 0) return hashCompare;
+
+        int nameCompare = FastByteComparisons.compare(a.bytes(), b.bytes());
         if (nameCompare != 0)
             return nameCompare;
 

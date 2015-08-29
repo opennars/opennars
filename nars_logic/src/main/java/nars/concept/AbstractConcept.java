@@ -97,7 +97,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     @Override
     public String toStringLong() {
         String res =
-                toStringWithBudget() + " " + getTerm().name()
+                toStringWithBudget() + " " + getTerm().toString()
                         + toStringIfNotNull(getTermLinks().size(), "termLinks")
                         + toStringIfNotNull(getTaskLinks().size(), "taskLinks")
                         + toStringIfNotNull(getBeliefs().size(), "beliefs")

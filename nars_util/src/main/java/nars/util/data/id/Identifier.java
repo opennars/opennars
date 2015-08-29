@@ -88,37 +88,37 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
         return false;
     }
 
-    public void share(Identifier ix) {
-        Identified localHost = host;
-        Identified remoteHost = ix.host;
-        if (localHost==null) {
-            if (remoteHost != null)
-                remoteHost.identifierEquals(this);
-        }
-        else {
-            //modify localHost
-            localHost.identifierEquals(ix);
-        }
-
-        //interesting but identityHashCode is slow
-//        else {
-//            //use the lower of the system codes to avoid circular assignments
-//            int l = System.identityHashCode( localHost );
-//            int r = System.identityHashCode( remoteHost );
-//            Identified target;
-//            Identifier source;
-//            if (l < r) {
-//                target = localHost;
-//                source = ix;
-//            }
-//            else {
-//                target = remoteHost;
-//                source = this;
-//            }
-//
-//            target.identifierEquals(source);
+//    public void share(Identifier ix) {
+//        Identified localHost = host;
+//        Identified remoteHost = ix.host;
+//        if (localHost==null) {
+//            if (remoteHost != null)
+//                remoteHost.identifierEquals(this);
 //        }
-    }
+//        else {
+//            //modify localHost
+//            localHost.identifierEquals(ix);
+//        }
+//
+//        //interesting but identityHashCode is slow
+////        else {
+////            //use the lower of the system codes to avoid circular assignments
+////            int l = System.identityHashCode( localHost );
+////            int r = System.identityHashCode( remoteHost );
+////            Identified target;
+////            Identifier source;
+////            if (l < r) {
+////                target = localHost;
+////                source = ix;
+////            }
+////            else {
+////                target = remoteHost;
+////                source = this;
+////            }
+////
+////            target.identifierEquals(source);
+////        }
+//    }
 
     /*protected boolean equalOnlyToSameClass() {
         return false;
@@ -127,36 +127,36 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     /** this method needs to test value equality and should not involve hashcode or instance equality tests */
     public abstract boolean equalTo(Identifier x);
 
-    /** this method needs to test value equality and should not involve hashcode or instance equality tests */
-    public abstract int compare(Identifier x);
+//    /** this method needs to test value equality and should not involve hashcode or instance equality tests */
+//    public abstract int compare(Identifier x);
 
-    @Override
-    public int compareTo(Object o) {
-        if (this == o) return 0;
-
-        /*
-        Class ca = getClass();
-        Class cb = o.getClass();
-        if (ca!=cb //&& equalOnlyToSameClass()) {
-            //sort by the hashcode of the class names, not natural ordering
-            String sa = ca.getName();
-            String sb = cb.getName();
-            int a = sa.hashCode();
-            int b = sb.hashCode();
-            if (a!=b)
-                return Integer.compare(a, b);
-            return sa.compareTo(sb); //rare case if the hashcodes are equal but different classes
-        }
-        else {*/
-            //same class as this
-        Identifier i = (Identifier) o;
-        int x = compare(i);
-        if ( x== 0) {
-            share(i);
-        }
-        return x;
-        //}
-    }
+//    @Override
+//    public int compareTo(final Object o) {
+//        if (this == o) return 0;
+//
+//        /*
+//        Class ca = getClass();
+//        Class cb = o.getClass();
+//        if (ca!=cb //&& equalOnlyToSameClass()) {
+//            //sort by the hashcode of the class names, not natural ordering
+//            String sa = ca.getName();
+//            String sb = cb.getName();
+//            int a = sa.hashCode();
+//            int b = sb.hashCode();
+//            if (a!=b)
+//                return Integer.compare(a, b);
+//            return sa.compareTo(sb); //rare case if the hashcodes are equal but different classes
+//        }
+//        else {*/
+//            //same class as this
+//        final Identifier i = (Identifier) o;
+//        final int x = compare(i);
+////        if ( x== 0) {
+////            share(i);
+////        }
+//        return x;
+//        //}
+//    }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public String toString(final boolean pretty) {

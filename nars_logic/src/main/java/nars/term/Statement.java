@@ -241,7 +241,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
         w.append(STATEMENT_OPENER);
 
-        getSubject().name().append(w, pretty);
+        getSubject().append(w, pretty);
 
         if (pretty) w.append(' ');
 
@@ -249,7 +249,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
         if (pretty) w.append(' ');
 
-        getPredicate().name().append(w, pretty);
+        getPredicate().append(w, pretty);
 
         w.append(STATEMENT_CLOSER);
     }

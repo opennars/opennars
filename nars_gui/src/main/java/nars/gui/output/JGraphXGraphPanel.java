@@ -6,7 +6,6 @@ import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import nars.NAR;
-import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
@@ -112,9 +111,9 @@ public class JGraphXGraphPanel extends mxGraphComponent {
 
 
 
-    public JGraphXGraphPanel(NAR n) {
-        this(new NARGraph().add(n, IncludeEverything, new DefaultGrapher(true,true,true,true,3,false, false)));
-    }
+//    public JGraphXGraphPanel(NAR n) {
+//        this(new NARGraph().add(n, IncludeEverything, new DefaultGrapher(true,true,true,true,3,false, false)));
+//    }
     
 //    public static void main(String[] args) {
 //        NAR n = new NAR();

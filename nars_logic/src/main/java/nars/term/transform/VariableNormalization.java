@@ -4,8 +4,7 @@ import nars.term.Compound;
 import nars.term.Variable;
 import nars.util.data.FastPutsArrayMap;
 
-import java.util.Comparator;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * Variable normalization
@@ -43,7 +42,7 @@ public class VariableNormalization implements VariableTransform {
             Variable b = ((Variable) ob);
             if (!b.isScoped() || !a.isScoped())
                 return false;
-            return a.name().equals(b.name());
+            return equalName(a, b);
         }
 
 //        @Override
@@ -118,11 +117,15 @@ public class VariableNormalization implements VariableTransform {
         Variable vv = rename.computeIfAbsent(vname, _vname -> {
             //type + id
             Variable rvv = newVariable(v.getType(), finalRename.size() + 1);
-            renamed = !rvv.name().equals(v.name());
+            renamed = !equalName(rvv, v);
             return rvv;
         });
 
         return vv;
+    }
+
+    public static boolean equalName(Variable a, Variable b) {
+        return Arrays.equals(a.bytes(), b.bytes());
     }
 
     protected Variable newVariable(final char type, int i) {

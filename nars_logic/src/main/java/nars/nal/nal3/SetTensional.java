@@ -50,7 +50,7 @@ public interface SetTensional extends Term, Iterable<Term> {
             int bytes = 2;
             for (int i = 0; i < len; i++) {
                 Term tt = term(i);
-                bytes += tt.name().bytes().length;
+                bytes += tt.bytes().length;
                 if (i!=0) bytes++; //comma
             }
 
