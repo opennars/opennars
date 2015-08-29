@@ -410,12 +410,3 @@
 //NAL2 Structure Transformation
 (S <-> P), S |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
 (S <-> P), S |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
-
-//NAL2 Inheritance to Similarity
-(S <-> P), (S --> P) |- (P --> S), (Truth:Identity, Desire:Identity)
-(A --> M), (A <-> B) |- (B --> M), (Truth:Analogy, Desire:Strong)
-
-//NAL3 Set Operations
-(S --> {A}), (S --> {B}) |- (S --> {A,B}), (Truth:Union)
-(S --> {A,B}), (S --> {C}) |- (S --> {A,C}), (Truth:Union),    (S --> {B,C}), (Truth:Union)
-(S --> {A,B,C}), (S --> {D}) |- (S --> {A,D}), (Truth:Union),    (S --> {B,D}), (Truth:Union),     (S --> {C,D}), (Truth:Union)
