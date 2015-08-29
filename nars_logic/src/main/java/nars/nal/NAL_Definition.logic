@@ -354,22 +354,11 @@
 ((\,_, A_1..n ) --> M), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
 
 //NAL3 specific:
-//((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
-//  non-var arg version, var arg is suspect
-((|,X,Y1) --> M), Z |- (X --> M), (Truth:AnalyticDeduction)
-((|,X,Y1,Y2) --> M), Z |- (X --> M), (Truth:AnalyticDeduction)
-((|,X,Y1,Y2,Y3) --> M), Z |- (X --> M), (Truth:AnalyticDeduction)
-((|,X,Y1,Y2,Y3,Y4) --> M), Z |- (X --> M), (Truth:AnalyticDeduction)
+((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
+(M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
 
-//(M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
-//  non-var arg version, var arg is suspect
-(M --> (&,X,Y1)), Z |- (M --> X), (Truth:AnalyticDeduction)
-(M --> (&,X,Y1,Y2)), Z |- (M --> X), (Truth:AnalyticDeduction)
-(M --> (&,X,Y1,Y2,Y3)), Z |- (M --> X), (Truth:AnalyticDeduction)
-(M --> (&,X,Y1,Y2,Y3,Y4)), Z |- (M --> X), (Truth:AnalyticDeduction)
-
-((~, B, G) --> S), Z |- (B --> S), (Truth:AnalyticDeduction)
-(R --> (-, B, S)), Z |- (R --> B), (Truth:AnalyticDeduction)
+((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
+(R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
 
 //TODO Similarity Theorems (needs to be carefully evaluated what is needed here)
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
@@ -406,7 +395,3 @@
 ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 
 ////// Truth-value functions: see TruthFunctions.java
-
-//NAL2 Structure Transformation
-(S <-> P), S |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
-(S <-> P), S |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
