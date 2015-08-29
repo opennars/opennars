@@ -5,6 +5,7 @@ import javolution.util.FastSet;
 import nars.Events;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.event.ConceptReaction;
 import nars.event.NARReaction;
 import nars.io.out.TextOutput;
 import nars.task.Task;
@@ -24,7 +25,7 @@ import java.util.function.Consumer;
 public class ConceptLogPanel extends LogPanel implements Runnable {
 
 
-    private final NARReaction conceptReaction;
+    private final ConceptReaction conceptReaction;
     ConceptPanelBuilder b;
     VerticalPanel content = new VerticalPanel();
 
@@ -38,7 +39,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     public ConceptLogPanel(NAR c) {
         super(c);
 
-        conceptReaction = new NARReaction(nar, Events.ConceptActive.class) {
+        conceptReaction = new ConceptReaction(nar.memory) {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -46,15 +47,18 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
                 if (!isShowing())
                     return;
 
-                if (event == Events.ConceptActive.class) {
-//                    SwingUtilities.invokeLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-                            updateConcept((Concept) args[0], 1.0f, "Conceptualized");
-//                        }
-//                    });
-                }
             }
+
+            @Override
+            public void onConceptActive(Concept c) {
+                updateConcept(c, 1.0f, "Conceptualized");
+            }
+
+            @Override
+            public void onConceptForget(Concept c) {
+
+            }
+
         };
         b = newBuilder();
         add(content, BorderLayout.CENTER);

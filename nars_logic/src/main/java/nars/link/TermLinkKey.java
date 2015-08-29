@@ -2,14 +2,14 @@ package nars.link;
 
 import nars.term.Term;
 import nars.util.data.Util;
+import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
 
-public interface TermLinkKey  {
+public interface TermLinkKey extends Byted /* byte[] holds the prefix part */ {
 
     public Term getTarget();
 
-    public byte[] prefix();
 
 
 
@@ -20,11 +20,9 @@ public interface TermLinkKey  {
 
     default public boolean termLinkEquals(final Object obj) {
         if (this == obj) return true;
-        if (obj instanceof TermLinkKey) {
-            TermLinkKey tl = (TermLinkKey) obj;
-            return Utf8.equals2(prefix(), tl.prefix()) && getTarget().equals(tl.getTarget());
-        }
-        return false;
+        if (!(obj instanceof TermLinkKey)) return false;
+        final TermLinkKey tl = (TermLinkKey) obj;
+        return Utf8.equals(this, tl) && getTarget().equals(tl.getTarget());
     }
 
 //    /** the result of this should be cached */

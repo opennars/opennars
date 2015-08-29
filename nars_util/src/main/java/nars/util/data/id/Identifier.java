@@ -77,16 +77,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
 
     @Override
-    public boolean equals(final Object x) {
-        if (x == this) return true;
-        if (!(x instanceof Identifier)) return false;
-
-        if (equalTo((Identifier)x)) {
-            return true;
-        }
-
-        return false;
-    }
+    abstract public boolean equals(final Object x);
 
 //    public void share(Identifier ix) {
 //        Identified localHost = host;
@@ -124,8 +115,6 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
         return false;
     }*/
 
-    /** this method needs to test value equality and should not involve hashcode or instance equality tests */
-    public abstract boolean equalTo(Identifier x);
 
 //    /** this method needs to test value equality and should not involve hashcode or instance equality tests */
 //    public abstract int compare(Identifier x);

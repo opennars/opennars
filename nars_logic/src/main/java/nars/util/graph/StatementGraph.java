@@ -28,7 +28,10 @@ abstract public class StatementGraph extends SentenceGraph {
 
     @Override
     ConceptRelation[] getRelations(Concept c) {
-        Statement t = (Statement)c.getTerm();
+        Term tt = c.getTerm();
+        if (!(tt instanceof Statement)) return null;
+
+        final Statement t = (Statement)tt;
         Term subj = t.getSubject();
         Concept subjTerm = nar.concept(subj);
         Term pred = t.getPredicate();

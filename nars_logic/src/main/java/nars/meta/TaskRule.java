@@ -250,27 +250,36 @@ public class TaskRule extends Rule<Premise,Task> {
                 case "no_common_subterm":
                     next = new NoCommonSubterm(arg1, arg2);
                     break;
-                case "measure_time":
-                    next = new MeasureTime(arg1, arg2, args[2]);
-                    break;
+
+
                 case "after":
-                    next = new After(arg1/*, arg2*/);
-                    break;
-                case "not_implication_or_equivalence":
-                    next = new NotImplicationOrEquivalence(arg1);
+                    if ((next = after(arg1, arg2)) == null)
+                        return null; //this rule is not valid, probably from a rearrangement of terms which invalidates the pattern -> task relationship this needs to test
                     break;
                 case "concurrent":
-                    next = new Concurrent(arg1);
+                    if ((next = concurrent(arg1, arg2)) == null)
+                        return null; //this rule is not valid, probably from a rearrangement of terms which invalidates the pattern -> task relationship this needs to test
                     break;
-                case "substitute":
-                    next = new Substitute(arg1, arg2);
-                    break;
+
+                //TODO apply similar pattern to these as after and concurrent
                 case "shift_occurrence_forward":
                     next = new TimeOffset(arg1, arg2, true);
                     break;
                 case "shift_occurrence_backward":
                     next = new TimeOffset(arg1, arg2, false);
                     break;
+                case "measure_time":
+                    next = new MeasureTime(arg1, arg2, args[2]);
+                    break;
+
+                case "substitute":
+                    next = new Substitute(arg1, arg2);
+                    break;
+
+                case "not_implication_or_equivalence":
+                    next = new NotImplicationOrEquivalence(arg1);
+                    break;
+
                 case "task":
                     switch (arg1.toString()) {
                         case "negative":
@@ -388,7 +397,46 @@ public class TaskRule extends Rule<Premise,Task> {
         return new TaskRule(newPremise, newConclusion);
     }
 
+    /**
+     * returns +1 if first arg=task, second arg = belief, -1 if opposite, and 0 if there was an incomplete match
+     * @param arg1
+     * @param arg2
+     * @param rule
+     * @return
+     */
+    public int getTaskOrder(Term arg1, Term arg2) {
+
+        final boolean t;
+        Term taskPattern = getPremises().term(0);
+        Term beliefPattern = getPremises().term(1);
+        if (arg2.equals(taskPattern) && arg1.equals(beliefPattern)) {
+            return -1;
+        }
+        else if (arg1.equals(taskPattern) && arg2.equals(beliefPattern)) {
+            return 1;
+        }
+        else {
+            //throw new RuntimeException("after(%X,%Y) needs to match both taks and belief patterns, in one of 2 orderings");
+            return 0;
+        }
+
+    }
+
+
+    public After after(Term arg1, Term arg2) {
+        int order = getTaskOrder(arg1, arg2);
+        if (order == 0) return null;
+        return new After(order == 1);
+    }
+    public Concurrent concurrent(Term arg1, Term arg2) {
+        int order = getTaskOrder(arg1, arg2);
+        if (order == 0)
+            return null;
+        return new Concurrent();
+    }
+
 }
+
 
 
 

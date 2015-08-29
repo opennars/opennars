@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Access to library of examples/unit tests
@@ -120,11 +121,21 @@ public class LibraryInput extends TextInput {
         this.input = input;
     }
 
+
     public String getSource() {
         return input;
     }
 
     protected static Map<String, String> examples = new HashMap(); //path -> script data
+
+    final static Function<? super String, CharSequence> lineFilter = _line -> {
+        String line = _line.trim();
+        if (line.startsWith("IN:"))
+            line = line.replace("IN:", "");
+        if (line.startsWith("OUT:"))
+            return "";
+        return line;
+    };
 
     public static String getExample(String path) {
         try {
@@ -132,7 +143,7 @@ public class LibraryInput extends TextInput {
             if (existing!=null)
                 return existing;
 
-            existing = FileInput.load(path);
+            existing = FileInput.load(new File(path), lineFilter );
 
             examples.put(path, existing);
             return existing;

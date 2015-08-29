@@ -19,7 +19,7 @@ import java.util.Arrays;
  * @author https://github.com/squito/jutf8
  *         http://svn.apache.org/viewvc/avro/trunk/lang/java/avro/src/main/java/org/apache/avro/other/Utf8.java?revision=1552418&view=co
  */
-public class Utf8 implements CharSequence, Comparable<Utf8> {
+public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
 
     public static final Charset utf8Charset = Charset.forName("UTF-8");
 //    final static CharsetEncoder utf8Encoder = ThreadLocalCoders.encoderFor(utf8Charset)
@@ -36,7 +36,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
         return ThreadLocalCoders.decoderFor(utf8Charset);
     }
 
-    final byte[] bytes;
+    byte[] bytes;
     final int start;
     final int end;
     int length = -1;
@@ -176,10 +176,57 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
         return ByteBuf.create(prefix + str.length()).add((byte) prefix).add(str).toBytes();
     }
 
+    @Override
+    public final byte[] bytes() {
+        return bytes;
+    }
+
+    @Override
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    /**
+     * ordinary array equals comparison with some conditions removed
+     * instance equality between A and B will most likely already performed prior to calling this, so it is not done in this method
+     */
+    public static boolean equals(final Byted A, final Byted B) {
+        final byte[] a = A.bytes();
+        final byte[] b = B.bytes();
+
+        if (a == b)
+            return true;
+
+        if (A.hashCode() != B.hashCode())
+            return false;
+
+        return isEqualContentAndMergeIfTrue(A,a,B,b);
+    }
+
+    /** separate method so that the base equals() method can be more easily inlined */
+    static boolean isEqualContentAndMergeIfTrue(final Byted A, final byte[] a, final Byted B, final byte[] b) {
+
+        final int aLen = a.length;
+        if (b.length != aLen)
+            return false;
+
+        //backwards
+        for (int i = aLen - 1; i >= 0; i--)
+            if (a[i] != b[i]) {
+                //if this happens, it could indicate a BAD HASHING strategy
+                return false;
+            }
+
+        //merge the two instances
+        B.setBytes(a);
+
+        return true;
+    }
+
     /**
      * ordinary array equals comparison with some conditions removed
      */
-    public static boolean equals2(final byte[] a, final byte[] a2) {
+    @Deprecated public static boolean equals2(final byte[] a, final byte[] a2) {
         /*if (a==null || a2==null)
             return false;*/
 
@@ -226,17 +273,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-
-        if (!(obj instanceof Utf8))
-            return false;
-
-        Utf8 u = (Utf8) obj;
-        if (hashCode() != u.hashCode())
-            return false;
-
-        return equals2(bytes, u.bytes);
+        if (this == obj) return true;
+        if (!(obj instanceof Utf8)) return false;
+        return Utf8.equals(this, (Utf8)obj);
     }
 
     public void commit() {

@@ -228,18 +228,18 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
             });
             m.add(pml); */
             
-            JMenuItem gml = new JMenuItem("+ Forgetting Log");
-            gml.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Forgot", new SwingLogPanel(nar,
-                            Events.ConceptForget.class
-                            //, Events.TaskRemove.class, Events.TermLinkRemove.class, Events.TaskLinkRemove.class)
-                    ))
-                    .show(500, 300);
-                }
-            });
-            m.add(gml);
+//            JMenuItem gml = new JMenuItem("+ Forgetting Log");
+//            gml.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    new NWindow("Forgot", new SwingLogPanel(nar,
+//                            Events.ConceptForget.class
+//                            //, Events.TaskRemove.class, Events.TermLinkRemove.class, Events.TaskLinkRemove.class)
+//                    ))
+//                    .show(500, 300);
+//                }
+//            });
+//            m.add(gml);
             
             /* JMenuItem al = new JMenuItem("+ Activity");
             al.addActionListener(new ActionListener() {
@@ -294,14 +294,14 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
             m.add(tt);
             
             
-            JMenuItem it = new JMenuItem("+ Idea Panel");
-            it.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {                    
-                    new NWindow("Ideas", new IdeaPanel(nar)).show(400, 700, false);
-                }
-            });
-            m.add(it);
+//            JMenuItem it = new JMenuItem("+ Idea Panel");
+//            it.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    new NWindow("Ideas", new IdeaPanel(nar)).show(400, 700, false);
+//                }
+//            });
+//            m.add(it);
             
             m.addSeparator();
             

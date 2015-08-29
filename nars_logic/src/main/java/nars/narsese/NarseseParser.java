@@ -83,9 +83,9 @@ public class NarseseParser extends BaseParser<Object>  {
                         sequence(
                                 s(),
                                 firstOf(
-                                        Immediate(),
-                                        Task(),
-                                        sequence("IN:",s(), Task(),"\n") //temporary
+                                        LineComment(),
+                                        PauseInput(),
+                                        Task()
                                 )
                         )
                 );
@@ -158,34 +158,24 @@ public class NarseseParser extends BaseParser<Object>  {
     public Rule LineComment() {
         return sequence(
                 firstOf(
-                        string("//"),
+                        "//",
                         "'",
-                        sequence(string("***"), zeroOrMore('*')), //temporary
+                        sequence("***", zeroOrMore('*')), //temporary
                         "OUT:"
                 ),
                 LineCommentEchoed()  );
     }
 
-    @Cached
     public Rule LineCommentEchoed() {
         return sequence( zeroOrMore(noneOf("\n")),
                 push(echo.echo(match()) ), "\n");
     }
 
-    @Cached
     public Rule PauseInput() {
         return sequence(IntegerNonNegative(),
                 push( PauseInput.pause( (Integer) pop() ) ), "\n" );
     }
-    @Cached
-    public Rule Immediate() {
-        return firstOf(
-                LineComment(),
-                PauseInput()
-                /*Reset(),
-                Volume(),*/
-        );
-    }
+
 
     public Rule Task() {
 

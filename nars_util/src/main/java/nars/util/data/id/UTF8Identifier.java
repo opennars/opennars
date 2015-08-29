@@ -1,9 +1,11 @@
 package nars.util.data.id;
 
+import nars.util.utf8.Byted;
+
 /**
  * Created by me on 6/4/15.
  */
-public abstract class UTF8Identifier extends Identifier {
+public abstract class UTF8Identifier extends Identifier implements Byted {
 
     @Override
     public abstract char[] chars(boolean pretty);

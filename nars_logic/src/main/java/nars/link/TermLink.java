@@ -73,7 +73,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     public final short[] index;
     public final short type;
     private final int hash;
-    private final byte[] prefix;
+    private byte[] prefix;
 
 
     /**
@@ -103,8 +103,13 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     }
 
     @Override
-    public byte[] prefix() {
+    public byte[] bytes() {
         return prefix;
+    }
+
+    @Override
+    public void setBytes(byte[] b) {
+        this.prefix = b;
     }
 
     @Override

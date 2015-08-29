@@ -2,17 +2,26 @@ package nars.meta.pre;
 
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
+import nars.meta.TaskRule;
 import nars.task.Task;
 import nars.term.Term;
 
 /**
- * Created by me on 8/15/15.
+ * After(%X,%Y) Means that the task matching the pattern of the first argument is after the task of the pattern of the 2nd
  */
-public class After extends PreCondition1 {
+public class After extends PreCondition {
 
 
-    public After(Term arg1) {
-        super(arg1);
+    final boolean taskBeforeBelief;
+
+    public After(boolean taskBeforeBelief) {
+        super();
+        this.taskBeforeBelief = taskBeforeBelief;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[" + taskBeforeBelief + "]";
     }
 
     @Override
@@ -21,22 +30,20 @@ public class After extends PreCondition1 {
     }
 
     @Override
-    public boolean test(RuleMatch m, Term a) {
+    public boolean test(RuleMatch m) {
+        if (!m.premise.isEvent())
+            return false;
+
         final Task task = m.premise.getTask();
         final Task belief = m.premise.getBelief();
 
-        if (belief==null || !m.premise.isEvent())
-            return false;
-
         int dur = m.premise.duration();
-        if (a.equals(task.getTerm())) {
-            if (!task.after(belief, dur))
-                return false;
+        if (taskBeforeBelief) {
+            return task.after(belief, dur);
         }
-        else if (a.equals(belief.getTerm())) {
-            if (!belief.after(task, dur))
-                return false;
+        else {
+            return belief.after(task, dur);
         }
-        return true;
+
     }
 }

@@ -1,17 +1,21 @@
 package nars.meta.pre;
 
+import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
-import nars.meta.pre.PreCondition1;
 import nars.task.Task;
-import nars.term.Term;
 
 /**
  * Created by me on 8/15/15.
  */
-public class Concurrent extends PreCondition1 {
+public class Concurrent extends PreCondition {
 
-    public Concurrent(Term arg1) {
-        super(arg1);
+    public Concurrent() {
+        super();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 
     @Override
@@ -20,23 +24,14 @@ public class Concurrent extends PreCondition1 {
     }
 
     @Override
-    public boolean test(RuleMatch m, Term a) {
+    public boolean test(RuleMatch m) {
+        if (!m.premise.isEvent())
+            return false;
+
         final Task task = m.premise.getTask();
         final Task belief = m.premise.getBelief();
 
-        if (belief == null || !m.premise.isEvent())
-            return false;
-
         return task.concurrent(belief, m.premise.duration());
-
-//        if (a.equals(task.getTerm())) {
-//            if (!(!task.after(belief, dur) && !belief.after(task, dur)))
-//                return false;
-//        }
-//        if (a.equals(belief.getTerm())) {
-//            if (!(!task.after(belief, dur) && !belief.after(task, dur)))
-//                return false;
-//        }
-//        return true;
     }
+
 }

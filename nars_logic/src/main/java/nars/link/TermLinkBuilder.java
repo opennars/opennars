@@ -194,11 +194,15 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     @Override
-    public byte[] prefix() {
+    public byte[] bytes() {
         return prefix;
     }
 
 
+    @Override
+    public void setBytes(byte[] b) {
+        this.prefix = b;
+    }
 
     protected void validate() {
         this.prefix = currentTemplate.prefix(incoming);

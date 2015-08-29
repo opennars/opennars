@@ -35,7 +35,7 @@ public class StatementGraphTest {
         n.frame();
 
         String g = m.graph.toString();
-        assertEquals("([a, b, c, d], [<a --> b>=(a,b), <b --> c>=(b,c), <d --> b>=(d,b)])", g);
+        assertEquals("([a, b, c, x, y, d], [<a --> b>=(a,b), <b --> c>=(b,c), <x <-> y>=(x,y), <d --> b>=(d,b)])", g);
 
     }
 }

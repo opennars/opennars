@@ -6,16 +6,15 @@ import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.granular.Granulize;
 import automenta.vivisect.audio.synth.SineWave;
 import nars.Events;
+import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.NARReaction;
-import nars.premise.Premise;
+import nars.event.ConceptReaction;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,17 +22,17 @@ import java.util.stream.Collectors;
 /**
  * Sonifies the activity of concepts being activated and forgotten
  */
-public class ConceptSonification extends NARReaction {
+public class ConceptSonification extends ConceptReaction {
 
     List<String> samples;
 
     private final Audio sound;
-    Map<Concept, SoundProducer> playing = new HashMap();
+    Map<Concept, SoundProducer> playing = Global.newHashMap();
     float audiblePriorityThreshold = 0.8f;
 
 
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
-        super(nar, true, Events.ConceptForget.class, Events.FrameEnd.class);
+        super(nar.memory, true, Events.FrameEnd.class);
 
         this.sound = sound;
 
@@ -119,11 +118,16 @@ public class ConceptSonification extends NARReaction {
             update(f.getConcept());
         }*/
 
-        else if (event == Events.ConceptForget.class) {
-            Concept c = (Concept)args[0];
-            update(c);
-        }
 
+    }
 
+    @Override
+    public void onConceptActive(Concept c) {
+        update(c);
+    }
+
+    @Override
+    public void onConceptForget(Concept c) {
+        update(c);
     }
 }

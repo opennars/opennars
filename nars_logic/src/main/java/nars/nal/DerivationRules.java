@@ -211,6 +211,8 @@ public class DerivationRules {
                 final TaskRule rUnnorm = parser.term(s);
 
                 final TaskRule rNorm = rUnnorm.normalize();
+                if (rNorm == null)
+                    throw new RuntimeException("invalid rule, detected after normalization: " + s);
 
                 boolean added = rules.add(rNorm);
                 if (added) {
@@ -222,7 +224,10 @@ public class DerivationRules {
 
                         _r = _r.normalize();
 
-                        if (rules.add(_r)) {
+                        //normalize may be returned null if the rearranging produced an invalid result
+                        //so do not add null
+
+                        if (_r!=null && rules.add(_r)) {
                             //System.out.println("  " + _r);
                         }
                     });

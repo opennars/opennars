@@ -184,7 +184,7 @@ public class Variable extends Atom {
         final Variable vthat = ((Variable) that);
 
         if (getType() == VAR_PATTERN && vthat.getType() == VAR_PATTERN) {
-            return equalTo(vthat);
+            return super.equals(vthat);
         }
 
         if (!isScoped()) return false;

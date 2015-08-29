@@ -1,6 +1,7 @@
 package nars.util.data.id;
 
 import nars.util.data.Util;
+import nars.util.utf8.Byted;
 import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
 
@@ -114,44 +115,12 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         //should not need to do anything here in the constant/static impl
     }
 
-
     @Override
-    public boolean equalTo(final Identifier x) {
-
-
-
-        //if (x instanceof UTF8Identifier) {
-
-            UTF8Identifier u = (UTF8Identifier) x;
-
-
-            if (hashCode() != u.hashCode())
-                return false;
-
-            final byte[] ub = u.bytes();
-            if (Utf8.equals2(bytes(), ub)) {
-                //share the same data for fast equality test next time
-                //data = ub;
-                return true;
-            }
-
-            return false;
-        //}
-
-        /*
-        //this case should be avoided, it is wasteful
-        System.err.println(this + " wasteful String comparison");
-        return toString().equals(x.toString());
-        */
+    public boolean equals(Object x) {
+        if (this == x) return true;
+        if (!(x instanceof LiteralUTF8Identifier)) return false;
+        return Utf8.equals(this, (Byted)x);
     }
-
-//    /*8 returns true only if the hashes both exist and are different */
-//    public boolean unequalHash(final UTF8Identifier u) {
-//        //if (!hasHash()) return false;
-//        //if (!u.hasHash()) return false;
-//        return hashCode()!=u.hashCode();
-//    }
-
 
     @Override
     public int compareTo(Object o) {
@@ -208,4 +177,8 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         return Utf8.fromUtf8(bytes());
     }
 
+    @Override
+    public void setBytes(byte[] b) {
+        this.data = b;
+    }
 }
