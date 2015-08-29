@@ -35,7 +35,6 @@
         <module>nars_util</module>
         <module>nars_logic</module>
         <module>nars_lab</module>
-        <module>nars_prolog</module>
         <module>nars_gui</module>
         <module>nars_web</module>
     </modules>
