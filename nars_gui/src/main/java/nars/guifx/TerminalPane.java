@@ -3,7 +3,6 @@ package nars.guifx;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-import nars.InputPane;
 import nars.NAR;
 
 /**

@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 /**
  * TODO wikibrowser does not need to modify any DOM links because they will be intercepted.
  * this will make processing the page faster.
+ *
  * @author me
  */
 abstract public class WikiBrowser extends BorderPane {
@@ -41,11 +42,11 @@ abstract public class WikiBrowser extends BorderPane {
     private final WebEngine webEngine;
     private final WikiOntology wikiOntology;
 
-    public WikiBrowser(String startURL) {
+    public WikiBrowser(String startWikiPage) {
         super();
-        
+
         this.wikiOntology = new WikiOntology();
-        
+
         webview = new WebView();
         webEngine = webview.getEngine();
         webEngine.getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
@@ -54,14 +55,19 @@ abstract public class WikiBrowser extends BorderPane {
             public void changed(ObservableValue<? extends State> ov, State oldState, State newState) {
                 if (newState == State.SUCCEEDED) {
                     Platform.runLater(new Runnable() {
-                        @Override public void run() {
+                        @Override
+                        public void run() {
                             processPage();
                             webview.setVisible(true);
-                        }                        
+                        }
                     });
                 }
             }
         });
+
+
+
+
         /*
          webEngine.locationProperty().addListener(new ChangeListener<String>() {
          @Override public void changed(ObservableValue<? extends String> ov, final String oldLoc, final String loc) {
@@ -74,9 +80,9 @@ abstract public class WikiBrowser extends BorderPane {
 
         setTop(newControls());
 
-        
-        if (startURL!=null)
-            loadWikiPage(startURL);                    
+
+        if (startWikiPage != null)
+            loadWikiPage(startWikiPage);
 
     }
 
@@ -89,47 +95,55 @@ abstract public class WikiBrowser extends BorderPane {
 
     static {
         try {
-            jquery = readFile(WikiBrowser.class.getResource("minified-custom.js").toURI(), Charset.defaultCharset());
+            jquery = readFile(WikiBrowser.class.getResource("jquery.js").toURI(), Charset.defaultCharset());
         } catch (Exception ex) {
             Logger.getLogger(WikiBrowser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    protected void processPage() {
+    protected synchronized void processPage() {
         boolean wikiFilter = false;
-        
+
         String location = webEngine.getLocation();
         if (location.contains("://en.m.wikipedia.org") && !location.contains("api.php")) {
             wikiFilter = true;
         }
-        
+
         //JSObject win =  (JSObject) webEngine.executeScript("window");
         //win.setMember("app", new JavaApp());
 
 
-        /*
-         webEngine.setJavaScriptEnabled(true);                
-         webEngine.executeScript(jquery);
-         webEngine.executeScript("var MINI = require('minified'); var _=MINI._, $=MINI.$, $$=MINI.$$, EE=MINI.EE, HTML=MINI.HTML;");
-         */
-        //String script = "$(function() {";
-        
+        webEngine.setJavaScriptEnabled(true);
+
+
+        //TODO store compiled
+        //webEngine.executeScript(jquery);
+
+        //webEngine.executeScript("var MINI = require('minified'); var _=MINI._, $=MINI.$, $$=MINI.$$, EE=MINI.EE, HTML=MINI.HTML;");
+
+
         if (wikiFilter) {
+
             JSObject jsobj = (JSObject) webEngine.executeScript("window");
             jsobj.setMember("category", wikiOntology);
 
-            String script = "";
-            script += "$('body').after('<style>.crb { border: 1px solid #aaa; margin: 2px; padding: 1px; }</style>');";
-            script += "$('head, .header, #page-actions, #jump-to-nav, .top-bar, .navigation-drawer, .edit-page').remove();";
 
-            //Add tag button to each tlink
-            script += "$('a').each(function() { var t = $(this); var h = t.attr('href'); if (h && h.indexOf('#')!==-1) return; t.addClass('crb'); t.after('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>')});";
+            //String script = "$(document).ready(function() {";
+            String script = "window.setTimeout(function() {";
+            {
+                script += "$('body').after('<style>.crb { border: 1px solid #aaa; margin: 2px; padding: 1px; }</style>');";
+                script += "$('head, .header, #page-actions, #jump-to-nav, .top-bar, .navigation-drawer, .edit-page').remove();";
 
-            //Add Tag button to H1 header of article
-            script += "$('#section_0').each(function() { var t = $(this); t.append('<a class=\"crb\" href=\"tag://_\">+</a>')});";
+                //Add tag button to each tlink
+                script += "$('a').each(function() { var t = $(this); var h = t.attr('href'); if (h && h.indexOf('#')!==-1) return; t.addClass('crb'); t.after('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>')});";
 
-            script += "if (window.mw) { category.add(window.mw.config.get('wgCategories')); }";
-            
+                //Add Tag button to H1 header of article
+                script += "$('#section_0').each(function() { var t = $(this); t.append('<a class=\"crb\" href=\"tag://_\">+</a>')});";
+
+                script += "if (window.mw) { category.add(window.mw.config.get('wgCategories')); }";
+            }
+            script += "}, 0);";
+
             webEngine.executeScript(script);
         }
 
@@ -143,15 +157,15 @@ abstract public class WikiBrowser extends BorderPane {
                 //System.err.println("EventType: " + domEventType);
                 if (domEventType.equals("click")) {
                     String href = ((Element) ev.getTarget()).getAttribute("href");
- 
-                    if (href!=null)
+
+                    if (href != null)
                         if (href.startsWith("tag://")) {
                             _onTagClicked(href);
                         }
                 }
             }
         };
-        
+
 //        String currentTag = getCurrentPageTag();
 //        if (currentTag != null) {
 //
@@ -179,11 +193,11 @@ abstract public class WikiBrowser extends BorderPane {
 //            }
 //
 //        }
-        
+
 
     }
 
-//        
+    //
 //        
 //	protected class MyWebViewClient extends WebViewClient {
 //
@@ -253,29 +267,29 @@ abstract public class WikiBrowser extends BorderPane {
 
     public void loadWikiPage(String urlOrTag) {
         webview.setVisible(false);
-        if (urlOrTag.indexOf("/")==-1)
+        if (urlOrTag.indexOf("/") == -1)
             urlOrTag = "http://en.m.wikipedia.org/wiki/" + urlOrTag;
         webEngine.load(urlOrTag);
     }
-    
+
     public String getWikiTag(String url) {
         if (url.contains(".wikipedia.org/wiki/")) {
             int p = url.lastIndexOf('/');
-            String tag = url.substring(p+1);                    
-         
+            String tag = url.substring(p + 1);
+
             int hashLocation = tag.indexOf('#');
-            if (hashLocation!=-1) {
+            if (hashLocation != -1) {
                 tag = tag.substring(0, hashLocation);
             }
             return tag;
         }
         return null;
     }
-    
+
     public String getCurrentPageTag() {
         return getWikiTag(webEngine.getLocation());
     }
-    
+
     private void _onTagClicked(String url) {
         String prefix = "tag://";
         if (!url.startsWith(prefix)) {
@@ -287,21 +301,19 @@ abstract public class WikiBrowser extends BorderPane {
         String tag;
         if (url.startsWith(wikiPrefix)) {
             tag = url.substring(wikiPrefix.length());
-        }
-        else if (url.startsWith("_")) {
+        } else if (url.startsWith("_")) {
             tag = getCurrentPageTag();
-        }
-        else {
+        } else {
             return;
         }
-        
+
         onTagClicked(tag);
 
 
     }
 
     abstract public void onTagClicked(String id);
-    
+
     protected Node newControls() {
         Button nearButton = new Button("Near");
         Button backButton = new Button("Back");
@@ -333,7 +345,7 @@ abstract public class WikiBrowser extends BorderPane {
 //                //"https://en.m.wikipedia.org/wiki/Special:Nearby"
             }
         });
-        
+
         EventHandler<ActionEvent> search = new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -347,32 +359,32 @@ abstract public class WikiBrowser extends BorderPane {
 
         return p;
     }
-    
+
 
     public class WikiOntology {
 
-        public WikiOntology() {            
-        
+        public WikiOntology() {
+
         }
 
-        
+
         public void add(Object o) {
-            JSObject j = (JSObject)o;
+            JSObject j = (JSObject) o;
             List<String> categories = new ArrayList();
-            
-            int length = (int)j.getMember("length");
+
+            int length = (int) j.getMember("length");
             for (int i = 0; i < length; i++) {
                 Object x = j.getSlot(i);
                 if (x instanceof String) {
-                    String cat = (String)x;
+                    String cat = (String) x;
                     if (cat.startsWith("All articles "))
                         continue;
                     if (cat.startsWith("Articles with "))
                         continue;
                     if (cat.startsWith("Articles containing "))
-                        continue;                    
+                        continue;
                     if (cat.startsWith("Articles needing "))
-                        continue;                    
+                        continue;
                     if (cat.startsWith("CS1 errors:"))
                         continue;
                     if (cat.startsWith("Use dmy dates "))
@@ -380,44 +392,44 @@ abstract public class WikiBrowser extends BorderPane {
                     if (cat.startsWith("Pages using citations with "))
                         continue;
                     if (cat.startsWith("Pages containing cite ")) continue;
-                    if (cat.startsWith("Wikipedia articles "))  continue;
-                    if (cat.startsWith("All accuracy "))  continue; 
-                    if (cat.startsWith("All disambiguation "))  continue; 
-                    if (cat.startsWith("Wikipedia semi-protected "))  continue; 
-                    if (cat.startsWith("Commons category with "))  continue;
-                    if (cat.startsWith("Articles to be expanded "))  continue;
-                    if (cat.startsWith("Use British English "))  continue;
-                    if (cat.startsWith("All Wikipedia articles "))  continue;
-                    if (cat.startsWith("Wikipedia indefinitely "))  continue;
-                    if (cat.startsWith("Articles prone to "))  continue;
-                    if (cat.startsWith("All article "))  continue;
-                    if (cat.startsWith("Vague or ambiguous "))  continue;
-                    
-                    
+                    if (cat.startsWith("Wikipedia articles ")) continue;
+                    if (cat.startsWith("All accuracy ")) continue;
+                    if (cat.startsWith("All disambiguation ")) continue;
+                    if (cat.startsWith("Wikipedia semi-protected ")) continue;
+                    if (cat.startsWith("Commons category with ")) continue;
+                    if (cat.startsWith("Articles to be expanded ")) continue;
+                    if (cat.startsWith("Use British English ")) continue;
+                    if (cat.startsWith("All Wikipedia articles ")) continue;
+                    if (cat.startsWith("Wikipedia indefinitely ")) continue;
+                    if (cat.startsWith("Articles prone to ")) continue;
+                    if (cat.startsWith("All article ")) continue;
+                    if (cat.startsWith("Vague or ambiguous ")) continue;
+
+
                     String c = categoryToPage(cat);
                     if (!c.equals(getCurrentPageTag()))
                         categories.add(c);
                 }
             }
-            
+
             if (categories.size() > 0) {
 //                NTag n = new NTag(getCurrentPageTag(), getCurrentPageTag(), categories);
 //                core.publish(n);
             }
         }
     }
-    
+
     public static String categoryToPage(String category) {
         return category.replaceAll(" ", "_");
     }
-    
+
 }
 
 
-		//String url = urlOrTag;
-		//String[] sects = url.split("/");
-        //String tag = sects[sects.length-1];
-                // process page loading
+//String url = urlOrTag;
+//String[] sects = url.split("/");
+//String tag = sects[sects.length-1];
+// process page loading
 //		try {
 //			Document d = Jsoup.parse(new URL(url), TIMEOUT_MS);
 //

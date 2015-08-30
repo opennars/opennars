@@ -65,7 +65,7 @@ public class TreePane extends BorderPane {
         tree.setShowRoot(false);
 
 
-        setCenter(tree);
+        setCenter(NARfx.scrolled(tree));
 
         onFrame = new FrameReaction(n) {
             @Override
@@ -76,18 +76,15 @@ public class TreePane extends BorderPane {
         };
         {
             NSliderFX ns;
-            Pane p = new FlowPane(
-                    new Label("Pri Min"),
-                    ns = new NSliderFX(80, 40)
-            );
+            setTop( new FlowPane(
+                    new Label("PriMin"),
+                    ns = new NSliderFX(80, 20)
+            ));
 
-            minPriority = ns.value;
-
-            minPriority.addListener((v) -> {
+            (this.minPriority = ns.value).addListener((v) -> {
                 update();
             });
 
-            setTop(p);
         }
 
         autosize();

@@ -3,12 +3,13 @@
     -fx-padding: 12 30 12 30;
     -fx-border-width: 0;
 }
-.button:hover {
+/*.button:hover {
 
 }
 .button:pressed {
 
-}
+}*/
+
 
 
 .label {
@@ -18,6 +19,14 @@
 
 .menubuttonLabel {
     -fx-fill: #fff;
+}
+
+.ComingSoon {
+
+    -fx-font-size: 150%;
+    -fx-font-style: italic bold;
+    -fx-opacity: 0.25;
+
 }
 
 /* from: http://www.e-zest.net/blog/gradients-in-javafx-2/#prettyPhoto */

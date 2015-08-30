@@ -49,10 +49,10 @@
     /*default font */
     -fx-font-family: 'Monospaced';
     /*-fx-font-size: 16.0px;*/
-    -fx-disabled-opacity: 0.8;
+    /*-fx-disabled-opacity: 0.8;*/
 
-    -flatter-red: rgb(237.0, 68.0, 37.0);
-    -flatter-blue: rgb(0.0, 184.0, 222.0);
+    /*-flatter-red: rgb(237.0, 68.0, 37.0);
+    -flatter-blue: rgb(0.0, 184.0, 222.0);*/
 }
 
 .mnemonic-underline {
@@ -60,7 +60,7 @@
 }
 
 .text {
-    /*-fx-font-smoothing-type: lcd;*/
+    -fx-font-smoothing-type: lcd;
 }
 
 .emoji-text {
@@ -117,6 +117,10 @@
     -fx-background-color: #206;
 }
 
+.label {
+    -fx-text-fill: -fx-text-base-color;
+    -fx-fill: -fx-text-base-color;
+}
 .toggle-button, .button{
     -fx-background-color: #222;
     -fx-background-insets:  0.0;
@@ -165,10 +169,9 @@
  ******************************************************************************/
 
 .text-area , .text-field {
-    -fx-background-color: white;
+    -fx-background-color: rgb(0,0,0);
     -fx-background-insets:  0.0;
-    -fx-background-radius: 2.0;
-    -fx-padding: 0.7em;
+    -fx-padding: 0.25em;
     -fx-border-width: 0.0;
     -fx-prompt-text-fill: derive(-dark, 50.0%);
     -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
@@ -176,15 +179,10 @@
 
 .text-area .text, .text-field > * > .text {
     -fx-effect: null;
-    -fx-fill: -dark;
 }
 
-.text-area {
-    -fx-padding: 0.15em;
-}
 
 .text-area .content {
-    -fx-padding: 0.7em;
     -fx-border-width: 0.0;
     -fx-background-color: transparent;
 }
@@ -194,9 +192,6 @@
 }
 
 .text-area:focused, .text-field:focused {
-    -fx-background-color: #333; /*-flatter-blue, derive(rgb(94.0, 203.0, 234.0), 80.0%);*/
-    -fx-background-insets: 0.0, 0.2em;
-    -fx-background-radius: 2.0;
 }
 
 .slider {

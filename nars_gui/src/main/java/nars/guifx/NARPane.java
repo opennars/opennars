@@ -2,19 +2,26 @@ package nars.guifx;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.NARStream;
 import nars.event.NARReaction;
+import nars.util.event.Reaction;
+
+import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
+import static nars.guifx.NARfx.scrolled;
 
 /**
  * Created by me on 1/21/15.
@@ -22,10 +29,12 @@ import static javafx.application.Platform.runLater;
 public class NARPane extends BorderPane {
 
 
-    private final BorderPane menu = new BorderPane();
+    private final TabPane menu = new TabPane();
 
     public final TabPane content = new TabPane();
+
     public final NARControlFX controlStrip;
+    private final NARStream narstream;
 
     Tab console = null;
 
@@ -133,7 +142,7 @@ public class NARPane extends BorderPane {
                     tabDetacher.stylesheets(getScene().getStylesheets().toArray(new String[getScene().getStylesheets().size()]));
         });
 
-        NARStream s = new NARStream(n);
+        NARStream s = this.narstream = new NARStream(n);
 
         controlStrip = new NARControlFX(nar, true, true, true) {
             @Override
@@ -165,7 +174,39 @@ public class NARPane extends BorderPane {
         //s.forEachCycle(lp::update);
 
         //f.setCenter( scrolled(lp)       );
-        f.setCenter(NARfx.scrolled(new TreePane(n)));
+
+        menu.setSide(Side.LEFT);
+        menu.getTabs().addAll(
+
+                new TabX.TabButton("+",
+                        scrolled( new NARReactionPane() ) )
+                        .button("I/O", (e) -> {  })
+                        .button("Graph", (e) -> {  })
+                        .button("About", (e) -> {  })
+                ,
+
+                new TabX("Tasks",
+                    new TreePane(n)).closeable(false),
+                new TabX("Concepts",
+                        new VBox()).closeable(false),
+
+
+
+//                new TabX("Stats",
+//                    new VBox()).closeable(false),
+
+                new TabX("InterNAR",
+                        new VBox()).closeable(false)
+
+
+
+
+        );
+
+        menu.setRotateGraphic(true);
+
+        f.setCenter(menu);
+
         f.setRight(controlStrip);
 
 
@@ -216,4 +257,18 @@ public class NARPane extends BorderPane {
 
     }
 
+
+    public class NARReactionPane extends NARCollectionPane<Reaction> {
+
+        public NARReactionPane() {
+            super(narstream, r ->
+                    new Label(r.toString())
+            );
+        }
+
+        @Override
+        public void collect(Consumer<Reaction> c) {
+            narstream.nar.memory.exe.forEachReaction(c);
+        }
+    }
 }

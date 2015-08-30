@@ -37,6 +37,8 @@
                 <directory>${basedir}/src/main/java/</directory>
                 <includes>
                     <include>**/*.css</include>
+                    <include>**/*.html</include>
+                    <include>**/*.js</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

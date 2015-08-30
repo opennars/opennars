@@ -6,9 +6,10 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Control;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
@@ -24,12 +25,20 @@ public class NSliderFX extends Canvas {
     private final GraphicsContext g;
 
     public final ChangeListener<Number> redrawOnDoubleChange = (observable, oldValue, newValue) -> {
+        //TODO debounce these with a AtomicBoolean or something
         redrawLater();
     };
 
 
     public NSliderFX(double w, double h) {
-        super(w, h);
+        super();
+
+        if (h <= 0) {
+            maxHeight(Double.MAX_VALUE);
+        }
+        setHeight(h);
+        setWidth(w);
+
 
         //setManaged(false);
         //setPickOnBounds(false);
@@ -63,6 +72,8 @@ public class NSliderFX extends Canvas {
         value.addListener(redrawOnDoubleChange);
         min.addListener(redrawOnDoubleChange);
         max.addListener(redrawOnDoubleChange);
+        widthProperty().addListener(redrawOnDoubleChange);
+        heightProperty().addListener(redrawOnDoubleChange);
 
         g = getGraphicsContext2D();
         redraw();
@@ -118,7 +129,8 @@ public class NSliderFX extends Canvas {
         g.strokeRect(0, 0, W, H);
 
         g.setLineWidth(0);
-        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), 1f, 0.5 + 0.5 * p, 1f));
+        double hp = 0.5 + 0.5 * p;
+        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, hp, 1f));
         g.fillRect(mh, mh, barSize - mh*2, H - mh*2);
     }
 

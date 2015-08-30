@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * TODO separate this into a single-thread and multithread implementation
  */
 abstract public class EventEmitter<K,V>  {
+
 
     abstract public List<Reaction<K,V>> all(K op);
 
@@ -158,6 +160,9 @@ abstract public class EventEmitter<K,V>  {
 //        }
 //    }
 
+    abstract public void forEachReaction(Consumer<Reaction> c);
+
+
     /** single-thread synchronous (in-thread) event emitter with direct array access
      * NOT WORKING YET
      * */
@@ -167,6 +172,13 @@ abstract public class EventEmitter<K,V>  {
 
         final Function<K, List<Reaction<K,V>>> getNewChannel = k -> { return newChannelList(); };
 
+
+        @Override
+        public void forEachReaction(Consumer<Reaction> c) {
+            for (List<Reaction<K, V>> reactionList : reactions.values()) {
+                reactionList.forEach(c);
+            }
+        }
 
         @Override
         public String toString() {

@@ -52,6 +52,11 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
     @Deprecated protected NAR nar;
 
 
+    @Override
+    public String toString() {
+        return "^" + term.toString();
+    }
+
     public OpReaction(Term term) {
         if (term == null) {
             term = Atom.the(getClass().getSimpleName());
@@ -155,7 +160,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
             for (final Task t : feedback) {
                 if (t == null) continue;
                 t.setCause(op);
-                t.log("Feedback");
+                //t.log("Feedback");
 
                 memory.add(t);
             }
