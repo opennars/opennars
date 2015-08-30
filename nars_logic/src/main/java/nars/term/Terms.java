@@ -3,7 +3,6 @@ package nars.term;
 import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
-import nars.Op;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -182,7 +181,7 @@ public class Terms {
 
         final Term[] list;
 
-        if ((t1.operator() == t2.operator()))  {
+        if ((t1.op() == t2.op()))  {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, t2);
@@ -205,7 +204,7 @@ public class Terms {
 
     public static Term reduceComponentOneLayer(Compound t1, Term t2, AbstractMemory memory) {
         Term[] list;
-        if ((t1.operator() == t2.operator())) {
+        if ((t1.op() == t2.op())) {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, t2);

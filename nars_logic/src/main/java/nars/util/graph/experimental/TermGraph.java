@@ -33,7 +33,7 @@ abstract class TermGraph /* extends AbstractReaction */ implements UndirectedGra
         public ParameterizedTermGraph(NAR nar, Op theOperator, boolean sub, boolean supr) {
             this(nar, new Predicate<Term>() {
                 @Override public boolean apply(Term term) {
-                    return term.operator() == theOperator;
+                    return term.op() == theOperator;
                 }
             }, sub, supr);
         }

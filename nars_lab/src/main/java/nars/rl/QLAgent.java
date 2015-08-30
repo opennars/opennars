@@ -167,7 +167,7 @@ public class QLAgent<S extends Term> extends NARAgent {
     /** fast immediate checks to discount terms which are definitely not representative of a state */
     public boolean isRowPrefilter(Term s) {
         //TODO use a standard subject for all state data that can be tested quickly
-        return (s.operator()== Op.INHERITANCE);
+        return (s.op()== Op.INHERITANCE);
     }
 
     /* the effective action desire value, as aggregated between frames from NARS executions */

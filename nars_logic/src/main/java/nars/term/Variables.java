@@ -1,12 +1,12 @@
 package nars.term;
 
-import com.google.common.base.Utf8;
 import nars.Memory;
+import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Junction;
 import nars.term.transform.FindSubst;
-import nars.util.data.id.LiteralUTF8Identifier;
+import org.apache.commons.collections.map.Flat3Map;
 import org.infinispan.commons.equivalence.ByteArrayEquivalence;
 
 import java.util.HashMap;
@@ -19,12 +19,12 @@ import java.util.Random;
  */
 public class Variables {
 
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Memory memory) {
-        return findSubstitute(type, term1, term2, map1, map2, memory.random);
+    public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Memory memory) {
+        return findSubstitute(varType, term1, term2, map1, map2, memory.random);
     }
 
-    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Random random) {
-        return new FindSubst(type, map1, map2, random).get(term1, term2);
+    public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Random random) {
+        return new FindSubst(varType, map1, map2, random).get(term1, term2);
     }
 
     /**
@@ -33,8 +33,8 @@ public class Variables {
      * this is to delay the instantiation of the 2 HashMap until necessary to avoid
      * wasting them if they are not used.
      */
-    @Deprecated public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term>[] map, final Random random) {
-        FindSubst f = new FindSubst(type, map[0], map[1], random);
+    @Deprecated public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term>[] map, final Random random) {
+        FindSubst f = new FindSubst(varType, map[0], map[1], random);
         boolean b = f.get(term1, term2);
         map[0] = f.map0;
         map[1] = f.map1;
@@ -53,28 +53,28 @@ public class Variables {
     /**
      * To unify two terms
      *
-     * @param type The type of variable that can be substituted
+     * @param varType The varType of variable that can be substituted
      * @param t    The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term[] t, final Random random) {
-        return unify(type, t[0], t[1], t, random);
+    public static boolean unify(final Op varType, final Term[] t, final Random random) {
+        return unify(varType, t[0], t[1], t, random);
     }
 
 
     /**
      * To unify two terms
      *
-     * @param type      The type of variable that can be substituted
+     * @param varType      The varType of variable that can be substituted
      * @param compound1 The compound containing the first term, possibly modified
      * @param compound2 The compound containing the second term, possibly modified
      * @param t         The first and second term as an array, which will have been modified upon returning true
      * @return Whether the unification is possible.  't' will refer to the unified terms
      */
-    public static boolean unify(final char type, final Term t1, final Term t2, final Term[] compound, final Random random) {
+    public static boolean unify(final Op varType, final Term t1, final Term t2, final Term[] compound, final Random random) {
         final Map<Term, Term> map[] = new Map[2]; //begins empty: null,null
 
-        final boolean hasSubs = findSubstitute(type, t1, t2, map, random);
+        final boolean hasSubs = findSubstitute(varType, t1, t2, map, random);
         if (hasSubs) {
             final Term a = applySubstituteAndRenameVariables(((Compound) compound[0]), map[0]);
             if (a == null) return false;
@@ -225,13 +225,15 @@ public class Variables {
     /**
      * Check if two terms can be unified
      *
-     * @param type  The type of variable that can be substituted
+     * @param varType  The varType of variable that can be substituted
      * @param term1 The first term to be unified
      * @param term2 The second term to be unified
      * @return Whether there is a substitution
      */
-    public static boolean hasSubstitute(final char type, final Term term1, final Term term2, final Random random) {
-        return findSubstitute(type, term1, term2, new HashMap<>(), new HashMap<>(), random);
+    public static boolean hasSubstitute(final Op varType, final Term term1, final Term term2, final Random random) {
+        return findSubstitute(varType, term1, term2,
+                new Flat3Map(), new Flat3Map(),
+                random);
     }
 
 }

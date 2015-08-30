@@ -1,5 +1,6 @@
 package nars.meta.pre;
 
+import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
@@ -12,7 +13,7 @@ import nars.term.Variable;
  */
 public class MatchTaskBeliefPattern extends PreCondition {
 
-    final PairMatchingProduct pattern;
+    public final PairMatchingProduct pattern;
     //private final Term taskPattern, beliefPattern;
     private final boolean allowNullBelief;
     private final String id;
@@ -26,7 +27,7 @@ public class MatchTaskBeliefPattern extends PreCondition {
             // if nothing else in the rule involves this term
             // which will be a singular VAR_PATTERN variable
             // then allow null
-            if (((Variable)beliefPattern).getType()!='%')
+            if (beliefPattern.op()!= Op.VAR_PATTERN)
                 throw new RuntimeException("not what was expected");
 
             allowNullBelief = (rule.countOccurrences(pattern) == 1);

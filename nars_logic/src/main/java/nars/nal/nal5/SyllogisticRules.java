@@ -602,7 +602,7 @@ public final class SyllogisticRules {
         TaskSeed newTask = nal.newDoublePremise(task, belief, deduction); //NOTE: overlap may be tested earlier, try to do it only once
         if (newTask == null) return null;
 
-        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), nal.memory.random);
+        boolean conditionalTask = Variables.hasSubstitute(Op.VAR_INDEPENDENT, premise2, belief.getTerm(), nal.memory.random);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -628,17 +628,17 @@ public final class SyllogisticRules {
             index = (short) index2;
         } else {
             Term[] u = new Term[]{premise1, premise2};
-            boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u, nal.memory.random);
+            boolean match = Variables.unify(Op.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u, nal.memory.random);
             premise1 = (Implication) u[0];
             premise2 = u[1];
 
-            if (!match && ((commonComponent.operator() == oldCondition.operator()))) {
+            if (!match && ((commonComponent.op() == oldCondition.op()))) {
 
                 Compound compoundCommonComponent = ((Compound) commonComponent);
 
                 if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index)) { // assumption: { was missing
                     u = new Term[]{premise1, premise2};
-                    match = Variables.unify(Symbols.VAR_INDEPENDENT,
+                    match = Variables.unify(Op.VAR_INDEPENDENT,
                             oldCondition.term[index],
                             compoundCommonComponent.term[index],
                             u, nal.memory.random);
@@ -782,7 +782,7 @@ public final class SyllogisticRules {
         final Task task = nal.getTask();
         final Task belief = nal.getBelief();
 
-        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), r);
+        boolean conditionalTask = Variables.hasSubstitute(Op.VAR_INDEPENDENT, premise2, belief.getTerm(), r);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -802,13 +802,13 @@ public final class SyllogisticRules {
         Conjunction oldCondition = (Conjunction) tm;
 
         Term[] u = new Term[]{premise1, premise2};
-        boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u, r);
+        boolean match = Variables.unify(Op.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u, r);
         premise1 = (Equivalence) u[0];
         premise2 = u[1];
 
-        if (!match && ((commonComponent.operator() == oldCondition.operator()))) {
+        if (!match && ((commonComponent.op() == oldCondition.op()))) {
             u = new Term[]{premise1, premise2};
-            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u, r);
+            match = Variables.unify(Op.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u, r);
             premise1 = (Equivalence) u[0];
             premise2 = u[1];
         }
@@ -919,7 +919,7 @@ public final class SyllogisticRules {
         Truth value2 = belief.getTruth();
         Term content;
 
-        boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getTerm(), nal.memory.random);
+        boolean keepOrder = Variables.hasSubstitute(Op.VAR_INDEPENDENT, st1, task.getTerm(), nal.memory.random);
 
         Truth truth = null;
         Budget budget;

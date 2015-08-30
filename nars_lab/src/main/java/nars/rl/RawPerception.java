@@ -124,7 +124,7 @@ public class RawPerception implements Perception {
             Inheritance ii = (Inheritance)t;
             if (!ii.getPredicate().equals(idTerm))
                 return false;
-            if (ii.getSubject().operator() == Op.SET_EXT) {
+            if (ii.getSubject().op() == Op.SET_EXT) {
                 Term subj = ((Compound)ii.getSubject()).term(0);
                 if (subj instanceof Atom) {
                     return true;

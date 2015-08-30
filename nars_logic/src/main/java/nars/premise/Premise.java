@@ -1,9 +1,6 @@
 package nars.premise;
 
-import nars.Events;
-import nars.Global;
-import nars.Memory;
-import nars.Param;
+import nars.*;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
@@ -216,11 +213,11 @@ public interface Premise {
         return s.term(content);
     }
 
-    default public boolean unify(char varType, Term a, Term b, Term[] u) {
+    default public boolean unify(Op varType, Term a, Term b, Term[] u) {
         return Variables.unify(varType, a, b, u, getRandom());
     }
 
-    default public boolean unify(char varType, Term a, Term b) {
+    default public boolean unify(Op varType, Term a, Term b) {
         return unify(varType, a, b, new Term[] { a, b } );
     }
 

@@ -1,7 +1,7 @@
 package nars.process.concept;
 
 import nars.Memory;
-import nars.Symbols;
+import nars.Op;
 import nars.link.TermLink;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -27,7 +27,7 @@ public class QueryVariableExhaustiveResults extends ConceptFireTaskTerm {
     }
 
     public static void forEachMatch(Memory m, Compound queryTerm, Consumer<Task> withBelief) {
-        FindSubst f = new FindSubst(Symbols.VAR_QUERY, m.random);
+        FindSubst f = new FindSubst(Op.VAR_QUERY, m.random);
         m.getControl().forEach(c -> {
             if (!c.hasBeliefs())
                 return;

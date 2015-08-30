@@ -35,7 +35,7 @@ import static nars.Symbols.*;
 public class Variable extends Atom {
 
 
-    private transient final Op op;
+    public transient final Op op;
     private final int structure;
 
     @Override
@@ -47,9 +47,7 @@ public class Variable extends Atom {
         return -1; /** variables have earlier sorting order than non-variables */
     }
 
-    /** caches the type character for faster lookup than charAt(0) */
-    private transient char type = 0;
-    
+
     private final boolean scope;
 
 
@@ -68,10 +66,10 @@ public class Variable extends Atom {
 
     public Variable(final byte[] n, final boolean scope) {
         super(n);
-        this.type = (char)n[0];
+
         this.scope = scope;
 
-        switch (type) {
+        switch ((char)n[0]) {
             case VAR_INDEPENDENT:
                 op = Op.VAR_INDEPENDENT;
                 break;
@@ -88,8 +86,8 @@ public class Variable extends Atom {
                 throw new RuntimeException("Invalid variable type");
 
         }
-        if (type == VAR_PATTERN)
-            structure = 1 << operator().ordinal();
+        if (op != Op.VAR_PATTERN)
+            structure = 1 << op().ordinal();
         else
             structure = 0;
 
@@ -97,7 +95,7 @@ public class Variable extends Atom {
     }
 
     @Override
-    final public Op operator() {
+    final public Op op() {
         return op;
     }
 
@@ -142,15 +140,7 @@ public class Variable extends Atom {
         return clone(false);
     }
 
-    /**
-     * Get the type of the variable
-     *
-     * @return The variable type
-     */
-    public char getType() {
-        return type;
-    }
-    
+
 
     /**
      * A variable is not constant
@@ -183,13 +173,17 @@ public class Variable extends Atom {
 
         final Variable vthat = ((Variable) that);
 
-        if (getType() == VAR_PATTERN && vthat.getType() == VAR_PATTERN) {
+        Op vop = vthat.op;
+        if (vop != op)
+            return false; //different type
+
+        if (op == Op.VAR_PATTERN) {
+            //both VAR_PATTERN
             return super.equals(vthat);
         }
 
         if (!isScoped()) return false;
         if (!vthat.isScoped()) return false;
-
 
         return super.equals(that);
     }
@@ -257,24 +251,30 @@ public class Variable extends Atom {
 
 
     @Override
-    public boolean hasVar(char type) {
-        return (type == getType());
+    final public boolean hasVar(final Op type) {
+        return op == type;
     }
 
-    @Override public boolean hasVar() { return true;     }
-    @Override public int getTotalVariables() {
+    @Override public final boolean hasVar() { return true;     }
+    @Override public final int getTotalVariables() {
         return 1;
     }
 
 
-    @Override public boolean hasVarDep() { return getType() == VAR_DEPENDENT;    }
-    @Override public int varDep() { return hasVarDep() ? 1 : 0;    }
+    @Override public final boolean hasVarDep() { return op == Op.VAR_DEPENDENT;    }
+    @Override public final int varDep() {
+        return op == Op.VAR_DEPENDENT ? 1 : 0;
+    }
 
-    @Override public boolean hasVarIndep() { return getType() == VAR_INDEPENDENT;    }
-    @Override public int varIndep() { return hasVarIndep() ? 1 : 0;    }
+    @Override public final boolean hasVarIndep() { return op == Op.VAR_INDEPENDENT;    }
+    @Override public final int varIndep() {
+        return op == Op.VAR_INDEPENDENT ? 1 : 0;
+    }
 
-    @Override public boolean hasVarQuery() { return getType() == VAR_QUERY;    }
-    @Override public int varQuery() { return hasVarQuery() ? 1 : 0;    }
+    @Override public final boolean hasVarQuery() { return op == Op.VAR_QUERY;    }
+    @Override public final int varQuery() {
+        return op == Op.VAR_QUERY ? 1 : 0;
+    }
 
 
 //    public boolean isCommon() {
@@ -308,7 +308,7 @@ public class Variable extends Atom {
     private static final byte[][] vn4 = new byte[MAX_CACHED_VARNAME_INDEXES/2][];
     
     
-    public static byte[] name(final char type, final int index) {
+    public static byte[] name(final Op type, final int index) {
         if (index > MAX_CACHED_VARNAME_INDEXES)
             return newName(type, index);
 
@@ -331,16 +331,16 @@ public class Variable extends Atom {
         return c;
     }
     
-    protected static byte[] newName(final char type, final int index) {
+    protected static byte[] newName(final Op type, final int index) {
 
         if (index < 36) {
             byte x = Utf8.base36(index);
-            return new byte[] { (byte)type, x};
+            return new byte[] { (byte)type.ch, x};
         }
         else if (index < (36*36)){
             byte x1 = Utf8.base36(index%36);
             byte x2 = Utf8.base36(index/36);
-            return new byte[] { (byte)type, x2, x1};
+            return new byte[] { (byte)type.ch, x2, x1};
         }
         else {
             throw new RuntimeException("variable index out of range for this method");
@@ -362,21 +362,21 @@ public class Variable extends Atom {
 //        return toString().substring(1);
 //    }
 
-    public static Variable the(char varDependent, int counter) {
-        return new Variable(name(varDependent, counter));
+    public static Variable the(Op type, int counter) {
+        return new Variable(name(type, counter));
     }
-    public static Variable theUnscoped(final char type, final int counter) {
+    public static Variable theUnscoped(final Op type, final int counter) {
         return new Variable(name(type, counter), true);
     }
 
     /** returns the default dependent variable */
     public static Variable theDependent() {
-        return the(Symbols.VAR_DEPENDENT, 0);
+        return the(Op.VAR_DEPENDENT, 0);
     }
 
     /** returns the default independent variable */
     public static Variable theIndependent() {
-        return the(Symbols.VAR_INDEPENDENT, 0);
+        return the(Op.VAR_INDEPENDENT, 0);
     }
 
 
@@ -389,7 +389,7 @@ public class Variable extends Atom {
             public void visit(Term t, Term superterm) {
                 if (!has[0]) {
                     if (t instanceof Variable)
-                        if ((((Variable)t).type == Symbols.VAR_PATTERN))
+                        if ((((Variable)t).op == Op.VAR_PATTERN))
                             has[0] = true;
                 }
             }

@@ -21,6 +21,7 @@
 package nars.nal;
 
 import nars.Global;
+import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -92,7 +93,7 @@ public final class CompositionalRules {
 
         final Task taskBelief = nal.getTask();
 
-        if ((!taskBelief.isJudgment()) || (!(taskContent.operator() == beliefContent.operator()))) {
+        if ((!taskBelief.isJudgment()) || (!(taskContent.op() == beliefContent.op()))) {
             return;
         }
 
@@ -704,7 +705,7 @@ public final class CompositionalRules {
         final Task task = p.getTask();
 
 
-        if (!task.isJudgment() || (!(premise1.operator() == premise2.operator())) || oldCompound.containsTerm(premise1)) {
+        if (!task.isJudgment() || (!(premise1.op() == premise2.op())) || oldCompound.containsTerm(premise1)) {
             return null;
         }
 
@@ -851,7 +852,7 @@ OUT: <lock1 --> lock>.
             res1.clear();
             res2.clear();
 
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2, m); //this part is
+            Variables.findSubstitute(Op.VAR_INDEPENDENT, P1, S2, res1, res2, m); //this part is
 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null)
@@ -882,7 +883,7 @@ OUT: <lock1 --> lock>.
             res1.clear();
             res2.clear();
 
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2, m); //this part is
+            Variables.findSubstitute(Op.VAR_INDEPENDENT, S1, P2, res1, res2, m); //this part is
 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null) {
@@ -912,7 +913,7 @@ OUT: <lock1 --> lock>.
             res1.clear();
             res2.clear();
 
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2, m); //this part is
+            Variables.findSubstitute(Op.VAR_INDEPENDENT, S1, S2, res1, res2, m); //this part is
 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null)
@@ -939,7 +940,7 @@ OUT: <lock1 --> lock>.
             res1.clear();
             res2.clear();
 
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2, m); //this part is
+            Variables.findSubstitute(Op.VAR_INDEPENDENT, P1, P2, res1, res2, m); //this part is
 
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null)
@@ -973,7 +974,7 @@ OUT: <lock1 --> lock>.
         for (final Term a1 : aComponents) {
 
             //here the dependent part matters, see example of Issue40
-            if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, a1, b, r1, r2, m)) {
+            if (Variables.findSubstitute(Op.VAR_DEPENDENT, a1, b, r1, r2, m)) {
                 for (Term a2 : aComponents) {
 
                     if (a2 == a1) continue; //this seems safe

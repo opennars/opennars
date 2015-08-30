@@ -17,7 +17,7 @@ public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.SET_INT;
     }
 

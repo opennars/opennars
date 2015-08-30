@@ -22,6 +22,7 @@ package nars.nal.nal1;
 
 import nars.Events.Answer;
 import nars.Memory;
+import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -198,7 +199,7 @@ public class LocalRules {
 
             Term u[] = new Term[]{content, question.getTerm()};
 
-            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.getRandom());
+            boolean unified = Variables.unify(Op.VAR_INDEPENDENT, u, nal.getRandom());
 
             if (unified) {
 

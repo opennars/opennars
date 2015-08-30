@@ -1,5 +1,6 @@
 package nars.process.concept;
 
+import nars.Op;
 import nars.Symbols;
 import nars.link.TermLink;
 import nars.nal.nal1.LocalRules;
@@ -44,7 +45,7 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
         } else {
             /* if goal question or quest */
             if (TemporalRules.matchingOrder(task, belief)) {
-                if (nal.unify(Symbols.VAR_QUERY, task.getTerm(), belief.getTerm())) {
+                if (nal.unify(Op.VAR_QUERY, task.getTerm(), belief.getTerm())) {
                     //TODO see if this is correct because it will be producing
                     //a Task which isnt used
                     return LocalRules.trySolution(belief, task, nal) != null;

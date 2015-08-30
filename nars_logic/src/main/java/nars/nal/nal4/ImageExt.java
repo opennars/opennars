@@ -135,7 +135,7 @@ public class ImageExt extends Image {
      * @return the operate of the term
      */
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.IMAGE_EXT;
     }
 }

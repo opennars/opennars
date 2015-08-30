@@ -33,7 +33,6 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
 import nars.process.NAL;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;
@@ -124,7 +123,7 @@ public final class StructuralRules {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
 
-        if (!(subj.operator() == pred.operator())) {
+        if (!(subj.op() == pred.op())) {
             return;
         }
         
@@ -307,7 +306,7 @@ public final class StructuralRules {
 
         final Term oldContent = p.getTask().getTerm();
         if (oldContent instanceof Statement) {
-            Statement content = Statement.make(oldContent.operator(), subject, predicate, order);
+            Statement content = Statement.make(oldContent.op(), subject, predicate, order);
             if (content != null) {
                 Budget budget = BudgetFunctions.compoundForward(truth, content, p);
                 return p.deriveSingle(content, truth, budget);

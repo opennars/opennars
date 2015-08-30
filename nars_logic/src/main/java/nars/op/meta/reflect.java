@@ -62,10 +62,10 @@ public class reflect extends TermFunction {
             return node;
         }
         Compound t = (Compound)node;
-        switch (t.operator()) {
+        switch (t.op()) {
             case INHERITANCE: return sop((Inheritance)t, "inheritance");
             case SIMILARITY:  return sop((Similarity)t, "similarity");
-            default: return sop(t.operator().toString(), t.term);                
+            default: return sop(t.op().toString(), t.term);
         }
         
     }

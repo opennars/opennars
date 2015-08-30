@@ -19,7 +19,7 @@ public class Product1<T extends Term> extends Compound1<T>  implements Product {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.PRODUCT;
     }
 

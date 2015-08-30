@@ -1,5 +1,6 @@
 package nars.term.transform;
 
+import nars.Op;
 import nars.term.Compound;
 import nars.term.Variable;
 import nars.util.data.FastPutsArrayMap;
@@ -59,7 +60,7 @@ public class VariableNormalization implements VariableTransform {
     public static final VariableTransform singleVariableNormalization = new VariableTransform( ) {
 
         @Override public Variable apply(Compound c, Variable v, int depth) {
-            return Variable.theUnscoped(v.getType(), 1);
+            return Variable.theUnscoped(v.op, 1);
         }
     };
 
@@ -116,7 +117,7 @@ public class VariableNormalization implements VariableTransform {
         final VariableMap finalRename = rename;
         Variable vv = rename.computeIfAbsent(vname, _vname -> {
             //type + id
-            Variable rvv = newVariable(v.getType(), finalRename.size() + 1);
+            Variable rvv = newVariable(v.op, finalRename.size() + 1);
             renamed = !equalName(rvv, v);
             return rvv;
         });
@@ -128,7 +129,7 @@ public class VariableNormalization implements VariableTransform {
         return Arrays.equals(a.bytes(), b.bytes());
     }
 
-    protected Variable newVariable(final char type, int i) {
+    final protected Variable newVariable(final Op type, final int i) {
         return Variable.theUnscoped(type, i);
     }
 

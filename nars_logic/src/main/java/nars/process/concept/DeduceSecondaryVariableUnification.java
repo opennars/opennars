@@ -1,6 +1,7 @@
 package nars.process.concept;
 
 import nars.Global;
+import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -274,14 +275,14 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
     private void dedSecondLayerReduce(ConceptProcess nal, Random r, List<Term> terms_dependent, List<Term> terms_independent, Map<Term, Term> values, Map<Term, Term> smap, Compound firstTerm, Term secTerm, Term secterm_unwrap, Term t1_unwrap) {
         smap.clear();
         values.clear(); //we are only interested in first variables
-        if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, t1_unwrap, secterm_unwrap, values, smap, r)) {
+        if (Variables.findSubstitute(Op.VAR_DEPENDENT, t1_unwrap, secterm_unwrap, values, smap, r)) {
             dedSecondLayerReduce(nal, terms_dependent, values, firstTerm, secTerm);
         }
 
 
         smap.clear();
         values.clear();
-        if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, t1_unwrap, secterm_unwrap, values, smap, r)) {
+        if (Variables.findSubstitute(Op.VAR_INDEPENDENT, t1_unwrap, secterm_unwrap, values, smap, r)) {
             dedSecondLayerReduce(nal, terms_independent, values, firstTerm, secTerm);
         }
     }

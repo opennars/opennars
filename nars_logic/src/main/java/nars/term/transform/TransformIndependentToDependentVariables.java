@@ -1,6 +1,6 @@
 package nars.term.transform;
 
-import nars.Symbols;
+import nars.Op;
 import nars.term.Term;
 import nars.term.Variable;
 
@@ -11,14 +11,14 @@ public class TransformIndependentToDependentVariables extends VariableSubstituti
     int counter = 0;
 
     @Override
-    public boolean test(Term possiblyAVariable) {
+    public boolean test(final Term possiblyAVariable) {
         if (super.test(possiblyAVariable))
             return possiblyAVariable.hasVarIndep();
         return false;
     }
 
     @Override
-    protected Variable getSubstitute(Variable v) {
-        return Variable.the(Symbols.VAR_DEPENDENT, counter++);
+    protected Variable getSubstitute(final Variable v) {
+        return Variable.the(Op.VAR_DEPENDENT, counter++);
     }
 }

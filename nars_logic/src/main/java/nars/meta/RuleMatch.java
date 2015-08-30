@@ -1,7 +1,7 @@
 package nars.meta;
 
 import nars.Global;
-import nars.Symbols;
+import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
@@ -42,7 +42,7 @@ public class RuleMatch extends FindSubst {
      * @param random
      */
     public RuleMatch(Random random) {
-        super(Symbols.VAR_PATTERN, Global.newHashMap(8), Global.newHashMap(8), random);
+        super(Op.VAR_PATTERN, Global.newHashMap(8), Global.newHashMap(8), random);
     }
 
     /** set the next premise */
@@ -52,6 +52,12 @@ public class RuleMatch extends FindSubst {
         taskBelief.set(nal.getTask(), nal.getBelief());
 
         //testCache.clear();
+    }
+
+    @Override protected void putCommon(Variable a, Variable b) {
+        //no common variables
+        map0.put(a, a);
+        map1.put(b, b);
     }
 
     /**

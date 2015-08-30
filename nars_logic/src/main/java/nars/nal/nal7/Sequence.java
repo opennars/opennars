@@ -64,7 +64,7 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.SEQUENCE;
     }
 

@@ -105,7 +105,7 @@ public class NumberPerception extends NullOperator {
     }
 
     private double getValue(Term value) {
-        if (value.operator() != Op.ATOM)
+        if (value.op() != Op.ATOM)
             return Double.NaN;
         try {
             return Double.valueOf(value.toStringCompact());

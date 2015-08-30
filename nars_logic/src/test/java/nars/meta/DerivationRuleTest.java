@@ -29,23 +29,23 @@ public class DerivationRuleTest extends TestCase {
 
         {
             TaskRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
-            assertEquals("((%A, %A), (%A, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
+            assertEquals("((A, A), (A, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
             // assertEquals(12, x.getVolume());
         }
 
         {
-            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
+            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (Truth:Revision, Desire:Weak)>");
             assertEquals(19, x.volume());
             assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
         }
         {
-            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
+            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> nonvar>, (Truth:Revision, Desire:Weak)>");
             assertEquals(19, x.volume()); //same volume as previous block
             assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> nonvar>, (<Revision --> Truth>, <Weak --> Desire>)))", x.toString());
         }
 
         {
-            TaskRule x = p.termRaw("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
+            TaskRule x = p.term("< <A --> B>, <B --> A> |- <A <-> B>, (<Nonsense --> Test>)>");
             assertEquals(16, x.volume());
             assertEquals("((<%A --> %B>, <%B --> %A>), (<%A <-> %B>, (<%Nonsense --> %Test>)))", x.toString());
         }
@@ -58,7 +58,7 @@ public class DerivationRuleTest extends TestCase {
 
         {
             //and the first complete rule:
-            TaskRule x = p.termRaw("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
+            TaskRule x = p.term("<(S --> M), (P --> M) |- (P <-> S), (TruthComparison,DesireStrong)>");
             assertEquals("((<%S --> %M>, <%P --> %M>), (<%P <-> %S>, (%TruthComparison, %DesireStrong)))", x.toString());
             assertEquals(15, x.volume());
         }

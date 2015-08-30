@@ -21,7 +21,7 @@
 package nars.nal;
 
 import nars.Global;
-import nars.Symbols;
+import nars.Op;
 import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -35,13 +35,12 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.process.NAL;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.*;
 
 import java.util.Random;
 
-import static nars.Symbols.*;
+import static nars.Op.*;
 
 /**
  * Table of logic rules, indexed by the TermLinks for the task and the
@@ -380,7 +379,7 @@ public class RuleTables {
                 }
                 break;
             case 21:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), u, r)) {
+                if (Variables.unify(Op.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), u, r)) {
                     asymSt = (Statement) u[0];
                     symSt = (Statement) u[1];
 
@@ -389,7 +388,7 @@ public class RuleTables {
                 }
                 break;
             case 22:
-                if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), u, r)) {
+                if (Variables.unify(Op.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), u, r)) {
                     asymSt = (Statement) u[0];
                     symSt = (Statement) u[1];
 
@@ -401,7 +400,7 @@ public class RuleTables {
     }
 
     private static void asymmetricSymmetric(Task asym, Task sym, int figure, NAL nal, Random r, Term t1, Term t2, Term[] u) {
-        if (Variables.unify(VAR_QUERY, t1, t2, u, r)) {
+        if (Variables.unify(Op.VAR_QUERY, t1, t2, u, r)) {
             LocalRules.matchAsymSym(asym, sym, figure, nal);
         } else {
             switch (figure) {
@@ -615,7 +614,7 @@ public class RuleTables {
      * @param nal        Reference to the memory
      */
     public static void compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
-        if ((taskTerm.operator() == beliefTerm.operator())) {
+        if ((taskTerm.op() == beliefTerm.op())) {
             if (taskTerm.length() >= beliefTerm.length()) {
                 compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
             } else if (taskTerm.length() < beliefTerm.length()) {
@@ -642,7 +641,7 @@ public class RuleTables {
         Term component = compound.term[index];
 
         Task task = nal.getTask();
-        if ((component.operator() == statement.operator())) {
+        if ((component.op() == statement.op())) {
             if ((compound instanceof Conjunction) && (nal.getBelief() != null)) {
                 final Random r = nal.memory.random;
 

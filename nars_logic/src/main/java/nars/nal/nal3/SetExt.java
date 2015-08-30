@@ -16,7 +16,7 @@ import java.util.Collection;
 public interface SetExt extends SetTensional {
 
     @Override
-    default public Op operator() {
+    default public Op op() {
         return Op.SET_EXT;
     }
 

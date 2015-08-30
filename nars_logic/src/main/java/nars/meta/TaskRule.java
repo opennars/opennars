@@ -87,7 +87,7 @@ public class TaskRule extends Rule<Premise,Task> {
     /** non-null;
      *  if it returns Op.VAR_PATTERN this means that any type can apply */
     public Op getTaskTermType() {
-        return getTask().operator();
+        return getTask().op();
     }
 
     protected Term getTask() {
@@ -103,7 +103,7 @@ public class TaskRule extends Rule<Premise,Task> {
     public Op getBeliefTermType() {
 //        if (getPremises().length() < 2)
 //            return Op.NONE;
-        return getBelief().operator();
+        return getBelief().op();
     }
 
     protected Term getBelief() {

@@ -13,7 +13,6 @@ import nars.util.data.rope.impl.PrePostCharRope;
 import org.junit.Test;
 
 import static java.lang.String.valueOf;
-import static nars.Op.*;
 import static nars.Symbols.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -55,7 +54,7 @@ public class TextsTest {
             return new PrePostCharRope(STATEMENT_OPENER, STATEMENT_CLOSER, Rope.cat(
                 toString(s.getSubject()),
                 valueOf(' '),
-                s.operator().toString(),
+                s.op().toString(),
                 valueOf(' '),
                 toString(s.getPredicate())
             ));
@@ -70,7 +69,7 @@ public class TextsTest {
             }
             
             Rope ttt = Rope.cat(tt);
-            return Rope.cat(String.valueOf(COMPOUND_TERM_OPENER), ct.operator().toString(), ttt, String.valueOf(COMPOUND_TERM_CLOSER));
+            return Rope.cat(String.valueOf(COMPOUND_TERM_OPENER), ct.op().toString(), ttt, String.valueOf(COMPOUND_TERM_CLOSER));
 
         }
         else

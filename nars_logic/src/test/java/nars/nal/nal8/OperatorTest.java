@@ -46,7 +46,7 @@ public class OperatorTest {
 
     @Test public void testOperationIsInheritance() {
         Operation o = Operation.op(Product.make("x"), Operator.the("x"));
-        assertEquals(Op.INHERITANCE, o.operator());
+        assertEquals(Op.INHERITANCE, o.op());
     }
 
     @Test public void testTermReactionRegistration() {

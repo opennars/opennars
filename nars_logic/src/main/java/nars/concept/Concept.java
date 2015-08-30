@@ -34,7 +34,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.truth.Truth;
-import nars.util.data.id.Identifier;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -70,7 +69,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     boolean link(Task currentTask);
 
     default Op operator() {
-        return getTerm().operator();
+        return getTerm().op();
     }
 
 

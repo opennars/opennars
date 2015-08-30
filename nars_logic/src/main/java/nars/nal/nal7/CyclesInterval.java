@@ -73,7 +73,7 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
 
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.INTERVAL;
     }
 

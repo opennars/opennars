@@ -3,6 +3,7 @@ package nars.process.concept;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
+import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -134,7 +135,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
         Map<Term, Term> res1 = Global.newHashMap();
         Map<Term, Term> res2 = Global.newHashMap();
 
-        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1, res2, nal.memory.random)) {
+        if(Variables.findSubstitute(Op.VAR_INDEPENDENT, B1, realB2, res1, res2, nal.memory.random)) {
             //ok it unifies, so lets create a &/ term
             for(int i=0;i<term.length;i++) {
                 final Term ti = term[i];

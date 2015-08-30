@@ -17,7 +17,7 @@ public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.SET_EXT;
     }
 

@@ -84,7 +84,7 @@ public class NarseseParserTest {
     public void testIncompleteTask() throws InvalidInputException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
-        assertEquals(Op.INHERITANCE, t.getTerm().operator());
+        assertEquals(Op.INHERITANCE, t.getTerm().op());
         Inheritance i = (Inheritance) t.getTerm();
         assertEquals("a", i.getSubject().toString());
         assertEquals("b", i.getPredicate().toString());
@@ -107,7 +107,7 @@ public class NarseseParserTest {
     public void testNoBudget() throws InvalidInputException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
-        assertEquals(Op.EQUIVALENCE, t.getTerm().operator());
+        assertEquals(Op.EQUIVALENCE, t.getTerm().op());
 
         assertEquals('.', t.getPunctuation());
         assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
@@ -121,7 +121,7 @@ public class NarseseParserTest {
         String tt = "<<a <=> b> --> <c ==> d>>";
         Task t = task(tt + "?");
         assertNotNull(t);
-        assertEquals(Op.INHERITANCE, t.getTerm().operator());
+        assertEquals(Op.INHERITANCE, t.getTerm().op());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.getTruth());
@@ -153,7 +153,7 @@ public class NarseseParserTest {
         String tt = "(a, b, c)";
         Task t = task(tt + "@");
         assertNotNull(t);
-        assertEquals(Op.PRODUCT, t.getTerm().operator());
+        assertEquals(Op.PRODUCT, t.getTerm().op());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('@', t.getPunctuation());
         assertNull(t.getTruth());
@@ -166,7 +166,7 @@ public class NarseseParserTest {
         Product pt = term("(a, b, c)");
 
         assertNotNull(pt);
-        assertEquals(Op.PRODUCT, pt.operator());
+        assertEquals(Op.PRODUCT, pt.op());
 
         testProductABC(pt);
 
@@ -183,24 +183,24 @@ public class NarseseParserTest {
     @Test
     public void testInfix2() throws InvalidInputException {
         Intersect t = term("(x & y)");
-        assertEquals(Op.INTERSECTION_EXT, t.operator());
+        assertEquals(Op.INTERSECTION_EXT, t.op());
         assertEquals(2, t.length());
         assertEquals("x", t.term[0].toString());
         assertEquals("y", t.term[1].toString());
 
         IntersectionInt a = term("(x | y)");
-        assertEquals(Op.INTERSECTION_INT, a.operator());
+        assertEquals(Op.INTERSECTION_INT, a.op());
         assertEquals(2, a.length());
 
         Product b = term("(x * y)");
-        assertEquals(Op.PRODUCT, b.operator());
+        assertEquals(Op.PRODUCT, b.op());
         assertEquals(2, b.length());
 
         Compound c = term("(<a -->b> && y)");
-        assertEquals(Op.CONJUNCTION, c.operator());
+        assertEquals(Op.CONJUNCTION, c.op());
         assertEquals(2, c.length());
         assertEquals(5, c.complexity());
-        assertEquals(Op.INHERITANCE, c.term[1].operator());
+        assertEquals(Op.INHERITANCE, c.term[1].op());
     }
 
 
@@ -275,7 +275,7 @@ public class NarseseParserTest {
         Term a = term("<a --> b>");
         Term x = term("(a --> b)");
         Term y = term("(a-->b)");
-        assertEquals(Op.INHERITANCE, x.operator());
+        assertEquals(Op.INHERITANCE, x.op());
         assertEquals(x, a);
         assertEquals(x, y);
 
@@ -289,7 +289,7 @@ public class NarseseParserTest {
 
         Term abcd = term("((a,b) --> (c,d))");
         Term ABCD = term("<(*,a,b) --> (*,c,d)>");
-        assertEquals(Op.INHERITANCE, x.operator());
+        assertEquals(Op.INHERITANCE, x.op());
         assertEquals(abcd + " != " + ABCD, abcd, ABCD);
     }
 
@@ -318,12 +318,12 @@ public class NarseseParserTest {
     @Test
     public void testSet() {
         Compound xInt = term("[x]");
-        assertEquals(Op.SET_INT_OPENER, xInt.operator());
+        assertEquals(Op.SET_INT_OPENER, xInt.op());
         assertEquals(1, xInt.length());
         assertEquals("x", xInt.term[0].toString());
 
         Compound xExt = term("{x}");
-        assertEquals(Op.SET_EXT_OPENER, xExt.operator());
+        assertEquals(Op.SET_EXT_OPENER, xExt.op());
         assertEquals(1, xExt.length());
         assertEquals("x", xExt.term[0].toString());
 

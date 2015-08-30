@@ -1,5 +1,6 @@
 package nars.process.concept;
 
+import nars.Op;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.RuleTables;
@@ -8,14 +9,12 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal5.SyllogisticRules;
 import nars.process.ConceptProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Variables;
 
-import static nars.Symbols.VAR_INDEPENDENT;
 import static nars.nal.RuleTables.goalFromQuestion;
 
 
@@ -104,7 +103,7 @@ public class TableDerivations extends ConceptFireTaskTerm { //the real RuleTable
                         if (belief != null) {
                             if (beliefTerm instanceof Implication) {
                                 Term[] u = new Term[] { beliefTerm, taskTerm };
-                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, f.memory.random)) {
+                                if (Variables.unify(Op.VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, f.memory.random)) {
                                     if (u[0] instanceof Compound) {
                                         Task<Statement> newBelief = beliefTask.clone((Compound) u[0]/*, Statement.class*/);
                                         if (newBelief != null) {

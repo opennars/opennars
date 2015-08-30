@@ -25,8 +25,6 @@ import nars.Op;
 import nars.Symbols;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
-import nars.util.data.id.Identified;
-import nars.util.data.id.Identifier;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -41,7 +39,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
         return this;
     }
 
-    public Op operator();
+    public Op op();
 
 
     /** volume = total number of terms = complexity + # total variables */
@@ -111,16 +109,16 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
         return TemporalRules.ORDER_NONE;
     }
 
-    default boolean hasVar(final char type) {
+    default boolean hasVar(final Op type) {
 
         switch (type) {
-            case Symbols.VAR_DEPENDENT:
+            case VAR_DEPENDENT:
                 return hasVarDep();
-            case Symbols.VAR_INDEPENDENT:
+            case VAR_INDEPENDENT:
                 return hasVarIndep();
-            case Symbols.VAR_QUERY:
+            case VAR_QUERY:
                 return hasVarQuery();
-            case Symbols.VAR_PATTERN:
+            case VAR_PATTERN:
                 /* if this is the case, its always the case because
                    then its the meta-matcher which asks
                    who only operators with PATTERN variables
@@ -161,7 +159,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     }
 
     @Deprecated default public boolean equalsType(final Term t) {
-        return (operator()== t.operator());
+        return (op()== t.op());
     }
 
     public byte[] bytes();
@@ -248,7 +246,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     }
 
     default boolean levelValid(final int nal) {
-        return operator().levelValid(nal);
+        return op().levelValid(nal);
     }
 
 

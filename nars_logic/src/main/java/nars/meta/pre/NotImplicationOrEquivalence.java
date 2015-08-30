@@ -2,9 +2,6 @@ package nars.meta.pre;
 
 import nars.Op;
 import nars.meta.RuleMatch;
-import nars.nal.nal5.Equivalence;
-import nars.nal.nal5.Implication;
-import nars.task.Task;
 import nars.term.Term;
 
 
@@ -16,7 +13,10 @@ final public class NotImplicationOrEquivalence extends PreCondition1 {
 
     @Override
     public boolean test(final RuleMatch m, final Term arg1) {
-        final Op o = arg1.operator();
+        if (arg1 == null)
+            return true; //?
+
+        final Op o = arg1.op();
         switch (o) {
             case IMPLICATION:
             case IMPLICATION_AFTER:

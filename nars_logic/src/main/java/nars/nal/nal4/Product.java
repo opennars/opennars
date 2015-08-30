@@ -43,7 +43,7 @@ public interface Product extends Term, Iterable<Term> {
      * @return the operate of the term
      */
     @Override
-    default public Op operator() {
+    default public Op op() {
         return Op.PRODUCT;
     }
 

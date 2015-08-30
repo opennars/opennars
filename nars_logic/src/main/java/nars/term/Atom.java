@@ -37,7 +37,7 @@ public class Atom extends ImmutableAtom {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.ATOM;
     }
 
@@ -167,7 +167,7 @@ public class Atom extends ImmutableAtom {
     }
 
     @Override
-    public boolean hasVar(char type) {
+    public boolean hasVar(Op type) {
         return false;
     }
 

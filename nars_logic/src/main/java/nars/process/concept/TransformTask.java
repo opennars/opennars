@@ -152,7 +152,7 @@ public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
         if (indices.length == 2) {
             content = newInh;
         } else if ((oldContent instanceof Statement) && (indices[0] == 1)) {
-            content = Statement.make(oldContent.operator(), oldContent.term[0], newInh, oldContent.getTemporalOrder());
+            content = Statement.make(oldContent.op(), oldContent.term[0], newInh, oldContent.getTemporalOrder());
         } else {
             Term[] componentList;
             Term condition = oldContent.term[0];
@@ -160,7 +160,7 @@ public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
                 componentList = ((Compound) condition).cloneTermsDeepIfContainingVariables(); //cloneTerms();
                 componentList[indices[1]] = newInh;
                 Term newCond = Memory.term((Compound) condition, componentList);
-                content = Statement.make(oldContent.operator(), newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
+                content = Statement.make(oldContent.op(), newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
             } else {
 
                 componentList = oldContent.cloneTermsDeepIfContainingVariables(); //oldContent.cloneTerms();
@@ -171,7 +171,7 @@ public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
                         return null;
                     content = (Compound)newContent;
                 } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
-                    content = Statement.make(oldContent.operator(), componentList[0], componentList[1], oldContent.getTemporalOrder());
+                    content = Statement.make(oldContent.op(), componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
             }
         }

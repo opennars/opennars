@@ -63,7 +63,7 @@ public class SetExtN extends AbstractSetN implements SetExt {
      * @return the operate of the term
      */
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.SET_EXT;
     }
 

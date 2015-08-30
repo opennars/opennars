@@ -44,6 +44,11 @@ public class PairMatchingProduct extends ProductN {
         rehash();
     }
 
+    @Override
+    protected int getStructureBase() {
+        return 0;
+    }
+
     public boolean substitutesMayExist(final PairMatchingProduct pattern) {
         if (impossibleStructure(pattern.structure()))
             return false;
@@ -66,14 +71,11 @@ public class PairMatchingProduct extends ProductN {
         return true;
     }
 
-    @Override
-    public <T extends Term> T normalizeDestructively() {
-        return (T)this;
-    }
 
-    @Override
-    protected <T extends Term> T normalized(boolean destructive) {
-        return (T) this;
-    }
+
+//    @Override
+//    protected <T extends Term> T normalized(boolean destructive) {
+//        return (T) this;
+//    }
 
 }

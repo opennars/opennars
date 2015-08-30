@@ -2,8 +2,8 @@ package nars.nal;
 
 import nars.Global;
 import nars.meta.TaskRule;
+import nars.meta.pre.MatchTaskBeliefPattern;
 import nars.narsese.NarseseParser;
-import nars.term.Term;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -217,18 +217,25 @@ public class DerivationRules {
                 boolean added = rules.add(rNorm);
                 if (added) {
 
-                    //System.out.println(s); System.out.println("  " + rNorm);
+                    /*System.out.println(s);
+                    System.out.println("  " + rNorm);
+                    System.out.println("    " +
+                                    Integer.toBinaryString(
+                            ((MatchTaskBeliefPattern)rNorm.preconditions[0])
+                                    .pattern.structure()
+                                    )
+                    );*/
 
                     //add reverse questions
-                    rUnnorm.forEachQuestionReversal(_r -> {
+                    rUnnorm.forEachQuestionReversal(q -> {
 
-                        _r = _r.normalize();
+                        q = q.normalize();
 
                         //normalize may be returned null if the rearranging produced an invalid result
                         //so do not add null
 
-                        if (_r!=null && rules.add(_r)) {
-                            //System.out.println("  " + _r);
+                        if (q!=null && rules.add(q)) {
+                            //System.out.println("  " + q);
                         }
                     });
                 }

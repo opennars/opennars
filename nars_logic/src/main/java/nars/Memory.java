@@ -189,7 +189,7 @@ public class Memory implements Serializable, AbstractMemory {
         } else if (compound instanceof ImageInt) {
             return new ImageInt(components, ((Image) compound).relationIndex);
         } else {
-            return term(compound.operator(), components);
+            return term(compound.op(), components);
         }
     }
 

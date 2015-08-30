@@ -21,7 +21,7 @@ public interface SetTensional extends Term, Iterable<Term> {
     }
 
     @Override
-    abstract public Op operator();
+    abstract public Op op();
 
 
 

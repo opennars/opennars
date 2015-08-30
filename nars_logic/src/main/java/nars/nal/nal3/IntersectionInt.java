@@ -135,7 +135,7 @@ public class IntersectionInt extends Intersect {
      * @return the operate of the term
      */
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.INTERSECTION_INT;
     }
 

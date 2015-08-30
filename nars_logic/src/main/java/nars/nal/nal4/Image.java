@@ -116,7 +116,7 @@ abstract public class Image extends DefaultCompound {
 
             ByteBuf b = ByteBuf.create(bytes)
                     .add((byte) COMPOUND_TERM_OPENER)
-                    .add(this.operator().bytes)
+                    .add(this.op().bytes)
                     .add((byte) ARGUMENT_SEPARATOR)
                     .add(this.relation().bytes());
 
@@ -143,7 +143,7 @@ abstract public class Image extends DefaultCompound {
             final int len = this.length();
 
             p.append(COMPOUND_TERM_OPENER);
-            p.append(this.operator().str);
+            p.append(this.op().str);
 
             p.append(ARGUMENT_SEPARATOR);
             if (pretty)

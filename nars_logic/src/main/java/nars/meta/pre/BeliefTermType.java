@@ -32,7 +32,7 @@ public class BeliefTermType extends PreCondition {
         final Term t = b.getTerm();
 
         //if (t == null && op == null) return true;
-        return (t.operator() == op);
+        return (t.op() == op);
     }
 
 

@@ -65,7 +65,7 @@ public class TermSpect extends TermCept implements Term, Concept {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return op;
     }
 
@@ -154,10 +154,6 @@ public class TermSpect extends TermCept implements Term, Concept {
         return new byte[0];
     }
 
-    @Override
-    public int structure() {
-        return 0;
-    }
 
     @Override
     public int structure() {

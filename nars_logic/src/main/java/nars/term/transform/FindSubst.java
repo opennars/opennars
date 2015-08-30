@@ -1,6 +1,7 @@
 package nars.term.transform;
 
 import nars.Global;
+import nars.Op;
 import nars.Symbols;
 import nars.nal.nal4.Image;
 import nars.term.Compound;
@@ -15,16 +16,16 @@ import java.util.Random;
  * Created by me on 8/17/15.
  */
 public class FindSubst {
-    private final char type;
+    private final Op type;
     public final Map<Term, Term> map0;
     public final Map<Term, Term> map1;
     private final Random random;
 
-    public FindSubst(char type, Random random) {
+    public FindSubst(Op type, Random random) {
         this(type, null, null, random);
     }
 
-    public FindSubst(char type, Map map0, Map map1, Random random) {
+    public FindSubst(Op type, Map map0, Map map1, Random random) {
         if (map0 == null)
             map0 = Global.newHashMap(0);
         if (map1 == null)
@@ -87,52 +88,42 @@ public class FindSubst {
             return true;
         }
 
-        if (term1Var != null && term1Var.getType() == type) {
+        if (term1Var != null && term1Var.op == type) {
 
             final Term t = map0.get(term1Var);
 
-            if (t != null)
+            if (t != null && t!=term2)
                 return next(t, term2);
 
-            if (term2Var != null && term2Var.getType() == type) {
-                Variable commonVar = Variables.CommonVariable.make(term1, term2);
-                map0.put(term1Var, commonVar);
-                map1.put(term2Var, commonVar);
+            if (term2Var != null && term2Var.op == type) {
+                putCommon(term1Var, term2Var);
             } else {
                 if (term2Var != null) {
                     //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
 
-                    boolean t1Query = term1Var.getType() == Symbols.VAR_QUERY;
-                    boolean t2Query = term2Var.getType() == Symbols.VAR_QUERY;
+                    boolean t1Query = term1Var.op == Op.VAR_QUERY;
+                    boolean t2Query = term2Var.op == Op.VAR_QUERY;
 
                     if ((t2Query && !t1Query) || (!t2Query && t1Query)) {
                         return false;
                     }
                 }
 
-                map0.put(term1Var, term2);
-                if (term1Var instanceof Variables.CommonVariable) {
-                    map1.put(term1Var, term2);
-                }
+                put0to1(term2, term1Var);
             }
 
             return true;
 
-        } else if (term2Var != null && term2Var.getType() == type) {
-
+        } else if (term2Var != null && term2Var.op == type) {
             final Term t = map1.get(term2Var);
 
             if (t != null)
                 return next(term1, t);
 
-            map1.put(term2Var, term1);
-            if (term2Var instanceof Variables.CommonVariable) {
-                map0.put(term2Var, term1);
-            }
+            put1to0(term1, term2Var);
 
             return true;
-
-        } else if ((term1 instanceof Compound) && ((term1.operator() == term2.operator())) && (term1.hasVar(type) || term2.hasVar(type))) {
+        } else if ((term1 instanceof Compound) && ((term1.op() == term2.op())) && (term1.hasVar(type) || term2.hasVar(type))) {
             final Compound cTerm1 = (Compound) term1;
             final Compound cTerm2 = (Compound) term2;
             final int c1Len = cTerm1.length();
@@ -162,6 +153,27 @@ public class FindSubst {
         }
 
         return termsEqual;
+    }
+
+    private void put1to0(Term term1, Variable term2Var) {
+        if (term2Var instanceof Variables.CommonVariable) {
+            map0.put(term2Var, term1);
+        }
+        map1.put(term2Var, term1);
+    }
+
+    private void put0to1(Term term2, Variable term1Var) {
+        map0.put(term1Var, term2);
+        if (term1Var instanceof Variables.CommonVariable) {
+            map1.put(term1Var, term2);
+        }
+    }
+
+    /** override this to disable common variables */
+    protected void putCommon(Variable a, Variable b) {
+        Variable commonVar = Variables.CommonVariable.make(a, b);
+        map0.put(a, commonVar);
+        map1.put(b, commonVar);
     }
 
     private boolean permute3(final Term[] c3, final Compound cTerm2) {

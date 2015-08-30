@@ -79,7 +79,7 @@ public class NarseseParserExtendedTest  {
     @Test
     public void testColonReverseInheritance() {
         Inheritance t = term("namespace:named");
-        assertEquals(t.operator(), Op.INHERITANCE);
+        assertEquals(t.op(), Op.INHERITANCE);
         assertEquals("namespace", t.getPredicate().toString());
         assertEquals("named", t.getSubject().toString());
 
@@ -95,7 +95,7 @@ public class NarseseParserExtendedTest  {
     @Test
     public void testBacktickReverseInstance() {
         Inheritance t = term("namespace`named");
-        assertEquals(t.operator(), Op.INHERITANCE);
+        assertEquals(t.op(), Op.INHERITANCE);
         assertEquals("namespace", t.getPredicate().toString());
         assertEquals("{named}", t.getSubject().toString());
     }

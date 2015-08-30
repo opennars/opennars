@@ -60,7 +60,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
 
     /** bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm */
-    int structureHash;
+    protected int structureHash;
     int contentHash;
 
 
@@ -94,7 +94,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     public boolean impossibleStructure(final int possibleSubtermStructure) {
-        final int existingStructure = structure();
+        final int existingStructure = structureHash;
 
         //if the OR produces a different result compared to subterms,
         // it means there is some component of the other term which is not found
@@ -114,11 +114,11 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1, vol = 1;
 
-        final int opOrdinal = operator().ordinal();
-        int subt = (1 << opOrdinal);
+
+        int subt = getStructureBase();
 
 
-        int contentHash = (PRIME2 * opOrdinal) + additionalStructureCode();;
+        int contentHash = (PRIME2 * subt) + additionalStructureCode();;
 
         int p = 0;
         for (final Term t : term) {
@@ -146,13 +146,19 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.complexity = (short) compl;
 
         if ((this.volume = (short)vol) > Global.COMPOUND_VOLUME_MAX) {
-            throw new RuntimeException("volume limit exceeded for new Compound[" + operator() + "] " + Arrays.toString(term));
+            throw new RuntimeException("volume limit exceeded for new Compound[" + op() + "] " + Arrays.toString(term));
         }
 
         //invalidate();
 
         if (!hasVar())
             setNormalized();
+    }
+
+
+    protected int getStructureBase() {
+        final int opOrdinal = op().ordinal();
+        return 1 << opOrdinal;
     }
 
     public void rehash() {
@@ -187,7 +193,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
     @Override
-    public int structure() {
+    public final int structure() {
         return structureHash;
     }
 
@@ -198,7 +204,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         final int numArgs = term.length;
 
-        byte[] opBytes = operator().bytes;
+        byte[] opBytes = op().bytes;
 
         int len = opBytes.length;
 
@@ -260,7 +266,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     public boolean appendOperator(Writer p) throws IOException {
-        p.append(operator().str);
+        p.append(op().str);
         return true;
     }
 
@@ -412,7 +418,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * Abstract method to get the operate of the compound
      */
     @Override
-    public abstract Op operator();
+    public abstract Op op();
 
     /**
      * Abstract clone method
@@ -910,7 +916,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
     @Override
     public boolean levelValid(final int nal) {
-        if (!operator().levelValid(nal))
+        if (!op().levelValid(nal))
             return false;
 
         //TODO use structural hash
@@ -1049,7 +1055,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * true if equal operate and all terms contained
      */
     public boolean containsAllTermsOf(final Term t) {
-        if ((operator() == t.operator())) {
+        if ((op() == t.op())) {
             return Terms.containsAll(term, ((Compound) t).term);
         } else {
             return this.containsTerm(t);
@@ -1065,7 +1071,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     public Term cloneReplacingSubterm(final int index, final Term subterm) {
 
-        final boolean e = (subterm != null) && (operator() == subterm.operator());
+        final boolean e = (subterm != null) && (op() == subterm.op());
 
         //if the subterm is alredy equivalent, just return this instance because it will be equivalent
         if (subterm != null && (e) && (term[index].equals(subterm)))
@@ -1224,7 +1230,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * compare subterms where any variables matched are not compared
      */
     public boolean equalsVariablesAsWildcards(final Compound c) {
-        if (!(operator() == c.operator())) return false;
+        if (!(op() == c.op())) return false;
         if (length() != c.length()) return false;
         for (int i = 0; i < length(); i++) {
             Term a = term[i];

@@ -24,7 +24,7 @@ public class ProductN extends DefaultCompound implements Product {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.PRODUCT;
     }
 

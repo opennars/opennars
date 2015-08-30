@@ -22,7 +22,7 @@ public class Operator<T extends Term> extends Compound1<T> {
     }
 
     @Override
-    public Op operator() {
+    public Op op() {
         return Op.OPERATOR;
     }
 
@@ -40,12 +40,12 @@ public class Operator<T extends Term> extends Compound1<T> {
 
     @Override
     public byte[] init() {
-        return Compound.newCompound1Key(operator(), the());
+        return Compound.newCompound1Key(op(), the());
     }
 
     @Override
     public void append(Writer p, boolean pretty) throws IOException {
-        p.append(operator().ch);
+        p.append(op().ch);
         the().append(p, pretty);
     }
 
@@ -53,8 +53,9 @@ public class Operator<T extends Term> extends Compound1<T> {
 
 
     @Override
-    public int structure() {
-        return operatorOrdinal;
+    protected void init(Term... term) {
+        super.init(term);
+        structureHash = operatorOrdinal;
     }
 
     @Override

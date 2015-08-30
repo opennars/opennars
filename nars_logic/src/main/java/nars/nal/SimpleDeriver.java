@@ -69,7 +69,7 @@ public class SimpleDeriver extends Deriver {
 
         final Term taskTerm = match.premise.getTask().getTerm();
 
-        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.operator());
+        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.op());
 
         final Task belief = match.premise.getBelief();
         final Term beliefTerm = belief!=null ? belief.getTerm() : null;
@@ -78,7 +78,7 @@ public class SimpleDeriver extends Deriver {
 
             if (beliefTerm != null) {
                 // <T>,<B>
-                List<TaskRule> u = taskSpecific.get(beliefTerm.operator());
+                List<TaskRule> u = taskSpecific.get(beliefTerm.op());
                 if (u != null)
                     match.run(u);
             }

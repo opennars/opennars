@@ -139,7 +139,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @return The Statement built
      */
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
-        return make(statement.operator(), subj, pred, order);
+        return make(statement.op(), subj, pred, order);
     }
 
     /** op needs to be a Statement operator */
@@ -221,7 +221,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     public byte[] init() {
         final byte[] subjBytes = getSubject().bytes();
         final byte[] predBytes = getPredicate().bytes();
-        final byte[] relationBytes = operator().bytes;
+        final byte[] relationBytes = op().bytes;
 
         ByteBuf b = ByteBuf.create(
                 subjBytes.length + predBytes.length + relationBytes.length +
@@ -245,7 +245,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
         if (pretty) w.append(' ');
 
-        operator().expand(w);
+        op().expand(w);
 
         if (pretty) w.append(' ');
 

@@ -153,7 +153,7 @@ public class Conjunction extends Junction {
      * @return the operate of the term
      */
     @Override
-    public Op operator() {
+    public Op op() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
                 throw new RuntimeException("use Sequence subclass of Conjunction");    //return NALOperator.SEQUENCE;
