@@ -1,19 +1,19 @@
 package nars.guifx;
 
-import nars.guifx.graph2.NARGraph1;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.guifx.graph2.NARGraph1;
 import nars.nar.Default;
-import nars.nar.experimental.Equalized;
 import nars.task.Task;
 
 import java.io.File;
@@ -143,9 +143,12 @@ public class NARfx extends Application {
 
             NARGraph1 g = new NARGraph1(w.nar);
 
-            SubScene gs = g.newSubScene(100, 100);
+            SubScene gs = g.newSubScene(w.content.getWidth(), w.content.getHeight());
             gs.widthProperty().bind(w.content.widthProperty());
             gs.heightProperty().bind(w.content.heightProperty());
+
+            AnchorPane ags = new AnchorPane(gs);
+
 
 //            final TilePane lp = new TilePane(4,4,
 ////                        new LinePlot("Total Priority", () ->
@@ -191,7 +194,7 @@ public class NARfx extends Application {
 
 
             w.content.getTabs().add(new TabX("Terminal", new TerminalPane(w.nar) ));
-            w.content.getTabs().add(new TabX("Graph", gs ));
+            w.content.getTabs().add(new TabX("Graph", ags ));
         }
         //startup defaults
         w.console(true);

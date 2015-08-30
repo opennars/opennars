@@ -9,13 +9,13 @@ import java.util.function.Supplier;
 /**
  * Created by me on 8/30/15.
  */
-public class LazyTabX extends TabX {
+public class TabXLazy extends TabX {
 
 
     private final Supplier<Node> contentBuilder;
     private Node map = null;
 
-    public LazyTabX(String label, Supplier<Node> contentBuilder) {
+    public TabXLazy(String label, Supplier<Node> contentBuilder) {
         super(label, new Label(" "));
         this.contentBuilder = contentBuilder;
     }

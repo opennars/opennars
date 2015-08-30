@@ -1,4 +1,4 @@
-package nars.guifx;
+package nars.guifx.wikipedia;
 
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -26,14 +26,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * TODO wikibrowser does not need to modify any DOM links because they will be intercepted.
  * this will make processing the page faster.
  *
- * @author me
+ * TODO
+*      --cache the page manipulation JS code in a JSObject instead of creating and inputting a new script string each page load
+*      --manipulate links in batches, so it doesnt freeze slower devices?
+ *        --parameters for link decoration
+ *     --use p2p/infinispan cache as page cache
+*      --language switch
+ *
  */
 abstract public class WikiBrowser extends BorderPane {
 
@@ -91,15 +95,15 @@ abstract public class WikiBrowser extends BorderPane {
         return new String(encoded, encoding);
     }
 
-    static String jquery = "";
-
-    static {
-        try {
-            jquery = readFile(WikiBrowser.class.getResource("jquery.js").toURI(), Charset.defaultCharset());
-        } catch (Exception ex) {
-            Logger.getLogger(WikiBrowser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+//    static String jquery = "";
+//
+//    static {
+//        try {
+//            jquery = readFile(WikiBrowser.class.getResource("jquery.js").toURI(), Charset.defaultCharset());
+//        } catch (Exception ex) {
+//            Logger.getLogger(WikiBrowser.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 
     protected synchronized void processPage() {
         boolean wikiFilter = false;
@@ -109,8 +113,8 @@ abstract public class WikiBrowser extends BorderPane {
             wikiFilter = true;
         }
 
-        //JSObject win =  (JSObject) webEngine.executeScript("window");
-        //win.setMember("app", new JavaApp());
+        JSObject win =  (JSObject) webEngine.executeScript("window");
+        win.setMember("app", this);
 
 
         webEngine.setJavaScriptEnabled(true);
@@ -131,14 +135,20 @@ abstract public class WikiBrowser extends BorderPane {
             //String script = "$(document).ready(function() {";
             String script = "window.setTimeout(function() {";
             {
+
                 script += "$('body').after('<style>.crb { border: 1px solid #aaa; margin: 2px; padding: 1px; }</style>');";
+
                 script += "$('head, .header, #page-actions, #jump-to-nav, .top-bar, .navigation-drawer, .edit-page').remove();";
 
                 //Add tag button to each tlink
-                script += "$('a').each(function() { var t = $(this); var h = t.attr('href'); if (h && h.indexOf('#')!==-1) return; t.addClass('crb'); t.after('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>')});";
+                //String plusLink = "$('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>').click(function() { window.app.tagAdd(h); } )";
 
-                //Add Tag button to H1 header of article
-                script += "$('#section_0').each(function() { var t = $(this); t.append('<a class=\"crb\" href=\"tag://_\">+</a>')});";
+                String plusLink = "$('<a class=\"crb\" href=\"tag:/' + h + '\">+</a>').click(function() { window.app.tagAdd(h); } ) ";
+
+                script += "var linkTransform = function() { var t = $(this); var h = t.attr('href'); if (h && h.indexOf('#')!==-1) return; t.after(" + plusLink + " ); }; ";
+                script += "$('a').each(linkTransform);";
+                script += "$('#section_0').each(linkTransform);";
+
 
                 script += "if (window.mw) { category.add(window.mw.config.get('wgCategories')); }";
             }
@@ -150,21 +160,23 @@ abstract public class WikiBrowser extends BorderPane {
         //webEngine.setJavaScriptEnabled(false);
         //if ((target.indexOf('Portal:') != 0) && (target.indexOf('Special:') != 0)) {
         //  t.after(newPopupButton(target));
-        EventListener listener = new EventListener() {
-            @Override
-            public void handleEvent(Event ev) {
-                String domEventType = ev.getType();
-                //System.err.println("EventType: " + domEventType);
-                if (domEventType.equals("click")) {
-                    String href = ((Element) ev.getTarget()).getAttribute("href");
-
-                    if (href != null)
-                        if (href.startsWith("tag://")) {
-                            _onTagClicked(href);
-                        }
-                }
-            }
-        };
+//        EventListener listener = new EventListener() {
+//            @Override
+//            public void handleEvent(Event ev) {
+//                String domEventType = ev.getType();
+//
+//                System.err.println("EventType: " + domEventType + " " + ev);
+//
+//                if (domEventType.equals("click")) {
+//                    String href = ((Element) ev.getTarget()).getAttribute("href");
+//
+//                    if (href != null)
+//                        if (href.startsWith("tag://")) {
+//                            tagAdd(href);
+//                        }
+//                }
+//            }
+//        };
 
 //        String currentTag = getCurrentPageTag();
 //        if (currentTag != null) {
@@ -290,26 +302,22 @@ abstract public class WikiBrowser extends BorderPane {
         return getWikiTag(webEngine.getLocation());
     }
 
-    private void _onTagClicked(String url) {
-        String prefix = "tag://";
-        if (!url.startsWith(prefix)) {
-            return;
-        }
-        url = url.substring(prefix.length());
+    public void tagAdd(String url) {
 
-        String wikiPrefix = "wiki/";
+        final String wikiPrefix = "/wiki/";
         String tag;
         if (url.startsWith(wikiPrefix)) {
+            //ordinary wikilink
             tag = url.substring(wikiPrefix.length());
-        } else if (url.startsWith("_")) {
+        } else if (url.equals("undefined")) {
+            //section header link
             tag = getCurrentPageTag();
         } else {
+            System.err.println("unknown tagAdd url: " + url);
             return;
         }
 
         onTagClicked(tag);
-
-
     }
 
     abstract public void onTagClicked(String id);

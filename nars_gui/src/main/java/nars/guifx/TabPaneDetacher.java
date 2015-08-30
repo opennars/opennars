@@ -2,11 +2,11 @@ package nars.guifx;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -143,12 +143,16 @@ public class TabPaneDetacher {
         }
         int originalTab = originalTabs.indexOf(tab);
         tapTransferMap.remove(originalTab);
-        Pane content = (Pane) tab.getContent();
+        Parent content = (Parent)tab.getContent();
         if (content == null) {
             throw new IllegalArgumentException("Can not detach Tab '" + tab.getText() + "': content is empty (null).");
         }
         tab.setContent(null);
-        final Scene scene = new Scene(content, content.getPrefWidth(), content.getPrefHeight());
+
+        double W = content.getLayoutBounds().getWidth();
+        double H = content.getLayoutBounds().getHeight();
+        final Scene scene = new Scene(content, W, H);
+
         scene.getStylesheets().addAll(stylesheets);
         Stage stage = new Stage();
         stage.setScene(scene);

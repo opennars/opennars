@@ -1,11 +1,19 @@
 package nars.guifx;
 
 import javafx.geometry.Side;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import nars.NAR;
-import nars.guifx.space.LazyTabX;
+import nars.guifx.space.TabXLazy;
 import nars.guifx.space.WebMap;
+import nars.guifx.wikipedia.NARWikiBrowser;
+import nars.io.in.LibraryInput;
+
+import java.util.Map;
+
+import static javafx.application.Platform.runLater;
+import static nars.guifx.NARfx.scrolled;
 
 
 /**
@@ -13,27 +21,26 @@ import nars.guifx.space.WebMap;
  */
 public class InputPane extends TabPane {
 
+    private final NAR nar;
+
     public InputPane(NAR n) {
         super();
+
+        this.nar = n;
 
         setSide(Side.BOTTOM);
         setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 
-        getTabs().add(new LazyTabX("Wiki", () -> {
+        getTabs().add(new TabXLazy("Wiki", () -> {
 
             //"Navigate wikipedia to collect tags to use as input terms"
-            return new WikiBrowser("Happiness") {
+            return new NARWikiBrowser("Happiness");
+        }));
+        getTabs().add(new TabXLazy("Space", () -> new WebMap()) /*"Space", "Navigate a 2D map to input (map region-as-shape analysis, and lists of features and their locations)")*/);
 
-                @Override
-                public void onTagClicked(String id) {
+        getTabs().add(new TabXLazy("Narsese", () -> new NarseseInput(n)));
 
-                }
-            };
-        } ));
-        getTabs().add(new LazyTabX("Space", () -> new WebMap()) /*"Space", "Navigate a 2D map to input (map region-as-shape analysis, and lists of features and their locations)")*/);
-
-        getTabs().add(new Tab("Narsese", new NarseseInput(n)));
-        getTabs().add(new ComingSoonTab("Library", "Apps, APIs, Interfaces, and Examples (ex: from .NAL files) that can be input"));
+        getTabs().add(new TabXLazy("Library", () -> new LibraryInputPane()));
 
         getTabs().add(new ComingSoonTab("Natural", "Natural language input in any of the major languages, using optional strategies (ex: CoreNLP)"));
         {
@@ -53,5 +60,66 @@ public class InputPane extends TabPane {
         getTabs().add(new ComingSoonTab("Patterns", "Frequently-used inputs and templates selectable via speed-dial button grid"));
         getTabs().add(new ComingSoonTab("URL", "Bookmarks that will create a new browser tab for web pages. Also includes URL navigation textfield"));
 
+    }
+
+
+    /**
+     * Apps, APIs, Interfaces, and Examples (ex: from .NAL files) that can be input
+     */
+    private class LibraryInputPane extends SplitPane implements Runnable {
+
+
+        final ListView<String> index = new ListView<>();
+        final TextArea source = new TextArea();
+        final Map<String, String> absPath;
+
+        public LibraryInputPane() {
+            super();
+
+            GridPane buttons = new GridPane();
+            buttons.setMaxHeight(Double.MAX_VALUE);
+            buttons.addColumn(0,
+                    new Button("Input"), //input immediately
+                    new Button("Edit"), //copy the source to narsese input panel and switch to it, after verifying with user before needing to remove any existing code there
+                    new Button("Append"), //append the source to current narsese input buffer
+                    new Button("Fork") //fork a new NAR which will have this executed in it, while the current NAR remains the same
+            );
+
+            BorderPane bp = new BorderPane();
+            bp.setCenter(scrolled(source));
+            bp.setRight(buttons);
+
+            getItems().setAll(scrolled(index), bp);
+
+            absPath = nars.io.in.LibraryInput.getAllExamples();
+
+            index.getItems().addAll(absPath.keySet());
+
+            index.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+            index.getSelectionModel().selectedItemProperty().addListener((e) -> {
+                runLater(LibraryInputPane.this);
+            });
+
+        }
+
+        @Override
+        public synchronized void run() {
+
+            StringBuilder sb = new StringBuilder();
+            for (final String file : index.getSelectionModel().getSelectedItems()) {
+
+                try {
+                    LibraryInput x = LibraryInput.get(nar, absPath.get(file));
+                    if (x != null)
+                        sb.append(x.getSource()).append("\n\n");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            source.setText(sb.toString());
+
+        }
     }
 }
