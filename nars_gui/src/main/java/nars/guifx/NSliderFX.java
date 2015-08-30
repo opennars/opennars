@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
@@ -107,18 +108,29 @@ public class NSliderFX extends Canvas {
         double margin = 4;
         double mh = margin/2.0;
 
+
         g.setFill(Color.BLACK);
         //g.fillRect(W-barSize, 0, W-barSize, H);
         g.fillRect(0, 0, W, H);
 
+        g.setLineWidth(mh*2);
+        g.setStroke(Color.GRAY);
+        g.strokeRect(0, 0, W, H);
+
+        g.setLineWidth(0);
         g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), 1f, 0.5 + 0.5 * p, 1f));
-        g.fillRect(mh, mh, barSize - mh, H - mh);
+        g.fillRect(mh, mh, barSize - mh*2, H - mh*2);
     }
 
     public NSliderFX set(double v, double min, double max) {
         this.value.set(v);
         this.min.set(min);
         this.max.set(max);
+        return this;
+    }
+
+    public NSliderFX bind(DoubleProperty minPriority) {
+        minPriority.bindBidirectional(value);
         return this;
     }
 
