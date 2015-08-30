@@ -33,6 +33,11 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
         repaint(parent.heightProperty().get());
     }
 
+    public TaskSummaryIcon width(double w) {
+        setWidth(w);
+        return this;
+    }
+
     protected void repaint() {
         paintConstants();
 

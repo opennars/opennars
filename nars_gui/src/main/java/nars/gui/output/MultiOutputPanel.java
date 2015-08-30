@@ -1,6 +1,6 @@
 package nars.gui.output;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.swing.dock.DockingContent;
 import automenta.vivisect.swing.dock.DockingRegionRoot;
 import nars.NAR;

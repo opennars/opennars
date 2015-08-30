@@ -17,7 +17,7 @@
 
 package automenta.vivisect.swing;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;

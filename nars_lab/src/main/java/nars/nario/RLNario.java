@@ -1,6 +1,6 @@
 package nars.nario;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;

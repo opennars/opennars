@@ -1,6 +1,5 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.TabPaneDetacher;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;

@@ -1,6 +1,6 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.graph2.NARGraph1;
+import nars.guifx.graph2.NARGraph1;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
@@ -113,7 +113,8 @@ public class NARfx extends Application {
         d.setTermLinkBagSize(96);
         d.setTaskLinkBagSize(96);*/
 
-        Default d = new Equalized(1024,2,3);
+        //Default d = new Equalized(1024,2,3);
+        Default d = new Default(1024,2,3);
 
         NAR n = new NAR(d);
 

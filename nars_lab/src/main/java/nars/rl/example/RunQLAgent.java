@@ -1,6 +1,6 @@
 package nars.rl.example;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;

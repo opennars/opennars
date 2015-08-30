@@ -17,7 +17,7 @@
 
 package nars.launcher;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nar.Default;

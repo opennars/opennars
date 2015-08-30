@@ -37,7 +37,7 @@ package nars.rl.util;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import javafx.animation.Timeline;
 import javafx.embed.swing.JFXPanel;

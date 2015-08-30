@@ -1,6 +1,6 @@
 package ca.nengo.model.impl;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import ca.nengo.model.NSource;
 import ca.nengo.model.NTarget;
 import ca.nengo.model.Node;

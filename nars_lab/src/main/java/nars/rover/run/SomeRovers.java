@@ -1,15 +1,13 @@
 package nars.rover.run;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
 import nars.clock.SimulatedClock;
 import nars.event.CycleReaction;
-import nars.gui.NARSwing;
 import nars.io.out.TextOutput;
 import nars.nar.Default;
-import nars.nar.NewDefault;
 import nars.nar.experimental.Equalized;
 import nars.nar.experimental.Solid;
 import nars.rover.Sim;
@@ -18,8 +16,6 @@ import nars.rover.robot.Rover;
 import nars.rover.robot.Spider;
 import nars.rover.robot.Turret;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-
-import javax.swing.*;
 
 /**
  * Created by me on 6/20/15.

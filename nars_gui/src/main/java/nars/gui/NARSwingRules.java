@@ -1,6 +1,6 @@
 package nars.gui;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import nars.NAR;
 import nars.NARSeed;
 import nars.nar.NewDefault;

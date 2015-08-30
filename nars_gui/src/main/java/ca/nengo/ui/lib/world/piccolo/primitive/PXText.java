@@ -29,7 +29,7 @@
  */
 package ca.nengo.ui.lib.world.piccolo.primitive;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import ca.nengo.ui.lib.NengoStyle;
 import org.piccolo2d.util.PPaintContext;
 

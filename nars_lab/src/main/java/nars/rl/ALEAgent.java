@@ -1,6 +1,6 @@
 package nars.rl;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.arcade.agents.AbstractAgent;
 import jurls.reinforcementlearning.domains.arcade.io.Actions;

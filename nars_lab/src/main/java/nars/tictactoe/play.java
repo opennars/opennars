@@ -17,8 +17,7 @@
 
 package nars.tictactoe;
 
-import automenta.vivisect.Video;
-import nars.Memory;
+import nars.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nal.nal8.Operation;

@@ -5,7 +5,7 @@
  */
 package jurls;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.swing.NSlider;
 import javafx.application.Platform;
 import jurls.core.LearnerAndActor;

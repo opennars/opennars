@@ -1,12 +1,10 @@
 package nars.gui.output;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import javolution.util.FastSet;
-import nars.Events;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.event.ConceptReaction;
-import nars.event.NARReaction;
 import nars.io.out.TextOutput;
 import nars.task.Task;
 import nars.util.data.id.Named;

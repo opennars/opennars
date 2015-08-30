@@ -1,6 +1,6 @@
 package nars.nario;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Global;

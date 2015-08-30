@@ -1,6 +1,6 @@
 package jurls.reinforcementlearning.domains.wander;
 
-import automenta.vivisect.Video;
+import nars.Video;
 
 import java.awt.*;
 

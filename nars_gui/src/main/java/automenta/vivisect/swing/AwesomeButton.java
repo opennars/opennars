@@ -1,6 +1,6 @@
 package automenta.vivisect.swing;
 
-import automenta.vivisect.Video;
+import nars.Video;
 
 import javax.swing.*;
 

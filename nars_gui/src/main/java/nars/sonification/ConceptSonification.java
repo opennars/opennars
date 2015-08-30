@@ -1,10 +1,10 @@
 package nars.sonification;
 
-import automenta.vivisect.Audio;
-import automenta.vivisect.Video;
-import automenta.vivisect.audio.SoundProducer;
-import automenta.vivisect.audio.granular.Granulize;
-import automenta.vivisect.audio.synth.SineWave;
+import nars.Audio;
+import nars.Video;
+import nars.audio.SoundProducer;
+import nars.audio.granular.Granulize;
+import nars.audio.synth.SineWave;
 import nars.Events;
 import nars.Global;
 import nars.NAR;

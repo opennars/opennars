@@ -1,7 +1,7 @@
 package nars.nario;
 
-import automenta.vivisect.audio.sample.SampleLoader;
-import automenta.vivisect.audio.sample.SonarSample;
+import nars.audio.sample.SampleLoader;
+import nars.audio.sample.SonarSample;
 
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiSystem;

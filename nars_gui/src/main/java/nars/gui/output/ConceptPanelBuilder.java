@@ -4,8 +4,7 @@
  */
 package nars.gui.output;
 
-import automenta.vivisect.Video;
-import com.google.common.collect.Iterators;
+import nars.Video;
 import javolution.util.FastMap;
 import nars.Events;
 import nars.Events.FrameEnd;
@@ -18,10 +17,8 @@ import nars.event.NARReaction;
 import nars.gui.ConceptMenu;
 import nars.gui.VerticalLayout;
 import nars.link.TaskLink;
-import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Term;
 import nars.truth.Truthed;
 import nars.util.data.id.Named;
 import org.infinispan.util.concurrent.ConcurrentHashSet;

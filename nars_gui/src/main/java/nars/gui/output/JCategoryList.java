@@ -1,6 +1,6 @@
 package nars.gui.output;
 
-import automenta.vivisect.Video;
+import nars.Video;
 
 import javax.swing.*;
 import javax.swing.border.Border;

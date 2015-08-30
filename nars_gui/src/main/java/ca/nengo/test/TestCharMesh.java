@@ -1,7 +1,7 @@
 package ca.nengo.test;
 
 
-import automenta.vivisect.Video;
+import nars.Video;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;

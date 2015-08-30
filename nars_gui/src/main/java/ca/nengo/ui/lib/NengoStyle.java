@@ -1,6 +1,6 @@
 package ca.nengo.ui.lib;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import org.apache.commons.math3.util.FastMath;
 import org.piccolo2d.util.PPaintContext;
 

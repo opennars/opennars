@@ -23,7 +23,7 @@
  ******************************************************************************/
 package nars.rover.physics.gl;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import nars.rover.physics.PhysicsCamera;

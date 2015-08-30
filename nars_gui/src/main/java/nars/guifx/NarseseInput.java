@@ -1,6 +1,5 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.CodeInput;
 import nars.NAR;
 import nars.io.in.TextInput;
 

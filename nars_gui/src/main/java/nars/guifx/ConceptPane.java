@@ -1,7 +1,7 @@
 package nars.guifx;
 
-import automenta.vivisect.javafx.graph3.SpaceNet;
-import automenta.vivisect.javafx.graph3.Xform;
+import nars.guifx.graph3.SpaceNet;
+import nars.guifx.graph3.Xform;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -13,8 +13,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;

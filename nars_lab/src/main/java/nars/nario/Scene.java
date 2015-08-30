@@ -1,6 +1,6 @@
 package nars.nario;
 
-import automenta.vivisect.audio.SoundListener;
+import nars.audio.SoundListener;
 
 import java.awt.*;
 

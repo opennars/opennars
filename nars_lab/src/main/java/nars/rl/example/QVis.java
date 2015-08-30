@@ -1,6 +1,6 @@
 package nars.rl.example;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;

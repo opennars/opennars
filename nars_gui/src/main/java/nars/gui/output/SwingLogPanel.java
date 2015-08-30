@@ -1,6 +1,6 @@
 package nars.gui.output;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import nars.NAR;
 import nars.gui.output.SwingLogText.LogLine;
 

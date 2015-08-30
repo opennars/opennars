@@ -1,6 +1,6 @@
 package nars.gui.output.audio;
 
-import automenta.vivisect.Audio;
+import nars.Audio;
 import nars.NAR;
 
 import javax.sound.sampled.LineUnavailableException;

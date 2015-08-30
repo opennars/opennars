@@ -1,6 +1,6 @@
 package automenta.vnc;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import automenta.vnc.drawing.Renderer;
 import automenta.vnc.rfb.client.ClientToServerMessage;

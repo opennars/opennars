@@ -1,6 +1,6 @@
 package nars.gui.output;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.Events;
 import nars.Events.OUT;

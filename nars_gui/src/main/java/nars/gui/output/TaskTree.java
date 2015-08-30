@@ -1,6 +1,6 @@
 package nars.gui.output;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.swing.NSlider;
 import nars.Events;
 import nars.Events.FrameEnd;
@@ -10,7 +10,6 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
-import nars.guifx.TaskLabel;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.util.event.Reaction;

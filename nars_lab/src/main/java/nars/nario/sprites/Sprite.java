@@ -1,6 +1,6 @@
 package nars.nario.sprites;
 
-import automenta.vivisect.audio.SoundSource;
+import nars.audio.SoundSource;
 import nars.nario.level.SpriteTemplate;
 
 import java.awt.*;

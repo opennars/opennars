@@ -20,7 +20,7 @@
  */
 package nars.gui.input;
 
-import automenta.vivisect.Video;
+import nars.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
