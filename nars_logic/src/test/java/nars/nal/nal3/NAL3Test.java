@@ -89,6 +89,33 @@ public class NAL3Test extends JavaNALTest {
     }
 
     @Test
+    public void set_operations3() throws InvalidInputException {
+        n.believe("<planetX --> [marsy,earthly,venusy]>",1.0f,0.9f).en("PlanetX is Mars, Pluto, or Venus.");
+        n.believe("<planetX --> [earthly,saturny]>", 0.1f, 0.9f).en("PlanetX is probably neither Pluto nor Saturn.");
+        n.mustBelieve(cycles, "<planetX --> [marsy,earthly,saturny,venusy]>", 0.91f ,0.81f).en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        n.mustBelieve(cycles, "<planetX --> [marsy,venusy]>", 0.63f ,0.81f).en("PlanetX is either Mars or Venus.");
+        n.run();
+    }
+
+    @Test
+    public void set_operations4() throws InvalidInputException {
+        n.believe("<[marsy,earthly,venusy] --> planetX>",1.0f,0.9f).en("PlanetX is Mars, Pluto, or Venus.");
+        n.believe("<[earthly,saturny] --> planetX>", 0.1f, 0.9f).en("PlanetX is probably neither Pluto nor Saturn.");
+        n.mustBelieve(cycles, "<[marsy,earthly,saturny,venusy] --> planetX>", 0.91f ,0.81f).en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        n.mustBelieve(cycles, "<[marsy,venusy] --> planetX>", 0.63f ,0.81f).en("PlanetX is either Mars or Venus.");
+        n.run();
+    }
+
+    @Test
+    public void set_operations5() throws InvalidInputException {
+        n.believe("<{Mars,Pluto,Venus} --> planetX>",1.0f,0.9f).en("PlanetX is Mars, Pluto, or Venus.");
+        n.believe("<{Pluto,Saturn} --> planetX>", 0.1f, 0.9f).en("PlanetX is probably neither Pluto nor Saturn.");
+        n.mustBelieve(cycles, "<{Mars,Pluto,Saturn,Venus} --> planetX>", 0.91f ,0.81f).en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        n.mustBelieve(cycles, "<{Mars,Venus} --> planetX>", 0.63f ,0.81f).en("PlanetX is either Mars or Venus.");
+        n.run();
+    }
+
+    @Test
     public void composition_on_both_sides_of_a_statement() throws InvalidInputException {
         n.believe("<bird --> animal>",0.9f,0.9f).en("Bird is a type of animal.");
         n.ask("<(&,bird,swimmer) --> (&,animal,swimmer)>").en("Is a swimming bird a type of swimming animal?");

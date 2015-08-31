@@ -94,7 +94,7 @@
 //// inheritance-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //if (S --> M) is the case, and ((|,S,A_1..n) --> M) is not the case, then ((|,A_1..n) --> M) is not the case, hence Truth:DecomposePositiveNegativeNegative
 
-    ((|,S,A_1..n) --> M), (S --> M) |- ((|,A_1..n) --> M), (Truth:DecomposePositiveNegativeNegative)
+    (S --> M), ((|,S,A_1..n) --> M) |- ((|,A_1..n) --> M), (Truth:DecomposePositiveNegativeNegative)
     (S --> M), ((&,S,A_1..n) --> M) |- ((&,A_1..n) --> M), (Truth:DecomposeNegativePositivePositive)
     (S --> M), ((~,S,P) --> M) |- (P --> M), (Truth:DecomposePositiveNegativePositive)
     (S --> M), ((~,P,S) --> M) |- (P --> M), (Truth:DecomposeNegativeNegativeNegative)
@@ -403,6 +403,20 @@
 ////// Truth-value functions: see TruthFunctions.java
 
 //Set comprehension:
+    (C --> {A_1..n}), (C --> {B_1..m}) |- (C --> {A_1..n,B_1..m}), (Truth:Deduction)
+    (C --> [A_1..n]), (C --> [B_1..m]) |- (C --> [A_1..n,B_1..m]), (Truth:Deduction)
+    ({A_1..n} --> C), ({B_1..m} --> C) |- ({A_1..n,B_1..m} --> C), (Truth:Deduction)
+    ([A_1..n] --> C), ([B_1..m] --> C) |- ([A_1..n,B_1..m] --> C), (Truth:Deduction)
+//Set split:
+    (C --> {A_1..n,B_1..m}), C |- (C --> {A_1..n}), (Truth:Deduction)
+    (C --> [A_1..n,B_1..m]), C |- (C --> [A_1..n]), (Truth:Deduction)
+    ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
+    ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
 
-    (A --> {A_1..n}), (A --> {B_1..m}) |- (A --> {A_1..n,B_1..m}), (Truth:Deduction)
-    (A --> {A_1..n}), (A --> {B_1..m}) |- (A --> {A_1..n,B_1..m}), (Truth:Deduction)
+//second layer variable introduction, here you go again :)
+
+//(A --> K), (&&,(#1 --> L),(($2 --> K) ==> R)), substitute(R,A) |- (&&,(#1 --> L),R), (Truth:Deduction)
+
+//(A --> K), (($1 --> L) ==> (&&,(#2 --> K),R)), substitute(R,A) |- (($1 --> L) ==> R), (Truth:AnonymousAnalogy)
+
+//(A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
