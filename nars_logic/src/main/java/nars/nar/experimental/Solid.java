@@ -99,13 +99,13 @@ public class Solid extends Default implements CycleProcess {
         //concepts = new LevelBag(32, activeConcepts);
     }
 
-    /** construct a new premise generator for a concept */
-    @Override
-    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
-        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, 1 /* cycle to clear after */,
-                maxTaskLink * maxTermLink,
-                0.01f /* false positive probability */ );
-    }
+//    /** construct a new premise generator for a concept */
+//    @Override
+//    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
+//        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, 1 /* cycle to clear after */,
+//                maxTaskLink * maxTermLink,
+//                0.01f /* false positive probability */ );
+//    }
 
     @Override
     public void init(NAR n) {

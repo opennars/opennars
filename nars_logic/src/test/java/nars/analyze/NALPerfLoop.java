@@ -19,17 +19,17 @@ public class NALPerfLoop {
     
     public static void main(String[] args) {
        
-        int repeats = 2;
-        int warmups = 2;
-        int maxConcepts = 2048;
+        int repeats = 1;
+        int warmups = 1;
+        int maxConcepts = 1024;
         int extraCycles = 10048;
         int randomExtraCycles = 512;
         Global.THREADS = 1;
         Global.EXIT_ON_EXCEPTION = true;
-        Global.DEBUG = false;
+        Global.DEBUG = true;
 
           
-        NAR n = new NAR(new Equalized(maxConcepts,1,3).setInternalExperience(null) );
+        NAR n = new NAR(new Equalized(maxConcepts,2,3).setInternalExperience(null) );
         //NAR n = new NAR(new Default().setActiveConcepts(maxConcepts).setInternalExperience(null) );
         //NAR n = new NAR(new NewDefault().setActiveConcepts(maxConcepts).setInternalExperience(null) );
 

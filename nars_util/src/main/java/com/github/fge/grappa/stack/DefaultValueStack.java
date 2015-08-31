@@ -18,14 +18,12 @@ package com.github.fge.grappa.stack;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
-import nars.util.data.DirectCopyOnWriteArrayList;
-import nars.util.data.FasterList;
+import nars.util.data.list.FasterList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Objects;
 
 @ParametersAreNonnullByDefault
 public final class DefaultValueStack<V>

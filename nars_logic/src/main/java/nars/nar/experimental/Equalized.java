@@ -193,13 +193,13 @@ public class Equalized extends Default {
 
     }
 
-    @Override
-    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
-        int novelCycles = duration.get();
-        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
-                novelCycles * conceptTaskTermProcessPerCycle.get(),
-                0.01f /* false positive probability */ );
-    }
+//    @Override
+//    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
+//        int novelCycles = duration.get();
+//        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
+//                novelCycles * conceptTaskTermProcessPerCycle.get(),
+//                0.01f /* false positive probability */ );
+//    }
 
     @Override
     public CycleProcess newCycleProcess() {

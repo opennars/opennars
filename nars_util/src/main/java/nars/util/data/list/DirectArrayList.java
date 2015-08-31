@@ -1,4 +1,4 @@
-package nars.util.data;
+package nars.util.data.list;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

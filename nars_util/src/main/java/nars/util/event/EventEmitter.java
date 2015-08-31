@@ -1,7 +1,7 @@
 
 package nars.util.event;
 
-import nars.util.data.FasterList;
+import nars.util.data.list.FasterList;
 
 import java.util.HashMap;
 import java.util.List;

@@ -54,11 +54,11 @@ public class RuleMatch extends FindSubst {
         //testCache.clear();
     }
 
-    @Override protected void putCommon(Variable a, Variable b) {
-        //no common variables
-        map0.put(a, a);
-        map1.put(b, b);
-    }
+//    @Override protected void putCommon(Variable a, Variable b) {
+//        //no common variables; use the variable from term1 as the unification target
+//        map1.put(a, a);
+//        map2.put(b, a);
+//    }
 
     /**
      * clear and re-use with a new rule
@@ -186,7 +186,7 @@ public class RuleMatch extends FindSubst {
     }
 
     final Function<Term,Term> resolver = k -> {
-        return k.substituted(map0);
+        return k.substituted(map1);
     };
 
     public Term resolveTest(final Term t) {

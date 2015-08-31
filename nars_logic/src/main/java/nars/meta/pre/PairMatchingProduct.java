@@ -6,14 +6,15 @@ import nars.term.Term;
 import nars.term.Variable;
 
 /**
- * Created by me on 8/29/15.
+ * TODO decide if the volume bounds are correct when varargs are involved,
+ * and if not, make a special case
  */
 public class PairMatchingProduct extends ProductN {
 
     public int volA, volB;
     public int structureA, structureB; //should use the long stuctureHash?
 
-    final static Variable empty = new Variable("%z");
+    final static Variable empty = new Variable("%1"); //just use the first pattern variable because it will overlap with it
 
     public PairMatchingProduct() {
         this(empty, empty);
@@ -52,8 +53,8 @@ public class PairMatchingProduct extends ProductN {
     public boolean substitutesMayExist(final PairMatchingProduct pattern) {
         if (impossibleStructure(pattern.structure()))
             return false;
-        if (volume() < pattern.volume())
-            return false;
+
+        //if (volume() < pattern.volume())            return false;
 
         return substitutesMayExistPart2(pattern);
     }
@@ -65,8 +66,8 @@ public class PairMatchingProduct extends ProductN {
 
         final Term d = term[1];
         if (d.impossibleStructure(pattern.structureB)) return false;
-        if (volA < pattern.volA) return false;
-        if (volB < pattern.volB) return false;
+        //if (volA < pattern.volA) return false;
+        //if (volB < pattern.volB) return false;
 
         return true;
     }

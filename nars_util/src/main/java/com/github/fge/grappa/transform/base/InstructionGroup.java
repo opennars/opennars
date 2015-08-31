@@ -16,12 +16,11 @@
 
 package com.github.fge.grappa.transform.base;
 
-import nars.util.data.FasterList;
+import nars.util.data.list.FasterList;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

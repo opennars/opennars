@@ -20,6 +20,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
 
     @Override public final String reject(final Premise nal, final TaskSeed task, final boolean solution, final boolean revised) {
 
+
         //only process non-solution judgments
         if (solution || !task.isJudgment())
             return VALID;

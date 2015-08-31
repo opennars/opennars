@@ -1,7 +1,6 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
-import nars.meta.pre.PreCondition2;
 import nars.term.Term;
 
 /**
@@ -20,7 +19,7 @@ public class Substitute extends PreCondition2 {
         //args[0] now encodes a variable which we want to replace with what M was assigned to
         //(relevant for variable elimination rules)
         if (b!=null) {
-            m.map0.put(this.arg1, b);
+            m.map1.put(this.arg1, b);
             return true;
         }
         return false;

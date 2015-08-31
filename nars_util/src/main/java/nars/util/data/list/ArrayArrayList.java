@@ -1,4 +1,4 @@
-package nars.util.data;
+package nars.util.data.list;
 
 import org.apache.commons.lang3.ArrayUtils;
 

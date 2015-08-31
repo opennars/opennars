@@ -1,4 +1,4 @@
-package nars.util.data;
+package nars.util.data.list;
 
 import com.gs.collections.impl.list.mutable.FastList;
 

@@ -20,7 +20,7 @@ import com.github.fge.grappa.misc.Reference;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import nars.util.data.FasterList;
+import nars.util.data.list.FasterList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

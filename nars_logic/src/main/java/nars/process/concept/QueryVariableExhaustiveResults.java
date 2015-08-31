@@ -33,7 +33,7 @@ public class QueryVariableExhaustiveResults extends ConceptFireTaskTerm {
                 return;
 
             f.clear();
-            if (f.get(queryTerm, c.getTerm())) {
+            if (f.next(queryTerm, c.getTerm())) {
                 System.out.println("match: " + queryTerm + " " + c.getBeliefs().top());
                 withBelief.accept(c.getBeliefs().top());
             }

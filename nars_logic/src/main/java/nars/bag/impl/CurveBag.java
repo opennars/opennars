@@ -479,9 +479,9 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             return null;
 
         final V jj = remove( ii.name() );
-        if (ii!=jj) {
+        /*if (ii!=jj) {
             throw new RuntimeException("removal fault");
-        }
+        }*/
 
         return jj;
     }

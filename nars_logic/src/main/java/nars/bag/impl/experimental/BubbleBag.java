@@ -5,7 +5,7 @@ import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.bag.Bag;
 import nars.budget.Item;
-import nars.util.data.CircularArrayList;
+import nars.util.data.list.CircularArrayList;
 import nars.util.data.CuckooMap;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;

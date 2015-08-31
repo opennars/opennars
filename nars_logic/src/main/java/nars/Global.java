@@ -21,11 +21,12 @@
 package nars;
 
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.task.Task;
 import nars.term.Atom;
-import nars.util.data.FasterHashMap;
-import nars.util.data.FasterList;
+import nars.util.data.list.FasterList;
+import nars.util.data.list.VList;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -234,8 +235,8 @@ public class Global {
     }
 
     public static <K, V> Map<K,V> newHashMap(int capacity) {
-        //return new UnifiedMap(capacity);
-        return new FasterHashMap(capacity);
+        return new UnifiedMap(capacity);
+        //return new FasterHashMap(capacity);
         //return new FastMap<>(); //javolution http://javolution.org/apidocs/javolution/util/FastMap.html
         //return new HashMap<>(capacity);
         //return new LinkedHashMap(capacity);
@@ -248,6 +249,7 @@ public class Global {
     }
 
     public static <X> List<X> newArrayList(int capacity) {
+
         return new FasterList(capacity);
         //return new ArrayList(capacity);
     }

@@ -1,4 +1,4 @@
-package nars.util.data;
+package nars.util.data.list;
 
 import java.io.Serializable;
 import java.util.AbstractList;

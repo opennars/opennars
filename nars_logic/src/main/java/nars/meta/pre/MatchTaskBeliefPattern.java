@@ -59,7 +59,7 @@ public class MatchTaskBeliefPattern extends PreCondition {
     }
 
     final protected boolean subst(final RuleMatch m, final PairMatchingProduct t) {
-        return m.get(pattern, t);
+        return m.next(pattern, t);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package nars.util.data;
 
+import nars.util.data.list.ArrayArrayList;
+
 import java.util.*;
 
 //NOT WORKING ENTIRELY YET

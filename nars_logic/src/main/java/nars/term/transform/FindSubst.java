@@ -2,7 +2,6 @@ package nars.term.transform;
 
 import nars.Global;
 import nars.Op;
-import nars.Symbols;
 import nars.nal.nal4.Image;
 import nars.term.Compound;
 import nars.term.Term;
@@ -17,53 +16,36 @@ import java.util.Random;
  */
 public class FindSubst {
     private final Op type;
-    public final Map<Term, Term> map0;
     public final Map<Term, Term> map1;
+    public final Map<Term, Term> map2;
     private final Random random;
 
     public FindSubst(Op type, Random random) {
         this(type, null, null, random);
     }
 
-    public FindSubst(Op type, Map map0, Map map1, Random random) {
-        if (map0 == null)
-            map0 = Global.newHashMap(0);
+    public FindSubst(Op type, Map map1, Map map2, Random random) {
         if (map1 == null)
             map1 = Global.newHashMap(0);
+        if (map2 == null)
+            map2 = Global.newHashMap(0);
 
         this.type = type;
-        this.map0 = map0;
         this.map1 = map1;
+        this.map2 = map2;
         this.random = random;
 
     }
 
     public void clear() {
-        map0.clear();
         map1.clear();
+        map2.clear();
     }
 
-    @Deprecated
-    public Map<Term, Term>[] getMap() {
-        return new Map[]{map0, map1};
-    }
-
-    public final boolean get(final Term term1, final Term term2) {
-
-        //print("Before", term1, term2);
-        boolean r = next(term1, term2);
-        //print("  " + r + " After", null, null);
-
-        /*System.err.println(
-                (term1.getVolume() > term2.getVolume()) + " " +
-                " match?=" + r + " " + "=" + term1.getVolume() + " " + "=" + term2.getVolume());*/
-
-        return r;
-    }
 
     @Override
     public String toString() {
-        return type + ":" + map0 + "," + map1;
+        return type + ":" + map1 + "," + map2;
     }
 
     private void print(String prefix, Term a, Term b) {
@@ -78,7 +60,7 @@ public class FindSubst {
     /**
      * recursess into the next sublevel of the term
      */
-    protected boolean next(final Term term1, final Term term2) {
+    public boolean next(final Term term1, final Term term2) {
 
         final Variable term1Var = term1 instanceof Variable ? (Variable) term1 : null;
         final Variable term2Var = term2 instanceof Variable ? (Variable) term2 : null;
@@ -90,39 +72,36 @@ public class FindSubst {
 
         if (term1Var != null && term1Var.op == type) {
 
-            final Term t = map0.get(term1Var);
+            final Term t = map1.get(term1Var);
 
-            if (t != null && t!=term2)
+            if (t != null) {
                 return next(t, term2);
+            }
+            else {
+                if ((term2Var != null) && (term2Var.op == type)) {
+                    putCommon(term1Var, term2Var);
+                } else {
 
-            if (term2Var != null && term2Var.op == type) {
-                putCommon(term1Var, term2Var);
-            } else {
-                if (term2Var != null) {
-                    //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
-
-                    boolean t1Query = term1Var.op == Op.VAR_QUERY;
-                    boolean t2Query = term2Var.op == Op.VAR_QUERY;
-
-                    if ((t2Query && !t1Query) || (!t2Query && t1Query)) {
+                    if ((term2Var!=null) && !queryVarMatch(term1Var, term2Var))
                         return false;
-                    }
+
+                    put1To2(term2, term1Var);
                 }
 
-                put0to1(term2, term1Var);
+                return true;
             }
 
-            return true;
-
         } else if (term2Var != null && term2Var.op == type) {
-            final Term t = map1.get(term2Var);
+
+            final Term t = map2.get(term2Var);
 
             if (t != null)
                 return next(term1, t);
+            else {
+                put2To1(term1, term2Var);
+                return true;
+            }
 
-            put1to0(term1, term2Var);
-
-            return true;
         } else if ((term1 instanceof Compound) && ((term1.op() == term2.op())) && (term1.hasVar(type) || term2.hasVar(type))) {
             final Compound cTerm1 = (Compound) term1;
             final Compound cTerm2 = (Compound) term2;
@@ -155,25 +134,44 @@ public class FindSubst {
         return termsEqual;
     }
 
-    private void put1to0(Term term1, Variable term2Var) {
+
+    /** //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3 */
+    protected boolean queryVarMatch(Variable term1Var, Variable term2Var) {
+
+        final boolean t1Query = (term1Var.op == Op.VAR_QUERY);
+        final boolean t2Query = (term2Var.op == Op.VAR_QUERY);
+
+        return (t1Query ^ t2Query);
+    }
+
+    /** elimination */
+    private final void put2To1(final Term term1, final Variable term2Var) {
         if (term2Var instanceof Variables.CommonVariable) {
-            map0.put(term2Var, term1);
+            map1.put(term2Var, term1);
         }
-        map1.put(term2Var, term1);
+        map2.put(term2Var, term1);
     }
 
-    private void put0to1(Term term2, Variable term1Var) {
-        map0.put(term1Var, term2);
+    /** elimination */
+    private final void put1To2(final Term term2, final Variable term1Var) {
+        map1.put(term1Var, term2);
         if (term1Var instanceof Variables.CommonVariable) {
-            map1.put(term1Var, term2);
+            map2.put(term1Var, term2);
         }
     }
 
-    /** override this to disable common variables */
+    /**
+     * unification.
+     *
+     * override this to disable common variables.
+     * for example, it may be required to default to variable a
+     * (Term 1 if it is a variable and of the target type)
+     * instead of a new common variable.
+     * */
     protected void putCommon(Variable a, Variable b) {
         Variable commonVar = Variables.CommonVariable.make(a, b);
-        map0.put(a, commonVar);
-        map1.put(b, commonVar);
+        map1.put(a, commonVar);
+        map2.put(b, commonVar);
     }
 
     private boolean permute3(final Term[] c3, final Compound cTerm2) {

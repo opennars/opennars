@@ -24,7 +24,7 @@ public class Variables {
     }
 
     public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Random random) {
-        return new FindSubst(varType, map1, map2, random).get(term1, term2);
+        return new FindSubst(varType, map1, map2, random).next(term1, term2);
     }
 
     /**
@@ -34,11 +34,7 @@ public class Variables {
      * wasting them if they are not used.
      */
     @Deprecated public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term>[] map, final Random random) {
-        FindSubst f = new FindSubst(varType, map[0], map[1], random);
-        boolean b = f.get(term1, term2);
-        map[0] = f.map0;
-        map[1] = f.map1;
-        return b;
+        return new FindSubst(varType, map[0], map[1], random).next(term1, term2);
     }
 
 

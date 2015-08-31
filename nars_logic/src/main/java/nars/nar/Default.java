@@ -36,7 +36,8 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.premise.BloomFilterNovelPremiseGenerator;
+import nars.premise.HashTableNovelPremiseGenerator;
+import nars.premise.PremiseGenerator;
 import nars.process.CycleProcess;
 import nars.process.concept.*;
 import nars.task.Sentence;
@@ -447,11 +448,15 @@ public class Default extends NARSeed  {
     }
 
     /** construct a new premise generator for a concept */
-    public BloomFilterNovelPremiseGenerator newPremiseGenerator() {
+    public PremiseGenerator newPremiseGenerator() {
         int novelCycles = 1;
-        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
-                novelCycles * conceptTaskTermProcessPerCycle.get(),
-                0.01f /* false positive probability */ );
+        return new HashTableNovelPremiseGenerator(termLinkMaxMatched, novelCycles);
+
+//        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
+//                novelCycles * conceptTaskTermProcessPerCycle.get(),
+//                0.01f /* false positive probability */ );
+
+
     }
 
     public Bag<Term, Concept> newConceptBag() {

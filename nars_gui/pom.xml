@@ -179,6 +179,13 @@
         </dependency>
 
 
+
+        <dependency>
+            <groupId>eu.limetri.client</groupId>
+            <artifactId>mapviewer-javafx</artifactId>
+            <version>1.4.4</version>
+        </dependency>
+
     </dependencies>
 
 

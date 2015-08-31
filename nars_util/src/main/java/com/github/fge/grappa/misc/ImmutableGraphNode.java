@@ -16,8 +16,6 @@
 
 package com.github.fge.grappa.misc;
 
-import nars.util.data.FasterList;
-
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;

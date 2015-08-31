@@ -61,6 +61,7 @@ public class NALStressMeasure  {
 
         };
         p.print();
+        System.out.print(", " + n.memory.numConcepts(true,true) + " total concepts");
         System.out.println();
 
         /*p.printCSV(false);

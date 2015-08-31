@@ -29,7 +29,7 @@ import com.github.fge.grappa.support.IndexRange;
 import com.github.fge.grappa.support.Position;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import nars.util.data.FasterList;
+import nars.util.data.list.FasterList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
