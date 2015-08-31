@@ -171,45 +171,14 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
 
-
     /**
      * Check whether different aspects of sentence are equivalent to another one
      *
      * @param that The other judgment
      * @return Whether the two are equivalent
      */
-    default public boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
+    boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime);
 
-        if (this == that) return true;
-
-        final char thisPunc = this.getPunctuation();
-
-        if (truth) {
-            if (this.getTruth()==null) {
-                if (that.getTruth()!=null) return false;
-            }
-            else {
-                if (!this.getTruth().equals(that.getTruth())) return false;
-            }
-        }
-
-        if (punctuation) {
-            if (thisPunc!=that.getPunctuation()) return false;
-        }
-
-        if (term) {
-            if (!equalTerms(that)) return false;
-        }
-
-        if (stamp) {
-            //uniqueness includes every aspect of stamp except creation time
-            //<patham9> if they are only different in creation time, then they are the same
-            if (!this.equalStamp(that, true, creationTime, true))
-                return false;
-        }
-
-        return true;
-    }
 
     default public Sentence setOccurrenceTime(Tense tense, int duration) {
         return setOccurrenceTime(getCreationTime(), tense, duration);

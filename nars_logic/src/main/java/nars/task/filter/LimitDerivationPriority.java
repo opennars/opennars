@@ -6,7 +6,7 @@ package nars.task.filter;
 
 import nars.budget.Budget;
 import nars.premise.Premise;
-import nars.task.TaskSeed;
+import nars.task.Task;
 
 /**
  * experimental: task priority conservation based on NAL's current task
@@ -15,10 +15,10 @@ import nars.task.TaskSeed;
 public class LimitDerivationPriority implements DerivationFilter {
 
     @Override
-    public String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
+    public String reject(Premise nal, Task task, boolean solution, boolean revised) {
 
         Budget currentTaskBudget = nal.getTask().getBudget();
-        task.andPriority(currentTaskBudget.getPriority());
+        task.getBudget().andPriority(currentTaskBudget.getPriority());
         
         return null;
     }

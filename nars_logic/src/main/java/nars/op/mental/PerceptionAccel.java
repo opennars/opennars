@@ -250,8 +250,8 @@ public class PerceptionAccel extends NARReaction {
                             .parent(task, newEvent)
                             .occurrNow()
                             .setEvidence(Stamp.toSetArray(evBase.toArray()))
-                            .temporalInductable(!longest_result_derived_already)
-            );
+                            .setTemporalInducting(!longest_result_derived_already));
+
 
 
         }

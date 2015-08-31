@@ -9,7 +9,8 @@ import nars.nal.nal8.Operation;
  */
 public class DecideAboveDecisionThresholdAndQuestions extends DecideAboveDecisionThreshold {
 
-    public final static DecideAboveDecisionThresholdAndQuestions the = new DecideAboveDecisionThresholdAndQuestions();
+
+    //public final static DecideAboveDecisionThresholdAndQuestions the = new DecideAboveDecisionThresholdAndQuestions();
 
     @Override
     public boolean test(Operation task) {

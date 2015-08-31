@@ -267,41 +267,6 @@ public interface Stamp extends Cloneable, Serializable {
         return getOccurrenceTime() == ETERNAL;
     }
 
-    /**
-     * Check if two stamps contains the same types of content
-     * <p>
-     * NOTE: hashcode will include within it the creationTime & occurrenceTime, so if those are not to be compared then avoid comparing hash
-     *
-     * @param s The Stamp to be compared
-     * @return Whether the two have contain the same evidential base
-     */
-    default public boolean equalStamp(final Stamp s, final boolean evidentialSet, final boolean creationTime, final boolean occurrenceTime) {
-        if (this == s) return true;
-
-        /*if (hash && (!occurrenceTime || !evidentialSet))
-            throw new RuntimeException("Hash equality test must be followed by occurenceTime and evidentialSet equality since hash incorporates them");
-
-        if (hash)
-            if (hashCode() != s.hashCode()) return false;*/
-        if (creationTime)
-            if (getCreationTime() != s.getCreationTime()) return false;
-        if (occurrenceTime)
-            if (getOccurrenceTime() != s.getOccurrenceTime()) return false;
-        if (evidentialSet) {
-            //iterate in reverse; the ending of the evidence chain is more likely to be different
-            /*final long[] a = getEvidentialSet();
-            final long[] b = s.getEvidentialSet();
-            //if (evidentialHash!=s.evidentialHash)
-            //    return false;
-            if (a.length != b.length) return false;
-            for (int i = a.length - 1; i >= 0; i--)
-                if (a[i] != b[i]) return false;*/
-            return Arrays.equals(getEvidence(), s.getEvidence());
-        }
-
-
-        return true;
-    }
 
     /**
      * Get the occurrenceTime of the truth-value
@@ -447,8 +412,6 @@ public interface Stamp extends Cloneable, Serializable {
 
 
     //String toStringCache = null; //holds pre-allocated symbol for toString()
-
-    void applyToStamp(Stamp target);
 
     //    static boolean isCyclic(final long[] eb, long[] es) {
 //        if (eb == null) {

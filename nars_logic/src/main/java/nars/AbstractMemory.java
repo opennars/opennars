@@ -29,9 +29,7 @@ public interface AbstractMemory {
         return getClock().time();
     }
 
-    default public int duration() {
-        return getParam().duration.get();
-    }
+    int duration();
 
 
     default boolean nal(int i) {

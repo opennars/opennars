@@ -2,7 +2,7 @@ package nars.task.filter;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.premise.Premise;
-import nars.task.TaskSeed;
+import nars.task.Task;
 
 
 /** this should not be used in practice because derivations should be allowed to accumulate in the derivation buffer,
@@ -19,8 +19,8 @@ public class FilterBelowBudget implements DerivationFilter {
         this.threshold = threshold;
     }
 
-    @Override public final String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
-        if (!task.summaryGreaterOrEqual(threshold)) return INSUFFICIENT_BUDGET;
+    @Override public final String reject(final Premise nal, final Task task, boolean solution, boolean revised) {
+        if (!task.getBudget().summaryGreaterOrEqual(threshold)) return INSUFFICIENT_BUDGET;
         return VALID;
     }
 }

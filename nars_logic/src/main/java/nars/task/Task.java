@@ -250,40 +250,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return getParentTask() == null && getCause() == null;
     }
 
-    /** safety checks which should not ordinarily be ncessary but maybe for debugging */
-    default public void ensureValid() {
-
-        switch (getPunctuation()) {
-            case Symbols.JUDGMENT:
-            case Symbols.QUESTION:
-            case Symbols.QUEST:
-            case Symbols.GOAL:
-            case Symbols.COMMAND:
-                break;
-            default:
-                throw new RuntimeException("Invalid sentence punctuation");
-        }
-
-        if (isJudgmentOrGoal() && (getTruth() == null)) {
-            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-        }
-
-        if ((getParentTaskRef() != null && getParentTask() == null))
-            throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
-
-        ///*if (this.equals(getParentTask())) {
-        if (this == getParentTask()) {
-            throw new RuntimeException(this + " has parentTask equal to itself");
-        }
-
-
-        if (Global.DEBUG) {
-            if (Sentence.invalidSentenceTerm(getTerm())) {
-                throw new RuntimeException("Invalid sentence content term: " + getTerm());
-            }
-        }
-
-    }
 
 
     /**
@@ -410,7 +376,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
     }
 
-    public void setTemporalInducting(boolean b);
+    public Task setTemporalInducting(boolean b);
 
     public boolean isTemporalInductable();
 
@@ -418,6 +384,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     public Task log(List<String> historyToCopy);
     public List<String> getLog();
 
+
+    /** is double-premise */
+    public boolean isDouble();
 
 
 
@@ -431,7 +400,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
 
-    @Deprecated default public boolean perceivable(final Memory memory) {
+    @Deprecated default public boolean init(final Memory memory) {
+
+        if (isCommand()) return true;
 
         //if a task has an unperceived creationTime,
         // set it to the memory's current time here,
@@ -449,7 +420,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         if (getDuration() == 0)
             setDuration(memory.duration());
 
-        if (getEvidence() == null && getParentTask() == null) {
+        if (getEvidence() == null) {
             setEvidence(memory.newStampSerial());
         }
         return true;

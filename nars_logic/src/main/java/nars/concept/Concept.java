@@ -74,12 +74,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    /**
-     * whether a concept's desire exceeds decision threshold
-     */
-    default public boolean isDesired() {
-        return isDesired(getMemory().getParam().executionThreshold.floatValue());
-    }
+
 
     default public boolean isDesired(float threshold) {
         Truth desire=this.getDesire();

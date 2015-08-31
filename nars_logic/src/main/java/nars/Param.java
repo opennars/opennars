@@ -112,7 +112,7 @@ public abstract class Param implements Serializable {
     /** budget summary necessary to propagte termlink activation */
     public final AtomicDouble termLinkThreshold = new AtomicDouble(0);
 
-    /** Minimum expectation for a desire value. 
+    /** Minimum expectation for a desire value.
      *  the range of "now" is [-DURATION, DURATION]; */
     public final AtomicDouble executionThreshold = new AtomicDouble();
 

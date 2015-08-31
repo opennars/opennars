@@ -1,7 +1,9 @@
 package nars.task.filter;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.budget.Budget;
 import nars.premise.Premise;
+import nars.task.Task;
 import nars.task.TaskSeed;
 
 
@@ -24,18 +26,18 @@ public class MultiplyDerivedBudget implements DerivationFilter {
 
 
     @Override
-    public String reject(final Premise nal, final TaskSeed task, final boolean solution, final boolean revised) {
+    final public String reject(final Premise nal, final Task derived, final boolean solution, final boolean revised) {
         if (!solution) {
-            final TaskSeed derived = task;
             if (!leak(derived))
                 return "MultiplyDerivedBudget";
         }
         return null;
     }
 
-    protected boolean leak(TaskSeed derived) {
-        derived.mulPriority(priorityMultiplier.floatValue());
-        derived.mulDurability(durabilityMultiplier.floatValue());
+    final protected boolean leak(final Task derived) {
+        final Budget b = derived.getBudget();
+        b.mulPriority(priorityMultiplier.floatValue());
+        b.mulDurability(durabilityMultiplier.floatValue());
         return true;
     }
 

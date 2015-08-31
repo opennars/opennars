@@ -225,44 +225,6 @@ abstract public class Symbols {
         return false;
     }
 
-    public static boolean isValidAtomChar(final char c) {
-        //TODO replace these with Symbols. constants
-        switch(c) {
-            case ' ':
-            case ',':
-            case Symbols.JUDGMENT:
-            case Symbols.GOAL:
-            case Symbols.QUESTION:
-            case Symbols.QUEST:
-            case '\"':
-            case '^':
-            case Symbols.INTERVAL_PREFIX_OLD:
-            case '<':
-            case '>':
-            case '-':
-            case '~':
-            case '=':
-            case '*':
-            case '|':
-            case '&':
-            case '(':
-            case ')':
-            case '[':
-            case ']':
-            case '{':
-            case '}':
-            case '%':
-            case '#':
-            case '$':
-            case ':':
-            case '`':
-            case '\'':
-            case '\t':
-            case '\n':
-                return false;
-        }
-        return true;
-    }
 
     public static String getPunctuationWord(char punctuation) {
         switch (punctuation) {

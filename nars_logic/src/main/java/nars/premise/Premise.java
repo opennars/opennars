@@ -223,20 +223,20 @@ public interface Premise {
 
 
 
-    default public Task derive(final TaskSeed task) {
+    default public Task derive(final Task task) {
         return derive(task, false);
     }
 
-    default public Task derive(final TaskSeed task, final boolean revised) {
+    default public Task derive(final Task task, final boolean revised) {
         return derive(task, revised, !task.isDouble());
     }
 
     @Deprecated
-    default public Task derive(final TaskSeed task, final boolean revised, final boolean single) {
+    default public Task derive(final Task task, final boolean revised, final boolean single) {
         return derive(task, revised, single, false);
     }
 
-    default public Task deriveDouble(final TaskSeed task) {
+    default public Task deriveDouble(final Task task) {
         return derive(task, false, false);
     }
 
@@ -357,7 +357,7 @@ public interface Premise {
      * <p>
      * if solution is false, it means it is a derivation
      */
-    default public Task addNewTask(TaskSeed task, String reason, @Deprecated boolean solution, boolean revised, boolean single) {
+    default public Task addNewTask(Task task, String reason, @Deprecated boolean solution, boolean revised, boolean single) {
 
         final Memory memory = getMemory();
 
@@ -382,24 +382,24 @@ public interface Premise {
             throw new RuntimeException("derived task must have one parentTask: " + task);
         }
 
-        Task taskCreated;
-        if ((taskCreated = task.get()) != null) {
+
+        if (task != null) {
 
             //taskCreated.setTemporalInducting(false);
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                taskCreated.log(System.nanoTime() + " " + this.toString());
+                task.log(System.nanoTime() + " " + this.toString());
             }
 
-            taskCreated.log(reason);
+            task.log(reason);
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                taskCreated.log(Premise.getStack());
+                task.log(Premise.getStack());
             }
 
-            accept(taskCreated);
+            accept(task);
 
-            return taskCreated;
+            return task;
         }
 
 
@@ -501,7 +501,7 @@ public interface Premise {
      * @param allowOverlap
      */
     @Deprecated
-    default public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, boolean allowOverlap) {
+    default public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, boolean allowOverlap) {
 
 
         if (task.getTerm() == null) {
@@ -543,11 +543,11 @@ public interface Premise {
                 else
                     o = Stamp.ETERNAL; //default ETERNAL
 
-                task.occurr(o);
+                task.setOccurrenceTime(o);
             }
         } else {
             if (task.isTimeless()) {
-                task.eternal();
+                task.setEternal();
             }
             else if (!task.isEternal()) {
                 throw new RuntimeException("non-eternal Task derived in non-temporal mode");

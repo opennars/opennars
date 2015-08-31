@@ -35,8 +35,9 @@ public abstract class AbstractCycle extends ConceptActivator implements CyclePro
     }
 
     @Override
-    public void onInput(Input perception) {
-        percepts.accept(perception);
+    public void onInput(Input i) {
+
+        percepts.accept(i);
     }
 
     /** attempts to perceive the next input from perception, and

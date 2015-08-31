@@ -32,6 +32,7 @@ import objenome.Container;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -173,19 +174,21 @@ public class NAR extends Container implements Runnable {
      * parses and forms a Task from a string but doesnt input it
      */
     public Task task(String taskText) {
-        Task t = narsese.task(taskText, memory);
-
-        long now = time();
-        if (!t.isEternal()) {
-            t.setTime(now, now + t.getOccurrenceTime());
-        } else {
-            t.setTime(now, Stamp.ETERNAL);
-        }
-        return t;
+        return narsese.task(taskText, memory);
     }
 
     public <T extends Compound> TaskSeed<T> task(T t) {
         return memory.newTask(t);
+    }
+
+    public List<Task> tasks(final String parse) {
+        List<Task> result = Global.newArrayList(1);
+        narsese.tasks(parse, n -> result.add(n), memory );
+        return result;
+    }
+
+    public List<Task> inputs(final String parse) {
+        return input(tasks(parse));
     }
 
     public TextInput input(final String text) {
@@ -338,6 +341,17 @@ public class NAR extends Container implements Runnable {
         return null;
     }
 
+    public List<Task> input(final List<Task> t) {
+        t.forEach(x -> input(x));
+        return t;
+    }
+
+    public Task[] input(final Task[] t) {
+        for (Task x : t)
+            input(x);
+        return t;
+    }
+
     public Premise inputDirect(final TaskSeed t) {
         return inputDirect(t.get());
     }
@@ -434,7 +448,7 @@ public class NAR extends Container implements Runnable {
      * Will remain added until it closes or it is explicitly removed.
      */
     public Input input(final Input i) {
-        memory.add(i);
+        i.inputAll(memory);
         return i;
     }
 
@@ -725,6 +739,8 @@ public class NAR extends Container implements Runnable {
     public void emit(Throwable e) {
         emit(Events.ERR.class, e);
     }
+
+
 
 
 //    private void debugTime() {

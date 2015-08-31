@@ -3,7 +3,6 @@ package nars.task.filter;
 import nars.concept.Concept;
 import nars.premise.Premise;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.truth.Truth;
 
@@ -18,7 +17,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
 
 
 
-    @Override public final String reject(final Premise nal, final TaskSeed task, final boolean solution, final boolean revised) {
+    @Override public final String reject(final Premise nal, final Task task, final boolean solution, final boolean revised) {
 
 
         //only process non-solution judgments

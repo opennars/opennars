@@ -669,7 +669,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     /**
      * fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance
      */
-    protected Budget budgetDirect(final float p, final float d, final float q) {
+    protected final Budget budgetDirect(final float p, final float d, final float q) {
         this.priority = p;
         this.durability = d;
         this.quality = q;

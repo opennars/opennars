@@ -53,9 +53,9 @@ import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
+import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
-import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.util.event.EventEmitter;
 import nars.util.event.Observed;
@@ -126,13 +126,14 @@ public class Memory implements Serializable, AbstractMemory {
 
 
     private int level;
-    private long currentStampSerial;
+    private long currentStampSerial = 1;
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
     private long inputPausedUntil = -1;
     private boolean inCycle = false;
     private long nextRandomSeed = 1;
+
 
     /**
      * Create a new memory
@@ -394,24 +395,6 @@ public class Memory implements Serializable, AbstractMemory {
         return Atom.the(s);
     }
 
-    /** applies default settings, with a new serial # as its evidentialBase, for a new input sentence */
-    public void applyToStamp(Stamp t) {
-//
-//    public Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
-//        super();
-//        this.creationTime = creationTime;
-//        this.occurrenceTime = occurenceTime;
-//        this.duration = duration;
-//        this.evidentialBase = evidentialBase;
-//    }
-//
-//    protected Stamp(final long serial, final long creationTime, final long occurenceTime, final int duration) {
-//        this(new long[]{serial}, creationTime, occurenceTime, duration);
-//    }
-        t.setCreationTime(time());
-        t.setDuration(duration());
-        t.setEvidence(new long[]{newStampSerial()});
-    }
 
     /** sets the random seed which will be used in the next reset(), then reset() */
     public void reset(long randomSeed) {
@@ -489,7 +472,8 @@ public class Memory implements Serializable, AbstractMemory {
         clock.reset();
 
 
-        currentStampSerial = 1;
+        //NOTE: allow stamp serial to continue increasing after reset.
+        //currentStampSerial = ;
 
         inputPausedUntil = -1;
 
@@ -579,24 +563,64 @@ public class Memory implements Serializable, AbstractMemory {
     }
 
 
-
-
-    /** adds the input stream to perception */
-    public void add(Input ii) {
-        getControl().onInput(ii);
-    }
-
 //    public void add(final Iterable<Task> source) {
 //        for (final Task t : source)
 //            add((Task) t);
 //    }
 
 
+    @Override public int duration() {
+        return param.duration.get();
+    }
+
+
+    /** safety checks which should not ordinarily be ncessary but maybe for debugging */
+    static void ensureValidTask(final Task t) {
+
+        switch (t.getPunctuation()) {
+            case Symbols.JUDGMENT:
+            case Symbols.QUESTION:
+            case Symbols.QUEST:
+            case Symbols.GOAL:
+            case Symbols.COMMAND:
+                break;
+            default:
+                throw new RuntimeException("Invalid sentence punctuation");
+        }
+
+        if (t.isJudgmentOrGoal() && (t.getTruth() == null)) {
+            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
+        }
+
+        if ((t.getParentTaskRef() != null && t.getParentTask() == null))
+            throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+
+        ///*if (this.equals(getParentTask())) {
+        if (t == t.getParentTask()) {
+            throw new RuntimeException(t + " has parentTask equal to itself");
+        }
+
+        if (Global.DEBUG) {
+            if (Sentence.invalidSentenceTerm(t.getTerm())) {
+                throw new RuntimeException("Invalid sentence content term: " + t.getTerm());
+            }
+        }
+
+    }
+
+
     /**
      * exposes the memory to an input, derived, or immediate task.
      * the memory then delegates it to its controller
+     *
+     * return true if the task was processed
+     * if the task was a command, it will return false even if executed
      */
     public boolean add(final Task t) {
+
+        if ((t instanceof Task) && (!((Task)t).init(this))) {
+            return false;
+        }
 
         if (t.isCommand()) {
             int n = execute(t);
@@ -606,12 +630,10 @@ public class Memory implements Serializable, AbstractMemory {
             return false;
         }
 
-        if (Global.DEBUG) {
-            t.ensureValid();
-        }
 
-        if (!t.perceivable(this)) {
-            return false;
+
+        if (Global.DEBUG) {
+            ensureValidTask(t);
         }
 
         if (!Terms.levelValid(t, nal())) {

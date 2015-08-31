@@ -75,8 +75,8 @@ public class TaskStruct extends Fuct implements Task {
     }
 
     @Override
-    public void setTemporalInducting(boolean b) {
-
+    public Task setTemporalInducting(boolean b) {
+        return this;
     }
 
     @Override
@@ -92,6 +92,11 @@ public class TaskStruct extends Fuct implements Task {
     @Override
     public List<String> getLog() {
         return null;
+    }
+
+    @Override
+    public boolean isDouble() {
+        return false;
     }
 
     @Override
@@ -160,6 +165,11 @@ public class TaskStruct extends Fuct implements Task {
     }
 
     @Override
+    public boolean equivalentTo(Sentence that, boolean punctuation, boolean term, boolean truth, boolean stamp, boolean creationTime) {
+        return false;
+    }
+
+    @Override
     public void setTermShared(Compound equivalentInstance) {
 
     }
@@ -184,10 +194,6 @@ public class TaskStruct extends Fuct implements Task {
 
     }
 
-    @Override
-    public void applyToStamp(Stamp target) {
-
-    }
 
     @Override
     public Stamp setDuration(int duration) {

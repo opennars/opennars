@@ -6,7 +6,7 @@ package nars.task.filter;
 
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
-import nars.task.TaskSeed;
+import nars.task.Task;
 import nars.term.Compound;
 
 /**
@@ -18,7 +18,7 @@ import nars.term.Compound;
 public class DeriveOnlyDemandedTasks implements DerivationFilter {
 
     @Override
-    public final String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
+    public final String reject(Premise nal, Task task, boolean solution, boolean revised) {
         
 
         Compound x = task.getTerm();

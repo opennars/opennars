@@ -2,7 +2,7 @@ package nars.task.filter;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.premise.Premise;
-import nars.task.TaskSeed;
+import nars.task.Task;
 import nars.truth.Truth;
 
 /**
@@ -16,7 +16,7 @@ public class FilterBelowConfidence implements DerivationFilter {
         confidenceThreshold.set(thresh);
     }
 
-    @Override public final String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
+    @Override public final String reject(Premise nal, Task task, boolean solution, boolean revised) {
         Truth t = task.getTruth();
         if (t != null) {
             float conf = t.getConfidence();

@@ -186,16 +186,20 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         this.cyclic = cyclic;
     }
 
-    @Override
-    public void applyToStamp(Stamp target) {
-        throw new RuntimeException("is this necessar");
-    }
+
 
     @Override
-    public Task<T> setEvidence(long[] evidentialSet) {
-        this.evidentialSet = evidentialSet;
+    public Task<T> setEvidence(final long... evidentialSet) {
+        if (evidentialSet!=null && evidentialSet.length > 0)
+            this.evidentialSet = evidentialSet;
+        else
+            this.evidentialSet = null;
         invalidate();
         return this;
+    }
+
+    final public boolean isDouble() {
+        return getParentBelief()!=null && getParentTask()!=null;
     }
 
     public Task log(List<String> historyToCopy) {
@@ -203,14 +207,14 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             return this;
 
         if (historyToCopy != null) {
-            if (this.history == null) this.history = new ArrayList(historyToCopy.size());
+            if (this.history == null) this.history = Global.newArrayList(historyToCopy.size());
             history.addAll(historyToCopy);
         }
         return this;
     }
 
     @Override
-    public char getPunctuation() {
+    public final char getPunctuation() {
         return punctuation;
     }
 
@@ -220,17 +224,17 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
-    public long getCreationTime() {
+    public final long getCreationTime() {
         return creationTime;
     }
 
     @Override
-    public long getOccurrenceTime() {
+    public final long getOccurrenceTime() {
         return occurrenceTime;
     }
 
     @Override
-    public int getDuration() {
+    public final int getDuration() {
         return duration;
     }
 
@@ -246,7 +250,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
-    protected void invalidate() {
+    protected final void invalidate() {
         this.hash = 0;
     }
 
@@ -260,15 +264,15 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
-    public Sentence setDuration(int d) {
+    public final Sentence setDuration(int d) {
         this.duration = d;
         return this;
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         if (hash == 0) {
-            this.hash = getHash();
+            hash = getHash();
         }
         return hash;
     }
@@ -281,13 +285,79 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * @return Whether the two sentences have the same content
      */
     @Override
-    public boolean equals(final Object that) {
+    public final boolean equals(final Object that) {
         if (this == that) return true;
         if (that instanceof Sentence) {
             return equivalentTo((Sentence) that, true, true, true, true, false);
         }
         return false;
     }
+
+    public final boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
+
+        if (this == that) return true;
+
+        final char thisPunc = this.getPunctuation();
+
+        if (term) {
+            if (!equalTerms(that)) return false;
+        }
+
+
+        if (punctuation) {
+            if (thisPunc!=that.getPunctuation()) return false;
+        }
+
+        if (truth) {
+            Truth thisTruth = this.getTruth();
+            if (thisTruth ==null) {
+                //equal punctuation will ensure thatTruth is also null
+            }
+            else {
+                if (!thisTruth.equals(that.getTruth())) return false;
+            }
+        }
+
+
+        if (stamp) {
+            //uniqueness includes every aspect of stamp except creation time
+            //<patham9> if they are only different in creation time, then they are the same
+            if (!this.equalStamp(that, true, creationTime, true))
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if two stamps contains the same types of content
+     * <p>
+     * NOTE: hashcode will include within it the creationTime & occurrenceTime, so if those are not to be compared then avoid comparing hash
+     *
+     * @param s The Stamp to be compared
+     * @return Whether the two have contain the same evidential base
+     */
+    public final boolean equalStamp(final Stamp s, final boolean evidentialSet, final boolean creationTime, final boolean occurrenceTime) {
+        if (this == s) return true;
+
+        /*if (hash && (!occurrenceTime || !evidentialSet))
+            throw new RuntimeException("Hash equality test must be followed by occurenceTime and evidentialSet equality since hash incorporates them");
+
+        if (hash)
+            if (hashCode() != s.hashCode()) return false;*/
+        if (creationTime)
+            if (getCreationTime() != s.getCreationTime()) return false;
+        if (occurrenceTime)
+            if (getOccurrenceTime() != s.getOccurrenceTime()) return false;
+        if (evidentialSet) {
+            return Arrays.equals(getEvidence(), s.getEvidence());
+        }
+
+
+        return true;
+    }
+
+
 
     public Reference<Task> getParentTaskRef() {
         return parentTask;
@@ -326,8 +396,9 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /**
      * flag to indicate whether this Event Task participates in tempporal induction
      */
-    public void setTemporalInducting(boolean b) {
+    public Task setTemporalInducting(boolean b) {
         this.temporallyInductable = b;
+        return this;
     }
 
     public boolean isTemporalInductable() {

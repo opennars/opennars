@@ -5,7 +5,7 @@
 package nars.task.filter;
 
 import nars.premise.Premise;
-import nars.task.TaskSeed;
+import nars.task.Task;
 
 /**
 <patham9_> desire value form the entire motivation management, what i did was allowing only input judgements and derived goals (no derived judgements) :D
@@ -14,7 +14,7 @@ import nars.task.TaskSeed;
 public class DeriveOnlyDesired implements DerivationFilter {
 
     @Override
-    public String reject(Premise nal, TaskSeed task, boolean solution, boolean revised) {
+    public String reject(Premise nal, Task task, boolean solution, boolean revised) {
         if (!task.isGoal()) {
             if (task.isEternal())
                 return "Not Goal";

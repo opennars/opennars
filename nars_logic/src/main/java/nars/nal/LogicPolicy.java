@@ -47,7 +47,7 @@ public class LogicPolicy {
     }
 
     /** tests validity of a derived task; if valid returns null, else returns a String rule explaining why it is invalid */
-    public String getDerivationRejection(final Premise nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
+    public String getDerivationRejection(final Premise nal, final Task task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
 
         List<DerivationFilter> derivationFilters = getDerivationFilters();
         final int dfs = derivationFilters.size();

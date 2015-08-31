@@ -68,27 +68,26 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
 
-    static final ThreadLocal<NarseseParser> parsers = new ThreadLocal();
+    static final ThreadLocal<NarseseParser> parsers = ThreadLocal.withInitial(() -> Grappa.createParser(NarseseParser.class) );
 
     public static NarseseParser the() {
-        NarseseParser p = parsers.get();
-        if (p == null) parsers.set(p = Grappa.createParser(NarseseParser.class));
-        return p;
+        return parsers.get();
     }
 
 
     public Rule Input() {
-        return
-                zeroOrMore(
-                        sequence(
-                                s(),
-                                firstOf(
-                                        LineComment(),
-                                        PauseInput(),
-                                        Task()
-                                )
-                        )
-                );
+        return sequence(
+            zeroOrMore( //1 or more?
+                    sequence(
+                            s(),
+                            firstOf(
+                                    LineComment(),
+                                    PauseInput(),
+                                    Task()
+                            ),
+                            s()
+                    )
+            ), s(), eof() ) ;
     }
 
     /**  {Premise1,Premise2} |- Conclusion. */
@@ -157,23 +156,26 @@ public class NarseseParser extends BaseParser<Object>  {
 
     public Rule LineComment() {
         return sequence(
+                s(),
                 firstOf(
                         "//",
                         "'",
                         sequence("***", zeroOrMore('*')), //temporary
                         "OUT:"
                 ),
-                LineCommentEchoed()  );
+                s(),
+                LineCommentEchoed(),
+                "\n");
     }
 
     public Rule LineCommentEchoed() {
         return sequence( zeroOrMore(noneOf("\n")),
-                push(echo.echo(match()) ), "\n");
+                push(echo.echo(match()) ));
     }
 
     public Rule PauseInput() {
-        return sequence(IntegerNonNegative(),
-                push( PauseInput.pause( (Integer) pop() ) ), "\n" );
+        return sequence( s(), IntegerNonNegative(),
+                push( PauseInput.pause( (Integer) pop() ) ), s(), "\n" );
     }
 
 
@@ -246,9 +248,9 @@ public class NarseseParser extends BaseParser<Object>  {
         Task ttt = new DefaultTask(ccontent, p, t, B, null, null, null);
         ttt.setCreationTime(Stamp.TIMELESS);
 
-        //TODO support some way of allowing memory to be null using non-Memory interfaces supplied to constructor
+
         ttt.setOccurrenceTime(tense, memory.duration());
-        ttt.setEvidence(new long[] { memory.newStampSerial() });
+        ttt.setEvidence(null);
 
         return ttt;
 
@@ -395,6 +397,7 @@ public class NarseseParser extends BaseParser<Object>  {
     }
 
 
+    @Cached
     Rule Term(boolean includeOperation, boolean includeMeta) {
         /*
                  <term> ::= <word>                             // an atomic constant term
@@ -520,7 +523,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
 
-    public final class ValidAtomCharMatcher extends AbstractMatcher
+    public final static class ValidAtomCharMatcher extends AbstractMatcher
     {
 
         public ValidAtomCharMatcher() {
@@ -544,6 +547,46 @@ public class NarseseParser extends BaseParser<Object>  {
             return count > 0;
         }
     }
+
+    public static boolean isValidAtomChar(final char c) {
+        //TODO replace these with Symbols. constants
+        switch(c) {
+            case ' ':
+            case ',':
+            case Symbols.JUDGMENT:
+            case Symbols.GOAL:
+            case Symbols.QUESTION:
+            case Symbols.QUEST:
+            case '\"':
+            case '^':
+            case Symbols.INTERVAL_PREFIX_OLD:
+            case '<':
+            case '>':
+            case '-':
+            case '~':
+            case '=':
+            case '*':
+            case '|':
+            case '&':
+            case '(':
+            case ')':
+            case '[':
+            case ']':
+            case '{':
+            case '}':
+            case '%':
+            case '#':
+            case '$':
+            case ':':
+            case '`':
+            case '\'':
+            case '\t':
+            case '\n':
+                return false;
+        }
+        return true;
+    }
+
 
     /**
      * MACRO: y:x    becomes    <x --> y>
@@ -888,7 +931,7 @@ public class NarseseParser extends BaseParser<Object>  {
      * whitespace, optional
      */
     Rule s() {
-        return zeroOrMore(anyOf(" \t\f\n"));
+        return zeroOrMore(anyOf(" \t\f\n\r"));
     }
 
 //    public static NarseseParser newParser(NAR n) {
@@ -902,55 +945,43 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
     public void tasks(String input, AbstractMemory m, Collection<Task> c) {
-        tasks(input, m, t -> {
+        tasks(input, t -> {
             c.add(t);
-        });
+        }, m);
     }
-
 
     /**
      * gets a stream of raw immutable task-generating objects
      * which can be re-used because a Memory can generate them
      * ondemand
      */
-    public void tasks(String input, Consumer c) {
+    public void tasks(String input, Consumer<Task> c, final AbstractMemory m) {
+        tasksRaw(input, o -> {
+            c.accept( getTask(m, o ) );
+        });
+    }
+
+
+    /** supplies the source array of objects that can construct a Task */
+    public void tasksRaw(String input, Consumer<Object[]> c) {
 
         ParsingResult r = the().inputParser.run(input);
 
         int size = r.getValueStack().size();
 
-        if (size == 0) {
-            c.accept( echo.echo("ERROR: Unrecognizable input: " + input) );
-            return;
-        }
         for (int i = size-1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);
 
-            if (o instanceof Task) {
-                c.accept( ((Task)o) );
-            }
-            else if (o instanceof Object[]) {
-                c.accept( o );
+            if (o instanceof Object[]) {
+                c.accept((Object[])o);
             }
             else {
-                //c.accept( echo.newTask( o.toString()) );
                 throw new RuntimeException("Unrecognized input result: " + o);
             }
         }
     }
 
-    /**
-     * parse a series of tasks
-     */
-    public void tasks(String input, final AbstractMemory memory, Consumer<Task> c) {
-        if (input.isEmpty()) return;
 
-        tasks(input, t -> {
-            if (t instanceof Object[])
-                t = getTask(memory, (Object[]) t);
-            c.accept((Task) t);
-        });
-    }
 
 
 
@@ -986,7 +1017,7 @@ public class NarseseParser extends BaseParser<Object>  {
             return getTask(memory, (Object[])r.getValueStack().peek() );
         }
         catch (Exception e) {
-            throw newParseException(input, r);
+            throw newParseException(input, r, e);
         }
     }
 
@@ -1030,7 +1061,7 @@ public class NarseseParser extends BaseParser<Object>  {
             }
         }
 
-        throw newParseException(input, r);
+        throw newParseException(input, r, null);
     }
     public <T extends Compound> T compound(String s) throws InvalidInputException {
         return term(s);
@@ -1038,13 +1069,15 @@ public class NarseseParser extends BaseParser<Object>  {
             return ((T)t).normalizeDestructively();*/
     }
 
-    public static InvalidInputException newParseException(String input, ParsingResult r) {
+    public static InvalidInputException newParseException(String input, ParsingResult r, Exception e) {
 
         CharSequenceInputBuffer ib = (CharSequenceInputBuffer) r.getInputBuffer();
 
 
         //if (!r.isSuccess()) {
-            return new InvalidInputException("input: " + input + " (" + r.toString() + ')');
+            return new InvalidInputException("input: " + input + " (" + r.toString() + ")  " +
+                    e!=null ? e.toString() + " " + e.getStackTrace()[0] : "");
+
         //}
 //        if (r.parseErrors.isEmpty())
 //            return new InvalidInputException("No parse result for: " + input);

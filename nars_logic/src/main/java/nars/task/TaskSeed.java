@@ -61,72 +61,20 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 //    }
 
 
-    @Override
-    public TaskSeed<T> setOccurrenceTime(long occurrenceTime) {
-        super.setOccurrenceTime(occurrenceTime);
-        return this;
-    }
 
-    /** is double-premise */
-    public boolean isDouble() {
-        return this.getParentTask()!=null && this.getParentBelief()!=null;
-    }
+
+
+
 
 
     @Override
-    public TaskSeed<T> setCreationTime(long creationTime) {
-        super.setCreationTime(creationTime);
-        return this;
-    }
+    public final long[] getEvidence() {
+        //supplying no evidence will be assigned a new serial
+        //but this should only happen for input tasks (with no parent)
 
+        if ((super.getEvidence() == null) && (!isInput())) {
 
-    /**
-     * duration (in cycles) which any contained intervals are measured by
-     */
-    @Override
-    public int getDuration() {
-        int duration = super.getDuration();
-        if (duration == 0) {
-            int d = 0;
-            if (getParentBelief() !=null) {
-                d = getParentBelief().getDuration();
-                if (d!=0) return d;
-            }
-            else if (d == 0 && getParentTask() !=null) {
-                d = getParentTask().getDuration();
-            }
-
-            if (d!=0) setDuration(d);
-        }
-        return duration;
-    }
-
-
-    @Deprecated @Override
-    public void applyToStamp(final Stamp target) {
-        throw new RuntimeException("untested / depr");
-//        target.setDuration(getDuration())
-//                .setTime(getCreationTime(), getOccurrenceTime())
-//                .setEvidence(getEvidence())
-//                .setCyclic(isCyclic());
-
-    }
-
-    @Override
-    public long[] getEvidence() {
-        updateEvidence();
-        return super.getEvidence();
-    }
-
-
-
-    protected void updateEvidence() {
-        if (super.getEvidence() == null) {
-
-            if ((getParentTask() == null) && (getParentBelief() == null)) {
-                //supplying no evidence will be assigned a new serial
-                //but this should only happen for input tasks (with no parent)
-            } else if (isDouble()) {
+            if (isDouble()) {
                 long[] as = getParentTask().getEvidence();
                 long[] bs = getParentBelief().getEvidence();
 
@@ -171,6 +119,8 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
             }
 
         }
+
+        return super.getEvidence();
     }
 
 
@@ -322,11 +272,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
 
-    public TaskSeed<T> stamp(Task t) {
-        //should this set parent too?
-        t.applyToStamp(this);
-        return this;
-    }
+
 
 //    public TaskSeed<T> stamp(Stamper s) {
 //        s.applyToStamp(this);
@@ -399,10 +345,11 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 
 
         if (getEvidence() == null) {
-            if (getParentTask() != null)
-                throw new RuntimeException(this + " has parent " + getParentTask() + " and " + getParentBelief() + " yet no evidentialBase was supplied");
 
-            setEvidence(new long[]{memory.newStampSerial()});
+            if (!isInput())
+                throw new RuntimeException(this + " has parent " + getParentTask() + " and " + getParentBelief() + " yet no stamp was supplied");
+
+            setEvidence(null);
 
         } else {
             if (getParentTask() == null && getParentBelief()==null)
@@ -426,11 +373,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
             applyDefaultBudget();
         }
 
-
-        //applyToStamp(t);
-
-        //setTemporalInducting(temporallyInductable);
-
         //if (this.cause != null) t.setCause(cause);
         //if (this.reason != null) t.log(reason);
 
@@ -438,34 +380,8 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
 
-    @Override
-    public TaskSeed setEvidence(long[] evidentialSet) {
-        super.setEvidence(evidentialSet);
-        return this;
-    }
-
-    @Override
-    public TaskSeed setDuration(int d) {
-        super.setDuration(d);
-        return this;
-    }
 
 
-    /**
-     * creation time of the stamp
-     */
-    @Override
-    public long getCreationTime() {
-        long creationTime = super.getCreationTime();
-//        if (creationTime == Stamp.ETERNAL) {
-//            throw new RuntimeException("creation time should be specified or timeless, not eternal");
-//        }
-        if (creationTime == Stamp.TIMELESS) {
-            //Default: created now
-            return memory.time();
-        }
-        return creationTime;
-    }
 
 
 
@@ -588,7 +504,8 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
     public TaskSeed<T> occurrNow() {
-        return setOccurrenceTime(memory.time());
+        setOccurrenceTime(memory.time());
+        return this;
     }
 
 
