@@ -415,6 +415,8 @@
 
 //second layer variable introduction, here you go again :)
 
-(A --> K), (&&,(#1 --> L),(($2 --> K) ==> R)), substitute(R,A) |- (&&,(#1 --> L),R), (Truth:Deduction)
+//(A --> K), (&&,(#1 --> L),(($2 --> K) ==> R)), substitute(R,A) |- (&&,(#1 --> L),R), (Truth:Deduction)
 
-(A --> K), (($1 --> L) ==> (&&,(#2 --> K),R)), substitute(R,A) |- (($1 --> L) ==> R), (Truth:Deduction)
+//(A --> K), (($1 --> L) ==> (&&,(#2 --> K),R)), substitute(R,A) |- (($1 --> L) ==> R), (Truth:AnonymousAnalogy)
+
+//(A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
