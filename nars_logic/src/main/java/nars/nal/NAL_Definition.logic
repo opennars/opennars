@@ -401,3 +401,8 @@
     ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 
 ////// Truth-value functions: see TruthFunctions.java
+
+//Set comprehension:
+
+    (A --> {A_1..n}), (A --> {B_1..m}) |- (A --> {A_1..n,B_1..m}), (Truth.Deduction)
+    (A --> {A_1..n}), (A --> {B_1..m}) |- (A --> {A_1..n,B_1..m}), (Truth.Deduction)
