@@ -1103,7 +1103,8 @@ public class NARGraph1 extends Spacegraph {
 
 
     protected void updateNodes() {
-        termList.forEach(n -> n.update());
+        if (termList!=null)
+            termList.forEach(n -> n.update());
     }
 
     final List<TermEdge> removable = Global.newArrayList();

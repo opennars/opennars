@@ -158,8 +158,8 @@ public class TreePane extends BorderPane {
                     Task k = ent.getKey();
                     if (!pendingTasks.remove(k) || !visible(k)) {
                         //task removed
-                        hide(k);
-                        ii.remove();
+                        if (hide(k))
+                            ii.remove();
                     } else {
                         //existing task
                         getItem(k);
@@ -199,10 +199,7 @@ public class TreePane extends BorderPane {
             return rootNode;
 
         TaskTreeItem i = tasks.computeIfAbsent(t, _t -> {
-
-
             return new TaskTreeItem(_t);
-
         });
 
         if (visible(t)) {
@@ -212,7 +209,6 @@ public class TreePane extends BorderPane {
         else {
             if (i.label.isVisible())
                 hide(t);
-            return null;
         }
 
         return i;
@@ -231,33 +227,44 @@ public class TreePane extends BorderPane {
             ii.label.setVisible(true);
         }
         else {
-            hide(t);
+            //hide(t);
+            throw new RuntimeException("no parent to reparent: " +  ii);
         }
 
         return ii;
     }
 
     private void update(final Task t, final TreeItem<Task> i) {
-        if (!visible(t))
-            hide(t);
+        if (!visible(t)) {
+            if (hide(t))
+                return;
+        }
 
         final Node g = i.getGraphic();
         if (g instanceof Runnable)
             ((Runnable) g).run();
     }
 
-    private void hide(Task t) {
+    private boolean hide(Task t) {
         TaskTreeItem tt = tasks.get(t);
         if (tt == null)
-            return;
+            return false;
 
-        TaskLabel tp = tt.label;
-        tp.setVisible(false);
+        //allow a node to e removed only if it has no children
+        if (tt.getChildren().isEmpty()) {
 
-        TreeItem<Task> pp = tt.getParent();
-        if (pp != null) {
-            pp.getChildren().remove(tt);
+            TaskLabel tp = tt.label;
+            tp.setVisible(false);
+
+            TreeItem<Task> pp = tt.getParent();
+            if (pp != null) {
+                pp.getChildren().remove(tt);
+            }
+
+            return true;
         }
+
+        return false;
 
     }
 
