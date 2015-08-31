@@ -412,3 +412,9 @@
     (C --> [A_1..n,B_1..m]), C |- (C --> [A_1..n]), (Truth:Deduction)
     ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
     ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
+
+//second layer variable introduction, here you go again :)
+
+(A --> K), (&&,(#1 --> L),(($2 --> K) ==> R)), substitute(R,A) |- (&&,(#1 --> L),R), (Truth:Deduction)
+
+(A --> K), (($1 --> L) ==> (&&,(#2 --> K),R)), substitute(R,A) |- (($1 --> L) ==> R), (Truth:Deduction)
