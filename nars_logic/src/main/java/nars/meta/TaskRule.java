@@ -248,6 +248,9 @@ public class TaskRule extends Rule<Premise,Task> {
                 case "not_equal":
                     next = new NotEqual(arg1, arg2);
                     break;
+                case "not_set":
+                    next = new NotSet(arg1);
+                    break;
                 case "event":
                     next = new IsEvent(arg1, arg2);
                     break;

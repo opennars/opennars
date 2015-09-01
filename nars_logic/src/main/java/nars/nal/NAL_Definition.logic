@@ -83,13 +83,13 @@
 //// inheritance-based composition ////////////////////////////////////////////////////////////////////////////////////
 //If P and S are in the intension/extension of M, then union/difference and intersection can be built:
 
-    (P --> M), (S --> M), not_equal(S,P), no_common_subterm(S,P) |- ((S | P) --> M), (Truth:Intersection),
-                                                                    ((S & P) --> M), (Truth:Union),
-                                                                    ((P ~ S) --> M), (Truth:Difference)
+    (P --> M), (S --> M), not_set(S), not_set(P), not_equal(S,P), no_common_subterm(S,P) |- ((S | P) --> M), (Truth:Intersection),
+                                                                                            ((S & P) --> M), (Truth:Union),
+                                                                                            ((P ~ S) --> M), (Truth:Difference)
 
-    (M --> P), (M --> S), not_equal(S,P), no_common_subterm(S,P) |- (M --> (P & S)), (Truth:Intersection),
-                                                                    (M --> (P | S)), (Truth:Union),
-                                                                    (M --> (P - S)), (Truth:Difference)
+    (M --> P), (M --> S), not_set(S), not_set(P), not_equal(S,P), no_common_subterm(S,P) |- (M --> (P & S)), (Truth:Intersection),
+                                                                                            (M --> (P | S)), (Truth:Union),
+                                                                                            (M --> (P - S)), (Truth:Difference)
 
 //// inheritance-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //if (S --> M) is the case, and ((|,S,A_1..n) --> M) is not the case, then ((|,A_1..n) --> M) is not the case, hence Truth:DecomposePositiveNegativeNegative
