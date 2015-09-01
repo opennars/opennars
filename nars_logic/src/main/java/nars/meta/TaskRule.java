@@ -192,7 +192,10 @@ public class TaskRule extends Rule<Premise,Task> {
 
         //extract preconditions
         List<PreCondition> early = Global.newArrayList(precon.length);
-        List<PreCondition> late = Global.newArrayList(precon.length);
+
+        List<PreCondition> beforeConcs = Global.newArrayList(precon.length);
+
+        List<PreCondition> afterConcs = Global.newArrayList(0);
 
 
         int start = 0;
@@ -213,7 +216,7 @@ public class TaskRule extends Rule<Premise,Task> {
         early.add(matcher);
 
 
-        //additional modifiers: either early or late, classify them here
+        //additional modifiers: either early or beforeConcs, classify them here
         for (int i = 2; i < precon.length; i++) {
             if (!(precon[i] instanceof Inheritance)) {
                 System.err.println("unknown precondition type: " + precon[i] + " in rule: " + this);
@@ -274,7 +277,7 @@ public class TaskRule extends Rule<Premise,Task> {
                     break;
 
                 case "substitute":
-                    next = new Substitute(arg1, arg2);
+                    afterConcs.add( new Substitute(arg1, arg2) );
                     break;
 
                 case "not_implication_or_equivalence":
@@ -309,7 +312,7 @@ public class TaskRule extends Rule<Premise,Task> {
 
         //store as arrays
         this.preconditions = early.toArray(new PreCondition[early.size()]);
-        final PreCondition[] _late = late.toArray(new PreCondition[late.size()]);
+
 
         int k = 0;
         for (int i = 0; i < postcons.length; ) {
@@ -318,7 +321,8 @@ public class TaskRule extends Rule<Premise,Task> {
                 throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
 
             postconditions[k++] = new PostCondition(t,
-                    _late,
+                    beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
+                    afterConcs.toArray(new PreCondition[afterConcs.size()]),
                     ((Product)postcons[i++]).terms() );
         }
 

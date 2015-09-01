@@ -74,10 +74,7 @@ public interface Premise {
         return getMemory().conceptPriority(target);
     }
 
-//    public boolean deriveTask(Task t, boolean revised, boolean single, String reason) {
-//        t.addHistory(reason);
-//        return deriveTask(t, revised, single);
-//    }
+
 
     default public Term self() {
         return getMemory().self();
@@ -373,11 +370,25 @@ public interface Premise {
 
         //its revision, of course its cyclic, apply evidental base policy
 
+
+
+
+        if (!Terms.levelValid(task.getTerm(), nal())) {
+            //TODO throw exception because we dont want this to happen
+            memory.removed(task, "Insufficient NAL level");
+            return null;
+        }
+
+        task = task.normalized();
+        if (task == null) return null;
+
+
+
         /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain
         {
             //if revised, the stamp should already have been prevented from even being created
 
-            if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
+            if (!Global.OVERLAP_ALLOW && (!allowOverlap || revised)) {
                 if (task.isCyclic()) {
                     //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                     //re.printStackTrace();
@@ -407,18 +418,6 @@ public interface Premise {
             else if (!task.isEternal()) {
                 throw new RuntimeException("non-eternal Task derived in non-temporal mode");
             }
-            //task.eternal();
-        }
-
-
-        if (!nal(7) && !task.isEternal()) {
-            throw new RuntimeException("Temporal task derived with non-temporal reasoning");
-        }
-
-        if (!Terms.levelValid(task.getTerm(), nal())) {
-            //TODO throw exception because we dont want this to happen
-            memory.removed(task, "Insufficient NAL level");
-            return null;
         }
 
         task = task.normalized();
@@ -432,9 +431,7 @@ public interface Premise {
             return null;
         }
 
-        if (task.isInput()) {
-            throw new RuntimeException("derived task must have one parentTask: " + task);
-        }
+
 
         return task; //valid
     }

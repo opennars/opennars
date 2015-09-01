@@ -72,7 +72,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      */
     private Operation cause;
 
-    private List<String> history = null;
+    private List<String> log = null;
 
     /**
      * indicates this Task can be used in Temporal induction
@@ -211,8 +211,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             return this;
 
         if (historyToCopy != null) {
-            if (this.history == null) this.history = Global.newArrayList(historyToCopy.size());
-            history.addAll(historyToCopy);
+            if (this.log == null) this.log = Global.newArrayList(historyToCopy.size());
+            log.addAll(historyToCopy);
         }
         return this;
     }
@@ -367,9 +367,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
         } if (isSingle()) {
             //Single premise
-
             setEvidence(getParentTask().getEvidence());
+
             setCyclic(true); //p.isCyclic());
+        }
+        else {
+            setCyclic(false);
         }
 
     }
@@ -540,15 +543,28 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             return;
 
         //TODO parameter for max history length, although task history should not grow after they are crystallized with a concept
-        if (this.history == null)
-            this.history = Global.newArrayList(1);
+        if (this.log == null)
+            this.log = Global.newArrayList(1);
 
-        this.history.add(reason);
+        this.log.add(reason);
     }
 
-    public List<String> getLog() {
-        return history;
+    public final List<String> getLog() {
+        return log;
     }
+
+
+    /*
+    @Override
+    public void delete() {
+        super.delete();
+//        this.parentBelief = this.parentTask = this.bestSolution = null;
+//        this.cause = null;
+//        log.clear();
+//        this.term = null;
+//        this.truth = null;
+//        this.hash = 0;
+    }*/
 
     public void setParentTask(Task parentTask) {
         this.parentTask = reference(parentTask!=null ? parentTask.normalized() : null);

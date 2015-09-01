@@ -14,6 +14,7 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.graph2.NARGraph1;
 import nars.nar.Default;
+import nars.nar.experimental.Equalized;
 import nars.task.Task;
 
 import java.io.File;
@@ -113,8 +114,8 @@ public class NARfx extends Application {
         d.setTermLinkBagSize(96);
         d.setTaskLinkBagSize(96);*/
 
-        //Default d = new Equalized(1024,2,3);
-        Default d = new Default(1024,2,3);
+        Default d = new Equalized(1024,2,3);
+        //Default d = new Default(1024,2,3);
 
         NAR n = new NAR(d);
 

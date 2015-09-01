@@ -595,13 +595,15 @@ public class Memory implements Serializable, AbstractMemory {
             throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
 
         ///*if (this.equals(getParentTask())) {
-        if (t == t.getParentTask()) {
+        if (t.equals( t.getParentTask()) ) {
             throw new RuntimeException(t + " has parentTask equal to itself");
         }
 
         if (t.getEvidence()==null)
             throw new RuntimeException(t + " from premise " + t.getParentTask() + "," + t.getParentBelief()
                     + " yet no evidence provided");
+
+
 
 
         if (Global.DEBUG) {

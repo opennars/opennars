@@ -22,12 +22,14 @@ public class PostCondition //since there can be multiple tasks derived per rule
     public final Term term;
     public final Term[] modifiers;
 
-    /** late preconditions, which must be applied during a PostCondition attempt */
-    public final PreCondition[] precond;
+    /** steps to apply before initially forming the derived task's term */
+    public final PreCondition[] beforeConclusions;
+
+    /** steps to apply after forming the goal. after each of these steps, the term will be re-resolved */
+    public final PreCondition[] afterConclusions;
 
     public final TruthFunction truth;
     public final DesireFunction desire;
-    public boolean single_premise = false;
     public boolean negate = false;
 
     /* high-speed adaptive RETE-like precondition filtering:
@@ -68,7 +70,11 @@ public class PostCondition //since there can be multiple tasks derived per rule
         identity = Atom.the("Identity");
 
 
-    public PostCondition(Term term, PreCondition[] latePreconditions, Term... modifiers) {
+    public PostCondition(Term term,
+                         PreCondition[] beforeConclusions,
+                         PreCondition[] afterConclusions,
+                         Term... modifiers) {
+
         this.term = term;
 
         @Deprecated List<Term> mods = Global.newArrayList();
@@ -137,7 +143,8 @@ public class PostCondition //since there can be multiple tasks derived per rule
         this.desire = goalTruth;
 
         this.modifiers = mods.toArray(new Term[mods.size()]);
-        this.precond = latePreconditions;
+        this.beforeConclusions = beforeConclusions;
+        this.afterConclusions = afterConclusions;
 
         if (beliefTruth == null) {
             System.err.println("missing truth function: " + this);
@@ -159,7 +166,7 @@ public class PostCondition //since there can be multiple tasks derived per rule
     public String toString() {
         return "PostCondition{" +
                 "term=" + term +
-                ", precon=" + Arrays.toString(precond) +
+                ", precon=" + Arrays.toString(beforeConclusions) +
                 ", modifiers=" + Arrays.toString(modifiers) +
                 ", truth=" + truth +
                 ", desire=" + desire +

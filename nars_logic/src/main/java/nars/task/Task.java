@@ -497,6 +497,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             setEvidence(memory.newStampSerial());
         }
 
+
         normalized();
 
         return true;
@@ -528,5 +529,11 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     void setBestSolution(AbstractMemory memory, Task belief);
 
 
+    default float getPriorityIfNaNThenZero() {
+        float p = getPriority();
+        if (Float.isFinite(p))
+            return p;
+        return 0;
+    }
 
 }

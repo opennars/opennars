@@ -74,7 +74,11 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
             derived = Global.newHashSet(1);
 
         if (!derived.add(derivedTask)) {
-            throw new RuntimeException("duplicate derivation: " + derivedTask);
+            if (Global.DEBUG) {
+                System.err.println(
+                        new RuntimeException("duplicate derivation: " + derivedTask)
+                );
+            }
         }
     }
 

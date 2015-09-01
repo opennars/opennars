@@ -8,10 +8,8 @@ import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.task.TaskSeed;
-import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
@@ -107,19 +105,25 @@ public class RuleMatch extends FindSubst {
         }
 
         //test and apply late preconditions
-        for (final PreCondition c : p.precond) {
+        for (final PreCondition c : p.beforeConclusions) {
+            if (!c.test(this))
+                return false;
+        }
 
+        Term derive;
+
+        if ((derive = resolve(p.term)) == null) return false;
+
+        for (final PreCondition c : p.afterConclusions) {
 
             if (!c.test(this))
                 return false;
 
-            //now we have to apply this to the derive term
+            if ((derive = resolve(derive)) == null) return false;
         }
 
-        Term derive = resolve(p.term);
-        if (derive == null)
-            return false;
         if (!(derive instanceof Compound)) return false;
+
 
 //        //check if this is redundant
 //        Term nextDerived = derive.substituted(assign); //at first M -> #1 for example (rule match), then #1 -> test (var elimination)
@@ -159,23 +163,26 @@ public class RuleMatch extends FindSubst {
 
 
 
-        TaskSeed<Compound> t = premise.newTask((Compound)derive, task, belief, allowOverlap);
+        TaskSeed<Compound> t = premise.newTask((Compound)derive); //, task, belief, allowOverlap);
         if (t != null) {
 
             Budget budget = BudgetFunctions.compoundForward(truth, derive, premise);
 
-            t.punctuation(task.getPunctuation()).truth(truth).budget(budget);
+            t
+                .punctuation(task.getPunctuation())
+                .truth(truth)
+                .budget(budget);
 
-            if (t.getOccurrenceTime() != Stamp.ETERNAL) {
+            if (!t.isEternal()) {
                 t.occurr(t.getOccurrenceTime() + occurence_shift);
             }
 
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
             if (belief!=null) {
-                premise.deriveDouble(t);
+                premise.deriveDouble(t.parent(task,belief));
             } else {
-                premise.deriveSingle(t);
+                premise.deriveSingle(t.parent(task));
             }
 
             return true;
