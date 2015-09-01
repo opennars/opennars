@@ -14,13 +14,14 @@ import nars.clock.HardRealtimeClock;
 import nars.clock.RealtimeMSClock;
 import nars.concept.BeliefTable;
 import nars.concept.Concept;
+import nars.concept.ConceptBuilder;
 import nars.concept.DefaultConcept;
 import nars.cycle.DefaultCycle;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.nal.LogicPolicy;
 import nars.nal.LogicStage;
+import nars.nal.PremiseProcessor;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -45,9 +46,9 @@ import nars.task.Task;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
-import nars.task.filter.LimitDerivationPriority;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.util.data.random.XorShift1024StarRandom;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -57,6 +58,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
@@ -67,8 +69,12 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends NARSeed {
+public class Default extends Param implements NARSeed {
 
+    //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
+    public final Random rng = new XorShift1024StarRandom(1);
+
+    protected int maxNALLevel;
 
     /**
      * How many concepts to fire each cycle; measures degree of parallelism in each cycle
@@ -86,9 +92,9 @@ public class Default extends NARSeed {
     public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
 
 
-    public LogicPolicy newPolicy(ConceptFireTaskTerm ruletable) {
+    public PremiseProcessor newPolicy(ConceptFireTaskTerm ruletable) {
 
-        return new LogicPolicy(
+        return new PremiseProcessor(
 
                 new LogicStage /* <ConceptProcess> */ []{
 
@@ -156,10 +162,15 @@ public class Default extends NARSeed {
     InternalExperience.InternalExperienceMode internalExperience;
     public int cyclesPerFrame = 1;
 
+    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
+    public Default setClock(Clock clock) {
+        this.clock = clock;
+        return this;
+    }
 
-    @Override
+
     public Default level(int maxNALlevel) {
-        super.level(maxNALlevel);
+        this.maxNALLevel = maxNALlevel;
         if (maxNALlevel < 8) {
             this.internalExperience = InternalExperience.InternalExperienceMode.None;
         }
@@ -168,7 +179,7 @@ public class Default extends NARSeed {
 
 
     @Override
-    protected int getMaximumNALLevel() {
+    public int getMaximumNALLevel() {
         return maxNALLevel;
     }
 
@@ -382,6 +393,10 @@ public class Default extends NARSeed {
 
     };
 
+    @Override
+    public ConceptBuilder getConceptBuilder() {
+        return this;
+    }
 
     /**
      * initialization after NAR is constructed
@@ -449,7 +464,7 @@ public class Default extends NARSeed {
 
 
     @Override
-    public LogicPolicy getLogicPolicy() {
+    public PremiseProcessor getPremiseProcessor() {
         return newPolicy(new TableDerivations());
     }
 
@@ -561,12 +576,7 @@ public class Default extends NARSeed {
     }
 
 
-    @Override
-    protected Memory newMemory(Param narParam, LogicPolicy policy) {
-        Memory m = super.newMemory(narParam, policy);
-        m.on(this); //default conceptbuilder
-        return m;
-    }
+
 
     public NARSeed setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
@@ -629,6 +639,18 @@ public class Default extends NARSeed {
             return !"--silence".equals(param);
         }
     }
+
+
+    @Override
+    public Param newParam() {
+        return this;
+    }
+
+    @Override
+    public Random getRandom() {
+        return rng;
+    }
+
 
     public InternalExperience.InternalExperienceMode getInternalExperience() {
         return internalExperience;

@@ -5,7 +5,6 @@ import nars.Global;
 import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.task.filter.DerivationFilter;
 
 import java.util.List;
@@ -13,15 +12,15 @@ import java.util.List;
 /**
  * General class which specifies NAL rules, their ordering, and other parameters applied during inference processes
  */
-public class LogicPolicy {
+public class PremiseProcessor {
 
     public final RuleList<Premise> conceptProcessing;
     public final List<DerivationFilter> derivationFilters;
 
-    public LogicPolicy() {
+    public PremiseProcessor() {
         this(null,null);
     }
-    public LogicPolicy(LogicStage<Premise>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
+    public PremiseProcessor(LogicStage<Premise>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
 
         conceptProcessing = new RuleList<Premise>(conceptProcessRules);
 

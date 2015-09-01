@@ -29,7 +29,7 @@ public class NALPerfLoop {
         Global.DEBUG = false;
 
           
-        NAR n = new NAR(new Equalized(maxConcepts,2,3).setInternalExperience(null) );
+        NAR n = new NAR(new Equalized(maxConcepts,1,3).setInternalExperience(null) );
         //NAR n = new NAR(new Default().setActiveConcepts(maxConcepts).setInternalExperience(null) );
         //NAR n = new NAR(new NewDefault().setActiveConcepts(maxConcepts).setInternalExperience(null) );
 

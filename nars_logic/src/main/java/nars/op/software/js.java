@@ -2,7 +2,6 @@ package nars.op.software;
 
 import nars.Memory;
 import nars.NAR;
-import nars.concept.ConstantConceptBuilder;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.TermFunction;
@@ -90,83 +89,84 @@ public class js extends TermFunction implements Mental {
 
     }
 
-    public class JSBelievedConceptBuilder extends ConstantConceptBuilder {
-
-        private Object fnCompiled;
-
-        public JSBelievedConceptBuilder(String fnsource) {
-
-            ensureJSLoaded();
-
-            try {
-                this.fnCompiled = js.eval(fnsource);
-            }
-            catch (Throwable ex) {
-                ex.printStackTrace();
-            }
-        }
-
-
-        @Override
-        protected Truth truth(Term t, Memory m) {
-
-            Bindings bindings = new SimpleBindings();
-            bindings.put("t", t);
-            bindings.put("_o", fnCompiled);
-            String input = "_o.apply(this,[t])";
-
-            Object result;
-            try {
-                result = js.eval(input, bindings);
-            } catch (Throwable ex) {
-                ex.printStackTrace();
-                throw new RuntimeException(ex);
-            }
-
-            if (result instanceof Number) {
-                return new DefaultTruth(((Number)result).floatValue(), 0.99f);
-            }
-            if (result instanceof Object[]) {
-                if (((Object[])result).length > 1) {
-                    Object a = ((Object[])result)[0];
-                    Object b = ((Object[])result)[1];
-                    if ((a instanceof Number) && (b instanceof Number)) {
-                        return new DefaultTruth(((Number) a).floatValue(), ((Number) b).floatValue());
-                    }
-                }
-            }
-
-            return null;
-        }
-    }
-
-
-    /** create dynamic javascript functions */
-    public class jsbelief extends NullOperator {
+//    public class JSBelievedConceptBuilder extends ConstantConceptBuilder {
+//
+//        private Object fnCompiled;
+//
+//        public JSBelievedConceptBuilder(String fnsource) {
+//
+//            ensureJSLoaded();
+//
+//            try {
+//                this.fnCompiled = js.eval(fnsource);
+//            }
+//            catch (Throwable ex) {
+//                ex.printStackTrace();
+//            }
+//        }
+//
+//
+//        @Override
+//        protected Truth truth(Term t, Memory m) {
+//
+//            Bindings bindings = new SimpleBindings();
+//            bindings.put("t", t);
+//            bindings.put("_o", fnCompiled);
+//            String input = "_o.apply(this,[t])";
+//
+//            Object result;
+//            try {
+//                result = js.eval(input, bindings);
+//            } catch (Throwable ex) {
+//                ex.printStackTrace();
+//                throw new RuntimeException(ex);
+//            }
+//
+//            if (result instanceof Number) {
+//                return new DefaultTruth(((Number)result).floatValue(), 0.99f);
+//            }
+//            if (result instanceof Object[]) {
+//                if (((Object[])result).length > 1) {
+//                    Object a = ((Object[])result)[0];
+//                    Object b = ((Object[])result)[1];
+//                    if ((a instanceof Number) && (b instanceof Number)) {
+//                        return new DefaultTruth(((Number) a).floatValue(), ((Number) b).floatValue());
+//                    }
+//                }
+//            }
+//
+//            return null;
+//        }
+//    }
 
 
-        @Override
-        public List<Task> apply(Operation op) {
-            Term[] x = op.args();
-
-            String functionCode = Atom.unquote(x[0]);
-
-            nar.on(new JSBelievedConceptBuilder(functionCode));
-
-            op.stop();
-
-            return null;
-        }
-
-    }
+//    /** create dynamic javascript functions */
+//    public class jsbelief extends NullOperator {
+//
+//
+//        @Override
+//        public List<Task> apply(Operation op) {
+//            Term[] x = op.args();
+//
+//            String functionCode = Atom.unquote(x[0]);
+//
+//            nar.on(new JSBelievedConceptBuilder(functionCode));
+//
+//            op.stop();
+//
+//            return null;
+//        }
+//
+//    }
 
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
+        //this is a plugin which attches additional plugins. kind of messy, this will change
         boolean x = super.setEnabled(n, enabled);
         if (enabled) {
             n.on(new jsop());
-            n.on(new jsbelief());
+            //n.on(new jsbelief());
         }
         return x;
     }

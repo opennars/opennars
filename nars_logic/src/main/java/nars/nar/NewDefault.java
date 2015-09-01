@@ -2,7 +2,7 @@ package nars.nar;
 
 import nars.NAR;
 import nars.nal.Deriver;
-import nars.nal.LogicPolicy;
+import nars.nal.PremiseProcessor;
 import nars.nal.LogicStage;
 import nars.nal.nal8.OpReaction;
 import nars.op.app.STMEventInference;
@@ -12,9 +12,6 @@ import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
-import nars.task.filter.DerivationFilter;
-import nars.task.filter.FilterBelowConfidence;
-import nars.task.filter.FilterDuplicateExistingBelief;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -28,13 +25,13 @@ public class NewDefault extends Default {
     final Deriver der = Deriver.defaults;
 
     @Override
-    public LogicPolicy getLogicPolicy() {
+    public PremiseProcessor getPremiseProcessor() {
         return nalex(der);
     }
 
-    public LogicPolicy nalex(ConceptFireTaskTerm ruletable) {
+    public PremiseProcessor nalex(ConceptFireTaskTerm ruletable) {
 
-        return new LogicPolicy(
+        return new PremiseProcessor(
 
                 new LogicStage /* <ConceptProcess> */ [] {
                         new FilterEqualSubtermsAndSetPremiseBelief(),
@@ -46,6 +43,13 @@ public class NewDefault extends Default {
                 getDerivationFilters()
 
         );
+    }
+    public NewDefault() {
+        super();
+    }
+
+    public NewDefault(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
+        super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
     }
 
     /** initialization after NAR is constructed */

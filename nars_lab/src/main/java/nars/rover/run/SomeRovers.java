@@ -30,7 +30,7 @@ public class SomeRovers {
     }
 
     public NARSeed newSolid() {
-        NARSeed d = new Solid(32, 599, 1, 1, 1, 3 ) {
+        Default d = new Solid(32, 599, 1, 1, 1, 3 ) {
 
 
         }.setInternalExperience(null).setClock(clock);

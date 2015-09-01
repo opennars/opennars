@@ -14,7 +14,7 @@ public class NARSwingRT {
     public static void main(String[] args) {
         Video.themeInvert();
 
-        NARSeed d = new Default();
+        Default d = new Default();
         d.setClock(new RealtimeMSClock(false));
         d.duration.set(50);
         d.outputVolume.set(50);

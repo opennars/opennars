@@ -64,6 +64,8 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
 
     @Override
     public void put(V v) {
+        if (v == null)
+            throw new RuntimeException("null");
         data.put(v.name(), v);
     }
 

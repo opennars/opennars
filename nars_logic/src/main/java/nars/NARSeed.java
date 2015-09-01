@@ -1,16 +1,14 @@
 package nars;
 
 import nars.bag.impl.CacheBag;
-import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
-import nars.io.Perception;
-import nars.nal.LogicPolicy;
+import nars.nal.PremiseProcessor;
 import nars.process.CycleProcess;
 import nars.term.Term;
-import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.Random;
+import java.util.function.Function;
 
 /**
  * NAR design parameters which define a NAR at initialization.
@@ -18,54 +16,40 @@ import java.util.Random;
  * These do not change after initialization.
  * For runtime parameters, @see Param
  */
-abstract public class NARSeed extends Param implements ConceptBuilder {
+abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
 
-    //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
-    public final Random rng = new XorShift1024StarRandom(1);
 
-    protected int maxNALLevel;
+    CycleProcess newCycleProcess();
 
-    abstract public CycleProcess newCycleProcess();
-
-    public NARSeed() {
+    default public Memory newMemory() {
+        return new Memory(
+                getRandom(),
+                getMaximumNALLevel(),
+                newParam(),
+                getConceptBuilder(),
+                getPremiseProcessor(),
+                newIndex()
+        );
     }
 
-    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
-    public NARSeed setClock(Clock clock) {
-        this.clock = clock;
-        return this;
-    }
+    Param newParam();
 
+    /** common random number generator */
+    Random getRandom();
 
-    protected Memory newMemory(Param narParam, LogicPolicy policy) {
-        return new Memory(rng, getMaximumNALLevel(), narParam, policy, newIndex());
-    }
+    CacheBag<Term,Concept> newIndex();
 
-    protected abstract CacheBag<Term,Concept> newIndex();
-
-    protected abstract int getMaximumNALLevel();
+    int getMaximumNALLevel();
 
     /** called after NAR created, for initializing it */
-    public void init(NAR nar) {
-    }
+    void init(NAR nar);
 
 
+    PremiseProcessor getPremiseProcessor();
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
+    public ConceptBuilder getConceptBuilder();
 
-
-    abstract public LogicPolicy getLogicPolicy();
-
-    public NARSeed level(int maxNALlevel) {
-        this.maxNALLevel = maxNALlevel;
-        return this;
-    }
-
-
-    public NARStream stream() {
+    default public NARStream stream() {
         return new NARStream(new NAR(this));
     }
 

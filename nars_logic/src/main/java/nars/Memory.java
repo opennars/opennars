@@ -30,7 +30,7 @@ import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
-import nars.nal.LogicPolicy;
+import nars.nal.PremiseProcessor;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -109,14 +109,16 @@ public class Memory implements Serializable, AbstractMemory {
     public final LogicMeter logic;
     public final ResourceMeter resource;
     public final Param param;
-    final List<ConceptBuilder> conceptBuilders;
+
     private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
     private final Set<Concept> questionConcepts = Global.newHashSet(16);
     private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
     private final Set<Concept> pendingDeletions = Global.newHashSet(16);
 
-    public LogicPolicy rules;
+    final ConceptBuilder conceptBuilder;
+
+    public PremiseProcessor rules;
 
     public final Clock clock;
     ExecutorService laterTasks = null;
@@ -140,7 +142,7 @@ public class Memory implements Serializable, AbstractMemory {
      * @param narParam reasoner paramerters
      * @param policy logic parameters
      */
-    public Memory(Random rng, int nalLevel, Param narParam, LogicPolicy policy, CacheBag<Term,Concept> concepts) {
+    public Memory(Random rng, int nalLevel, Param narParam, ConceptBuilder conceptBuilder, PremiseProcessor policy, CacheBag<Term,Concept> concepts) {
 
         this.random = rng;
         this.level = nalLevel;
@@ -161,7 +163,7 @@ public class Memory implements Serializable, AbstractMemory {
         //this.exe = new EventEmitter.FastDefaultEventEmitter();
 
 
-        this.conceptBuilders = new ArrayList(1);
+        this.conceptBuilder = conceptBuilder;
 
         //optional:
         this.resource = null; //new ResourceMeter();
@@ -348,44 +350,16 @@ public class Memory implements Serializable, AbstractMemory {
 
 
 
-    /** prepend a conceptbuilder to the conceptbuilder handler chain */
-    public void on(ConceptBuilder c) {
-        conceptBuilders.add(0, c);
-    }
-
-    /** remove a conceptbuilder which has been added; return true if successfully removed or false if it wasnt present */
-    public boolean off(ConceptBuilder c) {
-        return conceptBuilders.remove(c);
-    }
-
-    /** conceptbuilder handler chain */
-    public List<ConceptBuilder> getConceptBuilders() {
-        return conceptBuilders;
-    }
-
-    /** gets the final concept builder in the chain */
-    public ConceptBuilder getConceptBuilderDefault() {
-        List<ConceptBuilder> cb = getConceptBuilders();
-        return cb.get(cb.size() - 1);
-    }
 
     /* ---------- Constructor ---------- */
 
+
+
     public Concept newConcept(final Term term, final Budget budget) {
 
-        Concept concept = null;
-
-        /** use the concept created by the first conceptbuilder to return non-null */
-        List<ConceptBuilder> cb = getConceptBuilders();
-        int cbn = cb.size();
-
-        for (int i = 0; i < cbn; i++) {
-            ConceptBuilder c  =  cb.get(i);
-            concept = c.newConcept(term, budget, this);
-            if (concept != null) break;
-        }
-
-        concepts.put(concept);
+        Concept concept = conceptBuilder.newConcept(term, budget, this);
+        if (concept!=null)
+            concepts.put(concept);
 
         return concept;
     }

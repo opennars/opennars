@@ -7,14 +7,10 @@ import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
-import nars.nal.Deriver;
-import nars.nal.LogicPolicy;
-import nars.nal.LogicStage;
-import nars.nar.Default;
+import nars.nar.NewDefault;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
-import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
 import nars.task.Task;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
@@ -31,7 +27,7 @@ import java.util.function.Consumer;
 /**
  * Created by me on 7/21/15.
  */
-public class Equalized extends Default {
+public class Equalized extends NewDefault {
 
 
 
@@ -147,49 +143,6 @@ public class Equalized extends Default {
 
         }
 
-        //final Frequency termTypes = new Frequency();
-
-        private float getPriority(final Task task, int conceptsToFire) {
-            //somehow this should be a function of:
-            // # of concepts
-            // concept forget rate
-            // concept bag priority sum and distribution
-            //float targetBusyness = 5;
-
-            float f = (conceptsToFire);
-            if (f > 1f) f = 1f;
-
-
-//            final Compound term = task.getTerm();
-//            long includedTerms = (term.structuralHash() & 0xffffffff);
-//            long v = 1;
-//            for (int i = 0; i < 32; i++) {
-//                v = v << 1;
-//                if ((includedTerms & v) > 0) {
-//                    termTypes.addValue(Op.values()[i]);
-//                }
-//            }
-
-
-
-//            //EXPERIMENTAL
-//            double p = termTypes.getPct(term.operator());
-//            f *= Math.max(0.1, 1.0 - p);
-
-
-//            switch (term.operator()) {
-//                case IMAGE_EXT:
-//                case IMAGE_INT:
-//                    f *= 0.5f;
-//                    break;
-//            }
-//
-//            if (Math.random() < 0.01) {
-//                System.out.println(termTypes);
-//            }
-
-            return f;
-        }
 
 
     }
@@ -206,7 +159,7 @@ public class Equalized extends Default {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                new FilterBelowConfidence(0.05),
+                new FilterBelowConfidence(0.01),
                 new FilterDuplicateExistingBelief(),
                 new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());
@@ -224,7 +177,7 @@ public class Equalized extends Default {
 
     public Bag<Term, Concept> newConceptBag() {
         CurveBag<Term, Concept> b = new CurveBag(rng, getActiveConcepts());
-        b.mergeAverage();
+        b.mergePlus();
         return b;
     }
 }

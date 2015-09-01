@@ -88,8 +88,7 @@ public class NAR extends Container implements Runnable {
      * normal way to construct a NAR, using a particular Build instance
      */
     public NAR(NARSeed b) {
-        this( b.newCycleProcess(),
-              b.newMemory(b, b.getLogicPolicy()));
+        this( b.newCycleProcess(), b.newMemory());
 
         b.init(this);
     }
@@ -384,19 +383,7 @@ public class NAR extends Container implements Runnable {
         return reg;
     }
 
-    /**
-     * activate a concept builder
-     */
-    public void on(ConceptBuilder c) {
-        memory.on(c);
-    }
 
-    /**
-     * deactivate a concept builder
-     */
-    public void off(ConceptBuilder c) {
-        memory.off(c);
-    }
 
     @Deprecated
     public int getCyclesPerFrame() {

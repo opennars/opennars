@@ -101,7 +101,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
             concept = memory.newConcept(/*(Budget)*/getKey(), getBudget());
 
             if (concept == null)
-                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + memory.getConceptBuilders());
+                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this);
             else {
                 //memory.emit(Events.ConceptNew.class, this);
                 if (memory.logic != null)
