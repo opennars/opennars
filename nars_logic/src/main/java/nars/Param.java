@@ -3,6 +3,7 @@ package nars;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.clock.Clock;
 import nars.nal.nal7.Interval.AtomicDuration;
+import objenome.Container;
 
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -10,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * NAR Parameters which can be changed during runtime.
  */
-public abstract class Param implements Serializable {
+public abstract class Param extends Container implements Serializable {
 
 
     public Param() {    }

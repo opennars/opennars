@@ -45,7 +45,7 @@ import java.util.List;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR extends Container implements Runnable {
+public class NAR implements Runnable {
 
     /**
      * The information about the version and date of the project.
@@ -99,12 +99,13 @@ public class NAR extends Container implements Runnable {
         this.memory = m;
         this.param = m.param;
 
-        the(NAR.class, this);
+        param.the(NAR.class, this);
 
         this.narsese = NarseseParser.the();
 
         reset();
     }
+
 
     /**
      * create a NAR given the class of a Build.  its default constructor will be used
@@ -366,11 +367,22 @@ public class NAR extends Container implements Runnable {
         return memory.event.on(o, c);
     }
 
-    public EventEmitter.Registrations on(Class<? extends Reaction<Class,Object[]>> c) {
-        Reaction<Class,Object[]> v = the(c);
-        the(c, v); //register singleton
-        return on(v);
+    public void on(Class<? extends Reaction<Class,Object[]>>... x) {
+
+        for (Class<? extends Reaction<Class,Object[]>> c : x) {
+            Reaction<Class, Object[]> v = param.the(c);
+            param.the(c, v); //register singleton
+            on(v);
+        }
     }
+    public void on(Class<? extends OpReaction> c) {
+        //for (Class<? extends OpReaction> c : x) {
+            OpReaction v = param.the(c);
+            on(v);
+        //}
+    }
+
+
 
     public EventEmitter.Registrations on(Reaction<Term,Operation> o, Term... c) {
         return memory.exe.on(o, c);

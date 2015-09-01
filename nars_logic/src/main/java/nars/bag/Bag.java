@@ -9,7 +9,6 @@ import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.BudgetSource;
 import nars.budget.Itemized;
-import nars.concept.Concept;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
@@ -58,31 +57,15 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     abstract public V put(V newItem);
 
 
-    static final Procedure2<Budget,Budget> average = new Procedure2<Budget,Budget>() {
-        @Override public void value(Budget newBudget, Budget oldBudget) {
-            newBudget.merge( oldBudget );
-        }
-    };
-    static final Procedure2<Budget,Budget> plus = new Procedure2<Budget,Budget>() {
-        @Override public void value(Budget newBudget, Budget oldBudget) {
-            newBudget.accumulate( oldBudget );
-        }
-    };
-    static final Procedure2<Budget,Budget> max = new Procedure2<Budget,Budget>() {
-        @Override public void value(Budget newBudget, Budget oldBudget) {
-            newBudget.max( oldBudget );
-        }
-    };
-
-    Procedure2<Budget,Budget> mergeFunction = average;
+    Procedure2<Budget,Budget> mergeFunction = Budget.average;
 
     /** set the merging function to 'average' */
-    public void mergeAverage() {  mergeFunction = average;    }
+    public void mergeAverage() {  mergeFunction = Budget.average;    }
 
     /** set the merging function to 'plus' */
-    public void mergePlus() {  mergeFunction = plus;    }
+    public void mergePlus() {  mergeFunction = Budget.plus;    }
 
-    public void mergeMax() {  mergeFunction = max;    }
+    public void mergeMax() {  mergeFunction = Budget.max;    }
 
     final protected void merge(final Budget newBudget, final Budget oldBudget) {
         mergeFunction.value(newBudget, oldBudget);

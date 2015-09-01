@@ -22,7 +22,7 @@ public class RuleDerivationGraphTest {
 
     @Test
     public void testRuleStatistics() {
-        Deriver d = Deriver.defaults;
+        Deriver d = NewDefault.der;
 
         TaskRule[] R = d.rules.rules;
         int registeredRules = R.length;

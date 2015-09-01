@@ -1,16 +1,14 @@
 package nars.nar;
 
 import nars.NAR;
-import nars.nal.Deriver;
-import nars.nal.PremiseProcessor;
-import nars.nal.LogicStage;
+import nars.Param;
+import nars.nal.*;
 import nars.nal.nal8.OpReaction;
 import nars.op.app.STMEventInference;
 import nars.op.mental.Abbreviation;
 import nars.op.mental.Counting;
 import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
-import nars.process.concept.ConceptFireTaskTerm;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
@@ -18,25 +16,54 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 /**
  * Temporary class which uses the new rule engine for ruletables
+ *
+ * WARNING this Seed is not immutable yet because it extends Param,
+ * which is supposed to be per-instance/mutable. So do not attempt
+ * to create multiple NAR with the same Default seed model *
  */
 public class NewDefault extends Default {
 
-
-    final Deriver der = Deriver.defaults;
-
-    @Override
-    public PremiseProcessor getPremiseProcessor() {
-        return nalex(der);
+    public NewDefault() {
+        this(1,1,3);
     }
 
-    public PremiseProcessor nalex(ConceptFireTaskTerm ruletable) {
+    public NewDefault(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
+        super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
+    }
+
+    @Override
+    public Param newParam() {
+        Param p = super.newParam();
+        //deprecated: all reasoning components should be added to the DI index automatically
+        the(Deriver.class, der);
+        return p;
+    }
+
+    public static final Deriver der;
+    static {
+        Deriver r;
+
+        try {
+            r = new SimpleDeriver(DerivationRules.standard);
+        } catch (Exception e) {
+            r = null;
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+        der = r;
+    }
+
+
+    @Override
+    public PremiseProcessor getPremiseProcessor(Param p) {
 
         return new PremiseProcessor(
 
-                new LogicStage /* <ConceptProcess> */ [] {
+                new LogicStage[] {
                         new FilterEqualSubtermsAndSetPremiseBelief(),
                         //new QueryVariableExhaustiveResults(),
-                        ruletable
+                        p.the(Deriver.class)
                         //---------------------------------------------
                 } ,
 
@@ -44,46 +71,7 @@ public class NewDefault extends Default {
 
         );
     }
-    public NewDefault() {
-        super();
-    }
-
-    public NewDefault(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
-        super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
-    }
-
-    /** initialization after NAR is constructed */
-    @Override public void init(NAR n) {
-
-        n.the(Deriver.class, der);
-
-        n.setCyclesPerFrame(cyclesPerFrame);
-
-        if (maxNALLevel >= 7) {
-            //n.on(PerceptionAccel.class);
-            n.on(STMEventInference.class);
 
 
-            if (maxNALLevel >= 8) {
 
-                for (OpReaction o : defaultOperators)
-                    n.on(o);
-                for (OpReaction o : exampleOperators)
-                    n.on(o);
-
-                //n.on(Anticipate.class);      // expect an event
-
-                if (internalExperience == Minimal) {
-                    new InternalExperience(n);
-                    new Abbreviation(n);
-                } else if (internalExperience == Full) {
-                    new FullInternalExperience(n);
-                    n.on(new Counting());
-                }
-            }
-        }
-
-        //n.on(new RuntimeNARSettings());
-
-    }
 }

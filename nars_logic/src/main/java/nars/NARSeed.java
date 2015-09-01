@@ -22,12 +22,15 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
     CycleProcess newCycleProcess();
 
     default public Memory newMemory() {
+
+        final Param p = newParam();
+
         return new Memory(
                 getRandom(),
                 getMaximumNALLevel(),
-                newParam(),
+                p,
                 getConceptBuilder(),
-                getPremiseProcessor(),
+                getPremiseProcessor(p),
                 newIndex()
         );
     }
@@ -45,7 +48,7 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
     void init(NAR nar);
 
 
-    PremiseProcessor getPremiseProcessor();
+    PremiseProcessor getPremiseProcessor(Param p);
 
     public ConceptBuilder getConceptBuilder();
 

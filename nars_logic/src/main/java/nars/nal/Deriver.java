@@ -24,23 +24,6 @@ abstract public class Deriver extends ConceptFireTaskTerm {
 
     public final DerivationRules rules;
 
-    public static final Deriver defaults;
-
-
-    static {
-
-        Deriver r;
-
-        try {
-            r = new SimpleDeriver(DerivationRules.standard);
-        } catch (Exception e) {
-            r = null;
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        defaults = r;
-    }
 
 
     public Deriver(DerivationRules rules) {

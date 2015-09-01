@@ -114,7 +114,7 @@ public class NARfx extends Application {
         d.setTermLinkBagSize(96);
         d.setTaskLinkBagSize(96);*/
 
-        Default d = new Equalized(1024,1,5);
+        Default d = new Equalized(1024,2,2);
         //Default d = new Default(1024,2,3);
 
         NAR n = new NAR(d);

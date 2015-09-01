@@ -70,14 +70,27 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
+ *
+ * WARNING this Seed is not immutable yet because it extends Param,
+ * which is supposed to be per-instance/mutable. So do not attempt
+ * to create multiple NAR with the same Default seed model
  */
 public class Default extends Param implements NARSeed {
 
+    public static final OpReaction[] exampleOperators = new OpReaction[]{
+            //new Wait(),
+            new NullOperator("break"),
+            new NullOperator("drop"),
+            new NullOperator("goto"),
+            new NullOperator("open"),
+            new NullOperator("pick"),
+            new NullOperator("strike"),
+            new NullOperator("throw"),
+            new NullOperator("activate"),
+            new NullOperator("deactivate")
+    };
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng = new XorShift1024StarRandom(1);
-
-    protected int maxNALLevel;
-
     /**
      * How many concepts to fire each cycle; measures degree of parallelism in each cycle
      */
@@ -92,187 +105,6 @@ public class Default extends Param implements NARSeed {
      * max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
      */
     public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
-
-
-    public PremiseProcessor newPolicy(ConceptFireTaskTerm ruletable) {
-
-        return new PremiseProcessor(
-
-                new LogicStage /* <ConceptProcess> */ []{
-
-                        //A. concept fire tasklink derivation
-                        new TransformTask(),
-                        new Contraposition(),
-
-                        //B. concept fire tasklink termlink (pre-filter)
-                        new FilterEqualSubtermsAndSetPremiseBelief(),
-                        new MatchTaskBelief(),
-
-                        //C. concept fire tasklink termlink derivation ---------
-                        new ForwardImplicationProceed(),
-
-                        //temporalInduce(nal, task, taskSentence, memory);
-                        //(new TemporalInductionChain()),
-                        new TemporalInductionChain2(),
-
-                        new PerceptionDetachment(),
-
-                        new DeduceSecondaryVariableUnification(),
-                        new DeduceConjunctionByQuestion(),
-
-                        ruletable
-                        //---------------------------------------------
-                },
-
-                getDerivationFilters()
-
-        );
-    }
-
-    protected DerivationFilter[] getDerivationFilters() {
-        return new DerivationFilter[]{
-                new FilterBelowConfidence(0.01),
-                new FilterDuplicateExistingBelief()
-                //param.getDefaultDerivationFilters().add(new BeRational());
-        };
-    }
-
-
-    /**
-     * Size of TaskLinkBag
-     */
-    int taskLinkBagSize;
-
-
-    /**
-     * Size of TermLinkBag
-     */
-    int termLinkBagSize;
-
-    /**
-     * determines maximum number of concepts
-     */
-    int conceptBagSize;
-
-
-    /**
-     * Size of TaskBuffer
-     */
-    int taskBufferSize;
-
-
-    InternalExperience.InternalExperienceMode internalExperience;
-    public int cyclesPerFrame = 1;
-
-    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
-    public Default setClock(Clock clock) {
-        this.clock = clock;
-        return this;
-    }
-
-
-    public Default level(int maxNALlevel) {
-        this.maxNALLevel = maxNALlevel;
-        if (maxNALlevel < 8) {
-            this.internalExperience = InternalExperience.InternalExperienceMode.None;
-        }
-        return this;
-    }
-
-
-    @Override
-    public int getMaximumNALLevel() {
-        return maxNALLevel;
-    }
-
-    /**
-     * Default DEFAULTS
-     */
-    public Default() {
-        this(1024, 1, 3);
-    }
-
-    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
-
-        setActiveConcepts(maxConcepts);
-
-        conceptTaskTermProcessPerCycle.set(termLinksPerCycle);
-
-        termLinkMaxMatched.set(5);
-
-        //Build Parameters
-        this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
-        this.internalExperience =
-                maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
-
-        setTaskLinkBagSize(16);
-
-        setTermLinkBagSize(64);
-
-        setNovelTaskBagSize(48);
-
-
-        //Runtime Initial Values
-
-        duration.set(5);
-
-        shortTermMemoryHistory.set(1);
-        temporalRelationsMax.set(4);
-
-        conceptActivationFactor.set(1.0);
-        conceptFireThreshold.set(0.0);
-
-        conceptForgetDurations.set(3.0);
-        taskLinkForgetDurations.set(4.0);
-        termLinkForgetDurations.set(10.0);
-        novelTaskForgetDurations.set(2.0);
-
-        //param.budgetThreshold.set(0.01f);
-
-        conceptBeliefsMax.set(11);
-        conceptGoalsMax.set(8);
-        conceptQuestionsMax.set(4);
-
-        inputsMaxPerCycle.set(conceptsFirePerCycle);
-        conceptsFiredPerCycle.set(conceptsFirePerCycle);
-        novelMaxPerCycle.set(conceptsFirePerCycle);
-
-
-        this.activeConceptThreshold.set(0.0);
-        this.goalThreshold.set(0.01);
-
-        this.taskProcessThreshold.set(Global.BUDGET_EPSILON);
-        this.termLinkThreshold.set(Global.BUDGET_EPSILON);
-        this.taskLinkThreshold.set(Global.BUDGET_EPSILON);
-
-        this.executionThreshold.set(0.6);
-        //executionThreshold.set(0.60);
-
-        setClock(new CycleClock());
-        outputVolume.set(100);
-
-        reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
-
-
-        conceptCreationExpectation.set(0.66);
-
-    }
-
-
-    public static final OpReaction[] exampleOperators = new OpReaction[]{
-            //new Wait(),
-            new NullOperator("break"),
-            new NullOperator("drop"),
-            new NullOperator("goto"),
-            new NullOperator("open"),
-            new NullOperator("pick"),
-            new NullOperator("strike"),
-            new NullOperator("throw"),
-            new NullOperator("activate"),
-            new NullOperator("deactivate")
-    };
-
-
     public final OpReaction[] defaultOperators = new OpReaction[]{
 
             //system control
@@ -394,6 +226,133 @@ public class Default extends Param implements NARSeed {
 //        table.put("^strike", new Strike("^strike"));
 
     };
+    public int cyclesPerFrame = 1;
+    protected int maxNALLevel;
+    /**
+     * Size of TaskLinkBag
+     */
+    int taskLinkBagSize;
+    /**
+     * Size of TermLinkBag
+     */
+    int termLinkBagSize;
+    /**
+     * determines maximum number of concepts
+     */
+    int conceptBagSize;
+    /**
+     * Size of TaskBuffer
+     */
+    int taskBufferSize;
+    InternalExperience.InternalExperienceMode internalExperience;
+
+
+    /**
+     * Default DEFAULTS
+     */
+    public Default() {
+        this(1024, 1, 3);
+    }
+
+
+    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
+
+        setActiveConcepts(maxConcepts);
+
+        conceptTaskTermProcessPerCycle.set(termLinksPerCycle);
+
+        termLinkMaxMatched.set(5);
+
+        //Build Parameters
+        this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
+        this.internalExperience =
+                maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
+
+        setTaskLinkBagSize(16);
+
+        setTermLinkBagSize(64);
+
+        setNovelTaskBagSize(48);
+
+
+        //Runtime Initial Values
+
+        duration.set(5);
+
+        shortTermMemoryHistory.set(1);
+        temporalRelationsMax.set(4);
+
+        conceptActivationFactor.set(1.0);
+        conceptFireThreshold.set(0.0);
+
+        conceptForgetDurations.set(3.0);
+        taskLinkForgetDurations.set(4.0);
+        termLinkForgetDurations.set(10.0);
+        novelTaskForgetDurations.set(2.0);
+
+        //param.budgetThreshold.set(0.01f);
+
+        conceptBeliefsMax.set(11);
+        conceptGoalsMax.set(8);
+        conceptQuestionsMax.set(4);
+
+        inputsMaxPerCycle.set(conceptsFirePerCycle);
+        conceptsFiredPerCycle.set(conceptsFirePerCycle);
+        novelMaxPerCycle.set(conceptsFirePerCycle);
+
+
+        this.activeConceptThreshold.set(0.0);
+        this.goalThreshold.set(0.01);
+
+        this.taskProcessThreshold.set(Global.BUDGET_EPSILON);
+        this.termLinkThreshold.set(Global.BUDGET_EPSILON);
+        this.taskLinkThreshold.set(Global.BUDGET_EPSILON);
+
+        this.executionThreshold.set(0.6);
+        //executionThreshold.set(0.60);
+
+        setClock(new CycleClock());
+        outputVolume.set(100);
+
+        reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
+
+
+        conceptCreationExpectation.set(0.66);
+
+    }
+
+    static String readFile(String path, Charset encoding)
+            throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+    }
+
+    protected DerivationFilter[] getDerivationFilters() {
+        return new DerivationFilter[]{
+                new FilterBelowConfidence(0.01),
+                new FilterDuplicateExistingBelief()
+                //param.getDefaultDerivationFilters().add(new BeRational());
+        };
+    }
+
+    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
+    public Default setClock(Clock clock) {
+        this.clock = clock;
+        return this;
+    }
+
+    public Default level(int maxNALlevel) {
+        this.maxNALLevel = maxNALlevel;
+        if (maxNALlevel < 8) {
+            this.internalExperience = InternalExperience.InternalExperienceMode.None;
+        }
+        return this;
+    }
+
+    @Override
+    public int getMaximumNALLevel() {
+        return maxNALLevel;
+    }
 
     @Override
     public ConceptBuilder getConceptBuilder() {
@@ -425,11 +384,10 @@ public class Default extends Param implements NARSeed {
                 //n.on(Anticipate.class);      // expect an event
 
                 if (internalExperience == Minimal) {
-                    new InternalExperience(n);
-                    new Abbreviation(n);
+                    n.on(InternalExperience.class, Abbreviation.class);
                 } else if (internalExperience == Full) {
-                    new FullInternalExperience(n);
-                    n.on(new Counting());
+                    n.on(FullInternalExperience.class);
+                    n.on(Counting.class);
                 }
             }
         }
@@ -438,12 +396,12 @@ public class Default extends Param implements NARSeed {
 
     }
 
-
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+        taskLinks.mergePlus();
         //new ChainBag(rng,  getConceptTaskLinks());
 
         Bag<TermLinkKey, TermLink> termLinks =
@@ -453,21 +411,50 @@ public class Default extends Param implements NARSeed {
         return newConcept(t, b, taskLinks, termLinks, m);
     }
 
-
     /**
      * rank function used for concept belief and goal tables
      */
-    public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
+    protected BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
         return (c, b) ->
                 BeliefTable.BeliefConfidenceOrOriginality;
         //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
 
     }
 
-
     @Override
-    public PremiseProcessor getPremiseProcessor() {
-        return newPolicy(new TableDerivations());
+    public PremiseProcessor getPremiseProcessor(Param p) {
+
+        return new PremiseProcessor(
+
+                new LogicStage /* <ConceptProcess> */ []{
+
+                        //A. concept fire tasklink derivation
+                        new TransformTask(),
+                        new Contraposition(),
+
+                        //B. concept fire tasklink termlink (pre-filter)
+                        new FilterEqualSubtermsAndSetPremiseBelief(),
+                        new MatchTaskBelief(),
+
+                        //C. concept fire tasklink termlink derivation ---------
+                        new ForwardImplicationProceed(),
+
+                        //temporalInduce(nal, task, taskSentence, memory);
+                        //(new TemporalInductionChain()),
+                        new TemporalInductionChain2(),
+
+                        new PerceptionDetachment(),
+
+                        new DeduceSecondaryVariableUnification(),
+                        new DeduceConjunctionByQuestion(),
+
+                        new TableDerivations()
+                        //---------------------------------------------
+                },
+
+                getDerivationFilters()
+
+        );
     }
 
     protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
@@ -511,8 +498,8 @@ public class Default extends Param implements NARSeed {
         return new DefaultCycle(
                 new ItemAccumulator(new ItemComparator.Plus()),
                 newConceptBag(),
-                newNovelTaskBag(), inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
-
+                newNovelTaskBag(),
+                inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
         );
     }
 
@@ -521,11 +508,14 @@ public class Default extends Param implements NARSeed {
         //return new ChainBag(rng, getNovelTaskBagSize());
     }
 
-
     public int getNovelTaskBagSize() {
         return taskBufferSize;
     }
 
+    public Default setNovelTaskBagSize(int taskBufferSize) {
+        this.taskBufferSize = taskBufferSize;
+        return this;
+    }
 
     public int getActiveConcepts() {
         return conceptBagSize;
@@ -536,13 +526,6 @@ public class Default extends Param implements NARSeed {
         return this;
     }
 
-
-    public Default setNovelTaskBagSize(int taskBufferSize) {
-        this.taskBufferSize = taskBufferSize;
-        return this;
-    }
-
-
     public int getConceptTaskLinks() {
         return taskLinkBagSize;
     }
@@ -552,7 +535,6 @@ public class Default extends Param implements NARSeed {
         return this;
     }
 
-
     public int getConceptTermLinks() {
         return termLinkBagSize;
     }
@@ -561,7 +543,6 @@ public class Default extends Param implements NARSeed {
         this.termLinkBagSize = termLinkBagSize;
         return this;
     }
-
 
     public Default clock(Clock c) {
         setClock(c);
@@ -577,71 +558,10 @@ public class Default extends Param implements NARSeed {
         return clock(new HardRealtimeClock());
     }
 
-
-
-
     public NARSeed setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
         return this;
     }
-
-
-    @Deprecated
-    public static class CommandLineNARBuilder extends Default {
-
-        List<String> filesToLoad = new ArrayList();
-
-        public CommandLineNARBuilder(String[] args) {
-            super();
-
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                if ("--silence".equals(arg)) {
-                    arg = args[++i];
-                    int sl = Integer.parseInt(arg);
-                    outputVolume.set(100 - sl);
-                } else if ("--noise".equals(arg)) {
-                    arg = args[++i];
-                    int sl = Integer.parseInt(arg);
-                    outputVolume.set(sl);
-                } else {
-                    filesToLoad.add(arg);
-                }
-
-            }
-        }
-
-        @Override
-        public void init(NAR n) {
-            super.init(n);
-
-            for (String x : filesToLoad) {
-                n.memory.taskNext(() -> {
-                    try {
-                        n.input(new File(x));
-                    } catch (FileNotFoundException fex) {
-                        System.err.println(getClass() + ": " + fex.toString());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
-                //n.run(1);
-            }
-
-        }
-
-
-        /**
-         * Decode the silence level
-         *
-         * @param param Given argument
-         * @return Whether the argument is not the silence level
-         */
-        public static boolean isReallyFile(String param) {
-            return !"--silence".equals(param);
-        }
-    }
-
 
     @Override
     public Param newParam() {
@@ -653,11 +573,9 @@ public class Default extends Param implements NARSeed {
         return rng;
     }
 
-
     public InternalExperience.InternalExperienceMode getInternalExperience() {
         return internalExperience;
     }
-
 
     public Default setInternalExperience(InternalExperience.InternalExperienceMode i) {
         if (i == null) i = InternalExperience.InternalExperienceMode.None;
@@ -665,29 +583,13 @@ public class Default extends Param implements NARSeed {
         return this;
     }
 
+
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + '[' + maxNALLevel +
                 ((internalExperience == InternalExperience.InternalExperienceMode.None) || (internalExperience == null) ? "" : "+")
                 + ']';
-    }
-
-
-//    public static Default fromJSON(String filePath) {
-//
-//        try {
-//            String c = readFile(filePath, Charset.defaultCharset());
-//            return Param.json.fromJson(c, Default.class);
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//            return null;
-//        }
-//    }
-
-    static String readFile(String path, Charset encoding)
-            throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, encoding);
     }
 
     /**
@@ -889,4 +791,62 @@ public class Default extends Param implements NARSeed {
 
 
     }
+
+    @Deprecated
+    public static class CommandLineNARBuilder extends Default {
+
+        List<String> filesToLoad = new ArrayList();
+
+        public CommandLineNARBuilder(String[] args) {
+            super();
+
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                if ("--silence".equals(arg)) {
+                    arg = args[++i];
+                    int sl = Integer.parseInt(arg);
+                    outputVolume.set(100 - sl);
+                } else if ("--noise".equals(arg)) {
+                    arg = args[++i];
+                    int sl = Integer.parseInt(arg);
+                    outputVolume.set(sl);
+                } else {
+                    filesToLoad.add(arg);
+                }
+
+            }
+        }
+
+        /**
+         * Decode the silence level
+         *
+         * @param param Given argument
+         * @return Whether the argument is not the silence level
+         */
+        public static boolean isReallyFile(String param) {
+            return !"--silence".equals(param);
+        }
+
+        @Override
+        public void init(NAR n) {
+            super.init(n);
+
+            for (String x : filesToLoad) {
+                n.memory.taskNext(() -> {
+                    try {
+                        n.input(new File(x));
+                    } catch (FileNotFoundException fex) {
+                        System.err.println(getClass() + ": " + fex.toString());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
+
+                //n.run(1);
+            }
+
+        }
+    }
+
+
 }

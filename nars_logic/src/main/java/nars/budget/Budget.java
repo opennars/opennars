@@ -21,6 +21,7 @@
 package nars.budget;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import com.gs.collections.api.block.procedure.Procedure2;
 import nars.AbstractMemory;
 import nars.Global;
 import nars.Symbols;
@@ -46,6 +47,21 @@ import static nars.nal.UtilityFunctions.*;
  */
 public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializable {
 
+    public static final Procedure2<Budget,Budget> average = new Procedure2<Budget,Budget>() {
+        @Override public void value(Budget newBudget, Budget oldBudget) {
+            newBudget.merge( oldBudget );
+        }
+    };
+    public static final Procedure2<Budget,Budget> plus = new Procedure2<Budget,Budget>() {
+        @Override public void value(Budget newBudget, Budget oldBudget) {
+            newBudget.accumulate( oldBudget );
+        }
+    };
+    public static final Procedure2<Budget,Budget> max = new Procedure2<Budget,Budget>() {
+        @Override public void value(Budget newBudget, Budget oldBudget) {
+            newBudget.max( oldBudget );
+        }
+    };
     /**
      * The character that marks the two ends of a budget value
      */
