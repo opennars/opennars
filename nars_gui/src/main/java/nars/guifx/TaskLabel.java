@@ -1,7 +1,6 @@
 package nars.guifx;
 
 import javafx.scene.CacheHint;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import nars.NAR;
@@ -58,7 +57,7 @@ public class TaskLabel extends HBox {
     public void enablePopupClickHandler(NAR nar) {
 
         setOnMouseClicked(e -> {
-            NARfx.window(nar, task);
+            NARfx.newWindow(nar, task);
 //            Term t = task.getTerm();
 //            if (t!=null) {
 ////                Concept c = nar.concept(t);

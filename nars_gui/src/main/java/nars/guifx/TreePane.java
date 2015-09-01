@@ -76,8 +76,8 @@ public class TreePane extends BorderPane {
         };
         {
             NSliderFX ns;
-            setTop( new FlowPane(
-                    new Label("PriMin"),
+            setBottom( new FlowPane(
+                    new Label("Pri(Min)"),
                     ns = new NSliderFX(80, 20)
             ));
 

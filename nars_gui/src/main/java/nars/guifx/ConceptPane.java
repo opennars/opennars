@@ -378,7 +378,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
         n.frame(516);
 
         NARfx.run((a,s) -> {
-            NARfx.window(n, n.concept("<a-->b>"));
+            NARfx.newWindow(n, n.concept("<a-->b>"));
 //            s.setScene(new ConsolePanel(n, n.concept("<a-->b>")),
 //                    800,600);
 

@@ -1,12 +1,12 @@
 package nars.guifx;
 
+import automenta.vivisect.swing.NSlider;
 import de.jensd.fx.glyphs.GlyphIcon;
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
-import javafx.geometry.Orientation;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import nars.Events;
 import nars.NAR;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * to the left or right of anything else, which contains a set of
  * buttons for controlling a nar
  */
-abstract public class NARControlFX extends VBox implements Runnable {
+abstract public class NARControlFX extends HBox implements Runnable {
 
     public final ToggleButton consoleButton;
     private final long defaultNARPeriodMS = 75;
@@ -55,7 +55,7 @@ abstract public class NARControlFX extends VBox implements Runnable {
     }
 
     public NARControlFX(NAR n, boolean runButtons, boolean memoryButtons, boolean guiButtons) {
-        super();
+        super(2);
 
         this.nar = n;
         //Canvas canvas = new NARWindow.ResizableCanvas(this);
@@ -107,14 +107,15 @@ abstract public class NARControlFX extends VBox implements Runnable {
         }
 
 
-        Slider speedSlider = new Slider(0, 1, 0);
-        speedSlider.setOrientation(Orientation.VERTICAL);
-        speedSlider.setTooltip(new Tooltip("Speed"));
-        speedSlider.setMinorTickCount(10);
-        speedSlider.setShowTickMarks(true);
+//        Slider speedSlider = new Slider(0, 1, 0);
+//        speedSlider.setOrientation(Orientation.VERTICAL);
+//        speedSlider.setTooltip(new Tooltip("Speed"));
+//        speedSlider.setMinorTickCount(10);
+//        speedSlider.setShowTickMarks(true);
+//        getChildren().add(speedSlider);
+
+        NSliderFX speedSlider = new NSliderFX(100, 25.0);
         getChildren().add(speedSlider);
-
-
 
         if (memoryButtons) {
             Button b0 = JFX.newIconButton(FontAwesomeIcon.FOLDER);
@@ -151,7 +152,8 @@ abstract public class NARControlFX extends VBox implements Runnable {
             if (c instanceof Control)
                 ((Control) c).setMaxWidth(Double.MAX_VALUE);
         });
-        setFillWidth(true);
+        setMaxWidth(Double.MAX_VALUE);
+        //setFillHeight(true);
 
 
 

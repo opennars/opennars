@@ -156,7 +156,7 @@ public class NARGraph1 extends Spacegraph {
                 //System.out.println("click " + e.getClickCount());
                 if (e.getClickCount() == 2) {
                     if (c != null)
-                        NARfx.window(nar, c);
+                        NARfx.newWindow(nar, c);
                 }
             });
 

@@ -119,7 +119,7 @@ public class NARfx extends Application {
 
         NAR n = new NAR(d);
 
-        NARPane w = NARfx.window(n);
+        NARPane w = NARfx.newWindow(n);
 
 
         for (String s : getParameters().getRaw()) {
@@ -242,16 +242,14 @@ public class NARfx extends Application {
 
     }
 
-    public static Stage getStage(String title, Region n) {
-        Stage s = new Stage();
+    public static Stage newWindow(String title, Region n) {
+
 
         Scene scene = new Scene(n);
-        s.setTitle(title);
-
-
         scene.getStylesheets().setAll(NARfx.css, "dark.css" );
 
-
+        Stage s = new Stage();
+        s.setTitle(title);
         s.setScene(scene);
 
         n.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -260,12 +258,12 @@ public class NARfx extends Application {
     }
 
 
-    public static NARPane window(NAR nar) {
+    public static NARPane newWindow(NAR nar) {
         NARPane wn = new NARPane(nar);
 
         Stage s;
         wn.setPrefSize(900, 600);
-        Stage removed = window.put(wn, s = wn.newStage());
+        Stage removed = window.put(wn, s = wn.newWindow());
 
         s.show();
 
@@ -275,11 +273,11 @@ public class NARfx extends Application {
         return wn;
     }
 
-    public static void window(NAR nar, Concept c) {
+    public static void newWindow(NAR nar, Concept c) {
         ConceptPane wn = new ConceptPane(nar, c);
 
         Stage st;
-        Stage removed = window.put(wn, st = getStage(c.toString(), wn));
+        Stage removed = window.put(wn, st = newWindow(c.toString(), wn));
 
         st.show();
 
@@ -287,11 +285,11 @@ public class NARfx extends Application {
             removed.close();
     }
 
-    public static void window(NAR nar, Task c) {
+    public static void newWindow(NAR nar, Task c) {
         TaskPane wn = new TaskPane(nar, c);
 
         Stage st;
-        Stage removed = window.put(wn, st = getStage(c.toString(), wn));
+        Stage removed = window.put(wn, st = newWindow(c.toString(), wn));
 
         st.show();
 

@@ -209,7 +209,7 @@ public class NARPane extends BorderPane {
 
         f.setCenter(menu);
 
-        f.setRight(controlStrip);
+        f.setTop(controlStrip);
 
 
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -232,9 +232,9 @@ public class NARPane extends BorderPane {
 
     }
 
-    public Stage newStage() {
+    public Stage newWindow() {
 
-        return NARfx.getStage(nar.toString(), this);
+        return NARfx.newWindow(nar.toString(), this);
 
     }
 
