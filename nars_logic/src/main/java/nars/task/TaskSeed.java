@@ -12,36 +12,35 @@ import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
-import java.util.Arrays;
-
 /**
  * utility method for creating new tasks following a fluent builder pattern
  * warning: does not correctly support parent stamps, use .stamp() to specify one
  * <p>
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
-public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stamp {
+public class TaskSeed extends DefaultTask<Compound> implements Stamp {
 
 
     transient private final Memory memory;
 
-    public static <C extends Compound> TaskSeed<C> make(Memory memory, C t) {
-        TaskSeed<C> x = make(memory);
-        if (t != null) {
-            t = t.normalized();
-            if (t == null)
-                return null;
-            x.setTerm(t);
-        }
+    public static <C extends Compound> TaskSeed make(Memory memory, C t) {
+        Compound u = Sentence.termOrNull(t);
+        if (u == null)
+            return null;
+
+        TaskSeed x = make(memory);
+
+        x.setTerm(u);
+
         return x;
     }
 
 
-    public static <C extends Compound> TaskSeed<C> make(Memory memory) {
+    public static <C extends Compound> TaskSeed make(Memory memory) {
         return new TaskSeed(memory);
     }
 
-    TaskSeed(Memory memory) {
+    public TaskSeed(Memory memory) {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         super(null, (char) 0, null, 0, 0, 0);
 
@@ -68,12 +67,12 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
      * if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here
      */
     @Deprecated
-    public TaskSeed<T> truth(Truth tv) {
+    public TaskSeed truth(Truth tv) {
         this.truth = tv;
         return this;
     }
 
-    public TaskSeed<T> budget(float p, float d, float q) {
+    public TaskSeed budget(float p, float d, float q) {
         budgetDirect(p, d, q);
         return this;
     }
@@ -82,14 +81,14 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
      * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
      */
     @Deprecated
-    public TaskSeed<T> budget(Budget bv) {
+    public TaskSeed budget(Budget bv) {
         return budget(bv.getPriority(), bv.getDurability(), bv.getQuality());
     }
 
     /**
      * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
      */
-    public TaskSeed<T> budget(Budget bv, float priMult, float durMult) {
+    public TaskSeed budget(Budget bv, float priMult, float durMult) {
         return budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
     }
 
@@ -98,7 +97,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     /**
      * uses default budget generation and multiplies it by gain factors
      */
-    public TaskSeed<T> budgetScaled(float priorityFactor, float durFactor) {
+    public TaskSeed budgetScaled(float priorityFactor, float durFactor) {
 
         //TODO maybe lift this to Budget class
         if (!applyDefaultBudget()) {
@@ -122,23 +121,23 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 //        return this;
 //    }
 
-    public TaskSeed<T> term(T t) {
+    public TaskSeed term(Compound t) {
         this.term = t;
         return this;
     }
 
-    public TaskSeed<T> termIfValid(T t) {
+    public TaskSeed termIfValid(Compound t) {
         t = Sentence.termOrNull(t);
         if (t == null) return null;
         term(t);
         return this;
     }
 
-    public TaskSeed<T> truth(boolean freqAsBoolean, float conf) {
+    public TaskSeed truth(boolean freqAsBoolean, float conf) {
         return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
     }
 
-    public TaskSeed<T> truth(float freq, float conf) {
+    public TaskSeed truth(float freq, float conf) {
         if (this.truth != null) {
             System.err.println("warning: " + this + " modifying existing truth: " + this.truth);
         }
@@ -150,49 +149,49 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     /**
      * alias for judgment
      */
-    public TaskSeed<T> belief() {
+    public TaskSeed belief() {
         return judgment();
     }
 
-    public TaskSeed<T> judgment() {
+    public TaskSeed judgment() {
         setPunctuation(Symbols.JUDGMENT);
         return this;
     }
 
-    public TaskSeed<T> question() {
+    public TaskSeed question() {
         setPunctuation(Symbols.QUESTION);
         return this;
     }
 
-    public TaskSeed<T> quest() {
+    public TaskSeed quest() {
         setPunctuation(Symbols.QUEST);
         return this;
     }
 
-    public TaskSeed<T> goal() {
+    public TaskSeed goal() {
         setPunctuation(Symbols.GOAL);
         return this;
     }
 
-    public TaskSeed<T> tense(Tense t) {
+    public TaskSeed tense(Tense t) {
         this.occurr(Stamp.getOccurrenceTime(memory.time(), t, memory));
         return this;
     }
 
     //TODO make these return the task, as the final call in the chain
-    public TaskSeed<T> eternal() {
+    public TaskSeed eternal() {
         return tense(Tense.Eternal);
     }
 
-    public TaskSeed<T> present() {
+    public TaskSeed present() {
         return tense(Tense.Present);
     }
 
-    public TaskSeed<T> past() {
+    public TaskSeed past() {
         return tense(Tense.Past);
     }
 
-    public TaskSeed<T> future() {
+    public TaskSeed future() {
         return tense(Tense.Future);
     }
 
@@ -202,7 +201,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 //        return this;
 //    }
 
-    public TaskSeed<T> budget(float p, float d) {
+    public TaskSeed budget(float p, float d) {
         final float q;
         Truth t = getTruth();
         if ((getPunctuation() != Symbols.QUESTION) && (getPunctuation() != Symbols.QUEST)) {
@@ -215,7 +214,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
         return budget(p, d, q);
     }
 
-    public TaskSeed<T> duration(int duration) {
+    public TaskSeed duration(int duration) {
         this.setDuration(duration);
         return this;
     }
@@ -264,23 +263,23 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 //    }
 
 
-    public TaskSeed<T> punctuation(final char punctuation) {
+    public TaskSeed punctuation(final char punctuation) {
         setPunctuation(punctuation);
         return this;
     }
 
-    public TaskSeed<T> time(long creationTime, long occurrenceTime) {
+    public TaskSeed time(long creationTime, long occurrenceTime) {
         setCreationTime(creationTime);
         occurr(occurrenceTime);
         return this;
     }
 
-    public TaskSeed<T> cause(Operation operation) {
+    public TaskSeed cause(Operation operation) {
         setCause(operation);
         return this;
     }
 
-    public TaskSeed<T> reason(String reason) {
+    public TaskSeed reason(String reason) {
         log(reason);
         return this;
     }
@@ -306,18 +305,21 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
 
-    public TaskSeed<T> parent(final Task parentTask, final Task parentBelief) {
+    public TaskSeed parent(final Task parentTask, final Task parentBelief) {
+        if (parentTask == null)
+            throw new RuntimeException("parent task being set to null");
+
         setParentTask(parentTask);
         setParentBelief(parentBelief);
         return this;
     }
 
-    public TaskSeed<T> solution(Task solutionBelief) {
+    public TaskSeed solution(Task solutionBelief) {
         setBestSolution(memory, solutionBelief);
         return this;
     }
 
-    public TaskSeed<T> occurr(long occurrenceTime) {
+    public TaskSeed occurr(long occurrenceTime) {
         this.setOccurrenceTime(occurrenceTime);
         return this;
     }
@@ -338,36 +340,36 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 //    }
 //
 
-    public TaskSeed<T> budgetCompoundForward(Compound result, Premise p) {
+    public TaskSeed budgetCompoundForward(Compound result, Premise p) {
         BudgetFunctions.compoundForward(this, getTruth(), result, p);
         return this;
     }
 
 
-    public TaskSeed<T> temporalInductable(boolean b) {
+    public TaskSeed temporalInductable(boolean b) {
         setTemporalInducting(b);
         return this;
     }
 
 
-    public TaskSeed<T> parent(Task parentTask, Task parentBelief, long occurrence) {
+    public TaskSeed parent(Task parentTask, Task parentBelief, long occurrence) {
         parent(parentTask, parentBelief);
         setOccurrenceTime(occurrence);
         return this;
     }
 
-    public TaskSeed<T> parent(Task task, long occurrenceTime) {
+    public TaskSeed parent(Task task, long occurrenceTime) {
         parent(task, null);
         setOccurrenceTime(occurrenceTime);
         return this;
     }
 
-    public TaskSeed<T> parent(Task task) {
+    public TaskSeed parent(Task task) {
         parent(task, null);
         return this;
     }
 
-    public TaskSeed<T> occurrNow() {
+    public TaskSeed occurrNow() {
         setOccurrenceTime(memory.time());
         return this;
     }

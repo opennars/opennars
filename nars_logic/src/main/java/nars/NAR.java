@@ -177,7 +177,7 @@ public class NAR extends Container implements Runnable {
         return narsese.task(taskText, memory);
     }
 
-    public <T extends Compound> TaskSeed<T> task(T t) {
+    public <T extends Compound> TaskSeed task(T t) {
         return memory.newTask(t);
     }
 

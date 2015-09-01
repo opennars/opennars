@@ -160,9 +160,7 @@ public interface Premise {
 
     /* --------------- new task building --------------- */
 
-    default public <T extends Compound> TaskSeed newTask() {
-        return getMemory().newTask();
-    }
+
 
     default public <T extends Compound> TaskSeed newTask(final T term) {
         return getMemory().newTask(term);
@@ -182,16 +180,16 @@ public interface Premise {
     /**
      * for producing a non-cyclic derivation; returns null if the premise is cyclic
      */
-    default public <C extends Compound> TaskSeed<?> newDoublePremise(Task asym, Task sym) {
+    default public <C extends Compound> TaskSeed newDoublePremise(Task asym, Task sym) {
         return newDoublePremise(asym, sym, false);
     }
 
-    default public <C extends Compound> TaskSeed<C> newSinglePremise(Task parentTask, boolean allowOverlap) {
+    default public <C extends Compound> TaskSeed newSinglePremise(Task parentTask, boolean allowOverlap) {
         return newDoublePremise(parentTask, null, allowOverlap);
     }
 
-    default public <C extends Compound> TaskSeed<C> newDoublePremise(Task parentTask, Task parentBelief, boolean allowOverlap) {
-        TaskSeed x = newTask();
+    default public <C extends Compound> TaskSeed newDoublePremise(Task parentTask, Task parentBelief, boolean allowOverlap) {
+        TaskSeed x = new TaskSeed(getMemory());
         x.parent(parentTask, parentBelief);
         x.updateCyclic();
         if (!allowOverlap && x.isCyclic())
@@ -199,7 +197,7 @@ public interface Premise {
         return x;
     }
 
-    default public <C extends Compound> TaskSeed<C> newTask(C content, Task task, Task belief, boolean allowOverlap) {
+    default public <C extends Compound> TaskSeed newTask(C content, Task task, Task belief, boolean allowOverlap) {
         content = Sentence.termOrNull(content);
         if (content == null)
             return null;
@@ -260,8 +258,8 @@ public interface Premise {
     }
 
     default public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
-        final Task currentTask = getTask();
-        final Task parentTask = currentTask.getParentTask();
+        final Task parentTask = getTask();
+        final Task grandParentTask = parentTask.getParentTask();
         /*if (parentTask != null) {
             final Compound parentTaskTerm = parentTask.getTerm();
             if (parentTaskTerm == null) {
@@ -279,8 +277,8 @@ public interface Premise {
 
 //        final Task ptask;
 //        final Task currentBelief = getBelief();
-//        if (currentTask.isJudgment() || currentBelief == null) {
-//            ptask = currentTask;
+//        if (parentTask.isJudgment() || currentBelief == null) {
+//            ptask = parentTask;
 //        } else { //Unspecified cheat we need to get rid of.
 //            // to answer a question with negation in NAL-5 --- move to activated task?
 //            ptask = currentBelief;

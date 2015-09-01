@@ -594,16 +594,15 @@ public class Memory implements Serializable, AbstractMemory {
         if ((t.getParentTaskRef() != null && t.getParentTask() == null))
             throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
 
-        ///*if (this.equals(getParentTask())) {
+        /*
         if (t.equals( t.getParentTask()) ) {
             throw new RuntimeException(t + " has parentTask equal to itself");
         }
+        */
 
         if (t.getEvidence()==null)
             throw new RuntimeException(t + " from premise " + t.getParentTask() + "," + t.getParentBelief()
                     + " yet no evidence provided");
-
-
 
 
         if (Global.DEBUG) {
@@ -678,7 +677,7 @@ public class Memory implements Serializable, AbstractMemory {
         if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
             task.log(Premise.getStack());
 
-        System.err.println("REMOVED: " + task.getExplanation());
+        //System.err.println("REMOVED: " + task.getExplanation());
 
         eventTaskRemoved.emit(task);
         task.delete();
@@ -813,13 +812,11 @@ public class Memory implements Serializable, AbstractMemory {
 
     }
 
-    public <T extends Compound> TaskSeed<T> newTask(T t) {
+    public <T extends Compound> TaskSeed newTask(T t) {
         return TaskSeed.make(this, t);
     }
 
-    public <T extends Compound> TaskSeed<T> newTask() {
-        return newTask(null);
-    }
+
 
 
     /**

@@ -370,8 +370,10 @@ public class NARGraph1 extends Spacegraph {
         }
 
         public double getVertexScaleByConf(Concept c) {
-            double conf = c.getBeliefs().getConfidenceMax(0, 1);
-            if (Double.isFinite(conf)) return conf;
+            if (c.hasBeliefs()) {
+                double conf = c.getBeliefs().getConfidenceMax(0, 1);
+                if (Double.isFinite(conf)) return conf;
+            }
             return 0;
         }
 

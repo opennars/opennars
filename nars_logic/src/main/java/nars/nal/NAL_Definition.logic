@@ -359,7 +359,7 @@
     ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
     ((\,_, A_1..n ) --> M), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
 
-    //NAL3 specific:
+//NAL3 specific:
     ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
     (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
 

@@ -98,7 +98,7 @@ public class PerceptionAccel extends NARReaction {
     }
 
 
-    public void perceive(Task task, NAL nal) { //implement Peis idea here now
+    public void perceive(final Task task, NAL nal) { //implement Peis idea here now
         //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
 
         boolean longest_result_derived_already = false;

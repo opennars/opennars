@@ -105,6 +105,11 @@ public class TaskStruct extends Fuct implements Task {
     }
 
     @Override
+    public boolean isSingle() {
+        return false;
+    }
+
+    @Override
     public Task normalized() {
         return this;
     }

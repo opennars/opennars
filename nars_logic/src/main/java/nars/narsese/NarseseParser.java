@@ -85,8 +85,7 @@ public class NarseseParser extends BaseParser<Object>  {
                                     LineComment(),
                                     PauseInput(),
                                     Task()
-                            ),
-                            s()
+                            )
                     )
             ), s(), eof() ) ;
     }
@@ -176,7 +175,8 @@ public class NarseseParser extends BaseParser<Object>  {
 
     public Rule PauseInput() {
         return sequence( s(), IntegerNonNegative(),
-                push( PauseInput.pause( (Integer) pop() ) ), s(), "\n" );
+                push( PauseInput.pause( (Integer) pop() ) ), sNonNewLine(),
+                "\n" );
     }
 
 
@@ -933,6 +933,10 @@ public class NarseseParser extends BaseParser<Object>  {
      */
     Rule s() {
         return zeroOrMore(anyOf(" \t\f\n\r"));
+    }
+
+    Rule sNonNewLine() {
+        return zeroOrMore(anyOf(" \t\f"));
     }
 
 //    public static NarseseParser newParser(NAR n) {

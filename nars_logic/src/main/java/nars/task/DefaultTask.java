@@ -46,11 +46,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /**
      * Task from which the Task is derived, or null if input
      */
-    transient protected Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
+    transient private Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    transient protected Reference<Task> parentBelief;
+    transient private Reference<Task> parentBelief;
 
     public Truth truth;
     protected T term;
@@ -567,12 +567,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }*/
 
     public void setParentTask(Task parentTask) {
-        this.parentTask = reference(parentTask!=null ? parentTask.normalized() : null);
+        this.parentTask = reference(parentTask);
         invalidate();
     }
 
     public void setParentBelief(Task parentBelief) {
-        this.parentBelief = reference(parentBelief!=null ? parentBelief.normalized() : null);
+        this.parentBelief = reference(parentBelief);
         invalidate();
     }
 
@@ -581,7 +581,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      *
      * @return The belief from which the task is derived
      */
-    public Task getParentBelief() {
+    final public Task getParentBelief() {
         return dereference(parentBelief);
     }
 
@@ -590,12 +590,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      *
      * @return The task from which the task is derived
      */
-    public Task getParentTask() {
+    @Override
+    final public Task getParentTask() {
         return dereference(parentTask);
     }
 
     @Override
-    public Sentence<T> name() {
+    final public Sentence<T> name() {
         return this;
     }
 

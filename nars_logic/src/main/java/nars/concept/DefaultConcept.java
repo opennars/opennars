@@ -1,7 +1,6 @@
 package nars.concept;
 
 import javolution.util.function.Equality;
-import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
@@ -396,7 +395,7 @@ public class DefaultConcept extends AbstractConcept {
             if (qu.isEmpty()) return;
 
             for (Compound q : qu) {
-                TaskSeed<Compound> t = p.newTask(q)
+                TaskSeed t = p.newTask(q)
                         .question()
                         .parent(task)
                         .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
