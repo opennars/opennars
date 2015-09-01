@@ -1111,7 +1111,9 @@ public class NARGraph1 extends Spacegraph {
 
     final List<TermEdge> removable = Global.newArrayList();
 
-    final Color FADEOUT = new Color(0,0,0,0.5);
+    final Color FADEOUT =
+            Color.BLACK;
+            //new Color(0,0,0,0.5);
 
     protected void renderEdges() {
         //if (edgeDirty.get()) {
@@ -1120,8 +1122,7 @@ public class NARGraph1 extends Spacegraph {
         if (floorGraphics == null) floorGraphics = floorCanvas.getGraphicsContext2D();
 
         floorGraphics.setFill(
-                //FADEOUT
-                Color.BLACK
+                FADEOUT
         );
 
         floorGraphics.fillRect(0,0, floorGraphics.getCanvas().getWidth(), floorGraphics.getCanvas().getHeight());
@@ -1198,7 +1199,7 @@ public class NARGraph1 extends Spacegraph {
     protected void start() {
         synchronized (nar) {
             if (this.updater == null) {
-                this.updater = new Animate(75, a -> {
+                this.updater = new Animate(150, a -> {
                     if (!termList.isEmpty()) {
                         layoutNodes();
                         renderEdges();

@@ -623,7 +623,7 @@ public class Memory implements Serializable, AbstractMemory {
      */
     public boolean input(final Task t) {
 
-        if (!t.init(this)) {
+        if (t == null || !t.init(this)) {
             return false;
         }
 

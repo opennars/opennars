@@ -119,12 +119,13 @@ public class LogPane extends VBox implements Runnable {
                     (Task)args[0], nar);*/
 
             Task t = (Task)args[0];
-            ItemButton tl = new ItemButton( t, (i) -> i.toString(),
+            /*ItemButton tl = new ItemButton( t, (i) -> i.toString(),
                     (i) -> {
                         NARfx.window(nar, t);
                     }
-            );
-            tl.setCache(true);
+            );*/
+            TaskLabel tl = new TaskLabel( "", t, nar);
+            //tl.setCache(true);
 
             //tl.enablePopupClickHandler(nar);
             return tl;

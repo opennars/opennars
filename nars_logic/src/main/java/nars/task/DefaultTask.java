@@ -616,7 +616,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     @Override
     public Task setCause(final Operation op) {
         if (op != null) {
-            if (this.equals(op.getTask()))
+            if (this!=op.getTask())
                 return this; //dont set the cause to itself
         }
 

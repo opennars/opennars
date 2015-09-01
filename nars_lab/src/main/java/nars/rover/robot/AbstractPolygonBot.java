@@ -322,7 +322,7 @@ public abstract class AbstractPolygonBot extends Robotic {
             float conf = 0.75f;
 
             TaskSeed ts = nar.task(term).belief().present().truth(freq, conf);
-            Task t = ts;
+            Task t = ts.normalized();
             if (t!=null)
                 nar.input(t);
 
@@ -388,9 +388,9 @@ public abstract class AbstractPolygonBot extends Robotic {
 
         }
 
-        public TaskSeed getFeedback(float feedback) {
+        public Task getFeedback(float feedback) {
             //since it's expectation, using 0.99 conf is like preserving the necessary truth as was desired, if feedback = desire
-            return nar.task((Compound) term).present().belief().truth(feedback, 0.99f);
+            return nar.task((Compound) term).present().belief().truth(feedback, 0.99f).normalized();
         }
 
         public Concept getConcept() {

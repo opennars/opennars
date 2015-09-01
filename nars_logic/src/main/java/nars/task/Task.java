@@ -475,32 +475,31 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
     @Deprecated default public boolean init(final Memory memory) {
 
-        if (isCommand()) return true;
+        if (!isCommand()) {
 
-        //if a task has an unperceived creationTime,
-        // set it to the memory's current time here,
-        // and adjust occurenceTime if it's not eternal
+            //if a task has an unperceived creationTime,
+            // set it to the memory's current time here,
+            // and adjust occurenceTime if it's not eternal
 
-        if (getCreationTime() <= Stamp.TIMELESS) {
-            final long now = memory.time();
-            long oc = getOccurrenceTime();
-            if (oc != Stamp.ETERNAL)
-                oc += now;
+            if (getCreationTime() <= Stamp.TIMELESS) {
+                final long now = memory.time();
+                long oc = getOccurrenceTime();
+                if (oc != Stamp.ETERNAL)
+                    oc += now;
 
-            setTime(now, oc);
+                setTime(now, oc);
+            }
+
+            if (getDuration() == 0)
+                setDuration(memory.duration());
+
+            if (getEvidence() == null) {
+                setEvidence(memory.newStampSerial());
+            }
+
         }
 
-        if (getDuration() == 0)
-            setDuration(memory.duration());
-
-        if (getEvidence() == null) {
-            setEvidence(memory.newStampSerial());
-        }
-
-
-        normalized();
-
-        return true;
+        return (normalized() != null);
     }
 
 

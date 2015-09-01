@@ -3,6 +3,7 @@ package nars.guifx;
 import javafx.scene.CacheHint;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import nars.NAR;
 import nars.task.Task;
 
@@ -11,7 +12,7 @@ import nars.task.Task;
  */
 public class TaskLabel extends HBox {
 
-    private final Label label;
+    private final Text label;
     private final Task task;
     private final TaskSummaryIcon summary;
     private final NSliderFX slider;
@@ -22,10 +23,8 @@ public class TaskLabel extends HBox {
         this.task = task;
 
         String s = prefix + task.toString(n.memory).toString();
-        label = new Label(s);
+        label = new Text(s);
         label.setMouseTransparent(true);
-        label.getStylesheets().clear();
-        label.setCacheShape(true);
         label.setCacheHint(CacheHint.SPEED);
         label.setCache(true);
 
@@ -86,8 +85,10 @@ public class TaskLabel extends HBox {
 
         slider.value.set(pri);
 
-        label.setStyle(JFX.fontSize(8 + 16 * pri));
-        label.setTextFill(JFX.grayscale.get(pri));
+        //label.setStyle(JFX.fontSize(8 + 16 * pri));
+
+        label.setFont(NARfx.mono(8 + 16 * pri));
+        label.setFill(JFX.grayscale.get(pri));
 
 
 

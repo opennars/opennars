@@ -47,12 +47,19 @@ public class TabX extends Tab {
         }
     }
 
+    boolean closed = false;
+
     public TabX(String name, Parent content) {
         super(name,content);
         selectedProperty().addListener(s -> {
             update();
         });
 
+
+        onClosedProperty().addListener(c -> {
+            closed = true;
+            update();
+        });
 
         update();
     }
@@ -65,7 +72,7 @@ public class TabX extends Tab {
 
     protected void update() {
 
-        final boolean s = isSelected();
+        final boolean s = !closed && isSelected();
 
         logger.severe(getText() + " visible=" + s);
 

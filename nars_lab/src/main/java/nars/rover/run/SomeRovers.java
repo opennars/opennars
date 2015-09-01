@@ -50,7 +50,7 @@ public class SomeRovers {
     }
     public static Default newDefault() {
 
-        Default d = new Equalized(1024, 32, 8);
+        Default d = new Equalized(1024, 16, 8);
 //
 //
 //            @Override
@@ -70,6 +70,13 @@ public class SomeRovers {
 //        };
         //d.setInternalExperience(null);
         d.setClock(clock);
+
+        d.conceptTaskTermProcessPerCycle.set(4);
+
+        int cycPerFrame = 8;
+
+        d.setCyclesPerFrame(cycPerFrame);
+        d.duration.set(5 * cycPerFrame);
 
 
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
@@ -108,14 +115,8 @@ public class SomeRovers {
 
 
         {
-            int cycPerFrame = 8;
             Default e = newDefault();
-            e.conceptTaskTermProcessPerCycle.set(4);
 
-
-            e.setCyclesPerFrame(cycPerFrame);
-            e.duration.set(5 * cycPerFrame);
-            e.setClock(clock);
 
             NAR nar = new NAR(e);
             //TextOutput.out(nar).setOutputPriorityMin(0.5f);
@@ -132,18 +133,16 @@ public class SomeRovers {
             NAR nar;
 
             //NARSeed d = newSolid();
-            Equalized d = new Equalized(1024, 32, 8);
+            Default d = newDefault();
             nar = new NAR(d);
 
 
 
             //new InputActivationController(nar);
 
-            int nc = 16;
-            nar.setCyclesPerFrame(nc);
-            nar.param.duration.set(nc/2);
 
-          TextOutput.out(nar).setOutputPriorityMin(0.5f);
+
+            //TextOutput.out(nar).setOutputPriorityMin(0.5f);
 
 
             //nar.param.shortTermMemoryHistory.set(3);
