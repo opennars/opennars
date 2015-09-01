@@ -3,6 +3,7 @@ package nars.nar.experimental;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
+import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.concept.Concept;
@@ -85,7 +86,7 @@ public class Equalized extends NewDefault {
 
             Iterator<Task> ii = newTasks.iterateHighestFirst(temporary);
 
-            float priFactor = 1f / maxBusyness; //divide the procesesd priority by the expected busyness of this cycle to approximate 1.0 total
+            float priFactor = 1f; //divide the procesesd priority by the expected busyness of this cycle to approximate 1.0 total
 
             float b = 0;
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
@@ -157,7 +158,7 @@ public class Equalized extends NewDefault {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                new FilterBelowConfidence(0.01),
+                new FilterBelowConfidence(0.005),
                 new FilterDuplicateExistingBelief(),
                 new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());
@@ -167,7 +168,7 @@ public class Equalized extends NewDefault {
     @Override
     public CycleProcess newCycleProcess() {
         return new EqualizedCycle(
-                new ItemAccumulator(new ItemComparator.Plus()),
+                new ItemAccumulator(Budget.plus),
                 newConceptBag(),
                 conceptsFiredPerCycle
         );

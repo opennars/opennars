@@ -57,7 +57,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     abstract public V put(V newItem);
 
 
-    Procedure2<Budget,Budget> mergeFunction = Budget.average;
+    Procedure2<Budget,Budget> mergeFunction = Budget.max;
 
     /** set the merging function to 'average' */
     public void mergeAverage() {  mergeFunction = Budget.average;    }

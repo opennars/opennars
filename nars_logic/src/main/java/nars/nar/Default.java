@@ -401,12 +401,11 @@ public class Default extends Param implements NARSeed {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-        taskLinks.mergePlus();
-        //new ChainBag(rng,  getConceptTaskLinks());
+        taskLinks.mergeAverage();
+
 
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-        //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
@@ -496,7 +495,7 @@ public class Default extends Param implements NARSeed {
     @Override
     public CycleProcess newCycleProcess() {
         return new DefaultCycle(
-                new ItemAccumulator(new ItemComparator.Plus()),
+                new ItemAccumulator(Budget.max),
                 newConceptBag(),
                 newNovelTaskBag(),
                 inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle

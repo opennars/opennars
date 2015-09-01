@@ -48,18 +48,18 @@ import static nars.nal.UtilityFunctions.*;
 public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializable {
 
     public static final Procedure2<Budget,Budget> average = new Procedure2<Budget,Budget>() {
-        @Override public void value(Budget newBudget, Budget oldBudget) {
-            newBudget.merge( oldBudget );
+        @Override public void value(Budget target, Budget incoming) {
+            target.merge( incoming );
         }
     };
     public static final Procedure2<Budget,Budget> plus = new Procedure2<Budget,Budget>() {
-        @Override public void value(Budget newBudget, Budget oldBudget) {
-            newBudget.accumulate( oldBudget );
+        @Override public void value(Budget target, Budget incoming) {
+            target.accumulate( incoming );
         }
     };
     public static final Procedure2<Budget,Budget> max = new Procedure2<Budget,Budget>() {
-        @Override public void value(Budget newBudget, Budget oldBudget) {
-            newBudget.max( oldBudget );
+        @Override public void value(Budget target, Budget incoming) {
+            target.max( incoming );
         }
     };
     /**

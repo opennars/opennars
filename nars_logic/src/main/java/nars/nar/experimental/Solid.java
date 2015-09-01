@@ -51,7 +51,7 @@ public class Solid extends Default implements CycleProcess {
 
     ConceptActivator activator;
 
-    final ItemAccumulator<Task> tasks = new ItemAccumulator<>(new ItemComparator.Plus<>());
+    final ItemAccumulator<Task> tasks = new ItemAccumulator(Budget.plus);
     //final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new ItemComparator.Plus());
         /*final SortedSet<Task> tasks = new FastSortedSet(new WrapperComparatorImpl(new TaskComparator(TaskComparator.Duplication.Or))).atomic();*/
 

@@ -3,6 +3,7 @@ package nars.op.app;
 import com.google.common.collect.Iterators;
 import nars.Events;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.event.NARReaction;
@@ -33,7 +34,7 @@ public class Commander extends NARReaction {
             priorityRemaining = 0; //change left over from last cycle
 
     public Commander(NAR nar) {
-        this(nar, new ItemAccumulator(new ItemComparator.Plus()));
+        this(nar, new ItemAccumulator(Budget.plus));
     }
 
     public Commander(NAR nar, ItemAccumulator<Task> buffer) {

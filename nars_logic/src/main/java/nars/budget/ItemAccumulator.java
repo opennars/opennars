@@ -1,5 +1,6 @@
 package nars.budget;
 
+import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 
@@ -31,11 +32,26 @@ public class ItemAccumulator<I extends Budgeted> {
     final static Comparator<Budgeted> highestFirst = new HighestFirstComparator();
     final static Comparator<Budgeted> lowestFirst = new LowestFirstComparator();
 
+    /** ex: Bag.max, Bag.plus, Bag.average
+     * first budget = target where the data is accumulated
+     * second budget = incoming budget
+     * */
+    private final Procedure2<Budget, Budget> merge;
 
-    public ItemAccumulator(@Deprecated ItemComparator comp) {
+    final BiFunction<I,I,I> updater;
 
-        //this.buffer = new TreeSet(comp);
-        ////this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+    public ItemAccumulator(Procedure2<Budget, Budget> merge) {
+        super();
+
+        this.merge = merge;
+        this.updater = ((t, accumulated) -> {
+            if (accumulated!=null) {
+                merge.value(accumulated.getBudget(), t.getBudget());
+                return accumulated;
+            }
+            else
+                return t;
+        });
     }
 
     public void clear() {
@@ -43,19 +59,10 @@ public class ItemAccumulator<I extends Budgeted> {
     }
 
 
-    final BiFunction<I,I,I> accumulateFunc = ((t, accumulated) -> {
 
-        if (accumulated!=null) {
-            accumulated.getBudget().accumulate(t.getBudget());
-            return accumulated;
-        }
-        else
-            return t;
-
-    });
 
     public boolean add(I t0) {
-        items.compute(t0, accumulateFunc);
+        items.compute(t0, updater);
         return true;
     }
 
