@@ -130,11 +130,11 @@ public class BeliefTableTest extends TestCase {
 
             n.frame();
 
-            if (i % 10 == 0) {
+            /*if (i % 10 == 0) {
                 b.printWave();
                 b.printEnergy();
                 b.print();
-            }
+            }*/
         }
 
 

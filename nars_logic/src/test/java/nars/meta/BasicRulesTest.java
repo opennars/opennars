@@ -2,10 +2,6 @@ package nars.meta;
 
 import nars.Global;
 import nars.NAR;
-import nars.NARStream;
-import nars.cycle.DefaultCycle;
-import nars.io.out.TextOutput;
-import nars.meter.NARTrace;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import org.junit.Test;
@@ -34,7 +30,7 @@ public class BasicRulesTest {
         n.input("<a --> b>. <b --> c>.");
 
         //NARTrace.out(n);
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
 
         n.frame(1500);
@@ -46,7 +42,7 @@ public class BasicRulesTest {
         n.input("<<$1 --> M> ==> <C1 --> C2>>. <S --> M>.");
         //OUT: <C1 --> C2>. %1.00;0.81% {70: 1;2}
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
         n.frame(550);
 
         //<<$1 --> drunk> ==> <$1--> dead>>. <S --> drunk>.     |-  <S --> dead>.

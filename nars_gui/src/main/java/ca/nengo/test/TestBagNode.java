@@ -15,7 +15,6 @@ import ca.nengo.ui.model.widget.SliderNode;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.Item;
-import nars.cycle.DefaultCycle;
 import nars.event.NARReaction;
 import nars.io.out.Output;
 import nars.nar.Default;
@@ -131,7 +130,7 @@ public class TestBagNode extends Nengrow {
         }
 
         public Bag/*<Term,Concept>*/ concepts() {
-            return ((DefaultCycle) n.memory.getControl()).concepts;
+            return ((Default.DefaultCycle) n.memory.getControl()).concepts;
         }
     }
 

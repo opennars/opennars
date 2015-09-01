@@ -4,7 +4,6 @@ import nars.NAR;
 import nars.NARSeed;
 import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
-import nars.cycle.DefaultCycle;
 import nars.meter.CountIOEvents;
 import nars.nar.Default;
 import nars.term.Term;
@@ -27,8 +26,8 @@ public class BudgetBalancingTest {
         n.input("$0$ <a --> b>.");
         n.frame(1);
 
-        DefaultCycle active = ((DefaultCycle) n.memory.getControl());
-        CacheBag<Term, Concept> all = ((DefaultCycle) n.memory.getControl()).index();
+        Default.DefaultCycle active = ((Default.DefaultCycle) n.memory.getControl());
+        CacheBag<Term, Concept> all = ((Default.DefaultCycle) n.memory.getControl()).index();
 
 
         //System.out.println(Iterators.toString(all.iterator()));

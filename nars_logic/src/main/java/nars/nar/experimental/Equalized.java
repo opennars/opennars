@@ -6,7 +6,7 @@ import nars.bag.impl.CurveBag;
 import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.concept.Concept;
-import nars.cycle.DefaultCycle;
+import nars.cycle.SequentialCycle;
 import nars.nar.NewDefault;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
@@ -29,22 +29,23 @@ import java.util.function.Consumer;
  */
 public class Equalized extends NewDefault {
 
-
-
     public Equalized(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
     }
 
-
-
-
-    public static class EqualizedCycle extends DefaultCycle {
+    public static class EqualizedCycle extends SequentialCycle {
 
         /** stores sorted tasks temporarily */
         private final List<Task> temporary = Global.newArrayList();
 
+        /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
+        public final AtomicInteger conceptsFiredPerCycle;
+
+
         public EqualizedCycle(ItemAccumulator taskAccumulator, Bag<Term, Concept> concepts, AtomicInteger conceptsFiredPerCycle) {
-            super(taskAccumulator, concepts, null, null, null, conceptsFiredPerCycle);
+            super(concepts, taskAccumulator);
+            this.conceptsFiredPerCycle = conceptsFiredPerCycle;
+            //super(taskAccumulator, concepts, null, null, null, conceptsFiredPerCycle);
         }
 
         /**
@@ -70,10 +71,7 @@ public class Equalized extends NewDefault {
                 //input all available percepts
                 Task t;
                 while ((t = percepts.get())!=null) {
-                    if (t.isCommand())
-                        memory.input(t);
-                    else
-                        newTasks.add(t);
+                    newTasks.add(t);
                 }
             }
 

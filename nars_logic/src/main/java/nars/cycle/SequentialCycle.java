@@ -1,14 +1,18 @@
 package nars.cycle;
 
 import nars.Events;
+import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
+import nars.budget.ItemAccumulator;
 import nars.concept.Concept;
 import nars.concept.ConceptPrioritizer;
+import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Iterator;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -16,19 +20,71 @@ import java.util.function.Consumer;
  */
 abstract public class SequentialCycle extends AbstractCycle {
 
+
     /**
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Term, Concept> concepts;
 
-    public SequentialCycle(Bag<Term, Concept> concepts) {
+
+    /**
+     * List of new tasks accumulated in one cycle, to be processed in the next
+     * cycle
+     */
+    public final ItemAccumulator<Task> newTasks;
+    protected Set<Task> newTasksTemp = Global.newHashSet(8);
+    protected boolean executingNewTasks = false;
+
+    @Override
+    protected boolean active(Term t) {
+        return concepts.get(t)!=null;
+    }
+
+
+    public SequentialCycle(Bag<Term, Concept> concepts, ItemAccumulator<Task> newTasksBuffer) {
+        super();
         this.concepts = concepts;
+        this.newTasks = newTasksBuffer;
+    }
+
+
+    /** should be followed by a 'commitNewTasks' call after finishing */
+    protected void queueNewTasks() {
+        executingNewTasks = true;
+    }
+
+    /** @return how many new tasks added */
+    protected int commitNewTasks() {
+
+        executingNewTasks = false;
+
+        //add the generated tasks back to newTasks
+        int ns = newTasksTemp.size();
+        if (ns > 0) {
+            newTasks.addAll( newTasksTemp );
+            newTasksTemp.clear();
+        }
+
+        return ns;
+    }
+
+    @Override
+    public boolean accept(Task t) {
+        if (executingNewTasks) {
+            return newTasksTemp.add(t); //buffer it
+        }
+        else {
+            return newTasks.add(t); //add it directly to the newtasks set
+        }
     }
 
     @Override
     public void reset(Memory m) {
         super.reset(m);
         concepts.clear();
+
+        newTasksTemp.clear();
+        newTasks.clear();
     }
 
     @Override
