@@ -75,6 +75,11 @@ public class TaskStruct extends Fuct implements Task {
     }
 
     @Override
+    public void delete() {
+
+    }
+
+    @Override
     public Task setTemporalInducting(boolean b) {
         return this;
     }
@@ -97,6 +102,11 @@ public class TaskStruct extends Fuct implements Task {
     @Override
     public boolean isDouble() {
         return false;
+    }
+
+    @Override
+    public Task normalized() {
+        return this;
     }
 
     @Override

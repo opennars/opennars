@@ -179,13 +179,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
         return targetTask;
     }
 
-    @Override
-    public void delete() {
-//        if (records != null) {
-//            records.clear();
-//            records = null;
-//        }
-    }
 
     @Override
     public Term getTerm() {

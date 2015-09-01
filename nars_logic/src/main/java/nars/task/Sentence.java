@@ -359,8 +359,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     /**
      * Overridden in Task
      */
-    default public StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
-        throw new RuntimeException("unsupported");    }
+    StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory);
 
 //    /**
 //     * Get a String representation of the sentence for key of Task and TaskLink
@@ -432,53 +431,8 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
      * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
      * @return The String
      */
-    @Deprecated
-    default public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp) {
+    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp);
 
-        String contentName;
-        if (term && getTerm()!=null) {
-             contentName = getTerm().toString();
-        }
-        else contentName = "";
-
-        final CharSequence tenseString;
-        if (memory!=null) {
-            tenseString = getTense(memory.time(), memory.duration());
-        }
-        else {
-            appendOccurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
-        }
-
-
-        CharSequence stampString = showStamp ? stampAsStringBuilder() : null;
-
-        int stringLength = contentName.length() + tenseString.length() + 1 + 1;
-
-        if (getTruth() != null)
-            stringLength += 11;
-
-        if (showStamp)
-            stringLength += stampString.length()+1;
-
-        if (buffer == null)
-            buffer = new StringBuilder(stringLength);
-        else
-            buffer.ensureCapacity(stringLength);
-        buffer.append(contentName).append(getPunctuation());
-
-        if (tenseString.length() > 0)
-            buffer.append(' ').append(tenseString);
-
-        if (getTruth()!= null) {
-            buffer.append(' ');
-            getTruth().appendString(buffer, 2);
-        }
-
-        if (showStamp)
-            buffer.append(' ').append(stampString);
-
-        return buffer;
-    }
 
     default public boolean equalTerms(final Sentence s) {
         return getTerm().equals(s.getTerm());

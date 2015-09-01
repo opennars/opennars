@@ -336,7 +336,7 @@ public class NAR extends Container implements Runnable {
 
     /** input a task via perception buffers */
     public Task input(final Task t) {
-        if (memory.add(t))
+        if (memory.input(t))
             return t;
         return null;
     }
@@ -352,9 +352,7 @@ public class NAR extends Container implements Runnable {
         return t;
     }
 
-    public Premise inputDirect(final TaskSeed t) {
-        return inputDirect(t.get());
-    }
+
 
     /** input a task via direct TaskProcessing
      * @return the TaskProcess, after it has executed (synchronously) */

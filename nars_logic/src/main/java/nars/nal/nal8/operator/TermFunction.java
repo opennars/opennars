@@ -7,7 +7,6 @@ import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
@@ -92,8 +91,7 @@ public abstract class TermFunction<O> extends SynchOperator {
                         truth(getResultFrequency(), getResultConfidence()).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
-                        tense(getResultTense()).
-                        get()
+                        tense(getResultTense())
             );
 
             /*float equal = equals(lastTerm, y);
@@ -164,16 +162,14 @@ public abstract class TermFunction<O> extends SynchOperator {
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                         .truth(getResultFrequency(), getResultConfidence())
                         .parent(operation.getTask())
-                        .tense(getResultTense())
-                        .get(),
+                        .tense(getResultTense()),
 
                 actual_dep_part != null ?
                         nar.memory.newTask(actual_dep_part).judgment()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                                 .truth(1f, confidence)
                                 .present()
-                                .parent(operation.getTask())
-                                .get() : null
+                                .parent(operation.getTask()) : null
 
         );
 
@@ -220,7 +216,7 @@ public abstract class TermFunction<O> extends SynchOperator {
 
             Task b = memory.newTask(
                     inputTerm
-            ).judgment().eternal().truth((Truth) y).get();
+            ).judgment().eternal().truth((Truth) y);
 
             TaskProcess.run(nar, b);
 

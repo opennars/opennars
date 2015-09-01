@@ -75,7 +75,7 @@ public class RawPerception implements Perception {
                 states.add(x = newState(nar, i));
             }
 
-            tasks.add(nar.memory.newTask(x).judgment().present().truth(f, confidence).get());
+            tasks.add(nar.memory.newTask(x).judgment().present().truth(f, confidence));
         }
 
         return tasks;

@@ -163,8 +163,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
                 .truth(truth)
                 .budget(p, d, q)
                 .parent(getTask())
-                .occurr(occ)
-                .get();
+                .occurr(occ);
     }
 
 

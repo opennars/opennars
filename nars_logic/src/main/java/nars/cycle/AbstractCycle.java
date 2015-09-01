@@ -1,6 +1,5 @@
 package nars.cycle;
 
-import nars.AbstractMemory;
 import nars.Memory;
 import nars.concept.ConceptActivator;
 import nars.io.DefaultPerception;
@@ -49,7 +48,7 @@ public abstract class AbstractCycle extends ConceptActivator implements CyclePro
 
         Task t = percepts.get();
         if (t != null)
-            return memory.add(t) ? 1 : 0;
+            return memory.input(t) ? 1 : 0;
 
         return -1;
     }

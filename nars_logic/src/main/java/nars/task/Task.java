@@ -56,7 +56,12 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         for (int i = 0; i < indent; i++)
             sb.append("  ");
 
-        task.appendTo(sb).append(" history=").append(task.getLog());
+
+        task.appendTo(sb);
+
+        List l = task.getLog();
+        if (l!=null)
+            sb.append(" log=").append(l);
 
         if (task.getCause() != null)
             sb.append(" cause=").append(task.getCause());
@@ -240,15 +245,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         }
     }
 
-    /**
-     * Check if a Task is a direct input
-     *
-     * @return Whether the Task is derived from another task
-     */
-    @Override
-    default public boolean isInput() {
-        return getParentTask() == null && getCause() == null;
-    }
 
 
 
@@ -276,6 +272,63 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         if (sb == null) sb = new StringBuilder();
         return toString(sb, memory, false);
     }
+
+    default public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp) {
+
+
+        String contentName;
+        if (term && getTerm()!=null) {
+            contentName = getTerm().toString();
+        }
+        else contentName = "";
+
+        final CharSequence tenseString;
+        if (memory!=null) {
+            tenseString = getTense(memory.time(), memory.duration());
+        }
+        else {
+            appendOccurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
+        }
+
+
+        CharSequence stampString = showStamp ? stampAsStringBuilder() : null;
+
+        int stringLength = contentName.length() + tenseString.length() + 1 + 1;
+
+        if (getTruth() != null)
+            stringLength += 11;
+
+        if (showStamp)
+            stringLength += stampString.length()+1;
+
+        /*if (showBudget)*/ {
+            //"$0.8069;0.0117;0.6643$ "
+            stringLength += 1 + 6 + 1 + 6 + 1 + 6 + 1  + 1;
+        }
+
+        if (buffer == null)
+            buffer = new StringBuilder(stringLength);
+        else
+            buffer.ensureCapacity(stringLength);
+
+
+        getBudget().toBudgetStringExternal(buffer).append(" ");
+        buffer.append(contentName).append(getPunctuation());
+
+        if (tenseString.length() > 0)
+            buffer.append(' ').append(tenseString);
+
+        if (getTruth()!= null) {
+            buffer.append(' ');
+            getTruth().appendString(buffer, 2);
+        }
+
+        if (showStamp)
+            buffer.append(' ').append(stampString);
+
+        return buffer;
+    }
+
 
     default public boolean hasParent(Task t) {
         if (getParentTask() == null)
@@ -372,22 +425,40 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     /**
      * signaling that the Task has ended or discarded
      */
-    default public void delete() {
-
-    }
+    public void delete();
 
     public Task setTemporalInducting(boolean b);
 
     public boolean isTemporalInductable();
+
+    default public void logUnrepeated(String reason) {
+        if (getLog()!=null &&
+                getLog().get(getLog().size()-1).equals(reason))
+            return;
+        log(reason);
+    }
 
     public void log(String reason);
     public Task log(List<String> historyToCopy);
     public List<String> getLog();
 
 
+    //TODO make a Source.{ INPUT, SINGLE, DOUBLE } enum
+
     /** is double-premise */
     public boolean isDouble();
 
+    /** is single premise */
+    boolean isSingle();
+
+    /**
+     * Check if a Task is a direct input
+     *
+     * @return Whether the Task is derived from another task
+     */
+    @Override default public boolean isInput() {
+        return getParentTask() == null;
+    }
 
 
     /**
@@ -398,6 +469,8 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     }
 
 
+    /** updates all implied fields and re-hashes; returns this task */
+    public Task normalized();
 
 
     @Deprecated default public boolean init(final Memory memory) {
@@ -423,6 +496,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         if (getEvidence() == null) {
             setEvidence(memory.newStampSerial());
         }
+
+        normalized();
+
         return true;
     }
 
@@ -450,6 +526,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
     void setBestSolution(AbstractMemory memory, Task belief);
+
 
 
 }

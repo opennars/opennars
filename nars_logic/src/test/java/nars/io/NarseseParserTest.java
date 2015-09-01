@@ -45,7 +45,7 @@ public class NarseseParserTest {
     static Task task(String s) throws InvalidInputException {
         List<Task> l = tasks(s);
         if (l.size() != 1)
-            throw new RuntimeException("Expected 1 task");
+            throw new RuntimeException("Expected 1 task, got: " + l);
         return l.get(0);
     }
 

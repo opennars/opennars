@@ -30,6 +30,11 @@ public class TaskProcess extends NAL {
         this.task = task;
     }
 
+    @Override
+    public Task getBelief() {
+        return null;
+    }
+
     @Override public Task getTask() {
         return task;
     }
@@ -57,7 +62,7 @@ public class TaskProcess extends NAL {
 
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
-        getTask().getBudget().toStringBuilderExternal(sb);
+        getTask().getBudget().toBudgetStringExternal(sb);
         sb.append(']');
 
         return sb.toString();

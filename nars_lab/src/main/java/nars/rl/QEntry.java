@@ -142,11 +142,11 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
         if (qUpdateConfidence > 0 &&
                 ((now - lastCommit >= commitEvery) && FastMath.abs(nextFreq - lastFreq) > freqThreshold)) {
 
-            Task t = ((Memory)concept.getMemory()).newTask((Compound) qt).punctuation(
+            Task t = ((Memory) concept.getMemory()).newTask((Compound) qt).punctuation(
 
                     punctuation
 
-            ).present().truth(nextFreq, qUpdateConfidence).get();
+            ).present().truth(nextFreq, qUpdateConfidence);
 
             t.getBudget().mulPriority(priorityGain);
 

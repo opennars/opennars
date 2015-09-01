@@ -322,7 +322,7 @@ public abstract class AbstractPolygonBot extends Robotic {
             float conf = 0.75f;
 
             TaskSeed ts = nar.task(term).belief().present().truth(freq, conf);
-            Task t = ts.get();
+            Task t = ts;
             if (t!=null)
                 nar.input(t);
 
@@ -379,7 +379,7 @@ public abstract class AbstractPolygonBot extends Robotic {
                     float feedback = onFrame(d);
 
                     if (feedbackEnabled && Float.isFinite(feedback))
-                        nar.input(getFeedback(feedback).get());
+                        nar.input(getFeedback(feedback));
                 }
             }
             else {
@@ -457,8 +457,8 @@ public abstract class AbstractPolygonBot extends Robotic {
                 if (Float.isFinite(feedback)) {
                     if (isPos) {
                         posFeedback = feedback;
-                        nar.input(this.positive.getFeedback(posFeedback).get());
-                        nar.input(this.negative.getFeedback(0).get());
+                        nar.input(this.positive.getFeedback(posFeedback));
+                        nar.input(this.negative.getFeedback(0));
 
 //                        //counteract the interference
 //                        negFeedback = (negativeDesire - (positiveDesire - feedback));
@@ -472,8 +472,8 @@ public abstract class AbstractPolygonBot extends Robotic {
 
                     } else {
                         negFeedback = feedback;
-                        nar.input(this.negative.getFeedback(negFeedback).get());
-                        nar.input(this.positive.getFeedback(0).get());
+                        nar.input(this.negative.getFeedback(negFeedback));
+                        nar.input(this.positive.getFeedback(0));
 
 //                        //counteract the interference
 //                        posFeedback = (positiveDesire - (negativeDesire - feedback));

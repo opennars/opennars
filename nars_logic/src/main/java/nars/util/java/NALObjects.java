@@ -117,7 +117,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         nar.input(nar.memory.newTask(
                 Operation.op(Product.make(instancePlusArgs), op )
-        ).goal().present().truth(1f, 0.9f).get());
+        ).goal().present().truth(1f, 0.9f));
 
         if (result!=null) {
             effect = term(result);
@@ -130,7 +130,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         //TODO use task of callee as Parent task, if self-invoked
         nar.input(nar.memory.newTask(
                 Operation.result(op, Product.make(instancePlusArgs), effect )
-        ).belief().present().truth(1f, 0.9f).get());
+        ).belief().present().truth(1f, 0.9f));
 
 
         lock.set(false);

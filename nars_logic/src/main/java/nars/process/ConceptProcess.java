@@ -4,7 +4,6 @@
  */
 package nars.process;
 
-import nars.Events;
 import nars.Memory;
 import nars.Param;
 import nars.concept.Concept;
@@ -14,7 +13,7 @@ import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -186,9 +185,9 @@ abstract public class ConceptProcess extends NAL  {
     }
 
 
-    public List<Task> getDerived() {
+    public Set<Task> getDerived() {
         if (derived == null)
-            return Collections.emptyList();
+            return Collections.emptySet();
         return derived;
     }
 }

@@ -8,9 +8,7 @@ import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
 import nars.nal.Deriver;
 import nars.nal.LogicPolicy;
-import nars.nal.nal8.ImmediateOperator;
 import nars.nar.Default;
-import nars.premise.BloomFilterNovelPremiseGenerator;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -74,7 +72,7 @@ public class Equalized extends Default {
                 Task t;
                 while ((t = percepts.get())!=null) {
                     if (t.isCommand())
-                        memory.add(t);
+                        memory.input(t);
                     else
                         newTasks.add(t);
                 }

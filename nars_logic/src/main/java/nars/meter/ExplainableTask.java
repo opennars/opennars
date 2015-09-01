@@ -23,8 +23,10 @@ public class ExplainableTask extends DefaultTask {
 
     public ExplainableTask(TaskCondition tc) {
         this(tc.getMemory().newTask((Compound) tc.term).punctuation(tc.punc)
-        .truth(tc.getTruthMean()).time(tc.getCreationTime(),
-                        Stamp.getOccurrenceTime(tc.getCreationTime(), tc.tense, tc.getMemory())).get());
+            .truth(tc.getTruthMean()).time(tc.getCreationTime(),
+            Stamp.getOccurrenceTime(tc.getCreationTime(), tc.tense, tc.getMemory()))
+                .normalized() //?
+        );
     }
 
     @Deprecated public ExplainableTask(Task t) {

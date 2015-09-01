@@ -21,6 +21,7 @@
 package nars.nal.nal1;
 
 import nars.Events.Answer;
+import nars.Global;
 import nars.Memory;
 import nars.Op;
 import nars.Symbols;
@@ -274,11 +275,13 @@ public class LocalRules {
                             .solution(belief),
                     "Adjusted Solution",
                     true, false, false);*/
-            nal.getMemory().add(belief);
+            nal.getMemory().input(belief);
         }
         else {
             belief.getBudget().accumulate(budget);
-            belief.log(/*Global.DEBUG ? "Solution " + question : */"Solution");
+
+            if (Global.DEBUG_TASK_LOG_SOLUTION)
+                belief.logUnrepeated("Solution" /*Global.DEBUG ? "Solution " + question : */);
         }
 
         question.getBudget().decPriority(budget.getPriority());

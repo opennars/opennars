@@ -85,7 +85,7 @@ public class BudgetDynamics {
 
                     float refund = 0;
                     for (Task t : derived) {
-                        final boolean added = m.add(t);
+                        final boolean added = m.input(t);
                         if (!added)
                             refund += t.getPriority();
                     }

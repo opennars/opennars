@@ -10,6 +10,7 @@ import nars.AbstractMemory;
 import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.budget.Item;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operation;
@@ -17,15 +18,16 @@ import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.TermMetadata;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.data.Util;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.Reference;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static nars.Global.dereference;
 import static nars.Global.reference;
@@ -100,9 +102,9 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     protected void setTerm(T t) {
         //if (Global.DEBUG) {
-            if (Sentence.invalidSentenceTerm(t)) {
-                throw new RuntimeException("Invalid sentence content term: " + t);
-            }
+        if (Sentence.invalidSentenceTerm(t)) {
+            throw new RuntimeException("Invalid sentence content term: " + t);
+        }
         //}
 
         term = t;
@@ -171,39 +173,41 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     public void setTruth(Truth t) {
-        this.truth = t;
-        invalidate();
+        if (!Objects.equals(this.truth, t)) {
+            this.truth = t;
+            invalidate();
+        }
     }
 
     @Override
-    public boolean isCyclic() {
+    final public boolean isCyclic() {
         return cyclic;
     }
 
     @Override
-    public void setCyclic(boolean cyclic) {
+    final public void setCyclic(boolean cyclic) {
         if (Global.OVERLAP_ALLOW) cyclic = false;
         this.cyclic = cyclic;
+        //TODO decide if to include cyclic ni equality and hash, then invalidate() here
     }
-
 
 
     @Override
     public Task<T> setEvidence(final long... evidentialSet) {
-        if (evidentialSet!=null && evidentialSet.length > 0)
-            this.evidentialSet = evidentialSet;
-        else
-            this.evidentialSet = null;
+        this.evidentialSet = evidentialSet;
         invalidate();
         return this;
     }
 
     final public boolean isDouble() {
-        return getParentBelief()!=null && getParentTask()!=null;
+        return getParentBelief() != null && getParentTask() != null;
+    }
+    final public boolean isSingle() {
+        return getParentTask() != null && getParentBelief()==null;
     }
 
     public Task log(List<String> historyToCopy) {
-        if (!Global.DEBUG_TASK_HISTORY)
+        if (!Global.DEBUG_TASK_LOG)
             return this;
 
         if (historyToCopy != null) {
@@ -219,7 +223,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     @Override
-    public long[] getEvidence() {
+    public final long[] getEvidence() {
         return evidentialSet;
     }
 
@@ -243,20 +247,141 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             //use the occurrence time as the delta, now that this has a "finite" creationTime
             setOccurrenceTime(this.occurrenceTime + creationTime);
         }
-        if (this.creationTime!=creationTime) {
+        if (this.creationTime != creationTime) {
             this.creationTime = creationTime;
             //does not need invalidated since creation time is not part of hash
         }
         return this;
     }
 
+    public boolean isDeleted() {
+        return !Float.isFinite(getPriority());
+    }
+
+    /**
+     * call if the task was changed; re-hashes it at the end.
+     * if the task was removed then this returns null
+     */
+    public Task normalized() {
+
+        if (isDeleted()) {
+            return null;
+        }
+
+        //dont recompute if hash isnt invalid (==0)
+        if (this.hash != 0)
+            return this;
+
+        final char punc = getPunctuation();
+        if (punc == 0)
+            throw new RuntimeException("Punctuation must be specified before generating a default budget");
+
+        if ((truth == null) && !((punc == Symbols.QUEST) || (punc == Symbols.QUESTION))) {
+            truth = new DefaultTruth(punc);
+        }
+
+
+        Compound sentenceTerm = getTerm();
+        if (sentenceTerm == null)
+            return null;
+
+
+        updateEvidence();
+
+
+
+
+        /*Task t = new DefaultTask(sentenceTerm, punc,
+                (truth != null) ? new DefaultTruth(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
+                getBudget(),
+                getParentTask(),
+                getParentBelief(),
+                solutionBelief);*/
+
+
+        if (!Float.isFinite(getQuality())) {
+            applyDefaultBudget();
+        }
+
+        //if (this.cause != null) t.setCause(cause);
+        //if (this.reason != null) t.log(reason);
+
+        this.hash = getHash();
+
+        return this;
+    }
+
+    protected boolean applyDefaultBudget() {
+        //if (getBudget().isBudgetValid()) return true;
+        if (getTruth() == null) return false;
+
+        final char punc = getPunctuation();
+        setPriority(Budget.newDefaultPriority(punc));
+        setDurability(Budget.newDefaultDurability(punc));
+
+        /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
+        if (Float.isNaN(quality)) {
+            setQuality(BudgetFunctions.truthToQuality(truth));
+        }
+
+        return true;
+    }
+
+    final void updateEvidence() {
+        //supplying no evidence will be assigned a new serial
+        //but this should only happen for input tasks (with no parent)
+
+        if (isDouble()) {
+            long[] as = getParentTask().getEvidence();
+            long[] bs = getParentBelief().getEvidence();
+
+            //temporary
+            if (as == null)
+                throw new RuntimeException("parentTask " + getParentTask() + " has no evidentialSet");
+            if (bs == null)
+                throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
+
+            final long[] zipped = Stamp.zip(as, bs);
+            final long[] uniques = Stamp.toSetArray(zipped);
+            setEvidence(uniques);
+
+                /*if (getParentTask().isInput() || getParentBelief().isInput()) {
+                    setCyclic(false);
+                } else {*/
+                    /*
+                    <patham9> since evidental overlap is not checked on deduction, a derivation can be cyclic
+                    <patham9> its on revision when it finally matters, but not whether the two parents are cyclic, but whether the combination of both evidental bases of both parents would be cyclic/have an overlap
+                    <patham9> else deductive conclusions could not lead to revisions altough the overlap is only local to the parent (the deductive conclusion)
+                    <patham9> revision is allowed here because the two premises to revise dont have an overlapping evidental base element
+                    */
+
+            setCyclic(
+                    //boolean bothParentsCyclic =
+                    ((getParentTask().isCyclic() && getParentBelief().isCyclic())
+                            ||
+                            //boolean overlapBetweenParents = if the sum of the two parents length is greater than the result then there was some overlap
+                            (zipped.length > uniques.length))
+            );
+
+            //}
+
+        } if (isSingle()) {
+            //Single premise
+
+            setEvidence(getParentTask().getEvidence());
+            setCyclic(true); //p.isCyclic());
+        }
+
+    }
+
+
     protected final void invalidate() {
-        this.hash = 0;
+        hash = 0;
     }
 
     @Override
     public Sentence setOccurrenceTime(long o) {
-        if (o!=occurrenceTime) {
+        if (o != occurrenceTime) {
             this.occurrenceTime = o;
             invalidate();
         }
@@ -272,7 +397,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     @Override
     public final int hashCode() {
         if (hash == 0) {
-            hash = getHash();
+            throw new RuntimeException(this + " not normalized");
         }
         return hash;
     }
@@ -288,6 +413,9 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public final boolean equals(final Object that) {
         if (this == that) return true;
         if (that instanceof Sentence) {
+
+            if (hashCode() != that.hashCode()) return false;
+
             return equivalentTo((Sentence) that, true, true, true, true, false);
         }
         return false;
@@ -303,17 +431,15 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             if (!equalTerms(that)) return false;
         }
 
-
         if (punctuation) {
-            if (thisPunc!=that.getPunctuation()) return false;
+            if (thisPunc != that.getPunctuation()) return false;
         }
 
         if (truth) {
             Truth thisTruth = this.getTruth();
-            if (thisTruth ==null) {
+            if (thisTruth == null) {
                 //equal punctuation will ensure thatTruth is also null
-            }
-            else {
+            } else {
                 if (!thisTruth.equals(that.getTruth())) return false;
             }
         }
@@ -358,7 +484,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
 
-
     public Reference<Task> getParentTaskRef() {
         return parentTask;
     }
@@ -388,7 +513,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      *
      * @param judg The solution to be remembered
      */
-    @Override public void setBestSolution(final AbstractMemory memory, final Task judg) {
+    @Override
+    public void setBestSolution(final AbstractMemory memory, final Task judg) {
         InternalExperience.experienceFromBelief(memory, this, judg);
         bestSolution = reference(judg);
     }
@@ -410,7 +536,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * useful for debugging but can also be applied to meta-analysis
      */
     public void log(String reason) {
-        if (!Global.DEBUG_TASK_HISTORY)
+        if (!Global.DEBUG_TASK_LOG)
             return;
 
         //TODO parameter for max history length, although task history should not grow after they are crystallized with a concept
@@ -425,10 +551,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
     public void setParentTask(Task parentTask) {
-        this.parentTask = reference(parentTask);
+        this.parentTask = reference(parentTask!=null ? parentTask.normalized() : null);
+        invalidate();
     }
+
     public void setParentBelief(Task parentBelief) {
-        this.parentBelief = reference(parentBelief);
+        this.parentBelief = reference(parentBelief!=null ? parentBelief.normalized() : null);
+        invalidate();
     }
 
     /**

@@ -23,11 +23,6 @@ import nars.Memory;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.function.Consumer;
-
 /**
  *
  * Provides a stream of input tasks
@@ -54,7 +49,7 @@ public interface Input extends Source<Task> {
 
         int i =0;
         while (( t = get() ) != null) {
-            i += m.add(t) ? 1 : 0;
+            i += m.input(t) ? 1 : 0;
         }
         return i;
     }

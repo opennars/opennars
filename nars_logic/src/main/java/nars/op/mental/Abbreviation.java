@@ -101,11 +101,11 @@ public class Abbreviation extends NARReaction {
 
                 concept.put(Abbreviation.class, atomic);
 
-                memory.add( memory.newTask(Similarity.make(termAbbreviating, atomic))
-                        .judgment().truth(1, abbreviationConfidence)
-                        .parent(task).occurrNow()
-                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
-                                Global.DEFAULT_JUDGMENT_DURABILITY).get()
+                memory.input(memory.newTask(Similarity.make(termAbbreviating, atomic))
+                                .judgment().truth(1, abbreviationConfidence)
+                                .parent(task).occurrNow()
+                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
+                                        Global.DEFAULT_JUDGMENT_DURABILITY)
                 );
 
             }

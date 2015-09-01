@@ -28,7 +28,6 @@ import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
-import nars.io.in.Input;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
 import nars.nal.LogicPolicy;
@@ -600,6 +599,11 @@ public class Memory implements Serializable, AbstractMemory {
             throw new RuntimeException(t + " has parentTask equal to itself");
         }
 
+        if (t.getEvidence()==null)
+            throw new RuntimeException(t + " from premise " + t.getParentTask() + "," + t.getParentBelief()
+                    + " yet no evidence provided");
+
+
         if (Global.DEBUG) {
             if (Sentence.invalidSentenceTerm(t.getTerm())) {
                 throw new RuntimeException("Invalid sentence content term: " + t.getTerm());
@@ -616,9 +620,9 @@ public class Memory implements Serializable, AbstractMemory {
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
-    public boolean add(final Task t) {
+    public boolean input(final Task t) {
 
-        if ((t instanceof Task) && (!((Task)t).init(this))) {
+        if (!t.init(this)) {
             return false;
         }
 
@@ -629,8 +633,6 @@ public class Memory implements Serializable, AbstractMemory {
             }
             return false;
         }
-
-
 
         if (Global.DEBUG) {
             ensureValidTask(t);
@@ -671,18 +673,13 @@ public class Memory implements Serializable, AbstractMemory {
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
     public void removed(final Task task, final String removalReason) {
         task.log(removalReason);
-        if (Global.DEBUG_TASK_HISTORY && Global.DEBUG_DERIVATION_STACKTRACES)
+        if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
             task.log(Premise.getStack());
+
+        System.err.println("REMOVED: " + task.getExplanation());
+
         eventTaskRemoved.emit(task);
         task.delete();
-    }
-
-    /* There are several types of new tasks, all added into the
-     newTasks list, to be processed in the next cycleMemory.
-     Some of them are reported and/or logged. */
-
-    public void removed(final TaskSeed task, final String removalReason) {
-        //nothing yet
     }
 
     /** sends an event signal to listeners subscribed to channel 'c' */

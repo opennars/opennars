@@ -59,7 +59,6 @@ public class NarseseParserExtendedTest  {
         tensed(task("(a & b). %1.0/0.7%"), Future);
         tensed(task("(a & b). %1.0\\0.7%"), Past);
         eternal(task("(a & b). %1.0;0.7%"));
-        eternal(task("(a & b). %1.0 ; 0.7%"));
 
         /*tensed(task("(a & b). %1.0|"), Present);
         tensed(task("(a & b). %1.0/"), Future);
@@ -124,7 +123,7 @@ public class NarseseParserExtendedTest  {
         NarseseParser p = NarseseParser.the();
         Term a = p.term("{ a:x, b:{x,y} }");
         assertNotNull(a);
-        assertEquals("{<{x, y} --> b>, <x --> a>}", a.toString());
+        assertEquals("{<x --> a>, <{x, y} --> b>}", a.toString());
 
     }
 

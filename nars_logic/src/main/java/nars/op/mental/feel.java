@@ -53,10 +53,10 @@ public abstract class feel extends SynchOperator implements Mental {
         final Term selfSubject = SetExt.make(self);
         Inheritance content = Inheritance.make(selfSubject, predicate);
 
-        return Lists.newArrayList( memory.newTask(content)
-                .judgment().truth(new DefaultTruth(value, 0.999f))
-                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                .occurrNow().get()
+        return Lists.newArrayList(memory.newTask(content)
+                        .judgment().truth(new DefaultTruth(value, 0.999f))
+                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+                        .occurrNow()
         );
 
 

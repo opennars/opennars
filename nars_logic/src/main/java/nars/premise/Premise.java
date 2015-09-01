@@ -178,9 +178,7 @@ public interface Premise {
 
     /** queues a derivation during a reasoning process.
      * this is in order to combine duplicates at the end before inputting to memory */
-    default void accept(Task derivedTask) {
-        throw new RuntimeException("unsupported");
-    }
+    void accept(Task derivedTask);
 
 
 
@@ -267,7 +265,7 @@ public interface Premise {
     default public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
         final Task currentTask = getTask();
         final Task parentTask = currentTask.getParentTask();
-        if (parentTask != null) {
+        /*if (parentTask != null) {
             final Compound parentTaskTerm = parentTask.getTerm();
             if (parentTaskTerm == null) {
                 return null;
@@ -275,31 +273,31 @@ public interface Premise {
             if (parentTaskTerm.equals(newContent)) {
                 return null;
             }
-        }
+        }*/
 
         newContent = Sentence.termOrNull(newContent);
         if (newContent == null)
             return null;
 
 
-        final Task ptask;
-        final Task currentBelief = getBelief();
-        if (currentTask.isJudgment() || currentBelief == null) {
-            ptask = currentTask;
-        } else { //Unspecified cheat we need to get rid of.
-            // to answer a question with negation in NAL-5 --- move to activated task?
-            ptask = currentBelief;
-        }
+//        final Task ptask;
+//        final Task currentBelief = getBelief();
+//        if (currentTask.isJudgment() || currentBelief == null) {
+//            ptask = currentTask;
+//        } else { //Unspecified cheat we need to get rid of.
+//            // to answer a question with negation in NAL-5 --- move to activated task?
+//            ptask = currentBelief;
+//        }
 
 
         return deriveSingle(newTask(newContent, punctuation)
                 .truth(newTruth)
                 .budget(newBudget, priMult, durMult)
-                .parent(ptask,null));
+                .parent(parentTask,null));
 
     }
 
-    default public Task deriveSingle(TaskSeed t) {
+    default public Task deriveSingle(Task t) {
         return derive(t, false, true);
     }
 
@@ -357,22 +355,78 @@ public interface Premise {
      * <p>
      * if solution is false, it means it is a derivation
      */
-    default public Task addNewTask(Task task, String reason, @Deprecated boolean solution, boolean revised, boolean single) {
+    default Task validDerivation(Task task, boolean allowOverlap, @Deprecated boolean solution, boolean revised, boolean singleOrDouble) {
 
         final Memory memory = getMemory();
+
+        if (task.getTerm() == null) {
+            throw new RuntimeException("task has null term");
+        }
+
+        if (task.isInput()) {
+            throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
+        }
+
+        if (singleOrDouble && !task.isSingle()) {
+            throw new RuntimeException((singleOrDouble ? "singleOrDouble" : "double") + " premise not consistent with Stamp on derived task: " + task);
+        }
+
+        //its revision, of course its cyclic, apply evidental base policy
+
+        /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain
+        {
+            //if revised, the stamp should already have been prevented from even being created
+
+            if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
+                if (task.isCyclic()) {
+                    //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
+                    //re.printStackTrace();
+                    removed(task, "Cyclic");
+                    return null;
+                }
+            }
+        }
+
+
+        if (nal(7)) {
+            //adjust occurence time
+            final Task parent = task.getParentTask();
+            if (task.isTimeless()) {
+                final long o;
+                if (parent != null && !parent.isEternal())
+                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
+                else
+                    o = Stamp.ETERNAL; //default ETERNAL
+
+                task.setOccurrenceTime(o);
+            }
+        } else {
+            if (task.isTimeless()) {
+                task.setEternal();
+            }
+            else if (!task.isEternal()) {
+                throw new RuntimeException("non-eternal Task derived in non-temporal mode");
+            }
+            //task.eternal();
+        }
+
 
         if (!nal(7) && !task.isEternal()) {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
         }
 
         if (!Terms.levelValid(task.getTerm(), nal())) {
+            //TODO throw exception because we dont want this to happen
             memory.removed(task, "Insufficient NAL level");
             return null;
         }
 
+        task = task.normalized();
+        if (task == null) return null;
+
         //use this NAL's instance defaults for the values because specific values were not substituted:
 
-        String rejectionReason = memory.rules.getDerivationRejection(this, task, solution, revised, single, getBelief(), getTask());
+        String rejectionReason = memory.rules.getDerivationRejection(this, task, solution, revised, singleOrDouble, getBelief(), getTask());
         if (rejectionReason != null) {
             memory.removed(task, rejectionReason);
             return null;
@@ -382,31 +436,7 @@ public interface Premise {
             throw new RuntimeException("derived task must have one parentTask: " + task);
         }
 
-
-        if (task != null) {
-
-            //taskCreated.setTemporalInducting(false);
-
-            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                task.log(System.nanoTime() + " " + this.toString());
-            }
-
-            task.log(reason);
-
-            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                task.log(Premise.getStack());
-            }
-
-            accept(task);
-
-            return task;
-        }
-
-
-
-        return null;
-
-
+        return task; //valid
     }
 
 
@@ -504,71 +534,34 @@ public interface Premise {
     default public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, boolean allowOverlap) {
 
 
-        if (task.getTerm() == null) {
-            throw new RuntimeException("task has null term");
-        }
-
-        if (task.getParentTask() == null && task.getParentBelief() == null) {
-            throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
-        }
-
-        if (single != !task.isDouble()) {
-            throw new RuntimeException((single ? "single" : "double") + " premise not consistent with Stamp on derived task: " + task);
-        }
-
-        //its revision, of course its cyclic, apply evidental base policy
-
-        /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain
-        {
-            //if revised, the stamp should already have been prevented from even being created
-
-            if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
-                if (task.isCyclic()) {
-                    //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
-                    //re.printStackTrace();
-                    removed(task, "Cyclic");
-                    return null;
-                }
-            }
-        }
-
-
-        if (nal(7)) {
-            //adjust occurence time
-            final Task parent = task.getParentTask();
-            if (task.isTimeless()) {
-                final long o;
-                if (parent != null && !parent.isEternal())
-                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
-                else
-                    o = Stamp.ETERNAL; //default ETERNAL
-
-                task.setOccurrenceTime(o);
-            }
-        } else {
-            if (task.isTimeless()) {
-                task.setEternal();
-            }
-            else if (!task.isEternal()) {
-                throw new RuntimeException("non-eternal Task derived in non-temporal mode");
-            }
-            //task.eternal();
-        }
-
 
         final Memory memory = getMemory();
 
         //TODO balance budget on input; original task + immediate eternalization budget should be shared
 
-        Task derived;
-        if (null != (derived = addNewTask(task, "Derived", false, revised, single))) {
 
-            emit(Events.TaskDerive.class, derived, this);
+        if (null != validDerivation(task, allowOverlap, false, revised, single)) {
+
+            //taskCreated.setTemporalInducting(false);
+
+            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
+                task.log(System.nanoTime() + " " + this.toString());
+            }
+
+            task.log("Derived");
+
+            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
+                task.log(Premise.getStack());
+            }
+
+            accept(task);
+
+            emit(Events.TaskDerive.class, task, this);
             memory.logic.TASK_DERIVED.hit();
 
-            if (nal(7) && !derived.isEternal()) {
-                if (derived.getOccurrenceTime() > time()) {
-                    emit(Events.TaskDeriveFuture.class, derived, this);
+            if (nal(7) && !task.isEternal()) {
+                if (task.getOccurrenceTime() > time()) {
+                    emit(Events.TaskDeriveFuture.class, task, this);
                 }
 
 
@@ -600,7 +593,7 @@ public interface Premise {
 //                }
             }
 
-            return derived;
+            return task;
         }
 
 

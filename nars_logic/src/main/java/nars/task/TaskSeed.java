@@ -27,7 +27,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 
     public static <C extends Compound> TaskSeed<C> make(Memory memory, C t) {
         TaskSeed<C> x = make(memory);
-        if (t!=null) {
+        if (t != null) {
             t = t.normalized();
             if (t == null)
                 return null;
@@ -43,7 +43,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 
     TaskSeed(Memory memory) {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
-        super(null, (char)0, null, 0, 0, 0);
+        super(null, (char) 0, null, 0, 0, 0);
 
         budgetDirect(Float.NaN, Float.NaN, Float.NaN);
 
@@ -62,66 +62,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
 
 
 
-
-
-
-
-
-    @Override
-    public final long[] getEvidence() {
-        //supplying no evidence will be assigned a new serial
-        //but this should only happen for input tasks (with no parent)
-
-        if ((super.getEvidence() == null) && (!isInput())) {
-
-            if (isDouble()) {
-                long[] as = getParentTask().getEvidence();
-                long[] bs = getParentBelief().getEvidence();
-
-                //temporary
-                if (as == null)
-                    throw new RuntimeException("parentTask " + getParentTask() + " has no evidentialSet");
-                if (bs == null)
-                    throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
-
-                setEvidence(Stamp.toSetArray(Stamp.zip(as, bs)));
-
-                if (getParentTask().isInput() || getParentBelief().isInput()) {
-                    setCyclic(false);
-                }
-                else {
-                    /*
-                    <patham9> since evidental overlap is not checked on deduction, a derivation can be cyclic
-                    <patham9> its on revision when it finally matters, but not whether the two parents are cyclic, but whether the combination of both evidental bases of both parents would be cyclic/have an overlap
-                    <patham9> else deductive conclusions could not lead to revisions altough the overlap is only local to the parent (the deductive conclusion)
-                    <patham9> revision is allowed here because the two premises to revise dont have an overlapping evidental base element
-                    */
-                    boolean bothParentsCyclic = getParentTask().isCyclic() && getParentBelief().isCyclic();
-
-                    boolean overlapBetweenParents = ((as.length + bs.length) > getEvidence().length);
-
-                    //if the sum of the two parents length is greater than the result then there was some overlap
-                    setCyclic(bothParentsCyclic || overlapBetweenParents);
-                }
-
-            }
-            else {
-                //Single premise
-
-                Stamp p = null; //parent to inherit some properties from
-                if (getParentTask() == null) p = getParentBelief();
-                else if (getParentBelief() == null) p = getParentTask();
-
-                if (p!=null) {
-                    setEvidence(p.getEvidence());
-                    setCyclic(p.isCyclic());
-                }
-            }
-
-        }
-
-        return super.getEvidence();
-    }
 
 
     /**
@@ -153,21 +93,7 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
         return budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
     }
 
-    protected boolean applyDefaultBudget() {
-        //if (getBudget().isBudgetValid()) return true;
-        if (getTruth() == null) return false;
 
-        final char punc = getPunctuation();
-        setPriority( Budget.newDefaultPriority(punc) );
-        setDurability( Budget.newDefaultDurability(punc) );
-
-        /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
-        if (Float.isNaN(quality)) {
-            setQuality( BudgetFunctions.truthToQuality(truth) );
-        }
-
-        return true;
-    }
 
     /**
      * uses default budget generation and multiplies it by gain factors
@@ -221,7 +147,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
 
-
     /**
      * alias for judgment
      */
@@ -230,22 +155,22 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
     public TaskSeed<T> judgment() {
-        setPunctuation( Symbols.JUDGMENT );
+        setPunctuation(Symbols.JUDGMENT);
         return this;
     }
 
     public TaskSeed<T> question() {
-        setPunctuation( Symbols.QUESTION );
+        setPunctuation(Symbols.QUESTION);
         return this;
     }
 
     public TaskSeed<T> quest() {
-        setPunctuation( Symbols.QUEST );
+        setPunctuation(Symbols.QUEST);
         return this;
     }
 
     public TaskSeed<T> goal() {
-        setPunctuation( Symbols.GOAL );
+        setPunctuation(Symbols.GOAL);
         return this;
     }
 
@@ -272,8 +197,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     }
 
 
-
-
 //    public TaskSeed<T> stamp(Stamper s) {
 //        s.applyToStamp(this);
 //        return this;
@@ -282,12 +205,11 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     public TaskSeed<T> budget(float p, float d) {
         final float q;
         Truth t = getTruth();
-        if ((getPunctuation()!=Symbols.QUESTION) && (getPunctuation()!=Symbols.QUEST)) {
+        if ((getPunctuation() != Symbols.QUESTION) && (getPunctuation() != Symbols.QUEST)) {
             if (t == null)
                 throw new RuntimeException("Truth needs to be defined prior to budget to calculate truthToQuality");
             q = BudgetFunctions.truthToQuality(t);
-        }
-        else
+        } else
             q = Float.NaN;
 
         return budget(p, d, q);
@@ -325,63 +247,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
     public boolean isInput() {
         return getParentTask() == null;
     }
-
-    /**
-     * attempt to build the task. returns non-null if successful
-     */
-    public Task get() {
-        final char punc = getPunctuation();
-        if (punc == 0)
-            throw new RuntimeException("Punctuation must be specified before generating a default budget");
-
-        if ((truth == null) && !((punc == Symbols.QUEST) || (punc == Symbols.QUESTION))) {
-            truth = new DefaultTruth(punc);
-        }
-
-
-        Compound sentenceTerm = getTerm();
-        if (sentenceTerm == null)
-            return null;
-
-
-        if (getEvidence() == null) {
-
-            if (!isInput())
-                throw new RuntimeException(this + " has parent " + getParentTask() + " and " + getParentBelief() + " yet no stamp was supplied");
-
-            setEvidence(null);
-
-        } else {
-            if (getParentTask() == null && getParentBelief()==null)
-                throw new RuntimeException(this + " has no parent task or belief so where did the evidentialBase originate?: " + Arrays.toString(getEvidence()));
-        }
-
-
-        /*Task t = new DefaultTask(sentenceTerm, punc,
-                (truth != null) ? new DefaultTruth(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
-                getBudget(),
-                getParentTask(),
-                getParentBelief(),
-                solutionBelief);*/
-
-        setDuration(getDuration())
-                .setTime(getCreationTime(), getOccurrenceTime())
-                .setEvidence(getEvidence());
-
-
-        if (!Float.isFinite(getQuality())) {
-            applyDefaultBudget();
-        }
-
-        //if (this.cause != null) t.setCause(cause);
-        //if (this.reason != null) t.log(reason);
-
-        return this;
-    }
-
-
-
-
 
 
 
@@ -428,10 +293,9 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
             boolean cyclic = true;
 
             //HACK when Stamp and parents are unified the extra conditoins here will not be necessary:
-            if (getParentTask()!=null && getParentTask().isInput()) {
+            if (getParentTask() != null && getParentTask().isInput()) {
                 cyclic = false;
-            }
-            else if (getParentBelief()!=null && getParentBelief().isInput()) {
+            } else if (getParentBelief() != null && getParentBelief().isInput()) {
                 cyclic = false;
             }
 
@@ -507,7 +371,6 @@ public class TaskSeed<T extends Compound> extends DefaultTask<T> implements Stam
         setOccurrenceTime(memory.time());
         return this;
     }
-
 
 
     /**

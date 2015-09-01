@@ -22,6 +22,6 @@ abstract public class AbstractPremise implements Premise {
 
     @Override
     public void accept(Task derivedTask) {
-        getMemory().add(derivedTask);
+        getMemory().input(derivedTask);
     }
 }

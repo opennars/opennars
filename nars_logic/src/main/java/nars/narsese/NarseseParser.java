@@ -39,6 +39,7 @@ import nars.term.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -972,7 +973,11 @@ public class NarseseParser extends BaseParser<Object>  {
         for (int i = size-1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);
 
-            if (o instanceof Object[]) {
+            if (o instanceof Task) {
+                //wrap the task in an array
+                c.accept(new Object[] { o });
+            }
+            else if (o instanceof Object[]) {
                 c.accept((Object[])o);
             }
             else {
@@ -1022,6 +1027,8 @@ public class NarseseParser extends BaseParser<Object>  {
     }
 
     public static Task getTask(final AbstractMemory m, Object[] x) {
+        if (x.length == 1 && x[0] instanceof Task)
+            return (Task)x[0];
         return getTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
     }
 
@@ -1076,7 +1083,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
         //if (!r.isSuccess()) {
             return new InvalidInputException("input: " + input + " (" + r.toString() + ")  " +
-                    e!=null ? e.toString() + " " + e.getStackTrace()[0] : "");
+                    (e!=null ? e.toString() + " " + Arrays.toString(e.getStackTrace()) : ""));
 
         //}
 //        if (r.parseErrors.isEmpty())

@@ -59,14 +59,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
     abstract public K name();
 
 
-    /** called when the item has been permanently discarded.
-     *  attempts to completely erase the item and all its contained
-     *  data structures.
-     *  helps garbage collection as much as possible.  */
-    @Override
-    public void delete() {
 
-    }
 
     /**
      * Return a String representation of the Item
@@ -96,7 +89,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
     }
 
     public void appendWithBudget(StringBuilder sb) {
-        final StringBuilder briefBudget = super.toStringBuilderExternal();
+        final StringBuilder briefBudget = super.toBudgetStringExternal();
         final String n = name().toString();
         sb.ensureCapacity(briefBudget.length()+n.length()+1);
         sb.append(briefBudget).append(' ').append(n);

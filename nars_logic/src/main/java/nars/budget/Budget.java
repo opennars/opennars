@@ -535,11 +535,11 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      *
      * @return String representation of the value with 2-digit accuracy
      */
-    public StringBuilder toStringBuilderExternal() {
-        return toStringBuilderExternal(null);
+    public StringBuilder toBudgetStringExternal() {
+        return toBudgetStringExternal(null);
     }
 
-    public StringBuilder toStringBuilderExternal(StringBuilder sb) {
+    public StringBuilder toBudgetStringExternal(StringBuilder sb) {
         //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
 
         final CharSequence priorityString = Texts.n2(priority);
@@ -566,7 +566,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     public String toBudgetString() {
-        return toStringBuilderExternal().toString();
+        return toBudgetStringExternal().toString();
     }
 
 
@@ -746,5 +746,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return this;
     }
 
-
+    public void delete() {
+        budgetDirect(Float.NaN, Float.NaN, Float.NaN);
+    }
 }

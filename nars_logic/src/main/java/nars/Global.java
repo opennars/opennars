@@ -49,6 +49,7 @@ public class Global {
     public static final Atom DEFAULT_SELF = Atom.the("SELF");
 
 
+
     public static int DEFAULT_NAL_LEVEL = 8;
 
     /** use this for advanced error checking, at the expense of lower performance.
@@ -59,7 +60,8 @@ public class Global {
     public static boolean DEBUG_DERIVATION_STACKTRACES = false; //includes stack trace in task's derivation rule string
     public static boolean DEBUG_INVALID_SENTENCES = true;
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
-    public static boolean DEBUG_TASK_HISTORY = true; //false disables task history completely
+    public static boolean DEBUG_TASK_LOG = true; //false disables task history completely
+    public static boolean DEBUG_TASK_LOG_SOLUTION = true;
     public static boolean EXIT_ON_EXCEPTION = true;
 
 

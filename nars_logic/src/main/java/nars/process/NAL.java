@@ -9,6 +9,7 @@ import nars.Memory;
 import nars.task.Task;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -27,8 +28,9 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
 
 
     /** derivation queue (this might also work as a Set) */
-    protected List<Task> derived = null;
+    protected Set<Task> derived = null;
 
+    public Consumer<Task> inputToMemory;
 
     /**
      * stores the tasks that this process generates, and adds to memory
@@ -36,6 +38,7 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
     //protected SortedSet<Task> newTasks; //lazily instantiated
     public NAL(final Memory m) {
         super(m);
+        inputToMemory = d -> memory.input(d);
     }
 
 
@@ -65,23 +68,21 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
 
 
 
-    @Override
-    public Task getBelief() {
-        return null;
-    }
 
     @Override public void accept(Task derivedTask) {
         if (derived == null)
-            derived = Global.newArrayList(1);
+            derived = Global.newHashSet(1);
 
-        derived.add(derivedTask);
+        if (!derived.add(derivedTask)) {
+            throw new RuntimeException("duplicate derivation: " + derivedTask);
+        }
     }
+
+
 
     protected void inputDerivations() {
         if (derived!=null) {
-            for (int i = 0; i < derived.size(); i++) {
-                memory.add(derived.get(i));
-            }
+            derived.forEach(inputToMemory);
         }
     }
 

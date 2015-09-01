@@ -162,7 +162,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
                 t.setCause(op);
                 //t.log("Feedback");
 
-                memory.add(t);
+                memory.input(t);
             }
         }
 
@@ -180,15 +180,15 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
         memory.logic.TASK_EXECUTED.hit();
 
-        memory.add(memory.newTask(operation).
+        memory.input(memory.newTask(operation).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
                 budget(operation.getTask().getBudget()).
                 present().
                 parent(opTask).
                 cause(operation).
-                reason("Executed").
-                get());
+                reason("Executed")
+            );
 
     }
 

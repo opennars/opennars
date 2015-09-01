@@ -84,26 +84,24 @@ public class EmotionMeter implements Serializable {
 
                 Inheritance inh = Inheritance.make(memory.self(), satisfiedSetInt);
 
-                memory.add(
+                memory.input(
                         memory.newTask(inh).judgment()
                                 .truth(frequency, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                 .occurrNow()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                                 .reason("Happy Metabelief")
-                                .get()
                 );
 
                 if (Global.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
 
                     //TODO convert to fluent format
 
-                    memory.add(
+                    memory.input(
                             memory.newTask(inh).goal()
                                     .truth(frequency, Global.DEFAULT_GOAL_CONFIDENCE)
                                     .occurrNow()
                                     .budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY)
                                     .reason("Happy Metagoal")
-                                    .get()
                     );
 
                     //this is a good candidate for innate belief for consider and remind:
@@ -116,14 +114,13 @@ public class EmotionMeter implements Serializable {
                         //means it has good chance to be considered after
                         for (Operation o : new Operation[]{op_remind, op_consider}) {
 
-                            memory.add(
+                            memory.input(
                                     memory.newTask(o).judgment()
                                             .occurrNow()
                                             .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                             .budget(Global.DEFAULT_JUDGMENT_PRIORITY * InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
                                                     Global.DEFAULT_JUDGMENT_DURABILITY * InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
                                             .reason("Happy Remind/Consider")
-                                            .get()
                             );
                         }
                     }
@@ -178,13 +175,12 @@ public class EmotionMeter implements Serializable {
             if (Global.REFLECT_META_BUSY_BELIEF && (frequency != -1) && (memory.nal(7))) { //ok lets add an event now
                 final Inheritance busyTerm = Inheritance.make(memory.self(), BUSYness);
 
-                memory.add(
+                memory.input(
                         memory.newTask(busyTerm).judgment()
                                 .truth(frequency, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                 .occurrNow()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                                 .reason("Busy")
-                                .get()
                 );
             }
         }

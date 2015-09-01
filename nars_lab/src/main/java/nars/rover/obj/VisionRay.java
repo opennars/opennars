@@ -254,7 +254,7 @@ public class VisionRay implements AbstractPolygonBot.Sense, SwingDraw.LayerDraw 
                 );
 
 
-        abstractPolygonBot.nar.input(abstractPolygonBot.nar.task(tt).belief().present().truth(freq, conf).get());
+        abstractPolygonBot.nar.input(abstractPolygonBot.nar.task(tt).belief().present().truth(freq, conf));
     }
 
     public void onTouch(Body hit, float di) {
