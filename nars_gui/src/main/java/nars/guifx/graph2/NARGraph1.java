@@ -47,6 +47,7 @@ public class NARGraph1 extends Spacegraph {
     private Animate updater;
     private GraphicsContext floorGraphics;
     private double scaleFactor;
+    private Animate updaterSlow;
 
     public interface VisModel {
 
@@ -379,7 +380,8 @@ public class NARGraph1 extends Spacegraph {
 
         @Override
         public double getVertexScale(Concept c) {
-            return getVertexScaleByConf(c) * 0.75f + 0.25f;
+
+            return (c!=null ? getVertexScaleByConf(c) : 0) * 0.75f + 0.25f;
             //return getVertexScaleByPri(c);
         }
 
@@ -967,8 +969,8 @@ public class NARGraph1 extends Spacegraph {
     HyperassociativeMap<TermNode, TermEdge> h = null;
 
     protected void layoutNodes() {
-        //layoutNodesCircle();
-        layoutNodesHyper();
+        layoutNodesCircle();
+        //layoutNodesHyper();
     }
 
     protected void layoutNodesCircle() {
@@ -1089,11 +1091,11 @@ public class NARGraph1 extends Spacegraph {
 
         h.resetLearning();
         h.setLearningRate(0.4f);
-        h.setRepulsiveWeakness(14.0);
-        h.setAttractionStrength(7.0);
+        h.setRepulsiveWeakness(10.0);
+        h.setAttractionStrength(10.0);
         h.setMaxRepulsionDistance(10);
 
-        h.align(1);
+        h.align(16);
 
         h.apply();
 
@@ -1106,7 +1108,7 @@ public class NARGraph1 extends Spacegraph {
 
     protected void updateNodes() {
         if (termList!=null)
-            termList.forEach(n -> n.update());
+            termList.forEach(n -> { if (n!=null) n.update(); } );
     }
 
     final List<TermEdge> removable = Global.newArrayList();
@@ -1199,13 +1201,20 @@ public class NARGraph1 extends Spacegraph {
     protected void start() {
         synchronized (nar) {
             if (this.updater == null) {
-                this.updater = new Animate(150, a -> {
+                this.updater = new Animate(75, a -> {
+                    if (!termList.isEmpty()) {
+                        layoutNodes();
+                        renderEdges();
+                    }
+                });
+                this.updaterSlow = new Animate(200, a -> {
                     if (!termList.isEmpty()) {
                         layoutNodes();
                         renderEdges();
                     }
                 });
                 updater.start();
+                updaterSlow.start();
             }
         }
     }
@@ -1213,6 +1222,8 @@ public class NARGraph1 extends Spacegraph {
     protected void stop() {
         synchronized (nar) {
             if (this.updater != null) {
+                updaterSlow.stop();
+                updaterSlow = null;
                 updater.stop();
                 updater = null;
             }

@@ -220,7 +220,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * @return The current priority
      */
     @Override
-    public float getPriority() {
+    public final float getPriority() {
         return priority;
     }
 
@@ -285,7 +285,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * AND's (multiplies) priority with another value
      */
     public void andPriority(final float v) {
-        setPriority(and(priority, v));
+        setPriority(and(getPriority(), v));
     }
 
     /**
@@ -755,5 +755,9 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
     public void delete() {
         budgetDirect(Float.NaN, Float.NaN, Float.NaN);
+    }
+
+    public boolean isDeleted() {
+        return !Float.isFinite(getPriority());
     }
 }

@@ -20,10 +20,12 @@ public class Animate extends AnimationTimer {
     }
 
     @Override
-    public void handle(final long now) {
+    public void handle(final long nowNS) {
+        long now = nowNS/1000000; //ns -> ms
         if (now - last > periodMS) {
             run.accept(this);
             last = now;
         }
+
     }
 }

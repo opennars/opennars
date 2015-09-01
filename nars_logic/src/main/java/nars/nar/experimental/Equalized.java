@@ -2,17 +2,24 @@ package nars.nar.experimental;
 
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.impl.CurveBag;
 import nars.budget.ItemAccumulator;
 import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.cycle.DefaultCycle;
 import nars.nal.Deriver;
 import nars.nal.LogicPolicy;
+import nars.nal.LogicStage;
 import nars.nar.Default;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
+import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
 import nars.task.Task;
+import nars.task.filter.DerivationFilter;
+import nars.task.filter.FilterBelowConfidence;
+import nars.task.filter.FilterDuplicateExistingBelief;
+import nars.task.filter.LimitDerivationPriority;
 import nars.term.Term;
 
 import java.util.Iterator;
@@ -20,7 +27,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import static nars.nar.NewDefault.nalex;
 
 /**
  * Created by me on 7/21/15.
@@ -33,10 +39,7 @@ public class Equalized extends Default {
         super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
     }
 
-    @Override
-    public LogicPolicy getLogicPolicy() {
-        return nalex(Deriver.defaults);
-    }
+
 
 
     public static class EqualizedCycle extends DefaultCycle {
@@ -199,6 +202,17 @@ public class Equalized extends Default {
 //                0.01f /* false positive probability */ );
 //    }
 
+
+    @Override
+    protected DerivationFilter[] getDerivationFilters() {
+        return new DerivationFilter[]{
+                new FilterBelowConfidence(0.05),
+                new FilterDuplicateExistingBelief(),
+                new LimitDerivationPriority()
+                //param.getDefaultDerivationFilters().add(new BeRational());
+        };
+    }
+
     @Override
     public CycleProcess newCycleProcess() {
         return new EqualizedCycle(
@@ -208,4 +222,9 @@ public class Equalized extends Default {
         );
     }
 
+    public Bag<Term, Concept> newConceptBag() {
+        CurveBag<Term, Concept> b = new CurveBag(rng, getActiveConcepts());
+        b.mergeAverage();
+        return b;
+    }
 }

@@ -31,6 +31,10 @@ public class InputPane extends TabPane {
         setSide(Side.BOTTOM);
         setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
 
+        getTabs().add(new TabXLazy("Narsese", () -> new NarseseInput(n)));
+
+        getTabs().add(new TabXLazy("Library", () -> new LibraryInputPane()));
+
         getTabs().add(new TabXLazy("Wiki", () -> {
 
             //"Navigate wikipedia to collect tags to use as input terms"
@@ -38,9 +42,6 @@ public class InputPane extends TabPane {
         }));
         getTabs().add(new TabXLazy("Space", () -> new WebMap()) /*"Space", "Navigate a 2D map to input (map region-as-shape analysis, and lists of features and their locations)")*/);
 
-        getTabs().add(new TabXLazy("Narsese", () -> new NarseseInput(n)));
-
-        getTabs().add(new TabXLazy("Library", () -> new LibraryInputPane()));
 
         getTabs().add(new ComingSoonTab("Natural", "Natural language input in any of the major languages, using optional strategies (ex: CoreNLP)"));
         {

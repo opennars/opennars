@@ -32,7 +32,7 @@ public class NewDefault extends Default {
         return nalex(der);
     }
 
-    public static LogicPolicy nalex(ConceptFireTaskTerm ruletable) {
+    public LogicPolicy nalex(ConceptFireTaskTerm ruletable) {
 
         return new LogicPolicy(
 
@@ -43,10 +43,7 @@ public class NewDefault extends Default {
                         //---------------------------------------------
                 } ,
 
-                new DerivationFilter[] {
-                        new FilterBelowConfidence(0.01),
-                        new FilterDuplicateExistingBelief(),
-                }
+                getDerivationFilters()
 
         );
     }

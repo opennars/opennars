@@ -7,9 +7,7 @@ import javafx.scene.text.Text;
 import nars.NAR;
 import nars.task.Task;
 
-/**
- * Created by me on 8/10/15.
- */
+
 public class TaskLabel extends HBox {
 
     private final Text label;
@@ -88,7 +86,7 @@ public class TaskLabel extends HBox {
         //label.setStyle(JFX.fontSize(8 + 16 * pri));
 
         label.setFont(NARfx.mono(8 + 16 * pri));
-        label.setFill(JFX.grayscale.get(pri));
+        label.setFill(JFX.grayscale.get(pri*0.5+0.5));
 
 
 

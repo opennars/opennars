@@ -95,7 +95,7 @@ public class Alann extends NARSeed {
 
     @Override
     public LogicPolicy getLogicPolicy() {
-        return Default.newPolicy(new TableDerivations());
+        return new Default().newPolicy(new TableDerivations());
     }
 
 

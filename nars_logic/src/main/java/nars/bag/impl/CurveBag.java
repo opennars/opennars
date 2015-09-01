@@ -314,9 +314,16 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     @Override
     public V peekNext() {
 
-        if (isEmpty()) return null; // empty bag
-        return items.get(sampler.applyAsInt(this));
-
+        while (!isEmpty()) {
+            V i = items.get(sampler.applyAsInt(this));
+            if (i.getBudget().isDeleted()) {
+                remove(i.name());
+            }
+            else {
+                return i;
+            }
+        }
+        return null; // empty bag
     }
 
 

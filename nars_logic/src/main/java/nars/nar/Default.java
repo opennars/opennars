@@ -45,6 +45,7 @@ import nars.task.Task;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
+import nars.task.filter.LimitDerivationPriority;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -85,7 +86,7 @@ public class Default extends NARSeed {
     public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
 
 
-    public static LogicPolicy newPolicy(ConceptFireTaskTerm ruletable) {
+    public LogicPolicy newPolicy(ConceptFireTaskTerm ruletable) {
 
         return new LogicPolicy(
 
@@ -115,16 +116,19 @@ public class Default extends NARSeed {
                         //---------------------------------------------
                 },
 
-                new DerivationFilter[]{
-                        new FilterBelowConfidence(0.01),
-                        new FilterDuplicateExistingBelief(),
-                        //param.getDefaultDerivationFilters().add(new BeRational());
-                }
+                getDerivationFilters()
 
         );
     }
 
-    final LogicPolicy policy;
+    protected DerivationFilter[] getDerivationFilters() {
+        return new DerivationFilter[]{
+                new FilterBelowConfidence(0.01),
+                new FilterDuplicateExistingBelief()
+                //param.getDefaultDerivationFilters().add(new BeRational());
+        };
+    }
+
 
     /**
      * Size of TaskLinkBag
@@ -239,7 +243,6 @@ public class Default extends NARSeed {
 
         conceptCreationExpectation.set(0.66);
 
-        policy = getLogicPolicy();
     }
 
 
@@ -454,7 +457,6 @@ public class Default extends NARSeed {
         return new DefaultConcept(t, b,
                 taskLinks, termLinks,
                 newConceptBeliefGoalRanking(),
-                //new UniquePerCyclePremiseGenerator(termLinkMaxMatched),
                 newPremiseGenerator(),
                 mem
         );
@@ -476,7 +478,7 @@ public class Default extends NARSeed {
 
     public Bag<Term, Concept> newConceptBag() {
         CurveBag<Term, Concept> b = new CurveBag(rng, getActiveConcepts());
-        b.mergePlus();
+        b.mergeMax();
         return b;
     }
 

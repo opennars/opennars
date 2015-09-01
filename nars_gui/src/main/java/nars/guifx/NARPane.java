@@ -178,6 +178,9 @@ public class NARPane extends BorderPane {
         menu.setSide(Side.LEFT);
         menu.getTabs().addAll(
 
+                new TabX("Tasks",
+                        new TreePane(n)).closeable(false),
+
                 new TabX.TabButton("+",
                         scrolled( new NARReactionPane() ) )
                         .button("I/O", (e) -> {  })
@@ -185,8 +188,7 @@ public class NARPane extends BorderPane {
                         .button("About", (e) -> {  })
                 ,
 
-                new TabX("Tasks",
-                    new TreePane(n)).closeable(false),
+
                 new TabX("Concepts",
                         new VBox()).closeable(false),
 

@@ -75,8 +75,8 @@ public class BloomFilterNovelPremiseGenerator extends TermLinkBagPremiseGenerato
     }
 
     @Override
-    public boolean validTermLinkTarget(TermLink termLink, TaskLink taskLink) {
-        if (!super.validTermLinkTarget(termLink, taskLink)) return false;
+    public boolean valid(TermLink termLink, TaskLink taskLink) {
+        if (!super.valid(termLink, taskLink)) return false;
 
         final long now = time();
 

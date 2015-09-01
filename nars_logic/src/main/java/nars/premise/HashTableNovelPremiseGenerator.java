@@ -34,8 +34,8 @@ public class HashTableNovelPremiseGenerator extends TermLinkBagPremiseGenerator 
     }
 
     @Override
-    public boolean validTermLinkTarget(TermLink term, TaskLink task) {
-        if (super.validTermLinkTarget(term, task)) {
+    public boolean valid(TermLink term, TaskLink task) {
+        if (super.valid(term, task)) {
             final long now = time();
 
 
