@@ -4,9 +4,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Labeled;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import nars.budget.Budget;
 import nars.task.Task;
 
 /**
@@ -24,7 +23,7 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
 
     transient float lastPriority = -1;
 
-    public TaskSummaryIcon(Task i, Labeled parent) {
+    public TaskSummaryIcon(Task i, Region parent) {
         super();
 
         this.task = i;
@@ -88,7 +87,7 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
         //TODO only clear if size changed, because it can just paint on top
         //g.clearRect(0, 0, W, H);
 
-        float p = task.getPriorityIfNaNThenZero();
+        float p = task.getBudget().getPriorityIfNaNThenZero();
 
         if (Math.abs(lastPriority - p) > VISIBLE_BUDGET_CHANGE) {
 

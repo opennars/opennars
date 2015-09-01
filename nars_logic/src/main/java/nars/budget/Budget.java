@@ -695,6 +695,13 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return this;
     }
 
+    public final float getPriorityIfNaNThenZero() {
+        float p = getPriority();
+        if (Float.isFinite(p))
+            return p;
+        return 0;
+    }
+
     /**
      * modifies the budget if any of the components are signifiantly different
      * returns whether the budget was changed

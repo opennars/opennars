@@ -66,16 +66,22 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends NARSeed  {
+public class Default extends NARSeed {
 
 
-    /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
+    /**
+     * How many concepts to fire each cycle; measures degree of parallelism in each cycle
+     */
     public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
 
-    /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    /**
+     * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
+     */
     public final AtomicInteger inputsMaxPerCycle = new AtomicInteger();
 
-    /** max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    /**
+     * max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
+     */
     public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
 
 
@@ -83,7 +89,7 @@ public class Default extends NARSeed  {
 
         return new LogicPolicy(
 
-                new LogicStage /* <ConceptProcess> */ [] {
+                new LogicStage /* <ConceptProcess> */ []{
 
                         //A. concept fire tasklink derivation
                         new TransformTask(),
@@ -107,9 +113,9 @@ public class Default extends NARSeed  {
 
                         ruletable
                         //---------------------------------------------
-                } ,
+                },
 
-                new DerivationFilter[] {
+                new DerivationFilter[]{
                         new FilterBelowConfidence(0.01),
                         new FilterDuplicateExistingBelief(),
                         //param.getDefaultDerivationFilters().add(new BeRational());
@@ -120,20 +126,28 @@ public class Default extends NARSeed  {
 
     final LogicPolicy policy;
 
-    /** Size of TaskLinkBag */
+    /**
+     * Size of TaskLinkBag
+     */
     int taskLinkBagSize;
 
 
-    /** Size of TermLinkBag */
+    /**
+     * Size of TermLinkBag
+     */
     int termLinkBagSize;
-    
-    /** determines maximum number of concepts */
+
+    /**
+     * determines maximum number of concepts
+     */
     int conceptBagSize;
 
 
-    /** Size of TaskBuffer */
+    /**
+     * Size of TaskBuffer
+     */
     int taskBufferSize;
-    
+
 
     InternalExperience.InternalExperienceMode internalExperience;
     public int cyclesPerFrame = 1;
@@ -154,7 +168,9 @@ public class Default extends NARSeed  {
         return maxNALLevel;
     }
 
-    /** Default DEFAULTS */
+    /**
+     * Default DEFAULTS
+     */
     public Default() {
         this(1024, 1, 3);
     }
@@ -170,15 +186,13 @@ public class Default extends NARSeed  {
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
         this.internalExperience =
-                maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
+                maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
 
         setTaskLinkBagSize(16);
 
         setTermLinkBagSize(64);
 
         setNovelTaskBagSize(48);
-
-
 
 
         //Runtime Initial Values
@@ -229,84 +243,82 @@ public class Default extends NARSeed  {
     }
 
 
-
-    public static final OpReaction[] exampleOperators = new OpReaction[] {
-        //new Wait(),
-        new NullOperator("break"),
-        new NullOperator("drop"),
-        new NullOperator("goto"),
-        new NullOperator("open"),
-        new NullOperator("pick"),
-        new NullOperator("strike"),
-        new NullOperator("throw"),
-        new NullOperator("activate"),
-        new NullOperator("deactivate")
+    public static final OpReaction[] exampleOperators = new OpReaction[]{
+            //new Wait(),
+            new NullOperator("break"),
+            new NullOperator("drop"),
+            new NullOperator("goto"),
+            new NullOperator("open"),
+            new NullOperator("pick"),
+            new NullOperator("strike"),
+            new NullOperator("throw"),
+            new NullOperator("activate"),
+            new NullOperator("deactivate")
     };
 
 
+    public final OpReaction[] defaultOperators = new OpReaction[]{
 
-    public final OpReaction[] defaultOperators  = new OpReaction[] {
+            //system control
+            echo.the,
+            PauseInput.the,
+            new reset(),
 
-                //system control
-                echo.the,
-                PauseInput.the,
-                new reset(),
+            new eval(),
 
-                new eval(),
+            //new Wait(),
+            new believe(),  // accept a statement with a default truth-value
+            new want(),     // accept a statement with a default desire-value
+            new wonder(),   // find the truth-value of a statement
+            new evaluate(), // find the desire-value of a statement
 
-                //new Wait(),
-                new believe(),  // accept a statement with a default truth-value
-                new want(),     // accept a statement with a default desire-value
-                new wonder(),   // find the truth-value of a statement
-                new evaluate(), // find the desire-value of a statement
+            //concept operations for internal perceptions
+            new remind(),   // create/activate a concept
+            new consider(),  // do one inference step on a concept
+            new name(),         // turn a compount term into an atomic term
+            //new Abbreviate(),
 
-                //concept operations for internal perceptions
-                new remind(),   // create/activate a concept
-                new consider(),  // do one inference step on a concept
-                new name(),         // turn a compount term into an atomic term
-                //new Abbreviate(),
+            //new Register(),
 
-                //new Register(),
-
-                // truth-value operations
-                new doubt(),        // decrease the confidence of a belief
-                new hesitate(),      // decrease the confidence of a goal
-
-
-                //Meta
-                new reflect(),
-
-                // feeling operations
-                new feelHappy(),
-                new feelBusy(),
-
-                // math operations
-                new count(),
-                new add(),
-                //new MathExpression(),
+            // truth-value operations
+            new doubt(),        // decrease the confidence of a belief
+            new hesitate(),      // decrease the confidence of a goal
 
 
-                new complexity(),
+            //Meta
+            new reflect(),
 
-                //Term manipulation
-                new Flat.flatProduct(),
-                new similaritree(),
+            // feeling operations
+            new feelHappy(),
+            new feelBusy(),
 
-                //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
-                new scheme(),      // scheme evaluation
+            // math operations
+            new count(),
+            new add(),
+            //new MathExpression(),
 
 
-                //new NumericCertainty(),
+            new complexity(),
 
-                //io operations
-                new say(),
+            //Term manipulation
+            new Flat.flatProduct(),
+            new similaritree(),
 
-                new schizo(),     //change Memory's SELF term (default: SELF)
+            //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
+            new scheme(),      // scheme evaluation
 
-                new js(), //javascdript evalaution
 
-                new json.jsonfrom(),
-                new json.jsonto()
+            //new NumericCertainty(),
+
+            //io operations
+            new say(),
+
+            new schizo(),     //change Memory's SELF term (default: SELF)
+
+            new js(), //javascdript evalaution
+
+            new json.jsonfrom(),
+            new json.jsonto()
          /*
 +         *          I/O operations under consideration
 +         * observe          // get the most active input (Channel ID: optional?)
@@ -365,17 +377,17 @@ public class Default extends NARSeed  {
 //        table.put("^throw", new Throw("^throw"));
 //        table.put("^strike", new Strike("^strike"));
 
-        };
+    };
 
 
-
-    /** initialization after NAR is constructed */
-    @Override public void init(NAR n) {
+    /**
+     * initialization after NAR is constructed
+     */
+    @Override
+    public void init(NAR n) {
 
         n.setCyclesPerFrame(cyclesPerFrame);
 
-
-        
 
         if (maxNALLevel >= 7) {
             n.on(PerceptionAccel.class);
@@ -407,27 +419,28 @@ public class Default extends NARSeed  {
     }
 
 
-
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-                //new ChainBag(rng,  getConceptTaskLinks());
+        //new ChainBag(rng,  getConceptTaskLinks());
 
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-                //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+        //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
 
 
-    /** rank function used for concept belief and goal tables */
+    /**
+     * rank function used for concept belief and goal tables
+     */
     public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
         return (c, b) ->
                 BeliefTable.BeliefConfidenceOrOriginality;
-                //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
+        //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
 
     }
 
@@ -447,7 +460,9 @@ public class Default extends NARSeed  {
         );
     }
 
-    /** construct a new premise generator for a concept */
+    /**
+     * construct a new premise generator for a concept
+     */
     public PremiseGenerator newPremiseGenerator() {
         int novelCycles = 1;
         return new HashTableNovelPremiseGenerator(termLinkMaxMatched, novelCycles);
@@ -460,13 +475,13 @@ public class Default extends NARSeed  {
     }
 
     public Bag<Term, Concept> newConceptBag() {
-        CurveBag<Term,Concept> b = new CurveBag(rng, getActiveConcepts());
+        CurveBag<Term, Concept> b = new CurveBag(rng, getActiveConcepts());
         b.mergePlus();
         return b;
     }
 
     @Override
-    public CacheBag<Term,Concept> newIndex() {
+    public CacheBag<Term, Concept> newIndex() {
 
         return new GuavaCacheBag();
         //return new TrieCacheBag();
@@ -481,29 +496,32 @@ public class Default extends NARSeed  {
 
         );
     }
-    
+
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
         return new CurveBag(rng, getNovelTaskBagSize());
         //return new ChainBag(rng, getNovelTaskBagSize());
     }
 
 
-
     public int getNovelTaskBagSize() {
         return taskBufferSize;
     }
-    
-    
-    public int getActiveConcepts() { return conceptBagSize; }
-    public Default setActiveConcepts(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
-    
+
+    public int getActiveConcepts() {
+        return conceptBagSize;
+    }
+
+    public Default setActiveConcepts(int conceptBagSize) {
+        this.conceptBagSize = conceptBagSize;
+        return this;
+    }
+
 
     public Default setNovelTaskBagSize(int taskBufferSize) {
         this.taskBufferSize = taskBufferSize;
         return this;
     }
-
 
 
     public int getConceptTaskLinks() {
@@ -516,7 +534,6 @@ public class Default extends NARSeed  {
     }
 
 
-
     public int getConceptTermLinks() {
         return termLinkBagSize;
     }
@@ -526,11 +543,12 @@ public class Default extends NARSeed  {
         return this;
     }
 
-    
+
     public Default clock(Clock c) {
         setClock(c);
         return this;
     }
+
     public Default realTime() {
         return clock(new RealtimeMSClock(true));
     }
@@ -539,7 +557,6 @@ public class Default extends NARSeed  {
         duration.set(durationMS);
         return clock(new HardRealtimeClock());
     }
-
 
 
     @Override
@@ -555,12 +572,11 @@ public class Default extends NARSeed  {
     }
 
 
+    @Deprecated
+    public static class CommandLineNARBuilder extends Default {
 
-
-    @Deprecated public static class CommandLineNARBuilder extends Default {
-        
         List<String> filesToLoad = new ArrayList();
-        
+
         public CommandLineNARBuilder(String[] args) {
             super();
 
@@ -568,43 +584,39 @@ public class Default extends NARSeed  {
                 String arg = args[i];
                 if ("--silence".equals(arg)) {
                     arg = args[++i];
-                    int sl = Integer.parseInt(arg);                
-                    outputVolume.set(100-sl);
-                }
-                else if ("--noise".equals(arg)) {
+                    int sl = Integer.parseInt(arg);
+                    outputVolume.set(100 - sl);
+                } else if ("--noise".equals(arg)) {
                     arg = args[++i];
-                    int sl = Integer.parseInt(arg);                
+                    int sl = Integer.parseInt(arg);
                     outputVolume.set(sl);
-                }    
-                else {
+                } else {
                     filesToLoad.add(arg);
                 }
-                
-            }        
+
+            }
         }
 
         @Override
         public void init(NAR n) {
             super.init(n);
-            
+
             for (String x : filesToLoad) {
-                try {
-                    n.input(new File(x));
-                }
-                catch (FileNotFoundException fex) {
-                    System.err.println(getClass() + ": " + fex.toString());
-                }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                n.memory.taskNext(() -> {
+                    try {
+                        n.input(new File(x));
+                    } catch (FileNotFoundException fex) {
+                        System.err.println(getClass() + ": " + fex.toString());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                });
                 //n.run(1);
             }
-            
+
         }
 
-        
-        
-        
+
         /**
          * Decode the silence level
          *
@@ -629,11 +641,10 @@ public class Default extends NARSeed  {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName()+ '[' + maxNALLevel +
-                ((internalExperience== InternalExperience.InternalExperienceMode.None) || (internalExperience==null) ? "" : "+")
+        return getClass().getSimpleName() + '[' + maxNALLevel +
+                ((internalExperience == InternalExperience.InternalExperienceMode.None) || (internalExperience == null) ? "" : "+")
                 + ']';
     }
-
 
 
 //    public static Default fromJSON(String filePath) {
@@ -646,11 +657,11 @@ public class Default extends NARSeed  {
 //            return null;
 //        }
 //    }
-    
-    static String readFile(String path, Charset encoding) 
-        throws IOException  {
+
+    static String readFile(String path, Charset encoding)
+            throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
-      }
+    }
 
 }

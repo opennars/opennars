@@ -86,8 +86,7 @@ public class DefaultCycle extends SequentialCycle {
             return newTasksTemp.add(t); //buffer it
         }
         else {
-            boolean added = newTasks.add(t); //add it directly to the newtasks set
-            return added;
+            return newTasks.add(t); //add it directly to the newtasks set
         }
     }
 

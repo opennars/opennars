@@ -276,7 +276,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
-        if ((truth == null) && !((punc == Symbols.QUEST) || (punc == Symbols.QUESTION))) {
+        if ((truth == null) && (isJudgmentOrGoal())) {
             truth = new DefaultTruth(punc);
         }
 

@@ -2,7 +2,6 @@ package nars.guifx;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import nars.budget.Itemized;
 import nars.link.TaskLink;
 import nars.task.Task;
@@ -49,10 +48,11 @@ public class ItemButton<I extends Itemized> extends Label implements Runnable {
 
 
         //setFont(NARfx.mono(10 + 8 * item.getPriority()));
-        float p = item.getPriority() * 0.5f + 0.5f;
-        setTextFill(Color.rgb(255,255,255,p));
+        float p = item.getBudget().getPriorityIfNaNThenZero();
+        float ph = p * 0.5f + 0.5f;
+        setTextFill(JFX.grayscale.get(ph));
 
-        setStyle("-fx-font-size: " + 1 + 2 * item.getPriority());
+        setStyle(JFX.fontSize(8 + 12 * p));
 
         Node g = getGraphic();
         if (g instanceof Runnable)

@@ -1,18 +1,20 @@
 package nars.guifx;
 
+import javafx.scene.CacheHint;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import nars.NAR;
 import nars.task.Task;
 
 /**
  * Created by me on 8/10/15.
  */
-public class TaskLabel extends Label {
+public class TaskLabel extends HBox {
 
+    private final Label label;
     private final Task task;
+    private final TaskSummaryIcon summary;
+    private final NSliderFX slider;
 
     public TaskLabel(String prefix, Task task, NAR n) {
         super( );
@@ -20,22 +22,22 @@ public class TaskLabel extends Label {
         this.task = task;
 
         String s = prefix + task.toString(n.memory).toString();
-        setText(s);
+        label = new Label(s);
+        label.setMouseTransparent(true);
+        label.getStylesheets().clear();
+        label.setCacheShape(true);
+        label.setCacheHint(CacheHint.SPEED);
+        label.setCache(true);
 
-        float pri = task.getPriority();
-        this.setTextFill(Color.hsb(360.0 * pri, 0.75f, 0.85f));
 
-
-        Pane fp = new HBox(
-
-                new TaskSummaryIcon(task, this).width(40),
-                new NSliderFX(40, 20).set(pri, 0, 1)
+        getChildren().setAll(
+                summary = new TaskSummaryIcon(task, this).width(40),
+                slider = new NSliderFX(40, 20).set(0, 0, 1),
+                label
         );
 
 
-        setGraphic(
-                fp
-        );
+
 
         //setAlignment(Pos.CENTER_LEFT);
 
@@ -51,6 +53,8 @@ public class TaskLabel extends Label {
 
         //setCacheHint(CacheHint.SCALE);
         //setCache(true);
+
+        update();
 
     }
 
@@ -74,4 +78,19 @@ public class TaskLabel extends Label {
         this("", task, nar);
     }
 
+    public void update() {
+
+        summary.run();
+
+        float pri = task.getBudget().getPriorityIfNaNThenZero();
+
+        slider.value.set(pri);
+
+        label.setStyle(JFX.fontSize(8 + 16 * pri));
+        label.setTextFill(JFX.grayscale.get(pri));
+
+
+
+
+    }
 }

@@ -28,12 +28,14 @@ import static javafx.application.Platform.runLater;
  */
 public class TreePane extends BorderPane {
 
+    public static final Task root = echo.echo("root");
     private final TaskTreeItem rootNode;
     private final TreeView<Task> tree;
     private final FrameReaction onFrame;
 
     final Set<Task> pendingTasks = new LinkedHashSet<>(); //Global.newHashSet(1);
 
+    final Map<Task, TaskLabel> labels = new ConcurrentWeakKeyHashMap<>();
     final Map<Task, TaskTreeItem> tasks = new ConcurrentWeakKeyHashMap<>();
 
 
@@ -41,7 +43,6 @@ public class TreePane extends BorderPane {
 
     public final DoubleProperty minPriority;
 
-    final Function<Task, TaskLabel> labelBuilder;
 
     final AtomicBoolean ready = new AtomicBoolean(true);
 
@@ -49,11 +50,10 @@ public class TreePane extends BorderPane {
         super();
 
         this.nar = n;
-        this.labelBuilder = (i) -> {
-            return new TaskLabel(i, nar);
-        };
 
-        rootNode = new TaskTreeItem(echo.echo("root"));
+        newLabel = u -> new TaskLabel(u, nar);
+
+        rootNode = new TaskTreeItem(root);
         tree = new TreeView<Task>(rootNode);
         tree.setCellFactory(new Callback<TreeView<Task>, TreeCell<Task>>() {
             @Override
@@ -99,6 +99,12 @@ public class TreePane extends BorderPane {
         }
 
 
+
+        @Override
+        public void updateSelected(boolean selected) {
+            ((TaskLabel)getGraphic()).update();
+        }
+
         @Override
         public void updateItem(Task t, boolean empty) {
             super.updateItem(t, empty);
@@ -120,7 +126,9 @@ public class TreePane extends BorderPane {
 //            }
 
             if (getItem() != null) {
-                setGraphic(tasks.get(t).label);
+                TaskLabel lbl = tasks.get(t).label;
+                lbl.update();
+                setGraphic(lbl);
             } else {
                 //this.setTextFill(Color.WHITE);
                 setGraphic(null);
@@ -184,13 +192,18 @@ public class TreePane extends BorderPane {
         return k.getPriority() >= minPriority.get();
     }
 
+    final Function<Task, TaskLabel> newLabel;
+
     public class TaskTreeItem extends TreeItem<Task> {
         public final TaskLabel label;
 
+
         public TaskTreeItem(Task t) {
             super(t);
-            label = new TaskLabel(t, nar);
+
+            label = labels.computeIfAbsent(t, newLabel);
             label.setVisible(false);
+
         }
     }
 
@@ -205,10 +218,17 @@ public class TreePane extends BorderPane {
         if (visible(t)) {
             if (!i.label.isVisible())
                 reparent(i);
+
+            i.label.update();
         }
         else {
-            if (i.label.isVisible())
-                hide(t);
+            boolean hidden = false;
+            if (i.label.isVisible()) {
+                if (hide(t))
+                    hidden = true;
+            }
+            if (!hidden)
+                i.label.update();
         }
 
         return i;
@@ -225,6 +245,7 @@ public class TreePane extends BorderPane {
         if (parent!=null) {
             parent.getChildren().add(ii);
             ii.label.setVisible(true);
+            ii.label.update();
         }
         else {
             //hide(t);
@@ -234,15 +255,13 @@ public class TreePane extends BorderPane {
         return ii;
     }
 
-    private void update(final Task t, final TreeItem<Task> i) {
+    private void update(final Task t, final TaskTreeItem i) {
         if (!visible(t)) {
             if (hide(t))
                 return;
         }
 
-        final Node g = i.getGraphic();
-        if (g instanceof Runnable)
-            ((Runnable) g).run();
+        i.label.update();
     }
 
     private boolean hide(Task t) {
