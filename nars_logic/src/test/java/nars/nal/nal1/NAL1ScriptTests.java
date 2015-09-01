@@ -23,14 +23,14 @@ public class NAL1ScriptTests extends ScriptNALTest {
     @Parameterized.Parameters(name= "{1} {0}")
     public static Collection configurations() {
         return getParams(new String[]{"test1"},
-                //new Default(),
-                //new Default().setInternalExperience(null),
-                //new Default().setInternalExperience(null).level(1),
+                new Default(),
+                new Default().setInternalExperience(null),
+                new Default().setInternalExperience(null).level(1),
                 //new NewDefault(),
-                new NewDefault().setInternalExperience(null)
-                //new DefaultMicro().setInternalExperience(null),
-                //new Classic().setInternalExperience(null),
-                //new Solid(1, 64, 1, 1, 1, 2).setInternalExperience(null)
+                new NewDefault().setInternalExperience(null),
+                new DefaultMicro().setInternalExperience(null),
+                new Classic().setInternalExperience(null),
+                new Solid(1, 64, 1, 1, 1, 2).setInternalExperience(null)
         );
     }
 

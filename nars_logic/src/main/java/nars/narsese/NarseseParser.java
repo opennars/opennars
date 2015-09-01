@@ -80,14 +80,14 @@ public class NarseseParser extends BaseParser<Object>  {
         return sequence(
             zeroOrMore( //1 or more?
                     sequence(
-                            s(),
                             firstOf(
                                     LineComment(),
                                     PauseInput(),
                                     Task()
-                            )
+                            ),
+                            s()
                     )
-            ), s(), eof() ) ;
+            ), eof() ) ;
     }
 
     /**  {Premise1,Premise2} |- Conclusion. */
@@ -163,9 +163,10 @@ public class NarseseParser extends BaseParser<Object>  {
                         sequence("***", zeroOrMore('*')), //temporary
                         "OUT:"
                 ),
-                s(),
+                sNonNewLine(),
                 LineCommentEchoed(),
-                "\n");
+                firstOf("\n",eof() /* may not have newline at end of file */)
+        );
     }
 
     public Rule LineCommentEchoed() {

@@ -163,7 +163,9 @@ public interface Stamp extends Cloneable, Serializable {
 
     public static boolean overlapping(final Sentence a, final Sentence b) {
 
+
         if (a == b) return true;
+        if (b == null) return false;
 
         return overlapping(a.getEvidence(), b.getEvidence());
     }
