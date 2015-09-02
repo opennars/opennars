@@ -16,9 +16,9 @@
 
 package com.github.fge.grappa.transform.process;
 
-import com.github.fge.grappa.transform.generate.ClassNodeInitializer;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import com.github.fge.grappa.transform.base.RuleMethod;
+import com.github.fge.grappa.transform.generate.ClassNodeInitializer;
 
 import java.io.IOException;
 import java.util.List;

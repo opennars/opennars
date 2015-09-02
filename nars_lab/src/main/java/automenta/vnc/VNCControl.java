@@ -1,6 +1,5 @@
 package automenta.vnc;
 
-import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import automenta.vnc.drawing.Renderer;
 import automenta.vnc.rfb.client.ClientToServerMessage;
@@ -8,6 +7,7 @@ import automenta.vnc.rfb.client.PointerEventMessage;
 import automenta.vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import nars.Global;
 import nars.NAR;
+import nars.Video;
 import nars.clock.RealtimeMSClock;
 import nars.concept.Concept;
 import nars.gui.NARSwing;

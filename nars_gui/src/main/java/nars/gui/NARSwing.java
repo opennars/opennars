@@ -20,9 +20,9 @@
  */
 package nars.gui;
 
-import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
+import nars.Video;
 import nars.cycle.experimental.AntCore;
 import nars.nar.Default.CommandLineNARBuilder;
 

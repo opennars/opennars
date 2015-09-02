@@ -1,10 +1,10 @@
 package nars.guifx.demo;
 
-import nars.guifx.graph2.NARGraph1;
 import javafx.scene.Scene;
 import nars.Global;
 import nars.NAR;
 import nars.guifx.NARfx;
+import nars.guifx.graph2.NARGraph1;
 import nars.nar.NewDefault;
 
 import java.io.IOException;

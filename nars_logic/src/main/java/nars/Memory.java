@@ -62,7 +62,10 @@ import nars.util.event.Observed;
 import nars.util.meter.ResourceMeter;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

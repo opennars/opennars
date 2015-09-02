@@ -22,29 +22,15 @@ import com.github.fge.grappa.transform.generate.ActionClassGenerator;
 import com.github.fge.grappa.transform.generate.ClassNodeInitializer;
 import com.github.fge.grappa.transform.generate.ConstructorGenerator;
 import com.github.fge.grappa.transform.generate.VarInitClassGenerator;
+import com.github.fge.grappa.transform.process.*;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import org.objectweb.asm.ClassWriter;
-import com.github.fge.grappa.transform.process.BodyWithSuperCallReplacer;
-import com.github.fge.grappa.transform.process.CachingGenerator;
-import com.github.fge.grappa.transform.process.ImplicitActionsConverter;
-import com.github.fge.grappa.transform.process.InstructionGraphCreator;
-import com.github.fge.grappa.transform.process.InstructionGroupCreator;
-import com.github.fge.grappa.transform.process.InstructionGroupPreparer;
-import com.github.fge.grappa.transform.process.LabellingGenerator;
-import com.github.fge.grappa.transform.process.ReturnInstructionUnifier;
-import com.github.fge.grappa.transform.process.RuleMethodProcessor;
-import com.github.fge.grappa.transform.process.RuleMethodRewriter;
-import com.github.fge.grappa.transform.process.SuperCallRewriter;
-import com.github.fge.grappa.transform.process.UnusedLabelsRemover;
-import com.github.fge.grappa.transform.process.VarFramingGenerator;
 
 import java.util.List;
 import java.util.Objects;
 
-import static com.github.fge.grappa.misc.AsmUtils.findLoadedClass;
-import static com.github.fge.grappa.misc.AsmUtils.getExtendedParserClassName;
-import static com.github.fge.grappa.misc.AsmUtils.loadClass;
+import static com.github.fge.grappa.misc.AsmUtils.*;
 
 public final class ParserTransformer
 {

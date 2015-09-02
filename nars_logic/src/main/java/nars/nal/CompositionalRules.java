@@ -22,7 +22,6 @@ package nars.nal;
 
 import nars.Global;
 import nars.Op;
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.BeliefTable;

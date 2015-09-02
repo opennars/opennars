@@ -16,10 +16,10 @@
 
 package com.github.fge.grappa.matchers.trie;
 
+import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.util.MatcherContextBuilder;
 import com.google.common.collect.Lists;
 import org.assertj.core.api.SoftAssertions;
-import com.github.fge.grappa.run.context.MatcherContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

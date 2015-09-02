@@ -16,12 +16,12 @@
 
 package com.github.fge.grappa.transform;
 
-import com.github.fge.grappa.parsers.BaseParser;
-import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.annotations.Cached;
 import com.github.fge.grappa.annotations.DontLabel;
 import com.github.fge.grappa.annotations.ExplicitActionsOnly;
 import com.github.fge.grappa.annotations.Label;
+import com.github.fge.grappa.parsers.BaseParser;
+import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.support.Var;
 
 import static java.lang.Integer.parseInt;

@@ -16,17 +16,17 @@
 
 package com.github.fge.grappa.transform.process;
 
+import com.github.fge.grappa.annotations.Label;
 import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.transform.CodeBlock;
+import com.github.fge.grappa.transform.base.ParserClassNode;
+import com.github.fge.grappa.transform.base.RuleMethod;
 import com.google.common.base.Preconditions;
 import me.qmx.jitescript.util.CodegenUtils;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LabelNode;
-import com.github.fge.grappa.annotations.Label;
-import com.github.fge.grappa.transform.base.ParserClassNode;
-import com.github.fge.grappa.transform.base.RuleMethod;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

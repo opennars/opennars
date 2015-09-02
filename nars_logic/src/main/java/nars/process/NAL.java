@@ -8,7 +8,6 @@ import nars.Global;
 import nars.Memory;
 import nars.task.Task;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 

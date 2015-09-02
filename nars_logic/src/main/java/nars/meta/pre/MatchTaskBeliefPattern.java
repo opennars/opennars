@@ -4,9 +4,7 @@ import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
-import nars.premise.Premise;
 import nars.term.Term;
-import nars.term.Variable;
 
 /**
  * Created by me on 8/15/15.

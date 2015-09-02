@@ -1,7 +1,6 @@
 package nars.meta.pre;
 
 import nars.Op;
-import nars.meta.RuleMatch;
 import nars.premise.Premise;
 import nars.task.Task;
 

@@ -1,6 +1,5 @@
 package nars.guifx;
 
-import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;

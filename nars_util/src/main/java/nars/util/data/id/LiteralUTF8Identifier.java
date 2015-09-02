@@ -2,7 +2,6 @@ package nars.util.data.id;
 
 import nars.util.data.Util;
 import nars.util.utf8.Byted;
-import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;

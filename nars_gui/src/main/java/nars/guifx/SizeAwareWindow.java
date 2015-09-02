@@ -8,7 +8,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.nar.Default;
@@ -18,7 +17,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static javafx.application.Platform.runLater;
-import static nars.guifx.NARfx.scrolled;
 
 /**
  * Size (and visibility) aware

@@ -22,7 +22,6 @@ package nars.term;
 
 
 import nars.Op;
-import nars.Symbols;
 import nars.term.transform.TermVisitor;
 import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;

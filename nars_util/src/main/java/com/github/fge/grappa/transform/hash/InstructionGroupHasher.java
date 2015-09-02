@@ -16,6 +16,8 @@
 
 package com.github.fge.grappa.transform.hash;
 
+import com.github.fge.grappa.transform.base.InstructionGroup;
+import com.github.fge.grappa.transform.process.InstructionGroupPreparer;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
@@ -24,8 +26,6 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FieldNode;
-import com.github.fge.grappa.transform.base.InstructionGroup;
-import com.github.fge.grappa.transform.process.InstructionGroupPreparer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;

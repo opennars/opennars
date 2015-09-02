@@ -29,8 +29,8 @@
  */
 package ca.nengo.ui.lib.world.piccolo.primitive;
 
-import nars.Video;
 import ca.nengo.ui.lib.NengoStyle;
+import nars.Video;
 import org.piccolo2d.util.PPaintContext;
 
 import java.awt.*;

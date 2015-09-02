@@ -3,7 +3,6 @@ package nars.cycle;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.concept.Concept;
@@ -11,7 +10,6 @@ import nars.concept.ConceptPrioritizer;
 import nars.task.Task;
 import nars.term.Term;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
 

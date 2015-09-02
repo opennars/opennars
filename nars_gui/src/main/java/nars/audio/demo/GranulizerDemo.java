@@ -1,11 +1,11 @@
 package nars.audio.demo;
 
+import automenta.vivisect.swing.NSlider;
 import nars.Audio;
 import nars.audio.SoundListener;
 import nars.audio.granular.Granulize;
 import nars.audio.granular.TimeStretchGui;
 import nars.audio.sample.SampleLoader;
-import automenta.vivisect.swing.NSlider;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;

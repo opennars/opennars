@@ -2,7 +2,6 @@ package nars.nal;
 
 import nars.Global;
 import nars.meta.TaskRule;
-import nars.meta.pre.MatchTaskBeliefPattern;
 import nars.narsese.NarseseParser;
 
 import java.io.IOException;

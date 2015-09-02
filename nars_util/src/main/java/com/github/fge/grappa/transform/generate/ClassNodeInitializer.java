@@ -28,12 +28,7 @@ import com.github.fge.grappa.transform.ParserAnnotation;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import com.github.fge.grappa.transform.base.RuleMethod;
 import com.google.common.io.Closer;
-import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.objectweb.asm.*;
 import org.objectweb.asm.tree.MethodNode;
 
 import javax.annotation.Nullable;
@@ -43,13 +38,9 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.github.fge.grappa.transform.ParserAnnotation.recordAnnotation;
-import static org.objectweb.asm.Opcodes.ACC_ABSTRACT;
-import static org.objectweb.asm.Opcodes.ACC_FINAL;
-import static org.objectweb.asm.Opcodes.ACC_NATIVE;
-import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static com.github.fge.grappa.misc.AsmUtils.getExtendedParserClassName;
+import static com.github.fge.grappa.transform.ParserAnnotation.recordAnnotation;
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Initializes the basic ParserClassNode fields and collects all methods.

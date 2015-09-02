@@ -1,7 +1,6 @@
 package nars.process.concept;
 
 
-import nars.Symbols;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.link.TermLink;

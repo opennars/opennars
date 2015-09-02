@@ -1,10 +1,10 @@
 package nars.gui.output.audio;
 
+import automenta.vivisect.swing.NPanel;
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.Audio;
 import nars.Sound;
 import nars.audio.SoundListener;
-import automenta.vivisect.swing.NPanel;
-import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

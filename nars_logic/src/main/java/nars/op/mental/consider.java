@@ -17,7 +17,6 @@
 
 package nars.op.mental;
 
-import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;

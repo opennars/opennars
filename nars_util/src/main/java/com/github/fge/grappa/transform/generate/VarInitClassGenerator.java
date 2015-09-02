@@ -20,12 +20,12 @@ import com.github.fge.grappa.transform.base.InstructionGraphNode;
 import com.github.fge.grappa.transform.base.InstructionGroup;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import com.github.fge.grappa.transform.base.RuleMethod;
+import com.github.fge.grappa.transform.process.GroupClassGenerator;
+import com.github.fge.grappa.transform.runtime.BaseVarInit;
 import me.qmx.jitescript.util.CodegenUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import com.github.fge.grappa.transform.runtime.BaseVarInit;
-import com.github.fge.grappa.transform.process.GroupClassGenerator;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

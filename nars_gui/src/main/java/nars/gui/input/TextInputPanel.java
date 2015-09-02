@@ -20,10 +20,10 @@
  */
 package nars.gui.input;
 
-import nars.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
+import nars.Video;
 import nars.gui.FileTreeModel;
 import nars.gui.output.SwingText;
 import nars.op.io.echo;

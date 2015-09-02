@@ -1,13 +1,9 @@
 package nars.sonification;
 
-import nars.Audio;
-import nars.Video;
+import nars.*;
 import nars.audio.SoundProducer;
 import nars.audio.granular.Granulize;
 import nars.audio.synth.SineWave;
-import nars.Events;
-import nars.Global;
-import nars.NAR;
 import nars.concept.Concept;
 import nars.event.ConceptReaction;
 

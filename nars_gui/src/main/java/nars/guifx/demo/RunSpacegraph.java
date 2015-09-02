@@ -1,8 +1,5 @@
 package nars.guifx.demo;
 
-import nars.guifx.CodeInput;
-import nars.guifx.Spacegraph;
-import nars.guifx.Windget;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -13,7 +10,10 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import nars.NAR;
+import nars.guifx.CodeInput;
+import nars.guifx.Spacegraph;
 import nars.guifx.TerminalPane;
+import nars.guifx.Windget;
 import nars.nar.Default;
 import za.co.knonchalant.builder.POJONode;
 import za.co.knonchalant.builder.TaggedParameters;

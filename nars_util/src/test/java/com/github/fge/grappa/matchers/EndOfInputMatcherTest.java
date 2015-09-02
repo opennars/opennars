@@ -16,9 +16,9 @@
 
 package com.github.fge.grappa.matchers;
 
+import com.github.fge.grappa.run.MatchHandler;
 import com.github.fge.grappa.util.MatcherContextBuilder;
 import com.github.fge.grappa.util.SimpleMatchHandler;
-import com.github.fge.grappa.run.MatchHandler;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

@@ -23,6 +23,8 @@
 package com.github.fge.grappa.misc;
 
 import com.github.fge.grappa.parsers.BaseParser;
+import com.github.fge.grappa.run.context.ContextAware;
+import com.github.fge.grappa.support.Var;
 import com.github.fge.grappa.transform.ClassCache;
 import com.github.fge.grappa.transform.LoadingOpcode;
 import me.qmx.jitescript.util.CodegenUtils;
@@ -32,8 +34,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import com.github.fge.grappa.run.context.ContextAware;
-import com.github.fge.grappa.support.Var;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;

@@ -27,11 +27,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 public final class ParserClassNode
     extends ClassNode

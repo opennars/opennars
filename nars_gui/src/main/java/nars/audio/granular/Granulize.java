@@ -1,8 +1,8 @@
 package nars.audio.granular;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.audio.SoundProducer;
 import nars.audio.sample.SonarSample;
-import com.google.common.util.concurrent.AtomicDouble;
 
 public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 

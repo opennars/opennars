@@ -22,7 +22,6 @@ package nars.term;
 
 
 import nars.Op;
-import nars.Symbols;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 

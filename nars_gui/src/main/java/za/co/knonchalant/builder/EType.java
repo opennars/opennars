@@ -1,6 +1,5 @@
 package za.co.knonchalant.builder;
 
-import nars.util.math.Range;
 import org.apache.commons.math3.geometry.euclidean.oned.Interval;
 import za.co.knonchalant.builder.converters.*;
 

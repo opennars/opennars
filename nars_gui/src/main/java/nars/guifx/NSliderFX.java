@@ -6,10 +6,8 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Control;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 

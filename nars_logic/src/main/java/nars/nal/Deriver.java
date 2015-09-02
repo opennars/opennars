@@ -1,15 +1,7 @@
 package nars.nal;
 
-import com.gs.collections.api.list.MutableList;
-import com.gs.collections.impl.multimap.list.FastListMultimap;
-import nars.Op;
 import nars.link.TermLink;
-import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
-import nars.meta.TaskRule;
-import nars.meta.pre.BeliefTermType;
-import nars.meta.pre.TaskTermMinVolume;
-import nars.meta.pre.TaskTermType;
 import nars.process.ConceptProcess;
 import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Task;

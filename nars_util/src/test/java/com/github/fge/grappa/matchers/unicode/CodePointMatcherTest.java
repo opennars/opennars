@@ -17,9 +17,9 @@
 package com.github.fge.grappa.matchers.unicode;
 
 import com.github.fge.grappa.buffers.InputBuffer;
+import com.github.fge.grappa.run.context.MatcherContext;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import com.github.fge.grappa.run.context.MatcherContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -30,9 +30,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public final class CodePointMatcherTest
 {

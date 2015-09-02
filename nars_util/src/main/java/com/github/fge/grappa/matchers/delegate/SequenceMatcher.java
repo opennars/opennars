@@ -20,8 +20,8 @@ import com.github.fge.grappa.matchers.MatcherType;
 import com.github.fge.grappa.matchers.base.CustomDefaultLabelMatcher;
 import com.github.fge.grappa.matchers.base.Matcher;
 import com.github.fge.grappa.rules.Rule;
-import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.run.context.MatcherContext;
+import com.github.fge.grappa.stack.ValueStack;
 
 import java.util.List;
 import java.util.Objects;

@@ -10,11 +10,8 @@ import nars.nar.experimental.Solid;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 8/31/15.

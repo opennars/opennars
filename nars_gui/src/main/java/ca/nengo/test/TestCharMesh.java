@@ -1,7 +1,6 @@
 package ca.nengo.test;
 
 
-import nars.Video;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
@@ -17,6 +16,7 @@ import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.ui.model.plot.MeshCursor;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import ca.nengo.util.ScriptGenException;
+import nars.Video;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
 

@@ -1,6 +1,5 @@
 package nars.meter;
 
-import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.process.ConceptProcess;

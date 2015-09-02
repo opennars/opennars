@@ -1,15 +1,8 @@
 package com.github.fge.grappa.support;
 
-import com.google.common.annotations.Beta;
-import com.google.common.annotations.GwtCompatible;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.escape.ArrayBasedEscaperMap;
 import com.google.common.escape.ArrayBasedUnicodeEscaper;
 import com.google.common.escape.CharEscaper;
 import com.gs.collections.api.map.primitive.CharObjectMap;
-
-import java.util.Collections;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

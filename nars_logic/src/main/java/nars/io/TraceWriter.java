@@ -20,7 +20,6 @@
  */
 package nars.io;
 
-import nars.Events;
 import nars.Events.OUT;
 import nars.NAR;
 import nars.clock.Clock;

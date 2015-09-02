@@ -1,7 +1,6 @@
 package nars.process.concept;
 
 import nars.Op;
-import nars.Symbols;
 import nars.link.TermLink;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal7.TemporalRules;

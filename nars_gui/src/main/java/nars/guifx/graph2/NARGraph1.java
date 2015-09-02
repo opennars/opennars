@@ -2,8 +2,6 @@ package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.dimensionalize.IterativeLayout;
-import nars.guifx.Spacegraph;
-import nars.guifx.demo.Animate;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import javafx.animation.Timeline;
@@ -26,6 +24,8 @@ import nars.NAR;
 import nars.NARStream;
 import nars.concept.Concept;
 import nars.guifx.NARfx;
+import nars.guifx.Spacegraph;
+import nars.guifx.demo.Animate;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.term.Term;

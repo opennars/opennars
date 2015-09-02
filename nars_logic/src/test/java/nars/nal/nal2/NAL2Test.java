@@ -14,8 +14,6 @@ import org.junit.runners.Parameterized;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static nars.nal.nal7.Tense.Eternal;
-
 public class NAL2Test extends JavaNALTest {
 
     public NAL2Test(NARSeed b) { super(b); }

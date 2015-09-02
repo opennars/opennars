@@ -14,9 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
-import org.w3c.dom.Element;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.EventListener;
 
 import java.io.IOException;
 import java.net.URI;

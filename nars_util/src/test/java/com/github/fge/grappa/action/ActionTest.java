@@ -17,11 +17,11 @@
 package com.github.fge.grappa.action;
 
 import com.github.fge.grappa.Grappa;
+import com.github.fge.grappa.annotations.Label;
 import com.github.fge.grappa.parsers.BaseActions;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Action;
 import com.github.fge.grappa.rules.Rule;
-import com.github.fge.grappa.annotations.Label;
 import com.github.fge.grappa.run.context.Context;
 import com.github.fge.grappa.test.ParboiledTest;
 import org.testng.annotations.Test;

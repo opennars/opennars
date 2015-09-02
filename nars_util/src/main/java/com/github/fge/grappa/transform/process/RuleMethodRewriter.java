@@ -24,20 +24,14 @@ package com.github.fge.grappa.transform.process;
 
 import com.github.fge.grappa.transform.CodeBlock;
 import com.github.fge.grappa.transform.LoadingOpcode;
-import com.google.common.base.Supplier;
-import me.qmx.jitescript.util.CodegenUtils;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
 import com.github.fge.grappa.transform.base.InstructionGraphNode;
 import com.github.fge.grappa.transform.base.InstructionGroup;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import com.github.fge.grappa.transform.base.RuleMethod;
+import com.google.common.base.Supplier;
+import me.qmx.jitescript.util.CodegenUtils;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.*;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

@@ -1,10 +1,10 @@
 package nars.gui.output;
 
-import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.Events;
 import nars.Events.OUT;
 import nars.NAR;
+import nars.Video;
 import nars.concept.Concept;
 import nars.io.out.TextOutput;
 import nars.task.Sentence;

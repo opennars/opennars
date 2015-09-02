@@ -2,8 +2,6 @@ package nars.util.graph;
 
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.task.Task;
 import org.jgrapht.graph.DirectedMultigraph;
 

@@ -19,6 +19,9 @@ package com.github.fge.grappa.transform.process;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Action;
 import com.github.fge.grappa.rules.Rule;
+import com.github.fge.grappa.transform.base.InstructionGraphNode;
+import com.github.fge.grappa.transform.base.ParserClassNode;
+import com.github.fge.grappa.transform.base.RuleMethod;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import me.qmx.jitescript.util.CodegenUtils;
@@ -26,9 +29,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
-import com.github.fge.grappa.transform.base.InstructionGraphNode;
-import com.github.fge.grappa.transform.base.ParserClassNode;
-import com.github.fge.grappa.transform.base.RuleMethod;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -36,10 +36,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static org.objectweb.asm.Opcodes.AASTORE;
-import static org.objectweb.asm.Opcodes.ANEWARRAY;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static com.github.fge.grappa.misc.AsmUtils.isBooleanValueOfZ;
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Makes all implicit action expressions in a rule method explicit.

@@ -22,11 +22,11 @@
 
 package com.github.fge.grappa.transform.base;
 
+import com.github.fge.grappa.misc.AsmUtils;
 import com.google.common.collect.Range;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
 import org.objectweb.asm.util.Printer;
-import com.github.fge.grappa.misc.AsmUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,10 +35,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import static org.objectweb.asm.Opcodes.IALOAD;
-import static org.objectweb.asm.Opcodes.IASTORE;
-import static org.objectweb.asm.Opcodes.ILOAD;
-import static org.objectweb.asm.Opcodes.ISTORE;
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * A node in the instruction dependency graph.

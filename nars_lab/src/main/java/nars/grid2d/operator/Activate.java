@@ -20,7 +20,6 @@
  */
 package nars.grid2d.operator;
 
-import nars.Memory;
 import nars.grid2d.TestChamber;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;

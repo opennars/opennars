@@ -2,7 +2,6 @@ package nars.nal.nal1;
 
 import nars.Global;
 import nars.NARSeed;
-import nars.io.out.TextOutput;
 import nars.nal.JavaNALTest;
 import nars.nar.Classic;
 import nars.nar.Default;

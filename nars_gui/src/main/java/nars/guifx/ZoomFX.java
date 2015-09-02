@@ -1,6 +1,5 @@
 package nars.guifx;
 
-import nars.guifx.demo.Animate;
 import dejv.commons.jfx.geometry.ObservableBounds;
 import dejv.commons.jfx.geometry.ObservableDimension2D;
 import javafx.beans.property.DoubleProperty;
@@ -12,6 +11,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
+import nars.guifx.demo.Animate;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 

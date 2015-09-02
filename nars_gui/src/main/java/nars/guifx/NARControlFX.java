@@ -1,6 +1,5 @@
 package nars.guifx;
 
-import automenta.vivisect.swing.NSlider;
 import de.jensd.fx.glyphs.GlyphIcon;
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;

@@ -1,6 +1,5 @@
 package nars.op.meta;
 
-import nars.Memory;
 import nars.link.TermLink;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;

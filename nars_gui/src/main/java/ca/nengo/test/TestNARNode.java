@@ -1,6 +1,5 @@
 package ca.nengo.test;
 
-import nars.Video;
 import ca.nengo.model.AgentNode;
 import ca.nengo.model.Network;
 import ca.nengo.model.SimulationException;
@@ -16,6 +15,7 @@ import ca.nengo.ui.model.widget.SliderNode;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
+import nars.Video;
 import nars.event.NARReaction;
 import nars.gui.NARSwing;
 import nars.io.out.Output;

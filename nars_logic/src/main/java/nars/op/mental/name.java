@@ -30,7 +30,6 @@ import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -38,7 +38,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 
-import static nars.Symbols.*;
+import static nars.Symbols.STATEMENT_CLOSER;
+import static nars.Symbols.STATEMENT_OPENER;
 
 /**
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a

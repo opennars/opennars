@@ -1,6 +1,5 @@
 package nars.rl;
 
-import nars.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.arcade.agents.AbstractAgent;
 import jurls.reinforcementlearning.domains.arcade.io.Actions;
@@ -10,6 +9,7 @@ import jurls.reinforcementlearning.domains.arcade.rl.FeatureMap;
 import jurls.reinforcementlearning.domains.arcade.rl.FrameHistory;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
 import nars.NAR;
+import nars.Video;
 import nars.nar.Default;
 import nars.rl.example.QVis;
 import nars.task.Task;

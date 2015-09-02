@@ -32,7 +32,6 @@
 
 package nars.guifx.graph3.example;
 
-import nars.guifx.graph3.Xform;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.*;
@@ -45,6 +44,7 @@ import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
+import nars.guifx.graph3.Xform;
 
 /**
  *

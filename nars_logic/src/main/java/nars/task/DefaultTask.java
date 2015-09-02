@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.AbstractMemory;
 import nars.Global;
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Item;

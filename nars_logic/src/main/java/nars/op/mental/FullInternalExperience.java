@@ -1,6 +1,5 @@
 package nars.op.mental;
 
-import nars.Events;
 import nars.NAR;
 import nars.process.TaskProcess;
 

@@ -41,7 +41,9 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
 
     CacheBag<Term,Concept> newConceptIndex();
 
-    int getMaximumNALLevel();
+    default int getMaximumNALLevel() {
+        return 8;
+    }
 
     /** called after NAR created, for initializing it */
     void init(NAR nar);

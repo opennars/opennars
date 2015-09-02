@@ -1,6 +1,5 @@
 package ca.nengo.model.impl;
 
-import nars.Video;
 import ca.nengo.model.NSource;
 import ca.nengo.model.NTarget;
 import ca.nengo.model.Node;
@@ -12,6 +11,7 @@ import ca.nengo.ui.model.icon.PolygonIcon;
 import ca.nengo.ui.model.widget.UISource;
 import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.util.ScriptGenException;
+import nars.Video;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 import java.awt.*;

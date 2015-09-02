@@ -23,6 +23,7 @@
 package com.github.fge.grappa.transform.base;
 
 import com.github.fge.grappa.parsers.BaseParser;
+import com.github.fge.grappa.support.Var;
 import com.github.fge.grappa.transform.ParserAnnotation;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -35,33 +36,12 @@ import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.BasicValue;
-import com.github.fge.grappa.support.Var;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-import static com.github.fge.grappa.transform.ParserAnnotation.CACHED;
-import static com.github.fge.grappa.transform.ParserAnnotation.DONT_EXTEND;
-import static com.github.fge.grappa.transform.ParserAnnotation.DONT_LABEL;
-import static com.github.fge.grappa.transform.ParserAnnotation
-    .DONT_SKIP_ACTIONS_IN_PREDICATES;
-import static com.github.fge.grappa.transform.ParserAnnotation
-    .EXPLICIT_ACTIONS_ONLY;
-import static com.github.fge.grappa.transform.ParserAnnotation
-    .SKIP_ACTIONS_IN_PREDICATES;
-import static com.github.fge.grappa.transform.ParserAnnotation.moveTo;
-import static com.github.fge.grappa.transform.ParserAnnotation.recordAnnotation;
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static com.github.fge.grappa.misc.AsmUtils.getClassForType;
-import static com.github.fge.grappa.misc.AsmUtils.isActionRoot;
-import static com.github.fge.grappa.misc.AsmUtils.isAssignableTo;
-import static com.github.fge.grappa.misc.AsmUtils.isBooleanValueOfZ;
-import static com.github.fge.grappa.misc.AsmUtils.isVarRoot;
+import static com.github.fge.grappa.misc.AsmUtils.*;
+import static com.github.fge.grappa.transform.ParserAnnotation.*;
+import static org.objectweb.asm.Opcodes.*;
 
 public class RuleMethod
     extends MethodNode

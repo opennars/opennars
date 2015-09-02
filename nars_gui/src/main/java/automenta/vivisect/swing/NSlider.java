@@ -18,9 +18,7 @@
 package automenta.vivisect.swing;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import javafx.beans.property.DoubleProperty;
 import nars.Video;
-import nars.guifx.NSliderFX;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

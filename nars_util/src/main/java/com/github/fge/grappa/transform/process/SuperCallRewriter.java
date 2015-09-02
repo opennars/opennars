@@ -16,20 +16,18 @@
 
 package com.github.fge.grappa.transform.process;
 
+import com.github.fge.grappa.transform.base.ParserClassNode;
+import com.github.fge.grappa.transform.base.RuleMethod;
 import com.google.common.base.Preconditions;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
-import com.github.fge.grappa.transform.base.ParserClassNode;
-import com.github.fge.grappa.transform.base.RuleMethod;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Replaces the method code with a simple call to the super method.

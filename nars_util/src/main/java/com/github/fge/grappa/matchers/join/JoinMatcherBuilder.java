@@ -16,6 +16,7 @@
 
 package com.github.fge.grappa.matchers.join;
 
+import com.github.fge.grappa.annotations.Cached;
 import com.github.fge.grappa.matchers.EmptyMatcher;
 import com.github.fge.grappa.matchers.delegate.OptionalMatcher;
 import com.github.fge.grappa.rules.Rule;
@@ -24,7 +25,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BoundType;
 import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.Range;
-import com.github.fge.grappa.annotations.Cached;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;

@@ -1,12 +1,12 @@
 package nars.guifx.graph3.example;
 
-import nars.guifx.graph3.SpacenetApp;
-import nars.guifx.graph3.Xform;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
+import nars.guifx.graph3.SpacenetApp;
+import nars.guifx.graph3.Xform;
 
 
 public class Molecule extends SpacenetApp {

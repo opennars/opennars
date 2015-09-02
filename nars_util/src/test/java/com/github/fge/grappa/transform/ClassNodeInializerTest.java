@@ -17,9 +17,9 @@
 package com.github.fge.grappa.transform;
 
 import com.github.fge.grappa.transform.base.RuleMethod;
+import com.github.fge.grappa.transform.process.TransformationTest;
 import com.google.common.base.Predicate;
 import org.objectweb.asm.tree.MethodNode;
-import com.github.fge.grappa.transform.process.TransformationTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

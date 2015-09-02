@@ -2,9 +2,7 @@ package nars.meta.pre;
 
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
-import nars.meta.TaskRule;
 import nars.task.Task;
-import nars.term.Term;
 
 /**
  * After(%X,%Y) Means that the task matching the pattern of the first argument is after the task of the pattern of the 2nd

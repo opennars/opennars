@@ -18,9 +18,9 @@ package com.github.fge.grappa.parsers;
 
 import com.github.fge.grappa.buffers.InputBuffer;
 import com.github.fge.grappa.exceptions.InvalidGrammarException;
-import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.run.context.Context;
 import com.github.fge.grappa.run.context.ContextAware;
+import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.IndexRange;
 import com.github.fge.grappa.support.Position;
 

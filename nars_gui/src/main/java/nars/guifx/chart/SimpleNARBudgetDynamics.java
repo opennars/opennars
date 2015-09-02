@@ -1,7 +1,6 @@
 package nars.guifx.chart;
 
 import nars.Global;
-import nars.NAR;
 import nars.NARStream;
 import nars.nar.Default;
 import nars.nar.NewDefault;

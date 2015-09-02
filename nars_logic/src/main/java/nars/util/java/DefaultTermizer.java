@@ -1,6 +1,5 @@
 package nars.util.java;
 
-import com.gs.collections.impl.bimap.mutable.HashBiMap;
 import nars.nal.nal4.Product;
 import nars.term.Atom;
 import nars.term.Term;

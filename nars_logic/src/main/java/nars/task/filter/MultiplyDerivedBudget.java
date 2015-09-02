@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import nars.budget.Budget;
 import nars.premise.Premise;
 import nars.task.Task;
-import nars.task.TaskSeed;
 
 
 /**

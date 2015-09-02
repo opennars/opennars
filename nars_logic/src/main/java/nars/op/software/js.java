@@ -1,17 +1,13 @@
 package nars.op.software;
 
-import nars.Memory;
 import nars.NAR;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.TermFunction;
-import nars.op.io.echo;
 import nars.op.mental.Mental;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;

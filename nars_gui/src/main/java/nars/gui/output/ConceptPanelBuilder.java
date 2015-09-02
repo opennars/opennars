@@ -4,11 +4,11 @@
  */
 package nars.gui.output;
 
-import nars.Video;
 import javolution.util.FastMap;
 import nars.Events;
 import nars.Events.FrameEnd;
 import nars.NAR;
+import nars.Video;
 import nars.bag.Bag;
 import nars.budget.Budgeted;
 import nars.budget.Itemized;

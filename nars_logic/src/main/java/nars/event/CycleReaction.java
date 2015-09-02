@@ -1,6 +1,5 @@
 package nars.event;
 
-import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.util.event.Observed;

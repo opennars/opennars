@@ -1,11 +1,8 @@
 package nars.guifx;
 
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import nars.io.Texts;
 import org.apache.commons.math3.util.FastMath;

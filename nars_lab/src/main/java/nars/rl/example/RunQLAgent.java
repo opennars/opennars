@@ -1,11 +1,11 @@
 package nars.rl.example;
 
-import nars.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
+import nars.Video;
 import nars.concept.BeliefTable;
 import nars.gui.NARSwing;
 import nars.nar.Default;

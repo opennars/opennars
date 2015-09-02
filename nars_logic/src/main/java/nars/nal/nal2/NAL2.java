@@ -5,7 +5,6 @@ import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Equivalence;
 import nars.premise.Premise;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;

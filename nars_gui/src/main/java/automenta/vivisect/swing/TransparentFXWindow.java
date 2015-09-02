@@ -1,6 +1,5 @@
 package automenta.vivisect.swing;
 
-import nars.Video;
 import javafx.application.Application;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
@@ -17,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import nars.Video;
 
 
 public class TransparentFXWindow extends Application {

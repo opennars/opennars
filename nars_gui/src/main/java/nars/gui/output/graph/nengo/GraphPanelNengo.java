@@ -28,7 +28,10 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 /** for displaying any generic Graph */
 public class GraphPanelNengo<V extends Named, E> extends Nengrow {

@@ -17,8 +17,8 @@
 
 package nars.tictactoe;
 
-import nars.Video;
 import nars.NAR;
+import nars.Video;
 import nars.gui.NARSwing;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;

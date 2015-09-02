@@ -1,15 +1,10 @@
 package nars.cycle;
 
 import nars.Memory;
-import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
-import nars.io.DefaultPerception;
-import nars.io.Perception;
-import nars.io.in.Input;
 import nars.process.CycleProcess;
-import nars.task.Task;
 import nars.term.Term;
 
 import java.util.Iterator;
@@ -71,12 +66,14 @@ public abstract class AbstractCycle<C extends CacheBag<Term,Concept>> extends Co
     }
 
     @Override
-    final public Concept get(final Term key) {
+    public Concept get(final Term key) {
         return concepts.get(key);
     }
 
+
     @Override
     public void reset(Memory m) {
+
 
 
         clear();

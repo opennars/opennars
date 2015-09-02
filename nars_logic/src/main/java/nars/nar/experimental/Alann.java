@@ -1,156 +1,305 @@
 package nars.nar.experimental;
 
 import com.google.common.collect.Iterators;
-import com.gs.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
-import nars.*;
-import nars.bag.Bag;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
+import nars.Param;
 import nars.bag.impl.CacheBag;
-import nars.bag.impl.CurveBag;
-import nars.bag.impl.GuavaCacheBag;
-import nars.budget.*;
-import nars.clock.CycleClock;
-import nars.concept.*;
-import nars.cycle.AbstractCycle;
-import nars.cycle.SequentialCycle;
+import nars.bag.impl.MapCacheBag;
+import nars.budget.Budget;
+import nars.budget.ItemAccumulator;
+import nars.budget.Itemized;
+import nars.concept.Concept;
+import nars.concept.ConceptBuilder;
 import nars.io.out.TextOutput;
-import nars.link.*;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.meter.NARTrace;
+import nars.nal.Deriver;
 import nars.nal.PremiseProcessor;
+import nars.nar.Default;
 import nars.nar.NewDefault;
-import nars.premise.Premise;
-import nars.process.CycleProcess;
+import nars.process.ConceptProcess;
+import nars.process.ConceptProcessTaskLink;
+import nars.process.ConceptProcessTaskTermLink;
 import nars.process.TaskProcess;
-import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.transform.TermVisitor;
+import nars.util.data.random.XorShift1024StarRandom;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
-import java.util.function.Consumer;
 
 /**
  * "Adaptive Logic And Neural Networks" Spiking continuous-time model
  * designed by TonyLo
  */
-public class Alann extends AbstractNARSeed {
-    @Override
-    public boolean accept(Task t) {
-        return false;
+public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
+
+    private MapCacheBag<Term, Concept> index;
+    private Iterator<Concept> indexIterator;
+
+    public static void main(String[] args) {
+        //temporary testing shell
+
+        Global.DEBUG = true;
+        Global.EXIT_ON_EXCEPTION = true;
+
+        NAR n = new NAR(new Alann(2));
+        TextOutput.out(n);
+        NARTrace.out(n);
+
+        n.input("<x --> y>.\n" +
+                "<y --> z>.\n" +
+                "<x --> z>?\n");
+
+        n.frame(8);
+
     }
+
+
+    /** shadow defaults, will replace once refactored */
+    @Deprecated final Default defaults = new NewDefault();
+
+    final Random rng = new XorShift1024StarRandom(1);
+
+    final ItemAccumulator<Task> newTasks = new ItemAccumulator(Budget.plus);
+
+
+    @Override
+    public boolean accept(final Task t) {
+        return newTasks.add(t);
+    }
+
+    /** particle that travels through the graph,
+     * responsible for deciding what to derive */
+    class Derivelet {
+
+        /** current location */
+        public Concept concept;
+
+
+        public ConceptProcess nextPremise() {
+
+            TaskLink tl = concept.getTaskLinks().forgetNext();
+            if (tl == null) return null;
+
+            //TODO better probabilities
+            if (Math.random() < 0.1) {
+                return new ConceptProcessTaskLink(concept, tl);
+            }
+            else {
+                TermLink tm = concept.getTermLinks().forgetNext();
+                if (tm == null)
+                    return new ConceptProcessTaskLink(concept, tl);
+
+                return new ConceptProcessTaskTermLink(concept, tl, tm);
+            }
+
+        }
+
+        /** determines a next concept to move adjacent to
+         *  the concept it is currently at
+         */
+        public Concept nextConcept() {
+            if (concept == null) {
+                return null;
+            }
+
+            if (Math.random() < 0.5) {
+                //stay here
+                return concept;
+            }
+            if (Math.random() < 0.25) {
+                TermLink tl = concept.getTermLinks().forgetNext();
+                Concept tlConcept = get(tl.getTerm());
+                if (tlConcept!=null) return tlConcept;
+            }
+            if (Math.random() < 0.25) {
+                TaskLink tl = concept.getTaskLinks().forgetNext();
+                Concept tkConcept = get(tl.getTerm());
+                if (tkConcept != null) return tkConcept;
+            }
+
+            //stay here
+            return concept;
+        }
+
+        /** run next iteration; true if still alive by end, false if died and needs recycled */
+        public boolean cycle() {
+            if ( (concept = nextConcept()) == null)
+                return false;
+
+            ConceptProcess p = nextPremise();
+            System.out.println(p);
+
+            p.run();
+
+            return true;
+        }
+
+        public TaskLink taskLink;
+
+        public Task belief;
+
+        public void start(Concept concept) {
+            this.concept = concept;
+        }
+    }
+
+
+    public final List<Derivelet> derivers = new ArrayList();
+
+    public Alann(int initialDerivers) {
+        for (int i = 0; i < initialDerivers; i++)
+            derivers.add( new Derivelet() );
+    }
+
 
     @Override
     public void cycle() {
 
+        if (!newTasks.isEmpty()) {
+            List<Task> toProcess = new ArrayList();
+
+            Iterator<Task> ii = newTasks.iterateHighestFirst();
+            int max = 5;
+            int processed = 0;
+            while (ii.hasNext() && processed < max) {
+                Task t = ii.next();
+                toProcess.add(t);
+                newTasks.items.remove(t);
+
+                processed++;
+            }
+
+            System.out.println("new tasks: " + processed + " processed, " + newTasks.size() + " pending");
+
+//            int inputs = 1;
+//            for (int i = 0; i < inputs; i++) {
+//                toProcess.add( newTasks.removeHighest() );
+//            }
+
+            toProcess.forEach(t -> new TaskProcess(memory, t).run());
+        }
+
+
+        if (index.size() > 0) {
+            for (int i = 0; i < derivers.size(); i++) {
+                Derivelet d = derivers.get(i);
+                if (!d.cycle()) {
+                    Concept c = nextConcept();
+                    if (c != null)
+                        d.start(c);
+                    //else ?
+                }
+            }
+        }
+
+        System.out.println("cycle " + memory.time());
     }
 
     @Override
-    public void reset(AbstractMemory memory) {
+    public Concept put(Concept concept) {
+        return index.put(concept);
+    }
 
+    @Override
+    public Concept get(Term key) {
+        return index.get(key);
     }
 
     @Override
     public Concept conceptualize(Term term, Budget budget, boolean createIfMissing) {
-        return null;
+        Concept existing = get(term);
+        if (existing == null) {
+            put(existing = newConcept(term, budget, memory));
+        }
+        else {
+            Budget.plus.value(existing.getBudget(), budget);
+        }
+        return existing;
     }
 
     @Override
     public Concept nextConcept() {
-        return null;
+        final Concept c = indexIterator.next();
+        if (c == null)
+            return null;
+        return c;
     }
 
     @Override
     public boolean reprioritize(Term term, float newPriority) {
-        return false;
+        throw new RuntimeException("N/A");
     }
 
     @Override
     public Concept remove(Concept c) {
-        return null;
+        Itemized removed = index.remove(c.getTerm());
+        if ((removed==null) || (removed!=c))
+            throw new RuntimeException("concept unknown");
+
+        c.getBudget().zero(); return c;
     }
 
-    @Override
-    public Itemized get(Object key) {
-        return null;
-    }
 
-    @Override
-    public Itemized remove(Object key) {
-        return null;
-    }
-
-    @Override
-    public Itemized put(Itemized itemized) {
-        return null;
-    }
-
-    @Override
-    public CycleProcess newCycleProcess() {
-        return null;
-    }
 
     @Override
     public Param newParam() {
-        return null;
+        defaults.the(Deriver.class, NewDefault.der);
+        return defaults;
     }
 
     @Override
     public Random getRandom() {
-        return null;
+        return rng;
     }
 
     @Override
     public CacheBag<Term, Concept> newConceptIndex() {
-        return null;
+        this.index = new MapCacheBag(Global.newHashMap());
+        this.indexIterator = Iterators.cycle(index);
+        return this.index;
     }
 
-    @Override
-    public int getMaximumNALLevel() {
-        return 0;
+    public Memory newMemory() {
+
+        final Param p = newParam();
+
+        return new Memory(
+                getRandom(),
+                getMaximumNALLevel(),
+                p,
+                getConceptBuilder(),
+                getPremiseProcessor(p),
+                newConceptIndex()
+        );
     }
 
     @Override
     public void init(NAR nar) {
-
+        defaults.init(nar);
     }
 
     @Override
     public PremiseProcessor getPremiseProcessor(Param p) {
-        return null;
+        return defaults.getPremiseProcessor(p);
     }
 
     @Override
     public ConceptBuilder getConceptBuilder() {
-        return null;
+        return defaults.getConceptBuilder();
     }
 
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
-        return null;
+        return defaults.newConcept(t, b, m);
     }
 
-
-//
-//    public static void main(String[] args) {
-//        //temporary testing shell
-//
-//        Global.DEBUG = true;
-//        Global.EXIT_ON_EXCEPTION = true;
-//
-//        Global.DEFAULT_JUDGMENT_PRIORITY = defaultBeliefPriority;
-//
-//        NAR n = new NAR(new Alann());
-//        TextOutput.out(n);
-//        NARTrace.out(n);
-//
-//        n.input("<x --> y>.\n" +
-//                "<y --> z>.\n" +
-//                "<x --> z>?\n");
-//
-//        n.frame(8);
-//
-//    }
 //
 //    @Override
 //    protected Memory newMemory(Param narParam, ConceptProcessor policy) {

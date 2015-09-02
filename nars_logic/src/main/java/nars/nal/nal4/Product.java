@@ -29,7 +29,6 @@ import nars.term.Term;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * A Product is a sequence of 1 or more terms.

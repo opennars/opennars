@@ -23,9 +23,9 @@
  ******************************************************************************/
 package nars.rover.physics.gl;
 
-import nars.Video;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import nars.Video;
 import nars.rover.physics.PhysicsCamera;
 import nars.rover.physics.j2d.SwingDraw;
 import org.jbox2d.callbacks.DebugDraw;

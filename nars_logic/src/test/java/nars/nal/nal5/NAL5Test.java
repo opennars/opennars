@@ -1,16 +1,12 @@
 package nars.nal.nal5;
 
-import nars.Events;
-import nars.NAR;
 import nars.NARSeed;
-import nars.event.NARReaction;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
 import nars.nar.DefaultDeep;
 import nars.nar.DefaultMicro;
 import nars.nar.NewDefault;
 import nars.narsese.InvalidInputException;
-import nars.task.Task;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

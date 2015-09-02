@@ -11,7 +11,6 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.ConceptBagActivator;

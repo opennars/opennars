@@ -1,11 +1,5 @@
 package nars;
 
-import nars.concept.Concept;
-import nars.premise.Premise;
-import nars.task.Sentence;
-import nars.task.Task;
-import nars.util.event.Reaction;
-
 import java.util.Arrays;
 import java.util.List;
 

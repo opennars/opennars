@@ -26,7 +26,6 @@ import nars.nal.nal8.operator.SynchOperator;
 import nars.task.Task;
 import nars.term.Term;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

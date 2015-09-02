@@ -4,8 +4,6 @@ import nars.NAR;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;
-import nars.guifx.NARfx;
-import nars.nar.experimental.Equalized;
 
 import javax.swing.*;
 import java.awt.*;

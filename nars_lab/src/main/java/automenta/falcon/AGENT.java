@@ -2,8 +2,6 @@ package automenta.falcon;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
 
-import java.util.function.Consumer;
-
 public abstract class AGENT {
 
     public final static int RFALCON = 0;

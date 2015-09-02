@@ -1,15 +1,12 @@
 package nars.guifx;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 import nars.NAR;
 import nars.event.FrameReaction;
@@ -17,7 +14,10 @@ import nars.op.io.echo;
 import nars.task.Task;
 import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 

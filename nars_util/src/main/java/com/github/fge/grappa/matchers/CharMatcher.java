@@ -22,7 +22,6 @@ import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.support.Chars;
 
 import static com.github.fge.grappa.support.Chars.escape;
-import static com.github.fge.grappa.support.Chars.escapeChar;
 
 /**
  * A {@link Matcher} matching a single given character.

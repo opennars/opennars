@@ -16,8 +16,8 @@
 
 package com.github.fge.grappa.transform.process;
 
-import com.google.common.collect.ImmutableList;
 import com.github.fge.grappa.transform.TestParser;
+import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

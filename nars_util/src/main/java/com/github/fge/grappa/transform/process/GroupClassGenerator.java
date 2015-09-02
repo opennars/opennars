@@ -16,37 +16,25 @@
 
 package com.github.fge.grappa.transform.process;
 
+import com.github.fge.grappa.misc.AsmUtils;
+import com.github.fge.grappa.run.context.Context;
+import com.github.fge.grappa.run.context.ContextAware;
 import com.github.fge.grappa.transform.CodeBlock;
+import com.github.fge.grappa.transform.base.InstructionGraphNode;
+import com.github.fge.grappa.transform.base.InstructionGroup;
+import com.github.fge.grappa.transform.base.ParserClassNode;
+import com.github.fge.grappa.transform.base.RuleMethod;
 import me.qmx.jitescript.util.CodegenUtils;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import com.github.fge.grappa.run.context.Context;
-import com.github.fge.grappa.run.context.ContextAware;
-import com.github.fge.grappa.misc.AsmUtils;
-import com.github.fge.grappa.transform.base.InstructionGraphNode;
-import com.github.fge.grappa.transform.base.InstructionGroup;
-import com.github.fge.grappa.transform.base.ParserClassNode;
-import com.github.fge.grappa.transform.base.RuleMethod;
+import org.objectweb.asm.tree.*;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import static org.objectweb.asm.Opcodes.ACC_FINAL;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SYNTHETIC;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.DUP;
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.*;
 
 public abstract class GroupClassGenerator
     implements RuleMethodProcessor

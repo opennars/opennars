@@ -5,18 +5,9 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
-import java.lang.invoke.CallSite;
-import java.lang.invoke.ConstantCallSite;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
+import java.lang.invoke.*;
 
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.H_INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_7;
+import static org.objectweb.asm.Opcodes.*;
 
 public final class Tester
 {

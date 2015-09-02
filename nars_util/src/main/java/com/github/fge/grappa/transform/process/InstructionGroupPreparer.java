@@ -16,15 +16,15 @@
 
 package com.github.fge.grappa.transform.process;
 
+import com.github.fge.grappa.transform.base.InstructionGraphNode;
+import com.github.fge.grappa.transform.base.InstructionGroup;
+import com.github.fge.grappa.transform.base.ParserClassNode;
+import com.github.fge.grappa.transform.base.RuleMethod;
 import com.github.fge.grappa.transform.hash.InstructionGroupHasher;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import com.github.fge.grappa.transform.base.InstructionGraphNode;
-import com.github.fge.grappa.transform.base.InstructionGroup;
-import com.github.fge.grappa.transform.base.ParserClassNode;
-import com.github.fge.grappa.transform.base.RuleMethod;
 
 import javax.annotation.Nonnull;
 import java.util.List;

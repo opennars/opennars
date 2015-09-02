@@ -41,7 +41,11 @@ public class BloomFilterNovelPremiseGenerator extends TermLinkBagPremiseGenerato
     }
 
     public BloomFilterNovelPremiseGenerator(AtomicInteger maxSelectionAttempts) {
-        this(maxSelectionAttempts, 1, 32, 0.005);
+        this(maxSelectionAttempts, 1);
+    }
+
+    public BloomFilterNovelPremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles) {
+        this(maxSelectionAttempts, clearAfterCycles, 32, 0.005);
     }
 
     public BloomFilterNovelPremiseGenerator(AtomicInteger maxSelectionAttempts, int clearAfterCycles, int expectedSize, double fpp) {

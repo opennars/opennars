@@ -3,9 +3,7 @@ package automenta.falcon.jurls;
 import automenta.falcon.AGENT;
 import automenta.falcon.FALCON;
 import automenta.vivisect.swing.NWindow;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.tetris.Tetris;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 
 /**

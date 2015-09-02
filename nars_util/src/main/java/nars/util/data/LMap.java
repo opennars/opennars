@@ -1,6 +1,5 @@
 package nars.util.data;
 
-import java.lang.invoke.LambdaMetafactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;

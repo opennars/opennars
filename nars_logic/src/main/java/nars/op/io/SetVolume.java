@@ -1,6 +1,5 @@
 package nars.op.io;
 
-import nars.Memory;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 

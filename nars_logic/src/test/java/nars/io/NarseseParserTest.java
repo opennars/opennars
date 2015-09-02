@@ -1,6 +1,9 @@
 package nars.io;
 
-import nars.*;
+import nars.Global;
+import nars.NAR;
+import nars.Op;
+import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
@@ -13,13 +16,14 @@ import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.op.io.echo;
 import nars.task.Task;
-import nars.term.*;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Variable;
 import org.junit.Test;
 
 import java.util.List;
 
-import static java.lang.String.valueOf;
-import static nars.term.Statement.make;
 import static org.junit.Assert.*;
 
 

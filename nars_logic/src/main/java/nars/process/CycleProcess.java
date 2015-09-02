@@ -6,7 +6,6 @@ import nars.Global;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.io.in.Input;
 import nars.task.Task;
 import nars.term.Term;
 

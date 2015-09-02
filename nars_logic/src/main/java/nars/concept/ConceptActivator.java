@@ -1,8 +1,5 @@
 package nars.concept;
 
-import nars.AbstractMemory;
-import nars.Events;
-import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;

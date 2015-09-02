@@ -1,6 +1,5 @@
 package nars.nal;
 
-import nars.Events;
 import nars.NAR;
 import nars.event.CycleReaction;
 import nars.util.event.EventEmitter;

@@ -5,14 +5,10 @@ import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
-import nars.NAR;
-import nars.util.graph.NARGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 
 import java.util.Map;
-
-import static nars.util.graph.NARGraph.IncludeEverything;
 
 /**
  *

@@ -24,7 +24,6 @@ import nars.Events;
 import nars.Global;
 import nars.nal.nal8.Operation;
 import nars.task.Task;
-import nars.term.Term;
 
 import java.util.List;
 

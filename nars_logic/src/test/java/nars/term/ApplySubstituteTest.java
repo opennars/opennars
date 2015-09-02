@@ -4,8 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
-import nars.term.Compound;
-import nars.term.Term;
 import org.junit.Test;
 
 import java.util.HashMap;

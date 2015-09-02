@@ -1,20 +1,5 @@
 package nars.op.scheme;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import nars.NAR;
-import nars.clock.HardRealtimeClock;
-import nars.nar.Default;
-import nars.op.software.scheme.SchemeClosure;
-import nars.op.software.scheme.expressions.Expression;
-import nars.util.java.NALObjects;
-import org.junit.Test;
-
-import java.util.List;
-
-import static nars.op.software.scheme.expressions.NumberExpression.number;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 /**
  * Created by me on 7/10/15.
  */

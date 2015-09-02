@@ -3,7 +3,6 @@ package nars.nal.nal8.operator;
 import nars.Events;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
-import nars.op.io.echo;
 import nars.term.Term;
 
 /**

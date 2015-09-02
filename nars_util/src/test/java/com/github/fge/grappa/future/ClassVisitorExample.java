@@ -7,11 +7,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.analysis.Analyzer;
-import org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.objectweb.asm.tree.analysis.BasicInterpreter;
-import org.objectweb.asm.tree.analysis.BasicValue;
-import org.objectweb.asm.tree.analysis.Frame;
+import org.objectweb.asm.tree.analysis.*;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 

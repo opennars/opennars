@@ -4,7 +4,6 @@
  */
 package nars.cycle.experimental;
 
-import nars.AbstractMemory;
 import nars.Memory;
 import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;

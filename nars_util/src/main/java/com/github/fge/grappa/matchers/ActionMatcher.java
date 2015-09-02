@@ -20,10 +20,10 @@ import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.matchers.base.Matcher;
 import com.github.fge.grappa.rules.Action;
 import com.github.fge.grappa.rules.SkippableAction;
-import com.github.fge.grappa.stack.ValueStack;
-import com.google.common.collect.Lists;
 import com.github.fge.grappa.run.context.ContextAware;
 import com.github.fge.grappa.run.context.MatcherContext;
+import com.github.fge.grappa.stack.ValueStack;
+import com.google.common.collect.Lists;
 
 import java.lang.reflect.Field;
 import java.util.List;

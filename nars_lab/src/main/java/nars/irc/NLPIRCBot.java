@@ -1,11 +1,11 @@
 package nars.irc;
 
-import nars.Video;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.Global;
 import nars.NAR;
+import nars.Video;
 import nars.clock.RealtimeMSClock;
 import nars.event.NARReaction;
 import nars.gui.NARSwing;

@@ -16,10 +16,10 @@
 
 package com.github.fge.grappa.transform.process;
 
-import com.google.common.collect.ImmutableList;
-import com.github.fge.grappa.transform.generate.ActionClassGenerator;
 import com.github.fge.grappa.transform.TestParser;
+import com.github.fge.grappa.transform.generate.ActionClassGenerator;
 import com.github.fge.grappa.transform.generate.VarInitClassGenerator;
+import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

@@ -23,7 +23,6 @@ package nars.task;
 import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.budget.Itemized;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;

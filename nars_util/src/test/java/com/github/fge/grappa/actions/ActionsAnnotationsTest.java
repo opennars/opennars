@@ -16,18 +16,15 @@
 
 package com.github.fge.grappa.actions;
 
+import com.github.fge.grappa.Grappa;
+import com.github.fge.grappa.annotations.SkipActionsInPredicates;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.run.ListeningParseRunner;
-import com.github.fge.grappa.Grappa;
-import com.github.fge.grappa.annotations.SkipActionsInPredicates;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public final class ActionsAnnotationsTest
 {

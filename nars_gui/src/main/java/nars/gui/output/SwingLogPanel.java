@@ -1,7 +1,7 @@
 package nars.gui.output;
 
-import nars.Video;
 import nars.NAR;
+import nars.Video;
 import nars.gui.output.SwingLogText.LogLine;
 
 import javax.swing.*;

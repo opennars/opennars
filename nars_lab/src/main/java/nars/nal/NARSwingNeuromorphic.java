@@ -4,8 +4,8 @@
  */
 package nars.nal;
 
-import nars.Video;
 import nars.NAR;
+import nars.Video;
 import nars.gui.NARSwing;
 import nars.nar.experimental.Solid;
 

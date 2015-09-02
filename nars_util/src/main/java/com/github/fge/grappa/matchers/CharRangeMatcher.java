@@ -18,8 +18,8 @@ package com.github.fge.grappa.matchers;
 
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.matchers.base.Matcher;
-import com.google.common.base.Preconditions;
 import com.github.fge.grappa.run.context.MatcherContext;
+import com.google.common.base.Preconditions;
 
 import static com.github.fge.grappa.support.Chars.escape;
 

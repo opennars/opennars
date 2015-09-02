@@ -20,15 +20,11 @@ package nars.op.mental;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Symbols;
-import nars.budget.Budget;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
-import nars.truth.DefaultTruth;
 
 import java.util.List;
 

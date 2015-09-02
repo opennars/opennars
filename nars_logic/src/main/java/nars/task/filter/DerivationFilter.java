@@ -2,7 +2,6 @@ package nars.task.filter;
 
 import nars.premise.Premise;
 import nars.task.Task;
-import nars.task.TaskSeed;
 
 
 @FunctionalInterface

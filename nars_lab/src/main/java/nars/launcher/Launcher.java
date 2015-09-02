@@ -17,8 +17,8 @@
 
 package nars.launcher;
 
-import nars.Video;
 import nars.NAR;
+import nars.Video;
 import nars.gui.NARSwing;
 import nars.nar.Default;
 import nars.nario.NARio;

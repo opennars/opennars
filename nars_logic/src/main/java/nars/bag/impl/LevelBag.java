@@ -28,7 +28,6 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
-import nars.budget.Item;
 import nars.budget.Itemized;
 import nars.util.data.ReversibleRecyclableArrayIterator;
 import nars.util.data.linkedlist.DD;

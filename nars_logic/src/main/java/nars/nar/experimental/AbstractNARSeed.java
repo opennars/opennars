@@ -1,13 +1,12 @@
 package nars.nar.experimental;
 
-import nars.Memory;
 import nars.NARSeed;
 import nars.Param;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.concept.Concept;
 import nars.cycle.AbstractCycle;
-import nars.op.mental.InternalExperience;
+import nars.process.CycleProcess;
 import nars.term.Term;
 
 /**
@@ -26,5 +25,10 @@ abstract public class AbstractNARSeed<B extends CacheBag<Term,Concept>, P extend
     @Override
     public String toString() {
         return getClass().getSimpleName() + '[' + getMaximumNALLevel() + ']';
+    }
+
+    @Override
+    public CycleProcess newCycleProcess() {
+        return this;
     }
 }

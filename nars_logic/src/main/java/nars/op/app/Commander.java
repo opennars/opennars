@@ -5,7 +5,6 @@ import nars.Events;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.budget.ItemComparator;
 import nars.event.NARReaction;
 import nars.task.Task;
 import nars.util.event.Observed;

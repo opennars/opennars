@@ -19,7 +19,6 @@ package com.github.fge.grappa.matchers.trie;
 import com.google.common.annotations.Beta;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * A builder for a {@link Trie}

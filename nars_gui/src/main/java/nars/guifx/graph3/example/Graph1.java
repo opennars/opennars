@@ -1,7 +1,5 @@
 package nars.guifx.graph3.example;
 
-import nars.guifx.graph3.SpacenetApp;
-import nars.guifx.graph3.Xform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.chart.PieChart;
@@ -13,6 +11,8 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import nars.NAR;
 import nars.guifx.NARPane;
+import nars.guifx.graph3.SpacenetApp;
+import nars.guifx.graph3.Xform;
 import nars.nar.Default;
 import za.co.knonchalant.builder.POJONode;
 

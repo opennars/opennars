@@ -3,8 +3,6 @@ package nars.term;
 import nars.NAR;
 import nars.nar.Default;
 import nars.task.Task;
-import nars.term.Compound;
-import nars.term.Variable;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

@@ -37,7 +37,6 @@ package nars.rl.util;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import nars.Video;
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import javafx.animation.Timeline;
 import javafx.embed.swing.JFXPanel;
@@ -59,6 +58,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
+import nars.Video;
 import nars.gui.output.graph.nengo.UIVertex;
 import nars.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;

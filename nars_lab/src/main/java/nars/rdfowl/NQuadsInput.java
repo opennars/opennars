@@ -1,8 +1,8 @@
 package nars.rdfowl;
 
-import nars.Video;
 import nars.Global;
 import nars.NAR;
+import nars.Video;
 import nars.gui.NARSwing;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;

@@ -4,9 +4,9 @@
  */
 package nars.gui.input;
 
-import nars.Video;
 import automenta.vivisect.swing.NPanel;
 import nars.NAR;
+import nars.Video;
 
 import javax.swing.*;
 import java.awt.*;

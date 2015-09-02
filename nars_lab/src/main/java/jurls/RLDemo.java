@@ -5,7 +5,6 @@
  */
 package jurls;
 
-import nars.Video;
 import automenta.vivisect.swing.NSlider;
 import javafx.application.Platform;
 import jurls.core.LearnerAndActor;
@@ -21,6 +20,7 @@ import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.follow.Follow1D;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
+import nars.Video;
 
 import javax.swing.*;
 import java.awt.*;

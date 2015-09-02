@@ -19,7 +19,6 @@ package nars.op.mental;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
@@ -29,7 +28,6 @@ import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -1,8 +1,8 @@
 package nars.gui.output;
 
-import nars.Video;
 import javolution.util.FastSet;
 import nars.NAR;
+import nars.Video;
 import nars.concept.Concept;
 import nars.event.ConceptReaction;
 import nars.io.out.TextOutput;

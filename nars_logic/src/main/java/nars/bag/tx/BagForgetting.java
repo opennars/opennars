@@ -1,10 +1,8 @@
 package nars.bag.tx;
 
 import nars.AbstractMemory;
-import nars.Global;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.budget.Itemized;
 
 /**

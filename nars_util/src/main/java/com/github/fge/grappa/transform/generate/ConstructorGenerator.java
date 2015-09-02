@@ -21,21 +21,13 @@ import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.transform.CodeBlock;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.*;
 
 import java.util.List;
 import java.util.Objects;
 
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ARETURN;
-import static org.objectweb.asm.Opcodes.DUP;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.NEW;
 import static com.github.fge.grappa.misc.AsmUtils.createArgumentLoaders;
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * Adds one constructor for each of the ParserClassNode.constructors,

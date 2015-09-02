@@ -1,6 +1,5 @@
 package nars.op.io;
 
-import nars.io.out.TextOutput;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.task.Task;

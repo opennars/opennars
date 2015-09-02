@@ -2,7 +2,6 @@ package nars.term;
 
 import nars.NAR;
 import nars.nar.Default;
-import nars.util.data.id.Identifier;
 import org.junit.Test;
 
 import java.util.Arrays;

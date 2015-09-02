@@ -19,8 +19,8 @@ package com.github.fge.grappa.transform.process;
 import com.github.fge.grappa.exceptions.InvalidGrammarException;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
-import com.google.common.collect.ImmutableList;
 import com.github.fge.grappa.transform.generate.ActionClassGenerator;
+import com.google.common.collect.ImmutableList;
 import org.testng.annotations.Test;
 
 import java.util.List;

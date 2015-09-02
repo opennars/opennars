@@ -2,7 +2,6 @@ package nars.concept;
 
 import javolution.util.function.Equality;
 import nars.AbstractMemory;
-import nars.Events;
 import nars.task.Task;
 
 import java.util.ArrayList;

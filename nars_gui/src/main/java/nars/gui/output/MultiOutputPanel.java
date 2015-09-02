@@ -1,9 +1,9 @@
 package nars.gui.output;
 
-import nars.Video;
 import automenta.vivisect.swing.dock.DockingContent;
 import automenta.vivisect.swing.dock.DockingRegionRoot;
 import nars.NAR;
+import nars.Video;
 import nars.gui.NARControlPanel;
 import nars.task.Task;
 

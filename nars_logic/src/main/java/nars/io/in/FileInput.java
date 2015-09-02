@@ -1,6 +1,5 @@
 package nars.io.in;
 
-import com.google.common.base.Function;
 import com.google.common.io.Files;
 import nars.NAR;
 

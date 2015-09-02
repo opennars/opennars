@@ -1,20 +1,8 @@
 package nars.struct;
 
-import nars.Memory;
 import nars.Op;
-import nars.bag.Bag;
-import nars.budget.Budget;
-import nars.concept.BeliefTable;
-import nars.concept.Concept;
-import nars.concept.TaskTable;
-import nars.link.*;
-import nars.premise.Premise;
-import nars.task.Sentence;
-import nars.task.Task;
-import nars.term.Term;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 /**
  * Created by me on 8/28/15.

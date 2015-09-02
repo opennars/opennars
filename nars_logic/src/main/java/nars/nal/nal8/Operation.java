@@ -41,7 +41,9 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
-import static nars.Symbols.*;
+
+import static nars.Symbols.COMPOUND_TERM_CLOSER;
+import static nars.Symbols.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation with an operator.

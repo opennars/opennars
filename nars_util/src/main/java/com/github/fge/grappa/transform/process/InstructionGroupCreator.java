@@ -24,33 +24,21 @@ package com.github.fge.grappa.transform.process;
 
 import com.github.fge.grappa.exceptions.InvalidGrammarException;
 import com.github.fge.grappa.transform.ClassCache;
-import com.google.common.base.Preconditions;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
 import com.github.fge.grappa.transform.base.InstructionGraphNode;
 import com.github.fge.grappa.transform.base.InstructionGroup;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import com.github.fge.grappa.transform.base.RuleMethod;
+import com.google.common.base.Preconditions;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodInsnNode;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GETSTATIC;
-import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static com.github.fge.grappa.misc.AsmUtils.getClassConstructor;
-import static com.github.fge.grappa.misc.AsmUtils.getClassField;
-import static com.github.fge.grappa.misc.AsmUtils.getClassMethod;
+import static com.github.fge.grappa.misc.AsmUtils.*;
+import static org.objectweb.asm.Opcodes.*;
 
 public final class InstructionGroupCreator
     implements RuleMethodProcessor

@@ -18,25 +18,17 @@ package com.github.fge.grappa.run;
 
 import com.github.fge.grappa.buffers.InputBuffer;
 import com.github.fge.grappa.matchers.base.Matcher;
-import com.github.fge.grappa.run.events.MatchFailureEvent;
-import com.github.fge.grappa.run.events.MatchSuccessEvent;
-import com.github.fge.grappa.run.events.PostParseEvent;
-import com.github.fge.grappa.run.events.PreMatchEvent;
-import com.github.fge.grappa.run.events.PreParseEvent;
+import com.github.fge.grappa.run.context.MatcherContext;
+import com.github.fge.grappa.run.events.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
-import com.github.fge.grappa.run.context.MatcherContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public final class EventBasedParseRunnerTest
 {

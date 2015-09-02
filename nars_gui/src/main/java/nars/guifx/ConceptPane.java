@@ -1,7 +1,5 @@
 package nars.guifx;
 
-import nars.guifx.graph3.SpaceNet;
-import nars.guifx.graph3.Xform;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -21,6 +19,8 @@ import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
+import nars.guifx.graph3.SpaceNet;
+import nars.guifx.graph3.Xform;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;

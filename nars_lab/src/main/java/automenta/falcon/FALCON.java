@@ -2,13 +2,11 @@ package automenta.falcon;
 
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import org.jgroups.protocols.PERF;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.Arrays;
 
 public class FALCON extends AGENT {
     final static int RFALCON = 0;

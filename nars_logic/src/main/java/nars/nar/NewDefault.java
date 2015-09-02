@@ -1,18 +1,8 @@
 package nars.nar;
 
-import nars.NAR;
 import nars.Param;
 import nars.nal.*;
-import nars.nal.nal8.OpReaction;
-import nars.op.app.STMEventInference;
-import nars.op.mental.Abbreviation;
-import nars.op.mental.Counting;
-import nars.op.mental.FullInternalExperience;
-import nars.op.mental.InternalExperience;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
-
-import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
-import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 /**
  * Temporary class which uses the new rule engine for ruletables

@@ -4,7 +4,6 @@ import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
@@ -28,7 +27,6 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
-import objenome.Container;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,9 +132,6 @@ public class NAR implements Runnable {
      * reactivated, a signal for them to empty their state (if necessary).
      */
     public void reset() {
-
-
-
         memory.reset(control);
     }
 

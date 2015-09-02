@@ -18,9 +18,9 @@ package com.github.fge.grappa.matchers;
 
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.matchers.base.Matcher;
-import com.google.common.base.Preconditions;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.support.Characters;
+import com.google.common.base.Preconditions;
 
 import java.util.Objects;
 

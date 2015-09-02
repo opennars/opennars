@@ -3,7 +3,6 @@ package nars.nar;
 import com.google.common.collect.Iterators;
 import nars.Events;
 import nars.NARStream;
-import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 

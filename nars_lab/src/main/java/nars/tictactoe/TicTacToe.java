@@ -21,11 +21,11 @@ package nars.tictactoe;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.Events.FrameEnd;
 import nars.Events.OUT;
 import nars.NAR;
+import nars.Video;
 import nars.budget.Budget;
 import nars.clock.SimulatedClock;
 import nars.concept.Concept;

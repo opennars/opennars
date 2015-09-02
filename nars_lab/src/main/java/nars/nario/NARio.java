@@ -1,10 +1,10 @@
 package nars.nario;
 
-import nars.Video;
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Global;
 import nars.NAR;
+import nars.Video;
 import nars.gui.NARSwing;
 import nars.io.in.ChangedTextInput;
 import nars.nal.nal8.Operation;

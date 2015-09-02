@@ -27,11 +27,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
 import org.objectweb.asm.tree.analysis.SimpleVerifier;
-import org.objectweb.asm.util.CheckMethodAdapter;
-import org.objectweb.asm.util.Printer;
-import org.objectweb.asm.util.Textifier;
-import org.objectweb.asm.util.TraceClassVisitor;
-import org.objectweb.asm.util.TraceMethodVisitor;
+import org.objectweb.asm.util.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

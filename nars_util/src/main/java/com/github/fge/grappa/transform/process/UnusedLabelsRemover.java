@@ -16,9 +16,9 @@
 
 package com.github.fge.grappa.transform.process;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
 import com.github.fge.grappa.transform.base.ParserClassNode;
 import com.github.fge.grappa.transform.base.RuleMethod;
+import org.objectweb.asm.tree.AbstractInsnNode;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

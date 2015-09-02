@@ -5,7 +5,6 @@ import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.cycle.SequentialCycle;
 import nars.nar.NewDefault;
@@ -152,7 +151,7 @@ public class Equalized extends NewDefault {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                new FilterBelowConfidence(0.005),
+                new FilterBelowConfidence(0.02),
                 new FilterDuplicateExistingBelief(),
                 new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());
@@ -170,7 +169,7 @@ public class Equalized extends NewDefault {
 
     public Bag<Term, Concept> newConceptBag() {
         CurveBag<Term, Concept> b = new CurveBag(rng, getActiveConcepts());
-        b.mergePlus();
+        b.mergeAverage();
         return b;
     }
 }

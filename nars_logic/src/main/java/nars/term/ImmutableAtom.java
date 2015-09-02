@@ -2,10 +2,7 @@ package nars.term;
 
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
-import nars.util.data.id.Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
-import nars.util.data.id.UTF8Identifier;
-import nars.util.utf8.FastByteComparisons;
 
 /**
  *

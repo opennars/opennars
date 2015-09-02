@@ -26,7 +26,6 @@ import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.util.data.list.FasterList;
-import nars.util.data.list.VList;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;

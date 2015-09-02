@@ -4,7 +4,6 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Popup;
 import nars.guifx.JFX;
 
 /**

@@ -4,9 +4,9 @@
  */
 package nars.dialog;
 
-import nars.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
+import nars.Video;
 import nars.gui.NARSwing;
 import nars.gui.input.KeyboardInputPanel;
 import nars.nar.Default;

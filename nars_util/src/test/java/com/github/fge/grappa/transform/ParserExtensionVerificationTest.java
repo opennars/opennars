@@ -23,11 +23,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.github.fge.grappa.transform.AsmTestUtils.verifyIntegrity;
 import static org.testng.Assert.assertNotNull;

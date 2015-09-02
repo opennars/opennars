@@ -16,12 +16,12 @@
 
 package com.github.fge.grappa.transform;
 
+import com.github.fge.grappa.misc.AsmUtils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.objectweb.asm.Type;
-import com.github.fge.grappa.misc.AsmUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;

@@ -2,10 +2,8 @@ package nars.nar;
 
 import nars.NAR;
 import nars.Symbols;
-import nars.io.out.TextOutput;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
-import nars.nar.Default;
 import nars.task.Task;
 import org.junit.Test;
 

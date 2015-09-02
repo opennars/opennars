@@ -26,7 +26,6 @@ import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.TimeControl;
 import ca.nengo.ui.NengrowPanel;
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.Events;
 import nars.Events.FrameEnd;
 import nars.Global;
 import nars.Memory;

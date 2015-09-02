@@ -19,11 +19,7 @@ package com.github.fge.grappa.annotations;
 import com.github.fge.grappa.rules.Action;
 import com.github.fge.grappa.run.context.ContextAware;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Override {@link SkipActionsInPredicates} for one particular rule

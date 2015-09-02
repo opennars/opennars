@@ -1,15 +1,12 @@
 package nars.rover.run;
 
-import nars.Video;
 import nars.Global;
 import nars.NAR;
-import nars.NARSeed;
+import nars.Video;
 import nars.clock.SimulatedClock;
 import nars.event.CycleReaction;
-import nars.io.out.TextOutput;
 import nars.nar.Default;
 import nars.nar.experimental.Equalized;
-import nars.nar.experimental.Solid;
 import nars.rover.Sim;
 import nars.rover.robot.CarefulRover;
 import nars.rover.robot.Rover;
@@ -31,12 +28,12 @@ public class SomeRovers {
 
     public static Default newDefault() {
 
-        int cycPerFrame = 8;
+        int cycPerFrame = 4;
 
-        Default d = new Equalized(1024, 16, 4);
+        Default d = new Equalized(1024, 32, 8);
         d.setTermLinkBagSize(16);
         d.setTaskLinkBagSize(16);
-//
+
 //
 //            @Override
 //            public Concept newConcept(final Term t, final Budget b, final Memory m) {

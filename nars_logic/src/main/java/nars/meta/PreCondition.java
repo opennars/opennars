@@ -1,7 +1,5 @@
 package nars.meta;
 
-import nars.meta.RuleMatch;
-
 import java.util.function.Predicate;
 
 /**

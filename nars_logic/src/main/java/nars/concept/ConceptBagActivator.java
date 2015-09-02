@@ -1,6 +1,5 @@
 package nars.concept;
 
-import nars.AbstractMemory;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.term.Term;

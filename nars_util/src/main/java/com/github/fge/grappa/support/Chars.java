@@ -17,7 +17,6 @@
 package com.github.fge.grappa.support;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
 import com.gs.collections.api.map.primitive.CharObjectMap;
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
 

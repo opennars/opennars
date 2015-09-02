@@ -7,7 +7,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal4.Product1;
 import nars.nal.nal4.ProductN;
 import nars.nal.nal8.operator.TermFunction;
-import nars.op.io.echo;
 import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.Expression;
 import nars.op.software.scheme.expressions.ListExpression;
@@ -16,7 +15,6 @@ import nars.op.software.scheme.expressions.SymbolExpression;
 import nars.term.Atom;
 import nars.term.Term;
 
-import java.util.Arrays;
 import java.util.List;
 
 

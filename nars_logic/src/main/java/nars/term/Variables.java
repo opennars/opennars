@@ -9,7 +9,6 @@ import nars.term.transform.FindSubst;
 import org.apache.commons.collections.map.Flat3Map;
 import org.infinispan.commons.equivalence.ByteArrayEquivalence;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 

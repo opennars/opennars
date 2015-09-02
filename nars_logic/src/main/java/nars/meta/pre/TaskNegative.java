@@ -4,7 +4,6 @@ import nars.meta.PostCondition;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.task.Task;
-import nars.term.Term;
 
 /**
  * Created by me on 8/15/15.
