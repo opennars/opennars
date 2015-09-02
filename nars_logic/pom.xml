@@ -279,25 +279,20 @@
                     <showSuccess>true</showSuccess>
                 </configuration>
             </plugin>
+
+            <!--&lt;!&ndash;-->
+            <!--<plugin>-->
+            <!--<groupId>org.codehaus.mojo</groupId>-->
+            <!--<artifactId>jdepend-maven-plugin</artifactId>-->
+            <!--<version>2.0</version>-->
+            <!--</plugin>-->
+            <!--&ndash;&gt;-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.6</version>
+            </plugin>
         </plugins>
-    </reporting>
-
-
-    <reporting>
-    <plugins>
-    <!--&lt;!&ndash;-->
-    <!--<plugin>-->
-    <!--<groupId>org.codehaus.mojo</groupId>-->
-    <!--<artifactId>jdepend-maven-plugin</artifactId>-->
-    <!--<version>2.0</version>-->
-    <!--</plugin>-->
-    <!--&ndash;&gt;-->
-    <plugin>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>cobertura-maven-plugin</artifactId>
-    <version>2.6</version>
-    </plugin>
-    </plugins>
     </reporting>
 
 
@@ -325,7 +320,6 @@
 
 
     </dependencies>
-
 
 
 </project>
