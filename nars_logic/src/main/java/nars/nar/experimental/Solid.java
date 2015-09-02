@@ -75,12 +75,13 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 
     @Override
     public Param newParam() {
-        this.param = new Default().setInternalExperience(null);
+        this.param = new Equalized(1,1,1).setInternalExperience(null);
         param.duration.set(2);
-        param.termLinkForgetDurations.set(4);
-        param.taskLinkForgetDurations.set(10);
-        param.conceptForgetDurations.set(2);
+        param.termLinkForgetDurations.set(2);
+        param.taskLinkForgetDurations.set(3);
+        param.conceptForgetDurations.set(1);
         param.conceptCreationExpectation.set(0);
+
 
         return param;
     }
@@ -109,7 +110,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
         taskLinkBagSize = 32;
 
 
-        concepts = new CurveBag<Term,Concept>(getRandom(), activeConcepts, new CurveBag.Power6BagCurve(),
+        concepts = new CurveBag<Term,Concept>(getRandom(), activeConcepts, CurveBag.power6BagCurve,
                 new ArraySortedIndex(activeConcepts, new FastList(activeConcepts)/*.asSynchronized()*/)
         );
 
@@ -139,12 +140,12 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 
     @Override
     public PremiseProcessor getPremiseProcessor(Param p) {
-        return null;
+        return param.getPremiseProcessor(p);
     }
 
     @Override
     public ConceptBuilder getConceptBuilder() {
-        return null;
+        return param.getConceptBuilder();
     }
 
 
@@ -308,10 +309,6 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
         return new GuavaCacheBag();
     }
 
-    @Override
-    public int getMaximumNALLevel() {
-        return 0;
-    }
 
     @Override
     public Concept concept(Term term) {

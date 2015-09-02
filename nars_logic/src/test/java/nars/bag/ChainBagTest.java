@@ -1,6 +1,6 @@
 package nars.bag;
 
-import nars.analyze.experimental.NullItem;
+import nars.meter.bag.NullItem;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
 import nars.util.data.random.XORShiftRandom;

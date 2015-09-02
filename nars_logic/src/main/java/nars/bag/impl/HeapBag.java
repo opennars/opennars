@@ -60,7 +60,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
     public HeapBag(Random rng, int capacity) {
-        this(rng, capacity, new CurveBag.Power6BagCurve());
+        this(rng, capacity, CurveBag.power6BagCurve);
     }
 
 
@@ -343,7 +343,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         final float x = rng.nextFloat();
 
-        float y = getFocus(x);
+        float y = curve.valueOf(x);
 
         int result = (int) FastMath.floor(y * s);
 
@@ -352,17 +352,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         return result;
     }
 
-    /**
-     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).  x=0 represents low priority (bottom of bag), x=1.0 represents high priority
-     *
-     * @param x
-     * @return
-     */
-    public float getFocus(final float x) {
-        return curve.y(x);
-    }
-
-//    public static long fastRound(final double d) {
+    //    public static long fastRound(final double d) {
 //        if (d > 0) {
 //            return (long) (d + 0.5d);
 //        } else {

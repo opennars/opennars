@@ -210,14 +210,14 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
 
     @Override
-    public void addPriority(final float v) {
+    final public void addPriority(final float v) {
         setPriority(v + getPriority());
     }
 
     /**
      * set all quantities to zero
      */
-    public Budget zero() {
+    public final Budget zero() {
         this.priority = this.durability = this.quality = 0f;
         return this;
     }
@@ -692,13 +692,16 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return this;
     }
 
-    public Budget set(final Budget b) {
-        if (b == null) {
+    public Budget set(final Budget source) {
+        if (source == null)
             return zero();
-        } else {
-            setLastForgetTime(b.getLastForgetTime());
-            return budgetDirect(b.getPriority(), b.getDurability(), b.getQuality());
+
+        if (source.isDeleted()) {
+            throw new RuntimeException("source budget invalid");
         }
+
+        setLastForgetTime(source.getLastForgetTime());
+        return budgetDirect(source.getPriority(), source.getDurability(), source.getQuality());
     }
 
     /**
@@ -763,7 +766,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return !summaryNotLessThan(s);
     }
 
-    public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
+    final public Budget forget(final long now, final float forgetCycles, final float relativeThreshold) {
         //BudgetFunctions.forgetPeriodic(this, forgetCycles, relativeThreshold, now);
         BudgetFunctions.forgetAlann(this, forgetCycles, now);
         return this;

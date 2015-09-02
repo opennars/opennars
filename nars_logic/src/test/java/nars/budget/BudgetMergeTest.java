@@ -1,6 +1,6 @@
 package nars.budget;
 
-import nars.analyze.experimental.NullItem;
+import nars.meter.bag.NullItem;
 import org.junit.Test;
 
 import java.util.Iterator;

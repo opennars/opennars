@@ -91,7 +91,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> {
 
     public V remove(final K key) {
 
-        V e = removeKey(key);
+        final V e = removeKey(key);
         if (e != null) {
             V removed = removeItem(e);
             if (removed == null)

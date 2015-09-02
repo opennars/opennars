@@ -14,7 +14,7 @@ import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
 public class NewDefault extends Default {
 
     public NewDefault() {
-        this(1,1,3);
+        this(1024,1,3);
     }
 
     public NewDefault(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
@@ -53,7 +53,7 @@ public class NewDefault extends Default {
                 new LogicStage[] {
                         new FilterEqualSubtermsAndSetPremiseBelief(),
                         //new QueryVariableExhaustiveResults(),
-                        p.the(Deriver.class)
+                        der
                         //---------------------------------------------
                 } ,
 

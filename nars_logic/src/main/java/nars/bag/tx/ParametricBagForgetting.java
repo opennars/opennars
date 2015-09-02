@@ -55,7 +55,7 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
                 throw new RuntimeException("invalid model");
         }
 
-        this.selected = select ? v : null;
+        this.lastForgotten = select ? v : null;
 
 
         if (!forget) {

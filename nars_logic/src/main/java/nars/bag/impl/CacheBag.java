@@ -35,7 +35,7 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
         int bins = x.length;
         forEach(e -> {
             final float p = e.getPriority();
-            final int b = decimalize(p, bins - 1);
+            final int b = bin(p, bins - 1);
             x[b]++;
         });
         double total = 0;
@@ -49,13 +49,13 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
         return x;
     }
 
-    public static int decimalize(final float x, final int bins) {
+    public static int bin(final float x, final int bins) {
         return (int) FastMath.floor((x + (0.5f / bins)) * bins);
     }
 
     /** bins a priority value to an integer */
     public static int decimalize(float v) {
-        return decimalize(v,10);
+        return bin(v,10);
     }
 
 

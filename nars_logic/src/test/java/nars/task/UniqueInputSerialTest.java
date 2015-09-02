@@ -18,10 +18,16 @@ import static org.junit.Assert.assertArrayEquals;
  */
 public class UniqueInputSerialTest {
 
-    @Test public void inputTwoUniqueTasks() {
+    @Test public void inputTwoUniqueTasksDef() {
         inputTwoUniqueTasks(new Default());
+    }
+    @Test public void inputTwoUniqueTasksSolid() {
         inputTwoUniqueTasks(new Solid(4, 1, 1, 1, 1, 1));
+    }
+    @Test public void inputTwoUniqueTasksEq() {
         inputTwoUniqueTasks(new Equalized(4, 1, 1));
+    }
+    @Test public void inputTwoUniqueTasksNewDef() {
         inputTwoUniqueTasks(new NewDefault());
     }
 

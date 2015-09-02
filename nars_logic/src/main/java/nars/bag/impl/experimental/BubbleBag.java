@@ -14,6 +14,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * iteratively sorts a items by priority via a partial bubble sorted.
@@ -115,13 +116,18 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
         return selected;
     }
 
-    public boolean contains(K k) {
+    final public boolean contains(K k) {
         return index.containsKey(k);
     }
 
     @Override
-    public boolean contains(E it) {
+    final public boolean contains(E it) {
             return index.containsKey(it.name());
+    }
+
+    @Override
+    final public void forEach(Consumer<? super E> action) {
+        queue.forEach(action);
     }
 
     protected void remove(E item, int qi) {

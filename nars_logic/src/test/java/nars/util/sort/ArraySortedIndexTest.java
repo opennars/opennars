@@ -1,6 +1,6 @@
 package nars.util.sort;
 
-import nars.analyze.experimental.NullItem;
+import nars.meter.bag.NullItem;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

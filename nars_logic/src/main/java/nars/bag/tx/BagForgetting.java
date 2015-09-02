@@ -1,6 +1,5 @@
 package nars.bag.tx;
 
-import nars.AbstractMemory;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
 import nars.budget.Itemized;
@@ -14,7 +13,12 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
 
 
     protected float forgetCycles;
-    public V selected = null;
+
+    /** provides a way for callee to get the current/last affected item,
+     *  because it may have been removed in the update,
+     *  in which case would update() return null*/
+    public V lastForgotten = null;
+
     protected long now;
 
 
@@ -35,14 +39,10 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
         this.now = now;
     }
 
-    public void set(float forgetCycles, AbstractMemory memory) {
-        set(forgetCycles, memory.time());
-    }
-
 
     @Override
     public Budget updateItem(V v, Budget result) {
-        this.selected = v;
+        this.lastForgotten = v;
 
         //final float priorityStart = v.getPriority();
 

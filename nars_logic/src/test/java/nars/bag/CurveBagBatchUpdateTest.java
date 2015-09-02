@@ -1,20 +1,97 @@
 package nars.bag;
 
-import nars.analyze.experimental.NullItem;
+import com.google.common.collect.Lists;
+import nars.Global;
 import nars.bag.impl.CurveBag;
+import nars.bag.impl.LevelBag;
+import nars.bag.impl.experimental.ChainBag;
+import nars.meter.bag.BagGenerators;
+import nars.meter.bag.NullItem;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  */
 public class CurveBagBatchUpdateTest {
 
     @Test
-    public void testCurveBag() {
+    public void testDefaultBatchImpl() {
+        XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
 
-        final int size = 16;
+        testDefaultBatchImpl(
+                new CurveBag<>(rng, 32)
+        );
 
-        CurveBag cb = new CurveBag(new XorShift1024StarRandom(1), size);
+        testDefaultBatchImpl(
+            new ChainBag<>(rng, 32)
+        );
+        testDefaultBatchImpl(
+            new LevelBag<>(8, 32)
+        );
 
+    }
+
+    public void testDefaultBatchImpl(Bag<CharSequence,NullItem> cb) {
+
+
+        Global.DEBUG = true;
+
+        final int cap = cb.capacity();
+        int batch = 2;
+        NullItem[] b = new NullItem[batch];
+        int loops = 256;
+        int insertsPerLoop = cap/2;
+
+
+        int[] x = BagGenerators.testRemovalPriorityDistribution(
+                loops, insertsPerLoop, 1f , cb
+        );
+        System.out.println(Arrays.toString(x));
+
+        assertTrue(  Math.abs(cap - cb.size()) < cap/8.0 );
+
+        int count1 = cb.forgetNext(1f, b, 1L);
+
+        assertEquals(b.length, count1);
+
+        ArrayList<NullItem> b1 = snapshot(b);
+
+
+        int count2 = cb.forgetNext(1f, b, 2L);
+        assertEquals(b.length, count1);
+
+        ArrayList<NullItem> b2 = snapshot(b);
+
+        assertNotEquals(b1, b2);
+
+        //System.out.println(b1);
+        //System.out.println(b2);
+        //cb.printAll();
+
+        assertTrue(cb.getPriorityMin() <  cb.getPriorityMax());
+
+    }
+
+    protected static ArrayList<NullItem> snapshot(NullItem[] b) {
+
+        ArrayList<NullItem> b1;
+
+        //test for nulls
+        for (NullItem o : b)
+            if (o == null)
+                throw new RuntimeException(Arrays.toString(b) + " has at least 1 null");
+
+        b1 = Lists.newArrayList(b);
+
+        Arrays.fill(b, null);
+
+        return b1;
     }
 }

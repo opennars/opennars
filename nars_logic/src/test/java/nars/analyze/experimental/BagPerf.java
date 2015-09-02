@@ -24,6 +24,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
+import nars.meter.bag.NullItem;
 import nars.nar.Default;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.sort.ArraySortedIndex;

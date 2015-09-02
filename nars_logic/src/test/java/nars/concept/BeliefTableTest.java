@@ -41,18 +41,15 @@ public class BeliefTableTest extends TestCase {
 
         NAR n = newNAR(4);
 
+
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>")
-                .believe(1.0f, 0.9f).run(1)
-                .believe(0.0f, 0.9f).run(1);
+                .believe(1.0f, 0.9f)
+                .believe(0.0f, 0.9f).run(2);
 
-        assertEquals(2, b.size());
-
-        n.frame(1);
-        //b.print();
 
         assertEquals("revised", 3, b.size());
 
-        n.frame(200);
+        n.frame(100);
         //b.print();
 
         assertEquals("no additional revisions", 3, b.size());

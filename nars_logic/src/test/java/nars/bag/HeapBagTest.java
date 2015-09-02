@@ -4,7 +4,7 @@ import com.google.common.collect.Iterables;
 import nars.Global;
 import nars.NAR;
 import nars.Param;
-import nars.analyze.experimental.NullItem;
+import nars.meter.bag.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.HeapBag;
@@ -142,7 +142,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         //System.out.println(capacity +"," + random + " = " + Arrays.toString(count));
                 
-        assert(Util.isSemiMonotonicallyIncreasing(count));
+        assert(Util.isSemiMonotonicallyDecreasing(count));
         
         //System.out.println(Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
@@ -155,7 +155,9 @@ public class HeapBagTest extends AbstractBagTest {
         final float priorityEpsilon = 0.01f;
         
         HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
+        c.mergePlus();
         LevelBag<CharSequence, NullItem> d = new LevelBag<>(capacity, 10);
+        d.mergePlus();
         
         assertEquals(c.getPrioritySum(), d.getPrioritySum(), 0);
         assertEquals(c.getPriorityMean(), d.getPriorityMean(), 0);
@@ -181,9 +183,9 @@ public class HeapBagTest extends AbstractBagTest {
         d.put(new NullItem(.30f));
         c.put(new NullItem(.50f));
         d.put(new NullItem(.50f));
-        
-        assertEquals(0.4, c.getPriorityMean(), priorityEpsilon);
+
         assertEquals(0.4, d.getPriorityMean(), priorityEpsilon);
+        assertEquals(0.4, c.getPriorityMean(), priorityEpsilon);
 
     }
 

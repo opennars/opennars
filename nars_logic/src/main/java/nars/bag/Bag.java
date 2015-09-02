@@ -13,6 +13,7 @@ import nars.budget.Itemized;
 
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -249,6 +250,13 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         this.forEach( x -> p.println(x.getPriority() + " " + x));
     }
 
+    /** should visit items highest priority first, if possible.
+     *  for some bags this may not be possible.
+     */
+    //by default this will use iterator().forEach() but this can be used to make sure each implementation offers its best
+    //@Override abstract public void forEach(final Consumer<? super V> action);
+
+
 
 
     public float getPrioritySum() {
@@ -267,6 +275,47 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
 
+    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
+        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);
+    }
+
+    /** collects a batch of values and returns them after applying forgetting to each
+     *  returns number of items collected.
+     *  batch[] will be overwritten between start and stop,
+     *  but may end before stop.
+     *  use the returned count to determine what the next
+     *  available position is.
+     *
+     * maxAdditionalAttempts is the number of retries beyond the given
+     * (stop-start) amount of entries in case the bag or selector
+     * refuse to provide one in that iteration.  (ex: novelty
+     * filtering.)
+     *
+     * the produced list may contain duplicates.
+     * TODO make a non-duplicate Set based version of this
+     * */
+    public int forgetNext(float forgetCycles, V[] batch, final int start, final int stop, final long now, final int maxAdditionalAttempts) {
+
+        if (isEmpty())
+            return 0;
+
+        forgetNext.set(forgetCycles, now);
+
+        int affected = 0;
+        int batchlen = stop-start;
+
+        int maxAttempts = batchlen + maxAdditionalAttempts;
+
+        int filled = 0;
+
+        for (int i = 0; (filled < batchlen) && (i < maxAttempts); i++) {
+            update(forgetNext);
+            if ((batch[start + (filled++)] = forgetNext.lastForgotten) == null)
+                break;
+        }
+
+        return filled;
+    }
 
     /**
      * accuracy determines the percentage of items which will be processNext().
@@ -277,7 +326,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         final int conceptsToForget = (int)Math.ceil(size() * accuracy);
         if (conceptsToForget == 0) return;
 
-        forgetNext.set(forgetCycles, m);
+        forgetNext.set(forgetCycles, m.time());
 
         int affected = 0;
         for (int i = 0; i < conceptsToForget; i++) {
@@ -307,7 +356,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     public V forgetNext() {
         update(forgetNext);
-        return forgetNext.selected;
+        return forgetNext.lastForgotten;
     }
 
     /** call this to set the forgetNext settings prior to calling forgetNext() */
@@ -315,7 +364,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         setForgetNext(forgetDurations.floatValue(), m);
     }
     public void setForgetNext(final float forgetDurations, final Memory m) {
-        forgetNext.set(m.param.cycles(forgetDurations), m);
+        forgetNext.set(m.param.cycles(forgetDurations), m.time());
     }
 
 

@@ -3,14 +3,13 @@ package nars.util.sort;
 import nars.Global;
 import nars.budget.Itemized;
 import nars.util.data.sorted.SortedIndex;
+import org.apache.commons.collections.iterators.ReverseListIterator;
 
 import java.io.Serializable;
 import java.util.*;
 
-//public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
-//public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
-//abstract public class SortedItemList<E> extends FastTable<E> {
-public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Serializable {
+
+public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> implements Serializable {
 
     int capacity = Integer.MAX_VALUE;
 
@@ -18,7 +17,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
     final static private Comparator<Itemized> priorityComparator = new Comparator<Itemized>() {
         @Override public int compare(final Itemized a, final Itemized b) {
-            return Float.compare(a.getPriority(), b.getPriority());
+            return Float.compare(b.getPriority(), a.getPriority());
         }
     };
 
@@ -195,21 +194,8 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
         return removed;
     }
 
-    @Override
-    public E getFirst() {
-//        if (isEmpty()) {
-//            return null;
-//        }
-        return get(0);
-    }
 
-    @Override
-    public E getLast() {
-//        if (isEmpty()) {
-//            return null;
-//        }
-        return get(size() - 1);
-    }
+
 
     public int capacity() {
         return capacity;
@@ -226,7 +212,7 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E>, Se
 
     @Override
     public Iterator<E> descendingIterator() {
-        return list.iterator(); //stored in descending order
+        return new ReverseListIterator(list);
     }
 
 //    /**

@@ -72,14 +72,14 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
             r--;
 
             c.getTermLinks().update(this);
-            if (selected != null)
+            if (lastForgotten != null)
                 break;
 
         }
 
-        onSelect(c, selected != null, attempting - r);
+        onSelect(c, lastForgotten != null, attempting - r);
 
-        return selected;
+        return lastForgotten;
     }
 
     /** for statistics and tuning purposes in subclasses */

@@ -31,12 +31,14 @@ public class SolidTest {
 
         };
 
-        s.getMemory().setLevel(6);
 
         //s.setMaxTasksPerCycle(numConcepts);
 
         TestNAR n = new TestNAR(s);
         n.memory.reset(1);
+
+        n.memory.nal(6);
+        n.param.conceptActivationFactor.set(0.15f);
 
         //TextOutput.out(n).setOutputPriorityMin(0f);
 
@@ -68,7 +70,7 @@ public class SolidTest {
                 break;
         }
 
-        n.memory.concepts.forEach(x -> System.out.println(x.getPriority() + " " + x));
+        //n.memory.concepts.forEach(x -> System.out.println(x.getPriority() + " " + x));
 
 
         //System.out.println(solutions);

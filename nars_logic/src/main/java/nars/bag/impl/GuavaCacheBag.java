@@ -2,6 +2,7 @@ package nars.bag.impl;
 
 import com.google.common.cache.*;
 import nars.budget.Itemized;
+import nars.util.event.Observed;
 
 import java.util.Iterator;
 
@@ -15,6 +16,7 @@ import java.util.Iterator;
 public class GuavaCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K, V> implements RemovalListener<K, V>, Iterable<V> {
 
     public final Cache<K, V> data;
+    //public final Observed<V> removed = new Observed();
 
 
     public GuavaCacheBag() {

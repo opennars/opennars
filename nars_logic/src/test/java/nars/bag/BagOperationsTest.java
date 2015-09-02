@@ -96,19 +96,19 @@ public class BagOperationsTest {
 
         //b.printAll();
 
-        //results in 0.2, not 0.1 if merged and not simply replaced B's budget
-        assertEquals(0.1f, b.getPriorityMin(),0.001f);
-        assertEquals(0.4f, b.getPriorityMax(),0.001f);
+        //results in 0.2, 0.5 because of the '.mergePlus' specified above
+        assertEquals(0.2f, b.getPriorityMin(),0.001f);
+        assertEquals(0.5f, b.getPriorityMax(),0.001f);
         
         
         Item tb = b.remove(B.name());
         assertEquals(1, b.size());
         assertTrue(tb!=null);
-        assertEquals(0.4f, tb.getPriority(), 0.001f);
+        assertEquals(0.5f, tb.getPriority(), 0.001f);
         
         Item tc = b.pop();
         assertEquals(0, b.size());
-        assertEquals(0.1f, tc.getPriority(), 0.001f);
+        assertEquals(0.2f, tc.getPriority(), 0.001f);
         
         assertEquals(null, b.put(new NullConcept("a", 0.2f)));
         b.put(new NullConcept("b", 0.3f));

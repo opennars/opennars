@@ -1,6 +1,6 @@
 package nars.bag;
 
-import nars.analyze.experimental.NullItem;
+import nars.meter.bag.NullItem;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.HeapBag;
@@ -11,7 +11,6 @@ import nars.io.Texts;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.PrintWriter;
@@ -51,7 +50,7 @@ public class BagSamplingPriorityTest {
 
         public int discretize(final float p) {
             //return (int)Math.floor(p * (bins-1));
-            return CacheBag.decimalize(p, bins);
+            return CacheBag.bin(p, bins);
         }
         public double undiscretize(int bin) {
             return CacheBag.unbinCenter(bin, bins);
@@ -175,11 +174,10 @@ public class BagSamplingPriorityTest {
     static final Function<Float,Float> skewedLow = ( x -> (float)Math.pow(1.0f - x, 2) );
 
 
-    @Ignore
     @Test
     public void testBags() {
 
-        int capacity = 512;
+        int capacity = 64;
 
         int bins = (int)Math.sqrt(capacity)/2;
 
@@ -254,6 +252,8 @@ public class BagSamplingPriorityTest {
         a.populateCurve(itemDistributionCurve);
 
         assertEquals("filled to capacity", c.capacity(), c.size());
+
+
 
         //System.out.println(a.getBagState());
 

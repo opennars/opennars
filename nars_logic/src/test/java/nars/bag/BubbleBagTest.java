@@ -3,9 +3,10 @@ package nars.bag;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import nars.analyze.experimental.NullItem;
+import nars.meter.bag.NullItem;
 import nars.bag.impl.experimental.BubbleBag;
 import nars.budget.Item;
+import nars.meter.bag.BagGenerators;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 
@@ -111,9 +112,8 @@ public class BubbleBagTest extends AbstractBagTest {
         float fractionTRemove = 0.1f;
         BubbleBag bag = new BubbleBag(rng, 16);
 
-        int[] dist =AbstractBagTest.testRemovalPriorityDistribution(
-                loops, insertsPerLoop, fractionToAdjust, fractionTRemove, bag,
-                false
+        int[] dist = BagGenerators.testRemovalPriorityDistribution(
+                loops, insertsPerLoop, fractionTRemove, bag
         );
 
         //System.out.println(Arrays.toString(dist));
@@ -136,7 +136,7 @@ public class BubbleBagTest extends AbstractBagTest {
             }
         };
 
-        AbstractBagTest.testRetaining(
+        BagGenerators.testRetaining(
                 loops, insertsPerLoop, bag
         );
 

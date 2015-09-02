@@ -3,11 +3,12 @@ package nars.bag;
 import nars.Global;
 import nars.NAR;
 import nars.Param;
-import nars.analyze.experimental.NullItem;
+import nars.meter.bag.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
+import nars.meter.bag.BagGenerators;
 import nars.nar.Default;
 import nars.util.data.Util;
 import nars.util.data.random.XORShiftRandom;
@@ -70,7 +71,7 @@ public class CurveBagTest extends AbstractBagTest {
         
         int d[] = null;
         for (int capacity : new int[] { 10, 51, 100, 256 } ) {
-            d = testRemovalPriorityDistribution(capacity, items);
+            d = AbstractBagTest.testRemovalPriorityDistribution(capacity, items);
         }
         
         return d;
@@ -182,7 +183,7 @@ public class CurveBagTest extends AbstractBagTest {
         
         //System.out.println(capacity +"," + " = " + Arrays.toString(count));
                 
-        assert(Util.isSemiMonotonicallyIncreasing(count));
+        assert(Util.isSemiMonotonicallyDecreasing(count));
         
         //System.out.println(random + " " + Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
@@ -274,6 +275,7 @@ public class CurveBagTest extends AbstractBagTest {
         int capacity = 4;
 
         CurveBag<CharSequence, NullItem> c = new CurveBag(rng, capacity, curve);
+        c.mergeAverage();
 
         NullItem a, b;
         c.put(a = new NullItem(0.5f));

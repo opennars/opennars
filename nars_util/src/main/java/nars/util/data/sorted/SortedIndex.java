@@ -1,31 +1,36 @@
 package nars.util.data.sorted;
 
 
+import objenome.op.cas.E;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- *
- * @author me
+ * Stores items with highest priority at index = 0, lowest = size()-1
  */
-public interface SortedIndex<T> extends Collection<T> {
+abstract public class SortedIndex<T> implements Collection<T> {
 
     @Override
-    default boolean add(T t) {
+    public boolean add(T t) {
         throw new RuntimeException("Use insert method which can return a displaced object");
     }
 
-    public T insert(T i);
-    public T get(int i);
-    public T remove(int i);
-    public T getFirst();
-    public T getLast();
-    public Iterator<T> descendingIterator();
-    public void setCapacity(int capacity);
-    public List<T> getList();
+    abstract public T insert(T i);
+    abstract public T get(int i);
+    abstract public T remove(int i);
+
+
+    final public T getFirst() {  return get(size()-1);    }
+    final public T getLast() { return get(0); }
+
+    abstract public Iterator<T> descendingIterator();
+    abstract public void setCapacity(int capacity);
+
+    abstract public List<T> getList();
     
-    default public void reportPriority() {
+    public void reportPriority() {
         for (T t : this) {
             String s;
             /*if (t instanceof Item)
@@ -38,5 +43,5 @@ public interface SortedIndex<T> extends Collection<T> {
     }
 
 
-    public boolean isSorted();
+    abstract public boolean isSorted();
 }
