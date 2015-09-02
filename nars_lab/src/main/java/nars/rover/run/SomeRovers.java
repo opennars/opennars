@@ -30,7 +30,7 @@ public class SomeRovers {
 
         int cycPerFrame = 4;
 
-        Default d = new Equalized(1024, 32, 8);
+        Default d = new Equalized(1024, 16, 10);
         d.setTermLinkBagSize(16);
         d.setTaskLinkBagSize(16);
 
@@ -82,7 +82,7 @@ public class SomeRovers {
         Global.DEBUG = Global.EXIT_ON_EXCEPTION = false;
 
 
-        float fps = 25;
+        float fps = 60;
         boolean cpanels = true;
 
         final Sim game = new Sim(clock);

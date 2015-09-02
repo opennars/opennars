@@ -1,15 +1,18 @@
 package nars.bag.tx;
 
-import nars.bag.BagTransaction;
+import nars.bag.BagSelector;
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.link.TermLink;
+
+import java.util.function.Function;
 
 /**
 * Applies forgetting to the next sequence of sampled bag items
  *
  * NOT thread safe
 */
-public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K,V> {
+public class BagForgetting<K, V extends Itemized<K>> implements BagSelector<K,V> {
 
 
     protected float forgetCycles;
@@ -22,22 +25,33 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
     protected long now;
 
 
-
     public BagForgetting() {
         this.forgetCycles = Float.NaN;
     }
 
-    @Override
-    public K name() {
-        return null; //signals to the bag updater to use the next item
-    }
-
 
     /** updates with current time, etc. call immediately before update() will be called */
-    public void set(float forgetCycles, long now) {
+    public BagForgetting<K,V> set(float forgetCycles, long now) {
         this.forgetCycles = forgetCycles;
         this.now = now;
+        return this;
     }
+
+    private final Function<V, ForgetAction> defaultModel = o -> ForgetAction.SelectAndForget;
+
+    @Override
+    public Function<V, ForgetAction> getModel() {
+        return defaultModel;
+    }
+
+    //    @Override
+//    public Function<V, ForgetAction> getModel() {
+////        @Override
+////        public ForgetAction apply(TermLink termLink) {
+////            return ForgetAction.SelectAndForget;
+////        }
+//        return null;
+//    }
 
 
     @Override
@@ -63,14 +77,4 @@ public class BagForgetting<K, V extends Itemized<K>> implements BagTransaction<K
         return result;
     }
 
-
-    @Override
-    public V newItem() {
-        return null;
-    }
-
-
-    public V getItem() {
-        return null;
-    }
 }

@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagSelector;
+import nars.bag.BagTransaction;
 import nars.budget.Itemized;
 import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;
@@ -12,6 +14,7 @@ import nars.util.sort.ArraySortedIndex;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
 /**
@@ -510,9 +513,9 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             throw new RuntimeException("invalid index: " + index + ", size=" + size());
 
         final V jj = remove( ii.name() );
-        if (ii!=jj) {
+        /*if (ii!=jj) {
             throw new RuntimeException("removal fault");
-        }
+        }*/
 
         return jj;
     }
@@ -671,4 +674,100 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         }
     }
 
+    /** optimized peek implementation that scans the curvebag
+     *  iteratively surrounding a randomly selected point */
+    @Override protected int peekFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
+
+
+
+        final Function<V, BagSelector.ForgetAction> filter = tx.getModel();
+
+        final int s = size();
+
+        final List<V> a = items.getList();
+
+        int fill;
+
+        if (len == s) {
+            //optimization: if len==s then just add all elements
+            fill = 0;
+            for (int i = 0; i < len; i++) {
+                V v = a.get(i);
+                BagSelector.ForgetAction p = filter.apply(v);
+                if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
+                    batch[start + (fill++)] = v;
+
+            }
+            return fill;
+        }
+
+        final int r = len/2; //radius padding
+
+        int center = this.sampler.applyAsInt(this);
+        if (center + r >= s)
+            center = s - r;
+        if (center -r < 0)
+            center = r;
+
+
+        batch[0] = a.get(center); //should not be null
+        fill = 1;
+
+        int remaining = maxAttempts;
+
+        boolean direction = true;
+
+        int nextUp = center, nextDown = center;
+        boolean finishedUp = false, finishedDown = false;
+
+        while( (remaining > 0 ) && (fill < len) ) {
+
+            if (++nextUp<s) {
+                final V x = a.get(nextUp);
+                if (!bufferIncludes(batch, x)) {
+                    BagSelector.ForgetAction p = filter.apply(x);
+                    if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
+                        batch[start + (fill++)] = x;
+                }
+            }
+            else {
+                if (finishedDown) break;
+                finishedUp = true;
+            }
+
+            if (fill == len) break;
+
+            if (--nextDown >=0) {
+                final V x = a.get(nextDown);
+
+                if (!bufferIncludes(batch, x)) {
+                    BagSelector.ForgetAction p = filter.apply(x);
+                    if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
+                        batch[start + (fill++)] = x;
+                }
+            }
+            else {
+                if (finishedUp) break;
+                finishedDown=true;
+            }
+
+            remaining-=2;
+
+        }
+
+        /*
+        System.out.println(Arrays.toString(batch) + " " + nextDown + ":" + center + ":" + nextUp +
+                " --> " + fill + '/' + len + '/' + s + " found, " + (maxAttempts-remaining) + " tried");
+            */
+
+        return fill;
+    }
+
+    //    @Override
+//    protected int update(BagTransaction<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
+//
+//        super.update()
+//        int center = this.sampler.applyAsInt(this);
+//
+//    }
 }

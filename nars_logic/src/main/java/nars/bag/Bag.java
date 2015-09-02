@@ -13,10 +13,10 @@ import nars.budget.Itemized;
 
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 
@@ -175,21 +175,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     protected final Budget temp = new Budget();
 
-    /** receive a batch (up to specific) of values.
-     *  implementations can override this to
-     *  optimize it for its unique data management patterns.
-     *
-     *  the length is specified by the length of a provider array
-     *  where the data values will be stored before returning.
-     *  @return the number of entries filled in the array
-     *  remaining entries will be null
-     *
-     *  the transaction(s) themseles will have completed by the
-     *  time the values are returned.
-     */
-    public int update(final BagTransaction<K, V> selector, V[] recv) {
-        return 0;
-    }
+
 
     /**
      * calls overflow() on an overflown object
@@ -197,7 +183,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses
      */
     public V update(final BagTransaction<K, V> selector) {
-
 
         K key = selector.name();
         V item;
@@ -241,6 +226,45 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
         return item;
     }
+
+
+    /** faster than using the BagTransaction version when creation of instances is not necessary */
+    public V peek(final BagSelector<K, V> selector) {
+
+        V item = peekNext();
+
+        if (item == null)
+            return null;
+
+        Budget ib = item.getBudget();
+
+        Budget result = selector.updateItem(item, temp.set(ib));
+
+        if ((result == null) || (result.isDeleted()) || (result.equalsByPrecision(ib)))
+            return null;
+        else {
+            //it has changed
+
+            //this PUT(TAKE( sequence can be optimized in particular impl
+            //the default is a non-optimal failsafe
+            remove(item.name());
+
+            //apply changed budget after removed and before re-insert
+            ib.set(result);
+        }
+
+
+        // put the (new or merged) item into itemTable
+        final V overflow = put(item);
+        if (overflow != null)
+            selector.overflow(overflow);
+
+//        if (overflow == item)
+//            return null;
+
+        return item;
+    }
+
 
     public void printAll() {
         printAll(System.out);
@@ -295,27 +319,75 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      * TODO make a non-duplicate Set based version of this
      * */
     public int forgetNext(float forgetCycles, V[] batch, final int start, final int stop, final long now, final int maxAdditionalAttempts) {
-
         if (isEmpty())
             return 0;
 
-        forgetNext.set(forgetCycles, now);
+        return peek(forgetNext.set(forgetCycles, now),
+                batch, start, stop, maxAdditionalAttempts);
+    }
 
-        int affected = 0;
-        int batchlen = stop-start;
+    /** receive a batch (up to specific) of values.
+     *  implementations can override this to
+     *  optimize it for its unique data management patterns.
+     *
+     *  the length is specified by the length of a provider array
+     *  where the data values will be stored before returning.
+     *  @return the number of entries filled in the array
+     *  remaining entries will be null
+     *
+     *  the transaction(s) themseles will have completed by the
+     *  time the values are returned.
+     *
+     *  TODO option for if duplicates are allowed
+     */
+    protected int peek(final BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
 
-        int maxAttempts = batchlen + maxAdditionalAttempts;
+        final int batchlen = Math.min(size(), stop-start);
+        final int maxAttempts = batchlen + maxAdditionalAttempts;
 
-        int filled = 0;
+        return peekFill(tx, batch, start, batchlen, maxAttempts);
+    }
 
-        for (int i = 0; (filled < batchlen) && (i < maxAttempts); i++) {
-            update(forgetNext);
-            if ((batch[start + (filled++)] = forgetNext.lastForgotten) == null)
-                break;
+    protected int peekFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
+        int fill = 0;
+
+        final Function<V, BagSelector.ForgetAction> filter = tx.getModel();
+
+        if (len == size()) {
+            //optimization: if len==s then just add all elements
+
+            for (V v : values()) {
+                BagSelector.ForgetAction p = filter.apply(v);
+                if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
+                    batch[start + (fill++)] = v;
+            }
+
+            return fill;
         }
 
-        return filled;
+        for (int i = 0; (fill < len) && (i < maxAttempts); i++) {
+            final V v = peek(tx);
+            if (v != null) {
+                BagSelector.ForgetAction p = filter.apply(v);
+                if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
+                    if (!bufferIncludes(batch, v)) {
+                        batch[start + (fill++)] = v;
+                }
+            }
+        }
+
+        return fill;
     }
+
+    public final static <V> boolean bufferIncludes(V[] buffer, V item) {
+        for (final V x : buffer) {
+            if (x == null)
+                break;
+            if (x == item) return true;
+        }
+        return false;
+    }
+
 
     /**
      * accuracy determines the percentage of items which will be processNext().
@@ -330,7 +402,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
         int affected = 0;
         for (int i = 0; i < conceptsToForget; i++) {
-            update(forgetNext);
+            peek(forgetNext);
         }
 
     }
@@ -355,7 +427,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
     public V forgetNext() {
-        update(forgetNext);
+        peek(forgetNext);
         return forgetNext.lastForgotten;
     }
 
@@ -433,6 +505,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
             n++;
         }
 
+    }
+
+    final public int peek(BagSelector<K,V> tx, V[] result, int additionalAttempts) {
+        return peek(tx, result, 0, result.length, additionalAttempts);
     }
 
 //    /**

@@ -21,5 +21,5 @@ public interface PremiseGenerator {
         return Tuples.pair(t.getTerm(), taskLink.getTask());
     }
 
-    public TermLink nextTermLink(Concept c, TaskLink taskLink);
+    public TermLink[] nextTermLinks(Concept c, TaskLink taskLink, TermLink[] result);
 }

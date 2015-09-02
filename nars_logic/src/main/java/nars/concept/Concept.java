@@ -29,6 +29,7 @@ import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.link.*;
 import nars.premise.Premise;
+import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -143,14 +144,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     public TermLinkBuilder getTermLinkBuilder();
-
-
-    /** selects the next termlink for a given tasklink with this concept.
-     *  may return null if it could not decide on one, or there was none
-     *  it wants to select.
-     */
-    public TermLink nextTermLink(TaskLink taskLink);
-
 
 
     default public String toInstanceString() {
@@ -368,6 +361,8 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         });
         return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
     }
+
+    PremiseGenerator getPremiseGenerator();
 
 //    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);
 //

@@ -9,6 +9,7 @@ import nars.concept.Concept;
 import nars.concept.TaskTable;
 import nars.link.*;
 import nars.premise.Premise;
+import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -261,7 +262,7 @@ public class TermSpect extends TermCept implements Term, Concept {
     }
 
     @Override
-    public TermLink nextTermLink(TaskLink taskLink) {
+    public PremiseGenerator getPremiseGenerator() {
         return null;
     }
 

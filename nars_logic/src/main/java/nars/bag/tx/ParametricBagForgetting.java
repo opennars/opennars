@@ -2,6 +2,7 @@ package nars.bag.tx;
 
 import nars.budget.Budget;
 import nars.budget.Itemized;
+import nars.link.TermLink;
 
 import java.util.function.Function;
 
@@ -11,14 +12,15 @@ import java.util.function.Function;
 public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForgetting<K, V> {
 
 
-    public static enum ForgetAction {
-        Select, SelectAndForget, Ignore, IgnoreAndForget
-    }
 
     Function<V, ForgetAction> model = null;
 
     public ParametricBagForgetting() {
         super();
+    }
+
+    public Function<V, ForgetAction> getModel() {
+        return model;
     }
 
     public void setModel(Function<V, ForgetAction> model) {
@@ -32,7 +34,7 @@ public class ParametricBagForgetting<K, V extends Itemized<K>> extends BagForget
         final ForgetAction a;
 
         if (model != null)
-            a = model.apply(v);
+            a = getModel().apply(v);
         else
             a = ForgetAction.SelectAndForget;
 

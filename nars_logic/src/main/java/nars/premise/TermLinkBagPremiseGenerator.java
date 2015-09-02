@@ -22,6 +22,7 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
     public final AtomicInteger maxSelectionAttempts;
     private Concept currentConcept;
     private TaskLink currentTaskLink;
+    private TermLink[] buffer = null;
 
 
     public TermLinkBagPremiseGenerator(AtomicInteger maxSelectionAttempts) {
@@ -35,16 +36,19 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
 
     /** a general condition */
     @Override public boolean valid(final TermLink term, final TaskLink task) {
-        return !(term.getTarget().equals(task.getTerm()) && !task.getBudget().isDeleted());
+        return !(term.getTarget().equals(task.getTerm())
+                && !task.getBudget().isDeleted()
+        );
     }
 
+
     @Override
-    public void setConcept(Concept c) {
+    final public void setConcept(Concept c) {
         this.currentConcept = c;
     }
 
     @Override
-    public ForgetAction apply(TermLink termLink) {
+    final public ForgetAction apply(final TermLink termLink) {
 
         if (valid(termLink, currentTaskLink)) {
             return ParametricBagForgetting.ForgetAction.SelectAndForget;
@@ -56,43 +60,67 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
     }
 
     @Override
-    public @Nullable TermLink nextTermLink(final Concept c, final TaskLink taskLink) {
+    public @Nullable TermLink[] nextTermLinks(final Concept c, final TaskLink taskLink, TermLink[] result) {
+
+        this.buffer = result;
 
         final int attempting = getMaxAttempts(c);
         if (attempting == 0) return null;
 
-        int r = attempting;
+
 
         this.currentConcept = c;
         this.currentTaskLink = taskLink;
         set(c.getMemory().param.termLinkForgetDurations.floatValue(), c.getMemory().time());
 
-        while (r > 0) {
 
-            r--;
+        //protected int update(BagTransaction<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
 
-            c.getTermLinks().update(this);
-            if (lastForgotten != null)
-                break;
+        int n = c.getTermLinks().peek(this, result, attempting);
 
-        }
+        //onSelect(c, lastForgotten != null, n);
 
-        onSelect(c, lastForgotten != null, attempting - r);
-
-        return lastForgotten;
+        return result;
     }
 
-    /** for statistics and tuning purposes in subclasses */
-    protected void onSelect(final Concept c, final boolean foundSomething, final int attempts) {
 
-        /*
-        int s = c.getTermLinks().size();
-        System.out.println(c + " termlinks avail=" + s +
-                    " found=" + foundSomething + " attempts=" + attempts);
-        */
+//    public @Nullable TermLink nextTermLinkOLD(final Concept c, final TaskLink taskLink) {
+//
+//        final int attempting = getMaxAttempts(c);
+//        if (attempting == 0) return null;
+//
+//        int r = attempting;
+//
+//        this.currentConcept = c;
+//        this.currentTaskLink = taskLink;
+//        set(c.getMemory().param.termLinkForgetDurations.floatValue(), c.getMemory().time());
+//
+//        while (r > 0) {
+//
+//            r--;
+//
+//            c.getTermLinks().update(this);
+//            if (lastForgotten != null)
+//                break;
+//
+//        }
+//
+//        onSelect(c, lastForgotten != null, attempting - r);
+//
+//        return lastForgotten;
+//    }
 
-    }
-
+//    /** for statistics and tuning purposes in subclasses */
+//    final protected void onSelect(final Concept c, final boolean foundSomething, final int attempts) {
+//
+//        /*
+//        int s = c.getTermLinks().size();
+//        System.out.println(c + " termlinks avail=" + s +
+//                    " found=" + foundSomething + " attempts=" + attempts);
+//        */
+//
+//    }
+//
     protected int getMaxAttempts(final Concept c) {
         int termlinks = c.getTermLinks().size();
 

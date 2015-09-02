@@ -19,28 +19,16 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import static nars.budget.BudgetFunctions.divide;
 import static nars.nal.nal1.LocalRules.trySolution;
 
 
-public class DefaultConcept extends AbstractConcept {
+public class DefaultConcept extends AtomConcept {
 
     private final TaskTable questions;
     private final TaskTable quests;
     private final BeliefTable beliefs;
     private final BeliefTable goals;
-
-    private final Bag<Sentence, TaskLink> taskLinks;
-    private final Bag<TermLinkKey, TermLink> termLinks;
-
-    /**
-     * Link templates of TermLink, only in concepts with CompoundTerm Templates
-     * are used to improve the efficiency of TermLink building
-     */
-    private final TermLinkBuilder termLinkBuilder;
-    transient private final TaskLinkBuilder taskLinkBuilder;
 
 
     final static public Equality<Task> taskEquivalence = new Equality<Task>() {
@@ -68,8 +56,6 @@ public class DefaultConcept extends AbstractConcept {
         @Override public int hashCodeOf(Task task) { return task.hashCode(); }
     };
 
-    private final PremiseGenerator premiseGenerator;
-
 
     /**
      * Constructor, called in Memory.getConcept only
@@ -81,38 +67,18 @@ public class DefaultConcept extends AbstractConcept {
      * @param memory    A reference to the memory
      */
     public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, PremiseGenerator ps, final Memory memory) {
-        super(term, b, memory);
+        super(term, b, memory, termLinks, taskLinks, ps);
 
-        this.premiseGenerator = ps;
         ps.setConcept(this);
 
-        this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue(), rb.get(this, true));
-        this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue(), rb.get(this, false));
+        //if (!(term instanceof Atom)) {
+            this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue(), rb.get(this, true));
+            this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue(), rb.get(this, false));
 
-        final int maxQuestions = memory.param.conceptQuestionsMax.intValue();
-        this.questions = new ArrayListTaskTable(maxQuestions);
-        this.quests = new ArrayListTaskTable(maxQuestions);
+            final int maxQuestions = memory.param.conceptQuestionsMax.intValue();
+            this.questions = new ArrayListTaskTable(maxQuestions);
+            this.quests = new ArrayListTaskTable(maxQuestions);
 
-        this.taskLinks = taskLinks;
-        this.termLinks = termLinks;
-
-        this.termLinkBuilder = new TermLinkBuilder(this);
-        this.taskLinkBuilder = new TaskLinkBuilder(memory);
-
-    }
-
-    /**
-     * Task links for indirect processing
-     */
-    public Bag<Sentence, TaskLink> getTaskLinks() {
-        return taskLinks;
-    }
-
-    /**
-     * Term links between the term and its components and compounds; beliefs
-     */
-    public Bag<TermLinkKey, TermLink> getTermLinks() {
-        return termLinks;
     }
 
     /**
@@ -163,36 +129,7 @@ public class DefaultConcept extends AbstractConcept {
     /* ---------- direct processing of tasks ---------- */
 
 
-
-    /**
-     * called by concept before it fires to update any pending changes
-     */
-    public void updateLinks() {
-
-
-        getTermLinks().forgetNext(
-                getMemory().param.termLinkForgetDurations,
-                Global.TERMLINK_FORGETTING_EXTRA_DEPTH,
-                getMemory());
-
-
-
-        getTaskLinks().forgetNext(
-                getMemory().param.taskLinkForgetDurations,
-                Global.TASKLINK_FORGETTING_EXTRA_DEPTH,
-                getMemory());
-
-
-        linkTerms(null, true);
-
-    }
-
-    public boolean link(Task t) {
-        if (linkTask(t))
-            return linkTerms(t.getBudget(), true);  // recursively insert TermLink
-        return false;
-    }
-//
+    //
 //    /**
 //     * for batch processing a collection of tasks; more efficient than processing them individually
 //     */
@@ -455,204 +392,7 @@ public class DefaultConcept extends AbstractConcept {
 
 
 
-    /**
-     * Link to a new task from all relevant concepts for continued processing in
-     * the near future for unspecified time.
-     * <p>
-     * The only method that calls the TaskLink constructor.
-     *
-     * @param task The task to be linked
-     */
-    protected boolean linkTask(final Task task) {
-
-        final Budget taskBudget = task.getBudget();
-
-        if (!taskBudget.summaryGreaterOrEqual(memory.param.taskLinkThreshold))
-            return false;
-
-
-        taskLinkBuilder.setTemplate(null);
-        taskLinkBuilder.setTask(task);
-
-        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
-
-        List<TermLinkTemplate> templates = termLinkBuilder.templates();
-
-        if (templates == null || templates.isEmpty()) {
-            //distribute budget to incoming termlinks?
-            return false;
-        }
-
-
-        //TODO parameter to use linear division, conserving total budget
-        //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
-        final int numTemplates = templates.size();
-
-
-        float linkSubBudgetDivisor = termLinkBuilder.getNonTransforms();
-        //float linkSubBudgetDivisor = (float) Math.sqrt(numTemplates);
-
-
-        final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
-
-        if (!aboveThreshold(subBudget)) {
-            return false;
-        }
-
-        taskLinkBuilder.setBudget(subBudget);
-
-        for (int i = 0; i < numTemplates; i++) {
-            TermLinkTemplate termLink = templates.get(i);
-
-            //if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
-
-            Term componentTerm = termLink.getTarget();
-            if (componentTerm.equals(getTerm())) // avoid circular transform
-                continue;
-
-            Concept componentConcept = getMemory().conceptualize(componentTerm, subBudget);
-
-            if (componentConcept != null) {
-
-                termLink.setTargetInstance(componentConcept.getTerm());
-
-                taskLinkBuilder.setTemplate(termLink);
-
-                /** activate the task tlink */
-                componentConcept.activateTaskLink(taskLinkBuilder);
-            } else {
-                //taskBudgetBalance += subBudget.getPriority();
-            }
-
-        }
-
-        return true;
-    }
-
-    static boolean aboveThreshold(Budget b) {
-        return b.summary() >= Global.BUDGET_EPSILON;
-    }
-
-
     /* ---------- insert Links for indirect processing ---------- */
-
-    /**
-     * Insert a TaskLink into the TaskLink bag
-     * <p>
-     * called only from Memory.continuedProcess
-     *
-     * @param taskLink The termLink to be inserted
-     * @return the tasklink which was selected or updated
-     */
-    public TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
-
-        TaskLink t = getTaskLinks().update(taskLink);
-        return t;
-    }
-
-
-    /**
-     * Recursively build TermLinks between a compound and its components
-     * <p>
-     * called only from Memory.continuedProcess
-     *
-     * @param taskBudget   The BudgetValue of the task
-     * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
-     * @return whether any activity happened as a result of this invocation
-     */
-    public boolean linkTerms(final Budget taskBudget, boolean updateTLinks) {
-
-        final float subPriority;
-        int recipients = termLinkBuilder.getNonTransforms();
-        if (recipients == 0) {
-            //termBudgetBalance += subBudget;
-            //subBudget = 0;
-            //return false;
-        }
-
-        boolean activity = false;
-        if ((taskBudget != null) && (recipients > 0)) {
-            float dur, qua;
-            //TODO make this parameterizable
-
-            //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
-
-            //half of each subBudget is spent on this concept and the other concept's termlink
-            //subBudget = taskBudget.getPriority() * (1f / (2 * recipients));
-
-            //subPriority = taskBudget.getPriority() / (float) Math.sqrt(recipients);
-            subPriority = taskBudget.getPriority() / recipients;
-            dur = taskBudget.getDurability();
-            qua = taskBudget.getQuality();
-
-            final List<TermLinkTemplate> templates = termLinkBuilder.templates();
-
-            int numTemplates = templates.size();
-            for (int i = 0; i < numTemplates; i++) {
-
-                final TermLinkTemplate template = templates.get(i);
-
-                //only apply this loop to non-transform termlink templates
-                if (template.type != TermLink.TRANSFORM) {
-                    template.accumulate(this);
-                    if (template.link(this, updateTLinks))
-                        activity = true;
-                }
-
-            }
-        } else {
-            subPriority = 0;
-        }
-
-
-
-
-        //TODO merge with above loop, or avoid altogether under certain conditions
-
-        List<TermLinkTemplate> tl = getTermLinkTemplates();
-        if (tl != null && updateTLinks) {
-            int n = tl.size();
-            for (int i = 0; i < n; i++) {
-                TermLinkTemplate t = tl.get(i);
-                if (t.summaryGreaterOrEqual(memory.param.termLinkThreshold)) {
-                    if (linkTerm(t, updateTLinks))
-                        activity = true;
-
-                }
-            }
-        }
-
-
-        return activity;
-    }
-
-    boolean linkTerm(TermLinkTemplate template, boolean updateTLinks) {
-        return template.link(this, updateTLinks);
-        //return linkTerm(template, 0, 0, 0, updateTLinks);
-    }
-
-    @Override
-    public TermLinkBuilder getTermLinkBuilder() {
-        return termLinkBuilder;
-    }
-
-    /**
-     * Insert a new or activate an existing TermLink in the TermLink bag
-     * via a caching TermLinkSelector which has been configured for the
-     * target Concept and the current budget
-     * <p>
-     * called from buildTermLinks only
-     * <p>
-     * If the tlink already exists, the budgets will be merged
-     *
-     * @param termLink The termLink to be inserted
-     * @return the termlink which was selected or updated
-     */
-    public TermLink activateTermLink(final TermLinkBuilder termLink) {
-
-        return getTermLinks().update(termLink);
-
-    }
 
 
     //    /**
@@ -702,11 +442,6 @@ public class DefaultConcept extends AbstractConcept {
 //    }
 
 
-    public List<TermLinkTemplate> getTermLinkTemplates() {
-        return termLinkBuilder.templates();
-    }
-
-
     /**
      * Pending Question directly asked about the term
      *
@@ -750,18 +485,6 @@ public class DefaultConcept extends AbstractConcept {
 //    }
 
 
-    /**
-     * called when concept is activated; empty and subclassable
-     */
-    protected void onActive() {
-
-    }
-
-    @Override
-    public TermLink nextTermLink(TaskLink taskLink) {
-        return premiseGenerator.nextTermLink(this, taskLink);
-    }
-
     /** called by memory, dont call directly */
     @Override public void delete() {
 
@@ -777,8 +500,8 @@ public class DefaultConcept extends AbstractConcept {
         getTermLinks().delete();
         getTaskLinks().delete();
 
-        if (termLinkBuilder != null)
-            termLinkBuilder.delete();
+        if (getTermLinkBuilder() != null)
+            getTermLinkBuilder().delete();
     }
 
 }

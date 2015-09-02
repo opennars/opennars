@@ -21,6 +21,7 @@
 package nars.bag.impl;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
@@ -768,9 +769,12 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     }
 
     @Override
-    public Collection<E> values() {
-        throw new RuntimeException("Coming soon");
-        //return index.values();
+    @Deprecated public Iterable<E> values() {
+        return Iterables.transform(
+                index.values(),
+                (d) -> d.item );
+
+        //throw new RuntimeException("Coming soon");
     }
 
 

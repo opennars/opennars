@@ -11,10 +11,7 @@ import nars.clock.Clock;
 import nars.clock.CycleClock;
 import nars.clock.HardRealtimeClock;
 import nars.clock.RealtimeMSClock;
-import nars.concept.BeliefTable;
-import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
-import nars.concept.DefaultConcept;
+import nars.concept.*;
 import nars.cycle.SequentialCycle;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -47,6 +44,7 @@ import nars.task.Task;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
+import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -463,13 +461,21 @@ public class Default extends Param implements NARSeed {
         );
     }
 
-    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory mem) {
-        return new DefaultConcept(t, b,
-                taskLinks, termLinks,
-                newConceptBeliefGoalRanking(),
-                newPremiseGenerator(),
-                mem
-        );
+    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+
+        if (t instanceof Atom) {
+            return new AtomConcept(t, b, m, termLinks, taskLinks,
+                    newPremiseGenerator());
+        }
+        else {
+            return new DefaultConcept(t, b,
+                    taskLinks, termLinks,
+                    newConceptBeliefGoalRanking(),
+                    newPremiseGenerator(),
+                    m
+            );
+        }
+
     }
 
     /**

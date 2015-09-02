@@ -12,6 +12,7 @@ import nars.link.TermLink;
 import nars.task.Task;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -140,38 +141,37 @@ abstract public class ConceptProcess extends NAL  {
      * */
     public static int forEachPremise(Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
 
-
         int numTermLinks = concept.getTermLinks().size();
         if (numTermLinks == 0)
             return 0;
 
         final Memory memory = concept.getMemory();
 
-//      Idea:
-//        /** use the time since last cycle as a sort of estimate for how to divide this cycle into subcycles;
-//         * this isnt necessary for default mode but realtime mode and others may have
-//         * irregular or unpredictable clocks.
-//         */
-//        //float cyclesSincePrevious = memory.timeSinceLastCycle();
+        TermLink[] termlinks = new TermLink[termlinksToReason];
 
+        //int remainingProcesses = Math.min(termlinksToReason, numTermLinks);
 
-        int remainingProcesses = Math.min(termlinksToReason, numTermLinks);
+        //while (remainingProcesses > 0) {
 
-        while (remainingProcesses > 0) {
+            Arrays.fill(termlinks, null);
 
-           final TermLink bLink = concept.nextTermLink(t);
+            concept.getPremiseGenerator().nextTermLinks(concept, t, termlinks);
 
-            if (bLink!=null) {
+            int created = 0;
+            for (TermLink tl : termlinks) {
+                if (tl == null) break;
 
                 proc.accept(
-                        new ConceptTaskTermLinkProcess(concept, t, bLink)
+                    new ConceptTaskTermLinkProcess(concept, t, tl)
                 );
-
+                created++;
             }
 
-            remainingProcesses--;
 
-        }
+          //  remainingProcesses--;
+
+
+        //}
 
         /*if (remainingProcesses == 0) {
             System.err.println(now + ": " + currentConcept + ": " + remainingProcesses + "/" + termLinksToFire + " firings over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords() + " for TermLinks "
@@ -180,7 +180,7 @@ abstract public class ConceptProcess extends NAL  {
             //currentConcept.taskLinks.printAll(System.out);
         }*/
 
-        return termlinksToReason - remainingProcesses;
+        return created;
 
     }
 
