@@ -581,9 +581,9 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         @Override
         public final float valueOf(final float x) {
-            float nx = 1.0f - x;
+            float nx = 1-x;
             float nnx = nx * nx;
-            return 1.0f - (nnx * nnx);
+            return 1 - (nnx * nnx);
         }
 
         @Override
@@ -591,13 +591,14 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             return "Power4BagCurve";
         }
     }
+    public final static BagCurve power4BagCurve = new Power4BagCurve();
 
     public static class Power6BagCurve implements BagCurve {
 
         @Override
         public final float valueOf(final float x) {
             /** x=0, y=0 ... x=1, y=1 */
-            float nx = (1-x);
+            float nx = 1-x;
             float nnx = nx * nx;
             return 1-(nnx * nnx * nnx);
         }

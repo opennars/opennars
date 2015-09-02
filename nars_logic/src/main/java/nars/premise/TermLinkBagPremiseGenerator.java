@@ -35,7 +35,7 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
 
     /** a general condition */
     @Override public boolean valid(final TermLink term, final TaskLink task) {
-        return !(term.getTarget().equals(task.getTerm()));
+        return !(term.getTarget().equals(task.getTerm()) && !task.getBudget().isDeleted());
     }
 
     @Override

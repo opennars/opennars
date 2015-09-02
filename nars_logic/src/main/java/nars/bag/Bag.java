@@ -217,7 +217,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
             Budget result = selector.updateItem(item, temp.set(ib));
 
-            if ((result == null) || (result.equalsByPrecision(ib)))
+            if ((result == null) || (result.isDeleted()) || (result.equalsByPrecision(ib)))
                 return item;
             else {
                 //it has changed
