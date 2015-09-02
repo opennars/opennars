@@ -6,7 +6,7 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars-web</artifactId>
+    <artifactId>opennars_web</artifactId>
     <packaging>jar</packaging>
 
     <name>OpenNARS Web</name>
@@ -42,12 +42,12 @@
 
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-util</artifactId>
+            <artifactId>opennars_util</artifactId>
         </dependency>
 
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-logic</artifactId>
+            <artifactId>opennars_logic</artifactId>
         </dependency>
 
         <dependency>

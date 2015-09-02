@@ -78,12 +78,12 @@
         <dependencies>
             <dependency>
                 <groupId>opennars</groupId>
-                <artifactId>opennars-util</artifactId>
+                <artifactId>opennars_util</artifactId>
                 <version>1.7-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>opennars</groupId>
-                <artifactId>opennars-logic</artifactId>
+                <artifactId>opennars_logic</artifactId>
                 <version>1.7-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -193,17 +193,12 @@
             </dependency>
             <dependency>
                 <groupId>opennars</groupId>
-                <artifactId>opennars-prolog</artifactId>
+                <artifactId>opennars_gui</artifactId>
                 <version>1.7-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>opennars</groupId>
-                <artifactId>opennars-gui</artifactId>
-                <version>1.7-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>opennars</groupId>
-                <artifactId>opennars-web</artifactId>
+                <artifactId>opennars_web</artifactId>
                 <version>1.7-SNAPSHOT</version>
             </dependency>
             <dependency>

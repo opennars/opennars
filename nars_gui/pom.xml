@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <artifactId>opennars-gui</artifactId>
+    <artifactId>opennars_gui</artifactId>
 
     <parent>
         <groupId>opennars</groupId>
@@ -51,7 +51,7 @@
 
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-util</artifactId>
+            <artifactId>opennars_util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -119,7 +119,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>opennars-logic</artifactId>
+            <artifactId>opennars_logic</artifactId>
             <version>${project.version}</version>
         </dependency>
 

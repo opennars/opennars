@@ -6,7 +6,7 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars-lab</artifactId>
+    <artifactId>opennars_lab</artifactId>
     <packaging>jar</packaging>
 
     <name>OpenNARS Lab</name>
@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-logic</artifactId>
+            <artifactId>opennars_logic</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -37,17 +37,14 @@
             <groupId>org.jbox2d</groupId>
             <artifactId>jbox2d-library</artifactId>
         </dependency>
+
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-prolog</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>opennars</groupId>
-            <artifactId>opennars-gui</artifactId>
+            <artifactId>opennars_gui</artifactId>
         </dependency>        
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-web</artifactId>
+            <artifactId>opennars_web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>

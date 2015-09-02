@@ -6,7 +6,7 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars-logic</artifactId>
+    <artifactId>opennars_logic</artifactId>
     <packaging>jar</packaging>
 
     <name>OpenNARS Logic Reasoner</name>
@@ -62,7 +62,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
-                    <!--<useIncrementalCompilation>true</useIncrementalCompilation>-->
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
                 </configuration>
             </plugin>
 
@@ -276,15 +276,15 @@
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <showSuccess>false</showSuccess>
+                    <showSuccess>true</showSuccess>
                 </configuration>
             </plugin>
         </plugins>
     </reporting>
 
 
-    <!--<reporting>-->
-    <!--<plugins>-->
+    <reporting>
+    <plugins>
     <!--&lt;!&ndash;-->
     <!--<plugin>-->
     <!--<groupId>org.codehaus.mojo</groupId>-->
@@ -292,13 +292,13 @@
     <!--<version>2.0</version>-->
     <!--</plugin>-->
     <!--&ndash;&gt;-->
-    <!--<plugin>-->
-    <!--<groupId>org.codehaus.mojo</groupId>-->
-    <!--<artifactId>cobertura-maven-plugin</artifactId>-->
-    <!--<version>2.6</version>-->
-    <!--</plugin>-->
-    <!--</plugins>-->
-    <!--</reporting>-->
+    <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>cobertura-maven-plugin</artifactId>
+    <version>2.6</version>
+    </plugin>
+    </plugins>
+    </reporting>
 
 
     <dependencies>
@@ -306,7 +306,7 @@
 
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-util</artifactId>
+            <artifactId>opennars_util</artifactId>
         </dependency>
 
 
