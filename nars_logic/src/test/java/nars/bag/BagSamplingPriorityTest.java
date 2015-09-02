@@ -1,6 +1,7 @@
 package nars.bag;
 
 import nars.analyze.experimental.NullItem;
+import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.HeapBag;
 import nars.bag.impl.LevelBag;
@@ -50,10 +51,10 @@ public class BagSamplingPriorityTest {
 
         public int discretize(final float p) {
             //return (int)Math.floor(p * (bins-1));
-            return Bag.bin(p, bins);
+            return CacheBag.decimalize(p, bins);
         }
         public double undiscretize(int bin) {
-            return Bag.unbinCenter(bin, bins);
+            return CacheBag.unbinCenter(bin, bins);
             //return ((double)bin)/(bins-1);
         }
 

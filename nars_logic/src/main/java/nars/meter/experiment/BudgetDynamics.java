@@ -105,7 +105,7 @@ public class BudgetDynamics {
 
                         }
 
-                        m.getControl().reprioritize(parentConcept.getTerm(), newPriority);
+                        m.getCycleProcess().reprioritize(parentConcept.getTerm(), newPriority);
 
                     }
 

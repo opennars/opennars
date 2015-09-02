@@ -96,7 +96,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         final Term firstTerm = task.getTerm();
 
         for (int k = 0; k < Global.DED_SECOND_UNIFICATION_ATTEMPTS; k++) {
-            Concept secondConcept = nal.memory.getControl().nextConcept(new Predicate<Concept>() {
+            Concept secondConcept = nal.memory.getCycleProcess().nextConcept(new Predicate<Concept>() {
 
                 @Override
                 public boolean test(Concept concept) {

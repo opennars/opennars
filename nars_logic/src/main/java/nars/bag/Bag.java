@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.AbstractMemory;
 import nars.Memory;
+import nars.bag.impl.CacheBag;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.BudgetSource;
@@ -25,11 +26,9 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements Iterable<V>, Consumer<V>, Supplier<V>, Serializable {
+public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements CacheBag<K,V>, Consumer<V>, Supplier<V>, Serializable {
 
     transient public final BagForgetting<K, V> forgetNext = new BagForgetting<>();
-
-
 
     /** returns the bag to an empty state */
     public abstract void clear();
@@ -83,6 +82,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     abstract public int capacity();
 
+
+
+
+
     /**
      * Choose an Item according to distribution policy and take it out of the Bag
      * TODO rename removeNext()
@@ -134,6 +137,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         return exist.equals(it);
     }
 
+    /** not used currently in Bag classes, but from CacheBag interface */
+    @Override public Consumer<V> getOnRemoval() {  return null;    }
+    /** not used currently in Bag classes, but from CacheBag interface */
+    @Override public void setOnRemoval(Consumer<V> onRemoval) { }
 
     /** implements the Consumer<V> interface; invokes a put() */
     @Override public void accept(V v) {
@@ -297,27 +304,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
 
-    public double[] getPriorityHistogram(int bins) {
-        return getPriorityHistogram(new double[bins]);
-    }
-
-    public double[] getPriorityHistogram(final double[] x) {
-        int bins = x.length;
-        forEach(e -> {
-            final float p = e.getPriority();
-            final int b = bin(p, bins - 1);
-            x[b]++;
-        });
-        double total = 0;
-        for (double e : x) {
-            total += e;
-        }
-        if (total > 0) {
-            for (int i = 0; i < bins; i++)
-                x[i] /= total;
-        }
-        return x;
-    }
 
     @Override
     public String toString() {
@@ -350,14 +336,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         return max;
     }
 
-    public static final int bin(final float x, final int bins) {
-        return (int) FastMath.floor((x + (0.5f / bins)) * bins);
-    }
-
-    /** finds the mean value of a given bin */
-    public static final float unbinCenter(final int b, final int bins) {
-        return ((float)b)/bins;
-    }
 
     /** utility function for inserting an item, capturing any overflow,
      * and returning the result of the operation

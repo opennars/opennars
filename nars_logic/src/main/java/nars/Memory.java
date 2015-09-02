@@ -20,14 +20,15 @@
  */
 package nars;
 
-import com.google.common.collect.Iterators;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
+import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
+import nars.link.TaskLink;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
 import nars.nal.PremiseProcessor;
@@ -86,7 +87,7 @@ public class Memory implements Serializable, AbstractMemory {
 
     public final Random random;
 
-    private CycleProcess control;
+    private CycleProcess cycle;
 
     @Deprecated public final EventEmitter<Class,Object[]> event;
     public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
@@ -406,8 +407,8 @@ public class Memory implements Serializable, AbstractMemory {
             }
 
             //this test was cycle.size() previously:
-            if (questionConcepts.size() > getControl().size()) {
-                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + getControl().size());
+            if (questionConcepts.size() > getCycleProcess().size()) {
+                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + getCycleProcess().size());
             }
         }
     }
@@ -423,13 +424,13 @@ public class Memory implements Serializable, AbstractMemory {
     }
 
     public void reset(CycleProcess control) {
-        this.control = control;
+        this.cycle = control;
         reset();
     }
 
     public synchronized void reset() {
 
-        control.reset(this);
+        cycle.reset(this);
 
 
         nextTasks.clear();
@@ -513,7 +514,7 @@ public class Memory implements Serializable, AbstractMemory {
         if ((term = term.normalized()) == null)
             return null;
 
-        return getControl().conceptualize(term, budget, true);
+        return getCycleProcess().conceptualize(term, budget, true);
     }
 
     public Concept conceptualize(final Task t) {
@@ -619,7 +620,7 @@ public class Memory implements Serializable, AbstractMemory {
         }
 
         /* delegate the fate of this task to controller */
-        if (getControl().accept(t)) {
+        if (getCycleProcess().accept(t)) {
 
 
             emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
@@ -698,12 +699,12 @@ public class Memory implements Serializable, AbstractMemory {
 
     /** adds a task to the queue of task which will be executed in batch
      *  at the end of the current cycle.     */
-    public void taskNext(Runnable t) {
+    final public void taskNext(Runnable t) {
         nextTasks.addLast(t);
     }
 
     /** runs all the tasks in the 'Next' queue */
-    public void runNextTasks() {
+    protected final void runNextTasks() {
         int originalSize = nextTasks.size();
         if (originalSize == 0) return;
 
@@ -748,7 +749,7 @@ public class Memory implements Serializable, AbstractMemory {
 
 
     public void forEachTask(boolean includeTaskLinks, Consumer<Task> each) {
-        getControl().forEach(c -> {
+        getCycleProcess().forEachConcept(c -> {
             if (c.getTaskLinks() != null)
                 c.getTaskLinks().forEach(tl -> {
                     each.accept(tl.getTask());
@@ -764,11 +765,10 @@ public class Memory implements Serializable, AbstractMemory {
 
 
         if (includeTaskLinks) {
-            getControl().forEach(c -> {
-                if (c.getTaskLinks() != null)
-                    c.getTaskLinks().forEach(tl -> {
-                        target.add(tl.targetTask);
-                    });
+            getCycleProcess().forEachConcept(c -> {
+                Bag<Sentence, TaskLink> tl = c.getTaskLinks();
+                if (tl != null)
+                    tl.forEach(t ->  target.add(t.targetTask) );
             });
         }
 
@@ -798,12 +798,12 @@ public class Memory implements Serializable, AbstractMemory {
      * may return null if no concept is available depending on the control system
      */
     public Concept nextConcept() {
-        return getControl().nextConcept();
+        return getCycleProcess().nextConcept();
     }
 
     /** scan for a next concept matching the predicate */
     public Concept nextConcept(Predicate<Concept> pred, float v) {
-        return getControl().nextConcept(pred, v);
+        return getCycleProcess().nextConcept(pred, v);
     }
 
     @Override
@@ -813,28 +813,19 @@ public class Memory implements Serializable, AbstractMemory {
 
     /** returns the concept index */
     public CacheBag<Term, Concept> getConcepts() {
-        return concepts;
+        return cycle;
     }
 
-    public Iterator<Concept> getConcepts(boolean active, boolean inactive) {
-        if (active && !inactive)
-            return getControl().iterator();
-        else if (!active && inactive)
-            return Iterators.filter(concepts.iterator(), c -> isActive(c));
-        else if (active && inactive)
-            return concepts.iterator(); //'concepts' should contain all concepts
-        else
-            return Iterators.emptyIterator();
-    }
+//
 
     public boolean isActive(Concept c) {
-        return control.concept(c.getTerm())!=null;
+        return cycle.concept(c.getTerm())!=null;
     }
 
     public int numConcepts(boolean active, boolean inactive) {
         int total = 0;
-        if (active && !inactive) return getControl().size();
-        else if (!active && inactive) return concepts.size() - getControl().size();
+        if (active && !inactive) return getCycleProcess().size();
+        else if (!active && inactive) return concepts.size() - getCycleProcess().size();
         else if (active && inactive)
             return concepts.size();
         else
@@ -854,7 +845,7 @@ public class Memory implements Serializable, AbstractMemory {
         //event.emit(Events.CycleStart.class);
         eventCycleStart.emit(this);
 
-        getControl().cycle();
+        getCycleProcess().cycle();
 
         //event.emit(Events.CycleEnd.class);
         eventCycleEnd.emit(this);
@@ -903,7 +894,7 @@ public class Memory implements Serializable, AbstractMemory {
     /** actually delete procedure for a concept; removes from indexes */
     protected void _delete(Concept c) {
 
-        Concept removedFromActive = getControl().remove(c);
+        Concept removedFromActive = getCycleProcess().remove(c);
 
         if (c!=removedFromActive) {
             throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
@@ -922,20 +913,20 @@ public class Memory implements Serializable, AbstractMemory {
 
     /** sums the priorities of items in different active areas of the memory */
     public double getActivePrioritySum(final boolean concept, final boolean tasklink, final boolean termlink) {
-        double total = 0;
-        for (Concept c : getControl()) {
+        final double[] total = {0};
+        getCycleProcess().forEachConcept(c-> {
             if (concept)
-                total += c.getPriority();
+                total[0] += c.getPriority();
             if (tasklink)
-                total += c.getTaskLinks().getPrioritySum();
+                total[0] += c.getTaskLinks().getPrioritySum();
             if (termlink)
-                total += c.getTermLinks().getPrioritySum();
-        }
-        return total;
+                total[0] += c.getTermLinks().getPrioritySum();
+        });
+        return total[0];
     }
 
-    public CycleProcess<Memory> getControl() {
-        return control;
+    public CycleProcess<Memory> getCycleProcess() {
+        return cycle;
     }
 
     public double getActivePriorityPerConcept(final boolean concept, final boolean tasklink, final boolean termlink) {
@@ -959,4 +950,17 @@ public class Memory implements Serializable, AbstractMemory {
 //        return item == null ? "" : "\n " + title + ":\n"
 //                + item.toString();
 //    }
+
+
+    //public Iterator<Concept> getConcepts(boolean active, boolean inactive) {
+//        if (active && !inactive)
+//            return getControl().iterator();
+//        else if (!active && inactive)
+//            return Iterators.filter(concepts.iterator(), c -> isActive(c));
+//        else if (active && inactive)
+//            return concepts.iterator(); //'concepts' should contain all concepts
+//        else
+//            return Iterators.emptyIterator();
+//    }
 }
+

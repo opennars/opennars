@@ -661,19 +661,15 @@ public class NAR implements Runnable {
         return enabled;
     }
 
-    /**
-     * executes one complete memory cycle (if not disabled)
-     */
-    protected void cycle(final boolean newFrame) {
-        if (isEnabled()) {
-            memory.cycle();
-        }
-    }
+
 
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
     protected void frameCycles(final int cycles) {
+
+        if (!isEnabled())
+            throw new RuntimeException("NAR disabled");
 
         if (memory.resource!=null)
             memory.resource.FRAME_DURATION.start();
@@ -684,13 +680,16 @@ public class NAR implements Runnable {
 
         //try {
         for (int i = 0; i < cycles; i++)
-            cycle(i == 0);
+            memory.cycle();
+
         /*}
         catch (Throwable e) {
             Throwable c = e.getCause();
             if (c == null) c = e;
             error(c);
         }*/
+
+        memory.runNextTasks();
 
         emit(FrameEnd.class);
 

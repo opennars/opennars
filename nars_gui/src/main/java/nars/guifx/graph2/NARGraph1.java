@@ -817,7 +817,7 @@ public class NARGraph1 extends Spacegraph {
         if (conceptsChanged.getAndSet(false)) {
             active.clear();
 
-            nar.memory.getControl().forEach(maxTerms, c -> {
+            nar.memory.getCycleProcess().forEachConcept(maxTerms, c -> {
 
                 final Term source = c.getTerm();
 

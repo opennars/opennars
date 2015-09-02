@@ -111,30 +111,27 @@ public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object
 
 
 
-
-
-
-
     public void update(Memory m) {
 
         SummaryStatistics prisum = new SummaryStatistics();
 
-        double tActiveTaskLinkPriority = 0, tActiveTermLinkPriority = 0;
+        final double[] tActiveTaskLinkPriority = {0};
+        final double[] tActiveTermLinkPriority = {0};
 
-        for (Concept c : m.getControl()) {
+        m.getCycleProcess().forEachConcept(c -> {
             double p = c.getPriority();
 
             prisum.addValue(p);
 
-            tActiveTaskLinkPriority += c.getTaskLinks().getPrioritySum();
-            tActiveTermLinkPriority += c.getTermLinks().getPrioritySum();
-        }
+            tActiveTaskLinkPriority[0] += c.getTaskLinks().getPrioritySum();
+            tActiveTermLinkPriority[0] += c.getTermLinks().getPrioritySum();
+        });
 
         put(Budgeted.ActiveConceptPrioritySum, prisum.getSum());
         put(Budgeted.ActiveConcepts, prisum.getN());
         put(Budgeted.ActiveConceptPriorityVariance, prisum.getVariance());
-        put(Budgeted.ActiveTaskLinkPrioritySum, tActiveTaskLinkPriority);
-        put(Budgeted.ActiveTermLinkPrioritySum, tActiveTermLinkPriority);
+        put(Budgeted.ActiveTaskLinkPrioritySum, tActiveTaskLinkPriority[0]);
+        put(Budgeted.ActiveTermLinkPrioritySum, tActiveTermLinkPriority[0]);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class NAL1ScriptTests extends ScriptNALTest {
                 new NewDefault().setInternalExperience(null),
                 new DefaultMicro().setInternalExperience(null),
                 new Classic().setInternalExperience(null),
-                new Solid(1, 64, 1, 1, 1, 2).setInternalExperience(null)
+                new Solid(1, 64, 1, 1, 1, 2)
         );
     }
 

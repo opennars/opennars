@@ -22,7 +22,7 @@ public class NAL6ScriptTests extends ScriptNALTest {
         return getParams(new String[]{"test6"},
                 new Default(),
                 new Default().setInternalExperience(null).level(6),
-                new Solid(1, 256, 1, 4, 1, 3).setInternalExperience(null)
+                new Solid(1, 256, 1, 4, 1, 3)
                 //new Default().setInternalExperience(null),
                 //new Classic().setInternalExperience(null)
         );

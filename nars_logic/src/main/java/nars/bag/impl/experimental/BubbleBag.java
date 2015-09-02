@@ -4,9 +4,10 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.budget.Item;
-import nars.util.data.list.CircularArrayList;
 import nars.util.data.CuckooMap;
+import nars.util.data.list.CircularArrayList;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
@@ -318,14 +319,10 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
         float p = e.getPriority();
         outPriority.addValue(p);
-        removal.addValue(bin(p));
+        removal.addValue(CacheBag.decimalize(p));
         return e;
     }
 
-    /** bins a priority value to an integer */
-    protected int bin(float v) {
-        return bin(v,10);
-    }
 
     @Override
     public E remove(K key) {

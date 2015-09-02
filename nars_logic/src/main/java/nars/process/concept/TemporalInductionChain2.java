@@ -12,7 +12,6 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -78,7 +77,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 //TODO create and use a sampleNextConcept(NALOperator.Implication) method
 
-                Concept next = memory.getControl().nextConcept(nextInductedImplication, chainSampleSearchSize);
+                Concept next = memory.getCycleProcess().nextConcept(nextInductedImplication, chainSampleSearchSize);
                 if (next == null || next.equals(concept))
                     continue;
 

@@ -31,7 +31,7 @@ public class SolidTest {
 
         };
 
-        s.level(6);
+        s.getMemory().setLevel(6);
 
         //s.setMaxTasksPerCycle(numConcepts);
 
@@ -68,7 +68,7 @@ public class SolidTest {
                 break;
         }
 
-        //n.memory.concepts.forEach(x -> System.out.println(x.getPriority() + " " + x));
+        n.memory.concepts.forEach(x -> System.out.println(x.getPriority() + " " + x));
 
 
         //System.out.println(solutions);

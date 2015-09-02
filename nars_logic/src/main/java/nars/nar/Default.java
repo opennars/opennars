@@ -7,7 +7,6 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.budget.ItemComparator;
 import nars.clock.Clock;
 import nars.clock.CycleClock;
 import nars.clock.HardRealtimeClock;
@@ -58,9 +57,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
@@ -70,12 +67,20 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
- *
+ * <p>
  * WARNING this Seed is not immutable yet because it extends Param,
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
  */
 public class Default extends Param implements NARSeed {
+
+    /**
+     * for fairly absorbing streams of task as originally designed;
+     * this functionality will be moved to a separate system outside of
+     * Memory
+     */
+    //@Deprecated final protected Perception percepts = new DefaultPerception();
+    final Deque<Task> percepts = new ArrayDeque();
 
     public static final OpReaction[] exampleOperators = new OpReaction[]{
             //new Wait(),
@@ -335,7 +340,9 @@ public class Default extends Param implements NARSeed {
         };
     }
 
-    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
+    /**
+     * avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode
+     */
     public Default setClock(Clock clock) {
         this.clock = clock;
         return this;
@@ -486,8 +493,7 @@ public class Default extends Param implements NARSeed {
     }
 
     @Override
-    public CacheBag<Term, Concept> newIndex() {
-
+    public CacheBag<Term, Concept> newConceptIndex() {
         return new GuavaCacheBag();
         //return new TrieCacheBag();
     }
@@ -583,7 +589,6 @@ public class Default extends Param implements NARSeed {
     }
 
 
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + '[' + maxNALLevel +
@@ -595,19 +600,23 @@ public class Default extends Param implements NARSeed {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static class DefaultCycle extends SequentialCycle {
+    public class DefaultCycle extends SequentialCycle {
 
 
-
-        /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
+        /**
+         * How many concepts to fire each cycle; measures degree of parallelism in each cycle
+         */
         public final AtomicInteger conceptsFiredPerCycle;
 
-        /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+        /**
+         * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
+         */
         public final AtomicInteger inputsMaxPerCycle;
 
-        /** max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+        /**
+         * max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
+         */
         public final AtomicInteger novelMaxPerCycle;
-
 
 
         /**
@@ -618,7 +627,6 @@ public class Default extends Param implements NARSeed {
         int numNovelTasksPerCycle = 1;
 
         /* ---------- Short-term workspace for a single cycle ------- */
-
 
 
         public DefaultCycle(ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
@@ -641,48 +649,48 @@ public class Default extends Param implements NARSeed {
         public void reset(Memory m) {
             super.reset(m);
 
+            percepts.clear();
 
-            if (novelTasks!=null)
+            if (novelTasks != null)
                 novelTasks.clear();
         }
+
+
+        @Override
+        public boolean accept(Task t) {
+            if (t.isInput())
+                return percepts.add(t);
+            else
+                return super.accept(t);
+        }
+
 
 
 
 
         /**
          * An atomic working cycle of the system:
-         *  0) optionally process inputs
-         *  1) optionally process new task(s)
-         *  2) optionally process novel task(s)
-         *  2) optionally fire a concept
+         * 0) optionally process inputs
+         * 1) optionally process new task(s)
+         * 2) optionally process novel task(s)
+         * 2) optionally fire a concept
          **/
         @Override
         public void cycle() {
 
-            concepts.forgetNext(
-                    memory.param.conceptForgetDurations,
-                    Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
-                    memory);
+            enhanceAttention();
 
-            //inputs
-            inputNextPerception(inputsMaxPerCycle.get());
+            runInputTasks();
 
+            runAllNewTasks();
 
-            //all new tasks
-            int numNewTasks = newTasks.size();
-            if (numNewTasks > 0)
-                runNewTasks();
+            runNovelTasks();
 
+            fireConcepts();
 
-            //1 novel tasks if numNewTasks empty
-            if (newTasks.isEmpty() && !novelTasks.isEmpty())  {
-                int nn = novelMaxPerCycle.get();
-                if (nn < 0) nn = novelTasks.size(); //all
-                if (nn > 0)
-                    runNextNovelTasks(nn);
-            }
+        }
 
-
+        protected void fireConcepts() {
             //1 concept if (memory.newTasks.isEmpty())*/
             final int conceptsToFire = newTasks.isEmpty() ? conceptsFiredPerCycle.get() : 0;
             if (conceptsToFire > 0) {
@@ -690,17 +698,30 @@ public class Default extends Param implements NARSeed {
                 final float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
 
                 ConceptProcess.forEachPremise(memory,
-                        () ->  nextConceptToProcess(conceptForgetDurations),
+                        () -> nextConceptToProcess(conceptForgetDurations),
                         conceptsToFire,
-                        p->p.run()
+                        p -> p.run()
                 );
 
             }
-
-            memory.runNextTasks();
-
         }
 
+        protected void runNovelTasks() {
+            //1 novel tasks if numNewTasks empty
+            if (newTasks.isEmpty() && !novelTasks.isEmpty()) {
+                int nn = novelMaxPerCycle.get();
+                if (nn < 0) nn = novelTasks.size(); //all
+                if (nn > 0)
+                    runNextNovelTasks(nn);
+            }
+        }
+
+        protected void enhanceAttention() {
+            ((Bag) concepts).forgetNext(
+                    memory.param.conceptForgetDurations,
+                    Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
+                    memory);
+        }
 
 
         /**
@@ -713,7 +734,7 @@ public class Default extends Param implements NARSeed {
             for (int i = 0; i < count; i++) {
 
                 final Task task = novelTasks.pop();
-                if (task!=null)
+                if (task != null)
                     TaskProcess.run(memory, task);
                 else
                     break;
@@ -722,11 +743,16 @@ public class Default extends Param implements NARSeed {
             commitNewTasks();
         }
 
-        private void runNewTasks() {
+
+
+        protected void runAllNewTasks() {
+
+            int numNewTasks = newTasks.size();
+            if (numNewTasks == 0) return;
 
             queueNewTasks();
 
-            for (int n = newTasks.size()-1;  n >= 0; n--) {
+            for (int n = newTasks.size() - 1; n >= 0; n--) {
                 Task highest = newTasks.removeHighest();
                 if (highest == null) break;
 
@@ -737,9 +763,20 @@ public class Default extends Param implements NARSeed {
 
         }
 
+        protected void runInputTasks() {
+
+            int m = Math.min(percepts.size(),
+                        inputsMaxPerCycle.get());
+
+            for (int n = m; n > 0; n--) {
+                run(percepts.removeFirst());
+            }
+        }
 
 
-        /** returns whether the task was run */
+        /**
+         * returns whether the task was run
+         */
         protected boolean run(Task task) {
 
 
@@ -750,11 +787,10 @@ public class Default extends Param implements NARSeed {
                     ) {
 
                 //it is a question/quest or a judgment for a concept which exists:
-                return TaskProcess.run(memory, task)!=null;
+                return TaskProcess.run(memory, task) != null;
 
             } else {
                 //it is a judgment or goal which would create a new concept:
-
 
 
                 //if (s.isJudgment() || s.isGoal()) {
@@ -784,9 +820,6 @@ public class Default extends Param implements NARSeed {
             }
             return false;
         }
-
-
-
 
 
     }

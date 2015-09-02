@@ -211,7 +211,7 @@ public class NARSwing extends NARControlPanel {
 
         @Override
         public int getNumConcepts() {
-            return ((AntCore) nar.memory.getControl()).concepts.size();
+            return ((AntCore) nar.memory.getCycleProcess()).concepts.size();
         }
         
     }

@@ -143,7 +143,7 @@ public class OptimizeLeakGenetic3  {
                 @Override
                 public void onCycle() {
 
-                    nar.memory.getControl().conceptPriorityHistogram(conPri);
+                    nar.memory.getCycleProcess().conceptPriorityHistogram(conPri);
 
                     //these represent the points of the boundaries between histogram bins
                     c0.set(conPri[0]);

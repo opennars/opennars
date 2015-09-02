@@ -33,7 +33,7 @@ public class InfiniCacheTest {
         }
 
         @Override
-        public CacheBag<Term, Concept> newIndex() {
+        public CacheBag<Term, Concept> newConceptIndex() {
             return (this.internar = InfiniCacheBag.local(uid, subconChannel));
         }
 

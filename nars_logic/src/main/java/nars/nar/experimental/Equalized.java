@@ -66,15 +66,7 @@ public class Equalized extends NewDefault {
                     Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
                     memory);
 
-            //inputs
-            if (memory.isInputting()) {
 
-                //input all available percepts
-                Task t;
-                while ((t = percepts.get())!=null) {
-                    newTasks.add(t);
-                }
-            }
 
             queueNewTasks();
 
@@ -124,7 +116,7 @@ public class Equalized extends NewDefault {
 
             //System.out.print("concepts=" + conceptsToFire + "  ");
 
-            memory.runNextTasks();
+
 
             final int maxNewTasks = conceptsToFire * memory.duration();
             if (newTasks.size() > maxNewTasks) {

@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 public class ItemAccumulator<I extends Budgeted> {
 
 
-    public final UnifiedMap<I,I> items = new UnifiedMap();
+    public final UnifiedMap<I,I> items = new UnifiedMap<>();
 
 //    final Comparator<? super I> floatValueComparator = new Comparator<I>() {
 //        @Override public final int compare(final I o1, final I o2) {
@@ -29,8 +29,8 @@ public class ItemAccumulator<I extends Budgeted> {
 //        }
 //    };
 
-    final static Comparator<Budgeted> highestFirst = new HighestFirstComparator();
-    final static Comparator<Budgeted> lowestFirst = new LowestFirstComparator();
+    final static Comparator highestFirst = new HighestFirstComparator();
+    final static Comparator lowestFirst = new LowestFirstComparator();
 
     /** ex: Bag.max, Bag.plus, Bag.average
      * first budget = target where the data is accumulated
@@ -74,15 +74,15 @@ public class ItemAccumulator<I extends Budgeted> {
         return items.isEmpty();
     }
 
-    public I removeHighest() {
+    public <J extends I> J removeHighest() {
         final I i = highest();
         items.remove(i);
-        return i;
+        return (J)i;
     }
-    public I removeLowest() {
+    public <J extends I> J removeLowest() {
         final I i = lowest();
         items.remove(i);
-        return i;
+        return (J)i;
     }
 
     public I lowest() {
@@ -188,14 +188,14 @@ public class ItemAccumulator<I extends Budgeted> {
 
 
 
-    static final class HighestFirstComparator<I extends Item> implements Comparator<I> {
-        @Override public final int compare(final I a, final I b) {
+    static final class HighestFirstComparator implements Comparator<Budgeted> {
+        @Override public final int compare(final Budgeted a, final Budgeted b) {
             return Float.compare(b.getPriority(), a.getPriority());
         }
     }
 
-    static final class LowestFirstComparator<I extends Item> implements Comparator<I> {
-        @Override public final int compare(final I a, final I b) {
+    static final class LowestFirstComparator implements Comparator<Budgeted> {
+        @Override public final int compare(final Budgeted a, final Budgeted b) {
             return Float.compare(a.getPriority(), b.getPriority());
         }
     }

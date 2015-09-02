@@ -324,7 +324,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         graphize.setMinPriority(filter.getMinPriority());
 
         //TODO support AbstractBag
-        for (Concept c : n.memory.getControl()) {
+        for (Concept c : n.memory.getCycleProcess()) {
 
             //TODO use more efficient iterator so that the entire list does not need to be traversed when excluding ranges
             float p = c.getPriority();

@@ -26,8 +26,8 @@ public class BudgetBalancingTest {
         n.input("$0$ <a --> b>.");
         n.frame(1);
 
-        Default.DefaultCycle active = ((Default.DefaultCycle) n.memory.getControl());
-        CacheBag<Term, Concept> all = ((Default.DefaultCycle) n.memory.getControl()).index();
+        Default.DefaultCycle active = ((Default.DefaultCycle) n.memory.getCycleProcess());
+        CacheBag<Term, Concept> all = ((Default.DefaultCycle) n.memory.getCycleProcess()).index();
 
 
         //System.out.println(Iterators.toString(all.iterator()));
@@ -50,7 +50,7 @@ public class BudgetBalancingTest {
 
         assertTrue("active input has activated forgotten knowledge"
                         //+ Iterables.toString(n.memory.cycle)
-                ,5 <= n.memory.getControl().size());
+                ,5 <= n.memory.getCycleProcess().size());
 
         assertTrue(all.size() >= active.size());
 

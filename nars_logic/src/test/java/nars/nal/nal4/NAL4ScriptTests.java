@@ -23,7 +23,7 @@ public class NAL4ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().level(4),
-                new Solid(1, 96, 1, 1, 1, 7).setInternalExperience(null)
+                new Solid(1, 96, 1, 1, 1, 7)
         );
 
     }

@@ -3,10 +3,9 @@ package nars.process;
 import javolution.context.ConcurrentContext;
 import nars.AbstractMemory;
 import nars.Global;
-import nars.Memory;
+import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.io.Perception;
 import nars.io.in.Input;
 import nars.task.Task;
 import nars.term.Term;
@@ -24,12 +23,11 @@ import java.util.function.Predicate;
  * may correspond to a region of activation or some other process which
  * is iteratively called a more or less continual basis
  * */
-public interface CycleProcess<M extends AbstractMemory> extends Iterable<Concept> /* TODO: implements Plugin */ {
+public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Concept>, Iterable<Concept> /* TODO: implements Plugin */ {
 
 
     /** accept the task, return whether it was accepted */
     boolean accept(Task t);
-
 
     /** number of concepts active in this controller */
     int size();
@@ -51,7 +49,12 @@ public interface CycleProcess<M extends AbstractMemory> extends Iterable<Concept
         return null;
     }
 
-    default void forEach(int max, Consumer<Concept> action) {
+    default void forEachConcept(final Consumer<Concept> action) {
+        forEachConcept(Integer.MAX_VALUE, action);
+    }
+
+
+    default void forEachConcept(int max, Consumer<Concept> action) {
         Iterator<Concept> ii = iterator();
         int n = 0;
         while (ii.hasNext() && n < max) {
@@ -147,6 +150,9 @@ public interface CycleProcess<M extends AbstractMemory> extends Iterable<Concept
 
     }
 
-    void onInput(Input ii);
+
+
+
+
 
 }

@@ -28,7 +28,7 @@ public class QueryVariableExhaustiveResults extends ConceptFireTaskTerm {
 
     public static void forEachMatch(Memory m, Compound queryTerm, Consumer<Task> withBelief) {
         FindSubst f = new FindSubst(Op.VAR_QUERY, m.random);
-        m.getControl().forEach(c -> {
+        m.getCycleProcess().forEachConcept(c -> {
             if (!c.hasBeliefs())
                 return;
 

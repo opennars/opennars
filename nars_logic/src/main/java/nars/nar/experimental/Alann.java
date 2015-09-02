@@ -1,55 +1,136 @@
-//package nars.nar.experimental;
-//
-//import com.google.common.collect.Iterators;
-//import com.google.common.util.concurrent.AtomicDouble;
-//import com.gs.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
-//import nars.*;
-//import nars.bag.Bag;
-//import nars.bag.impl.CacheBag;
-//import nars.bag.impl.CurveBag;
-//import nars.bag.impl.GuavaCacheBag;
-//import nars.budget.Budget;
-//import nars.budget.BudgetFunctions;
-//import nars.budget.ItemAccumulator;
-//import nars.budget.ItemComparator;
-//import nars.clock.CycleClock;
-//import nars.concept.*;
-//import nars.cycle.AbstractCycle;
-//import nars.io.out.TextOutput;
-//import nars.link.*;
-//import nars.meter.NARTrace;
-//import nars.nal.ConceptProcessor;
-//import nars.nar.Default;
-//import nars.premise.Premise;
-//import nars.process.CycleProcess;
-//import nars.process.TaskProcess;
-//import nars.process.concept.TableDerivations;
-//import nars.task.Sentence;
-//import nars.task.Task;
-//import nars.term.Compound;
-//import nars.term.Term;
-//import nars.term.transform.TermVisitor;
-//
-//import java.util.Iterator;
-//import java.util.function.Consumer;
-//
-///**
-// * "Adaptive Logic And Neural Networks" Spiking continuous-time model
-// * designed by TonyLo
-// */
-//public class Alann extends NARSeed {
-//
-//    static final AtomicDouble activationThreshold = new AtomicDouble(0.05);
-//    final int MAX_CONCEPTS = 128 * 1024;
-//    final int subcyclesPerCycle = 3;
-//    static final float spikeDecay = 0.9f;
-//    static final float defaultBeliefPriority = 0.1f;
-//    private final double conceptActivationThreshold = 0.05f; //this will be automatically tuned by a busy metric
-//    final int commandsPerCycle = 1;
-//
-//    public Alann() {
-//        setClock(new CycleClock());
-//    }
+package nars.nar.experimental;
+
+import com.google.common.collect.Iterators;
+import com.gs.collections.impl.map.mutable.primitive.ObjectFloatHashMap;
+import nars.*;
+import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
+import nars.bag.impl.CurveBag;
+import nars.bag.impl.GuavaCacheBag;
+import nars.budget.*;
+import nars.clock.CycleClock;
+import nars.concept.*;
+import nars.cycle.AbstractCycle;
+import nars.cycle.SequentialCycle;
+import nars.io.out.TextOutput;
+import nars.link.*;
+import nars.meter.NARTrace;
+import nars.nal.PremiseProcessor;
+import nars.nar.NewDefault;
+import nars.premise.Premise;
+import nars.process.CycleProcess;
+import nars.process.TaskProcess;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.transform.TermVisitor;
+
+import java.util.Iterator;
+import java.util.Random;
+import java.util.function.Consumer;
+
+/**
+ * "Adaptive Logic And Neural Networks" Spiking continuous-time model
+ * designed by TonyLo
+ */
+public class Alann extends AbstractNARSeed {
+    @Override
+    public boolean accept(Task t) {
+        return false;
+    }
+
+    @Override
+    public void cycle() {
+
+    }
+
+    @Override
+    public void reset(AbstractMemory memory) {
+
+    }
+
+    @Override
+    public Concept conceptualize(Term term, Budget budget, boolean createIfMissing) {
+        return null;
+    }
+
+    @Override
+    public Concept nextConcept() {
+        return null;
+    }
+
+    @Override
+    public boolean reprioritize(Term term, float newPriority) {
+        return false;
+    }
+
+    @Override
+    public Concept remove(Concept c) {
+        return null;
+    }
+
+    @Override
+    public Itemized get(Object key) {
+        return null;
+    }
+
+    @Override
+    public Itemized remove(Object key) {
+        return null;
+    }
+
+    @Override
+    public Itemized put(Itemized itemized) {
+        return null;
+    }
+
+    @Override
+    public CycleProcess newCycleProcess() {
+        return null;
+    }
+
+    @Override
+    public Param newParam() {
+        return null;
+    }
+
+    @Override
+    public Random getRandom() {
+        return null;
+    }
+
+    @Override
+    public CacheBag<Term, Concept> newConceptIndex() {
+        return null;
+    }
+
+    @Override
+    public int getMaximumNALLevel() {
+        return 0;
+    }
+
+    @Override
+    public void init(NAR nar) {
+
+    }
+
+    @Override
+    public PremiseProcessor getPremiseProcessor(Param p) {
+        return null;
+    }
+
+    @Override
+    public ConceptBuilder getConceptBuilder() {
+        return null;
+    }
+
+    @Override
+    public Concept newConcept(Term t, Budget b, Memory m) {
+        return null;
+    }
+
+
 //
 //    public static void main(String[] args) {
 //        //temporary testing shell
@@ -93,10 +174,7 @@
 //        return 8;
 //    }
 //
-//    @Override
-//    public ConceptProcessor getLogicPolicy() {
-//        return new Default().newPolicy(new TableDerivations());
-//    }
+//
 //
 //
 //    @Override
@@ -619,9 +697,5 @@
 //            return concepts.get(t)!=null;
 //        }
 //
-//        @Override
-//        public Iterator<Concept> iterator() {
-//            return concepts.iterator();
-//        }
 //    }
-//}
+}

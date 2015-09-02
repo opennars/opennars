@@ -45,14 +45,14 @@ import static com.google.common.collect.Iterators.*;
 abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
-    public Bag<Sentence, TaskLink> getTaskLinks();
-    public Bag<TermLinkKey, TermLink> getTermLinks();
+    Bag<Sentence, TaskLink> getTaskLinks();
+    Bag<TermLinkKey, TermLink> getTermLinks();
 
-    public Map<Object, Object> getMeta();
+    Map<Object, Object> getMeta();
     void setMeta(Map<Object, Object> meta);
 
 
-    public Memory getMemory();
+    Memory getMemory();
 
 
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);

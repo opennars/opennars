@@ -37,7 +37,7 @@ public class NarseseIRCBot extends IRCBot {
     public static void main(String[] arg) throws Exception {
         new NarseseIRCBot(new Default() {
             @Override
-            public CacheBag<Term, Concept> newIndex() {
+            public CacheBag<Term, Concept> newConceptIndex() {
                 return InfiniCacheBag.file("main", "/tmp/narseseirc", 1024*1024);
             }
         });

@@ -201,7 +201,7 @@ public class TestNAR extends NAR {
         return t;
     }
     public ExplainableTask explainable(Task x) {
-        ExplainableTask t = new ExplainableTask(x);
+        ExplainableTask t = new ExplainableTask(x.normalized());
         return explain(t);
     }
 

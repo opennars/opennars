@@ -3,7 +3,8 @@ package nars.budget;
 /**
  * indicates an implementation has, or is associated with a specific BudgetValue
  */
-public interface Budgeted {
+public interface Budgeted  {
+
     public Budget getBudget();
 
     default public float getPriority() {
@@ -21,6 +22,7 @@ public interface Budgeted {
     default public long getLastForgetTime() {
         return getBudget().getLastForgetTime();
     }
+
 
 
     default Object[] toBudgetArray() {

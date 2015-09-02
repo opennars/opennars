@@ -112,7 +112,7 @@ public class ThermostatTest  {
             n.frame(1000);
         }
 
-        n.memory.getControl().iterator().forEachRemaining(c -> System.out.println(c));
+        n.memory.getCycleProcess().iterator().forEachRemaining(c -> System.out.println(c));
 
         tc.log = true;
         nobj.setGoalInvoke(true);

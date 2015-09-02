@@ -12,7 +12,6 @@ import nars.io.qa.AnswerReaction;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
 import nars.task.Task;
-import nars.util.event.Observed;
 import nars.util.event.Reaction;
 
 import java.io.*;
@@ -153,7 +152,7 @@ public class NARStream  {
     }
 
     public NARStream forEachConceptActive(Consumer<Concept> recip) {
-        nar.memory.getControl().forEach(recip);
+        nar.memory.getCycleProcess().forEachConcept(recip);
         return this;
     }
 
@@ -162,7 +161,7 @@ public class NARStream  {
         return this;
     }
     public NARStream conceptActiveIterator(Consumer<Iterator<Concept>> recip) {
-        recip.accept( nar.memory.getControl().iterator() );
+        recip.accept( nar.memory.getCycleProcess().iterator() );
         return this;
     }
 

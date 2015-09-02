@@ -24,7 +24,7 @@ public class DelayBagTest {
 
 
     static int numConcepts(NAR n) {
-        return ((AntCore) n.memory.getControl()).concepts.size();
+        return ((AntCore) n.memory.getCycleProcess()).concepts.size();
     }
 
     @Before
@@ -43,7 +43,7 @@ public class DelayBagTest {
 
         NAR n = new NAR(new Neuromorphic(ants).setInternalExperience(null));
 
-        assertTrue(n.memory.getControl() != null);
+        assertTrue(n.memory.getCycleProcess() != null);
         
         n.input("<a --> b>.");
         
@@ -64,7 +64,7 @@ public class DelayBagTest {
         n.frame(30);
         assertEquals(6, numConcepts(n) );
         
-        ((AntCore) n.memory.getControl()).concepts.remove((Term)n.term("<a --> b>"));
+        ((AntCore) n.memory.getCycleProcess()).concepts.remove((Term)n.term("<a --> b>"));
         
         assertEquals(5, numConcepts(n) );
         n.frame(10);

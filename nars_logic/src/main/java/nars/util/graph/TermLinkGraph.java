@@ -21,7 +21,7 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
 
     public TermLinkGraph(NAR n) {
         this();
-        add(n.memory.getControl(), true);
+        add(n.memory.getCycleProcess(), true);
     }
 
     public TermLinkGraph add(Concept c, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
@@ -68,7 +68,7 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
     }
 
     public void add(Memory memory) {
-        add(memory.getControl(), true);
+        add(memory.getCycleProcess(), true);
     }
 
     /*public boolean includeLevel(int l) {

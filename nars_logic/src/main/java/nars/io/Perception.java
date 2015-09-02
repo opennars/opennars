@@ -13,6 +13,7 @@ public interface Perception extends Consumer<Source<Task>>,Supplier<Task> {
     @Override
     void accept(Source<Task> input);
 
+
     @Override
     Task get();
 
@@ -28,6 +29,7 @@ public interface Perception extends Consumer<Source<Task>>,Supplier<Task> {
         }
         return null;
     }
+
 
     void clear();
 

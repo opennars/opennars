@@ -8,7 +8,6 @@ import nars.budget.ItemAccumulator;
 import nars.event.CycleReaction;
 import nars.guifx.NARPane;
 import nars.guifx.NARfx;
-import nars.io.out.TextOutput;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Conjunction;
@@ -62,7 +61,7 @@ public class TimeClustering extends CycleReaction {
         centroids.setEpsW(centroidVelocity);*/
 
         this.nar = n;
-        this.pending = ((Equalized.EqualizedCycle)n.memory.getControl()).newTasks;
+        this.pending = ((Equalized.EqualizedCycle)n.memory.getCycleProcess()).newTasks;
         this.lastUpdateTime = n.time();
     }
 

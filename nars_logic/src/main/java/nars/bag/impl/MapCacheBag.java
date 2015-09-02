@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by me on 6/2/15.
  */
-abstract public class MapCacheBag<K, V extends Itemized<K>> extends CacheBag<K,V>  {
+abstract public class MapCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V>  {
 
     protected final Map<K, V> data;
 
@@ -37,8 +37,8 @@ abstract public class MapCacheBag<K, V extends Itemized<K>> extends CacheBag<K,V
     }
 
     @Override
-    public void put(V v) {
-        data.put(v.name(), v);
+    public V put(V v) {
+        return data.put(v.name(), v);
     }
 
     @Override

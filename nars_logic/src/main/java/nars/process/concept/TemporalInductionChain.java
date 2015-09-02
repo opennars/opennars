@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
@@ -14,7 +13,6 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -60,7 +58,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
             for (int i = 0; i < chainSamples; i++) {
 
-                Concept next = memory.getControl().nextConcept();
+                Concept next = memory.getCycleProcess().nextConcept();
                 if (next == null) continue;
 
                 Term t = next.getTerm();

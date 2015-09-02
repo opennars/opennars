@@ -1,9 +1,9 @@
 package nars.cycle;
 
-import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.concept.Concept;
@@ -18,13 +18,8 @@ import java.util.function.Consumer;
 /**
  * Base class for single-threaded Cores based on the original NARS design
  */
-abstract public class SequentialCycle extends AbstractCycle {
+abstract public class SequentialCycle extends AbstractCycle<Bag<Term,Concept>> {
 
-
-    /**
-     * Concept bag. Containing all Concepts of the system
-     */
-    public final Bag<Term, Concept> concepts;
 
 
     /**
@@ -35,15 +30,11 @@ abstract public class SequentialCycle extends AbstractCycle {
     protected Set<Task> newTasksTemp = Global.newHashSet(8);
     protected boolean executingNewTasks = false;
 
-    @Override
-    protected boolean active(Term t) {
-        return concepts.get(t)!=null;
-    }
 
 
-    public SequentialCycle(Bag<Term, Concept> concepts, ItemAccumulator<Task> newTasksBuffer) {
-        super();
-        this.concepts = concepts;
+
+    public SequentialCycle(Bag<Term,Concept> concepts, ItemAccumulator<Task> newTasksBuffer) {
+        super(concepts);
         this.newTasks = newTasksBuffer;
     }
 
@@ -81,25 +72,12 @@ abstract public class SequentialCycle extends AbstractCycle {
     @Override
     public void reset(Memory m) {
         super.reset(m);
-        concepts.clear();
 
         newTasksTemp.clear();
         newTasks.clear();
     }
 
-    @Override
-    public void on(Concept c) {
-        Concept overflown = concepts.put(c);
-        if (overflown!=null)
-            overflow(overflown);
 
-        getMemory().eventConceptActive.emit(c);
-    }
-
-    @Override
-    public void off(Concept c) {
-        //will have already bbe
-    }
 
 
     @Override
@@ -107,10 +85,6 @@ abstract public class SequentialCycle extends AbstractCycle {
         return new ConceptPrioritizer(this).update(c, newPriority, concepts);
     }
 
-    @Override
-    public int size() {
-        return concepts.size();
-    }
 
     protected Concept nextConceptToProcess(float conceptForgetDurations) {
         Concept currentConcept = concepts.forgetNext(conceptForgetDurations, memory);
@@ -125,13 +99,8 @@ abstract public class SequentialCycle extends AbstractCycle {
         return currentConcept;
     }
 
-    @Override public void delete() {
-        concepts.delete();
-    }
 
-    public Iterable<Concept> getConcepts() {
-        return concepts.values();
-    }
+
 
 
     /** returns a concept that is in this active concept bag only */
@@ -150,22 +119,12 @@ abstract public class SequentialCycle extends AbstractCycle {
         return concepts.peekNext();
     }
 
-    @Override
-    public Iterator<Concept> iterator() {
-        return concepts.iterator();
-    }
 
-
-    @Override
     public void forEach(final Consumer<? super Concept> action) {
         concepts.forEach(action);
     }
 
-    @Override
-    public void conceptPriorityHistogram(double[] bins) {
-        if (bins!=null)
-            concepts.getPriorityHistogram(bins);
-    }
+
 
     @Override
     public Concept remove(Concept cc) {
@@ -190,7 +149,7 @@ abstract public class SequentialCycle extends AbstractCycle {
 //        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
 //    }
 
-    @Override public void forEach(int max, Consumer<Concept> action) {
+    @Override public void forEachConcept(int max, Consumer<Concept> action) {
         concepts.forEach(max, action);
     }
 }

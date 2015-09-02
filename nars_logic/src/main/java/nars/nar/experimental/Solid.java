@@ -1,51 +1,54 @@
 package nars.nar.experimental;
 
 import com.gs.collections.impl.list.mutable.FastList;
-import nars.AbstractMemory;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
+import nars.*;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.budget.ItemComparator;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.ConceptBagActivator;
+import nars.concept.ConceptBuilder;
 import nars.io.in.Input;
 import nars.link.TaskLink;
+import nars.nal.PremiseProcessor;
 import nars.nar.Default;
-import nars.premise.BloomFilterNovelPremiseGenerator;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
+import nars.util.data.random.XORShiftRandom;
+import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.sort.ArraySortedIndex;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 /**
  * processes every concept fairly, according to priority, in each cycle
  * <p>
  * TODO eliminate ConcurrentSkipListSet like is implemented in DefaultCore
  */
-public class Solid extends Default implements CycleProcess {
-
+public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 
     private final int maxConcepts;
+
+    private final int termLinkBagSize;
+    private final int taskLinkBagSize;
+
     private int maxTasksPerCycle = -1; //if ==-1, no limit
     private final int minTaskLink;
     private final int maxTaskLink;
     private final int minTermLink;
     private final int maxTermLink;
     private final int inputsPerCycle;
-    private Memory memory;
+
 
     public final Bag<Term, Concept> concepts;
 
@@ -63,9 +66,33 @@ public class Solid extends Default implements CycleProcess {
     int tasksAddedThisCycle = 0;
     private final boolean normalizePriority = false;
 
+    /** proxy parameter/seed, temporary */
+    @Deprecated private Default param;
+
+    private final Random rng = new XorShift1024StarRandom(1);
+
+
+    @Override
+    public Param newParam() {
+        this.param = new Default().setInternalExperience(null);
+        param.duration.set(2);
+        param.termLinkForgetDurations.set(4);
+        param.taskLinkForgetDurations.set(10);
+        param.conceptForgetDurations.set(2);
+        param.conceptCreationExpectation.set(0);
+
+        return param;
+    }
+
+    @Override
+    public Random getRandom() {
+        return rng;
+    }
 
     public Solid(int inputsPerCycle, int activeConcepts, int minTaskLink, int maxTaskLink, int minTermLink, int maxTermLink) {
         super();
+
+
         this.inputsPerCycle = inputsPerCycle;
         this.maxConcepts = activeConcepts;
 
@@ -76,22 +103,16 @@ public class Solid extends Default implements CycleProcess {
         this.maxTaskLink = maxTaskLink;
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
-        duration.set(2);
-        termLinkForgetDurations.set(4);
-        taskLinkForgetDurations.set(10);
-        conceptForgetDurations.set(2);
+
+        termLinkBagSize = 32;
+        taskLinkBagSize = 32;
 
 
-        conceptCreationExpectation.set(0);
-
-        setTermLinkBagSize(32);
-        setTaskLinkBagSize(32);
-
-
-
-        concepts = new CurveBag<Term,Concept>(rng, activeConcepts, new CurveBag.Power6BagCurve(),
+        concepts = new CurveBag<Term,Concept>(getRandom(), activeConcepts, new CurveBag.Power6BagCurve(),
                 new ArraySortedIndex(activeConcepts, new FastList(activeConcepts)/*.asSynchronized()*/)
         );
+
+        reset(newMemory());
 
         //concepts = new ChainBag(rng, activeConcepts);
         //concepts = new BubbleBag(rng, activeConcepts);
@@ -109,28 +130,21 @@ public class Solid extends Default implements CycleProcess {
 
     @Override
     public void init(NAR n) {
-        super.init(n);
-        this.memory = n.memory;
+        ((Default)n.param).init(n); //temporary hack
 
-        activator = new ConceptBagActivator(memory, concepts);
-    }
-
-
-    @Override
-    public void conceptPriorityHistogram(double[] bins) {
-        throw new RuntimeException("not impl yet");
+        activator = new ConceptBagActivator(n.memory, concepts);
     }
 
     @Override
-    public AbstractMemory getMemory() {
-        return memory;
+    public PremiseProcessor getPremiseProcessor(Param p) {
+        return null;
     }
-
 
     @Override
-    public Iterator<Concept> iterator() {
-        return concepts.iterator();
+    public ConceptBuilder getConceptBuilder() {
+        return null;
     }
+
 
     @Override
     public boolean accept(Task t) {
@@ -141,10 +155,7 @@ public class Solid extends Default implements CycleProcess {
         return false;
     }
 
-    @Override
-    public int size() {
-        return concepts.size();
-    }
+
 
     protected int num(float p, int min, int max) {
         if ((max == min) || (p == 0)) return min;
@@ -152,13 +163,10 @@ public class Solid extends Default implements CycleProcess {
     }
 
 
-    @Override
-    public void onInput(Input ii) {
-        //TODO use perception buffer, but for now, just flush it all into memory
-        ii.inputAll(memory);
-    }
-
     protected int processNewTasks() {
+
+
+
         int t = 0;
         final int mt = maxTasksPerCycle;
 
@@ -210,7 +218,7 @@ public class Solid extends Default implements CycleProcess {
 
         int newTasks = processNewTasks();
 
-        final float tlfd = memory.param.cycles(this.termLinkForgetDurations);
+        final float tlfd = memory.param.cycles(param.termLinkForgetDurations);
 
         float maxPriority = concepts.getPriorityMax();
         float minPriority = concepts.getPriorityMin();
@@ -256,7 +264,7 @@ public class Solid extends Default implements CycleProcess {
 
 
             for (int i = 0; i < fires; i++) {
-                TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
+                TaskLink tl = c.getTaskLinks().forgetNext(param.taskLinkForgetDurations, memory);
                 if (tl == null) break;
 
                 ConceptProcess.forEachPremise(c, tl,
@@ -270,10 +278,15 @@ public class Solid extends Default implements CycleProcess {
 
         temporaryC.clear();
 
-
-        memory.runNextTasks();
     }
 
+
+    @Override
+    public void reset(Memory memory) {
+        super.reset(memory);
+        tasks.clear();
+
+    }
 
 
     static float normalize(final float p, final float min, final float max) {
@@ -281,14 +294,7 @@ public class Solid extends Default implements CycleProcess {
         return (p - min)/(max-min);
     }
 
-    @Override
-    public void reset(AbstractMemory memory) {
 
-        tasks.clear();
-
-        concepts.clear();
-
-    }
 
     @Override
     public void delete() {
@@ -296,8 +302,13 @@ public class Solid extends Default implements CycleProcess {
     }
 
     @Override
-    public CacheBag<Term, Concept> newIndex() {
+    public CacheBag<Term, Concept> newConceptIndex() {
         return new GuavaCacheBag();
+    }
+
+    @Override
+    public int getMaximumNALLevel() {
+        return 0;
     }
 
     @Override
@@ -394,6 +405,17 @@ public class Solid extends Default implements CycleProcess {
     @Override
     public boolean reprioritize(Term term, float newPriority) {
         //TODO
+
         return false;
+    }
+
+    @Override
+    final public Concept newConcept(Term t, Budget b, Memory m) {
+        return param.newConcept(t, b, m);
+    }
+
+    public Solid level(int i) {
+        memory.setLevel(i);
+        return this;
     }
 }

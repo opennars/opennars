@@ -22,6 +22,7 @@ import nars.term.Term;
 import nars.term.Termed;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Multiprocessor-capable NAR controller.
@@ -29,7 +30,7 @@ import java.util.*;
  * Named Ant-core because the activity pattern resembles a collection of 
  * simulated Ants navigating through the concept network
  */
-public class AntCore extends ConceptWaveCore {
+@Deprecated public class AntCore extends ConceptWaveCore {
 
     public final Deque<Ant> ants = new ArrayDeque();
     
@@ -120,8 +121,7 @@ public class AntCore extends ConceptWaveCore {
             }
         }
 
-        memory.runNextTasks(); //probably want to batch this with the next tasks below.. but this will work for now
-        
+
         for (Ant a : ants) {            
             numConcepts += a.cycle(cycleSpeed, run);
         }
@@ -157,10 +157,6 @@ public class AntCore extends ConceptWaveCore {
         return concepts.remove(c.getTerm());
     }
 
-    @Override
-    public void onInput(Input ii) {
-        ii.inputAll(memory);
-    }
 
     public boolean ensureAntsOccupyUniqueConcepts() {
         int numConcepts = occupied.size();
@@ -176,9 +172,38 @@ public class AntCore extends ConceptWaveCore {
         }
         return true;
     }
-    
-    
-    
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public Concept get(Term key) {
+        return null;
+    }
+
+    @Override
+    public Concept remove(Term key) {
+        return null;
+    }
+
+    @Override
+    public Concept put(Concept concept) {
+        return null;
+    }
+
+    @Override
+    public void setOnRemoval(Consumer<Concept> onRemoval) {
+
+    }
+
+    @Override
+    public Consumer<Concept> getOnRemoval() {
+        return null;
+    }
+
+
     /** intelligent visitor */
     public class Ant {
         

@@ -8,7 +8,6 @@ import nars.process.CycleProcess;
 import nars.term.Term;
 
 import java.util.Random;
-import java.util.function.Function;
 
 /**
  * NAR design parameters which define a NAR at initialization.
@@ -31,7 +30,7 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
                 p,
                 getConceptBuilder(),
                 getPremiseProcessor(p),
-                newIndex()
+                newConceptIndex()
         );
     }
 
@@ -40,7 +39,7 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
     /** common random number generator */
     Random getRandom();
 
-    CacheBag<Term,Concept> newIndex();
+    CacheBag<Term,Concept> newConceptIndex();
 
     int getMaximumNALLevel();
 
