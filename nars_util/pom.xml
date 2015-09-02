@@ -6,7 +6,8 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars_util</artifactId>
+
+    <artifactId>nars_util</artifactId>
     <packaging>jar</packaging>
 
     <name>OpenNARS Util</name>
@@ -21,7 +22,7 @@
     </scm>
 
     <build>
-        <finalName>opennars_util_${project.version}</finalName>
+        <finalName>nars_util_${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -43,13 +44,16 @@
                         <include>**/*.java</include>
                     </includes>
                     <!--<skipTests>true</skipTests>-->
+                    <perCoreThreadCount>1</perCoreThreadCount>
+                    <disableXmlReport></disableXmlReport>
+                    <trimStackTrace>true</trimStackTrace>
                     <useFile>true</useFile>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 

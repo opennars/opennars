@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <artifactId>opennars_gui</artifactId>
+    <artifactId>nars_gui</artifactId>
 
     <parent>
         <groupId>opennars</groupId>
@@ -16,16 +16,38 @@
 
 
     <build>
+        <finalName>nars_gui_${project.version}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <includes>
+                        <!-- because they dont all have the pattern: ____Test.java yet -->
+                        <include>**/*.java</include>
+                    </includes>
+                    <!--<skipTests>true</skipTests>-->
+                    <perCoreThreadCount>1</perCoreThreadCount>
+                    <disableXmlReport></disableXmlReport>
+                    <trimStackTrace>true</trimStackTrace>
+                    <useFile>true</useFile>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
         </plugins>
+
+
         <resources>
             <resource><!--TODO: resolve:  this has the effect of disabling src/main/resources for this project.  can it simply stomp src/main/resources to take the default effective pom? and reduce total LOC?-->
                 <directory>src/resources</directory>
@@ -51,8 +73,14 @@
 
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars_util</artifactId>
+            <artifactId>nars_util</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>opennars</groupId>
+            <artifactId>nars_logic</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
@@ -117,11 +145,7 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>opennars_logic</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+
 
         <!--<dependency>-->
             <!--<groupId>de.jensd</groupId>-->

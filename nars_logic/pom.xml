@@ -1,14 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>opennars</groupId>
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars_logic</artifactId>
-    <packaging>jar</packaging>
 
+    <artifactId>nars_logic</artifactId>
+
+    <packaging>jar</packaging>
     <name>OpenNARS Logic Reasoner</name>
     <url>https://github.com/opennars/opennars</url>
 
@@ -33,28 +35,10 @@
             </resource>
         </resources>
 
-        <finalName>opennars_logic_${project.version}</finalName>
+        <finalName>nars_logic_${project.version}</finalName>
+
+
         <plugins>
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
-                <configuration>
-                    <includes>
-                        <!-- because they dont all have the pattern: ____Test.java yet -->
-                        <include>**/*.java</include>
-                    </includes>
-                    <!--<skipTests>true</skipTests>-->
-                    <useFile>true</useFile>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
-            </plugin>
-
-            <!-- Order is important ! Execution follows the declaration order -->
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -65,6 +49,24 @@
                     <useIncrementalCompilation>true</useIncrementalCompilation>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <includes>
+                        <!-- because they dont all have the pattern: ____Test.java yet -->
+                        <include>**/*.java</include>
+                    </includes>
+                    <!--<skipTests>true</skipTests>-->
+                    <perCoreThreadCount>1</perCoreThreadCount>
+                    <disableXmlReport></disableXmlReport>
+                    <trimStackTrace>true</trimStackTrace>
+                    <useFile>true</useFile>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+
 
             <!--<plugin>-->
             <!--<groupId>org.apache.maven.plugins</groupId>-->
@@ -301,7 +303,7 @@
 
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars_util</artifactId>
+            <artifactId>nars_util</artifactId>
         </dependency>
 
 
