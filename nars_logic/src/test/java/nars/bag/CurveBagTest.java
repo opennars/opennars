@@ -9,6 +9,7 @@ import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
 import nars.nar.Default;
+import nars.util.data.Util;
 import nars.util.data.random.XORShiftRandom;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
@@ -181,7 +182,7 @@ public class CurveBagTest extends AbstractBagTest {
         
         //System.out.println(capacity +"," + " = " + Arrays.toString(count));
                 
-        assert(semiMonotonicallyIncreasing(count));
+        assert(Util.isSemiMonotonicallyIncreasing(count));
         
         //System.out.println(random + " " + Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);

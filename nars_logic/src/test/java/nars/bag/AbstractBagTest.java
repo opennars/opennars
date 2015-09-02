@@ -38,8 +38,10 @@ public class AbstractBagTest {
         for (int l = 0; l < loops; l++) {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
-                NullItem ni = new NullItem();
-                ni.key = "" + (int)(rng.nextFloat() * insertsPerLoop * 1.2f);
+                NullItem ni = new NullItem(
+                    rng.nextFloat(),
+                    "" + (int)(rng.nextFloat() * insertsPerLoop * 1.2f)
+                );
                 f.put(ni);
             }
 
@@ -161,23 +163,4 @@ public class AbstractBagTest {
     }
 
 
-    /** removal rates are approximately monotonically increasing function;
-     * tests first, mid and last for this  ordering
-     * first items are highest, so it is actually descending order
-     * */
-    public static boolean semiMonotonicallyIncreasing(int[] count) {
-
-        int cl = count.length;
-        return
-                (count[0] >= count[cl-1]) &&
-                (count[cl/2] >= count[cl-1]);
-    }
-
-    public static boolean semiMonotonicallyDecreasing(int[] count) {
-
-        int cl = count.length;
-        return
-                (count[0] <= count[cl-1]) &&
-                        (count[cl/2] <= count[cl-1]);
-    }
 }

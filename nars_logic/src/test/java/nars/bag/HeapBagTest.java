@@ -11,6 +11,7 @@ import nars.bag.impl.HeapBag;
 import nars.bag.impl.LevelBag;
 import nars.budget.Item;
 import nars.nar.Default;
+import nars.util.data.Util;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -141,7 +142,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         //System.out.println(capacity +"," + random + " = " + Arrays.toString(count));
                 
-        assert(semiMonotonicallyIncreasing(count));
+        assert(Util.isSemiMonotonicallyIncreasing(count));
         
         //System.out.println(Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);

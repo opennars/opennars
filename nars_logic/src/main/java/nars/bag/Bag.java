@@ -174,11 +174,19 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     protected final Budget temp = new Budget();
 
-    /** receive a batch (up to length 'n') of values.
+    /** receive a batch (up to specific) of values.
      *  implementations can override this to
      *  optimize it for its unique data management patterns.
+     *
+     *  the length is specified by the length of a provider array
+     *  where the data values will be stored before returning.
+     *  @return the number of entries filled in the array
+     *  remaining entries will be null
+     *
+     *  the transaction(s) themseles will have completed by the
+     *  time the values are returned.
      */
-    public int update(final BagTransaction<K, V> selector, int n, V[] recv) {
+    public int update(final BagTransaction<K, V> selector, V[] recv) {
         return 0;
     }
 

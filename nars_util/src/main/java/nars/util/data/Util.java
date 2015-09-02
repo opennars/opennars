@@ -510,4 +510,27 @@ public class Util {
     public static byte f2b(float conf) {
         return (byte)(conf * Byte.MAX_VALUE);
     }
+
+    /** removal rates are approximately monotonically increasing function;
+     * tests first, mid and last for this  ordering
+     * first items are highest, so it is actually descending order
+     * TODO improve accuracy
+     * */
+    public static boolean isSemiMonotonicallyIncreasing(int[] count) {
+
+
+        int cl = count.length;
+        return
+                (count[0] >= count[cl-1]) &&
+                (count[cl/2] >= count[cl-1]);
+    }
+
+    /* TODO improve accuracy */
+    public static boolean isSemiMonotonicallyDecreasing(int[] count) {
+
+        int cl = count.length;
+        return
+                (count[0] <= count[cl-1]) &&
+                        (count[cl/2] <= count[cl-1]);
+    }
 }
