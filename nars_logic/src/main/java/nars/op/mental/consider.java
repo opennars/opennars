@@ -23,7 +23,7 @@ import nars.link.TaskLink;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.process.ConceptProcessTaskLink;
+import nars.process.ConceptTaskLinkProcess;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -56,7 +56,7 @@ public class consider extends SynchOperator implements Mental {
 
         TaskLink taskLink = concept.getTaskLinks().peekNext();
         if (taskLink!=null) {
-            new ConceptProcessTaskLink(concept, taskLink).run();
+            new ConceptTaskLinkProcess(concept, taskLink).run();
         }
         
         return null;

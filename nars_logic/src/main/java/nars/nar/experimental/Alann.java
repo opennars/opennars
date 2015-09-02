@@ -21,8 +21,8 @@ import nars.nal.PremiseProcessor;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.process.ConceptProcess;
-import nars.process.ConceptProcessTaskLink;
-import nars.process.ConceptProcessTaskTermLink;
+import nars.process.ConceptTaskLinkProcess;
+import nars.process.ConceptTaskTermLinkProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
@@ -84,19 +84,21 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
         public ConceptProcess nextPremise() {
 
+            final Concept concept = this.concept;
+
             TaskLink tl = concept.getTaskLinks().forgetNext();
             if (tl == null) return null;
 
             //TODO better probabilities
             if (Math.random() < 0.1) {
-                return new ConceptProcessTaskLink(concept, tl);
+                return new ConceptTaskLinkProcess(concept, tl);
             }
             else {
                 TermLink tm = concept.getTermLinks().forgetNext();
                 if (tm == null)
-                    return new ConceptProcessTaskLink(concept, tl);
+                    return new ConceptTaskLinkProcess(concept, tl);
 
-                return new ConceptProcessTaskTermLink(concept, tl, tm);
+                return new ConceptTaskTermLinkProcess(concept, tl, tm);
             }
 
         }
@@ -134,7 +136,6 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
                 return false;
 
             ConceptProcess p = nextPremise();
-            System.out.println(p);
 
             p.run();
 
@@ -158,12 +159,13 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
             derivers.add( new Derivelet() );
     }
 
+    List<Task> toProcess = Global.newArrayList();
+
 
     @Override
     public void cycle() {
 
         if (!newTasks.isEmpty()) {
-            List<Task> toProcess = new ArrayList();
 
             Iterator<Task> ii = newTasks.iterateHighestFirst();
             int max = 5;
@@ -176,7 +178,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
                 processed++;
             }
 
-            System.out.println("new tasks: " + processed + " processed, " + newTasks.size() + " pending");
+            //System.out.println("new tasks: " + processed + " processed, " + newTasks.size() + " pending");
 
 //            int inputs = 1;
 //            for (int i = 0; i < inputs; i++) {
@@ -184,6 +186,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 //            }
 
             toProcess.forEach(t -> new TaskProcess(memory, t).run());
+            toProcess.clear();
         }
 
 
@@ -199,7 +202,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
             }
         }
 
-        System.out.println("cycle " + memory.time());
+        //System.out.println("cycle " + memory.time());
     }
 
     @Override

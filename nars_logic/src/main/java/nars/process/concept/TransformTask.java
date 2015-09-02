@@ -15,7 +15,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
-import nars.process.ConceptProcessTaskLink;
+import nars.process.ConceptTaskLinkProcess;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;
@@ -30,10 +30,10 @@ import java.util.Arrays;
  * The TaskLink is of type TRANSFORM, and the conclusion is an equivalent
  * transformation
  **/
-public class TransformTask extends ConceptFireTask<ConceptProcessTaskLink> {
+public class TransformTask extends ConceptFireTask<ConceptTaskLinkProcess> {
 
     @Override
-    public final boolean apply(ConceptProcessTaskLink f, TaskLink t) {
+    public final boolean apply(ConceptTaskLinkProcess f, TaskLink t) {
 
         if (t.type == TermLink.TRANSFORM) {
 

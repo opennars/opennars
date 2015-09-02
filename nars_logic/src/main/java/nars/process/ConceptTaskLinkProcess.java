@@ -7,9 +7,9 @@ import nars.link.TermLink;
 /**
  * Created by me on 8/5/15.
  */
-public class ConceptProcessTaskLink extends ConceptProcess {
+public class ConceptTaskLinkProcess extends ConceptProcess {
 
-    public ConceptProcessTaskLink(Concept concept, TaskLink taskLink) {
+    public ConceptTaskLinkProcess(Concept concept, TaskLink taskLink) {
         super(concept, taskLink);
     }
 

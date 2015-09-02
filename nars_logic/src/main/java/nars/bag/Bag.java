@@ -174,6 +174,14 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     protected final Budget temp = new Budget();
 
+    /** receive a batch (up to length 'n') of values.
+     *  implementations can override this to
+     *  optimize it for its unique data management patterns.
+     */
+    public int update(final BagTransaction<K, V> selector, int n, V[] recv) {
+        return 0;
+    }
+
     /**
      * calls overflow() on an overflown object
      * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)

@@ -125,7 +125,7 @@ abstract public class ConceptProcess extends NAL  {
                 return;
         }
 
-        proc.accept( new ConceptProcessTaskLink(concept, taskLink) );
+        proc.accept( new ConceptTaskLinkProcess(concept, taskLink) );
 
         if ((termLinks > 0) && (taskLink.type!=TermLink.TRANSFORM))
             ConceptProcess.forEachPremise(concept, taskLink,
@@ -164,7 +164,7 @@ abstract public class ConceptProcess extends NAL  {
             if (bLink!=null) {
 
                 proc.accept(
-                        new ConceptProcessTaskTermLink(concept, t, bLink)
+                        new ConceptTaskTermLinkProcess(concept, t, bLink)
                 );
 
             }

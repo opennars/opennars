@@ -10,11 +10,11 @@ import nars.link.TermLinkKey;
 /**
  * Created by me on 8/5/15.
  */
-public class ConceptProcessTaskTermLink extends ConceptProcess {
+public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     protected final TermLink termLink;
 
-    public ConceptProcessTaskTermLink(Concept concept, TaskLink taskLink, TermLink termLink) {
+    public ConceptTaskTermLinkProcess(Concept concept, TaskLink taskLink, TermLink termLink) {
         super(concept, taskLink);
 
         if (taskLink.type == TermLink.TRANSFORM) {
