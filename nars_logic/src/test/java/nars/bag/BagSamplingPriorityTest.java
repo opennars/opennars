@@ -1,6 +1,5 @@
 package nars.bag;
 
-import nars.meter.bag.NullItem;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.HeapBag;
@@ -8,6 +7,7 @@ import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
 import nars.io.Texts;
+import nars.meter.bag.NullItem;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;

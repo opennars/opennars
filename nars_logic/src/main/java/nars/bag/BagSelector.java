@@ -2,7 +2,6 @@ package nars.bag;
 
 import nars.budget.Budget;
 import nars.budget.Itemized;
-import nars.link.TermLink;
 
 import java.util.function.Function;
 

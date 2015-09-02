@@ -3,10 +3,10 @@ package nars.bag;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import nars.meter.bag.NullItem;
 import nars.bag.impl.experimental.BubbleBag;
 import nars.budget.Item;
 import nars.meter.bag.BagGenerators;
+import nars.meter.bag.NullItem;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 

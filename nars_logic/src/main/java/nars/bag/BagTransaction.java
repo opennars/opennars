@@ -1,6 +1,5 @@
 package nars.bag;
 
-import nars.budget.Budget;
 import nars.budget.Itemized;
 
 /** transaction interface for lazily constructing bag items, and efficiently updating existing items.

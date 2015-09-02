@@ -1,8 +1,6 @@
 package nars.meter.bag;
 
 import nars.budget.Item;
-import nars.truth.DefaultTruth;
-import nars.util.data.random.XORShiftRandom;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.Random;

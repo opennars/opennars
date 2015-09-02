@@ -5,7 +5,6 @@ import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagSelector;
-import nars.bag.BagTransaction;
 import nars.budget.Itemized;
 import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;

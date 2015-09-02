@@ -1,7 +1,6 @@
 package nars.meter.experiment;
 
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.nal.nal1.Inheritance;
 import nars.nar.experimental.Alann;
@@ -25,7 +24,7 @@ public class DeductiveChainTest {
 
         int length = 9;
         NAR n = new NAR(
-                //new Equalized(1000, 1, 3).level(1)
+                //new Equalized(1000, 8, 3) //.level(1)
                 //new Default().level(1)
                 new Alann(16)
         );

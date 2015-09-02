@@ -1,8 +1,8 @@
 package nars.bag;
 
-import nars.meter.bag.NullItem;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Item;
+import nars.meter.bag.NullItem;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 

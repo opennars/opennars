@@ -2,7 +2,6 @@ package nars.bag.impl;
 
 import com.google.common.cache.*;
 import nars.budget.Itemized;
-import nars.util.event.Observed;
 
 import java.util.Iterator;
 

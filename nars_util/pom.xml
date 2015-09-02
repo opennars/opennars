@@ -38,7 +38,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.18.1</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <includes>
+                        <!-- because they dont all have the pattern: ____Test.java yet -->
+                        <include>**/*.java</include>
+                    </includes>
+                    <!--<skipTests>true</skipTests>-->
+                    <useFile>true</useFile>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
 

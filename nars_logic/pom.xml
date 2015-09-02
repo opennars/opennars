@@ -46,8 +46,8 @@
                         <!-- because they dont all have the pattern: ____Test.java yet -->
                         <include>**/*.java</include>
                     </includes>
-                    <skipTests>true</skipTests>
-                    <useFile>false</useFile>
+                    <!--<skipTests>true</skipTests>-->
+                    <useFile>true</useFile>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
@@ -143,13 +143,13 @@
                                     <artifact>com.goldmansachs:gs-collections</artifact>
                                     <excludes>
                                         <!-- primitive types we dont use but take up lots of space -->
-                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Byte*</exclude>
-                                        <!--<exclude>com/gs/collections/impl/map/mutable/primitive/Char*</exclude>-->
-                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Short*</exclude>
+                                        <!--<exclude>com/gs/collections/impl/map/mutable/primitive/Byte*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Char*</exclude>-->
+                                        <!--<exclude>com/gs/collections/impl/map/mutable/primitive/Short*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Int*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Long*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Float*</exclude>
-                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Double*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Double*</exclude>-->
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Synchronized*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Unmodifiable*</exclude>
                                         <exclude>com/gs/collections/impl/map/mutable/primitive/Immutable*</exclude>
@@ -157,8 +157,8 @@
                                         <exclude>com/gs/collections/impl/block/**</exclude>
                                         <exclude>com/gs/collections/impl/bag/**</exclude>
                                         <exclude>com/gs/collections/impl/stack/**</exclude>
-                                        <exclude>com/gs/collections/impl/multimap/**</exclude>
-                                        <exclude>com/gs/collections/impl/bimap/**</exclude>
+                                        <!--<exclude>com/gs/collections/impl/multimap/**</exclude>-->
+                                        <!--<exclude>com/gs/collections/impl/bimap/**</exclude>-->
                                     </excludes>
                                 </filter>
                             </filters>
