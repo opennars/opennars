@@ -41,6 +41,7 @@ public class Equalized extends NewDefault {
 
         /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
         public final AtomicInteger conceptsFiredPerCycle;
+        private int maxNewBufferHistoryCycles = 8;
 
 
         public EqualizedCycle(ItemAccumulator taskAccumulator, Bag<Term, Concept> concepts, AtomicInteger conceptsFiredPerCycle) {
@@ -59,7 +60,7 @@ public class Equalized extends NewDefault {
         @Override
         public void cycle() {
 
-            int conceptsToFire = conceptsFiredPerCycle.get();
+            final int conceptsToFire = conceptsFiredPerCycle.get();
 
             concepts.forgetNext(
                     memory.param.conceptForgetDurations,
@@ -73,12 +74,13 @@ public class Equalized extends NewDefault {
 
 
             //new tasks
-            float maxBusyness = conceptsFiredPerCycle.get(); //interpret concepts fired per cycle as business limit
+            float maxBusyness = conceptsToFire; //interpret concepts fired per cycle as business limit
             int newTasksToFire = newTasks.size();
 
             Iterator<Task> ii = newTasks.iterateHighestFirst(temporary);
 
-            float priFactor = 1f; //divide the procesesd priority by the expected busyness of this cycle to approximate 1.0 total
+            float priFactor = 1f;
+            //float priFactor = 1f / maxBusyness; //divide the procesesd priority by the expected busyness of this cycle to approximate 1.0 total
 
             float b = 0;
             for (int n = newTasksToFire;  ii.hasNext() && n > 0; n--) {
@@ -118,7 +120,7 @@ public class Equalized extends NewDefault {
 
 
 
-            final int maxNewTasks = conceptsToFire * memory.duration();
+            final int maxNewTasks = conceptsToFire * maxNewBufferHistoryCycles;
             if (newTasks.size() > maxNewTasks) {
                 int removed = newTasks.limit(maxNewTasks, new Consumer<Task>() {
                     @Override public void accept(Task task) {

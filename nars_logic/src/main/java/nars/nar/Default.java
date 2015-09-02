@@ -275,7 +275,7 @@ public class Default extends Param implements NARSeed {
 
         setTaskLinkBagSize(16);
 
-        setTermLinkBagSize(64);
+        setTermLinkBagSize(48);
 
         setNovelTaskBagSize(48);
 
@@ -563,7 +563,7 @@ public class Default extends Param implements NARSeed {
         return clock(new HardRealtimeClock());
     }
 
-    public NARSeed setCyclesPerFrame(int cyclesPerFrame) {
+    @Deprecated public NARSeed setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
         return this;
     }

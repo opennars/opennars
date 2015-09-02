@@ -29,28 +29,13 @@ public class SomeRovers {
         Video.themeInvert();
     }
 
-    public NARSeed newSolid() {
-        Default d = new Solid(32, 599, 1, 1, 1, 3 ) {
-
-
-        }.setInternalExperience(null).setClock(clock);
-
-        //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
-
-        //N/A for solid
-        //nar.param.inputsMaxPerCycle.set(32);
-        //nar.param.conceptsFiredPerCycle.set(4);
-
-
-        d.conceptBeliefsMax.set(16);
-        d.conceptGoalsMax.set(12);
-
-
-        return d;
-    }
     public static Default newDefault() {
 
-        Default d = new Equalized(1024, 16, 8);
+        int cycPerFrame = 8;
+
+        Default d = new Equalized(1024, 16, 4);
+        d.setTermLinkBagSize(16);
+        d.setTaskLinkBagSize(16);
 //
 //
 //            @Override
@@ -73,24 +58,21 @@ public class SomeRovers {
 
         d.conceptTaskTermProcessPerCycle.set(4);
 
-        int cycPerFrame = 8;
 
         d.setCyclesPerFrame(cycPerFrame);
-        d.duration.set(5 * cycPerFrame);
-
+        d.duration.set(cycPerFrame);
+        d.conceptBeliefsMax.set(16);
+        d.conceptGoalsMax.set(8);
 
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
 
-        d.setTermLinkBagSize(64);
-        d.setTaskLinkBagSize(64);
 
         //N/A for solid
         //nar.param.inputsMaxPerCycle.set(32);
         //nar.param.conceptsFiredPerCycle.set(4);
 
         d.conceptCreationExpectation.set(0);
-        d.conceptBeliefsMax.set(16);
-        d.conceptGoalsMax.set(8);
+
         //d.termLinkForgetDurations.set(4);
 
 
@@ -103,7 +85,7 @@ public class SomeRovers {
         Global.DEBUG = Global.EXIT_ON_EXCEPTION = false;
 
 
-        float fps = 90;
+        float fps = 25;
         boolean cpanels = true;
 
         final Sim game = new Sim(clock);
@@ -117,48 +99,15 @@ public class SomeRovers {
         {
             Default e = newDefault();
 
-
             NAR nar = new NAR(e);
-            //TextOutput.out(nar).setOutputPriorityMin(0.5f);
-
-            //TextOutput.out(nar);
 
             game.add(new Rover("r1", nar));
 
-            //new UselessProcess(nar);
-
         }
       {
+            NAR nar = new NAR( newDefault() );
 
-            NAR nar;
-
-            //NARSeed d = newSolid();
-            Default d = newDefault();
-            nar = new NAR(d);
-
-
-
-            //new InputActivationController(nar);
-
-
-
-            //TextOutput.out(nar).setOutputPriorityMin(0.5f);
-
-
-            //nar.param.shortTermMemoryHistory.set(3);
-
-            (nar.param).outputVolume.set(0);
-            //nar.param.budgetThreshold.set(0.02);
-            //nar.param.confidenceThreshold.set(0.02);
-
-            //(nar.param).conceptForgetDurations.set(2f);
-            /*
-            (nar.param).taskLinkForgetDurations.set(10f);
-            (nar.param).termLinkForgetDurations.set(10f);
-            (nar.param).novelTaskForgetDurations.set(10f);
-            */
-
-
+            //nar.param.outputVolume.set(0);
 
             game.add(new CarefulRover("r2", nar));
 

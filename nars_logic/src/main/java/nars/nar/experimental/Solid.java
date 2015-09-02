@@ -1,18 +1,21 @@
 package nars.nar.experimental;
 
 import com.gs.collections.impl.list.mutable.FastList;
-import nars.*;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
+import nars.Param;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
+import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.ConceptBagActivator;
 import nars.concept.ConceptBuilder;
-import nars.io.in.Input;
 import nars.link.TaskLink;
 import nars.nal.PremiseProcessor;
 import nars.nar.Default;
@@ -21,7 +24,6 @@ import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
-import nars.util.data.random.XORShiftRandom;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.sort.ArraySortedIndex;
 
@@ -127,6 +129,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 //                maxTaskLink * maxTermLink,
 //                0.01f /* false positive probability */ );
 //    }
+
 
     @Override
     public void init(NAR n) {
