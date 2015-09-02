@@ -342,7 +342,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundForward(final Truth truth, final Term content, final Premise nal) {
-        return compoundForward(new DirectBudget(), truth, content, nal);
+        return compoundForward(new Budget(), truth, content, nal);
     }
 
     public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal) {

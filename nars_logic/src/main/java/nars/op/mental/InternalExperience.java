@@ -109,14 +109,29 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         return false;
     }
 
+    @Override
+    public void event(Class event, Object[] args) {
 
-    protected InternalExperience(NAR n, Class... events) {
-        super(n, events);
-        n.memory.eventBeliefReason.on(this);
     }
 
     public InternalExperience(NAR n) {
-        this(n, TaskProcess.class);
+        super(n);
+        n.memory.eventBeliefReason.on(this);
+
+        n.memory.eventTaskProcess.on(tp -> {
+
+            final Task task = tp.getTask();
+
+            //old strategy always, new strategy only for QUESTION and QUEST:
+            final char punc = task.getPunctuation();
+
+            if (OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (punc == Symbols.QUESTION || punc == Symbols.QUEST))) {
+                experienceFromTaskInternal(tp, task, isFull());
+            }
+            //we also need Mr task process to be able to have the task process, this is a hack..
+
+        });
+
     }
 
     public static Operation toTerm(final Sentence s, final NAL mem) {
@@ -189,22 +204,6 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         return nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)];
     }
 
-    @Override
-    public void event(Class event, Object[] a) {
-
-
-        if (event == TaskProcess.class) {
-
-            Task task = (Task) a[0];
-            TaskProcess tp = (TaskProcess) a[1];
-
-            //old strategy always, new strategy only for QUESTION and QUEST:
-            char punc = task.getPunctuation();
-            if (OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (punc == Symbols.QUESTION || punc == Symbols.QUEST))) {
-                experienceFromTaskInternal(tp, task, isFull());
-            }
-        }
-    }
 
 //    public Task experienceFromBelief(NAL nal, Budget b, Sentence belief) {
 //        return experienceFromTask(nal,

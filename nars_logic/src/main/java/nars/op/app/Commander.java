@@ -2,14 +2,17 @@ package nars.op.app;
 
 import com.google.common.collect.Iterators;
 import nars.Events;
+import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.event.NARReaction;
+import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.util.event.Observed;
 
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 /**
  * Captures input goals and questions into a buffer
@@ -24,11 +27,14 @@ import java.util.Iterator;
  * Analogous to a continuous echo/delay effect,
  * or a sustain effecct.
  */
-public class Commander extends NARReaction {
+public class Commander extends NARReaction implements Consumer<Memory> {
 
     public final ItemAccumulator<Task> commands;
     public final Iterator<Task> commandIterator;
     private final Observed.DefaultObserved.DefaultObservableRegistration cycleEnd;
+    private final NAR nar;
+
+
     float priorityPerCycle = 1,
             priorityRemaining = 0; //change left over from last cycle
 
@@ -37,13 +43,19 @@ public class Commander extends NARReaction {
     }
 
     public Commander(NAR nar, ItemAccumulator<Task> buffer) {
-        super(nar, Events.IN.class);
-        this.cycleEnd = nar.memory.eventCycleEnd.on(m -> {
-            cycle();
-        });
+        super(nar);
+        this.nar = nar;
+        this.cycleEnd = nar.memory.eventCycleEnd.on(this);
         this.commands = buffer;
         commandIterator = Iterators.cycle(commands.items);
+
+        nar.memory.eventTaskProcess.on((tp) -> {
+            Task t = tp.getTask();
+            if (!t.isDeleted())
+                input(t);
+        });
     }
+
 
     @Override
     public void setActive(boolean b) {
@@ -55,22 +67,31 @@ public class Commander extends NARReaction {
 
     @Override
     public void event(Class event, Object... args) {
-        if (event == Events.IN.class) {
-            Task t = (Task)args[0];
-            input(t);
-        }
+
     }
 
     protected void input(Task t) {
-        if ((t.isGoal() || t.isQuestOrQuestion()) && t.isInput()) {
+        if (/*(t.isGoal() || t.isQuestOrQuestion()) && */ t.isInput()) {
             commands.add(t);
         }
     }
 
-    protected void cycle() {
+
+    @Override
+    public void accept(Memory memory) {
 
         //TODO iterate tasks until allotted priority has been reached,
         //  TaskProcess each
+
+
+        int inputsPerCycle = 1;
+
+        for (int i = 0; i < inputsPerCycle; i++) {
+            if (commandIterator.hasNext()) {
+                Task next = commandIterator.next();
+                memory.input(next);
+            }
+        }
 
     }
 

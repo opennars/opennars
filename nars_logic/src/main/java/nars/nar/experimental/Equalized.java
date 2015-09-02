@@ -8,7 +8,6 @@ import nars.budget.ItemAccumulator;
 import nars.concept.Concept;
 import nars.cycle.SequentialCycle;
 import nars.nar.NewDefault;
-import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
@@ -21,7 +20,8 @@ import nars.term.Term;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
+
+import static nars.process.ConceptProcess.forEachPremise;
 
 
 /**
@@ -105,11 +105,16 @@ public class Equalized extends NewDefault {
 
             //1 concept if (memory.newTasks.isEmpty())*/
             float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
-            ConceptProcess.forEachPremise(memory,
-                    () -> nextConceptToProcess(conceptForgetDurations),
-                    conceptsToFire, f -> f.run()
-            );
+            final int termLinkSelections = memory.param.conceptTaskTermProcessPerCycle.intValue();
 
+            Concept[] buffer = new Concept[conceptsToFire];
+            int n = nextConcepts(conceptForgetDurations, buffer);
+            if (n == 0) return;
+
+            for (final Concept c : buffer) {
+                if (c == null) break;
+                forEachPremise(c, termLinkSelections, conceptForgetDurations, ConceptProcessRunner );
+            }
 
             int added = commitNewTasks();
 
@@ -121,11 +126,8 @@ public class Equalized extends NewDefault {
 
             final int maxNewTasks = conceptsToFire * maxNewBufferHistoryCycles;
             if (newTasks.size() > maxNewTasks) {
-                int removed = newTasks.limit(maxNewTasks, new Consumer<Task>() {
-                    @Override public void accept(Task task) {
-                        memory.removed(task, "Ignored");
-                    }
-                }, temporary);
+
+                int removed = ItemAccumulator.limit(newTasks, maxNewTasks, temporary, memory);
 
                 //System.out.print("discarded=" + removed + "  ");
             }

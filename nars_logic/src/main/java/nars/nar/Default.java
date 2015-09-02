@@ -57,9 +57,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
+import static nars.process.ConceptProcess.forEachPremise;
 
 //import sun.tools.jstat.Operator;
 
@@ -461,7 +463,7 @@ public class Default extends Param implements NARSeed {
         );
     }
 
-    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+    public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
 
         if (t instanceof Atom) {
             return new AtomConcept(t, b, m, termLinks, taskLinks,
@@ -699,17 +701,24 @@ public class Default extends Param implements NARSeed {
         protected void fireConcepts() {
             //1 concept if (memory.newTasks.isEmpty())*/
             final int conceptsToFire = newTasks.isEmpty() ? conceptsFiredPerCycle.get() : 0;
-            if (conceptsToFire > 0) {
+            if (conceptsToFire == 0) return;
 
-                final float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
+            final float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
 
-                ConceptProcess.forEachPremise(memory,
-                        () -> nextConceptToProcess(conceptForgetDurations),
-                        conceptsToFire,
-                        p -> p.run()
-                );
+            final Param p = memory.param;
+            final float tasklinkForgetDurations = p.taskLinkForgetDurations.floatValue();
+            final int termLinkSelections = p.conceptTaskTermProcessPerCycle.intValue();
 
+
+            Concept[] buffer = new Concept[conceptsToFire];
+            int n = nextConcepts(conceptForgetDurations, buffer);
+            if (n == 0) return;
+
+            for (final Concept c : buffer) {
+                if (c == null) break;
+                forEachPremise(c, termLinkSelections, conceptForgetDurations, ConceptProcessRunner );
             }
+
         }
 
         protected void runNovelTasks() {
@@ -739,6 +748,7 @@ public class Default extends Param implements NARSeed {
 
             for (int i = 0; i < count; i++) {
 
+                //TODO remove(N)
                 final Task task = novelTasks.pop();
                 if (task != null)
                     TaskProcess.run(memory, task);
@@ -828,7 +838,15 @@ public class Default extends Param implements NARSeed {
         }
 
 
+
     }
+
+    public static final Consumer<ConceptProcess> ConceptProcessRunner = new Consumer<ConceptProcess>() {
+        @Override
+        public void accept(ConceptProcess p) {
+            p.run();
+        }
+    };
 
     @Deprecated
     public static class CommandLineNARBuilder extends Default {

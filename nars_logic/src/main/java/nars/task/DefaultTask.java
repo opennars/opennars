@@ -253,9 +253,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
-    public boolean isDeleted() {
-        return !Float.isFinite(getPriority());
-    }
 
     /**
      * call if the task was changed; re-hashes it at the end.
@@ -263,13 +260,18 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      */
     public Task normalized() {
 
-        if (isDeleted()) {
-            return null;
-        }
-
         //dont recompute if hash isnt invalid (==0)
         if (this.hash != 0)
             return this;
+
+        if (isDeleted())
+            return null;
+
+        return normalizeThis();
+    }
+
+    /** actual normalization process */
+    protected Task normalizeThis() {
 
         final char punc = getPunctuation();
         if (punc == 0)
@@ -638,5 +640,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
         serialize(jgen, provider);
     }
+
+
 
 }

@@ -114,7 +114,7 @@ public class NARfx extends Application {
         d.setTermLinkBagSize(96);
         d.setTaskLinkBagSize(96);*/
 
-        Default d = new Equalized(1024,2,2);
+        Default d = new Equalized(1024,8,8);
         //Default d = new Default(1024,2,3);
 
         NAR n = new NAR(d);
@@ -142,13 +142,8 @@ public class NARfx extends Application {
 
         {
 
-            NARGraph1 g = new NARGraph1(w.nar);
 
-            SubScene gs = g.newSubScene(w.content.getWidth(), w.content.getHeight());
-            gs.widthProperty().bind(w.content.widthProperty());
-            gs.heightProperty().bind(w.content.heightProperty());
 
-            AnchorPane ags = new AnchorPane(gs);
 
 
 //            final TilePane lp = new TilePane(4,4,
@@ -195,7 +190,17 @@ public class NARfx extends Application {
 
 
             w.content.getTabs().add(new TabX("Terminal", new TerminalPane(w.nar) ));
-            w.content.getTabs().add(new TabX("Graph", ags ));
+
+
+
+//              NARGraph1 g = new NARGraph1(w.nar);
+//            SubScene gs = g.newSubScene(w.content.getWidth(), w.content.getHeight());
+//            gs.widthProperty().bind(w.content.widthProperty());
+//            gs.heightProperty().bind(w.content.heightProperty());
+//
+//            AnchorPane ags = new AnchorPane(gs);
+//            w.content.getTabs().add(new TabX("Graph", ags ));
+
         }
         //startup defaults
         w.console(true);

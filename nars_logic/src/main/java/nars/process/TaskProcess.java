@@ -17,11 +17,15 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 
+import java.util.List;
+
 /**
  * "Direct" processing of a new task, in constant time Local processing,
  * involving one concept only
  */
 public class TaskProcess extends NAL {
+
+    private static TaskProcess[] emptyTaskProcess = new TaskProcess[0];
 
     public final Task task;
 
@@ -61,8 +65,11 @@ public class TaskProcess extends NAL {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        getTask().getBudget().toBudgetStringExternal(sb);
+
+        sb.append(getClass().getSimpleName()).append('[');
+
+        getTask().toString(sb, getMemory(), true, false);
+
         sb.append(']');
 
         return sb.toString();
@@ -71,17 +78,20 @@ public class TaskProcess extends NAL {
 
 
 
-    @Override public void derive() {
-        Concept c = memory.conceptualize(getTask());
+    @Override final public void derive() {
+
+        final Memory memory = this.memory;
+        final Concept c = memory.conceptualize(getTask());
+
         if (c==null) return;
 
         if (processConcept(c)) {
 
             final Task t = getTask();
 
-            emit(TaskProcess.class, t, this, c);
-
             c.link(t);
+
+            memory.eventTaskProcess.emit(this);
 
             memory.logic.TASK_PROCESS.hit();
             memory.emotion.busy(t, this);
@@ -200,5 +210,32 @@ public class TaskProcess extends NAL {
     }
 
 
+    /** batch processing run: the reverse sorted list is divided into 3 sections:
+     *  0  ..        discarded:  to remove from the system
+     *  (last-remaining)..last:  to input (highest pri first)
+     *
+     *  ignore the rest, they are still in the newTaskBuffer this sort was generated from
+     * */
+    public static TaskProcess[] run(final Memory memory, final List<Task> reverseSorted, final int toRun, final int toDiscard) {
 
+        final int size = reverseSorted.size();
+        if (size == 0) return emptyTaskProcess;
+
+        if (toRun + toDiscard > size)
+            throw new RuntimeException("invalid buffer positions; size=" + size + ", toRun=" + toRun + ", toDiscard=" + toDiscard);
+
+        for (int i = 0; i < toDiscard; i++) {
+            memory.removed( reverseSorted.get(i) );
+        }
+
+        final int bottomPoint = Math.max(size-toRun, toDiscard);
+        final TaskProcess[] r = new TaskProcess[size-bottomPoint];
+
+        int j = 0;
+        for (int i = size-1; i >= bottomPoint; i--) {
+            r[j++] = TaskProcess.get( memory, reverseSorted.get(i) );
+        }
+
+        return r;
+    }
 }

@@ -527,6 +527,5 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     void setBestSolution(AbstractMemory memory, Task belief);
 
 
-
-
+    public boolean isDeleted();
 }

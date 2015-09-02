@@ -130,6 +130,11 @@ public class TaskStruct extends Fuct implements Task {
     }
 
     @Override
+    public boolean isDeleted() {
+        return false;
+    }
+
+    @Override
     public Task log(List historyToCopy) {
         return null;
     }

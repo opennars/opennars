@@ -98,10 +98,16 @@ public class Anticipate extends NARReaction implements Mental {
     }*/
     public Anticipate(NAR nar, STMInduction stm) {
         super(nar, Events.TaskDeriveFuture.class,
-                Events.InduceSucceedingEvent.class,
-                TaskProcess.class);
+                Events.InduceSucceedingEvent.class
+                );
         this.nar = nar;
         this.stm = stm;
+
+        /*nar.memory.eventTaskProcess.on(taskProcess -> {
+
+            //we also need Mr task process to be able to have the task process, this is a hack..
+
+        });*/
 
         this.onCycleEnd = nar.memory.eventCycleEnd.on(c -> {
             updateAnticipations();
@@ -290,8 +296,6 @@ public class Anticipate extends NARReaction implements Mental {
             if (newEvent.getTruth() != null)
                 newTaskTerms.add(newEvent.getTerm()); //new: always add but keep truth value in mind
 
-        } else if(event == TaskProcess.class) { //we also need Mr task process to be able to have the task process, this is a hack..
-            this.tp = (TaskProcess)args[1];
         }
 
     }

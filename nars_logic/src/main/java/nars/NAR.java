@@ -75,7 +75,7 @@ public class NAR implements Runnable {
      * Flag for running continuously
      */
     private boolean running = false;
-    private boolean threadYield = false;
+
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
     /**
      * memory activity enabled
@@ -336,6 +336,8 @@ public class NAR implements Runnable {
         return null;
     }
 
+
+
     public List<Task> input(final List<Task> t) {
         t.forEach(x -> input(x));
         return t;
@@ -523,9 +525,9 @@ public class NAR implements Runnable {
      *
      * @return total time in seconds elapsed in realtime
      */
-    public synchronized void frame(final int frames) {
+    public void frame(final int frames) {
 
-        final boolean wasRunning = running;
+        //final boolean wasRunning = running;
 
         running = true;
 
@@ -534,7 +536,7 @@ public class NAR implements Runnable {
             frameCycles(cpf);
         }
 
-        running = wasRunning;
+        //running = wasRunning;
 
     }
 
@@ -591,36 +593,44 @@ public class NAR implements Runnable {
     /**
      * Runs until stopped, at a given delay period between frames (0= no delay). Main loop
      */
-    public void loop(long minFramePeriodMS) {
+    final public void loop(long minFramePeriodMS) {
         //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
         running = true;
 
         while (running) {
 
-
-            long start = System.currentTimeMillis();
+            final long start = System.currentTimeMillis();
 
             frame(1); //in seconds
 
-            long frameTimeMS = System.currentTimeMillis() - start;
+            final long frameTimeMS = System.currentTimeMillis() - start;
 
             if (minFramePeriodMS > 0) {
-
-                double remainingTime = (minFramePeriodMS - frameTimeMS) / 1.0E3;
-                if (remainingTime > 0) {
-                    try {
-                        Thread.sleep(minFramePeriodMS);
-                    } catch (InterruptedException ee) {
-                        //error(ee);
-                    }
-                } else if (remainingTime < 0) {
-                    minFramePeriodMS++;
-                    System.err.println("Expected framerate not achieved: " + remainingTime + "ms too slow; incresing frame period to " + minFramePeriodMS + "ms");
-                }
-            } else if (threadYield) {
-                Thread.yield();
+                minFramePeriodMS = throttle(minFramePeriodMS, frameTimeMS);
             }
+        }
+    }
+
+    protected long throttle(long minFramePeriodMS, long frameTimeMS) {
+        double remainingTime = (minFramePeriodMS - frameTimeMS) / 1.0E3;
+        if (remainingTime > 0) {
+            onLoopLag(minFramePeriodMS);
+        } else if (remainingTime < 0) {
+
+            System.err.println(Thread.currentThread() + " loop lag: " + remainingTime + "ms too slow");
+
+            //minFramePeriodMS++;
+            //; incresing frame period to " + minFramePeriodMS + "ms");
+        }
+        return minFramePeriodMS;
+    }
+
+    private void onLoopLag(long minFramePeriodMS) {
+        try {
+            Thread.sleep(minFramePeriodMS);
+        } catch (InterruptedException ee) {
+            System.err.println(ee);
         }
     }
 
@@ -708,13 +718,6 @@ public class NAR implements Runnable {
         return running;
     }
 
-    /**
-     * When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay).
-     * This is for improving program responsiveness when NAR is run with no delay.
-     */
-    public void setThreadYield(boolean b) {
-        this.threadYield = b;
-    }
 
     /**
      * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the
@@ -731,7 +734,8 @@ public class NAR implements Runnable {
         emit(Events.ERR.class, e);
     }
 
-
+    public void loop(int i, Object p1) {
+    }
 
 
 //    private void debugTime() {

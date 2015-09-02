@@ -29,7 +29,7 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
     /** derivation queue (this might also work as a Set) */
     protected Set<Task> derived = null;
 
-    public Consumer<Task> inputToMemory;
+    public final Consumer<Task> inputToMemory;
 
     /**
      * stores the tasks that this process generates, and adds to memory

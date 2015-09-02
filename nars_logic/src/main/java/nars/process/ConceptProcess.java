@@ -93,23 +93,6 @@ abstract public class ConceptProcess extends NAL  {
     }
 
 
-    public static void forEachPremise(final Memory memory, Supplier<Concept> conceptSource, int concepts, Consumer<ConceptProcess> proc) {
-
-        final Param p = memory.param;
-        final float tasklinkForgetDurations = p.taskLinkForgetDurations.floatValue();
-        final int termLinkSelections = p.conceptTaskTermProcessPerCycle.intValue();
-
-        for (int i = 0; i < concepts; i++) {
-            Concept c = conceptSource.get();
-            if (c==null) continue;
-
-            ConceptProcess.forEachPremise(c,
-                    termLinkSelections,
-                    tasklinkForgetDurations,
-                    proc
-            );
-        }
-    }
 
     public static void forEachPremise(@Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
         forEachPremise(concept, null, termLinks, taskLinkForgetDurations, proc);

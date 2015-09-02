@@ -44,22 +44,23 @@ public class STMEventInference extends NARReaction {
         this.stmSize = 1;
         stm = Global.THREADS == 1 ? new ArrayDeque() : new ConcurrentLinkedDeque<>();
         //I=this; //hm there needs to be a way to query plugins from the NAR/NAL object like in 1.6.x, TODO find out
+
+
+        nar.memory.eventTaskProcess.on(n -> {
+            inductionOnSucceedingEvents(n, false);
+        });
     }
 
     @Override
     public Class[] getEvents() {
-        return new Class[]{TaskProcess.class, Events.ResetStart.class};
+        return new Class[]{ Events.ResetStart.class};
     }
 
 
     @Override
     public void event(Class event, Object[] args) {
-        if (event == TaskProcess.class) {
-            Task t = (Task) args[0];
-            TaskProcess n = (TaskProcess) args[1];
-            inductionOnSucceedingEvents(n, false);
-        }
-        else if (event == Events.ResetStart.class) {
+
+        if (event == Events.ResetStart.class) {
             stm.clear();
         }
     }

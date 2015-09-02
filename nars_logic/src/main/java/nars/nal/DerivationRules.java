@@ -1,18 +1,19 @@
 package nars.nal;
 
+import com.google.common.base.Predicates;
 import nars.Global;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
+import org.infinispan.util.concurrent.ConcurrentHashSet;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
  */
 public class DerivationRules {
 
-    @Deprecated static final int maxVarArgsToMatch = 5;
+    @Deprecated static final int maxVarArgsToMatch = 2;
 
     public final TaskRule[] rules;
 
@@ -39,21 +40,22 @@ public class DerivationRules {
         this(parseRules(loadRuleStrings(ruleStrings)));
     }
 
-    public DerivationRules(Set<TaskRule> r) {
-        rules = r.toArray(new TaskRule[r.size()]);
+    public DerivationRules(Stream<List<TaskRule>> r) {
+        super();
+        rules = r.flatMap(x -> x.stream() ).toArray(n -> new TaskRule[n]);//collect(Collectors.toList());
     }
 
-    public DerivationRules(Set<TaskRule> r, Predicate<TaskRule> filter) {
-        rules = r.stream().filter(filter).toArray(n -> new TaskRule[n]);
-    }
+//    public DerivationRules(Stream<TaskRule[]> r, Predicate<TaskRule[]> filter) {
+//        rules = r.filter(filter).toArray(n -> new TaskRule[n]);
+//    }
 
-    public DerivationRules(DerivationRules master, Predicate<TaskRule> filter) {
-        rules = Stream.of(master.rules).filter(filter).toArray(n -> new TaskRule[n]);
-    }
+//    public DerivationRules(DerivationRules master, Predicate<TaskRule> filter) {
+//        rules = Stream.of(master.rules).filter(filter).toArray(n -> new TaskRule[n]);
+//    }
 
-    public DerivationRules(DerivationRules master, int nalLevel) {
-        this(master, tr -> tr.levelValid(nalLevel));
-    }
+//    public DerivationRules(DerivationRules master, int nalLevel) {
+//        this(master, tr -> tr.levelValid(nalLevel));
+//    }
 
 
 
@@ -181,15 +183,18 @@ public class DerivationRules {
 
 
 
-    static Set<TaskRule> parseRules(final Collection<String> rawRules) {
+    static Stream<List<TaskRule>> parseRules(final Collection<String> rawRules) {
+
+
+
+        final Set<String> expanded = Global.newHashSet(1); //new ConcurrentSkipListSet<>();
 
         final NarseseParser parser = NarseseParser.the();
 
-        final Set<String> expanded = Global.newHashSet(1024);
-
-        for (String rule : rawRules) {
+        rawRules.stream().forEach(rule -> {
 
             final String p = preprocess(rule);
+
 
             //there might be now be A_1..maxVarArgsToMatch in it, if this is the case we have to add up to maxVarArgsToMatch rules
             if (p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
@@ -197,13 +202,14 @@ public class DerivationRules {
             } else {
                 addAndPermuteTenses(parser, expanded, p);
             }
-        }
+
+
+        });//.forEachOrdered(s -> expanded.addAll(s));
+
+
 
         //accumulate these in a set to eliminate duplicates
-        final Set<TaskRule> rules
-                = new LinkedHashSet<>(expanded.size() /* approximately */);
-
-        for (final String s : expanded) {
+        return expanded.stream().map(s -> {
             try {
 
 
@@ -213,6 +219,7 @@ public class DerivationRules {
                 if (rNorm == null)
                     throw new RuntimeException("invalid rule, detected after normalization: " + s);
 
+                List<TaskRule> rules = new ArrayList();
                 boolean added = rules.add(rNorm);
                 if (added) {
 
@@ -243,14 +250,19 @@ public class DerivationRules {
                 if (!s2.equals(s1))
                     System.err.println("rUnnorm modified");*/
 
+                return rules;
+
             } catch (Exception ex) {
                 System.err.println("Ignoring invalid input rule:  " + s);
                 ex.printStackTrace();//ex.printStackTrace();
             }
 
-        }
+            return Collections.EMPTY_LIST;
 
-        return rules;
+
+        });
+
+
     }
 
     private static void addUnrolledVarArgs(NarseseParser parser,

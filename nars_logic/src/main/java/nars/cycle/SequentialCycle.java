@@ -84,17 +84,8 @@ abstract public class SequentialCycle extends AbstractCycle<Bag<Term,Concept>> {
     }
 
 
-    protected Concept nextConceptToProcess(float conceptForgetDurations) {
-        Concept currentConcept = concepts.forgetNext(conceptForgetDurations, memory);
-
-        if (currentConcept == null)
-            return null;
-
-        if (currentConcept.getPriority() < memory.param.conceptFireThreshold.get()) {
-            return null;
-        }
-
-        return currentConcept;
+    protected int nextConcepts(float conceptForgetDurations, Concept[] result) {
+        return concepts.forgetNext(conceptForgetDurations, result, memory.time());
     }
 
 

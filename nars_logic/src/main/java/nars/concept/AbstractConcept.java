@@ -32,7 +32,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated
      */
     @Override
-    public Map<Object, Object> getMeta() {
+    final public Map<Object, Object> getMeta() {
         return meta;
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * Reference to the memory to which the Concept belongs
      */
     @Override
-    public Memory getMemory() {
+    final public Memory getMemory() {
         return memory;
     }
 
@@ -53,12 +53,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * The term is the unique ID of the concept
      */
     @Override
-    public Term getTerm() {
+    final public Term getTerm() {
         return term;
     }
 
     @Override
-    public long getCreationTime() {
+    final public long getCreationTime() {
         return creationTime;
     }
 
@@ -70,12 +70,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     }
 
     @Override
-    public int hashCode() {
+    final public int hashCode() {
         return getTerm().hashCode();
     }
 
     @Override
-    public Term name() {
+    final public Term name() {
         return getTerm();
     }
 
@@ -85,7 +85,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
      * @return The concept name, with taskBudget in the full version
      */
     @Override
-    public String toString() {  // called from concept bag
+    final public String toString() {  // called from concept bag
         //return (super.toStringBrief() + " " + key);
         //return super.toStringExternal();
         return getTerm().toString();
@@ -142,12 +142,12 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
 
     @Override
-    public boolean isConstant() {
+    final public boolean isConstant() {
         return constant;
     }
 
     @Override
-    public boolean setConstant(boolean b) {
+    final public boolean setConstant(boolean b) {
         this.constant = b;
         return constant;
     }

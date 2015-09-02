@@ -53,6 +53,7 @@ import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
+import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -106,6 +107,9 @@ public class Memory implements Serializable, AbstractMemory {
             /** fired at the end of each memory cycle */
             eventCycleEnd = new Observed.DefaultObserved();
 
+    public final Observed<TaskProcess> eventTaskProcess = new Observed.DefaultObserved<>();
+
+
     public final EventEmitter<Term,Operation> exe;
 
 
@@ -138,6 +142,7 @@ public class Memory implements Serializable, AbstractMemory {
     private long inputPausedUntil = -1;
     private boolean inCycle = false;
     private long nextRandomSeed = 1;
+
 
 
     /**
@@ -591,6 +596,9 @@ public class Memory implements Serializable, AbstractMemory {
 
     }
 
+    final public void input(final Task[] t) {
+        for (final Task x : t) input(x);
+    }
 
     /**
      * exposes the memory to an input, derived, or immediate task.
@@ -651,7 +659,10 @@ public class Memory implements Serializable, AbstractMemory {
 
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
     public void removed(final Task task, final String removalReason) {
-        task.log(removalReason);
+
+        if (removalReason!=null)
+            task.log(removalReason);
+
         if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
             task.log(Premise.getStack());
 
@@ -659,6 +670,10 @@ public class Memory implements Serializable, AbstractMemory {
 
         eventTaskRemoved.emit(task);
         task.delete();
+    }
+
+    final public void removed(final Task task) {
+        removed(task, null);
     }
 
     /** sends an event signal to listeners subscribed to channel 'c' */

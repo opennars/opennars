@@ -3,6 +3,8 @@ package nars.budget;
 import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
+import nars.Memory;
+import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -138,23 +140,30 @@ public class ItemAccumulator<I extends Budgeted> {
         return lowestFirstKeyValues().iterator();
     }
 
-    public int removeLowest(final int n, @Nullable List<I> temporary) {
+
+
+    public int update(final int targetSize, @Nullable List<I> sortedResult) {
+
+        sortedResult.clear();
+
         final int s = items.size();
-        if (s <= n) {
-            items.clear();
+
+        lowestFirstKeyValues(sortedResult);
+
+        if (s <= targetSize) {
+            //size is small enough, nothing is discarded. everything retained
+            //sortedResult has been sorted
             return s;
         }
 
-        final List<I> lf = lowestFirstKeyValues(temporary);
+        final int toDiscard = s - targetSize;
 
         int r;
-        for (r = 0; r < n; r++) {
-            items.remove( lf.get(r) );
+        for (r = 0; r < toDiscard; r++) {
+            items.remove( sortedResult.get(r) );
         }
 
-        temporary.clear();
-
-        return r;
+        return s - r;
     }
 
     public void addAll(final Collection<I> x) {
@@ -162,16 +171,24 @@ public class ItemAccumulator<I extends Budgeted> {
     }
 
     /** if size() capacity, remove lowest elements until size() is at capacity
-     * @return how many removed
+     * @return how many remain
      * */
-    public int limit(int capacity, Consumer<I> onRemoved, @Nullable List<I> temporary) {
+    public int limit(int capacity, Consumer<I> onRemoved, @Nullable List<I> sortedResult) {
 
         final int numToRemove = size() - capacity;
 
         if (numToRemove > 0)
-            return removeLowest(numToRemove, temporary);
+            return update(numToRemove, sortedResult);
 
         return 0;
+    }
+
+    public static int limit(ItemAccumulator<Task> acc, int capacity, List<Task> temporary, Memory m) {
+        return acc.limit(capacity, new Consumer<Task>() {
+            @Override public void accept(Task task) {
+                m.removed(task, "Ignored");
+            }
+        }, temporary);
     }
 
 
@@ -184,7 +201,6 @@ public class ItemAccumulator<I extends Budgeted> {
     public String toString() {
         return items.toString();
     }
-
 
 
 

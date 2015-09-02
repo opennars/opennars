@@ -1,11 +1,14 @@
 package nars.nar.experimental;
 
 import com.google.common.collect.Iterators;
+import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Param;
+import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
+import nars.bag.impl.CurveBag;
 import nars.bag.impl.MapCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
@@ -15,15 +18,18 @@ import nars.concept.ConceptBuilder;
 import nars.io.out.TextOutput;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.link.TermLinkKey;
 import nars.meter.NARTrace;
 import nars.nal.Deriver;
 import nars.nal.PremiseProcessor;
 import nars.nar.Default;
 import nars.nar.NewDefault;
+import nars.op.app.Commander;
 import nars.process.ConceptProcess;
 import nars.process.ConceptTaskLinkProcess;
 import nars.process.ConceptTaskTermLinkProcess;
 import nars.process.TaskProcess;
+import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -41,6 +47,17 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
     private MapCacheBag<Term, Concept> index;
     private Iterator<Concept> indexIterator;
+    private List<Task> sorted = Global.newArrayList();
+    @Deprecated final Default param = new NewDefault(); // shadow defaults, will replace once refactored
+    final Random rng = new XorShift1024StarRandom(1);
+    final ItemAccumulator<Task> newTasks = new ItemAccumulator(Budget.plus);
+
+    final static Procedure2<Budget,Budget> budgetMerge = Budget.plus;
+
+    Commander commander;
+    public final List<Derivelet> derivers = Global.newArrayList();
+    final int maxNewTasksPerCycle = 10;
+    final int maxNewTaskHistory = 20;
 
     public static void main(String[] args) {
         //temporary testing shell
@@ -61,16 +78,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
     }
 
 
-    /** shadow defaults, will replace once refactored */
-    @Deprecated final Default defaults = new NewDefault();
-
-    final Random rng = new XorShift1024StarRandom(1);
-
-    final ItemAccumulator<Task> newTasks = new ItemAccumulator(Budget.plus);
-
-
-    @Override
-    public boolean accept(final Task t) {
+    @Override final public boolean accept(final Task t) {
         return newTasks.add(t);
     }
 
@@ -98,7 +106,19 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
                 if (tm == null)
                     return new ConceptTaskLinkProcess(concept, tl);
 
-                return new ConceptTaskTermLinkProcess(concept, tl, tm);
+                return new ConceptTaskTermLinkProcess(concept, tl, tm) {
+
+                    @Override protected void inputDerivations() {
+                        if (derived!=null) {
+                            //transform this ConceptProcess's derivation to a TaskProcess and run it
+                            derived.forEach(/*newTaskProcess*/ t -> {
+                                System.err.println("direct input: " + t);
+                                TaskProcess.run(concept.getMemory(), t);
+                            });
+                        }
+                    }
+
+                };
             }
 
         }
@@ -131,12 +151,11 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
         }
 
         /** run next iteration; true if still alive by end, false if died and needs recycled */
-        public boolean cycle() {
+        final public boolean cycle() {
             if ( (concept = nextConcept()) == null)
                 return false;
 
-            ConceptProcess p = nextPremise();
-
+            final ConceptProcess p = nextPremise();
             p.run();
 
             return true;
@@ -152,48 +171,43 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
     }
 
 
-    public final List<Derivelet> derivers = new ArrayList();
+
 
     public Alann(int initialDerivers) {
         for (int i = 0; i < initialDerivers; i++)
             derivers.add( new Derivelet() );
     }
 
-    List<Task> toProcess = Global.newArrayList();
-
-
     @Override
     public void cycle() {
 
-        if (!newTasks.isEmpty()) {
+        final int size = newTasks.size();
+        if (size!=0) {
 
-            Iterator<Task> ii = newTasks.iterateHighestFirst();
-            int max = 5;
-            int processed = 0;
-            while (ii.hasNext() && processed < max) {
-                Task t = ii.next();
-                toProcess.add(t);
-                newTasks.items.remove(t);
+            int toDiscard = Math.max(0, size - maxNewTaskHistory);
+            int remaining = newTasks.update(maxNewTaskHistory, sorted);
+            if (size > 0) {
 
-                processed++;
+                int toRun = Math.min( maxNewTasksPerCycle, remaining);
+
+                final TaskProcess[] x = TaskProcess.run(memory, sorted, toRun, toDiscard);
+
+                for (final TaskProcess y : x)
+                    y.run();
+
+                System.out.print("newTasks size=" + size + " run=" + toRun + "=(" + x.length + "), discarded=" + toDiscard + "  ");
             }
-
-            //System.out.println("new tasks: " + processed + " processed, " + newTasks.size() + " pending");
-
-//            int inputs = 1;
-//            for (int i = 0; i < inputs; i++) {
-//                toProcess.add( newTasks.removeHighest() );
-//            }
-
-            toProcess.forEach(t -> new TaskProcess(memory, t).run());
-            toProcess.clear();
         }
 
 
         if (index.size() > 0) {
-            for (int i = 0; i < derivers.size(); i++) {
-                Derivelet d = derivers.get(i);
+            int numDerivers = derivers.size();
+            for (int i = 0; i < numDerivers; i++) {
+                final Derivelet d = derivers.get(i);
+
                 if (!d.cycle()) {
+
+                    //recycle this derivelet
                     Concept c = nextConcept();
                     if (c != null)
                         d.start(c);
@@ -222,7 +236,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
             put(existing = newConcept(term, budget, memory));
         }
         else {
-            Budget.plus.value(existing.getBudget(), budget);
+            budgetMerge.value(existing.getBudget(), budget);
         }
         return existing;
     }
@@ -253,8 +267,8 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
     @Override
     public Param newParam() {
-        defaults.the(Deriver.class, NewDefault.der);
-        return defaults;
+        param.the(Deriver.class, NewDefault.der);
+        return param;
     }
 
     @Override
@@ -283,24 +297,41 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
         );
     }
 
+
     @Override
     public void init(NAR nar) {
-        defaults.init(nar);
+
+        param.init(nar);
+
+        //param.taskProcessThreshold.set(0); //process everything, even if budget is zero
+
+        commander = new Commander(nar);
+
+
     }
 
     @Override
     public PremiseProcessor getPremiseProcessor(Param p) {
-        return defaults.getPremiseProcessor(p);
+        return param.getPremiseProcessor(p);
     }
 
     @Override
     public ConceptBuilder getConceptBuilder() {
-        return defaults.getConceptBuilder();
+        return param.getConceptBuilder();
     }
 
     @Override
-    public Concept newConcept(Term t, Budget b, Memory m) {
-        return defaults.newConcept(t, b, m);
+    public Concept newConcept(final Term t, final Budget b, final Memory m) {
+
+        Bag<Sentence, TaskLink> taskLinks =
+                new CurveBag(rng, /*sentenceNodes,*/ param.getConceptTaskLinks());
+        taskLinks.mergeAverage();
+
+        Bag<TermLinkKey, TermLink> termLinks =
+                new CurveBag(rng, /*termlinkKeyNodes,*/ param.getConceptTermLinks());
+        termLinks.mergeAverage();
+
+        return param.newConcept(t, b, taskLinks, termLinks, m);
     }
 
 //

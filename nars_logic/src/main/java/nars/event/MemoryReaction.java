@@ -22,7 +22,6 @@ public abstract class MemoryReaction extends ConceptReaction {
             Events.OUT.class,
             //Events.TaskRemove.class,
             Events.TaskDerive.class,
-            TaskProcess.class,
             Events.TermLinkTransformed.class,
             //Events.UnExecutedGoal.class,
 

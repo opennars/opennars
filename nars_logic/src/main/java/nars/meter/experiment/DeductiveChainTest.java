@@ -1,11 +1,14 @@
 package nars.meter.experiment;
 
 import nars.NAR;
+import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.nal.nal1.Inheritance;
 import nars.nar.experimental.Alann;
 import nars.task.Task;
 import nars.term.Atom;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by me on 8/25/15.
@@ -20,14 +23,15 @@ public class DeductiveChainTest {
         return Inheritance.make(a(x), a(y));
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         int length = 9;
         NAR n = new NAR(
                 //new Equalized(1000, 8, 3) //.level(1)
                 //new Default().level(1)
-                new Alann(16)
+                new Alann(32)
         );
+        n.param.conceptActivationFactor.set(0.4f);
 
         //Global.OVERLAP_ALLOW = true;
         //TextOutput.out(n);
@@ -52,10 +56,23 @@ public class DeductiveChainTest {
             }
         };
 
-        n.frame(5000);
+        //n.frame(5000);
 
-        System.out.println("end @ " + n.time() + "   " + timestamp(start) + " " +
-                n.memory.numConcepts(true,true) + " total concepts");
+        TextOutput.out(n).setOutputPriorityMin(0.85f);
+
+        while (true) {
+
+            n.frame(100);
+            sleep(20);
+
+            int printEvery = 100;
+            if (n.time() % printEvery == 0) {
+                System.out.println("@ " + n.time() + "   " + timestamp(start) + " " +
+                        n.memory.numConcepts(true, true) + " total concepts");
+            }
+        }
+
+
 
     }
 
