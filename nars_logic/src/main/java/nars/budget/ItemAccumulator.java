@@ -153,6 +153,7 @@ public class ItemAccumulator<I extends Budgeted> {
         if (s <= targetSize) {
             //size is small enough, nothing is discarded. everything retained
             //sortedResult has been sorted
+            items.clear();
             return s;
         }
 

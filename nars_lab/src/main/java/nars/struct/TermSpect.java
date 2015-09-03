@@ -146,7 +146,7 @@ public class TermSpect extends TermCept implements Term, Concept {
     }
 
     @Override
-    public int getTotalVariables() {
+    public int vars() {
         return 0;
     }
 

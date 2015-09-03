@@ -88,7 +88,7 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     }
 
     @Override
-    public int getTotalVariables() {
+    public int vars() {
         return 0;
     }
 

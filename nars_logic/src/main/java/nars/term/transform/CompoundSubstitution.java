@@ -1,8 +1,8 @@
 package nars.term.transform;
 
+import nars.Global;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.util.data.FastPutsArrayMap;
 
 import java.util.Map;
 
@@ -19,23 +19,20 @@ abstract public class CompoundSubstitution<I extends Compound, T extends Term> i
         if (subst == null)
             subst = newSubstitutionMap();
 
-        T subbed = subst.get(v);
-
-        if (subbed == null) {
-            subbed = getSubstitute(v);
-            if (subbed == null) return v; //unaffected
-
-            subst.put(v, subbed);
-        }
+        T subbed = subst.computeIfAbsent(v, _v -> {
+            T s = getSubstitute(_v);
+            if (s == null) return _v; //unaffected
+            return s;
+        });
 
         v = subbed;
 
         return v;
     }
 
-    protected Map<T, T> newSubstitutionMap() {
-        // //Global.newHashMap();
-        return new FastPutsArrayMap();
+    final protected Map<T, T> newSubstitutionMap() {
+        return Global.newHashMap();
+        //return new FastPutsArrayMap<>();
     }
 
     /**

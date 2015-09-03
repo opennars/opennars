@@ -14,11 +14,10 @@ import static java.util.Arrays.copyOf;
 public class Substitution<C extends Compound> implements Function<C,Term> {
     final Map<Term, Term> subs;
 
-    public int minMatchVolume = Integer.MAX_VALUE;
-    int maxMatchVolume = Integer.MIN_VALUE;
+    public int minMatchVolume, maxMatchVolume;
     final int numSubs;
 
-    int numDep = 0, numIndep = 0, numQuery = 0;
+    final int numDep, numIndep, numQuery;
 
 
     /** creates a substitution of one variable; more efficient than supplying a Map */
@@ -27,19 +26,22 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
     }
 
     public Substitution(final Map<Term, Term> subs) {
+
         this.subs = subs;
 
-        numSubs = subs.size();
+        final int numSubs = this.numSubs = subs.size();
         if (numSubs == 0) {
             throw new RuntimeException("Empty substitution");
         }
 
+        int numDep = 0, numIndep = 0, numQuery = 0;
+
+        int minMatchVolume = Integer.MAX_VALUE,
+            maxMatchVolume = Integer.MIN_VALUE;
 
         for (final Map.Entry<Term,Term> e : subs.entrySet()) {
 
             final Term m = e.getKey();
-            if (m == null)
-                throw new RuntimeException("null key");
 
             final int v = m.volume();
             if (minMatchVolume > v) minMatchVolume = v;
@@ -47,9 +49,9 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
             if (m instanceof Variable) {
                 final Variable vv = (Variable) m;
-                if (vv.hasVarIndep()) numIndep++;
-                if (vv.hasVarDep()) numDep++;
-                if (vv.hasVarQuery()) numQuery++;
+                numIndep += vv.varIndep();
+                numDep += vv.varDep();
+                numQuery += vv.varQuery();
             }
 
         /* collapse a substitution map to each key's ultimate destination
@@ -71,30 +73,41 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
                     e.setValue(k);
                 }
             }
+
         }
 
+        this.numDep = numDep;
+        this.numIndep = numIndep;
+        this.numQuery = numQuery;
+
+        this.minMatchVolume = minMatchVolume;
+        this.maxMatchVolume = maxMatchVolume;
     }
 
 
     /** if eliminates all conditions with regard to a specific compound */
-    public boolean impossible(Term superterm) {
-        int subsApplicable = numSubs;
+    public final boolean impossible(final Term superterm) {
 
         if (superterm instanceof Compound) {
-            if (((Compound)superterm).impossibleSubTermOrEqualityVolume(minMatchVolume)) {
+            if (superterm.impossibleSubTermOrEqualityVolume(minMatchVolume)) {
                 //none of the subs could possibly fit inside or be equal to the superterm
                 return true;
             }
         }
 
-        if (!superterm.hasVarDep()) subsApplicable -= numDep;
-        if (subsApplicable <= 0) return true;
+        int subsApplicable = numSubs;
 
-        if (!superterm.hasVarIndep()) subsApplicable -= numIndep;
-        if (subsApplicable <= 0) return true;
+        if (!superterm.hasVarDep())
+            if ((subsApplicable -= numDep) <= 0)
+                return true;
 
-        if (!superterm.hasVarQuery()) subsApplicable -= numQuery;
-        if (subsApplicable <= 0) return true;
+        if (!superterm.hasVarIndep())
+            if ((subsApplicable -= numIndep) <= 0)
+                return true;
+
+        if (!superterm.hasVarQuery())
+            if ((subsApplicable -= numQuery) <= 0)
+                return true;
 
 
         //there exist variables that can match, and the term can theoretically equal or contain it
@@ -107,6 +120,7 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
         return subs.get(t);
     }
 
+    @Override
     public Term apply(final C t) {
         if (impossible(t))
             return t;

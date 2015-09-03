@@ -527,7 +527,7 @@ public class NAR implements Runnable {
      */
     public void frame(final int frames) {
 
-        //final boolean wasRunning = running;
+        final boolean wasRunning = running;
 
         running = true;
 
@@ -536,7 +536,7 @@ public class NAR implements Runnable {
             frameCycles(cpf);
         }
 
-        //running = wasRunning;
+        running = wasRunning;
 
     }
 
@@ -734,8 +734,7 @@ public class NAR implements Runnable {
         emit(Events.ERR.class, e);
     }
 
-    public void loop(int i, Object p1) {
-    }
+
 
 
 //    private void debugTime() {

@@ -4,8 +4,7 @@ import nars.Op;
 import nars.term.Compound;
 import nars.term.Variable;
 import nars.util.data.FastPutsArrayMap;
-
-import java.util.Arrays;
+import nars.util.utf8.Byted;
 
 /**
  * Variable normalization
@@ -38,12 +37,12 @@ public class VariableNormalization implements VariableTransform {
         }
 
         @Override
-        public boolean keyEquals(final Variable a, final Object ob) {
+        public final boolean keyEquals(final Variable a, final Object ob) {
             if (a == ob) return true;
             Variable b = ((Variable) ob);
             if (!b.isScoped() || !a.isScoped())
                 return false;
-            return equalName(a, b);
+            return Byted.equals(a, b);
         }
 
 //        @Override
@@ -76,10 +75,10 @@ public class VariableNormalization implements VariableTransform {
     public VariableNormalization(Compound target, boolean destructively) {
 
 
-        /*CompoundTransform tx = target.getTotalVariables() == 1 ?
-                singleVariableNormalization : this;*/
+        CompoundTransform tx = target.vars() == 1 ?
+                singleVariableNormalization : this;
 
-        final CompoundTransform tx = this;
+
 
         final Compound result1;
 
@@ -118,18 +117,16 @@ public class VariableNormalization implements VariableTransform {
         Variable vv = rename.computeIfAbsent(vname, _vname -> {
             //type + id
             Variable rvv = newVariable(v.op, finalRename.size() + 1);
-            renamed = !equalName(rvv, v);
+            renamed = !Byted.equals(rvv, v);
             return rvv;
         });
 
         return vv;
     }
 
-    public static boolean equalName(Variable a, Variable b) {
-        return Arrays.equals(a.bytes(), b.bytes());
-    }
 
-    final protected Variable newVariable(final Op type, final int i) {
+
+    final static protected Variable newVariable(final Op type, final int i) {
         return Variable.theUnscoped(type, i);
     }
 

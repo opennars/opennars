@@ -11,9 +11,7 @@ import nars.term.Variables;
 import java.util.Map;
 import java.util.Random;
 
-/**
- * Created by me on 8/17/15.
- */
+
 public class FindSubst {
     private final Op type;
     public final Map<Term, Term> map1;
@@ -24,7 +22,7 @@ public class FindSubst {
         this(type, null, null, random);
     }
 
-    public FindSubst(Op type, Map map1, Map map2, Random random) {
+    public FindSubst(Op type, Map<Term,Term> map1, Map<Term,Term> map2, Random random) {
         if (map1 == null)
             map1 = Global.newHashMap(0);
         if (map2 == null)
@@ -45,7 +43,7 @@ public class FindSubst {
 
     @Override
     public String toString() {
-        return type + ":" + map1 + "," + map2;
+        return type + ":" + map1 + ',' + map2;
     }
 
     private void print(String prefix, Term a, Term b) {
@@ -136,7 +134,7 @@ public class FindSubst {
 
 
     /** //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3 */
-    protected boolean queryVarMatch(Variable term1Var, Variable term2Var) {
+    static protected boolean queryVarMatch(final Variable term1Var, final Variable term2Var) {
 
         final boolean t1Query = (term1Var.op == Op.VAR_QUERY);
         final boolean t2Query = (term2Var.op == Op.VAR_QUERY);

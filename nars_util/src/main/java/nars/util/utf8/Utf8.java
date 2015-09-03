@@ -189,7 +189,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
     /**
      * ordinary array equals comparison with some conditions removed
      */
-    @Deprecated public static boolean equals2(final byte[] a, final byte[] a2) {
+    public static boolean equals2(final byte[] a, final byte[] a2) {
         /*if (a==null || a2==null)
             return false;*/
 

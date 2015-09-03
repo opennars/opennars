@@ -34,7 +34,7 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -65,7 +65,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
         Global.DEBUG = true;
         Global.EXIT_ON_EXCEPTION = true;
 
-        NAR n = new NAR(new Alann(2));
+        NAR n = new NAR(new Alann(1));
         TextOutput.out(n);
         NARTrace.out(n);
 
@@ -111,9 +111,15 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
                     @Override protected void inputDerivations() {
                         if (derived!=null) {
                             //transform this ConceptProcess's derivation to a TaskProcess and run it
+                            final Memory mem = concept.getMemory();
+
                             derived.forEach(/*newTaskProcess*/ t -> {
-                                System.err.println("direct input: " + t);
-                                TaskProcess.run(concept.getMemory(), t);
+
+                                if (t.init(mem)) {
+                                    //System.err.println("direct input: " + t);
+                                    TaskProcess.run(mem, t);
+                                }
+
                             });
                         }
                     }
@@ -186,16 +192,18 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
             int toDiscard = Math.max(0, size - maxNewTaskHistory);
             int remaining = newTasks.update(maxNewTaskHistory, sorted);
+
             if (size > 0) {
 
                 int toRun = Math.min( maxNewTasksPerCycle, remaining);
 
                 final TaskProcess[] x = TaskProcess.run(memory, sorted, toRun, toDiscard);
 
+
                 for (final TaskProcess y : x)
                     y.run();
 
-                System.out.print("newTasks size=" + size + " run=" + toRun + "=(" + x.length + "), discarded=" + toDiscard + "  ");
+                //System.out.print("newTasks size=" + size + " run=" + toRun + "=(" + x.length + "), discarded=" + toDiscard + "  ");
             }
         }
 

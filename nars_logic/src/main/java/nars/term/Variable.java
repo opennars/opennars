@@ -99,7 +99,7 @@ public class Variable extends Atom {
     }
 
     @Override
-    public int structure() {
+    final public int structure() {
         return structure;
     }
 
@@ -190,16 +190,18 @@ public class Variable extends Atom {
     public static int compare(final Variable a, final Variable b) {
         if (a == b) return 0;
 
-        int hashCompare = Integer.compare(a.hashCode(), b.hashCode());
-        if (hashCompare != 0) return hashCompare;
 
-        int nameCompare = Byted.compare(a, b);
-        if (nameCompare != 0)
-            return nameCompare;
+        int c;
+
+        if ((c = Integer.compare(a.hashCode(), b.hashCode())) != 0)
+            return c;
+
+        if ((c = Byted.compare(a, b)) != 0)
+            return c;
 
         //otherwise, if they have the same name:
-        boolean ascoped = a.isScoped();
-        boolean bscoped = b.isScoped();
+        final boolean ascoped = a.isScoped();
+        final boolean bscoped = b.isScoped();
 
         if (!ascoped && !bscoped) {
             //if the two variables are each without scope, they are not equal.
@@ -255,7 +257,7 @@ public class Variable extends Atom {
     }
 
     @Override public final boolean hasVar() { return true;     }
-    @Override public final int getTotalVariables() {
+    @Override public final int vars() {
         return 1;
     }
 
@@ -284,7 +286,7 @@ public class Variable extends Atom {
 //    }
 
 
-    public boolean isScoped() { return scope; }
+    public final boolean isScoped() { return scope; }
 
 
     public static boolean validVariableType(final char c) {

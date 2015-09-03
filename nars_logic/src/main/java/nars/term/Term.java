@@ -137,7 +137,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
     /** total # of variables */
-    public int getTotalVariables();
+    public int vars();
 
     /** tests if num variables of any type exceed a value */
     default public boolean varsInAnyTypeMoreThan(final int n) {

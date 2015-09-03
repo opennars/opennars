@@ -58,7 +58,7 @@ public class DeductiveChainTest {
 
         //n.frame(5000);
 
-        TextOutput.out(n).setOutputPriorityMin(0.85f);
+        //TextOutput.out(n).setOutputPriorityMin(0.85f);
 
         while (true) {
 
@@ -67,8 +67,8 @@ public class DeductiveChainTest {
 
             int printEvery = 100;
             if (n.time() % printEvery == 0) {
-                System.out.println("@ " + n.time() + "   " + timestamp(start) + " " +
-                        n.memory.numConcepts(true, true) + " total concepts");
+                System.out.println( n.time() + " " + timestamp(start) + " " +
+                        n.memory.numConcepts(true, true) );
             }
         }
 
@@ -77,6 +77,6 @@ public class DeductiveChainTest {
     }
 
     private static String timestamp(long start) {
-        return (System.currentTimeMillis() - start) + "ms";
+        return (System.currentTimeMillis() - start) + " ms";
     }
 }

@@ -261,7 +261,7 @@ public class Atom extends ImmutableAtom {
     @Override public boolean hasVar() {
         return false;
     }
-    @Override public int getTotalVariables() {
+    @Override public int vars() {
         return 0;
     }
 

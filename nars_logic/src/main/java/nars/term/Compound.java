@@ -576,7 +576,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
     @Override
-    public <T extends Term> T normalized() {
+    final public <T extends Term> T normalized() {
         return normalized(false);
     }
 
@@ -629,8 +629,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
 
-    public static Compound transformIndependentToDependentVariables(Compound c) {
-
+    public static Compound transformIndependentToDependentVariables(final Compound c) {
         if (!c.hasVarIndep())
             return c;
 
@@ -1160,7 +1159,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     @Override
-    public int getTotalVariables() {
+    public int vars() {
         return varTotal;
     }
 
