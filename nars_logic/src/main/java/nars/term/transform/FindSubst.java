@@ -58,78 +58,104 @@ public class FindSubst {
     /**
      * recursess into the next sublevel of the term
      */
-    public boolean next(final Term term1, final Term term2) {
+    public boolean next(Term term1, Term term2) {
 
-        final Variable term1Var = term1 instanceof Variable ? (Variable) term1 : null;
-        final Variable term2Var = term2 instanceof Variable ? (Variable) term2 : null;
+        boolean termsEqual;
 
-        final boolean termsEqual = term1.equals(term2);
-        if (term1Var != null && term2Var != null && termsEqual) {
-            return true;
-        }
+        do {
 
-        if (term1Var != null && term1Var.op == type) {
+            Variable term1Var = term1 instanceof Variable ? (Variable) term1 : null;
+            Variable term2Var = term2 instanceof Variable ? (Variable) term2 : null;
 
-            final Term t = map1.get(term1Var);
-
-            if (t != null) {
-                return next(t, term2);
-            }
-            else {
-                if ((term2Var != null) && (term2Var.op == type)) {
-                    putCommon(term1Var, term2Var);
-                } else {
-
-                    if ((term2Var!=null) && !queryVarMatch(term1Var, term2Var))
-                        return false;
-
-                    put1To2(term2, term1Var);
-                }
-
+            termsEqual = term1.equals(term2);
+            if (term1Var != null && term2Var != null && termsEqual) {
                 return true;
             }
 
-        } else if (term2Var != null && term2Var.op == type) {
+            if (term1Var != null && term1Var.op == type) {
 
-            final Term t = map2.get(term2Var);
+                final Term t = map1.get(term1Var);
 
-            if (t != null)
-                return next(term1, t);
-            else {
+                if (t != null) {
+                    //RECURSE:  //return next(t, term2);
+                    term1 = t; /*term2 = term2;*/
+                    continue;
+                }
+
+                return nextTerm1Var(term2, term1Var, term2Var);
+
+            } else if (term2Var != null && term2Var.op == type) {
+
+                final Term t = map2.get(term2Var);
+
+                if (t != null) {
+                    //RECURSE:  //return next(term1, t);
+                    term2 = t;
+                    continue;
+                }
+
                 put2To1(term1, term2Var);
                 return true;
+
+            } else if ((term1.op() == term2.op()) && (term1 instanceof Compound) && (term1.hasVar(type) || term2.hasVar(type))) {
+                return recurseAndPermute((Compound) term1, (Compound) term2);
             }
 
-        } else if ((term1 instanceof Compound) && ((term1.op() == term2.op())) && (term1.hasVar(type) || term2.hasVar(type))) {
-            final Compound cTerm1 = (Compound) term1;
-            final Compound cTerm2 = (Compound) term2;
-            final int c1Len = cTerm1.length();
-            if (c1Len != cTerm2.length()) {
-                return false;
-            }
-            //TODO simplify comparison with Image base class
-            if ((cTerm1 instanceof Image) && (((Image) cTerm1).relationIndex != ((Image) cTerm2).relationIndex)) {
-                return false;
-            }
+            term1 = null; //reaching here causes the loop to break
 
-            final Term[] list;
-            if (cTerm1.isCommutative() && c1Len > 1) {
-                if (c1Len == 2) {
-                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2);
-                } else if (c1Len ==3) {
-                    return permute3(cTerm1.term, cTerm2);
-                } else {
-                    list = cTerm1.cloneTerms();
-                    Compound.shuffle(list, random);
-                }
-            } else {
-                list = cTerm1.term;
-            }
-
-            return next(cTerm2, list);
-        }
+        } while (term1!=null);
 
         return termsEqual;
+    }
+
+    protected boolean nextTerm1Var(Term term2, Variable term1Var, Variable term2Var) {
+        if ((term2Var != null) && (term2Var.op == type)) {
+            putCommon(term1Var, term2Var);
+        } else {
+
+            if ((term2Var != null) && !queryVarMatch(term1Var, term2Var))
+                return false;
+
+            put1To2(term2, term1Var);
+        }
+
+        return true;
+    }
+
+    protected boolean recurseAndPermute(final Compound term1, final Compound term2) {
+
+        final Compound cTerm1 = term1;
+        final Compound cTerm2 = term2;
+        final int c1Len = cTerm1.length();
+        if (c1Len != cTerm2.length()) {
+            return false;
+        }
+
+        //TODO simplify comparison with Image base class
+        if (cTerm1 instanceof Image) {
+            if (((Image) cTerm1).relationIndex != ((Image) cTerm2).relationIndex)
+                return false;
+        }
+
+        if (cTerm1.isCommutative() && c1Len > 1) {
+
+            switch(c1Len) {
+                case 2:
+                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2);
+                case 3:
+                    return permute3(cTerm1.term, cTerm2);
+                default:
+                    return permuteN(cTerm1, cTerm2);
+            }
+        }
+
+        return permute(cTerm2, cTerm1.term);
+    }
+
+    boolean permuteN(final Compound cTerm1, final Compound cTerm2) {
+        Term[] list = cTerm1.cloneTerms();
+        Compound.shuffle(list, random);
+        return permute(cTerm2, list);
     }
 
 
@@ -190,7 +216,7 @@ public class FindSubst {
                 case 4: list[0] = c; list[1] = a; list[2] = b; break;
                 case 5: list[0] = c; list[1] = b; list[2] = a; break;
             }
-            solved = next(cTerm2, list);
+            solved = permute(cTerm2, list);
             order = (order + 1) % 6;
             tries++;
         } while (tries < maxTries && !solved);
@@ -214,7 +240,7 @@ public class FindSubst {
                 list[1] = cTerm1_0;
             }
             order = !order;
-            solved = next(cTerm2, list);
+            solved = permute(cTerm2, list);
             tries++;
         } while (tries < 2 && !solved);
 
@@ -229,7 +255,7 @@ public class FindSubst {
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    final protected boolean next(final Compound x, final Term[] t) {
+    final protected boolean permute(final Compound x, final Term[] t) {
         final Term X[] = x.term;
         final int tlen = t.length;
         for (int i = 0; i < tlen; i++) {

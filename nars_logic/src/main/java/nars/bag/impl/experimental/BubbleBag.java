@@ -6,7 +6,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Item;
-import nars.util.data.CuckooMap;
+import nars.util.data.map.CuckooMap;
 import nars.util.data.list.CircularArrayList;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;

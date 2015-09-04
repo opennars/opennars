@@ -62,6 +62,7 @@ public abstract class JoglAbstractDraw extends DebugDraw {
     }
 
     public void setPanel(JoglAbstractPanel panel) {
+
         this.panel = panel;
     }
 

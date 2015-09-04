@@ -61,25 +61,25 @@ public class DefaultConcept extends AtomConcept {
 
     /**
      * Constructor, called in Memory.getConcept only
-     *
-     * @param term      A term corresponding to the concept
+     *  @param term      A term corresponding to the concept
      * @param b
      * @param taskLinks
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, PremiseGenerator ps, final Memory memory) {
-        super(term, b, memory, termLinks, taskLinks, ps);
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, @Deprecated PremiseGenerator ps, BeliefTable.RankBuilder rb, final Memory memory) {
+        super(term, b, termLinks, taskLinks, ps, memory);
 
-        ps.setConcept(this);
+        //TODO move PremiseGenerator into ConceptProcess , and only in one subclass of them
+        if (ps!=null)
+            ps.setConcept(this);
 
-        //if (!(term instanceof Atom)) {
-            this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue(), rb.get(this, true));
-            this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue(), rb.get(this, false));
+        this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue(), rb.get(this, true));
+        this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue(), rb.get(this, false));
 
-            final int maxQuestions = memory.param.conceptQuestionsMax.intValue();
-            this.questions = new ArrayListTaskTable(maxQuestions);
-            this.quests = new ArrayListTaskTable(maxQuestions);
+        final int maxQuestions = memory.param.conceptQuestionsMax.intValue();
+        this.questions = new ArrayListTaskTable(maxQuestions);
+        this.quests = new ArrayListTaskTable(maxQuestions);
 
     }
 
@@ -266,7 +266,7 @@ public class DefaultConcept extends AtomConcept {
 //
 //        }
 
-        if (goal.getBudget().summaryGreaterOrEqual(memory.param.goalThreshold)) {
+        if (goal.getBudget().summaryGreaterOrEqual(memory.param.questionFromGoalThreshold)) {
 
             // check if the Goal is already satisfied
             Task beliefSatisfied = getBeliefs().topRanked();

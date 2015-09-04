@@ -15,11 +15,10 @@ import org.jbox2d.dynamics.Fixture;
  * @author me
  */
 abstract public class RoverWorld {
-    protected final PhysicsModel p;
+    protected PhysicsModel p;
 
-    public RoverWorld(PhysicsModel p) {
-        super();
-        
+
+    public void init(PhysicsModel p) {
         this.p = p;
     }
 

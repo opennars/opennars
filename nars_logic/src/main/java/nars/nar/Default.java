@@ -273,9 +273,9 @@ public class Default extends Param implements NARSeed {
         this.internalExperience =
                 maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
 
-        setTaskLinkBagSize(16);
+        setTaskLinkBagSize(64);
 
-        setTermLinkBagSize(48);
+        setTermLinkBagSize(96);
 
         setNovelTaskBagSize(48);
 
@@ -307,7 +307,7 @@ public class Default extends Param implements NARSeed {
 
 
         this.activeConceptThreshold.set(0.0);
-        this.goalThreshold.set(0.01);
+        this.questionFromGoalThreshold.set(0.35);
 
         this.taskProcessThreshold.set(Global.BUDGET_EPSILON);
         this.termLinkThreshold.set(Global.BUDGET_EPSILON);
@@ -407,12 +407,12 @@ public class Default extends Param implements NARSeed {
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks =
-                new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+                new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
         taskLinks.mergeAverage();
 
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+                new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
@@ -420,12 +420,13 @@ public class Default extends Param implements NARSeed {
     /**
      * rank function used for concept belief and goal tables
      */
-    protected BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
+    public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
         return (c, b) ->
                 BeliefTable.BeliefConfidenceOrOriginality;
         //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
 
     }
+
 
     @Override
     public PremiseProcessor getPremiseProcessor(Param p) {
@@ -466,14 +467,13 @@ public class Default extends Param implements NARSeed {
     public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
 
         if (t instanceof Atom) {
-            return new AtomConcept(t, b, m, termLinks, taskLinks,
-                    newPremiseGenerator());
+            return new AtomConcept(t, b, termLinks, taskLinks, newPremiseGenerator(), m
+            );
         }
         else {
             return new DefaultConcept(t, b,
                     taskLinks, termLinks,
-                    newConceptBeliefGoalRanking(),
-                    newPremiseGenerator(),
+                    newPremiseGenerator(), newConceptBeliefGoalRanking(),
                     m
             );
         }
@@ -501,13 +501,13 @@ public class Default extends Param implements NARSeed {
     }
 
     @Override
-    public CacheBag<Term, Concept> newConceptIndex() {
+    public CacheBag<Term, Concept> getConceptIndex() {
         return new GuavaCacheBag();
         //return new TrieCacheBag();
     }
 
     @Override
-    public CycleProcess newCycleProcess() {
+    public CycleProcess getCycleProcess() {
         return new DefaultCycle(
                 new ItemAccumulator(Budget.max),
                 newConceptBag(),
@@ -577,7 +577,7 @@ public class Default extends Param implements NARSeed {
     }
 
     @Override
-    public Param newParam() {
+    public Param getParam() {
         return this;
     }
 

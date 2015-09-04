@@ -39,13 +39,13 @@ public final class OptionalMatcher
     }
 
     @Override
-    public MatcherType getType()
+    final public MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    final public <V> boolean match(final MatcherContext<V> context)
     {
         subMatcher.getSubContext(context).runMatcher();
         return true;

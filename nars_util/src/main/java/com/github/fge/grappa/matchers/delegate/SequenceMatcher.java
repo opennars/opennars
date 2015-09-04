@@ -46,20 +46,20 @@ public class SequenceMatcher
     }
 
     @Override
-    public MatcherType getType()
+    final public MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    final public <V> boolean match(final MatcherContext<V> context)
     {
         final ValueStack<V> stack = context.getValueStack();
         final Object snapshot = stack.takeSnapshot();
 
         List<Matcher> children = getChildren();
         for (int i = 0; i < children.size(); i++) {
-            Matcher matcher = children.get(i);
+            final Matcher matcher = children.get(i);
             if (matcher.getSubContext(context).runMatcher())
                 continue;
 

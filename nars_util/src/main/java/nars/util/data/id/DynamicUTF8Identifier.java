@@ -19,12 +19,12 @@ abstract public class DynamicUTF8Identifier extends LiteralUTF8Identifier {
         }
     }
 
-    public boolean hasHash() {
-        /** assumes the hash is generated when name is  */
-        if (!hasName())
-            return false;
-        return true;
-    }
+//    public boolean hasHash() {
+//        /** assumes the hash is generated when name is  */
+//        if (!hasName())
+//            return false;
+//        return true;
+//    }
 
 
     @Override

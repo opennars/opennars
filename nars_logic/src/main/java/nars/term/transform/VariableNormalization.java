@@ -3,7 +3,7 @@ package nars.term.transform;
 import nars.Op;
 import nars.term.Compound;
 import nars.term.Variable;
-import nars.util.data.FastPutsArrayMap;
+import nars.util.data.map.FastPutsArrayMap;
 import nars.util.utf8.Byted;
 
 /**

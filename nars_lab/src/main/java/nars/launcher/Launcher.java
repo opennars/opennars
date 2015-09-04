@@ -333,7 +333,7 @@ public class Launcher extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
-        nars.grid2d.TestChamber.main(new String[]{});
+        nars.testchamber.TestChamber.main(new String[]{});
         //this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_jLabel6MouseClicked

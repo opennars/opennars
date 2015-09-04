@@ -131,6 +131,11 @@ public class TermSpect extends TermCept implements Term, Concept {
     }
 
     @Override
+    public boolean hasVar(Op type) {
+        return false;
+    }
+
+    @Override
     public int varIndep() {
         return 0;
     }

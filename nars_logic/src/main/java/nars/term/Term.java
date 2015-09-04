@@ -108,24 +108,8 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
         return TemporalRules.ORDER_NONE;
     }
 
-    default boolean hasVar(final Op type) {
+    boolean hasVar(final Op type);
 
-        switch (type) {
-            case VAR_DEPENDENT:
-                return hasVarDep();
-            case VAR_INDEPENDENT:
-                return hasVarIndep();
-            case VAR_QUERY:
-                return hasVarQuery();
-            case VAR_PATTERN:
-                /* if this is the case, its always the case because
-                   then its the meta-matcher which asks
-                   who only operators with PATTERN variables
-                 */
-                return true;
-        }
-        throw new RuntimeException("Invalid variable type: " + type);
-    }
 
 
     /** # of contained independent variables */

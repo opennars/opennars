@@ -56,7 +56,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     public Concept getTermLinkConcept() {
         final TermLink tl = getTermLink();
         if (tl != null) {
-            return concept(tl.getTarget());
+            return concept(tl.getTerm());
         }
         return null;
     }

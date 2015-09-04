@@ -213,7 +213,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     @Override
-    public Term getTarget() {
+    public Term getTerm() {
         return incoming ? concept.getTerm() : currentTemplate.getTarget();
     }
 
@@ -262,7 +262,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTarget(), currentTemplate, getBudget(), prefix, hash);
+        return new TermLink(getTerm(), currentTemplate, getBudget(), prefix, hash);
     }
 
     public TermLink out(TermLinkTemplate tlt) {

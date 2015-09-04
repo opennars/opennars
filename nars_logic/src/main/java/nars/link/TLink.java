@@ -11,7 +11,7 @@ public interface TLink<T extends Termed> extends Budgeted, Serializable {
 
     public short getIndex(final int i);
     
-    public Term getTarget();
+    public Term getTerm();
     
     @Override
     public float getPriority();

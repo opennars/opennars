@@ -14,6 +14,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import nars.guifx.util.ColorArray;
 import org.apache.commons.math3.util.Precision;
 
 /**

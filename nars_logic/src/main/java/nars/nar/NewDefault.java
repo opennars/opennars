@@ -22,8 +22,8 @@ public class NewDefault extends Default {
     }
 
     @Override
-    public Param newParam() {
-        Param p = super.newParam();
+    public Param getParam() {
+        Param p = super.getParam();
         //deprecated: all reasoning components should be added to the DI index automatically
         the(Deriver.class, der);
         return p;

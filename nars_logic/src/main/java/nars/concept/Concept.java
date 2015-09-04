@@ -58,7 +58,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);
 
-    boolean linkTerms(Budget budgetRef, boolean b);
+    boolean linkTerms(Budget budgetRef, boolean updateTLinks);
 
     TermLink activateTermLink(TermLinkBuilder termLinkBuilder);
 
@@ -72,9 +72,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     default Op operator() {
         return getTerm().op();
     }
-
-
-
 
 
     default public boolean isDesired(float threshold) {
@@ -246,12 +243,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
 
-    /**
-     * by default, any Task is valid to be processed
-     */
-    default public boolean processable(Task t) {
-        return true;
-    }
+
 
 
 //    /** returns the best belief of the specified types */
@@ -363,6 +355,8 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
     PremiseGenerator getPremiseGenerator();
+
+
 
 //    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);
 //

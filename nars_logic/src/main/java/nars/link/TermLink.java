@@ -159,7 +159,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
         return new StringBuilder()
                 .append(Utf8.fromUtf8(TermLinkTemplate.prefix(type, index, false)))
                 .append(Symbols.TLinkSeparator)
-                .append(getTarget().toString()).toString();
+                .append(getTerm().toString()).toString();
     }
 
 
@@ -184,8 +184,8 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     }
 
     @Override
-    public Term getTarget() {
-        return target;
+    public Term getTerm() {
+        return target.getTerm();
     }
 
     @Override public void delete() {
@@ -193,11 +193,6 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     }
 
 
-
-    @Override
-    public Term getTerm() {
-        return target.getTerm();
-    }
 
 
 

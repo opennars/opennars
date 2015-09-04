@@ -74,7 +74,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 
 
     @Override
-    public Param newParam() {
+    public Param getParam() {
         this.param = new Equalized(1,1,1).setInternalExperience(null);
         param.duration.set(2);
         param.termLinkForgetDurations.set(2);
@@ -305,7 +305,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
     }
 
     @Override
-    public CacheBag<Term, Concept> newConceptIndex() {
+    public CacheBag<Term, Concept> getConceptIndex() {
         return new GuavaCacheBag();
     }
 
@@ -333,7 +333,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 
 
     @Override
-    public CycleProcess newCycleProcess() {
+    public CycleProcess getCycleProcess() {
         return this;
     }
 

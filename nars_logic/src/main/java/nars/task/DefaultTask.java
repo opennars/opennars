@@ -300,7 +300,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
                 solutionBelief);*/
 
 
-        if (!Float.isFinite(getQuality())) {
+        if (!Float.isNaN(getQuality())) {
             applyDefaultBudget();
         }
 

@@ -14,8 +14,8 @@ import nars.term.Atom;
  */
 public class RLNario extends NARio  {
 
-    private final QVis mi;
-    private final QLAgent agent;
+    private QVis mi;
+    private QLAgent agent;
 
     public RLNario(NAR nar, Perception... p) {
         super(nar);
@@ -24,11 +24,11 @@ public class RLNario extends NARio  {
         float fps = 30f;
         gameRate = 1.0f / fps;
 
-        this.agent = new QLAgent(nar, "A", "<I --> G>", this, p);
+        /*this.agent = new QLAgent(nar, "A", "<I --> G>", this, p);
 
         agent.ql.brain.setEpsilon(0.15);
 
-        mi = new QVis(agent);
+        mi = new QVis(agent);*/
 
 
         Video.themeInvert();
@@ -93,8 +93,8 @@ public class RLNario extends NARio  {
                 //new AEPerception("b", 0.8f, 4).setLearningRate(0.08).setSigmoid(false)
         );
 
-        rl.agent.setQLFactor(0.45f, 0.85f);
-        rl.agent.setInputGain(0.6f);
+        //rl.agent.setQLFactor(0.45f, 0.85f);
+        //rl.agent.setInputGain(0.6f);
 
         //rl.agent.add(new ShapePerception(rl.getScreenImage()));
 

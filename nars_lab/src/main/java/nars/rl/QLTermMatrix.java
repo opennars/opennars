@@ -419,7 +419,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         t.getBudget().mulPriority(inputPriorityMult);
 
         //System.out.println("ql: " + t);
-        TaskProcess.run(nar, t);
+        TaskProcess.queue(nar, t);
         //nar.input(t);
     }
 

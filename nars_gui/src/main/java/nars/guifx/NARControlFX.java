@@ -3,22 +3,24 @@ package nars.guifx;
 import de.jensd.fx.glyphs.GlyphIcon;
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import nars.Events;
 import nars.NAR;
 import nars.NARStream;
+import nars.guifx.util.NSliderFX;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static javafx.application.Platform.runLater;
 
 /**
  * small VBox vertically oriented component which can be attached
  * to the left or right of anything else, which contains a set of
  * buttons for controlling a nar
  */
-abstract public class NARControlFX extends HBox implements Runnable {
+public class NARControlFX extends HBox implements Runnable {
 
     public final ToggleButton consoleButton;
     private final long defaultNARPeriodMS = 75;
@@ -40,7 +42,7 @@ abstract public class NARControlFX extends HBox implements Runnable {
     public void run() {
         if (pending.getAndSet(true)==false) {
 
-            Platform.runLater(() -> {
+            runLater(() -> {
                 pending.set(false);
                 boolean running = nar.isRunning();
                 if (running != wasRunning) {
@@ -134,9 +136,9 @@ abstract public class NARControlFX extends HBox implements Runnable {
             consoleButton = JFX.newToggleButton(FontAwesomeIcon.CODE);
             consoleButton.setTooltip(new Tooltip("I/O..."));
             getChildren().add(consoleButton);
-            consoleButton.setOnAction(e -> {
-                onConsole(consoleButton.isSelected());
-            });
+//            consoleButton.setOnAction(e -> {
+//                onConsole(consoleButton.isSelected());
+//            });
 
 //            Button bo = newIconButton(FontAwesomeIcon.TACHOMETER);
 //            bo.setTooltip(new Tooltip("Output..."));
@@ -155,6 +157,15 @@ abstract public class NARControlFX extends HBox implements Runnable {
         //setFillHeight(true);
 
 
+        NSliderFX fontSlider = new NSliderFX(25f, 25f);
+        getChildren().add(0, fontSlider);
+        fontSlider.value.addListener((a,b,c) -> {
+            runLater(() -> {
+                double pointSize = 6 + 12 * c.doubleValue();
+                getScene().getRoot().setStyle("-fx-font-size: " + pointSize + "pt;");
+                //+ 100*(0.5 + c.doubleValue()) + "%");
+            });
+        });
 
 
 //        this.busyBackgroundColor = new NARWindow.FXReaction(n, this, Events.FrameEnd.class) {
@@ -193,7 +204,6 @@ abstract public class NARControlFX extends HBox implements Runnable {
 
     }
 
-    protected abstract void onConsole(boolean selected);
 
 
 }

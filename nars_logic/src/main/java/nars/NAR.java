@@ -86,7 +86,7 @@ public class NAR implements Runnable {
      * normal way to construct a NAR, using a particular Build instance
      */
     public NAR(NARSeed b) {
-        this( b.newCycleProcess(), b.newMemory());
+        this( b.getCycleProcess(), b.newMemory());
 
         b.init(this);
     }
@@ -354,7 +354,7 @@ public class NAR implements Runnable {
     /** input a task via direct TaskProcessing
      * @return the TaskProcess, after it has executed (synchronously) */
     public Premise inputDirect(final Task t) {
-        return TaskProcess.run(this, t);
+        return TaskProcess.queue(this, t);
     }
 
     /**

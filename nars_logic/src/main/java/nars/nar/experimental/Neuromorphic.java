@@ -37,7 +37,7 @@ public class Neuromorphic extends Default {
     }
 
     @Override
-    public CycleProcess newCycleProcess() {
+    public CycleProcess getCycleProcess() {
         if (numAnts == -1)
             numAnts = conceptsFiredPerCycle.get();
         return new AntCore(numAnts, 2.0f, getActiveConcepts());
@@ -64,8 +64,7 @@ public class Neuromorphic extends Default {
                     taskLinkForgetDurations, getConceptTaskLinks());
             DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(m,
                     termLinkForgetDurations, getConceptTermLinks());
-            return new DefaultConcept(t, b, taskLinks, termLinks, newConceptBeliefGoalRanking(),
-                    newPremiseGenerator(),
+            return new DefaultConcept(t, b, taskLinks, termLinks, newPremiseGenerator(), newConceptBeliefGoalRanking(),
                     m);
         }
         else {

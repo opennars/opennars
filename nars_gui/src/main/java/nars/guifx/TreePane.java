@@ -10,6 +10,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.util.Callback;
 import nars.NAR;
 import nars.event.FrameReaction;
+import nars.guifx.util.NSliderFX;
 import nars.op.io.echo;
 import nars.task.Task;
 import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;

@@ -226,15 +226,20 @@ public interface BeliefTable extends TaskTable {
      * beliefs to current time
      */
     default public float getMeanProjectedExpectation(final long time) {
-        int size = size();
+        final int size = size();
         if (size == 0) return 0;
 
-        float d = 0;
-        for (Task t : this) {
-            d += t.projectionTruthQuality(time, time, false) * t.getExpectation();
-        }
+        final float[] d = {0};
+        this.forEach(t -> {
+            d[0] += t.projectionTruthQuality(time, time, false) * t.getExpectation();
+        });
 
-        return d/size;
+        final float dd = d[0];
+
+        if (dd == 0) return 0;
+
+        return dd / size;
+
     }
 
     public interface Ranker extends Function<Task,Float> {

@@ -6,7 +6,7 @@ import nars.bag.BagTransaction;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.util.CollectorMap;
-import nars.util.data.CuckooMap;
+import nars.util.data.map.CuckooMap;
 import nars.util.data.list.CircularArrayList;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;

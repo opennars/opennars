@@ -41,9 +41,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
      * The Task linked
      */
     public final Task targetTask;
+
     private float lastFireTime = -1; //float to include the "subcycle"
-
-
 
 
 //
@@ -68,12 +67,12 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
     /**
      * The type of tlink, one of the above
      */
-    public final short type;
+    @Deprecated public final short type;
 
     /**
      * The index of the component in the component list of the compound, may have up to 4 levels
      */
-    public final short[] index;
+    @Deprecated public final short[] index;
 
 
     protected TaskLink(Task t, Budget v, short[] index, short type) {
@@ -105,7 +104,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
 
 
     @Override
-    public Sentence name() { return targetTask; }
+    public final Sentence name() { return targetTask; }
 
 
 //    @Override
@@ -122,11 +121,11 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
         //throw new RuntimeException("tasklinks should be compared by their sentences, not directly");
 
         if (obj == this) return true;
-        if (obj instanceof TaskLink) {
+        //if (obj instanceof TaskLink) {
             TaskLink t = (TaskLink) obj;
             return targetTask.equals(t.targetTask);
-        }
-        return false;
+        //}
+        //return false;
 //
 //            /*if (Global.TASK_LINK_UNIQUE_BY_INDEX)
 //                return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
@@ -143,6 +142,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
      */
     @Override
     public final short getIndex(final int i) {
+        final short[] index = this.index;
         if ((index != null) && (i < index.length)) {
             return index[i];
         } else {
@@ -150,11 +150,11 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
         }
     }
 
-    public float getLastFireTime() {
+    public final float getLastFireTime() {
         return lastFireTime;
     }
 
-    public void setFired(final float now) {
+    public final void setFired(final float now) {
         this.lastFireTime = now;
     }
 
@@ -171,19 +171,15 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
      * @return The linked Task
      */
     @Override
-    public Term getTarget() {
+    public final Term getTerm() {
         return targetTask.getTerm();
     }
 
-    public Task getTask() {
+    public final Task getTask() {
         return targetTask;
     }
 
 
-    @Override
-    public Term getTerm() {
-        return getTarget();
-    }
 
 
 

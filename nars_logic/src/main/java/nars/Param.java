@@ -101,7 +101,7 @@ public abstract class Param extends Container implements Serializable {
     public final AtomicDouble activeConceptThreshold = new AtomicDouble(0);
 
     /** budget summary necessary to execute a desired Goal */
-    public final AtomicDouble goalThreshold = new AtomicDouble(0);
+    public final AtomicDouble questionFromGoalThreshold = new AtomicDouble(0);
 
     /** budget summary necessary to run a TaskProcess for a given Task
      *  this should be equal to zero to allow subconcept seeding. */

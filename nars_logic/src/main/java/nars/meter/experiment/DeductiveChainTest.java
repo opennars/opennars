@@ -1,14 +1,11 @@
 package nars.meter.experiment;
 
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.nal.nal1.Inheritance;
 import nars.nar.experimental.Alann;
 import nars.task.Task;
 import nars.term.Atom;
-
-import static java.lang.Thread.sleep;
 
 /**
  * Created by me on 8/25/15.
@@ -25,11 +22,11 @@ public class DeductiveChainTest {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int length = 9;
+        int length = 7;
         NAR n = new NAR(
                 //new Equalized(1000, 8, 3) //.level(1)
-                //new Default().level(1)
-                new Alann(32)
+                //new NewDefault().level(2)
+                new Alann(4,2)
         );
         n.param.conceptActivationFactor.set(0.4f);
 
@@ -60,12 +57,13 @@ public class DeductiveChainTest {
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);
 
+        final int printEvery = 6000;
+
         while (true) {
 
-            n.frame(100);
-            sleep(20);
+            n.frame(500);
+            //sleep(20);
 
-            int printEvery = 100;
             if (n.time() % printEvery == 0) {
                 System.out.println( n.time() + " " + timestamp(start) + " " +
                         n.memory.numConcepts(true, true) );

@@ -4,15 +4,18 @@
  */
 package nars.rover.world;
 
-import nars.grid2d.*;
-import nars.grid2d.map.Maze;
 import nars.rover.PhysicsModel;
 import nars.rover.RoverWorld;
 import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.physics.j2d.SwingDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
+import nars.testchamber.*;
+import nars.testchamber.map.Maze;
+import nars.util.data.random.XorShift1024StarRandom;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+
+import java.util.Random;
 
 /**
  *
@@ -20,7 +23,7 @@ import org.jbox2d.dynamics.World;
  */
 public class GridSpaceWorld extends RoverWorld implements LayerDraw {
 
-    static Grid2DSpace newMazePlanet() {
+    public static Grid2DSpace newMazePlanet() {
         int w = 40;
         int h = 40;
         int water_threshold = 30;
@@ -55,23 +58,12 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
     private JoglAbstractDraw draw;
 
 
-    public GridSpaceWorld(PhysicsModel p, Grid2DSpace g) {
-        super(p);
-        
-        ((JoglAbstractDraw)p.draw()).addLayer(this);
-        
-        this.grid = g;
-        
-        w = grid.cells.w;
-        h = grid.cells.h;
-        
-        //cell size
-        cw = 6f;
-        ch = cw;
+    @Override
+    public void init(PhysicsModel p) {
+        super.init(p);
 
-        worldWidth = w * cw;
-        worldHeight = w * ch;
-        
+        ((JoglAbstractDraw)p.draw()).addLayer(this);
+
         cells(new CellVisitor() {
             @Override public void cell(Cell c, float px, float py) {
                 switch (c.material) {
@@ -88,12 +80,30 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
                             @Override public String toString() {
                                 return "wall";
                             }
-                            
+
                         });
                         break;
                 }
             }
         }, false);
+
+    }
+
+    public GridSpaceWorld(Grid2DSpace g) {
+        super();
+
+        this.grid = g;
+        
+        w = grid.cells.w;
+        h = grid.cells.h;
+        
+        //cell size
+        cw = 6f;
+        ch = cw;
+
+        worldWidth = w * cw;
+        worldHeight = w * ch;
+        
     }
     
     public interface CellVisitor {
@@ -113,8 +123,10 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
         }
     }
     
-    CellVisitor groundDrawer = new CellVisitor() {
-                
+    final CellVisitor groundDrawer = new CellVisitor() {
+
+        final Random rng = new XorShift1024StarRandom(1);
+
         @Override public void cell(Cell c, float px, float py) {
             
             float h = c.height;
@@ -131,7 +143,7 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
                     draw.drawSolidRect(px, py, cw, ch,0.1f,0.5f + c.height*0.005f, 0.1f);
                     break;
                 case Water:
-                    float db = (float)Math.random()*0.04f;
+                    float db = (float)rng.nextFloat()*0.04f;
                     
                     
                     float b = 0.5f + h*0.01f - db;

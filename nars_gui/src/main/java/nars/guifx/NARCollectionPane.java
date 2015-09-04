@@ -4,6 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import nars.Global;
 import nars.NARStream;
+import nars.guifx.util.DebouncedRunnable;
 import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
 
 import java.util.List;

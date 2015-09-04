@@ -28,7 +28,6 @@
 
 .code-area {
     -fx-background-color: #262626;
-    -fx-font-family: monospace;
     -fx-font-size: 150%;
 }
 .code-area-default {
@@ -47,7 +46,6 @@
      -fx-background-color: -dark;
 
     /*default font */
-    -fx-font-family: 'Monospaced';
     /*-fx-font-size: 16.0px;*/
     /*-fx-disabled-opacity: 0.8;*/
 
@@ -260,7 +258,7 @@
 .title-bar .title-label {
     -fx-padding: 0 10 0 10;
     -fx-alignment: center;
-    -fx-font-size: 36;
+    -fx-font-size: 150%;
     -fx-font-weight: bolder;
 }
 

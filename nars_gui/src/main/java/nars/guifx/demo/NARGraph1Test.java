@@ -5,7 +5,7 @@ import nars.Global;
 import nars.NAR;
 import nars.guifx.NARfx;
 import nars.guifx.graph2.NARGraph1;
-import nars.nar.NewDefault;
+import nars.nar.experimental.Equalized;
 
 import java.io.IOException;
 
@@ -17,7 +17,9 @@ public class NARGraph1Test {
     public static void main(String[] args) throws IOException {
 
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.5f;
-        NAR n = new NAR(new NewDefault().setInternalExperience(null));
+        NAR n = new NAR(
+                new Equalized(1000, 1, 2).setInternalExperience(null)
+        );
         //n.input(new File("/tmp/h.nal"));
         n.input("<a-->b>.");
         n.input("<b-->c>.");
@@ -45,7 +47,7 @@ public class NARGraph1Test {
             });
 
             //TextOutput.out(n);
-            new Thread(() -> n.loop(50)).start();
+            new Thread(() -> n.loop(250)).start();
 
         });
 

@@ -1,5 +1,6 @@
 package nars.guifx;
 
+import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -12,23 +13,26 @@ public class TaskLabel extends HBox {
     private final Text label;
     private final Task task;
     private final TaskSummaryIcon summary;
-    private final NSliderFX slider;
+    //private final NSliderFX slider;
 
     public TaskLabel(String prefix, Task task, NAR n) {
-        super( );
+        super( 1 );
 
         this.task = task;
 
-        String s = prefix + task.toString(n.memory).toString();
-        label = new Text(s);
+        StringBuilder sb = new StringBuilder();
+        sb.append(prefix);
+        task.toString(sb, n.memory, true, false, false);
+
+        label = new Text(sb.toString());
+
         label.setMouseTransparent(true);
-        label.setCacheHint(CacheHint.SPEED);
-        label.setCache(true);
+        label.setCacheHint(CacheHint.SCALE);
 
 
         getChildren().setAll(
                 summary = new TaskSummaryIcon(task, this).width(40),
-                slider = new NSliderFX(40, 20).set(0, 0, 1),
+                //slider = new NSliderFX(40, 20).set(0, 0, 1),
                 label
         );
 
@@ -52,6 +56,7 @@ public class TaskLabel extends HBox {
 
         update();
 
+        label.setCache(true);
     }
 
     public void enablePopupClickHandler(NAR nar) {
@@ -80,15 +85,18 @@ public class TaskLabel extends HBox {
 
         float pri = task.getBudget().getPriorityIfNaNThenZero();
 
-        slider.value.set(pri);
+        //slider.value.set(pri);
 
-        //label.setStyle(JFX.fontSize(8 + 16 * pri));
 
-        label.setFont(NARfx.mono(8 + 16 * pri));
+        setAlignment(Pos.BASELINE_LEFT);
+
+        double sc = 0.5 + 2.5 * ( 1 -  pri);
+        label.setScaleX(sc);
+        label.setScaleY(sc);
+
+        layout();
+
         label.setFill(JFX.grayscale.get(pri*0.5+0.5));
-
-
-
 
     }
 }

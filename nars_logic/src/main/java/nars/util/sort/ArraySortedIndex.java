@@ -160,7 +160,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     @Override
     public E insert(final E o) {
 
-        E removed = o;
+        E removed;
 
         final int s = size();
 
@@ -310,8 +310,10 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         if (list.remove(_o)) {
             return true;
         }
-        String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
-        throw new RuntimeException(err);
+
+        //String err = this + "(" + capacity + ") missing for remove: " + o + ", p=" + p + " size=" + s;
+        //throw new RuntimeException(err);
+        return false;
     }
 
     private final boolean attemptRemoval(final Object o, /*final Object oName, */final int i) {

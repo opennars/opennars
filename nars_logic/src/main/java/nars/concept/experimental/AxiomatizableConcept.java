@@ -24,7 +24,7 @@ import java.util.List;
 public class AxiomatizableConcept extends DefaultConcept {
 
     public AxiomatizableConcept(Term term, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, PremiseGenerator ps, Memory memory) {
-        super(term, b, taskLinks, termLinks, rb, ps, memory);
+        super(term, b, taskLinks, termLinks, ps, rb, memory);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class AxiomatizableConcept extends DefaultConcept {
                     getBeliefs().clear();
                     List<TaskLink> toRemove = Global.newArrayList();
                     getTaskLinks().forEach(t -> {
-                        if (t.getTarget().equals(getTerm()))
+                        if (t.getTerm().equals(getTerm()))
                             toRemove.add(t);
                     });
                     toRemove.forEach(t -> getTaskLinks().remove(t.targetTask));

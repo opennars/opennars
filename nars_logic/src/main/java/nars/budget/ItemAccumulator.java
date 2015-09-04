@@ -1,7 +1,8 @@
 package nars.budget;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
+import com.gs.collections.impl.map.mutable.AbstractMutableMap;
+import com.gs.collections.impl.map.mutable.ConcurrentHashMap;
 import nars.Global;
 import nars.Memory;
 import nars.task.Task;
@@ -23,7 +24,8 @@ import java.util.function.Consumer;
 public class ItemAccumulator<I extends Budgeted> {
 
 
-    public final UnifiedMap<I,I> items = new UnifiedMap<>();
+    public final AbstractMutableMap<I,I> items = new ConcurrentHashMap();
+            //new UnifiedMap<>();
 
 //    final Comparator<? super I> floatValueComparator = new Comparator<I>() {
 //        @Override public final int compare(final I o1, final I o2) {
@@ -195,6 +197,7 @@ public class ItemAccumulator<I extends Budgeted> {
 
     /** iterates in no-specific order */
     public void forEach(Consumer<I> recv) {
+
         items.forEachKey(recv::accept);
     }
 

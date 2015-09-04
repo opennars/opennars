@@ -68,7 +68,7 @@ public class Classic extends Default {
         Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks,
-                newConceptBeliefGoalRanking(), newPremiseGenerator(), m);
+                newPremiseGenerator(), newConceptBeliefGoalRanking(), m);
     }
 
 

@@ -440,7 +440,7 @@ import java.util.function.Consumer;
 
                 eta = viaLink.getPriority();
                 link = viaLink;
-                Termed target = viaLink.getTarget();
+                Termed target = viaLink.getTerm();
                 viaLink = null;
                 if (goNextConcept(target, new Budget(getConceptVisitDelivery(), 0.5f, 0.5f)) == null)
                     return;

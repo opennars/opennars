@@ -523,16 +523,16 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return 0;
     }
 
-    public void recurseTerms(final TermVisitor v, Term parent) {
+    public final void recurseTerms(final TermVisitor v, final Term parent) {
         v.visit(this, parent);
-        if (this instanceof Compound) {
-            for (Term t : ((Compound) this).term) {
+        //if (this instanceof Compound) {
+            for (final Term t : ((Compound) this).term) {
                 t.recurseTerms(v, this);
             }
-        }
+        //}
     }
 
-    public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+    public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
         if (hasVar()) {
             v.visit(this, parent);
             //if (this instanceof Compound) {
@@ -1167,6 +1167,26 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     public boolean hasVar() {
         return varTotal > 0;
     }
+
+    public final boolean hasVar(final Op type) {
+
+        switch (type) {
+            case VAR_DEPENDENT:
+                return hasVarDep();
+            case VAR_INDEPENDENT:
+                return hasVarIndep();
+            case VAR_QUERY:
+                return hasVarQuery();
+            case VAR_PATTERN:
+                /* if this is the case, its always the case because
+                   then its the meta-matcher which asks
+                   who only operators with PATTERN variables
+                 */
+                return true;
+        }
+        throw new RuntimeException("Invalid variable type: " + type);
+    }
+
 
     /**
      * NOT TESTED YET

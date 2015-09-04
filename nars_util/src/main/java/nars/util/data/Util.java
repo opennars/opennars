@@ -16,7 +16,9 @@ package nars.util.data;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Map;
@@ -44,6 +46,22 @@ public class Util {
     public static double expFast(final double val) {
         final long tmp = (long) (1512775 * val + (1072693248 - 60801));
         return Double.longBitsToDouble(tmp << 32);
+    }
+
+
+
+    /** Fetch the Unsafe.  Use With Caution. */
+    public static Unsafe getUnsafe() {
+        // Not on bootclasspath
+        if( Util.class.getClassLoader() == null )
+            return Unsafe.getUnsafe();
+        try {
+            final Field fld = Unsafe.class.getDeclaredField("theUnsafe");
+            fld.setAccessible(true);
+            return (Unsafe) fld.get(Util.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Could not obtain access to sun.misc.Unsafe", e);
+        }
     }
 
     public static String UUIDbase64() {
@@ -301,7 +319,7 @@ public class Util {
    /* End Of  P. J. Weinberger Hash Function */
 
 
-    public static long ELFHash(String str) {
+    public static long ELFHash(final String str) {
         long hash = 0;
         long x = 0;
 
@@ -316,11 +334,6 @@ public class Util {
 
         return hash;
     }
-
-    public static long ELFHash(final byte[] str) {
-        return ELFHash(str, 0);
-    }
-
 
 
     public static long ELFHash(final byte[] str, final long seed)

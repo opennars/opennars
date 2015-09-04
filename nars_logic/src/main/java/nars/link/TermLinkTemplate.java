@@ -208,11 +208,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         return hashOut;
     }
 
-    public boolean link(Concept c, boolean propagate) {
-
-        if (!propagate) {
-            return false;
-        }
+    public boolean link(Concept c) {
 
 //        if (summary() < Global.BUDGET_EPSILON)
 //            return false;
@@ -227,21 +223,33 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         }
 
 
+        //activate this termlink to peer
         c.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
-        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
-        Budget termlinkBudget = termLinkBuilder.getBudget();
+        //activate peer termlink to this
+        termLinkBuilder.setIncoming(true);
 
-        if (otherTerm instanceof Compound) {
-            otherConcept.linkTerms(termlinkBudget, false);
-        } else {
+        activatePeer(otherConcept, termLinkBuilder);
 
-        }
 
         //spent ?
         //setPriority(0);
 
         return true;
 
+    }
+
+    void activatePeer(final Concept otherConcept, final TermLinkBuilder termLinkBuilder) {
+
+        otherConcept.activateTermLink(termLinkBuilder); // that concept termLink to this concept
+
+        final Budget termlinkBudget = termLinkBuilder.getBudget();
+
+        if (otherConcept.getTerm() instanceof Compound) {
+            otherConcept.linkTerms(termlinkBudget, false);
+        }
+        /*} else {
+
+        }*/
     }
 }

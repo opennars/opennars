@@ -6,7 +6,7 @@ import nars.Global;
 import nars.NAR;
 import nars.budget.ItemAccumulator;
 import nars.event.CycleReaction;
-import nars.guifx.NARPane;
+import nars.guifx.NARide;
 import nars.guifx.NARfx;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -266,7 +266,7 @@ public class TimeClustering extends CycleReaction {
 
         NARfx.run( (app, stage) -> {
 
-            NARPane p = new NARPane(n);
+            NARide p = new NARide(n);
 
             p.console(true);
 

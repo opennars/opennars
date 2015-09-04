@@ -423,7 +423,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
     default @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
-        return toString(buffer, memory, true, true);
+        return toString(buffer, memory, true, true, true);
     }
 
     /**
@@ -431,9 +431,10 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
      *
      * @param buffer provided StringBuilder to append to
      * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
+     * @param showBudget
      * @return The String
      */
-    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp);
+    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget);
 
 
     default public boolean equalTerms(final Sentence s) {

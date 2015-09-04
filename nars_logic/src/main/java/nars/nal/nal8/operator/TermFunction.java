@@ -218,7 +218,7 @@ public abstract class TermFunction<O> extends SynchOperator {
                     inputTerm
             ).judgment().eternal().truth((Truth) y);
 
-            TaskProcess.run(nar, b);
+            TaskProcess.queue(nar, b);
 
             return null;
         }

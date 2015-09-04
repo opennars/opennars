@@ -67,8 +67,11 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget for the new task
      */
     public static Budget revise(final Truth tTruth, final Truth bTruth, final Truth truth, final Premise p) {
-        final float difT = truth.getExpDifAbs(tTruth);
+
         final Task task = p.getTask();
+
+        final float difT = truth.getExpDifAbs(tTruth);
+
         task.getBudget().decPriority(1f - difT);
         task.getBudget().andDurability(1f - difT);
 
@@ -394,7 +397,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         if (bLink!=null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());
-            final float targetActivation = nal.conceptPriority(bLink.getTarget());
+            final float targetActivation = nal.conceptPriority(bLink.getTerm());
             bLink.orPriority(or(quality, targetActivation));
             bLink.orDurability(quality);
         }

@@ -63,11 +63,11 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         this(Utf8.toUtf8(s));
     }
 
-    public int makeHash() {
-        return (int)Util.ELFHash(data);
+    final public int makeHash() {
+        return (int) Util.ELFHash(data, 0);
     }
 
-    public boolean hasName() { return data !=null;  }
+    final public boolean hasName() { return data !=null;  }
 
 /*    public boolean hasHash() {
         return hash!=0;
@@ -115,7 +115,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
     }
 
     @Override
-    public boolean equals(Object x) {
+    public boolean equals(final Object x) {
         if (this == x) return true;
         if (!(x instanceof LiteralUTF8Identifier)) return false;
         return Byted.equals(this, (Byted)x);
@@ -176,7 +176,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
      * or setting an equivalent value where the hash would remain the same.
      * for all other purposes, use setData() which will do a complete update
      */
-    @Override public void setBytes(byte[] b) {
+    @Override public final void setBytes(byte[] b) {
         this.data = b;
     }
 }

@@ -1,7 +1,7 @@
 package automenta.vivisect.dimensionalize;
 
 import com.mxgraph.util.mxRectangle;
-import nars.util.data.CuckooMap;
+import nars.util.data.map.CuckooMap;
 import org.jgrapht.Graph;
 
 import java.util.ArrayList;

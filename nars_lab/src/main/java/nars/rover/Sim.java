@@ -6,7 +6,6 @@ import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.gl.JoglAbstractDraw;
 import nars.rover.robot.Robotic;
-import nars.rover.world.FoodSpawnWorld1;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
@@ -266,6 +265,7 @@ public class Sim extends PhysicsModel {
 
         @Override
         public void before(Body b, JoglAbstractDraw d, float time) {
+
             d.setFillColor(foodFill);
         }
 
@@ -300,9 +300,16 @@ public class Sim extends PhysicsModel {
         }
     }
 
-    public Sim(SimulatedClock clock) {
+    public Sim(SimulatedClock clock, RoverWorld world) {
         this.clock = clock;
-        init();
+
+        this.world = world;
+
+        init(phy.model);
+
+        cycle();
+
+        this.world.init(this);
     }
 
 
@@ -360,12 +367,6 @@ public class Sim extends PhysicsModel {
 //
 
     public RoverWorld world;
-    public static int sz = 48;
-
-    public void init() {
-        init(phy.model);
-        cycle();
-    }
 
     @Override
     public void initTest(boolean deserialized) {
@@ -374,13 +375,9 @@ public class Sim extends PhysicsModel {
         getWorld().setGravity(new Vec2());
         getWorld().setAllowSleep(false);
 
-        //world = new ReactorWorld(this, 32, sz, sz*2);
-        world = new FoodSpawnWorld1(this, 128, sz, sz, 0.5f);
-        //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
-
     }
 
-    protected void cycle() {
+    protected final void cycle() {
         phy.cycle(fps);
     }
 

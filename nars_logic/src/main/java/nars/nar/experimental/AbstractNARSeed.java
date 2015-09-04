@@ -28,7 +28,7 @@ abstract public class AbstractNARSeed<B extends CacheBag<Term,Concept>, P extend
     }
 
     @Override
-    public CycleProcess newCycleProcess() {
+    public CycleProcess getCycleProcess() {
         return this;
     }
 }

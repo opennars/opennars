@@ -2,7 +2,7 @@ package nars.guifx.space;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import nars.guifx.TabX;
+import nars.guifx.util.TabX;
 
 import java.util.function.Supplier;
 

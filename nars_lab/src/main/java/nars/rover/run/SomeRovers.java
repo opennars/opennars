@@ -2,16 +2,19 @@ package nars.rover.run;
 
 import nars.Global;
 import nars.NAR;
+import nars.NARSeed;
 import nars.Video;
 import nars.clock.SimulatedClock;
 import nars.event.CycleReaction;
-import nars.nar.Default;
-import nars.nar.experimental.Equalized;
+import nars.nar.experimental.Alann;
+import nars.rover.RoverWorld;
 import nars.rover.Sim;
 import nars.rover.robot.CarefulRover;
 import nars.rover.robot.Rover;
 import nars.rover.robot.Spider;
 import nars.rover.robot.Turret;
+import nars.rover.world.FoodSpawnWorld1;
+import nars.rover.world.GridSpaceWorld;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
@@ -26,13 +29,16 @@ public class SomeRovers {
         Video.themeInvert();
     }
 
-    public static Default newDefault() {
+    public static NARSeed newDefault(int threads) {
 
-        int cycPerFrame = 4;
+        int cycPerFrame = 8;
 
-        Default d = new Equalized(1024, 16, 10);
-        d.setTermLinkBagSize(16);
-        d.setTaskLinkBagSize(16);
+        Alann d = new Alann(256, threads);
+        d.param.conceptActivationFactor.set(0.05f);
+
+        //Default d = new Equalized(1024, 16, 10);
+        //d.setTermLinkBagSize(16);
+        //d.setTaskLinkBagSize(16);
 
 //
 //            @Override
@@ -51,15 +57,15 @@ public class SomeRovers {
 //
 //        };
         //d.setInternalExperience(null);
-        d.setClock(clock);
+        d.param.setClock(clock);
 
-        d.conceptTaskTermProcessPerCycle.set(4);
+        d.param.conceptTaskTermProcessPerCycle.set(4);
 
 
-        d.setCyclesPerFrame(cycPerFrame);
-        d.duration.set(cycPerFrame);
-        d.conceptBeliefsMax.set(16);
-        d.conceptGoalsMax.set(8);
+        d.param.setCyclesPerFrame(cycPerFrame);
+        d.param.duration.set(cycPerFrame);
+        d.param.conceptBeliefsMax.set(16);
+        d.param.conceptGoalsMax.set(8);
 
         //TextOutput.out(nar).setShowInput(true).setShowOutput(false);
 
@@ -68,7 +74,7 @@ public class SomeRovers {
         //nar.param.inputsMaxPerCycle.set(32);
         //nar.param.conceptsFiredPerCycle.set(4);
 
-        d.conceptCreationExpectation.set(0);
+        d.param.conceptCreationExpectation.set(0);
 
         //d.termLinkForgetDurations.set(4);
 
@@ -85,7 +91,16 @@ public class SomeRovers {
         float fps = 60;
         boolean cpanels = true;
 
-        final Sim game = new Sim(clock);
+        RoverWorld world;
+
+        //world = new ReactorWorld(this, 32, 48, 48*2);
+
+        world = new FoodSpawnWorld1(128, 48, 48, 0.5f);
+
+        //world = new GridSpaceWorld(GridSpaceWorld.newMazePlanet());
+
+
+        final Sim game = new Sim(clock, world);
 
 
         game.add(new Turret("turret"));
@@ -94,15 +109,15 @@ public class SomeRovers {
 
 
         {
-            Default e = newDefault();
+            NARSeed e = newDefault(3);
 
             NAR nar = new NAR(e);
 
             game.add(new Rover("r1", nar));
 
         }
-      {
-            NAR nar = new NAR( newDefault() );
+        {
+            NAR nar = new NAR( newDefault(1) );
 
             //nar.param.outputVolume.set(0);
 
@@ -116,6 +131,7 @@ public class SomeRovers {
         }
 
         game.run(fps);
+
     }
 
     private static class InputActivationController extends CycleReaction {

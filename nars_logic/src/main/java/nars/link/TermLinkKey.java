@@ -7,7 +7,7 @@ import nars.util.utf8.Byted;
 
 public interface TermLinkKey extends Byted /* byte[] holds the prefix part */ {
 
-    public Term getTarget();
+    public Term getTerm();
 
 
 
@@ -19,9 +19,9 @@ public interface TermLinkKey extends Byted /* byte[] holds the prefix part */ {
 
     default public boolean termLinkEquals(final Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof TermLinkKey)) return false;
+        //if (!(obj instanceof TermLinkKey)) return false;
         final TermLinkKey tl = (TermLinkKey) obj;
-        return Byted.equals(this, tl) && getTarget().equals(tl.getTarget());
+        return Byted.equals(this, tl) && getTerm().equals(tl.getTerm());
     }
 
 //    /** the result of this should be cached */

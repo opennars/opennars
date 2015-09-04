@@ -161,7 +161,7 @@ public class Equalized extends NewDefault {
     }
 
     @Override
-    public CycleProcess newCycleProcess() {
+    public CycleProcess getCycleProcess() {
         return new EqualizedCycle(
                 new ItemAccumulator(Budget.plus),
                 newConceptBag(),

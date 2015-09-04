@@ -15,12 +15,25 @@ import nars.rover.RoverWorld;
 public class FoodSpawnWorld1 extends RoverWorld {
     private final float w;
     private final float h;
+    private final float foodToPoisonRatio;
+    private final int numFood;
 
-    public FoodSpawnWorld1(PhysicsModel p, int numFood, float w, float h, float foodtoPoisonRatio) {
-        super(p);
+    public FoodSpawnWorld1(int numFood, float w, float h, float foodtoPoisonRatio) {
+        super();
         this.w = w;
         this.h = h;
 
+        this.numFood = numFood;
+        this.foodToPoisonRatio = foodtoPoisonRatio;
+
+    }
+
+    @Override
+    public void init(PhysicsModel p) {
+        super.init(p);
+
+
+        int numFood = 100;
 
         float foodSpawnR = w / 1.5f;
         for (int i = 0; i < numFood; i++) {
@@ -28,9 +41,9 @@ public class FoodSpawnWorld1 extends RoverWorld {
             float maxSize = 2.0f;
             float mass = 0.1f;
             addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass,
-                    Math.random() < foodtoPoisonRatio ?
+                    Math.random() < foodToPoisonRatio ?
                             Material.food : Material.poison
-                    );
+            );
         }
         float wt = 1f;
         addWall(0, h, w, wt, 0);
@@ -38,7 +51,5 @@ public class FoodSpawnWorld1 extends RoverWorld {
         addWall(w, 0, wt, h, 0);
         addWall(0, -h, w, wt, 0);
 
-
     }
-    
 }

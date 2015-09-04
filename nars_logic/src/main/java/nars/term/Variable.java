@@ -128,7 +128,7 @@ public class Variable extends Atom {
         return this;
     }
 
-    public Variable clone(boolean newScope) {
+    public final Variable clone(boolean newScope) {
         if (newScope!=scope)
             return new Variable(bytes(), newScope);
         return this;
@@ -147,7 +147,7 @@ public class Variable extends Atom {
      * @return false
      */
     @Override
-    public boolean isConstant() {
+    public final boolean isConstant() {
         return false;
     }
 
@@ -157,7 +157,7 @@ public class Variable extends Atom {
      *
      * @return The complexity of the term, an integer
      */
-    @Override public int complexity() {
+    @Override public final int complexity() {
         return 0;
     }
 
@@ -251,8 +251,7 @@ public class Variable extends Atom {
 //    }
 
 
-    @Override
-    final public boolean hasVar(final Op type) {
+    @Override final public boolean hasVar(final Op type) {
         return op == type;
     }
 

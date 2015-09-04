@@ -4,15 +4,14 @@ import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SubScene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.guifx.graph2.NARGraph1;
+import nars.guifx.util.SizeAwareWindow;
+import nars.guifx.util.TabX;
 import nars.nar.Default;
 import nars.nar.experimental.Equalized;
 import nars.task.Task;
@@ -30,12 +29,9 @@ public class NARfx extends Application {
 
     public static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
 
-//    static {
-//        Video.themeInvert();
-//    }
 
     /** NAR instances -> GUI windows */
-    public static Map<Region, Stage> window = Global.newHashMap();
+    public static Map<NAR, Stage> window = Global.newHashMap();
 
     public static final javafx.scene.control.ScrollPane scrolled(Node n) {
         return scrolled(n, true, true);
@@ -114,12 +110,12 @@ public class NARfx extends Application {
         d.setTermLinkBagSize(96);
         d.setTaskLinkBagSize(96);*/
 
-        Default d = new Equalized(1024,8,8);
+        Default d = new Equalized(1024,1,3);
         //Default d = new Default(1024,2,3);
 
         NAR n = new NAR(d);
 
-        NARPane w = NARfx.newWindow(n);
+        NARide w = NARfx.newWindow(n);
 
 
         for (String s : getParameters().getRaw()) {
@@ -249,7 +245,6 @@ public class NARfx extends Application {
 
     public static Stage newWindow(String title, Region n) {
 
-
         Scene scene = new Scene(n);
         scene.getStylesheets().setAll(NARfx.css, "dark.css" );
 
@@ -262,27 +257,53 @@ public class NARfx extends Application {
         return s;
     }
 
+    public static Stage newWindow(String title, Scene scene) {
 
-    public static NARPane newWindow(NAR nar) {
-        NARPane wn = new NARPane(nar);
+        scene.getStylesheets().setAll(NARfx.css, "dark.css" );
 
-        Stage s;
-        wn.setPrefSize(900, 600);
-        Stage removed = window.put(wn, s = wn.newWindow());
+        Stage s = new Stage();
+        s.setTitle(title);
+        s.setScene(scene);
 
-        s.show();
+        scene.getRoot().maxWidth(Double.MAX_VALUE);
+        scene.getRoot().maxHeight(Double.MAX_VALUE);
 
-        if (removed!=null)
-            removed.close();
+        return s;
+    }
 
-        return wn;
+    public static NARide newWindow(NAR nar) {
+        NARide ni;
+        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
+        wn.window.show();
+        //newWindow(nar.toString(), wn).show();
+        return ni;
+
+//
+//        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
+//
+//        ni.resize(500,500);
+//
+//        Stage s = new Stage();
+//        s.setScene(wn);
+//        //s.sizeToScene();
+//
+//
+//
+//        s.show();
+//
+//        Stage removed = window.put(nar, s);
+//
+//        if (removed!=null)
+//            removed.close();
+//
+//        return ni;
     }
 
     public static void newWindow(NAR nar, Concept c) {
         ConceptPane wn = new ConceptPane(nar, c);
 
         Stage st;
-        Stage removed = window.put(wn, st = newWindow(c.toString(), wn));
+        Stage removed = window.put(nar, st = newWindow(c.toString(), wn));
 
         st.show();
 
@@ -294,7 +315,7 @@ public class NARfx extends Application {
         TaskPane wn = new TaskPane(nar, c);
 
         Stage st;
-        Stage removed = window.put(wn, st = newWindow(c.toString(), wn));
+        Stage removed = window.put(nar, st = newWindow(c.toString(), wn));
 
         st.show();
 

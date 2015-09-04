@@ -22,4 +22,5 @@ public interface PremiseGenerator {
     }
 
     public TermLink[] nextTermLinks(Concept c, TaskLink taskLink, TermLink[] result);
+
 }

@@ -7,7 +7,7 @@ import java.util.concurrent.Future;
 
 
 
-public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runnable {
+public class NARPhysics<P extends PhysicsModel> extends NARGame  {
     public final P model;
     public final PhysicsRun phy;
     private Future<?> phyCycle;
@@ -50,8 +50,7 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
     @Override
     public void frame() {
         
-        nar.memory.taskNext(this);
-        
+
 //        if (phy!=null) {
 //            
 //            //wait for previous cycle to finish if it hasnt
@@ -67,12 +66,6 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
 //        }
     }
 
-    @Override
-    public void run() {
-        if (phy!=null)
-            phy.cycle();
-    }
-    
-    
+
     
 }

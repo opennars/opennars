@@ -8,14 +8,17 @@ import nars.NAR;
 import nars.Param;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
-import nars.bag.impl.CurveBag;
 import nars.bag.impl.MapCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.budget.Itemized;
+import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
+import nars.concept.DefaultConcept;
+import nars.io.Texts;
 import nars.io.out.TextOutput;
+import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -31,13 +34,17 @@ import nars.process.ConceptTaskTermLinkProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.term.Atom;
 import nars.term.Term;
+import nars.util.data.map.nbhm.NonBlockingHashMap;
+import nars.util.data.random.XORShiftRandom;
 import nars.util.data.random.XorShift1024StarRandom;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 /**
  * "Adaptive Logic And Neural Networks" Spiking continuous-time model
@@ -45,19 +52,33 @@ import java.util.Random;
  */
 public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
+    private final int derivers;
+    final int threads;
+
+
     private MapCacheBag<Term, Concept> index;
-    private Iterator<Concept> indexIterator;
-    private List<Task> sorted = Global.newArrayList();
-    @Deprecated final Default param = new NewDefault(); // shadow defaults, will replace once refactored
+
+    private final List<Task> sorted = Global.newArrayList();
+
+    @Deprecated
+    public final Default param = new NewDefault(); // shadow defaults, will replace once refactored
+
     final Random rng = new XorShift1024StarRandom(1);
     final ItemAccumulator<Task> newTasks = new ItemAccumulator(Budget.plus);
 
     final static Procedure2<Budget,Budget> budgetMerge = Budget.plus;
 
+    int maxConcepts = 1024*1024;
+    float maxCyclesPerSecond = -1;
+
+
     Commander commander;
-    public final List<Derivelet> derivers = Global.newArrayList();
+
     final int maxNewTasksPerCycle = 10;
-    final int maxNewTaskHistory = 20;
+    final int maxNewTaskHistory = 100;
+
+    ExecutorService exe;
+
 
     public static void main(String[] args) {
         //temporary testing shell
@@ -65,7 +86,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
         Global.DEBUG = true;
         Global.EXIT_ON_EXCEPTION = true;
 
-        NAR n = new NAR(new Alann(1));
+        NAR n = new NAR(new Alann(4, 2));
         TextOutput.out(n);
         NARTrace.out(n);
 
@@ -84,10 +105,17 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
     /** particle that travels through the graph,
      * responsible for deciding what to derive */
-    class Derivelet {
+    public static class Derivelet  {
+
+
+        private DeriveletsThread runner;
 
         /** current location */
         public Concept concept;
+
+
+        public Derivelet() {
+        }
 
 
         public ConceptProcess nextPremise() {
@@ -95,93 +123,269 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
             final Concept concept = this.concept;
 
             TaskLink tl = concept.getTaskLinks().forgetNext();
-            if (tl == null) return null;
+            if ((tl == null) || (tl.getTask().isDeleted()))
+                return null;
 
-            //TODO better probabilities
-            if (Math.random() < 0.1) {
-                return new ConceptTaskLinkProcess(concept, tl);
+            /*if (runner.nextFloat() < 0.1) {
+                return new ALANNConceptTaskLinkProcess(concept, tl);
             }
-            else {
+            else*/ {
                 TermLink tm = concept.getTermLinks().forgetNext();
-                if (tm == null)
-                    return new ConceptTaskLinkProcess(concept, tl);
+                if ((tm != null) && (tl.type != TermLink.TRANSFORM)) {
+                    return new ALANNConceptTaskTermLinkProcess(concept, tl, tm);
+                }
+                else {
+                    return new ALANNConceptTaskLinkProcess(concept, tl);
+                }
+            }
 
-                return new ConceptTaskTermLinkProcess(concept, tl, tm) {
+        }
 
-                    @Override protected void inputDerivations() {
-                        if (derived!=null) {
-                            //transform this ConceptProcess's derivation to a TaskProcess and run it
-                            final Memory mem = concept.getMemory();
+        protected void inputDerivations(final Set<Task> derived) {
+            if (derived!=null) {
+                //transform this ConceptProcess's derivation to a TaskProcess and run it
+                final Memory mem = concept.getMemory();
 
-                            derived.forEach(/*newTaskProcess*/ t -> {
+                derived.forEach(/*newTaskProcess*/ t -> {
 
-                                if (t.init(mem)) {
-                                    //System.err.println("direct input: " + t);
-                                    TaskProcess.run(mem, t);
-                                }
-
-                            });
-                        }
+                    if (t.init(mem)) {
+                        //System.err.println("direct input: " + t);
+                        TaskProcess.run(mem, t);
                     }
 
-                };
+                });
             }
-
         }
 
         /** determines a next concept to move adjacent to
          *  the concept it is currently at
          */
         public Concept nextConcept() {
+
+            final Concept concept = this.concept;
+
             if (concept == null) {
                 return null;
             }
 
-            if (Math.random() < 0.5) {
+            float x = runner.nextFloat();
+
+            if (x < 0.5) {
                 //stay here
                 return concept;
             }
-            if (Math.random() < 0.25) {
-                TermLink tl = concept.getTermLinks().forgetNext();
-                Concept tlConcept = get(tl.getTerm());
-                if (tlConcept!=null) return tlConcept;
-            }
-            if (Math.random() < 0.25) {
-                TaskLink tl = concept.getTaskLinks().forgetNext();
-                Concept tkConcept = get(tl.getTerm());
-                if (tkConcept != null) return tkConcept;
+            else {
+                final TLink tl;
+                if (x < 0.75) {
+                    tl = concept.getTermLinks().forgetNext();
+                } else {
+                    tl = concept.getTaskLinks().forgetNext();
+                }
+                if (tl != null) {
+                    Concept c = runner.concept(tl.getTerm());
+                    if (c != null) return c;
+                }
             }
 
-            //stay here
-            return concept;
+            return null;
         }
 
         /** run next iteration; true if still alive by end, false if died and needs recycled */
         final public boolean cycle() {
-            if ( (concept = nextConcept()) == null)
+
+            final Concept current = this.concept, next;
+            if (current == null)
                 return false;
 
+            if ( (next = nextConcept()) == null) {
+                return false;
+            }
+            else {
+                this.concept = next;
+            }
+
             final ConceptProcess p = nextPremise();
-            p.run();
+            if (p!=null)
+                p.run();
 
             return true;
         }
 
-        public TaskLink taskLink;
 
-        public Task belief;
-
-        public void start(Concept concept) {
+        public final void start(final DeriveletsThread runner, final Concept concept) {
+            this.runner = runner;
             this.concept = concept;
+        }
+
+        @Override
+        public String toString() {
+            return getClass().getSimpleName() + '@' + concept;
+        }
+
+        private class ALANNConceptTaskTermLinkProcess extends ConceptTaskTermLinkProcess {
+
+            public ALANNConceptTaskTermLinkProcess(Concept concept, TaskLink tl, TermLink tm) {
+                super(concept, tl, tm);
+            }
+
+            @Override protected void inputDerivations() {
+                Derivelet.this.inputDerivations(derived);
+            }
+
+            @Override
+            protected synchronized void derive() {
+                super.derive();
+            }
+        }
+
+        private class ALANNConceptTaskLinkProcess extends ConceptTaskLinkProcess {
+            public ALANNConceptTaskLinkProcess(Concept concept, TaskLink tl) {
+                super(concept, tl);
+            }
+
+            @Override protected void inputDerivations() {
+                Derivelet.this.inputDerivations(derived);
+            }
+
+            @Override
+            protected synchronized void derive() {
+                super.derive();
+            }
         }
     }
 
 
 
+    public class DeriveletsThread implements Runnable {
 
-    public Alann(int initialDerivers) {
-        for (int i = 0; i < initialDerivers; i++)
-            derivers.add( new Derivelet() );
+        final static long ifNoConceptsWaitMS = 5;
+
+        /** random # generator local to this thread */
+        private final Random rng;
+
+        /** current concept, next concept */
+        private Function<Concept,Concept> conceptSupply;
+
+        public Derivelet[] d;
+
+        public DeriveletsThread(Collection<Derivelet> d, Function<Concept,Concept> conceptSupply) {
+            this.conceptSupply = conceptSupply;
+            this.d = d.toArray(new Derivelet[d.size()]);
+            this.rng = newRandom();
+        }
+
+
+        @Override
+        public String toString() {
+            return "DeriveletsThread:" + '/' + Thread.currentThread().getId() + '*' +
+                    d.length;
+                    //Arrays.toString(d);
+        }
+
+        protected void cycle() {
+            Derivelet current = null;
+
+            try {
+
+                boolean active = false;
+
+                for (final Derivelet x : d) {
+                    active |= cycleDerivelet(current = x);
+                }
+
+                if (!active) {
+                    try {
+                        Thread.sleep(ifNoConceptsWaitMS);
+                    } catch (InterruptedException e) { }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                kill(current);
+            }
+        }
+
+        final boolean cycleDerivelet(final Derivelet d) {
+            //System.out.println(d + " cycle");
+
+            if (!d.cycle()) {
+
+                //recycle this derivelet
+                Concept next = conceptSupply.apply(d.concept);
+                if (next != null) {
+                    d.start(this, next);
+                } else {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /** kill a derivelet if it was interrupted or exception,
+         * freeing any hostage concept it may have (which will be locked)  */
+        protected void kill(final Derivelet d) {
+            final Concept currentConcept = d.concept;
+            if (currentConcept!=null) {
+                d.concept = null;
+            }
+        }
+
+        public void run() {
+
+            //System.out.println(this + " start");
+
+            while (true /*running*/) {
+                cycle();
+            }
+        }
+
+
+        public final float nextFloat() {
+            return this.rng.nextFloat();
+        }
+
+        public final Concept concept(final Term term) {
+            return memory.concept(term);
+        }
+    }
+
+    public class InstrumentedDeriveletsThread extends DeriveletsThread {
+
+        final Mean m = new Mean();
+        final int reportPeriod = 200;
+
+        public InstrumentedDeriveletsThread(Collection<Derivelet> d, Function<Concept,Concept> concepts) {
+            super(d, concepts);
+        }
+
+        @Override
+        protected void cycle() {
+
+            long start = System.nanoTime();
+            super.cycle();
+            long end = System.nanoTime();
+
+            double timeMS = (end-start)/1.0e6;
+            m.increment(timeMS);
+
+            long cyc = m.getN();
+            if (cyc % reportPeriod == 0) {
+                System.out.println(this + " @ " + cyc + " (" + Texts.n4(timeMS) + "ms avg),  " + index.size() + " concepts" );
+
+                m.clear();
+
+            }
+        }
+    }
+
+    public Alann(int initialDerivers, int threads) {
+        this.derivers = initialDerivers;
+        this.threads = threads;
+    }
+
+
+    @Deprecated @Override public Concept nextConcept() {
+        throw new RuntimeException("should not be called, this method will be deprecated");
     }
 
     @Override
@@ -197,32 +401,35 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
                 int toRun = Math.min( maxNewTasksPerCycle, remaining);
 
-                final TaskProcess[] x = TaskProcess.run(memory, sorted, toRun, toDiscard);
-
-
-                for (final TaskProcess y : x)
-                    y.run();
+                TaskProcess.run(memory, sorted, toRun, toDiscard);
 
                 //System.out.print("newTasks size=" + size + " run=" + toRun + "=(" + x.length + "), discarded=" + toDiscard + "  ");
             }
         }
 
+        {
+            float maxCPS = maxCyclesPerSecond;
+            if (maxCPS > 0) {
+                long ms = (long) (1000f / maxCPS);
+                try {
+                    Thread.sleep(ms);
+                } catch (InterruptedException e) {
 
-        if (index.size() > 0) {
-            int numDerivers = derivers.size();
-            for (int i = 0; i < numDerivers; i++) {
-                final Derivelet d = derivers.get(i);
-
-                if (!d.cycle()) {
-
-                    //recycle this derivelet
-                    Concept c = nextConcept();
-                    if (c != null)
-                        d.start(c);
-                    //else ?
                 }
             }
+
+            Thread.yield();
         }
+
+
+//        if (index.size() > 0) {
+//            int numDerivers = derivers.size();
+//            for (int i = 0; i < numDerivers; i++) {
+//                final Derivelet d = derivers.get(i);
+//
+//
+//            }
+//        }
 
         //System.out.println("cycle " + memory.time());
     }
@@ -249,13 +456,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
         return existing;
     }
 
-    @Override
-    public Concept nextConcept() {
-        final Concept c = indexIterator.next();
-        if (c == null)
-            return null;
-        return c;
-    }
+
 
     @Override
     public boolean reprioritize(Term term, float newPriority) {
@@ -274,8 +475,9 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
 
     @Override
-    public Param newParam() {
+    public Param getParam() {
         param.the(Deriver.class, NewDefault.der);
+        param.setTermLinkBagSize(32);
         return param;
     }
 
@@ -284,16 +486,42 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
         return rng;
     }
 
+    final Random newRandom() {
+        return new XORShiftRandom();
+    }
+
+    /** this will be invoked in the DeriveletsThread.
+     *  Concept.runQueued will thus be called in-between
+     *  derivelet cycles.
+     * */
+    public final Function<Concept,Concept> newConceptSupply() {
+        final Iterator<Concept> indexIterator = Iterators.cycle(index);
+        return (prev) -> {
+            if (!indexIterator.hasNext()) {
+                return null;
+            }
+
+            final Concept next = indexIterator.next();
+
+            return next;
+        };
+    }
+
+
     @Override
-    public CacheBag<Term, Concept> newConceptIndex() {
-        this.index = new MapCacheBag(Global.newHashMap());
-        this.indexIterator = Iterators.cycle(index);
+    public CacheBag<Term, Concept> getConceptIndex() {
+        this.index = new MapCacheBag<>(
+                new NonBlockingHashMap<>(maxConcepts)
+                //Global.newHashMap()
+        );
+
+
         return this.index;
     }
 
     public Memory newMemory() {
 
-        final Param p = newParam();
+        final Param p = getParam();
 
         return new Memory(
                 getRandom(),
@@ -301,7 +529,7 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
                 p,
                 getConceptBuilder(),
                 getPremiseProcessor(p),
-                newConceptIndex()
+                getConceptIndex()
         );
     }
 
@@ -315,12 +543,58 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
 
         commander = new Commander(nar);
 
+        initDerivelets();
+    }
 
+    private void initDerivelets() {
+
+        exe = Executors.newFixedThreadPool(threads);
+
+        for (int j = 0; j < threads; j++) {
+
+            final List<Derivelet> d = Global.newArrayList();
+
+            for (int i = 0; i < derivers; i++) {
+                d.add( new Derivelet() );
+            }
+
+            DeriveletsThread dt
+                    //= new DeriveletsThread(d);
+                    = new InstrumentedDeriveletsThread(d, newConceptSupply());
+
+            exe.execute(dt);
+
+        }
+
+
+        /** set this thread priority to zero to allow derivelet threads more priority */
+        //Thread.currentThread().setPriority(1);
     }
 
     @Override
-    public PremiseProcessor getPremiseProcessor(Param p) {
+    public PremiseProcessor getPremiseProcessor(final Param p) {
         return param.getPremiseProcessor(p);
+    }
+
+
+
+    public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+
+        if (t instanceof Atom) {
+            return new AtomConcept(t, b,
+                    termLinks, taskLinks,
+                    null, m
+            );
+        }
+        else {
+            return new DefaultConcept(t, b,
+                    taskLinks, termLinks,
+                    null,
+                    param.newConceptBeliefGoalRanking(),
+                    m
+            );
+        }
+
     }
 
     @Override
@@ -332,14 +606,14 @@ public class Alann extends AbstractNARSeed<CacheBag<Term,Concept>,Param> {
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks =
-                new CurveBag(rng, /*sentenceNodes,*/ param.getConceptTaskLinks());
+                new SynchronizedCurveBag<>(rng, /*sentenceNodes,*/ param.getConceptTaskLinks());
         taskLinks.mergeAverage();
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag(rng, /*termlinkKeyNodes,*/ param.getConceptTermLinks());
+                new SynchronizedCurveBag<>(rng, /*termlinkKeyNodes,*/ param.getConceptTermLinks());
         termLinks.mergeAverage();
 
-        return param.newConcept(t, b, taskLinks, termLinks, m);
+        return newConcept(t, b, taskLinks, termLinks, m);
     }
 
 //

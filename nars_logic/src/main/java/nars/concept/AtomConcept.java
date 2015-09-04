@@ -12,9 +12,12 @@ import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
+import nars.util.data.list.FastConcurrentDirectDeque;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static nars.budget.BudgetFunctions.divide;
 
@@ -23,8 +26,11 @@ import static nars.budget.BudgetFunctions.divide;
  */
 public class AtomConcept extends AbstractConcept {
 
+    final AtomicBoolean locked = new AtomicBoolean(false);
+
     protected final Bag<Sentence, TaskLink> taskLinks;
     protected final Bag<TermLinkKey, TermLink> termLinks;
+
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
@@ -32,8 +38,9 @@ public class AtomConcept extends AbstractConcept {
     protected final TermLinkBuilder termLinkBuilder;
     protected transient final TaskLinkBuilder taskLinkBuilder;
     protected final PremiseGenerator premiseGenerator;
+    private FastConcurrentDirectDeque<Runnable> pending;
 
-    public AtomConcept(Term atom, Budget budget, Memory memory, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks, PremiseGenerator ps) {
+    public AtomConcept(Term atom, Budget budget, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks, PremiseGenerator ps, Memory memory) {
         super(atom, budget, memory);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
@@ -106,9 +113,23 @@ public class AtomConcept extends AbstractConcept {
      */
     protected boolean linkTask(final Task task) {
 
+        final List<TermLinkTemplate> templates = termLinkBuilder.templates();
+        final int numTemplates = termLinkBuilder.getNonTransforms();
+        if (templates == null || numTemplates == 0) {
+            //distribute budget to incoming termlinks?
+            return false;
+        }
+
+        //TODO parameter to use linear division, conserving total budget
+        //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
+        //float linkSubBudgetDivisor = (float) Math.sqrt(numTemplates);
+        float linkSubBudgetDivisor = numTemplates;
+
         final Budget taskBudget = task.getBudget();
 
-        if (!taskBudget.summaryGreaterOrEqual(memory.param.taskLinkThreshold))
+        if (!taskBudget.summaryGreaterOrEqual(
+                memory.param.taskLinkThreshold.floatValue() / linkSubBudgetDivisor
+        ))
             return false;
 
 
@@ -116,23 +137,6 @@ public class AtomConcept extends AbstractConcept {
         taskLinkBuilder.setTask(task);
 
         activateTaskLink(taskLinkBuilder);  // tlink type: SELF
-
-        List<TermLinkTemplate> templates = termLinkBuilder.templates();
-
-        if (templates == null || templates.isEmpty()) {
-            //distribute budget to incoming termlinks?
-            return false;
-        }
-
-
-        //TODO parameter to use linear division, conserving total budget
-        //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
-        final int numTemplates = templates.size();
-
-
-        float linkSubBudgetDivisor = termLinkBuilder.getNonTransforms();
-        //float linkSubBudgetDivisor = (float) Math.sqrt(numTemplates);
-
 
         final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
 
@@ -160,7 +164,8 @@ public class AtomConcept extends AbstractConcept {
                 taskLinkBuilder.setTemplate(termLink);
 
                 /** activate the task tlink */
-                componentConcept.activateTaskLink(taskLinkBuilder);
+                activatePeer(componentConcept, taskLinkBuilder);
+
             } else {
                 //taskBudgetBalance += subBudget.getPriority();
             }
@@ -168,6 +173,11 @@ public class AtomConcept extends AbstractConcept {
         }
 
         return true;
+    }
+
+    /* called by a concept when it activates another concept's tasklink */
+    final void activatePeer(final Concept componentConcept, final TaskLinkBuilder taskLinkBuilder) {
+        componentConcept.activateTaskLink(taskLinkBuilder);
     }
 
     /**
@@ -227,9 +237,13 @@ public class AtomConcept extends AbstractConcept {
 
                 //only apply this loop to non-transform termlink templates
                 if (template.type != TermLink.TRANSFORM) {
+
                     template.accumulate(this);
-                    if (template.link(this, updateTLinks))
-                        activity = true;
+
+                    if (updateTLinks) {
+                        if (template.link(this))
+                            activity = true;
+                    }
                 }
 
             }
@@ -238,17 +252,18 @@ public class AtomConcept extends AbstractConcept {
         }
 
 
-
-
         //TODO merge with above loop, or avoid altogether under certain conditions
 
         List<TermLinkTemplate> tl = getTermLinkTemplates();
         if (tl != null && updateTLinks) {
             int n = tl.size();
             for (int i = 0; i < n; i++) {
+
                 TermLinkTemplate t = tl.get(i);
+
                 if (t.summaryGreaterOrEqual(memory.param.termLinkThreshold)) {
-                    if (linkTerm(t, updateTLinks))
+
+                    if (t.link(this))
                         activity = true;
 
                 }
@@ -259,10 +274,6 @@ public class AtomConcept extends AbstractConcept {
         return activity;
     }
 
-    boolean linkTerm(TermLinkTemplate template, boolean updateTLinks) {
-        return template.link(this, updateTLinks);
-        //return linkTerm(template, 0, 0, 0, updateTLinks);
-    }
 
     @Override
     public TermLinkBuilder getTermLinkBuilder() {

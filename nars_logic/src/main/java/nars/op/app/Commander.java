@@ -34,12 +34,16 @@ public class Commander extends NARReaction implements Consumer<Memory> {
     private final Observed.DefaultObserved.DefaultObservableRegistration cycleEnd;
     private final NAR nar;
 
+    /** how far away from the occurence time of a temporal belief before it is deleted */
+    private final int maxTemporalBeliefAge;
+    private final int maxTemporalBeliefDurations = 16 /* should be tuned */;
+
 
     float priorityPerCycle = 1,
             priorityRemaining = 0; //change left over from last cycle
 
     public Commander(NAR nar) {
-        this(nar, new ItemAccumulator(Budget.plus));
+        this(nar, new ItemAccumulator<>(Budget.plus));
     }
 
     public Commander(NAR nar, ItemAccumulator<Task> buffer) {
@@ -48,6 +52,10 @@ public class Commander extends NARReaction implements Consumer<Memory> {
         this.cycleEnd = nar.memory.eventCycleEnd.on(this);
         this.commands = buffer;
         commandIterator = Iterators.cycle(commands.items);
+
+
+        this.maxTemporalBeliefAge = nar.memory.duration() * maxTemporalBeliefDurations;
+
 
         nar.memory.eventTaskProcess.on((tp) -> {
             Task t = tp.getTask();
@@ -83,16 +91,35 @@ public class Commander extends NARReaction implements Consumer<Memory> {
         //TODO iterate tasks until allotted priority has been reached,
         //  TaskProcess each
 
+        int inputsPerCycle = Math.min(1, commands.size());
 
-        int inputsPerCycle = 1;
+        final long now = nar.time();
 
+        final Iterator<Task> commandIterator = this.commandIterator;
         for (int i = 0; i < inputsPerCycle; i++) {
             if (commandIterator.hasNext()) {
-                Task next = commandIterator.next();
-                memory.input(next);
+                final Task next = commandIterator.next();
+                if (valid(now, next))
+                    memory.input(next);
+                else
+                    commandIterator.remove();
             }
         }
 
+    }
+
+    public final boolean valid(final long now, final Task t) {
+
+        if (t.getBudget().isDeleted())
+            return false;
+
+        if (!t.isEternal()) {
+            long age = Math.abs( now - t.getOccurrenceTime() );
+            if (age > maxTemporalBeliefAge)
+                return false;
+        }
+
+        return true;
     }
 
     //TODO getBufferPrioritySum

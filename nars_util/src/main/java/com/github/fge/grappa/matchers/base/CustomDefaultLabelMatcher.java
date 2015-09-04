@@ -39,13 +39,13 @@ public abstract class CustomDefaultLabelMatcher<T extends CustomDefaultLabelMatc
     }
 
     @Override
-    public String getLabel()
+    final public String getLabel()
     {
         return hasCustomLabel() ? super.getLabel() : defaultLabel;
     }
 
     @Override
-    public boolean hasCustomLabel()
+    final public boolean hasCustomLabel()
     {
         return super.getLabel() != null;
     }

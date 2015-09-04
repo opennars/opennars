@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.event.MemoryReaction;
 import nars.task.Task;
-import nars.util.data.CuckooMap;
+import nars.util.data.map.CuckooMap;
 import org.jgrapht.graph.DefaultEdge;
 
 import java.util.ArrayDeque;

@@ -24,10 +24,13 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     long cyc;
     int duration;
 
+    @Override final public boolean hasVar(Op type) {
+        return false;
+    }
+
     public static CyclesInterval make(long numCycles) {
         return new CyclesInterval(numCycles);
     }
-
 
     public static CyclesInterval make(long numCycles, AbstractMemory m) {
         return make(numCycles, m.duration());

@@ -4,6 +4,7 @@ import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import nars.guifx.util.ColorArray;
 import nars.io.Texts;
 import org.apache.commons.math3.util.FastMath;
 
@@ -27,7 +28,7 @@ public class LinePlot extends Canvas {
     int count;
 
     public LinePlot(String name, DoubleSupplier valueFunc, int history) {
-        super(300,300);
+        super();
 
 
 //        ChangeListener sizechanged = new ChangeListener() {

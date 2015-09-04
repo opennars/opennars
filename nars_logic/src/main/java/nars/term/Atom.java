@@ -51,11 +51,7 @@ public class Atom extends ImmutableAtom {
     }
 
 
-    @Override
-    public int length() {
-        throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
-        //return 0;
-    }
+
 
 
 
@@ -199,38 +195,17 @@ public class Atom extends ImmutableAtom {
      * Alias for 'isNormalized'
      * @return A Term is constant by default
      */
-    @Override
-    public boolean isConstant() {
-        return true;
-    }
+
+
+
 
     @Override
-    public int getTemporalOrder() {
-        return TemporalRules.ORDER_NONE;
-    }
-
-    @Override
-    public void recurseTerms(final TermVisitor v, Term parent) {
+    public final void recurseTerms(final TermVisitor v, final Term parent) {
         v.visit(this, parent);
     }
 
-    public void recurseSubtermsContainingVariables(final TermVisitor v) {
+    public final void recurseSubtermsContainingVariables(final TermVisitor v) {
         recurseSubtermsContainingVariables(v, null);
-    }
-
-    @Override
-    public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
-        //TODO move to Variable subclass and leave this empty here
-        if (hasVar())
-            v.visit(this, parent);
-    }
-
-
-
-
-    @Override
-    public int containedTemporalRelations() {
-        return 0;
     }
 
     /**
@@ -239,15 +214,10 @@ public class Atom extends ImmutableAtom {
      * @param target The term to be searched
      * @return Whether the two have the same content
      */
-    @Override
-    public boolean containsTermRecursivelyOrEquals(final Term target) {
-        return equals(target);
-    }
-
-    /** whether this contains a term in its components. */
-    @Override
-    public boolean containsTerm(final Term target) {
-        return equals(target);
+    @Override public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+        //TODO move to Variable subclass and leave this empty here
+        if (hasVar())
+            v.visit(this, parent);
     }
 
 
@@ -268,19 +238,19 @@ public class Atom extends ImmutableAtom {
     @Override public boolean hasVarIndep() {
         return false;
     }
-    @Override public int varIndep() { return 0;     }
+
 
     @Override public boolean hasVarDep() {
         return false;
     }
-    @Override public int varDep() { return 0;     }
+
 
     @Override public boolean hasVarQuery() {
         return false;
     }
-    @Override public int varQuery() { return 0;     }
 
-    public static String unquote(Term s) {
+
+    public static String unquote(final Term s) {
         String x = s.toString();
         if (x.startsWith("\"") && x.endsWith("\"")) {
             return x.substring(1, x.length()-1);

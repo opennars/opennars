@@ -1,4 +1,7 @@
-
+.root {
+    -fx-font-family: monospace;
+    /*-fx-font-family: 'Monospaced';*/
+}
 .button {
     -fx-padding: 12 30 12 30;
     -fx-border-width: 0;
@@ -13,7 +16,7 @@
 
 
 .label {
-    -fx-font-size: 18px;
+
 }
 
 

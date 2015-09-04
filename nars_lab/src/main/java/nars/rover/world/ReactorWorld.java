@@ -21,8 +21,8 @@ public class ReactorWorld extends RoverWorld {
     private final float w;
     private final float h;
 
-    public ReactorWorld(PhysicsModel p, int numFood, float w, float h) {
-        super(p);
+    public ReactorWorld(int numFood, float w, float h) {
+        super();
         this.w = w;
         this.h = h;
 

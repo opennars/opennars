@@ -411,7 +411,11 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
     }
 
     public boolean setMemory(Memory memory) {
-        if (memory != null && this.memory != null) return false;
+        //detect if a different memory tries to steal this operation
+        if (this.memory != null)
+             if (this.memory != memory)
+                 return false;
+
         this.memory = memory;
         return true;
     }

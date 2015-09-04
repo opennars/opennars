@@ -21,6 +21,7 @@ import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.guifx.graph3.SpaceNet;
 import nars.guifx.graph3.Xform;
+import nars.guifx.util.ColorArray;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;

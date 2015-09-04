@@ -1,6 +1,7 @@
 package nars.guifx;
 
 import nars.NAR;
+import nars.guifx.util.CodeInput;
 import nars.io.in.TextInput;
 
 /**

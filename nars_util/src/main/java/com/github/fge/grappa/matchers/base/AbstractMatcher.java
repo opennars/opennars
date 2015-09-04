@@ -61,8 +61,7 @@ public abstract class AbstractMatcher
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel()    {
         return label;
     }
 

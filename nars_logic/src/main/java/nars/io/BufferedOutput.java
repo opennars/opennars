@@ -286,7 +286,7 @@ abstract public class BufferedOutput extends Output {
             signal = args;
 
         float cost = cost(channel, signal);
-        if (Float.isFinite(cost))
+        if (Float.isNaN(cost))
             queue(nar.time(), channel, signal, cost);
         /*else
             excluded(signal); */

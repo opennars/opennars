@@ -18,11 +18,11 @@ import java.util.Random;
 abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
 
 
-    CycleProcess newCycleProcess();
+    CycleProcess getCycleProcess();
 
     default public Memory newMemory() {
 
-        final Param p = newParam();
+        final Param p = getParam();
 
         return new Memory(
                 getRandom(),
@@ -30,16 +30,16 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
                 p,
                 getConceptBuilder(),
                 getPremiseProcessor(p),
-                newConceptIndex()
+                getConceptIndex()
         );
     }
 
-    Param newParam();
+    Param getParam();
 
     /** common random number generator */
     Random getRandom();
 
-    CacheBag<Term,Concept> newConceptIndex();
+    CacheBag<Term,Concept> getConceptIndex();
 
     default int getMaximumNALLevel() {
         return 8;

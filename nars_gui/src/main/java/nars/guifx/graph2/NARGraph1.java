@@ -390,17 +390,17 @@ public class NARGraph1 extends Spacegraph {
 
             return Color.hsb(25.0 + 180.0 * (1.0 + (termMean - taskMean)),
                     0.95f,
-                    Math.min(0.25f + 0.75f * (termMean + taskMean) / 2f, 1f),
-                    0.5 * (termMean + taskMean)
+                    Math.min(0.75f + 0.25f * (termMean + taskMean) / 2f, 1f)
+                    //,0.5 * (termMean + taskMean)
                     );
 
 
-//        return new Color(
-//                0.5f + 0.5f * termMean,
-//                0,
-//                0.5f + 0.5f * taskMean,
-//                0.5f + 0.5f * (termMean + taskMean)/2f
-//        );
+//            return new Color(
+//                    0.5f + 0.5f * termMean,
+//                    0,
+//                    0.5f + 0.5f * taskMean,
+//                    0.5f + 0.5f * (termMean + taskMean)/2f
+//            );
         }
 
     };
@@ -787,7 +787,7 @@ public class NARGraph1 extends Spacegraph {
         sn.concept = c;
 
         c.getTaskLinks().forEach(t -> {
-            Term target = t.getTarget();
+            Term target = t.getTerm();
             if (!source.equals(target.getTerm())) {
                 TermNode tn = getTermNode(target, false);
                 if (tn!=null) {
@@ -798,7 +798,7 @@ public class NARGraph1 extends Spacegraph {
         });
 
         c.getTermLinks().forEach(t -> {
-            TermNode tn = getTermNode(t.getTarget(), false);
+            TermNode tn = getTermNode(t.getTerm(), false);
             if (tn !=null) {
                 TermEdgeHalf e = getConceptEdgeHalf(sn, tn);
                 e.set(t, now);
@@ -969,8 +969,8 @@ public class NARGraph1 extends Spacegraph {
     HyperassociativeMap<TermNode, TermEdge> h = null;
 
     protected void layoutNodes() {
-        layoutNodesCircle();
-        //layoutNodesHyper();
+        //layoutNodesCircle();
+        layoutNodesHyper();
     }
 
     protected void layoutNodesCircle() {

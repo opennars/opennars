@@ -41,14 +41,17 @@ public final class OneOrMoreMatcher
     }
 
     @Override
-    public MatcherType getType()
+    final public MatcherType getType()
     {
         return MatcherType.COMPOSITE;
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    final public <V> boolean match(final MatcherContext<V> context)
     {
+
+        final Matcher subMatcher = this.subMatcher;
+
         final boolean matched = subMatcher.getSubContext(context).runMatcher();
         if (!matched)
             return false;

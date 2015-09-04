@@ -327,19 +327,20 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             final V i =
                     remove ? removeItem(index): items.get(index);
 
-            if (i.getBudget().isDeleted()) {
+            if (i == null)
+                return null;
 
-                //ignore this deleted item now that it's removed from the bag
-                //if it wasnt already removed above
-                if (!remove)
-                    remove(i.name());
-
-                continue;
-
-            }
-            else {
+            if (!i.getBudget().isDeleted()) {
                 return i;
             }
+
+            //ignore this deleted item now that it's removed from the bag
+            //if it wasnt already removed above
+            if (!remove)
+                remove(i.name());
+
+            continue;
+
         }
         return null; // empty bag
     }
@@ -468,6 +469,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             V displaced = null;
 
             if (full()) {
+
 
                 if (getPriorityMin() > i.getPriority()) {
                     //insufficient priority to enter the bag
@@ -760,6 +762,17 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             */
 
         return fill;
+    }
+
+    @Override
+    public float getPriorityMax() {
+        if (isEmpty()) return 0;
+        return items.getFirst().getPriority();
+    }
+    @Override
+    public float getPriorityMin() {
+        if (isEmpty()) return 0;
+        return items.getLast().getPriority();
     }
 
     //    @Override

@@ -272,7 +272,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return toString(sb, memory, false);
     }
 
-    default public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp) {
+    default public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget) {
 
 
         String contentName;
@@ -311,7 +311,10 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             buffer.ensureCapacity(stringLength);
 
 
-        getBudget().toBudgetStringExternal(buffer).append(" ");
+        if (showBudget) {
+            getBudget().toBudgetStringExternal(buffer).append(" ");
+        }
+
         buffer.append(contentName).append(getPunctuation());
 
         if (tenseString.length() > 0)

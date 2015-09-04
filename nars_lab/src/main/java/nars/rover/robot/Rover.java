@@ -29,27 +29,24 @@ public class Rover extends AbstractPolygonBot {
     private final ChangedTextInput feltSpeedAvg;
     private final ChangedTextInput mouthInput;
 
-    final double minVisionInputProbability = 0.9f;
-    final double maxVisionInputProbability = 1.0f;
-
     //float tasteDistanceThreshold = 1.0f;
-    final static int retinaPixels = 12;
+    final static int retinaPixels = 11;
 
 
-    int retinaRaysPerPixel = 4; //rays per vision sensor
+    int retinaRaysPerPixel = 2; //rays per vision sensor
 
     float aStep = (float)(Math.PI*2f) / retinaPixels;
 
     float L = 25f; //vision distance
 
     Vec2 mouthPoint = new Vec2(2.7f, 0); //0.5f);
-    @Deprecated int distanceResolution = 6;
+    @Deprecated int distanceResolution = 4;
 
     double mouthArc = Math.PI/6f; //in radians
     float biteDistanceThreshold = 0.05f;
 
 
-    float linearDamping = 0.9f;
+    float linearDamping = 0.8f;
     float angularDamping = 0.6f;
     float restitution = 0.9f; //bounciness
     float friction = 0.5f;

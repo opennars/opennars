@@ -161,8 +161,9 @@ public abstract class AbstractPolygonBot extends Robotic {
             return;
         }
 
-        float x = (float) Math.random() * Sim.sz - Sim.sz / 2f;
-        float y = (float) Math.random() * Sim.sz - Sim.sz / 2f;
+        @Deprecated int sz = 48;
+        float x = (float) Math.random() * sz - sz / 2f;
+        float y = (float) Math.random() * sz - sz / 2f;
         //random new position
         eaten.setTransform(new Vec2(x * 2.0f, y * 2.0f), eaten.getAngle());
     }

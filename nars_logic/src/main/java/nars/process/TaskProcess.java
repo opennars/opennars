@@ -18,6 +18,7 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,
@@ -31,6 +32,11 @@ public class TaskProcess extends NAL {
 
     public TaskProcess(Memory mem, Task task) {
         super(mem);
+
+        if (task.isDeleted()) {
+            throw new RuntimeException("task is deleted");
+        }
+
         this.task = task;
     }
 
@@ -68,7 +74,7 @@ public class TaskProcess extends NAL {
 
         sb.append(getClass().getSimpleName()).append('[');
 
-        getTask().toString(sb, getMemory(), true, false);
+        getTask().toString(sb, getMemory(), true, false, true);
 
         sb.append(']');
 
@@ -78,23 +84,33 @@ public class TaskProcess extends NAL {
 
 
 
+
     @Override final public void derive() {
 
-        final Memory memory = this.memory;
-        final Concept c = memory.conceptualize(getTask());
+        final Task task = getTask();
 
-        if (c==null) return;
+        /** deleted in the time between this was created, and run() */
+        if (task.isDeleted()) {
+            return;
+        }
+
+        final Memory memory = this.memory;
+
+        final Concept c = memory.conceptualize(task);
+
+        if (c==null) {
+            memory.removed(task, "Unable to conceptualize");
+            return;
+        }
 
         if (processConcept(c)) {
 
-            final Task t = getTask();
-
-            c.link(t);
+            c.link(task);
 
             memory.eventTaskProcess.emit(this);
 
             memory.logic.TASK_PROCESS.hit();
-            memory.emotion.busy(t, this);
+            memory.emotion.busy(task, this);
         }
         
     }
@@ -114,10 +130,7 @@ public class TaskProcess extends NAL {
 
         final Task task = getTask();
 
-        if (!c.processable(task)) {
-            removed(task, "Filtered by Concept");
-            return false;
-        }
+
 
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
         task.setTermShared((Compound) c.getTerm());
@@ -168,12 +181,12 @@ public class TaskProcess extends NAL {
         inputDerivations();
     }
 
-    public static Premise run(final NAR nar, final String task) {
+    public static Premise queue(final NAR nar, final String task) {
         return run(nar.memory, nar.task(task));
     }
 
     /** create and execute a direct process immediately */
-    public static Premise run(final NAR nar, final Task task) {
+    public static Premise queue(final NAR nar, final Task task) {
         return run(nar.memory, task);
     }
 
@@ -210,16 +223,22 @@ public class TaskProcess extends NAL {
     }
 
 
-    /** batch processing run: the reverse sorted list is divided into 3 sections:
-     *  0  ..        discarded:  to remove from the system
-     *  (last-remaining)..last:  to input (highest pri first)
+    /**
+     * queues a batch process run of TaskProcess's to their
+     * relevant concepts after conceptualizing them with
+     * the budget
      *
-     *  ignore the rest, they are still in the newTaskBuffer this sort was generated from
+     * the input reverse sorted task list is divided into 3 sections:
+     *
+     *      0      ..    discarded   == to remove from the system
+     *           --ignore--          == (they are still in the newTaskBuffer this sort was generated from)
+     *      (last-remaining)..last   == to input (highest pri first)
+     *
      * */
-    public static TaskProcess[] run(final Memory memory, final List<Task> reverseSorted, final int toRun, final int toDiscard) {
+    public static void run(final Memory memory, final List<Task> reverseSorted, final int toRun, final int toDiscard) {
 
         final int size = reverseSorted.size();
-        if (size == 0) return emptyTaskProcess;
+        if (size == 0) return;
 
         if (toRun + toDiscard > size)
             throw new RuntimeException("invalid buffer positions; size=" + size + ", toRun=" + toRun + ", toDiscard=" + toDiscard);
@@ -229,13 +248,20 @@ public class TaskProcess extends NAL {
         }
 
         final int bottomPoint = Math.max(size-toRun, toDiscard);
-        final TaskProcess[] r = new TaskProcess[size-bottomPoint];
+        //final TaskProcess[] r = new TaskProcess[size-bottomPoint];
 
-        int j = 0;
+        //int j = 0;
         for (int i = size-1; i >= bottomPoint; i--) {
-            r[j++] = TaskProcess.get( memory, reverseSorted.get(i) );
+
+            final TaskProcess tp = new TaskProcess(memory, reverseSorted.get(i));
+            tp.run();
+
+            //target.accept();
+
+            //r[j++] =
         }
 
-        return r;
     }
+
+
 }
