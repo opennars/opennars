@@ -5,6 +5,7 @@
 package nars.task.filter;
 
 import nars.budget.Budget;
+import nars.nal.UtilityFunctions;
 import nars.premise.Premise;
 import nars.task.Task;
 
@@ -15,10 +16,19 @@ import nars.task.Task;
 public class LimitDerivationPriority implements DerivationFilter {
 
     @Override
-    public String reject(Premise nal, Task task, boolean solution, boolean revised) {
+    final public String reject(final Premise nal, final Task task, final boolean solution, final boolean revised) {
 
-        Budget currentTaskBudget = nal.getTask().getBudget();
-        task.getBudget().andPriority(currentTaskBudget.getPriority());
+        final Budget targetBudget = task.getBudget();
+
+        final Budget currentTaskBudget = nal.getTask().getBudget();
+        float m = currentTaskBudget.getPriority();
+
+        if (nal.getBelief()!=null) {
+            final Budget currentBeliefBudget = nal.getBelief().getBudget();
+            m = UtilityFunctions.and(m,currentBeliefBudget.getPriority());
+        }
+
+        targetBudget.andPriority(m);
         
         return null;
     }

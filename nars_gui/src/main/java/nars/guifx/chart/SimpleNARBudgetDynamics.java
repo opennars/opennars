@@ -1,9 +1,9 @@
 package nars.guifx.chart;
 
 import nars.Global;
+import nars.NARSeed;
 import nars.NARStream;
-import nars.nar.Default;
-import nars.nar.NewDefault;
+import nars.nar.experimental.Alann;
 import nars.narsese.NarseseParser;
 import nars.term.Term;
 
@@ -34,30 +34,45 @@ public class SimpleNARBudgetDynamics {
     public static void main(String[] args) {
 
 
-        int cycles = 1000;
+        int preCycles = 0;
+        int cycles = 2000;
 
-        Consumer<NARStream> execution = n -> {
-            n
-                    //.stdout()
-                    .input(abcClosed).run(cycles);
-        };
+        float pri = 0.1f;
+
+        String[] x = abcClosed.clone();
+        for (int i = 0; i < x.length; i++) {
+            x[i] = "$" + pri + ";" + pri + ";" + pri + "$ " + x[i];
+        }
+
+
 
 
         //Default d = new Default(1024, 1, 3).setInternalExperience(null);
         //Default d = new Equalized(1024, 5, 7).setInternalExperience(null);
-        Default d = new NewDefault().setInternalExperience(null);
+        //Default d = new NewDefault().setInternalExperience(null);
+        NARSeed d = new Alann(500, 2);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
         //d.conceptActivationFactor.set(0.5f);
-        d.setCyclesPerFrame(1);
-        d.duration.set(5);
+        //d.setCyclesPerFrame(1);
+        //d.duration.set(5);
         //d.level(3);
         //d.conceptForgetDurations.set(2);
         //d.taskLinkForgetDurations.set(1);
         //d.termLinkForgetDurations.set(2);
 
+
+
+
+        Consumer<NARStream> execution = n -> {
+            n
+                    //.stdout()
+                    .input(x).run(cycles);
+        };
+
         new NARui(d)
 
+                .then(n -> { n.nar.frame(preCycles); })
                 .meter( (metrics, nar) -> {
                     metrics.set("# concepts", nar.memory.numConcepts(true, false));
                 })

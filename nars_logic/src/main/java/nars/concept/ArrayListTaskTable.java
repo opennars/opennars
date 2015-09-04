@@ -3,8 +3,7 @@ package nars.concept;
 import javolution.util.function.Equality;
 import nars.AbstractMemory;
 import nars.task.Task;
-
-import java.util.ArrayList;
+import nars.util.data.list.FasterList;
 
 /** implements a Task table suitable for Questions and Quests using an ArrayList.
  *  we use an ArrayList and not an ArrayDeque (which is seemingly ideal for the
@@ -13,7 +12,7 @@ import java.util.ArrayList;
  *
  *
  */
-public class ArrayListTaskTable extends ArrayList<Task> implements TaskTable {
+public class ArrayListTaskTable extends FasterList<Task> implements TaskTable {
 
     protected int cap;
 

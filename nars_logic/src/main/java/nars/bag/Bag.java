@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements CacheBag<K,V>, Consumer<V>, Supplier<V>, Serializable {
 
-    transient public final BagForgetting<K, V> forgetNext = new BagForgetting<>();
+    transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
     /** returns the bag to an empty state */
     public abstract void clear();
@@ -407,7 +407,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     }
 
-    public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {
+    final public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {
         float forgetCycles = m.param.cycles(forgetDurations);
         forgetNext(forgetCycles, accuracy, m);
     }
@@ -418,9 +418,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 //     * @return the variable that was updated, or null if none was taken out
 //     * @forgetCycles forgetting time in cycles
 //     */
-    public V forgetNext(final AtomicDouble forgetDurations, final Memory m) {
+    final public V forgetNext(final AtomicDouble forgetDurations, final Memory m) {
         return forgetNext(forgetDurations.floatValue(), m);
     }
+
     public V forgetNext(final float forgetDurations, final Memory m) {
         setForgetNext(forgetDurations, m);
         return forgetNext();
@@ -432,10 +433,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
     /** call this to set the forgetNext settings prior to calling forgetNext() */
-    public void setForgetNext(final AtomicDouble forgetDurations, final Memory m) {
-        setForgetNext(forgetDurations.floatValue(), m);
-    }
-    public void setForgetNext(final float forgetDurations, final Memory m) {
+    protected void setForgetNext(final float forgetDurations, final Memory m) {
         forgetNext.set(m.param.cycles(forgetDurations), m.time());
     }
 

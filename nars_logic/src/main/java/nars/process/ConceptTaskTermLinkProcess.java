@@ -38,13 +38,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
         final Memory memory = getMemory();
 
-        final Bag<TermLinkKey, TermLink> tl = concept.getTermLinks();
-        if (tl != null)
-            tl.setForgetNext(memory.param.termLinkForgetDurations, memory);
-
-
         memory.rules.fire(this);
-
 
         memory.eventBeliefReason.emit(this);
         //emit(Events.BeliefReason.class, this);

@@ -91,7 +91,9 @@ public class Commander extends NARReaction implements Consumer<Memory> {
         //TODO iterate tasks until allotted priority has been reached,
         //  TaskProcess each
 
-        int inputsPerCycle = Math.min(1, commands.size());
+        if (commands.size() == 0) return;
+
+        int inputsPerCycle = 1; //Math.min(1, commands.size());
 
         final long now = nar.time();
 

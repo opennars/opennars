@@ -607,15 +607,28 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      */
     @Override
     final public long setLastForgetTime(final long currentTime) {
-        long period;
-        if (this.lastForgetTime == -1)
+
+        final long period;
+        final boolean save;
+
+        if (this.lastForgetTime == -1) {
             period = 0;
-        else
+            save = true;
+        }
+        else {
             period = currentTime - lastForgetTime;
+            save = !(period == 0);
+        }
 
-        lastForgetTime = currentTime;
+        if (save) {
+            this.lastForgetTime = currentTime;
+            return period;
+        }
 
-        return period;
+        if (period > 0)
+            System.err.println("wtf");
+
+        return 0;
     }
 
     @Override
@@ -748,7 +761,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         setDurability(getDurability() * factor);
     }
 
-    public boolean summaryLessThan(final float s) {
+    public final boolean summaryLessThan(final float s) {
         return !summaryNotLessThan(s);
     }
 

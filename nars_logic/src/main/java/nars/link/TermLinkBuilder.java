@@ -56,7 +56,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     }
 
-    void prepareComponentLinks(Compound ct) {
+    final void prepareComponentLinks(Compound ct) {
         short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         prepareComponentLinks(type, ct);
     }
@@ -145,7 +145,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     /** count how many termlinks are non-transform */
-    public List<TermLinkTemplate> templates() {
+    public final List<TermLinkTemplate> templates() {
         return template;
     }
 
@@ -159,18 +159,18 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     @Override
-    public float getForgetCycles() {
+    public final float getForgetCycles() {
         return forgetCycles;
     }
 
     @Override
-    public long time() {
+    public final long time() {
         return now;
     }
 
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory memory) {
+    public final  TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory memory) {
         if ((temp != currentTemplate) || (this.incoming != initialDirection)) {
             this.currentTemplate = temp;
             this.incoming = initialDirection;
@@ -185,7 +185,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return this;
     }
 
-    public TermLinkBuilder setIncoming(final boolean b) {
+    public final TermLinkBuilder setIncoming(final boolean b) {
         if (this.incoming!=b) {
             this.incoming = b;
             validate();
@@ -194,78 +194,49 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     @Override
-    public byte[] bytes() {
+    public final byte[] bytes() {
         return prefix;
     }
 
 
     @Override
-    public void setBytes(byte[] b) {
+    public final void setBytes(byte[] b) {
         this.prefix = b;
     }
 
-    protected void validate() {
+    protected final void validate() {
         this.prefix = currentTemplate.prefix(incoming);
         this.hash = currentTemplate.hash(incoming);
     }
 
-
-
-
     @Override
-    public Term getTerm() {
+    public final Term getTerm() {
         return incoming ? concept.getTerm() : currentTemplate.getTarget();
     }
 
-    public Term getSource() {
+    public final Term getSource() {
         return incoming ? currentTemplate.getTarget() : concept.getTerm();
     }
 
     @Override
-    public boolean equals(final Object obj) {
-
-        //seems that identity comparison is all that's needed here.
-        //no counterexamples were discovered using the below commented code.
-        //return (obj!=null) && ((((TermLink)obj)).getTarget() == getTarget());
-
-        return termLinkEquals(obj);
-
-/*
-        if (obj == null) return false;
-        //experimental identity-only comparison
-        if (obj == null)
-            System.err.println("obj null");
-        if (getTarget() == null)
-            System.err.println("targetnull");
-
-        if ((((TermLink)obj)).getTarget() == getTarget()) {
-            return true;
-        }
-        else {
-            if (termLinkEquals(obj))
-                System.err.println("actually equal but dif instances: " + this + " " + obj);
-        }
-        return false;
-*/
-
-        //Original comparison
-        //return termLinkEquals(obj);
+    public final boolean equals(final Object obj) {
+        return TermLinkKey.termLinkEquals(this, (TermLinkKey) obj);
     }
 
 
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return hash;
     }
 
     @Override
-    public TermLink newItem() {
+    public final TermLink newItem() {
         //this.prefix = null;
         return new TermLink(getTerm(), currentTemplate, getBudget(), prefix, hash);
     }
 
-    public TermLink out(TermLinkTemplate tlt) {
+    public final TermLink out(TermLinkTemplate tlt) {
         return new TermLink(tlt.getTarget(), tlt, getBudget(),
                 tlt.prefix(false),
                 tlt.hash(false));
@@ -284,20 +255,20 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     /** count of how many templates are non-transforms */
-    public int getNonTransforms() {
+    public final int getNonTransforms() {
         return nonTransforms;
     }
 
 
 
     @Override
-    public String toString() {
+    public final String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
         return name().toString();
     }
 
     @Override
-    public TermLinkKey name() {
+    public final TermLinkKey name() {
         return this;
     }
 
@@ -309,7 +280,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 //        return t;
 //    }
 
-    public Term getOther() {
+    public final Term getOther() {
         return currentTemplate.getTerm();
     }
 

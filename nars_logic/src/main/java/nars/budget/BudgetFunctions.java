@@ -246,8 +246,8 @@ public final class BudgetFunctions extends UtilityFunctions {
         final double lambda = (1 - budget.getDurability()) / forgetPeriod;
 
         final float nextPriority = currentPriority *
-                (float)Util.expFast(-lambda * t);
-                //(float)Math.exp(-lambda * t);
+                //(float)Util.expFast(-lambda * t);
+                (float)Math.exp(-lambda * t);
 
         //self limiting to [0,1] interval so no need for checks
         budget.setPriority(nextPriority);

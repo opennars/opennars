@@ -31,10 +31,11 @@ public class SomeRovers {
 
     public static NARSeed newDefault(int threads) {
 
-        int cycPerFrame = 8;
+        int cycPerFrame = 16;
 
-        Alann d = new Alann(256, threads);
-        d.param.conceptActivationFactor.set(0.05f);
+        Alann d = new Alann(64, threads);
+        d.param.conceptActivationFactor.set(0.25f);
+        d.param.inputsMaxPerCycle.set(4);
 
         //Default d = new Equalized(1024, 16, 10);
         //d.setTermLinkBagSize(16);

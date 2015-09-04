@@ -153,7 +153,7 @@ public class Equalized extends NewDefault {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                new FilterBelowConfidence(0.02),
+                new FilterBelowConfidence(0.01),
                 new FilterDuplicateExistingBelief(),
                 new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());

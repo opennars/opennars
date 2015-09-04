@@ -103,17 +103,17 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     }
 
     @Override
-    public byte[] bytes() {
+    public final byte[] bytes() {
         return prefix;
     }
 
     @Override
-    public void setBytes(byte[] b) {
+    public final void setBytes(byte[] b) {
         this.prefix = b;
     }
 
     @Override
-    public TermLinkKey name() {
+    public final TermLinkKey name() {
         return this;
     }
 
@@ -131,14 +131,14 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return hash;
     }
 
 
     @Override
-    public boolean equals(final Object obj) {
-        return termLinkEquals(obj);
+    public final boolean equals(final Object obj) {
+        return TermLinkKey.termLinkEquals(this, (TermLinkKey) obj);
 
 //        if (this != obj) {
 //            if (termLinkEquals(obj)) {

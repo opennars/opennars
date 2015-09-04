@@ -655,7 +655,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     }
 
     @Override
-    final public void forEach(final Consumer<? super V> action) {
+    public void forEach(final Consumer<? super V> action) {
 
         final List<V> l = items.getList();
         for (int i = 0; i < l.size(); i++){
@@ -666,7 +666,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
 
     /** default implementation; more optimal implementations will avoid instancing an iterator */
-    final public void forEach(final int max, final Consumer<V> action) {
+    public void forEach(final int max, final Consumer<V> action) {
         final List<V> l = items.getList();
         final int n = Math.min(l.size(), max);
         //TODO let the list implementation decide this because it can use the array directly in ArraySortedIndex

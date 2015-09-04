@@ -17,11 +17,12 @@ public interface TermLinkKey extends Byted /* byte[] holds the prefix part */ {
 //        return Objects.hash(getPrefix(), getTarget());
 //    }
 
-    default public boolean termLinkEquals(final Object obj) {
-        if (this == obj) return true;
-        //if (!(obj instanceof TermLinkKey)) return false;
-        final TermLinkKey tl = (TermLinkKey) obj;
-        return Byted.equals(this, tl) && getTerm().equals(tl.getTerm());
+    public static boolean termLinkEquals(final TermLinkKey a, final TermLinkKey b) {
+        if (a == b) return true;
+        //if (!(b instanceof TermLinkKey)) return false;
+
+        return Byted.equals(a, b) &&
+                a.getTerm().equals(b.getTerm());
     }
 
 //    /** the result of this should be cached */

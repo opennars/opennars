@@ -73,13 +73,8 @@ public abstract class AbstractCycle<C extends CacheBag<Term,Concept>> extends Co
 
     @Override
     public void reset(Memory m) {
-
-
-
         clear();
-
         memory = m;
-
     }
 
     @Override
