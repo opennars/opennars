@@ -14,6 +14,7 @@ public class NARSwingRules {
 
         Video.themeInvert();
 
+        
         NARSeed d = new NewDefault();
 
         NAR n = new NAR(d);

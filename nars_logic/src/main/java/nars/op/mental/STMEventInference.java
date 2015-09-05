@@ -121,10 +121,18 @@ public class STMEventInference extends NARReaction {
 
         RuleMatch m = matchers.get();
 
+
+
+
         for (Task previousTask : stmCopy) {
 
+
+            //help me out seh, why doesnt this work? ^^
+            nal.memory.concept(currentTask.getTerm()).link(previousTask);
+            nal.memory.concept(previousTask.getTerm()).link(currentTask);
             //nal.setCurrentTask(currentTask);
 
+           /* continue;
             //nal.setBelief(previousTask);
 
             //if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
@@ -134,6 +142,8 @@ public class STMEventInference extends NARReaction {
             final Premise premise = new STMPremise(nal, previousTask);
             ///final Task task, final Sentence belief, Term beliefterm,
             //tLink.getTask(), belief, bLink.getTerm(),
+
+
 
 
             m.start(premise);
@@ -147,7 +157,7 @@ public class STMEventInference extends NARReaction {
                 //TODO also allow backward inference by traversing
             }
 
-            m.clear();
+            m.clear();*/
 
         }
 

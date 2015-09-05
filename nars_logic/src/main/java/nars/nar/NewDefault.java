@@ -1,8 +1,19 @@
 package nars.nar;
 
+import nars.NAR;
 import nars.Param;
 import nars.nal.*;
+import nars.nal.nal8.OpReaction;
+import nars.op.app.STMEventInference;
+import nars.op.app.STMInduction;
+import nars.op.mental.*;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
+
+import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
+import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
+
+//LOCKED CODE!!!, ASK PATRICK FOR CHANGE, I WILL REVERT ALL CHANGES NO MATTER WHAT IF I AM NOT CONVINCED THAT
+//THE CHANGE WILL BREAK NOTHING
 
 /**
  * Temporary class which uses the new rule engine for ruletables
@@ -42,6 +53,39 @@ public class NewDefault extends Default {
         }
 
         der = r;
+    }
+
+    @Override
+    public void init(NAR n) {
+
+        n.setCyclesPerFrame(cyclesPerFrame);
+
+
+        if (maxNALLevel >= 7) {
+            n.on(STMEventInference.class);
+
+
+            if (maxNALLevel >= 8) {
+
+                for (OpReaction o : defaultOperators)
+                    n.on(o);
+                for (OpReaction o : exampleOperators)
+                    n.on(o);
+
+
+                //n.on(Anticipate.class);      // expect an event
+
+                if (internalExperience == Minimal) {
+                    n.on(InternalExperience.class, Abbreviation.class);
+                } else if (internalExperience == Full) {
+                    n.on(FullInternalExperience.class);
+                    n.on(Counting.class);
+                }
+            }
+        }
+
+        //n.on(new RuntimeNARSettings());
+
     }
 
 
