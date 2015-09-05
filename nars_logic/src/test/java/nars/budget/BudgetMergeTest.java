@@ -22,9 +22,12 @@ public class BudgetMergeTest {
         NullItem z = new NullItem(0.1f, "z");
 
         a.add(x0);
-        a.add(x1);
+        assertEquals(1, a.size());
+        assertEquals(0.5f, a.removeHighest().getPriority(), 0.001);
+        a.add(x0);
 
-        //the new value does not affect the higher existing value w/ max
+        //new value with same key does not affect the higher existing value w/ max
+        a.add(x1);
         assertEquals(1, a.size());
         assertEquals(0.5f, a.removeHighest().getPriority(), 0.001);
 

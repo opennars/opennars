@@ -229,7 +229,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
 
     /** faster than using the BagTransaction version when creation of instances is not necessary */
-    public V peek(final BagSelector<K, V> selector) {
+    public V peekNext(final BagSelector<K, V> selector) {
 
         V item = peekNext();
 
@@ -241,7 +241,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         Budget result = selector.updateItem(item, temp.set(ib));
 
         if ((result == null) || (result.isDeleted()) || (result.equalsByPrecision(ib)))
-            return null;
+            return item;
         else {
             //it has changed
 
@@ -322,7 +322,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         if (isEmpty())
             return 0;
 
-        return peek(forgetNext.set(forgetCycles, now),
+        return peekNext(forgetNext.set(forgetCycles, now),
                 batch, start, stop, maxAdditionalAttempts);
     }
 
@@ -340,15 +340,15 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      *
      *  TODO option for if duplicates are allowed
      */
-    protected int peek(final BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
+    protected int peekNext(final BagSelector<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
 
         final int batchlen = Math.min(size(), stop-start);
         final int maxAttempts = batchlen + maxAdditionalAttempts;
 
-        return peekFill(tx, batch, start, batchlen, maxAttempts);
+        return peekNextFill(tx, batch, start, batchlen, maxAttempts);
     }
 
-    protected int peekFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
+    protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
         int fill = 0;
 
         final Function<V, BagSelector.ForgetAction> filter = tx.getModel();
@@ -356,22 +356,28 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         if (len == size()) {
             //optimization: if len==s then just add all elements
 
-            for (V v : values()) {
-                BagSelector.ForgetAction p = filter.apply(v);
+            for (V x : values()) {
+
+                //HACK
+                BagSelector.ForgetAction p = (filter == null) ? BagSelector.ForgetAction.Select : filter.apply(x);
+
                 if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
-                    batch[start + (fill++)] = v;
+                    batch[start + (fill++)] = x;
             }
 
             return fill;
         }
 
         for (int i = 0; (fill < len) && (i < maxAttempts); i++) {
-            final V v = peek(tx);
-            if (v != null) {
-                BagSelector.ForgetAction p = filter.apply(v);
+            final V x = peekNext(tx);
+            if (x != null) {
+
+                //HACK
+                BagSelector.ForgetAction p = (filter == null) ? BagSelector.ForgetAction.Select : filter.apply(x);
+
                 if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
-                    if (!bufferIncludes(batch, v)) {
-                        batch[start + (fill++)] = v;
+                    if (!bufferIncludes(batch, x)) {
+                        batch[start + (fill++)] = x;
                 }
             }
         }
@@ -402,7 +408,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
         int affected = 0;
         for (int i = 0; i < conceptsToForget; i++) {
-            peek(forgetNext);
+            peekNext(forgetNext);
         }
 
     }
@@ -428,7 +434,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
     public V forgetNext() {
-        peek(forgetNext);
+        peekNext(forgetNext);
         return forgetNext.lastForgotten;
     }
 
@@ -505,8 +511,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     }
 
-    final public int peek(BagSelector<K,V> tx, V[] result, int additionalAttempts) {
-        return peek(tx, result, 0, result.length, additionalAttempts);
+    final public int peekNext(BagSelector<K,V> tx, V[] result, int additionalAttempts) {
+        return peekNext(tx, result, 0, result.length, additionalAttempts);
     }
 
 //    /**

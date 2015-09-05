@@ -65,6 +65,7 @@ public class NewDefault extends Default {
             n.on(STMEventInference.class);
 
 
+
             if (maxNALLevel >= 8) {
 
                 for (OpReaction o : defaultOperators)

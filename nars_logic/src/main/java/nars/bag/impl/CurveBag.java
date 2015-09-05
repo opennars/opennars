@@ -677,7 +677,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     /** optimized peek implementation that scans the curvebag
      *  iteratively surrounding a randomly selected point */
-    @Override protected int peekFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
+    @Override protected int peekNextFill(BagSelector<K, V> tx, V[] batch, int start, int len, int maxAttempts) {
 
 
 
@@ -726,7 +726,10 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             if (++nextUp<s) {
                 final V x = a.get(nextUp);
                 if (!bufferIncludes(batch, x)) {
-                    BagSelector.ForgetAction p = filter.apply(x);
+
+                    //HACK
+                    BagSelector.ForgetAction p = (filter == null) ? BagSelector.ForgetAction.Select : filter.apply(x);
+
                     if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
                         batch[start + (fill++)] = x;
                 }
@@ -742,7 +745,9 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
                 final V x = a.get(nextDown);
 
                 if (!bufferIncludes(batch, x)) {
-                    BagSelector.ForgetAction p = filter.apply(x);
+
+                    BagSelector.ForgetAction p = (filter == null) ? BagSelector.ForgetAction.Select : filter.apply(x);
+
                     if ((p!= BagSelector.ForgetAction.Ignore) && (p!= BagSelector.ForgetAction.IgnoreAndForget))
                         batch[start + (fill++)] = x;
                 }

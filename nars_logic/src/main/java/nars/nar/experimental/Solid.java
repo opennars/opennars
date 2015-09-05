@@ -16,8 +16,10 @@ import nars.concept.ConceptActivator;
 import nars.concept.ConceptBagActivator;
 import nars.concept.ConceptBuilder;
 import nars.link.TaskLink;
+import nars.nal.Deriver;
 import nars.nal.PremiseProcessor;
 import nars.nar.Default;
+import nars.nar.NewDefault;
 import nars.process.ConceptProcess;
 import nars.process.CycleProcess;
 import nars.process.TaskProcess;
@@ -82,6 +84,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
         param.conceptForgetDurations.set(1);
         param.conceptCreationExpectation.set(0);
 
+        param.the(Deriver.class, NewDefault.der);
 
         return param;
     }

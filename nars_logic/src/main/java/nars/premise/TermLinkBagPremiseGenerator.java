@@ -76,7 +76,7 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
 
         //protected int update(BagTransaction<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
 
-        int n = c.getTermLinks().peek(this, result, attempting);
+        int n = c.getTermLinks().peekNext(this, result, attempting);
 
         //onSelect(c, lastForgotten != null, n);
 

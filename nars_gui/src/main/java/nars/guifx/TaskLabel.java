@@ -12,7 +12,7 @@ import org.apache.commons.math3.util.Precision;
 
 public class TaskLabel extends BorderPane {
 
-    private final Text label;
+    public final Text label;
     private final Task task;
     private final TaskSummaryIcon summary;
     private final NSliderFX slider;

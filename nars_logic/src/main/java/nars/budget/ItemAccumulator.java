@@ -2,7 +2,7 @@ package nars.budget;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.AbstractMutableMap;
-import com.gs.collections.impl.map.mutable.ConcurrentHashMap;
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.Memory;
 import nars.task.Task;
@@ -21,11 +21,11 @@ import java.util.function.Consumer;
  * TODO reimplement merging functions (currently uses default Plus method)
  *
  * */
-public class ItemAccumulator<I extends Budgeted> {
+public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
 
 
-    public final AbstractMutableMap<I,I> items = new ConcurrentHashMap();
-            //new UnifiedMap<>();
+    public final AbstractMutableMap<I,I> items = //new ConcurrentHashMap();
+            new UnifiedMap<>();
 
 //    final Comparator<? super I> floatValueComparator = new Comparator<I>() {
 //        @Override public final int compare(final I o1, final I o2) {
@@ -42,20 +42,23 @@ public class ItemAccumulator<I extends Budgeted> {
      * */
     private final Procedure2<Budget, Budget> merge;
 
-    final BiFunction<I,I,I> updater;
+    //final BiFunction<I,I,I> updater;
+
+
+    @Override
+    final public I  apply(final I t, final I accumulated) {
+        if (accumulated!=null) {
+            merge.value(accumulated.getBudget(), t.getBudget());
+            return accumulated;
+        }
+        else
+            return t;
+    }
 
     public ItemAccumulator(Procedure2<Budget, Budget> merge) {
         super();
 
         this.merge = merge;
-        this.updater = ((t, accumulated) -> {
-            if (accumulated!=null) {
-                merge.value(accumulated.getBudget(), t.getBudget());
-                return accumulated;
-            }
-            else
-                return t;
-        });
     }
 
     public void clear() {
@@ -65,36 +68,36 @@ public class ItemAccumulator<I extends Budgeted> {
 
 
 
-    public boolean add(I t0) {
-        items.compute(t0, updater);
+    public final boolean add(final I t0) {
+        items.compute(t0, this /*updater*/);
         return true;
     }
 
-    public int size() {
+    public final int size() {
         return items.size();
     }
 
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return items.isEmpty();
     }
 
-    public <J extends I> J removeHighest() {
+    public final <J extends I> J removeHighest() {
         final I i = highest();
         items.remove(i);
         return (J)i;
     }
-    public <J extends I> J removeLowest() {
+    public final <J extends I> J removeLowest() {
         final I i = lowest();
         items.remove(i);
         return (J)i;
     }
 
-    public I lowest() {
+    public final I lowest() {
         if (items.isEmpty()) return null;
         return lowestFirstKeyValues().get(0);
     }
 
-    public I highest() {
+    public final I highest() {
         if (items.isEmpty()) return null;
         return highestFirstKeyValues().get(0);
     }

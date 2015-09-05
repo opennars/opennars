@@ -20,8 +20,8 @@ abstract public class SortedIndex<T> implements Collection<T> {
     abstract public T remove(int i);
 
 
-    final public T getFirst() {  return get(size()-1);    }
-    final public T getLast() { return get(0); }
+    final public T getLast() {  return get(size()-1);    }
+    final public T getFirst() { return get(0); }
 
     abstract public Iterator<T> descendingIterator();
     abstract public void setCapacity(int capacity);

@@ -1,6 +1,7 @@
 package nars.bag;
 
 import nars.budget.Budget;
+import nars.budget.Item;
 import nars.budget.Itemized;
 
 import java.util.function.Function;
@@ -40,5 +41,16 @@ public interface BagSelector<K, V extends Itemized<K>> {
         //new Exception().printStackTrace();
         overflow.delete();
     }
+
+    public static class AnyItemSelector implements BagSelector {
+
+        @Override
+        public Budget updateItem(Itemized v, Budget result) {
+            return null;
+        }
+
+    }
+
+    public static final AnyItemSelector anyItemSelector = new AnyItemSelector();
 
 }

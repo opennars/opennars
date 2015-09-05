@@ -21,20 +21,27 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class CurveBagBatchUpdateTest {
 
+    final XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
+
     @Test
     public void testDefaultBatchImpl() {
-        XorShift1024StarRandom rng = new XorShift1024StarRandom(1);
 
         testDefaultBatchImpl(
                 new CurveBag<>(rng, 32)
         );
+    }
+    @Test
+    public void testDefaultBatchImpl2() {
+        testDefaultBatchImpl(
+                new ChainBag<>(rng, 32)
+        );
+    }
+    @Test
+    public void testDefaultBatchImpl3() {
+        testDefaultBatchImpl(
+                new LevelBag<>(8, 32)
+        );
 
-        testDefaultBatchImpl(
-            new ChainBag<>(rng, 32)
-        );
-        testDefaultBatchImpl(
-            new LevelBag<>(8, 32)
-        );
 
     }
 
@@ -57,14 +64,20 @@ public class CurveBagBatchUpdateTest {
 
         assertTrue(  Math.abs(cap - cb.size()) < cap/8.0 );
 
-        int count1 = cb.forgetNext(1f, b, 1L);
+        cb.clear();
+        x = BagGenerators.testRemovalPriorityDistribution(
+                2, cap, 0.5f , cb
+        );
+        //cb.printAll();
+
+        int count1 = cb.peekNext(BagSelector.anyItemSelector, b, 3);
 
         assertEquals(b.length, count1);
 
         ArrayList<NullItem> b1 = snapshot(b);
 
 
-        int count2 = cb.forgetNext(1f, b, 2L);
+        int count2 = cb.peekNext(BagSelector.anyItemSelector, b, 3);
         assertEquals(b.length, count1);
 
         ArrayList<NullItem> b2 = snapshot(b);
