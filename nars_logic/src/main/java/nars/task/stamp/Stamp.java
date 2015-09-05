@@ -443,7 +443,7 @@ public interface Stamp extends Cloneable, Serializable {
 //    }
 
 
-    default Stamp setTime(long creation, long occurrence) {
+    default Stamp setTime(final long creation, final long occurrence) {
         setCreationTime(creation);
         setOccurrenceTime(occurrence);
         return this;

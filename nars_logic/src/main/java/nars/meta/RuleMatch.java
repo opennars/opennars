@@ -40,7 +40,10 @@ public class RuleMatch extends FindSubst {
      * @param random
      */
     public RuleMatch(Random random) {
-        super(Op.VAR_PATTERN, Global.newHashMap(8), Global.newHashMap(8), random);
+        super(Op.VAR_PATTERN,
+                Global.newHashMap(8),
+                Global.newHashMap(8),
+                random);
     }
 
     /** set the next premise */

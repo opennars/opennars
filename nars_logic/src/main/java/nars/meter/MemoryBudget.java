@@ -8,6 +8,7 @@ import nars.term.Term;
 import nars.util.meter.Signal;
 import nars.util.meter.Signals;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -15,9 +16,26 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /** snapshot of a Memory's budget at a particular time */
-public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object>  {
+public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
 
+    public int getInt(Budgeted b) {
+        return (int)get(b);
+    }
+
+    public long getLong(Budgeted b) {
+        return (long)get(b);
+    }
+
+    public double getDouble(Budgeted b) {
+        return (double)get(b);
+    }
+
+    public Object getDoubleFinite(Budgeted b, double defaultVal) {
+        double d = getDouble(b);
+        if (Double.isFinite(d)) return d;
+        return defaultVal;
+    }
 
     public enum Budgeted {
         //Unitary
@@ -27,19 +45,23 @@ public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object
 
         //Aggregate
         ActiveConcepts,
+
         ActiveConceptPrioritySum,
-        ActiveConceptPriorityVariance,
+        ActiveConceptPriorityStdDev,
+
+        ActiveTaskLinkPriorityStdDev,
         ActiveTaskLinkPrioritySum,
         //ActiveTaskLinkPrioritySumNormalized, //multiplied by its concept's priority before summing
+        ActiveTermLinkPriorityStdDev,
         ActiveTermLinkPrioritySum,
         //ActiveTermLinkPrioritySumNormalized, //multiplied by its concept's priority before summing
     }
 
-    public MemoryBudgetState() {
+    public MemoryBudget() {
         super(Budgeted.class);
     }
 
-    public MemoryBudgetState(Memory m) {
+    public MemoryBudget(Memory m) {
         this();
         update(m);
     }
@@ -83,10 +105,10 @@ public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object
         return s;
     }
 
-    public static Signals on(String prefix, Consumer<MemoryBudgetState> c) {
+    public static Signals on(String prefix, Consumer<MemoryBudget> c) {
         Signals s = new Signals() {
 
-            MemoryBudgetState b = new MemoryBudgetState();
+            MemoryBudget b = new MemoryBudget();
 
             @Override
             public List<Signal> getSignals() {
@@ -101,7 +123,7 @@ public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object
                 c.accept(b);
                 return new Object[] {
                         b.get(Budgeted.ActiveConceptPrioritySum),
-                        b.get(Budgeted.ActiveConceptPriorityVariance)
+                        b.get(Budgeted.ActiveConceptPriorityStdDev)
                 };
             }
         };
@@ -116,7 +138,11 @@ public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object
         SummaryStatistics prisum = new SummaryStatistics();
 
         final double[] tActiveTaskLinkPriority = {0};
+        final double[] tActiveTaskLinkStdDev = {0};
+        final double[] tActiveTermLinkStdDev = {0};
         final double[] tActiveTermLinkPriority = {0};
+
+        StandardDeviation s = new StandardDeviation();
 
         m.getCycleProcess().forEachConcept(c -> {
             double p = c.getPriority();
@@ -124,14 +150,19 @@ public class MemoryBudgetState extends EnumMap<MemoryBudgetState.Budgeted,Object
             prisum.addValue(p);
 
             tActiveTaskLinkPriority[0] += c.getTaskLinks().getPrioritySum();
+            tActiveTaskLinkStdDev[0] += c.getTaskLinks().getStdDev(s);
             tActiveTermLinkPriority[0] += c.getTermLinks().getPrioritySum();
+            tActiveTermLinkStdDev[0] += c.getTermLinks().getStdDev(s);
         });
 
+        long N = prisum.getN();
         put(Budgeted.ActiveConceptPrioritySum, prisum.getSum());
-        put(Budgeted.ActiveConcepts, prisum.getN());
-        put(Budgeted.ActiveConceptPriorityVariance, prisum.getVariance());
+        put(Budgeted.ActiveConcepts, N);
+        put(Budgeted.ActiveConceptPriorityStdDev, prisum.getStandardDeviation());
         put(Budgeted.ActiveTaskLinkPrioritySum, tActiveTaskLinkPriority[0]);
+        put(Budgeted.ActiveTaskLinkPriorityStdDev, tActiveTaskLinkStdDev[0]/N);
         put(Budgeted.ActiveTermLinkPrioritySum, tActiveTermLinkPriority[0]);
+        put(Budgeted.ActiveTermLinkPriorityStdDev, tActiveTermLinkStdDev[0]/N);
     }
 
     @Override

@@ -243,15 +243,20 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
     public static class Derivelet  {
 
 
+        /** modulating the TTL (time-to-live) allows the system to control
+         * the quality of attention it experiences.
+         * a longer TTL will cause derivelets to restart
+         * less frequently and continue exploring potentially "yarny"
+         * paths of knowledge
+          */
+        int ttl;
 
 
         /** current location */
-        public DeriveletContext context;
         public Concept concept;
 
-
-        public Derivelet() {
-        }
+        /** utility context */
+        public DeriveletContext context;
 
 
         public ConceptProcess nextPremise(long now) {
@@ -314,7 +319,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
             final float x = context.nextFloat();
 
             //calculate probability it will stay at this concept
-            final float stayProb = (concept.getPriority()) * 0.8f;
+            final float stayProb = (concept.getPriority()) * 0.5f;
             if (x < stayProb ) {
                 //stay here
                 return concept;
@@ -323,9 +328,9 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
                 final TLink tl;
                 float rem = 1.0f - stayProb;
                 if (x > stayProb + rem/2 ) {
-                    tl = concept.getTermLinks().forgetNext();
+                    tl = concept.getTermLinks().peekNext();
                 } else {
-                    tl = concept.getTaskLinks().forgetNext();
+                    tl = concept.getTaskLinks().peekNext();
                 }
                 if (tl != null) {
                     Concept c = context.concept(tl.getTerm());
@@ -337,25 +342,37 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
         }
 
         /** run next iteration; true if still alive by end, false if died and needs recycled */
-        final public boolean cycle(long now) {
+        final public boolean cycle(final long now) {
 
             final Concept current = this.concept;
 
+            if (this.ttl-- == 0) {
+                //died
+                return false;
+            }
+
             if ( (this.concept = nextConcept()) == null) {
+                //dead-end
                 return false;
             }
 
             final ConceptProcess p = nextPremise(now);
-            if (p!=null)
+            if (p!=null) {
                 p.run();
+            }
+            else {
+                //no premise
+                return false;
+            }
 
             return true;
         }
 
 
-        public final void start(final Concept concept, final DeriveletContext context) {
+        public final void start(final Concept concept, int ttl, final DeriveletContext context) {
             this.context = context;
             this.concept = concept;
+            this.ttl = ttl;
         }
 
         @Override
@@ -369,7 +386,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
                 super(concept, tl, tm);
             }
 
-            @Override protected void inputDerivations() {
+            @Override protected final void inputDerivations() {
                 Derivelet.this.inputDerivations(derived);
             }
 
@@ -384,7 +401,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
                 super(concept, tl);
             }
 
-            @Override protected void inputDerivations() {
+            @Override protected final void inputDerivations() {
                 Derivelet.this.inputDerivations(derived);
             }
 

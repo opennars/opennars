@@ -8,6 +8,7 @@ import nars.term.Term;
 import nars.term.Variable;
 import nars.term.Variables;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -60,60 +61,76 @@ public class FindSubst {
      */
     public boolean next(Term term1, Term term2) {
 
-        boolean termsEqual;
+
+
+        final Op type = this.type;
 
         do {
 
-            Variable term1Var = term1 instanceof Variable ? (Variable) term1 : null;
-            Variable term2Var = term2 instanceof Variable ? (Variable) term2 : null;
+            final Op op1 = term1.op();
+            final Op op2 = term2.op();
 
-            termsEqual = term1.equals(term2);
-            if (term1Var != null && term2Var != null && termsEqual) {
+            final boolean termsEqual = term1.equals(term2);
+
+            if (op1.isVar() && op2.isVar() && termsEqual) {
                 return true;
             }
 
-            if (term1Var != null && term1Var.op == type) {
+            if (op1 == type) {
 
-                final Term t = map1.get(term1Var);
+                final Term t = map1.get(term1);
 
                 if (t != null) {
-                    //RECURSE:  //return next(t, term2);
+                    //RECURSE, ie: return next(t, term2);
                     term1 = t; /*term2 = term2;*/
                     continue;
                 }
 
-                return nextTerm1Var(term2, term1Var, term2Var);
+                return nextTerm1Var(
+                        (Variable)term1,
+                        term2
+                );
 
-            } else if (term2Var != null && term2Var.op == type) {
+            } else if (op2 == type) {
 
-                final Term t = map2.get(term2Var);
+                final Term t = map2.get(term2);
 
                 if (t != null) {
-                    //RECURSE:  //return next(term1, t);
-                    term2 = t;
+                    //RECURSE, ie: return next(term1, t);
+                    term2 = t; /* term1 = term1 */
                     continue;
                 }
 
-                put2To1(term1, term2Var);
+                put2To1(term1, (Variable)term2);
                 return true;
 
-            } else if ((term1.op() == term2.op()) && (term1 instanceof Compound) && (term1.hasVar(type) || term2.hasVar(type))) {
+            } else if ((op1 == op2) && (term1 instanceof Compound) && (term1.hasVar(type) || term2.hasVar(type))) {
                 return recurseAndPermute((Compound) term1, (Compound) term2);
             }
 
-            term1 = null; //reaching here causes the loop to break
+            return termsEqual;
 
-        } while (term1!=null);
+        } while (true);
 
-        return termsEqual;
+        //throw new RuntimeException("substitution escape");
     }
 
-    protected boolean nextTerm1Var(Term term2, Variable term1Var, Variable term2Var) {
-        if ((term2Var != null) && (term2Var.op == type)) {
+    protected boolean nextTerm1Var(final Variable term1Var, final Term term2) {
+        Op op2 = null;
+
+        final Variable term2Var;
+        if (term2 instanceof Variable) {
+            term2Var = (Variable) term2;
+            op2 = term2Var.op;
+        }
+        else
+            term2Var = null;
+
+        if ((term2Var != null) && (op2 == type)) {
             putCommon(term1Var, term2Var);
         } else {
 
-            if ((term2Var != null) && !queryVarMatch(term1Var, term2Var))
+            if ((term2Var != null) && !queryVarMatch(term1Var.op, op2))
                 return false;
 
             put1To2(term2, term1Var);
@@ -160,10 +177,10 @@ public class FindSubst {
 
 
     /** //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3 */
-    static protected boolean queryVarMatch(final Variable term1Var, final Variable term2Var) {
+    static protected boolean queryVarMatch(final Op term1Var, final Op term2Var) {
 
-        final boolean t1Query = (term1Var.op == Op.VAR_QUERY);
-        final boolean t2Query = (term2Var.op == Op.VAR_QUERY);
+        final boolean t1Query = (term1Var == Op.VAR_QUERY);
+        final boolean t2Query = (term2Var == Op.VAR_QUERY);
 
         return (t1Query ^ t2Query);
     }

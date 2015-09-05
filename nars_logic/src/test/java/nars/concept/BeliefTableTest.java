@@ -3,7 +3,7 @@ package nars.concept;
 import junit.framework.TestCase;
 import nars.NAR;
 import nars.meter.BeliefAnalysis;
-import nars.meter.MemoryBudgetState;
+import nars.meter.MemoryBudget;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class BeliefTableTest extends TestCase {
 
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>");
 
-        assertEquals(0.0, (Double)b.energy().get(MemoryBudgetState.Budgeted.ActiveConceptPrioritySum), 0.001);
+        assertEquals(0.0, (Double)b.energy().get(MemoryBudget.Budgeted.ActiveConceptPrioritySum), 0.001);
 
         b.believe(1.0f, 0.9f, Tense.Present);
         b.run(1);

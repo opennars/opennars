@@ -96,11 +96,13 @@ public class NARui extends NARStream {
 
             });
 
-            v.setMaxSize(MAX_VALUE, MAX_VALUE);
+            v.layout();
 
-            s.setScene(new Scene(NARfx.scrolled(v)));
+            //v.setMaxSize(MAX_VALUE, MAX_VALUE);
 
-            s.sizeToScene();
+            s.setScene(new Scene(NARfx.scrolled(v), 800, 600));
+
+            //s.sizeToScene();
 
             s.show();
 
@@ -138,14 +140,19 @@ public class NARui extends NARStream {
 
         LineChart<Double, Double> bc = new LineChart(xAxis, yAxis);
 
+
         bc.setData( observableArrayList(
                 Stream.of(_signals).map(s -> series(meter, s)).collect(Collectors.toList())
         ) );
+
         yAxis.setAutoRanging(true);
         bc.setCreateSymbols(false);
         bc.setHorizontalGridLinesVisible(true);
         bc.setVerticalGridLinesVisible(true);
 
+
+        bc.setMinHeight(650);
+        bc.setMinWidth(bc.getData().size());
 
         //bc.setCenter(bc);
 

@@ -34,7 +34,7 @@ public class SomeRovers {
         int cycPerFrame = 4;
 
         //Alann d = new ParallelAlann(64, threads);
-        DefaultAlann d = new DefaultAlann(256);
+        DefaultAlann d = new DefaultAlann(64);
         //Equalized d = new Equalized(1000, 32, 4);
 
         //d.param.conceptActivationFactor.set(0.25f);

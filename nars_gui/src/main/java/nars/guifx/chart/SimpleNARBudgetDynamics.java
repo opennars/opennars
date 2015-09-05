@@ -1,10 +1,11 @@
 package nars.guifx.chart;
 
-import nars.Global;
-import nars.NARSeed;
 import nars.NARStream;
-import nars.nar.experimental.DefaultAlann;
+import nars.meter.MemoryBudget;
+import nars.nar.Default;
+import nars.nar.experimental.Equalized;
 import nars.narsese.NarseseParser;
+import nars.task.Task;
 import nars.term.Term;
 
 import java.util.HashMap;
@@ -35,30 +36,30 @@ public class SimpleNARBudgetDynamics {
 
 
         int preCycles = 0;
-        int cycles = 80;
+        int cycles = 1500;
 
-        float pri = 0.1f;
+        float pri = 0.25f;
+        float dur = 0.8f;
+        float qua = 0.5f;
 
-        String[] x = abcClosed.clone();
-        for (int i = 0; i < x.length; i++) {
-            x[i] = "$" + pri + ";" + pri + ";" + pri + "$ " + x[i];
-        }
+
+
 
 
 
 
         //Default d = new Default(1024, 1, 3).setInternalExperience(null);
-        //Default d = new Equalized(1024, 5, 7).setInternalExperience(null);
+        Default d = new Equalized(1024, 2, 4).setInternalExperience(null);
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
-        NARSeed d = new DefaultAlann(200);
+        //NARSeed d = new DefaultAlann(64);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
+        //Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
         //d.conceptActivationFactor.set(0.5f);
         //d.setCyclesPerFrame(1);
         //d.duration.set(5);
         //d.level(3);
-        //d.conceptForgetDurations.set(2);
+        d.getParam().conceptForgetDurations.set(5);
         //d.taskLinkForgetDurations.set(1);
         //d.termLinkForgetDurations.set(2);
 
@@ -66,32 +67,81 @@ public class SimpleNARBudgetDynamics {
 
 
         Consumer<NARStream> execution = n -> {
-            n.input(x).run(cycles);
+
+            n.stdout();
+
+            String[] x = abcClosed.clone();
+            for (int i = 0; i < x.length; i++) {
+                //x[i] = "$" + Texts.n2(pri) + ";" + Texts.n2(dur) + ";" + Texts.n2(qua) + "$ " + x[i];
+                Task t = n.nar.task(x[i]);
+                t.getBudget().setPriority(pri);
+                Task s = n.nar.input(t);
+
+
+            }
+
+            n.run(cycles);
 
             n.nar.memory.concepts.forEach(System.out::println);
 
         };
 
+        final MemoryBudget mb = new MemoryBudget();
+
         new NARui(d)
 
-                .then(n -> { n.nar.frame(preCycles); })
+                .then(n -> {
+                    n.nar.frame(preCycles);
+
+                })
                 .meter( (metrics, nar) -> {
                     metrics.set("# concepts", nar.memory.numConcepts(true, false));
                 })
-                .meter( (metrics, nar) -> {  metrics
-                        .set("A pri", nar.memory.conceptPriority(term("a")))
-                        .set("B pri", nar.memory.conceptPriority(term("b")))
+                .meter( (metrics, nar) -> {
+
+                    mb.clear();
+                    mb.update(nar.memory);
+
+                    System.out.println(nar.time());
+
+                    double conPriSum = mb.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum);
+                    long numConcepts = mb.getLong(MemoryBudget.Budgeted.ActiveConcepts);
+                    if (numConcepts == 0) numConcepts = 1;
+
+                    metrics
+                        .set("a pri", nar.memory.conceptPriority(term("a")))
+                        .set("b pri", nar.memory.conceptPriority(term("b")))
+                        .set("c pri", nar.memory.conceptPriority(term("c")))
                         .set("<a-->b> pri", nar.memory.conceptPriority(term("<a-->b>")))
-                        .set("<b-->a> pri", nar.memory.conceptPriority(term("<b-->a>")))
-                        .set("<b-->a> pri", nar.memory.conceptPriority(term("<b-->c>")))
+                        //.set("<b-->a> pri", nar.memory.conceptPriority(term("<b-->a>")))
+                        .set("<b-->c> pri", nar.memory.conceptPriority(term("<b-->c>")))
                         .set("<a<->b> pri", nar.memory.conceptPriority(term("<a<->b>")))
                         .set("<a<->c> pri", nar.memory.conceptPriority(term("<a<->c>")))
+                        .set("mean(concept pri)", conPriSum / numConcepts) // .getActivePriorityPerConcept(true, false, false)
                         ;
                 })
-                .meter( (metrics, nar) -> {  metrics
-                            .set("mean(concept pri)", nar.memory.getActivePriorityPerConcept(true, false, false))
-                            .set("sum(termlink pri)/cpt", nar.memory.getActivePriorityPerConcept(false, true, false))
-                            .set("sum(tasklink pri)/cpt", nar.memory.getActivePriorityPerConcept(false, false, true))
+                .meter( (metrics, nar) -> {
+
+
+                    double conPriSum = mb.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum);
+                    long numConcepts = mb.getLong(MemoryBudget.Budgeted.ActiveConcepts);
+                    if (numConcepts == 0) numConcepts = 1;
+
+                    metrics
+                            .set("stddev(concept pri)", mb.getDoubleFinite(MemoryBudget.Budgeted.ActiveConceptPriorityStdDev, 0))
+
+                            .set("sum(termlink pri)/cpt",
+                                    ((double)mb.get(MemoryBudget.Budgeted.ActiveTermLinkPrioritySum))
+                                            /numConcepts)
+                                    //nar.memory.getActivePriorityPerConcept(false, true, false))
+                            .set("stddev(termlink pri)", mb.getDoubleFinite(MemoryBudget.Budgeted.ActiveTermLinkPriorityStdDev, 0))
+
+                            .set("sum(tasklink pri)/cpt",
+                                    ((double)mb.get(MemoryBudget.Budgeted.ActiveTaskLinkPrioritySum))
+                                            /numConcepts)
+                            .set("stddev(tasklink pri)", mb.getDoubleFinite(MemoryBudget.Budgeted.ActiveTaskLinkPriorityStdDev, 0))
+                                    //nar.memory.getActivePriorityPerConcept(false, false, true))
+
                         ;
                 })
                 /*.meter("ConceptPriorityMean", (nar) -> {

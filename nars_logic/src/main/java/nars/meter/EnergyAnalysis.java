@@ -14,8 +14,8 @@ public class EnergyAnalysis {
     }
 
 
-    public MemoryBudgetState energy() {
-        return new MemoryBudgetState(nar.memory);
+    public MemoryBudget energy() {
+        return new MemoryBudget(nar.memory);
     }
 
     public void printEnergy() {

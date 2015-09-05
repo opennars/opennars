@@ -81,6 +81,7 @@ public class ParallelAlann extends AbstractAlann {
 
         final static long ifNoConceptsWaitMS = 1;
 
+        int defaultTTL = memory.duration() * 8;
 
         public Derivelet[] d;
         private long now;
@@ -130,7 +131,7 @@ public class ParallelAlann extends AbstractAlann {
                 //recycle this derivelet
                 Concept next = conceptSupply.get();
                 if (next != null) {
-                    d.start(next, this);
+                    d.start(next, defaultTTL, this);
                 } else {
                     return false;
                 }

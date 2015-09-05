@@ -1,9 +1,7 @@
 package nars.guifx;
 
-import javafx.geometry.Pos;
-import javafx.scene.effect.BlendMode;
+import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import nars.NAR;
@@ -33,7 +31,7 @@ public class TaskLabel extends HBox {
 
         label.getStyleClass().add("tasklabel_text");
         label.setMouseTransparent(true);
-        //label.setCacheHint(CacheHint.SCALE);
+        label.setCacheHint(CacheHint.SCALE);
         label.setPickOnBounds(false);
         label.setSmooth(false);
         label.setTextAlignment(TextAlignment.LEFT);
@@ -41,7 +39,7 @@ public class TaskLabel extends HBox {
 
 
 
-        int iconWidth = 50;
+        int iconWidth = 40;
         int iconSpacing = 2;
 
         summary = new TaskSummaryIcon(task, this).width(iconWidth);
@@ -61,7 +59,7 @@ public class TaskLabel extends HBox {
 
         update();
 
-        //label.setCache(true);
+        label.setCache(true);
     }
 
     public void enablePopupClickHandler(NAR nar) {

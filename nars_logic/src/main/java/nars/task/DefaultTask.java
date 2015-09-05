@@ -241,15 +241,15 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return duration;
     }
 
-    public Sentence<T> setCreationTime(long creationTime) {
+    public final Sentence<T> setCreationTime(final long creationTime) {
         if ((this.creationTime <= Stamp.TIMELESS) && (this.occurrenceTime > Stamp.TIMELESS)) {
             //use the occurrence time as the delta, now that this has a "finite" creationTime
             setOccurrenceTime(this.occurrenceTime + creationTime);
         }
-        if (this.creationTime != creationTime) {
-            this.creationTime = creationTime;
+        //if (this.creationTime != creationTime) {
+        this.creationTime = creationTime;
             //does not need invalidated since creation time is not part of hash
-        }
+        //}
         return this;
     }
 
@@ -300,7 +300,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
                 solutionBelief);*/
 
 
-        if (!Float.isNaN(getQuality())) {
+        if (Float.isNaN(getQuality())) {
             applyDefaultBudget();
         }
 

@@ -11,59 +11,60 @@ public enum Op {
 
 
 
+
     //TODO include min/max arity for each operate, if applicable
 
     /** an atomic term (includes interval and variables); this value is set if not a compound term */
-    ATOM(".", Op.ANY, false),
+    ATOM(".", Op.ANY, OpType.Other),
 
-    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, Op.ANY, false),
-    VAR_DEPENDENT(Symbols.VAR_DEPENDENT, Op.ANY, false),
-    VAR_QUERY(Symbols.VAR_QUERY,Op.ANY,false),
+    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, Op.ANY, OpType.Variable),
+    VAR_DEPENDENT(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
+    VAR_QUERY(Symbols.VAR_QUERY,Op.ANY, OpType.Variable),
 
     OPERATOR("^", 8),
 
-    NEGATION("--", 5, false, true, 1),
+    NEGATION("--", 5, 1),
 
     /* Relations */
-    INHERITANCE("-->", 1, true, 2),
-    SIMILARITY("<->", 2, true, 3),
+    INHERITANCE("-->", 1, OpType.Relation, 2),
+    SIMILARITY("<->", 2, OpType.Relation, 3),
 
 
     /* CompountTerm operators, length = 1 */
-    INTERSECTION_EXT("&", 3, false, true),
-    INTERSECTION_INT("|", 3, false, true),
-    DIFFERENCE_EXT("-", 3, false, true),
-    DIFFERENCE_INT("~", 3, false, true),
+    INTERSECTION_EXT("&", 3),
+    INTERSECTION_INT("|", 3),
+    DIFFERENCE_EXT("-", 3),
+    DIFFERENCE_INT("~", 3),
 
-    PRODUCT("*", 4, false, true),
+    PRODUCT("*", 4),
 
-    IMAGE_EXT("/", 4, false, true),
-    IMAGE_INT("\\", 4, false, true),
+    IMAGE_EXT("/", 4),
+    IMAGE_INT("\\", 4),
 
     /* CompoundStatement operators, length = 2 */
-    DISJUNCTION("||", 5, false, true, 4),
-    CONJUNCTION("&&", 5, false, true, 5),
+    DISJUNCTION("||", 5, 4),
+    CONJUNCTION("&&", 5, 5),
 
-    SEQUENCE("&/", 7, false, true, 6),
-    PARALLEL("&|", 7, false, true, 7),
-
-
-    /* CompountTerm delimitors, must use 4 different pairs */
-    SET_INT_OPENER("[", 3, false, true), //OPENER also functions as the symbol for the entire compound
-    SET_EXT_OPENER("{", 3, false, true), //OPENER also functions as the symbol for the entire compound
+    SEQUENCE("&/", 7, 6),
+    PARALLEL("&|", 7, 7),
 
 
+    /* CompountTerm delimiters, must use 4 different pairs */
+    SET_INT_OPENER("[", 3), //OPENER also functions as the symbol for the entire compound
+    SET_EXT_OPENER("{", 3), //OPENER also functions as the symbol for the entire compound
 
-    IMPLICATION("==>", 5, true, 8),
+
+
+    IMPLICATION("==>", 5, OpType.Relation, 8),
 
     /* Temporal Relations */
-    IMPLICATION_AFTER("=/>", 7, true, 9),
-    IMPLICATION_WHEN("=|>", 7, true, 10),
-    IMPLICATION_BEFORE("=\\>", 7, true, 11),
+    IMPLICATION_AFTER("=/>", 7, OpType.Relation, 9),
+    IMPLICATION_WHEN("=|>", 7, OpType.Relation, 10),
+    IMPLICATION_BEFORE("=\\>", 7, OpType.Relation, 11),
 
-    EQUIVALENCE("<=>", 5, true, 12),
-    EQUIVALENCE_AFTER("</>", 7, true, 13),
-    EQUIVALENCE_WHEN("<|>", 7, true, 14),
+    EQUIVALENCE("<=>", 5, OpType.Relation, 12),
+    EQUIVALENCE_AFTER("</>", 7, OpType.Relation, 13),
+    EQUIVALENCE_WHEN("<|>", 7, OpType.Relation, 14),
 
 
 
@@ -71,22 +72,22 @@ public enum Op {
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
     // so that any of their ordinal values will not exceed 31
     //-------------
-    NONE('\u2205', Op.ANY, false),
+    NONE('\u2205', Op.ANY),
 
 
     INTERVAL(
             //TODO decide what this value should be, it overrides with IMAGE_EXT
             //but otherwise it's not used
             String.valueOf(Symbols.INTERVAL_PREFIX) + "/",
-            Op.ANY, false),
+            Op.ANY),
 
-    INSTANCE("{--", 2, true), //should not be given a compact representation because this will not exist internally after parsing
-    PROPERTY("--]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
-    INSTANCE_PROPERTY("{-]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
+    INSTANCE("{--", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
+    PROPERTY("--]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
+    INSTANCE_PROPERTY("{-]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
 
 
 
-    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, false), ;
+    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, OpType.Variable);
 
 
     //-----------------------------------------------------
@@ -99,11 +100,8 @@ public enum Op {
     /** character representation of this getOperator if symbol has length 1; else ch = 0 */
     public final char ch;
 
-    /** is relation? */
-    public final boolean relation;
+    public final OpType type;
 
-    /** is native */
-    public final boolean isNative;
 
     /** opener? */
     public final boolean opener;
@@ -122,24 +120,20 @@ public enum Op {
 
 
     Op(char c, int minLevel, int... bytes) {
-        this(Character.toString(c), minLevel, false, bytes);
+        this(c, minLevel, OpType.Other, bytes);
     }
 
-    Op(String string, int minLevel, int... bytes) {
-        this(string, minLevel, false, bytes);
+    Op(char c, int minLevel, OpType type, int... bytes) {
+        this(Character.toString(c), minLevel, type, bytes);
     }
 
-    Op(char c, int minLevel, boolean relation, int... bytes) {
-        this(Character.toString(c), minLevel, relation, bytes);
-    }
-    Op(String string, int minLevel, boolean relation, int... bytes) {
-        this(string, minLevel, relation, !relation, bytes);
+    Op(String string, int minLevel, int... ibytes) {
+        this(string, minLevel, OpType.Other, ibytes);
     }
 
-    Op(String string, int minLevel, boolean relation, boolean innate, int... ibytes) {
+    Op(String string, int minLevel, OpType type, int... ibytes) {
 
         this.str = string;
-
 
         final byte bb[];
 
@@ -167,8 +161,8 @@ public enum Op {
         }
 
         this.minLevel = minLevel;
-        this.relation = relation;
-        this.isNative = innate;
+        this.type = type;
+
         this.ch = string.length() == 1 ? string.charAt(0) : 0;
 
         this.opener = name().endsWith("_OPENER");
@@ -219,4 +213,14 @@ public enum Op {
 
     /** specifier for any NAL level */
     public final static int ANY = 0;
+
+    public boolean isVar() {
+        return type == Op.OpType.Variable;
+    }
+
+    public static enum OpType {
+        Relation,
+        Variable,
+        Other
+    }
 }

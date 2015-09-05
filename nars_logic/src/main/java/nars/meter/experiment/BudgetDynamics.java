@@ -4,7 +4,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
 import nars.concept.Concept;
-import nars.meter.MemoryBudgetState;
+import nars.meter.MemoryBudget;
 import nars.meter.NARMetrics;
 import nars.meter.NARTrace;
 import nars.nar.Default;
@@ -30,7 +30,7 @@ public class BudgetDynamics {
 
         this.nm = new NARMetrics(nar, 1000);
 
-        MemoryBudgetState.on("Memory", nm);
+        MemoryBudget.on("Memory", nm);
 
         this.metrics = nm.metrics;
 
@@ -42,7 +42,7 @@ public class BudgetDynamics {
         nar.input(s);
     }
     public void watchConcept(String s) {
-        MemoryBudgetState.onConcept(nm, nar.term(s));
+        MemoryBudget.onConcept(nm, nar.term(s));
     }
 
     public void believeAndWatchConcept(String s) {

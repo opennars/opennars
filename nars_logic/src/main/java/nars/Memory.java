@@ -947,6 +947,7 @@ public class Memory implements Serializable, AbstractMemory {
         return cycle;
     }
 
+
     public double getActivePriorityPerConcept(final boolean concept, final boolean tasklink, final boolean termlink) {
         int c = numConcepts(true, false);
         if (c == 0) return 0;

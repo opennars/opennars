@@ -1,20 +1,21 @@
 package nars.guifx.demo;
 
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import nars.Global;
 import nars.NAR;
 import nars.NARStream;
 import nars.guifx.NARfx;
 import nars.guifx.TaskLabel;
-import nars.nar.NewDefault;
+import nars.nar.experimental.Equalized;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -82,10 +83,18 @@ public class DemoTimeline  {
 
         private final TaskTimeline<TaskEventButton> time;
         private final Pane view;
+        private final NAR nar;
 
-        public TaskTimelinePane(NAR n, Pane view) {
+        /**previous/current mouse coord*/
+        double mx = Double.NaN, my = Double.NaN;
+
+        double t = 0.0;  //time about which the timeline is centered
+        double d = 25.0; //duration window
+
+        public TaskTimelinePane(NAR n, StackPane view) {
             super();
 
+            this.nar = n;
             this.view = view;
 
             this.time = new TaskTimeline(n) {
@@ -100,10 +109,103 @@ public class DemoTimeline  {
 
             s.forEachDerived(task -> { time.addOccurrence((Task)task[0]); });
 
+
+
+            view.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            view.setMouseTransparent(false);
+            view.setPickOnBounds(true);
+            view.setOnMouseDragged((e) -> {
+                double nx = e.getSceneX(), ny = e.getSceneY();
+
+                if (Double.isFinite(mx)) {
+
+                    double dx = nx - mx;
+                    double dy = ny - my;
+
+                    push(dx, dy);
+                }
+
+                mx = nx; my = ny;
+            });
+            view.setOnMouseReleased((e) -> {
+                mx = my = Double.NaN;
+            });
+
         }
 
-        abstract protected TaskEventButton build(Task task, float start, float end, int nth);
 
+        public final void push(final double dx, final double dy) {
+            //System.out.println("dx " + dx + " " + dy);
+            //view.layoutXProperty().add(dx);
+            //view.layoutYProperty().add(dy);
+
+            if (dy < 0.01) return;
+
+            t+=dy * 0.25;
+            updateAll();
+        }
+
+        //abstract protected TaskEventButton build(Task task, float start, float end, int nth);
+
+
+        public double timeToPosition(double eventTime) {
+            double H = view.getHeight();
+            return ((eventTime - t) / d) * (H) + H/2;
+        }
+
+        int scaleX = 25;
+
+        final List<TaskEventButton> shown = new ArrayList();
+
+                /*
+                @Override
+                protected TaskEventButton build(Task task, float start, float end, int nth) {
+                    TaskEventButton te = new TaskEventButton(task, n, start, end);
+                    return te;
+                }*/
+
+        protected TaskEventButton build(Task task, float start, float end, int nth) {
+            TaskEventButton te = new TaskEventButton(task, nar, start, end);
+
+            //te.setScaleX(0.75f+task.getPriority()*0.25f);
+            //te.setScaleY(0.75f+task.getPriority()*0.25f);
+            te.setOpacity(task.getPriority()*0.5f + 0.5f);
+
+            te.label.setWrappingWidth(1 * scaleX);
+
+            //te.setManaged(false);
+
+            //te.setPrefWidth(1*scaleX);
+
+
+
+            double tx = nth * scaleX + scaleX/2;
+
+
+            te.setTranslateX(tx);
+
+            shown.add(te);
+            update(te);
+
+            return te;
+        }
+
+        protected void updateAll() {
+            for (TaskEventButton t : shown) {
+                update(t);
+            }
+        }
+
+        private void update(final TaskEventButton te) {
+            double ty1 = timeToPosition(te.start); // nth * (scaleX+marginX);
+            double ty2 = timeToPosition(te.end);
+            //System.out.println(start + " " + end + " " + nth + " - " + tx + " " + ty);
+
+            double dur = ty2-ty1;
+            double mid = ty1+dur/2.0;
+            te.setTranslateY(mid);
+            //te.setPrefHeight(dur);
+        }
 
 
         public List<Node> visible(float start, float stop) {
@@ -140,6 +242,8 @@ public class DemoTimeline  {
             super(t, nar);
             this.start = start;
             this.end = end;
+            label.setScaleX(1);
+            label.setScaleY(1);
         }
     }
 
@@ -150,47 +254,20 @@ public class DemoTimeline  {
     public static void main(String[] args) {
         NARfx.run((a, b) -> {
 
-            NAR n = new NAR(new NewDefault());
+            NAR n = new NAR(new Equalized(4,3,3));
 
 
-            Pane tpView = new VBox();
-            ScrollPane sp = new ScrollPane(tpView);
+            StackPane sp = new StackPane();
+            //sp.setBackground(new Background(new BackgroundFill(Color.gray(0.5), null, new Insets(0,0,0,0))));
 
-            sp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+            //ScrollPane sp = new ScrollPane(sp);
 
-            TaskTimelinePane tp = new TaskTimelinePane(n, tpView) {
+            //sp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-                int scaleX = 50;
-                int scaleY = 50;
+            sp.setCenterShape(false);
 
-                @Override
-                protected TaskEventButton build(Task task, float start, float end, int nth) {
-                    TaskEventButton te = new TaskEventButton(task, n, start, end);
-                    return te;
-                }
+            TaskTimelinePane tp = new TaskTimelinePane(n, sp) {
 
-                protected TaskEventButton build2(Task task, float start, float end, int nth) {
-                    TaskEventButton te = new TaskEventButton(task, n, start, end);
-
-                    te.label.setWrappingWidth(1 * scaleX);
-
-                    te.setManaged(false);
-
-                    te.setPrefWidth(1*scaleX);
-                    te.setMaxWidth(1*scaleX);
-
-                    double tx = nth * scaleX;
-                    double ty = (start + end) / 2.0 * scaleY;
-                    System.out.println(start + " " + end + " " + nth + " - " + tx + " " + ty);
-
-                    te.setTranslateX(tx);
-
-                    te.setTranslateY(ty);
-
-                    te.setPrefHeight((end-start)*scaleY);
-
-                    return te;
-                }
             };
 
             n.input("b:a. :|:");
@@ -206,7 +283,7 @@ public class DemoTimeline  {
 
             n.frame(55);
 
-            tp.view(-1f, 55f);
+            tp.view(-1f, 25);
 
             //System.out.println(tp.time.map.searchOverlapping(9f, 12f));
 
@@ -214,7 +291,7 @@ public class DemoTimeline  {
 
 
 
-            b.setScene(new Scene(sp, 500, 400));
+            b.setScene(new Scene(/*scrolled*/(sp), 500, 400));
 
             b.show();
 
