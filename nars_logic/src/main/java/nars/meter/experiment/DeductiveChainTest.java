@@ -3,7 +3,7 @@ package nars.meter.experiment;
 import nars.NAR;
 import nars.io.qa.AnswerReaction;
 import nars.nal.nal1.Inheritance;
-import nars.nar.experimental.Alann;
+import nars.nar.experimental.ParallelAlann;
 import nars.task.Task;
 import nars.term.Atom;
 
@@ -26,7 +26,7 @@ public class DeductiveChainTest {
         NAR n = new NAR(
                 //new Equalized(1000, 8, 3) //.level(1)
                 //new NewDefault().level(2)
-                new Alann(4,2)
+                new ParallelAlann(4,2)
         );
         n.param.conceptActivationFactor.set(0.4f);
 

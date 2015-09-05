@@ -79,7 +79,7 @@ public class TimeClustering extends CycleReaction {
         }
 
 
-        Iterator<Task> ii = pending.items.iterator();
+        Iterator<Task> ii = pending.items.keySet().iterator();
         while (ii.hasNext()) {
             Task t = ii.next();
             if (add(t, now)) {

@@ -4,7 +4,7 @@ package nars.term;
 import nars.Global;
 import nars.NAR;
 import nars.io.out.TextOutput;
-import nars.meter.condition.OutputCount;
+import nars.meter.condition.EventCount;
 import nars.nar.Default;
 import org.junit.Test;
 
@@ -23,24 +23,25 @@ public class NALLevelTest {
         assertEquals(Global.DEFAULT_NAL_LEVEL, nDefault.nal());
 
         NAR n1 = new NAR(new Default().level(1));
-        OutputCount n1Count = new OutputCount(n1);
+        EventCount n1Count = new EventCount(n1);
         assertEquals(1, n1.nal());
 
         NAR n8 = new NAR(new Default().level(8));
-        OutputCount n8Count = new OutputCount(n8);
-
-        TextOutput.out(n8);
+        EventCount n8Count = new EventCount(n8);
 
         String productSentence = "<(*,a,b) --> c>.\n<c <-> a>?\n";
 
         n1.input(productSentence);
         n1.runWhileInputting(5);
 
+
         n8.input(productSentence);
         n8.runWhileInputting(5);
 
-        assertTrue("NAL8 will accept sentence containing a Product", n8Count.getOutputs() >= 1);
-        assertEquals("NAL1 will NOT accept sentence containing a Product", 0, n1Count.getOutputs() + n1Count.getOthers());
+        assertEquals(5, n1.time());
+        assertEquals("NAL1 will NOT accept sentence containing a Product", 0, n1Count.getInputs());
+        assertTrue("NAL8 will accept sentence containing a Product", n8Count.getInputs() >= 1);
+
 
 
 

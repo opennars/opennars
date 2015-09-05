@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  */
 public class DerivationRules {
 
-    @Deprecated static final int maxVarArgsToMatch = 2;
+    @Deprecated static final int maxVarArgsToMatch = 5;
 
     public final TaskRule[] rules;
 
@@ -42,7 +42,11 @@ public class DerivationRules {
 
     public DerivationRules(Stream<List<TaskRule>> r) {
         super();
-        rules = r.flatMap(x -> x.stream() ).toArray(n -> new TaskRule[n]);//collect(Collectors.toList());
+
+        //remove duplicates again?
+        final Set<TaskRule> ruleSet = r.flatMap(x -> x.stream()).collect(Collectors.toSet());
+
+        rules = ruleSet.toArray(new TaskRule[ruleSet.size()]);//collect(Collectors.toList());
     }
 
 //    public DerivationRules(Stream<TaskRule[]> r, Predicate<TaskRule[]> filter) {

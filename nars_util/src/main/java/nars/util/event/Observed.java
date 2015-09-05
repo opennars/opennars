@@ -18,6 +18,9 @@ abstract public interface Observed<V>  {
 
     abstract public List<Consumer<V>> all();
 
+
+
+
     public interface EventRegistration {
         public void off();
     }

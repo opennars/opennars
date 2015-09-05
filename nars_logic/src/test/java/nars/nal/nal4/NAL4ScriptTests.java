@@ -22,8 +22,8 @@ public class NAL4ScriptTests extends ScriptNALTest {
         return getParams(new String[]{"test4"},
                 new Default(),
                 new Default().setInternalExperience(null),
-                new Default().level(4),
-                new Solid(1, 96, 1, 1, 1, 3)
+                new Default().level(4)
+                //new Solid(1, 96, 1, 1, 1, 3).level(4)
         );
 
     }

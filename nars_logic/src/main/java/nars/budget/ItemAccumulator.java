@@ -1,17 +1,16 @@
 package nars.budget;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import com.gs.collections.impl.map.mutable.AbstractMutableMap;
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import nars.Global;
 import nars.Memory;
+import nars.concept.Concept;
 import nars.task.Task;
+import nars.term.Term;
+import org.infinispan.commons.equivalence.AnyEquivalence;
+import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -24,8 +23,17 @@ import java.util.function.Consumer;
 public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
 
 
-    public final AbstractMutableMap<I,I> items = //new ConcurrentHashMap();
-            new UnifiedMap<>();
+    public final Map<I,I> items =
+
+            new BoundedConcurrentHashMap(
+                        /* capacity */ 1024,
+                        /* concurrency */ 1,
+                        /* key equivalence */
+                    AnyEquivalence.getInstance(Budget.class),
+                    AnyEquivalence.getInstance(Budget.class));
+
+            //new ConcurrentHashMap();
+            //new UnifiedMap<>();
 
 //    final Comparator<? super I> floatValueComparator = new Comparator<I>() {
 //        @Override public final int compare(final I o1, final I o2) {
@@ -201,7 +209,8 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
     /** iterates in no-specific order */
     public void forEach(Consumer<I> recv) {
 
-        items.forEachKey(recv::accept);
+        items.forEach((k,v) -> recv.accept(k));
+        //items.forEachKey(recv::accept);
     }
 
     @Override

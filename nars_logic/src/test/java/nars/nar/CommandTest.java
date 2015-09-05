@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.jgroups.util.Util.assertEquals;
+import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -37,7 +37,7 @@ public class CommandTest {
         assertNotNull(t);
         assertEquals(Symbols.COMMAND, t.getPunctuation());
         assertTrue(t.isCommand());
-        assertEquals("c(x); {0: 1}", t.toString());
+        assertEquals("c(x);", t.toString());
 
         n.input(t);
 

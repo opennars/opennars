@@ -6,7 +6,8 @@ import nars.NARSeed;
 import nars.Video;
 import nars.clock.SimulatedClock;
 import nars.event.CycleReaction;
-import nars.nar.experimental.Alann;
+import nars.nar.experimental.DefaultAlann;
+import nars.nar.experimental.ParallelAlann;
 import nars.rover.RoverWorld;
 import nars.rover.Sim;
 import nars.rover.robot.CarefulRover;
@@ -14,7 +15,6 @@ import nars.rover.robot.Rover;
 import nars.rover.robot.Spider;
 import nars.rover.robot.Turret;
 import nars.rover.world.FoodSpawnWorld1;
-import nars.rover.world.GridSpaceWorld;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
@@ -33,7 +33,8 @@ public class SomeRovers {
 
         int cycPerFrame = 16;
 
-        Alann d = new Alann(64, threads);
+        //Alann d = new ParallelAlann(64, threads);
+        DefaultAlann d = new DefaultAlann(32);
         d.param.conceptActivationFactor.set(0.25f);
         d.param.inputsMaxPerCycle.set(4);
 

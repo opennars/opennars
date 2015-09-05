@@ -86,7 +86,7 @@ public class Equalized extends NewDefault {
                 Task next = ii.next();
                 if (next == null) break;
 
-                newTasks.items.removeKey(next); //remove from new items
+                newTasks.items.remove(next); //remove from new items
 
                 float nextPri = next.getPriority();
 

@@ -46,7 +46,7 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
     }
 
     /** called after NAR created, for initializing it */
-    void init(NAR nar);
+    public void init(NAR nar);
 
 
     PremiseProcessor getPremiseProcessor(Param p);

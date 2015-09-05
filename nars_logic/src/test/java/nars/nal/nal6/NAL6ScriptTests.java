@@ -4,6 +4,7 @@ package nars.nal.nal6;
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import nars.nar.Default;
+import nars.nar.NewDefault;
 import nars.nar.experimental.Solid;
 import org.junit.runners.Parameterized;
 
@@ -22,7 +23,8 @@ public class NAL6ScriptTests extends ScriptNALTest {
         return getParams(new String[]{"test6"},
                 new Default(),
                 new Default().setInternalExperience(null).level(6),
-                new Solid(1, 256, 1, 4, 1, 3)
+                new NewDefault()
+                //new Solid(1, 256, 1, 4, 1, 3)
                 //new Default().setInternalExperience(null),
                 //new Classic().setInternalExperience(null)
         );

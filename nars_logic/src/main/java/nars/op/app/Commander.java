@@ -51,7 +51,7 @@ public class Commander extends NARReaction implements Consumer<Memory> {
         this.nar = nar;
         this.cycleEnd = nar.memory.eventCycleEnd.on(this);
         this.commands = buffer;
-        commandIterator = Iterators.cycle(commands.items);
+        commandIterator = Iterators.cycle(commands.items.keySet());
 
 
         this.maxTemporalBeliefAge = nar.memory.duration() * maxTemporalBeliefDurations;

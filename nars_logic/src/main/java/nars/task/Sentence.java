@@ -423,7 +423,8 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
     default @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
-        return toString(buffer, memory, true, true, true);
+        final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
+        return toString(buffer, memory, true, notCommand, notCommand);
     }
 
     /**

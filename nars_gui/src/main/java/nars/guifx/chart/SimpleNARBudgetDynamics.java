@@ -3,7 +3,7 @@ package nars.guifx.chart;
 import nars.Global;
 import nars.NARSeed;
 import nars.NARStream;
-import nars.nar.experimental.Alann;
+import nars.nar.experimental.DefaultAlann;
 import nars.narsese.NarseseParser;
 import nars.term.Term;
 
@@ -35,7 +35,7 @@ public class SimpleNARBudgetDynamics {
 
 
         int preCycles = 0;
-        int cycles = 2000;
+        int cycles = 80;
 
         float pri = 0.1f;
 
@@ -50,7 +50,8 @@ public class SimpleNARBudgetDynamics {
         //Default d = new Default(1024, 1, 3).setInternalExperience(null);
         //Default d = new Equalized(1024, 5, 7).setInternalExperience(null);
         //Default d = new NewDefault().setInternalExperience(null);
-        NARSeed d = new Alann(500, 2);
+        //NARSeed d = new ParallelAlann(500, 2);
+        NARSeed d = new DefaultAlann(200);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
         //d.conceptActivationFactor.set(0.5f);
@@ -65,9 +66,10 @@ public class SimpleNARBudgetDynamics {
 
 
         Consumer<NARStream> execution = n -> {
-            n
-                    //.stdout()
-                    .input(x).run(cycles);
+            n.input(x).run(cycles);
+
+            n.nar.memory.concepts.forEach(System.out::println);
+
         };
 
         new NARui(d)

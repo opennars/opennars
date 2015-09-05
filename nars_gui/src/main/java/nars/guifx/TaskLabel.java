@@ -1,6 +1,8 @@
 package nars.guifx;
 
-import javafx.scene.layout.BorderPane;
+import javafx.geometry.Pos;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -10,7 +12,7 @@ import nars.task.Task;
 import org.apache.commons.math3.util.Precision;
 
 
-public class TaskLabel extends BorderPane {
+public class TaskLabel extends HBox {
 
     public final Text label;
     private final Task task;
@@ -37,21 +39,23 @@ public class TaskLabel extends BorderPane {
         label.setTextAlignment(TextAlignment.LEFT);
 
 
+
+
         int iconWidth = 50;
         int iconSpacing = 2;
 
-        StackPane icon = new StackPane(
-                summary = new TaskSummaryIcon(task, this).width(iconWidth),
-                slider = new NSliderFX(iconWidth, 20).set(0, 0, 1)
+        summary = new TaskSummaryIcon(task, this).width(iconWidth);
+        slider = new NSliderFX(iconWidth, 20).set(0, 0, 1);
+        //icon.setMinWidth(50);
+
+        getChildren().setAll(
+                summary, slider, label
         );
-        icon.autosize();
 
-        setLeft(icon);
-        setCenter(label);
-
-
-        slider.setOpacity(0.5);
+        /*slider.setOpacity(0.5);
+        slider.setBlendMode(BlendMode.HARD_LIGHT);*/
         summary.setMouseTransparent(false);
+
 
         layout();
 

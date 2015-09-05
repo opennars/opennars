@@ -8,13 +8,13 @@ import nars.io.out.Output;
 /**
  * Counts # of outputs of different types
  */
-public class OutputCount extends NARReaction {
+public class EventCount extends NARReaction {
 
     int inputs = 0;
     int outputs = 0;
     int others = 0;
 
-    public OutputCount(NAR n) {
+    public EventCount(NAR n) {
         super(n, Output.DefaultOutputEvents);
     }
 
