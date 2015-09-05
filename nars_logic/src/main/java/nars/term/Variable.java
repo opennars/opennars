@@ -301,7 +301,7 @@ public class Variable extends Atom {
 
     /** TODO cache for unscoped variable terms */
 
-    private static final int MAX_CACHED_VARNAME_INDEXES = 64;
+    private static final int MAX_CACHED_VARNAME_INDEXES = 128;
     private static final byte[][] vn1 = new byte[MAX_CACHED_VARNAME_INDEXES][];
     private static final byte[][] vn2 = new byte[MAX_CACHED_VARNAME_INDEXES][];
     private static final byte[][] vn3 = new byte[MAX_CACHED_VARNAME_INDEXES][];
@@ -309,7 +309,7 @@ public class Variable extends Atom {
     
     
     public static byte[] name(final Op type, final int index) {
-        if (index > MAX_CACHED_VARNAME_INDEXES)
+        if (index >= MAX_CACHED_VARNAME_INDEXES)
             return newName(type, index);
 
 

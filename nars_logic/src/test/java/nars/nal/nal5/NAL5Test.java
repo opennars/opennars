@@ -1,12 +1,23 @@
 package nars.nal.nal5;
 
+import com.google.common.collect.Lists;
+import nars.NAR;
 import nars.NARSeed;
-import nars.nal.JavaNALTest;
+import nars.budget.Budget;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.nal.*;
 import nars.nar.Default;
 import nars.nar.DefaultDeep;
 import nars.nar.DefaultMicro;
 import nars.nar.NewDefault;
 import nars.narsese.InvalidInputException;
+import nars.process.ConceptTaskTermLinkProcess;
+import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
+import nars.task.Task;
+import nars.task.filter.DerivationFilter;
+import nars.task.filter.FilterBelowConfidence;
+import nars.task.filter.FilterDuplicateExistingBelief;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -320,4 +331,6 @@ public class NAL5Test extends JavaNALTest {
         n.mustBelieve(70, "<a <-> b>", 1.0f, 0.66f);
         n.run();
     }
+
+
 }

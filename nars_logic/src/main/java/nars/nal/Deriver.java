@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 /**
  * Created by patrick.hammer on 30.07.2015.
  */
-abstract public class Deriver extends ConceptFireTaskTerm {
+abstract public class Deriver implements LogicStage<ConceptProcess> {
 
     public final DerivationRules rules;
 
@@ -39,9 +39,8 @@ abstract public class Deriver extends ConceptFireTaskTerm {
 
     static final ThreadLocal<RuleMatch> matchers = newThreadLocalRuleMatches();
 
-
     @Override
-    public final boolean apply(final ConceptProcess f, final TermLink bLink) {
+    public boolean test(ConceptProcess f) {
 
         ///final Task task, final Sentence belief, Term beliefterm,
         //tLink.getTask(), belief, bLink.getTerm(),

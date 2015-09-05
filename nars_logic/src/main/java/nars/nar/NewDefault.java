@@ -40,12 +40,26 @@ public class NewDefault extends Default {
         return p;
     }
 
+
+
+    /** default set of rules, statically available */
+    public static DerivationRules standard;
+
+    static {
+        try {
+            standard = new DerivationRules();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
     public static final Deriver der;
     static {
         Deriver r;
 
         try {
-            r = new SimpleDeriver(DerivationRules.standard);
+            r = new SimpleDeriver(standard);
         } catch (Exception e) {
             r = null;
             e.printStackTrace();

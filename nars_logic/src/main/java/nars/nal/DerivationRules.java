@@ -105,6 +105,10 @@ public class DerivationRules {
             }
         }
 
+        if (current_rule.length()> 0) {
+            unparsed_rules.add(current_rule.toString());
+        }
+
         return unparsed_rules;
     }
 
@@ -327,15 +331,5 @@ public class DerivationRules {
     }
 
 
-    /** default set of rules, statically available */
-    public static DerivationRules standard;
 
-    static {
-        try {
-            standard = new DerivationRules();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
 }

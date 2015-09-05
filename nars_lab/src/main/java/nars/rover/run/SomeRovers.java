@@ -7,7 +7,7 @@ import nars.Video;
 import nars.clock.SimulatedClock;
 import nars.event.CycleReaction;
 import nars.nar.experimental.DefaultAlann;
-import nars.nar.experimental.ParallelAlann;
+import nars.nar.experimental.Equalized;
 import nars.rover.RoverWorld;
 import nars.rover.Sim;
 import nars.rover.robot.CarefulRover;
@@ -31,12 +31,14 @@ public class SomeRovers {
 
     public static NARSeed newDefault(int threads) {
 
-        int cycPerFrame = 16;
+        int cycPerFrame = 4;
 
         //Alann d = new ParallelAlann(64, threads);
-        DefaultAlann d = new DefaultAlann(32);
-        d.param.conceptActivationFactor.set(0.25f);
-        d.param.inputsMaxPerCycle.set(4);
+        DefaultAlann d = new DefaultAlann(256);
+        //Equalized d = new Equalized(1000, 32, 4);
+
+        //d.param.conceptActivationFactor.set(0.25f);
+        //d.param.inputsMaxPerCycle.set(4);
 
         //Default d = new Equalized(1024, 16, 10);
         //d.setTermLinkBagSize(16);

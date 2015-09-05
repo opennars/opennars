@@ -1,6 +1,7 @@
 package nars.nar.experimental;
 
 import nars.Global;
+import nars.Param;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
@@ -28,6 +29,8 @@ import static nars.process.ConceptProcess.forEachPremise;
  * Created by me on 7/21/15.
  */
 public class Equalized extends NewDefault {
+
+    public final Param param = this;
 
     public Equalized(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);

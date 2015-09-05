@@ -86,7 +86,7 @@ public enum Op {
 
 
 
-    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, false);
+    VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, false), ;
 
 
     //-----------------------------------------------------
