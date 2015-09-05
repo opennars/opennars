@@ -1,6 +1,6 @@
 package nars.audio.demo;
 
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NSliderSwing;
 import nars.Audio;
 import nars.audio.SoundListener;
 import nars.audio.granular.Granulize;
@@ -23,7 +23,7 @@ public class GranulizerDemo {
 
         public GranularControlPanel(Granulize s) {
             super(new BorderLayout());
-            NSlider p = new NSlider(s.stretchFactor, 0.1f, 10.0f);
+            NSliderSwing p = new NSliderSwing(s.stretchFactor, 0.1f, 10.0f);
             add(p, BorderLayout.NORTH);
         }
 

@@ -151,6 +151,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
             tActiveTaskLinkPriority[0] += c.getTaskLinks().getPrioritySum();
             tActiveTaskLinkStdDev[0] += c.getTaskLinks().getStdDev(s);
+
             tActiveTermLinkPriority[0] += c.getTermLinks().getPrioritySum();
             tActiveTermLinkStdDev[0] += c.getTermLinks().getStdDev(s);
         });
@@ -159,10 +160,12 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
         put(Budgeted.ActiveConceptPrioritySum, prisum.getSum());
         put(Budgeted.ActiveConcepts, N);
         put(Budgeted.ActiveConceptPriorityStdDev, prisum.getStandardDeviation());
+
         put(Budgeted.ActiveTaskLinkPrioritySum, tActiveTaskLinkPriority[0]);
-        put(Budgeted.ActiveTaskLinkPriorityStdDev, tActiveTaskLinkStdDev[0]/N);
+        put(Budgeted.ActiveTaskLinkPriorityStdDev, tActiveTaskLinkStdDev[0]);
+
         put(Budgeted.ActiveTermLinkPrioritySum, tActiveTermLinkPriority[0]);
-        put(Budgeted.ActiveTermLinkPriorityStdDev, tActiveTermLinkStdDev[0]/N);
+        put(Budgeted.ActiveTermLinkPriorityStdDev, tActiveTermLinkStdDev[0]);
     }
 
     @Override

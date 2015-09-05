@@ -1,7 +1,7 @@
 package ca.nengo.ui;
 
 
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NSliderSwing;
 import automenta.vivisect.swing.NWindow;
 import ca.nengo.ui.lib.world.piccolo.primitive.Universe;
 import org.piccolo2d.util.PPaintContext;
@@ -76,7 +76,7 @@ abstract public class Nengrow extends AbstractNengo {
     private JComponent newSpeedControl() {
         JPanel j = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 2));
 
-        NSlider n = new NSlider(0.001f, 0, 0.01f) {
+        NSliderSwing n = new NSliderSwing(0.001f, 0, 0.01f) {
 
             @Override
             public void onChange(float v) {

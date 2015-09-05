@@ -21,7 +21,7 @@
 package nars.gui;
 
 import automenta.vivisect.swing.AwesomeButton;
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NSliderSwing;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.TimeControl;
 import ca.nengo.ui.NengrowPanel;
@@ -104,7 +104,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
         }
     };
 
-    private NSlider volumeSlider;
+    private NSliderSwing volumeSlider;
 
 
     private final NARMetrics metrics;
@@ -631,8 +631,8 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
     }
 
 
-    private NSlider newVolumeSlider() {
-        final NSlider s = this.volumeSlider = new NSlider(100f, 0, 100f) {
+    private NSliderSwing newVolumeSlider() {
+        final NSliderSwing s = this.volumeSlider = new NSliderSwing(100f, 0, 100f) {
 
             @Override
             public String getText() {
@@ -811,11 +811,11 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
 
         p.add(pc, c);
         
-        NSlider vs = newVolumeSlider();
+        NSliderSwing vs = newVolumeSlider();
         vs.setFont(vs.getFont().deriveFont(Font.BOLD));
         p.add(vs, c);
 
-        NSlider ss = newSpeedSlider();
+        NSliderSwing ss = newSpeedSlider();
         ss.setFont(vs.getFont());
         p.add(ss, c);
 
@@ -824,13 +824,13 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
 
         JPanel pg = new JPanel(new GridLayout(0, 2));
         {
-            pg.add(new NSlider(memory.param.inputActivationFactor, "Input Activation", 0.0f, 1.0f), c);
-            pg.add(new NSlider(memory.param.conceptActivationFactor, "Concept Activation", 0.0f, 1.0f), c);
+            pg.add(new NSliderSwing(memory.param.inputActivationFactor, "Input Activation", 0.0f, 1.0f), c);
+            pg.add(new NSliderSwing(memory.param.conceptActivationFactor, "Concept Activation", 0.0f, 1.0f), c);
 
-            pg.add(new NSlider(memory.param.conceptFireThreshold, "Concepts >", 0.0f, 1.0f), c);
-            pg.add(new NSlider(memory.param.executionThreshold, "Decisions >", 0.5f, 1.0f), c);
+            pg.add(new NSliderSwing(memory.param.conceptFireThreshold, "Concepts >", 0.0f, 1.0f), c);
+            pg.add(new NSliderSwing(memory.param.executionThreshold, "Decisions >", 0.5f, 1.0f), c);
 
-            pg.add(new NSlider(memory.param.conceptForgetDurations, "Concept Memory Durations", 0.5f, 20), c);
+            pg.add(new NSliderSwing(memory.param.conceptForgetDurations, "Concept Memory Durations", 0.5f, 20), c);
 
             tasklinkRate.set(memory.param.taskLinkForgetDurations.get() / memory.param.conceptForgetDurations.get());
             termlinkRate.set( memory.param.termLinkForgetDurations.get() / memory.param.conceptForgetDurations.get() );
@@ -862,7 +862,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
         return p;
     }
 
-    class NCSlider extends NSlider {
+    class NCSlider extends NSliderSwing {
 
         public NCSlider(AtomicDouble value, String label, float min, float max) {
             super(value, label, min, max);
@@ -897,8 +897,8 @@ public class NARControlPanel extends TimeControl implements Reaction<Class,Objec
         memory.param.novelTaskForgetDurations.set( novelRate.get() * conceptRate );
     }
 
-    private NSlider newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {
-        final NSlider s = new NSlider(x.intValue(), min, max) {
+    private NSliderSwing newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {
+        final NSliderSwing s = new NSliderSwing(x.intValue(), min, max) {
 
             @Override
             public String getText() {

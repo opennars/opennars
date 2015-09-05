@@ -2,7 +2,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NSliderSwing;
 import nars.NAR;
 import nars.Video;
 import nars.io.out.Output;
@@ -138,8 +138,8 @@ public class MultiModePanel extends NPanel implements Reaction<Class,Object[]> {
         
         m.addSeparator();
         
-        NSlider fontSlider;
-        fontSlider = new NSlider() { // (float)11, 6.0f, 40.0f) {
+        NSliderSwing fontSlider;
+        fontSlider = new NSliderSwing() { // (float)11, 6.0f, 40.0f) {
             @Override
             public void onChange(float v) {
                 setFontSize(v);

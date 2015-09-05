@@ -285,7 +285,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
         out.println("CONCEPT: " + toInstanceString() + " @ " + now);
 
-        final String indent = "\t";
+        final String indent = "  \t";
         if (showbeliefs) {
             out.print(" Beliefs:");
             if (getBeliefs().isEmpty()) out.println(" none");
@@ -313,6 +313,8 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             out.println(" TermLinks:");
             for (TLink t : getTermLinks()) {
                 out.print(indent);
+                out.print(t.getBudget().toBudgetString());
+                out.print(" ");
                 TLink.print(t, out);
                 out.println();
             }

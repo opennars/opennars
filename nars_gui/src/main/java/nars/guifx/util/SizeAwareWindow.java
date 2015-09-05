@@ -5,7 +5,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.guifx.NARfx;
@@ -30,8 +33,6 @@ public class SizeAwareWindow extends Scene {
     //private final BorderPane overlay;
     //private Scene scene;
     public Stage window;
-
-
 
 
     final LMap<double[], Parent> nodes;
@@ -98,20 +99,39 @@ public class SizeAwareWindow extends Scene {
 
             ChangeListener onSizeChange = (observable1, oldValue1, newValue1) -> {
                 Scene ss = finalWindow.getScene();
+
+
                 double w = ss.getWidth();
                 double h = ss.getHeight();
-                //System.out.println(w + " " + h);
-                if (sizeChanging.compareAndSet(false, true)) {
-                    runLater(() -> {
-                        resized(w, h);
-                        sizeChanging.set(false);
-                    });
+
+                if ((w != 0) && (h != 0)) {
+                    //System.out.println(w + " " + h);
+                    if (sizeChanging.compareAndSet(false, true)) {
+
+                        runLater(() -> {
+
+                            resized(w, h);
+                            sizeChanging.set(false);
+                        });
+                    }
                 }
+
+
             };
 
             //TODO combine into the same method
             finalWindow.heightProperty().addListener(onSizeChange);
             finalWindow.widthProperty().addListener(onSizeChange);
+
+
+            runLater(() -> {
+
+                //onSizeChange.changed(null, null, null);
+                resized(finalWindow.getWidth(),
+                        finalWindow.getHeight());
+
+            });
+
 
         });
 
@@ -120,7 +140,6 @@ public class SizeAwareWindow extends Scene {
 
 
     }
-
 
 
     Parent current;
@@ -140,10 +159,20 @@ public class SizeAwareWindow extends Scene {
 
         Parent next = nodes.get(_d);
 
-        if (next == null)
+        if (next == null) {
             setRoot(null);
-        else if (next != this.current) {
+            this.current.setVisible(false);
+        } else if (next != this.current) {
+            next.setVisible(true);
+
+            Parent old = this.current;
+
             setRoot(this.current = next);
+
+            old.setVisible(false);
+
+            getRoot().layout();
+
         }
 
     }
@@ -165,10 +194,10 @@ public class SizeAwareWindow extends Scene {
 
     private static Supplier<Parent> Row = () -> {
         return new HBox(2,
-                new NSliderFX(100, 25),
-                new NSliderFX(100, 25),
-                new NSliderFX(100, 25),
-                new NSliderFX(100, 25)
+                new NSlider(100, 25),
+                new NSlider(100, 25),
+                new NSlider(100, 25),
+                new NSlider(100, 25)
 
         );
     };
@@ -204,7 +233,7 @@ public class SizeAwareWindow extends Scene {
                     return Row;
                 }
                 return Default;
-            }).size(500, 500).show();
+            }).size(800, 800).show();
 
 
         });
@@ -246,12 +275,11 @@ public class SizeAwareWindow extends Scene {
 
     public SizeAwareWindow size(double w, double h) {
         runLater(() -> {
-            if (window!=null)
-                if (window.getScene()!=null)
-                    if (window.getScene().getRoot()!=null) {
-                        window.getScene().getRoot().prefWidth(w);
-                        window.getScene().getRoot().prefHeight(h);
-                    }
+            if (window != null) {
+
+                window.setWidth(w);
+                window.setHeight(h);
+            }
         });
         return this;
     }

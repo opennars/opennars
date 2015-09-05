@@ -4,12 +4,12 @@ import de.jensd.fx.glyphs.GlyphIcon;
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Text;
 import nars.Events;
 import nars.NAR;
 import nars.NARStream;
-import nars.guifx.util.NSliderFX;
+import nars.guifx.util.NSlider;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -20,7 +20,7 @@ import static javafx.application.Platform.runLater;
  * to the left or right of anything else, which contains a set of
  * buttons for controlling a nar
  */
-public class NARControlFX extends HBox implements Runnable {
+public class NARControlFX extends FlowPane implements Runnable {
 
     public final ToggleButton consoleButton;
     private final long defaultNARPeriodMS = 75;
@@ -56,12 +56,15 @@ public class NARControlFX extends HBox implements Runnable {
     }
 
     public NARControlFX(NAR n, boolean runButtons, boolean memoryButtons, boolean guiButtons) {
-        super(2);
+        super();
+
+        setHgap(4);
 
         this.nar = n;
         //Canvas canvas = new NARWindow.ResizableCanvas(this);
         //canvas.maxWidth(Double.MAX_VALUE);
         //canvas.maxHeight(Double.MAX_VALUE);
+
 
 
 
@@ -73,6 +76,11 @@ public class NARControlFX extends HBox implements Runnable {
 
 
         getChildren().add(clock);
+
+        Menu m = new Menu();
+        m.getItems().add(new MenuItem("x"));
+        m.getItems().add(new MenuItem("y"));
+        getChildren().add(new MenuBar(m));
 
         bp = JFX.newIconButton(FontAwesomeIcon.PLAY);
         bp.setTooltip(new Tooltip("Toggle run/stop"));
@@ -115,7 +123,7 @@ public class NARControlFX extends HBox implements Runnable {
 //        speedSlider.setShowTickMarks(true);
 //        getChildren().add(speedSlider);
 
-        NSliderFX speedSlider = new NSliderFX(100, 25.0);
+        NSlider speedSlider = new NSlider(100, 25.0);
         getChildren().add(speedSlider);
 
         if (memoryButtons) {
@@ -157,7 +165,7 @@ public class NARControlFX extends HBox implements Runnable {
         //setFillHeight(true);
 
 
-        NSliderFX fontSlider = new NSliderFX(25f, 25f);
+        NSlider fontSlider = new NSlider(25f, 25f);
         getChildren().add(0, fontSlider);
         fontSlider.value.addListener((a,b,c) -> {
             runLater(() -> {
@@ -165,6 +173,12 @@ public class NARControlFX extends HBox implements Runnable {
                 getScene().getRoot().setStyle("-fx-font-size: " + pointSize + "pt;");
                 //+ 100*(0.5 + c.doubleValue()) + "%");
             });
+        });
+        fontSlider.setOnMouseClicked((e) -> {
+            if (e.getClickCount()==2) {
+                //double click
+                System.out.println("double click fontSlider");
+            }
         });
 
 

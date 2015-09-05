@@ -1,9 +1,10 @@
 package nars.guifx.chart;
 
+import nars.Global;
+import nars.NARSeed;
 import nars.NARStream;
 import nars.meter.MemoryBudget;
-import nars.nar.Default;
-import nars.nar.experimental.Equalized;
+import nars.nar.experimental.DefaultAlann;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
@@ -36,10 +37,10 @@ public class SimpleNARBudgetDynamics {
 
 
         int preCycles = 0;
-        int cycles = 1500;
+        int cycles = 256;
 
-        float pri = 0.25f;
-        float dur = 0.8f;
+        float pri = 0.05f;
+        float dur = 0.5f;
         float qua = 0.5f;
 
 
@@ -49,40 +50,44 @@ public class SimpleNARBudgetDynamics {
 
 
         //Default d = new Default(1024, 1, 3).setInternalExperience(null);
-        Default d = new Equalized(1024, 2, 4).setInternalExperience(null);
+        //Default d = new Equalized(1024, 1, 2).setInternalExperience(null);
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
-        //NARSeed d = new DefaultAlann(64);
+        NARSeed d = new DefaultAlann(32);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
-        //Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
+        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
+        Global.TASKLINK_FORGETTING_EXTRA_DEPTH = 0.9f;
+        Global.TERMLINK_FORGETTING_EXTRA_DEPTH = 0.9f;
         //d.conceptActivationFactor.set(0.5f);
         //d.setCyclesPerFrame(1);
         //d.duration.set(5);
         //d.level(3);
-        d.getParam().conceptForgetDurations.set(5);
-        //d.taskLinkForgetDurations.set(1);
-        //d.termLinkForgetDurations.set(2);
+        //d.getParam().conceptForgetDurations.set(2);
+        //d.taskLinkForgetDurations.set(16);
+        //d.termLinkForgetDurations.set(16);
 
 
 
 
         Consumer<NARStream> execution = n -> {
 
-            n.stdout();
+            //n.stdout();
 
             String[] x = abcClosed.clone();
             for (int i = 0; i < x.length; i++) {
-                //x[i] = "$" + Texts.n2(pri) + ";" + Texts.n2(dur) + ";" + Texts.n2(qua) + "$ " + x[i];
+
                 Task t = n.nar.task(x[i]);
                 t.getBudget().setPriority(pri);
-                Task s = n.nar.input(t);
+                t.getBudget().setQuality(qua);
+                t.getBudget().setDurability(dur);
 
-
+                n.nar.input(t);
             }
 
             n.run(cycles);
 
-            n.nar.memory.concepts.forEach(System.out::println);
+            //n.nar.memory.concepts.forEach(System.out::println);
+            n.nar.memory.concepts.forEach(c -> c.print(System.out));
 
         };
 

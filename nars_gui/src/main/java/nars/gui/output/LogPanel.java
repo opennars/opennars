@@ -3,7 +3,7 @@ package nars.gui.output;
 import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.AwesomeToggleButton;
 import automenta.vivisect.swing.NPanel;
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NSliderSwing;
 import nars.Events.ERR;
 import nars.Events.EXE;
 import nars.NAR;
@@ -181,7 +181,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         menu.add(Box.createHorizontalStrut(4));
 
         
-        final NSlider fontSlider = new NSlider(12f, 6f, 40f) {
+        final NSliderSwing fontSlider = new NSliderSwing(12f, 6f, 40f) {
 
             @Override
             public void onChange(float v) {

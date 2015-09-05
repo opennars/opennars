@@ -34,7 +34,7 @@ import java.text.NumberFormat;
  *
  * @author me
  */
-public class NSlider extends JLabel implements MouseListener, MouseMotionListener {
+public class NSliderSwing extends JLabel implements MouseListener, MouseMotionListener {
     public final AtomicDouble value;
     protected float min;
     protected float max;
@@ -47,22 +47,22 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
 
     final static Font defaultLabelFont = Video.monofont.deriveFont(11f);
 
-    public NSlider() {
+    public NSliderSwing() {
         this(0,0,0);
     }
     
-    public NSlider(float initialValue, float min, float max) {
+    public NSliderSwing(float initialValue, float min, float max) {
         this(new AtomicDouble(initialValue), min, max);
     }
 
-    public NSlider(AtomicDouble value, String prefix, float min, float max) {
+    public NSliderSwing(AtomicDouble value, String prefix, float min, float max) {
         this(value, min, max);
         this.prefix = prefix;
         setDoubleBuffered(true);
         setToolTipText(prefix);
     }
     
-    public NSlider(AtomicDouble value, float min, float max) {
+    public NSliderSwing(AtomicDouble value, float min, float max) {
         super();
         
         

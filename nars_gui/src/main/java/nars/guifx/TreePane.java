@@ -10,7 +10,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.util.Callback;
 import nars.NAR;
 import nars.event.FrameReaction;
-import nars.guifx.util.NSliderFX;
+import nars.guifx.util.NSlider;
 import nars.op.io.echo;
 import nars.task.Task;
 import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
@@ -76,10 +76,10 @@ public class TreePane extends BorderPane {
             }
         };
         {
-            NSliderFX ns;
+            NSlider ns;
             setBottom( new FlowPane(
                     new Label("Pri(Min)"),
-                    ns = new NSliderFX(80, 20)
+                    ns = new NSlider(80, 20)
             ));
 
             (this.minPriority = ns.value).addListener((v) -> {

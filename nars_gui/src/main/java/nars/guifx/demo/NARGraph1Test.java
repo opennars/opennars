@@ -18,7 +18,7 @@ public class NARGraph1Test {
 
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.5f;
         NAR n = new NAR(
-                new Equalized(1000, 1, 2).setInternalExperience(null)
+                new Equalized(1000, 2, 3).setInternalExperience(null)
         );
         //n.input(new File("/tmp/h.nal"));
         n.input("<a-->b>.");
@@ -47,7 +47,7 @@ public class NARGraph1Test {
             });
 
             //TextOutput.out(n);
-            new Thread(() -> n.loop(250)).start();
+            new Thread(() -> n.loop(35)).start();
 
         });
 

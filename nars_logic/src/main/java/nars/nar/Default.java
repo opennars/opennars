@@ -408,11 +408,12 @@ public class Default extends Param implements NARSeed {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-        taskLinks.mergeAverage();
+        taskLinks.mergePlus();
 
 
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+        termLinks.mergePlus();
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }

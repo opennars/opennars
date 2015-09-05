@@ -151,7 +151,7 @@ public class NARui extends NARStream {
         bc.setVerticalGridLinesVisible(true);
 
 
-        bc.setMinHeight(650);
+        bc.setMinHeight(450);
         bc.setMinWidth(bc.getData().size());
 
         //bc.setCenter(bc);

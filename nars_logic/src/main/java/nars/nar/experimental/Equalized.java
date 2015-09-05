@@ -1,6 +1,7 @@
 package nars.nar.experimental;
 
 import nars.Global;
+import nars.Memory;
 import nars.Param;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
@@ -34,6 +35,11 @@ public class Equalized extends NewDefault {
 
     public Equalized(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
+    }
+
+    @Override
+    public Concept newConcept(Term t, Budget b, Memory m) {
+        return super.newConcept(t, b, m);
     }
 
     public static class EqualizedCycle extends SequentialCycle {
@@ -156,9 +162,9 @@ public class Equalized extends NewDefault {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                new FilterBelowConfidence(0.01),
+                //new FilterBelowConfidence(0.01),
                 new FilterDuplicateExistingBelief(),
-                new LimitDerivationPriority()
+                //new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());
         };
     }
@@ -174,7 +180,7 @@ public class Equalized extends NewDefault {
 
     public Bag<Term, Concept> newConceptBag() {
         CurveBag<Term, Concept> b = new CurveBag(rng, getActiveConcepts());
-        b.mergeAverage();
+        b.mergePlus();
         return b;
     }
 }

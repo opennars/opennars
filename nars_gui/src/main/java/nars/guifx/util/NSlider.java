@@ -12,9 +12,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 /**
- * Created by me on 8/30/15.
+ * versatile light-weight slider component for javafx
  */
-public class NSliderFX extends Canvas {
+public class NSlider extends Canvas {
 
 
     public final DoubleProperty value = new SimpleDoubleProperty(0.5);
@@ -29,18 +29,32 @@ public class NSliderFX extends Canvas {
     };
 
 
-    public NSliderFX(double w, double h) {
+    public NSlider(double w, double h) {
         super();
 
         if (h <= 0) {
             maxHeight(Double.MAX_VALUE);
+            boundsInParentProperty().addListener((b) -> {
+                setHeight( boundsInParentProperty().get().getHeight() );
+                redraw();
+            });
+        }
+        else {
+            setHeight(h);
         }
         if (w <= 0) {
             maxWidth(Double.MAX_VALUE);
+            boundsInParentProperty().addListener((b) -> {
+                setWidth( boundsInParentProperty().get().getWidth() );
+                redraw();
+            });
+        }
+        else {
+            setWidth(w);
         }
 
-        setHeight(h);
-        setWidth(w);
+
+
 
 
         //setManaged(false);
@@ -88,9 +102,9 @@ public class NSliderFX extends Canvas {
         double dx = mouseEvent.getX();
         double dy = mouseEvent.getY();
 
-        double v = p(dx, dy);
         double min = this.min.get();
         double max = this.max.get();
+        double v = p(dx, dy) * (max-min) + min ;
         if (v < min) v = min;
         if (v > max) v = max;
         value.set( v );
@@ -105,6 +119,7 @@ public class NSliderFX extends Canvas {
         Platform.runLater(()->redraw());
     }
 
+    /** value to proportion of width */
     public double p() {
         final double v = this.value.get();
         final double min = this.min.get();
@@ -137,14 +152,14 @@ public class NSliderFX extends Canvas {
         g.fillRect(mh, mh, barSize - mh*2, H - mh*2);
     }
 
-    public NSliderFX set(double v, double min, double max) {
+    public NSlider set(double v, double min, double max) {
         this.value.set(v);
         this.min.set(min);
         this.max.set(max);
         return this;
     }
 
-    public NSliderFX bind(DoubleProperty minPriority) {
+    public NSlider bind(DoubleProperty minPriority) {
         minPriority.bindBidirectional(value);
         return this;
     }

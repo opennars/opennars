@@ -1,11 +1,13 @@
 .root {
 
-    -fx-base: rgb(20, 20, 20);
+    -fx-base: rgb(0, 0, 0);
 
-    -fx-background: rgb(10, 10, 10);
+    -fx-background: rgb(0, 0, 0);
 
     -fx-fill: #fff;
 
+    -fx-background-insets:  0.0;
+    -fx-background-radius: 0.0;
     -fx-border-width: 0;
     -fx-border-style: none;
 
@@ -15,7 +17,7 @@
      * text; selected items in menus, lists, trees, and tables; progress bars;
      * default buttons.
      */
-    -fx-accent: #444;
+    -fx-accent: #333;
 
     /* A bright blue for the focus indicator of objects. Typically used as the
      * first color in -fx-background-color for the "focused" pseudo-class. Also
@@ -24,10 +26,24 @@
      * TODO: should this be derived from -fx-accent?
      */
     -fx-focus-color: #222;
+
+    /*-fx-text-base-color: rgb(252.0, 240.0, 237.0);
+    -fx-text-fill: -fx-text-base-color;*/
+
+     /*-dark: rgb(55.0, 55.0, 55.0);
+     -fx-background-color: -dark;*/
+
+    /*default font */
+    /*-fx-font-size: 16.0px;*/
+    /*-fx-disabled-opacity: 0.8;*/
+
+    /*-flatter-red: rgb(237.0, 68.0, 37.0);
+    -flatter-blue: rgb(0.0, 184.0, 222.0);*/
+
 }
 
 .code-area {
-    -fx-background-color: #262626;
+    -fx-background-color: #000;
     -fx-font-size: 150%;
 }
 .code-area-default {
@@ -38,20 +54,6 @@
 
 /* Pasted from:  http://search.maven.org/#artifactdetails%7Ccom.guigarage%7Cflatter%7C0.7%7Cjar */
 
-.root {
-    /*-fx-text-base-color: rgb(252.0, 240.0, 237.0);
-    -fx-text-fill: -fx-text-base-color;*/
-
-     -dark: rgb(55.0, 55.0, 55.0);
-     -fx-background-color: -dark;
-
-    /*default font */
-    /*-fx-font-size: 16.0px;*/
-    /*-fx-disabled-opacity: 0.8;*/
-
-    /*-flatter-red: rgb(237.0, 68.0, 37.0);
-    -flatter-blue: rgb(0.0, 184.0, 222.0);*/
-}
 
 .mnemonic-underline {
     -fx-stroke: transparent;
@@ -103,29 +105,23 @@
  *                                                                             *
  ******************************************************************************/
 
+
 .label, .toggle-button, .button, .tree-cell {
-    -fx-padding: 0.1em;
+    /*-fx-text-fill: -fx-text-base-color;
+    -fx-fill: -fx-text-base-color;*/
+    -fx-padding: 0.2em;
     -fx-label-padding: 0em;
 }
 
-.tree-cell {
-    -fx-padding: 0.1em;
-}
+
 .tree-cell:focused {
-    -fx-background-color: #206;
+    -fx-background-color: #242;
 }
 
-.label {
-    -fx-text-fill: -fx-text-base-color;
-    -fx-fill: -fx-text-base-color;
-}
 .toggle-button, .button{
     -fx-background-color: #222;
-    -fx-background-insets:  0.0;
-    -fx-background-radius: 0.0;
-    -fx-border-width: 0.0;
     -fx-text-fill: -fx-text-base-color;
-    -fx-fill: -fx-text-base-color;
+    /*-fx-fill: -fx-text-base-color;*/
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
 }
@@ -167,12 +163,12 @@
  ******************************************************************************/
 
 .text-area , .text-field {
-    -fx-background-color: rgb(0,0,0);
-    -fx-background-insets:  0.0;
-    -fx-padding: 0.25em;
+    /*-fx-background-color: rgb(0,0,0);
+    -fx-background-insets:  0.0;*/
+    -fx-padding: 0.1em;
     -fx-border-width: 0.0;
     -fx-prompt-text-fill: derive(-dark, 50.0%);
-    -fx-highlight-fill: rgb(94.0, 203.0, 234.0);
+    -fx-highlight-fill: rgb(94.0, 233.0, 194.0);
 }
 
 .text-area .text, .text-field > * > .text {
@@ -181,12 +177,12 @@
 
 
 .text-area .content {
-    -fx-border-width: 0.0;
-    -fx-background-color: transparent;
+    /*-fx-border-width: 0.0;
+    -fx-background-color: transparent;*/
 }
 
 .text-area:focused  .content {
-     -fx-background-color: transparent;
+     /*-fx-background-color: transparent;*/
 }
 
 .text-area:focused, .text-field:focused {
@@ -262,16 +258,16 @@
     -fx-font-weight: bolder;
 }
 
-.content-area {
+/*.content-area {
     -fx-background-color: -dark;
-}
+}*/
 
 
-.content-background {
+/*.content-background {*/
     /*-fx-background-color: -flatter-red;
     -fx-background-radius:0.0 0.0 11.0 11.0;
     -fx-padding: 0 10 10 10;*/
-}
+/*}*/
 
 
 /*******************************************************************************
@@ -335,7 +331,7 @@
 }
 
 .menu-item:focused {
-    -fx-background-color: rgb(94.0, 203.0, 234.0);
+    -fx-background-color: rgb(20, 40, 20);
 }
 
 

@@ -23,7 +23,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
      *
      * @param lines The text lines to be displayed
      */
-    protected NSlider speedSlider;
+    protected NSliderSwing speedSlider;
     protected boolean allowFullSpeed = true;
     /** in ms */
     protected long lastUpdateTime = -1;
@@ -41,10 +41,10 @@ abstract public class TimeControl extends NPanel implements ActionListener {
     /** description of the current time */
     abstract public String getTimeText();
 
-    protected NSlider newSpeedSlider() {
+    protected NSliderSwing newSpeedSlider() {
             //final StringBuilder sb = new StringBuilder(32);
 
-        final NSlider s = new NSlider(0f, 0f, 1.0f) {
+        final NSliderSwing s = new NSliderSwing(0f, 0f, 1.0f) {
 
 
             @Override

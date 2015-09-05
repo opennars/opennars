@@ -18,10 +18,6 @@ public interface TLink<T extends Termed> extends Budgeted, Serializable {
 
     public static void print(TLink t, PrintStream out) {
         out.print(t.toString());
-        out.print(' ');
-        out.print(t.getBudget());
-
-
     }
 
     /** accessor for getIndex which will throw an exception if the index is not available for use as a figure value (0,1) */

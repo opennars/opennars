@@ -21,6 +21,7 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
     final static ColorArray goalRange = new ColorArray(colorLevels, Color.BLUE, Color.GREEN);
 
     private final Task task;
+    private final GraphicsContext g;
 
     transient float lastPriority = -1;
 
@@ -29,12 +30,17 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
 
         this.task = i;
 
+        g = getGraphicsContext2D();
+
         parent.heightProperty().addListener(this);
         repaint(parent.heightProperty().get());
     }
 
     public TaskSummaryIcon width(double w) {
-        setWidth(w);
+        if (getWidth()!=w) {
+            setWidth(w);
+            repaint();
+        }
         return this;
     }
 
@@ -44,18 +50,18 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
         run();
     }
 
-    public Color getBudgetColor(float pri) {
+    public final Color getBudgetColor(float pri) {
         return grayRange.get(pri);
     }
-    public Color getBeliefColor(float freq, float conf) {
-        return beliefRange.get(freq, conf);
+
+    public final Color getBeliefColor(float freq, float conf) {
+        return beliefRange.get(freq);
     }
-    public Color getGoalColor(float freq, float conf) {
-        return goalRange.get(freq, conf);
+    public final Color getGoalColor(float freq, float conf) {
+        return goalRange.get(freq);
     }
 
     public void paintConstants() {
-        GraphicsContext g = getGraphicsContext2D();
         final double W = getWidth();
         final double H = getHeight();
         if (W*H == 0) return;
@@ -110,11 +116,13 @@ public class TaskSummaryIcon extends Canvas implements Runnable, ChangeListener<
         h *= 0.5;
 
         setHeight(h);
-        setWidth(h * 3);
+        double w = h * 3;
+        setWidth(w);
+        prefWidth(w);
 
         lastPriority = -1;
 
-        paintConstants();
+
         repaint();
     }
 }

@@ -1,6 +1,6 @@
 package nars.gui.output;
 
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NSliderSwing;
 import nars.Events;
 import nars.Events.FrameEnd;
 import nars.Events.OUT;
@@ -318,14 +318,14 @@ public class TaskTree extends ReactionPanel implements Reaction<Class,Object[]>,
     public class TaskEdit extends JPanel implements TaskComponent {
         private final Task task;
         private final TaskLabel label;
-        private final NSlider priSlider;
+        private final NSliderSwing priSlider;
 
         public TaskEdit(Task t) {
             super( new FlowLayout(WrapLayout.LEFT,4,1));
             this.task = t;
 
             {
-                priSlider = new NSlider(0.5f, 0, 1f) {
+                priSlider = new NSliderSwing(0.5f, 0, 1f) {
                     @Override
                     public void onChange(float v) {
                         t.getBudget().setPriority(v);

@@ -5,7 +5,7 @@
  */
 package jurls;
 
-import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NSliderSwing;
 import javafx.application.Platform;
 import jurls.core.LearnerAndActor;
 import jurls.core.approximation.ApproxParameters;
@@ -276,13 +276,13 @@ public class RLDemo extends javax.swing.JFrame {
 
         parametersPanel.setLayout(new GridLayout(0,2));
 
-        parametersPanel.add(new NSlider(approxParameters.alpha, "Approximator Learning Rate (Alpha)", 0f, 1.0f));
-        parametersPanel.add(new NSlider(approxParameters.momentum, "Approximator Momentum", 0f, 1.0f));
+        parametersPanel.add(new NSliderSwing(approxParameters.alpha, "Approximator Learning Rate (Alpha)", 0f, 1.0f));
+        parametersPanel.add(new NSliderSwing(approxParameters.momentum, "Approximator Momentum", 0f, 1.0f));
 
-        parametersPanel.add(new NSlider(rLParameters.alpha, "Q Learning Rate", 0f, 1.0f));
-        parametersPanel.add(new NSlider(rLParameters.gamma, "Q Farsight", 0f, 1.0f));
-        parametersPanel.add(new NSlider(rLParameters.epsilon, "Q Randomness", 0f, 1.0f));
-        parametersPanel.add(new NSlider(rLParameters.lambda, "Q Lambda", 0f, 1.0f));
+        parametersPanel.add(new NSliderSwing(rLParameters.alpha, "Q Learning Rate", 0f, 1.0f));
+        parametersPanel.add(new NSliderSwing(rLParameters.gamma, "Q Farsight", 0f, 1.0f));
+        parametersPanel.add(new NSliderSwing(rLParameters.epsilon, "Q Randomness", 0f, 1.0f));
+        parametersPanel.add(new NSliderSwing(rLParameters.lambda, "Q Lambda", 0f, 1.0f));
 
 
 

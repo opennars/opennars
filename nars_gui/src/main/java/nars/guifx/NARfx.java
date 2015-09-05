@@ -258,23 +258,26 @@ public class NARfx extends Application {
     }
 
     public static Stage newWindow(String title, Scene scene) {
-
-        scene.getStylesheets().setAll(NARfx.css, "dark.css" );
-
         Stage s = new Stage();
         s.setTitle(title);
-        s.setScene(scene);
+        return newWindow(title, scene, s);
+    }
 
-        scene.getRoot().maxWidth(Double.MAX_VALUE);
-        scene.getRoot().maxHeight(Double.MAX_VALUE);
+    public static Stage newWindow(String title, Scene scene, Stage stage) {
+        stage.setScene(scene);
+        stage.getScene().getStylesheets().setAll(NARfx.css, "dark.css" );
 
-        return s;
+        //scene.getRoot().maxWidth(Double.MAX_VALUE);
+        //scene.getRoot().maxHeight(Double.MAX_VALUE);
+        return stage;
     }
 
     public static NARide newWindow(NAR nar) {
         NARide ni;
-        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
-        wn.window.show();
+        //SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
+
+        Stage wn = (ni = new NARide(nar)).newWindow();
+        wn.show();
         //newWindow(nar.toString(), wn).show();
         return ni;
 
