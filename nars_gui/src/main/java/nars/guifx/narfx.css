@@ -1,11 +1,12 @@
+/* javafx default theme reference: http://pastebin.com/0PebD9nR */
+
 .root {
     -fx-font-family: monospace;
     /*-fx-font-family: 'Monospaced';*/
 }
 .button {
     -fx-padding: 20 20 20 20;
-    -fx-border-width: 0;
-    -fx-background: transparent;
+    /*-fx-background: transparent;*/
 }
 /*.button:hover {
 
@@ -14,10 +15,8 @@
 
 }*/
 
-
-
-.label {
-
+.thread_control .button {
+    -fx-padding: 8 16 8 16;
 }
 
 
@@ -46,3 +45,10 @@
    -fx-background-color: radial-gradient(focus-angle 45deg , focus-distance 20% , center 25% 25% , radius 50% , reflect, #808080, #a9a9a9 75% , #696969);
 }
 
+.nar_main_menu {
+    -fx-font-size: 150%
+}
+.nar_main_menu .menu {
+    -fx-fill: white;
+    -fx-text-fill: white;
+}

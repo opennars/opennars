@@ -26,8 +26,9 @@ public class TaskLabel extends Label {
 
         StringBuilder sb = new StringBuilder();
         sb.append(prefix);
-        sb.append(task.getTerm());
-        //task.toString(sb, n.memory, true, false, false);
+
+        //sb.append(task.getTerm());
+        task.toString(sb, n.memory, true, false, false);
 
         setText(sb.toString());
 
@@ -124,8 +125,8 @@ public class TaskLabel extends Label {
         double sc = 0.75 + 0.25 * ( 1 -  pri);
         /*label.setScaleX(sc);
         label.setScaleY(sc);*/
-        setFont(NARfx.mono((sc*8+8)));
-        setStyle(JFX.fontSize((float)(sc*8+8)));
+        //setFont(NARfx.mono((sc*8+8)));
+        //setStyle(JFX.fontSize((float)(sc*8+8)));
         setTextFill(JFX.grayscale.get(pri*0.5+0.5));
 
 
