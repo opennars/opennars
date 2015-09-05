@@ -317,6 +317,9 @@
     (($1 --> M) ==> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
     ((M --> $1) ==> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
 
+    (P ==> ($1 --> M)), (S --> M), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
+    (P ==> (M --> $1)), (M --> S), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
+
 //NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
