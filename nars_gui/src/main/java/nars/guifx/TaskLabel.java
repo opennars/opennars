@@ -1,22 +1,25 @@
 package nars.guifx;
 
-import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import nars.NAR;
+import nars.guifx.util.NSliderFX;
 import nars.task.Task;
+import org.apache.commons.math3.util.Precision;
 
 
-public class TaskLabel extends HBox {
+public class TaskLabel extends BorderPane {
 
     private final Text label;
     private final Task task;
     private final TaskSummaryIcon summary;
-    //private final NSliderFX slider;
+    private final NSliderFX slider;
+    private float lastPri = -1;
 
     public TaskLabel(String prefix, Task task, NAR n) {
-        super( 1 );
+        super( );
 
         this.task = task;
 
@@ -26,37 +29,35 @@ public class TaskLabel extends HBox {
 
         label = new Text(sb.toString());
 
+        label.getStyleClass().add("tasklabel_text");
         label.setMouseTransparent(true);
-        label.setCacheHint(CacheHint.SCALE);
+        //label.setCacheHint(CacheHint.SCALE);
+        label.setPickOnBounds(false);
+        label.setSmooth(false);
+        label.setTextAlignment(TextAlignment.LEFT);
 
 
-        getChildren().setAll(
-                summary = new TaskSummaryIcon(task, this).width(40),
-                //slider = new NSliderFX(40, 20).set(0, 0, 1),
-                label
+        int iconWidth = 50;
+        int iconSpacing = 2;
+
+        StackPane icon = new StackPane(
+                summary = new TaskSummaryIcon(task, this).width(iconWidth),
+                slider = new NSliderFX(iconWidth, 20).set(0, 0, 1)
         );
+        icon.autosize();
+
+        setLeft(icon);
+        setCenter(label);
 
 
+        slider.setOpacity(0.5);
+        summary.setMouseTransparent(false);
 
-
-        //setAlignment(Pos.CENTER_LEFT);
-
-        //Font ff = NARfx.mono(16.0 + 16.0 * pri);
-        /*Font ff = NARfx.mono(16);
-        setTranslateX(getWidth());
-        setScaleX(1.0 + 0.5 * pri);
-        setScaleY(1.0 + 0.5 * pri);
-        this.setFont(ff);*/
-
-        //autosize();
-
-
-        //setCacheHint(CacheHint.SCALE);
-        //setCache(true);
+        layout();
 
         update();
 
-        label.setCache(true);
+        //label.setCache(true);
     }
 
     public void enablePopupClickHandler(NAR nar) {
@@ -81,22 +82,22 @@ public class TaskLabel extends HBox {
 
     public void update() {
 
-        summary.run();
 
         float pri = task.getBudget().getPriorityIfNaNThenZero();
+        if (Precision.equals(lastPri, pri, 0.025)) {
+            return;
+        }
+        lastPri = pri;
 
-        //slider.value.set(pri);
+        summary.run();
 
-
-        setAlignment(Pos.BASELINE_LEFT);
-
-        double sc = 0.5 + 2.5 * ( 1 -  pri);
+        double sc = 0.25 + 1 * ( 1 -  pri);
         label.setScaleX(sc);
         label.setScaleY(sc);
+        label.setFill(JFX.grayscale.get(pri*0.5+0.5));
 
         layout();
 
-        label.setFill(JFX.grayscale.get(pri*0.5+0.5));
 
     }
 }

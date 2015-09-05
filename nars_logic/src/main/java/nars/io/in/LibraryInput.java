@@ -179,7 +179,7 @@ public class LibraryInput extends TextInput {
         return getUnitTests(directories);
     }
 
-    public static List rawTasks(String script) {
+    public static List<Object[]> rawTasks(String script) {
 
         List<Object[]> rr = Global.newArrayList();
 
@@ -188,14 +188,14 @@ public class LibraryInput extends TextInput {
         return rr;
     }
 
-    public static List<Task> getExample(List raw, AbstractMemory m) {
+    public static List<Task> getExample(List<Object[]> raw, AbstractMemory m) {
 
         List<Task> y = Global.newArrayList(raw.size());
         for (Object o : raw) {
             if (o instanceof Task) y.add((Task)o);
             else {
                 Object[] z = (Object[])o;
-                y.add(NarseseParser.getTask(m, z));
+                y.add(NarseseParser.decodeTask("", m, z));
             }
         }
         return y;

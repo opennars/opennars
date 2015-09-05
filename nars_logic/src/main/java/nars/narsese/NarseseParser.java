@@ -216,8 +216,7 @@ public class NarseseParser extends BaseParser<Object>  {
     }
 
 
-    //TODO return TaskSeed
-    public static Task getTask(final AbstractMemory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+    static Task decodeTask(final AbstractMemory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
 
         if (p == null)
             throw new RuntimeException("character is null");
@@ -950,7 +949,7 @@ public class NarseseParser extends BaseParser<Object>  {
 //    }
 
 
-    public void tasks(String input, AbstractMemory m, Collection<Task> c) {
+    public void tasks(String input, Collection<Task> c, AbstractMemory m) {
         tasks(input, t -> {
             c.add(t);
         }, m);
@@ -962,8 +961,19 @@ public class NarseseParser extends BaseParser<Object>  {
      * ondemand
      */
     public void tasks(String input, Consumer<Task> c, final AbstractMemory m) {
+
         tasksRaw(input, o -> {
-            c.accept( getTask(m, o ) );
+            Object t = decodeTask(input, m, o);
+            if (t instanceof Task) {
+                c.accept((Task) t);
+            }
+            else if (t instanceof Object[]) {
+                Object[] x = (Object[])t;
+                c.accept(decodeTask(input, m, x));
+            }
+            else {
+
+            }
         });
     }
 
@@ -1024,17 +1034,21 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
         try {
-            return getTask(memory, (Object[])r.getValueStack().peek() );
+            return decodeTask(input, memory, (Object[])r.getValueStack().peek() );
         }
         catch (Exception e) {
             throw newParseException(input, r, e);
         }
     }
 
-    public static Task getTask(final AbstractMemory m, Object[] x) {
+    public static Task decodeTask(String input, final AbstractMemory m, Object[] x) {
         if (x.length == 1 && x[0] instanceof Task)
             return (Task)x[0];
-        return getTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
+        Task y = decodeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
+        if (y == null) {
+            m.emit(Events.ERR.class, "Invalid task: " + input, -1);
+        }
+        return y;
     }
 
     /** parse one term and normalize it if successful */

@@ -37,8 +37,8 @@ public class TextInput extends TaskQueue {
     }
 
     protected void process(final NAR n, final String input) {
-        n.narsese.tasks(process(input), n.memory,
-                (Collection<Task>)this);
+        n.narsese.tasks(process(input), (Collection<Task>)this, n.memory
+        );
     }
 
     /** can be overridden in subclasses to preprocess addInput */

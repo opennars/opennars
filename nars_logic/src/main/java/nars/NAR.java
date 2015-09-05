@@ -178,7 +178,7 @@ public class NAR implements Runnable {
 
     public List<Task> tasks(final String parse) {
         List<Task> result = Global.newArrayList(1);
-        narsese.tasks(parse, n -> result.add(n), memory );
+        narsese.tasks(parse, result, memory);
         return result;
     }
 

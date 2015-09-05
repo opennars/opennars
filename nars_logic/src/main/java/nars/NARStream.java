@@ -255,7 +255,7 @@ public class NARStream  {
         });
     }
 
-    public NARStream forEachDerived(Consumer<Task> receiver) {
+    public NARStream forEachDerived(Consumer<Object[] /* TODO: Task*/> receiver) {
         NARReaction r = new ConsumedStreamNARReaction(receiver, Events.OUT.class);
         return this;
     }
