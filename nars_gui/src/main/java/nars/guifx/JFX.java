@@ -13,6 +13,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
 import nars.guifx.util.ColorArray;
 import org.apache.commons.math3.util.Precision;
@@ -80,4 +81,20 @@ public class JFX {
         });
     }
 
+    public static Polygon newPoly(int sides, double d) {
+
+        Polygon polygon = new Polygon();
+        polygon.setStrokeWidth(0);
+        polygon.setStroke(null);
+        double da = (2 * Math.PI) / sides, a = 0;
+        double r = d / 2;
+        for (int i = 0; i < sides; i++) {
+            polygon.getPoints().addAll(
+                    r * Math.cos(a),
+                    r * Math.sin(a)
+            );
+            a += da;
+        }
+        return polygon;
+    }
 }

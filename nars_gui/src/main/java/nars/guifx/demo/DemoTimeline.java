@@ -1,18 +1,36 @@
 package nars.guifx.demo;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.*;
+import javafx.scene.chart.PieChart;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.NARStream;
 import nars.guifx.NARfx;
+import nars.guifx.Spacegraph;
 import nars.guifx.TaskLabel;
+import nars.guifx.TerminalPane;
+import nars.guifx.graph2.NARGraph1;
+import nars.guifx.util.CodeInput;
+import nars.guifx.util.Windget;
+import nars.nar.Default;
 import nars.nar.experimental.Equalized;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
+import za.co.knonchalant.builder.POJONode;
+import za.co.knonchalant.builder.TaggedParameters;
+import za.co.knonchalant.sample.pojo.SampleClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,30 +91,28 @@ public class DemoTimeline  {
         abstract W build(Task task, float start, float end, int nth);
 
         public void forEachOverlapping(float start, float stop, Consumer<Map.Entry<Task,W>> w) {
-            final List<Map<Task,W>> x = map.searchOverlapping(start, stop);
+            final List<Map<Task,W>> x = map.searchContainedBy(start, stop);
             if (x == null) return;
 
             x.forEach( c -> c.entrySet().forEach(w) );
         }
     }
 
-    abstract public static class TaskTimelinePane {
+    abstract public static class TaskTimelinePane extends NARGraph1 {
 
         private final TaskTimeline<TaskEventButton> time;
-        private final Pane view;
         private final NAR nar;
 
         /**previous/current mouse coord*/
         double mx = Double.NaN, my = Double.NaN;
 
         double t = 0.0;  //time about which the timeline is centered
-        double d = 25.0; //duration window
+        double d = 75.0; //duration window
 
-        public TaskTimelinePane(NAR n, StackPane view) {
-            super();
+        public TaskTimelinePane(NAR n) {
+            super(n);
 
             this.nar = n;
-            this.view = view;
 
             this.time = new TaskTimeline(n) {
 
@@ -106,31 +122,36 @@ public class DemoTimeline  {
                 }
             };
 
-            NARStream s = new NARStream(n);
+            runLater(() -> {
 
-            s.forEachDerived(task -> { time.addOccurrence((Task)task[0]); });
+                NARStream s = new NARStream(n);
 
+                s.forEachDerived(task -> { time.addOccurrence((Task)task[0]); });
 
-
-            //view.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-            view.setMouseTransparent(false);
-            view.setPickOnBounds(true);
-            view.setOnMouseDragged((e) -> {
-                double nx = e.getX(), ny = e.getY();
-
-                if (!Double.isNaN(mx)) {
-
-                    double dx = nx - mx;
-                    double dy = ny - my;
-
-                    push(dx, dy);
-                }
-
-                mx = nx; my = ny;
+                updateAll();
             });
-            view.setOnMouseReleased((e) -> {
-                mx = my = Double.NaN;
-            });
+
+
+
+//            //view.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+//            setMouseTransparent(false);
+//            setPickOnBounds(true);
+//            setOnMouseDragged((e) -> {
+//                double nx = e.getX(), ny = e.getY();
+//
+//                if (!Double.isNaN(mx)) {
+//
+//                    double dx = nx - mx;
+//                    double dy = ny - my;
+//
+//                    push(dx, dy);
+//                }
+//
+//                mx = nx; my = ny;
+//            });
+//            view.setOnMouseReleased((e) -> {
+//                mx = my = Double.NaN;
+//            });
 
         }
 
@@ -199,20 +220,22 @@ public class DemoTimeline  {
         }
 
         protected void updateAll() {
-            double H = view.getLayoutBounds().getHeight();
+            double H = getLayoutBounds().getHeight();
 
 
-            shown = visible((float)(t-d/2.0), (float)(t+d/2.0));
-            view.getChildren().setAll(shown);
+            shown = visible((float)(t), (float)(t+d));
 
             for (Node t : shown) {
                 //t.setVisible(true);
                 if (t instanceof TaskEventButton)
                     update(H, (TaskEventButton)t);
             }
+
+            setNodes(shown);
+
         }
         private void update(final TaskEventButton te) {
-            update(view.getLayoutBounds().getHeight(), te);
+            update(getLayoutBounds().getHeight(), te);
         }
 
         private void update(double H, final TaskEventButton te) {
@@ -259,9 +282,10 @@ public class DemoTimeline  {
             return visible;
         }
 
-        /*public void view(float start, float stop) {
-            view.getChildren().setAll(visible(start,stop));
-        }*/
+//        public void view(float start, float stop) {
+//            this.t =
+//            view.getChildren().setAll(visible(start,stop));
+//        }
     }
 
     public static class TaskEventButton extends TaskLabel {
@@ -280,13 +304,101 @@ public class DemoTimeline  {
 //
 //    }
 
+
+
+
+    public void start2(Stage primaryStage) {
+
+
+//        Scene scene = space.newScene(1200, 800);
+//
+//        // init and show the stage
+//        primaryStage.setTitle("WignerFX Spacegraph Demo");
+//        primaryStage.setScene(scene);
+//        primaryStage.show();
+//
+
+        Platform.runLater(() -> {
+            start();
+        });
+    }
+
+    protected void start() {
+
+        //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
+
+        Spacegraph space = new Spacegraph();
+        ObservableList<PieChart.Data> pieChartData =
+                FXCollections.observableArrayList(
+                        new PieChart.Data("Grapefruit", 13),
+                        new PieChart.Data("Oranges", 25),
+                        new PieChart.Data("Plums", 10),
+                        new PieChart.Data("Pears", 22),
+                        new PieChart.Data("Apples", 30));
+        final PieChart chart = new PieChart(pieChartData);
+        chart.setTitle("Imported Fruits");
+        chart.setCacheHint(CacheHint.SPEED);
+
+        Windget cc = new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-100,-100);
+        cc.addOverlay(new Windget.RectPort(cc, true, +1, -1, 30, 30));
+
+        Windget wc = new Windget("Chart", chart, 400, 400);
+        wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
+
+
+        //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
+
+
+        TaggedParameters taggedParameters = new TaggedParameters();
+        List<String> range = new ArrayList<>();
+        range.add("Ay");
+        range.add("Bee");
+        range.add("See");
+        taggedParameters.addTag("range", range);
+        Pane jps = POJONode.build(new SampleClass(), taggedParameters);
+
+//        Button button = new Button("Read in");
+//        button.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                //SampleClass sample = POJONode.read(mainPane, SampleClass.class);
+//                //System.out.println(sample.getTextString());
+//            }
+//        });
+
+        jps.setStyle("-fx-font-size: 75%");
+        Windget wd = new Windget("WTF",
+                jps,
+                //new Button("XYZ"),
+                400, 400);
+        wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
+
+        space.addNodes(
+                wc,
+                cc,
+                wd
+        );
+
+
+
+
+        TerminalPane np = new TerminalPane(new NAR(new Default()));
+
+        Windget nd = new Windget("NAR",
+                np, 200, 200
+        ).move(-200,300);
+
+        space.addNodes(nd);
+
+    }
+
     public static void main(String[] args) {
         NARfx.run((a, b) -> {
 
             NAR n = new NAR(new Equalized(4,3,3));
 
 
-            StackPane sp = new StackPane();
+
             //sp.setBackground(new Background(new BackgroundFill(Color.gray(0.5), null, new Insets(0,0,0,0))));
 
             //ScrollPane sp = new ScrollPane(sp);
@@ -295,7 +407,7 @@ public class DemoTimeline  {
 
             //sp.setCenterShape(false);
 
-            TaskTimelinePane tp = new TaskTimelinePane(n, sp) {
+            TaskTimelinePane tp = new TaskTimelinePane(n) {
 
             };
 
@@ -320,7 +432,7 @@ public class DemoTimeline  {
             //t.map.entrySet().forEach( System.out::println );
 
 
-            b = NARfx.newWindow("timeline", new Scene(sp), b);
+            b = NARfx.newWindow("timeline", new Scene(tp), b);
 
             final javafx.stage.Stage finalB = b;
             runLater(() -> {

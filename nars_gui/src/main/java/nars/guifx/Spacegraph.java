@@ -33,6 +33,12 @@ public class Spacegraph extends ZoomFX {
     public void addNodes(Node... n) {
         verts.getChildren().addAll(n);
     }
+    public void addNodes(Collection<Node> n) {
+        verts.getChildren().addAll(n);
+    }
+    public void setNodes(Collection<Node> n) {
+        verts.getChildren().setAll(n);
+    }
 
     public void removeNodes(Node... n) {
         verts.getChildren().removeAll(n);

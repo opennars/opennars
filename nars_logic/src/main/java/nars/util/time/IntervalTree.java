@@ -64,7 +64,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	/**
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
-	public Collection<V> searchContainedBy(K low, K high){
+	public List<V> searchContainedBy(K low, K high){
 		return searchContainedBy(new Interval<K>(low, high));
 	}
 	
