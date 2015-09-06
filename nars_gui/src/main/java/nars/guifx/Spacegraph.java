@@ -137,12 +137,9 @@ public class Spacegraph extends ZoomFX {
         return ((int) y) + .5;
     }
 
+    public final Group edges = new Group();
     public final Group verts = new Group();
 
-    public final Canvas floorCanvas = new Canvas();
-
-
-    public final Pane layers = new AnchorPane(verts);
 
     public void print() {
         System.out.println(this + " " + verts.getChildren().size() + " verts");
@@ -154,34 +151,21 @@ public class Spacegraph extends ZoomFX {
 
         verts.maxWidth(Double.MAX_VALUE);
         verts.maxHeight(Double.MAX_VALUE);
+        edges.maxWidth(Double.MAX_VALUE);
+        edges.maxHeight(Double.MAX_VALUE);
 
-
-        layers.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        layers.setPickOnBounds(false);
         verts.setPickOnBounds(false);
+        edges.setPickOnBounds(false);
+
+        //content().add(layers);
 
 
-        content().add(layers);
 
+        //getChildren().add(0, floorCanvas); //untransformed
+        content().addAll(edges, verts);
 
-        floorCanvas.setManaged(false);
-        floorCanvas.setPickOnBounds(false);
-        floorCanvas.setMouseTransparent(true);
-
-
-        floorCanvas.widthProperty().bind(widthProperty());
-        floorCanvas.heightProperty().bind(heightProperty());
-        getChildren().add(0, floorCanvas); //untransformed
-
-
-        layers.setCenterShape(false);
         verts.setAutoSizeChildren(false);
-
-
-
-
-
-        getStyleClass().setAll("spacegraph","dark");
+        edges.setAutoSizeChildren(false);
 
 
 //        space.zoomFactorProperty().addListener((prop, oldVal, newVal) -> zoomFactor.setText(String.format("%d%%", Math.round(newVal.doubleValue() * 100))));

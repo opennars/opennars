@@ -4,6 +4,7 @@ import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -11,21 +12,18 @@ import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.util.SizeAwareWindow;
-import nars.guifx.util.TabX;
 import nars.nar.Default;
-import nars.nar.experimental.Equalized;
 import nars.task.Task;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
+import java.util.function.Consumer;
 
 
 /**
  *
  * @author me
  */
-public class NARfx extends Application {
+public class NARfx  {
 
     public static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
 
@@ -99,133 +97,132 @@ public class NARfx extends Application {
 //
 //    }
 
-    @Override
-    public void start(Stage primaryStage) {
 
-
-        //Default d = new Default();
-
-        /*Default d = new Equalized(1024,4,5);
-        d.setCyclesPerFrame(4);
-        d.setTermLinkBagSize(96);
-        d.setTaskLinkBagSize(96);*/
-
-        Default d = new Default(); //new Equalized(1024,1,3);
-        //Default d = new Default(1024,2,3);
-
-        NAR n = new NAR(d);
-
-        NARide w = NARfx.newWindow(n);
-
-
-        for (String s : getParameters().getRaw()) {
-            try {
-                n.input(new File(s));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        try {
-            n.input(new File("/tmp/h.nal")); //temporary
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        primaryStage.setOnCloseRequest(e -> {
-            n.stop();
-        });
-
-        {
-
-
-
-
-
-//            final TilePane lp = new TilePane(4,4,
-////                        new LinePlot("Total Priority", () ->
-////                            nar.memory.getActivePrioritySum(true, true, true)
-////                        , 128),
-//                    new LinePlot("Concept Priority", () -> {
-//                        int c = nar.memory.getControl().size();
-//                        if (c == 0) return 0;
-//                        else return nar.memory.getActivePrioritySum(true, false, false) / (c);
-//                    }, 128),
-//                    new LinePlot("Link Priority", () ->
-//                            nar.memory.getActivePrioritySum(false, true, false)
-//                            , 128),
-//                    new LinePlot("TaskLink Priority", () ->
-//                            nar.memory.getActivePrioritySum(false, false, true)
-//                            , 128)
-//            );
-//            lp.setPrefColumns(2);
-//            lp.setPrefRows(2);
+//    public static void run(NAR n) {
 //
-//            new CycleReaction(w.nar) {
+//        //Default d = new Default();
 //
-//                @Override
-//                public void onCycle() {
-//                    for (Object o : lp.getChildren()) {
-//                        if (o instanceof LinePlot)
-//                            ((LinePlot)o).update();
-//                    }
-//                }
-//            };
+//        /*Default d = new Equalized(1024,4,5);
+//        d.setCyclesPerFrame(4);
+//        d.setTermLinkBagSize(96);
+//        d.setTaskLinkBagSize(96);*/
 //
-//            lp.setOpacity(0.5f);
-//            lp.setPrefSize(200,200);
-//            lp.maxWidth(Double.MAX_VALUE);
-//            lp.maxHeight(Double.MAX_VALUE);
-//            lp.setMouseTransparent(true);
-//            lp.autosize();
-
-
-//                StackPane s = new StackPane(lp);
-//                s.maxWidth(Double.MAX_VALUE);
-//                s.maxHeight(Double.MAX_VALUE);
-
-
-            w.content.getTabs().add(new TabX("Terminal", new TerminalPane(w.nar) ));
-
-
-
-//              NARGraph1 g = new NARGraph1(w.nar);
-//            SubScene gs = g.newSubScene(w.content.getWidth(), w.content.getHeight());
-//            gs.widthProperty().bind(w.content.widthProperty());
-//            gs.heightProperty().bind(w.content.heightProperty());
+//        Default d = new Default(); //new Equalized(1024,1,3);
+//        //Default d = new Default(1024,2,3);
 //
-//            AnchorPane ags = new AnchorPane(gs);
-//            w.content.getTabs().add(new TabX("Graph", ags ));
-
-        }
-        //startup defaults
-        w.console(true);
-
-
-        //JFX.popup(new NodeControlPane());
-
-        /*
-        WebBrowser w = new WebBrowser();
-
-
-        primaryStage.setTitle("title");
-        primaryStage.show();
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                System.exit(0);
-            }
-        });
-
-        try {
-            w.start(primaryStage);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }*/
-
-    }
+//        NAR n = new NAR(d);
+//
+//        NARide w = NARfx.newWindow(n);
+//
+//
+//        for (String s : getParameters().getRaw()) {
+//            try {
+//                n.input(new File(s));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        try {
+//            n.input(new File("/tmp/h.nal")); //temporary
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        primaryStage.setOnCloseRequest(e -> {
+//            n.stop();
+//        });
+//
+//        {
+//
+//
+//
+//
+//
+////            final TilePane lp = new TilePane(4,4,
+//////                        new LinePlot("Total Priority", () ->
+//////                            nar.memory.getActivePrioritySum(true, true, true)
+//////                        , 128),
+////                    new LinePlot("Concept Priority", () -> {
+////                        int c = nar.memory.getControl().size();
+////                        if (c == 0) return 0;
+////                        else return nar.memory.getActivePrioritySum(true, false, false) / (c);
+////                    }, 128),
+////                    new LinePlot("Link Priority", () ->
+////                            nar.memory.getActivePrioritySum(false, true, false)
+////                            , 128),
+////                    new LinePlot("TaskLink Priority", () ->
+////                            nar.memory.getActivePrioritySum(false, false, true)
+////                            , 128)
+////            );
+////            lp.setPrefColumns(2);
+////            lp.setPrefRows(2);
+////
+////            new CycleReaction(w.nar) {
+////
+////                @Override
+////                public void onCycle() {
+////                    for (Object o : lp.getChildren()) {
+////                        if (o instanceof LinePlot)
+////                            ((LinePlot)o).update();
+////                    }
+////                }
+////            };
+////
+////            lp.setOpacity(0.5f);
+////            lp.setPrefSize(200,200);
+////            lp.maxWidth(Double.MAX_VALUE);
+////            lp.maxHeight(Double.MAX_VALUE);
+////            lp.setMouseTransparent(true);
+////            lp.autosize();
+//
+//
+////                StackPane s = new StackPane(lp);
+////                s.maxWidth(Double.MAX_VALUE);
+////                s.maxHeight(Double.MAX_VALUE);
+//
+//
+//            w.content.getTabs().add(new TabX("Terminal", new TerminalPane(w.nar) ));
+//
+//
+//
+////              NARGraph1 g = new NARGraph1(w.nar);
+////            SubScene gs = g.newSubScene(w.content.getWidth(), w.content.getHeight());
+////            gs.widthProperty().bind(w.content.widthProperty());
+////            gs.heightProperty().bind(w.content.heightProperty());
+////
+////            AnchorPane ags = new AnchorPane(gs);
+////            w.content.getTabs().add(new TabX("Graph", ags ));
+//
+//        }
+//        //startup defaults
+//        w.console(true);
+//
+//
+//        //JFX.popup(new NodeControlPane());
+//
+//        /*
+//        WebBrowser w = new WebBrowser();
+//
+//
+//        primaryStage.setTitle("title");
+//        primaryStage.show();
+//        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+//            @Override
+//            public void handle(WindowEvent event) {
+//                System.exit(0);
+//            }
+//        });
+//
+//        try {
+//            w.start(primaryStage);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }*/
+//
+//    }
 
 
     public static void main(String[] arg) {
@@ -239,7 +236,11 @@ public class NARfx extends Application {
 //            }
 //        });
 
-        Application.launch(NARfx.class, arg);
+        //Application.launch(NARfx.class, arg);
+
+        NARfx.newWindow(new NAR(new Default()), (i) -> {
+
+        });
 
     }
 
@@ -272,16 +273,49 @@ public class NARfx extends Application {
         return stage;
     }
 
-    public static NARide newWindow(NAR nar) {
-        NARide ni;
+    public static void newWindow(NAR nar) {
+        newWindow(nar, (Consumer)null);
+    }
+
+    public static void newWindow(NAR nar, Consumer<NARide> ide) {
+
         //SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
 
-        Stage wn = (ni = new NARide(nar)).newWindow();
-        wn.show();
-        //newWindow(nar.toString(), wn).show();
-        return ni;
+        run((a,b) -> {
 
-//
+            NARide ni = new NARide(nar);
+
+            Button summaryPane = new Button(":D");
+
+//            Scene scene = new SizeAwareWindow((d) -> {
+//                double w = d[0];
+//                double h = d[1];
+//                if ((w < 200) && (h < 200)) {
+//                    /*
+//                    new LinePlot(
+//                        "Concepts",
+//                        () -> (nar.memory.getConcepts().size()),
+//                        300
+//                     */
+//                    return () -> summaryPane;
+//                }/* else if (w < 200) {
+//                    return Column;
+//                } else if (h < 200) {
+//                    return Row;
+//                }*/
+//                return () -> ni;
+//            });
+            Scene scene = new Scene(ni);
+            b.setScene(scene);
+
+            b.setScene(scene);
+            b.sizeToScene();
+            b.show();
+
+            if (ide!=null)
+                ide.accept(ni);
+
+        });
 //        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
 //
 //        ni.resize(500,500);

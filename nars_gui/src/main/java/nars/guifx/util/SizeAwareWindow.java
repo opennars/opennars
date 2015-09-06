@@ -1,11 +1,12 @@
 package nars.guifx.util;
 
 import javafx.beans.value.ChangeListener;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -27,8 +28,7 @@ import static javafx.application.Platform.runLater;
  */
 public class SizeAwareWindow extends Scene {
 
-
-    private final Pane root;
+    private final BorderPane root;
     //private final BorderPane content;
     //private final BorderPane overlay;
     //private Scene scene;
@@ -52,10 +52,10 @@ public class SizeAwareWindow extends Scene {
     }
 
     public SizeAwareWindow(Stage window, Function<double[], Supplier<Parent>> model) {
-        super(new AnchorPane());
+        super(new BorderPane());
 
 
-        this.root = (Pane) getRoot();
+        this.root = (BorderPane)getRoot();
 
         this.nodes = LMap.newHash(model);
 
@@ -160,21 +160,33 @@ public class SizeAwareWindow extends Scene {
         Parent next = nodes.get(_d);
 
         if (next == null) {
-            setRoot(null);
+            setContent(null);
             this.current.setVisible(false);
         } else if (next != this.current) {
-            next.setVisible(true);
+
+            if (next!=null) {
+                next.setVisible(true);
+                next.maxWidth(Double.MAX_VALUE);
+                next.maxHeight(Double.MAX_VALUE);
+                next.layout();
+            }
 
             Parent old = this.current;
 
-            setRoot(this.current = next);
+            System.out.println("setting: " + next + " " + next.getLayoutBounds());
+            setContent(this.current = next);
 
-            old.setVisible(false);
+            if (old!=null)
+                old.setVisible(false);
 
             getRoot().layout();
 
         }
 
+    }
+
+    public void setContent(Node n) {
+        root.setCenter(n);
     }
 
     /**

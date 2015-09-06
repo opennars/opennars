@@ -1,6 +1,7 @@
 package automenta.vivisect.dimensionalize;
 
 
+import nars.guifx.graph2.NARGraph1;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.util.Collection;
@@ -9,7 +10,7 @@ public interface IterativeLayout<V,E> {
 
     ArrayRealVector getPosition(V vertex);
 
-    public void run(int iterations);
+    public void run(NARGraph1 graph, int iterations);
 
     void resetLearning();
 

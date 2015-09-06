@@ -98,7 +98,7 @@ public class DemoTimeline  {
         }
     }
 
-    abstract public static class TaskTimelinePane extends NARGraph1 {
+    public static class TaskTimelinePane extends NARGraph1 {
 
         private final TaskTimeline<TaskEventButton> time;
         private final NAR nar;
@@ -271,13 +271,14 @@ public class DemoTimeline  {
             TaskEventButton[] prev = new TaskEventButton[1];
             time.forEachOverlapping(start, stop, (w) -> {
                 TaskEventButton v = w.getValue();
-                if (prev[0]!=null) {
+                /*if (prev[0]!=null) {
                     double prevTime = prev[0].end;
                     double distance = v.start - prevTime;
-                    /*if (distance > 0) {
+                    if (distance > 0) {
                         visible.add(new Label("/" + distance));
-                    }*/
-                }
+                    }
+                }*/
+                System.out.println("add: " + w + " -> " + v);
                 visible.add(v);
                 prev[0] = v;
             });
@@ -299,120 +300,16 @@ public class DemoTimeline  {
             super(t, nar);
             this.start = start;
             this.end = end;
-
         }
     }
 
-//    public static class TaskTimelineVis() {
-//
-//    }
-
-
-
-
-    public void start2(Stage primaryStage) {
-
-
-//        Scene scene = space.newScene(1200, 800);
-//
-//        // init and show the stage
-//        primaryStage.setTitle("WignerFX Spacegraph Demo");
-//        primaryStage.setScene(scene);
-//        primaryStage.show();
-//
-
-        Platform.runLater(() -> {
-            start();
-        });
-    }
-
-    protected void start() {
-
-        //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
-
-        Spacegraph space = new Spacegraph();
-        ObservableList<PieChart.Data> pieChartData =
-                FXCollections.observableArrayList(
-                        new PieChart.Data("Grapefruit", 13),
-                        new PieChart.Data("Oranges", 25),
-                        new PieChart.Data("Plums", 10),
-                        new PieChart.Data("Pears", 22),
-                        new PieChart.Data("Apples", 30));
-        final PieChart chart = new PieChart(pieChartData);
-        chart.setTitle("Imported Fruits");
-        chart.setCacheHint(CacheHint.SPEED);
-
-        Windget cc = new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-100,-100);
-        cc.addOverlay(new Windget.RectPort(cc, true, +1, -1, 30, 30));
-
-        Windget wc = new Windget("Chart", chart, 400, 400);
-        wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
-
-
-        //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
-
-
-        TaggedParameters taggedParameters = new TaggedParameters();
-        List<String> range = new ArrayList<>();
-        range.add("Ay");
-        range.add("Bee");
-        range.add("See");
-        taggedParameters.addTag("range", range);
-        Pane jps = POJONode.build(new SampleClass(), taggedParameters);
-
-//        Button button = new Button("Read in");
-//        button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent actionEvent) {
-//                //SampleClass sample = POJONode.read(mainPane, SampleClass.class);
-//                //System.out.println(sample.getTextString());
-//            }
-//        });
-
-        jps.setStyle("-fx-font-size: 75%");
-        Windget wd = new Windget("WTF",
-                jps,
-                //new Button("XYZ"),
-                400, 400);
-        wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
-
-        space.addNodes(
-                wc,
-                cc,
-                wd
-        );
-
-
-
-
-        TerminalPane np = new TerminalPane(new NAR(new Default()));
-
-        Windget nd = new Windget("NAR",
-                np, 200, 200
-        ).move(-200,300);
-
-        space.addNodes(nd);
-
-    }
 
     public static void main(String[] args) {
         NARfx.run((a, b) -> {
 
             NAR n = new NAR(new DefaultAlann(16));
 
-
-
-            //sp.setBackground(new Background(new BackgroundFill(Color.gray(0.5), null, new Insets(0,0,0,0))));
-
-            //ScrollPane sp = new ScrollPane(sp);
-
-            //sp.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
-            //sp.setCenterShape(false);
-
-            TaskTimelinePane tp = new TaskTimelinePane(n) {
-
-            };
+            TaskTimelinePane tp = new TaskTimelinePane(n);
 
             n.input("<a ==> x>! :|:");
             n.frame(1);
@@ -426,7 +323,7 @@ public class DemoTimeline  {
             n.frame(3);
             n.input("c:b. :|:");
             n.frame(2);
-            n.input("<(&/, c:b, b:a, #x) =/> #x --> x>>.");
+            //n.input("<(&/, c:b, b:a, #x) =/> #x --> x>>.");
             n.frame(1);
 
             n.frame(55);
@@ -448,13 +345,98 @@ public class DemoTimeline  {
             });
 
 
-            NARfx.newWindow(n);
+            NARfx.newWindow(n, i -> {
 
+            });
 
         });
     }
 
 
 
+    //public void start2(Stage primaryStage) {
+//
+//
+////        Scene scene = space.newScene(1200, 800);
+////
+////        // init and show the stage
+////        primaryStage.setTitle("WignerFX Spacegraph Demo");
+////        primaryStage.setScene(scene);
+////        primaryStage.show();
+////
+//
+//        Platform.runLater(() -> {
+//            start();
+//        });
+//    }
+
+//    protected void start() {
+//
+//        //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
+//
+//        Spacegraph space = new Spacegraph();
+//        ObservableList<PieChart.Data> pieChartData =
+//                FXCollections.observableArrayList(
+//                        new PieChart.Data("Grapefruit", 13),
+//                        new PieChart.Data("Oranges", 25),
+//                        new PieChart.Data("Plums", 10),
+//                        new PieChart.Data("Pears", 22),
+//                        new PieChart.Data("Apples", 30));
+//        final PieChart chart = new PieChart(pieChartData);
+//        chart.setTitle("Imported Fruits");
+//        chart.setCacheHint(CacheHint.SPEED);
+//
+//        Windget cc = new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-100,-100);
+//        cc.addOverlay(new Windget.RectPort(cc, true, +1, -1, 30, 30));
+//
+//        Windget wc = new Windget("Chart", chart, 400, 400);
+//        wc.addOverlay(new Windget.RectPort(wc, true, -1, +1, 30, 30));
+//
+//
+//        //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
+//
+//
+//        TaggedParameters taggedParameters = new TaggedParameters();
+//        List<String> range = new ArrayList<>();
+//        range.add("Ay");
+//        range.add("Bee");
+//        range.add("See");
+//        taggedParameters.addTag("range", range);
+//        Pane jps = POJONode.build(new SampleClass(), taggedParameters);
+//
+////        Button button = new Button("Read in");
+////        button.setOnAction(new EventHandler<ActionEvent>() {
+////            @Override
+////            public void handle(ActionEvent actionEvent) {
+////                //SampleClass sample = POJONode.read(mainPane, SampleClass.class);
+////                //System.out.println(sample.getTextString());
+////            }
+////        });
+//
+//        jps.setStyle("-fx-font-size: 75%");
+//        Windget wd = new Windget("WTF",
+//                jps,
+//                //new Button("XYZ"),
+//                400, 400);
+//        wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
+//
+//        space.addNodes(
+//                wc,
+//                cc,
+//                wd
+//        );
+//
+//
+//
+//
+//        TerminalPane np = new TerminalPane(new NAR(new Default()));
+//
+//        Windget nd = new Windget("NAR",
+//                np, 200, 200
+//        ).move(-200,300);
+//
+//        space.addNodes(nd);
+//
+//    }
 
 }

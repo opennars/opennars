@@ -17,6 +17,7 @@ import ca.nengo.ui.model.viewer.NodeViewer;
 import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.gui.WrapLayout;
+import nars.guifx.graph2.NARGraph1;
 import nars.nar.Default;
 import nars.util.data.id.Named;
 import nars.util.graph.TermLinkGraph;
@@ -106,6 +107,10 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
         final FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>> organicLayout =
                 new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(layoutBounds) {
 
+                    @Override
+                    public void run(NARGraph1 graph, int iterations) {
+
+                    }
 
                     @Override
                     public ArrayRealVector getPosition(UIVertex node) {
@@ -238,7 +243,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
 
                     organicLayout.setForceConstant(300);
                     organicLayout.resetLearning();
-                    organicLayout.run(1);
+                    organicLayout.run(null, 1);
 
 
                     //hyperLayout.run(1);

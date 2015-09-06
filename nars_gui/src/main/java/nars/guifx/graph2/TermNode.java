@@ -155,7 +155,6 @@ public class TermNode extends Group {
 
 
     public void randomPosition(double bx, double by) {
-
         move(NARGraph1.rng.nextDouble() * bx, NARGraph1.rng.nextDouble() * by);
     }
 
@@ -237,13 +236,13 @@ public class TermNode extends Group {
     }
 
     public double sx() {
-        if (sceneCoord == null) sceneCoord = localToScene(0, 0);
+        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
         return sceneCoord.getX();
     }
 
     public double sy() {
 
-        if (sceneCoord == null) sceneCoord = localToScene(0, 0);
+        if (sceneCoord == null) sceneCoord = localToParent(0, 0);
         return sceneCoord.getY();
     }
 
