@@ -29,7 +29,7 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class NARGraph1<V,E> extends Spacegraph {
+public class NARGraph1<V, E> extends Spacegraph {
 
     private Animate updater;
     private GraphicsContext floorGraphics;
@@ -84,7 +84,7 @@ public class NARGraph1<V,E> extends Spacegraph {
         @Override
         public double getVertexScale(Concept c) {
 
-            return (c!=null ? getVertexScaleByConf(c) : 0) * 0.75f + 0.25f;
+            return (c != null ? getVertexScaleByConf(c) : 0) * 0.75f + 0.25f;
             //return getVertexScaleByPri(c);
         }
 
@@ -95,7 +95,7 @@ public class NARGraph1<V,E> extends Spacegraph {
                     0.95f,
                     Math.min(0.75f + 0.25f * (termMean + taskMean) / 2f, 1f)
                     //,0.5 * (termMean + taskMean)
-                    );
+            );
 
 
 //            return new Color(
@@ -112,7 +112,7 @@ public class NARGraph1<V,E> extends Spacegraph {
 
 
     final Map<Term, TermNode> terms = new LinkedHashMap();
-            //Collections.synchronizedMap(new LinkedHashMap());
+    //Collections.synchronizedMap(new LinkedHashMap());
     final List<TermNode> termList = Global.newArrayList();
 
     final Map<Term, TermNode> termToAdd = new LinkedHashMap();
@@ -148,17 +148,18 @@ public class NARGraph1<V,E> extends Spacegraph {
         return i < 0;
     }
 
-    public TermEdge getEdge(Term a, Term b){
+    public TermEdge getEdge(Term a, Term b) {
         TermNode n = getTermNode(a, false);
         if (n != null) {
             return n.edge.get(b);
         }
         return null;
     }
-    public boolean addEdge(Term a, Term b, TermEdge e){
+
+    public boolean addEdge(Term a, Term b, TermEdge e) {
         TermNode n = getTermNode(a, false);
         if (n != null) {
-            return n.putEdge(b, e)==null;
+            return n.putEdge(b, e) == null;
         }
         return false;
     }
@@ -196,7 +197,7 @@ public class NARGraph1<V,E> extends Spacegraph {
             Term target = t.getTerm();
             if (!source.equals(target.getTerm())) {
                 TermNode tn = getTermNode(target, false);
-                if (tn!=null) {
+                if (tn != null) {
                     TermEdgeHalf e = getConceptEdgeHalf(sn, tn);
                     e.set(t, now);
                 }
@@ -205,7 +206,7 @@ public class NARGraph1<V,E> extends Spacegraph {
 
         c.getTermLinks().forEach(t -> {
             TermNode tn = getTermNode(t.getTerm(), false);
-            if (tn !=null) {
+            if (tn != null) {
                 TermEdgeHalf e = getConceptEdgeHalf(sn, tn);
                 e.set(t, now);
             }
@@ -233,10 +234,9 @@ public class NARGraph1<V,E> extends Spacegraph {
 
                 refresh(sn, c, now);
             });
-        }
-        else {
+        } else {
             active.forEach(sn -> {
-               refresh(sn, sn.concept, now);
+                refresh(sn, sn.concept, now);
             });
         }
 
@@ -277,11 +277,11 @@ public class NARGraph1<V,E> extends Spacegraph {
                 getVertices().forEach(nn -> {
                     if (!(nn instanceof TermNode)) return;
 
-                    TermNode r = (TermNode)nn;
+                    TermNode r = (TermNode) nn;
                     if (!active.contains(r)) {
                         TermNode c = terms.remove(r.term);
 
-                        if (c!=null) {
+                        if (c != null) {
                             c.setVisible(false);
                             toDetach.add(c);
                         }
@@ -298,7 +298,7 @@ public class NARGraph1<V,E> extends Spacegraph {
                     }
                 });
 
-                removeNodes((Collection)toDetach);
+                removeNodes((Collection) toDetach);
                 //removeEdges((Collection)toDetachEdge);
 
                 termList.clear();
@@ -372,57 +372,74 @@ public class NARGraph1<V,E> extends Spacegraph {
 
     IterativeLayout<TermNode, TermEdge> layout = null;
 
-    HyperassociativeMap<TermNode, TermEdge> h = null;
 
     protected void layoutNodes() {
-        //layoutNodesCircle();
-        layoutNodesHyper();
-    }
-
-    protected void layoutNodesCircle() {
-        if (layout == null) {
-            layout = new CircleLayout<TermNode, TermEdge>();
+        if (layout != null) {
+            layout.run(1);
         }
-
-        double[] i = new double[1];
-        double numFraction = Math.PI * 2.0 * 1.0 / termList.size();
-        double radiusMin = (termList.size() + 1) * 10;
-        double radiusMax = 3f * radiusMin;
-
-        ((CircleLayout<TermNode, TermEdge>) layout).
-                run(termList,
-                        (v) -> {
-                            double r = 1f - (v.c != null ? v.c.getPriority() : 0);
-                            double min = radiusMin;
-                            double max = radiusMax;
-                            return r * (max - min) + min;
-                        },
-                        (v) -> {
-                            //return Math.PI * 2 * (v.term.hashCode() % 8192) / 8192.0;
-
-                            i[0] += numFraction;
-                            return i[0];
-                        },
-                        (v, d) -> {
-                            v.move(d[0], d[1]);//, 0.5f, 1f);
-                        });
-
-
     }
 
-    protected void layoutNodesHyper() {
+    private IterativeLayout<TermNode, TermEdge> getLayout() {
+        return layout;
+    }
 
+    public void setLayout(IterativeLayout<TermNode, TermEdge> layout) {
+        this.layout = layout;
+    }
 
-        if (h == null) {
+    protected IterativeLayout<TermNode,TermEdge> newNodesCircle() {
 
+        return new CircleLayout<TermNode, TermEdge>() {
 
-            h = new HyperassociativeMap<TermNode, TermEdge>(2) {
-                float termRadius = 1;
+            @Override public void run(int iterations) {
 
-                @Override
-                public void getPosition(final TermNode node, final double[] v) {
-                    node.getPosition(v);
-                }
+                double[] i = new double[1];
+                double numFraction = Math.PI * 2.0 * 1.0 / termList.size();
+                double radiusMin = (termList.size() + 1) * 10;
+                double radiusMax = 3f * radiusMin;
+
+                run(termList,
+                    (v) -> {
+                        double r = 1f - (v.c != null ? v.c.getPriority() : 0);
+                        double min = radiusMin;
+                        double max = radiusMax;
+                        return r * (max - min) + min;
+                    },
+                    (v) -> {
+                        //return Math.PI * 2 * (v.term.hashCode() % 8192) / 8192.0;
+
+                        i[0] += numFraction;
+                        return i[0];
+                    },
+                    (v, d) -> {
+                        v.move(d[0], d[1]);//, 0.5f, 1f);
+                    });
+
+            }
+        };
+    }
+
+    protected HyperassociativeMap<TermNode, TermEdge> newHyperassociativeMapLayout() {
+        return new HyperassociativeMap<TermNode, TermEdge>(2) {
+            float termRadius = 1;
+
+            @Override
+            public void run(int i) {
+                resetLearning();
+                setLearningRate(0.4f);
+                setRepulsiveWeakness(10.0);
+                setAttractionStrength(10.0);
+                setMaxRepulsionDistance(10);
+
+                align(i);
+
+                apply();
+            }
+
+            @Override
+            public void getPosition(final TermNode node, final double[] v) {
+                node.getPosition(v);
+            }
 
                 /*
                 @Override
@@ -436,92 +453,76 @@ public class NARGraph1<V,E> extends Spacegraph {
                     return super.getRadius(termNode);
                 }*/
 
-                @Override
-                public boolean normalize() {
-                    return true;
-                }
+            @Override
+            public boolean normalize() {
+                return true;
+            }
 
 
-                @Override
-                public double getRadius(TermNode termNode) {
+            @Override
+            public double getRadius(TermNode termNode) {
 
-                    //return termNode.width() / 4f;
-                    return 0;
-                }
+                //return termNode.width() / 4f;
+                return 0;
+            }
 
-                @Override
-                public double getSpeedFactor(TermNode termNode) {
-                    //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
-                    return scaleFactor*2f;
-                }
+            @Override
+            public double getSpeedFactor(TermNode termNode) {
+                //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
+                return scaleFactor * 2f;
+            }
 
-                @Override
-                public void apply(final TermNode node, final double[] dataRef) {
+            @Override
+            public void apply(final TermNode node, final double[] dataRef) {
 
-                    node.move(dataRef[0], dataRef[1]);//, 1.0, 0);
-                }
+                node.move(dataRef[0], dataRef[1]);//, 1.0, 0);
+            }
 
-                @Override
-                protected Collection<TermNode> getVertices() {
-                    scaleFactor = 150 + 70 * Math.sqrt(1 + termList.size());
-                    setScale(scaleFactor);
+            @Override
+            protected Collection<TermNode> getVertices() {
+                scaleFactor = 150 + 70 * Math.sqrt(1 + termList.size());
+                setScale(scaleFactor);
 
-                    //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
+                //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
 
-                    setEquilibriumDistance(0.1f); //termRadius * 1.5f);
+                setEquilibriumDistance(0.1f); //termRadius * 1.5f);
 
-                    return termList;
-                }
+                return termList;
+            }
 
-                @Override
-                protected void edges(final TermNode nodeToQuery, Consumer<TermNode> updateFunc, boolean ins, boolean outs) {
+            @Override
+            protected void edges(final TermNode nodeToQuery, Consumer<TermNode> updateFunc, boolean ins, boolean outs) {
 //                    for (final TermEdge e : edges.row(nodeToQuery.term).values()) {
 //                        updateFunc.accept(e.otherNode(nodeToQuery));
 //                    }
 
-                    for (final TermEdge e : nodeToQuery.getEdges()) {
-                        if (e.visible)
-                            updateFunc.accept(e.otherNode(nodeToQuery));
-                    }
+                for (final TermEdge e : nodeToQuery.getEdges()) {
+                    if (e.visible)
+                        updateFunc.accept(e.otherNode(nodeToQuery));
+                }
 
                     /*edges.values().forEach(e ->
                             updateFunc.accept(e.otherNode(nodeToQuery)));*/
 
-                }
+            }
 
-            };
-
-
-
-        }
-
-        h.resetLearning();
-        h.setLearningRate(0.4f);
-        h.setRepulsiveWeakness(10.0);
-        h.setAttractionStrength(10.0);
-        h.setMaxRepulsionDistance(10);
-
-        h.align(16);
-
-        h.apply();
-
-
-
+        };
 
     }
 
 
-
     protected void updateNodes() {
-        if (termList!=null)
-            termList.forEach(n -> { if (n!=null) n.update(); } );
+        if (termList != null)
+            termList.forEach(n -> {
+                if (n != null) n.update();
+            });
     }
 
     final List<TermEdge> removable = Global.newArrayList();
 
     final Color FADEOUT =
             Color.BLACK;
-            //new Color(0,0,0,0.5);
+    //new Color(0,0,0,0.5);
 
     protected void renderEdges() {
         //if (edgeDirty.get()) {
@@ -533,7 +534,7 @@ public class NARGraph1<V,E> extends Spacegraph {
                 FADEOUT
         );
 
-        floorGraphics.fillRect(0,0, floorGraphics.getCanvas().getWidth(), floorGraphics.getCanvas().getHeight());
+        floorGraphics.fillRect(0, 0, floorGraphics.getCanvas().getWidth(), floorGraphics.getCanvas().getHeight());
 
         floorGraphics.setStroke(null);
         floorGraphics.setLineWidth(0);
@@ -587,13 +588,15 @@ public class NARGraph1<V,E> extends Spacegraph {
                 })*/
 
 
-
         visibleProperty().addListener(v -> {
             checkVisibility();
         });
 
-        runLater(() -> { checkVisibility(); } );
+        runLater(() -> {
+            checkVisibility();
+        });
 
+        setLayout(newHyperassociativeMapLayout());
     }
 
     protected void checkVisibility() {

@@ -25,7 +25,7 @@ import nars.guifx.graph2.NARGraph1;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
 import nars.nar.Default;
-import nars.nar.experimental.Equalized;
+import nars.nar.experimental.DefaultAlann;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
 import za.co.knonchalant.builder.POJONode;
@@ -91,7 +91,7 @@ public class DemoTimeline  {
         abstract W build(Task task, float start, float end, int nth);
 
         public void forEachOverlapping(float start, float stop, Consumer<Map.Entry<Task,W>> w) {
-            final List<Map<Task,W>> x = map.searchContainedBy(start, stop);
+            final List<Map<Task,W>> x = map.searchOverlapping(start, stop);
             if (x == null) return;
 
             x.forEach( c -> c.entrySet().forEach(w) );
@@ -107,7 +107,7 @@ public class DemoTimeline  {
         double mx = Double.NaN, my = Double.NaN;
 
         double t = 0.0;  //time about which the timeline is centered
-        double d = 75.0; //duration window
+        double d = 150.0; //duration window
 
         public TaskTimelinePane(NAR n) {
             super(n);
@@ -227,8 +227,11 @@ public class DemoTimeline  {
 
             for (Node t : shown) {
                 //t.setVisible(true);
-                if (t instanceof TaskEventButton)
-                    update(H, (TaskEventButton)t);
+                if (t instanceof TaskEventButton) {
+                    TaskEventButton tb = (TaskEventButton) t;
+                    System.out.println(tb.start + " " + tb.end + " " + t);
+                    update(H, (TaskEventButton) t);
+                }
             }
 
             setNodes(shown);
@@ -395,7 +398,7 @@ public class DemoTimeline  {
     public static void main(String[] args) {
         NARfx.run((a, b) -> {
 
-            NAR n = new NAR(new Equalized(4,3,3));
+            NAR n = new NAR(new DefaultAlann(16));
 
 
 
@@ -411,17 +414,20 @@ public class DemoTimeline  {
 
             };
 
+            n.input("<a ==> x>! :|:");
+            n.frame(1);
             n.input("b:a. :|:");
+            n.frame(2);
             n.input("x:y. :\\:");
-            n.frame(4);
+            n.frame(3);
             n.input("c:b. :|:");
             n.frame(4);
             n.input("b:a. :|:");
-            n.frame(4);
+            n.frame(3);
             n.input("c:b. :|:");
+            n.frame(2);
             n.input("<(&/, c:b, b:a, #x) =/> #x --> x>>.");
-
-            n.frame(4);
+            n.frame(1);
 
             n.frame(55);
 
@@ -442,6 +448,7 @@ public class DemoTimeline  {
             });
 
 
+            NARfx.newWindow(n);
 
 
         });
