@@ -292,9 +292,12 @@ public class NARfx  {
 
             NARide ni = new NARide(nar);
 
-            //ni.addView(new TerminalPane(nar));
-            ni.addView(new StatusPane(nar));
+            {
+                ni.addView(new TerminalPane(nar));
+                //ni.addView(additional components);
+            }
 
+            /** tool registration */
             ni.addTool("Terminal", () -> new TerminalPane(nar));
             ni.addTool("Status", () -> new StatusPane(nar));
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));

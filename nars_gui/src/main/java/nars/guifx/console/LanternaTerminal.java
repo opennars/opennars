@@ -2,6 +2,7 @@ package nars.guifx.console;
 
 import com.google.common.collect.Lists;
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -28,6 +29,7 @@ public class LanternaTerminal extends Application {
             public UltraCaret() {
                 super(16,16);
                 setFill(Color.ORANGE);
+
             }
 
             public void run() {
@@ -42,9 +44,12 @@ public class LanternaTerminal extends Application {
 
             setStyle(0, Lists.newArrayList("code-area-default"));
 
+
             Popup popup = new Popup();
 
+            popup.setAutoHide(true);
             popup.setOpacity(0.5);
+            popup.setAutoFix(true);
             popup.getContent().add(
                 new UltraCaret()
             );
@@ -56,6 +61,11 @@ public class LanternaTerminal extends Application {
             });
 
             //area.setPopupAnchorOffset(new Point2D(4, 4));
+
+        }
+
+        private void updateCaret(int x, int y) {
+            System.out.println(x + " " + y);
 
         }
 
