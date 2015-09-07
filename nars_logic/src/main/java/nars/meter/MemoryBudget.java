@@ -20,15 +20,25 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
 
     public int getInt(Budgeted b) {
-        return (int)get(b);
+        Integer i = (Integer)get(b);
+        if (i != null)
+            return i.intValue();
+        return 0;
     }
 
     public long getLong(Budgeted b) {
-        return (long)get(b);
+        Long l = (Long) get(b);
+        if (l!=null)
+            return l.longValue();
+        return 0;
     }
 
     public double getDouble(Budgeted b) {
-        return (double)get(b);
+        Double l = (Double ) get(b);
+        if (l!=null)
+            return l.doubleValue();
+        return 0;
+        //return (double)get(b);
     }
 
     public Object getDoubleFinite(Budgeted b, double defaultVal) {

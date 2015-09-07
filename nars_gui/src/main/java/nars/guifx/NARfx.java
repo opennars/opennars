@@ -15,6 +15,8 @@ import nars.guifx.remote.VncClientApp;
 import nars.nar.Default;
 import nars.task.Task;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -239,7 +241,11 @@ public class NARfx  {
         //Application.launch(NARfx.class, arg);
 
         NARfx.newWindow(new NAR(new Default()), (i) -> {
-
+            try {
+                i.nar.input(new File("/tmp/h.nal"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
 
     }
@@ -285,8 +291,11 @@ public class NARfx  {
 
             NARide ni = new NARide(nar);
 
-            ni.addView(new TerminalPane(nar));
+            //ni.addView(new TerminalPane(nar));
+            ni.addView(new StatusPane(nar));
+
             ni.addTool("Terminal", () -> new TerminalPane(nar));
+            ni.addTool("Status", () -> new StatusPane(nar));
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
 
 

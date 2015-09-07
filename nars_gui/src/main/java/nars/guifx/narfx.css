@@ -52,3 +52,8 @@
     -fx-fill: white;
     -fx-text-fill: white;
 }
+
+.selected {
+    -fx-background-color: #446;
+    -fx-text-fill: #8f8;
+}

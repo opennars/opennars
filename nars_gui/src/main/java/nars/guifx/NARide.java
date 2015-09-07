@@ -292,7 +292,9 @@ public class NARide extends BorderPane {
             LinePlot bp = new LinePlot(
                     "Concepts",
                     () -> (n.memory.getConcepts().size()),
-                    300
+                    300,
+
+                    100,100
             );
 
             new FrameReaction(n) {

@@ -1,8 +1,12 @@
 package nars.guifx;
 
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import nars.guifx.util.ColorArray;
 import nars.io.Texts;
@@ -13,7 +17,7 @@ import java.util.function.DoubleSupplier;
 /**
  * Created by me on 8/10/15.
  */
-public class LinePlot extends Canvas {
+public class LinePlot extends Canvas /*implements ChangeListener*/ {
 
     public static final ColorArray BlueRed = new ColorArray(128, Color.BLUE, Color.RED);
 
@@ -27,18 +31,23 @@ public class LinePlot extends Canvas {
     private double mean;
     int count;
 
-    public LinePlot(String name, DoubleSupplier valueFunc, int history) {
-        super();
+    public LinePlot(String name, DoubleSupplier valueFunc, int history, int width, int height) {
+        super(width,height);
 
 
-//        ChangeListener sizechanged = new ChangeListener() {
-//            @Override
-//            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-//                update();
+//        parentProperty().addListener(p-> {
+//            if (p!=null) {
+//                Region parent = (Region)p;
+//                parent.widthProperty().addListener(LinePlot.this);
+//                heightProperty().addListener(LinePlot.this);
 //            }
-//        };
-//        widthProperty().addListener(sizechanged);
-//        heightProperty().addListener(sizechanged);
+//        });
+//        layoutBoundsProperty().addListener((b) -> {
+//            Bounds ng = getLayoutBounds();
+//            setWidth(ng.getWidth());
+//            setHeight(ng.getHeight());
+//            System.out.println(ng);
+//        });
 
 
         this.name = name;
@@ -51,7 +60,7 @@ public class LinePlot extends Canvas {
 
 
 
-    public synchronized void update() {
+    public void update() {
 
         GraphicsContext g = getGraphicsContext2D();
 
@@ -133,6 +142,7 @@ public class LinePlot extends Canvas {
         g.fillText(label, 10, 25);
 
     }
+
 
 }
 

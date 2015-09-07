@@ -1,12 +1,15 @@
 package nars.guifx;
 
-import javafx.geometry.Pos;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
-import javafx.scene.text.Text;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.text.TextAlignment;
 import nars.NAR;
 import nars.task.Task;
 import org.apache.commons.math3.util.Precision;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class TaskLabel extends Label {
@@ -15,6 +18,7 @@ public class TaskLabel extends Label {
     private final TaskSummaryIcon summary;
     //private final NSlider slider;
     private float lastPri = -1;
+    public final SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
 
     public TaskLabel(String prefix, Task task, NAR n) {
         super();
@@ -33,9 +37,9 @@ public class TaskLabel extends Label {
         setText(sb.toString());
 
         //label.getStyleClass().add("tasklabel_text");
-        setMouseTransparent(true);
+        //setMouseTransparent(true);
         //label.setCacheHint(CacheHint.SCALE);
-        setPickOnBounds(false);
+        //setPickOnBounds(false);
         //setSmooth(false);
         //setCache(true);
 
@@ -44,6 +48,7 @@ public class TaskLabel extends Label {
         int iconSpacing = 1;
 
         setCenterShape(false);
+        setPickOnBounds(true);
 
         summary = new TaskSummaryIcon(task, this).width(iconWidth);
 
@@ -88,7 +93,49 @@ public class TaskLabel extends Label {
 
         layout();
 
-        //label.setCache(true);
+
+
+        /*setOnMouseEntered(e-> {
+            if (e.isPrimaryButtonDown()) {
+                System.out.println("dragged: " + task);
+                selected.set(!selected.get());
+            }
+        });*/
+        AtomicBoolean dragging= new AtomicBoolean(false);
+        EventHandler<MouseEvent> onDrag = e -> {
+            if (dragging.compareAndSet(false, true)) {
+                //System.out.println("dragged: " + task);
+                selected.set(!selected.get());
+            }
+        };
+        EventHandler<MouseEvent> clearDrag = e -> {
+            //System.out.println("exited: " + task);
+            dragging.set(false);
+        };
+
+
+        setOnDragOver((e)->{
+            onDrag.handle(null);
+        });
+        setOnDragDetected(e->{
+            clearDrag.handle(null);
+            startFullDrag();
+        });
+        setOnMouseDragEntered(onDrag);
+        setOnMouseReleased(clearDrag);
+
+
+        final String selectedClass = "selected";
+        selected.addListener((c,p,v) -> {
+            if (v) {
+                getStyleClass().add(selectedClass);
+            }
+            else {
+                getStyleClass().remove(selectedClass);
+            }
+        });
+
+        setCache(true);
     }
 
     public void enablePopupClickHandler(NAR nar) {
