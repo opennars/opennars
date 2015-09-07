@@ -19,6 +19,7 @@ import org.infinispan.notifications.cachemanagerlistener.annotation.Merged;
 import org.infinispan.notifications.cachemanagerlistener.annotation.ViewChanged;
 import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
 import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
+import org.infinispan.transaction.TransactionMode;
 import org.jgroups.protocols.UDP;
 
 import java.io.PrintStream;
@@ -32,7 +33,7 @@ import java.util.logging.Logger;
  * @see https://github.com/belaban/JGroups/tree/master/conf
  */
 @Listener(sync = true)
-public class InfiniPeer extends DefaultCacheManager  {
+public class InfiniPeer extends DefaultCacheManager {
 
     static {
         Logger.getLogger(JGroupsTransport.class.getName()).setLevel(Level.WARNING);
@@ -44,7 +45,7 @@ public class InfiniPeer extends DefaultCacheManager  {
     public InfiniPeer(GlobalConfiguration globalConfig, Configuration config) {
         super(globalConfig, config);
 
-        if (globalConfig.transport()!=null)
+        if (globalConfig.transport() != null)
             this.userID = globalConfig.transport().nodeName();
         else
             this.userID = null;
@@ -67,11 +68,11 @@ public class InfiniPeer extends DefaultCacheManager  {
 
     }
 
-    public <K,V> Cache<K, V> the(String cacheID) {
+    public <K, V> Cache<K, V> the(String cacheID) {
         return the(cacheID, true);
     }
 
-    public <K,V> Cache<K, V> the(String cacheID, boolean createIfMissing) {
+    public <K, V> Cache<K, V> the(String cacheID, boolean createIfMissing) {
         Cache<K, V> cache = getCache(cacheID, createIfMissing);
         cache.addListener(this);
         return cache;
@@ -114,10 +115,10 @@ public class InfiniPeer extends DefaultCacheManager  {
 //    }
 
 
-
-
-    /** for local only mode on the same host */
-    public static InfiniPeer local(String userID) {
+    /**
+     * for local only mode on the same host
+     */
+    @Deprecated public static InfiniPeer clusterLocal(String userID) {
         return cluster(userID, t ->
                         t.nodeName(userID)
                                 .defaultTransport()
@@ -135,15 +136,19 @@ public class InfiniPeer extends DefaultCacheManager  {
     }
 
 
+    public static InfiniPeer file(String diskPath, int maxEntries) {
+        return file("_", diskPath, maxEntries);
+    }
 
     /** for local only mode on the same host, saved to disk */
-    public static InfiniPeer local(String userID, String diskPath, int maxEntries) {
+    public static InfiniPeer file(String userID, String diskPath, int maxEntries) {
 
 
         GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder();
 
         globalConfigBuilder.transport().nodeName(userID)
                 .defaultTransport();
+
                 //.addProperty("configurationFile", "fast.xml");
 
 
@@ -161,13 +166,17 @@ public class InfiniPeer extends DefaultCacheManager  {
 
                         //.purgeOnStartup(true)
 
+                //.transaction().autoCommit(true).transactionMode(TransactionMode.NON_TRANSACTIONAL)
+
                 .unsafe()
-                .clustering()
+
+                        .clustering().sync()
+                //.clustering()
                         //.cacheMode(CacheMode.DIST_SYNC)
-                .cacheMode(CacheMode.DIST_SYNC)
-                .sync()
-                .l1().lifespan(25000L)
-                .hash().numOwners(3)
+                //.cacheMode(CacheMode.DIST_SYNC)
+                //.sync()
+                //.l1().lifespan(25000L)
+                //.hash().numOwners(3)
                 .build();
 
         return new InfiniPeer(
@@ -230,8 +239,12 @@ public class InfiniPeer extends DefaultCacheManager  {
         );
     }
 
-    public static InfiniPeer local() {
-        return local("");
+    public static InfiniPeer clusterLocal() {
+        return clusterLocal("");
+    }
+
+    public static InfiniPeer tmp() {
+        return file("_", System.getProperty("java.io.tmpdir") + "/" + "opennars", 128);
     }
 
 //    public static void main(String args[]) throws Exception {

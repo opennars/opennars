@@ -8,6 +8,11 @@ import nars.op.app.STMEventInference;
 import nars.op.app.STMInduction;
 import nars.op.mental.*;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
+import org.infinispan.Cache;
+import spangraph.InfiniPeer;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -45,9 +50,27 @@ public class NewDefault extends Default {
     /** default set of rules, statically available */
     public static DerivationRules standard;
 
+    public static final String key = "derivation_rules:standard";
+
     static {
         try {
-            standard = new DerivationRules();
+//            Cache<Object, Object> cache = (InfiniPeer.tmp().getCache());
+//            standard = (DerivationRules)cache.get(key);
+//            if (standard == null) {
+//                try {
+//                    System.out.print("Recompiling derivation rules..");
+                    standard = new DerivationRules();
+
+//                    cache.put(key, standard);
+//                    System.out.println("saved.");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    System.exit(1);
+//                }
+//            }
+
+
+            //standard = new DerivationRules();
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);

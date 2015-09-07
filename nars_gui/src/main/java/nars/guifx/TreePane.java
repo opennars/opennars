@@ -36,7 +36,7 @@ public class TreePane extends BorderPane {
 
     final Set<Task> pendingTasks = new LinkedHashSet<>(); //Global.newHashSet(1);
 
-    final Map<Task, TaskLabel> labels = new ConcurrentWeakKeyHashMap<>();
+    final Map<Task, AutoLabel> labels = new ConcurrentWeakKeyHashMap<>();
     final Map<Task, TaskTreeItem> tasks = new ConcurrentWeakKeyHashMap<>();
 
 
@@ -52,7 +52,7 @@ public class TreePane extends BorderPane {
 
         this.nar = n;
 
-        newLabel = u -> new TaskLabel(u, nar);
+        newLabel = u -> new AutoLabel(u, nar);
 
         rootNode = new TaskTreeItem(root);
         tree = new TreeView<Task>(rootNode);
@@ -103,7 +103,7 @@ public class TreePane extends BorderPane {
 
         @Override
         public void updateSelected(boolean selected) {
-            ((TaskLabel)getGraphic()).update();
+            ((AutoLabel)getGraphic()).update();
         }
 
         @Override
@@ -127,7 +127,7 @@ public class TreePane extends BorderPane {
 //            }
 
             if (getItem() != null) {
-                TaskLabel lbl = tasks.get(t).label;
+                AutoLabel lbl = tasks.get(t).label;
                 lbl.update();
                 setGraphic(lbl);
             } else {
@@ -193,10 +193,10 @@ public class TreePane extends BorderPane {
         return k.getPriority() >= minPriority.get();
     }
 
-    final Function<Task, TaskLabel> newLabel;
+    final Function<Task, AutoLabel> newLabel;
 
     public class TaskTreeItem extends TreeItem<Task> {
-        public final TaskLabel label;
+        public final AutoLabel label;
 
 
         public TaskTreeItem(Task t) {
@@ -273,7 +273,7 @@ public class TreePane extends BorderPane {
         //allow a node to e removed only if it has no children
         if (tt.getChildren().isEmpty()) {
 
-            TaskLabel tp = tt.label;
+            AutoLabel tp = tt.label;
             tp.setVisible(false);
 
             TreeItem<Task> pp = tt.getParent();

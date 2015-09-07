@@ -5,6 +5,10 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import jfxtras.labs.scene.control.gauge.Content;
+import jfxtras.labs.scene.control.gauge.ContentBuilder;
+import jfxtras.labs.scene.control.gauge.MatrixPanel;
+import jfxtras.labs.scene.control.gauge.MatrixPanelBuilder;
 import nars.NAR;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
@@ -17,6 +21,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static javafx.application.Platform.runLater;
+import static jfxtras.labs.scene.control.gauge.Content.*;
 
 /**
  * Created by me on 8/2/15.
@@ -123,11 +128,11 @@ public class LogPane extends VBox implements Runnable {
                         NARfx.window(nar, t);
                     }
             );*/
-            TaskLabel tl = new TaskLabel( "", t, nar);
-            //tl.setCache(true);
-
+            //AutoLabel tl = new AutoLabel( "", t, nar);
             //tl.enablePopupClickHandler(nar);
-            return tl;
+            //return tl;
+
+            return new AutoLabel(t, nar);
         }
 
         StringBuilder sb = TextOutput.append(event, args, false, nar, new StringBuilder());

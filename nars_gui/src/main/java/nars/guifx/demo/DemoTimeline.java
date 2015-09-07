@@ -1,36 +1,21 @@
 package nars.guifx.demo;
 
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.NARStream;
 import nars.guifx.NARfx;
-import nars.guifx.Spacegraph;
-import nars.guifx.TaskLabel;
-import nars.guifx.TerminalPane;
+import nars.guifx.AutoLabel;
 import nars.guifx.graph2.NARGraph1;
-import nars.guifx.util.CodeInput;
-import nars.guifx.util.Windget;
-import nars.nar.Default;
 import nars.nar.experimental.DefaultAlann;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
-import za.co.knonchalant.builder.POJONode;
-import za.co.knonchalant.builder.TaggedParameters;
-import za.co.knonchalant.sample.pojo.SampleClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -199,8 +184,8 @@ public class DemoTimeline  {
 
             //te.setManaged(false);
 
-            te.setWrapText(true);
-            te.setPrefWidth(1*scaleX);
+            //te.setWrapText(true);
+            //te.setPrefWidth(1*scaleX);
 
 
 
@@ -209,9 +194,9 @@ public class DemoTimeline  {
 
 
             te.setTranslateX(tx);
-            te.setBackground(new Background(new BackgroundFill(
+            /*te.setBackground(new Background(new BackgroundFill(
                     Color.hsb(te.hashCode() % 360, 0.8, 0.3),
-                    CornerRadii.EMPTY, new Insets(0,0,0,0))));
+                    CornerRadii.EMPTY, new Insets(0,0,0,0))));*/
 
             shown.add(te);
             update(te);
@@ -260,7 +245,7 @@ public class DemoTimeline  {
             te.setTranslateY(mid);
 
             //te.setPrefWidth(scaleX);
-            te.setPrefHeight(scaleY);
+            //te.setPrefHeight(scaleY);
         }
 
 
@@ -292,7 +277,7 @@ public class DemoTimeline  {
 //        }
     }
 
-    public static class TaskEventButton extends TaskLabel {
+    public static class TaskEventButton extends AutoLabel {
 
         public final float start, end;
 

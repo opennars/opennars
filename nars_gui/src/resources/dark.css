@@ -1,6 +1,6 @@
 .root {
 
-    -fx-base: rgb(20,20,20);
+    -fx-base: rgb(30,30,30);
     -fx-text-base-color: rgb(230,230,230);
 
     -fx-background: rgb(0, 0, 0);
@@ -15,7 +15,7 @@
     -fx-border-width: 0;
     -fx-border-style: none;
 
-    -fx-control-inner-background:  rgb(10, 10, 10);
+    -fx-control-inner-background:  rgb(30, 30, 30);
 
     /* A bright blue for highlighting/accenting objects.  For example: selected
      * text; selected items in menus, lists, trees, and tables; progress bars;
@@ -48,7 +48,7 @@
 
 .code-area {
     -fx-background-color: #000;
-    -fx-font-size: 150%;
+    /*-fx-font-size: 150%;*/
 }
 .code-area-default {
      -fx-fill: white;
@@ -113,7 +113,7 @@
 .label, .toggle-button, .button, .tree-cell {
     /*-fx-text-fill: -fx-text-base-color;
     -fx-fill: -fx-text-base-color;*/
-    -fx-padding: 0.2em;
+    -fx-padding: 0.1em;
     -fx-label-padding: 0em;
 }
 

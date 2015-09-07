@@ -24,7 +24,7 @@ abstract public class OptimalDeriver extends Deriver {
     public OptimalDeriver(DerivationRules rules) {
         super(rules);
 
-        for (final TaskRule r : rules.rules) {
+        for (final TaskRule r : rules) {
 
             final PreCondition[] p = r.preconditions;
             final Op o1 = r.getTaskTermType();

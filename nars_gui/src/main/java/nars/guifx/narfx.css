@@ -57,3 +57,7 @@
     -fx-background-color: #446;
     -fx-text-fill: #8f8;
 }
+
+.monoconsole {
+    -fx-font-size: 350%;
+}

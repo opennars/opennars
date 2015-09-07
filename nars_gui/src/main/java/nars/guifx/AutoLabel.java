@@ -12,7 +12,7 @@ import org.apache.commons.math3.util.Precision;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class TaskLabel extends Label {
+public class AutoLabel extends Label {
 
     private final Task task;
     private final TaskSummaryIcon summary;
@@ -20,9 +20,10 @@ public class TaskLabel extends Label {
     private float lastPri = -1;
     public final SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
 
-    public TaskLabel(String prefix, Task task, NAR n) {
+    public AutoLabel(String prefix, Task task, NAR n) {
         super();
 
+        setGraphicTextGap(0);
         getStylesheets().setAll();
         getStyleClass().setAll();
 
@@ -154,7 +155,7 @@ public class TaskLabel extends Label {
 
     }
 
-    public TaskLabel(Task task, NAR nar) {
+    public AutoLabel(Task task, NAR nar) {
         this("", task, nar);
     }
 
@@ -169,7 +170,7 @@ public class TaskLabel extends Label {
 
         summary.run();
 
-        double sc = 1.0 + 1.0 * pri;
+        double sc = 0.5 + 1.0 * pri;
         //setScaleX(sc);
         //setScaleY(sc);
         //setFont(NARfx.mono((pri*12+12)));
@@ -182,4 +183,5 @@ public class TaskLabel extends Label {
 
 
     }
+
 }

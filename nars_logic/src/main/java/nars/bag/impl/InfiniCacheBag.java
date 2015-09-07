@@ -18,11 +18,12 @@ public class InfiniCacheBag<K, V extends Itemized<K>> extends MapCacheBag<K, V> 
 //    }
 
     public static <K, V extends Itemized<K>> InfiniCacheBag<K,V> local(String userID, String channel) {
-        return new InfiniCacheBag(InfiniPeer.local(userID).the(channel));
+        return new InfiniCacheBag(InfiniPeer.clusterLocal(userID).the(channel));
     }
     public static <K, V extends Itemized<K>> InfiniCacheBag<K,V> file(String channel, String diskPath, int maxEntries) {
-        return new InfiniCacheBag(InfiniPeer.local("file", diskPath, maxEntries).the(channel));
+        return new InfiniCacheBag(InfiniPeer.file("file", diskPath, maxEntries).the(channel));
     }
+
 
     public InfiniCacheBag(Cache<K,V> c) {
         super(c);

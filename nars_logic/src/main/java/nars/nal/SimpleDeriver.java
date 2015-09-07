@@ -24,13 +24,19 @@ public class SimpleDeriver extends Deriver {
         taskTypeMap = new EnumMap(Op.class);
         beliefTypeMap = new EnumMap(Op.class);
 
-        for (final TaskRule r : rules.rules) {
-
+        int rs = rules.size();
+        for (int i = 0; i < rs; i++) {
+            final TaskRule r = rules.get(i);
 
             final PreCondition[] p = r.preconditions;
 
             final Op o1 = r.getTaskTermType();
             final Op o2 = r.getBeliefTermType();
+
+            if ((o1 == null) || (o2 == null)) {
+                System.err.println("nulls: " + o1 + " " + o2);
+                continue;
+            }
 
             if (o1!=Op.VAR_PATTERN) {
                 EnumMap<Op, List<TaskRule>> subtypeMap = taskTypeMap.computeIfAbsent(o1, op -> {
@@ -41,6 +47,7 @@ public class SimpleDeriver extends Deriver {
                     return Global.newArrayList();
                 });
                 lt.add(r);
+
             }
             else {
                 List<TaskRule> lt = beliefTypeMap.computeIfAbsent(o2, x -> {

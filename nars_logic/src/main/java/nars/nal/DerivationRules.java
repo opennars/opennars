@@ -1,29 +1,25 @@
 package nars.nal;
 
-import com.google.common.base.Predicates;
 import nars.Global;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
-import org.infinispan.util.concurrent.ConcurrentHashSet;
+import nars.op.math.add;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Holds an array of derivation rules
  */
-public class DerivationRules {
+public class DerivationRules extends ArrayList<TaskRule> {
 
     @Deprecated static final int maxVarArgsToMatch = 5;
 
-    public final TaskRule[] rules;
+
 
     public DerivationRules() throws IOException, URISyntaxException {
         this("NAL_Definition.logic");
@@ -44,9 +40,10 @@ public class DerivationRules {
         super();
 
         //remove duplicates again?
-        final Set<TaskRule> ruleSet = r.flatMap(x -> x.stream()).collect(Collectors.toSet());
-
-        rules = ruleSet.toArray(new TaskRule[ruleSet.size()]);//collect(Collectors.toList());
+        final Collection<TaskRule> target = this;
+        r.flatMap(x -> x.stream()).forEach(c -> {
+            add(c);
+        });
     }
 
 //    public DerivationRules(Stream<TaskRule[]> r, Predicate<TaskRule[]> filter) {

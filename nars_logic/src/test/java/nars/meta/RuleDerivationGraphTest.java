@@ -8,10 +8,7 @@ import nars.nar.NewDefault;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jgroups.util.Util.assertEquals;
 
@@ -24,8 +21,8 @@ public class RuleDerivationGraphTest {
     public void testRuleStatistics() {
         Deriver d = NewDefault.der;
 
-        TaskRule[] R = d.rules.rules;
-        int registeredRules = R.length;
+        List<TaskRule> R = d.rules;
+        int registeredRules = R.size();
 
 
         Frequency f = new Frequency();

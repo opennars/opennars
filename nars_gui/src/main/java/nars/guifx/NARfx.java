@@ -241,7 +241,7 @@ public class NARfx  {
 
         //Application.launch(NARfx.class, arg);
 
-        NARfx.newWindow(new NAR(new Default()), (i) -> {
+        NARfx.newWindow(new NAR(new Default(1000,3,2)), (i) -> {
             try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (IOException e) {

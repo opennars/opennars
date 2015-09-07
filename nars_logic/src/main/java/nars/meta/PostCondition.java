@@ -5,6 +5,7 @@ import nars.nal.nal1.Inheritance;
 import nars.term.Atom;
 import nars.term.Term;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
  * Describes a derivation postcondition
  * Immutable
  */
-public class PostCondition //since there can be multiple tasks derived per rule
+public class PostCondition implements Serializable //since there can be multiple tasks derived per rule
 {
 
     public static final float HALF = 0.5f;

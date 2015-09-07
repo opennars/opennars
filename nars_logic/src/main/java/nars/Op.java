@@ -4,10 +4,11 @@ package nars;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 
 /** NAL symbol table */
-public enum Op {
+public enum Op implements Serializable {
 
 
 

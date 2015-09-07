@@ -35,7 +35,7 @@ public class NAL5RuleTest {
         ));
         //System.out.println(Arrays.toString(d.rules));
         assertEquals("original rule + some derived",
-                3, d.rules.length);
+                3, d.size());
 
         SimpleDeriver sd = new SimpleDeriver(d);
 

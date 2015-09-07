@@ -1,5 +1,6 @@
 package nars.meta;
 
+import java.io.Serializable;
 import java.util.function.Predicate;
 
 /**
@@ -7,7 +8,7 @@ import java.util.function.Predicate;
  * so subclasses must implement a valid toString() identifier containing its components.
  * this will only be used at startup when compiling
  */
-abstract public class PreCondition implements Predicate<RuleMatch> {
+abstract public class PreCondition implements Predicate<RuleMatch>, Serializable {
 
     //abstract public boolean test(RuleMatch m);
 
