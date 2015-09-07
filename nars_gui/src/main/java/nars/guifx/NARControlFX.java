@@ -161,9 +161,6 @@ public class NARControlFX extends HBox {
             Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
             button2.setMouseTransparent(true);
             tool = new Menu("", button2);
-            tool.getItems().add(new MenuItem("Interface..."));
-            tool.getItems().add(new MenuItem("Cognition..."));
-            tool.getItems().add(new MenuItem("Sensor..."));
 
             getChildren().add(new MenuBar(main, tool));
         }

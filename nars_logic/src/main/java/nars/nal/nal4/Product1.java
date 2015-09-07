@@ -10,7 +10,7 @@ import java.io.Writer;
 /**
  * Higher efficiency 1-subterm implementation of Product
  */
-public class Product1<T extends Term> extends Compound1<T>  implements Product {
+public class Product1<T extends Term> extends Compound1<T>  implements Product<T> {
 
     public Product1(T the) {
         super(the);

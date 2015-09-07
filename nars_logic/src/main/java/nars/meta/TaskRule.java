@@ -86,11 +86,11 @@ public class TaskRule extends Rule<Premise,Task> {
 
     /** non-null;
      *  if it returns Op.VAR_PATTERN this means that any type can apply */
-    public Op getTaskTermType() {
+    public final Op getTaskTermType() {
         return getTask().op();
     }
 
-    protected Term getTask() {
+    protected final Term getTask() {
         return getPremises().term(0);
     }
 

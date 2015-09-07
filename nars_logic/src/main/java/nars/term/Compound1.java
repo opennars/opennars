@@ -1,7 +1,7 @@
 package nars.term;
 
 /** an optimized compound implementation for use when only 1 subterm */
-abstract public class Compound1<T extends Term> extends Compound {
+abstract public class Compound1<T extends Term> extends Compound<T> {
 
 
 

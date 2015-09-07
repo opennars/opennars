@@ -208,8 +208,8 @@ public class NARGraph1<V, E> extends Spacegraph {
         Consumer<NARGraph1> u = getUpdater();
         if (u!=null)
             u.accept(this);
-        else
-            System.err.println(this + " has no updater");
+        /*else
+            System.err.println(this + " has no updater");*/
     }
 
 
@@ -374,8 +374,6 @@ public class NARGraph1<V, E> extends Spacegraph {
     protected void stop() {
         synchronized (nar) {
             if (this.animator != null) {
-                updaterSlow.stop();
-                updaterSlow = null;
                 animator.stop();
                 animator = null;
             }

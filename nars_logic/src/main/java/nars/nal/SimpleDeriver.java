@@ -33,11 +33,6 @@ public class SimpleDeriver extends Deriver {
             final Op o1 = r.getTaskTermType();
             final Op o2 = r.getBeliefTermType();
 
-            if ((o1 == null) || (o2 == null)) {
-                System.err.println("nulls: " + o1 + " " + o2);
-                continue;
-            }
-
             if (o1!=Op.VAR_PATTERN) {
                 EnumMap<Op, List<TaskRule>> subtypeMap = taskTypeMap.computeIfAbsent(o1, op -> {
                     return new EnumMap(Op.class);

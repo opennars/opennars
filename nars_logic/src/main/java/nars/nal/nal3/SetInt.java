@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * Created by me on 5/2/15.
  */
-public interface SetInt extends SetTensional {
+public interface SetInt<T extends Term> extends SetTensional<T> {
 
 
     public static Compound make(Collection<Term> l) {

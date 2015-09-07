@@ -23,7 +23,7 @@ import com.github.fge.grappa.rules.SkippableAction;
 import com.github.fge.grappa.run.context.ContextAware;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
-import com.google.common.collect.Lists;
+import nars.util.data.list.FasterList;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -36,7 +36,7 @@ public final class ActionMatcher
     extends AbstractMatcher
 {
     private final Action<?> action;
-    private final List<ContextAware<?>> contextAwares = Lists.newArrayList();
+    private final ContextAware<?>[] contextAwares;
     private final boolean skipInPredicates;
 
     public ActionMatcher(final Action<?> action)
@@ -55,8 +55,12 @@ public final class ActionMatcher
          */
         final Class<?> actionClass = action.getClass();
 
-        if (actionClass.isSynthetic())
+        if (actionClass.isSynthetic()) {
+            this.contextAwares = new ContextAware[0];
             return;
+        }
+
+        FasterList<ContextAware<?>> contextAwares = new FasterList();
 
         if (action instanceof ContextAware)
             contextAwares.add((ContextAware<?>) action);
@@ -83,16 +87,18 @@ public final class ActionMatcher
                 field.setAccessible(false);
             }
         }
+
+        this.contextAwares = contextAwares.array();
     }
 
     @Override
-    public MatcherType getType()
+    public final MatcherType getType()
     {
         return MatcherType.ACTION;
     }
 
     @Override
-    public <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
+    public final <V> MatcherContext<V> getSubContext(final MatcherContext<V> context)
     {
         final MatcherContext<V> subContext = context.getBasicSubContext();
         subContext.setMatcher(this);
@@ -107,7 +113,7 @@ public final class ActionMatcher
 
     @Override
     @SuppressWarnings("unchecked")
-    public <V> boolean match(final MatcherContext<V> context)
+    public final <V> boolean match(final MatcherContext<V> context)
     {
         if (skipInPredicates && context.inPredicate())
             return true;

@@ -91,13 +91,13 @@ public class NarseseParserExtendedTest  {
         assertEquals(ut.getTerm(), u);
 
     }
-    @Test
-    public void testBacktickReverseInstance() {
-        Inheritance t = term("namespace`named");
-        assertEquals(t.op(), Op.INHERITANCE);
-        assertEquals("namespace", t.getPredicate().toString());
-        assertEquals("{named}", t.getSubject().toString());
-    }
+//    @Test
+//    public void testBacktickReverseInstance() {
+//        Inheritance t = term("namespace`named");
+//        assertEquals(t.op(), Op.INHERITANCE);
+//        assertEquals("namespace", t.getPredicate().toString());
+//        assertEquals("{named}", t.getSubject().toString());
+//    }
 
     @Test
     public void testNamespaceTerms2() {

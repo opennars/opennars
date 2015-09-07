@@ -203,7 +203,7 @@ public class Variables {
         //this means we have to go through the conjunction, and check if the component is a indepVarUsedInvalid instance, if yes, return true
         //
         if (T instanceof Junction) {
-            for (Term t : ((Compound) T)) {
+            for (Term t : ((Compound<?>) T)) {
                 if (indepVarUsedInvalid(t)) {
                     return true;
                 }

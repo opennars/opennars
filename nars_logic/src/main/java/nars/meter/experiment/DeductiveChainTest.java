@@ -3,7 +3,7 @@ package nars.meter.experiment;
 import nars.NAR;
 import nars.io.qa.AnswerReaction;
 import nars.nal.nal1.Inheritance;
-import nars.nar.experimental.ParallelAlann;
+import nars.nar.experimental.DefaultAlann;
 import nars.task.Task;
 import nars.term.Atom;
 
@@ -22,13 +22,14 @@ public class DeductiveChainTest {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int length = 7;
+        int length = 3;
         NAR n = new NAR(
                 //new Equalized(1000, 8, 3) //.level(1)
                 //new NewDefault().level(2)
-                new ParallelAlann(4,2)
+                //new ParallelAlann(4,2)
+                new DefaultAlann(32)
         );
-        n.param.conceptActivationFactor.set(0.4f);
+        n.param.conceptActivationFactor.set(0.2f);
 
         //Global.OVERLAP_ALLOW = true;
         //TextOutput.out(n);
@@ -48,8 +49,11 @@ public class DeductiveChainTest {
 
             @Override
             public void onSolution(Task belief) {
-                if (belief.getTerm().equals(q))
-                    System.out.println(belief + " "  + timestamp(start));
+                if (belief.getTerm().equals(q)) {
+                    System.out.println(belief + " " + timestamp(start) + " " + n.memory.concepts.size() + " concepts");
+                    System.out.println(belief.getExplanation());
+                    System.out.println();
+                }
             }
         };
 

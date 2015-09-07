@@ -21,6 +21,7 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
@@ -45,13 +46,13 @@ import static nars.Symbols.*;
 /**
  * a compound term
  */
-public abstract class Compound extends DynamicUTF8Identifier implements Term, Collection<Term>, IPair {
+public abstract class Compound<T extends Term> extends DynamicUTF8Identifier implements Term, Iterable<T>, IPair {
 
 
     /**
      * list of (direct) term
      */
-    public final Term[] term;
+    public final T[] term;
 
     /**
      * syntactic complexity of the compound, the sum of those of its term
@@ -60,8 +61,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
 
     /** bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm */
-    protected int structureHash;
-    int contentHash;
+    protected transient int structureHash;
+    transient int contentHash;
 
 
     /**
@@ -71,14 +72,14 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     transient private short varTotal, volume, complexity;
 
     transient private int containedTemporalRelations = -1;
-    private boolean normalized;
+    transient boolean normalized;
 
 
     /**
      * subclasses should be sure to call init() in their constructors; it is not done here
      * to allow subclass constructors to set data before calling init()
      */
-    public Compound(final Term... components) {
+    public Compound(final T... components) {
         super();
 
         this.complexity = -1;
@@ -162,8 +163,9 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     public void rehash() {
-        for (Term t : term)
-            if (t instanceof Compound) ((Compound)t).rehash();
+        for (Term t : term) {
+            ((Term)t).rehash();
+        }
 
         init(term);
     }
@@ -388,7 +390,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 //        }
 //    }
 
-    public Term term(int i) {
+    public T term(int i) {
         return term[i];
     }
 
@@ -629,7 +631,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
 
-    public static Compound transformIndependentToDependentVariables(final Compound c) {
+    public static Compound<?> transformIndependentToDependentVariables(final Compound c) {
         if (!c.hasVarIndep())
             return c;
 
@@ -927,7 +929,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     /** transforms destructively, may need to use on a new clone */
-    protected <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans, int depth) {
+    protected <I extends Compound> void transform(CompoundTransform<I, T> trans, int depth) {
         final int len = length();
 
         I thiss = null;
@@ -1085,7 +1087,9 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
                 list.add(index, subterm);
             } else {
                 //splice in subterm's subterms at index
-                list.addAll(index, ((Compound) subterm));
+                for (final Term t : term) {
+                    list.add(t);
+                }
 
                 /*Term[] tt = ((Compound) subterm).term;
                 for (int i = 0; i < tt.length; i++) {
@@ -1302,12 +1306,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return y;
     }
 
-    @Override
     public int size() {
         return length();
     }
 
-    @Override
     public boolean isEmpty() {
         return length() != 0;
     }
@@ -1315,7 +1317,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     /**
      * first level only, not recursive
      */
-    @Override
     public boolean contains(Object o) {
         if (o instanceof Term)
             return containsTerm((Term) o);
@@ -1323,64 +1324,17 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     @Override
-    public Iterator<Term> iterator() {
+    public Iterator<T> iterator() {
         return Iterators.forArray(term);
     }
 
-    @Override
-    public Object[] toArray() {
-        return term;
-    }
 
-    private boolean unsupportedCollectionMethod() {
-        throw new RuntimeException("Unsupported");
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        unsupportedCollectionMethod();
-        return null;
-    }
 
     @Override
     public String toStringCompact() {
         return toString(false);
     }
 
-    @Override
-    public boolean add(Term term) {
-        return unsupportedCollectionMethod();
-    }
-
-    @Override
-    public boolean remove(Object o) {
-        return unsupportedCollectionMethod();
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return unsupportedCollectionMethod();
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends Term> c) {
-        return unsupportedCollectionMethod();
-    }
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        return unsupportedCollectionMethod();
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        return unsupportedCollectionMethod();
-    }
-
-    @Override
-    public void clear() {
-        unsupportedCollectionMethod();
-    }
 
     @Override
     public Object first() {

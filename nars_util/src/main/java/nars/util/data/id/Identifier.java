@@ -24,8 +24,6 @@ import static nars.util.utf8.Utf8.trim;
  */
 abstract public class Identifier<E extends Identifier> implements Comparable, Serializable {
 
-    transient private Identified host = null;
-
     /** produces the character array by invoking the append()
      *  method that certain subclasses use to form their
      *  data lazily/dynamically.  this is guaranteed to work for all
@@ -70,10 +68,6 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
      * to avoid allocating a temporary buffer
      */
     public abstract void append(Writer p, boolean pretty) throws IOException;
-
-    public void set(Identified h) {
-        this.host = h;
-    }
 
 
     @Override

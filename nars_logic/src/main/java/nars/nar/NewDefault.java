@@ -5,14 +5,18 @@ import nars.Param;
 import nars.nal.*;
 import nars.nal.nal8.OpReaction;
 import nars.op.app.STMEventInference;
-import nars.op.app.STMInduction;
-import nars.op.mental.*;
+import nars.op.mental.Abbreviation;
+import nars.op.mental.Counting;
+import nars.op.mental.FullInternalExperience;
+import nars.op.mental.InternalExperience;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
 import org.infinispan.Cache;
+import org.infinispan.commons.io.ByteBuffer;
+import org.infinispan.commons.marshall.JavaSerializationMarshaller;
+import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 import spangraph.InfiniPeer;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -22,7 +26,7 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 /**
  * Temporary class which uses the new rule engine for ruletables
- *
+ * <p>
  * WARNING this Seed is not immutable yet because it extends Param,
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model *
@@ -30,7 +34,7 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 public class NewDefault extends Default {
 
     public NewDefault() {
-        this(1024,1,3);
+        this(1024, 1, 3);
     }
 
     public NewDefault(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
@@ -46,8 +50,9 @@ public class NewDefault extends Default {
     }
 
 
-
-    /** default set of rules, statically available */
+    /**
+     * default set of rules, statically available
+     */
     public static DerivationRules standard;
 
     public static final String key = "derivation_rules:standard";
@@ -55,20 +60,37 @@ public class NewDefault extends Default {
     static {
         try {
 //            Cache<Object, Object> cache = (InfiniPeer.tmp().getCache());
-//            standard = (DerivationRules)cache.get(key);
-//            if (standard == null) {
+//
+//            cache.entrySet().forEach(c -> {
+//                System.out.println(c);
+//            });
+//
+//
+//
+//            standard = (DerivationRules) cache.get(key);
+//
+//            if (standard == null || !standard.isValid()) {
 //                try {
 //                    System.out.print("Recompiling derivation rules..");
+
                     standard = new DerivationRules();
 
-//                    cache.put(key, standard);
+//                    //GenericJBossMarshaller
+//
+//                    ByteBuffer b = new JavaSerializationMarshaller().objectToBuffer(standard.get(0));
+//                    System.out.println(b.getLength());
+//                    System.out.println(b);
+//
+//                    cache.putForExternalRead(key, standard);
 //                    System.out.println("saved.");
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                    System.exit(1);
 //                }
+//
+//
 //            }
-
+//
 
             //standard = new DerivationRules();
         } catch (Exception e) {
@@ -78,6 +100,7 @@ public class NewDefault extends Default {
     }
 
     public static final Deriver der;
+
     static {
         Deriver r;
 
@@ -100,7 +123,6 @@ public class NewDefault extends Default {
 
         if (maxNALLevel >= 7) {
             n.on(STMEventInference.class);
-
 
 
             if (maxNALLevel >= 8) {
@@ -132,18 +154,17 @@ public class NewDefault extends Default {
 
         return new PremiseProcessor(
 
-                new LogicStage[] {
+                new LogicStage[]{
                         new FilterEqualSubtermsAndSetPremiseBelief(),
                         //new QueryVariableExhaustiveResults(),
                         der
                         //---------------------------------------------
-                } ,
+                },
 
                 getDerivationFilters()
 
         );
     }
-
 
 
 }

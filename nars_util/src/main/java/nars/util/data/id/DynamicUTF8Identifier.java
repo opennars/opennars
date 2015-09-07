@@ -13,7 +13,7 @@ abstract public class DynamicUTF8Identifier extends LiteralUTF8Identifier {
     }
 
 
-    @Override protected void ensureNamed() {
+    protected void ensureNamed() {
         if (!hasName()) {
             setData(init());
         }

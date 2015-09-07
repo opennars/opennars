@@ -35,6 +35,8 @@ public class PairMatchingProduct extends ProductN {
         structureB = b.structure();
     }
 
+
+
     public void set(final Task a, final Task b) {
         set(a.getTerm(), b == null ? empty : b.getTerm());
     }
@@ -50,17 +52,18 @@ public class PairMatchingProduct extends ProductN {
         return 0;
     }
 
-    public boolean substitutesMayExist(final PairMatchingProduct pattern) {
+    public final boolean substitutesMayExist(final PairMatchingProduct pattern) {
         if (impossibleStructure(pattern.structure()))
             return false;
 
-        //if (volume() < pattern.volume())            return false;
+        if (volume() < pattern.volume())
+            return false;
 
         return substitutesMayExistPart2(pattern);
     }
 
     /** separated into its own method to assist inlining */
-    protected boolean substitutesMayExistPart2(final PairMatchingProduct pattern) {
+    protected final boolean substitutesMayExistPart2(final PairMatchingProduct pattern) {
         final Term c = term[0];
         if (c.impossibleStructure(pattern.structureA)) return false;
 

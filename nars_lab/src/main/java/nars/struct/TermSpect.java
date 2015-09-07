@@ -187,6 +187,11 @@ public class TermSpect extends TermCept implements Term, Concept {
     }
 
     @Override
+    public void rehash() {
+
+    }
+
+    @Override
     public int compareTo(Object o) {
         return 0;
     }

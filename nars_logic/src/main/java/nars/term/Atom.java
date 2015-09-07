@@ -55,6 +55,7 @@ public class Atom extends ImmutableAtom {
 
 
 
+
     /**
      * @param that The Term to be compared with the current Term
      */

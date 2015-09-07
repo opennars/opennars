@@ -232,6 +232,10 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
         return op().levelValid(nal);
     }
 
+    /** called during construction, or after serialization,
+     * to recompute any transient fields (hashes, etc..)  */
+    void rehash();
+
 
 //    default public boolean hasAll(final Op... op) {
 //        //TODO

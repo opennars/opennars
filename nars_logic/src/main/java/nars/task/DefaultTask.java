@@ -34,8 +34,8 @@ import static nars.Global.reference;
 /**
  * Created by me on 8/17/15.
  */
-@JsonSerialize(using = ToStringSerializer.class)
-public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
+//@JsonSerialize(using = ToStringSerializer.class)
+public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable {
     /**
      * The punctuation also indicates the type of the Sentence:
      * Judgment, Question, Goal, or Quest.
@@ -54,16 +54,17 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public Truth truth;
     protected T term;
     transient private int hash;
-    private long[] evidentialSet = null;
-    private long creationTime = Stamp.TIMELESS;
-    private long occurrenceTime = Stamp.ETERNAL;
-    private int duration = 0;
-    private boolean cyclic;
+    long[] evidentialSet = null;
+    long creationTime = Stamp.TIMELESS;
+    long occurrenceTime = Stamp.ETERNAL;
+    int duration = 0;
+    boolean cyclic;
+
     /**
      * TODO move to SolutionTask subclass
      * For Question and Goal: best solution found so far
      */
-    private Reference<Task> bestSolution;
+    transient private Reference<Task> bestSolution;
 
     /**
      * TODO move to DesiredTask subclass
@@ -138,6 +139,9 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     private final int getHash() {
         //stamp (evidentialset, occurrencetime), truth, term, punctuation
+
+        if (getTerm().hashCode()==0)
+            getTerm().rehash();
 
         int hashStamp = Util.hash(Arrays.hashCode(getEvidence()), (int) this.getOccurrenceTime());
 
@@ -379,7 +383,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
 
-    protected final void invalidate() {
+    public final void invalidate() {
+        getTerm().invalidate();
         hash = 0;
     }
 
@@ -539,7 +544,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * add to this task's log history
      * useful for debugging but can also be applied to meta-analysis
      */
-    public void log(String reason) {
+    public void log(final String reason) {
         if (!Global.DEBUG_TASK_LOG)
             return;
 
@@ -631,16 +636,18 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
 
-    @Override
-    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
-        jgen.writeString(toString());
-    }
-
-    @Override
-    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
-        serialize(jgen, provider);
-    }
-
+//    @Override
+//    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
+//        //jgen.writeString(toString());
+//
+//        jgen.writeObject(this);
+//    }
+//
+//    @Override
+//    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
+//        serialize(jgen, provider);
+//    }
+//
 
 
 }

@@ -13,7 +13,7 @@ import java.util.Collection;
 /**
  * Created by me on 5/2/15.
  */
-public interface SetExt extends SetTensional {
+public interface SetExt<T extends Term> extends SetTensional<T> {
 
     @Override
     default public Op op() {

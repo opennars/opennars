@@ -54,18 +54,21 @@ public class SequenceMatcher
     @Override
     final public <V> boolean match(final MatcherContext<V> context)
     {
+        final List<Matcher> children = getChildren();
+        int cs = children.size();
+
+
         final ValueStack<V> stack = context.getValueStack();
         final Object snapshot = stack.takeSnapshot();
 
-        List<Matcher> children = getChildren();
-        for (int i = 0; i < children.size(); i++) {
+        for (int i = 0; i < cs; i++) {
             final Matcher matcher = children.get(i);
-            if (matcher.getSubContext(context).runMatcher())
-                continue;
-
-            stack.restoreSnapshot(snapshot);
-            return false;
+            if (!matcher.getSubContext(context).runMatcher()) {
+                stack.restoreSnapshot(snapshot);
+                return false;
+            }
         }
+
         return true;
     }
 }

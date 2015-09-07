@@ -48,7 +48,7 @@ import static nars.Symbols.COMPOUND_TERM_OPENER;
 /**
  * An operation is interpreted as an Inheritance relation with an operator.
  */
-public class Operation extends Inheritance<SetExt1<Product>, Operator> {
+public class Operation extends Inheritance<SetExt1<? extends Product>, Operator> {
 
     /**
      * the invoking task.
@@ -146,7 +146,7 @@ public class Operation extends Inheritance<SetExt1<Product>, Operator> {
         return task;
     }
 
-    public Product arg() {
+    public Product<?> arg() {
         return getSubject().the();
     }
 

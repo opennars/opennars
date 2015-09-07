@@ -4,6 +4,10 @@ import junit.framework.TestCase;
 import nars.nal.Deriver;
 import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
+import nars.term.Atom;
+import nars.term.Term;
+import org.infinispan.commons.marshall.Marshaller;
+import org.infinispan.marshall.core.JBossMarshaller;
 import org.junit.Test;
 
 /**

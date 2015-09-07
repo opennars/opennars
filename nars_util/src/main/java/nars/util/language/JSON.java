@@ -2,11 +2,9 @@ package nars.util.language;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
@@ -26,9 +24,16 @@ public class JSON {
 
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
-            .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()))
-            ;
+            .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()));
     static final ObjectWriter omPretty = om.copy().writerWithDefaultPrettyPrinter();
+
+    public static final ObjectMapper omDeep = new ObjectMapper()
+            .enableDefaultTyping()
+            .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
+            .enable(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID)
+            .disable(SerializationFeature.WRITE_NULL_MAP_VALUES)
+            .disable(MapperFeature.USE_STATIC_TYPING)
+            .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()));
 
 //
     public static JsonNode toJSON(String json) throws IOException {

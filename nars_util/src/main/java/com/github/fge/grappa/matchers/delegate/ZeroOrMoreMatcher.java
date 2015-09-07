@@ -46,21 +46,24 @@ public final class ZeroOrMoreMatcher
     }
 
     @Override
-    public <V> boolean match(final MatcherContext<V> context)
+    public final <V> boolean match(final MatcherContext<V> context)
     {
         int beforeMatch = context.getCurrentIndex();
         int afterMatch;
 
         while (subMatcher.getSubContext(context).runMatcher()) {
-            afterMatch = context.getCurrentIndex();
-            if (afterMatch != beforeMatch) {
+            if ((afterMatch = context.getCurrentIndex()) != beforeMatch) {
                 beforeMatch = afterMatch;
                 continue;
             }
-            throw new GrappaException("The inner rule of zeroOrMore rule '"
-                + getLabel() + "' must not allow empty matches");
+            error();            //return false;
         }
 
         return true;
+    }
+
+    protected void error() {
+        throw new GrappaException("The inner rule of zeroOrMore rule '"
+            + getLabel() + "' must not allow empty matches");
     }
 }

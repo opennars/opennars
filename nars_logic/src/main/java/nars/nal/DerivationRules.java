@@ -1,6 +1,7 @@
 package nars.nal;
 
 import nars.Global;
+import nars.Op;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
 import nars.op.math.add;
@@ -328,5 +329,24 @@ public class DerivationRules extends ArrayList<TaskRule> {
     }
 
 
+    public boolean isValid() {
+        int violations = 0;
+        for (TaskRule r : this) {
 
+            r.rehash();
+
+            final Op o1 = r.getTaskTermType();
+            if (o1==null) {
+                System.err.println(r + " has null taskterm type");
+                //violations++;
+            }
+            final Op o2 = r.getBeliefTermType();
+            if (o2==null) {
+                System.err.println(r + " has null beliefterm type");
+                //violations++;
+            }
+        }
+
+        return violations==0;
+    }
 }

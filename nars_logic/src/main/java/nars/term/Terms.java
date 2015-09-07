@@ -382,7 +382,7 @@ public class Terms {
     }
     
     /** a contains any of b  NOT TESTED YET */
-    public static boolean containsAny(Compound a, final Collection<Term> b) {
+    public static boolean containsAny(Compound<?> a, final Collection<Term> b) {
         for (final Term bx : b) {
             if (a.containsTerm(bx))
                 return true;
@@ -538,7 +538,7 @@ public class Terms {
         return null;
     }
 
-    public static Compound compoundOrNull(Term t) {
+    public static Compound<?> compoundOrNull(Term t) {
         if (t instanceof Compound) return (Compound)t;
         return null;
     }

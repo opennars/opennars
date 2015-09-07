@@ -1,21 +1,21 @@
 package nars.guifx.demo;
 
-import javafx.geometry.Insets;
+import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import nars.Global;
 import nars.NAR;
 import nars.NARStream;
-import nars.guifx.NARfx;
 import nars.guifx.AutoLabel;
+import nars.guifx.NARfx;
 import nars.guifx.graph2.NARGraph1;
+import nars.guifx.graph2.TermEdge;
+import nars.guifx.graph2.TermNode;
+import nars.meter.NARTrace;
 import nars.nar.experimental.DefaultAlann;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
+import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +115,6 @@ public class DemoTimeline  {
 
                 updateAll();
             });
-
 
 
 //            //view.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -271,9 +270,10 @@ public class DemoTimeline  {
             return visible;
         }
 
+//
 //        public void view(float start, float stop) {
 //            this.t =
-//            view.getChildren().setAll(visible(start,stop));
+//            getChildren().setAll(visible(start,stop));
 //        }
     }
 
@@ -330,9 +330,6 @@ public class DemoTimeline  {
             });
 
 
-            NARfx.newWindow(n, i -> {
-
-            });
 
         });
     }

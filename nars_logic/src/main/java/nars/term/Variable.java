@@ -34,8 +34,8 @@ import static nars.Symbols.*;
 public class Variable extends Atom {
 
 
-    public transient final Op op;
-    private final int structure;
+    public final Op op;
+    final int structure;
 
     @Override
     public int compareTo(Object that) {
@@ -47,7 +47,7 @@ public class Variable extends Atom {
     }
 
 
-    private final boolean scope;
+    final boolean scope;
 
 
     public Variable(final String name) {

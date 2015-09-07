@@ -60,15 +60,18 @@ public class NavTools {
         //backButton.setGraphic(backGraphic);
         //backGraphic.setPreserveRatio(true);
         //backGraphic.setFitHeight(buttonHeight);        
+
         backButton.onActionProperty().set(actionEvent -> {
-            if (chrome.getBrowser().getHistory().canNavBack()) {
-                chrome.getBrowser().go(chrome.getBrowser().getHistory().requestNavBack());
-            }
+            if (chrome.getBrowser().getHistory()!=null)
+                if (chrome.getBrowser().getHistory().canNavBack()) {
+                    chrome.getBrowser().go(chrome.getBrowser().getHistory().requestNavBack());
+                }
         });
         backButton.setOnMouseReleased(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
-                chrome.getBrowser().getHistory().showMenu(backButton);
-            }
+            if (chrome.getBrowser().getHistory()!=null)
+                if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+                    chrome.getBrowser().getHistory().showMenu(backButton);
+                }
         });
 
         // create a forward button.

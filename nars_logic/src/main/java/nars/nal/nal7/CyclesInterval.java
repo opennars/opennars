@@ -100,6 +100,7 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
         output.append('/').append(Long.toString(cyc)).append('/');
     }
 
+
     /** filter any zero CyclesIntervals from the list and return a new one */
     public static Term[] removeZeros(final Term[] relterms) {
         int zeros = 0;

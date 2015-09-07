@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /** efficient implementation of a set with one element */
-public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt {
+public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt<T> {
 
     public SetExt1(T the) {
         super(the);

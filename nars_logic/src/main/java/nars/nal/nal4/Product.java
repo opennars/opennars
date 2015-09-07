@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * A Product is a sequence of 1 or more terms.
  */
-public interface Product extends Term, Iterable<Term> {
+public interface Product<T extends Term> extends Term, Iterable<T> {
 
     public final static Product empty = new ProductN();
 

@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 /** efficient implementation of a set with one element */
-public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt {
+public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt<T> {
 
     public SetInt1(T the) {
         super(the);

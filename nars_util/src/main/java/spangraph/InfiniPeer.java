@@ -45,7 +45,7 @@ public class InfiniPeer extends DefaultCacheManager {
     public InfiniPeer(GlobalConfiguration globalConfig, Configuration config) {
         super(globalConfig, config);
 
-        if (globalConfig.transport() != null)
+        if (globalConfig!=null && globalConfig.transport() != null)
             this.userID = globalConfig.transport().nodeName();
         else
             this.userID = null;
@@ -58,6 +58,11 @@ public class InfiniPeer extends DefaultCacheManager {
 
 
     }
+
+    public InfiniPeer(ConfigurationBuilder config) {
+        this(null, config.build());
+    }
+
 
     public void print(Cache cache, PrintStream out) {
 
@@ -140,11 +145,19 @@ public class InfiniPeer extends DefaultCacheManager {
         return file("_", diskPath, maxEntries);
     }
 
+
     /** for local only mode on the same host, saved to disk */
     public static InfiniPeer file(String userID, String diskPath, int maxEntries) {
 
+        ConfigurationBuilder config = new ConfigurationBuilder();
+        config.persistence()
+                .addSingleFileStore()
+                .location(diskPath)
+                .maxEntries(maxEntries);
+        /*
 
-        GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder();
+        GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder()
+                .globalJmxStatistics().enabled(false);
 
         globalConfigBuilder.transport().nodeName(userID)
                 .defaultTransport();
@@ -179,10 +192,12 @@ public class InfiniPeer extends DefaultCacheManager {
                 //.hash().numOwners(3)
                 .build();
 
+        */
+
         return new InfiniPeer(
-                globalConfigBuilder.build(),
                 config
         );
+
 
     }
 

@@ -162,9 +162,9 @@ public class Equalized extends NewDefault {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                //new FilterBelowConfidence(0.01),
+                new FilterBelowConfidence(0.01),
                 new FilterDuplicateExistingBelief(),
-                //new LimitDerivationPriority()
+                new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());
         };
     }

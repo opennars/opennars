@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -12,6 +13,8 @@ import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.remote.VncClientApp;
+import nars.guifx.terminal.LocalTerminal;
+import nars.guifx.util.TabX;
 import nars.nar.Default;
 import nars.task.Task;
 import org.jewelsea.willow.browser.WebBrowser;
@@ -228,29 +231,6 @@ public class NARfx  {
 //    }
 
 
-    public static void main(String[] arg) {
-
-
-//        Platform.runLater(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//
-//            }
-//        });
-
-        //Application.launch(NARfx.class, arg);
-
-        NARfx.newWindow(new NAR(new Default(1000,3,2)), (i) -> {
-            try {
-                i.nar.input(new File("/tmp/h.nal"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-    }
-
     public static Stage newWindow(String title, Region n) {
 
         Scene scene = new Scene(n);
@@ -293,17 +273,23 @@ public class NARfx  {
             NARide ni = new NARide(nar);
 
             {
+                ni.addView(new LocalTerminal());
                 ni.addView(new TerminalPane(nar));
                 //ni.addView(additional components);
             }
 
             /** tool registration */
-            ni.addTool("Terminal", () -> new TerminalPane(nar));
+            ni.addTool("Terminal (bash)", () -> new TerminalPane(nar));
             ni.addTool("Status", () -> new StatusPane(nar));
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
             ni.addTool("Web Browser", () -> new WebBrowser());
 
-            Button summaryPane = new Button(":D");
+            ni.addTool(new Menu("Interface..."));
+            ni.addTool(new Menu("Cognition..."));
+            ni.addTool(new Menu("Sensor..."));
+
+
+            //Button summaryPane = new Button(":D");
 
 //            Scene scene = new SizeAwareWindow((d) -> {
 //                double w = d[0];
@@ -335,6 +321,9 @@ public class NARfx  {
             if (ide!=null)
                 ide.accept(ni);
 
+            b.setOnCloseRequest((e) -> {
+                System.exit(0);
+            });
         });
 //        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
 //

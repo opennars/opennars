@@ -35,24 +35,12 @@ public class NARide extends BorderPane {
 
     public final TabPane content = new TabPane();
 
-    public final NARControlFX controlStrip;
+    public final NARControlFX controlPane;
     private final NARStream narstream;
 
     Tab console = null;
 
-    public void console(boolean enabled) {
 
-        if (enabled) {
-            runLater(() -> {
-                contentUpdate(true);
-            });
-        } else if (console != null) {
-            runLater(() -> {
-                contentUpdate(false);
-            });
-        }
-
-    }
 
     public void addView(Pane n) {
         content.getTabs().add(new TabX(
@@ -65,7 +53,11 @@ public class NARide extends BorderPane {
         mi.setOnAction((e) -> {
             addView(builder.get());
         });
-        controlStrip.tool.getItems().add(mi);
+        controlPane.tool.getItems().add(mi);
+    }
+
+    public void addTool(Menu submenu) {
+        controlPane.tool.getItems().add(submenu);
     }
 
     public static class ResizableCanvas extends Canvas {
@@ -160,7 +152,7 @@ public class NARide extends BorderPane {
 
         NARStream s = this.narstream = new NARStream(n);
 
-        controlStrip = new NARControlFX(nar, true, true, true);
+        controlPane = new NARControlFX(nar, true, true, true);
 
 
         final BorderPane f = new BorderPane();
@@ -219,7 +211,7 @@ public class NARide extends BorderPane {
 
         f.setCenter(menu);
 
-        f.setTop(controlStrip);
+        f.setTop(controlPane);
 
 
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);

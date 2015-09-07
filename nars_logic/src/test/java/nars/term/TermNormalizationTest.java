@@ -19,12 +19,17 @@ public class TermNormalizationTest {
         NAR n = new NAR(new Default());
         Task t = n.input( n.task(term + ".") );
         Compound ct = t.getTerm();
-        Variable a = ct.subterm(v1Index);
-        assertNotNull(a);
-        Variable b = ct.subterm(v2Index);
-        assertNotNull(b);
-        assertEquals(a, b);
-        assertTrue("successfully re-used the variable instance", a==b);
+
+        Term varA = ct.subterm(v1Index);
+        assertEquals(Variable.class, varA.getClass());
+        assertNotNull(varA);
+
+        Term varB = ct.subterm(v2Index);
+        assertEquals(Variable.class, varB.getClass());
+        assertNotNull(varB);
+
+        assertEquals(varA, varB);
+        assertTrue("successfully re-used the variable instance", varA==varB);
     }
 
     @Test

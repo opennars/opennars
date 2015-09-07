@@ -98,11 +98,11 @@ public class NarseseParser extends BaseParser<Object>  {
                 STATEMENT_OPENER, s(),
                 push(TaskRule.class),
                 TaskRuleCond(),
-                zeroOrMore( s(), ',', s(), TaskRuleCond() ),
+                zeroOrMore( ArgSep(), s(), TaskRuleCond() ),
                 s(), string(TASK_RULE_FWD), s(),
                 push(TaskRule.class),
                 TaskRuleConclusion(),
-                zeroOrMore(s(), ',', s(), TaskRuleConclusion() ),
+                zeroOrMore( ArgSep(), s(), TaskRuleConclusion() ),
                 s(), STATEMENT_CLOSER,
 
                 push(popTaskRule())
@@ -239,14 +239,14 @@ public class NarseseParser extends BaseParser<Object>  {
         }
 
         //avoid cloning by transforming this new compound directly
-        Compound ccontent = ((Compound)content).normalizeDestructively();
+        Term ccontent = ((Compound)content).normalizeDestructively();
         if (ccontent!=null)
             ccontent = Sentence.termOrNull(ccontent);
 
         if (ccontent==null) return null;
 
 
-        Task ttt = new DefaultTask(ccontent, p, t, B, null, null, null);
+        Task ttt = new DefaultTask((Compound)ccontent, p, t, B, null, null, null);
         ttt.setCreationTime(Stamp.TIMELESS);
 
 
@@ -488,7 +488,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
                         ColonReverseInheritance(),
-                        BacktickReverseInstance(),
+                        //BacktickReverseInstance(),
 
                         Atom(),
                         ImageIndex()
@@ -553,7 +553,7 @@ public class NarseseParser extends BaseParser<Object>  {
         //TODO replace these with Symbols. constants
         switch(c) {
             case ' ':
-            case ',':
+            case Symbols.ARGUMENT_SEPARATOR:
             case Symbols.JUDGMENT:
             case Symbols.GOAL:
             case Symbols.QUESTION:
@@ -631,10 +631,14 @@ public class NarseseParser extends BaseParser<Object>  {
 
     Rule QuotedMultilineLiteral() {
         return sequence(
-                dquote(), dquote(), dquote(),
+                TripleQuote(), //dquote(), dquote(), dquote()),
                 AnyString(), push('\"' + match() + '\"'),
-                dquote(), dquote(), dquote()
+                TripleQuote() //dquote(), dquote(), dquote()
         );
+    }
+
+    Rule TripleQuote() {
+        return string("\"\"\"");
     }
 
     Rule RangeTerm() {

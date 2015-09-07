@@ -176,7 +176,7 @@ public class TemporalRules {
             if (o.getOperator() instanceof Mental) return true;
         }
         if ((recurse) && (t instanceof Compound)) {
-            for (Term s : ((Compound) t)) {
+            for (Term s : ((Compound) t).term) {
                 if (containsMentalOperator(s, true)) return true;
             }
         }

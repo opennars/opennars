@@ -11,13 +11,13 @@ import java.util.Arrays;
 import java.util.Locale;
 
 /**
- * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 
+ * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms
  */
-abstract public class Texts  {
+abstract public class Texts {
     //TODO find more appropriate symbol mapping
     //TODO escape any mapped characters if they appear in input during encoding
     //http://www.ssec.wisc.edu/~tomw/java/unicode.html
-    
+
 //    private final static Map<Character,Character> escapeMap = new HashMap(256);
 //    private final static Map<Character,Character> escapeMapReverse = new HashMap(256);
 //    static {
@@ -56,7 +56,6 @@ abstract public class Texts  {
 //        for (Map.Entry<Character, Character> e : escapeMap.entrySet())
 //            escapeMapReverse.put(e.getValue(), e.getKey());
 //    }
-
 
 
 //    protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {
@@ -111,9 +110,8 @@ abstract public class Texts  {
 //    public static StringBuilder unescape(CharSequence s) {
 //        return escape(s, true, true);
 //    }
-    
-    
-    
+
+
 //    
 //    public static String enterm(String s) {
 //        return s.replaceAll(":", "\u25B8")
@@ -150,6 +148,7 @@ abstract public class Texts  {
     public static char[] getCharArray(String s) {
         return Rope.getCharArray(s);
     }
+
     public static char[] getCharArray(StringBuilder s) {
         return Rope.getCharArray(s);
     }
@@ -169,6 +168,7 @@ abstract public class Texts  {
     StdOut.println("Immutable");
     }
      */
+
     /**
      * @author http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Levenshtein_distance#Java
      */
@@ -188,11 +188,11 @@ abstract public class Texts  {
                 int cost_replace = cost[i - 1] + match;
                 int cost_insert = cost[i] + 1;
                 int cost_delete = newcost[i - 1] + 1;
-                
+
                 int c = cost_insert;
                 if (cost_delete < c) c = cost_delete;
                 if (cost_replace < c) c = cost_replace;
-                
+
                 newcost[i] = c;
             }
             int[] swap = cost;
@@ -202,9 +202,10 @@ abstract public class Texts  {
         return cost[len0 - 1];
     }
 
-    /** Change the first min(|s|, |t|) characters of s to t
-    TODO must reset the hashcode field
-    TODO this is untested and probably not yet functional
+    /**
+     * Change the first min(|s|, |t|) characters of s to t
+     * TODO must reset the hashcode field
+     * TODO this is untested and probably not yet functional
      */
     public static void overwrite(CharSequence s, CharSequence t) {
         try {
@@ -218,13 +219,14 @@ abstract public class Texts  {
         }
     }
 
-    /** Half-way between a String and a Rope; concatenates a list of strings into an immutable CharSequence which is either:
-     *  If a component is null, it is ignored.
-     *  if total non-null components is 0, returns null
-     *  if total non-null components is 1, returns that component.
-     *  if the combined length <= maxLen, creates a StringBuilder appending them all.
-     *  if the combined length > maxLen, creates a Rope appending them all.
-     * 
+    /**
+     * Half-way between a String and a Rope; concatenates a list of strings into an immutable CharSequence which is either:
+     * If a component is null, it is ignored.
+     * if total non-null components is 0, returns null
+     * if total non-null components is 1, returns that component.
+     * if the combined length <= maxLen, creates a StringBuilder appending them all.
+     * if the combined length > maxLen, creates a Rope appending them all.
+     * <p>
      * TODO do not allow a StringBuilder to appear in output, instead wrap in CharArrayRope
      */
     public static CharSequence yarn(final int maxLen, final CharSequence... components) {
@@ -244,7 +246,7 @@ abstract public class Texts  {
         if (total == 1) {
             return lastNonNull.toString();
         }
-        
+
         if ((totalLen <= maxLen) || (maxLen == -1)) {            
             /*
             final CharBuffer n = CharBuffer.allocate(totalLen);
@@ -255,8 +257,8 @@ abstract public class Texts  {
 
             return n.compact();
             */
-        
-            
+
+
             StringBuilder sb = new StringBuilder(totalLen);
             for (final CharSequence s : components) {
                 if (s != null) {
@@ -268,54 +270,77 @@ abstract public class Texts  {
             Rope r = Rope.catFast(components);
             return r;
         }
-    }    
-    
+    }
+
     public static boolean containsChar(final CharSequence n, final char c) {
         if (n instanceof String)
-            return ((String)n).indexOf(c)!=-1;
-        
+            return ((String) n).indexOf(c) != -1;
+
         final int l = n.length();
-        for (int i = 0; i < l; i++)            
+        for (int i = 0; i < l; i++)
             if (n.charAt(i) == c)
-                return true;        
+                return true;
         return false;
     }
 
 
-
     final static Format oneDecimal = new DecimalFormat("0.0");
-    public static final String n1(final float x) { return oneDecimal.format(x);     }
-    public static final String n1char(final double x) { return oneDecimal.format(x);     }
+
+    public static final String n1(final float x) {
+        return oneDecimal.format(x);
+    }
+
+    public static final String n1char(final double x) {
+        return oneDecimal.format(x);
+    }
 
     final static Format threeDecimal = new DecimalFormat("0.000");
-    public static final String n3(final float x) { return threeDecimal.format(x);     }
-    public static final String n3(final double x) { return threeDecimal.format(x);     }
+
+    public static final String n3(final float x) {
+        return threeDecimal.format(x);
+    }
+
+    public static final String n3(final double x) {
+        return threeDecimal.format(x);
+    }
 
     final static Format fourDecimal = new DecimalFormat("0.0000");
-    public static final String n4(final float x) { return fourDecimal.format(x);     }
-    public static final String n4(final double x) { return fourDecimal.format(x);     }
 
-    final static Format twoDecimal = new DecimalFormat("0.00");    
-    public static final String n2Slow(final float x) { return twoDecimal.format(x);     }
+    public static final String n4(final float x) {
+        return fourDecimal.format(x);
+    }
+
+    public static final String n4(final double x) {
+        return fourDecimal.format(x);
+    }
+
+    final static Format twoDecimal = new DecimalFormat("0.00");
+
+    public static final String n2Slow(final float x) {
+        return twoDecimal.format(x);
+    }
 
     public static long thousandths(final float d) {
         return (long) ((d * 1000.0f + 0.5f));
     }
+
     public static long hundredths(final float d) {
         return (long) ((d * 100.0f + 0.5f));
     }
+
     public static int tens(final float d) {
         return (int) ((d * 10.0f + 0.5f));
     }
 
-    /** 2 decimal representation of values between 0 and 1. only the tens and hundredth
+    /**
+     * 2 decimal representation of values between 0 and 1. only the tens and hundredth
      * decimal point are displayed - not the ones, and not a decimal point.
      * for compact display.
      * if the value=1.0, then 'aa' is the result
      */
     public static final String n2u(final float x) {
         if ((x < 0) || (x > 1)) throw new RuntimeException("values >=0 and <=1");
-        int hundreds = (int)hundredths(x);
+        int hundreds = (int) hundredths(x);
         if (x == 100) return "aa";
         if (hundreds < 10) return "0" + hundreds;
         else
@@ -325,52 +350,57 @@ abstract public class Texts  {
     public static final CharSequence n2(final float x) {
         if ((x < 0) || (x > 1.0f))
             throw new RuntimeException("Invalid value for Texts.n2: " + x);
-        
-        int hundredths = (int)hundredths(x);
+
+        int hundredths = (int) hundredths(x);
         switch (hundredths) {
             //some common values
-            case 100: return "1.00";
-            case 99: return "0.99";
-            case 90: return "0.90";
-            case 0: return "0.00";
+            case 100:
+                return "1.00";
+            case 99:
+                return "0.99";
+            case 90:
+                return "0.90";
+            case 0:
+                return "0.00";
         }
-                    
+
         if (hundredths > 9) {
-            int tens = hundredths/10;
-            return new String(new char[] {
-                '0', '.', (char)('0' + tens), (char)('0' + hundredths%10)
+            int tens = hundredths / 10;
+            return new String(new char[]{
+                    '0', '.', (char) ('0' + tens), (char) ('0' + hundredths % 10)
+            });
+        } else {
+            return new String(new char[]{
+                    '0', '.', '0', (char) ('0' + hundredths)
             });
         }
-        else {
-            return new String(new char[] {
-                '0', '.', '0', (char)('0' + hundredths)
-            });
-        }            
     }
-    
+
     //final static Format oneDecimal = new DecimalFormat("0.0");
-    /** 1 character representing a 1 decimal of a value between 0..1.0;
-     *  representation; 0..9 //, A=1.0 */
+
+    /**
+     * 1 character representing a 1 decimal of a value between 0..1.0;
+     * representation; 0..9 //, A=1.0
+     */
     public static final char n1char(final float x) {
         int i = tens(x);
         if (i >= 10)
-            i=9; //return 'A';
-        return (char)('0' + i);
+            i = 9; //return 'A';
+        return (char) ('0' + i);
     }
 
     public static int compare(final CharSequence s, final CharSequence t) {
         if ((s instanceof String) && (t instanceof String)) {
-            return ((String)s).compareTo((String)t);
+            return ((String) s).compareTo((String) t);
+        } else if ((s instanceof CharBuffer) && (t instanceof CharBuffer)) {
+            return ((CharBuffer) s).compareTo((CharBuffer) t);
         }
-        else if ((s instanceof CharBuffer) && (t instanceof CharBuffer)) {
-            return ((CharBuffer)s).compareTo((CharBuffer)t);
-        }
-        
+
         int i = 0;
 
         final int sl = s.length();
         final int tl = t.length();
-        
+
         while (i < sl && i < tl) {
             char a = s.charAt(i);
             char b = t.charAt(i);
@@ -378,54 +408,67 @@ abstract public class Texts  {
             int diff = a - b;
 
             if (diff != 0)
-              return diff;
+                return diff;
 
             i++;
         }
 
         return sl - tl;
-      }
+    }
 
     public static CharSequence n2(final double p) {
-        return n2((float)p);
+        return n2((float) p);
     }
 
 
-    /** character to a digit, or -1 if it wasnt a digit */
+    /**
+     * character to a digit, or -1 if it wasnt a digit
+     */
     public static int i(final char c) {
         if ((c >= '0' && c <= '9'))
             return c - '0';
         return -1;
     }
 
-    /** fast parse an int under certain conditions, avoiding Integer.parse if possible */
+    /**
+     * fast parse an int under certain conditions, avoiding Integer.parse if possible
+     */
     public static int i(final String s) {
         if (s.length() == 1) {
             char c = s.charAt(0);
             int i = i(c);
-            if (i!=-1) return i;
-        }
-        else if (s.length() == 2) {
+            if (i != -1) return i;
+        } else if (s.length() == 2) {
             int dig1 = i(s.charAt(1));
             int dig10 = i(s.charAt(0));
-            if ((dig1!=-1) && (dig10!=-1))
-                return dig10*10+dig1;
+            if ((dig1 != -1) && (dig10 != -1))
+                return dig10 * 10 + dig1;
         }
         return Integer.parseInt(s);
     }
 
-    /** fast parse for float, checking common conditions */
+    /**
+     * fast parse for float, checking common conditions
+     */
     public static float f(final String s) {
 
-        switch(s) {
-            case "0": return 0;
-            case "0.00": return 0;
-            case "1": return 1f;
-            case "1.00": return 1f;
-            case "0.90": return 0.9f;
-            case "0.9": return 0.9f;
-            case "0.5": return 0.5f;
-            default: return Float.parseFloat(s);
+        switch (s) {
+            case "0":
+                return 0;
+            case "0.00":
+                return 0;
+            case "1":
+                return 1f;
+            case "1.00":
+                return 1f;
+            case "0.90":
+                return 0.9f;
+            case "0.9":
+                return 0.9f;
+            case "0.5":
+                return 0.5f;
+            default:
+                return Float.parseFloat(s);
         }
 
     }
@@ -450,13 +493,26 @@ abstract public class Texts  {
     public static CharSequence n(float v, int decimals) {
 
         switch (decimals) {
-            case 1: return n1(v);
-            case 2: return n2(v);
-            case 3: return n3(v);
-            case 4: return n4(v);
+            case 1:
+                return n1(v);
+            case 2:
+                return n2(v);
+            case 3:
+                return n3(v);
+            case 4:
+                return n4(v);
         }
 
         throw new RuntimeException("invalid decimal number");
+    }
+
+    public static int count(String s, char x) {
+        int c = 0;
+        for (int i = 0; i < s.length(); i++)
+            if (s.charAt(i) == x)
+                c++;
+
+        return c;
     }
 
 //    /** fast append to CharBuffer */
@@ -474,7 +530,7 @@ abstract public class Texts  {
 //            return c.append(s);
 //        }
 //    }
-    
+
 //    public final static CharBuffer append(final CharBuffer c, final CharBuffer s) {
 //        return c.put(s);        
 //    }

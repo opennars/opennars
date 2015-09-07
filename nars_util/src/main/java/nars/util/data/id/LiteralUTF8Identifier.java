@@ -35,6 +35,10 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         this.hash = makeHash();
     }
 
+    public void rehash() {
+        this.hash = makeHash();
+    }
+
     public LiteralUTF8Identifier(final byte[] prefix, final byte[] suffix) {
         int plen = prefix.length;
         int slen = suffix.length;
@@ -81,7 +85,6 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     @Override
     public byte[] bytes() {
-        ensureNamed();
         return data;
     }
 
@@ -110,9 +113,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 //    }
 
 
-    protected void ensureNamed() {
-        //should not need to do anything here in the constant/static impl
-    }
+
 
     @Override
     public boolean equals(final Object x) {

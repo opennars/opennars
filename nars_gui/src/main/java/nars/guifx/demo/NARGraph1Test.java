@@ -7,6 +7,7 @@ import nars.guifx.graph2.HyperassociativeMapLayout;
 import nars.guifx.graph2.NARGraph1;
 import nars.guifx.graph2.NARGrapher;
 import nars.guifx.graph2.QuadPolyEdgeRenderer;
+import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.TabX;
 import nars.nar.experimental.Equalized;
 
@@ -41,8 +42,10 @@ public class NARGraph1Test {
             g.setLayout(new HyperassociativeMapLayout());
             //g.setLayout(new TimelineLayout());
 
+
             ide.content.getTabs().add(new TabX("Graph", g));
         });
+
 
 
 

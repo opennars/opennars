@@ -129,56 +129,56 @@ public final class DefaultMatcherContext<V>
     //////////////////////////////// CONTEXT INTERFACE ////////////////////////////////////
 
     @Override
-    public MatcherContext<V> getParent()
+    public final MatcherContext<V> getParent()
     {
         return parent;
     }
 
     @Nonnull
     @Override
-    public InputBuffer getInputBuffer()
+    public final InputBuffer getInputBuffer()
     {
         return inputBuffer;
     }
 
     @Override
-    public int getStartIndex()
+    public final int getStartIndex()
     {
         return startIndex;
     }
 
     @Override
-    public Matcher getMatcher()
+    public final Matcher getMatcher()
     {
         return matcher;
     }
 
     @Override
-    public char getCurrentChar()
+    public final char getCurrentChar()
     {
         return inputBuffer.charAt(currentIndex);
     }
 
     @Override
-    public int getCurrentCodePoint()
+    public final int getCurrentCodePoint()
     {
         return inputBuffer.codePointAt(currentIndex);
     }
 
     @Override
-    public int getCurrentIndex()
+    public final int getCurrentIndex()
     {
         return currentIndex;
     }
 
     @Override
-    public int getLevel()
+    public final int getLevel()
     {
         return level;
     }
 
     @Override
-    public boolean inPredicate()
+    public final boolean inPredicate()
     {
         //noinspection SimplifiableIfStatement
         if (matcher.getType() == MatcherType.PREDICATE)

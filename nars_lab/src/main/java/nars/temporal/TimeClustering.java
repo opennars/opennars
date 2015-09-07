@@ -268,8 +268,6 @@ public class TimeClustering extends CycleReaction {
 
             NARide p = new NARide(n);
 
-            p.console(true);
-
 
             stage.setWidth(900);
             stage.setHeight(900);

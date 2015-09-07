@@ -195,25 +195,25 @@ public final class SyllogisticRules {
 
 
         if ((!requiresTruth) || (truth1 != null)) {
-            Statement s = Statement.make(taskContent, term1, term2, order).normalized();
+            Term s = Statement.make(taskContent, term1, term2, order).normalized();
             if (s != null) {
-                p.deriveDouble(p.newTask(s, punc).parent(sentence1, sentence2).truth(truth1).budget(budget1));
+                p.deriveDouble(p.newTask((Statement)s, punc).parent(sentence1, sentence2).truth(truth1).budget(budget1));
                 //p.deriveDouble(s, punc, truth1, budget1, sentence1, sentence2, false, false);
             }
         }
 
         if ((!requiresTruth) || (truth2 != null)) {
-            Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order)).normalized();
+            Term s = Statement.make(taskContent, term2, term1, reverseOrder(order)).normalized();
             if (s != null) {
-                p.deriveDouble(p.newTask(s, punc).parent(sentence1, sentence2).truth(truth2).budget(budget2));
+                p.deriveDouble(p.newTask((Statement)s, punc).parent(sentence1, sentence2).truth(truth2).budget(budget2));
                 //p.deriveDouble(s, punc, truth2, budget2, sentence1, sentence2, false, false);
             }
         }
 
         if ((!requiresTruth) || (truth3 != null)) {
-            Statement s = Terms.makeSymStatement(taskContent, term1, term2, order).normalized();
+            Term s = Terms.makeSymStatement(taskContent, term1, term2, order).normalized();
             if (s != null) {
-                p.deriveDouble(p.newTask(s, punc).parent(sentence1, sentence2).truth(truth3).budget(budget3));
+                p.deriveDouble(p.newTask((Statement)s, punc).parent(sentence1, sentence2).truth(truth3).budget(budget3));
                 //p.deriveDouble(s, punc, truth3, budget3, sentence1, sentence2, false, false);
             }
 
@@ -238,9 +238,9 @@ public final class SyllogisticRules {
         p.doublePremiseTask(
             Statement.make(NativeOperator.INHERITANCE, term2, term1),
                 truth2, budget2.clone(),false, false);*/
-                Statement s2 = Similarity.make(term1, term2).normalized();
+                Term s2 = Similarity.make(term1, term2).normalized();
                 if (s2 != null) {
-                    p.deriveDouble(p.newTask(s2, punc).parent(sentence1, sentence2)
+                    p.deriveDouble(p.newTask((Statement)s2, punc).parent(sentence1, sentence2)
                                     .truth(truth3)
                                     .budget(budget2)
                     );
