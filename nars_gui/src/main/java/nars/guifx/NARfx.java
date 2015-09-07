@@ -14,6 +14,7 @@ import nars.concept.Concept;
 import nars.guifx.remote.VncClientApp;
 import nars.nar.Default;
 import nars.task.Task;
+import org.jewelsea.willow.browser.WebBrowser;
 
 import java.io.File;
 import java.io.IOException;
@@ -297,7 +298,7 @@ public class NARfx  {
             ni.addTool("Terminal", () -> new TerminalPane(nar));
             ni.addTool("Status", () -> new StatusPane(nar));
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
-
+            ni.addTool("Web Browser", () -> new WebBrowser());
 
             Button summaryPane = new Button(":D");
 
