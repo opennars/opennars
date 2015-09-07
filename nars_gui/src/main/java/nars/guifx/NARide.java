@@ -6,10 +6,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -23,6 +20,7 @@ import nars.guifx.util.TabX;
 import nars.util.event.Reaction;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static javafx.application.Platform.runLater;
 import static nars.guifx.NARfx.scrolled;
@@ -54,6 +52,20 @@ public class NARide extends BorderPane {
             });
         }
 
+    }
+
+    public void addView(Pane n) {
+        content.getTabs().add(new TabX(
+                n.getClass().getSimpleName(),
+                n));
+    }
+
+    public void addTool(String name, Supplier<Pane> builder) {
+        MenuItem mi = new MenuItem(name);
+        mi.setOnAction((e) -> {
+            addView(builder.get());
+        });
+        controlStrip.tool.getItems().add(mi);
     }
 
     public static class ResizableCanvas extends Canvas {

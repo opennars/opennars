@@ -75,9 +75,10 @@ public class JFX {
 
     static final FloatObjectHashMap<String> fontSizeStrings = new FloatObjectHashMap<>(128);
 
-    public static String fontSize(final float v) {
-        return fontSizeStrings.getIfAbsentPutWithKey(Precision.round(v, 1), _v -> {
-            return "-fx-font-size: " + _v;
+
+    public static String fontSize(float pct) {
+        return fontSizeStrings.getIfAbsentPutWithKey(Precision.round(pct, 1), _v -> {
+            return "-fx-font-size: " + pct + "%";
         });
     }
 

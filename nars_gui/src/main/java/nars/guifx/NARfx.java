@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.guifx.util.SizeAwareWindow;
+import nars.guifx.remote.VncClientApp;
 import nars.nar.Default;
 import nars.task.Task;
 
@@ -285,6 +285,11 @@ public class NARfx  {
 
             NARide ni = new NARide(nar);
 
+            ni.addView(new TerminalPane(nar));
+            ni.addTool("Terminal", () -> new TerminalPane(nar));
+            ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
+
+
             Button summaryPane = new Button(":D");
 
 //            Scene scene = new SizeAwareWindow((d) -> {
@@ -306,10 +311,12 @@ public class NARfx  {
 //                return () -> ni;
 //            });
             Scene scene = new Scene(ni);
+            scene.getStylesheets().setAll(NARfx.css, "dark.css" );
             b.setScene(scene);
 
             b.setScene(scene);
-            b.sizeToScene();
+            b.setWidth(900);
+            b.setHeight(700);
             b.show();
 
             if (ide!=null)

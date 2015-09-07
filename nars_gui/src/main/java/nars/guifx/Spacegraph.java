@@ -33,6 +33,9 @@ public class Spacegraph extends ZoomFX {
     public void addNodes(Node... n) {
         verts.getChildren().addAll(n);
     }
+    public void setNodes(Node... n) {
+        verts.getChildren().setAll(n);
+    }
     public void addNodes(Collection<Node> n) {
         verts.getChildren().addAll(n);
     }
@@ -40,11 +43,21 @@ public class Spacegraph extends ZoomFX {
         verts.getChildren().setAll(n);
     }
 
+    public void addEdges(Node... n) {
+        edges.getChildren().addAll(n);
+    }
+    public void setEdges(Node... n) {
+        edges.getChildren().setAll(n);
+    }
+
     public void removeNodes(Node... n) {
         verts.getChildren().removeAll(n);
     }
     public void removeNodes(Collection<Node> n) {
         verts.getChildren().removeAll(n);
+    }
+    public void removeEdges(Collection<Node> n) {
+        edges.getChildren().removeAll(n);
     }
 
 
@@ -162,10 +175,10 @@ public class Spacegraph extends ZoomFX {
 
 
         //getChildren().add(0, floorCanvas); //untransformed
-        content().addAll(edges, verts);
+        content().addAll(edges,verts);
 
-        verts.setAutoSizeChildren(false);
-        edges.setAutoSizeChildren(false);
+        //verts.setAutoSizeChildren(false);
+        //edges.setAutoSizeChildren(false);
 
 
 //        space.zoomFactorProperty().addListener((prop, oldVal, newVal) -> zoomFactor.setText(String.format("%d%%", Math.round(newVal.doubleValue() * 100))));

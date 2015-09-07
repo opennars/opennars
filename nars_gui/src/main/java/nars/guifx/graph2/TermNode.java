@@ -241,7 +241,6 @@ public class TermNode extends Group {
     }
 
     public double sy() {
-
         if (sceneCoord == null) sceneCoord = localToParent(0, 0);
         return sceneCoord.getY();
     }

@@ -67,10 +67,6 @@ public class NARGrapher implements Consumer<NARGraph1> {
         }
     }
 
-    public TermEdgeHalf getConceptEdgeHalf(NARGraph1 graph, TermNode s, TermNode t) {
-        return NARGraph1.getConceptEdge(getConceptEdge(graph, s, t), s, t);
-    }
-
     public TermEdge getConceptEdge(NARGraph1 graph, TermNode s, TermNode t) {
         //re-order
         if (!NARGraph1.order(s.term, t.term)) {
@@ -99,19 +95,13 @@ public class NARGrapher implements Consumer<NARGraph1> {
             Term target = t.getTerm();
             if (!source.equals(target.getTerm())) {
                 TermNode tn = getTermNode(graph, target);
-                if (tn != null) {
-                    TermEdgeHalf e = getConceptEdgeHalf(graph, sn, tn);
-                    e.set(t, now);
-                }
+                getConceptEdge(graph, sn, tn);
             }
         });
 
         c.getTermLinks().forEach(t -> {
             TermNode tn = getTermNode(graph, t.getTerm());
-            if (tn != null) {
-                TermEdgeHalf e = getConceptEdgeHalf(graph, sn, tn);
-                e.set(t, now);
-            }
+            getConceptEdge(graph, sn, tn);
         });
 
     }

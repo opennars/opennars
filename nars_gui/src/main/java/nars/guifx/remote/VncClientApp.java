@@ -10,7 +10,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.jfxvnc.net.rfb.render.DefaultProtocolConfiguration;
 import org.jfxvnc.net.rfb.render.ProtocolConfiguration;
@@ -99,6 +99,39 @@ public class VncClientApp extends Application {
         stage.setScene(scene);
         //stage.getIcons().add(offlineImg);
         stage.show();
+    }
+
+    public static Pane newView() {
+        Injector.setLogger((t) -> logger.trace(t));
+
+        final StringProperty headerProperty = new SimpleStringProperty(System.getProperty("javafx.runtime.version"));
+
+        // Injector.setModelOrService(Stage.class, stage);
+        Injector.setModelOrService(ProtocolConfiguration.class, Injector.instantiateModelOrService(DefaultProtocolConfiguration.class));
+
+        VncRenderService vncService = Injector.instantiateModelOrService(VncRenderService.class);
+
+        vncService.fullSceenProperty().addListener((l, a, b) -> Platform.runLater(() -> { /* stage.setFullScreen(b) */ } ));
+        vncService.restartProperty().addListener(l -> vncService.restart());
+        vncService.connectInfoProperty().addListener((l, a, b) -> Platform.runLater(() -> headerProperty.set(b.getServerName())));
+//        vncService.onlineProperty().addListener((l, a, b) -> Platform.runLater(() -> {
+//            stage.getIcons().add(b ? onlineImg : offlineImg);
+//            stage.getIcons().remove(!b ? onlineImg : offlineImg);
+//        }));
+
+        // update property on exit full screen by key combination
+        //stage.fullScreenProperty().addListener((l, a, b) -> vncService.fullSceenProperty().set(b));
+
+        SessionContext session = Injector.instantiateModelOrService(SessionContext.class);
+        session.setSession("jfxvnc.app");
+        session.loadSession();
+
+        //session.bind(sceneWidthProperty, "scene.width");
+        //session.bind(sceneHeightProperty, "scene.height");
+
+        MainView main = new MainView();
+        return (Pane) main.getView();
+
     }
 
     private void restart() {

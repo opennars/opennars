@@ -122,11 +122,14 @@ public class TaskLabel extends Label {
 
         summary.run();
 
-        double sc = 0.75 + 0.25 * ( 1 -  pri);
-        /*label.setScaleX(sc);
-        label.setScaleY(sc);*/
-        //setFont(NARfx.mono((sc*8+8)));
-        //setStyle(JFX.fontSize((float)(sc*8+8)));
+        double sc = 1.0 + 1.0 * pri;
+        //setScaleX(sc);
+        //setScaleY(sc);
+        //setFont(NARfx.mono((pri*12+12)));
+
+
+        setStyle(JFX.fontSize( ((1.0f + pri)*100.0f) ) );
+
         setTextFill(JFX.grayscale.get(pri*0.5+0.5));
 
 

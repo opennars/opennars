@@ -1,11 +1,8 @@
 package nars.guifx.graph2;
 
-import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.dimensionalize.IterativeLayout;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
 import javafx.animation.Timeline;
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import nars.Global;
@@ -107,38 +104,14 @@ public class NARGraph1<V, E> extends Spacegraph {
 
 
     private Consumer<NARGraph1> updater;
+    private EdgeRenderer<E> edgeRenderer;
 
 
-    public final TermEdge getConceptEdge(TermNode s, TermNode t) {
-        if (!order(s.term, t.term)) {
-            TermNode x = s;
-            s = t;
-            t = x;
-        }
 
-        return getConceptEdgeOrdered(s, t);
-    }
 
     /** assumes that 's' and 't' are already ordered */
     public final TermEdge getConceptEdgeOrdered(TermNode s, TermNode t) {
         return getEdge(s.term, t.term);
-    }
-
-    public final TermEdgeHalf getConceptEdgeHalf(final TermNode s, final TermNode t) {
-        TermEdge parent = getConceptEdge(s, t);
-        if (parent!=null)
-            return getConceptEdge(parent, s, t);
-        return null;
-    }
-
-    public final static TermEdgeHalf getConceptEdge(TermEdge parent, TermNode s, TermNode t) {
-        if (parent == null)
-            return null;
-        if (order(s.term, t.term)) {
-            return parent.a;
-        } else {
-            return parent.b;
-        }
     }
 
     static boolean order(final Term x, final Term y) {
@@ -191,11 +164,11 @@ public class NARGraph1<V, E> extends Spacegraph {
                 for (final TermEdge te : y) {
                     addEdge(te.aSrc.term, te.bSrc.term, te);
                 }
-                //addEdges(y);
+                addEdges(y);
             }
 
             List<TermNode> toDetach = Global.newArrayList();
-            //List<TermEdge> toDetachEdge = new ArrayList();
+            List<TermEdge> toDetachEdge = new ArrayList();
 
             getVertices().forEach(nn -> {
                 if (!(nn instanceof TermNode)) return;
@@ -205,27 +178,20 @@ public class NARGraph1<V, E> extends Spacegraph {
                     TermNode c = terms.remove(r.term);
 
                     if (c != null) {
-                        c.setVisible(false);
+                        //c.setVisible(false);
                         toDetach.add(c);
+                        if (c.edges!=null)
+                            Collections.addAll(toDetachEdge, c.edges);
                     }
-
-
-//                        Map<Term, TermEdge> er = edges.rowMap().remove(r.term);
-//                        /*if (er != null)
-//                            toDetachEdge.addAll((Collection) er.values());*/
-//
-//                        Map<Term, TermEdge> ec = edges.columnMap().remove(r.term);
-//                        /*if (ec != null)
-//                            toDetachEdge.addAll((Collection) ec.values());*/
-
                 }
             });
 
             removeNodes((Collection) toDetach);
-            //removeEdges((Collection)toDetachEdge);
+            removeEdges((Collection)toDetachEdge);
 
             termList.clear();
             termList.addAll(terms.values());
+
             //print();
 
             updateNodes();
@@ -288,39 +254,46 @@ public class NARGraph1<V, E> extends Spacegraph {
             });
     }
 
-    final List<TermEdge> removable = Global.newArrayList();
+    final List<Object /*TermEdge*/> removable = Global.newArrayList();
 
     final Color FADEOUT = Color.BLACK;
     //new Color(0,0,0,0.5);
 
+    public interface EdgeRenderer<E> extends Consumer<E> {
+        /** called before any update begins */
+        public void reset(NARGraph1 g);
+    }
+
+    public EdgeRenderer<E> getEdgeRenderer() {
+        return edgeRenderer;
+    }
+
+    public void setEdgeRenderer(EdgeRenderer<E> r) {
+        this.edgeRenderer = r;
+    }
+
     protected void renderEdges() {
-        //if (edgeDirty.get()) {
-        //edgeDirty.set(false);
 
-//        if (floorGraphics == null) floorGraphics = floorCanvas.getGraphicsContext2D();
-//
-//        floorGraphics.setFill(
-//                FADEOUT
-//        );
-//
-//        floorGraphics.fillRect(0, 0, floorGraphics.getCanvas().getWidth(), floorGraphics.getCanvas().getHeight());
-//
-//        floorGraphics.setStroke(null);
-//        floorGraphics.setLineWidth(0);
+        EdgeRenderer er = getEdgeRenderer();
+        if (er == null) {
+            System.err.println(this + " has no edge renderer");
+        }
+        er.reset(this);
 
+
+        Collections.addAll(removable, edges.getChildren());
 
         for (int i = 0, termListSize = termList.size(); i < termListSize; i++) {
             final TermNode n = termList.get(i);
             for (final TermEdge e : n.getEdges()) {
-                /*if (!e.render(floorGraphics)) {
-
-                }*/
+                er.accept(e);
+                removable.remove(e);
             }
         }
 
-//        removable.forEach(x -> {
-//            edges.remove(x.aSrc.term, x.bSrc.term);
-//        });
+        removable.forEach(x -> {
+            edges.getChildren().remove(x);
+        });
 
         removable.clear();
 

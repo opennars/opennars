@@ -32,6 +32,7 @@ public class NARControlFX extends HBox {
 
     final NAR nar;
     private final NARThreadControlPane threadControl;
+    public final Menu tool;
 
 
     public static class NARThreadControlPane extends FlowPane implements Runnable {
@@ -159,7 +160,7 @@ public class NARControlFX extends HBox {
 
             Button button2 = JFX.newIconButton(FontAwesomeIcon.NAVICON);
             button2.setMouseTransparent(true);
-            Menu tool = new Menu("", button2);
+            tool = new Menu("", button2);
             tool.getItems().add(new MenuItem("Interface..."));
             tool.getItems().add(new MenuItem("Cognition..."));
             tool.getItems().add(new MenuItem("Sensor..."));
