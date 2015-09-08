@@ -69,7 +69,7 @@ public class scheme extends TermFunction {
 
     //TODO make narsToScheme method
 
-    public final Function<Expression, Term> schemeToNars = new Function<Expression, Term>() {
+    public static final Function<Expression, Term> schemeToNars = new Function<Expression, Term>() {
         @Override
         public Term apply(Expression schemeObj) {
             if (schemeObj instanceof ListExpression) {

@@ -3,10 +3,11 @@ package nars.bag.impl;
 import nars.budget.Itemized;
 import org.apache.commons.math3.util.FastMath;
 
+import java.io.Serializable;
 import java.util.function.Consumer;
 
 
-public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V> {
+public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Serializable {
     
 
     public void clear();

@@ -16,7 +16,7 @@ import java.util.Collection;
  * Created by me on 9/7/15.
  */
 @RunWith(Parameterized.class)
-public class TaskSerializationTest  extends AbstractSerializationTest<DefaultTask> {
+public class TaskSerializationTest  extends AbstractSerializationTest<String,DefaultTask> {
 
 
     final static Memory memory = new NAR(new Default()).memory;

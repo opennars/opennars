@@ -2,10 +2,12 @@ package nars.clock;
 
 import nars.Memory;
 
+import java.io.Serializable;
+
 /**
  * Created by me on 7/2/15.
  */
-public interface Clock {
+public interface Clock extends Serializable {
 
     /** called when memory reset */
     public void reset();

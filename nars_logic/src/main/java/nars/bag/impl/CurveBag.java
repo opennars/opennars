@@ -6,6 +6,7 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagSelector;
 import nars.budget.Itemized;
+import nars.concept.Concept;
 import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;
@@ -47,7 +48,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     final int capacity;
 
 
-    public final CurveSampler sampler;
+    public transient final ToIntFunction<CurveBag> sampler;
 
 
     public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {
@@ -111,10 +112,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         return items.isSorted();
     }
 
-    @FunctionalInterface
-    public interface CurveSampler extends ToIntFunction<CurveBag> {    }
-
-    public static class RandomSampler implements CurveSampler {
+    public static class RandomSampler implements ToIntFunction<CurveBag> {
 
         private final BagCurve curve;
         private final Random rng;
@@ -187,7 +185,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 //    final float scanningRate = -1.0f;
 
 
-    public CurveBag(int capacity, CurveSampler sampler, SortedIndex<V> items) {
+    public CurveBag(int capacity, ToIntFunction<CurveBag> sampler, SortedIndex<V> items) {
         super();
         this.capacity = capacity;
         this.sampler = sampler;

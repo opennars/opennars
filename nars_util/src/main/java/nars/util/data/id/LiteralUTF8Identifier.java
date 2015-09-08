@@ -85,7 +85,12 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     @Override
     public byte[] bytes() {
+        ensureNamed();
         return data;
+    }
+
+    protected void ensureNamed() {
+
     }
 
     @Override

@@ -33,6 +33,7 @@ import nars.term.Atom;
 import nars.term.Term;
 import nars.util.event.Reaction;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 
@@ -45,11 +46,12 @@ import java.util.function.Function;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-abstract public class OpReaction implements Function<Operation,List<Task>>, Reaction<Term,Operation> {
+abstract public class OpReaction implements Function<Operation,List<Task>>, Reaction<Term,Operation>, Serializable {
 
 
     public final Term term;
-    @Deprecated protected NAR nar;
+
+    transient @Deprecated protected NAR nar;
 
 
     @Override

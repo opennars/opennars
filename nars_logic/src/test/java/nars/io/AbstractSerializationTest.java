@@ -11,19 +11,19 @@ import static org.junit.Assert.assertTrue;
 /**
  * Round-trip serialization and deserialization tests for various types
  */
-abstract public class AbstractSerializationTest<T> {
+abstract public class AbstractSerializationTest<S,T> {
 
-    final String input;
+    final S input;
 
     public static final NarseseParser p = NarseseParser.the();
 
     abstract public void testEquality(T a, T b);
 
-    public AbstractSerializationTest(String input) {
+    public AbstractSerializationTest(S input) {
         this.input = input;
     }
 
-    abstract T parse(String input);
+    abstract T parse(S input);
 
     @Test
     public void assertEquals() throws Exception {

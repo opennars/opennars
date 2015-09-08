@@ -3,12 +3,13 @@ package nars.util;
 import nars.Global;
 import nars.budget.Itemized;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 /** adapter to a Map for coordinating changes in a Map with another Collection */
-public abstract class CollectorMap<K, V extends Itemized<K>> {
+public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializable {
 
 
     public final Map<K, V> map;

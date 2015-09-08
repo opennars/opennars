@@ -34,8 +34,8 @@ import static nars.Global.reference;
 /**
  * Created by me on 8/17/15.
  */
-//@JsonSerialize(using = ToStringSerializer.class)
-public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable {
+@JsonSerialize(using = ToStringSerializer.class)
+public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implements Task<T>, Serializable, JsonSerializable {
     /**
      * The punctuation also indicates the type of the Sentence:
      * Judgment, Question, Goal, or Quest.
@@ -384,7 +384,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
 
     public final void invalidate() {
-        getTerm().invalidate();
+        if (term!=null)
+            term.invalidate();
         hash = 0;
     }
 
@@ -636,18 +637,16 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
 
-//    @Override
-//    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
-//        //jgen.writeString(toString());
-//
-//        jgen.writeObject(this);
-//    }
-//
-//    @Override
-//    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
-//        serialize(jgen, provider);
-//    }
-//
+    @Override
+    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException {
+        jgen.writeString(toString());
+    }
+
+    @Override
+    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
+        serialize(jgen, provider);
+    }
+
 
 
 }

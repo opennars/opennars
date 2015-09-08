@@ -14,12 +14,11 @@ import static org.junit.Assert.assertTrue;
  * Created by me on 9/7/15.
  */
 @RunWith(Parameterized.class)
-public class TermSerializationTest extends AbstractSerializationTest<Term> {
-
-
+public class TermSerializationTest extends AbstractSerializationTest<String,Term> {
 
     public TermSerializationTest(String input) {
-        super(input); }
+        super(input);
+    }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {

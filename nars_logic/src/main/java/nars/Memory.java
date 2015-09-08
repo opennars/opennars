@@ -63,15 +63,14 @@ import nars.util.event.Observed;
 import nars.util.meter.ResourceMeter;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static org.jgroups.util.Util.assertEquals;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -85,62 +84,62 @@ import java.util.function.Predicate;
  */
 public class Memory implements Serializable, AbstractMemory {
 
-
-
     private Atom self;
 
-    public final Random random;
+    transient public final Random random;
 
-    private CycleProcess cycle;
+    transient private CycleProcess cycle;
 
-    @Deprecated public final EventEmitter<Class,Object[]> event;
-    public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
-    public final Observed<Task> eventTaskRemoved = new Observed.DefaultObserved();
-    public final Observed<ConceptProcess> eventConceptProcessed = new Observed.DefaultObserved();
+    @Deprecated transient public final EventEmitter<Class,Object[]> event;
+    transient public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
+    transient public final Observed<Task> eventTaskRemoved = new Observed.DefaultObserved();
+    transient public final Observed<ConceptProcess> eventConceptProcessed = new Observed.DefaultObserved();
 
-    public final Observed<Concept> eventConceptActive = new Observed.DefaultObserved();
-    public final Observed<Concept> eventConceptForget = new Observed.DefaultObserved();
+    transient public final Observed<Concept> eventConceptActive = new Observed.DefaultObserved();
+    transient public final Observed<Concept> eventConceptForget = new Observed.DefaultObserved();
 
-    public final Observed<Memory>
+    transient public final Observed<Memory>
             /** fired at the beginning of each memory cycle */
             eventCycleStart = new Observed.DefaultObserved(),
             /** fired at the end of each memory cycle */
             eventCycleEnd = new Observed.DefaultObserved();
 
-    public final Observed<TaskProcess> eventTaskProcess = new Observed.DefaultObserved<>();
+    transient public final Observed<TaskProcess> eventTaskProcess = new Observed.DefaultObserved<>();
 
 
-    public final EventEmitter<Term,Operation> exe;
+    transient public final EventEmitter<Term,Operation> exe;
 
 
-    public final EmotionMeter emotion;
-    public final LogicMeter logic;
-    public final ResourceMeter resource;
+    transient public final EmotionMeter emotion;
+    transient public final LogicMeter logic;
+    transient public final ResourceMeter resource;
+
     public final Param param;
 
-    private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
-    private final Set<Concept> questionConcepts = Global.newHashSet(16);
-    private final Set<Concept> goalConcepts = Global.newHashSet(16);
+    transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
-    private final Set<Concept> pendingDeletions = Global.newHashSet(16);
+    transient private final Set<Concept> questionConcepts = Global.newHashSet(16);
+    transient private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
-    final ConceptBuilder conceptBuilder;
+    transient private final Set<Concept> pendingDeletions = Global.newHashSet(16);
 
-    public PremiseProcessor rules;
+    transient final ConceptBuilder conceptBuilder;
+
+    transient public PremiseProcessor rules;
 
     public final Clock clock;
-    ExecutorService laterTasks = null;
+    transient ExecutorService laterTasks = null;
 
     public final CacheBag<Term, Concept> concepts;
 
 
-    private int level;
+    transient private int level;
     private long currentStampSerial = 1;
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
-    private long inputPausedUntil = -1;
-    private boolean inCycle = false;
+    transient private long inputPausedUntil = -1;
+    transient private boolean inCycle = false;
     private long nextRandomSeed = 1;
 
 
@@ -159,7 +158,9 @@ public class Memory implements Serializable, AbstractMemory {
         this.clock = narParam.getClock();
 
         this.concepts = concepts;
-        concepts.setOnRemoval(c -> delete(c));
+
+        /*final Consumer<Concept> deleteOnConceptRemove = c -> delete(c);
+        concepts.setOnRemoval(deleteOnConceptRemove);*/
 
         this.param = narParam;
         this.rules = policy;
@@ -954,6 +955,27 @@ public class Memory implements Serializable, AbstractMemory {
         return getActivePrioritySum(concept, tasklink, termlink)/c;
     }
 
+    public static boolean equals(Memory a, Memory b) {
+
+        //TODO
+        //for now, just accept that they include the same set of terms
+
+        Set<Term> aTerm = new LinkedHashSet();
+        Set<Term> bTerm = new LinkedHashSet();
+        a.concepts.forEach(ac -> aTerm.add(ac.getTerm()));
+        b.concepts.forEach(bc -> bTerm.add(bc.getTerm()));
+        if (!aTerm.equals(bTerm)) {
+            System.out.println(aTerm.size() + " " + aTerm);
+            System.out.println(bTerm.size() + " " + bTerm);
+            return false;
+        }
+
+
+        /*if (!a.concepts.equals(b.concepts)) {
+
+        }*/
+        return true;
+    }
 
     //    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
 //        return item == null ? "" : "\n " + title + ":\n"

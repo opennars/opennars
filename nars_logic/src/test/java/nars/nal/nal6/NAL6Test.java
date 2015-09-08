@@ -34,7 +34,7 @@ public class NAL6Test extends JavaNALTest {
                     {new Default().level(6)},
                     {new Classic().setInternalExperience(null) },
 
-                    {new Solid(1, 128, 1, 1, 1, 2).level(6)}
+                    //{new Solid(1, 128, 1, 1, 1, 2).level(6)}
 
 
             });

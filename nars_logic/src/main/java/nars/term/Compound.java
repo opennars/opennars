@@ -471,6 +471,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
 
     @Override
     final public int hashCode() {
+        ensureNamed();
         return contentHash;
     }
 
