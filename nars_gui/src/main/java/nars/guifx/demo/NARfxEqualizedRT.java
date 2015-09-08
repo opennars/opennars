@@ -1,13 +1,11 @@
 package nars.guifx.demo;
 
 import nars.NAR;
-import nars.clock.RealtimeClock;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.NARfx;
 import nars.nar.experimental.Equalized;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by me on 9/7/15.
@@ -32,7 +30,7 @@ public class NARfxEqualizedRT {
         NARfx.newWindow(new NAR(d), (i) -> {
             try {
                 i.nar.input(new File("/tmp/h.nal"));
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         });

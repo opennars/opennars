@@ -1,14 +1,14 @@
 package nars.nal.nal3;
 
 import nars.Global;
-import nars.term.DefaultCompound;
+import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set), where N>1
  */
-abstract public class AbstractSetN extends DefaultCompound implements SetTensional {
+abstract public class AbstractSetN extends Compound implements SetTensional {
 
 
     /**

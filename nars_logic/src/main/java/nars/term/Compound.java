@@ -453,20 +453,31 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
     }
 
     /**
-     * this will be called if the c is of the same class as 'this'.
-     * the implementation can decide whether to compare by name() or by
-     * subterm content
+     * compares only the contents of the subterms; assume that the other term is of the same operator type
      */
-    abstract protected int compare(Compound otherCompoundOfEqualType);
+    public int compareSubterms(final Compound otherCompoundOfEqualType) {
+        return Terms.compareSubterms(term, otherCompoundOfEqualType.term);
+    }
+
+
+    final static int maxSubTermsForNameCompare = 2; //tunable
+
+    protected int compare(final Compound otherCompoundOfEqualType) {
+
+        int l = length();
+
+        if ((l != otherCompoundOfEqualType.length()) || (l < maxSubTermsForNameCompare))
+            return compareSubterms(otherCompoundOfEqualType);
+
+        return compareName(otherCompoundOfEqualType);
+    }
+
 
     public int compareName(final Compound c) {
         return super.compareTo(c);
     }
 
-    /**
-     * compares only the contents of the subterms; assume that the other term is of the same operator type
-     */
-    abstract public int compareSubterms(final Compound otherCompoundOfEqualType);
+
 
     @Override
     final public int hashCode() {

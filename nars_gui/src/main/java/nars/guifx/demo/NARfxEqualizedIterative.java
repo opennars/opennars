@@ -27,7 +27,7 @@ public class NARfxEqualizedIterative {
         NARfx.newWindow(new NAR(new Equalized(1000,3,2)), (i) -> {
             try {
                 i.nar.input(new File("/tmp/h.nal"));
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         });

@@ -14,10 +14,14 @@ public class LocalTerminal extends TerminalPanel {
 
     private Process pty;
 
-    public LocalTerminal() throws IOException {
+    public LocalTerminal()  {
         super();
 
-        connect();
+        try {
+            connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void connect() throws IOException {

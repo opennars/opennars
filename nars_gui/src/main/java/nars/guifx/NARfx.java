@@ -4,7 +4,6 @@ import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
@@ -14,13 +13,9 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
-import nars.guifx.util.TabX;
-import nars.nar.Default;
 import nars.task.Task;
 import org.jewelsea.willow.browser.WebBrowser;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -273,13 +268,12 @@ public class NARfx  {
             NARide ni = new NARide(nar);
 
             {
-                ni.addView(new LocalTerminal());
                 ni.addView(new TerminalPane(nar));
                 //ni.addView(additional components);
             }
 
             /** tool registration */
-            ni.addTool("Terminal (bash)", () -> new TerminalPane(nar));
+            ni.addTool("Terminal (bash)", () -> new LocalTerminal());
             ni.addTool("Status", () -> new StatusPane(nar));
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
             ni.addTool("Web Browser", () -> new WebBrowser());

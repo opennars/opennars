@@ -3,7 +3,6 @@ package nars.nal.nal4;
 import nars.Op;
 import nars.Symbols;
 import nars.term.Compound;
-import nars.term.DefaultCompound;
 import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
@@ -18,7 +17,7 @@ import static nars.Symbols.*;
  */
 
 
-abstract public class Image extends DefaultCompound {
+abstract public class Image extends Compound {
     /** The index of relation in the component list */
     transient public final short relationIndex;
 
