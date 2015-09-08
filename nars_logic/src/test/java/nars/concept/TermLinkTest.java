@@ -94,10 +94,14 @@ public class TermLinkTest {
         //note: this method also seems to work
         //Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f) );
 
-        n.input("$1;1;1$ " + term + ".");
+        //TextOutput.out(n);
+        n.input(term + ".");
         n.frame(1);
 
+        assertTrue(n.memory.numConcepts(true,false) >= 1);
+
         Concept c = n.concept(term);
+
         //System.out.println(c.getTermLinkBuilder().templates());
         assertNotNull(c);
 
@@ -172,8 +176,9 @@ public class TermLinkTest {
     @Test
     public void termlinkConjunctionImplicationFullyConnected() {
         //from nal6.4
-        String c = "<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>.";
-        String d = "<<$y --> [withwings]> ==> <$y --> flyer>>.";
+        String c = "<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>";
+
+        String d = "<<$y --> [withwings]> ==> <$y --> flyer>>";
         Bag<TermLinkKey, TermLink> x = getTermLinks(d);
         for (TermLink t : x.values()) {
             assertEquals(t.type, 3); //all component_statement links
@@ -184,8 +189,8 @@ public class TermLinkTest {
 
         NAR n = new NAR(new Default());
 
-        n.input(c);
-        n.input(d);
+        n.input(c + ".");
+        n.input(d + ".");
 
         //in each of the first two cycles (for each of the two inputs),
         //check that termlink connectivity is complete

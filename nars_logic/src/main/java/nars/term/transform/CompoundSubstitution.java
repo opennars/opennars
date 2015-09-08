@@ -11,32 +11,25 @@ import java.util.Map;
  */
 abstract public class CompoundSubstitution<I extends Compound, T extends Term> implements CompoundTransform<I, T> {
 
-    public Map<T, T> subst = null;
+    public final Map<T, T> subst;
 
-    @Override
-    public T apply(I containingCompound, T v, int depth) {
 
-        if (subst == null)
-            subst = newSubstitutionMap();
-
-        T subbed = subst.computeIfAbsent(v, _v -> {
-            T s = getSubstitute(_v);
-            if (s == null) return _v; //unaffected
-            return s;
-        });
-
-        v = subbed;
-
-        return v;
+    public CompoundSubstitution() {
+        this(Global.newHashMap(1));
     }
 
-    final protected Map<T, T> newSubstitutionMap() {
-        return Global.newHashMap();
-        //return new FastPutsArrayMap<>();
+    public CompoundSubstitution(Map<T, T> subst) {
+        this.subst = subst;
+    }
+
+    @Override
+    public final T apply(I containingCompound, T v, int depth) {
+        return subst.computeIfAbsent(v, this::getSubstitute);
     }
 
     /**
-     * returns the substituted value for the given subterm; null if the subterm should be unaffected
+     * returns the substituted value for the given subterm;
+     * should not return null
      */
     protected abstract T getSubstitute(T v);
 }

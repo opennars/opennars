@@ -24,7 +24,7 @@ public class ProductN extends Compound implements Product {
     }
 
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.PRODUCT;
     }
 
@@ -49,7 +49,7 @@ public class ProductN extends Compound implements Product {
 
 
     @Override
-    public Term[] terms() {
+    public final Term[] terms() {
         return term;
     }
 

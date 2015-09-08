@@ -159,12 +159,12 @@ public class Equivalence extends Statement {
      * @return true for commutative
      */
     @Override
-    public boolean isCommutative() {
+    public final boolean isCommutative() {
         return (temporalOrder != TemporalRules.ORDER_FORWARD);
     }
 
     @Override
-    public int getTemporalOrder() {
+    public final int getTemporalOrder() {
         return temporalOrder;
     }
 }

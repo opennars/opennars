@@ -70,6 +70,7 @@ public class NAL6Test extends JavaNALTest {
         n.mustBelieve(100,"<<$1 --> swimmer> ==> <$1 --> bird>>",1.00f,0.37f).en("I guess if something is a swimmer, then it is a bird.");
         n.mustBelieve(100,"<<$1 --> bird> ==> <$1 --> swimmer>>",0.80f,0.42f).en("I guess if something is a bird, then it is a swimmer.");
         n.mustBelieve(100,"<<$1 --> bird> <=> <$1 --> swimmer>>",0.80f,0.42f).en("I guess something is a bird, if and only if it is a swimmer.");
+        n.run();
     }
 
 

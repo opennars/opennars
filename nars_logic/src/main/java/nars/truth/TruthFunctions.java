@@ -452,8 +452,6 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final ProjectedTruth eternalize(final Truth t) {
-        if (t == null)
-            return null;
         return new ProjectedTruth(
                 t.getFrequency(),
                 eternalizedConfidence(t.getConfidence()),

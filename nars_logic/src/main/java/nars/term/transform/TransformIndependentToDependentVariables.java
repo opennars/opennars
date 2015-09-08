@@ -12,14 +12,14 @@ public class TransformIndependentToDependentVariables extends VariableSubstituti
     int counter = 0;
 
     @Override
-    public boolean test(final Term possiblyAVariable) {
+    public final boolean test(final Term possiblyAVariable) {
         if (super.test(possiblyAVariable))
             return possiblyAVariable.hasVarIndep();
         return false;
     }
 
     @Override
-    protected Variable getSubstitute(final Variable v) {
+    protected final Variable getSubstitute(final Variable v) {
         return Variable.the(Op.VAR_DEPENDENT, counter++);
     }
 }

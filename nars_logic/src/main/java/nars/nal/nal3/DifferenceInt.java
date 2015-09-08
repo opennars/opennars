@@ -115,7 +115,7 @@ public class DifferenceInt extends Difference {
      * @return the operate of the term
      */
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.DIFFERENCE_INT;
     }
 }

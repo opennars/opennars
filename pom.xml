@@ -44,6 +44,34 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <useIncrementalCompilation>true</useIncrementalCompilation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <includes>
+                        <!-- because they dont all have the pattern: ____Test.java yet -->
+                        <include>**/*.java</include>
+                    </includes>
+                    <!--<skipTests>true</skipTests>-->
+                    <perCoreThreadCount>true</perCoreThreadCount>
+                    <disableXmlReport>true</disableXmlReport>
+                    <trimStackTrace>true</trimStackTrace>
+                    <useFile>true</useFile>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-doap-plugin</artifactId>
                 <version>1.2</version>
                 <executions>
@@ -57,23 +85,87 @@
                 </executions>
             </plugin>
 
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <instrumentation>
+                        <!--<ignores>-->
+                            <!--<ignore>com.example.boringcode.*</ignore>-->
+                        <!--</ignores>-->
+                        <!--<excludes>-->
+                            <!--<exclude>com/example/dullcode/**/*.class</exclude>-->
+                            <!--<exclude>com/example/**/*Test.class</exclude>-->
+                        <!--</excludes>-->
+                    </instrumentation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+
+
+
     </build>
-    <!--
-        <reporting>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jdepend-maven-plugin</artifactId>
-                    <version>2.0</version>
-                </plugin>
-                &lt;!&ndash;<plugin>&ndash;&gt;
-                    &lt;!&ndash;<groupId>org.codehaus.mojo</groupId>&ndash;&gt;
-                    &lt;!&ndash;<artifactId>cobertura-maven-plugin</artifactId>&ndash;&gt;
-                    &lt;!&ndash;<version>2.6</version>&ndash;&gt;
-                &lt;!&ndash;</plugin>&ndash;&gt;
-            </plugins>
-        </reporting>-->
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <showSuccess>false</showSuccess>
+                    <detail>true</detail>
+                </configuration>
+            </plugin>
+
+            <!--&lt;!&ndash;-->
+            <!--<plugin>-->
+            <!--<groupId>org.codehaus.mojo</groupId>-->
+            <!--<artifactId>jdepend-maven-plugin</artifactId>-->
+            <!--<version>2.0</version>-->
+            <!--</plugin>-->
+            <!--&ndash;&gt;-->
+
+
+            <!-- Normally, we take off the dependency report, saves time. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <!--<format>xml</format>-->
+                    </formats>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.5</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -305,4 +397,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+
+
 </project>

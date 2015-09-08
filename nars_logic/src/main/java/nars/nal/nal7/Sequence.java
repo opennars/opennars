@@ -59,12 +59,12 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
     @Override
-    public long[] intervals() {
+    public final long[] intervals() {
         return intervals;
     }
 
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.SEQUENCE;
     }
 

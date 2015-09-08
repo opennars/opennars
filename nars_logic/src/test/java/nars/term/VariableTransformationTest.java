@@ -41,8 +41,8 @@ public class VariableTransformationTest {
         String same = "(&&,<$1 --> x>,<$1 --> y>)";
         String different = "(&&,<$1 --> x>,<$2 --> y>)";
         combine("<$1 --> x>", true, "<$1 --> y>", true, same);
-        combine("<$1 --> x>", false, "<$1 --> y>", false, different);
         combine("<$1 --> x>", false, "<$1 --> y>", true, different);
+        combine("<$1 --> x>", true, "<$1 --> y>", false, different);
         combine("<$1 --> x>", false, "<$1 --> y>", false, different);
 
     }
@@ -83,7 +83,7 @@ public class VariableTransformationTest {
         Term tb = scope(n.term(b), scopedB);
         Term c = Conjunction.make(ta, tb).normalized();
 
-        Term e = n.term(expect);
+        Term e = n.term(expect).normalized();
         Term d = e.normalized();
         assertNotNull(e);
         assertEquals(a + " (" + scopedA + ")  +    "   + b + " (" + scopedB + ")", d, c);

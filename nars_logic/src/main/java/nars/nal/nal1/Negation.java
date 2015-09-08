@@ -98,7 +98,7 @@ public class Negation extends Compound1 {
      * @return the operate of the term
      */
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.NEGATION;
     }
 

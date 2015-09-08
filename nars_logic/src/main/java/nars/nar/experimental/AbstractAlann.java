@@ -122,15 +122,8 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
         throw new RuntimeException("should not be called, this method will be deprecated");
     }
 
-    @Override
-    public final Concept put(final Concept concept) {
-        return concepts.put(concept);
-    }
 
-    @Override
-    public final Concept get(final Term key) {
-        return concepts.get(key);
-    }
+
 
     @Override
     public Concept conceptualize(final Term term, final Budget budget, final boolean createIfMissing) {

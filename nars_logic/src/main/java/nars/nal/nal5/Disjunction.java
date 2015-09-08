@@ -124,7 +124,7 @@ public class Disjunction extends Junction {
      * @return the operate of the term
      */
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.DISJUNCTION;
     }
 

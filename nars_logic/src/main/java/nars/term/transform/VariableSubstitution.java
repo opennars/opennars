@@ -8,4 +8,5 @@ import nars.term.Variable;
  */
 abstract public class VariableSubstitution extends CompoundSubstitution<Compound, Variable> implements VariableTransform {
 
+
 }
