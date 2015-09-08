@@ -95,7 +95,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
     default void discountTaskConfidences(final Iterable<Task> t) {
-        t.forEach(x -> x.discountConfidence());
+        t.forEach(Task::discountConfidence);
     }
 
 
@@ -338,12 +338,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     }
 
     default public Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
-        return transform(adjacentTermables(termLinks, taskLinks), new Function<Termed, Term>() {
-            @Override
-            public Term apply(final Termed term) {
-                return term.getTerm();
-            }
-        });
+        return transform(adjacentTermables(termLinks, taskLinks), Termed::getTerm);
     }
 
     default public Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {

@@ -1,6 +1,5 @@
 package nars.term;
 
-import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.LiteralUTF8Identifier;
 
@@ -21,11 +20,6 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
     @Override
     public int complexity() {
         return 1;
-    }
-
-    @Override
-    public final int getTemporalOrder() {
-        return TemporalRules.ORDER_NONE;
     }
 
     @Override

@@ -3,9 +3,7 @@ package nars.budget;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Memory;
-import nars.concept.Concept;
 import nars.task.Task;
-import nars.term.Term;
 import org.infinispan.commons.equivalence.AnyEquivalence;
 import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
 
@@ -198,11 +196,7 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
     }
 
     public static int limit(ItemAccumulator<Task> acc, int capacity, List<Task> temporary, Memory m) {
-        return acc.limit(capacity, new Consumer<Task>() {
-            @Override public void accept(Task task) {
-                m.removed(task, "Ignored");
-            }
-        }, temporary);
+        return acc.limit(capacity, task -> m.removed(task, "Ignored"), temporary);
     }
 
 

@@ -59,7 +59,7 @@ public class Not extends BooleanNode {
      */
     @Override
     public Boolean evaluate() {
-        return !((Boolean) getChild(0).evaluate());
+        return !(boolean)(getChild(0).evaluate());
     }
 
     /**

@@ -63,10 +63,10 @@ public class Or extends BooleanNode {
      */
     @Override
     public Boolean evaluate() {
-        boolean result = ((Boolean) getChild(0).evaluate());
+        boolean result = (boolean)(getChild(0).evaluate());
 
         if (!result) {
-            result = ((Boolean) getChild(1).evaluate());
+            result = (boolean) (getChild(1).evaluate());
         }
 
         return result;

@@ -133,10 +133,12 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
 
         boolean needsCopy = false;
 
-        if (x[x.length-1] == '\u0000') {
-            l--; //skip suffix zero charcter
-            needsCopy = true;
+        //skip suffix zero charcter
+        final int il = l;
+        while (l > 0 && x[l-1] == '\u0000') {
+            l--;
         }
+        if (il!=l) needsCopy = true;
 
         if (l!=c.capacity()) {
             needsCopy = true;

@@ -16,7 +16,6 @@ import nars.util.data.list.FastConcurrentDirectDeque;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static nars.budget.BudgetFunctions.divide;

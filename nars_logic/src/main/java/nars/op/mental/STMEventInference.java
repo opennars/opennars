@@ -10,7 +10,6 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.meta.RuleMatch;
 import nars.nal.Deriver;
-import nars.premise.Premise;
 import nars.process.AbstractPremise;
 import nars.process.NAL;
 import nars.process.TaskProcess;

@@ -8,7 +8,6 @@ import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.term.Term;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.function.Consumer;
 

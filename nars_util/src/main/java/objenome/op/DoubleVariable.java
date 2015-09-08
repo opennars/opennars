@@ -10,8 +10,8 @@ public class DoubleVariable extends Variable<Double> {
     }
 
     public void setValue(Double value) {
-        throw new RuntimeException("use set(double v) to avoid boxing");
-        //this.value = value;
+        //throw new RuntimeException("use set(double v) to avoid boxing");
+        this.value = value;
     }
 
     public Double getValue() {

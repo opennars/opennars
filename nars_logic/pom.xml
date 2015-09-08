@@ -59,7 +59,6 @@
                         <include>**/*.java</include>
                     </includes>
                     <!--<skipTests>true</skipTests>-->
-                    <perCoreThreadCount>1</perCoreThreadCount>
                     <disableXmlReport></disableXmlReport>
                     <trimStackTrace>true</trimStackTrace>
                     <useFile>true</useFile>

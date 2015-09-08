@@ -295,7 +295,7 @@ public class NAR implements Runnable {
 
         final Truth tv;
 
-        Task<C> t = new DefaultTask<C>(belief,
+        Task<C> t = new DefaultTask<>(belief,
                 Symbols.JUDGMENT,
                 tv = new DefaultTruth(freq, conf),
                 pri, dur, BudgetFunctions.truthToQuality(tv));

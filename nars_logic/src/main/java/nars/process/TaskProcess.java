@@ -18,7 +18,6 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,

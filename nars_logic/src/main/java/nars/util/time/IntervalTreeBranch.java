@@ -19,12 +19,12 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
     private void updateKeyRange() {
         if (left != null) {
             if (right == null || left.getHigh().compareTo(right.getHigh()) > 0) {
-                key = new Interval<K>(left.getLow(), left.getHigh());
+                key = new Interval<>(left.getLow(), left.getHigh());
             } else {
-                key = new Interval<K>(left.getLow(), right.getHigh());
+                key = new Interval<>(left.getLow(), right.getHigh());
             }
         } else {
-            key = new Interval<K>(right.getLow(), right.getHigh());
+            key = new Interval<>(right.getLow(), right.getHigh());
         }
     }
 
@@ -91,16 +91,16 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
         if (right == null) {
             if (left.getLow().compareTo(key.getLow()) < 0) {
                 right = left;
-                left = new IntervalTreeLeaf<K, V>(key, value);
+                left = new IntervalTreeLeaf<>(key, value);
             } else {
-                right = new IntervalTreeLeaf<K, V>(key, value);
+                right = new IntervalTreeLeaf<>(key, value);
             }
         } else {
             if (right.getLow().compareTo(key.getLow()) < 0) {
                 right = right.put(key, value);
             } else {
                 if (left == null) {
-                    left = new IntervalTreeLeaf<K, V>(key, value);
+                    left = new IntervalTreeLeaf<>(key, value);
                 } else {
                     left = left.put(key, value);
                 }

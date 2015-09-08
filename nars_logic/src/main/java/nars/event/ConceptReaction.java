@@ -7,8 +7,6 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.util.event.Observed;
 
-import java.util.function.Consumer;
-
 /** watches for concept lifecycle (creation and forget) events */
 abstract public class ConceptReaction extends NARReaction {
 
@@ -45,12 +43,7 @@ abstract public class ConceptReaction extends NARReaction {
     protected void init() {
 
         //add existing events
-        memory.getCycleProcess().forEachConcept(new Consumer<Concept>() {
-            @Override
-            public void accept(Concept concept) {
-                onConceptActive(concept);
-            }
-        });
+        memory.getCycleProcess().forEachConcept(ConceptReaction.this::onConceptActive);
     }
 
     @Override
@@ -60,12 +53,7 @@ abstract public class ConceptReaction extends NARReaction {
 //            onConceptDelete(c);
 //        }
         if (event == Events.ResetStart.class) {
-            memory.getCycleProcess().forEachConcept(new Consumer<Concept>() {
-                @Override
-                public void accept(Concept concept) {
-                    onConceptForget(concept);
-                }
-            });
+            memory.getCycleProcess().forEachConcept(ConceptReaction.this::onConceptForget);
         }
     }
 

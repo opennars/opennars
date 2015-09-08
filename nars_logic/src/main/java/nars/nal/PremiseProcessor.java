@@ -22,7 +22,7 @@ public class PremiseProcessor {
     }
     public PremiseProcessor(LogicStage<Premise>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
 
-        conceptProcessing = new RuleList<Premise>(conceptProcessRules);
+        conceptProcessing = new RuleList<>(conceptProcessRules);
 
         if (derivationFilters!=null)
             this.derivationFilters = Lists.newArrayList(derivationFilters);

@@ -21,7 +21,6 @@
 package nars.term;
 
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
@@ -208,7 +207,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
 
         byte[] opBytes = op().bytes;
 
-        int len = opBytes.length;
+        int len = opBytes.length+1;
 
         for (final Term t : term) {
             len += t.bytes().length + 1;

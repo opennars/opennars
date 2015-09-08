@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.nar.Default;
 import nars.task.DefaultTask;
-import nars.task.Task;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

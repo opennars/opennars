@@ -94,10 +94,10 @@ public class STGPBoolean extends ProblemSTGP {
    
     public static class BooleanCases {
         
-        public final boolean[][] inputValues;
-        public final boolean[] expectedOutputs;
+        public final Boolean[][] inputValues;
+        public final Boolean[] expectedOutputs;
 
-        public BooleanCases(boolean[][] inputValues, boolean[] expectedOutputs) {
+        public BooleanCases(Boolean[][] inputValues, Boolean[] expectedOutputs) {
             this.inputValues = inputValues;
             this.expectedOutputs = expectedOutputs;
         }
@@ -108,7 +108,7 @@ public class STGPBoolean extends ProblemSTGP {
         this(c.inputValues, c.expectedOutputs, populationSize, maxGenerations);
     }
 
-    public STGPBoolean(boolean[][] inputValues, boolean[] expectedOutputs, int populationSize, int maxGenerations) {
+    public STGPBoolean(Boolean[][] inputValues, Boolean[] expectedOutputs, int populationSize, int maxGenerations) {
         super();
         
 

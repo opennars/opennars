@@ -10,7 +10,7 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 	private V value;
 	
 	IntervalTreeLeaf(K min, K max, V value) {
-		this(new Interval<K>(min, max),value);
+		this(new Interval<>(min, max),value);
 	}
 
 	public IntervalTreeLeaf(Interval<K> key, V value) {
@@ -75,11 +75,11 @@ class IntervalTreeLeaf<K extends Comparable<? super K>,V> implements IntervalTre
 
 	@Override
 	public IntervalTreeNode<K, V> put(Interval<K> key, V value) {
-		IntervalTreeNode<K, V> putNode = new IntervalTreeLeaf<K, V>(key, value);
+		IntervalTreeNode<K, V> putNode = new IntervalTreeLeaf<>(key, value);
 		if(this.key.getLow().compareTo(key.getLow()) < 0){
-			return new IntervalTreeBranch<K, V>(this, putNode);
+			return new IntervalTreeBranch<>(this, putNode);
 		}else{
-			return new IntervalTreeBranch<K, V>(putNode, this);
+			return new IntervalTreeBranch<>(putNode, this);
 		}
 	}
 

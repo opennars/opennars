@@ -1,9 +1,9 @@
 package nars.term;
 
 /** implementation of a compound which generates and stores its name as a CharSequence, which is used for equality and hash*/
-abstract public class DefaultCompound extends Compound {
+abstract public class DefaultCompound<T extends Term> extends Compound<T> {
 
-    public DefaultCompound(Term... components) {
+    public DefaultCompound(T... components) {
         super(components);
     }
 

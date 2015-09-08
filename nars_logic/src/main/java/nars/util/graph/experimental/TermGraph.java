@@ -31,11 +31,7 @@ abstract class TermGraph /* extends AbstractReaction */ implements UndirectedGra
         private final boolean supr;
 
         public ParameterizedTermGraph(NAR nar, Op theOperator, boolean sub, boolean supr) {
-            this(nar, new Predicate<Term>() {
-                @Override public boolean apply(Term term) {
-                    return term.op() == theOperator;
-                }
-            }, sub, supr);
+            this(nar, term -> term.op() == theOperator, sub, supr);
         }
 
         public ParameterizedTermGraph(NAR nar, Predicate<Term> includeTerm, boolean sub, boolean supr) {
@@ -97,10 +93,8 @@ abstract class TermGraph /* extends AbstractReaction */ implements UndirectedGra
 //    }
 //
     protected Iterator<TermLink> iterateEdges(Concept concept, boolean asOutgoing) {
-        return Iterators.filter(concept.getTermLinks().iterator(), new Predicate<TermLink>() {
-            @Override public boolean apply(TermLink t) {
-                return include(concept, t, asOutgoing);
-            }
+        return Iterators.filter(concept.getTermLinks().iterator(), t -> {
+            return include(concept, t, asOutgoing);
         });
     }
 //

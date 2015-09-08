@@ -23,14 +23,10 @@ import static nars.nal.nal7.TemporalRules.solutionQualityMatchingOrder;
 public interface BeliefTable extends TaskTable {
 
 
-    static final Ranker BeliefConfidenceOrOriginality = new Ranker() {
-
-        @Override
-        public final float rank(final Task belief, final float bestToBeat) {
-            final float confidence = belief.getTruth().getConfidence();
-            final float originality = belief.getOriginality();
-            return or(confidence, originality);
-        }
+    static final Ranker BeliefConfidenceOrOriginality = (belief, bestToBeat) -> {
+        final float confidence = belief.getTruth().getConfidence();
+        final float originality = belief.getOriginality();
+        return or(confidence, originality);
     };
 
     /** attempt to insert a task.
@@ -158,12 +154,7 @@ public interface BeliefTable extends TaskTable {
 
         if (isEmpty()) return null;
 
-        return top(new Ranker() {
-            @Override
-            public float rank(Task t, float bestToBeat) {
-                return solutionQuality(hasQueryVar, occTime, t, truth, now);
-            }
-        });
+        return top((t, bestToBeat) -> solutionQuality(hasQueryVar, occTime, t, truth, now));
     }
 
 //    /**

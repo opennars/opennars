@@ -67,7 +67,7 @@ public class If extends Node {
      */
     @Override
     public Object evaluate() {
-        boolean c1 = ((Boolean) getChild(0).evaluate());
+        boolean c1 = (boolean)(getChild(0).evaluate());
 
         if (c1) {
             return getChild(1).evaluate();

@@ -70,8 +70,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static org.jgroups.util.Util.assertEquals;
-
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
  * memory * clock * reasoner state * etc.

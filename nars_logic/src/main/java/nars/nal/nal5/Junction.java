@@ -6,9 +6,9 @@ import nars.term.Term;
 /**
  * Common parent class for Conjunction and Disjunction
  */
-abstract public class Junction extends DefaultCompound {
+abstract public class Junction<T extends Term> extends DefaultCompound<T> {
 
-    public Junction(final Term[] arg) {
+    public Junction(final T[] arg) {
         super(arg);
     }
 

@@ -6,7 +6,6 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagSelector;
 import nars.budget.Itemized;
-import nars.concept.Concept;
 import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;
 import nars.util.data.sorted.SortedIndex;

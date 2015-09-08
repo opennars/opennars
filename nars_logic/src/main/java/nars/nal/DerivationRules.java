@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Op;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
-import nars.op.math.add;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

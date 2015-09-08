@@ -1,9 +1,7 @@
 package objenome.util;
 
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
-import nars.util.utf8.ByteBuf;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -26,12 +24,12 @@ public class UTF8IdentifierTest {
         //testLazyHash("abcd31342");
 
 
-        testConstantAndDynamicEquality("abcdefg1234");
+        testEquality("abcdefg1234");
     }
 
-    private void testConstantAndDynamicEquality(String b) {
+    private void testEquality(String b) {
         UTF8Identifier x = new LiteralUTF8Identifier(b);
-        UTF8Identifier y = new DynamicallyConstructedConstantUTF8Identifier(b);
+        UTF8Identifier y = new LiteralUTF8Identifier(b);
         assertEquals(x, y);
         assertEquals(y, x);
         assertEquals(x, x);
@@ -48,25 +46,26 @@ public class UTF8IdentifierTest {
 
 
     public void testDynamic(final String b) {
-        UTF8Identifier x = new DynamicallyConstructedConstantUTF8Identifier(b);
+        UTF8Identifier x = new LiteralUTF8Identifier(b);
         assertTrue(x.hashCode()!=0);
+        assertEquals(b.length(), x.toString().length());
         assertEquals(b, x.toString());
     }
 
 
-    private static class DynamicallyConstructedConstantUTF8Identifier extends DynamicUTF8Identifier {
-        private final String b;
-
-        public DynamicallyConstructedConstantUTF8Identifier(String b) {
-            this.b = b;
-        }
-
-        @Override public byte[] init() {
-            ByteBuf bb = ByteBuf.create(8);
-            bb.append(b);
-            return bb.toBytes();
-        }
-    }
+//    private static class DynamicallyConstructedConstantUTF8Identifier extends DynamicUTF8Identifier {
+//        private final String b;
+//
+//        public DynamicallyConstructedConstantUTF8Identifier(String b) {
+//            this.b = b;
+//        }
+//
+//        @Override public byte[] init() {
+//            ByteBuf bb = ByteBuf.create(8);
+//            bb.append(b);
+//            return bb.toBytes();
+//        }
+//    }
 
 
 

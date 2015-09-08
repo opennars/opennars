@@ -14,15 +14,15 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.meter.NARTrace;
-import nars.op.app.Commander;
-import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.term.Term;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.infinispan.commons.equivalence.AnyEquivalence;
 import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;

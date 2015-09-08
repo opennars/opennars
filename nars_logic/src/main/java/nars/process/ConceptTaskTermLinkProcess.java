@@ -1,11 +1,9 @@
 package nars.process;
 
 import nars.Memory;
-import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.link.TermLinkKey;
 
 /**
  * Created by me on 8/5/15.

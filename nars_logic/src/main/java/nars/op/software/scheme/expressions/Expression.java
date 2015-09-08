@@ -3,8 +3,6 @@ package nars.op.software.scheme.expressions;
 
 import nars.op.software.scheme.exception.UnexpectedExpression;
 
-import java.io.Serializable;
-
 public interface Expression  {
 
     static final Expression NONE = new Expression() {

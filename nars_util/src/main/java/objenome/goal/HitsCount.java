@@ -64,7 +64,7 @@ public class HitsCount extends TypedFitnessFunction implements Listener<ConfigEv
 
     // Configuration settings
 
-    private Variable<Double>[] inputVariables;
+    private Variable<Object>[] inputVariables;
 
     private Object[][] inputValueSets;
     private Object[] expectedOutputs;
@@ -148,14 +148,14 @@ public class HitsCount extends TypedFitnessFunction implements Listener<ConfigEv
     public DoubleFitness.Minimize evaluate(Population population, TypedOrganism individual) {
         setConfig(population.getConfig());
 
-        if (!(individual instanceof TypedOrganism)) {
-            throw new IllegalArgumentException("Unsupported representation");
-        }
+//        if (!(individual instanceof TypedOrganism)) {
+//            throw new IllegalArgumentException("Unsupported representation");
+//        }
+//
+//        //TODO validate number of inputs etc
+//        TypedOrganism program = (TypedOrganism) individual;
 
-        //TODO validate number of inputs etc
-        TypedOrganism program = (TypedOrganism) individual;
-
-        double cost = getCost(program);
+        double cost = getCost(individual);
 
         return new DoubleFitness.Minimize(cost);
     }
@@ -168,7 +168,7 @@ public class HitsCount extends TypedFitnessFunction implements Listener<ConfigEv
         for (int i = 0; i < inputValueSets.length; i++) {
             // Update the variable values
             for (int j = 0; j < inputVariables.length; j++) {
-                inputVariables[j].set((double)inputValueSets[i][j]);
+                inputVariables[j].setValue(inputValueSets[i][j]);
             }
 
             // Run the program

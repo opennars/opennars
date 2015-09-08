@@ -4,7 +4,6 @@ package nars.nal.nal4;
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import nars.nar.Default;
-import nars.nar.experimental.Solid;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;

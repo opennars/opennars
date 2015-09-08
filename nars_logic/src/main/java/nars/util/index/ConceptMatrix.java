@@ -88,12 +88,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
             public void onConceptForget(Concept c) {
             }
 
-            @Override
-            public void onConceptDelete(Concept c) {
-
-
-            }
-
         };
 
 

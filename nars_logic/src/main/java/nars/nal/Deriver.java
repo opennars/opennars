@@ -1,13 +1,9 @@
 package nars.nal;
 
-import nars.link.TermLink;
 import nars.meta.RuleMatch;
 import nars.process.ConceptProcess;
-import nars.process.concept.ConceptFireTaskTerm;
 import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
-
-import java.util.function.Supplier;
 
 /**
  * Created by patrick.hammer on 30.07.2015.
@@ -28,12 +24,9 @@ abstract public class Deriver implements LogicStage<ConceptProcess> {
 
 
     public static final ThreadLocal<RuleMatch> newThreadLocalRuleMatches() {
-        return ThreadLocal.withInitial(new Supplier<RuleMatch>() {
-            @Override
-            public RuleMatch get() {
-                //TODO use the memory's RNG for complete deterministic reproducibility
-                return new RuleMatch(new XorShift1024StarRandom(1));
-            }
+        return ThreadLocal.withInitial(() -> {
+            //TODO use the memory's RNG for complete deterministic reproducibility
+            return new RuleMatch(new XorShift1024StarRandom(1));
         });
     }
 

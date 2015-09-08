@@ -842,12 +842,7 @@ public class Default extends Param implements NARSeed {
 
     }
 
-    public static final Consumer<ConceptProcess> ConceptProcessRunner = new Consumer<ConceptProcess>() {
-        @Override
-        public void accept(ConceptProcess p) {
-            p.run();
-        }
-    };
+    public static final Consumer<ConceptProcess> ConceptProcessRunner = ConceptProcess::run;
 
     @Deprecated
     public static class CommandLineNARBuilder extends Default {

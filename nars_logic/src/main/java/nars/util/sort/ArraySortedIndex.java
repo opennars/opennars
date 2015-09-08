@@ -15,11 +15,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
     public final List<E> list;
 
-    final static private Comparator<Itemized> priorityComparator = new Comparator<Itemized>() {
-        @Override public int compare(final Itemized a, final Itemized b) {
-            return Float.compare(b.getPriority(), a.getPriority());
-        }
-    };
+    final static private Comparator<Itemized> priorityComparator = (a, b) -> Float.compare(b.getPriority(), a.getPriority());
 
     @Override
     public List<E> getList() {

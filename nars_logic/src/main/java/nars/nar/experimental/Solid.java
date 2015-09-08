@@ -21,7 +21,6 @@ import nars.nal.PremiseProcessor;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.process.ConceptProcess;
-import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
@@ -113,7 +112,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
         taskLinkBagSize = 32;
 
 
-        concepts = new CurveBag<Term,Concept>(getRandom(), activeConcepts, CurveBag.power6BagCurve,
+        concepts = new CurveBag<>(getRandom(), activeConcepts, CurveBag.power6BagCurve,
                 new ArraySortedIndex(activeConcepts, new FastList(activeConcepts)/*.asSynchronized()*/)
         );
 
@@ -333,12 +332,6 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
         return concepts.peekNext();
     }
 
-
-
-    @Override
-    public CycleProcess getCycleProcess() {
-        return this;
-    }
 
     public void setMaxTasksPerCycle(int maxTasksPerCycle) {
         this.maxTasksPerCycle = maxTasksPerCycle;

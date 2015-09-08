@@ -16,6 +16,8 @@ import nars.term.Atom;
 import nars.term.Term;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 public class scheme extends TermFunction {
@@ -73,7 +75,7 @@ public class scheme extends TermFunction {
         @Override
         public Term apply(Expression schemeObj) {
             if (schemeObj instanceof ListExpression) {
-                List<Term> elements = Lists.newArrayList( Iterables.transform(((ListExpression)schemeObj).value, schemeToNars));
+                List<Term> elements = Lists.newArrayList(StreamSupport.stream(((ListExpression) schemeObj).value.spliterator(), false).map(schemeToNars::apply).collect(Collectors.toList()));
                 return Product.make( elements );
             }
             //TODO handle other types, like Object[] etc

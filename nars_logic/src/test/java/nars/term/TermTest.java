@@ -485,8 +485,9 @@ public class TermTest {
 
         String i1 = "(/,x, y, _)";
         String i2 = "(/,x, _, y)";
-        Compound a = testStructure(i1, "100000000000000000010000000000001");
-        Compound b = testStructure(i2,                     "10000000000001");
+        //Compound a = testStructure(i1,  "100000000000000000010000000000001");
+        Compound a = testStructure(i1,  "10000000000001");
+        Compound b = testStructure(i2,  "10000000000001");
         assertNotEquals("additional structure code in upper bits",
                 a.structure(), a.structure());
         assertNotEquals("structure code influenced contentHash",

@@ -31,7 +31,6 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.Truth;
-import nars.util.data.Util;
 
 import static java.lang.Math.pow;
 

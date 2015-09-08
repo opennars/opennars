@@ -1,13 +1,11 @@
 package nars.op.app;
 
 import com.google.common.collect.Iterators;
-import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.event.NARReaction;
-import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.util.event.Observed;
 

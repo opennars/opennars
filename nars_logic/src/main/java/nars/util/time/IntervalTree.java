@@ -18,7 +18,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 
 	final public V getEqual(K low, K high){
-		return getEqual(new Interval<K>(low, high));
+		return getEqual(new Interval<>(low, high));
 	}
 
 	public V getEqual(Interval<K> range){
@@ -29,7 +29,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 	
 	public List<V> searchOverlapping(K low, K high){
-		return searchOverlapping(new Interval<K>(low, high));
+		return searchOverlapping(new Interval<>(low, high));
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that wholly contain the range specified.
 	 */
 	public List<V> searchContaining(K low, K high){
-		return searchContaining(new Interval<K>(low, high));
+		return searchContaining(new Interval<>(low, high));
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
 	public List<V> searchContainedBy(K low, K high){
-		return searchContainedBy(new Interval<K>(low, high));
+		return searchContainedBy(new Interval<>(low, high));
 	}
 	
 	public void removeOverlapping(Interval<K> range){
@@ -75,7 +75,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 	
 	public void removeOverlapping(K low, K high){
-		removeOverlapping(new Interval<K>(low, high));
+		removeOverlapping(new Interval<>(low, high));
 	}
 	
 	/**
@@ -91,7 +91,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that wholly contain the range specified.
 	 */
 	public void removeContaining(K low, K high){
-		removeContaining(new Interval<K>(low, high));
+		removeContaining(new Interval<>(low, high));
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	 * Returns a collection of values that are wholly contained by the range specified.
 	 */
 	public void removeContainedBy(K low, K high){
-		removeContainedBy(new Interval<K>(low, high));
+		removeContainedBy(new Interval<>(low, high));
 	}
 	
 	public boolean isEmpty() {
@@ -116,14 +116,14 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 
 	public void put(Interval<K> key, V value) {
 		if(root == null){
-			root = new IntervalTreeLeaf<K, V>(key, value);
+			root = new IntervalTreeLeaf<>(key, value);
 		}else{
 			root = root.put(key,value);
 		}
 	}
 	
 	public void put(K low, K high, V value) {
-		put(new Interval<K>(low, high),value);
+		put(new Interval<>(low, high),value);
 	}
 	
 	
@@ -193,7 +193,7 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 		int count = 0;
 
 		//TODO use IntArrayList
-		Collection<Integer> c = new LinkedList<Integer>();
+		Collection<Integer> c = new LinkedList<>();
 		root.averageHeight(c, 0);
 		for(int i : c){
 			total += i;

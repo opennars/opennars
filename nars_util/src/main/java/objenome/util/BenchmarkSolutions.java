@@ -108,7 +108,7 @@ public final class BenchmarkSolutions {
      * @param inputs an array of boolean inputs
      * @return the result of applying a correct multiplexer on the given inputs
      */
-    public static boolean multiplexer(boolean[] inputs) {
+    public static boolean multiplexer(Boolean[] inputs) {
         int noAddressBits = multiplexerAddressBits(inputs.length);
 
         return multiplexer(inputs, noAddressBits);
@@ -129,7 +129,7 @@ public final class BenchmarkSolutions {
      * array
      * @return the result of applying a correct multiplexer on the given inputs
      */
-    public static boolean multiplexer(boolean[] inputs, int noAddressBits) {
+    public static boolean multiplexer(Boolean[] inputs, int noAddressBits) {
         int dataPosition = 0;
         for (int i = 0; i < noAddressBits; i++) {
             if (inputs[i]) {
@@ -167,8 +167,8 @@ public final class BenchmarkSolutions {
     
     public static BooleanCases multiplexerProblem(int bits) {
         int noAddressBits = BenchmarkSolutions.multiplexerAddressBits(bits);
-        boolean[][] inputValues = BooleanUtils.generateBoolSequences(bits);
-        boolean[] expectedOutputs = new boolean[inputValues.length];
+        Boolean[][] inputValues = BooleanUtils.generateBoolSequences(bits);
+        Boolean[] expectedOutputs = new Boolean[inputValues.length];
         for (int i = 0; i < inputValues.length; i++) {
             expectedOutputs[i] = BenchmarkSolutions.multiplexer(inputValues[i], noAddressBits);
         }

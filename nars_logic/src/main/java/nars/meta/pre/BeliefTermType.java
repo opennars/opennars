@@ -18,7 +18,7 @@ public class BeliefTermType extends PreCondition {
     public final static EnumMap<Op,BeliefTermType> the = new EnumMap(Op.class);
 
     public static BeliefTermType the(final Op o) {
-        return the.computeIfAbsent(o, k -> new BeliefTermType(k));
+        return the.computeIfAbsent(o, BeliefTermType::new);
     }
 
     BeliefTermType(Op o) {

@@ -1,7 +1,6 @@
 package nars.bag;
 
 import nars.budget.Budget;
-import nars.budget.Item;
 import nars.budget.Itemized;
 
 import java.util.function.Function;

@@ -12,7 +12,6 @@ import nars.nal.nal8.Operator;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
-import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;

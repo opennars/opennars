@@ -3,7 +3,6 @@ package nars.term;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.meter.condition.EventCount;
 import nars.nar.Default;
 import org.junit.Test;

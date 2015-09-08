@@ -19,7 +19,6 @@ import nars.util.event.Observed;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class TaskCondition extends OutputCondition implements Serializable {
 
@@ -112,17 +111,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     protected Observed.DefaultObserved.DefaultObservableRegistration getTaskRemoved(NAR n) {
-        return n.memory.eventTaskRemoved.on(new Consumer<Task>() {
-
-            @Override
-            public void accept(Task task) {
-                if (!succeeded) {
-                    if (matches(task)) {
-                        ensureRemovals();
-                        removals.addLast(task);
-                        if (removals.size() > maxRemovals)
-                            removals.removeFirst();
-                    }
+        return n.memory.eventTaskRemoved.on(task -> {
+            if (!succeeded) {
+                if (matches(task)) {
+                    ensureRemovals();
+                    removals.addLast(task);
+                    if (removals.size() > maxRemovals)
+                        removals.removeFirst();
                 }
             }
         });

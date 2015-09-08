@@ -145,13 +145,5 @@ public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Co
 
     Concept remove(Concept c);
 
-    default public void delete() {
-
-    }
-
-
-
-
-
 
 }

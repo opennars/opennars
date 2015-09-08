@@ -1,7 +1,6 @@
 package nars.op.mental;
 
 import nars.NAR;
-import nars.process.TaskProcess;
 
 /**
  * To rememberAction an internal action as an operation

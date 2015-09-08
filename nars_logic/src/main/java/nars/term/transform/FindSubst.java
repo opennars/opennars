@@ -8,7 +8,6 @@ import nars.term.Term;
 import nars.term.Variable;
 import nars.term.Variables;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 

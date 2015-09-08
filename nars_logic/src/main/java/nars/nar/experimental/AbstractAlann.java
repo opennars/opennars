@@ -1,6 +1,5 @@
 package nars.nar.experimental;
 
-import com.github.fge.grappa.run.context.Context;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Memory;

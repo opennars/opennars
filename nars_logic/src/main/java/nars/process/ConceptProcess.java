@@ -5,7 +5,6 @@
 package nars.process;
 
 import nars.Memory;
-import nars.Param;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -16,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *

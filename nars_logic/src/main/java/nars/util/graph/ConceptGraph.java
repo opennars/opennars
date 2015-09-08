@@ -22,10 +22,10 @@ abstract public class ConceptGraph<E> extends ConceptMap implements EdgeFactory<
     public ConceptGraph(NAR nar, boolean directed) {
         super(nar);
         if (directed) {
-            graph = new DefaultDirectedGraph<Concept, E>(this);
+            graph = new DefaultDirectedGraph<>(this);
         }
         else {
-            graph = new AsUndirectedGraph(new DefaultDirectedGraph<Concept, E>(this));
+            graph = new AsUndirectedGraph(new DefaultDirectedGraph<>(this));
         }
 
     }

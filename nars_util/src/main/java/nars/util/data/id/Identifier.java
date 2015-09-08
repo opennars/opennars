@@ -55,6 +55,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     /** use this when this class must generate an output by a writer
      *  this is the default general implementation.  */
     public char[] chars(final boolean pretty) {
+
         return charsFromWriter(pretty);
     }
 
@@ -182,7 +183,8 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
     @Override
     public String toString() {
-        return toString(true);
+        return Utf8.fromUtf8(bytes());
+        //return toString(true);
     }
 
     abstract int charsEstimated();

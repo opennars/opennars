@@ -3,7 +3,6 @@ package nars.term;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal1.Negation;
-import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 import nars.util.utf8.Byted;
 
@@ -16,9 +15,7 @@ import java.util.function.Function;
 public class Atom extends ImmutableAtom {
 
     private static final Map<String,Atom> atoms = Global.newHashMap(4096);
-    public static final Function<String, Atom> AtomInterner = n -> {
-        return new Atom(n);
-    };
+    public static final Function<String, Atom> AtomInterner = Atom::new;
 
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */

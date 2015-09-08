@@ -10,13 +10,6 @@ import nars.op.mental.Counting;
 import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
-import org.infinispan.Cache;
-import org.infinispan.commons.io.ByteBuffer;
-import org.infinispan.commons.marshall.JavaSerializationMarshaller;
-import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
-import spangraph.InfiniPeer;
-
-import java.util.Arrays;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;

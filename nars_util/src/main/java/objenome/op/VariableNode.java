@@ -130,8 +130,9 @@ public class VariableNode<V> extends Node {
 
     @Override
     public VariableNode newInstance() {
-        VariableNode n = (VariableNode) super.newInstance();
+        /*VariableNode n = (VariableNode) super.newInstance();
         n.variable = n.variable.clone();
-        return n;
+        return n;*/
+        return this;
     }
 }
