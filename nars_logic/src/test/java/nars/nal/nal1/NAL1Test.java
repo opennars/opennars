@@ -7,6 +7,7 @@ import nars.nar.Classic;
 import nars.nar.Default;
 import nars.nar.DefaultMicro;
 import nars.nar.NewDefault;
+import nars.nar.experimental.DefaultAlann;
 import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -33,6 +34,9 @@ public class NAL1Test extends JavaNALTest {
                 {new Default().level(2)}, //why does this need level 2 for some tests?
                 {new DefaultMicro().level(2) },
                 {new Classic()},
+
+                {new DefaultAlann(64)}
+
 //                {new Solid(1, 64, 1, 4, 1, 3)},
 //                {new Solid(1, 64, 1, 4, 1, 3).level(2)},
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},

@@ -89,7 +89,7 @@ public class Global {
 
 
     /** minimum difference necessary to cause a modifciation in budget components */
-    public static float BUDGET_EPSILON = 0.01f/2f;
+    public static float BUDGET_EPSILON = 0.0001f;
 
 
     /* ---------- default input values ---------- */

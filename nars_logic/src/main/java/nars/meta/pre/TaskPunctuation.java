@@ -11,7 +11,7 @@ import nars.term.Term;
 public class TaskPunctuation extends PreCondition {
 
     public final char punc;
-    transient private final String id;
+    public final String id;
 
 
     public static final TaskPunctuation TaskJudgment = new TaskPunctuation('.');

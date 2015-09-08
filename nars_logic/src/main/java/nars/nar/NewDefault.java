@@ -51,25 +51,48 @@ public class NewDefault extends Default {
     public static final String key = "derivation_rules:standard";
 
     static {
-        try {
+
+//        standard = TemporaryCache.computeIfAbsent(
+//                key, new GenericJBossMarshaller(),
+
+//                () -> {
+                    try {
+                        standard = new DerivationRules();
+
+//                        return new DerivationRules();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.exit(1);
+//                        return null;
+                    }
+//                },
+//                //TODO compare hash/checksum of the input file
+//                //to what is stored in cached file
+//                (x) -> {
+//                    //this disables entirely and just creates a new one each time:
+//                    return  ...
+//                }
+//        );
+
+    }
+//    static {
+//        try {
 //            Cache<Object, Object> cache = (InfiniPeer.tmp().getCache());
 //
 //            cache.entrySet().forEach(c -> {
 //                System.out.println(c);
 //            });
 //
-//
-//
 //            standard = (DerivationRules) cache.get(key);
 //
 //            if (standard == null || !standard.isValid()) {
 //                try {
 //                    System.out.print("Recompiling derivation rules..");
-
-                    standard = new DerivationRules();
-
-//                    //GenericJBossMarshaller
 //
+//                    standard = new DerivationRules();
+//
+////                    //GenericJBossMarshaller
+////
 //                    ByteBuffer b = new JavaSerializationMarshaller().objectToBuffer(standard.get(0));
 //                    System.out.println(b.getLength());
 //                    System.out.println(b);
@@ -84,13 +107,13 @@ public class NewDefault extends Default {
 //
 //            }
 //
-
-            //standard = new DerivationRules();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
+//
+//            //standard = new DerivationRules();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            System.exit(1);
+//        }
+//    }
 
     public static final Deriver der;
 

@@ -220,7 +220,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
                 final TaskRule rUnnorm = parser.term(s);
 
-                final TaskRule rNorm = rUnnorm.normalize();
+                final TaskRule rNorm = rUnnorm.normalizeRule();
                 if (rNorm == null)
                     throw new RuntimeException("invalid rule, detected after normalization: " + s);
 
@@ -240,7 +240,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
                     //add reverse questions
                     rUnnorm.forEachQuestionReversal(q -> {
 
-                        q = q.normalize();
+                        q = q.normalizeRule();
 
                         //normalize may be returned null if the rearranging produced an invalid result
                         //so do not add null

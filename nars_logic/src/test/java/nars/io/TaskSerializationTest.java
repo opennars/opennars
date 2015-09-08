@@ -93,4 +93,6 @@ public class TaskSerializationTest  extends AbstractSerializationTest<String,Def
         Assert.assertEquals(a.toString(), b.toString());
 
     }
+
+
 }

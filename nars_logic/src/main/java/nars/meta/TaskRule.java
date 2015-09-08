@@ -160,7 +160,7 @@ public class TaskRule extends Rule<Premise,Task> {
         return this;
     }
 
-    public TaskRule normalize() {
+    public TaskRule normalizeRule() {
         TaskRule tr = (TaskRule) new VariableNormalization(this, false) {
 
                     @Override

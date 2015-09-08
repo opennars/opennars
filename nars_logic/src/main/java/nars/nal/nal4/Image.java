@@ -18,8 +18,9 @@ import static nars.Symbols.*;
 
 
 abstract public class Image extends Compound {
+
     /** The index of relation in the component list */
-    transient public final short relationIndex;
+    public final short relationIndex;
 
     protected Image(Term[] components, short relationIndex) {
         super(components);

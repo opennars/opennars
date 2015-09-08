@@ -37,16 +37,12 @@ public class SimpleNARBudgetDynamics {
 
 
         int preCycles = 0;
-        int cycles = 256;
-
-        float pri = 0.05f;
-        float dur = 0.5f;
-        float qua = 0.5f;
+        int cycles = 512;
 
 
-
-
-
+        float pri = 0.01f;
+        float dur = 0.05f;
+        float qua = 0.1f;
 
 
         //Default d = new Default(1024, 1, 3).setInternalExperience(null);
@@ -54,6 +50,10 @@ public class SimpleNARBudgetDynamics {
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
         NARSeed d = new DefaultAlann(32);
+        d.getParam().conceptForgetDurations.set(1);
+        d.getParam().termLinkForgetDurations.set(1);
+        d.getParam().taskLinkForgetDurations.set(1);
+        d.getParam().duration.set(100);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
         Global.TASKLINK_FORGETTING_EXTRA_DEPTH = 0.9f;
