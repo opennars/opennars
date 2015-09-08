@@ -2,8 +2,10 @@
 package objenome.util.bytecode;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public abstract class SgVariableTest {
 
     private SgClass dummyClass;

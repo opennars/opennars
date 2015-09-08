@@ -2,13 +2,14 @@
 package objenome.util.bytecode;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Ignore
 public abstract class SgBehaviorTest {
 
     protected abstract SgBehavior getTestee();

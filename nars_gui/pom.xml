@@ -205,11 +205,6 @@
 
         <dependency>
             <groupId>org.jfxvnc</groupId>
-            <artifactId>jfxvnc-parent</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jfxvnc</groupId>
             <artifactId>jfxvnc-net</artifactId>
             <version>1.0.0</version>
         </dependency>

@@ -26,6 +26,7 @@ import com.github.fge.grappa.stack.ValueStack;
 import nars.util.data.list.FasterList;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public final class ActionMatcher
     extends AbstractMatcher
 {
     private final Action<?> action;
-    private final ContextAware<?>[] contextAwares;
+    private final List<ContextAware<?>> contextAwares;
     private final boolean skipInPredicates;
 
     public ActionMatcher(final Action<?> action)
@@ -56,7 +57,7 @@ public final class ActionMatcher
         final Class<?> actionClass = action.getClass();
 
         if (actionClass.isSynthetic()) {
-            this.contextAwares = new ContextAware[0];
+            this.contextAwares = Collections.emptyList();
             return;
         }
 
@@ -88,7 +89,7 @@ public final class ActionMatcher
             }
         }
 
-        this.contextAwares = contextAwares.array();
+        this.contextAwares = contextAwares;
     }
 
     @Override
