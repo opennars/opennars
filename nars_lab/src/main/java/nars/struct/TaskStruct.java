@@ -110,6 +110,11 @@ public class TaskStruct extends Fuct implements Task {
     }
 
     @Override
+    public boolean isNormalized() {
+        return false;
+    }
+
+    @Override
     public Task normalized() {
         return this;
     }

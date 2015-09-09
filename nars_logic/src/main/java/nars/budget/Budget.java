@@ -169,6 +169,16 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     public final Budget accumulate(final float addPriority, final float otherDurability, final float otherQuality) {
         final float currentPriority = getPriority();
 
+        return set(
+                getPriority() + addPriority,
+                Util.max(getDurability(), otherDurability),
+                Util.max(getQuality(), otherQuality)
+        );
+    }
+
+    public final Budget accumulateLerp(final float addPriority, final float otherDurability, final float otherQuality) {
+        final float currentPriority = getPriority();
+
         /** influence factor determining LERP amount of blending durability and quality */
         final float f = 1 - Math.abs(currentPriority - clamp(addPriority+currentPriority));
 

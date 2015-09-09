@@ -40,14 +40,18 @@ public class Commander extends NARReaction implements Consumer<Memory> {
     float priorityPerCycle = 1,
             priorityRemaining = 0; //change left over from last cycle
 
-    public Commander(NAR nar) {
-        this(nar, new ItemAccumulator<>(Budget.plus));
+    public Commander(NAR nar, boolean active) {
+        this(nar, new ItemAccumulator<>(Budget.plus), active);
     }
 
-    public Commander(NAR nar, ItemAccumulator<Task> buffer) {
+    public Commander(NAR nar, ItemAccumulator<Task> buffer, boolean active) {
         super(nar);
+
         this.nar = nar;
-        this.cycleEnd = nar.memory.eventCycleEnd.on(this);
+
+        this.cycleEnd = active ?
+                nar.memory.eventCycleEnd.on(this) : null;
+
         this.commands = buffer;
         commandIterator = Iterators.cycle(commands.items.keySet());
 

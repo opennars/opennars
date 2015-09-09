@@ -471,6 +471,8 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     }
 
 
+    boolean isNormalized();
+
     /** updates all implied fields and re-hashes; returns this task */
     public Task normalized();
 
@@ -501,7 +503,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
         }
 
-        return (normalized() != null);
+        return normalized() != null;
     }
 
 

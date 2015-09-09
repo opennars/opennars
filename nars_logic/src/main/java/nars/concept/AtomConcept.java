@@ -12,7 +12,6 @@ import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
-import nars.util.data.list.FastConcurrentDirectDeque;
 
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +36,6 @@ public class AtomConcept extends AbstractConcept {
     protected final TermLinkBuilder termLinkBuilder;
     protected transient final TaskLinkBuilder taskLinkBuilder;
     protected final PremiseGenerator premiseGenerator;
-    private FastConcurrentDirectDeque<Runnable> pending;
 
     public AtomConcept(Term atom, Budget budget, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks, PremiseGenerator ps, Memory memory) {
         super(atom, budget, memory);
@@ -49,7 +47,7 @@ public class AtomConcept extends AbstractConcept {
     }
 
     static boolean aboveThreshold(Budget b) {
-        return b.summary() >= Global.BUDGET_EPSILON;
+        return b.getPriority() >= Global.BUDGET_EPSILON;
     }
 
     @Override
@@ -126,11 +124,10 @@ public class AtomConcept extends AbstractConcept {
 
         final Budget taskBudget = task.getBudget();
 
-        if (!taskBudget.summaryGreaterOrEqual(
-                memory.param.taskLinkThreshold.floatValue() / linkSubBudgetDivisor
-        ))
+        float subPri = taskBudget.getPriority()/ linkSubBudgetDivisor;
+        if ((subPri < Global.BUDGET_EPSILON) ||
+                (subPri < memory.param.taskLinkThreshold.floatValue() ))
             return false;
-
 
         taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setTask(task);
@@ -139,10 +136,6 @@ public class AtomConcept extends AbstractConcept {
 
         final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
 
-        if (!aboveThreshold(subBudget)) {
-            return false;
-        }
-
         taskLinkBuilder.setBudget(subBudget);
 
         for (int i = 0; i < numTemplates; i++) {
@@ -150,11 +143,11 @@ public class AtomConcept extends AbstractConcept {
 
             //if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
 
-            Term componentTerm = termLink.getTarget();
+            final Term componentTerm = termLink.getTarget();
             if (componentTerm.equals(getTerm())) // avoid circular transform
                 continue;
 
-            Concept componentConcept = getMemory().conceptualize(componentTerm, subBudget);
+            Concept componentConcept = getMemory().conceptualize(termLink, subBudget);
 
             if (componentConcept != null) {
 
@@ -198,13 +191,15 @@ public class AtomConcept extends AbstractConcept {
      * <p>
      * called only from Memory.continuedProcess
      *
-     * @param taskBudget   The BudgetValue of the task
+     * @param b   The BudgetValue of the task
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkTerms(final Budget taskBudget, boolean updateTLinks) {
+    public boolean linkTerms(final Budget b, boolean updateTLinks) {
 
-        final float subPriority;
+        //activate the concept with the taskbudget
+
+
         int recipients = termLinkBuilder.getNonTransforms();
         if (recipients == 0) {
             //termBudgetBalance += subBudget;
@@ -212,58 +207,46 @@ public class AtomConcept extends AbstractConcept {
             //return false;
         }
 
+        List<TermLinkTemplate> tl = getTermLinkTemplates();
+
+        //accumulate incoming task budget to the tasklinks
         boolean activity = false;
-        if ((taskBudget != null) && (recipients > 0)) {
+        float subPriority;
+        if (tl!=null && (b != null) && (recipients > 0)) {
+
             float dur, qua;
             //TODO make this parameterizable
 
             //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
 
             //half of each subBudget is spent on this concept and the other concept's termlink
-            //subBudget = taskBudget.getPriority() * (1f / (2 * recipients));
+            //subBudget = b.getPriority() * (1f / (2 * recipients));
 
-            //subPriority = taskBudget.getPriority() / (float) Math.sqrt(recipients);
-            subPriority = taskBudget.getPriority() / recipients;
-            dur = taskBudget.getDurability();
-            qua = taskBudget.getQuality();
+            //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
+            subPriority = b.getPriority() / recipients;
+            dur = b.getDurability();
+            qua = b.getQuality();
 
-            final List<TermLinkTemplate> templates = termLinkBuilder.templates();
+            if (subPriority >= Global.BUDGET_EPSILON) {
 
-            int numTemplates = templates.size();
-            for (int i = 0; i < numTemplates; i++) {
+                int numTemplates = tl.size();
+                final float termLinkThresh = memory.param.termLinkThreshold.floatValue();
 
-                final TermLinkTemplate template = templates.get(i);
+                for (int i = 0; i < numTemplates; i++) {
 
-                //only apply this loop to non-transform termlink templates
-                if (template.type != TermLink.TRANSFORM) {
+                    final TermLinkTemplate t = tl.get(i);
+                    if (t.type == TermLink.TRANSFORM)
+                        continue;
 
-                    template.accumulate(this);
+                    //only apply this loop to non-transform termlink templates
+                    t.accumulate(subPriority, dur, qua);
 
                     if (updateTLinks) {
-                        if (template.link(this))
-                            activity = true;
+                        if (t.getPriority() >= termLinkThresh) {
+                            if (t.link(this))
+                                activity = true;
+                        }
                     }
-                }
-
-            }
-        } else {
-            subPriority = 0;
-        }
-
-
-        //TODO merge with above loop, or avoid altogether under certain conditions
-
-        List<TermLinkTemplate> tl = getTermLinkTemplates();
-        if (tl != null && updateTLinks) {
-            int n = tl.size();
-            for (int i = 0; i < n; i++) {
-
-                TermLinkTemplate t = tl.get(i);
-
-                if (t.summaryGreaterOrEqual(memory.param.termLinkThreshold)) {
-
-                    if (t.link(this))
-                        activity = true;
 
                 }
             }
@@ -376,9 +359,7 @@ public class AtomConcept extends AbstractConcept {
      * @return the termlink which was selected or updated
      */
     public TermLink activateTermLink(final TermLinkBuilder termLink) {
-
         return getTermLinks().update(termLink);
-
     }
 
     public List<TermLinkTemplate> getTermLinkTemplates() {

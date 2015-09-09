@@ -4,6 +4,7 @@ import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.bag.impl.MapCacheBag;
 import nars.concept.Concept;
+import nars.task.Task;
 import nars.term.Term;
 import org.infinispan.commons.equivalence.AnyEquivalence;
 import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
@@ -11,6 +12,7 @@ import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
 
 /**
@@ -18,7 +20,7 @@ import java.util.function.Supplier;
  */
 public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
 
-    private final Iterator<Concept> indexIterator;
+    private Iterator<Concept> indexIterator = null;
     private int defaultTTL;
     List<Derivelet> derivers = new ArrayList();
     private DeriveletContext context;
@@ -50,7 +52,6 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
         for (int i = 0; i < numDerivelets; i++) {
             Derivelet d = new Derivelet();
             derivers.add( d );
-            //restart(d); //dont restart yet because there will be no concepts anyway
         }
 
     }
@@ -94,8 +95,46 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
 
     }
 
+//    public abstract class RunProb implements Runnable {
+//        private final float prob;
+//
+//        public RunProb(float initialProb) {
+//            this.prob = initialProb;
+//        }
+//
+//        public float getProb() { return prob; }
+//    }
+
+    public static <D> D runProbability(Random rng, float[] probs, D[] choices) {
+        float tProb = 0;
+        for (int i = 0; i < probs.length; i++) {
+            tProb += probs[i];
+        }
+        float s = rng.nextFloat() * tProb;
+        int c = 0;
+        for (int i = 0; i < probs.length; i++) {
+            s -= probs[i];
+            if (s <= 0) { c = i; break; }
+        }
+        return choices[c];
+    }
+
+    final Supplier<Concept> fromInput = () -> {
+        Task t = commander.commandIterator.next();
+        return concept(t.getTerm());
+    };
+    final Supplier<Concept> fromNext = () -> {
+        return indexIterator.next();
+    };
+
     final void restart(final Derivelet d) {
-        Concept next = indexIterator.next();
+
+        Supplier<Concept> source = runProbability(getRandom(),
+                new float[] { 0.1f, 0.6f },
+                new Supplier[] { fromInput, fromNext }
+        );
+        Concept next = source.get();
+
         if (next != null) {
             d.start(next, defaultTTL, context);
         }

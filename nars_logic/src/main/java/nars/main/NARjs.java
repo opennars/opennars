@@ -45,7 +45,7 @@ public class NARjs {
     
     public static void main(String[] args) throws Exception {
         NARjs j = new NARjs();
-        
+
         System.out.println(NAR.VERSION +  " Javascript Console - :h for help, :q to exit");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("> ");

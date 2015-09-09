@@ -258,14 +258,19 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
 
+    @Override
+    public final boolean isNormalized() {
+        return this.hash != 0;
+    }
+
     /**
      * call if the task was changed; re-hashes it at the end.
      * if the task was removed then this returns null
      */
-    public Task normalized() {
+    public final Task normalized() {
 
         //dont recompute if hash isnt invalid (==0)
-        if (this.hash != 0)
+        if (isNormalized())
             return this;
 
         if (isDeleted())
@@ -384,13 +389,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
 
     public final void invalidate() {
-        if (term!=null)
-            term.invalidate();
+        /*if (term!=null)
+            term.invalidate();*/
         hash = 0;
     }
 
     @Override
-    public Sentence setOccurrenceTime(long o) {
+    public Sentence setOccurrenceTime(final long o) {
         if (o != occurrenceTime) {
             this.occurrenceTime = o;
             invalidate();

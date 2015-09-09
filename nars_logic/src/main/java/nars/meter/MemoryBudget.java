@@ -2,12 +2,18 @@ package nars.meter;
 
 import com.google.common.collect.Lists;
 import nars.Memory;
+import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.io.Texts;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.link.TermLinkKey;
+import nars.task.Sentence;
 import nars.term.Term;
 import nars.util.meter.Signal;
 import nars.util.meter.Signals;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.util.EnumMap;
@@ -142,14 +148,17 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
     }
 
 
+    final SummaryStatistics prisum = new SummaryStatistics();
+    final Mean termLinkStdDev = new Mean();
+    final Mean taskLinkStdDev = new Mean();
 
-    public void update(Memory m) {
+    public /*synchronized*/ void update(Memory m) {
 
-        SummaryStatistics prisum = new SummaryStatistics();
+        prisum.clear();
+        termLinkStdDev.clear();
+        taskLinkStdDev.clear();
 
         final double[] tActiveTaskLinkPriority = {0};
-        final double[] tActiveTaskLinkStdDev = {0};
-        final double[] tActiveTermLinkStdDev = {0};
         final double[] tActiveTermLinkPriority = {0};
 
         StandardDeviation s = new StandardDeviation();
@@ -159,11 +168,15 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
             prisum.addValue(p);
 
-            tActiveTaskLinkPriority[0] += c.getTaskLinks().getPrioritySum();
-            tActiveTaskLinkStdDev[0] += c.getTaskLinks().getStdDev(s);
+            Bag<Sentence, TaskLink> tasklinks = c.getTaskLinks();
+            tActiveTaskLinkPriority[0] += tasklinks.getPrioritySum();
+            if (tasklinks.size() > 1)
+                taskLinkStdDev.increment( tasklinks.getStdDev(s) );
 
-            tActiveTermLinkPriority[0] += c.getTermLinks().getPrioritySum();
-            tActiveTermLinkStdDev[0] += c.getTermLinks().getStdDev(s);
+            Bag<TermLinkKey, TermLink> termlinks = c.getTermLinks();
+            tActiveTermLinkPriority[0] += termlinks.getPrioritySum();
+            if (termlinks.size() > 1)
+                termLinkStdDev.increment( termlinks.getStdDev(s) );
         });
 
         long N = prisum.getN();
@@ -172,10 +185,10 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
         put(Budgeted.ActiveConceptPriorityStdDev, prisum.getStandardDeviation());
 
         put(Budgeted.ActiveTaskLinkPrioritySum, tActiveTaskLinkPriority[0]);
-        put(Budgeted.ActiveTaskLinkPriorityStdDev, tActiveTaskLinkStdDev[0]);
+        put(Budgeted.ActiveTaskLinkPriorityStdDev, taskLinkStdDev.getResult());
 
         put(Budgeted.ActiveTermLinkPrioritySum, tActiveTermLinkPriority[0]);
-        put(Budgeted.ActiveTermLinkPriorityStdDev, tActiveTermLinkStdDev[0]);
+        put(Budgeted.ActiveTermLinkPriorityStdDev, termLinkStdDev.getResult());
     }
 
     @Override

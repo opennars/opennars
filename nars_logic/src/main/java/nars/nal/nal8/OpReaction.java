@@ -189,8 +189,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
                 present().
                 parent(opTask).
                 cause(operation).
-                reason("Executed").
-                normalized()
+                reason("Executed")
             );
 
     }

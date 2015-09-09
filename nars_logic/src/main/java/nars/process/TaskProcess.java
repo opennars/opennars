@@ -95,7 +95,7 @@ public class TaskProcess extends NAL {
 
         final Memory memory = this.memory;
 
-        final Concept c = memory.conceptualize(task);
+        final Concept c = memory.conceptualize(task, task.getBudget());
 
         if (c==null) {
             memory.removed(task, "Unable to conceptualize");

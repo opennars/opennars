@@ -10,6 +10,11 @@ import nars.op.mental.Counting;
 import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
+import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
+import spangraph.TemporaryCache;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -50,31 +55,43 @@ public class NewDefault extends Default {
 
     public static final String key = "derivation_rules:standard";
 
-    static {
-
-//        standard = TemporaryCache.computeIfAbsent(
-//                key, new GenericJBossMarshaller(),
-
-//                () -> {
+    static void loadCachedRules() {
+        standard = TemporaryCache.computeIfAbsent(
+                key, new GenericJBossMarshaller(),
+                () -> {
                     try {
-                        standard = new DerivationRules();
+//                        standard = new DerivationRules();
 
-//                        return new DerivationRules();
+                        return new DerivationRules();
                     } catch (Exception e) {
                         e.printStackTrace();
                         System.exit(1);
-//                        return null;
+                        return null;
                     }
-//                },
+                }
 //                //TODO compare hash/checksum of the input file
 //                //to what is stored in cached file
 //                (x) -> {
 //                    //this disables entirely and just creates a new one each time:
 //                    return  ...
 //                }
-//        );
-
+        );
     }
+
+    static void loadRules() {
+        try {
+            standard = new DerivationRules();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static {
+        loadRules();
+    }
+
 //    static {
 //        try {
 //            Cache<Object, Object> cache = (InfiniPeer.tmp().getCache());

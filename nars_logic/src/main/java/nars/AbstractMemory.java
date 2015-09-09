@@ -5,6 +5,7 @@ import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 
 /**
  * Created by me on 7/6/15.
@@ -14,7 +15,7 @@ public interface AbstractMemory {
 
     Concept concept(Term t);
 
-    Concept conceptualize(Term term, Budget budget);
+    Concept conceptualize(Termed term, Budget budget);
 
     Clock getClock();
 

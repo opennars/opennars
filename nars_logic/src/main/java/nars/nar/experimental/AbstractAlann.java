@@ -85,7 +85,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
 
         //param.taskProcessThreshold.set(0); //process everything, even if budget is zero
 
-        commander = new Commander(nar);
+        commander = new Commander(nar, false);
     }
 
     protected void processNewTasks() {

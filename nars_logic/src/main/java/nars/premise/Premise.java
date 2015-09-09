@@ -70,8 +70,8 @@ public interface Premise {
 
 
 
-    default public float conceptPriority(Term target) {
-        return getMemory().conceptPriority(target);
+    default public float conceptPriority(Term target, float valueForMissing) {
+        return getMemory().conceptPriority(target, valueForMissing);
     }
 
 

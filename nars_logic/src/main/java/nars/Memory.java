@@ -511,21 +511,46 @@ public class Memory implements Serializable, AbstractMemory {
      * @return an existing Concept, or a new one, or null
      */
     @Override
-    public Concept conceptualize(Term term, final Budget budget) {
-        //TODO term in first arg
+    public Concept conceptualize(Termed termed, final Budget budget) {
 
-        if (!validConceptTerm(term))
+        if (termed == null)
             return null;
 
+        //validation here is to avoid checking a term if we know it is already normalized
+        final boolean needsValidation;
 
-        if ((term = term.normalized()) == null)
-            return null;
+        needsValidation = (termed instanceof Term);
+//        if (termed instanceof Term) {
+//            needsValidation = true;
+//        }
+//        else if (termed instanceof Task) {
+//            //in a task should mean it's already valid
+//            needsValidation = false;
+//        }
+//        else if (termed instanceof TaskLink) {
+//            needsValidation = false;
+//        }
+//        else if (termed instanceof TermLinkTemplate) {
+//            needsValidation = false;
+//        }
+//        else if (termed instanceof TermLinkKey) {
+//            needsValidation = false;
+//        }
+//        else {
+//            throw new RuntimeException("unknown validation requirement: " + termed + " " + termed.getClass());
+//        }
+
+        Term term = termed.getTerm();
+
+        if (needsValidation) {
+            if (!validConceptTerm(term))
+                return null;
+
+            if ((term = term.normalized()) == null)
+                return null;
+        }
 
         return getCycleProcess().conceptualize(term, budget, true);
-    }
-
-    public Concept conceptualize(final Task t) {
-        return conceptualize(t.getTerm(), t.getBudget());
     }
 
     private boolean validConceptTerm(Term term) {
@@ -536,11 +561,12 @@ public class Memory implements Serializable, AbstractMemory {
      * Get the current activation level of a concept.
      *
      * @param t The Term naming a concept
+     *          @param v the value returned in case of a non-existing concept
      * @return the priority value of the concept
      */
-    public float conceptPriority(final Term t) {
+    public float conceptPriority(final Term t, float valueForMissing) {
         final Concept c = concept(t);
-        return (c == null) ? 0.0f : c.getPriority();
+        return (c == null) ? valueForMissing : c.getPriority();
     }
 
 

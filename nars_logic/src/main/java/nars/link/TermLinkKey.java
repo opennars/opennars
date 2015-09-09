@@ -1,13 +1,14 @@
 package nars.link;
 
 import nars.term.Term;
+import nars.term.Termed;
 import nars.util.data.Util;
 import nars.util.utf8.Byted;
 
 
-public interface TermLinkKey extends Byted /* byte[] holds the prefix part */ {
+public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix part */ {
 
-    public Term getTerm();
+    Term getTerm();
 
 
 

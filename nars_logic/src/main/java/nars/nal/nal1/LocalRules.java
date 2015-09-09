@@ -152,7 +152,7 @@ public class LocalRules {
                                 //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
                                 //Arrays.toString(oldBelief.getEvidentialSet())
                         )
-                    ,true).normalized();
+                    ,true); //.normalized();
 
         if (revised != null)
             nal.getMemory().logic.BELIEF_REVISION.hit();

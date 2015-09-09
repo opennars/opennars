@@ -25,7 +25,6 @@ import nars.budget.Item;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.Termed;
 
 /**
  * Reference to a Task.
@@ -35,7 +34,7 @@ import nars.term.Termed;
  * <p>
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed {
+public class TaskLink extends Item<Sentence> implements TLink<Task> {
 
     /**
      * The Task linked

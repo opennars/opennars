@@ -7,7 +7,7 @@ import nars.term.Termed;
 import java.io.PrintStream;
 import java.io.Serializable;
 
-public interface TLink<T extends Termed> extends Budgeted, Serializable {
+public interface TLink<T extends Termed> extends Budgeted, Serializable, Termed {
 
     public short getIndex(final int i);
     

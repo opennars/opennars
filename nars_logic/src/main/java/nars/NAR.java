@@ -330,9 +330,11 @@ public class NAR implements Runnable {
 
 
     /** input a task via perception buffers */
-    public Task input(final Task t) {
+    public Task input(Task t) {
+
         if (memory.input(t))
             return t;
+
         return null;
     }
 

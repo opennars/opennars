@@ -2,7 +2,6 @@ package nars.link;
 
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.utf8.Utf8;
@@ -210,14 +209,12 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
     public boolean link(Concept c) {
 
-//        if (summary() < Global.BUDGET_EPSILON)
-//            return false;
-
         TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
 
-        Term otherTerm = termLinkBuilder.set(this, false, c.getMemory()).getOther();
+        termLinkBuilder.set(this, false, c.getMemory());
 
-        Concept otherConcept = c.getMemory().conceptualize(otherTerm, this);
+        Concept otherConcept = c.getMemory().conceptualize(termLinkBuilder, this);
+
         if (otherConcept == null) {
             return false;
         }
@@ -227,9 +224,17 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         c.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
 
         //activate peer termlink to this
-        termLinkBuilder.setIncoming(true);
+        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
-        activatePeer(otherConcept, termLinkBuilder);
+
+        final Budget termlinkBudget = termLinkBuilder.getBudget();
+
+        //if (otherConcept.getTerm() instanceof Compound) {
+            otherConcept.linkTerms(termlinkBudget, false);
+        //}
+        /*} else {
+
+        }*/
 
 
         //spent ?
@@ -239,17 +244,4 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
     }
 
-    void activatePeer(final Concept otherConcept, final TermLinkBuilder termLinkBuilder) {
-
-        otherConcept.activateTermLink(termLinkBuilder); // that concept termLink to this concept
-
-        final Budget termlinkBudget = termLinkBuilder.getBudget();
-
-        if (otherConcept.getTerm() instanceof Compound) {
-            otherConcept.linkTerms(termlinkBudget, false);
-        }
-        /*} else {
-
-        }*/
-    }
 }

@@ -14,9 +14,7 @@ import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.task.filter.DerivationFilter;
-import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
-import nars.task.filter.LimitDerivationPriority;
 import nars.term.Term;
 
 import java.util.Iterator;
@@ -87,7 +85,7 @@ public class Equalized extends NewDefault {
 
             Iterator<Task> ii = newTasks.iterateHighestFirst(temporary);
 
-            float priFactor = 1f;
+            float priFactor = memory.param.inputActivationFactor.floatValue();
             //float priFactor = 1f / maxBusyness; //divide the procesesd priority by the expected busyness of this cycle to approximate 1.0 total
 
             float b = 0;
@@ -96,8 +94,6 @@ public class Equalized extends NewDefault {
                 if (next == null) break;
 
                 newTasks.items.remove(next); //remove from new items
-
-                float nextPri = next.getPriority();
 
                 TaskProcess tp = TaskProcess.get(memory, next, priFactor);
                 if (tp!=null) {
@@ -162,9 +158,9 @@ public class Equalized extends NewDefault {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                new FilterBelowConfidence(0.01),
+                //new FilterBelowConfidence(0.01),
                 new FilterDuplicateExistingBelief(),
-                new LimitDerivationPriority()
+                //new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());
         };
     }
