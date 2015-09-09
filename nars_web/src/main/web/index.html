@@ -17,35 +17,28 @@
 
     </head>
     <body>
-        <div id="menu">   
+        <!--<div id="menu">
             <font size="2" color="gray">..Volume Level</font>
             <input id="volume" type="number" name="Volume" min="0" max="100" value="100" title="Volume"/>
-            <a id="title">openNARS</a>
-        </div>
+        </div>-->
 
         <div id="io">
 
+        </div>
+        <div id="input">
+            <textarea id="inputArea"></textarea>
         </div>
 
         <script type="text/javascript">
 
             var nlp = 0;
-            var websocketPort = 10000;
-            var ws = new WebSocket('ws://' + window.location.hostname + ':' + websocketPort);
+            var path = 'ws';
+            var wsPath = 'ws://' + window.location.hostname + ':' + window.location.port + '/' + path;
+            var ws = new WebSocket(wsPath);
 
             var prevOutput = null, currentOutput = null;
 
-            function getLineClass(m) {
-                if ((m[0] == '\"') && (m[m.length - 1] == '\"'))
-                    return 'comment';
-                if (m.trim().indexOf('IN:') == 0)
-                    return 'in';
-                if (m.trim().indexOf('OUT') == 0)
-                    return 'out';
-                return null;
-            }
-            var begin = '<tom --> [fast]>.\n<tim --> [fast]>.\n<tim <-> ?what>?';
-            function addIO(message) {
+            function _addIO(message) {
                 var d = $('<div/>').addClass('section');
 
                 prevOutput = currentOutput;
@@ -93,107 +86,44 @@
                     }, 0);
                 }
                 $('#io').append(d);
-                scrollbottom();
+                scrollbottom($('#io'));
             }
             
-            function scrollbottom() {
-                $('body').scrollTop($('body').prop('scrollHeight'));
+            function scrollbottom(n) {
+                n.scrollTop(n.prop('scrollHeight'));
             }
             
             var cnt = 0;
             var arri = [];
-            
-            function output(m, monospace) {
-                if (!prevOutput)
-                    prevOutput = currentOutput;
-                if (monospace) {
-                    if (m.indexOf("ERROR:") == -1) {
-                        var line = null;
+            var io = $('#io');
 
-
-                        if (nlp == 0)
-                            line = m;
-                        else
-                        {
-                            if (m.indexOf("/") != -1 || m.indexOf("\\") != -1 || m.indexOf("|") != -1 || m.indexOf("&") != -1 || m.indexOf("~") != -1)
-                                "nope"
-                            else
-                            {
-                                res = m
-                                var i = 100
-                                while (i > 0 && (m.indexOf("*") != -1 || m.indexOf("-") != -1 || m.indexOf("<") != -1 || m.indexOf(">") != -1 || m.indexOf("(") != -1 || m.indexOf(")") != -1))
-                                {
-                                    res = res.replace("<->", "is similar to").replace("-->", "is").replace("<", "").replace(">", "").replace(",", " ").replace("(", "\"").replace(")", "\"").replace("* ", "")
-                                    i = i - 1
-                                }
-
-                                while (res.indexOf(",") != - 1)
-                                    res = res.replace(",", " ")
-                                //
-                                var potential = res.replace(" is ", " is ").replace("somewhat similar", "similar").replace("?1", "what").replace("?2", "what").replace("$1", "what").replace("$2", "what");
-                                var addit = 1
-                                if (potential.indexOf("IN:") == -1)//if(res.indexOf("%")==-1) //question
-                                {
-                                    for (var i = 0; i < cnt; i++)
-                                    {
-                                        if (arri[i] == potential.split("{")[0] && potential.indexOf("IN:") == -1)
-                                            addit = 0;
-                                    }
-                                    if (addit == 1)
-                                    {
-                                        cnt += 1;
-                                        arri.push(potential.split("{")[0]);
-                                    }
-                                }
-                                if (addit)
-                                    if (potential.indexOf("%") == -1 || parseFloat(potential.split(";")[1].split("%")[0]) >= 0.5)
-                                    {
-                                        if (potential.indexOf("OUT:") != -1)
-                                        { //you and i handling
-                                            while (potential.indexOf(" i?") != - 1 || potential.indexOf(" i!") != - 1 || potential.indexOf(" i.") != - 1 || potential.indexOf(" i ") != - 1)
-                                                potential = potential.replace(" i?", " Dyou?").replace(" i!", " Dyou!").replace(" i.", " Dyou.").replace(" i ", " Dyou ")
-                                            while (potential.indexOf(" you?") != - 1 || potential.indexOf(" you!") != - 1 || potential.indexOf(" you.") != - 1 || potential.indexOf(" you ") != - 1)
-                                                potential = potential.replace(" you?", " i?").replace(" you!", " i!").replace(" you.", " i.").replace(" you ", " i ")
-                                            while (potential.indexOf(" Dyou?") != - 1 || potential.indexOf(" Dyou!") != - 1 || potential.indexOf(" Dyou.") != - 1 || potential.indexOf(" Dyou ") != - 1)
-                                                potential = potential.replace(" Dyou?", " you?").replace(" Dyou!", " you!").replace(" Dyou.", " you.").replace(" Dyou ", " you ")
-                                        }
-                                        while (potential.indexOf("is has") != - 1 || potential.indexOf("is have") != - 1 || potential.indexOf("#1") != - 1 || potential.indexOf("#2") != - 1 || potential.indexOf(" i is ") != - 1 || potential.indexOf(" you is ") != - 1)
-                                            potential = potential.replace("is has", "has").replace("is have", "have").replace("#1", "something").replace("#2", "something").replace(" i is ", " i am ").replace(" you is ", " you are ")
-                                        while (potential.indexOf("--") != - 1)
-                                            potential = potential.replace("--", "not")
-                                        if (potential.indexOf("==") != -1)
-                                            potential = potential.replace("IN: ", "IN: if ")
-                                        line = (potential.replace("==", "then").replace("\" not", "\" is").replace("wqhat", "it").replace("wqho", "it").replace("wqhere", "it").replace("wqhat", "it").replace("wqhy", "it").replace("wqho", "it").replace("wqhen", "it"))
-                                    }
-                            }
-                        }
-                    }
-                    if (line && (line.length > 0)) {
-                        var l = $("<pre/>");
-                        l.text(line);
-                        var lc = getLineClass(m);
-                        if (lc)
-                            l.addClass(lc);
-                        prevOutput.append(l);
-                        scrollbottom();
-                    }
-                }
-                else {
-                    prevOutput.append("<span>" + m + '</span>\n');
-                    scrollbottom();
-                }
+            function addIO(msg) {
+                io.append( $('<pre>').text(msg) );
+                    //.append('<br/>');
+                scrollbottom(io);
             }
 
 
             $(document).ready(function() {
 
+
+                var ia = $('#inputArea');
+                ia.keydown(function(e) {
+                    console.log(e);
+                        if (e.ctrlKey && e.keyCode == 13) {
+                            var t = ia.val();
+                            ws.send(t);
+                            ia.val('');
+                        }
+                });
+
                 ws.onopen = function() {
-                    addIO("Connected.");
+                    addIO("connect " + wsPath + "<br/>");
                     addIO();
                 };
                 ws.onmessage = function(e) {
                     e.data.split("\n").forEach(function(l) {
-                        output(l, true);
+                        addIO(l);
                     });
                 };
                 ws.onclose = function() {
@@ -203,7 +133,7 @@
 
             });
 
-            $('#volume').change(function() {
+            /*$('#volume').change(function() {
                 var volume = $('#volume').val();
                 ws.send('*volume=' + volume);
             });
@@ -226,7 +156,7 @@
                 else {
                     $('#languageToggle').removeClass('active');
                 }
-            });
+            });*/
 
 
         </script>
