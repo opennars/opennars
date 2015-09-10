@@ -104,6 +104,28 @@
     (M --> S), (M --> (-,S,P)) |- (M --> P), (Truth:DecomposePositiveNegativePositive)
     (M --> S), (M --> (-,P,S)) |- (M --> P), (Truth:DecomposeNegativeNegativeNegative)
 
+//Set comprehension:
+
+    (C --> {A_1..n}), (C --> {B_1..m}) |- (C --> {A_1..n,B_1..m}), (Truth:Deduction)
+    (C --> [A_1..n]), (C --> [B_1..m]) |- (C --> [A_1..n,B_1..m]), (Truth:Deduction)
+    ({A_1..n} --> C), ({B_1..m} --> C) |- ({A_1..n,B_1..m} --> C), (Truth:Deduction)
+    ([A_1..n] --> C), ([B_1..m] --> C) |- ([A_1..n,B_1..m] --> C), (Truth:Deduction)
+
+//Set split:
+
+    (C --> {A_1..n,B_1..m}), C |- (C --> {A_1..n}), (Truth:Deduction)
+    (C --> [A_1..n,B_1..m]), C |- (C --> [A_1..n]), (Truth:Deduction)
+    ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
+    ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
+
+//NAL3 single premise inference:
+
+    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
+    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
+
+    ((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
+    (R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
+
 //// implication-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //       (A ==> B) ------- (B ==> C)
 //            \               /
@@ -320,6 +342,17 @@
     (P ==> ($1 --> M)), (S --> M), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
     (P ==> (M --> $1)), (M --> S), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
 
+//// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
+//second level variable elimination
+
+    (A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
+    (A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
+
+//second level variable introduction
+
+    (A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
+    (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#1) |- ((&&,(#1 --> L),(#1 --> S),A_1..n) ==> R), (Truth:Intersection)
+
 //NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
@@ -363,12 +396,7 @@
     ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
     ((\,_, A_1..n ) --> M), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
 
-//NAL3 specific:
-    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
-    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
 
-    ((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
-    (R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
 
 //TODO Similarity Theorems (needs to be carefully evaluated what is needed here)
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
@@ -405,24 +433,3 @@
     ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 
 ////// Truth-value functions: see TruthFunctions.java
-
-//Set comprehension:
-    (C --> {A_1..n}), (C --> {B_1..m}) |- (C --> {A_1..n,B_1..m}), (Truth:Deduction)
-    (C --> [A_1..n]), (C --> [B_1..m]) |- (C --> [A_1..n,B_1..m]), (Truth:Deduction)
-    ({A_1..n} --> C), ({B_1..m} --> C) |- ({A_1..n,B_1..m} --> C), (Truth:Deduction)
-    ([A_1..n] --> C), ([B_1..m] --> C) |- ([A_1..n,B_1..m] --> C), (Truth:Deduction)
-//Set split:
-    (C --> {A_1..n,B_1..m}), C |- (C --> {A_1..n}), (Truth:Deduction)
-    (C --> [A_1..n,B_1..m]), C |- (C --> [A_1..n]), (Truth:Deduction)
-    ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
-    ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
-
-//second level variable elimination
-
-(A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
-(A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
-
-//second level variable introduction
-
-(A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
-(A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#1) |- ((&&,(#1 --> L),(#1 --> S),A_1..n) ==> R), (Truth:Intersection)
