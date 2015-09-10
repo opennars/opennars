@@ -94,15 +94,10 @@ public class TaskRule extends Rule<Premise,Task> {
         return getPremises().term(0);
     }
 
-    public int getTaskTermVolumeMin() {
-        return getTask().volume();
-    }
 
     /** returns Op.NONE if there is no belief term type;
      if it returns Op.VAR_PATTERN this means that any type can apply */
     public Op getBeliefTermType() {
-//        if (getPremises().length() < 2)
-//            return Op.NONE;
         return getBelief().op();
     }
 
@@ -114,9 +109,6 @@ public class TaskRule extends Rule<Premise,Task> {
         return conclusion().term(0);
     }
 
-    public int getBeliefTermVolumeMin() {
-        return getBelief().volume();
-    }
 
     /** test applicability of this rule with a specific maximum NAL level */
     public boolean levelValid(final int nalLevel) {
@@ -357,20 +349,20 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
 
-    //TEMPORARY for testing, to make sure the postcondition equality guarantees rule equality
-    boolean deepEquals(Object obj) {
-        /*
-        the precondition uniqueness is guaranted because they exist as the terms of the rule meta-term which equality is already tested for
-         */
-        if (super.equals(obj)) {
-            if (!Arrays.equals(postconditions, ((TaskRule)obj).postconditions)) {
-                throw new RuntimeException(this + " and " + obj + " have equal Rule Product but inequal postconditions");
-            }
-
-            return true;
-        }
-        return false;
-    }
+//    //TEMPORARY for testing, to make sure the postcondition equality guarantees rule equality
+//    boolean deepEquals(Object obj) {
+//        /*
+//        the precondition uniqueness is guaranted because they exist as the terms of the rule meta-term which equality is already tested for
+//         */
+//        if (super.equals(obj)) {
+//            if (!Arrays.equals(postconditions, ((TaskRule)obj).postconditions)) {
+//                throw new RuntimeException(this + " and " + obj + " have equal Rule Product but inequal postconditions");
+//            }
+//
+//            return true;
+//        }
+//        return false;
+//    }
 
 
     /** for each calculable "question reverse" rule,

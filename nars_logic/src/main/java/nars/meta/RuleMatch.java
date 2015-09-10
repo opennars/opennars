@@ -101,6 +101,8 @@ public class RuleMatch extends FindSubst {
         }
 
         if (truth == null && task.isJudgmentOrGoal()) {
+            //if this happens it could have been known before any substitution/matching happened
+            //set a precondition when a rule precludes certain punctuations */
             /*if (Global.DEBUG) {
                 System.err.println("truth rule missing: " + this);
             }*/

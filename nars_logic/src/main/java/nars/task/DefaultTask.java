@@ -207,7 +207,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return getParentBelief() != null && getParentTask() != null;
     }
     final public boolean isSingle() {
-        return getParentTask() != null && getParentBelief()==null;
+        return getParentBelief()==null && getParentTask()!=null ;
     }
 
     public Task log(List<String> historyToCopy) {
