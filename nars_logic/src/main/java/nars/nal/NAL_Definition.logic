@@ -419,8 +419,7 @@
 
 //second layer variable introduction, here you go again :)
 
-(A --> K), (&&,(#1 --> L),(($2 --> K) ==> R)), substitute($2,A) |- (&&,(#1 --> L),R), (Truth:Deduction)
-
-(A --> K), (($1 --> L) ==> (&&,(#2 --> K),R)), substitute(#2,A) |- (($1 --> L) ==> R), (Truth:AnonymousAnalogy)
-
+(A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
+(A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
 (A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
+(A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#1) |- ((&&,(#1 --> L),(#1 --> S),A_1..n) ==> R), (Truth:Intersection)
