@@ -417,7 +417,7 @@
     ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
     ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
 
-//second layer variable introduction, here you go again :)
+//second layer variable elimination, here you go again :)
 
 (A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
 (A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
