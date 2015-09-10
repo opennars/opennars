@@ -4,68 +4,79 @@ import nars.meta.TaskRule;
 import nars.nar.NewDefault;
 import nars.term.Compound;
 import org.junit.Assert;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import java.util.Collection;
+import java.util.Iterator;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 9/7/15.
  */
-@RunWith(Parameterized.class)
-public class RuleSerializationTest extends AbstractSerializationTest<TaskRule,TaskRule> {
+public class RuleSerializationTest extends AbstractSerializationTest<Collection<TaskRule>,Collection<TaskRule>> {
 
 
-    public RuleSerializationTest(TaskRule input) {
-        super(input);
+    public RuleSerializationTest() {
+        super(NewDefault.standard);
     }
 
-    @Parameterized.Parameters(name = "{0}")
-    public static Collection configurations() {
-        return NewDefault.standard;
-    }
 
 
     @Override
-    TaskRule parse(TaskRule input) {
+    Collection<TaskRule> parse(Collection<TaskRule> input) {
         return input;
     }
 
     @Override
-    protected TaskRule post(TaskRule deserialized) {
-        deserialized.rehash();
+    protected Collection<TaskRule> post(Collection<TaskRule> deserialized) {
+        for (TaskRule rr: deserialized)
+            rr.rehash();
         return deserialized;
     }
 
     @Override
-    public void testEquality(TaskRule a, TaskRule b)  {
 
-        if (!a.equals(b)) {
-            System.out.println(a +  "\t\t" + b);
+    public void testEquality(Collection<TaskRule> aa, Collection<TaskRule> bb)  {
 
-            /*try {
-                System.out.println(JSON.omDeep.writeValueAsString(a));
-                System.out.println(JSON.omDeep.writeValueAsString(b));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }*/
+        assertTrue(aa!=bb);
+
+        Iterator xa = aa.iterator();
+        Iterator xb = bb.iterator();
+
+        Assert.assertEquals(aa.size(), bb.size());
+
+
+        while (xa.hasNext()) {
+            TaskRule a = (TaskRule) xa.next();
+            TaskRule b = (TaskRule) xb.next();
+
+            assertTrue(a!=b);
+
+            if (!a.equals(b)) {
+                System.out.println(a +  "\t\t" + b);
+
+                /*try {
+                    System.out.println(JSON.omDeep.writeValueAsString(a));
+                    System.out.println(JSON.omDeep.writeValueAsString(b));
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }*/
+            }
+
+            //Assert.assertEquals(a.toString(), b.toString());
+            Assert.assertEquals(a.hashCode(), b.hashCode());
+            Assert.assertEquals(
+                    ((Compound)a.getTerm()).term(0),
+                    ((Compound)a.getTerm()).term(0)
+            );
+            Assert.assertArrayEquals(a.preconditions, b.preconditions);
+            //postconditions will eventually be backed by proper terms, until then, it is enough for preconditions to match
+            //assertArrayEquals(a.postconditions, b.postconditions);
+            Assert.assertEquals(a.postconditions.length, b.postconditions.length);
+
+
+            Assert.assertEquals(a, b);
         }
-
-        Assert.assertEquals(a.toString(), b.toString());
-        Assert.assertEquals(a.hashCode(), b.hashCode());
-        Assert.assertEquals(
-                ((Compound)a.getTerm()).term(0),
-                ((Compound)a.getTerm()).term(0)
-        );
-        assertArrayEquals(a.preconditions, b.preconditions);
-        //postconditions will eventually be backed by proper terms, until then, it is enough for preconditions to match
-        //assertArrayEquals(a.postconditions, b.postconditions);
-        Assert.assertEquals(a.postconditions.length, b.postconditions.length);
-
-
-        Assert.assertEquals(a, b);
 
 
     }
