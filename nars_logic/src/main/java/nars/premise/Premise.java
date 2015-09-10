@@ -194,14 +194,14 @@ public interface Premise {
         return x;
     }
 
-    default public <C extends Compound> TaskSeed newTask(C content, Task task, Task belief, boolean allowOverlap) {
-        content = Sentence.termOrNull(content);
-        if (content == null)
-            return null;
-        TaskSeed s = newDoublePremise(task, belief, allowOverlap);
-        if (s == null) return null;
-        return s.term(content);
-    }
+//    default public <C extends Compound> TaskSeed newTask(C content, Task task, Task belief, boolean allowOverlap) {
+//        content = Sentence.termOrNull(content);
+//        if (content == null)
+//            return null;
+//        TaskSeed s = newDoublePremise(task, belief, allowOverlap);
+//        if (s == null) return null;
+//        return s.term(content);
+//    }
 
     default public boolean unify(Op varType, Term a, Term b, Term[] u) {
         return Variables.unify(varType, a, b, u, getRandom());
@@ -391,14 +391,14 @@ public interface Premise {
                     //its parent is not cyclic
 
                     boolean cyclic = task.isCyclic();
-                    if (singleOrDouble) {
-                        cyclic &= task.getParentTask().isCyclic();
-                    }
+//                    if (singleOrDouble) {
+//                        cyclic &= task.getParentTask().isCyclic();
+//                    }
 
                     if (cyclic) {
                         //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                         //re.printStackTrace();
-                        removed(task, "Cyclic");
+                        getMemory().removed(task, "Cyclic");
                         return null;
                     }
                 }
@@ -604,12 +604,6 @@ public interface Premise {
         return null;
     }
 
-    default public void removed(TaskSeed task, String reason) {
-        getMemory().removed(task, reason);
-    }
-    default public void removed(Task task, String reason) {
-        getMemory().removed(task, reason);
-    }
 
 
     default Concept concept(Term x) {

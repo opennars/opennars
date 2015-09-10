@@ -293,13 +293,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
 
 
-    /**
-     * allows adjusting forgetting rate in subclasses
-     */
-    public float getForgetCycles(final float baseForgetCycles, final V item) {
-        return baseForgetCycles;
-    }
-
 
     final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
         return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);

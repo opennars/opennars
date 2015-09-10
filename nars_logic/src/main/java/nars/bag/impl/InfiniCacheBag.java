@@ -10,8 +10,6 @@ import nars.util.db.InfiniPeer;
 public class InfiniCacheBag<K, V extends Itemized<K>> extends MapCacheBag<K, V> {
 
 
-    private final Cache<K,V> map;
-
 
 //    public static <K, V extends Itemized<K>> InfiniCacheBag<K,V> make(InfiniPeer p) {
 //
@@ -27,7 +25,6 @@ public class InfiniCacheBag<K, V extends Itemized<K>> extends MapCacheBag<K, V> 
 
     public InfiniCacheBag(Cache<K,V> c) {
         super(c);
-        this.map = c;
     }
 
     @Override

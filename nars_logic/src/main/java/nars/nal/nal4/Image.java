@@ -1,6 +1,5 @@
 package nars.nal.nal4;
 
-import nars.Op;
 import nars.Symbols;
 import nars.term.Compound;
 import nars.term.Term;
@@ -47,45 +46,38 @@ abstract public class Image extends Compound {
         return n[0] == Symbols.IMAGE_PLACE_HOLDER;
     }    
     
-   /**
-     * default method to make the oldName of an image term from given fields
-     *
-     * @param op the term operate
-     * @param arg the list of term
-     * @param relationIndex the location of the place holder
-     * @return the oldName of the term
-     */
-    protected static CharSequence makeImageName(final Op op, final Term[] arg, final int relationIndex) {
-        throw new RuntimeException("should not be used, utf8 instead");
-//        final int sizeEstimate = 24 * arg.length + 2;
-//
-//        StringBuilder name = new StringBuilder(sizeEstimate)
-//            .append(COMPOUND_TERM_OPENER.ch)
-//            .append(op)
-//            .append(Symbols.ARGUMENT_SEPARATOR)
-//            .append(arg[relationIndex].toString());
-//
-//        for (int i = 0; i < arg.length; i++) {
-//            name.append(Symbols.ARGUMENT_SEPARATOR);
-//            if (i == relationIndex) {
-//                name.append(Symbols.IMAGE_PLACE_HOLDER);
-//            } else {
-//                name.append(arg[i].toString());
-//            }
-//        }
-//        name.append(COMPOUND_TERM_CLOSER.ch);
-//        return name.toString();
-    }
+//   /**
+//     * default method to make the oldName of an image term from given fields
+//     *
+//     * @param op the term operate
+//     * @param arg the list of term
+//     * @param relationIndex the location of the place holder
+//     * @return the oldName of the term
+//     */
+//    protected static CharSequence makeImageName(final Op op, final Term[] arg, final int relationIndex) {
+//        throw new RuntimeException("should not be used, utf8 instead");
+////        final int sizeEstimate = 24 * arg.length + 2;
+////
+////        StringBuilder name = new StringBuilder(sizeEstimate)
+////            .append(COMPOUND_TERM_OPENER.ch)
+////            .append(op)
+////            .append(Symbols.ARGUMENT_SEPARATOR)
+////            .append(arg[relationIndex].toString());
+////
+////        for (int i = 0; i < arg.length; i++) {
+////            name.append(Symbols.ARGUMENT_SEPARATOR);
+////            if (i == relationIndex) {
+////                name.append(Symbols.IMAGE_PLACE_HOLDER);
+////            } else {
+////                name.append(arg[i].toString());
+////            }
+////        }
+////        name.append(COMPOUND_TERM_CLOSER.ch);
+////        return name.toString();
+//    }
 
 
 
-    /**
-     * Get the relation term in the Image
-     * @return The term representing a relation
-     */
-    public Term getRelation() {
-        return term[relationIndex];
-    }
 
 
     /**

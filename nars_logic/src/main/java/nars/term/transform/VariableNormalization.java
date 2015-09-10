@@ -68,10 +68,6 @@ public class VariableNormalization implements VariableTransform {
     final Compound result;
     boolean renamed = false;
 
-    public VariableNormalization(Compound target) {
-        this(target, false);
-    }
-
     public VariableNormalization(Compound target, boolean destructively) {
 
 

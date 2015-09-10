@@ -146,9 +146,7 @@ public enum TruthFunction {
      */
     abstract public Truth get(Truth T, Truth B);
 
-    public final Truth get(final Truth t) {
-        return get(t, null);
-    }
+
 
     static final Map<Term, TruthFunction> atomToTruthModifier = Global.newHashMap(TruthFunction.values().length);
 

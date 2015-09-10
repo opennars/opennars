@@ -41,8 +41,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
      */
     public final Task targetTask;
 
-    private float lastFireTime = -1; //float to include the "subcycle"
-
 
 //
 //
@@ -149,13 +147,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
         }
     }
 
-    public final float getLastFireTime() {
-        return lastFireTime;
-    }
-
-    public final void setFired(final float now) {
-        this.lastFireTime = now;
-    }
 
 
     @Override

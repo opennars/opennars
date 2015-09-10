@@ -13,14 +13,14 @@ import nars.term.Term;
  */
 public interface PremiseGenerator {
 
-    public void setConcept(Concept c);
+    void setConcept(Concept c);
 
-    abstract public boolean valid(final TermLink term, final TaskLink task);
+    //boolean valid(final TermLink term, final TaskLink task);
 
-    public static Pair<Term, Sentence> pair(TaskLink taskLink, TermLink t) {
+    static Pair<Term, Sentence> pair(TaskLink taskLink, TermLink t) {
         return Tuples.pair(t.getTerm(), taskLink.getTask());
     }
 
-    public TermLink[] nextTermLinks(Concept c, TaskLink taskLink, TermLink[] result);
+    TermLink[] nextTermLinks(Concept c, TaskLink taskLink, TermLink[] result);
 
 }
