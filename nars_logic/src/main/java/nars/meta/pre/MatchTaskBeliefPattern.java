@@ -1,5 +1,6 @@
 package nars.meta.pre;
 
+import nars.Global;
 import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
@@ -12,8 +13,6 @@ import nars.term.Term;
 public class MatchTaskBeliefPattern extends PreCondition {
 
     public final PairMatchingProduct pattern;
-    //private final Term taskPattern, beliefPattern;
-    private final boolean allowNullBelief;
     private final String id;
 
 
@@ -21,18 +20,16 @@ public class MatchTaskBeliefPattern extends PreCondition {
 
         this.pattern = new PairMatchingProduct(taskPattern, beliefPattern);
 
-        if (beliefPattern.structure() == 0) {
+        if (Global.DEBUG) {
+            if (beliefPattern.structure() == 0) {
 
-            // if nothing else in the rule involves this term
-            // which will be a singular VAR_PATTERN variable
-            // then allow null
-            if (beliefPattern.op() != Op.VAR_PATTERN)
-                throw new RuntimeException("not what was expected");
+                // if nothing else in the rule involves this term
+                // which will be a singular VAR_PATTERN variable
+                // then allow null
+                if (beliefPattern.op() != Op.VAR_PATTERN)
+                    throw new RuntimeException("not what was expected");
 
-            allowNullBelief = (rule.countOccurrences(pattern) == 1);
-
-        } else {
-            allowNullBelief = false;
+            }
         }
 
         /*System.out.println( Long.toBinaryString(
@@ -67,8 +64,4 @@ public class MatchTaskBeliefPattern extends PreCondition {
     }
 
 
-    @Override
-    public boolean isEarly() {
-        return true;
-    }
 }

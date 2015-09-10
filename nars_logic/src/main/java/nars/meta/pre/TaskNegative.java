@@ -26,8 +26,4 @@ final public class TaskNegative extends PreCondition {
     }
 
 
-    @Override
-    public boolean isEarly() {
-        return true;
-    }
 }

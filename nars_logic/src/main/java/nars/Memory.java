@@ -743,9 +743,14 @@ public class Memory implements Serializable, AbstractMemory {
 //    }
 
     /** adds a task to the queue of task which will be executed in batch
-     *  at the end of the current cycle.     */
-    final public void taskNext(Runnable t) {
-        nextTasks.addLast(t);
+     *  at the end of the current cycle.
+     *  checks if the queue already contains the pending
+     *  Runnable instance to ensure duplicates don't
+     *  don't accumulate
+     */
+    final public void taskNext(final Runnable t) {
+        if (!nextTasks.contains(t))
+            nextTasks.addLast(t);
     }
 
     /** runs all the tasks in the 'Next' queue */

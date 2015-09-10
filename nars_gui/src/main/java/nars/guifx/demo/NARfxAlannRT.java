@@ -25,7 +25,7 @@ public class NARfxAlannRT {
         //Application.launch(NARfx.class, arg);
 
         //Equalized d = new Equalized(1000, 3, 2);
-        DefaultAlann d = new DefaultAlann(64);
+        DefaultAlann d = new DefaultAlann(16);
         d.param.setClock(new RealtimeMSClock(false));
 
         NARfx.newWindow(new NAR(d), (i) -> {

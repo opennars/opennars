@@ -68,7 +68,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
      * Whether contains a variable
      */
     transient private byte hasVarQueries, hasVarIndeps, hasVarDeps;
-    transient private short varTotal, volume, complexity;
+    transient private int varTotal, volume, complexity;
 
     transient private int containedTemporalRelations = -1;
     transient boolean normalized;

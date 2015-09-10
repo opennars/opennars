@@ -1039,6 +1039,12 @@ public class NAR implements Runnable {
         return this;
     }
 
+    public NAR onAfterFrame(final Runnable r) {
+        return onEachFrame(() -> {
+           nar.memory.taskNext(r);
+        });
+    }
+
     abstract private class StreamNARReaction extends NARReaction {
 
         public StreamNARReaction(Class... signal) {

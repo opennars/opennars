@@ -23,11 +23,6 @@ public class After extends PreCondition {
     }
 
     @Override
-    public boolean isEarly() {
-        return true;
-    }
-
-    @Override
     public boolean test(RuleMatch m) {
         if (!m.premise.isEvent())
             return false;

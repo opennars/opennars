@@ -2,9 +2,9 @@ package nars.guifx.chart;
 
 import nars.Global;
 import nars.NAR;
-import nars.NARSeed;
 import nars.meter.MemoryBudget;
-import nars.nar.experimental.DefaultAlann;
+import nars.nar.Default;
+import nars.nar.experimental.Equalized;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
@@ -45,11 +45,11 @@ public class SimpleNARBudgetDynamics {
         float qua = 0.8f;
 
 
-        //Default d = new Default(1024, 1, 3).setInternalExperience(null);
-        //Default d = new Equalized(1024, 1, 3).setInternalExperience(null);
+        Default d = new Equalized(1024, 1, 3).setInternalExperience(null);
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
-        NARSeed d = new DefaultAlann(64);
+
+        //NARSeed d = new DefaultAlann(64);
 
 
         //d.getParam().conceptForgetDurations.set(1);

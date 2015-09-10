@@ -1,6 +1,8 @@
 package nars.guifx;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -12,10 +14,12 @@ import org.apache.commons.math3.util.Precision;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class AutoLabel extends Label {
+public class AutoLabel extends Label implements ChangeListener {
 
-    private final Task task;
-    private final TaskSummaryIcon summary;
+    private final NAR nar;
+    private final String prefix;
+    private Task task;
+    private TaskSummaryIcon summary;
     //private final NSlider slider;
     private float lastPri = -1;
     public final SimpleBooleanProperty selected = new SimpleBooleanProperty(false);
@@ -23,19 +27,84 @@ public class AutoLabel extends Label {
     public AutoLabel(String prefix, Task task, NAR n) {
         super();
 
+        this.prefix = prefix;
+        this.task = task;
+        this.nar = n;
+
+        parentProperty().addListener(this);
+    }
+
+    public void enablePopupClickHandler(NAR nar) {
+
+        setOnMouseClicked(e -> {
+            NARfx.newWindow(nar, task);
+//            Term t = task.getTerm();
+//            if (t!=null) {
+////                Concept c = nar.concept(t);
+////                if (c != null) {
+////                    NARfx.window(nar, c);
+////                }
+//
+//            }
+        });
+
+    }
+
+    public AutoLabel(Task task, NAR nar) {
+        this("", task, nar);
+    }
+
+    public void update() {
+
+        if (summary==null)
+            return;
+
+        float pri = task.getBudget().getPriorityIfNaNThenZero();
+        if (Precision.equals(lastPri, pri, 0.025)) {
+            return;
+        }
+        lastPri = pri;
+
+        summary.run();
+
+        double sc = 0.5 + 1.0 * pri;
+        //setScaleX(sc);
+        //setScaleY(sc);
+        //setFont(NARfx.mono((pri*12+12)));
+
+
+        setStyle(JFX.fontSize( ((1.0f + pri)*100.0f) ) );
+
+        setTextFill(JFX.grayscale.get(pri*0.5+0.5));
+
+
+
+    }
+
+    @Override
+    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+
+        /* parent changed */
+        getChildren().clear();
+
+        if (newValue == null) {
+            //unparented
+            summary = null;
+            return;
+        }
+
         setGraphicTextGap(0);
         getStylesheets().setAll();
         getStyleClass().setAll();
-
-        this.task = task;
 
         StringBuilder sb = new StringBuilder();
         sb.append(prefix);
 
         //sb.append(task.getTerm());
-        task.toString(sb, n.memory, true, false, false);
+        task.toString(sb, nar.memory, true, false, false);
 
         setText(sb.toString());
+
 
         //label.getStyleClass().add("tasklabel_text");
         //setMouseTransparent(true);
@@ -137,51 +206,6 @@ public class AutoLabel extends Label {
         });
 
         setCache(true);
-    }
-
-    public void enablePopupClickHandler(NAR nar) {
-
-        setOnMouseClicked(e -> {
-            NARfx.newWindow(nar, task);
-//            Term t = task.getTerm();
-//            if (t!=null) {
-////                Concept c = nar.concept(t);
-////                if (c != null) {
-////                    NARfx.window(nar, c);
-////                }
-//
-//            }
-        });
 
     }
-
-    public AutoLabel(Task task, NAR nar) {
-        this("", task, nar);
-    }
-
-    public void update() {
-
-
-        float pri = task.getBudget().getPriorityIfNaNThenZero();
-        if (Precision.equals(lastPri, pri, 0.025)) {
-            return;
-        }
-        lastPri = pri;
-
-        summary.run();
-
-        double sc = 0.5 + 1.0 * pri;
-        //setScaleX(sc);
-        //setScaleY(sc);
-        //setFont(NARfx.mono((pri*12+12)));
-
-
-        setStyle(JFX.fontSize( ((1.0f + pri)*100.0f) ) );
-
-        setTextFill(JFX.grayscale.get(pri*0.5+0.5));
-
-
-
-    }
-
 }

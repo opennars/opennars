@@ -16,7 +16,7 @@ public class NoCommonSubterm extends PreCondition2 {
     }
 
     public boolean addSubtermsRecursivelyUntilFirstMatch(Term t, Set<Term> map, Set<Term> Z) {
-        if(Z == null || Z.contains(t)) { //by this we can stop early
+        if(Z != null && Z.contains(t)) { //by this we can stop early
             return false;
         }
 
@@ -49,8 +49,4 @@ public class NoCommonSubterm extends PreCondition2 {
         return true;
     }
 
-    @Override
-    public boolean isEarly() {
-        return true;
-    }
 }

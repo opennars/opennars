@@ -24,7 +24,4 @@ abstract public class PreCondition implements Predicate<RuleMatch>, Serializable
         return toString().equals(obj.toString());
     }
 
-    /** can this precondition be tested in the early phase */
-    public boolean isEarly() { return false; }
-    
 }

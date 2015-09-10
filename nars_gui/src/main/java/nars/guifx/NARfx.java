@@ -4,6 +4,7 @@ import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
@@ -303,13 +304,15 @@ public class NARfx  {
 //                }*/
 //                return () -> ni;
 //            });
-            Scene scene = new Scene(ni);
+            Scene scene = new Scene(ni, 900, 700,
+                    false, SceneAntialiasing.DISABLED);
+
             scene.getStylesheets().setAll(NARfx.css, "dark.css" );
             b.setScene(scene);
 
+
             b.setScene(scene);
-            b.setWidth(900);
-            b.setHeight(700);
+
             b.show();
 
             if (ide!=null)

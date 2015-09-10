@@ -5,23 +5,17 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import jfxtras.labs.scene.control.gauge.Content;
-import jfxtras.labs.scene.control.gauge.ContentBuilder;
-import jfxtras.labs.scene.control.gauge.MatrixPanel;
-import jfxtras.labs.scene.control.gauge.MatrixPanelBuilder;
+import nars.Global;
 import nars.NAR;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
 import nars.task.Task;
+import nars.util.data.list.CircularArrayList;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static javafx.application.Platform.runLater;
-import static jfxtras.labs.scene.control.gauge.Content.*;
 
 /**
  * Created by me on 8/2/15.
@@ -30,46 +24,21 @@ public class LogPane extends VBox implements Runnable {
 
     private final Output incoming;
     private final NAR nar;
-    final int maxLines = 256;
-    final ConcurrentLinkedDeque<Node> pendingAdds = new ConcurrentLinkedDeque();
-    final AtomicBoolean pending = new AtomicBoolean(false);
+    final int maxLines = 128;
+    CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
+    List<Node> pending;
+
     ScrollPane scrollParent = null;
 
     /* to be run in javafx thread */
     @Override public void run() {
-        if (pending.compareAndSet(true, false)) {
 
-            int toAdd = pendingAdds.size();
-            int existing = getChildren().size();
+        Node[] c = toShow.toArray(new Node[toShow.size()]);
 
-            if (toAdd + existing > maxLines) {
-                int toRemove = (toAdd + existing) - maxLines;
-                int pendingsToRemove = toRemove - existing;
-                while (pendingsToRemove > 0) {
-                    pendingAdds.pop(); //old items we will not be displaying because too many were pushed
-                    pendingsToRemove--;
-                    toRemove--;
-                }
-
-                if (toRemove > 0) {
-                    getChildren().remove(0, toRemove);
-                }
-
-            }
-
-            List<Node> adding = new ArrayList(toAdd);
-            for (int i = 0; i < toAdd; i++) {
-                adding.add(pendingAdds.pop());
-            }
-
-            getChildren().addAll(adding);
-
-            if (scrollParent!=null) {
-                runLater(scrollBottom);
-            }
+        getChildren().setAll(c);
 
 
-        }
+        scrollBottom.run();
     }
 
     final Runnable scrollBottom = () -> scrollParent.setVvalue(1f);
@@ -97,6 +66,33 @@ public class LogPane extends VBox implements Runnable {
             updateParent();
         });
 
+        nar.onEachFrame( () -> {
+            List<Node> p = pending;
+            if (p!=null) {
+                pending = null;
+                //synchronized (nar) {
+                    int ps = p.size();
+                    int start = ps - Math.min(ps, maxLines);
+
+                    int tr = ((ps - start) + toShow.size()) - maxLines;
+                    if (tr > ps) {
+                        toShow.clear();
+                    }
+                    else {
+                        //remove first N
+                        for (int i = 0; i < tr; i++)
+                            toShow.removeFirst();
+                    }
+
+                    for (int i = start; i < ps; i++)
+                        toShow.add(p.get(i));
+                //}
+
+                //if (queueUpdate)
+                    runLater(LogPane.this);
+            }
+        });
+
         incoming = new Output(nar) {
 
             @Override
@@ -104,11 +100,11 @@ public class LogPane extends VBox implements Runnable {
                 Node n = getNode(channel, event, args);
                 if (n!=null) {
 
-                    pendingAdds.push(n);
+                    if (pending==null)
+                        pending = Global.newArrayList();
 
-                    if (!pending.getAndSet(true)) {
-                        runLater(LogPane.this);
-                    }
+                    pending.add(n);
+
                 }
                 return false;
             }
