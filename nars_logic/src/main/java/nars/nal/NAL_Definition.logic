@@ -11,6 +11,42 @@
 
 //   A, A |- A, (Truth:Revision) (Commented out because it is already handled by belief management in java)
 
+//TODO Similarity Theorems (needs to be carefully evaluated what is needed here)
+//Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
+
+//TODO Implication Theorems (needs to be carefully evaluated what is needed here)
+    (&&,A_1..n), A_i |- A_i, (Truth:Deduction, Desire:Strong)
+//TODO: also (&&,A_1,A_2), A_1 |- A_1, (Truth:Deduction, Desire:Strong) currently doesnt work, review
+
+//TODO Equivalence Theorems
+
+    ({S} <-> {P}), S |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
+    ({S} <-> {P}), P |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
+    ([S] <-> [P]), S |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
+    ([S] <-> [P]), P |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
+
+    ({S} <-> {P}), S |- ({P} --> {S}), (Truth:Identity, Desire:Identity)
+    ({S} <-> {P}), P |- ({P} --> {S}), (Truth:Identity, Desire:Identity)
+    ([S] <-> [P]), S |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
+    ([S] <-> [P]), P |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
+
+    ({S} <-> {P}), S |- (S <-> P), (Truth:Identity, Desire:Identity)
+    ({S} <-> {P}), P |- (S <-> P), (Truth:Identity, Desire:Identity)
+    ([S] <-> [P]), S |- (S <-> P), (Truth:Identity, Desire:Identity)
+    ([S] <-> [P]), P |- (S <-> P), (Truth:Identity, Desire:Identity)
+
+//Nothing is more specific than a instance, so its similar
+
+    (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)
+    (S --> {P}), P |- (S <-> {P}), (Truth:Identity, Desire:Identity)
+
+//nothing is more general than a property, so its similar
+
+    ([S] --> P), S |- ([S] <-> P), (Truth:Identity, Desire:Identity)
+    ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
+
+////// Truth-value functions: see TruthFunctions.java
+
 //// Immediate Inference ////////////////////////////////////////////////////////////////////////////////////
 //If S can stand for P, P can to a certain low degree also represent the class S
 //If after S usually P happens, then it might be a good guess that usually before P happens, S happens.
@@ -103,6 +139,43 @@
     (M --> S), (M --> (|,S,A_1..n)) |- (M --> (|,A_1..n)), (Truth:DecomposeNegativePositivePositive)
     (M --> S), (M --> (-,S,P)) |- (M --> P), (Truth:DecomposePositiveNegativePositive)
     (M --> S), (M --> (-,P,S)) |- (M --> P), (Truth:DecomposeNegativeNegativeNegative)
+
+//Set comprehension:
+
+    (C --> {A_1..n}), (C --> {B_1..m}) |- (C --> {A_1..n,B_1..m}), (Truth:Deduction)
+    (C --> [A_1..n]), (C --> [B_1..m]) |- (C --> [A_1..n,B_1..m]), (Truth:Deduction)
+    ({A_1..n} --> C), ({B_1..m} --> C) |- ({A_1..n,B_1..m} --> C), (Truth:Deduction)
+    ([A_1..n] --> C), ([B_1..m] --> C) |- ([A_1..n,B_1..m] --> C), (Truth:Deduction)
+
+//Set split:
+
+    (C --> {A_1..n,B_1..m}), C |- (C --> {A_1..n}), (Truth:Deduction)
+    (C --> [A_1..n,B_1..m]), C |- (C --> [A_1..n]), (Truth:Deduction)
+    ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
+    ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
+
+//NAL3 single premise inference:
+
+    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
+    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
+
+    ((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
+    (R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
+
+////// NAL4 - Transformations between products and images: ////////////////////////////////////////////////////////////////////////////////////
+//Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
+
+    ((*,A_1..n) --> M), A_i |- (A_i --> (/,M, A_1..A_i.substitute(_)..A_n )), (Truth:Identity, Desire:Identity)
+    ((*,A_1..n) --> M), M |- (M --> (/,_, A_1..n )), (Truth:Identity, Desire:Identity)
+
+    (M --> (*,A_1..n)), A_i |- ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), (Truth:Identity, Desire:Identity)
+    (M --> (*,A_1..n)), M |- ((\,_, A_1..n ) --> M), (Truth:Identity, Desire:Identity)
+
+    (A_i --> (/,M,A_1..A_i.substitute(_)..A_n )), M |- ((*,A_1..n) --> M), (Truth:Identity, Desire:Identity)
+    (M --> (/,_, A_1..n )), M |- ((*,A_1..n) --> M), (Truth:Identity, Desire:Identity)
+
+    ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
+    ((\,_, A_1..n ) --> M), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
 
 //// implication-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //       (A ==> B) ------- (B ==> C)
@@ -253,10 +326,9 @@
 //Can be derived by NAL7 rules so this won't be necessary there (Order:ForAllSame left out here)
 
     ((&&,A_1..n) ==> C), M, not_implication_or_equivalence(M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction)
-
-      ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
-      ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction, Order:ForAllSame)
-      ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
+    ((&&,M,A_1..n) ==> C), (A ==> M) |- ((&&,A,A_1..n) ==> C), (Truth:Deduction, Order:ForAllSame)
+    ((&&,M,A_1..n) ==> C), ((&&,A,A_1..n) ==> C) |- (A ==> M), (Truth:Abduction, Order:ForAllSame)
+    ((&&,A,A_1..n) ==> C), (A ==> M) |- ((&&,M,A_1..n) ==> C), (Truth:Induction, Order:ForAllSame)
 
 //// variable introduction ////////////////////////////////////////////////////////////////////////////////////
 //Introduce variables by common subject or predicate
@@ -320,6 +392,17 @@
     (P ==> ($1 --> M)), (S --> M), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
     (P ==> (M --> $1)), (M --> S), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
 
+//// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
+//second level variable elimination
+
+    (A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
+    (A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
+
+//second level variable introduction
+
+    (A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
+    (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#1) |- ((&&,(#1 --> L),(#1 --> S),A_1..n) ==> R), (Truth:Intersection)
+
 //NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
@@ -348,78 +431,3 @@
                                                                          (S <|> P), (Truth:Comparison),
                                                                          (&|,S,P), (Truth:Intersection)
 
-////// NAL4 (complete): ////////////////////////////////////////////////////////////////////////////////////
-//Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
-
-    ((*,A_1..n) --> M), A_i |- (A_i --> (/,M, A_1..A_i.substitute(_)..A_n )), (Truth:Identity, Desire:Identity)
-    ((*,A_1..n) --> M), M |- (M --> (/,_, A_1..n )), (Truth:Identity, Desire:Identity)
-
-    (M --> (*,A_1..n)), A_i |- ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), (Truth:Identity, Desire:Identity)
-    (M --> (*,A_1..n)), M |- ((\,_, A_1..n ) --> M), (Truth:Identity, Desire:Identity)
-
-    (A_i --> (/,M,A_1..A_i.substitute(_)..A_n )), M |- ((*,A_1..n) --> M), (Truth:Identity, Desire:Identity)
-    (M --> (/,_, A_1..n )), M |- ((*,A_1..n) --> M), (Truth:Identity, Desire:Identity)
-
-    ((\,M, A_1..A_i.substitute(_)..A_n ) --> A_i), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
-    ((\,_, A_1..n ) --> M), M |- (M --> (*,A_1..n)), (Truth:Identity, Desire:Identity)
-
-//NAL3 specific:
-    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
-    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
-
-    ((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
-    (R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
-
-//TODO Similarity Theorems (needs to be carefully evaluated what is needed here)
-//Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
-
-//TODO Implication Theorems (needs to be carefully evaluated what is needed here)
-    (&&,A_1..n), A_i |- A_i, (Truth:Deduction, Desire:Strong)
-//TODO: also (&&,A_1,A_2), A_1 |- A_1, (Truth:Deduction, Desire:Strong) currently doesnt work, review
-
-//TODO Equivalence Theorems
-
-    ({S} <-> {P}), S |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
-    ({S} <-> {P}), P |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), S |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), P |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
-
-    ({S} <-> {P}), S |- ({P} --> {S}), (Truth:Identity, Desire:Identity)
-    ({S} <-> {P}), P |- ({P} --> {S}), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), S |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), P |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
-
-    ({S} <-> {P}), S |- (S <-> P), (Truth:Identity, Desire:Identity)
-    ({S} <-> {P}), P |- (S <-> P), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), S |- (S <-> P), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), P |- (S <-> P), (Truth:Identity, Desire:Identity)
-
-//Nothing is more specific than a instance, so its similar
-
-    (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)
-    (S --> {P}), P |- (S <-> {P}), (Truth:Identity, Desire:Identity)
-
-//nothing is more general than a property, so its similar
-
-    ([S] --> P), S |- ([S] <-> P), (Truth:Identity, Desire:Identity)
-    ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
-
-////// Truth-value functions: see TruthFunctions.java
-
-//Set comprehension:
-    (C --> {A_1..n}), (C --> {B_1..m}) |- (C --> {A_1..n,B_1..m}), (Truth:Deduction)
-    (C --> [A_1..n]), (C --> [B_1..m]) |- (C --> [A_1..n,B_1..m]), (Truth:Deduction)
-    ({A_1..n} --> C), ({B_1..m} --> C) |- ({A_1..n,B_1..m} --> C), (Truth:Deduction)
-    ([A_1..n] --> C), ([B_1..m] --> C) |- ([A_1..n,B_1..m] --> C), (Truth:Deduction)
-//Set split:
-    (C --> {A_1..n,B_1..m}), C |- (C --> {A_1..n}), (Truth:Deduction)
-    (C --> [A_1..n,B_1..m]), C |- (C --> [A_1..n]), (Truth:Deduction)
-    ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
-    ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
-
-//second layer variable introduction, here you go again :)
-
-(A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
-(A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
-(A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
-(A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#1) |- ((&&,(#1 --> L),(#1 --> S),A_1..n) ==> R), (Truth:Intersection)
