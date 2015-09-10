@@ -12,7 +12,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.NAR;
-import nars.NARStream;
 import nars.event.FrameReaction;
 import nars.event.NARReaction;
 import nars.guifx.util.SizeAwareWindow;
@@ -36,7 +35,6 @@ public class NARide extends BorderPane {
     public final TabPane content = new TabPane();
 
     public final NARControlFX controlPane;
-    private final NARStream narstream;
 
     Tab console = null;
 
@@ -150,7 +148,7 @@ public class NARide extends BorderPane {
 //                    tabDetacher.stylesheets(getScene().getStylesheets().toArray(new String[getScene().getStylesheets().size()]));
 //        });
 
-        NARStream s = this.narstream = new NARStream(n);
+
 
         controlPane = new NARControlFX(nar, true, true, true);
 
@@ -265,14 +263,14 @@ public class NARide extends BorderPane {
     public class NARReactionPane extends NARCollectionPane<Reaction> {
 
         public NARReactionPane() {
-            super(narstream, r ->
+            super(nar, r ->
                             new Label(r.toString())
             );
         }
 
         @Override
         public void collect(Consumer<Reaction> c) {
-            narstream.nar.memory.exe.forEachReaction(c);
+            nar.memory.exe.forEachReaction(c);
         }
     }
 

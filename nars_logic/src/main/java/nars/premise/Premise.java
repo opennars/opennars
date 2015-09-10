@@ -184,9 +184,6 @@ public interface Premise {
         return newDoublePremise(asym, sym, false);
     }
 
-    default public <C extends Compound> TaskSeed newSinglePremise(Task parentTask, boolean allowOverlap) {
-        return newDoublePremise(parentTask, null, allowOverlap);
-    }
 
     default public <C extends Compound> TaskSeed newDoublePremise(Task parentTask, Task parentBelief, boolean allowOverlap) {
         TaskSeed x = new TaskSeed(getMemory());
@@ -259,7 +256,7 @@ public interface Premise {
 
     default public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
         final Task parentTask = getTask();
-        final Task grandParentTask = parentTask.getParentTask();
+        //final Task grandParentTask = parentTask.getParentTask();
         /*if (parentTask != null) {
             final Compound parentTaskTerm = parentTask.getTerm();
             if (parentTaskTerm == null) {
@@ -386,12 +383,24 @@ public interface Premise {
         {
             //if revised, the stamp should already have been prevented from even being created
 
-            if (!Global.OVERLAP_ALLOW && (!allowOverlap || revised)) {
-                if (task.isCyclic()) {
-                    //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
-                    //re.printStackTrace();
-                    removed(task, "Cyclic");
-                    return null;
+            if (!task.isInput()) {
+                if (!Global.OVERLAP_ALLOW && (!allowOverlap || revised)) {
+
+                    //if this is a single derivation, newly cyclic
+                    //tasks are allowed as long as
+                    //its parent is not cyclic
+
+                    boolean cyclic = task.isCyclic();
+                    if (singleOrDouble) {
+                        cyclic &= task.getParentTask().isCyclic();
+                    }
+
+                    if (cyclic) {
+                        //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
+                        //re.printStackTrace();
+                        removed(task, "Cyclic");
+                        return null;
+                    }
                 }
             }
         }
@@ -543,7 +552,7 @@ public interface Premise {
                 task.log(System.nanoTime() + " " + this.toString());
             }
 
-            task.log("Derived");
+            //task.log("Derived");
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
                 task.log(Premise.getStack());

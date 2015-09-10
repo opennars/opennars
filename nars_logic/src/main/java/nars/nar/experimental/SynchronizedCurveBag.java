@@ -4,6 +4,8 @@ import nars.Memory;
 import nars.bag.BagTransaction;
 import nars.bag.impl.CurveBag;
 import nars.budget.Itemized;
+import nars.util.data.list.FasterList;
+import nars.util.sort.ArraySortedIndex;
 
 import java.util.Random;
 import java.util.function.Consumer;
@@ -16,7 +18,11 @@ public class SynchronizedCurveBag<K,V extends Itemized<K>> extends CurveBag<K,V>
     final Object lock = new Object();
 
     public SynchronizedCurveBag(Random rng, int capacity) {
-        super(rng, capacity);
+        super(capacity, new RandomSampler(rng, CurveBag.power6BagCurve),
+                new ArraySortedIndex(capacity,
+                        new FasterList(capacity).asSynchronized()));
+
+
     }
 
     @Override

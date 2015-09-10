@@ -17,7 +17,7 @@ public class CountIOEvents extends NARReaction {
 //        public static final DoubleMeter numIn = new DoubleMeter("IN");
 //        public static final DoubleMeter numOut = new DoubleMeter("OUT");
 
-    final Map<Class, HitMeter> eventMeters = new HashMap();
+    public final Map<Object, HitMeter> eventMeters = new HashMap();
 
     public CountIOEvents(NAR n) {
         this(n, null);
@@ -33,6 +33,23 @@ public class CountIOEvents extends NARReaction {
                 m.add(h);
         }
 
+
+        n.memory.eventTaskRemoved.on((t) -> {
+            //System.out.println(t.getExplanation());
+
+            String reason = t.getLog().get(t.getLog().size()-1);
+
+            inc("TaskRemove");
+
+            //specific types of removals
+            inc("TaskRemove." + reason);
+
+        });
+    }
+
+    protected final void inc(final String key) {
+        final HitMeter h = eventMeters.computeIfAbsent(key, k -> new HitMeter(key));
+        h.hit();
     }
 
     public long numOutputs() { return eventMeters.get(Events.OUT.class).count(); }
@@ -48,6 +65,7 @@ public class CountIOEvents extends NARReaction {
             Events.ERR.class,
             Events.Answer.class,
     };
+
 
     @Override
     public Class[] getEvents() {

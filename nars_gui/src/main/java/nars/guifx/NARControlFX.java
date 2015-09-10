@@ -12,7 +12,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import nars.Events;
 import nars.NAR;
-import nars.NARStream;
 import nars.guifx.util.NSlider;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -74,7 +73,7 @@ public class NARControlFX extends HBox {
             this.nar = n;
 
 
-            new NARStream(n).on(this, Events.FrameEnd.class, Events.ResetStart.class);
+            nar.on(this, Events.FrameEnd.class, Events.ResetStart.class);
 
             Button runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
             Button stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);

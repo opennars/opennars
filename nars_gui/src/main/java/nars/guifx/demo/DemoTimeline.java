@@ -1,21 +1,15 @@
 package nars.guifx.demo;
 
-import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import nars.Global;
 import nars.NAR;
-import nars.NARStream;
 import nars.guifx.AutoLabel;
 import nars.guifx.NARfx;
 import nars.guifx.graph2.NARGraph1;
-import nars.guifx.graph2.TermEdge;
-import nars.guifx.graph2.TermNode;
-import nars.meter.NARTrace;
 import nars.nar.experimental.DefaultAlann;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
-import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,9 +103,7 @@ public class DemoTimeline  {
 
             runLater(() -> {
 
-                NARStream s = new NARStream(n);
-
-                s.forEachDerived(task -> { time.addOccurrence((Task)task[0]); });
+                n.onEachDerived(task -> { time.addOccurrence((Task)task[0]); });
 
                 updateAll();
             });

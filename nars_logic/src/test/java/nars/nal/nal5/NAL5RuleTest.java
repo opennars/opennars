@@ -11,7 +11,7 @@ import nars.nal.DerivationRules;
 import nars.nal.LogicStage;
 import nars.nal.PremiseProcessor;
 import nars.nal.SimpleDeriver;
-import nars.nar.NewDefault;
+import nars.nar.experimental.Equalized;
 import nars.process.ConceptTaskTermLinkProcess;
 import nars.task.Task;
 import nars.task.filter.DerivationFilter;
@@ -39,7 +39,7 @@ public class NAL5RuleTest {
 
         SimpleDeriver sd = new SimpleDeriver(d);
 
-        NAR n = new NAR(new NewDefault());
+        NAR n = new NAR(new Equalized());
         /*n.input("<(&&, m, a, b) ==> c>.");
         n.input("<(&&, a, b) ==> c>.");*/
 
@@ -110,7 +110,7 @@ public class NAL5RuleTest {
         rules.fire(cp);
 
         assertEquals(
-            "[$0.80;0.50;0.24$ <m <-> n>. %1.00;0.45% {?: 1;2}]",
+            "[$1.00;0.33;0.24$ <m <-> n>. %1.00;0.45% {?: 1;2}]",
             cp.getDerived().toString()
         );
 

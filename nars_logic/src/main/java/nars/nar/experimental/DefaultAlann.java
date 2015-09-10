@@ -127,7 +127,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
         return indexIterator.next();
     };
 
-    final float[] fromNextp1 = new float[] { 0.05f, 0.95f };
+    final float[] fromNextp1 = new float[] { 0.2f, 0.8f };
     final Supplier<Concept>[] fromNextpC = new Supplier[] { fromInput, fromNext };
 
     final void restart(final Derivelet d) {

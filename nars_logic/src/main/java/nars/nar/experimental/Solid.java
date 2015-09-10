@@ -1,13 +1,11 @@
 package nars.nar.experimental;
 
-import com.gs.collections.impl.list.mutable.FastList;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Param;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
-import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
@@ -26,7 +24,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.data.random.XorShift1024StarRandom;
-import nars.util.sort.ArraySortedIndex;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -113,9 +110,11 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
         taskLinkBagSize = 32;
 
 
-        concepts = new CurveBag<>(getRandom(), activeConcepts, CurveBag.power6BagCurve,
-                new ArraySortedIndex(activeConcepts, new FastList(activeConcepts)/*.asSynchronized()*/)
-        );
+        concepts = new SynchronizedCurveBag<>(getRandom(), activeConcepts);
+
+        /*concepts = new CurveBag<>(getRandom(), activeConcepts, CurveBag.power6BagCurve,
+                new ArraySortedIndex(activeConcepts, new FastList(activeConcepts))
+        );*/
 
         reset(newMemory());
 
@@ -194,9 +193,14 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
             //if (currentQuality < minQuality) minQuality = currentQuality;
             //else if (currentQuality > maxQuality) maxQuality = currentQuality;
 
-            if (TaskProcess.run(memory, task) != null) {
-                t++;
-                if (mt != -1 && t >= mt) break;
+            try {
+                if (TaskProcess.run(memory, task) != null) {
+                    t++;
+                    if (mt != -1 && t >= mt) break;
+                }
+            }
+            catch (Exception e) {
+                System.err.println(e);
             }
         }
         temporary.clear();
@@ -323,7 +327,13 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 
         //synchronized(activator) {
         //if (budget.getPriority() >= (memory.param.newConceptThreshold).floatValue() ) {
+        try {
             return activator.conceptualize(termed, budget, true, memory.time(), concepts);
+        }
+        catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
         //}
         //return null;
         //}

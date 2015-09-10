@@ -1,8 +1,8 @@
 package nars.guifx.chart;
 
 import nars.Global;
+import nars.NAR;
 import nars.NARSeed;
-import nars.NARStream;
 import nars.meter.MemoryBudget;
 import nars.nar.experimental.DefaultAlann;
 import nars.narsese.NarseseParser;
@@ -71,7 +71,7 @@ public class SimpleNARBudgetDynamics {
 
 
 
-        Consumer<NARStream> execution = n -> {
+        Consumer<NAR> execution = n -> {
 
             //n.stdout();
 

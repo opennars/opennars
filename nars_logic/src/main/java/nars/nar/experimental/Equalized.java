@@ -14,7 +14,9 @@ import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.task.filter.DerivationFilter;
+import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
+import nars.task.filter.LimitDerivationPriority;
 import nars.term.Term;
 
 import java.util.Iterator;
@@ -30,6 +32,10 @@ import static nars.process.ConceptProcess.forEachPremise;
 public class Equalized extends NewDefault {
 
     public final Param param = this;
+
+    public Equalized() {
+        this(1024, 1, 3);
+    }
 
     public Equalized(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
@@ -158,9 +164,9 @@ public class Equalized extends NewDefault {
     @Override
     protected DerivationFilter[] getDerivationFilters() {
         return new DerivationFilter[]{
-                //new FilterBelowConfidence(0.01),
+                new FilterBelowConfidence(0.005),
                 new FilterDuplicateExistingBelief(),
-                //new LimitDerivationPriority()
+                new LimitDerivationPriority()
                 //param.getDefaultDerivationFilters().add(new BeRational());
         };
     }

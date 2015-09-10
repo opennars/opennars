@@ -90,7 +90,7 @@ public class Memory implements Serializable, AbstractMemory {
 
     @Deprecated transient public final EventEmitter<Class,Object[]> event;
     transient public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
-    transient public final Observed<Task> eventTaskRemoved = new Observed.DefaultObserved();
+    transient public final Observed<Task<?>> eventTaskRemoved = new Observed.DefaultObserved();
     transient public final Observed<ConceptProcess> eventConceptProcessed = new Observed.DefaultObserved();
 
     transient public final Observed<Concept> eventConceptActive = new Observed.DefaultObserved();
@@ -683,10 +683,12 @@ public class Memory implements Serializable, AbstractMemory {
     /* ---------- new task entries ---------- */
 
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
-    public void removed(final Task task, final String removalReason) {
+    public void removed(final Task task, String removalReason) {
 
-        if (removalReason!=null)
-            task.log(removalReason);
+        if (removalReason==null)
+            removalReason = "Unknown";
+
+        task.log(removalReason);
 
         if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
             task.log(Premise.getStack());

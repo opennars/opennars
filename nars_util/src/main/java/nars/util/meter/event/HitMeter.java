@@ -5,42 +5,53 @@
  */
 package nars.util.meter.event;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.util.meter.FunctionMeter;
+import org.apache.commons.lang3.mutable.MutableLong;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.io.Serializable;
 
 /**
  *
  * @author me
  */
-public class HitMeter extends FunctionMeter<Long> {
+@JsonSerialize(using = ToStringSerializer.class)
+public class HitMeter extends FunctionMeter<Long> implements Serializable {
     
-    boolean autoReset;
-    final AtomicLong hits = new AtomicLong();
+    private boolean autoReset;
+    public final MutableLong hits = new MutableLong();
     
     public HitMeter(String id, boolean autoReset) {
         super(id);
         this.autoReset = autoReset;
     }
-    
+
+    @Override
+    public String toString() {
+        return signalID(0) + "=" + hits.getValue();
+    }
+
     public HitMeter(String id) {
         this(id, true);
     }    
     
     public HitMeter reset() {
-        hits.set(0);
+        hits.setValue(0);
         return this;
     }
 
     public long hit() {
-        return hits.incrementAndGet();
+        hits.add(1);
+        return hits.getValue();
     }
+
     public long hit(int n) {
-        return hits.addAndGet(n);
+        hits.add(n); return hits.getValue();
     }
     
     public long count() {
-        return hits.get();
+        return hits.getValue();
     }
     
     @Override

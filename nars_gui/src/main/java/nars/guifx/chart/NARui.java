@@ -9,7 +9,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.VBox;
 import nars.NAR;
 import nars.NARSeed;
-import nars.NARStream;
 import nars.guifx.NARfx;
 import nars.util.meter.TemporalMetrics;
 import nars.util.meter.event.ObjectMeter;
@@ -22,29 +21,23 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.Double.MAX_VALUE;
 import static javafx.collections.FXCollections.observableArrayList;
 
 /**
  * Created by me on 8/12/15.
  */
-public class NARui extends NARStream {
+public class NARui extends NAR {
 
     final List<TemporalMetrics<Double>> metrics = new ArrayList();
     private static final int DEFAULT_HISTORY_SIZE = 2048;
 
-    public NARui(NAR n) {
-        super(n);
-
-
-    }
 
     public NARui(NARSeed s) {
-        this(new NAR(s));
+        super(s);
 
     }
 
-    public NARui then(Consumer<NARStream> e) {
+    public NARui then(Consumer<NAR> e) {
         e.accept(this);
         return this;
     }
@@ -77,7 +70,7 @@ public class NARui extends NARStream {
                 return this;
             }
         };
-        forEachFrame(() -> {
+        onEachFrame(() -> {
             eachFrame.eachFrame(mc, nar);
             meter.update(nar.time());
         });

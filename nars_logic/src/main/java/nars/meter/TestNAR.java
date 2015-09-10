@@ -13,10 +13,12 @@ import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.truth.DefaultTruth;
+import nars.util.meter.event.HitMeter;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -24,6 +26,7 @@ import java.util.List;
 */
 public class TestNAR extends NAR {
 
+    public final Map<Object, HitMeter> eventMeters;
     boolean showFail = true;
     boolean showSuccess = false;
     boolean showExplanations = false;
@@ -38,6 +41,7 @@ public class TestNAR extends NAR {
     private Exception error;
     final transient private boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
+    private int temporalTolerance = 0;
 
 
     public TestNAR(NARSeed b) {
@@ -46,6 +50,8 @@ public class TestNAR extends NAR {
         if (exitOnAllSuccess) {
             new EarlyExit(1);
         }
+
+        eventMeters = new CountIOEvents(this).eventMeters;
 
     }
 
@@ -125,7 +131,15 @@ public class TestNAR extends NAR {
 
         if (freqMin == -1) freqMin = freqMax;
 
-        TaskCondition tc = new TaskCondition(this, c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+        int tt = getTemporalTolerance();
+
+        cycleStart -= tt;
+        cycleEnd += tt;
+
+        TaskCondition tc = new TaskCondition(this, c,
+                cycleStart,
+                cycleEnd,
+                sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         if (ocRelative!= Stamp.ETERNAL) {
             /** occurence time measured relative to the beginning */
             tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, memory.duration());
@@ -137,6 +151,16 @@ public class TestNAR extends NAR {
             explanations.add(et);
         }
         return et;
+    }
+
+    /** padding to add to specified time limitations to allow correct answers;
+     *  default=0 having no effect  */
+    public int getTemporalTolerance() {
+        return temporalTolerance;
+    }
+
+    public void setTemporalTolerance(int temporalTolerance) {
+        this.temporalTolerance = temporalTolerance;
     }
 
     public Exception getError() {
@@ -181,10 +205,10 @@ public class TestNAR extends NAR {
         long now = time();
         return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
     }
-    public ExplainableTask mustBelieve(long cycleStart, long cycleStop, String term, float freq, float confidence) throws InvalidInputException {
-        long now = time();
-        return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);
-    }
+//    public ExplainableTask mustBelieve(long cycleStart, long cycleStop, String term, float freq, float confidence) throws InvalidInputException {
+//        long now = time();
+//        return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);
+//    }
     public ExplainableTask mustBelieve(long withinCycles, String term, float freq, float confidence) throws InvalidInputException {
         return mustOutput(withinCycles, term, '.', freq, confidence);
     }

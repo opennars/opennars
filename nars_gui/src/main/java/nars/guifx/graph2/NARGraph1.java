@@ -2,12 +2,10 @@ package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.animation.Timeline;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import nars.Global;
 import nars.NAR;
-import nars.NARStream;
 import nars.concept.Concept;
 import nars.guifx.NARfx;
 import nars.guifx.Spacegraph;
@@ -308,14 +306,14 @@ public class NARGraph1<V, E> extends Spacegraph {
         super();
 
 
-        new NARStream(this.nar = n)
+        n
                 //.stdout()
                 //.stdoutTrace()
 //                .input("<a --> b>. %1.00;0.7%", //$0.9;0.75;0.2$
 //                        "<b --> c>. %1.00;0.7%")
                 .onConceptActive(ifConceptsChanged)
                 .onConceptForget(ifConceptsChanged)
-                .forEachNthFrame(this::updateGraph, 1);
+                .onEachNthFrame(this::updateGraph, 1);
                 /*.forEachCycle(() -> {
                     double[] dd = new double[4];
                     nar.memory.getControl().conceptPriorityHistogram(dd);

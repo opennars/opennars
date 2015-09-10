@@ -246,6 +246,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     @Override
     public boolean condition(Class channel, Object signal) {
 
+        //consider ANS and OUT the same:
         if (channel == Events.Answer.class)
             channel = Events.OUT.class;
 

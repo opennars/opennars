@@ -13,7 +13,7 @@ import java.util.Arrays;
  */
 public class FilterDuplicateExistingBelief implements DerivationFilter {
 
-    public final static String DUPLICATE = "Duplicate";
+    public final static String DUPLICATE = "DuplicateExistingBelief";
 
 
 

@@ -24,10 +24,7 @@ import org.junit.runners.Parameterized;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -148,7 +145,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     }
 
-    public static long runScript(TestNAR nar, String path, int maxCycles) {
+    @Deprecated public static long runScript(TestNAR nar, String path, int maxCycles) {
 
         script = LibraryInput.getExample(path);
 
@@ -171,16 +168,19 @@ abstract public class AbstractNALTest extends TestCase {
 
     public static class Report implements Serializable {
 
-        protected final long time;
+        public final long time;
+        public final HitMeter[] eventMeters;
         protected boolean success = true;
         protected Object error = null;
         protected Task[] inputs;
-        protected ArrayList<OutputCondition> cond = new ArrayList();
+        protected List<OutputCondition> cond = Global.newArrayList();
         transient final int stackElements = 4;
 
-        public Report(long time, List<Task> inputs) {
-            this.time = time;
-            this.inputs = inputs.toArray(new Task[inputs.size()]);
+        public Report(TestNAR n) {
+            this.time = n.time();
+
+            this.inputs = n.inputs.toArray(new Task[n.inputs.size()]);
+            this.eventMeters = n.eventMeters.values().toArray(new HitMeter[0]);
         }
 
         public void setError(Exception e) {
@@ -211,7 +211,7 @@ abstract public class AbstractNALTest extends TestCase {
         assertTrue("No cycles elapsed", n.memory.timeSinceLastCycle() > 0);
 
 
-        Report r = new Report(n.time(), n.inputs);
+        Report r = new Report(n);
 
         r.setError(n.getError());
 
@@ -219,11 +219,13 @@ abstract public class AbstractNALTest extends TestCase {
             r.add(e);
         }
 
-        if (!r.isSuccess()) {
-            String s = JSONOutput.stringFromFieldsPretty(r);
-            assertTrue(s, false);
-        }
+        String s;
+        if (!r.isSuccess())
+            s = JSONOutput.stringFromFieldsPretty(r);
+        else
+            s = "";
 
+        assertTrue(s, r.isSuccess());
 
         n.reset();
     }

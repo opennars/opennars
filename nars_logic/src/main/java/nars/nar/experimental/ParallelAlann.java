@@ -13,7 +13,6 @@ import nars.io.out.TextOutput;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.meter.NARTrace;
 import nars.task.Sentence;
 import nars.term.Term;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
@@ -52,7 +51,7 @@ public class ParallelAlann extends AbstractAlann {
 
         NAR n = new NAR(new ParallelAlann(4, 2));
         TextOutput.out(n);
-        NARTrace.out(n);
+        //NARTrace.out(n);
 
         n.input("<x --> y>.\n" +
                 "<y --> z>.\n" +

@@ -28,8 +28,10 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
  * WARNING this Seed is not immutable yet because it extends Param,
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model *
+ *
+ * it's broken, use equalized
  */
-public class NewDefault extends Default {
+@Deprecated public class NewDefault extends Default {
 
     public NewDefault() {
         this(1024, 1, 3);

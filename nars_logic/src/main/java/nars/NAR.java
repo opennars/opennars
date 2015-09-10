@@ -1,12 +1,22 @@
 package nars;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
+import nars.event.MemoryReaction;
+import nars.event.NARReaction;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
+import nars.io.out.Output;
+import nars.io.out.TextOutput;
+import nars.io.qa.AnswerReaction;
+import nars.meter.EmotionMeter;
+import nars.meter.LogicMeter;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.OpReaction;
@@ -28,9 +38,15 @@ import nars.truth.Truth;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.LongPredicate;
+import java.util.function.Predicate;
 
 
 /**
@@ -131,8 +147,9 @@ public class NAR implements Runnable {
      * will remain attached but enabled plugins will have been deactivated and
      * reactivated, a signal for them to empty their state (if necessary).
      */
-    public void reset() {
+    public NAR reset() {
         memory.reset(control);
+        return this;
     }
 
     /**
@@ -444,10 +461,7 @@ public class NAR implements Runnable {
      * Will remain added until it closes or it is explicitly removed.
      */
     public Input input(final Input i) {
-        int n = i.inputAll(memory);
-        if (n == 0) {
-            throw new RuntimeException(i + " contained no parsed input");
-        }
+        i.inputAll(memory);
         return i;
     }
 
@@ -739,6 +753,347 @@ public class NAR implements Runnable {
         emit(Events.ERR.class, e);
     }
 
+    public final NAR nar = this;
+
+    private final Multimap<Set<Class>, Reaction> reactions = HashMultimap.create();
+    private List<Object> regs = new ArrayList();
+
+
+
+
+
+
+    public NAR answer(String question, Consumer<Task> recvSolution) {
+        //question punctuation optional
+        if (!question.endsWith("?")) question = question + "?";
+        Task qt = nar.task(question);
+        return answer(qt, recvSolution);
+    }
+
+    public NAR answer(Task question, Consumer<Task> recvSolution) {
+        new AnswerReaction(nar, question) {
+
+            @Override public void onSolution(Task belief) {
+                recvSolution.accept(belief);
+            }
+
+            @Override public void setActive(boolean b) {
+                super.setActive(b);
+                manage(this, b);
+            }
+
+        };
+        return this;
+    }
+
+    protected final void ensureNotRunning() {
+        if (nar.isRunning())
+            throw new RuntimeException("NAR is already running");
+    }
+
+//    public NAR loop(long periodMS) {
+//        ensureNotRunning();
+//
+//        nar.loop(periodMS);
+//
+//        return nar;
+//    }
+
+    /** blocks until finished */
+    public NAR run(int frames) {
+        ensureNotRunning();
+
+        nar.frame(frames);
+
+        return this;
+    }
+
+    public NAR fork(Consumer<NAR> clone) {
+        ensureNotRunning();
+        return this; //TODO
+    }
+    public NAR save(ObjectOutputStream clone) {
+        ensureNotRunning();
+        return this; //TODO
+    }
+    public NAR load(ObjectInputStream clone) {
+        ensureNotRunning();
+        return this; //TODO
+    }
+
+    public NAR input(String... ss) {
+        for (String s : ss) nar.input(s);
+        return this;
+    }
+
+//    public NAR input(Task... tt) {
+//        for (Task t : tt) nar.input(t);
+//        return this;
+//    }
+
+    public NAR inputAt(long time, String... tt) {
+        return at(t -> t == time, () -> input(tt) );
+    }
+
+    public NAR inputAt(LongPredicate timeCondition, Task... tt) {
+        return at(timeCondition, () -> input(tt) );
+    }
+
+    public NAR inputAt(long time, Task... tt) {
+        return at(t -> t == time, () -> input(tt) );
+    }
+
+    public NAR forEachConceptTask(boolean b, boolean q, boolean g, boolean _q,
+                                        int maxPerConcept,
+                                        Consumer<Task> recip) {
+        forEachConcept(c -> {
+            if (b && c.hasBeliefs())   c.getBeliefs().top(maxPerConcept, recip);
+            if (q && c.hasQuestions()) c.getQuestions().top(maxPerConcept, recip);
+            if (g && c.hasBeliefs())   c.getGoals().top(maxPerConcept, recip);
+            if (_q && c.hasQuests())   c.getQuests().top(maxPerConcept, recip);
+        });
+        return this;
+    }
+
+    public NAR forEachConcept(Consumer<Concept> recip) {
+        nar.memory.concepts.forEach(recip);
+        return this;
+    }
+
+    public NAR forEachConceptActive(Consumer<Concept> recip) {
+        nar.memory.getCycleProcess().forEachConcept(recip);
+        return this;
+    }
+
+    public NAR conceptIterator(Consumer<Iterator<Concept>> recip) {
+        recip.accept( nar.memory.concepts.iterator() );
+        return this;
+    }
+    public NAR conceptActiveIterator(Consumer<Iterator<Concept>> recip) {
+        recip.accept( nar.memory.getCycleProcess().iterator() );
+        return this;
+    }
+
+    //TODO iterate/query beliefs, etc
+
+    public NAR meterLogic(Consumer<LogicMeter> recip) {
+        recip.accept( nar.memory.logic );
+        return this;
+    }
+    public NAR meterEmotion(Consumer<EmotionMeter> recip) {
+        recip.accept( nar.memory.emotion );
+        return this;
+    }
+
+
+
+    public NAR resetEvery(long minPeriodOfCycles) {
+        onEachPeriod(minPeriodOfCycles, this::reset);
+        return this;
+    }
+
+    public NAR onEachPeriod(long minPeriodOfCycles, Runnable action) {
+        final long start = nar.time();
+        final long[] next = new long[1];
+        next[0] = start + minPeriodOfCycles;
+        forEachCycle(() -> {
+            long n = nar.time();
+            if (n >= next[0]) {
+                action.run();
+            }
+        });
+        return this;
+    }
+
+    public NAR resetIf(Predicate<NAR> resetCondition) {
+        forEachCycle(() -> {
+            if (resetCondition.test(nar)) reset();
+        });
+        return this;
+    }
+
+    public NAR stopIf(BooleanSupplier stopCondition) {
+        forEachCycle(() -> {
+            if (stopCondition.getAsBoolean()) stop();
+        });
+        return this;
+    }
+
+
+    public NAR at(LongPredicate timeCondition, Runnable action) {
+        forEachCycle(() -> {
+            if (timeCondition.test(nar.time())) {
+                action.run();
+            }
+        });
+        return this;
+    }
+
+
+
+
+    public NAR forEachCycle(Runnable receiver) {
+        regs.add(nar.memory.eventCycleEnd.on( m -> {
+            receiver.run();
+        }));
+        return this;
+    }
+
+    public NAR onEachFrame(Runnable receiver) {
+        return on(Events.FrameEnd.class, receiver);
+    }
+
+    public NAR onEachNthFrame(Runnable receiver, int frames) {
+        return onEachFrame(() -> {
+            if (nar.time() % frames == 0)
+                receiver.run();
+        });
+    }
+
+    public NAR onEachDerived(Consumer<Object[] /* TODO: Task*/> receiver) {
+        NARReaction r = new ConsumedStreamNARReaction(receiver, Events.OUT.class);
+        return this;
+    }
+
+    public <X> NAR on(Class signal, Consumer<X> receiver) {
+        NARReaction r = new ConsumedStreamNARReaction(receiver, signal);
+        return this;
+    }
+
+    public NAR on(Runnable receiver, Class... signal) {
+        NARReaction r = new RunnableStreamNARReaction(receiver, signal);
+        return this;
+    }
+
+    public NAR on(Class signal, Runnable receiver) {
+        NARReaction r = new RunnableStreamNARReaction(receiver, signal);
+        return this;
+    }
+
+    public NAR stdout() {
+        try {
+            forEachEvent(System.out, Output.DefaultOutputEvents);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+    public NAR stdoutTrace() {
+        try {
+            forEachEvent(System.out, MemoryReaction.memoryEvents);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    public NAR forEachEvent(Appendable o, Class... signal) throws Exception {
+        NARReaction r = new StreamNARReaction(signal) {
+            @Override public void event(Class event, Object... args) {
+                try {
+                    TextOutput.append(o, event, args, "\n", true, true, 0, nar);
+
+                    if (o instanceof OutputStream)
+                        ((OutputStream)o).flush();
+
+                } catch (IOException e) {
+                    nar.emit(e);
+                }
+            }
+        };
+        return this;
+    }
+
+    public NAR output(ObjectOutputStream o, Class... signal) throws Exception {
+
+        NARReaction r = new StreamNARReaction(signal) {
+
+            @Override
+            public void event(Class event, Object... args) {
+                if (args instanceof Serializable) {
+                    //..
+                }
+            }
+        };
+
+        return this;
+    }
+
+    public NAR spawnThread(long periodMS, Consumer<Thread> t) {
+        ensureNotRunning();
+
+        t.accept( new Thread(() -> {
+            loop(periodMS);
+        }) );
+
+        return this;
+    }
+
+    public NAR onConceptActive(final Consumer<Concept> c) {
+        regs.add( nar.memory.eventConceptActive.on(c) );
+        return this;
+    }
+
+    public NAR onConceptForget(final Consumer<Concept> c) {
+        regs.add( nar.memory.eventConceptForget.on(c) );
+        return this;
+    }
+
+    abstract private class StreamNARReaction extends NARReaction {
+
+        public StreamNARReaction(Class... signal) {
+            super(nar, signal);
+        }
+
+        @Override public void setActive(boolean b) {
+            super.setActive(b);
+            manage(this, b);
+        }
+    }
+
+    protected void manage(NARReaction r, boolean b) {
+        if (!b) {
+            reactions.remove(Sets.newHashSet(r.getEvents()), r);
+        } else {
+            reactions.put(Sets.newHashSet(r.getEvents()), r);
+        }
+    }
+
+    private class ConsumedStreamNARReaction<X> extends StreamNARReaction {
+
+        private final Consumer<X> receiver;
+
+        public ConsumedStreamNARReaction(Consumer<X> receiver, Class... signal) {
+            super(signal);
+            this.receiver = receiver;
+        }
+
+        @Override
+        public void event(Class event, Object... args) {
+            receiver.accept((X) args);
+        }
+
+    }
+
+    /** ignores any event arguments and just invokes a Runnable when something
+     * is received (ex: cycle)
+     * @param <X>
+     */
+    private class RunnableStreamNARReaction<X> extends StreamNARReaction {
+
+        private final Runnable invoked;
+
+        public RunnableStreamNARReaction(Runnable invoked, Class... signal) {
+            super(signal);
+            this.invoked = invoked;
+        }
+
+        @Override
+        public void event(Class event, Object... args) {
+            invoked.run();
+        }
+
+    }
 
 
 

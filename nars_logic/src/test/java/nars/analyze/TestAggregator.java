@@ -1,14 +1,17 @@
 package nars.analyze;
 
 import nars.NAR;
-import nars.NARStream;
 import nars.io.out.TextOutput;
+import nars.meter.MemoryBudget;
 import nars.nar.experimental.DefaultAlann;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunListener;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by me on 9/10/15.
@@ -18,25 +21,36 @@ public class TestAggregator extends RunListener {
 
     private final NAR nar;
 
+    String testName = null;
+    Set<Description> success = new HashSet();
+
     public void testRunStarted(Description description) throws Exception {
+        testName = "nartest" + System.currentTimeMillis();
     }
 
     public void testRunFinished(Result result) throws Exception {
-
+        for (Description d : success) {
+            describe(d, true);
+        }
     }
 
-    public void testStarted(Description description) throws Exception {
+    public void testStarted(Description d) throws Exception {
+
+        String si = "<" + getDescriptionTerm(d) + " --> " + testName + ">.";
+        nar.input(si);
     }
 
 
     public void testFinished(Description d) throws Exception {
 
-        String si = "<" + getDescriptionTerm(d) + " --> [ok]>.";
-        nar.input(si);
+        success.add(d);
+
+        //System.err.println("finished: " + d.getAnnotations());
 
         //System.out.println(failure);
         //System.out.println(JSON.stringFrom(failure));
     }
+
     public String getDescriptionTerm(Description d) {
         String[] meth = d.getMethodName().split("[\\[\\]]");
         String m = String.join(",", meth);
@@ -45,11 +59,22 @@ public class TestAggregator extends RunListener {
                 + "," + m + "}";
     }
 
+    protected void describe(Description d, boolean success) {
+
+
+        String si = "<" + getDescriptionTerm(d) + " --> [" +
+                (success ? "ok" : "fail") + "]>.";
+
+        nar.input(si);
+    }
+
     public void testFailure(Failure failure) throws Exception {
+
         Description d = failure.getDescription();
 
-        String si = "<" + getDescriptionTerm(d) + " --> [fail]>.";
-        nar.input(si);
+        success.remove(d);
+
+        describe(d, false);
 
         //System.out.println(failure);
         //System.out.println(JSON.stringFrom(failure));
@@ -66,6 +91,7 @@ public class TestAggregator extends RunListener {
         this.nar = nar;
 
         JUnitCore core = new JUnitCore();
+
         core.addListener(this);
         for (String c : classnames) {
             try {
@@ -77,26 +103,36 @@ public class TestAggregator extends RunListener {
 
     }
     public static void main(String args[])  {
-        DefaultAlann da = new DefaultAlann(32);
+        DefaultAlann da = new DefaultAlann(128);
         da.param.realTime();
         NAR nar = new NAR(da);
 
-        //TextOutput.out(nar);
+        //nar.input("<?x --> [fail]>?");
+        //nar.input("<?x --> [ok]>?");
+        nar.input("<ok <-> fail>. %0%");
+        nar.input("<<#x --> [fail]> =/> fix(#x)>.");
 
-        nar.input("<{nal1,nal2,nal3,nal4} --> nal>.");
-        nar.input("<nars --> [nal]>.");
+
+//        nar.input("<{nal1,nal2,nal3,nal4} --> nal>.");
+//        nar.input("<nars --> [nal]>.");
 
         new Thread( () -> {
             new TestAggregator(nar, "nars.nal.nal1.NAL1Test");
         }).start();
+        new Thread( () -> {
+            new TestAggregator(nar, "nars.nal.nal2.NAL2Test");
+        }).start();
 
+//        new NARStream(nar).forEachFrame(() -> {
+//            //System.out.println(new MemoryBudget(nar));
+//        });
 
-        new NARStream(nar).forEachFrame(() -> {
-            //System.out.println(new MemoryBudget(nar));
-        });
+        TextOutput.out(nar).setOutputPriorityMin(0.5f);
 
-        TextOutput.out(nar).setOutputPriorityMin(0.7f);
-        nar.loop(3);
+        for (int i = 0; i < 100; i++) {
+            nar.frame(100);
+            System.out.println(new MemoryBudget(nar));
+        }
 
 
     }

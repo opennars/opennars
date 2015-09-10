@@ -66,7 +66,7 @@ public class ImageInt extends Image {
         
     
     /**
-     * Try to make a new ImageExt. Called by StringParser.
+     * Try to make a new ImageInt. Called by StringParser.
      * @return the Term generated from the arguments
      * @param argList The list of term
      */

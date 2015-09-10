@@ -190,7 +190,8 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     @Override
     final public void setCyclic(boolean cyclic) {
         if (Global.OVERLAP_ALLOW) cyclic = false;
-        this.cyclic = cyclic;
+        else
+            this.cyclic = cyclic;
         //TODO decide if to include cyclic ni equality and hash, then invalidate() here
     }
 

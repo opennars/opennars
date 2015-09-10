@@ -3,7 +3,7 @@ package nars.guifx;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import nars.Global;
-import nars.NARStream;
+import nars.NAR;
 import nars.guifx.util.DebouncedRunnable;
 import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
 
@@ -28,18 +28,16 @@ abstract public class NARCollectionPane<R> extends VBox implements DebouncedRunn
 
     final AtomicBoolean canQueue = new AtomicBoolean(true);
     final AtomicLong lastInvocation = new AtomicLong(0);
-    private final NARStream narstream;
     private List<Node> toDisplay = Global.newArrayList();
 
     final Function<R, Node> itemBuilder;
 
-    public NARCollectionPane(NARStream narstream, Function<R, Node> itemBuilder) {
+    public NARCollectionPane(NAR narstream, Function<R, Node> itemBuilder) {
         super();
 
-        this.narstream = narstream;
         this.itemBuilder = itemBuilder;
 
-        narstream.forEachFrame(this);
+        narstream.onEachFrame(this);
 
         run();
     }

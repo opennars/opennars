@@ -53,8 +53,5 @@ abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
 
     public ConceptBuilder getConceptBuilder();
 
-    default public NARStream stream() {
-        return new NARStream(new NAR(this));
-    }
 
 }

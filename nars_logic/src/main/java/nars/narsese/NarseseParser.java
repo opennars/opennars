@@ -959,10 +959,14 @@ public class NarseseParser extends BaseParser<Object>  {
 //    }
 
 
-    public void tasks(String input, Collection<Task> c, AbstractMemory m) {
+    /** returns number of tasks created */
+    public int tasks(String input, Collection<Task> c, AbstractMemory m) {
+        final int i[] = new int[1];
         tasks(input, t -> {
             c.add(t);
+            i[0]++;
         }, m);
+        return i[0];
     }
 
     /**

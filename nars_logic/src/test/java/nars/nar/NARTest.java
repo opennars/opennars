@@ -2,7 +2,8 @@ package nars.nar;
 
 import com.google.common.collect.Iterators;
 import nars.Events;
-import nars.NARStream;
+import nars.NAR;
+import nars.nar.experimental.Equalized;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 
@@ -17,16 +18,16 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 8/7/15.
  */
-public class NARStreamTest {
+public class NARTest {
 
     @Test
-    public void testNARStreamBasics() throws Exception {
+    public void testFluentBasics() throws Exception {
         int frames = 32;
         AtomicInteger cycled = new AtomicInteger(0),
             conceptsIterated = new AtomicInteger(0);
         StringWriter sw = new StringWriter( );
 
-        new Default().stream()
+        new NAR(new Equalized())
                 .input("<a --> b>.", "<b --> c>.")
                 .stopIf( () -> false )
                 .forEachCycle( cycled::incrementAndGet )
@@ -63,7 +64,7 @@ public class NARStreamTest {
                 "<a --> b>" /* unknown solution to be derived */ :
                 "<b --> a>" /* existing solution, to test finding existing solutions */;
 
-        new NARStream(new Default().level(2))
+        new NAR(new Default().level(2))
                 .stdout()
                 .input("<a <-> b>. %1.0;0.5%",
                         "<b --> a>. %1.0;0.5%")

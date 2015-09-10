@@ -3,10 +3,8 @@ package nars.nal.nal2;
 
 import nars.NARSeed;
 import nars.nal.JavaNALTest;
-import nars.nar.Classic;
-import nars.nar.Default;
-import nars.nar.DefaultMicro;
-import nars.nar.NewDefault;
+import nars.nar.experimental.DefaultAlann;
+import nars.nar.experimental.Equalized;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -21,18 +19,19 @@ public class NAL2Test extends JavaNALTest {
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-                {new Default()}, //NAL8 + NAL9 didnt solve it
-                {new Default().level(3)}, //needs 3 for sets
-                {new Default().setInternalExperience(null)},
+                //{new Default()}, //NAL8 + NAL9 didnt solve it
+                //{new Default().level(3)}, //needs 3 for sets
+                //{new Default().setInternalExperience(null)},
 
-              //  {new NewDefault()},
-                {new NewDefault().setInternalExperience(null)},
-                {new NewDefault().setInternalExperience(null).level(4)},
 
-                {new DefaultMicro() },
-                {new Classic()}
+                {new Equalized().setInternalExperience(null)},
+                {new Equalized().setInternalExperience(null).level(4)},
 
-                //{new Neuromorphic(4)},
+                {new DefaultAlann(64)}
+
+                //{new DefaultMicro() },
+                //{new Classic()}
+
         });
     }
 

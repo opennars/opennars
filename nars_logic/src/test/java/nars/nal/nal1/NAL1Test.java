@@ -2,14 +2,13 @@ package nars.nal.nal1;
 
 import nars.Global;
 import nars.NARSeed;
+import nars.meter.experiment.DeductiveChainTest;
 import nars.nal.JavaNALTest;
-import nars.nar.Classic;
-import nars.nar.Default;
-import nars.nar.DefaultMicro;
-import nars.nar.NewDefault;
 import nars.nar.experimental.DefaultAlann;
+import nars.nar.experimental.Equalized;
 import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -25,28 +24,31 @@ public class NAL1Test extends JavaNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 //{new Default()},
-                {new Default().setInternalExperience(null)},
+//                {new Default().setInternalExperience(null)},
 
                 //{new NewDefault()},
-                {new NewDefault().setInternalExperience(null)},
-                {new NewDefault().setInternalExperience(null).level(2)},
+                {new Equalized().setInternalExperience(null).level(1)},
+                {new Equalized().setInternalExperience(null).level(2)},
+                {new Equalized().setInternalExperience(null)},
 
-                {new Default().level(2)}, //why does this need level 2 for some tests?
-                {new DefaultMicro().level(2) },
-                {new Classic()},
+//                {new Default().level(2)}, //why does this need level 2 for some tests?
+//                {new DefaultMicro().level(2) },
+//                {new Classic()},
 
-                {new DefaultAlann(64)}
+                {new DefaultAlann(48)},
 
-//                {new Solid(1, 64, 1, 4, 1, 3)},
-//                {new Solid(1, 64, 1, 4, 1, 3).level(2)},
-                //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
+                //{new Solid(1, 48, 1, 2, 1, 3).level(1)},
+                //{new Solid(1, 64, 1, 2, 1, 3).level(2)},
         });
     }
 
 
+    @Before
+    public void setup() {
+        n.setTemporalTolerance(50 /* cycles */);
+    }
 
     @Test public void revision() throws InvalidInputException {
-
 
         final String birdIsATypeOfSwimmer = "<bird --> swimmer>";
         n.believe(birdIsATypeOfSwimmer)
@@ -163,9 +165,21 @@ public class NAL1Test extends JavaNALTest {
     }
 
 
+
+    public void multistepN(int length)  {
+        new DeductiveChainTest(length).apply(n, length*200);
+        n.run();
+    }
+
+    @Test public void multistep2() { multistepN(2);     }
+    @Test public void multistep3() { multistepN(3);     }
+    @Test public void multistep4() { multistepN(4);     }
+
     @Test
     public void multistep() throws InvalidInputException {
-        long time = build instanceof Solid ? 150 : 500;
+        long time = build instanceof Solid ? 150 : 25;
+
+        //TextOutput.out(n);
 
         //we know also 73% is the theoretical maximum it can reach
         if (n.nal() <= 2)
@@ -174,7 +188,6 @@ public class NAL1Test extends JavaNALTest {
             //originally checked for 0.25% exact confidence
             n.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
 
-        //TextOutput.out(nar);
         n.believe("<a --> b>", 1.0f, 0.9f);
         n.believe("<b --> c>", 1.0f, 0.9f);
         n.believe("<c --> d>", 1.0f, 0.9f);

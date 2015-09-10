@@ -36,9 +36,15 @@ public class TextInput extends TaskQueue {
         process(n, input);
     }
 
-    protected void process(final NAR n, final String input) {
-        n.narsese.tasks(process(input), (Collection<Task>)this, n.memory
-        );
+    protected int process(final NAR nar, final String input) {
+        final int n = nar.narsese.tasks(process(input),
+                (Collection<Task>)this, nar.memory);
+
+        if (n == 0) {
+            throw new RuntimeException("no parsed tasks: \'" + input + '\"');
+        }
+
+        return n;
     }
 
     /** can be overridden in subclasses to preprocess addInput */
