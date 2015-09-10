@@ -56,7 +56,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     Memory getMemory();
 
 
-    TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);
+
 
     boolean linkTerms(Budget budgetRef, boolean updateTLinks);
 

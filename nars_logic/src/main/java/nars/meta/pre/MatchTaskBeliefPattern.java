@@ -16,6 +16,7 @@ public class MatchTaskBeliefPattern extends PreCondition {
     private final boolean allowNullBelief;
     private final String id;
 
+
     public MatchTaskBeliefPattern(Term taskPattern, Term beliefPattern, TaskRule rule) {
 
         this.pattern = new PairMatchingProduct(taskPattern, beliefPattern);
@@ -25,13 +26,12 @@ public class MatchTaskBeliefPattern extends PreCondition {
             // if nothing else in the rule involves this term
             // which will be a singular VAR_PATTERN variable
             // then allow null
-            if (beliefPattern.op()!= Op.VAR_PATTERN)
+            if (beliefPattern.op() != Op.VAR_PATTERN)
                 throw new RuntimeException("not what was expected");
 
             allowNullBelief = (rule.countOccurrences(pattern) == 1);
 
-        }
-        else {
+        } else {
             allowNullBelief = false;
         }
 
@@ -42,18 +42,19 @@ public class MatchTaskBeliefPattern extends PreCondition {
         this.id = getClass().getSimpleName() + "[" + pattern.toStringCompact() + "]";
     }
 
+    //TODO this caching is not thread-safe yet
     @Override
     public final boolean test(final RuleMatch m) {
 
 //        if (!allowNullBelief && m.premise.getBelief() == null)
 //            return false;
 
-        PairMatchingProduct p = m.taskBelief;
-        if (!m.taskBelief.substitutesMayExist(pattern)) {
+        final PairMatchingProduct tb = m.taskBelief;
+        if (!tb.substitutesMayExist(pattern)) {
             return false;
         }
 
-        return subst(m, p);
+        return subst(m, tb);
     }
 
     final protected boolean subst(final RuleMatch m, final PairMatchingProduct t) {
@@ -64,7 +65,6 @@ public class MatchTaskBeliefPattern extends PreCondition {
     public String toString() {
         return id;
     }
-
 
 
     @Override

@@ -36,11 +36,11 @@ public abstract class Param extends Container implements Serializable {
     
 
     /** converts durations to cycles */
-    public final float cycles(AtomicDouble durations) {
-        return cycles(durations.floatValue());
+    public final float durationToCycles(AtomicDouble durations) {
+        return durationToCycles(durations.floatValue());
     }
 
-    public final float cycles(float durations) {
+    public final float durationToCycles(float durations) {
         return duration.floatValue() * durations;
     }
 

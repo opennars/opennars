@@ -3,10 +3,7 @@ package nars.term.transform;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal4.Image;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
-import nars.term.Variables;
+import nars.term.*;
 
 import java.util.Map;
 import java.util.Random;
@@ -60,8 +57,6 @@ public class FindSubst {
      */
     public boolean next(Term term1, Term term2) {
 
-
-
         final Op type = this.type;
 
         do {
@@ -110,6 +105,9 @@ public class FindSubst {
             return termsEqual;
 
         } while (true);
+
+
+
 
         //throw new RuntimeException("substitution escape");
     }
@@ -165,13 +163,13 @@ public class FindSubst {
             }
         }
 
-        return permute(cTerm2, cTerm1.term);
+        return matchAll(cTerm2, cTerm1.term);
     }
 
     boolean permuteN(final Compound cTerm1, final Compound cTerm2) {
         Term[] list = cTerm1.cloneTerms();
         Compound.shuffle(list, random);
-        return permute(cTerm2, list);
+        return matchAll(cTerm2, list);
     }
 
 
@@ -186,7 +184,7 @@ public class FindSubst {
 
     /** elimination */
     private final void put2To1(final Term term1, final Variable term2Var) {
-        if (term2Var instanceof Variables.CommonVariable) {
+        if (term2Var instanceof CommonVariable) {
             map1.put(term2Var, term1);
         }
         map2.put(term2Var, term1);
@@ -195,7 +193,7 @@ public class FindSubst {
     /** elimination */
     private final void put1To2(final Term term2, final Variable term1Var) {
         map1.put(term1Var, term2);
-        if (term1Var instanceof Variables.CommonVariable) {
+        if (term1Var instanceof CommonVariable) {
             map2.put(term1Var, term2);
         }
     }
@@ -209,7 +207,7 @@ public class FindSubst {
      * instead of a new common variable.
      * */
     protected void putCommon(Variable a, Variable b) {
-        Variable commonVar = Variables.CommonVariable.make(a, b);
+        Variable commonVar = CommonVariable.make(a, b);
         map1.put(a, commonVar);
         map2.put(b, commonVar);
     }
@@ -232,7 +230,7 @@ public class FindSubst {
                 case 4: list[0] = c; list[1] = a; list[2] = b; break;
                 case 5: list[0] = c; list[1] = b; list[2] = a; break;
             }
-            solved = permute(cTerm2, list);
+            solved = matchAll(cTerm2, list);
             order = (order + 1) % 6;
             tries++;
         } while (tries < maxTries && !solved);
@@ -256,7 +254,7 @@ public class FindSubst {
                 list[1] = cTerm1_0;
             }
             order = !order;
-            solved = permute(cTerm2, list);
+            solved = matchAll(cTerm2, list);
             tries++;
         } while (tries < 2 && !solved);
 
@@ -271,11 +269,12 @@ public class FindSubst {
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    final protected boolean permute(final Compound x, final Term[] t) {
+    final protected boolean matchAll(final Compound x, final Term[] t) {
         final Term X[] = x.term;
         final int tlen = t.length;
         for (int i = 0; i < tlen; i++) {
-            if (!next(t[i], X[i])) {
+            final boolean r = next(t[i], X[i]);
+            if (!r) {
                 return false;
             }
         }

@@ -195,9 +195,8 @@ public class RuleMatch extends FindSubst {
         return false;
     }
 
-    final Function<Term,Term> resolver = k -> {
-        return k.substituted(map1);
-    };
+    final Function<Term,Term> resolver = k ->
+        k!=null ? k.substituted(map1) : null;
 
     public Term resolveTest(final Term t) {
         Term r = resolver.apply(t);
@@ -212,21 +211,17 @@ public class RuleMatch extends FindSubst {
     }
 
     /** provides the cached result if it exists, otherwise computes it and adds to cache */
-    public Term resolve(final Term t) {
-        if (t == null) return null;
-
+    public final Term resolve(final Term t) {
         return resolutions.computeIfAbsent(t, resolver);
     }
 
 
-
-
     public final void run(final List<TaskRule> u) {
 
-        for (int i = 0; i < u.size(); i++) {
-            final TaskRule uu = u.get(i);
-            uu.run(this);
-        }
+        final int size = u.size();
+        for (int i = 0; i < size; i++)
+            u.get(i).run(this);
+
     }
 
 }

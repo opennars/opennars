@@ -6,7 +6,6 @@ import nars.NARSeed;
 import nars.Video;
 import nars.clock.SimulatedClock;
 import nars.event.CycleReaction;
-import nars.nar.experimental.DefaultAlann;
 import nars.nar.experimental.Equalized;
 import nars.rover.RoverWorld;
 import nars.rover.Sim;
@@ -31,11 +30,13 @@ public class SomeRovers {
 
     public static NARSeed newDefault(int threads) {
 
-        int cycPerFrame = 4;
+        int cycPerFrame = 5;
 
         //Alann d = new ParallelAlann(64, threads);
-        DefaultAlann d = new DefaultAlann(64);
-        //Equalized d = new Equalized(1000, 32, 4);
+        //DefaultAlann d = new DefaultAlann(32);
+        //d.tlinkToConceptExchangeRatio = 1f;
+
+        Equalized d = new Equalized(1000, 32, 4);
 
         //d.param.conceptActivationFactor.set(0.25f);
         //d.param.inputsMaxPerCycle.set(4);
@@ -61,12 +62,14 @@ public class SomeRovers {
 //
 //        };
         //d.setInternalExperience(null);
-        d.param.setClock(clock);
+        //d.param.setClock(clock);
+        d.setClock(clock);
 
         d.param.conceptTaskTermProcessPerCycle.set(4);
 
 
-        d.param.setCyclesPerFrame(cycPerFrame);
+        //d.param.setCyclesPerFrame(cycPerFrame);
+        d.setCyclesPerFrame(cycPerFrame);
         d.param.duration.set(cycPerFrame);
         d.param.conceptBeliefsMax.set(16);
         d.param.conceptGoalsMax.set(8);

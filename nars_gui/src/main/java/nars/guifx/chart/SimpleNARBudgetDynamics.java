@@ -1,10 +1,10 @@
 package nars.guifx.chart;
 
 import nars.Global;
+import nars.NARSeed;
 import nars.NARStream;
 import nars.meter.MemoryBudget;
-import nars.nar.Default;
-import nars.nar.experimental.Equalized;
+import nars.nar.experimental.DefaultAlann;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
@@ -37,19 +37,20 @@ public class SimpleNARBudgetDynamics {
 
 
         int preCycles = 0;
-        int cycles = 1230;
+        int cycles = 256;
 
 
         float pri = 0.5f;
-        float dur = 0.5f;
-        float qua = 0.5f;
+        float dur = 0.8f;
+        float qua = 0.8f;
 
 
         //Default d = new Default(1024, 1, 3).setInternalExperience(null);
-        Default d = new Equalized(1024, 1, 3).setInternalExperience(null);
+        //Default d = new Equalized(1024, 1, 3).setInternalExperience(null);
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
-        //NARSeed d = new DefaultAlann(16);
+        NARSeed d = new DefaultAlann(64);
+
 
         //d.getParam().conceptForgetDurations.set(1);
         //d.getParam().termLinkForgetDurations.set(1);
@@ -115,14 +116,14 @@ public class SimpleNARBudgetDynamics {
                     if (numConcepts == 0) numConcepts = 1;
 
                     metrics
-                        .set("a pri", nar.memory.conceptPriority(term("a"), -0.25f))
-                        .set("b pri", nar.memory.conceptPriority(term("b"), -0.25f))
-                        .set("c pri", nar.memory.conceptPriority(term("c"), -0.25f))
-                        .set("<a-->b> pri", nar.memory.conceptPriority(term("<a-->b>"), -0.25f))
+                        .set("a pri", nar.memory.conceptPriority(term("a"), 0f))
+                        .set("b pri", nar.memory.conceptPriority(term("b"), 0f))
+                        .set("c pri", nar.memory.conceptPriority(term("c"), 0f))
+                        .set("<a-->b> pri", nar.memory.conceptPriority(term("<a-->b>"), 0f))
                         //.set("<b-->a> pri", nar.memory.conceptPriority(term("<b-->a>")))
-                        .set("<b-->c> pri", nar.memory.conceptPriority(term("<b-->c>"), -0.25f))
-                        .set("<a<->b> pri", nar.memory.conceptPriority(term("<a<->b>"), -0.25f))
-                        .set("<a<->c> pri", nar.memory.conceptPriority(term("<a<->c>"), -0.25f))
+                        .set("<b-->c> pri", nar.memory.conceptPriority(term("<b-->c>"), 0f))
+                        .set("<a<->b> pri", nar.memory.conceptPriority(term("<a<->b>"), 0f))
+                        .set("<a<->c> pri", nar.memory.conceptPriority(term("<a<->c>"), 0f))
                         .set("mean(concept pri)", conPriSum / numConcepts) // .getActivePriorityPerConcept(true, false, false)
                         ;
                 })

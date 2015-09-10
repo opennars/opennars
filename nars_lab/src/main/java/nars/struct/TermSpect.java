@@ -221,10 +221,7 @@ public class TermSpect extends TermCept implements Term, Concept {
         return null;
     }
 
-    @Override
-    public TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder) {
-        return null;
-    }
+
 
     @Override
     public boolean linkTerms(Budget budgetRef, boolean b) {

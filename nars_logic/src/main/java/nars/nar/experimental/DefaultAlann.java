@@ -60,7 +60,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
     @Override
     public void init(NAR nar) {
         super.init(nar);
-        defaultTTL = nar.memory.duration() * 8;
+        defaultTTL = nar.memory.duration() * 3;
         this.context = new MyDeriveletContext(nar);
     }
 
@@ -127,11 +127,14 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
         return indexIterator.next();
     };
 
+    final float[] fromNextp1 = new float[] { 0.05f, 0.95f };
+    final Supplier<Concept>[] fromNextpC = new Supplier[] { fromInput, fromNext };
+
     final void restart(final Derivelet d) {
 
-        Supplier<Concept> source = runProbability(getRandom(),
-                new float[] { 0.1f, 0.6f },
-                new Supplier[] { fromInput, fromNext }
+        Supplier<Concept> source = runProbability(rng,
+                fromNextp1,
+                fromNextpC
         );
         Concept next = source.get();
 

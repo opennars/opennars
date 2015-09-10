@@ -44,13 +44,11 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
     abstract public long time();
 
-    @Override public Budget updateItem(V v, Budget result) {
+    @Override public Budget updateItem(final V v, final Budget result) {
 
-
-        nextActivation.mulPriority(getActivationFactor());
         result
                 .forget(time(), getForgetCycles(), 0)
-                .accumulate(nextActivation);
+                .accumulate(nextActivation, getActivationFactor());
 
         /** even if budget is unchanged, we need to set the last forget time */
         v.getBudget().setLastForgetTime(result.getLastForgetTime());

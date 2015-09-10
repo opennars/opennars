@@ -23,7 +23,6 @@ package nars.gui;
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
 import nars.Video;
-import nars.cycle.experimental.AntCore;
 import nars.nar.Default.CommandLineNARBuilder;
 
 import javax.management.MBeanServer;
@@ -211,7 +210,7 @@ public class NARSwing extends NARControlPanel {
 
         @Override
         public int getNumConcepts() {
-            return ((AntCore) nar.memory.getCycleProcess()).concepts.size();
+            return nar.memory.concepts.size();
         }
         
     }

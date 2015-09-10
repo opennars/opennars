@@ -56,25 +56,23 @@ public class PairMatchingProduct extends ProductN {
         if (impossibleStructure(pattern.structure()))
             return false;
 
-        if (volume() < pattern.volume())
+        /*if (volume() < pattern.volume())
+            return false;*/
+
+        if (volA < pattern.volA)
             return false;
 
-        return substitutesMayExistPart2(pattern);
-    }
+        if (volB < pattern.volB)
+            return false;
 
-    /** separated into its own method to assist inlining */
-    protected final boolean substitutesMayExistPart2(final PairMatchingProduct pattern) {
         final Term c = term[0];
         if (c.impossibleStructure(pattern.structureA)) return false;
 
         final Term d = term[1];
         if (d.impossibleStructure(pattern.structureB)) return false;
-        //if (volA < pattern.volA) return false;
-        //if (volB < pattern.volB) return false;
 
         return true;
     }
-
 
 
 //    @Override

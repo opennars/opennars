@@ -74,7 +74,7 @@ public class ParallelAlann extends AbstractAlann {
                 new SynchronizedCurveBag<>(rng, /*termlinkKeyNodes,*/ param.getConceptTermLinks());
         termLinks.mergeAverage();
 
-        return newConcept(t, b, taskLinks, termLinks, m);
+        return newConcept(t, b, taskLinks, termLinks);
     }
 
     public class DeriveletsThread extends DeriveletContext implements Runnable {

@@ -141,37 +141,7 @@ public class Variables {
 //    }
 
 
-    public static class CommonVariable extends Variable {
-
-        public static CommonVariable make(Term v1, Term v2) {
-            //TODO use more efficient string construction
-            byte[] bv1 = v1.bytes();
-            byte[] bv2 = v2.bytes();
-
-            //lexical ordering: swap
-            if (ByteArrayEquivalence.INSTANCE.compare(bv1, bv2) > 0) {
-                byte[] t = bv1;
-                bv1 = bv2;
-                bv2 = t;
-            }
-
-            int len = bv1.length + bv2.length + 1;
-            byte[] c = new byte[len];
-            System.arraycopy(bv1, 0, c, 0, bv1.length);
-            System.arraycopy(bv2, 0, c, bv1.length, bv2.length);
-
-            c[c.length-1] = '$';
-            return new CommonVariable(c);
-        }
-
-        CommonVariable(byte[] b) {
-            super(b, true /* scoped, so that CommonVariables with equal names can be considered equal */);
-        }
-
-
-    }
-
-//    public static boolean containVarDepOrIndep(final CharSequence n) {
+    //    public static boolean containVarDepOrIndep(final CharSequence n) {
 //        final int l = n.length();
 //        for (int i = 0; i < l; i++) {
 //            char c = n.charAt(i);

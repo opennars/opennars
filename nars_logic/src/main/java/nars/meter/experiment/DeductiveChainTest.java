@@ -22,14 +22,17 @@ public class DeductiveChainTest {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int length = 3;
+        int length = 4;
+
+        DefaultAlann da = new DefaultAlann(32);
+        da.param.level(3);
+
         NAR n = new NAR(
                 //new Equalized(1000, 8, 3) //.level(1)
                 //new NewDefault().level(2)
                 //new ParallelAlann(4,2)
-                new DefaultAlann(32)
+                da
         );
-        n.param.conceptActivationFactor.set(0.2f);
 
         //Global.OVERLAP_ALLOW = true;
         //TextOutput.out(n);

@@ -24,6 +24,7 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.sort.ArraySortedIndex;
 
@@ -223,7 +224,7 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
 
         int newTasks = processNewTasks();
 
-        final float tlfd = memory.param.cycles(param.termLinkForgetDurations);
+        final float tlfd = memory.param.durationToCycles(param.termLinkForgetDurations);
 
         float maxPriority = concepts.getPriorityMax();
         float minPriority = concepts.getPriorityMin();
@@ -318,10 +319,11 @@ public class Solid extends AbstractNARSeed<Bag<Term,Concept>,Param> {
     }
 
     @Override
-    public Concept conceptualize(Term term, Budget budget, boolean createIfMissing) {
+    public Concept conceptualize(Termed termed, Budget budget, boolean createIfMissing) {
+
         //synchronized(activator) {
         //if (budget.getPriority() >= (memory.param.newConceptThreshold).floatValue() ) {
-            return activator.conceptualize(term, budget, true, memory.time(), concepts);
+            return activator.conceptualize(termed, budget, true, memory.time(), concepts);
         //}
         //return null;
         //}

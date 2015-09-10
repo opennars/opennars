@@ -178,7 +178,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             validate();
         }
 
-        this.forgetCycles = memory.param.cycles(
+        this.forgetCycles = memory.param.durationToCycles(
                 memory.param.termLinkForgetDurations.floatValue()
         );
         this.now = memory.time();

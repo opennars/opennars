@@ -78,7 +78,7 @@ public abstract class AbstractCycle<C extends CacheBag<Term,Concept>> extends Co
     }
 
     @Override
-    public Memory getMemory() {
+    public final Memory getMemory() {
         return memory;
     }
 
@@ -102,7 +102,7 @@ public abstract class AbstractCycle<C extends CacheBag<Term,Concept>> extends Co
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return concepts.size();
     }
     @Override public void delete() {

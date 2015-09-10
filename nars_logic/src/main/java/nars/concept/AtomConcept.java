@@ -132,31 +132,35 @@ public class AtomConcept extends AbstractConcept {
         taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setTask(task);
 
-        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
 
         final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
 
         taskLinkBuilder.setBudget(subBudget);
 
+        //give self transform task subBudget (previously it got the entire budget)
+        this.activateTaskLink(taskLinkBuilder);
+
+
         for (int i = 0; i < numTemplates; i++) {
-            TermLinkTemplate termLink = templates.get(i);
+            TermLinkTemplate linkTemplate = templates.get(i);
 
-            //if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
+            //if (!(task.isStructural() && (linkTemplate.getType() == TermLink.TRANSFORM))) { // avoid circular transform
 
-            final Term componentTerm = termLink.getTarget();
+            final Term componentTerm = linkTemplate.getTarget();
             if (componentTerm.equals(getTerm())) // avoid circular transform
                 continue;
 
-            Concept componentConcept = getMemory().conceptualize(termLink, subBudget);
+            Concept componentConcept = getMemory().conceptualize(linkTemplate, subBudget);
 
             if (componentConcept != null) {
 
-                termLink.setTargetInstance(componentConcept.getTerm());
+                //share merge term instances
+                linkTemplate.setTargetInstance(componentConcept.getTerm());
 
-                taskLinkBuilder.setTemplate(termLink);
+                taskLinkBuilder.setTemplate(linkTemplate);
 
                 /** activate the task tlink */
-                activatePeer(componentConcept, taskLinkBuilder);
+                ((AtomConcept)componentConcept).activateTaskLink(taskLinkBuilder);
 
             } else {
                 //taskBudgetBalance += subBudget.getPriority();
@@ -167,11 +171,6 @@ public class AtomConcept extends AbstractConcept {
         return true;
     }
 
-    /* called by a concept when it activates another concept's tasklink */
-    final void activatePeer(final Concept componentConcept, final TaskLinkBuilder taskLinkBuilder) {
-        componentConcept.activateTaskLink(taskLinkBuilder);
-    }
-
     /**
      * Insert a TaskLink into the TaskLink bag
      * <p>
@@ -180,10 +179,8 @@ public class AtomConcept extends AbstractConcept {
      * @param taskLink The termLink to be inserted
      * @return the tasklink which was selected or updated
      */
-    public TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
-
-        TaskLink t = getTaskLinks().update(taskLink);
-        return t;
+    protected final TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
+        return getTaskLinks().update(taskLink);
     }
 
     /**

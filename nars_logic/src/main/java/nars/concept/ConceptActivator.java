@@ -1,12 +1,14 @@
 package nars.concept;
 
 import nars.Memory;
+import nars.Param;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.tx.BagActivator;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.term.Term;
+import nars.term.Termed;
 
 /**
  * Created by me on 3/15/15.
@@ -31,34 +33,36 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
 
     @Override
-    public float getForgetCycles() {
+    public final float getForgetCycles() {
         return conceptForgetCycles;
     }
 
 
     @Override
-    public long time() {
+    public final long time() {
         return now;
     }
 
     @Override
-    public float getActivationFactor() {
+    public final float getActivationFactor() {
         return activationFactor;
     }
 
 
-    public ConceptActivator set(Budget b, boolean createIfMissing, long now) {
+    public ConceptActivator set(Budget b, boolean createIfMissing, long now, float activationFactor) {
 
         setBudget(b);
 
-        this.conceptForgetCycles = getMemory().param.cycles( (getMemory().param.conceptForgetDurations ));
-        this.activationFactor = getMemory().param.conceptActivationFactor.floatValue();
+        final Param param = getMemory().param;
+        this.conceptForgetCycles = param.durationToCycles( (param.conceptForgetDurations ));
+        this.activationFactor = activationFactor;
         this.createIfMissing = createIfMissing;
         this.now = now;
+
         return this;
     }
 
-    public CacheBag<Term, Concept> index() {
+    public final CacheBag<Term, Concept> index() {
         return getMemory().getConcepts();
     }
 
@@ -142,11 +146,14 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         off(c);
     }
 
-    public Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
+    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing, long time, Bag<Term, Concept> concepts) {
 
-        set(budget, true, time);
+        float activationFactor = 1.0f;
 
-        return conceptualize(term, concepts);
+        set(budget, createIfMissing, time, activationFactor);
+
+        return conceptualize(term.getTerm(), concepts);
+
 
 //        if (c != null) {
 //

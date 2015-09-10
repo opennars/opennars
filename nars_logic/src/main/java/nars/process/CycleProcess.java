@@ -8,6 +8,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -95,7 +96,7 @@ public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Co
      * @return the new concept, or null if the memory is full
      *
      */
-    public Concept conceptualize(Term term, Budget budget, boolean createIfMissing);
+    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing);
 
     /**
      * Provides a "next" concept for sampling during logic.

@@ -604,14 +604,23 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
      */
     protected <T extends Term> T normalized(final boolean destructive) {
 
-        if (!(hasVar() && !isNormalized())) return (T) this;
+        //if (!(hasVar() && !isNormalized())) return (T) this;
+        if (isNormalized()) {
+            return (T)this;
+        }
 
-        VariableNormalization vn = new VariableNormalization(this, destructive);
-        Compound result = vn.getResult();
-        if (result == null) return null;
+        final Compound result;
+        if (hasVar()) {
+            VariableNormalization vn = new VariableNormalization(this, destructive);
+            result = vn.getResult();
+            if (result == null) return null;
 
-        if (vn.hasRenamed()) {
-            result.invalidate();
+            if (vn.hasRenamed()) {
+                result.invalidate();
+            }
+        }
+        else {
+            result = this;
         }
 
         result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
@@ -1250,12 +1259,12 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
     }
 
     @Override
-    public boolean isNormalized() {
+    public final boolean isNormalized() {
         return normalized;
     }
 
 
-    protected void setNormalized() {
+    protected final void setNormalized() {
         this.normalized = true;
     }
 

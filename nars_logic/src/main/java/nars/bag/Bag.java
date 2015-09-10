@@ -416,7 +416,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     }
 
     final public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {
-        float forgetCycles = m.param.cycles(forgetDurations);
+        float forgetCycles = m.param.durationToCycles(forgetDurations);
         forgetNext(forgetCycles, accuracy, m);
     }
 
@@ -442,7 +442,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     /** call this to set the forgetNext settings prior to calling forgetNext() */
     protected void setForgetNext(final float forgetDurations, final Memory m) {
-        forgetNext.set(m.param.cycles(forgetDurations), m.time());
+        forgetNext.set(m.param.durationToCycles(forgetDurations), m.time());
     }
 
 

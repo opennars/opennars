@@ -66,6 +66,7 @@ public class NarseseParser extends BaseParser<Object>  {
     private final ParseRunner inputParser = new ListeningParseRunner3(Input());
     private final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     private final ParseRunner singleTermParser = new ListeningParseRunner3(Term());
+    private final ParseRunner singleTaskRuleParser = new ListeningParseRunner3(TaskRule());
 
 
 
@@ -521,7 +522,12 @@ public class NarseseParser extends BaseParser<Object>  {
         );
     }
 
+    public TaskRule taskRule(String input) {
+        Term x = termRaw(input, singleTaskRuleParser);
+        if (x==null) return null;
 
+        return x.normalizeDestructively();
+    }
 
 
     public final static class ValidAtomCharMatcher extends AbstractMatcher

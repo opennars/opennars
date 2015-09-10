@@ -550,7 +550,7 @@ public class Memory implements Serializable, AbstractMemory {
                 return null;
         }
 
-        return getCycleProcess().conceptualize(term, budget, true);
+        return getCycleProcess().conceptualize(termed, budget, true);
     }
 
     private boolean validConceptTerm(Term term) {

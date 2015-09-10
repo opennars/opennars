@@ -24,6 +24,7 @@ public class TaskSeed extends DefaultTask<Compound> implements Stamp {
     transient private final Memory memory;
 
     public static <C extends Compound> TaskSeed make(Memory memory, C t) {
+        t.normalizeDestructively();
         Compound u = Sentence.termOrNull(t);
         if (u == null)
             return null;

@@ -29,6 +29,7 @@ import nars.io.Texts;
 import nars.task.Sentence;
 import nars.truth.Truth;
 import nars.util.data.Util;
+import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -163,16 +164,38 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * quality: max(this, b)    (similar to merge)
      */
     public final Budget accumulate(final Budget b) {
-        return accumulate(b.getPriority(), b.getDurability(), b.getQuality());
+        return accumulate(b, 1f);
     }
 
-    public final Budget accumulate(final float addPriority, final float otherDurability, final float otherQuality) {
-        final float currentPriority = getPriority();
+    public final Budget accumulate(final Budget b, float factor) {
+        return accumulate(b.getPriority(), b.getDurability(), b.getQuality(), factor);
+    }
+
+    public final Budget accumulate(float addPriority, final float otherDurability, final float otherQuality) {
+        return accumulate(addPriority, otherDurability, otherQuality, 1f);
+    }
+
+    /** linearly interpolates the change affected to determine dur, qua */
+    public final Budget accumulate(final float addPriority, final float otherDurability, final float otherQuality, float factor) {
+
+        final float dp = addPriority * factor;
+
+        final float p = getPriority();
+
+        final float nextPriority = FastMath.min(1,p + dp);
+
+        //insignificant change
+        if (Util.isEqual(p, nextPriority, Global.BUDGET_EPSILON))
+            return this;
+
+        //LERP components
+        final float s = (p / nextPriority);
+        final float t = 1f - s;
 
         return set(
-                getPriority() + addPriority,
-                Util.max(getDurability(), otherDurability),
-                Util.max(getQuality(), otherQuality)
+                nextPriority,
+                (s * getDurability()) + (t * otherDurability),
+                (s * getQuality()) + (t * otherQuality)
         );
     }
 

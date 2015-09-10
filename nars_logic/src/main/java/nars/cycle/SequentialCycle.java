@@ -9,6 +9,7 @@ import nars.concept.Concept;
 import nars.concept.ConceptPrioritizer;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 
 import java.util.Set;
 import java.util.function.Consumer;
@@ -99,7 +100,7 @@ abstract public class SequentialCycle extends AbstractCycle<Bag<Term,Concept>> {
 
 
     @Override
-    public Concept conceptualize(final Term term, Budget budget, boolean createIfMissing) {
+    public Concept conceptualize(final Termed term, Budget budget, boolean createIfMissing) {
         return conceptualize(term, budget, createIfMissing, memory.time(), concepts);
     }
 
