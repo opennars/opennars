@@ -63,13 +63,6 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     /** number of subterms. if atomic, length=1 */
     public int length();
 
-    /**
-     * Check whether the current Term can name a Concept.
-     *
-     * @return A Term is constant by default
-     */
-    public boolean isConstant();
-
     public boolean isNormalized();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
@@ -123,10 +116,10 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     /** total # of variables */
     public int vars();
 
-    /** tests if num variables of any type exceed a value */
-    default public boolean varsInAnyTypeMoreThan(final int n) {
-        return (varDep() > n) || (varIndep() > n) || (varQuery() > n);
-    }
+//    /** tests if num variables of any type exceed a value */
+//    default public boolean varsInAnyTypeMoreThan(final int n) {
+//        return (varDep() > n) || (varIndep() > n) || (varQuery() > n);
+//    }
 
 
     default public boolean hasVarIndep() {
@@ -141,9 +134,9 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
         return varQuery()!=0;
     }
 
-    @Deprecated default public boolean equalsType(final Term t) {
-        return (op()== t.op());
-    }
+//    @Deprecated default public boolean equalsType(final Term t) {
+//        return (op()== t.op());
+//    }
 
     public byte[] bytes();
 
@@ -224,7 +217,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
     /** tests if contains a term in the structural hash */
-    default public boolean has(final Op op) {
+    default boolean has(final Op op) {
         return (structure() & (1<<op.ordinal())) > 0;
     }
 

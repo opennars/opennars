@@ -133,22 +133,11 @@ public class Variable extends Atom {
         return this;
     }
 
-    /** clones the variable with its scope removed/reset */
-    public Variable cloneUnscoped() {
-        return clone(false);
-    }
+//    /** clones the variable with its scope removed/reset */
+//    public Variable cloneUnscoped() {
+//        return clone(false);
+//    }
 
-
-
-    /**
-     * A variable is not constant
-     *
-     * @return false
-     */
-    @Override
-    public final boolean isConstant() {
-        return false;
-    }
 
     /**
      * The syntactic complexity of a variable is 0, because it does not refer to
@@ -287,15 +276,15 @@ public class Variable extends Atom {
     public final boolean isScoped() { return scope; }
 
 
-    public static boolean validVariableType(final char c) {
-        switch (c) {
-            case VAR_QUERY: return true;
-            case VAR_DEPENDENT: return true;
-            case VAR_INDEPENDENT: return true;
-            case VAR_PATTERN: return true;
-        }
-        return false;
-    }
+//    public static boolean validVariableType(final char c) {
+//        switch (c) {
+//            case VAR_QUERY: return true;
+//            case VAR_DEPENDENT: return true;
+//            case VAR_INDEPENDENT: return true;
+//            case VAR_PATTERN: return true;
+//        }
+//        return false;
+//    }
 
 
     /** TODO cache for unscoped variable terms */
@@ -368,15 +357,15 @@ public class Variable extends Atom {
         return new Variable(name(type, counter), true);
     }
 
-    /** returns the default dependent variable */
-    public static Variable theDependent() {
-        return the(Op.VAR_DEPENDENT, 0);
-    }
-
-    /** returns the default independent variable */
-    public static Variable theIndependent() {
-        return the(Op.VAR_INDEPENDENT, 0);
-    }
+//    /** returns the default dependent variable */
+//    public static Variable theDependent() {
+//        return the(Op.VAR_DEPENDENT, 0);
+//    }
+//
+//    /** returns the default independent variable */
+//    public static Variable theIndependent() {
+//        return the(Op.VAR_INDEPENDENT, 0);
+//    }
 
 
     /** necessary because VAR_PATTERN are hidden from substructure */

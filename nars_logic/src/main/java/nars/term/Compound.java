@@ -118,7 +118,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
         int subt = getStructureBase();
 
 
-        int contentHash = (PRIME2 * subt) + additionalStructureCode();;
+        int contentHash = (PRIME2 * subt) + structure2();;
 
         int p = 0;
         for (final Term t : term) {
@@ -189,7 +189,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
      * will not change the default structureHash structure
      * @return
      */
-    public int additionalStructureCode() { return 0; }
+    public int structure2() { return 0; }
 
 
 
@@ -770,12 +770,6 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
     @Override
     public int length() {
         return term.length;
-    }
-
-
-    @Override
-    public boolean isConstant() {
-        return isNormalized();
     }
 
 

@@ -444,7 +444,10 @@ public class NAR implements Runnable {
      * Will remain added until it closes or it is explicitly removed.
      */
     public Input input(final Input i) {
-        i.inputAll(memory);
+        int n = i.inputAll(memory);
+        if (n == 0) {
+            throw new RuntimeException(i + " contained no parsed input");
+        }
         return i;
     }
 

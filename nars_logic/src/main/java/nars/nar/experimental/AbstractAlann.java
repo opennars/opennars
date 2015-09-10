@@ -1,10 +1,7 @@
 package nars.nar.experimental;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Param;
+import nars.*;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
@@ -16,7 +13,10 @@ import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
 import nars.concept.DefaultConcept;
-import nars.link.*;
+import nars.link.TLink;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.link.TermLinkKey;
 import nars.nal.Deriver;
 import nars.nal.PremiseProcessor;
 import nars.nar.Default;
@@ -66,7 +66,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
     protected final List<Task> sorted = Global.newArrayList();
     protected final Map<Term, Concept> conceptsMap;
     final Random rng = new XorShift1024StarRandom(1);
-    final ItemAccumulator<Task> newTasks = new ItemAccumulator(Budget.plus);
+    final ItemAccumulator<Task> newTasks = new ItemAccumulator<>(Budget.plus);
     Commander commander;
     public float tlinkToConceptExchangeRatio = 0.1f;
 
@@ -85,23 +85,23 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
         commander = new Commander(nar, false);
     }
 
-    protected void processNewTasks(int maxNewTaskHistory, int maxNewTasksPerCycle) {
-        final int size = newTasks.size();
-        if (size!=0) {
-
-            int toDiscard = Math.max(0, size - maxNewTaskHistory);
-            int remaining = newTasks.update(maxNewTaskHistory, sorted);
-
-            if (size > 0) {
-
-                int toRun = Math.min( maxNewTasksPerCycle, remaining);
-
-                TaskProcess.run(memory, sorted, toRun, toDiscard);
-
-                //System.out.print("newTasks size=" + size + " run=" + toRun + "=(" + x.length + "), discarded=" + toDiscard + "  ");
-            }
-        }
-    }
+//    protected void processNewTasks(int maxNewTaskHistory, int maxNewTasksPerCycle) {
+//        final int size = newTasks.size();
+//        if (size!=0) {
+//
+//            int toDiscard = Math.max(0, size - maxNewTaskHistory);
+//            int remaining = newTasks.update(maxNewTaskHistory, sorted);
+//
+//            if (size > 0) {
+//
+//                int toRun = Math.min( maxNewTasksPerCycle, remaining);
+//
+//                TaskProcess.run(memory, sorted, toRun, toDiscard);
+//
+//                //System.out.print("newTasks size=" + size + " run=" + toRun + "=(" + x.length + "), discarded=" + toDiscard + "  ");
+//            }
+//        }
+//    }
     protected void processNewTasks() {
         final int size = newTasks.size();
         if (size!=0) {
@@ -309,6 +309,9 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
                 derived.forEach(/*newTaskProcess*/ t -> {
 
                     if (t.init(mem)) {
+
+                        mem.emit(Events.OUT.class, t);
+
                         //System.err.println("direct input: " + t);
                         TaskProcess.run(mem, t);
                     }
@@ -357,7 +360,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
         /** run next iteration; true if still alive by end, false if died and needs recycled */
         final public boolean cycle(final long now) {
 
-            final Concept current = this.concept;
+
 
             if (this.ttl-- == 0) {
                 //died

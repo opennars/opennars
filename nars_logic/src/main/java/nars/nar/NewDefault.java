@@ -11,7 +11,7 @@ import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
 import nars.process.concept.FilterEqualSubtermsAndSetPremiseBelief;
 import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
-import spangraph.TemporaryCache;
+import nars.util.db.TemporaryCache;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

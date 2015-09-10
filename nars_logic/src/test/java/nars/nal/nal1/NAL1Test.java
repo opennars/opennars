@@ -24,10 +24,10 @@ public class NAL1Test extends JavaNALTest {
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-                {new Default()},
+                //{new Default()},
                 {new Default().setInternalExperience(null)},
 
-                {new NewDefault()},
+                //{new NewDefault()},
                 {new NewDefault().setInternalExperience(null)},
                 {new NewDefault().setInternalExperience(null).level(2)},
 

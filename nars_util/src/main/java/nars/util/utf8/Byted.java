@@ -24,9 +24,11 @@ public interface Byted {
     }
 
     static int compare(final Byted A, final Byted B) {
-        int i = Integer.compare(A.hashCode(), B.hashCode());
+        /*int i = Integer.compare(A.hashCode(), B.hashCode());
         if (i != 0)
-            return i;
+            return i;*/
+
+
 
         final byte[] a = A.bytes();
         final byte[] b = B.bytes();
@@ -34,13 +36,23 @@ public interface Byted {
         if (a == b)
             return 0;
 
-        i = FastByteComparisons.compare(a, b);
-        if (i == 0) {
-            //determined to be equal
+
+        int minLength = Math.min(a.length, b.length);
+
+        for(int i = 0; i < minLength; ++i) {
+            int compareResult = a[i] - b[i];
+            if(compareResult != 0) {
+                return compareResult;
+            }
+        }
+
+        final int r = a.length - b.length;
+        if (r == 0) {
+            //determined to be equal, share instances
             B.setBytes(a);
         }
 
-        return i;
+        return r;
     }
 
     /** separate method so that the base equals() method can be more easily inlined */

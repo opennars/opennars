@@ -1,5 +1,6 @@
 package spangraph;
 
+import nars.util.db.InfiniPeer;
 import org.infinispan.Cache;
 import org.junit.Test;
 

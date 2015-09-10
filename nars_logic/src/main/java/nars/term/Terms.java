@@ -421,12 +421,6 @@ public class Terms {
         return true;
     }
 
-    public static void verifyNonNull(Collection t) {
-        for (Object o : t)
-            if (o == null)
-                throw new RuntimeException("Element null in: " + t);
-    }
-
     public static void verifyNonNull(Term... t) {
         for (Object o : t)
             if (o == null)

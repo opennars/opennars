@@ -85,30 +85,57 @@
                 </executions>
             </plugin>
 
-
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <instrumentation>
-                        <!--<ignores>-->
-                            <!--<ignore>com.example.boringcode.*</ignore>-->
-                        <!--</ignores>-->
-                        <!--<excludes>-->
-                            <!--<exclude>com/example/dullcode/**/*.class</exclude>-->
-                            <!--<exclude>com/example/**/*Test.class</exclude>-->
-                        <!--</excludes>-->
-                    </instrumentation>
-                </configuration>
+                <!-- mvn jacoco:report -->
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.4.201502262128</version>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>clean</goal>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <haltOnFailure>false</haltOnFailure>
+                    <detail>true</detail>
+                    <dumpOnExit>true</dumpOnExit>
+                </configuration>
             </plugin>
+
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>cobertura-maven-plugin</artifactId>-->
+                <!--<version>2.7</version>-->
+                <!--<configuration>-->
+                    <!--<instrumentation>-->
+                        <!--&lt;!&ndash;<ignores>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<ignore>com.example.boringcode.*</ignore>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</ignores>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<excludes>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<exclude>com/example/dullcode/**/*.class</exclude>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<exclude>com/example/**/*Test.class</exclude>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</excludes>&ndash;&gt;-->
+                    <!--</instrumentation>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>clean</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+
         </plugins>
 
 

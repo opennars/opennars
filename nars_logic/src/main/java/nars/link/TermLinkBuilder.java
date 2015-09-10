@@ -214,9 +214,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return incoming ? concept.getTerm() : currentTemplate.getTarget();
     }
 
-    public final Term getSource() {
-        return incoming ? currentTemplate.getTarget() : concept.getTerm();
-    }
+//    public final Term getSource() {
+//        return incoming ? currentTemplate.getTarget() : concept.getTerm();
+//    }
 
     @Override
     public final boolean equals(final Object obj) {
@@ -236,11 +236,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return new TermLink(getTerm(), currentTemplate, getBudget(), prefix, hash);
     }
 
-    public final TermLink out(TermLinkTemplate tlt) {
-        return new TermLink(tlt.getTarget(), tlt, getBudget(),
-                tlt.prefix(false),
-                tlt.hash(false));
-    }
+//    public final TermLink out(TermLinkTemplate tlt) {
+//        return new TermLink(tlt.getTarget(), tlt, getBudget(),
+//                tlt.prefix(false),
+//                tlt.hash(false));
+//    }
 
 
 /*    public int size() {
@@ -280,9 +280,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 //        return t;
 //    }
 
-    public final Term getOther() {
-        return currentTemplate.getTerm();
-    }
+//    public final Term getOther() {
+//        return currentTemplate.getTerm();
+//    }
 
 
 

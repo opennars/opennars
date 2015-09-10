@@ -1,4 +1,4 @@
-package spangraph;
+package nars.util.db;
 
 import org.infinispan.commons.marshall.Marshaller;
 import sun.security.action.GetPropertyAction;
@@ -14,6 +14,7 @@ import static java.security.AccessController.doPrivileged;
  * Created by me on 9/8/15.
  */
 public class TemporaryCache {
+
 
     private static Path dir;
     private static Path tmp = Paths.get(doPrivileged(new GetPropertyAction("java.io.tmpdir")));

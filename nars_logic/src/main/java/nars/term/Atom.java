@@ -4,18 +4,24 @@ import nars.Global;
 import nars.Op;
 import nars.nal.nal1.Negation;
 import nars.term.transform.TermVisitor;
+import nars.util.data.Util;
 import nars.util.utf8.Byted;
+import nars.util.utf8.Utf8;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 import java.util.function.Function;
 
 /**
  * Created by me on 4/25/15.
  */
-public class Atom extends ImmutableAtom {
+public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 
     private static final Map<String,Atom> atoms = Global.newHashMap(4096);
     public static final Function<String, Atom> AtomInterner = Atom::new;
+    private byte[] data;
+    private int hash;
 
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
@@ -47,11 +53,34 @@ public class Atom extends ImmutableAtom {
         return atomOrdinal;
     }
 
+    @Override
+    public void append(final Writer w, final boolean pretty) throws IOException {
+        w.write(Utf8.fromUtf8ToChars(bytes()));
+    }
 
 
+    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
+    public StringBuilder toStringBuilder(final boolean pretty) {
+        char[] c = chars(pretty);
+        return new StringBuilder(c.length).append(c);
+    }
 
 
+    @Override
+    public String toString() {
+        return toStringBuilder(true).toString();
+    }
 
+    public char[] chars(final boolean pretty) {
+        return Utf8.fromUtf8ToChars(bytes());
+    }
+
+    @Override
+    public boolean equals(final Object x) {
+        if (this == x) return true;
+        if (!(x instanceof Atom)) return false;
+        return Byted.equals(this, (Byted)x);
+    }
 
     /**
      * @param that The Term to be compared with the current Term
@@ -84,13 +113,15 @@ public class Atom extends ImmutableAtom {
     /**
      * Constructor with a given name
      *
-     * @param name A String as the name of the Term
+     * @param id A String as the name of the Term
      */
-    protected Atom(final String name) {
-        super(name);
+    protected Atom(final String id) {
+        this(Utf8.toUtf8(id));
     }
 
-    protected Atom(final byte[] name) {  super(name);    }
+    protected Atom(final byte[] id) {
+        setBytes(id);
+    }
 
     /** interns the atomic term given a name, storing it in the static symbol table */
     public final static Atom theCached(final String name) {
@@ -103,6 +134,12 @@ public class Atom extends ImmutableAtom {
                 return quote(name);
         }
         return the(name);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return hash;
     }
 
     public final static Term the(Term x) {
@@ -202,9 +239,9 @@ public class Atom extends ImmutableAtom {
         v.visit(this, parent);
     }
 
-    public final void recurseSubtermsContainingVariables(final TermVisitor v) {
-        recurseSubtermsContainingVariables(v, null);
-    }
+//    public final void recurseSubtermsContainingVariables(final TermVisitor v) {
+//        recurseSubtermsContainingVariables(v, null);
+//    }
 
     /**
      * Recursively check if a compound contains a term
@@ -274,6 +311,91 @@ public class Atom extends ImmutableAtom {
         return null;
     }
 
+    @Override
+    public int complexity() {
+        return 1;
+    }
+
+
+
+    @Override
+    public final int containedTemporalRelations() {        return 0;     }
+
+    @Override
+    public final int length() {
+        throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
+        //return 0;
+    }
+
+    @Override public int volume() { return 1; }
+
+    final public boolean impossibleSubTermVolume(final int otherTermVolume) {
+        return true;
+    }
+
+    public void rehash() {
+        this.hash = Util.ELFHashNonZero(data, 1);
+    }
+
+
+    @Override
+    final public byte[] bytes() {
+        return data;
+    }
+
+    @Override
+    public void setBytes(final byte[] id) {
+        this.data = id;
+        rehash();
+    }
+
+    @Override public final boolean impossibleStructure(int possibleSubtermStructure) {
+        /*
+        for atomic terms, there will be only one
+        bit set in this (for the operator). if it does not equal
+        the parameter, then the structure can not match.
+        */
+        return structure()!=possibleSubtermStructure;
+    }
+
+    @Override
+    public final boolean containsTerm(Term target) {
+        return false;
+    }
+
+    @Override
+    public final boolean containsTermRecursivelyOrEquals(Term target) {
+        return equals(target);
+    }
+
+
+
+
+    @Override
+    public int varIndep() {
+        return 0;
+    }
+
+    @Override
+    public int varDep() {
+        return 0;
+    }
+
+    @Override
+    public int varQuery() {
+        return 0;
+    }
+
+
+    @Override
+    public final boolean isNormalized() {
+        return true;
+    }
+
+    @Override
+    public final Term normalized() {
+        return this;
+    }
 
 
     public static Negation notThe(String untrue) {

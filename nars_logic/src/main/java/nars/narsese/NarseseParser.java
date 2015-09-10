@@ -982,7 +982,7 @@ public class NarseseParser extends BaseParser<Object>  {
                 c.accept(decodeTask(input, m, x));
             }
             else {
-
+                throw new RuntimeException("unparsed: " + o);
             }
         });
     }

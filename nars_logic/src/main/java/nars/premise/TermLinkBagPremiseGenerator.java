@@ -22,7 +22,6 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
     public final AtomicInteger maxSelectionAttempts;
     private Concept currentConcept;
     private TaskLink currentTaskLink;
-    private TermLink[] buffer = null;
 
 
     public TermLinkBagPremiseGenerator(AtomicInteger maxSelectionAttempts) {
@@ -62,7 +61,7 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
     @Override
     public @Nullable TermLink[] nextTermLinks(final Concept c, final TaskLink taskLink, TermLink[] result) {
 
-        this.buffer = result;
+        TermLink[] buffer = result;
 
         final int attempting = getMaxAttempts(c);
         if (attempting == 0) return null;

@@ -253,7 +253,6 @@ public class TermSpect extends TermCept implements Term, Concept {
         return false;
     }
 
-    @Override
     public boolean isConstant() {
         return false;
     }

@@ -2,7 +2,7 @@ package nars.bag.impl;
 
 import nars.budget.Itemized;
 import org.infinispan.Cache;
-import spangraph.InfiniPeer;
+import nars.util.db.InfiniPeer;
 
 /**
  * CacheBag backed by Infinispan, supporting distributed memory sharing

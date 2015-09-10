@@ -17,8 +17,6 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.List;
-
 /**
  * "Direct" processing of a new task, in constant time Local processing,
  * involving one concept only
@@ -222,45 +220,45 @@ public class TaskProcess extends NAL {
     }
 
 
-    /**
-     * queues a batch process run of TaskProcess's to their
-     * relevant concepts after conceptualizing them with
-     * the budget
-     *
-     * the input reverse sorted task list is divided into 3 sections:
-     *
-     *      0      ..    discarded   == to remove from the system
-     *           --ignore--          == (they are still in the newTaskBuffer this sort was generated from)
-     *      (last-remaining)..last   == to input (highest pri first)
-     *
-     * */
-    public static void run(final Memory memory, final List<Task> reverseSorted, final int toRun, final int toDiscard) {
-
-        final int size = reverseSorted.size();
-        if (size == 0) return;
-
-        if (toRun + toDiscard > size)
-            throw new RuntimeException("invalid buffer positions; size=" + size + ", toRun=" + toRun + ", toDiscard=" + toDiscard);
-
-        for (int i = 0; i < toDiscard; i++) {
-            memory.removed( reverseSorted.get(i) );
-        }
-
-        final int bottomPoint = Math.max(size-toRun, toDiscard);
-        //final TaskProcess[] r = new TaskProcess[size-bottomPoint];
-
-        //int j = 0;
-        for (int i = size-1; i >= bottomPoint; i--) {
-
-            final TaskProcess tp = new TaskProcess(memory, reverseSorted.get(i));
-            tp.run();
-
-            //target.accept();
-
-            //r[j++] =
-        }
-
-    }
+//    /**
+//     * queues a batch process run of TaskProcess's to their
+//     * relevant concepts after conceptualizing them with
+//     * the budget
+//     *
+//     * the input reverse sorted task list is divided into 3 sections:
+//     *
+//     *      0      ..    discarded   == to remove from the system
+//     *           --ignore--          == (they are still in the newTaskBuffer this sort was generated from)
+//     *      (last-remaining)..last   == to input (highest pri first)
+//     *
+//     * */
+//    public static void run(final Memory memory, final List<Task> reverseSorted, final int toRun, final int toDiscard) {
+//
+//        final int size = reverseSorted.size();
+//        if (size == 0) return;
+//
+//        if (toRun + toDiscard > size)
+//            throw new RuntimeException("invalid buffer positions; size=" + size + ", toRun=" + toRun + ", toDiscard=" + toDiscard);
+//
+//        for (int i = 0; i < toDiscard; i++) {
+//            memory.removed( reverseSorted.get(i) );
+//        }
+//
+//        final int bottomPoint = Math.max(size-toRun, toDiscard);
+//        //final TaskProcess[] r = new TaskProcess[size-bottomPoint];
+//
+//        //int j = 0;
+//        for (int i = size-1; i >= bottomPoint; i--) {
+//
+//            final TaskProcess tp = new TaskProcess(memory, reverseSorted.get(i));
+//            tp.run();
+//
+//            //target.accept();
+//
+//            //r[j++] =
+//        }
+//
+//    }
 
 
 }

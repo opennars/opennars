@@ -2,6 +2,7 @@ package nars.meter;
 
 import com.google.common.collect.Lists;
 import nars.Memory;
+import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.io.Texts;
@@ -75,6 +76,10 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
     public MemoryBudget() {
         super(Budgeted.class);
+    }
+
+    public MemoryBudget(NAR n) {
+        this(n.memory);
     }
 
     public MemoryBudget(Memory m) {

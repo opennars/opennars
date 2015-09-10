@@ -42,11 +42,6 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
         //return 0;
     }
 
-    @Override
-    public boolean isConstant() {
-        return true;
-    }
-
     @Override public int volume() { return 1; }
 
     final public boolean impossibleSubTermVolume(final int otherTermVolume) {

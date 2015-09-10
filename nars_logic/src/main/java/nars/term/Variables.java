@@ -18,9 +18,9 @@ import java.util.Random;
  */
 public class Variables {
 
-    public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Memory memory) {
-        return findSubstitute(varType, term1, term2, map1, map2, memory.random);
-    }
+//    public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Memory memory) {
+//        return findSubstitute(varType, term1, term2, map1, map2, memory.random);
+//    }
 
     public static boolean findSubstitute(final Op varType, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Random random) {
         return new FindSubst(varType, map1, map2, random).next(term1, term2);

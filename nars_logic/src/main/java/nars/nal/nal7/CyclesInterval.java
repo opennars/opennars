@@ -4,7 +4,7 @@ import com.google.common.primitives.Longs;
 import nars.AbstractMemory;
 import nars.Memory;
 import nars.Op;
-import nars.term.ImmutableAtom;
+import nars.term.Atom;
 import nars.term.Term;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.io.Writer;
  *
  * TODO realtime subclass which includes a number value that maps to external wall time
  */
-public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
+public class CyclesInterval extends Atom implements AbstractInterval {
 
     final static int bytesPrecision = 4;
 

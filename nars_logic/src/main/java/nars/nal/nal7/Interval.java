@@ -111,11 +111,6 @@ import java.util.concurrent.atomic.AtomicInteger;
         return existing;            
     }
 
-    @Override
-    public boolean isConstant() {
-        return false;
-    }
-
 
     // time is a positive integer
     protected Interval(final long timeDiff, final AtomicDuration duration) {
