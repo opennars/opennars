@@ -417,9 +417,12 @@
     ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
     ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
 
-//second layer variable elimination, here you go again :)
+//second level variable elimination
 
 (A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
 (A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
+
+//second level variable introduction
+
 (A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
 (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#1) |- ((&&,(#1 --> L),(#1 --> S),A_1..n) ==> R), (Truth:Intersection)
