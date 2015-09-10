@@ -46,7 +46,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final long cycleEnd;  //-1 for not compared
 
     protected final boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
-    private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
+    //private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
     //@Expose
     protected long creationTime;
@@ -80,7 +80,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.relativeToCondition = relativeToCondition;
 
 
-        this.taskRemoved = getTaskRemoved(n);
+        /*this.taskRemoved = */getTaskRemoved(n);
 
         if (t.isEternal()) {
             setEternal();
@@ -127,7 +127,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         super(n, TaskCondition.outAndAnswer(channel));
 
         this.relativeToCondition = false;
-        this.taskRemoved = getTaskRemoved(n);
+        /*this.taskRemoved = */getTaskRemoved(n);
 
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");

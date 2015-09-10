@@ -14,7 +14,7 @@ import static java.util.Arrays.copyOf;
 public class Substitution<C extends Compound> implements Function<C,Term> {
     final Map<Term, Term> subs;
 
-    public int minMatchVolume, maxMatchVolume;
+    public int minMatchVolume/*, maxMatchVolume*/;
     final int numSubs;
 
     final int numDep, numIndep, numQuery;
@@ -81,7 +81,7 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
         this.numQuery = numQuery;
 
         this.minMatchVolume = minMatchVolume;
-        this.maxMatchVolume = maxMatchVolume;
+        //this.maxMatchVolume = maxMatchVolume;
     }
 
 

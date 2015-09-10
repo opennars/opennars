@@ -23,8 +23,6 @@ import nars.term.Term;
  */
 public class TaskProcess extends NAL {
 
-    private static TaskProcess[] emptyTaskProcess = new TaskProcess[0];
-
     public final Task task;
 
     public TaskProcess(Memory mem, Task task) {
@@ -176,10 +174,6 @@ public class TaskProcess extends NAL {
     @Override
     final protected void afterDerive() {
         inputDerivations();
-    }
-
-    public static Premise queue(final NAR nar, final String task) {
-        return run(nar.memory, nar.task(task));
     }
 
     /** create and execute a direct process immediately */

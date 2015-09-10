@@ -1,6 +1,7 @@
 package nars.op.meta;
 
 /**
+ * TODO
  * executes/evaluates each of the supplied arguments in one of various modes:
  *      sequential immediate (runs each item in sequence, blocking, then returns the result immediately)
  *      parallel immediate (can parallelize but blocks until they all finish)

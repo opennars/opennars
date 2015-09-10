@@ -15,7 +15,6 @@ import nars.term.Term;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static nars.budget.BudgetFunctions.divide;
 
@@ -24,7 +23,6 @@ import static nars.budget.BudgetFunctions.divide;
  */
 public class AtomConcept extends AbstractConcept {
 
-    final AtomicBoolean locked = new AtomicBoolean(false);
 
     protected final Bag<Sentence, TaskLink> taskLinks;
     protected final Bag<TermLinkKey, TermLink> termLinks;
@@ -46,9 +44,6 @@ public class AtomConcept extends AbstractConcept {
         this.termLinkBuilder = new TermLinkBuilder(this);
     }
 
-    static boolean aboveThreshold(Budget b) {
-        return b.getPriority() >= Global.BUDGET_EPSILON;
-    }
 
     @Override
     public PremiseGenerator getPremiseGenerator() {
@@ -363,10 +358,5 @@ public class AtomConcept extends AbstractConcept {
         return termLinkBuilder.templates();
     }
 
-    /**
-     * called when concept is activated; empty and subclassable
-     */
-    protected void onActive() {
 
-    }
 }

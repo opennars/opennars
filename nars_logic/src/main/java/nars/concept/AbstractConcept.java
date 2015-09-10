@@ -91,38 +91,38 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
         return getTerm().toString();
     }
 
-    /**
-     * called from {@link NARRun}
-     */
-    @Override
-    public String toStringLong() {
-        String res =
-                toStringWithBudget() + " " + getTerm().toString()
-                        + toStringIfNotNull(getTermLinks().size(), "termLinks")
-                        + toStringIfNotNull(getTaskLinks().size(), "taskLinks")
-                        + toStringIfNotNull(getBeliefs().size(), "beliefs")
-                        + toStringIfNotNull(getGoals().size(), "goals")
-                        + toStringIfNotNull(getQuestions().size(), "questions")
-                        + toStringIfNotNull(getQuests().size(), "quests");
+//    /**
+//     * called from {@link NARRun}
+//     */
+//    @Override
+//    public String toStringLong() {
+//        String res =
+//                toStringWithBudget() + " " + getTerm().toString()
+//                        + toStringIfNotNull(getTermLinks().size(), "termLinks")
+//                        + toStringIfNotNull(getTaskLinks().size(), "taskLinks")
+//                        + toStringIfNotNull(getBeliefs().size(), "beliefs")
+//                        + toStringIfNotNull(getGoals().size(), "goals")
+//                        + toStringIfNotNull(getQuestions().size(), "questions")
+//                        + toStringIfNotNull(getQuests().size(), "quests");
+//
+//        //+ toStringIfNotNull(null, "questions");
+//        /*for (Task t : questions) {
+//            res += t.toString();
+//        }*/
+//        // TODO other details?
+//        return res;
+//    }
 
-        //+ toStringIfNotNull(null, "questions");
-        /*for (Task t : questions) {
-            res += t.toString();
-        }*/
-        // TODO other details?
-        return res;
-    }
-
-    private String toStringIfNotNull(final Object item, final String title) {
-        if (item == null) {
-            return "";
-        }
-
-        final String itemString = item.toString();
-
-        return new StringBuilder(2 + title.length() + itemString.length() + 1).
-                append(' ').append(title).append(':').append(itemString).toString();
-    }
+//    private String toStringIfNotNull(final Object item, final String title) {
+//        if (item == null) {
+//            return "";
+//        }
+//
+//        final String itemString = item.toString();
+//
+//        return new StringBuilder(2 + title.length() + itemString.length() + 1).
+//                append(' ').append(title).append(':').append(itemString).toString();
+//    }
 
     /** called by memory, dont call directly */
     @Override public void delete() {

@@ -84,23 +84,23 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
         return make(subject, predicate, TemporalRules.ORDER_NONE);
     }
 
-    public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
-        Op copula;
-        switch (temporalOrder) {
-            case TemporalRules.ORDER_FORWARD:
-                copula = Op.IMPLICATION_AFTER;
-                break;
-            case TemporalRules.ORDER_CONCURRENT:
-                copula = Op.IMPLICATION_WHEN;
-                break;
-            case TemporalRules.ORDER_BACKWARD:
-                copula = Op.IMPLICATION_BEFORE;
-                break;
-            default:
-                copula = Op.IMPLICATION;
-        }                
-        return makeStatementName(subject, copula, predicate);
-    }
+//    public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
+//        Op copula;
+//        switch (temporalOrder) {
+//            case TemporalRules.ORDER_FORWARD:
+//                copula = Op.IMPLICATION_AFTER;
+//                break;
+//            case TemporalRules.ORDER_CONCURRENT:
+//                copula = Op.IMPLICATION_WHEN;
+//                break;
+//            case TemporalRules.ORDER_BACKWARD:
+//                copula = Op.IMPLICATION_BEFORE;
+//                break;
+//            default:
+//                copula = Op.IMPLICATION;
+//        }
+//        return makeStatementName(subject, copula, predicate);
+//    }
     
     public static Implication make(final Term subject, final Term predicate, int temporalOrder) {
         if (invalidStatement(subject, predicate)) {

@@ -29,7 +29,6 @@ import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
-import nars.truth.TruthFunctions;
 import nars.truth.Truthed;
 
 import javax.annotation.Nullable;
@@ -154,17 +153,17 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return clone(t, getTruth(), cloneEvenIfTruthEqual);
     }
 
-    default public Task cloneEternal() {
-        return clone(getTerm(), TruthFunctions.eternalize(getTruth()), Stamp.ETERNAL);
-    }
-
-    default public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
-        return clone(t, newTruth, true);
-    }
-
-    default public Task clone(long newOccurrenceTime) {
-        return clone(getTerm(), getTruth(), newOccurrenceTime);
-    }
+//    default public Task cloneEternal() {
+//        return clone(getTerm(), TruthFunctions.eternalize(getTruth()), Stamp.ETERNAL);
+//    }
+//
+//    default public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
+//        return clone(t, newTruth, true);
+//    }
+//
+//    default public Task clone(long newOccurrenceTime) {
+//        return clone(getTerm(), getTruth(), newOccurrenceTime);
+//    }
 
     /** clones this Task with a new Term and truth  */
     default public Task clone(Compound newTerm, Truth newTruth, boolean cloneEvenIfTruthEqual) {

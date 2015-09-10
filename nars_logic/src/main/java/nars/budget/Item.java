@@ -84,9 +84,6 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
         return sb.toString();
     }
 
-    public String toStringSentence() {
-        return name().toString();
-    }
 
     public void appendWithBudget(StringBuilder sb) {
         final StringBuilder briefBudget = super.toBudgetStringExternal();
@@ -95,11 +92,6 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
         sb.append(briefBudget).append(' ').append(n);
     }
 
-
-    
-    public String toStringLong() {
-    	return toString();
-    }
 
     /*//default:
     @Override

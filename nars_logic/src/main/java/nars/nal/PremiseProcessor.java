@@ -17,9 +17,6 @@ public class PremiseProcessor {
     public final RuleList<Premise> conceptProcessing;
     public final List<DerivationFilter> derivationFilters;
 
-    public PremiseProcessor() {
-        this(null,null);
-    }
     public PremiseProcessor(LogicStage<Premise>[] conceptProcessRules, DerivationFilter[] derivationFilters) {
 
         conceptProcessing = new RuleList<>(conceptProcessRules);
