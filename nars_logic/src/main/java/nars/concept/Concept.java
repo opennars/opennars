@@ -25,7 +25,6 @@ import nars.Global;
 import nars.Memory;
 import nars.Op;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.link.*;
 import nars.premise.Premise;
@@ -58,16 +57,16 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    boolean linkTerms(Budget budgetRef, boolean updateTLinks);
-
+//    boolean linkTerms(Budget budgetRef, boolean updateTLinks);
+//
     TermLink activateTermLink(TermLinkBuilder termLinkBuilder);
+//      boolean link(Task currentTask);
 
     void updateLinks();
 
     @Override
     float getPriority();
 
-    boolean link(Task currentTask);
 
     default Op operator() {
         return getTerm().op();
@@ -141,7 +140,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     public TermLinkBuilder getTermLinkBuilder();
-
+    public TaskLinkBuilder getTaskLinkBuilder();
 
     default public String toInstanceString() {
         String id = Integer.toString(System.identityHashCode(this), 16);

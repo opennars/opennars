@@ -4,7 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
-import nars.nar.Classic;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class NAL8Test extends JavaNALTest {
                 {new Default()},
                 {new Default()},
                 //{new DefaultMicro() },
-                {new Classic() }
+                //{new Classic() }
                 //{new Discretinuous() },
         });
     }

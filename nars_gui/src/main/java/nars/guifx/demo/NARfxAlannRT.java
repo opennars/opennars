@@ -1,7 +1,5 @@
 package nars.guifx.demo;
 
-import nars.NAR;
-import nars.clock.RealtimeMSClock;
 import nars.guifx.NARfx;
 import nars.nar.experimental.DefaultAlann;
 
@@ -26,9 +24,9 @@ public class NARfxAlannRT {
 
         //Equalized d = new Equalized(1000, 3, 2);
         DefaultAlann d = new DefaultAlann(16);
-        d.param.setClock(new RealtimeMSClock(false));
+        //d.memory().setClock(new RealtimeMSClock(false));
 
-        NARfx.newWindow(new NAR(d), (i) -> {
+        NARfx.newWindow(d, (i) -> {
             try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {

@@ -15,7 +15,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 
 import java.io.Serializable;
 import java.util.*;
@@ -110,7 +110,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.term = t.getTerm();
     }
 
-    protected DefaultObserved.DefaultObservableRegistration getTaskRemoved(NAR n) {
+    protected DefaultTopic.Subscription getTaskRemoved(NAR n) {
         return n.memory.eventTaskRemoved.on(task -> {
             if (!succeeded) {
                 if (matches(task)) {

@@ -7,8 +7,10 @@ import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
+import nars.concept.ConceptActivator;
 import nars.event.MemoryReaction;
 import nars.event.NARReaction;
 import nars.io.in.FileInput;
@@ -20,6 +22,7 @@ import nars.io.qa.AnswerReaction;
 import nars.link.TaskLink;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.OpReaction;
@@ -32,10 +35,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Terms;
+import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.event.EventEmitter;
@@ -62,7 +62,7 @@ import java.util.function.Predicate;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR  {
+abstract public class NAR  {
 
 
 
@@ -385,28 +385,48 @@ public class NAR  {
             return false;
         }
 
+        //broadcast event
 
-        if (process(t)) {
-
-
-            emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
-
-
-            //NOTE: if duplicate outputs happen, the budget wil have changed
-            //but they wont be displayed.  to display them,
-            //we need to buffer unique TaskAdd ("OUT") tasks until the end
-            //of the cycle
-
-
-            m.logic.TASK_ADD_NEW.hit();
-            return true;
-        }
-        else {
-            m.removed(t, "Ignored");
-        }
-
-        return false;
+        memory.eventInput.emit(t);
+        return true;
     }
+
+
+
+//    public static class InputBuffer {
+//
+//        private final Seq<Task> stream;
+//
+//        public InputBuffer(Memory m) {
+//            this.stream = m.eventInput.stream();
+//
+//            stream.forEach(t -> {
+//            });
+//        }
+//    }
+
+//
+//        if (process(t)) {
+//
+//
+//            emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
+//
+//
+//            //NOTE: if duplicate outputs happen, the budget wil have changed
+//            //but they wont be displayed.  to display them,
+//            //we need to buffer unique TaskAdd ("OUT") tasks until the end
+//            //of the cycle
+//
+//
+//            m.logic.TASK_ADD_NEW.hit();
+//            return true;
+//        }
+//        else {
+//            m.removed(t, "Ignored");
+//        }
+//
+//        return false;
+//    }
 
     /** returns the global concept index */
     public final CacheBag<Term, Concept> concepts() {
@@ -1118,6 +1138,71 @@ public class NAR  {
         });
         return this;
     }
+
+    /**
+     * Get the Concept associated to a Term, or create it.
+     *
+     * Existing concept: apply tasklink activation (remove from bag, adjust
+     * budget, reinsert) New concept: set initial activation, insert Subconcept:
+     * extract from cache, apply activation, insert
+     *
+     * If failed to insert as a result of null bag, returns null
+     *
+     * A displaced Concept resulting from insert is forgotten (but may be stored
+     * in optional subconcept memory
+     *
+     * @param term indicating the concept
+     * @return an existing Concept, or a new one, or null
+     */
+    public Concept conceptualize(Termed termed, final Budget budget) {
+
+        if (termed == null)
+            return null;
+
+        //validation here is to avoid checking a term if we know it is already normalized
+        final boolean needsValidation;
+
+        needsValidation = (termed instanceof Term);
+//        if (termed instanceof Term) {
+//            needsValidation = true;
+//        }
+//        else if (termed instanceof Task) {
+//            //in a task should mean it's already valid
+//            needsValidation = false;
+//        }
+//        else if (termed instanceof TaskLink) {
+//            needsValidation = false;
+//        }
+//        else if (termed instanceof TermLinkTemplate) {
+//            needsValidation = false;
+//        }
+//        else if (termed instanceof TermLinkKey) {
+//            needsValidation = false;
+//        }
+//        else {
+//            throw new RuntimeException("unknown validation requirement: " + termed + " " + termed.getClass());
+//        }
+
+        Term term = termed.getTerm();
+
+        if (needsValidation) {
+            if (!validConceptTerm(term))
+                return null;
+
+            if ((term = term.normalized()) == null)
+                return null;
+        }
+
+
+        return doConceptualize(termed, budget);
+    }
+
+    abstract protected Concept doConceptualize(Termed term, Budget budget);
+
+    private boolean validConceptTerm(Term term) {
+        return !((term instanceof Variable) || (term instanceof AbstractInterval));
+    }
+
 
     public NAR resetIf(Predicate<NAR> resetCondition) {
         forEachCycle(() -> {

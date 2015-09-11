@@ -21,7 +21,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,8 +36,8 @@ public class PerceptionAccel extends NARReaction {
 
     public final static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1; //new inference rule accelerating decision making: https://groups.google.com/forum/#!topic/open-nars/B8veE-WDd8Q
     public final static int ConjunctionMemorySize = 100;
-    private final DefaultObserved.DefaultObservableRegistration onConceptActive;
-    private final DefaultObserved.DefaultObservableRegistration onConceptForget;
+    private final DefaultTopic.Subscription onConceptActive;
+    private final DefaultTopic.Subscription onConceptForget;
 
     //mostly only makes sense if perception plugin is loaded
     //keep track of how many conjunctions with related amount of component terms there are:

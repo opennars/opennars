@@ -2,6 +2,9 @@ package nars.nar.experimental;
 
 import nars.LocalMemory;
 import nars.NAR;
+import nars.budget.Budget;
+import nars.concept.Concept;
+import nars.term.Termed;
 
 
 /**
@@ -17,6 +20,11 @@ public class Equalized extends NAR {
     public Equalized(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(new LocalMemory());
                 //maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
+    }
+
+    @Override
+    protected Concept doConceptualize(Termed term, Budget budget) {
+        return null;
     }
 
 //    @Override

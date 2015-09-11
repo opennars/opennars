@@ -16,8 +16,6 @@ import nars.term.Term;
 import java.util.Iterator;
 import java.util.List;
 
-import static nars.budget.BudgetFunctions.divide;
-
 /**
  * Created by me on 9/2/15.
  */
@@ -85,168 +83,15 @@ public class AtomConcept extends AbstractConcept {
                     getMemory());
 
 
-        linkTerms(null, true);
+        //linkTerms(null, true);
 
     }
 
-    public boolean link(Task t) {
-        if (linkTask(t))
-            return linkTerms(t.getBudget(), true);  // recursively insert TermLink
-        return false;
+    @Override
+    public TaskLinkBuilder getTaskLinkBuilder() {
+        return taskLinkBuilder;
     }
 
-    /**
-     * Link to a new task from all relevant concepts for continued processing in
-     * the near future for unspecified time.
-     * <p>
-     * The only method that calls the TaskLink constructor.
-     *
-     * @param task The task to be linked
-     */
-    protected boolean linkTask(final Task task) {
-
-        final List<TermLinkTemplate> templates = termLinkBuilder.templates();
-        final int numTemplates = termLinkBuilder.getNonTransforms();
-        if (templates == null || numTemplates == 0) {
-            //distribute budget to incoming termlinks?
-            return false;
-        }
-
-        //TODO parameter to use linear division, conserving total budget
-        //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
-        //float linkSubBudgetDivisor = (float) Math.sqrt(numTemplates);
-        float linkSubBudgetDivisor = numTemplates;
-
-        final Budget taskBudget = task.getBudget();
-
-        float subPri = taskBudget.getPriority()/ linkSubBudgetDivisor;
-        if ((subPri < Global.BUDGET_EPSILON) ||
-                (subPri < memory.param.taskLinkThreshold.floatValue() ))
-            return false;
-
-        taskLinkBuilder.setTemplate(null);
-        taskLinkBuilder.setTask(task);
-
-
-        final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
-
-        taskLinkBuilder.setBudget(subBudget);
-
-        //give self transform task subBudget (previously it got the entire budget)
-        this.activateTaskLink(taskLinkBuilder);
-
-
-        for (int i = 0; i < numTemplates; i++) {
-            TermLinkTemplate linkTemplate = templates.get(i);
-
-            //if (!(task.isStructural() && (linkTemplate.getType() == TermLink.TRANSFORM))) { // avoid circular transform
-
-            final Term componentTerm = linkTemplate.getTarget();
-            if (componentTerm.equals(getTerm())) // avoid circular transform
-                continue;
-
-            Concept componentConcept = getMemory().conceptualize(linkTemplate, subBudget);
-
-            if (componentConcept != null) {
-
-                //share merge term instances
-                linkTemplate.setTargetInstance(componentConcept.getTerm());
-
-                taskLinkBuilder.setTemplate(linkTemplate);
-
-                /** activate the task tlink */
-                ((AtomConcept)componentConcept).activateTaskLink(taskLinkBuilder);
-
-            } else {
-                //taskBudgetBalance += subBudget.getPriority();
-            }
-
-        }
-
-        return true;
-    }
-
-    /**
-     * Insert a TaskLink into the TaskLink bag
-     * <p>
-     * called only from Memory.continuedProcess
-     *
-     * @param taskLink The termLink to be inserted
-     * @return the tasklink which was selected or updated
-     */
-    protected final TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
-        return getTaskLinks().update(taskLink);
-    }
-
-    /**
-     * Recursively build TermLinks between a compound and its components
-     * <p>
-     * called only from Memory.continuedProcess
-     *
-     * @param b   The BudgetValue of the task
-     * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
-     * @return whether any activity happened as a result of this invocation
-     */
-    public boolean linkTerms(final Budget b, boolean updateTLinks) {
-
-        //activate the concept with the taskbudget
-
-
-        int recipients = termLinkBuilder.getNonTransforms();
-        if (recipients == 0) {
-            //termBudgetBalance += subBudget;
-            //subBudget = 0;
-            //return false;
-        }
-
-        List<TermLinkTemplate> tl = getTermLinkTemplates();
-
-        //accumulate incoming task budget to the tasklinks
-        boolean activity = false;
-        float subPriority;
-        if (tl!=null && (b != null) && (recipients > 0)) {
-
-            float dur, qua;
-            //TODO make this parameterizable
-
-            //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
-
-            //half of each subBudget is spent on this concept and the other concept's termlink
-            //subBudget = b.getPriority() * (1f / (2 * recipients));
-
-            //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-            subPriority = b.getPriority() / recipients;
-            dur = b.getDurability();
-            qua = b.getQuality();
-
-            if (subPriority >= Global.BUDGET_EPSILON) {
-
-                int numTemplates = tl.size();
-                final float termLinkThresh = memory.param.termLinkThreshold.floatValue();
-
-                for (int i = 0; i < numTemplates; i++) {
-
-                    final TermLinkTemplate t = tl.get(i);
-                    if (t.type == TermLink.TRANSFORM)
-                        continue;
-
-                    //only apply this loop to non-transform termlink templates
-                    t.accumulate(subPriority, dur, qua);
-
-                    if (updateTLinks) {
-                        if (t.getPriority() >= termLinkThresh) {
-                            if (t.link(this))
-                                activity = true;
-                        }
-                    }
-
-                }
-            }
-        }
-
-
-        return activity;
-    }
 
 
     @Override

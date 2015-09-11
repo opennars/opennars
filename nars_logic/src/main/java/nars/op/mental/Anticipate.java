@@ -42,7 +42,7 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -77,7 +77,7 @@ public class Anticipate extends NARReaction implements Mental {
     /** buffers the terms of new incoming tasks */
     final Set<Compound> newTaskTerms = Global.newHashSet(16);
     private final NAR nar;
-    private final DefaultObserved.DefaultObservableRegistration onCycleEnd;
+    private final DefaultTopic.Subscription onCycleEnd;
 
     NAL nal;
     TaskProcess tp;

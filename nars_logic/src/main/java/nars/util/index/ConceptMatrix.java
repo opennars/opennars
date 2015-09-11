@@ -130,7 +130,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 c = nar.concept(qt);
             }
             else {
-                c = nar.memory.conceptualize(
+                c = nar.conceptualize(
                         qt, new Budget(conceptualizePriority, conceptualizeDuration, conceptualizeQuality)
                 );
             }

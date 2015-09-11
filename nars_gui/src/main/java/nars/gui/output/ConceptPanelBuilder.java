@@ -14,8 +14,6 @@ import nars.budget.Budgeted;
 import nars.budget.Itemized;
 import nars.concept.Concept;
 import nars.event.NARReaction;
-import nars.gui.ConceptMenu;
-import nars.gui.VerticalLayout;
 import nars.link.TaskLink;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -25,14 +23,12 @@ import org.infinispan.util.concurrent.ConcurrentHashSet;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.WEST;
 
 /**
@@ -336,26 +332,26 @@ public class ConceptPanelBuilder extends NARReaction {
 //                    title.setLineWrap(true);
 //                    title.setEditable(false);
 //                    title.setOpaque(false);
-                    JLabel title = new JLabel(concept.getTerm().toString());
-                    title.setFont(titleFont);
-                    title.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                    title.addMouseListener(new MouseAdapter() {
-
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            JPopupMenu jp = new ConceptMenu(nar, c);
-                            jp.show(title, e.getX(), e.getY());
-                        }
-                    });
-
-
-                    JPanel titlePanel = new JPanel(new VerticalLayout());
-                    titlePanel.setOpaque(false);
-                    titlePanel.add(title);
-                    titlePanel.add(subtitle);
+//                    JLabel title = new JLabel(concept.getTerm().toString());
+//                    title.setFont(titleFont);
+//                    title.setCursor(new Cursor(Cursor.HAND_CURSOR));
+//                    title.addMouseListener(new MouseAdapter() {
+//
+//                        @Override
+//                        public void mouseClicked(MouseEvent e) {
+//                            JPopupMenu jp = new ConceptMenu(nar, c);
+//                            jp.show(title, e.getX(), e.getY());
+//                        }
+//                    });
 
 
-                    add(titlePanel, CENTER);
+//                    JPanel titlePanel = new JPanel(new VerticalLayout());
+//                    titlePanel.setOpaque(false);
+//                    titlePanel.add(title);
+//                    titlePanel.add(subtitle);
+//
+//
+//                    add(titlePanel, CENTER);
                 }
 
 

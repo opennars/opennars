@@ -11,7 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import nars.NAR;
 import nars.guifx.NARfx;
 import nars.guifx.NARide;
 import nars.nar.Default;
@@ -201,7 +200,7 @@ public class SizeAwareWindow extends Scene {
     };
 
     private static Supplier<Parent> Default = () -> {
-        return new NARide(new NAR(new Default(1000, 1, 3)));
+        return new NARide(new Default(1000, 1, 3));
     };
 
     private static Supplier<Parent> Row = () -> {

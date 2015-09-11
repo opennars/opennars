@@ -6,10 +6,7 @@ import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.clock.CycleClock;
-import nars.concept.AtomConcept;
-import nars.concept.BeliefTable;
-import nars.concept.Concept;
-import nars.concept.DefaultConcept;
+import nars.concept.*;
 import nars.event.CycleReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -44,7 +41,9 @@ import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.event.DefaultTopic;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -249,6 +248,7 @@ public class Default extends NAR {
     int taskBufferSize;
     InternalExperience.InternalExperienceMode internalExperience;
 
+    final ConceptBagActivator ca = new ConceptBagActivator(this);
 
     /**
      * Default DEFAULTS
@@ -355,9 +355,16 @@ public class Default extends NAR {
 
         memory.eventCycleStart.on(this.control = getCycleProcess());
 
+        memory.eventInput.on(t -> {
+            System.out.println("input: " + t);
+        });
+
+
         //n.on(new RuntimeNARSettings());
 
     }
+
+
 
     public DefaultCycle getCycleProcess() {
         return new DefaultCycle(
@@ -393,7 +400,7 @@ public class Default extends NAR {
 
 
 
-    public Concept newConcept(final Term t, final Budget b, final Memory m) {
+    public Concept newConcept(final Term t, final Budget b) {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
@@ -404,7 +411,7 @@ public class Default extends NAR {
                 new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
         termLinks.mergePlus();
 
-        return newConcept(t, b, taskLinks, termLinks, m);
+        return newConcept(t, b, taskLinks, termLinks, memory());
     }
 
     /**
@@ -467,6 +474,12 @@ public class Default extends NAR {
             );
         }
 
+    }
+
+
+    @Override
+    protected final Concept doConceptualize(Termed term, Budget b) {
+        return ca.update(term.getTerm(), b, true, time(), 1f, ca.active);
     }
 
     /**
@@ -544,15 +557,15 @@ public class Default extends NAR {
     }
 
     protected boolean process(Task t) {
-        control.accept(t);
         return true;
     }
+
 
         /**
          * The original deterministic memory cycle implementation that is currently used as a standard
          * for development and testing.
          */
-    public class DefaultCycle extends CycleReaction /*extends SequentialCycle*/ {
+    public class DefaultCycle extends CycleReaction  /*extends SequentialCycle*/ {
 
 
         /**
@@ -576,10 +589,12 @@ public class Default extends NAR {
          */
         public final Bag<Sentence<Compound>, Task<Compound>> novelTasks;
         private final ItemAccumulator<Task> newTasks;
+            private final DefaultTopic.Subscription reg;
 
-        int numNovelTasksPerCycle = 1;
+            int numNovelTasksPerCycle = 1;
 
         /* ---------- Short-term workspace for a single cycle ------- */
+
 
 
         public DefaultCycle(ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
@@ -591,6 +606,13 @@ public class Default extends NAR {
             this.inputsMaxPerCycle = inputsMaxPerCycle;
             this.novelMaxPerCycle = novelMaxPerCycle;
             this.novelTasks = novelTasks;
+
+            reg = memory().eventInput.on(t-> {
+                if (t.isInput())
+                    percepts.add(t);
+                else
+                    newTasks.add(t);
+            });
         }
 
 
@@ -612,12 +634,6 @@ public class Default extends NAR {
 //
 //
 
-        public boolean accept(Task t) {
-            if (t.isInput())
-                return percepts.add(t);
-            else
-                return newTasks.add(t);
-        }
 
 
 
@@ -841,4 +857,32 @@ public class Default extends NAR {
     }
 
 
+    private class ConceptBagActivator extends ConceptActivator {
+
+        public final Bag<Term,Concept> active =
+                newConceptBag();
+
+        public ConceptBagActivator(NAR n) {
+            super(n);
+        }
+
+        @Override
+        public Concept newConcept(Term t, Budget b, @Deprecated Memory m) {
+            return Default.this.newConcept(t, b);
+        }
+
+        @Override
+        protected void on(Concept c) {
+
+        }
+
+        @Override
+        protected void off(Concept c) {
+
+        }
+
+        public Concept update() {
+            return active.update(this);
+        }
+    }
 }

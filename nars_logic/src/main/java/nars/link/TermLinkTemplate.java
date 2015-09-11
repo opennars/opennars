@@ -1,7 +1,6 @@
 package nars.link;
 
 import nars.budget.Budget;
-import nars.concept.Concept;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.utf8.Utf8;
@@ -207,41 +206,5 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         return hashOut;
     }
 
-    public boolean link(Concept c) {
-
-        TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
-
-        termLinkBuilder.set(this, false, c.getMemory());
-
-        Concept otherConcept = c.getMemory().conceptualize(termLinkBuilder, this);
-
-        if (otherConcept == null) {
-            return false;
-        }
-
-
-        //activate this termlink to peer
-        c.activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
-
-        //activate peer termlink to this
-        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
-
-
-        final Budget termlinkBudget = termLinkBuilder.getBudget();
-
-        //if (otherConcept.getTerm() instanceof Compound) {
-            otherConcept.linkTerms(termlinkBudget, false);
-        //}
-        /*} else {
-
-        }*/
-
-
-        //spent ?
-        //setPriority(0);
-
-        return true;
-
-    }
 
 }

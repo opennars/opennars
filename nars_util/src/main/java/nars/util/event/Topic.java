@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /**
  * notifies subscribers when a value is emitted
  */
-abstract public interface Observed<V>  {
+abstract public interface Topic<V>  {
 
     abstract void delete();
 
@@ -27,11 +27,11 @@ abstract public interface Observed<V>  {
 
     public abstract void emit(V arg);
 
-    abstract public DefaultObserved.DefaultObservableRegistration on(Consumer<V> o);
+    DefaultTopic.Subscription on(Consumer<V> o);
 
 
 
-    public static class Registrations extends FasterList<DefaultObserved.DefaultObservableRegistration> {
+    public static class Registrations extends FasterList<DefaultTopic.Subscription> {
 
         Registrations(int length) {
             super(length);
@@ -61,10 +61,10 @@ abstract public interface Observed<V>  {
 
 
     
-    public static <V> Registrations on(final Consumer<V> o, final Observed<V>... w) {
+    public static <V> Registrations onAll(final Consumer<V> o, final Topic<V>... w) {
         Registrations r = new Registrations(w.length);
     
-        for (final Observed<V> c : w)
+        for (final Topic<V> c : w)
             r.add( c.on(o) );
         
         return r;

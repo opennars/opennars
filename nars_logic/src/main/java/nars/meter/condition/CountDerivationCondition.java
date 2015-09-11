@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.event.NARReaction;
 import nars.task.Task;
 import nars.util.data.map.CuckooMap;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.HitMeter;
 
@@ -17,7 +17,7 @@ public class CountDerivationCondition extends NARReaction {
     //SM = success method
     final static String methodInvolvedInSuccessfulDerivation_Prefix = "D";
     final static String methodInvolvedInDerivation_Prefix = "d";
-    private final DefaultObserved.DefaultObservableRegistration cycleEnd;
+    private final DefaultTopic.Subscription cycleEnd;
 
     boolean includeNonSuccessDerivations = true;
 

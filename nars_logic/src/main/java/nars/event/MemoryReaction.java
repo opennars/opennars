@@ -5,7 +5,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.task.Task;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 
 public abstract class MemoryReaction extends ConceptReaction {
 
@@ -27,9 +27,9 @@ public abstract class MemoryReaction extends ConceptReaction {
 
             Events.Restart.class};
 
-    private final DefaultObserved.DefaultObservableRegistration taskRemoved;
-    private final DefaultObserved.DefaultObservableRegistration cycleStart;
-    private final DefaultObserved.DefaultObservableRegistration cycleEnd;
+    private final DefaultTopic.Subscription taskRemoved;
+    private final DefaultTopic.Subscription cycleStart;
+    private final DefaultTopic.Subscription cycleEnd;
 
 
 

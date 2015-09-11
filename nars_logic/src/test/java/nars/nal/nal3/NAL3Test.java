@@ -3,7 +3,6 @@ package nars.nal.nal3;
 
 import nars.NAR;
 import nars.nal.JavaNALTest;
-import nars.nar.Classic;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.narsese.InvalidInputException;
@@ -28,7 +27,7 @@ public class NAL3Test extends JavaNALTest {
                 {new NewDefault()},
                 //{new NewDefault().setInternalExperience(null)},
                 //{new DefaultMicro() },
-                {new Classic()}
+                //{new Classic()}
 
                 //{new Neuromorphic(4)},
         });

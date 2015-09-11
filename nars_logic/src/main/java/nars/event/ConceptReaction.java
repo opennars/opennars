@@ -4,15 +4,15 @@ package nars.event;
 import nars.Events;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 
 /** watches for concept lifecycle (creation and forget) events */
 abstract public class ConceptReaction extends NARReaction {
 
     public final NAR nar;
 
-    private final DefaultObserved.DefaultObservableRegistration onConceptActive;
-    private final DefaultObserved.DefaultObservableRegistration onConceptForget;
+    private final DefaultTopic.Subscription onConceptActive;
+    private final DefaultTopic.Subscription onConceptForget;
 
 
     public ConceptReaction(NAR n, boolean active, Class... additionalEvents) {

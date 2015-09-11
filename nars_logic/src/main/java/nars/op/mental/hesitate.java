@@ -40,7 +40,7 @@ public class hesitate extends SynchOperator implements Mental {
     @Override
     public List<Task> apply(Operation operation) {
         Term term = operation.arg(0);
-        Concept concept = nar.memory.conceptualize(term, consider.budgetMentalConcept(operation));
+        Concept concept = nar.conceptualize(term, consider.budgetMentalConcept(operation));
         concept.discountGoalConfidence();
         return null;
     }

@@ -7,14 +7,14 @@ import java.util.function.Consumer;
 /** single-thread synchronous (in-thread) event emitter with direct array access
  * NOT WORKING YET
  * */
-public class DefaultObserved<V> extends CopyOnWriteArrayList<Consumer<V>> implements Observed<V> {
+public class DefaultTopic<V> extends CopyOnWriteArrayList<Consumer<V>> implements Topic<V> {
 
 
-    public class DefaultObservableRegistration<V>  {
+    public class Subscription<V>  {
 
         final Consumer<V> reaction;
 
-        DefaultObservableRegistration(Consumer<V> o) {
+        Subscription(Consumer<V> o) {
             this.reaction = o;
         }
 
@@ -37,8 +37,8 @@ public class DefaultObserved<V> extends CopyOnWriteArrayList<Consumer<V>> implem
     }
 
     @Override
-    public DefaultObservableRegistration on(Consumer<V> o) {
-        DefaultObservableRegistration d = new DefaultObservableRegistration(o);
+    public Subscription on(Consumer<V> o) {
+        Subscription d = new Subscription(o);
         add(o);
         return d;
     }

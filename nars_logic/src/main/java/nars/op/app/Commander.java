@@ -7,7 +7,7 @@ import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.event.NARReaction;
 import nars.task.Task;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
@@ -29,7 +29,7 @@ public class Commander extends NARReaction implements Consumer<Memory> {
 
     public final ItemAccumulator<Task> commands;
     public final Iterator<Task> commandIterator;
-    private final DefaultObserved.DefaultObservableRegistration cycleEnd;
+    private final DefaultTopic.Subscription cycleEnd;
     private final NAR nar;
 
     /** how far away from the occurence time of a temporal belief before it is deleted */

@@ -124,9 +124,12 @@ public class STMEventInference extends NARReaction {
 
 
             //help me out seh, why doesnt this work? ^^
-            nal.nar.concept(currentTask.getTerm()).link(previousTask);
-            nal.nar.concept(previousTask.getTerm()).link(currentTask);
+            //nal.nar.concept(currentTask.getTerm()).link(previousTask);
+            //nal.nar.concept(previousTask.getTerm()).link(currentTask);
             //nal.setCurrentTask(currentTask);
+
+            nal.link(nal.nar.concept(currentTask.getTerm()), previousTask);
+            nal.link(nal.nar.concept(previousTask.getTerm()), currentTask);
 
            /* continue;
             //nal.setBelief(previousTask);

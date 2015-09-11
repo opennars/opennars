@@ -368,7 +368,7 @@ public class ConceptPane extends BorderPane implements ChangeListener {
 
     /* test example */
     public static void main(String[] args) {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         n.input("<a-->b>. <b-->c>. <c-->a>.");
         n.input("<a --> b>!");
         n.input("<a --> b>?");

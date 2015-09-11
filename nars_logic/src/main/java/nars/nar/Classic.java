@@ -1,6 +1,5 @@
 package nars.nar;
 
-import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
@@ -63,12 +62,12 @@ public class Classic extends Default {
     }
 
     @Override
-    public Concept newConcept(Term t, Budget b, Memory m) {
+    public Concept newConcept(Term t, Budget b) {
         Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks,
-                newPremiseGenerator(), newConceptBeliefGoalRanking(), m);
+                newPremiseGenerator(), newConceptBeliefGoalRanking(), memory);
     }
 
 

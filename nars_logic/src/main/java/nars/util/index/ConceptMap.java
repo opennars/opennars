@@ -4,7 +4,7 @@ import nars.Events;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.event.NARReaction;
-import nars.util.event.DefaultObserved;
+import nars.util.event.DefaultTopic;
 
 /**
  * Created by me on 4/16/15.
@@ -12,9 +12,9 @@ import nars.util.event.DefaultObserved;
 abstract public class ConceptMap extends NARReaction {
 
     public final NAR nar;
-    private final DefaultObserved.DefaultObservableRegistration onCycleEnd;
-    private final DefaultObserved.DefaultObservableRegistration onConceptForget;
-    private final DefaultObserved.DefaultObservableRegistration onConceptActive;
+    private final DefaultTopic.Subscription onCycleEnd;
+    private final DefaultTopic.Subscription onConceptForget;
+    private final DefaultTopic.Subscription onConceptActive;
     int frame = -1;
     protected int cycleInFrame = -1;
 

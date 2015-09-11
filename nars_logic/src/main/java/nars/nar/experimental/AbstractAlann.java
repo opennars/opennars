@@ -377,6 +377,7 @@ public abstract class AbstractAlann extends NAR {
             }
 
             @Override protected final void inputDerivations() {
+
                 Derivelet.this.inputDerivations(derived);
             }
 

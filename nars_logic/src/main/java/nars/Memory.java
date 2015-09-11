@@ -23,7 +23,6 @@ package nars;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.bag.impl.CacheBag;
-import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.meter.EmotionMeter;
@@ -43,7 +42,6 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
@@ -51,10 +49,12 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.*;
-import nars.util.event.DefaultObserved;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.util.event.DefaultTopic;
 import nars.util.event.EventEmitter;
-import nars.util.event.Observed;
+import nars.util.event.Topic;
 import nars.util.meter.ResourceMeter;
 
 import java.io.Serializable;
@@ -81,20 +81,20 @@ public class Memory extends Param implements Serializable {
 
     @Deprecated transient public final EventEmitter<Class,Object[]> event;
 
-    transient public final Observed<ConceptProcess> eventBeliefReason = new DefaultObserved();
-    transient public final Observed<Task<?>> eventTaskRemoved = new DefaultObserved();
-    transient public final Observed<ConceptProcess> eventConceptProcessed = new DefaultObserved();
+    transient public final Topic<ConceptProcess> eventBeliefReason = new DefaultTopic();
+    transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic();
+    transient public final Topic<ConceptProcess> eventConceptProcessed = new DefaultTopic();
 
-    transient public final Observed<Concept> eventConceptActive = new DefaultObserved();
-    transient public final Observed<Concept> eventConceptForget = new DefaultObserved();
+    transient public final Topic<Concept> eventConceptActive = new DefaultTopic();
+    transient public final Topic<Concept> eventConceptForget = new DefaultTopic();
 
-    transient public final Observed<Memory>
+    transient public final Topic<Memory>
             /** fired at the beginning of each memory cycle */
-            eventCycleStart = new DefaultObserved(),
+            eventCycleStart = new DefaultTopic(),
             /** fired at the end of each memory cycle */
-            /* @Deprecated  */ eventCycleEnd = new DefaultObserved(); //eventCycleStart; //new DefaultObserved();
+            /* @Deprecated  */ eventCycleEnd = new DefaultTopic(); //eventCycleStart; //new DefaultObserved();
 
-    transient public final Observed<TaskProcess> eventTaskProcess = new DefaultObserved<>();
+    transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
 
     transient public final EventEmitter<Term,Operation> exe;
@@ -125,6 +125,9 @@ public class Memory extends Param implements Serializable {
 
     private long currentStampSerial = 1;
     private boolean inCycle = false;
+
+
+    public final Topic<Task> eventInput = new DefaultTopic<>();
 
 
     /**
@@ -394,66 +397,6 @@ public class Memory extends Param implements Serializable {
         return concepts.get(t);
     }
 
-    /**
-     * Get the Concept associated to a Term, or create it.
-     *
-     * Existing concept: apply tasklink activation (remove from bag, adjust
-     * budget, reinsert) New concept: set initial activation, insert Subconcept:
-     * extract from cache, apply activation, insert
-     *
-     * If failed to insert as a result of null bag, returns null
-     *
-     * A displaced Concept resulting from insert is forgotten (but may be stored
-     * in optional subconcept memory
-     *
-     * @param term indicating the concept
-     * @return an existing Concept, or a new one, or null
-     */
-    public Concept conceptualize(Termed termed, final Budget budget) {
-
-        if (termed == null)
-            return null;
-
-        //validation here is to avoid checking a term if we know it is already normalized
-        final boolean needsValidation;
-
-        needsValidation = (termed instanceof Term);
-//        if (termed instanceof Term) {
-//            needsValidation = true;
-//        }
-//        else if (termed instanceof Task) {
-//            //in a task should mean it's already valid
-//            needsValidation = false;
-//        }
-//        else if (termed instanceof TaskLink) {
-//            needsValidation = false;
-//        }
-//        else if (termed instanceof TermLinkTemplate) {
-//            needsValidation = false;
-//        }
-//        else if (termed instanceof TermLinkKey) {
-//            needsValidation = false;
-//        }
-//        else {
-//            throw new RuntimeException("unknown validation requirement: " + termed + " " + termed.getClass());
-//        }
-
-        Term term = termed.getTerm();
-
-        if (needsValidation) {
-            if (!validConceptTerm(term))
-                return null;
-
-            if ((term = term.normalized()) == null)
-                return null;
-        }
-
-        return conceptualize(termed, budget);
-    }
-
-    private boolean validConceptTerm(Term term) {
-        return !((term instanceof Variable) || (term instanceof AbstractInterval));
-    }
 
     /**
      * Get the current activation level of a concept.

@@ -2,12 +2,15 @@ package nars.nar.experimental;
 
 import com.google.common.collect.Iterators;
 import nars.LocalMemory;
+import nars.Memory;
 import nars.NAR;
 import nars.bag.impl.MapCacheBag;
+import nars.budget.Budget;
 import nars.clock.CycleClock;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 import org.infinispan.commons.equivalence.AnyEquivalence;
 import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
 
@@ -47,9 +50,13 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
     }
 
     public DefaultAlann(MapCacheBag<Term, Concept> concepts, int numDerivelets) {
-        super(new LocalMemory(new CycleClock(), concepts));
+        this(new LocalMemory(new CycleClock(), concepts), numDerivelets);
+    }
 
-        indexIterator = Iterators.cycle(concepts);
+    public DefaultAlann(Memory m, int numDerivelets) {
+        super(m);
+
+        indexIterator = Iterators.cycle(m.getConcepts());
 
         for (int i = 0; i < numDerivelets; i++) {
             Derivelet d = new Derivelet();
@@ -140,6 +147,11 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
         if (next != null) {
             d.start(next, defaultTTL, context);
         }
+    }
+
+    @Override
+    protected Concept doConceptualize(Termed term, Budget budget) {
+        return null;
     }
 
 

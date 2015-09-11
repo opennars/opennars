@@ -24,10 +24,11 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
     private float conceptForgetCycles;
     private float activationFactor;
 
-    private NAR nar;
+    public final NAR nar;
 
-    //abstract public Memory getMemory();
-    abstract public NAR getNAR();
+    public ConceptActivator(NAR nar) {
+        this.nar = nar;
+    }
 
     /** gets a concept from Memory, even if forgotten */
     public Concept concept(Term t) {
@@ -52,7 +53,9 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
     }
 
 
-    public ConceptActivator set(Budget b, boolean createIfMissing, long now, float activationFactor) {
+    public Concept update(Term term, Budget b, boolean createIfMissing, long now, float activationFactor, Bag<Term,Concept> bag) {
+
+        setKey(term);
 
         setBudget(b);
 
@@ -62,7 +65,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
         this.createIfMissing = createIfMissing;
         this.now = now;
 
-        return this;
+        return bag.update(this);
     }
 
     public final CacheBag<Term, Concept> index() {
@@ -149,13 +152,24 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
         off(c);
     }
 
-    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing, long time, Bag<Term, Concept> concepts) {
+    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing, long time, Bag<Term, Concept> bag) {
 
         float activationFactor = 1.0f;
 
-        set(budget, createIfMissing, time, activationFactor);
+        Concept c = update(term.getTerm(), budget, createIfMissing, time, activationFactor, bag);
 
-        return conceptualize(term.getTerm(), concepts);
+
+        if (c == null) {
+
+            c = forgottenOrNewConcept();
+
+            remember(c);
+
+        }
+
+
+
+        return c;
 
 
 //        if (c != null) {
@@ -186,24 +200,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
 //        return null;
     }
 
-    protected Concept conceptualize(Term term, Bag<Term, Concept> concepts) {
-        setKey(term);
-        Concept c = concepts.update(this);
 
-
-
-        if (c == null) {
-
-            c = forgottenOrNewConcept();
-
-            remember(c);
-
-        }
-
-        return c;
-    }
-
-    abstract protected boolean active(Term t);
 
     protected boolean isActivatable(Concept c) {
         //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);
