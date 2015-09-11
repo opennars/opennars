@@ -20,7 +20,7 @@ abstract public class ConceptReaction extends NARReaction {
 
 
 
-        this.onConceptActive = n.mem().eventConceptActive.on(c -> {
+        this.onConceptActive = n.mem().eventConceptActivated.on(c -> {
             onConceptActive(c);
         });
         this.onConceptForget = n.mem().eventConceptForget.on(c -> {

@@ -57,6 +57,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
 
         setKey(term);
 
+
         setBudget(b);
 
         final Param param = nar.memory;

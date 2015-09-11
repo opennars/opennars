@@ -27,7 +27,7 @@ abstract public class ConceptMap extends NARReaction {
     public ConceptMap(NAR nar) {
         super(nar, Events.FrameEnd.class, Events.ResetStart.class);
 
-        this.onConceptActive = nar.memory.eventConceptActive.on(c -> {
+        this.onConceptActive = nar.memory.eventConceptActivated.on(c -> {
             onConceptActive(c);
         });
         this.onConceptForget = nar.memory.eventConceptForget.on(c -> {

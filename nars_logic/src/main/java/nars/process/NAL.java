@@ -8,8 +8,11 @@ import nars.Global;
 import nars.NAR;
 import nars.task.Task;
 
-import java.util.Set;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -22,35 +25,25 @@ import java.util.function.Consumer;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL extends AbstractPremise implements Runnable, Consumer<Task> {
-
-
+public abstract class NAL extends AbstractPremise implements Supplier<Collection<Task>>, Consumer<Task> {
 
     /** derivation queue (this might also work as a Set) */
-    protected Set<Task> derived = null;
-
-    public final Consumer<Task> inputToMemory;
-
-    /**
-     * stores the tasks that this process generates, and adds to memory
-     */
-    //protected SortedSet<Task> newTasks; //lazily instantiated
+    protected List<Task> derived = null;
 
     public NAL(final NAR n) {
         super(n);
-
-        inputToMemory = d -> n.input(d);
     }
 
-
-    @Override public void run() {
+    @Override public Collection<Task> get() {
 
         beforeDerive();
 
         derive();
 
-        afterDerive();
+        if (derived == null)
+            derived = Collections.EMPTY_LIST;
 
+        return afterDerive(derived);
     }
 
     /** implement if necessary in subclasses */
@@ -59,8 +52,8 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
     }
 
     /** implement if necessary in subclasses */
-    protected void afterDerive() {
-
+    protected Collection<Task> afterDerive(Collection<Task> c) {
+        return c;
     }
 
     /** run the actual derivation process */
@@ -72,7 +65,7 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
 
     @Override public void accept(Task derivedTask) {
         if (derived == null)
-            derived = Global.newHashSet(1);
+            derived = Global.newArrayList(1);
 
         if (!derived.add(derivedTask)) {
             if (Global.DEBUG && Global.PRINT_DUPLICATE_DERIVATIONS) {
@@ -83,12 +76,8 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
         }
     }
 
-
-
-    protected void inputDerivations() {
-        if (derived!=null) {
-            derived.forEach(inputToMemory);
-        }
+    public void input(NAR nar) {
+        get().forEach(nar::input);
     }
 
 }

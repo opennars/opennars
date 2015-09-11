@@ -10,7 +10,6 @@ import nars.clock.CycleClock;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Term;
-import nars.term.Termed;
 import org.infinispan.commons.equivalence.AnyEquivalence;
 import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
 
@@ -150,7 +149,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
     }
 
     @Override
-    protected Concept doConceptualize(Termed term, Budget budget) {
+    protected Concept doConceptualize(Term term, Budget budget) {
         return null;
     }
 

@@ -27,6 +27,7 @@ import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
+import nars.nal.PremiseProcessor;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -85,7 +86,8 @@ public class Memory extends Param implements Serializable {
     transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic();
     transient public final Topic<ConceptProcess> eventConceptProcessed = new DefaultTopic();
 
-    transient public final Topic<Concept> eventConceptActive = new DefaultTopic();
+
+    transient public final Topic<Concept> eventConceptActivated = new DefaultTopic();
     transient public final Topic<Concept> eventConceptForget = new DefaultTopic();
 
     transient public final Topic<Memory>
@@ -625,26 +627,19 @@ public class Memory extends Param implements Serializable {
         return concepts;
     }
 
-    public boolean inCycle() {
-        return inCycle;
-    }
-
     public synchronized void cycle() {
 
         inCycle = true;
 
         clock.preCycle();
 
-
         eventCycleStart.emit(this);
-
 
         eventCycleEnd.emit(this);
 
         inCycle = false;
 
         //deletePendingConcepts();
-
 
         //randomUpdate();
 
@@ -711,6 +706,19 @@ public class Memory extends Param implements Serializable {
 //        return item == null ? "" : "\n " + title + ":\n"
 //                + item.toString();
 //    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[@" + time() + ",C=" + size() + "]";
+    }
+
+    public int size() {
+        return concepts.size();
+    }
+
+    public void setDeriver(PremiseProcessor p) {
+        this.deriver = p;
+    }
 
 
     //public Iterator<Concept> getConcepts(boolean active, boolean inactive) {

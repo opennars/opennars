@@ -509,6 +509,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         return peekNext(tx, result, 0, result.length, additionalAttempts);
     }
 
+    abstract public void setCapacity(int c);
+
 //    /**
 //     * for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible
 //     */

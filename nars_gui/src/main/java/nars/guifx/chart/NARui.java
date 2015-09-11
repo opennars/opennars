@@ -8,7 +8,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.VBox;
 import nars.NAR;
-import nars.NARSeed;
 import nars.guifx.NARfx;
 import nars.util.meter.TemporalMetrics;
 import nars.util.meter.event.ObjectMeter;
@@ -26,19 +25,21 @@ import static javafx.collections.FXCollections.observableArrayList;
 /**
  * Created by me on 8/12/15.
  */
-public class NARui extends NAR {
+public class NARui {
 
     final List<TemporalMetrics<Double>> metrics = new ArrayList();
     private static final int DEFAULT_HISTORY_SIZE = 2048;
+    public final NAR nar;
 
 
-    public NARui(NARSeed s) {
-        super(s);
+    public NARui(NAR s) {
+        super();
+        this.nar = s;
 
     }
 
     public NARui then(Consumer<NAR> e) {
-        e.accept(this);
+        e.accept(nar);
         return this;
     }
 
@@ -70,7 +71,7 @@ public class NARui extends NAR {
                 return this;
             }
         };
-        onEachFrame(() -> {
+        nar.onEachFrame(() -> {
             eachFrame.eachFrame(mc, nar);
             meter.update(nar.time());
         });
@@ -172,13 +173,12 @@ public class NARui extends NAR {
         return series;
     }
 
-    @Override
     public NARui run(int frames) {
 
         //enable charting immediately before (to be called after all other chart handlers)
         // and disable immediately after the run
         {
-            super.run(frames);
+            nar.run(frames);
         }
 
         return this;

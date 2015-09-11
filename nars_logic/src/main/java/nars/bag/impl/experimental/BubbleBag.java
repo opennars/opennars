@@ -221,6 +221,11 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
         return queue.toString();
     }
 
+    @Override
+    public void setCapacity(int c) {
+        this.capacity = c;
+    }
+
     /** find starting point, removing trailing invalid items */
     protected E getValidStart() {
         E root = null;

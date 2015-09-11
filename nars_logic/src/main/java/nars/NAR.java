@@ -10,7 +10,6 @@ import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.concept.ConceptActivator;
 import nars.event.MemoryReaction;
 import nars.event.NARReaction;
 import nars.io.in.FileInput;
@@ -360,7 +359,7 @@ abstract public class NAR  {
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
-    public boolean input(final Task t) {
+    public final boolean input(final Task t) {
 
         final Memory m = memory();
 
@@ -437,14 +436,11 @@ abstract public class NAR  {
     transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
 
-    @Deprecated public int numActiveConcepts() {
-        return 0;
-    }
 
-    public int numConcepts(boolean active, boolean inactive) {
+    @Deprecated public int numConcepts(boolean active, boolean inactive) {
         int total = 0;
-        if (active && !inactive) return numActiveConcepts();
-        else if (!active && inactive) return memory().concepts.size() - numActiveConcepts();
+        if (active && !inactive) return -1; //numActiveConcepts();
+        else if (!active && inactive) return -1; //return memory().concepts.size() - ();
         else if (active && inactive)
             return memory().concepts.size();
         else
@@ -1194,10 +1190,16 @@ abstract public class NAR  {
         }
 
 
-        return doConceptualize(termed, budget);
+        final Concept c = doConceptualize(term, budget);
+        if (c == null) {
+            throw new RuntimeException("unconceptualizable: " + termed + " , " + budget);
+        }
+        memory.eventConceptActivated.emit(c);
+        return c;
+
     }
 
-    abstract protected Concept doConceptualize(Termed term, Budget budget);
+    abstract protected Concept doConceptualize(Term term, Budget budget);
 
     private boolean validConceptTerm(Term term) {
         return !((term instanceof Variable) || (term instanceof AbstractInterval));
@@ -1329,7 +1331,7 @@ abstract public class NAR  {
     }
 
     public NAR onConceptActive(final Consumer<Concept> c) {
-        regs.add( nar.memory.eventConceptActive.on(c) );
+        regs.add( nar.memory.eventConceptActivated.on(c) );
         return this;
     }
 

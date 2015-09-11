@@ -67,7 +67,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
     /**
      * defined in different bags
      */
-    final int capacity;
+    int capacity;
 
     private final boolean ownsNodePool;
 
@@ -767,6 +767,12 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
         }
         return level[i];
     }
+
+    @Override
+    public void setCapacity(int c) {
+        this.capacity = c;
+    }
+
 
     @Override
     @Deprecated public Iterable<E> values() {

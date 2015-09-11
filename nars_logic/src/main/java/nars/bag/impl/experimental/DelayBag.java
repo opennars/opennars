@@ -67,7 +67,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E>  {
 
-    private final int capacity;
+    private int capacity;
     
     private final Map<K,E> nameTable;
     private final Deque<E> pending;
@@ -412,6 +412,12 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     public String toString() {
         return super.toString() + '[' + size() + '|' + pending.size() + '|' + this.forgetThreshold + ".." + this.activityThreshold + ']';
     }
+
+    @Override
+    public void setCapacity(int c) {
+        this.capacity = c;
+    }
+
 
     public void setTargetActivated(float proportion) {
         this.targetActivations = proportion;

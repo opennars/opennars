@@ -47,7 +47,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
     private boolean ownsNodePool = false;
 
-    private final int capacity;
+    private int capacity;
 
     transient DD<V> current = null;
 
@@ -313,6 +313,12 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
         return current = next;
     }
+
+    @Override
+    public void setCapacity(int c) {
+        this.capacity = c;
+    }
+
 
 
     /** updates the adaptive percentile measurement; should be called on put and when budgets update  */

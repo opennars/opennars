@@ -348,7 +348,7 @@ public abstract class AbstractAlann extends NAR {
 
             final ConceptProcess p = nextPremise(now);
             if (p!=null) {
-                p.run();
+                p.input(context.nar);
             }
             else {
                 //no premise
@@ -376,10 +376,7 @@ public abstract class AbstractAlann extends NAR {
                 super(nar, concept, tl, tm);
             }
 
-            @Override protected final void inputDerivations() {
 
-                Derivelet.this.inputDerivations(derived);
-            }
 
             /*@Override
             protected synchronized void derive() {
@@ -392,9 +389,6 @@ public abstract class AbstractAlann extends NAR {
                 super(nar, concept, tl);
             }
 
-            @Override protected final void inputDerivations() {
-                Derivelet.this.inputDerivations(derived);
-            }
 
             /*@Override
             protected synchronized void derive() {

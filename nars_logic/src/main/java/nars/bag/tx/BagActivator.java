@@ -15,20 +15,20 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
     Budget nextActivation = new Budget();
 
 
-    public K getKey() {
+    public final K getKey() {
         return key;
     }
 
 
-    public void setBudget(Budget budget) {
+    public final void setBudget(Budget budget) {
         nextActivation.set(budget);
     }
 
-    public Budget getBudget() {
+    public final Budget getBudget() {
         return nextActivation;
     }
 
-    public void setKey(K key) {
+    public final void setKey(K key) {
         this.key = key;
     }
 

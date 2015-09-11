@@ -111,7 +111,7 @@ public class NAL5RuleTest {
 
         assertEquals(
             "[$1.00;0.33;0.24$ <m <-> n>. %1.00;0.45% {?: 1;2}]",
-            cp.getDerived().toString()
+            cp.get().toString()
         );
 
 

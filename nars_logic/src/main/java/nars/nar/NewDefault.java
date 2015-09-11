@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
     }
 
     public NewDefault(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
-        super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
+        super(null, maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
     }
 
 //    @Override

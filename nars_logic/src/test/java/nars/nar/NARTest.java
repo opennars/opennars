@@ -4,7 +4,6 @@ import nars.Events;
 import nars.LocalMemory;
 import nars.Memory;
 import nars.io.out.TextOutput;
-import nars.nar.experimental.DefaultAlann;
 import nars.narsese.InvalidInputException;
 import nars.util.language.JSON;
 import org.infinispan.marshall.core.JBossMarshaller;
@@ -45,12 +44,12 @@ public class NARTest {
     @Test
     public void testPassiveAndReusableMemory() {
         Memory m = new LocalMemory();
-        //Default nar = new Default(m);
-        DefaultAlann nar = new DefaultAlann(m, 32);
+        Default nar = new Default(m, 1000, 1, 3);
+        //DefaultAlann nar = new DefaultAlann(m, 32);
 
         TextOutput.out(nar);
 
-        nar.input("<a-->b>.", "<b-->c>.").run(255);
+        nar.input("<a-->b>.", "<b-->c>.").run(25);
         nar.stop();
 
         int nc;
@@ -59,7 +58,7 @@ public class NARTest {
 
         //a new nar with the same memory is allowed to
         //take control of it after the first stops
-        Default nar2 = new Default(m);
+        Default nar2 = new Default(m, 1000, 1, 3);
 
         assertTrue(m.time() > 1);
 

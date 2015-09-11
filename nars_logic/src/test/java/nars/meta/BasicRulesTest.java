@@ -16,7 +16,7 @@ public class BasicRulesTest {
 
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0f;
         Default n = new Default().nal(3);
-        n.conceptsFiredPerCycle.set(1);
+
 
 
         /*new NARStream(n).forEachCycle(() -> {

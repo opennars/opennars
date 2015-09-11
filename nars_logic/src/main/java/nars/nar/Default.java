@@ -1,6 +1,9 @@
 package nars.nar;
 
-import nars.*;
+import nars.Global;
+import nars.LocalMemory;
+import nars.Memory;
+import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
@@ -11,6 +14,9 @@ import nars.event.CycleReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.nal.LogicStage;
+import nars.nal.PremiseProcessor;
+import nars.nal.SimpleDeriver;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
@@ -38,12 +44,14 @@ import nars.task.Task;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
+import nars.task.filter.LimitDerivationPriority;
 import nars.term.Atom;
-import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Termed;
+import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.DefaultTopic;
+import nars.util.event.Topic;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,8 +61,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 
+import static java.lang.System.out;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
@@ -75,7 +83,7 @@ public class Default extends NAR {
      * Memory
      */
     //@Deprecated final protected Perception percepts = new DefaultPerception();
-    final Deque<Task> percepts = new ArrayDeque();
+
 
     public static final OpReaction[] exampleOperators = new OpReaction[]{
             //new Wait(),
@@ -92,20 +100,9 @@ public class Default extends NAR {
 
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng = new XorShift1024StarRandom(1);
-    /**
-     * How many concepts to fire each cycle; measures degree of parallelism in each cycle
-     */
-    public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
 
-    /**
-     * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
-     */
-    public final AtomicInteger inputsMaxPerCycle = new AtomicInteger();
 
-    /**
-     * max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
-     */
-    public final AtomicInteger novelMaxPerCycle = new AtomicInteger();
+
     public final OpReaction[] defaultOperators = new OpReaction[]{
 
             //system control
@@ -238,39 +235,40 @@ public class Default extends NAR {
      * Size of TermLinkBag
      */
     int termLinkBagSize;
-    /**
-     * determines maximum number of concepts
-     */
-    int conceptBagSize;
-    /**
-     * Size of TaskBuffer
-     */
-    int taskBufferSize;
+
+
     InternalExperience.InternalExperienceMode internalExperience;
 
-    final ConceptBagActivator ca = new ConceptBagActivator(this);
 
     /**
      * Default DEFAULTS
      */
+
+
     public Default() {
-        this(1024, 1, 3);
+        this(new LocalMemory(new CycleClock()), 1024, 1, 3);
     }
 
-    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
-        this(new LocalMemory(new CycleClock()));
-
-        setActiveConcepts(maxConcepts);
-
-        inputsMaxPerCycle.set(conceptsFirePerCycle);
-        conceptsFiredPerCycle.set(conceptsFirePerCycle);
-        novelMaxPerCycle.set(conceptsFirePerCycle);
-    }
-
-    public Default(Memory m) {
+    public Default(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(m);
 
-        //conceptTaskTermProcessPerCycle.set(termLinksPerCycle);
+
+
+
+        m.setDeriver(new PremiseProcessor(
+                new LogicStage[]{
+                        //new FilterEqualSubtermsAndSetPremiseBelief(),
+                        //new QueryVariableExhaustiveResults(),
+                        new SimpleDeriver(NewDefault.standard)
+                        //---------------------------------------------
+                },
+                new DerivationFilter[]{
+                    new FilterBelowConfidence(0.005),
+                    new FilterDuplicateExistingBelief(),
+                    new LimitDerivationPriority()
+    //                //param.getDefaultDerivationFilters().add(new BeRational());
+                }
+        ) );
 
         //termLinkMaxMatched.set(5);
 
@@ -282,8 +280,6 @@ public class Default extends NAR {
         setTaskLinkBagSize(64);
 
         setTermLinkBagSize(96);
-
-        setNovelTaskBagSize(48);
 
 
         //Runtime Initial Values
@@ -333,14 +329,12 @@ public class Default extends NAR {
             on(PerceptionAccel.class);
             on(STMInduction.class);
 
-
             if (maxNALLevel >= 8) {
 
                 for (OpReaction o : defaultOperators)
                     on(o);
                 for (OpReaction o : exampleOperators)
                     on(o);
-
 
                 //n.on(Anticipate.class);      // expect an event
 
@@ -353,10 +347,39 @@ public class Default extends NAR {
             }
         }
 
-        memory.eventCycleStart.on(this.control = getCycleProcess());
+        {
+            DefaultCycle c = this.control = getCycleProcess();
+            memory.eventCycleStart.on(c);
+            c.capacity.set(maxConcepts);
+            c.inputsMaxPerCycle.set(conceptsFirePerCycle);
+            c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
+            c.termLinksPerConcept.setValue(termLinksPerCycle);
+        }
 
-        memory.eventInput.on(t -> {
-            System.out.println("input: " + t);
+
+        //print all concepts and their budgets
+        memory.eventCycleEnd.on((mm) -> {
+            System.out.println("system: ");
+            mm.concepts.iterator().forEachRemaining(c -> {
+                System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
+            });
+            System.out.println("active: " + " " + control.active.size() + " / " + control.active.capacity());
+            control.active.forEach(c -> {
+                System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
+            });
+        });
+
+        /* Trace */
+        Topic.all(memory, (k,v)-> {
+            out.print(k);
+            out.print(": ");
+            if (v instanceof Concept) {
+                Concept c = (Concept)v;
+                out.println(c + " " + c.getBudget().toBudgetString());
+            }
+            else {
+                out.println(v);
+            }
         });
 
 
@@ -368,10 +391,10 @@ public class Default extends NAR {
 
     public DefaultCycle getCycleProcess() {
         return new DefaultCycle(
+                this,
+                new ConceptBagActivator(this),
                 new ItemAccumulator(Budget.max),
-                newConceptBag(),
-                newNovelTaskBag(),
-                inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
+                newConceptBag()
         );
     }
 
@@ -476,10 +499,9 @@ public class Default extends NAR {
 
     }
 
-
     @Override
-    protected final Concept doConceptualize(Termed term, Budget b) {
-        return ca.update(term.getTerm(), b, true, time(), 1f, ca.active);
+    protected final Concept doConceptualize(Term term, Budget b) {
+        return control.update(term.getTerm(), b, true, 1f, control.active);
     }
 
     /**
@@ -497,36 +519,12 @@ public class Default extends NAR {
     }
 
     public Bag<Term, Concept> newConceptBag() {
-        CurveBag<Term, Concept> b = new CurveBag(rng, getActiveConcepts());
-        b.mergeMax();
+        CurveBag<Term, Concept> b = new CurveBag(rng, 1);
+        b.mergePlus();
         return b;
     }
 
 
-
-
-    public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new CurveBag(rng, getNovelTaskBagSize());
-        //return new ChainBag(rng, getNovelTaskBagSize());
-    }
-
-    public int getNovelTaskBagSize() {
-        return taskBufferSize;
-    }
-
-    public Default setNovelTaskBagSize(int taskBufferSize) {
-        this.taskBufferSize = taskBufferSize;
-        return this;
-    }
-
-    public int getActiveConcepts() {
-        return conceptBagSize;
-    }
-
-    public Default setActiveConcepts(int conceptBagSize) {
-        this.conceptBagSize = conceptBagSize;
-        return this;
-    }
 
     public int getConceptTaskLinks() {
         return taskLinkBagSize;
@@ -565,55 +563,72 @@ public class Default extends NAR {
          * The original deterministic memory cycle implementation that is currently used as a standard
          * for development and testing.
          */
-    public class DefaultCycle extends CycleReaction  /*extends SequentialCycle*/ {
+    public static class DefaultCycle extends CycleReaction  /*extends SequentialCycle*/ {
 
+        final Deque<Task> percepts = new ArrayDeque();
 
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
          */
         public final AtomicInteger conceptsFiredPerCycle;
 
+        public final MutableInt termLinksPerConcept = new MutableInt();
+
         /**
          * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
          */
         public final AtomicInteger inputsMaxPerCycle;
 
-        /**
-         * max # of novel tasks to process per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
-         */
-        public final AtomicInteger novelMaxPerCycle;
 
 
         /**
          * New tasks with novel composed terms, for delayed and selective processing
          */
-        public final Bag<Sentence<Compound>, Task<Compound>> novelTasks;
         private final ItemAccumulator<Task> newTasks;
-            private final DefaultTopic.Subscription reg;
 
-            int numNovelTasksPerCycle = 1;
+        /** concepts active in this cycle */
+        private final Bag<Term, Concept> active;
+
+        private final DefaultTopic.Subscription onInput;
+
+        private final NAR nar;
+
+        public final MutableInteger capacity = new MutableInteger();
+
+        private final ConceptBagActivator ca;
+
+
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
 
 
-        public DefaultCycle(ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
-            super(Default.this);
+        public DefaultCycle(NAR nar, ConceptBagActivator ca, ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts) {
+            super(nar);
+
+            this.nar = nar;
+            this.ca = ca;
 
             this.newTasks = newTasks;
+            this.inputsMaxPerCycle = new AtomicInteger(1);
+            this.conceptsFiredPerCycle = new AtomicInteger(1);
+            this.active = concepts;
 
-            this.conceptsFiredPerCycle = conceptsFiredPerCycle;
-            this.inputsMaxPerCycle = inputsMaxPerCycle;
-            this.novelMaxPerCycle = novelMaxPerCycle;
-            this.novelTasks = novelTasks;
-
-            reg = memory().eventInput.on(t-> {
+            onInput = nar.memory().eventInput.on(t-> {
                 if (t.isInput())
                     percepts.add(t);
                 else
                     newTasks.add(t);
             });
         }
+
+            public void reset() {
+
+                percepts.clear();
+
+                newTasks.clear();
+
+            }
 
 
 //        @Override
@@ -622,17 +637,7 @@ public class Default extends NAR {
 //            novelTasks.delete();
 //        }
 
-//        @Override
-//        public void reset(Memory m) {
-//            super.reset(m);
-//
-//            percepts.clear();
-//
-//            if (novelTasks != null)
-//                novelTasks.clear();
-//        }
-//
-//
+
 
 
 
@@ -653,72 +658,49 @@ public class Default extends NAR {
 
             runAllNewTasks();
 
-            runNovelTasks();
-
             fireConcepts();
         }
 
         protected void fireConcepts() {
+
+            active.setCapacity(capacity.intValue());
+
+
             //1 concept if (memory.newTasks.isEmpty())*/
             final int conceptsToFire = newTasks.isEmpty() ? conceptsFiredPerCycle.get() : 0;
             if (conceptsToFire == 0) return;
 
-            final float conceptForgetDurations = memory.param.conceptForgetDurations.floatValue();
+            final float conceptForgetDurations = nar.memory().conceptForgetDurations.floatValue();
 
-            final Param p = memory.param;
-            final float tasklinkForgetDurations = p.taskLinkForgetDurations.floatValue();
-            final int termLinkSelections = p.conceptTaskTermProcessPerCycle.intValue();
+
+            //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
+            final int termLinkSelections = termLinksPerConcept.getValue();
 
 
 //            Concept[] buffer = new Concept[conceptsToFire];
-//            int n = nextConcept(conceptForgetDurations, buffer);
+//            int n = active.forgetNext(conceptForgetDurations, buffer, time());
 //            if (n == 0) return;
-//
-//            for (final Concept c : buffer) {
-//                if (c == null) break;
-//                forEachPremise(nar, c, termLinkSelections, conceptForgetDurations, ConceptProcessRunner );
-//            }
 
-        }
+            Concept[] buffer = new Concept[] { active.forgetNext(conceptForgetDurations, nar.memory()) };
 
-        protected void runNovelTasks() {
-            //1 novel tasks if numNewTasks empty
-            if (newTasks.isEmpty() && !novelTasks.isEmpty()) {
-                int nn = novelMaxPerCycle.get();
-                if (nn < 0) nn = novelTasks.size(); //all
-                if (nn > 0)
-                    runNextNovelTasks(nn);
+            for (final Concept c : buffer) {
+                if (c == null) break;
+                ConceptProcess.forEachPremise(nar, c, termLinkSelections, conceptForgetDurations, (t) -> {
+                    t.input(nar);
+                } );
             }
+
         }
+
+
 
         protected void enhanceAttention() {
-            /*mem().getConcepts().forgetNext(
-                    memory.param.conceptForgetDurations,
+            active.forgetNext(
+                    nar.memory().conceptForgetDurations,
                     Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
-                    memory);
-                    */
+                    nar.memory());
         }
 
-
-        /**
-         * Select a novel task to process.
-         */
-        protected void runNextNovelTasks(int count) {
-
-            //queueNewTasks();
-
-            for (int i = 0; i < count; i++) {
-
-                //TODO remove(N)
-                final Task task = novelTasks.pop();
-                if (task != null)
-                    TaskProcess.run(Default.this, task);
-                else
-                    break;
-            }
-
-            //commitNewTasks();
-        }
 
 
 
@@ -751,58 +733,73 @@ public class Default extends NAR {
         }
 
 
-        /**
-         * returns whether the task was run
-         */
+
+
         protected boolean run(Task task) {
+            return TaskProcess.run(nar, task) != null;
+        }
 
+        public final long time() { return nar.time(); }
 
-            //memory.emotion.busy(task);
-
-            if (task.isInput() || !(task.isJudgment())
-                    || (memory.concept(task.getTerm()) != null)
-                    ) {
-
-                //it is a question/quest or a judgment for a concept which exists:
-                return TaskProcess.run(Default.this, task) != null;
-
-            } else {
-                //it is a judgment or goal which would create a new concept:
-
-
-                //if (s.isJudgment() || s.isGoal()) {
-
-                final double exp = task.getExpectation();
-                if (exp > memory.param.conceptCreationExpectation.floatValue()) {//Global.DEFAULT_CREATION_EXPECTATION) {
-
-                    // new concept formation
-                    Task overflow = novelTasks.put(task);
-
-                    if (overflow != null) {
-                        if (overflow == task) {
-                            memory.removed(task, "Ignored");
-                            return false;
-                        } else {
-                            memory.removed(overflow, "Displaced novel task");
-                        }
-                    }
-
-                    memory.logic.TASK_ADD_NOVEL.hit();
-                    return true;
-
-                } else {
-                    memory.removed(task, "Neglected");
-                }
-                //}
-            }
-            return false;
+        public Concept update(Term term, Budget b, boolean b1, float v, Bag<Term, Concept> active) {
+            active.setCapacity(capacity.intValue());
+            return ca.update(term.getTerm(), b, true, time(), 1f, active);
         }
 
 
+//        /**
+//         * returns whether the task was run
+//         */
+//        protected boolean runWithNoveltyBag(Task task) {
+//
+//            //memory.emotion.busy(task);
+//
+//            final Memory memory = nar.memory();
+//
+//            if (task.isInput() || !(task.isJudgment())
+//                    || (memory.concept(task.getTerm()) != null)
+//                    ) {
+//
+//                //it is a question/quest or a judgment for a concept which exists:
+//                return TaskProcess.run(nar, task) != null;
+//
+//            } else {
+//                //it is a judgment or goal which would create a new concept:
+//
+//
+//                //if (s.isJudgment() || s.isGoal()) {
+//
+//                final double exp = task.getExpectation();
+//                if (exp > memory.param.conceptCreationExpectation.floatValue()) {//Global.DEFAULT_CREATION_EXPECTATION) {
+//
+//                    // new concept formation
+//                    Task overflow = novelTasks.put(task);
+//
+//                    if (overflow != null) {
+//                        if (overflow == task) {
+//                            memory.removed(task, "Ignored");
+//                            return false;
+//                        } else {
+//                            memory.removed(overflow, "Displaced novel task");
+//                        }
+//                    }
+//
+//                    memory.logic.TASK_ADD_NOVEL.hit();
+//                    return true;
+//
+//                } else {
+//                    memory.removed(task, "Neglected");
+//                }
+//                //}
+//            }
+//            return false;
+//        }
+//
+//
 
     }
 
-    public static final Consumer<ConceptProcess> ConceptProcessRunner = ConceptProcess::run;
+
 
     @Deprecated
     public static class CommandLineNARBuilder extends Default {
@@ -859,16 +856,22 @@ public class Default extends NAR {
 
     private class ConceptBagActivator extends ConceptActivator {
 
-        public final Bag<Term,Concept> active =
-                newConceptBag();
 
         public ConceptBagActivator(NAR n) {
             super(n);
         }
 
         @Override
-        public Concept newConcept(Term t, Budget b, @Deprecated Memory m) {
+        @Deprecated public Concept newConcept(Term t, Budget b, @Deprecated Memory m) {
             return Default.this.newConcept(t, b);
+        }
+
+        @Override public Concept newItem() {
+            //default behavior overriden; a new item will be maanually inserted into the bag under certain conditons to be determined by this class
+            Concept c = Default.this.newConcept(getKey(),getBudget());
+            memory().put(c);
+
+            return c;
         }
 
         @Override
@@ -881,8 +884,8 @@ public class Default extends NAR {
 
         }
 
-        public Concept update() {
-            return active.update(this);
+        public Concept update(Bag<Term,Concept> bag) {
+            return bag.update(this);
         }
     }
 }

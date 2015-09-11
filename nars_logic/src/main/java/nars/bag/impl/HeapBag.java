@@ -36,7 +36,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * defined in different bags
      */
-    final int capacity;
+    int capacity;
     private final Random rng;
     /**
      * current sum of occupied level
@@ -551,4 +551,10 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     public void forEach(final Consumer<? super E> action) {
         items.forEach(action);
     }
+
+    @Override
+    public void setCapacity(int c) {
+        this.capacity = c;
+    }
+
 }

@@ -3,7 +3,9 @@ package nars.util.event;
 
 import nars.util.data.list.FasterList;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -19,13 +21,42 @@ abstract public interface Topic<V>  {
 
 
 
+    /** registers to all public Topic fields in an object */
+    public static Registrations all(final Object obj, BiConsumer<String /* fieldName*/,Object /* value */> f) {
 
-    public interface EventRegistration {
-        public void off();
+
+        Registrations s = new Registrations();
+
+        /** TODO cache the fields because reflection may be slow */
+        for (Field field : obj.getClass().getFields()) {
+            Class returnType = field.getType();
+            if (returnType.equals(Topic.class)) {
+                final String fieldName = field.getName();
+                try {
+                    Topic t = ((Topic) field.get(obj));
+
+                    // could send start message: f.accept(f.getName(),  );
+
+                    s.add(
+                        t.on((nextValue) -> f.accept(
+                                  fieldName /* could also be the Topic itself */,
+                                  nextValue
+                        )));
+
+                } catch (IllegalAccessException e) {
+                    f.accept( fieldName, e);
+                }
+            }
+
+            //System.out.println(obj + "  " + f + " " + returnType);
+        }
+
+        return s;
     }
 
 
-    public abstract void emit(V arg);
+
+    void emit(V arg);
 
     DefaultTopic.Subscription on(Consumer<V> o);
 
@@ -35,6 +66,9 @@ abstract public interface Topic<V>  {
 
         Registrations(int length) {
             super(length);
+        }
+        Registrations() {
+            this(1);
         }
 
 //        public void resume() {

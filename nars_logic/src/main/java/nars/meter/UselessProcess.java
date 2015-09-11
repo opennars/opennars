@@ -3,7 +3,10 @@ package nars.meter;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.process.ConceptProcess;
+import nars.task.Task;
 import nars.util.event.DefaultTopic;
+
+import java.util.Collection;
 
 /**
  * Meter utility for analyzing useless inference processes
@@ -29,7 +32,8 @@ public class UselessProcess extends NARReaction {
     }
 
     void onConceptProcessed(ConceptProcess arg) {
-        int numDerived = arg.getDerived().size();
+        Collection<Task> derived = arg.get();
+        int numDerived = derived.size();
         if (numDerived == 0) {
             System.err.println(nar.time() + ": " +  arg + " no derivations" );
         }

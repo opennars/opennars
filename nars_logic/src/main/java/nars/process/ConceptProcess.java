@@ -13,8 +13,7 @@ import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.util.Collection;
 import java.util.function.Consumer;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
@@ -25,6 +24,8 @@ import java.util.function.Consumer;
  *
  * */
 abstract public class ConceptProcess extends NAL  {
+
+
 
     protected final TaskLink taskLink;
     protected final Concept concept;
@@ -69,14 +70,13 @@ abstract public class ConceptProcess extends NAL  {
     }
 
     @Override
-    final protected void afterDerive() {
+    final protected Collection<Task> afterDerive(Collection<Task> c) {
 
         final long now = nar.time();
 
         beforeFinish(now);
 
-        inputDerivations();
-
+        return c;
     }
 
 
@@ -163,10 +163,4 @@ abstract public class ConceptProcess extends NAL  {
 
     }
 
-
-    public Set<Task> getDerived() {
-        if (derived == null)
-            return Collections.emptySet();
-        return derived;
-    }
 }

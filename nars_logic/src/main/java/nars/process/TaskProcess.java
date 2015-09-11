@@ -17,6 +17,7 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 
+import java.util.Collection;
 import java.util.List;
 
 import static nars.budget.BudgetFunctions.divide;
@@ -380,10 +381,6 @@ public class TaskProcess extends NAL {
 
     }
 
-    @Override
-    final protected void afterDerive() {
-        inputDerivations();
-    }
 
 //    /** create and execute a direct process immediately */
 //    public static Premise queue(final NAR nar, final Task task) {
@@ -417,7 +414,7 @@ public class TaskProcess extends NAL {
         if (d == null)
             return null;
 
-        d.run();
+        Collection<Task> c = d.get();
 
         return d;
     }

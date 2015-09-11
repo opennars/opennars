@@ -4,7 +4,7 @@ import nars.LocalMemory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.term.Termed;
+import nars.term.Term;
 
 
 /**
@@ -23,7 +23,7 @@ public class Equalized extends NAR {
     }
 
     @Override
-    protected Concept doConceptualize(Termed term, Budget budget) {
+    protected Concept doConceptualize(Term term, Budget budget) {
         return null;
     }
 

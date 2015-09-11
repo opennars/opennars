@@ -80,13 +80,21 @@ public class MutableInteger extends Number implements Comparable, Mutable {
     return new Double(this.value);
   }
 
+  @Override
+  public void setValue(Object value) {
+      if (value instanceof Integer)
+        set((Integer)value);
+      throw new RuntimeException("not integer");
+  }
+
+
   /**
    * Sets the value.
    * 
    * @param value
    *          the value to set
    */
-  public MutableInteger setValue(int value) {
+  public MutableInteger set(int value) {
     this.value = value;
     return this;
   }
@@ -101,9 +109,8 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * @throws ClassCastException
    *           if the type is not a {@link Number}
    */
-  @Override
-  public void setValue(Object value) {
-    setValue(((Number) value).intValue());
+  public void set(Object value) {
+    set(((Number) value).intValue());
   }
 
   // -----------------------------------------------------------------------

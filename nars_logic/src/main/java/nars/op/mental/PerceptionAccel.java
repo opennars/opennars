@@ -53,7 +53,7 @@ public class PerceptionAccel extends NARReaction {
     public PerceptionAccel(NAR n) {
         super(n, Events.InduceSucceedingEvent.class);
 
-        this.onConceptActive = n.memory.eventConceptActive.on(c -> {
+        this.onConceptActive = n.memory.eventConceptActivated.on(c -> {
             Term t = c.getTerm();
             if (t instanceof Sequence)
                 handleConjunctionSequence((Sequence)t, true);

@@ -44,7 +44,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     /**
      * defined in different bags
      */
-    final int capacity;
+    int capacity;
 
 
     public transient final ToIntFunction<CurveBag> sampler;
@@ -269,7 +269,11 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     }
 
 
-
+    @Override
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+        items.setCapacity(capacity);
+    }
 
     /**
      * Check if an item is in the bag

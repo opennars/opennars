@@ -16,7 +16,7 @@ public class ConceptTaskLinkProcess extends ConceptProcess {
 
     @Override
     protected void derive() {
-        nar().mem().getDeriver().fire(this);
+        nar.memory().getDeriver().fire(this);
     }
 
     @Override

@@ -56,7 +56,7 @@ public class consider extends SynchOperator implements Mental {
 
         TaskLink taskLink = concept.getTaskLinks().peekNext();
         if (taskLink!=null) {
-            new ConceptTaskLinkProcess(nar, concept, taskLink).run();
+            new ConceptTaskLinkProcess(nar, concept, taskLink).input(nar);
         }
         
         return null;
