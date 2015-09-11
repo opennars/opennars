@@ -10,7 +10,6 @@ import nars.task.Task;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -28,13 +27,13 @@ import java.util.function.Supplier;
 public abstract class NAL extends AbstractPremise implements Supplier<Collection<Task>>, Consumer<Task> {
 
     /** derivation queue (this might also work as a Set) */
-    protected List<Task> derived = null;
+    protected Collection<Task> derived = null;
 
     public NAL(final NAR n) {
         super(n);
     }
 
-    @Override public Collection<Task> get() {
+    @Override public final Collection<Task> get() {
 
         beforeDerive();
 
@@ -65,7 +64,7 @@ public abstract class NAL extends AbstractPremise implements Supplier<Collection
 
     @Override public void accept(Task derivedTask) {
         if (derived == null)
-            derived = Global.newArrayList(1);
+            derived = Global.newHashSet(1);
 
         if (!derived.add(derivedTask)) {
             if (Global.DEBUG && Global.PRINT_DUPLICATE_DERIVATIONS) {

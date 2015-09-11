@@ -130,6 +130,8 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
             int i= UtilityFunctions.floorInt(y * size);
 
+            i = size-i; //invert order = select highest pri most frequently
+
             if (i >= size) return size-1;
             if (i < 0) return 0;
 

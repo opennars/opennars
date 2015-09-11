@@ -505,6 +505,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     }
 
+
     final public int peekNext(BagSelector<K,V> tx, V[] result, int additionalAttempts) {
         return peekNext(tx, result, 0, result.length, additionalAttempts);
     }

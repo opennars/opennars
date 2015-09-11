@@ -10,9 +10,9 @@ import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.task.Task;
+import nars.term.Terms;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
 
@@ -93,74 +93,103 @@ abstract public class ConceptProcess extends NAL  {
 
 
     public static void forEachPremise(NAR nar, @Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
-        forEachPremise(nar, concept, null, termLinks, taskLinkForgetDurations, proc);
-    }
 
-    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
-        if (concept == null) return;
+        final long now = nar.time();
 
-        concept.updateLinks();
+        Task belief = null;
 
-        if (taskLink == null) {
-            taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, concept.getMemory());
-            if (taskLink == null)
-                return;
+
+        TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
+
+        TermLink termLink = concept.getTermLinks().forgetNext(nar.memory().termLinkForgetDurations, nar.memory());
+
+        if (!Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
+            final Concept beliefConcept = nar.concept(termLink.target);
+            if (beliefConcept != null) {
+                belief = beliefConcept.getBeliefs().top(taskLink.getTask(), now);
+            }
         }
 
-        proc.accept( new ConceptTaskLinkProcess(nar, concept, taskLink) );
+        ConceptProcess cp;
+        if (belief == null) {
+            cp = new ConceptTaskLinkProcess(nar, concept, taskLink);
+        }
+        else {
+            cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
+            cp.setBelief(belief);
+        }
 
-        if ((termLinks > 0) && (taskLink.type!=TermLink.TRANSFORM))
-            ConceptProcess.forEachPremise(nar, concept, taskLink,
-                    termLinks,
-                    proc
-            );
+        proc.accept(cp);
     }
 
-    /** generates a set of termlink processes by sampling
-     * from a concept's TermLink bag
-     * @return how many processes generated
-     * */
-    public static int forEachPremise(NAR nar, Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
+//    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
+//        if (concept == null) return;
+//
+//        concept.updateLinks();
+//
+//        if (taskLink == null) {
+//            taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, concept.getMemory());
+//            if (taskLink == null)
+//                return;
+//        }
+//
+//
+//
+//
+//        proc.accept( new ConceptTaskLinkProcess(nar, concept, taskLink) );
+//
+//        if ((termLinks > 0) && (taskLink.type!=TermLink.TRANSFORM))
+//            ConceptProcess.forEachPremise(nar, concept, taskLink,
+//                    termLinks,
+//                    proc
+//            );
+//    }
 
-        int numTermLinks = concept.getTermLinks().size();
-        if (numTermLinks == 0)
-            return 0;
-
-        TermLink[] termlinks = new TermLink[termlinksToReason];
-
-        //int remainingProcesses = Math.min(termlinksToReason, numTermLinks);
-
-        //while (remainingProcesses > 0) {
-
-            Arrays.fill(termlinks, null);
-
-            concept.getPremiseGenerator().nextTermLinks(concept, t, termlinks);
-
-            int created = 0;
-            for (TermLink tl : termlinks) {
-                if (tl == null) break;
-
-                proc.accept(
-                    new ConceptTaskTermLinkProcess(nar, concept, t, tl)
-                );
-                created++;
-            }
-
-
-          //  remainingProcesses--;
-
-
-        //}
-
-        /*if (remainingProcesses == 0) {
-            System.err.println(now + ": " + currentConcept + ": " + remainingProcesses + "/" + termLinksToFire + " firings over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords() + " for TermLinks "
-                    //+ currentConcept.getTermLinks().values()
-            );
-            //currentConcept.taskLinks.printAll(System.out);
-        }*/
-
-        return created;
-
-    }
+//    /** generates a set of termlink processes by sampling
+//     * from a concept's TermLink bag
+//     * @return how many processes generated
+//     * */
+//    public static int forEachPremise(NAR nar, Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
+//
+//        int numTermLinks = concept.getTermLinks().size();
+//        if (numTermLinks == 0)
+//            return 0;
+//
+//        TermLink[] termlinks = new TermLink[termlinksToReason];
+//
+//        //int remainingProcesses = Math.min(termlinksToReason, numTermLinks);
+//
+//        //while (remainingProcesses > 0) {
+//
+//            Arrays.fill(termlinks, null);
+//
+//            concept.getPremiseGenerator().nextTermLinks(concept, t, termlinks);
+//
+//            int created = 0;
+//            for (TermLink tl : termlinks) {
+//                if (tl == null) break;
+//
+//                proc.accept(
+//                    new ConceptTaskTermLinkProcess(nar, concept, t, tl)
+//                );
+//                created++;
+//            }
+//
+//
+//          //  remainingProcesses--;
+//
+//
+//        //}
+//
+//        /*if (remainingProcesses == 0) {
+//            System.err.println(now + ": " + currentConcept + ": " + remainingProcesses + "/" + termLinksToFire + " firings over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords() + " for TermLinks "
+//                    //+ currentConcept.getTermLinks().values()
+//            );
+//            //currentConcept.taskLinks.printAll(System.out);
+//        }*/
+//
+//        return created;
+//
+//    }
 
 }

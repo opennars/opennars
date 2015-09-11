@@ -61,7 +61,6 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
     @Override
     public @Nullable TermLink[] nextTermLinks(final Concept c, final TaskLink taskLink, TermLink[] result) {
 
-        TermLink[] buffer = result;
 
         final int attempting = getMaxAttempts(c);
         if (attempting == 0) return null;
@@ -70,14 +69,18 @@ public class TermLinkBagPremiseGenerator extends ParametricBagForgetting<TermLin
 
         this.currentConcept = c;
         this.currentTaskLink = taskLink;
-        set(c.getMemory().param.termLinkForgetDurations.floatValue(), c.getMemory().time());
+        set(c.getMemory().termLinkForgetDurations.floatValue(), c.getMemory().time());
 
 
-        //protected int update(BagTransaction<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
+        ////protected int update(BagTransaction<K, V> tx, V[] batch, int start, int stop, int maxAdditionalAttempts) {
 
-        int n = c.getTermLinks().peekNext(this, result, attempting);
+        //int n = c.getTermLinks().forgetNext(this, result, attempting);
 
-        //onSelect(c, lastForgotten != null, n);
+        ////onSelect(c, lastForgotten != null, n);
+
+
+        //HACK
+        result[0] = c.getTermLinks().forgetNext(c.getMemory().termLinkForgetDurations.floatValue(), c.getMemory());
 
         return result;
     }

@@ -6,13 +6,15 @@ import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.term.Terms;
 
-public class FilterEqualSubtermsAndSetPremiseBelief extends ConceptFireTaskTerm {
+@Deprecated public class FilterEqualSubtermsAndSetPremiseBelief extends ConceptFireTaskTerm {
 
     @Override
     public boolean apply(ConceptProcess f, TermLink termLink) {
         
-        if(Terms.equalSubTermsInRespectToImageAndProduct(f.getTaskLink().getTerm(), termLink.getTerm()))
+        if(Terms.equalSubTermsInRespectToImageAndProduct(f.getTaskLink().getTerm(), termLink.getTerm())) {
+            f.setBelief(null);
             return false;
+        }
 
         final Concept beliefConcept = f.nar.concept(termLink.target);
         if (beliefConcept!=null) {

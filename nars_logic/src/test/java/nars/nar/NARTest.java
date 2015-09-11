@@ -44,12 +44,12 @@ public class NARTest {
     @Test
     public void testPassiveAndReusableMemory() {
         Memory m = new LocalMemory();
-        Default nar = new Default(m, 1000, 1, 3);
+        Default nar = new Default(m, 1000, 1, 5);
         //DefaultAlann nar = new DefaultAlann(m, 32);
 
         TextOutput.out(nar);
 
-        nar.input("<a-->b>.", "<b-->c>.").run(25);
+        nar.input("<a-->b>.", "<b-->c>.").run(525);
         nar.stop();
 
         int nc;

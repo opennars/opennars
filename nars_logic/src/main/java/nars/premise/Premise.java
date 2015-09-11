@@ -395,9 +395,17 @@ public interface Premise {
                     //its parent is not cyclic
 
                     boolean cyclic = task.isCyclic();
-//                    if (singleOrDouble) {
-//                        cyclic &= task.getParentTask().isCyclic();
-//                    }
+                    if (singleOrDouble) {
+                        final Task parentTask = task.getParentTask();
+
+                        //THIS IS A HACK because Cyclic flag isnt semantically correct yet
+                        if (cyclic) {
+                            if (!task.getTerm().equals(parentTask.getTerm())
+                                    &&
+                                    (!parentTask.isCyclic()))
+                                cyclic = false;
+                        }
+                    }
 
                     if (cyclic) {
                         //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());

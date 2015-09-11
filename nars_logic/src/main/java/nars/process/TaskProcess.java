@@ -17,7 +17,6 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.Collection;
 import java.util.List;
 
 import static nars.budget.BudgetFunctions.divide;
@@ -414,7 +413,7 @@ public class TaskProcess extends NAL {
         if (d == null)
             return null;
 
-        Collection<Task> c = d.get();
+        d.input(m);
 
         return d;
     }

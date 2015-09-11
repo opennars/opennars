@@ -51,6 +51,7 @@ import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.DefaultTopic;
 import nars.util.event.Topic;
+import nars.util.graph.TermLinkGraph;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.io.File;
@@ -257,7 +258,6 @@ public class Default extends NAR {
 
         m.setDeriver(new PremiseProcessor(
                 new LogicStage[]{
-                        //new FilterEqualSubtermsAndSetPremiseBelief(),
                         //new QueryVariableExhaustiveResults(),
                         new SimpleDeriver(NewDefault.standard)
                         //---------------------------------------------
@@ -367,6 +367,12 @@ public class Default extends NAR {
             control.active.forEach(c -> {
                 System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
             });
+        });
+
+        //print termlinks graph
+        memory.eventCycleEnd.on((mm) -> {
+            TermLinkGraph g = new TermLinkGraph(mm);
+            System.out.println("termlinks: " + g);
         });
 
         /* Trace */
@@ -674,6 +680,7 @@ public class Default extends NAR {
 
 
             //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
+
             final int termLinkSelections = termLinksPerConcept.getValue();
 
 
