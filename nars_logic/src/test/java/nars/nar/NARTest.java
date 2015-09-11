@@ -3,9 +3,13 @@ package nars.nar;
 import nars.Events;
 import nars.LocalMemory;
 import nars.Memory;
+import nars.io.out.TextOutput;
 import nars.narsese.InvalidInputException;
+import nars.util.language.JSON;
+import org.infinispan.marshall.core.JBossMarshaller;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,10 +23,30 @@ import static org.junit.Assert.assertTrue;
  */
 public class NARTest {
 
+
+    @Test
+    public void testEmptyMemoryToJSON() throws IOException, InterruptedException, ClassNotFoundException {
+        String j = JSON.omDeep.writeValueAsString(new LocalMemory());
+        System.out.println(j);
+    }
+
+    @Test
+    public void testEmptyMemorySerialization() throws IOException, InterruptedException, ClassNotFoundException {
+        /** empty memory, and serialize it */
+        LocalMemory m = new LocalMemory();
+        byte[] bm = m.toBytes();
+        assertTrue(bm.length > 64);
+
+        assertEquals(m, new JBossMarshaller().objectFromByteBuffer(bm) );
+
+    }
+
     @Test
     public void testPassiveAndReusableMemory() {
         Memory m = new LocalMemory();
         Default nar = new Default(m);
+
+        TextOutput.out(nar);
 
         nar.input("<a-->b>.", "<b-->c>.").run(5);
         nar.stop();

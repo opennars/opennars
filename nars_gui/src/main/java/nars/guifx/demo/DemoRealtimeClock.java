@@ -25,9 +25,8 @@ public class DemoRealtimeClock extends NARControlFX {
             SizeAwareWindow s;
             b.setScene(s = new SizeAwareWindow(d -> {
                 return () -> {
-                    NAR nar = new NAR(
-                        new Equalized(1000,8,4)
-                    );
+                    NAR nar = new Equalized(1000,8,4);
+
                     return new BorderPane(new DemoRealtimeClock(nar));
                 };
 

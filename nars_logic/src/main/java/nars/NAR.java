@@ -118,13 +118,11 @@ public class NAR  {
     public NAR(final Memory m) {
         super();
 
-        reset(m);
+        setMemory(m);
 
-        memory().the(NAR.class, this);
 
         this.narsese = NarseseParser.the();
 
-        reset();
     }
 
 
@@ -351,8 +349,7 @@ public class NAR  {
 
 
     protected boolean process(Task t) {
-
-        return true;
+        throw new RuntimeException("this should be overridden in subclasses of NAR");
     }
 
 
@@ -916,10 +913,12 @@ public class NAR  {
     }
 
 
-    public void reset(Memory m) {
+    public final void setMemory(Memory m) {
+
+        m.the(NAR.class, this);
+
         if (isRunning())
             throw new RuntimeException("NAR must be stopped to change memory");
-
 
         memory = m;
     }

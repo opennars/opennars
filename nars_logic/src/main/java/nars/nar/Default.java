@@ -228,6 +228,7 @@ public class Default extends NAR {
 //        table.put("^strike", new Strike("^strike"));
 
     };
+    private final DefaultCycle control;
     public int cyclesPerFrame = 1;
     protected int maxNALLevel;
     /**
@@ -268,7 +269,6 @@ public class Default extends NAR {
 
     public Default(Memory m) {
         super(m);
-
 
         //conceptTaskTermProcessPerCycle.set(termLinksPerCycle);
 
@@ -353,8 +353,19 @@ public class Default extends NAR {
             }
         }
 
+        memory.eventCycleStart.on(this.control = getCycleProcess());
+
         //n.on(new RuntimeNARSettings());
 
+    }
+
+    public DefaultCycle getCycleProcess() {
+        return new DefaultCycle(
+                new ItemAccumulator(Budget.max),
+                newConceptBag(),
+                newNovelTaskBag(),
+                inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
+        );
     }
 
     static String readFile(String path, Charset encoding)
@@ -480,15 +491,6 @@ public class Default extends NAR {
 
 
 
-//    @Override
-//    public CycleProcess getCycleProcess() {
-//        return new DefaultCycle(
-//                new ItemAccumulator(Budget.max),
-//                newConceptBag(),
-//                newNovelTaskBag(),
-//                inputsMaxPerCycle, novelMaxPerCycle, conceptsFiredPerCycle
-//        );
-//    }
 
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
         return new CurveBag(rng, getNovelTaskBagSize());
@@ -541,10 +543,15 @@ public class Default extends NAR {
                 + ']';
     }
 
-    /**
-     * The original deterministic memory cycle implementation that is currently used as a standard
-     * for development and testing.
-     */
+    protected boolean process(Task t) {
+        control.accept(t);
+        return true;
+    }
+
+        /**
+         * The original deterministic memory cycle implementation that is currently used as a standard
+         * for development and testing.
+         */
     public class DefaultCycle extends CycleReaction /*extends SequentialCycle*/ {
 
 
@@ -575,8 +582,8 @@ public class Default extends NAR {
         /* ---------- Short-term workspace for a single cycle ------- */
 
 
-        public DefaultCycle(NAR nar, ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
-            super(nar);
+        public DefaultCycle(ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks, AtomicInteger inputsMaxPerCycle, AtomicInteger novelMaxPerCycle, AtomicInteger conceptsFiredPerCycle) {
+            super(Default.this);
 
             this.newTasks = newTasks;
 
@@ -604,13 +611,13 @@ public class Default extends NAR {
 //        }
 //
 //
-//        @Override
-//        public boolean accept(Task t) {
-//            if (t.isInput())
-//                return percepts.add(t);
-//            else
-//                return super.accept(t);
-//        }
+
+        public boolean accept(Task t) {
+            if (t.isInput())
+                return percepts.add(t);
+            else
+                return newTasks.add(t);
+        }
 
 
 
@@ -648,12 +655,12 @@ public class Default extends NAR {
 
 
 //            Concept[] buffer = new Concept[conceptsToFire];
-//            int n = nextConcepts(conceptForgetDurations, buffer);
+//            int n = nextConcept(conceptForgetDurations, buffer);
 //            if (n == 0) return;
 //
 //            for (final Concept c : buffer) {
 //                if (c == null) break;
-//                forEachPremise(c, termLinkSelections, conceptForgetDurations, ConceptProcessRunner );
+//                forEachPremise(nar, c, termLinkSelections, conceptForgetDurations, ConceptProcessRunner );
 //            }
 
         }

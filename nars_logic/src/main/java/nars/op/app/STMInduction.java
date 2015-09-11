@@ -18,7 +18,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
  * //TODO use new event api
  */
-abstract public class STMInduction extends NARReaction {
+public class STMInduction extends NARReaction {
 
     public final Deque<Task> stm;
     int stmSize;

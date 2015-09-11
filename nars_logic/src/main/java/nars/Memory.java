@@ -295,12 +295,12 @@ public class Memory extends Param implements Serializable {
 //    public Set<Concept> getQuestionConcepts() {
 //        return questionConcepts;
 //    }
-
-    /** provides fast iteration to concepts with goals */
-    public Set<Concept> getGoalConcepts() {
-        throw new RuntimeException("disabled until it is useful");
-        //return goalConcepts;
-    }
+//
+//    /** provides fast iteration to concepts with goals */
+//    public Set<Concept> getGoalConcepts() {
+//        throw new RuntimeException("disabled until it is useful");
+//        //return goalConcepts;
+//    }
 
 
 

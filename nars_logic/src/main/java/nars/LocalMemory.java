@@ -7,6 +7,9 @@ import nars.clock.CycleClock;
 import nars.concept.Concept;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
+import org.infinispan.marshall.core.JBossMarshaller;
+
+import java.io.IOException;
 
 /** default for single-thread, in-memory processing */
 public class LocalMemory extends Memory {
@@ -22,5 +25,9 @@ public class LocalMemory extends Memory {
 
     public LocalMemory() {
         this(new CycleClock());
+    }
+
+    public byte[] toBytes() throws IOException, InterruptedException {
+        return new JBossMarshaller().objectToByteBuffer(this);
     }
 }

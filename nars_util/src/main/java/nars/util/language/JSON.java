@@ -31,6 +31,7 @@ public class JSON {
             .enableDefaultTyping()
             .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
             .enable(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID)
+            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .disable(SerializationFeature.WRITE_NULL_MAP_VALUES)
             .disable(MapperFeature.USE_STATIC_TYPING)
             .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()));

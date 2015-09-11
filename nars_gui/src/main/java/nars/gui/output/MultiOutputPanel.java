@@ -4,7 +4,6 @@ import automenta.vivisect.swing.dock.DockingContent;
 import automenta.vivisect.swing.dock.DockingRegionRoot;
 import nars.NAR;
 import nars.Video;
-import nars.gui.NARControlPanel;
 import nars.task.Task;
 
 import javax.swing.*;
@@ -37,7 +36,7 @@ public class MultiOutputPanel extends JPanel implements HierarchyListener {
     private final DefaultListModel categoriesListModel;
     private final JCategoryList categoriesList;
 
-    public MultiOutputPanel(NARControlPanel c) {
+    public MultiOutputPanel() {
         super(new BorderLayout());
 
         JMenuBar menu = new JMenuBar();
@@ -48,7 +47,7 @@ public class MultiOutputPanel extends JPanel implements HierarchyListener {
         
         
         
-        this.nar = c.nar;
+        this.nar = null; //c.nar;
 
         categoriesListModel = new DefaultListModel();
         
