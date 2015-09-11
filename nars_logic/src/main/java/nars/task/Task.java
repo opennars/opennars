@@ -20,7 +20,6 @@
  */
 package nars.task;
 
-import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Itemized;
@@ -528,7 +527,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     public void discountConfidence();
 
 
-    void setBestSolution(AbstractMemory memory, Task belief);
+    void setBestSolution(Memory memory, Task belief);
 
 
     public boolean isDeleted();

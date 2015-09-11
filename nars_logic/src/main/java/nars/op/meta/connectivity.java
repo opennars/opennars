@@ -19,9 +19,8 @@ public class connectivity extends SynchOperator {
     @Override
     public List<Task> apply(Operation o) {
 
-        TermLinkGraph g = new TermLinkGraph(nar);
+        TermLinkGraph g = new TermLinkGraph(o.getMemory());
 
-        g.add(o.getMemory());
 
         ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
         int set = 0;

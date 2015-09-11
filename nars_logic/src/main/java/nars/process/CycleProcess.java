@@ -1,9 +1,8 @@
 package nars.process;
 
 import javolution.context.ConcurrentContext;
-import nars.AbstractMemory;
 import nars.Global;
-import nars.bag.impl.CacheBag;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.task.Task;
@@ -23,7 +22,7 @@ import java.util.function.Predicate;
  * may correspond to a region of activation or some other process which
  * is iteratively called a more or less continual basis
  * */
-public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Concept>, Iterable<Concept> /* TODO: implements Plugin */ {
+public interface CycleProcess<M> extends Iterable<Concept>, Consumer<Memory> { //CacheBag<Term,Concept>, Iterable<Concept> /* TODO: implements Plugin */ {
 
 
     /** accept the task, return whether it was accepted */
@@ -37,7 +36,6 @@ public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Co
 
     /** sample concepts for a specific operator type
      *
-     * @param implication
      * @param v percentage of bag size # of attempts to search before returning null
      */
     default Concept nextConcept(Predicate<Concept> pred, float v) {
@@ -49,10 +47,10 @@ public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Co
         return null;
     }
 
-    default void forEachConcept(final Consumer<Concept> action) {
+/*    default NAR forEachConcept(final Consumer<Concept> action) {
         forEachConcept(Integer.MAX_VALUE, action);
     }
-
+*/
 
     default void forEachConcept(int max, Consumer<Concept> action) {
         Iterator<Concept> ii = iterator();
@@ -63,7 +61,7 @@ public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Co
         }
     }
 
-    public M getMemory();
+
 
 
 
@@ -77,11 +75,6 @@ public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Co
     public void cycle();
 
 
-    /** Invoked during a memory reset to empty all concepts
-     * @param delete  whether to finalize everything (deallocate as much as possible)
-     * @param perception
-     * @param memory */
-    public void reset(M memory);
 
     /** Maps Term to a Concept active in this Cycle. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known and active.
@@ -146,5 +139,26 @@ public interface CycleProcess<M extends AbstractMemory> extends CacheBag<Term,Co
 
     Concept remove(Concept c);
 
+
+//    /** sums the priorities of items in different active areas of the memory */
+//    public static double getActivePrioritySum(CycleProcess p, final boolean concept, final boolean tasklink, final boolean termlink) {
+//        final double[] total = {0};
+//        p.forEachConcept(c-> {
+//            if (concept)
+//                total[0] += c.getBudget().getPriority();
+//            if (tasklink)
+//                total[0] += c.getBudget().getTaskLinks().getPrioritySum();
+//            if (termlink)
+//                total[0] += c.getBudget().getTermLinks().getPrioritySum();
+//        });
+//        return total[0];
+//    }
+
+    default public double getActivePriorityPerConcept(final Memory memory, final boolean tasklink, final boolean termlink) {
+        return 0;
+//        int c = numConcepts(true, false);
+//        if (c == 0) return 0;
+//        return getActivePrioritySum(concept, tasklink, termlink)/c;
+    }
 
 }

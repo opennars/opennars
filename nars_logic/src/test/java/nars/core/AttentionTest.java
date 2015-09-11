@@ -25,13 +25,13 @@ public class AttentionTest {
     @Test public void testSampleNextConcept() {
         
         int numConcepts = 32;
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         for (int i = 0; i < numConcepts; i++)
             n.believe("<x" + i + " <-> x" + (i + 1) + ">");
         
         n.runWhileInputting(100);
         
-        int c = Iterables.size(n.memory.getCycleProcess());
+        int c = Iterables.size(n.concepts());
         assertTrue(c > 16);
         
         Set<Concept> uniqueconcepts = new HashSet();
@@ -43,7 +43,7 @@ public class AttentionTest {
 
         assertTrue(uniqueconcepts.size() > 1);
         
-        int c2 = Iterables.size(n.memory.getCycleProcess());
+        int c2 = Iterables.size(n.concepts());
         assertEquals("does not affect # of concepts", c, c2);
     }
     

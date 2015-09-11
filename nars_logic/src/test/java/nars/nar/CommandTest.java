@@ -21,7 +21,7 @@ public class CommandTest {
 
     @Test
     public void testEcho() {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         final AtomicBoolean invoked = new AtomicBoolean();
         n.on(new NullOperator("c") {
 
@@ -46,7 +46,7 @@ public class CommandTest {
         assertTrue(invoked.get());
 
         //no concepts created because this command bypassed inference
-        assertEquals(0, n.memory.numConcepts(true,true));
+        assertEquals(0, n.numConcepts(true,true));
 
     }
 }

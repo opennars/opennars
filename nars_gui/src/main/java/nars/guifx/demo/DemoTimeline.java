@@ -7,7 +7,7 @@ import nars.NAR;
 import nars.guifx.AutoLabel;
 import nars.guifx.NARfx;
 import nars.guifx.graph2.NARGraph1;
-import nars.nar.experimental.DefaultAlann;
+import nars.nar.experimental.Equalized;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
 
@@ -284,7 +284,7 @@ public class DemoTimeline  {
     public static void main(String[] args) {
         NARfx.run((a, b) -> {
 
-            NAR n = new NAR(new DefaultAlann(16));
+            NAR n = new Equalized(1000, 1, 3);
 
             TaskTimelinePane tp = new TaskTimelinePane(n);
 

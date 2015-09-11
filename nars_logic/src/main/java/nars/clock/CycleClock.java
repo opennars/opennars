@@ -9,7 +9,7 @@ public class CycleClock implements Clock {
     long t;
 
     @Override
-    public void reset() {
+    public void clear() {
         t = 0;
     }
 

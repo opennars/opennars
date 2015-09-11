@@ -42,7 +42,7 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.event.Observed;
+import nars.util.event.DefaultObserved;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -77,7 +77,7 @@ public class Anticipate extends NARReaction implements Mental {
     /** buffers the terms of new incoming tasks */
     final Set<Compound> newTaskTerms = Global.newHashSet(16);
     private final NAR nar;
-    private final Observed.DefaultObserved.DefaultObservableRegistration onCycleEnd;
+    private final DefaultObserved.DefaultObservableRegistration onCycleEnd;
 
     NAL nal;
     TaskProcess tp;
@@ -117,7 +117,7 @@ public class Anticipate extends NARReaction implements Mental {
 
     public void anticipate(Compound term, long occurrenceTime, Task t) {
         if (memory == null)
-            memory = nal.memory;
+            memory = nal.memory();
 
         if (term instanceof Conjunction && term.getTemporalOrder() != TemporalRules.ORDER_NONE) {
             return;
@@ -192,11 +192,11 @@ public class Anticipate extends NARReaction implements Mental {
     /** called each cycle to update calculations of anticipations */
     protected void updateAnticipations() {
 
-        long now = nal.memory.time();
+        long now = nal.nar.time();
 
         if (anticipations.isEmpty()) return;
 
-        int dur = nal.memory.duration();
+        int dur = nal.duration();
 
         int news = newTaskTerms.size(), dids = 0, didnts =0, expireds = 0;
 

@@ -7,6 +7,7 @@ import nars.nal.nal5.Implication;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
@@ -142,7 +143,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
         if (qUpdateConfidence > 0 &&
                 ((now - lastCommit >= commitEvery) && FastMath.abs(nextFreq - lastFreq) > freqThreshold)) {
 
-            Task t = ((Memory) concept.getMemory()).newTask((Compound) qt).punctuation(
+            Task t = TaskSeed.make(((Memory) concept.getMemory()), (Compound) qt).punctuation(
 
                     punctuation
 

@@ -14,12 +14,14 @@ import java.util.Map;
 public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     protected final Term term;
-    protected transient final Memory memory;
+
     final long creationTime;
     private Map<Object, Object> meta = null;
     private boolean constant = false;
 
-    final static Variable how = new Variable("?how");
+    @Deprecated protected transient final Memory memory;
+
+    @Deprecated final static Variable how = new Variable("?how");
 
     public AbstractConcept(final Term term, Budget budget, final Memory memory) {
         super(budget);
@@ -124,10 +126,11 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 //                append(' ').append(title).append(':').append(itemString).toString();
 //    }
 
-    /** called by memory, dont call directly */
+    /** called by memory, dont call self or otherwise */
     @Override public void delete() {
-        if (getMemory().inCycle())
+        /*if (getMemory().inCycle())
             throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
+        */
 
         zero();
 

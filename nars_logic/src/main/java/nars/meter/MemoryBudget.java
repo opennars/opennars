@@ -168,7 +168,7 @@ public class MemoryBudget extends EnumMap<MemoryBudget.Budgeted,Object>  {
 
         StandardDeviation s = new StandardDeviation();
 
-        m.getCycleProcess().forEachConcept(c -> {
+        m.getConcepts().forEach(c -> {
             double p = c.getPriority();
 
             prisum.addValue(p);

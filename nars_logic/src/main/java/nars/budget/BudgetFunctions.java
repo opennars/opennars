@@ -20,7 +20,7 @@
  */
 package nars.budget;
 
-import nars.AbstractMemory;
+import nars.Memory;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -426,7 +426,7 @@ public final class BudgetFunctions extends UtilityFunctions {
          */
     }
 
-    @Deprecated static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final AbstractMemory memory) {
+    @Deprecated static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
         throw new RuntimeException("Moved to TemporalRules.java");
     }    
 

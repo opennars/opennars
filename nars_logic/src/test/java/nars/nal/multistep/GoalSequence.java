@@ -37,8 +37,8 @@ public class GoalSequence {
     final int maxCycles = 2000;
     
     public GoalSequence(int duration, int pause, int interSeqPause/*, float questionPriority, float questionDurability*/) throws InvalidInputException {
-        NAR n = new NAR(new Default());
-        n.param.duration.set(duration);
+        NAR n = new Default();
+        n.memory().duration.set(duration);
     
         System.out.println("duration=" + duration + ", pause=" + pause + ", interSeqPause=" + interSeqPause );
         

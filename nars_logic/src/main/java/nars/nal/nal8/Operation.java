@@ -32,6 +32,7 @@ import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.eval;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
@@ -160,7 +161,7 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
     }
 
     public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
-        return m.newTask(content)
+        return TaskSeed.make(m, content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(p, d, q)

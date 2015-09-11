@@ -10,7 +10,6 @@ import io.undertow.websockets.core.*;
 import io.undertow.websockets.extensions.PerMessageDeflateHandshake;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
 import nars.NAR;
-import nars.clock.RealtimeMSClock;
 import nars.io.out.TextOutput;
 import nars.nar.experimental.DefaultAlann;
 import nars.util.language.JSON;
@@ -263,9 +262,9 @@ public class NARServer extends PathHandler {
     public static void main(String[] args) throws Exception {
 
 
-        DefaultAlann d = new DefaultAlann(32);
-        d.param.setClock(new RealtimeMSClock(false));
-        final NAR nar = new NAR(d);
+        DefaultAlann nar = new DefaultAlann(32);
+        //d.memory.setClock(new RealtimeMSClock(false));
+
 
 
 

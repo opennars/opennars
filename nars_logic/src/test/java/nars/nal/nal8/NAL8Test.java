@@ -1,12 +1,11 @@
 package nars.nal.nal8;
 
 import nars.Global;
-import nars.NARSeed;
+import nars.NAR;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
 import nars.nar.Classic;
 import nars.nar.Default;
-import nars.nar.DefaultMicro;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -17,14 +16,14 @@ import java.util.Collection;
 
 public class NAL8Test extends JavaNALTest {
 
-    public NAL8Test(NARSeed b) { super(b); }
+    public NAL8Test(NAR b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
-                {new Default().setInternalExperience(null)},
-                {new DefaultMicro() },
+                {new Default()},
+                //{new DefaultMicro() },
                 {new Classic() }
                 //{new Discretinuous() },
         });
@@ -34,29 +33,29 @@ public class NAL8Test extends JavaNALTest {
 
         String goal = "<a --> b>";
 
-        n.goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goal, 1.0f, 0.9f);
+        tester.nar.goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goal, 1.0f, 0.9f);
 
-        n.run(50);
+        tester.run(50);
 
-        n.mustDesire(60, goal, 1.0f, 0.9f);
-        n.quest(goal);
+        tester.mustDesire(60, goal, 1.0f, 0.9f);
+        tester.nar.quest(goal);
 
-        n.run(10);
+        tester.run(10);
     }
 
     protected void testGoalExecute(String condition, String action) {
 
         //TextOutput.out(nar);
 
-        n.believe(condition, Tense.Present, 1.0f, 0.9f);
-        n.goal("(&/," + condition + ',' + action + ")", 1.0f, 0.9f);
+        tester.nar.believe(condition, Tense.Present, 1.0f, 0.9f);
+        tester.nar.goal("(&/," + condition + ',' + action + ")", 1.0f, 0.9f);
 
-        n.mustDesire(40, action, 1.0f, 0.42f);
+        tester.mustDesire(40, action, 1.0f, 0.42f);
 
-        n.mustOutput(1, 10, action, '.', 1f, 1f, Global.OPERATOR_EXECUTION_CONFIDENCE, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
+        tester.mustOutput(1, 10, action, '.', 1f, 1f, Global.OPERATOR_EXECUTION_CONFIDENCE, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
 
 
-        n.run(40);
+        tester.run(40);
     }
 
     @Test public void testGoalExecute0() {
@@ -101,10 +100,10 @@ public class NAL8Test extends JavaNALTest {
 
 
     @Test public void testOperationInheritance() {
-        n.input("pick(c). :|:");
-        n.run(6);
-        n.input("<a --> b>. :|:");
-        n.input("<a --> b>!");
+        tester.nar.input("pick(c). :|:");
+        tester.run(6);
+        tester.nar.input("<a --> b>. :|:");
+        tester.nar.input("<a --> b>!");
         /*nar.on(Events.TaskDerive.class, new Reaction() {
             @Override
             public void event(Class event, Object[] args) {
@@ -119,8 +118,8 @@ public class NAL8Test extends JavaNALTest {
                 System.out.println("Remove: " + t + " " + t.getReason());
             }
         });*/
-        n.mustBelieve(100, "pick(c,SELF)", 1f, 1f, 0.40f, 0.50f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
-        n.run(100);
+        tester.mustBelieve(100, "pick(c,SELF)", 1f, 1f, 0.40f, 0.50f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
+        tester.run(100);
 
     }
 

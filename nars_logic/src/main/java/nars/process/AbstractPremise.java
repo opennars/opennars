@@ -1,6 +1,6 @@
 package nars.process;
 
-import nars.Memory;
+import nars.NAR;
 import nars.premise.Premise;
 import nars.task.Task;
 
@@ -9,19 +9,18 @@ import nars.task.Task;
  */
 abstract public class AbstractPremise implements Premise {
 
-    public final Memory memory;
+    public final NAR nar;
 
-    public AbstractPremise(Memory m) {
-        this.memory = m;
+    public AbstractPremise(NAR m) {
+        this.nar = m;
     }
 
-    @Override
-    public Memory getMemory() {
-        return memory;
+    public NAR nar() {
+        return nar;
     }
 
     @Override
     public void accept(Task derivedTask) {
-        getMemory().input(derivedTask);
+        nar().input(derivedTask);
     }
 }

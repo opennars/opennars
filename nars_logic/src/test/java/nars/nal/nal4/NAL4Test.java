@@ -1,12 +1,9 @@
 package nars.nal.nal4;
 
-import nars.NARSeed;
+import nars.NAR;
 import nars.nal.JavaNALTest;
-import nars.nar.Classic;
 import nars.nar.Default;
-import nars.nar.DefaultDeep;
 import nars.nar.NewDefault;
-import nars.nar.experimental.Solid;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -17,22 +14,22 @@ import java.util.Collection;
 
 public class NAL4Test extends JavaNALTest {
 
-    private final NARSeed seed;
+    private final NAR seed;
 
-    public NAL4Test(NARSeed b) { super(b); this.seed = b; }
+    public NAL4Test(NAR b) { super(b); this.seed = b; }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
-                {new DefaultDeep()},
+                //{new DefaultDeep()},
                 {new NewDefault()},
-                {new NewDefault().setInternalExperience(null)},
-                {new Default().setInternalExperience(null) },
-                {new Default().level(5)},
-                {new Classic().setInternalExperience(null) },
+                //{new NewDefault().setInternalExperience(null)},
+                //{new Default().setInternalExperience(null) },
+                {new Default().nal(5)},
+                //{new Classic().setInternalExperience(null) },
 
-                {new Solid(1, 128, 1, 1, 1, 2).level(5)}
+                //{new Solid(1, 128, 1, 1, 1, 2).level(5)}
 
 
         });
@@ -40,74 +37,74 @@ public class NAL4Test extends JavaNALTest {
 
     @Test
     public void structural_transformation() throws InvalidInputException {
-        n.believe("<(*,acid,base) --> reaction>",1.0f,0.9f).en("An acid and a base can have a reaction.");
-        n.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f).en("Acid can react with base.");
-        n.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f).en("A base is something that has a reaction with an acid.");
-        n.run();
+        tester.believe("<(*,acid,base) --> reaction>",1.0f,0.9f).en("An acid and a base can have a reaction.");
+        tester.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f).en("Acid can react with base.");
+        tester.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f).en("A base is something that has a reaction with an acid.");
+        tester.run();
     }
 
     @Test
      public void structural_transformation2() throws InvalidInputException {
-        n.believe("<acid --> (/,reaction,_,base)>",1.0f,0.9f).en("Acid can react with base.");
-        n.mustBelieve(100, "<(*,acid,base) --> reaction>", 1.0f, 0.9f).en("Acid can react with base.");
-        n.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f).en("A base is something that has a reaction with an acid.");
-        n.run();
+        tester.believe("<acid --> (/,reaction,_,base)>",1.0f,0.9f).en("Acid can react with base.");
+        tester.mustBelieve(100, "<(*,acid,base) --> reaction>", 1.0f, 0.9f).en("Acid can react with base.");
+        tester.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f).en("A base is something that has a reaction with an acid.");
+        tester.run();
     }
 
     @Test
     public void structural_transformation3() throws InvalidInputException {
-        n.believe("<base --> (/,reaction,acid,_)>",1.0f,0.9f).en("A base is something that has a reaction with an acid.");
-        n.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f).en("Acid can react with base.");
-        n.mustBelieve(100, "<(*,acid,base) --> reaction>", 1.0f, 0.9f).en("An acid and a base can have a reaction.");
-        n.run();
+        tester.believe("<base --> (/,reaction,acid,_)>",1.0f,0.9f).en("A base is something that has a reaction with an acid.");
+        tester.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f).en("Acid can react with base.");
+        tester.mustBelieve(100, "<(*,acid,base) --> reaction>", 1.0f, 0.9f).en("An acid and a base can have a reaction.");
+        tester.run();
     }
 
     @Test
     public void structural_transformation4() throws InvalidInputException {
-        n.believe("<neutralization --> (*,acid,base)>",1.0f,0.9f).en("Neutralization is a relation between an acid and a base. ");
-        n.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>.", 1.0f, 0.9f).en("Something that can neutralize a base is an acid.");
-        n.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f).en("Something that can be neutralized by an acid is a base.");
-        n.run();
+        tester.believe("<neutralization --> (*,acid,base)>",1.0f,0.9f).en("Neutralization is a relation between an acid and a base. ");
+        tester.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>.", 1.0f, 0.9f).en("Something that can neutralize a base is an acid.");
+        tester.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f).en("Something that can be neutralized by an acid is a base.");
+        tester.run();
     }
 
     @Test
     public void structural_transformation5() throws InvalidInputException {
-        n.believe("<(\\,neutralization,_,base) --> acid>",1.0f,0.9f).en("Something that can neutralize a base is an acid.");
-        n.mustBelieve(100, "<neutralization --> (*,acid,base)>", 1.0f, 0.9f).en("Neutralization is a relation between an acid and a base.");
-        n.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f).en("Something that can be neutralized by an acid is a base.");
-        n.run();
+        tester.believe("<(\\,neutralization,_,base) --> acid>",1.0f,0.9f).en("Something that can neutralize a base is an acid.");
+        tester.mustBelieve(100, "<neutralization --> (*,acid,base)>", 1.0f, 0.9f).en("Neutralization is a relation between an acid and a base.");
+        tester.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f).en("Something that can be neutralized by an acid is a base.");
+        tester.run();
     }
 
     @Test
     public void structural_transformation6() throws InvalidInputException {
-        n.believe("<(\\,neutralization,acid,_) --> base>",1.0f,0.9f).en("Something that can be neutralized by an acid is a base.");
-        n.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>", 1.0f, 0.9f).en("Something that can neutralize a base is an acid.");
-        n.mustBelieve(100, "<neutralization --> (*,acid,base)>", 1.0f, 0.9f).en("Neutralization is a relation between an acid and a base.");
-        n.run();
+        tester.believe("<(\\,neutralization,acid,_) --> base>",1.0f,0.9f).en("Something that can be neutralized by an acid is a base.");
+        tester.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>", 1.0f, 0.9f).en("Something that can neutralize a base is an acid.");
+        tester.mustBelieve(100, "<neutralization --> (*,acid,base)>", 1.0f, 0.9f).en("Neutralization is a relation between an acid and a base.");
+        tester.run();
     }
 
     @Test
     public void composition_on_both_sides_of_a_statement() throws InvalidInputException {
-        n.believe("<bird --> animal>",1.0f,0.9f).en("Bird is a type of animal.");
-        n.ask("<(*,bird,plant) --> ?x>").en("What is the relation between a bird and a plant?");
-        n.mustBelieve(100, "<(*,bird,plant) --> (*,animal,plant)>", 1.0f, 0.81f).en("The relation between bird and plant is a type of relation between animal and plant.");
-        n.run();
+        tester.believe("<bird --> animal>",1.0f,0.9f).en("Bird is a type of animal.");
+        tester.ask("<(*,bird,plant) --> ?x>").en("What is the relation between a bird and a plant?");
+        tester.mustBelieve(100, "<(*,bird,plant) --> (*,animal,plant)>", 1.0f, 0.81f).en("The relation between bird and plant is a type of relation between animal and plant.");
+        tester.run();
     }
 
     @Test
     public void composition_on_both_sides_of_a_statement2() throws InvalidInputException {
-        n.believe("<neutralization --> reaction>",1.0f,0.9f).en("Neutralization is a type of reaction.");
-        n.ask("<(\\,neutralization,acid,_) --> ?x>").en("What can be neutralized by acid?");
-        n.mustBelieve(100, "<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>", 1.0f, 0.81f).en("What can be neutralized by acid can react with acid.");
-        n.run();
+        tester.believe("<neutralization --> reaction>",1.0f,0.9f).en("Neutralization is a type of reaction.");
+        tester.ask("<(\\,neutralization,acid,_) --> ?x>").en("What can be neutralized by acid?");
+        tester.mustBelieve(100, "<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>", 1.0f, 0.81f).en("What can be neutralized by acid can react with acid.");
+        tester.run();
     }
 
     @Test
     public void composition_on_both_sides_of_a_statement3() throws InvalidInputException {
-        n.believe("<soda --> base>",1.0f,0.9f).en("Soda is a type of base.");
-        n.ask("<(/,neutralization,_,base) --> ?x>").en("What is something that can neutralize a base?");
-        n.mustBelieve(100, "<(/,neutralization,_,base) --> (/,neutralization,_,soda)>", 1.0f, 0.81f).en("What can neutraliz base can react with base.");
-        n.run();
+        tester.believe("<soda --> base>",1.0f,0.9f).en("Soda is a type of base.");
+        tester.ask("<(/,neutralization,_,base) --> ?x>").en("What is something that can neutralize a base?");
+        tester.mustBelieve(100, "<(/,neutralization,_,base) --> (/,neutralization,_,soda)>", 1.0f, 0.81f).en("What can neutraliz base can react with base.");
+        tester.run();
     }
 
     /* NAL6

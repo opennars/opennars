@@ -1,6 +1,6 @@
 package nars.nal.nal9;
 
-import nars.NARSeed;
+import nars.NAR;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
@@ -16,25 +16,25 @@ import java.util.Collection;
  */
 public class AnticipationTest extends JavaNALTest {
 
-    public AnticipationTest(NARSeed b) { super(b); }
+    public AnticipationTest(NAR b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-                {new Default()},
+                {new Default()}
 
 
                 //TODO compare result with ^anticipate enabled vs. disabled
-                {new Default().setInternalExperience(null)},
+                //{new Default(). },
         });
     }
 
     @Test //test the occurrence time feature of TaskCondition
     public void testOccurrenceTimeTesting()  throws InvalidInputException {
         //TextOutput.out(nar);
-        n.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55);
-        n.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
-        n.run();
+        tester.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55);
+        tester.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
+        tester.run();
     }
 
 
@@ -54,18 +54,18 @@ public class AnticipationTest extends JavaNALTest {
 
         //TextOutput.out(n);
 
-        n.believe(rule, Tense.Eternal, 1.0f, 0.9f);
-        n.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
+        tester.believe(rule, Tense.Eternal, 1.0f, 0.9f);
+        tester.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
 
         //The actual output from Anticipate: <b --> c>. :\: %0.00;0.90%
-        n.mustOutput(0, time, "<b --> c>", '.', 0f, 0f, 0.9f, 0.9f, (int) (-1*time));
+        tester.mustOutput(0, time, "<b --> c>", '.', 0f, 0f, 0.9f, 0.9f, (int) (-1*time));
 
         //The induced result
-        n.mustOutput(0, time, rule, '.', 0.00f, 0.00f, 0.40f, 0.50f, -25);
-        n.mustOutput(0, time, rule, '.', 0.91f, 0.93f, 0.90f, 0.91f, -25);
-        n.mustOutput(0, time, rule, '.', 0.00f, 1.00f, 0.0f, 1.0f, (int) (-1*time)); //match any
+        tester.mustOutput(0, time, rule, '.', 0.00f, 0.00f, 0.40f, 0.50f, -25);
+        tester.mustOutput(0, time, rule, '.', 0.91f, 0.93f, 0.90f, 0.91f, -25);
+        tester.mustOutput(0, time, rule, '.', 0.00f, 1.00f, 0.0f, 1.0f, (int) (-1*time)); //match any
 
-        n.run();
+        tester.run();
 
 
     }

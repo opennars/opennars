@@ -72,8 +72,8 @@ public class RuleDerivationGraphTest {
     public void testDerivationComparator() {
 
         NARComparator c = new NARComparator(
-                new Default().setInternalExperience(null),
-                new NewDefault().setInternalExperience(null)
+                new Default(),
+                new NewDefault()
         ) {
 
 

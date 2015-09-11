@@ -5,7 +5,7 @@
 package nars.nal.nal6;
 
 import nars.Events.Answer;
-import nars.NARSeed;
+import nars.NAR;
 import nars.event.NARReaction;
 import nars.io.out.TextOutput;
 import nars.meter.condition.OutputContainsCondition;
@@ -27,15 +27,15 @@ import java.util.Collection;
 public class VariableUnificationTest extends JavaNALTest {
 
 
-    public VariableUnificationTest(NARSeed b) {
+    public VariableUnificationTest(NAR b) {
         super(b);
     }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-                {new Default().setInternalExperience(null)},
-                {new Default()},
+                {new Default() },
+                //{new Default()},
                 //{new DefaultBuffered()},
                 //{new DefaultBuffered().setInternalExperience(null)},
 
@@ -52,34 +52,34 @@ public class VariableUnificationTest extends JavaNALTest {
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable      
         */        
-        new NARReaction(n, true, Answer.class) {
+        new NARReaction(nar, true, Answer.class) {
             @Override public void event(Class event, Object[] args) {
                 //nothing should cause this event
                 assertTrue(Arrays.toString(args), false);
             }
         };
         
-        n.requires.add(new OutputContainsCondition(n, "=/> <a --> 4>>.", 5));
+        tester.requires.add(new OutputContainsCondition(tester.nar, "=/> <a --> 4>>.", 5));
 
 
-        n.input(
+        tester.nar.input(
                 "<a --> 3>. :\\: \n" +
                         "<a --> 4>. :/: \n" +
                         "<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
 
-        n.run(32);
+        tester.run(32);
 
     }
     
 
     void unaffected(String left, String right) {
 
-        TextOutput.out(n);
+        TextOutput.out(tester.nar);
 
-        n.mustInput(1, "<" + left + " ==> " + right + ">.");
-        n.input("<" + left + " ==> " + right + ">.");
+        tester.mustInput(1, "<" + left + " ==> " + right + ">.");
+        tester.nar.input("<" + left + " ==> " + right + ">.");
 
-        n.run(4);
+        tester.run(4);
     }
 
     /*

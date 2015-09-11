@@ -12,30 +12,30 @@ import static org.junit.Assert.assertTrue;
 public class TaskSeedTest {
 
     @Test public void testTenseEternality() {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
 
         String s = "<a --> b>.";
 
-        assertTrue(n.memory.newTask(n.term(s)).eternal().isEternal());
+        assertTrue(TaskSeed.make(n.memory, n.term(s)).eternal().isEternal());
 
-        assertTrue("default is timeless", n.memory.newTask(n.term(s)).isTimeless());
+        assertTrue("default is timeless", TaskSeed.make(n.memory, n.term(s)).isTimeless());
 
-        assertTrue("tense=eternal is eternal", n.memory.newTask(n.term(s)).eternal().isEternal());
+        assertTrue("tense=eternal is eternal", TaskSeed.make(n.memory, n.term(s)).eternal().isEternal());
 
-        assertTrue("present is non-eternal", !n.memory.newTask(n.term(s)).present().isEternal());
+        assertTrue("present is non-eternal", !TaskSeed.make(n.memory, n.term(s)).present().isEternal());
 
     }
 
     @Test public void testTenseOccurrenceOverrides() {
 
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
 
         String s = "<a --> b>.";
 
         //the final occurr() or tense() is the value applied
-        assertTrue(!n.memory.newTask(n.term(s)).eternal().occurr(100).isEternal());
-        assertTrue(!n.memory.newTask(n.term(s)).eternal().present().isEternal());
-        assertTrue(n.memory.newTask(n.term(s)).occurr(100).eternal().isEternal());
+        assertTrue(!TaskSeed.make(n.memory, n.term(s)).eternal().occurr(100).isEternal());
+        assertTrue(!TaskSeed.make(n.memory, n.term(s)).eternal().present().isEternal());
+        assertTrue(TaskSeed.make(n.memory, n.term(s)).occurr(100).eternal().isEternal());
     }
 
 

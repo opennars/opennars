@@ -21,14 +21,14 @@ public class QueryVariableExhaustiveResults extends ConceptFireTaskTerm {
     public boolean apply(ConceptProcess f, @Deprecated TermLink termLink) {
         Task t = f.getTask();
         if (t.isQuestion() && t.hasQueryVar()) {
-            forEachMatch(f.memory, t.getTerm(), f);
+            forEachMatch(f.memory(), t.getTerm(), f);
         }
         return true;
     }
 
     public static void forEachMatch(Memory m, Compound queryTerm, Consumer<Task> withBelief) {
         FindSubst f = new FindSubst(Op.VAR_QUERY, m.random);
-        m.getCycleProcess().forEachConcept(c -> {
+        m.concepts.forEach(c -> {
             if (!c.hasBeliefs())
                 return;
 

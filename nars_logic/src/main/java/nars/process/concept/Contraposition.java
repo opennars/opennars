@@ -53,7 +53,7 @@ public class Contraposition extends ConceptFireTask {
 
         final Statement statement = (Statement) sentence.getTerm();
 
-        Memory memory = nal.getMemory();
+        Memory memory = nal.memory();
         memory.logic.CONTRAPOSITION.hit();
 
         Term subj = statement.getSubject();

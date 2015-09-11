@@ -1,5 +1,6 @@
 package nars.process;
 
+import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -9,14 +10,13 @@ import nars.link.TermLink;
  */
 public class ConceptTaskLinkProcess extends ConceptProcess {
 
-    public ConceptTaskLinkProcess(Concept concept, TaskLink taskLink) {
-        super(concept, taskLink);
+    public ConceptTaskLinkProcess(NAR nar, Concept concept, TaskLink taskLink) {
+        super(nar, concept, taskLink);
     }
 
     @Override
     protected void derive() {
-
-        getMemory().rules.fire(this);
+        nar().mem().getDeriver().fire(this);
     }
 
     @Override

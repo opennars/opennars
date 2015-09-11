@@ -1,13 +1,6 @@
 package nars;
 
-import nars.bag.impl.CacheBag;
-import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
-import nars.nal.PremiseProcessor;
-import nars.process.CycleProcess;
-import nars.term.Term;
-
-import java.util.Random;
 
 /**
  * NAR design parameters which define a NAR at initialization.
@@ -15,43 +8,17 @@ import java.util.Random;
  * These do not change after initialization.
  * For runtime parameters, @see Param
  */
-abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
+@Deprecated abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
+    Memory newMemory();
 
-
-    CycleProcess getCycleProcess();
-
-    default public Memory newMemory() {
-
-        final Param p = getParam();
-
-        return new Memory(
-                getRandom(),
-                getMaximumNALLevel(),
-                p,
-                getConceptBuilder(),
-                getPremiseProcessor(p),
-                getConceptIndex()
-        );
-    }
-
-    Param getParam();
-
-    /** common random number generator */
-    Random getRandom();
-
-    CacheBag<Term,Concept> getConceptIndex();
-
-    default int getMaximumNALLevel() {
-        return 8;
-    }
-
-    /** called after NAR created, for initializing it */
-    public void init(NAR nar);
-
-
-    PremiseProcessor getPremiseProcessor(Param p);
-
-    public ConceptBuilder getConceptBuilder();
+//
+//    default int getMaximumNALLevel() {
+//        return 8;
+//    }
+//
+//    /** called after NAR created, for initializing it */
+//    public void init(NAR nar);
+//
 
 
 }

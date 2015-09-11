@@ -17,7 +17,7 @@ public class StatementGraphTest {
     @Test
     public void test() {
 
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
 
         StatementGraph m = new StatementGraph(n) {
             @Override public boolean containsStatement(Statement term) {

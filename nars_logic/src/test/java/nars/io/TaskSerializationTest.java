@@ -1,7 +1,6 @@
 package nars.io;
 
 import nars.Memory;
-import nars.NAR;
 import nars.nar.Default;
 import nars.task.DefaultTask;
 import org.junit.Assert;
@@ -18,7 +17,7 @@ import java.util.Collection;
 public class TaskSerializationTest  extends AbstractSerializationTest<String,DefaultTask> {
 
 
-    final static Memory memory = new NAR(new Default()).memory;
+    final static Memory memory = new Default().memory;
 
     public TaskSerializationTest(String input) {
         super(input);

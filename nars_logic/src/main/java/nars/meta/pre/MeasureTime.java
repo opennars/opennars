@@ -21,7 +21,7 @@ public class MeasureTime extends AbstractMeasureTime {
         }
 
         m.map1.put(c,
-                CyclesInterval.make(time, m.premise.getMemory())); // I:=+8 for example
+                CyclesInterval.make(time, m.premise.memory())); // I:=+8 for example
 
         return true;
     }

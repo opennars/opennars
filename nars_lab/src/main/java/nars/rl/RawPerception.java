@@ -6,6 +6,7 @@ import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -75,7 +76,7 @@ public class RawPerception implements Perception {
                 states.add(x = newState(nar, i));
             }
 
-            tasks.add(nar.memory.newTask(x).judgment().present().truth(f, confidence));
+            tasks.add(TaskSeed.make(nar.memory, x).judgment().present().truth(f, confidence));
         }
 
         return tasks;

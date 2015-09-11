@@ -106,7 +106,7 @@ public final class StructuralRules {
             return;
         
 
-        AnalyticTruth truth = TruthFunctions.deduction(nal.getTask().getTruth(), nal.memory.param.reliance.floatValue());
+        AnalyticTruth truth = TruthFunctions.deduction(nal.getTask().getTruth(), nal.memory().reliance.floatValue());
         if (truth!=null) {
             Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
             nal.deriveSingle(content, truth, budget);
@@ -194,7 +194,7 @@ public final class StructuralRules {
         int order = task.getTemporalOrder();
         Truth truth = task.getTruth();
         
-        final float reliance = nal.memory.param.reliance.floatValue();
+        final float reliance = nal.memory().reliance.floatValue();
 
         AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
         if (truthDed == null) return null;
@@ -258,7 +258,7 @@ public final class StructuralRules {
             return null;
         }
         
-        final float reliance = nal.memory.param.reliance.floatValue();
+        final float reliance = nal.memory().reliance.floatValue();
         AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
         if (truthDed == null) return null;
 
@@ -392,7 +392,7 @@ public final class StructuralRules {
 
         Truth truth = task.getTruth();
 
-        final float reliance = nal.memory.param.reliance.floatValue();
+        final float reliance = nal.memory().reliance.floatValue();
 
         Budget budget;
         if (task.isQuestOrQuestion()) {

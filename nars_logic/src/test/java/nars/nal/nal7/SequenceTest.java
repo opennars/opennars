@@ -29,7 +29,7 @@ public class SequenceTest {
     }
 
     @Test public void testConstuction() {
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
 
         String seq = "(&/, /1, a, /3, b, /6)";
         Sequence s = nar.term(seq);
@@ -49,14 +49,14 @@ public class SequenceTest {
     }
 
     @Test public void testSingleTermSequence() {
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
         Term x = nar.term("(&/, a)");
         assertNotNull(x);
         assertEquals(Atom.class, x.getClass());
     }
 
     @Test public void testSequenceToString() {
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
 
         testSeqTermString(nar, "(&/, a, /1, b)");
         testSeqTermString(nar, "(&/, a, /2, b, /4)");
@@ -69,7 +69,7 @@ public class SequenceTest {
 
     @Test public void testSequenceSentenceNormalization() {
         //sequences at the top level as terms must not have any trailing intervals
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
 
         //trailng suffix that should be removed when it becomes the sentence's content term
         Task t = nar.task("(&/, a, /1, b, /2).");
@@ -93,7 +93,7 @@ public class SequenceTest {
     }
 
     @Test public void testDistance1() {
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
 
         Sequence a = nar.term("(&/, x, /1, y)");
         Sequence b = nar.term("(&/, x, /2, y)");

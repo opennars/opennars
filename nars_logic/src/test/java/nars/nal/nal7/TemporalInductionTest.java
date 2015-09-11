@@ -1,7 +1,6 @@
 package nars.nal.nal7;
 
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.nar.Default;
 import org.junit.Test;
 
@@ -16,9 +15,9 @@ public class TemporalInductionTest {
         String task = "<a --> b>. :|:";
         String task2 = "<c --> d>. :|:";
 
-        NAR n = new NAR(new Default().setInternalExperience(null));
+        NAR n = new Default();
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         n.input(task);
         n.frame(10);

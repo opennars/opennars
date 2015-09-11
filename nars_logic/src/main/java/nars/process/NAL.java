@@ -5,7 +5,7 @@
 package nars.process;
 
 import nars.Global;
-import nars.Memory;
+import nars.NAR;
 import nars.task.Task;
 
 import java.util.Set;
@@ -35,9 +35,11 @@ public abstract class NAL extends AbstractPremise implements Runnable, Consumer<
      * stores the tasks that this process generates, and adds to memory
      */
     //protected SortedSet<Task> newTasks; //lazily instantiated
-    public NAL(final Memory m) {
-        super(m);
-        inputToMemory = d -> memory.input(d);
+
+    public NAL(final NAR n) {
+        super(n);
+
+        inputToMemory = d -> n.input(d);
     }
 
 

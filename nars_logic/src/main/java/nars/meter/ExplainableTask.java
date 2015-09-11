@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import nars.meter.condition.TaskCondition;
 import nars.task.DefaultTask;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 
@@ -22,7 +23,7 @@ public class ExplainableTask extends DefaultTask {
 
 
     public ExplainableTask(TaskCondition tc) {
-        this(tc.getMemory().newTask((Compound) tc.term).budget(0,0,0).punctuation(tc.punc)
+        this(TaskSeed.make(tc.getMemory(), (Compound) tc.term).budget(0,0,0).punctuation(tc.punc)
             .truth(tc.getTruthMean()).time(tc.getCreationTime(),
             Stamp.getOccurrenceTime(tc.getCreationTime(), tc.tense, tc.getMemory()))
 

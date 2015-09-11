@@ -17,7 +17,7 @@
 package nars.io.nlp;
 
 import com.google.common.collect.Lists;
-import nars.AbstractMemory;
+import nars.Memory;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
@@ -44,7 +44,7 @@ public class Twenglish {
     
     /** substitutions */
     public final Map<String,String> sub = new HashMap();
-    private AbstractMemory memory;
+    private Memory memory;
 
     
     boolean languageBooted = true; //set to false to initialize on first twenglish input
@@ -100,7 +100,7 @@ public class Twenglish {
         //etc..
     }
 
-    public Twenglish(AbstractMemory memory) {
+    public Twenglish(Memory memory) {
         this.memory = memory;
     }
 
@@ -201,7 +201,7 @@ public class Twenglish {
     
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<Task> parse(AbstractMemory m, String s, NarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
+    public List<Task> parse(Memory m, String s, NarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
 
         
         List<Task> results = new ArrayList();

@@ -1,26 +1,23 @@
 package nars.nar.experimental;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.*;
+import nars.Events;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.MapCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.budget.Itemized;
 import nars.concept.AtomConcept;
+import nars.concept.BeliefTable;
 import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
 import nars.concept.DefaultConcept;
 import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.nal.Deriver;
-import nars.nal.PremiseProcessor;
-import nars.nar.Default;
-import nars.nar.NewDefault;
 import nars.op.app.Commander;
 import nars.process.ConceptProcess;
 import nars.process.ConceptTaskLinkProcess;
@@ -28,62 +25,53 @@ import nars.process.ConceptTaskTermLinkProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.filter.DerivationFilter;
-import nars.task.filter.FilterBelowConfidence;
-import nars.task.filter.FilterDuplicateExistingBelief;
-import nars.task.filter.LimitDerivationPriority;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Termed;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
 /**
  * Created by me on 9/5/15.
  */
-public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Concept>, Param> {
+public abstract class AbstractAlann extends NAR {
 
     final static Procedure2<Budget,Budget> budgetMerge = Budget.plus;
 
-    @Deprecated
-    public final Default param = new NewDefault() {
+//    @Deprecated
+//    public final Default param = new NewDefault() {
+//
+//        @Override
+//        protected DerivationFilter[] getDerivationFilters() {
+//            return new DerivationFilter[]{
+//                    new FilterBelowConfidence(0.01),
+//                    new FilterDuplicateExistingBelief(),
+//                    new LimitDerivationPriority()
+//                    //param.getDefaultDerivationFilters().add(new BeRational());
+//            };
+//        }
+//
+//    }; // shadow defaults, will replace once refactored
 
-        @Override
-        protected DerivationFilter[] getDerivationFilters() {
-            return new DerivationFilter[]{
-                    new FilterBelowConfidence(0.01),
-                    new FilterDuplicateExistingBelief(),
-                    new LimitDerivationPriority()
-                    //param.getDefaultDerivationFilters().add(new BeRational());
-            };
-        }
-
-    }; // shadow defaults, will replace once refactored
     protected final List<Task> sorted = Global.newArrayList();
-    protected final Map<Term, Concept> conceptsMap;
+
     final Random rng = new XorShift1024StarRandom(1);
     final ItemAccumulator<Task> newTasks = new ItemAccumulator<>(Budget.plus);
     Commander commander;
     public float tlinkToConceptExchangeRatio = 0.1f;
 
-    public AbstractAlann(MapCacheBag<Term, Concept> concepts) {
-        super(concepts);
-        this.conceptsMap = concepts.data;
+    public AbstractAlann(Memory m) {
+        super(m);
+
+        commander = new Commander(this, false);
     }
 
     protected abstract void processConcepts();
 
-    public void init(NAR nar) {
-        param.init(nar);
 
-        //param.taskProcessThreshold.set(0); //process everything, even if budget is zero
-
-        commander = new Commander(nar, false);
-    }
 
 //    protected void processNewTasks(int maxNewTaskHistory, int maxNewTasksPerCycle) {
 //        final int size = newTasks.size();
@@ -105,31 +93,30 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
     protected void processNewTasks() {
         final int size = newTasks.size();
         if (size!=0) {
-            newTasks.forEach(t -> TaskProcess.run(memory, t));
+            newTasks.forEach(t -> TaskProcess.run(AbstractAlann.this, t));
             newTasks.clear();
         }
     }
 
 
-    @Override
-    public void cycle() {
-        processNewTasks();
-        processConcepts();
-    }
+//    @Override
+//    public void cycle() {
+//        processNewTasks();
+//        processConcepts();
+//    }
 
 
-    @Override final public boolean accept(final Task t) {
-        return newTasks.add(t);
-    }
+//    @Override final public boolean accept(final Task t) {
+//        return newTasks.add(t);
+//    }
+//
+//    @Deprecated @Override public Concept nextConcept() {
+//        throw new RuntimeException("should not be called, this method will be deprecated");
+//    }
+//
 
-    @Deprecated @Override public Concept nextConcept() {
-        throw new RuntimeException("should not be called, this method will be deprecated");
-    }
 
 
-
-
-    @Override
     public Concept conceptualize(final Termed termed, final Budget budget, final boolean createIfMissing) {
         final Term term = termed.getTerm();
 
@@ -143,7 +130,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
 //            activationFactor = 1f;
 //        }
 
-        return conceptsMap.compute(term, (k, existing) -> {
+        return ((MapCacheBag<Term,Concept>)(memory.getConcepts())).data.compute(term, (k, existing) -> {
             if (existing!=null) {
                 existing.getBudget().accumulate(budget, activationFactor);
                 return existing;
@@ -156,59 +143,35 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
         });
     }
 
-    @Override
-    public boolean reprioritize(Term term, float newPriority) {
-        throw new RuntimeException("N/A");
-    }
+//    @Override
+//    public boolean reprioritize(Term term, float newPriority) {
+//        throw new RuntimeException("N/A");
+//    }
+//
+//    @Override
+//    public Concept remove(Concept c) {
+//        Itemized removed = memory().remove(c.getTerm());
+//        if ((removed==null) || (removed!=c))
+//            throw new RuntimeException("concept unknown");
+//
+//        return c;
+//    }
 
-    @Override
-    public Concept remove(Concept c) {
-        Itemized removed = concepts.remove(c.getTerm());
-        if ((removed==null) || (removed!=c))
-            throw new RuntimeException("concept unknown");
+//    @Override
+//    public Param getParam() {
+//        param.the(Deriver.class, NewDefault.der);
+//        param.setTermLinkBagSize(32);
+//        return param;
+//    }
 
-        return c;
-    }
 
-    @Override
-    public Param getParam() {
-        param.the(Deriver.class, NewDefault.der);
-        param.setTermLinkBagSize(32);
-        return param;
-    }
 
-    @Override
-    public Random getRandom() {
-        return rng;
-    }
 
-    final Random newRandom() {
-        return new XorShift1024StarRandom(1);
-    }
 
-    @Override
-    final public CacheBag<Term, Concept> getConceptIndex() {
-        return concepts;
-    }
-
-    public Memory newMemory() {
-
-        final Param p = getParam();
-
-        return new Memory(
-                getRandom(),
-                getMaximumNALLevel(),
-                p,
-                getConceptBuilder(),
-                getPremiseProcessor(p),
-                concepts
-        );
-    }
-
-    @Override
-    public PremiseProcessor getPremiseProcessor(final Param p) {
-        return param.getPremiseProcessor(p);
-    }
+//    @Override
+//    public PremiseProcessor getPremiseProcessor(final Param p) {
+//        return param.getPremiseProcessor(p);
+//    }
 
     public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks) {
 
@@ -223,7 +186,7 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
             c = new DefaultConcept(t, b,
                     taskLinks, termLinks,
                     null,
-                    param.newConceptBeliefGoalRanking(),
+                    newConceptBeliefGoalRanking(),
                     memory
             );
         }
@@ -232,23 +195,30 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
         return c;
     }
 
-    @Override
-    public ConceptBuilder getConceptBuilder() {
-        return param.getConceptBuilder();
+    private BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
+        return null;
     }
 
-    @Override
+
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks =
-                new CurveBag<>(rng, /*sentenceNodes,*/ param.getConceptTaskLinks());
+                new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
         taskLinks.mergePlus();
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag<>(rng, /*termlinkKeyNodes,*/ param.getConceptTermLinks());
+                new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
         termLinks.mergePlus();
 
         return newConcept(t, b, taskLinks, termLinks);
+    }
+
+    private int getConceptTaskLinks() {
+        return -1;
+    }
+
+    private int getConceptTermLinks() {
+        return -1;
     }
 
     /** particle that travels through the graph,
@@ -292,10 +262,10 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
             else*/ {
                 TermLink tm = concept.getTermLinks().forgetNext();
                 if ((tm != null) && (tl.type != TermLink.TRANSFORM)) {
-                    return new Derivelet.ALANNConceptTaskTermLinkProcess(concept, tl, tm);
+                    return new Derivelet.ALANNConceptTaskTermLinkProcess(nar(), concept, tl, tm);
                 }
                 else {
-                    return new Derivelet.ALANNConceptTaskLinkProcess(concept, tl);
+                    return new Derivelet.ALANNConceptTaskLinkProcess(nar(), concept, tl);
                 }
             }
 
@@ -313,11 +283,15 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
                         mem.emit(Events.OUT.class, t);
 
                         //System.err.println("direct input: " + t);
-                        TaskProcess.run(mem, t);
+                        TaskProcess.run(nar(), t);
                     }
 
                 });
             }
+        }
+
+        private NAR nar() {
+            return context.nar;
         }
 
         /** determines a next concept to move adjacent to
@@ -398,8 +372,8 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
 
         private class ALANNConceptTaskTermLinkProcess extends ConceptTaskTermLinkProcess {
 
-            public ALANNConceptTaskTermLinkProcess(Concept concept, TaskLink tl, TermLink tm) {
-                super(concept, tl, tm);
+            public ALANNConceptTaskTermLinkProcess(NAR nar, Concept concept, TaskLink tl, TermLink tm) {
+                super(nar, concept, tl, tm);
             }
 
             @Override protected final void inputDerivations() {
@@ -413,8 +387,8 @@ public abstract class AbstractAlann extends AbstractNARSeed<MapCacheBag<Term,Con
         }
 
         private class ALANNConceptTaskLinkProcess extends ConceptTaskLinkProcess {
-            public ALANNConceptTaskLinkProcess(Concept concept, TaskLink tl) {
-                super(concept, tl);
+            public ALANNConceptTaskLinkProcess(NAR nar, Concept concept, TaskLink tl) {
+                super(nar, concept, tl);
             }
 
             @Override protected final void inputDerivations() {

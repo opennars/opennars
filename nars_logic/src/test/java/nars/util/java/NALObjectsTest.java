@@ -37,7 +37,7 @@ public class NALObjectsTest extends TestCase {
 
         AtomicInteger statements = new AtomicInteger(0);
 
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
 
         CountIOEvents count = new CountIOEvents(n);
 
@@ -62,8 +62,8 @@ public class NALObjectsTest extends TestCase {
      */
     @Test public void testMethodOperators() throws Exception {
 
-        NAR n = new NAR(new Default());
-        NAR m = new NAR(new Default());
+        NAR n = new Default();
+        NAR m = new Default();
 
         String instance = "obj";
         TestClass nc = new NALObjects(n).build(instance, TestClass.class);

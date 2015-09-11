@@ -1,8 +1,10 @@
 package nars.nar.experimental;
 
 import com.google.common.collect.Iterators;
+import nars.LocalMemory;
 import nars.NAR;
 import nars.bag.impl.MapCacheBag;
+import nars.clock.CycleClock;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Term;
@@ -45,7 +47,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
     }
 
     public DefaultAlann(MapCacheBag<Term, Concept> concepts, int numDerivelets) {
-        super(concepts);
+        super(new LocalMemory(new CycleClock(), concepts));
 
         indexIterator = Iterators.cycle(concepts);
 
@@ -54,15 +56,12 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
             derivers.add( d );
         }
 
-    }
-
-
-    @Override
-    public void init(NAR nar) {
-        super.init(nar);
         defaultTTL = nar.memory.duration() * 3;
         this.context = new MyDeriveletContext(nar);
+
     }
+
+
 
     @Override
     public final Concept get() {
@@ -72,7 +71,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
     @Override
     protected void processConcepts() {
 
-        if (concepts.size() > 0) {
+        if (concepts().size() > 0) {
 
             final long now = memory.time();
 
@@ -146,7 +145,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
 
     private class MyDeriveletContext extends DeriveletContext {
         public MyDeriveletContext(NAR nar) {
-            super(nar.memory, DefaultAlann.this.newRandom(), DefaultAlann.this);
+            super(nar, nar.memory().random, DefaultAlann.this);
         }
 
         @Override

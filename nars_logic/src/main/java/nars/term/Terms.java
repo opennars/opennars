@@ -1,6 +1,5 @@
 package nars.term;
 
-import nars.AbstractMemory;
 import nars.Global;
 import nars.Memory;
 import nars.meta.TaskRule;
@@ -87,7 +86,7 @@ public class Terms {
         return true;
     }
 
-    public static Term reduceUntilLayer2(final Compound _itself, Term replacement, AbstractMemory memory) {
+    public static Term reduceUntilLayer2(final Compound _itself, Term replacement, Memory memory) {
         if (_itself == null)
             return null;
         
@@ -177,7 +176,7 @@ public class Terms {
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term reduceComponents(final Compound t1, final Term t2, final AbstractMemory memory) {
+    public static Term reduceComponents(final Compound t1, final Term t2, final Memory memory) {
 
         final Term[] list;
 
@@ -202,7 +201,7 @@ public class Terms {
 
     }
 
-    public static Term reduceComponentOneLayer(Compound t1, Term t2, AbstractMemory memory) {
+    public static Term reduceComponentOneLayer(Compound t1, Term t2, Memory memory) {
         Term[] list;
         if ((t1.op() == t2.op())) {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);

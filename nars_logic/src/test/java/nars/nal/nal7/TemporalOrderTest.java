@@ -4,7 +4,7 @@
  */
 package nars.nal.nal7;
 
-import nars.NARSeed;
+import nars.NAR;
 import nars.meter.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
@@ -17,7 +17,7 @@ import java.util.Collection;
 
 public class TemporalOrderTest extends JavaNALTest {
 
-    public TemporalOrderTest(NARSeed b) {
+    public TemporalOrderTest(NAR b) {
         super(b);
     }
 
@@ -25,8 +25,8 @@ public class TemporalOrderTest extends JavaNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
-                {new Default().setInternalExperience(null)},
-                {new Default().setInternalExperience(null).level(7)}
+                {new Default()},
+                {new Default().nal(7)}
         });
     }
 
@@ -36,21 +36,21 @@ public class TemporalOrderTest extends JavaNALTest {
 
         //TextOutput.out(n);
 
-        n.input("<e --> f>. :/:");
-        n.input("<c --> d>. :|:");
-        n.input("<a --> b>. :\\:");
-        n.requires.add(new OutputContainsCondition.InputContainsCondition(n, "<e --> f>. :/: %1.00;0.90%"));
-        n.requires.add(new OutputContainsCondition.InputContainsCondition(n, "<c --> d>. :|: %1.00;0.90%"));
-        n.requires.add(new OutputContainsCondition.InputContainsCondition(n, "<a --> b>. :\\: %1.00;0.90%"));
+        tester.nar.input("<e --> f>. :/:");
+        tester.nar.input("<c --> d>. :|:");
+        tester.nar.input("<a --> b>. :\\:");
+        tester.requires.add(new OutputContainsCondition.InputContainsCondition(tester.nar, "<e --> f>. :/: %1.00;0.90%"));
+        tester.requires.add(new OutputContainsCondition.InputContainsCondition(tester.nar, "<c --> d>. :|: %1.00;0.90%"));
+        tester.requires.add(new OutputContainsCondition.InputContainsCondition(tester.nar, "<a --> b>. :\\: %1.00;0.90%"));
 
 
         //assertTrue(!futureQuestion.isTrue());
 
-        n.runUntil(1);
+        tester.runUntil(1);
         
         //assertTrue(futureQuestion.isTrue());
         
-        n.runUntil(10);
+        tester.runUntil(10);
 
         /*
         try {
@@ -62,10 +62,10 @@ public class TemporalOrderTest extends JavaNALTest {
         }
                 */
 
-        n.input("<c --> d>?");
+        tester.nar.input("<c --> d>?");
 
 
-        n.runUntil(20);
+        tester.runUntil(20);
         
     }
 

@@ -1,6 +1,7 @@
 package nars.process;
 
 import nars.Memory;
+import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -12,8 +13,8 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     protected final TermLink termLink;
 
-    public ConceptTaskTermLinkProcess(Concept concept, TaskLink taskLink, TermLink termLink) {
-        super(concept, taskLink);
+    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink) {
+        super(nar, concept, taskLink);
 
         if (taskLink.type == TermLink.TRANSFORM) {
             throw new RuntimeException("ConceptProcessTaskTermLink must involve a TaskLink non-Transform type");
@@ -34,9 +35,9 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     @Override
     protected void derive() {
 
-        final Memory memory = getMemory();
+        final Memory memory = nar().memory();
 
-        memory.rules.fire(this);
+        memory.getDeriver().fire(this);
 
         memory.eventBeliefReason.emit(this);
         //emit(Events.BeliefReason.class, this);

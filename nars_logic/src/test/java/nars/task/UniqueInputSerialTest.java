@@ -2,11 +2,9 @@ package nars.task;
 
 import nars.Global;
 import nars.NAR;
-import nars.NARSeed;
 import nars.nar.Default;
 import nars.nar.NewDefault;
 import nars.nar.experimental.Equalized;
-import nars.nar.experimental.Solid;
 import org.junit.Test;
 
 import java.util.List;
@@ -21,9 +19,9 @@ public class UniqueInputSerialTest {
     @Test public void inputTwoUniqueTasksDef() {
         inputTwoUniqueTasks(new Default());
     }
-    @Test public void inputTwoUniqueTasksSolid() {
+    /*@Test public void inputTwoUniqueTasksSolid() {
         inputTwoUniqueTasks(new Solid(4, 1, 1, 1, 1, 1));
-    }
+    }*/
     @Test public void inputTwoUniqueTasksEq() {
         inputTwoUniqueTasks(new Equalized(4, 1, 1));
     }
@@ -31,17 +29,15 @@ public class UniqueInputSerialTest {
         inputTwoUniqueTasks(new NewDefault());
     }
 
-    public void inputTwoUniqueTasks(NARSeed build) {
+    public void inputTwoUniqueTasks(NAR n) {
 
         Global.DEBUG = true;
 
-        NAR n = new NAR(build);
-
-        Task x = n.input(n.task("<a --> b>."));
+        Task x = n.inputTask("<a --> b>.");
         assertArrayEquals(new long[] { 1 }, x.getEvidence());
         n.frame();
 
-        Task y = n.input(n.task("<b --> c>."));
+        Task y = n.inputTask("<b --> c>.");
         assertArrayEquals(new long[] { 2 }, y.getEvidence());
         n.frame();
 
@@ -53,7 +49,7 @@ public class UniqueInputSerialTest {
 
         n.frame(10);
 
-        Task q = n.input(n.task("<c --> d>."));
+        Task q = n.inputTask("<c --> d>.");
         assertArrayEquals(new long[] { 5 }, q.getEvidence());
 
     }

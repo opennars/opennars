@@ -2,13 +2,8 @@ package nars.meter;
 
 import nars.Global;
 import nars.Memory;
-import nars.nal.nal1.Inheritance;
+import nars.event.CycleReaction;
 import nars.nal.nal3.SetInt;
-import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
-import nars.op.mental.InternalExperience;
-import nars.op.mental.consider;
-import nars.op.mental.remind;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Task;
@@ -21,7 +16,7 @@ import java.io.Serializable;
 /**
  * emotional value; self-felt internal mental states; variables used to record emotional values
  */
-public class EmotionMeter implements Serializable {
+public class EmotionMeter extends CycleReaction implements Serializable {
 
     public static final Compound BUSYness = SetInt.make(Atom.the("busy"));
     private final Memory memory;
@@ -48,7 +43,14 @@ public class EmotionMeter implements Serializable {
     final static Compound satisfiedSetInt = SetInt.make(satisfied);
 
     public EmotionMeter(Memory memory) {
+        super(memory);
+
         this.memory = memory;
+    }
+
+    @Override
+    public void onCycle() {
+        commit();
     }
 
     public float happy() {
@@ -80,52 +82,53 @@ public class EmotionMeter implements Serializable {
 //                frequency = 0.0f;
 //            }
 
-            if ((frequency != -1) && (memory.nal(7))) { //ok lets add an event now
-
-                Inheritance inh = Inheritance.make(memory.self(), satisfiedSetInt);
-
-                memory.input(
-                        memory.newTask(inh).judgment()
-                                .truth(frequency, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                                .occurrNow()
-                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                                .reason("Happy Metabelief")
-                );
-
-                if (Global.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
-
-                    //TODO convert to fluent format
-
-                    memory.input(
-                            memory.newTask(inh).goal()
-                                    .truth(frequency, Global.DEFAULT_GOAL_CONFIDENCE)
-                                    .occurrNow()
-                                    .budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY)
-                                    .reason("Happy Metagoal")
-                    );
-
-                    //this is a good candidate for innate belief for consider and remind:
-
-                    if (InternalExperience.enabled && Global.CONSIDER_REMIND) {
-                        Operation op_consider = Operation.op(Product.only(inh), consider.consider);
-                        Operation op_remind = Operation.op(Product.only(inh), remind.remind);
-
-                        //order important because usually reminding something
-                        //means it has good chance to be considered after
-                        for (Operation o : new Operation[]{op_remind, op_consider}) {
-
-                            memory.input(
-                                    memory.newTask(o).judgment()
-                                            .occurrNow()
-                                            .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
-                                            .budget(Global.DEFAULT_JUDGMENT_PRIORITY * InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                                                    Global.DEFAULT_JUDGMENT_DURABILITY * InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                                            .reason("Happy Remind/Consider")
-                            );
-                        }
-                    }
-                }
-            }
+//            if ((frequency != -1) && (memory.nal(7))) { //ok lets add an event now
+//
+//                Inheritance inh = Inheritance.make(memory.self(), satisfiedSetInt);
+//
+//                memory.input(
+//                        TaskSeed.make(memory, inh).judgment()
+//                                .truth(frequency, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+//                                .occurrNow()
+//                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+//                                .reason("Happy Metabelief")
+//                );
+//
+//                if (Global.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
+//
+//                    //TODO convert to fluent format
+//
+//                    memory.input(
+//                            TaskSeed.make(memory, inh).goal()
+//                                    .truth(frequency, Global.DEFAULT_GOAL_CONFIDENCE)
+//                                    .occurrNow()
+//                                    .budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY)
+//                                    .reason("Happy Metagoal")
+//                    );
+//
+//                    //this is a good candidate for innate belief for consider and remind:
+//
+//                    if (InternalExperience.enabled && Global.CONSIDER_REMIND) {
+//                        Operation op_consider = Operation.op(Product.only(inh), consider.consider);
+//                        Operation op_remind = Operation.op(Product.only(inh), remind.remind);
+//
+//                        //order important because usually reminding something
+//                        //means it has good chance to be considered after
+//                        for (Operation o : new Operation[]{op_remind, op_consider}) {
+//
+//                            memory.input(
+//                                    TaskSeed.make(memory, o).judgment()
+//                                            .occurrNow()
+//                                            .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+//                                            .budget(Global.DEFAULT_JUDGMENT_PRIORITY * InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+//                                                    Global.DEFAULT_JUDGMENT_DURABILITY * InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
+//                                            .reason("Happy Remind/Consider")
+//                            );
+//                        }
+//                    }
+//                }
+//            }
+//        }
         }
 
         happyMeter.set(happy);
@@ -172,17 +175,19 @@ public class EmotionMeter implements Serializable {
 //            }
 
 
+            /*
             if (Global.REFLECT_META_BUSY_BELIEF && (frequency != -1) && (memory.nal(7))) { //ok lets add an event now
                 final Inheritance busyTerm = Inheritance.make(memory.self(), BUSYness);
 
                 memory.input(
-                        memory.newTask(busyTerm).judgment()
+                        TaskSeed.make(memory, busyTerm).judgment()
                                 .truth(frequency, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                 .occurrNow()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                                 .reason("Busy")
                 );
             }
+            */
         }
 
         busyMeter.set(lastbusy = this.busy);

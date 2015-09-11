@@ -1,6 +1,7 @@
 package nars.concept;
 
 import nars.Memory;
+import nars.NAR;
 import nars.Param;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
@@ -13,7 +14,7 @@ import nars.term.Termed;
 /**
  * Created by me on 3/15/15.
  */
-abstract public class ConceptActivator extends BagActivator<Term, Concept> {
+abstract public class ConceptActivator extends BagActivator<Term, Concept> implements ConceptBuilder {
 
     //static final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
 
@@ -23,12 +24,14 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     private float conceptForgetCycles;
     private float activationFactor;
 
+    private NAR nar;
 
-    abstract public Memory getMemory();
+    //abstract public Memory getMemory();
+    abstract public NAR getNAR();
 
     /** gets a concept from Memory, even if forgotten */
     public Concept concept(Term t) {
-        return getMemory().concept(t);
+        return nar.concept(t);
     }
 
 
@@ -53,7 +56,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
         setBudget(b);
 
-        final Param param = getMemory().param;
+        final Param param = nar.memory;
         this.conceptForgetCycles = param.durationToCycles( (param.conceptForgetDurations ));
         this.activationFactor = activationFactor;
         this.createIfMissing = createIfMissing;
@@ -63,7 +66,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     }
 
     public final CacheBag<Term, Concept> index() {
-        return getMemory().getConcepts();
+        return nar.concepts();
     }
 
     /** returns non-null if the Concept is available for entry into active
@@ -78,8 +81,8 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
 
     public Concept forgottenOrNewConcept() {
-        final Memory memory = getMemory();
-        boolean belowThreshold = getBudget().getPriority() < memory.param.newConceptThreshold.floatValue();
+        final Memory memory = nar.memory;
+        boolean belowThreshold = getBudget().getPriority() < memory.newConceptThreshold.floatValue();
 
         //try remembering from subconscious if activation is sufficient
         Concept concept = index().get(getKey());
@@ -99,7 +102,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
             //create it regardless, even if this returns null because it wasnt active enough
 
-            concept = memory.newConcept(/*(Budget)*/getKey(), getBudget());
+            concept = newConcept(/*(Budget)*/getKey(), getBudget(), memory);
 
             if (concept == null)
                 throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this);
@@ -123,7 +126,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
                 on(c);
 
-                getMemory().logic.CONCEPT_REMEMBER.hit();
+                nar.memory.logic.CONCEPT_REMEMBER.hit();
 
                 return true;
             }
@@ -204,6 +207,6 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     protected boolean isActivatable(Concept c) {
         //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);
-        return c.getBudget().getPriority() > getMemory().param.activeConceptThreshold.floatValue();
+        return c.getBudget().getPriority() > nar.memory.activeConceptThreshold.floatValue();
     }
 }

@@ -2,18 +2,22 @@ package nars.event;
 
 import nars.Memory;
 import nars.NAR;
-import nars.util.event.Observed;
+import nars.util.event.DefaultObserved;
 
 import java.util.function.Consumer;
 
 /** default cycle reaction, called at end of cycle */
 abstract public class CycleReaction implements Consumer<Memory> {
 
-    private final Observed.DefaultObserved.DefaultObservableRegistration reg;
+    private final DefaultObserved.DefaultObservableRegistration reg;
 
     public CycleReaction(NAR nar) {
+        this(nar.mem());
+    }
+
+    public CycleReaction(Memory memory) {
         super();
-        reg = nar.memory.eventCycleEnd.on(this);
+        reg = memory.eventCycleEnd.on(this);
     }
 
     abstract public void onCycle();

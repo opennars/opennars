@@ -67,7 +67,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
         };
 
-        entries = new ConceptReaction(nar) {
+        entries = new ConceptReaction(nar, true) {
 
 
             @Override

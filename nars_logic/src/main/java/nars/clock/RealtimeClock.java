@@ -26,7 +26,7 @@ abstract public class RealtimeClock implements Clock {
     }
 
     @Override
-    public void reset() {
+    public void clear() {
         update();
         start = t;
     }

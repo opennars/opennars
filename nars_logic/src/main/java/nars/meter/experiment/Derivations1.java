@@ -1,7 +1,6 @@
 package nars.meter.experiment;
 
 import nars.Global;
-import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.meter.DerivationGraph;
 import nars.meter.TestNAR;
@@ -26,12 +25,13 @@ public class Derivations1  {
 
         for (int seed = 1; seed < seeds; seed++) {
             for (String s : LibraryInput.getPaths("test1"/*, "test2"*/)) {
-                NAR n = new TestNAR(new Default().setInternalExperience(null).level(maxNAL));
-                n.memory.reset(seed);
-                d.record(n);
+                TestNAR n = new TestNAR(new Default().nal(maxNAL));
+                n.nar.memory.clear();
+                n.nar.memory.setRandomSeed(seed);
+                d.record(n.nar);
 
-                n.input(LibraryInput.getExample(s));
-                n.frame(maxCycles);
+                n.nar.input(LibraryInput.getExample(s));
+                n.run(maxCycles);
             }
             int r = d.size();
             System.out.println("  " + r + " derivations");

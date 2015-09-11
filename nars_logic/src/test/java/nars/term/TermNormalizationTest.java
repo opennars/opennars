@@ -16,8 +16,8 @@ public class TermNormalizationTest {
 
     public void test(String term, int[] v1Index, int[] v2Index) {
         //test for re-use of variable instances during normalization
-        NAR n = new NAR(new Default());
-        Task t = n.input( n.task(term + ".") );
+        NAR n = new Default();
+        Task t = n.inputTask(term + ".");
         Compound ct = t.getTerm();
 
         Term varA = ct.subterm(v1Index);

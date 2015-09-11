@@ -269,7 +269,7 @@ public class LogicMeter extends NARReaction {
 
     public void commit() {
         if (isActive()) {
-            m.getCycleProcess().forEachConcept(conceptMeter);
+            m.getConcepts().forEach(conceptMeter);
             conceptMeter.commit(m);
         }
         else {

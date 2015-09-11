@@ -1,9 +1,6 @@
 package nars.op.app;
 
-import nars.AbstractMemory;
-import nars.Events;
-import nars.Global;
-import nars.NAR;
+import nars.*;
 import nars.event.NARReaction;
 import nars.nal.nal7.TemporalRules;
 import nars.process.TaskProcess;
@@ -19,8 +16,9 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
+ * //TODO use new event api
  */
-public class STMInduction extends NARReaction {
+abstract public class STMInduction extends NARReaction {
 
     public final Deque<Task> stm;
     int stmSize;
@@ -35,7 +33,8 @@ public class STMInduction extends NARReaction {
 
     @Override
     public Class[] getEvents() {
-        return new Class[]{TaskProcess.class, Events.ResetStart.class};
+        return new Class[]{
+                TaskProcess.class, Events.ResetStart.class};
     }
 
 
@@ -51,7 +50,7 @@ public class STMInduction extends NARReaction {
         }
     }
 
-    public static boolean isInputOrTriggeredOperation(final Task newEvent, AbstractMemory mem) {
+    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
         if (newEvent.isInput()) return true;
         if (containsMentalOperator(newEvent)) return true;
         return newEvent.getCause() != null;
@@ -63,14 +62,14 @@ public class STMInduction extends NARReaction {
 
     public boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal, boolean anticipation) {
 
-        stmSize = nal.memory.param.shortTermMemoryHistory.get();
+        stmSize = nal.memory().shortTermMemoryHistory.get();
 
         if (currentTask == null || (!currentTask.isTemporalInductable() && !anticipation)) { //todo refine, add directbool in task
             return false;
         }
 
 
-        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory) && !anticipation)) {
+        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
             return false;
         }
 

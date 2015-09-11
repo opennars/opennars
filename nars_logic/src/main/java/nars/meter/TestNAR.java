@@ -2,7 +2,6 @@ package nars.meter;
 
 import nars.Events;
 import nars.NAR;
-import nars.NARSeed;
 import nars.event.CycleReaction;
 import nars.io.in.TextInput;
 import nars.io.out.TextOutput;
@@ -24,9 +23,10 @@ import java.util.Map;
 /**
 * TODO use a countdown latch to provide early termination for successful tests
 */
-public class TestNAR extends NAR {
+public class TestNAR  {
 
     public final Map<Object, HitMeter> eventMeters;
+    public final NAR nar;
     boolean showFail = true;
     boolean showSuccess = false;
     boolean showExplanations = false;
@@ -44,14 +44,15 @@ public class TestNAR extends NAR {
     private int temporalTolerance = 0;
 
 
-    public TestNAR(NARSeed b) {
-        super(b);
+    public TestNAR(NAR nar) {
+        super();
+        this.nar = nar;
 
         if (exitOnAllSuccess) {
             new EarlyExit(1);
         }
 
-        eventMeters = new CountIOEvents(this).eventMeters;
+        eventMeters = new CountIOEvents(nar).eventMeters;
 
     }
 
@@ -74,7 +75,7 @@ public class TestNAR extends NAR {
         int cycle = 0;
 
         public EarlyExit(int checkResolution) {
-            super(TestNAR.this);
+            super(nar);
             this.checkResolution = checkResolution;
         }
 
@@ -106,11 +107,11 @@ public class TestNAR extends NAR {
         }
     }
 
-    @Override
+
     public void stop() {
-        super.stop();
+        nar.stop();
         if (resetOnStop) {
-            memory.delete();
+            nar.memory.delete();
         }
     }
 
@@ -136,13 +137,13 @@ public class TestNAR extends NAR {
         cycleStart -= tt;
         cycleEnd += tt;
 
-        TaskCondition tc = new TaskCondition(this, c,
+        TaskCondition tc = new TaskCondition(nar, c,
                 cycleStart,
                 cycleEnd,
                 sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         if (ocRelative!= Stamp.ETERNAL) {
             /** occurence time measured relative to the beginning */
-            tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, memory.duration());
+            tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, nar.memory().duration());
         }
         requires.add(tc);
 
@@ -175,8 +176,10 @@ public class TestNAR extends NAR {
         return mustEmit(withinCycles, task, Events.OUT.class);
     }
 
+    public final long time() { return nar.time(); }
+
     public ExplainableTask mustEmit(long withinCycles, String task, Class channel) throws InvalidInputException {
-        Task t = narsese.task(task, memory);
+        Task t = nar.task(task);
         //TODO avoid reparsing term from string
 
         final long now = time();
@@ -229,10 +232,10 @@ public class TestNAR extends NAR {
         return explain(t);
     }
 
-    @Override public ExplainableTask ask(String termString) throws InvalidInputException {
+    public ExplainableTask ask(String termString) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
-        Task t = super.ask(termString);
+        Task t = nar.ask(termString);
 
         return explainable(t);
     }
@@ -240,33 +243,31 @@ public class TestNAR extends NAR {
     public ExplainableTask believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
-        Task t = super.believe(pri, dur, term(beliefTerm), tense, freq, conf);
+        Task t = nar.believe(pri, dur, nar.term(beliefTerm), tense, freq, conf);
 
         return explainable(t);
     }
 
-    @Override
     public ExplainableTask believe(String termString) throws InvalidInputException {
-        return explainable(super.believe(termString));
+        return explainable(nar.believe(termString));
     }
 
 
-    @Override
+
     public ExplainableTask believe(String termString, float conf) throws InvalidInputException {
-        return explainable(super.believe(termString, conf));
+        return explainable(nar.believe(termString, conf));
     }
 
-    @Override
+
     public ExplainableTask believe(String termString, float freq, float conf) throws InvalidInputException {
-        return explainable(super.believe(termString, freq, conf));
+        return explainable(nar.believe(termString, freq, conf));
     }
 
-    @Override
+
     public ExplainableTask believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        return explainable(super.believe(termString, tense, freq, conf));
+        return explainable(nar.believe(termString, tense, freq, conf));
     }
 
-    @Override
     public void run() {
         long finalCycle = 0;
         for (OutputCondition oc : requires) {
@@ -289,18 +290,18 @@ public class TestNAR extends NAR {
         error = null;
 
         if (showOutput)
-            TextOutput.out(this);
+            TextOutput.out(nar);
 
 
         //try {
-            super.runWhileInputting((int)(finalCycle - time()));
+            nar.runWhileInputting((int)(finalCycle - time()));
         /*}
         catch (Exception e) {
             error = e;
         }*/
 
 
-        return this;
+        return nar;
     }
 
 
@@ -395,13 +396,13 @@ public class TestNAR extends NAR {
         if (script == null)
             throw new RuntimeException("null input");
 
-        input( new TestInput(script) );
+        nar.input( new TestInput(script) );
 
     }
 
-    private class TestInput extends TextInput {
+    class TestInput extends TextInput {
         public TestInput(String script) {
-            super(TestNAR.this, script);
+            super(nar, script);
         }
 
         @Override

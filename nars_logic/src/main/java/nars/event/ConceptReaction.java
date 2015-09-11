@@ -2,48 +2,40 @@ package nars.event;
 
 
 import nars.Events;
-import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.util.event.Observed;
+import nars.util.event.DefaultObserved;
 
 /** watches for concept lifecycle (creation and forget) events */
 abstract public class ConceptReaction extends NARReaction {
 
-    public final Memory memory;
+    public final NAR nar;
 
-    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptActive;
-    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptForget;
-
-
-    public ConceptReaction(NAR n) {
-        this(n.memory);
-    }
-
-    public ConceptReaction(Memory m) {
-        this(m, true);
-    }
-
-    public ConceptReaction(Memory m, boolean active, Class... additionalEvents) {
-        super(m.event, true, additionalEvents);
+    private final DefaultObserved.DefaultObservableRegistration onConceptActive;
+    private final DefaultObserved.DefaultObservableRegistration onConceptForget;
 
 
-        this.onConceptActive = m.eventConceptActive.on(c -> {
+    public ConceptReaction(NAR n, boolean active, Class... additionalEvents) {
+        super(n.memory.event, true, additionalEvents);
+
+
+
+        this.onConceptActive = n.mem().eventConceptActive.on(c -> {
             onConceptActive(c);
         });
-        this.onConceptForget = m.eventConceptForget.on(c -> {
+        this.onConceptForget = n.mem().eventConceptForget.on(c -> {
             onConceptForget(c);
         });
 
-        this.memory = m;
-        memory.taskLater(this::init);
+        this.nar = n;
+        nar.taskLater(this::init);
 
     }
 
     protected void init() {
 
         //add existing events
-        memory.getCycleProcess().forEachConcept(ConceptReaction.this::onConceptActive);
+        nar.forEachConcept(ConceptReaction.this::onConceptActive);
     }
 
     @Override
@@ -53,7 +45,7 @@ abstract public class ConceptReaction extends NARReaction {
 //            onConceptDelete(c);
 //        }
         if (event == Events.ResetStart.class) {
-            memory.getCycleProcess().forEachConcept(ConceptReaction.this::onConceptForget);
+            nar.forEachConcept(ConceptReaction.this::onConceptForget);
         }
     }
 

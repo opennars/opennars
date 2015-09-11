@@ -22,16 +22,12 @@ package nars;
 
 import nars.Events.ResetStart;
 import nars.Events.Restart;
-import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.clock.Clock;
 import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
-import nars.link.TaskLink;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
-import nars.nal.PremiseProcessor;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -52,23 +48,20 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
-import nars.process.CycleProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.*;
+import nars.util.event.DefaultObserved;
 import nars.util.event.EventEmitter;
 import nars.util.event.Observed;
 import nars.util.meter.ResourceMeter;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -80,29 +73,28 @@ import java.util.function.Predicate;
  *
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable, AbstractMemory {
+public class Memory extends Param implements Serializable {
 
     private Atom self;
 
-    transient public final Random random;
-
-    transient private CycleProcess cycle;
+    public final Random random;
 
     @Deprecated transient public final EventEmitter<Class,Object[]> event;
-    transient public final Observed<ConceptProcess> eventBeliefReason = new Observed.DefaultObserved();
-    transient public final Observed<Task<?>> eventTaskRemoved = new Observed.DefaultObserved();
-    transient public final Observed<ConceptProcess> eventConceptProcessed = new Observed.DefaultObserved();
 
-    transient public final Observed<Concept> eventConceptActive = new Observed.DefaultObserved();
-    transient public final Observed<Concept> eventConceptForget = new Observed.DefaultObserved();
+    transient public final Observed<ConceptProcess> eventBeliefReason = new DefaultObserved();
+    transient public final Observed<Task<?>> eventTaskRemoved = new DefaultObserved();
+    transient public final Observed<ConceptProcess> eventConceptProcessed = new DefaultObserved();
+
+    transient public final Observed<Concept> eventConceptActive = new DefaultObserved();
+    transient public final Observed<Concept> eventConceptForget = new DefaultObserved();
 
     transient public final Observed<Memory>
             /** fired at the beginning of each memory cycle */
-            eventCycleStart = new Observed.DefaultObserved(),
+            eventCycleStart = new DefaultObserved(),
             /** fired at the end of each memory cycle */
-            eventCycleEnd = new Observed.DefaultObserved();
+            /* @Deprecated  */ eventCycleEnd = new DefaultObserved(); //eventCycleStart; //new DefaultObserved();
 
-    transient public final Observed<TaskProcess> eventTaskProcess = new Observed.DefaultObserved<>();
+    transient public final Observed<TaskProcess> eventTaskProcess = new DefaultObserved<>();
 
 
     transient public final EventEmitter<Term,Operation> exe;
@@ -112,34 +104,27 @@ public class Memory implements Serializable, AbstractMemory {
     transient public final LogicMeter logic;
     transient public final ResourceMeter resource;
 
-    public final Param param;
+    @Deprecated transient public final Param param = this;
 
-    transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
-    transient private final Set<Concept> questionConcepts = Global.newHashSet(16);
+    /*transient private final Set<Concept> questionConcepts = Global.newHashSet(16);
     transient private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
-    transient private final Set<Concept> pendingDeletions = Global.newHashSet(16);
+    transient private final Set<Concept> pendingDeletions = Global.newHashSet(16);*/
 
-    transient final ConceptBuilder conceptBuilder;
+    //transient final ConceptBuilder conceptBuilder;
 
-    transient public PremiseProcessor rules;
+
 
     public final Clock clock;
-    transient ExecutorService laterTasks = null;
 
     public final CacheBag<Term, Concept> concepts;
 
 
-    transient private int level;
-    private long currentStampSerial = 1;
-    /**
-     * The remaining number of steps to be carried out (stepLater mode)
-     */
-    transient private long inputPausedUntil = -1;
-    transient private boolean inCycle = false;
-    private long nextRandomSeed = 1;
+    private int level;
 
+    private long currentStampSerial = 1;
+    private boolean inCycle = false;
 
 
     /**
@@ -148,20 +133,18 @@ public class Memory implements Serializable, AbstractMemory {
      * @param narParam reasoner paramerters
      * @param policy logic parameters
      */
-    public Memory(Random rng, int nalLevel, Param narParam, ConceptBuilder conceptBuilder, PremiseProcessor policy, CacheBag<Term,Concept> concepts) {
+    public Memory(Clock clock, Random rng, CacheBag<Term,Concept> concepts) {
 
         this.random = rng;
-        this.level = nalLevel;
 
-        this.clock = narParam.getClock();
+        this.level = 8;
+
+        this.clock = clock;
 
         this.concepts = concepts;
 
         /*final Consumer<Concept> deleteOnConceptRemove = c -> delete(c);
         concepts.setOnRemoval(deleteOnConceptRemove);*/
-
-        this.param = narParam;
-        this.rules = policy;
 
         this.self = Global.DEFAULT_SELF; //default value
 
@@ -171,20 +154,16 @@ public class Memory implements Serializable, AbstractMemory {
         //this.exe = new EventEmitter.FastDefaultEventEmitter();
 
 
-        this.conceptBuilder = conceptBuilder;
-
         //optional:
         this.resource = null; //new ResourceMeter();
         this.logic = new LogicMeter(this);
         this.emotion = new EmotionMeter(this);
+        emotion.commit();
 
 
     }
 
-    @Override
-    public Param getParam() {
-        return param;
-    }
+
 
     /**
      * Try to make a compound term from a template and a list of term
@@ -312,10 +291,10 @@ public class Memory implements Serializable, AbstractMemory {
         return concept(Atom.the(t));
     }
 
-    /** provides fast iteration to concepts with questions */
-    public Set<Concept> getQuestionConcepts() {
-        return questionConcepts;
-    }
+//    /** provides fast iteration to concepts with questions */
+//    public Set<Concept> getQuestionConcepts() {
+//        return questionConcepts;
+//    }
 
     /** provides fast iteration to concepts with goals */
     public Set<Concept> getGoalConcepts() {
@@ -359,117 +338,38 @@ public class Memory implements Serializable, AbstractMemory {
 
 
 
-    /* ---------- Constructor ---------- */
+    public void setRandomSeed(long l) { random.setSeed(l); }
 
 
-
-    public Concept newConcept(final Term term, final Budget budget) {
-
-        Concept concept = conceptBuilder.newConcept(term, budget, this);
-        if (concept!=null)
-            concepts.put(concept);
-
-        return concept;
-    }
-
-    public Atom the(final String s) {
-        return Atom.the(s);
-    }
-
-
-    /** sets the random seed which will be used in the next reset(), then reset() */
-    public void reset(long randomSeed) {
-        nextRandomSeed = randomSeed;
-        reset();
-    }
-
-    /** called when a Concept's lifecycle has changed */
-    public void updateConceptState(Concept c) {
-        boolean hasQuestions = c.hasQuestions();
-        boolean hasGoals = !c.getGoals().isEmpty();
-
-        if (isActive(c)) {
-            //index an incoming concept with existing questions or goals
-            if (hasQuestions) updateConceptQuestions(c);
-            //if (hasGoals) updateConceptGoals(c);
-        }
-        else  {
-            //unindex an outgoing concept with questions or goals
-            if (hasQuestions) questionConcepts.remove(c);
-            //..
-        }
-
-    }
-
-    /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events
-        called by a Concept when its questions state changes (becomes empty or becomes un-empty) */
-    public void updateConceptQuestions(Concept c) {
-        if (!c.hasQuestions() && !c.hasQuests()) {
-            if (!questionConcepts.remove(c))
-                throw new RuntimeException("Concept " + c + " never registered any questions");
-        }
-        else {
-            if (!questionConcepts.add(c)) {
-                throw new RuntimeException("Concept " + c + " aready registered existing questions");
-            }
-
-            //this test was cycle.size() previously:
-            if (questionConcepts.size() > getCycleProcess().size()) {
-                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + getCycleProcess().size());
-            }
-        }
-    }
-
-    public void updateConceptGoals(Concept c) {
-        //TODO
-    }
 
     public void delete() {
-        reset();
+        clear();
 
         event.delete();
     }
 
-    public void reset(CycleProcess control) {
-        this.cycle = control;
-        reset();
-    }
-
-    public synchronized void reset() {
-
-        cycle.reset(this);
 
 
-        nextTasks.clear();
-
-        if (laterTasks!=null) {
-            laterTasks.shutdown();
-            laterTasks = null;
-        }
+    public synchronized void clear() {
 
 
         event.emit(ResetStart.class);
 
-        clock.reset();
-
+        clock.clear();
 
         //NOTE: allow stamp serial to continue increasing after reset.
         //currentStampSerial = ;
 
-        inputPausedUntil = -1;
-
-        questionConcepts.clear();
+        //questionConcepts.clear();
 
         concepts.clear();
 
-        goalConcepts.clear();
+        //goalConcepts.clear();
 
         emotion.clear();
 
         event.emit(Restart.class);
 
-        //unless explicitly changed, nextRandomSeed will remain unchanged
-        random.setSeed(nextRandomSeed);
     }
 
 
@@ -486,7 +386,6 @@ public class Memory implements Serializable, AbstractMemory {
      * Get an existing (active OR forgotten) Concept identified
      * by the provided Term
      */
-    @Override
     public Concept concept(Term t) {
         if (!t.isNormalized()) {
             t = ((Compound)t).normalized();
@@ -510,7 +409,6 @@ public class Memory implements Serializable, AbstractMemory {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null
      */
-    @Override
     public Concept conceptualize(Termed termed, final Budget budget) {
 
         if (termed == null)
@@ -550,7 +448,7 @@ public class Memory implements Serializable, AbstractMemory {
                 return null;
         }
 
-        return getCycleProcess().conceptualize(termed, budget, true);
+        return conceptualize(termed, budget);
     }
 
     private boolean validConceptTerm(Term term) {
@@ -576,7 +474,7 @@ public class Memory implements Serializable, AbstractMemory {
 //    }
 
 
-    @Override public int duration() {
+    public int duration() {
         return param.duration.get();
     }
 
@@ -621,62 +519,7 @@ public class Memory implements Serializable, AbstractMemory {
 
     }
 
-    final public void input(final Task[] t) {
-        for (final Task x : t) input(x);
-    }
 
-    /**
-     * exposes the memory to an input, derived, or immediate task.
-     * the memory then delegates it to its controller
-     *
-     * return true if the task was processed
-     * if the task was a command, it will return false even if executed
-     */
-    public boolean input(final Task t) {
-
-        if (t == null || !t.init(this)) {
-            return false;
-        }
-
-        if (t.isCommand()) {
-            int n = execute(t);
-            if (n == 0) {
-                emit(Events.ERR.class, "Unknown command: " + t);
-            }
-            return false;
-        }
-
-        if (Global.DEBUG) {
-            ensureValidTask(t);
-        }
-
-        if (!Terms.levelValid(t, nal())) {
-            removed(t, "Insufficient NAL level");
-            return false;
-        }
-
-        /* delegate the fate of this task to controller */
-        if (getCycleProcess().accept(t)) {
-
-
-            emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
-
-
-            //NOTE: if duplicate outputs happen, the budget wil have changed
-            //but they wont be displayed.  to display them,
-            //we need to buffer unique TaskAdd ("OUT") tasks until the end
-            //of the cycle
-
-
-            logic.TASK_ADD_NEW.hit();
-            return true;
-        }
-        else {
-            removed(t, "Ignored");
-        }
-
-        return false;
-    }
 
 
 
@@ -707,209 +550,47 @@ public class Memory implements Serializable, AbstractMemory {
     final public void emit(final Class c, final Object... signal) {
         event.emit(c, signal);
     }
+
     /** sends an event signal to listeners subscribed to channel 'c' */
     final public void emit(final Class c) {
         event.emit(c);
     }
 
-    /** tells whether a given channel has any listeners that might react to something emitted to it */
-    final public boolean emitting(final Class channel) {
-        return event.isActive(channel);
-    }
-
-
-    /** queues a task to (hopefully) be executed at an unknown time in the future,
-     *  in its own thread in a thread pool */
-    public void taskLater(Runnable t) {
-        if (laterTasks==null) {
-            laterTasks = Executors.newFixedThreadPool(1);
-        }
-
-        laterTasks.submit(t);
-        laterTasks.execute(t);
-    }
 
 
 
-//
-//    /** applies entropy to the random number genrator;
-//     * if called at the end of each cycle, the entire sequence remains
-//     * algorithmically deterministic and repeatable.
-//     * this helps overcome low entropy inherent in fast / efficient random
-//     * number genreators, we involve NARS as part of the RNG process.
-//     * */
-//    protected void randomUpdate() {
-//        random.setSeed( random.nextLong() * time() );
-//    }
-
-    /** adds a task to the queue of task which will be executed in batch
-     *  at the end of the current cycle.
-     *  checks if the queue already contains the pending
-     *  Runnable instance to ensure duplicates don't
-     *  don't accumulate
-     */
-    final public void taskNext(final Runnable t) {
-        if (!nextTasks.contains(t))
-            nextTasks.addLast(t);
-    }
-
-    /** runs all the tasks in the 'Next' queue */
-    protected final void runNextTasks() {
-        int originalSize = nextTasks.size();
-        if (originalSize == 0) return;
-
-        CycleProcess.run(nextTasks, originalSize);
-    }
-
-    /** signals an error through one or more event notification systems */
-    protected void error(Throwable ex) {
-        emit(Events.ERR.class, ex);
-
-        ex.printStackTrace();
-
-        if (Global.DEBUG && Global.EXIT_ON_EXCEPTION) {
-            //throw the exception to the next lower stack catcher, or cause program exit if none exists
-            throw new RuntimeException(ex);
-        }
-
-    }
 
     /** produces a new stamp serial #, used to uniquely identify inputs */
     public long newStampSerial() {
         return currentStampSerial++;
     }
 
-    /** whether the NAR is currently accepting new inputs */
-    public boolean isInputting() {
-        if (inputPausedUntil == -1) return true;
-        return time() >= inputPausedUntil;
-    }
-
-    /**
-     * Queue additional cycle()'s to the logic process during which no new input will
-     * be perceived.  Analogous to closing one's eyes to focus internally for a brief
-     * or extended amount of time - but not necessarily sleeping.
-     *
-     * @param cycles The number of logic steps to think for, will end thinking at time() + cycles unless more thinking is queued
-     */
-    public void think(final long cycles) {
-        inputPausedUntil = (time() + cycles);
-    }
+//    /** whether the NAR is currently accepting new inputs */
+//    public boolean isInputting() {
+//        if (inputPausedUntil == -1) return true;
+//        return time() >= inputPausedUntil;
+//    }
 
 
 
-    public void forEachTask(boolean includeTaskLinks, Consumer<Task> each) {
-        getCycleProcess().forEachConcept(c -> {
-            if (c.getTaskLinks() != null)
-                c.getTaskLinks().forEach(tl -> {
-                    each.accept(tl.getTask());
-                });
-        });
-    }
+//    /**
+//     * samples a next active concept for processing;
+//     * may return null if no concept is available depending on the control system
+//     */
+//    public Concept nextConcept() {
+//        return getCycleProcess().nextConcept();
+//    }
+//
+//    /** scan for a next concept matching the predicate */
+//    public Concept nextConcept(Predicate<Concept> pred, float v) {
+//        return getCycleProcess().nextConcept(pred, v);
+//    }
 
-    /**
-     * get all tasks in the system by iterating all newTasks, novelTasks; does not change or remove any
-     * Concept TaskLinks
-     */
-    public void getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks, Set<Task> target) {
-
-
-        if (includeTaskLinks) {
-            getCycleProcess().forEachConcept(c -> {
-                Bag<Sentence, TaskLink> tl = c.getTaskLinks();
-                if (tl != null)
-                    tl.forEach(t ->  target.add(t.targetTask) );
-            });
-        }
-
-        /*
-        if (includeNewTasks) {
-            t.addAll(newTasks);
-        }
-
-        if (includeNovelTasks) {
-            for (Task n : novelTasks) {
-                t.add(n);
-            }
-        }
-        */
-
-    }
-
-    public <T extends Compound> TaskSeed newTask(T t) {
-        return TaskSeed.make(this, t);
-    }
-
-
-
-
-    /**
-     * samples a next active concept for processing;
-     * may return null if no concept is available depending on the control system
-     */
-    public Concept nextConcept() {
-        return getCycleProcess().nextConcept();
-    }
-
-    /** scan for a next concept matching the predicate */
-    public Concept nextConcept(Predicate<Concept> pred, float v) {
-        return getCycleProcess().nextConcept(pred, v);
-    }
-
-    @Override
     public Clock getClock() {
         return clock;
     }
 
-    /** returns the concept index */
-    public CacheBag<Term, Concept> getConcepts() {
-        return cycle;
-    }
-
-//
-
-    public boolean isActive(Concept c) {
-        return cycle.concept(c.getTerm())!=null;
-    }
-
-    public int numConcepts(boolean active, boolean inactive) {
-        int total = 0;
-        if (active && !inactive) return getCycleProcess().size();
-        else if (!active && inactive) return concepts.size() - getCycleProcess().size();
-        else if (active && inactive)
-            return concepts.size();
-        else
-            return 0;
-    }
-
-    public boolean inCycle() {
-        return inCycle;
-    }
-
-    public synchronized void cycle() {
-
-        inCycle = true;
-
-        clock.preCycle();
-
-        //event.emit(Events.CycleStart.class);
-        eventCycleStart.emit(this);
-
-        getCycleProcess().cycle();
-
-        //event.emit(Events.CycleEnd.class);
-        eventCycleEnd.emit(this);
-
-        inCycle = false;
-
-        deletePendingConcepts();
-
-        emotion.commit();
-
-        //randomUpdate();
-
-    }
-
+    /** TODO return value */
     public void delete(Term term) {
         Concept c = concept(term);
         if (c == null) return;
@@ -917,74 +598,55 @@ public class Memory implements Serializable, AbstractMemory {
         delete(c);
     }
 
-    /** queues the deletion of a concept until after the current cycle ends.
-     */
-    public synchronized void delete(Concept c) {
-        if (!inCycle()) {
-            //immediately delete
-            _delete(c);
-        }
-        else {
-            pendingDeletions.add(c);
-        }
+//    /** queues the deletion of a concept until after the current cycle ends.
+//     */
+//    public synchronized void delete(Concept c) {
+//        if (!inCycle()) {
+//            //immediately delete
+//            _delete(c);
+//        }
+//        else {
+//            pendingDeletions.add(c);
+//        }
+//
+//    }
+//
+//    /** called by Memory at end of each cycle to flush deleted concepts */
+//    protected void deletePendingConcepts() {
+//        if (!pendingDeletions.isEmpty()) {
+//
+//            for (Concept c : pendingDeletions)
+//                _delete(c);
+//
+//            pendingDeletions.clear();
+//        }
+//    }
 
-    }
+    /** actually delete procedure for a concept; removes from indexes
+     * TODO return value
+     * */
+    protected void delete(Concept c) {
 
-    /** called by Memory at end of each cycle to flush deleted concepts */
-    protected void deletePendingConcepts() {
-        if (!pendingDeletions.isEmpty()) {
-
-            for (Concept c : pendingDeletions)
-                _delete(c);
-
-            pendingDeletions.clear();
-        }
-    }
-
-    /** actually delete procedure for a concept; removes from indexes */
-    protected void _delete(Concept c) {
-
-        Concept removedFromActive = getCycleProcess().remove(c);
-
-        if (c!=removedFromActive) {
-            throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
-        }
+//        Concept removedFromActive = getCycleProcess().remove(c);
+//
+//        if (c!=removedFromActive) {
+//            throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
+//        }
 
         Concept removedFromIndex = concepts.remove(c.getTerm());
         if (removedFromIndex == null) {
             throw new RuntimeException("concept " + c + " was not removed from memory");
         }
-        if (c!=removedFromIndex) {
+        /*if (c!=removedFromIndex) {
             throw new RuntimeException("another instances of concept " + c + " detected on removal: " + removedFromActive);
-        }
+        }*/
 
         c.delete();
     }
 
-    /** sums the priorities of items in different active areas of the memory */
-    public double getActivePrioritySum(final boolean concept, final boolean tasklink, final boolean termlink) {
-        final double[] total = {0};
-        getCycleProcess().forEachConcept(c-> {
-            if (concept)
-                total[0] += c.getPriority();
-            if (tasklink)
-                total[0] += c.getTaskLinks().getPrioritySum();
-            if (termlink)
-                total[0] += c.getTermLinks().getPrioritySum();
-        });
-        return total[0];
-    }
-
-    public CycleProcess<Memory> getCycleProcess() {
-        return cycle;
-    }
 
 
-    public double getActivePriorityPerConcept(final boolean concept, final boolean tasklink, final boolean termlink) {
-        int c = numConcepts(true, false);
-        if (c == 0) return 0;
-        return getActivePrioritySum(concept, tasklink, termlink)/c;
-    }
+
 
     public static boolean equals(Memory a, Memory b) {
 
@@ -1007,6 +669,90 @@ public class Memory implements Serializable, AbstractMemory {
         }*/
         return true;
     }
+
+    public final long time() {
+        return getClock().time();
+    }
+
+    public void put(final Concept c) {
+        concepts.put(c);
+    }
+
+    public final CacheBag<Term, Concept> getConcepts() {
+        return concepts;
+    }
+
+    public boolean inCycle() {
+        return inCycle;
+    }
+
+    public synchronized void cycle() {
+
+        inCycle = true;
+
+        clock.preCycle();
+
+
+        eventCycleStart.emit(this);
+
+
+        eventCycleEnd.emit(this);
+
+        inCycle = false;
+
+        //deletePendingConcepts();
+
+
+        //randomUpdate();
+
+    }
+
+    public Concept nextConcept() {
+        throw new RuntimeException("not impl");
+    }
+
+
+//    /** called when a Concept's lifecycle has changed */
+//    public void updateConceptState(Concept c) {
+//        boolean hasQuestions = c.hasQuestions();
+//        boolean hasGoals = !c.getGoals().isEmpty();
+//
+//        if (isActive(c)) {
+//            //index an incoming concept with existing questions or goals
+//            if (hasQuestions) updateConceptQuestions(c);
+//            //if (hasGoals) updateConceptGoals(c);
+//        }
+//        else  {
+//            //unindex an outgoing concept with questions or goals
+//            if (hasQuestions) questionConcepts.remove(c);
+//            //..
+//        }
+//
+//    }
+//
+//    /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events
+//        called by a Concept when its questions state changes (becomes empty or becomes un-empty) */
+//    public void updateConceptQuestions(Concept c) {
+//        if (!c.hasQuestions() && !c.hasQuests()) {
+//            if (!questionConcepts.remove(c))
+//                throw new RuntimeException("Concept " + c + " never registered any questions");
+//        }
+//        else {
+//            if (!questionConcepts.add(c)) {
+//                throw new RuntimeException("Concept " + c + " aready registered existing questions");
+//            }
+//
+//            //this test was cycle.size() previously:
+//            if (questionConcepts.size() > getCycleProcess().size()) {
+//                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + getCycleProcess().size());
+//            }
+//        }
+//    }
+//
+//    public void updateConceptGoals(Concept c) {
+//        //TODO
+//    }
+
 
     //    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
 //        return item == null ? "" : "\n " + title + ":\n"

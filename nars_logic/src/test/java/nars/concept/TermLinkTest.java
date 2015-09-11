@@ -74,7 +74,7 @@ public class TermLinkTest {
 
     private static NAR nn(String term) {
         String task = term + ". %1.00;0.90%";
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         n.input(task);
         n.runWhileInputting(16);
         return n;
@@ -98,7 +98,7 @@ public class TermLinkTest {
         n.input(term + ".");
         n.frame(1);
 
-        assertTrue(n.memory.numConcepts(true,false) >= 1);
+        assertTrue(n.numConcepts(true,false) >= 1);
 
         Concept c = n.concept(term);
 
@@ -116,7 +116,7 @@ public class TermLinkTest {
 
     @Test
     public void testStatementComponent() {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         n.input("<a --> b>.");
         n.runWhileInputting(1);
 
@@ -126,7 +126,7 @@ public class TermLinkTest {
 
     @Test
     public void testIdentifier() {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         n.input("<a --> b>.");
         n.input("<<a --> b> --> d>.");
         n.input("<<a --> b> --> e>.");
@@ -187,7 +187,7 @@ public class TermLinkTest {
         assertEquals(4, getTermLinkTemplates(d).size());
 
 
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
 
         n.input(c + ".");
         n.input(d + ".");
@@ -224,7 +224,7 @@ public class TermLinkTest {
         String c = "<{x} --> y>.";
 
 
-        NAR n = new NAR(new Default().level(6));
+        NAR n = new Default().nal(6);
         n.input(c);
         n.frame(10); //allow sufficient time for all subterms to be processed
 

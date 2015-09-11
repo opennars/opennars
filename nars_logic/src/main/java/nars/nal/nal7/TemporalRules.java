@@ -361,7 +361,7 @@ public class TemporalRules {
         }
 
 
-        int durationCycles = nal.memory.duration();
+        int durationCycles = nal.memory().duration();
 
         long time1 = snext.getOccurrenceTime();
         long time2 = sprev.getOccurrenceTime();
@@ -411,7 +411,7 @@ public class TemporalRules {
             //it was not "semantically" connected by temporal succession
             int tt1 = (int) snext.getOccurrenceTime();
             int tt2 = (int) sprev.getOccurrenceTime();
-            float d = Math.abs(tt1 - tt2) / ((float)nal.memory.param.duration.get());
+            float d = Math.abs(tt1 - tt2) / ((float)nal.memory().duration.get());
             if (d != 0) {
                 float mul = 1.0f / d;
                 if (budget1!=null)  budget1.mulPriority(mul);
@@ -455,7 +455,7 @@ public class TemporalRules {
         }
 
 
-        final int inductionLimit = nal.memory.param.temporalRelationsMax.get();
+        final int inductionLimit = nal.memory().temporalRelationsMax.get();
 
         //List<Task> success = new ArrayList<Task>();
         if (t11 != null && t22 != null) {
@@ -501,7 +501,7 @@ public class TemporalRules {
         desireUpdateCompiledInferenceHelper(snext, task, nal, sprev);
 
         double conf = task.getTruth().getConfidence();
-        Concept C = nal.memory.concept(task.getTerm());
+        Concept C = nal.nar.concept(task.getTerm());
         if (C != null && C.hasBeliefs()) {
             Task bel = C.getBeliefs().top();
             Truth cur = bel.getTruth();
@@ -547,7 +547,7 @@ public class TemporalRules {
         */
         if (s1.isJudgment()) { //necessary check?
             Sentence belief=task;
-            Concept S1_State_C=nal.memory.concept(s1.getTerm());
+            Concept S1_State_C=nal.nar.concept(s1.getTerm());
             if(S1_State_C != null && S1_State_C.hasGoals() &&
                     !(((Statement) belief.getTerm()).getPredicate() instanceof Operation)) {
                 Task a_desire = S1_State_C.getGoals().top();
@@ -575,7 +575,7 @@ public class TemporalRules {
                 } else {
                     long shift=0;
                     if(task.getTerm().getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                        shift=nal.memory.duration();
+                        shift=nal.memory().duration();
                     }
                     occ = (strongest_desire.getOccurrenceTime()-shift);
                 }
@@ -605,7 +605,7 @@ public class TemporalRules {
     private static Task questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
         if(!(task.getTerm() instanceof Implication)) return null;
 
-        if(nal.memory.emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
+        if(nal.memory().emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
                 && Global.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF
                 && task.isJudgment()
                 && conf<Global.CURIOSITY_CONFIDENCE_THRESHOLD

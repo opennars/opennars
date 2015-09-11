@@ -24,6 +24,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
@@ -53,7 +54,7 @@ public abstract class feel extends SynchOperator implements Mental {
         final Term selfSubject = SetExt.make(self);
         Inheritance content = Inheritance.make(selfSubject, predicate);
 
-        return Lists.newArrayList(memory.newTask(content)
+        return Lists.newArrayList(TaskSeed.make(memory, content)
                         .judgment().truth(new DefaultTruth(value, 0.999f))
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                         .occurrNow()

@@ -51,7 +51,7 @@ public class Workspace extends CycleReaction {
     public double calc_temperature() {
         n_concepts=0;
         double s = 0.0f;
-        for(Concept node : nar.memory.getCycleProcess()) {
+        for(Concept node : nar.memory().getConcepts()) {
             if(!node.getGoals().isEmpty()) {
                 s+=node.getPriority()* node.getGoals().top().getTruth().getExpectation();
             }

@@ -1,7 +1,6 @@
 package nars.nal.nal7;
 
 import com.google.common.primitives.Longs;
-import nars.AbstractMemory;
 import nars.Memory;
 import nars.Op;
 import nars.term.Atom;
@@ -32,7 +31,7 @@ public class CyclesInterval extends Atom implements AbstractInterval {
         return new CyclesInterval(numCycles);
     }
 
-    public static CyclesInterval make(long numCycles, AbstractMemory m) {
+    public static CyclesInterval make(long numCycles, Memory m) {
         return make(numCycles, m.duration());
     }
 

@@ -2,7 +2,7 @@ package nars.util.graph.experimental;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import nars.AbstractMemory;
+import nars.Memory;
 import nars.NAR;
 import nars.Op;
 import nars.concept.Concept;
@@ -58,13 +58,13 @@ abstract class TermGraph /* extends AbstractReaction */ implements UndirectedGra
         }
     }
 
-    public final AbstractMemory memory;
+    public final Memory memory;
 
     public TermGraph(NAR nar) {
         this(nar.memory);
     }
 
-    public TermGraph(AbstractMemory memory) {
+    public TermGraph(Memory memory) {
         super();
         this.memory = memory;
     }

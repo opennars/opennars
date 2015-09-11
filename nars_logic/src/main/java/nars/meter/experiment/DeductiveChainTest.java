@@ -25,17 +25,17 @@ public class DeductiveChainTest {
         q = i(0, length);
     }
 
-    public void apply(TestNAR n, long timeLimit) {
+    public void apply(TestNAR t, long timeLimit) {
 
         //Global.OVERLAP_ALLOW = true;
-        //TextOutput.out(n);
+        //TextOutput.out(t);
 
         for (int x = 0; x < beliefs.length; x++) {
-            n.believe( beliefs[x]  );
+            t.nar.believe( beliefs[x]  );
         }
-        n.ask( q );
+        t.nar.ask( q );
 
-        n.mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 0.99f);
+        t.mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 0.99f);
     }
 
     public static Atom a(int i) {
@@ -51,7 +51,7 @@ public class DeductiveChainTest {
         int length = 4;
 
         DefaultAlann da = new DefaultAlann(32);
-        da.param.level(3);
+        //da.level(3);
 
         TestNAR n = new TestNAR(
                 //new Equalized(1000, 8, 3) //.level(1)
@@ -67,12 +67,12 @@ public class DeductiveChainTest {
 
         final long start = System.currentTimeMillis();
 
-        new AnswerReaction(n) {
+        new AnswerReaction(n.nar) {
 
             @Override
             public void onSolution(Task belief) {
                 if (belief.getTerm().equals(test.q)) {
-                    System.out.println(belief + " " + timestamp(start) + " " + n.memory.concepts.size() + " concepts");
+                    System.out.println(belief + " " + timestamp(start) + " " + n.nar.concepts().size() + " concepts");
                     System.out.println(belief.getExplanation());
                     System.out.println();
                 }
@@ -87,12 +87,12 @@ public class DeductiveChainTest {
 
         while (true) {
 
-            n.frame(500);
+            n.run(500);
             //sleep(20);
 
             if (n.time() % printEvery == 0) {
                 System.out.println(n.time() + " " + timestamp(start) + " " +
-                        n.memory.numConcepts(true, true));
+                        n.nar.numConcepts(true, true));
             }
         }
 

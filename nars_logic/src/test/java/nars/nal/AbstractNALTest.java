@@ -4,9 +4,7 @@ import junit.framework.TestCase;
 import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
-import nars.analyze.NALysis;
 import nars.io.JSONOutput;
-import nars.io.in.LibraryInput;
 import nars.meter.CountIOEvents;
 import nars.meter.TestNAR;
 import nars.meter.condition.CountDerivationCondition;
@@ -24,7 +22,9 @@ import org.junit.runners.Parameterized;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -80,23 +80,23 @@ abstract public class AbstractNALTest extends TestCase {
     public static CountDerivationCondition deriveMethodCounter;
 
 
-    public final TestNAR n;
-    public NARSeed build;
+    public final TestNAR tester;
+    public NAR nar;
 
 
 
-    public AbstractNALTest(NARSeed b) {
+    public AbstractNALTest(NAR b) {
         super();
 
-        this.build = b;
+        this.nar = b;
 
 
         Global.DEBUG = true;
 
         results.clear();
 
-        this.n = new TestNAR(build);
-        n.memory.reset(randomSeed);
+        this.tester = new TestNAR(nar);
+        nar.memory.clear();
 
         eventCounter = null; //new CountOutputEvents(nar, results);
         deriveMethodCounter = null;
@@ -127,7 +127,7 @@ abstract public class AbstractNALTest extends TestCase {
         testCost.set(OutputCondition.cost(nar.requires));
         testSeed.set(seed);
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
-        testConcepts.hit(nar.memory.getCycleProcess().size());
+        testConcepts.hit(nar.nar.concepts().size());
 
         results.update(label);
 
@@ -145,25 +145,27 @@ abstract public class AbstractNALTest extends TestCase {
 
     }
 
-    @Deprecated public static long runScript(TestNAR nar, String path, int maxCycles) {
-
-        script = LibraryInput.getExample(path);
-
-        if (NALysis.showInput)
-            System.out.println(script);
-
-        nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave, conditionsCache));
-
-
-        nar.inputTest(script);
-
-
-        long start = System.nanoTime();
-
-        nar.run(maxCycles);
-
-        return System.nanoTime() - start;
-    }
+//    @Deprecated public static long runScript(TestNAR tester, String path, int maxCycles) {
+//
+//        script = LibraryInput.getExample(path);
+//
+//        if (NALysis.showInput)
+//            System.out.println(script);
+//
+//        tester.requires.addAll(OutputCondition.getConditions(
+//                tester.nar,
+//                script, similarsToSave, conditionsCache));
+//
+//
+//        tester.inputTest(script);
+//
+//
+//        long start = System.nanoTime();
+//
+//        tester.run(maxCycles);
+//
+//        return System.nanoTime() - start;
+//    }
 
 
     public static class Report implements Serializable {
@@ -206,16 +208,16 @@ abstract public class AbstractNALTest extends TestCase {
     //Default test procedure
     @After public void test() {
 
-        assertTrue("No conditions tested", !n.requires.isEmpty());
+        assertTrue("No conditions tested", !tester.requires.isEmpty());
 
-        assertTrue("No cycles elapsed", n.memory.timeSinceLastCycle() > 0);
+        assertTrue("No cycles elapsed", tester.nar.memory().timeSinceLastCycle() > 0);
 
 
-        Report r = new Report(n);
+        Report r = new Report(tester);
 
-        r.setError(n.getError());
+        r.setError(tester.getError());
 
-        for (OutputCondition e : n.requires) {
+        for (OutputCondition e : tester.requires) {
             r.add(e);
         }
 
@@ -227,7 +229,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         assertTrue(s, r.isSuccess());
 
-        n.reset();
+        tester.nar.reset();
     }
 
 

@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class ApplySubstituteTest {
     
-    NAR n = new NAR(new Default());
+    NAR n = new Default();
 
     @Test
     public void testApplySubstitute() throws InvalidInputException {
@@ -43,7 +43,7 @@ public class ApplySubstituteTest {
     @Test
     public void test2() throws InvalidInputException {
         //substituting:  <(*,$1) --> num>.  with $1 ==> 0
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
             
         Map<Term,Term> h = new HashMap();
         h.put(n.term("$1"), n.term("0"));        

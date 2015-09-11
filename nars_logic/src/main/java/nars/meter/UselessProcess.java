@@ -3,7 +3,7 @@ package nars.meter;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.process.ConceptProcess;
-import nars.util.event.Observed;
+import nars.util.event.DefaultObserved;
 
 /**
  * Meter utility for analyzing useless inference processes
@@ -14,7 +14,7 @@ import nars.util.event.Observed;
 public class UselessProcess extends NARReaction {
 
     private final NAR nar;
-    private final Observed.DefaultObserved.DefaultObservableRegistration conceptProcessed;
+    private final DefaultObserved.DefaultObservableRegistration conceptProcessed;
 
     public UselessProcess(NAR n) {
         super(n);

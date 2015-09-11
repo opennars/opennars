@@ -20,12 +20,12 @@ import static org.jgroups.util.Util.assertEquals;
 public class OperatorTest {
 
     //create a completely empty NAR, no default operators
-    NAR n = new NAR(new Default() {
+    NAR n = new Default() {
         /*@Override
         public Operator[] defaultOperators(NAR n) {
             return new Operator[] { };
         }*/
-    });
+    };
 
 //
 //    public void testIO(String input, String output) {

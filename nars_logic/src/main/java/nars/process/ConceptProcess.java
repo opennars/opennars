@@ -1,10 +1,11 @@
 /*
  * Here comes the text of your license
- * Each line should be prefixed with  * 
+ * Each line should be prefixed with  *
  */
 package nars.process;
 
 import nars.Memory;
+import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -43,8 +44,8 @@ abstract public class ConceptProcess extends NAL  {
     }
 
 
-    public ConceptProcess(Concept concept, TaskLink taskLink) {
-        super(concept.getMemory());
+    public ConceptProcess(NAR nar, Concept concept, TaskLink taskLink) {
+        super(nar);
 
         this.taskLink = taskLink;
         this.concept = concept;
@@ -60,16 +61,17 @@ abstract public class ConceptProcess extends NAL  {
 
     protected void beforeFinish(final long now) {
 
-        memory.eventConceptProcessed.emit(this);
-        memory.logic.TASKLINK_FIRE.hit();
-        memory.emotion.busy(getTask(), this);
+        Memory m = nar.mem();
+        m.eventConceptProcessed.emit(this);
+        m.logic.TASKLINK_FIRE.hit();
+        m.emotion.busy(getTask(), this);
 
     }
 
     @Override
     final protected void afterDerive() {
 
-        final long now = memory.time();
+        final long now = nar.time();
 
         beforeFinish(now);
 
@@ -90,11 +92,11 @@ abstract public class ConceptProcess extends NAL  {
 
 
 
-    public static void forEachPremise(@Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
-        forEachPremise(concept, null, termLinks, taskLinkForgetDurations, proc);
+    public static void forEachPremise(NAR nar, @Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
+        forEachPremise(nar, concept, null, termLinks, taskLinkForgetDurations, proc);
     }
 
-    public static void forEachPremise(@Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
+    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
         if (concept == null) return;
 
         concept.updateLinks();
@@ -105,10 +107,10 @@ abstract public class ConceptProcess extends NAL  {
                 return;
         }
 
-        proc.accept( new ConceptTaskLinkProcess(concept, taskLink) );
+        proc.accept( new ConceptTaskLinkProcess(nar, concept, taskLink) );
 
         if ((termLinks > 0) && (taskLink.type!=TermLink.TRANSFORM))
-            ConceptProcess.forEachPremise(concept, taskLink,
+            ConceptProcess.forEachPremise(nar, concept, taskLink,
                     termLinks,
                     proc
             );
@@ -118,13 +120,11 @@ abstract public class ConceptProcess extends NAL  {
      * from a concept's TermLink bag
      * @return how many processes generated
      * */
-    public static int forEachPremise(Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
+    public static int forEachPremise(NAR nar, Concept concept, TaskLink t, final int termlinksToReason, Consumer<ConceptProcess> proc) {
 
         int numTermLinks = concept.getTermLinks().size();
         if (numTermLinks == 0)
             return 0;
-
-        final Memory memory = concept.getMemory();
 
         TermLink[] termlinks = new TermLink[termlinksToReason];
 
@@ -141,7 +141,7 @@ abstract public class ConceptProcess extends NAL  {
                 if (tl == null) break;
 
                 proc.accept(
-                    new ConceptTaskTermLinkProcess(concept, t, tl)
+                    new ConceptTaskTermLinkProcess(nar, concept, t, tl)
                 );
                 created++;
             }

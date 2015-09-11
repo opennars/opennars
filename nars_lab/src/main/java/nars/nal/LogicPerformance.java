@@ -21,7 +21,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.util.event.Observed;
+import nars.util.event.DefaultObserved;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.TimeNode;
 import nars.util.graph.NARGraph.UniqueEdge;
@@ -276,7 +276,7 @@ public class LogicPerformance {
 //            }
 //        }, TaskImmediateProcessed.class);
 
-        Observed.DefaultObserved.DefaultObservableRegistration conceptProcessed = n.memory.eventConceptProcessed.on(f -> {
+        DefaultObserved.DefaultObservableRegistration conceptProcessed = n.memory.eventConceptProcessed.on(f -> {
             process.explain(n.time(), f);
         });
 

@@ -14,7 +14,7 @@ import static org.jgroups.util.Util.assertEquals;
  */
 public class TermTrieNodeTest  {
 
-    final static NAR n = new NAR( new Default() );
+    final static NAR n = new Default();
 
     static Term t(String s) { return n.term(s); }
 

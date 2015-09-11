@@ -321,7 +321,7 @@ public final class SyllogisticRules {
         nal.deriveDouble(statement, nal.getTask().getPunctuation(), truth, budget,
                 asym, sym, false, true);
 
-        nal.memory.logic.ANALOGY.hit();
+        nal.memory().logic.ANALOGY.hit();
         return true;
     }
 
@@ -505,7 +505,7 @@ public final class SyllogisticRules {
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.time();
             }
-            long inc = order * nal.memory.duration();
+            long inc = order * nal.duration();
             long occurTime = (side == 0) ? baseTime + inc : baseTime - inc;
             //st = nal.newStamp(mainSentence, subSentence, occurTime);
             occ = occurTime;
@@ -602,7 +602,7 @@ public final class SyllogisticRules {
         TaskSeed newTask = nal.newDoublePremise(task, belief, deduction); //NOTE: overlap may be tested earlier, try to do it only once
         if (newTask == null) return null;
 
-        boolean conditionalTask = Variables.hasSubstitute(Op.VAR_INDEPENDENT, premise2, belief.getTerm(), nal.memory.random);
+        boolean conditionalTask = Variables.hasSubstitute(Op.VAR_INDEPENDENT, premise2, belief.getTerm(), nal.getRandom());
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -628,7 +628,7 @@ public final class SyllogisticRules {
             index = (short) index2;
         } else {
             Term[] u = new Term[]{premise1, premise2};
-            boolean match = Variables.unify(Op.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u, nal.memory.random);
+            boolean match = Variables.unify(Op.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u, nal.getRandom());
             premise1 = (Implication) u[0];
             premise2 = u[1];
 
@@ -641,7 +641,7 @@ public final class SyllogisticRules {
                     match = Variables.unify(Op.VAR_INDEPENDENT,
                             oldCondition.term[index],
                             compoundCommonComponent.term[index],
-                            u, nal.memory.random);
+                            u, nal.getRandom());
                     premise1 = (Implication) u[0];
                     premise2 = u[1];
                 }
@@ -677,10 +677,10 @@ public final class SyllogisticRules {
         if (newCondition != null) {
             if (newCondition instanceof AbstractInterval) {
                 content = premise1.getPredicate();
-                delta = ((AbstractInterval) newCondition).cycles(nal.memory);
+                delta = ((AbstractInterval) newCondition).cycles(nal.memory());
             } else if ((newCondition instanceof Conjunction) && (((Compound) newCondition).term[0] instanceof AbstractInterval)) {
                 AbstractInterval interval = (AbstractInterval) ((Compound) newCondition).term[0];
-                delta = interval.cycles(nal.memory);
+                delta = interval.cycles(nal.memory());
                 newCondition = ((Compound) newCondition).cloneReplacingSubterm(0, null);
                 content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
             } else {
@@ -777,7 +777,7 @@ public final class SyllogisticRules {
      * @param nal      Reference to the memory
      */
     public static boolean conditionalAna(Equivalence premise1, short index, Term premise2, int side, NAL nal) {
-        final Random r = nal.memory.random;
+        final Random r = nal.getRandom();
 
         final Task task = nal.getTask();
         final Task belief = nal.getBelief();
@@ -901,12 +901,12 @@ public final class SyllogisticRules {
         Term term1 = null;
         //        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
         if (cond1 instanceof Conjunction) {
-            term1 = reduceComponents((Compound) cond1, cond2, nal.memory);
+            term1 = reduceComponents((Compound) cond1, cond2, nal.memory());
         }
 //        if ((cond2 instanceof Conjunction) && !Variable.containVarDep(cond2.getName())) {
         Term term2 = null;
         if (cond2 instanceof Conjunction) {
-            term2 = reduceComponents((Compound) cond2, cond1, nal.memory);
+            term2 = reduceComponents((Compound) cond2, cond1, nal.memory());
         }
         if ((term1 == null) && (term2 == null)) {
             return false;
@@ -919,7 +919,7 @@ public final class SyllogisticRules {
         Truth value2 = belief.getTruth();
         Term content;
 
-        boolean keepOrder = Variables.hasSubstitute(Op.VAR_INDEPENDENT, st1, task.getTerm(), nal.memory.random);
+        boolean keepOrder = Variables.hasSubstitute(Op.VAR_INDEPENDENT, st1, task.getTerm(), nal.getRandom());
 
         Truth truth = null;
         Budget budget;
@@ -1006,7 +1006,7 @@ public final class SyllogisticRules {
      * @param nal          Reference to the memory
      */
     public static void elimiVarDep(Compound compound, Term component, boolean compoundTask, NAL nal) {
-        Term content = reduceComponents(compound, component, nal.memory);
+        Term content = reduceComponents(compound, component, nal.memory());
 
         if ((content == null) || (!(content instanceof Compound))) return;
 

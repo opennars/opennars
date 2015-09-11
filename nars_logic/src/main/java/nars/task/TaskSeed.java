@@ -1,6 +1,7 @@
 package nars.task;
 
 import nars.Memory;
+import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -22,6 +23,10 @@ public class TaskSeed extends DefaultTask<Compound> implements Stamp {
 
 
     transient private final Memory memory;
+
+    public static <C extends Compound> TaskSeed make(NAR nar, C t) {
+        return make(nar.memory(), t);
+    }
 
     public static <C extends Compound> TaskSeed make(Memory memory, C t) {
         t.normalizeDestructively();

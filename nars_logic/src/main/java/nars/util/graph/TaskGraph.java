@@ -30,7 +30,7 @@ public class TaskGraph  {
     public TaskGraph(NAR n) {
 
         this.nar = n;
-        reaction = new MemoryReaction(n.memory, false) {
+        reaction = new MemoryReaction(n, false) {
 
             @Override
             public void output(Object channel, Object... args) {

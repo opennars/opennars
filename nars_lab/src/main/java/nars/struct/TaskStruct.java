@@ -1,6 +1,6 @@
 package nars.struct;
 
-import nars.AbstractMemory;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
 import nars.task.Sentence;
@@ -130,7 +130,7 @@ public class TaskStruct extends Fuct implements Task {
     }
 
     @Override
-    public void setBestSolution(AbstractMemory memory, Task belief) {
+    public void setBestSolution(Memory memory, Task belief) {
 
     }
 

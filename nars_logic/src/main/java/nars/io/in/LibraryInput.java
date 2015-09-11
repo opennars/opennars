@@ -4,10 +4,7 @@
  */
 package nars.io.in;
 
-import nars.AbstractMemory;
-import nars.Global;
-import nars.NAR;
-import nars.NARSeed;
+import nars.*;
 import nars.meter.condition.OutputCondition;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
@@ -189,7 +186,7 @@ public class LibraryInput extends TextInput {
         return rr;
     }
 
-    public static List<Task> getExample(List<Object[]> raw, AbstractMemory m) {
+    public static List<Task> getExample(List<Object[]> raw, Memory m) {
 
         List<Task> y = Global.newArrayList(raw.size());
         for (Object o : raw) {
@@ -202,7 +199,7 @@ public class LibraryInput extends TextInput {
         return y;
     }
 
-    public static TaskQueue getExampleInput(List raw, AbstractMemory m) {
+    public static TaskQueue getExampleInput(List raw, Memory m) {
         return new TaskQueue(getExample(raw, m));
     }
 }

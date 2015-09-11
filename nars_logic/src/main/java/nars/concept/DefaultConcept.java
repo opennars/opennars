@@ -117,12 +117,12 @@ public class DefaultConcept extends AtomConcept {
             case Symbols.QUEST:
             case Symbols.QUESTION:
                 if (getQuestions().isEmpty() && getQuests().isEmpty()) {
-                    if (originalSize > 0) //became empty
-                        getMemory().updateConceptQuestions(this);
+                    //if (originalSize > 0) //became empty
+                        //getMemory().updateConceptQuestions(this);
                 } else {
-                    if (originalSize == 0) { //became non-empty
-                        getMemory().updateConceptQuestions(this);
-                    }
+                    //if (originalSize == 0) //became non-empty
+                        //getMemory().updateConceptQuestions(this);
+
                 }
                 break;
         }
@@ -296,7 +296,7 @@ public class DefaultConcept extends AtomConcept {
             //TODO
             //InternalExperience.experienceFromTask(nal, task, false);
 
-            nal.getMemory().execute(goal);
+            nal.memory().execute(goal);
 
             //}
         }

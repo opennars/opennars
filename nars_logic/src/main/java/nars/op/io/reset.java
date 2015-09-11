@@ -28,7 +28,7 @@ public class reset extends ImmediateOperator {
 
     @Override
     public void accept(Operation o) {
-        o.getMemory().reset();
+        o.getMemory().clear();
         //nar.reset()
     }
 }

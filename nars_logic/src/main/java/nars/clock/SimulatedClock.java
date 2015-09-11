@@ -9,7 +9,7 @@ public class SimulatedClock implements Clock {
 
 
     @Override
-    public void reset() {
+    public void clear() {
         t = t0 = 0;
     }
 

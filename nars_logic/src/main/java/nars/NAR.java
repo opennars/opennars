@@ -5,6 +5,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
+import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.event.MemoryReaction;
@@ -15,6 +17,7 @@ import nars.io.in.TextInput;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
+import nars.link.TaskLink;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
 import nars.nal.nal7.Tense;
@@ -23,26 +26,26 @@ import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
-import nars.premise.Premise;
 import nars.process.CycleProcess;
-import nars.process.TaskProcess;
 import nars.task.DefaultTask;
+import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.LongPredicate;
@@ -59,7 +62,9 @@ import java.util.function.Predicate;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Runnable {
+public class NAR  {
+
+
 
     /**
      * The information about the version and date of the project.
@@ -80,13 +85,15 @@ public class NAR implements Runnable {
     /**
      * The memory of the reasoner
      */
-    public final Memory memory;
-    public final Param param;
+    public Memory memory;
+
     /**
      * The name of the reasoner
      */
     protected String name;
-    private final CycleProcess control;
+
+
+
     /**
      * Flag for running continuously
      */
@@ -98,22 +105,22 @@ public class NAR implements Runnable {
      */
     private boolean enabled = true;
 
+
+
     /**
      * normal way to construct a NAR, using a particular Build instance
      */
     public NAR(NARSeed b) {
-        this( b.getCycleProcess(), b.newMemory());
-
-        b.init(this);
+        this(  b.newMemory());
+        //b.init(this);
     }
 
-    protected NAR(final CycleProcess c, final Memory m) {
+    public NAR(final Memory m) {
         super();
-        this.control = c;
-        this.memory = m;
-        this.param = m.param;
 
-        param.the(NAR.class, this);
+        reset(m);
+
+        memory().the(NAR.class, this);
 
         this.narsese = NarseseParser.the();
 
@@ -121,21 +128,10 @@ public class NAR implements Runnable {
     }
 
 
-    /**
-     * create a NAR given the class of a Build.  its default constructor will be used
-     */
-    public static NAR build(Class<? extends NARSeed> g) {
-        try {
-            return new NAR(g.newInstance());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
+    public final Memory memory() { return memory; }
 
-    public void think(int delay) {
-        memory.think(delay);
-    }
+
+
 
     public NAR input(ImmediateOperator o) {
         input(o.newTask());
@@ -147,8 +143,16 @@ public class NAR implements Runnable {
      * will remain attached but enabled plugins will have been deactivated and
      * reactivated, a signal for them to empty their state (if necessary).
      */
-    public NAR reset() {
-        memory.reset(control);
+    public synchronized NAR reset() {
+        nextTasks.clear();
+
+        if (laterTasks!=null) {
+            laterTasks.shutdown();
+            laterTasks = null;
+        }
+
+        memory.clear();
+
         return this;
     }
 
@@ -157,7 +161,6 @@ public class NAR implements Runnable {
      */
     public void delete() {
 
-        control.delete();
         memory.delete();
 
     }
@@ -190,7 +193,7 @@ public class NAR implements Runnable {
     }
 
     public <T extends Compound> TaskSeed task(T t) {
-        return memory.newTask(t);
+        return TaskSeed.make(memory, t);
     }
 
     public List<Task> tasks(final String parse) {
@@ -329,7 +332,7 @@ public class NAR implements Runnable {
 
         //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
-        final Task t = new DefaultTask(
+        final Task<?> t = new DefaultTask<>(
                 term,
                 questionOrQuest,
                 null,
@@ -346,13 +349,89 @@ public class NAR implements Runnable {
     }
 
 
-    /** input a task via perception buffers */
-    public Task input(Task t) {
 
-        if (memory.input(t))
-            return t;
+    protected boolean process(Task t) {
 
-        return null;
+        return true;
+    }
+
+
+    /**
+     * exposes the memory to an input, derived, or immediate task.
+     * the memory then delegates it to its controller
+     *
+     * return true if the task was processed
+     * if the task was a command, it will return false even if executed
+     */
+    public boolean input(final Task t) {
+
+        final Memory m = memory();
+
+        if (t == null || !t.init(m)) {
+            return false;
+        }
+
+        if (t.isCommand()) {
+            int n = m.execute(t);
+            if (n == 0) {
+                emit(Events.ERR.class, "Unknown command: " + t);
+            }
+            return false;
+        }
+
+        if (Global.DEBUG) {
+            m.ensureValidTask(t);
+        }
+
+        if (!Terms.levelValid(t, nal())) {
+            m.removed(t, "Insufficient NAL level");
+            return false;
+        }
+
+
+        if (process(t)) {
+
+
+            emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
+
+
+            //NOTE: if duplicate outputs happen, the budget wil have changed
+            //but they wont be displayed.  to display them,
+            //we need to buffer unique TaskAdd ("OUT") tasks until the end
+            //of the cycle
+
+
+            m.logic.TASK_ADD_NEW.hit();
+            return true;
+        }
+        else {
+            m.removed(t, "Ignored");
+        }
+
+        return false;
+    }
+
+    /** returns the global concept index */
+    public final CacheBag<Term, Concept> concepts() {
+        return memory().getConcepts();
+    }
+
+    transient ExecutorService laterTasks = null;
+    transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
+
+
+    @Deprecated public int numActiveConcepts() {
+        return 0;
+    }
+
+    public int numConcepts(boolean active, boolean inactive) {
+        int total = 0;
+        if (active && !inactive) return numActiveConcepts();
+        else if (!active && inactive) return memory().concepts.size() - numActiveConcepts();
+        else if (active && inactive)
+            return memory().concepts.size();
+        else
+            return 0;
     }
 
 
@@ -370,11 +449,11 @@ public class NAR implements Runnable {
 
 
 
-    /** input a task via direct TaskProcessing
-     * @return the TaskProcess, after it has executed (synchronously) */
-    public Premise inputDirect(final Task t) {
-        return TaskProcess.queue(this, t);
-    }
+//    /** input a task via direct TaskProcessing
+//     * @return the TaskProcess, after it has executed (synchronously) */
+//    public Premise inputDirect(final Task t) {
+//        return TaskProcess.queue(this, t);
+//    }
 
     /**
      * attach event handler to one or more event (classes)
@@ -386,14 +465,14 @@ public class NAR implements Runnable {
     public void on(Class<? extends Reaction<Class,Object[]>>... x) {
 
         for (Class<? extends Reaction<Class,Object[]>> c : x) {
-            Reaction<Class, Object[]> v = param.the(c);
-            param.the(c, v); //register singleton
+            Reaction<Class, Object[]> v = memory().the(c);
+            memory().the(c, v); //register singleton
             on(v);
         }
     }
     public void on(Class<? extends OpReaction> c) {
         //for (Class<? extends OpReaction> c : x) {
-            OpReaction v = param.the(c);
+            OpReaction v = memory().the(c);
             on(v);
         //}
     }
@@ -461,7 +540,12 @@ public class NAR implements Runnable {
      * Will remain added until it closes or it is explicitly removed.
      */
     public Input input(final Input i) {
-        i.inputAll(memory);
+        Task t;
+
+        int i1 =0;
+        while (( t = i.get() ) != null) {
+            i1 += input(t) ? 1 : 0;
+        }
         return i;
     }
 
@@ -604,7 +688,6 @@ public class NAR implements Runnable {
     /**
      * Run until stopped, at full speed
      */
-    @Override
     public void run() {
         loop(0);
     }
@@ -656,6 +739,10 @@ public class NAR implements Runnable {
     /**
      * returns the configured NAL level
      */
+    public NAR nal(int level) {
+        memory.nal(level);
+        return this;
+    }
     public int nal() {
         return memory.nal();
     }
@@ -668,9 +755,7 @@ public class NAR implements Runnable {
         memory.emit(c, o);
     }
 
-    protected void error(Throwable e) {
-        memory.error(e);
-    }
+
 
     /**
      * enable/disable all I/O and memory processing. CycleStart and CycleStop
@@ -686,6 +771,49 @@ public class NAR implements Runnable {
     }
 
 
+    /** adds a task to the queue of task which will be executed in batch
+     *  at the end of the current cycle.
+     *  checks if the queue already contains the pending
+     *  Runnable instance to ensure duplicates don't
+     *  don't accumulate
+     */
+    final public void taskNext(final Runnable t) {
+        if (!nextTasks.contains(t))
+            nextTasks.addLast(t);
+    }
+
+    /** runs all the tasks in the 'Next' queue */
+    protected final void runNextTasks() {
+        int originalSize = nextTasks.size();
+        if (originalSize == 0) return;
+
+        CycleProcess.run(nextTasks, originalSize);
+    }
+
+    /** signals an error through one or more event notification systems */
+    protected void error(Throwable ex) {
+        emit(Events.ERR.class, ex);
+
+        ex.printStackTrace();
+
+        if (Global.DEBUG && Global.EXIT_ON_EXCEPTION) {
+            //throw the exception to the next lower stack catcher, or cause program exit if none exists
+            throw new RuntimeException(ex);
+        }
+
+    }
+
+
+    /** queues a task to (hopefully) be executed at an unknown time in the future,
+     *  in its own thread in a thread pool */
+    public void taskLater(Runnable t) {
+        if (laterTasks==null) {
+            laterTasks = Executors.newFixedThreadPool(1);
+        }
+
+        laterTasks.submit(t);
+        laterTasks.execute(t);
+    }
 
     /**
      * A frame, consisting of one or more NAR memory cycles
@@ -713,7 +841,7 @@ public class NAR implements Runnable {
             error(c);
         }*/
 
-        memory.runNextTasks();
+        runNextTasks();
 
         emit(FrameEnd.class);
 
@@ -725,7 +853,7 @@ public class NAR implements Runnable {
     }
 
     /**
-     * Get the current time from the clock Called in {@link nars.logic.entity.stamp.Stamp}
+     * Get the current time from the clock
      *
      * @return The current time
      */
@@ -742,7 +870,7 @@ public class NAR implements Runnable {
      * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the
      */
     public Atom atom(final String s) {
-        return memory.the(s);
+        return Atom.the(s);
     }
 
     public void runWhileInputting() {
@@ -759,7 +887,93 @@ public class NAR implements Runnable {
     private List<Object> regs = new ArrayList();
 
 
+    public Iterator<Concept> iterator() {
+        return mem().getConcepts().iterator();
+    }
 
+
+    public void conceptPriorityHistogram(double[] bins) {
+        if (bins!=null)
+            mem().getConcepts().getPriorityHistogram(bins);
+    }
+
+
+    public Concept put(Concept concept) {
+        mem().put(concept);
+        return concept;
+    }
+
+
+    public Concept remove(Term key) {
+        return remove(mem().get(key));
+    }
+
+
+
+
+    public Concept get(final Term key) {
+        return concepts().get(key);
+    }
+
+
+    public void reset(Memory m) {
+        if (isRunning())
+            throw new RuntimeException("NAR must be stopped to change memory");
+
+
+        memory = m;
+    }
+
+
+    public final Memory mem() {
+        return memory;
+    }
+
+
+    protected boolean active(Term t) {
+        return mem().get(t)!=null;
+    }
+
+
+    /**
+     * get all tasks in the system by iterating all newTasks, novelTasks; does not change or remove any
+     * Concept TaskLinks
+     */
+    public void getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks, Set<Task> target) {
+
+
+        if (includeTaskLinks) {
+            forEachConcept(c -> {
+                Bag<Sentence, TaskLink> tl = c.getTaskLinks();
+                if (tl != null)
+                    tl.forEach(t ->  target.add(t.targetTask) );
+            });
+        }
+
+        /*
+        if (includeNewTasks) {
+            t.addAll(newTasks);
+        }
+
+        if (includeNovelTasks) {
+            for (Task n : novelTasks) {
+                t.add(n);
+            }
+        }
+        */
+
+    }
+
+
+
+    public void forEachTask(boolean includeTaskLinks, Consumer<Task> each) {
+        forEachConcept(c -> {
+            if (c.getTaskLinks() != null)
+                c.getTaskLinks().forEach(tl -> {
+                    each.accept(tl.getTask());
+                });
+        });
+    }
 
 
 
@@ -860,19 +1074,20 @@ public class NAR implements Runnable {
         return this;
     }
 
-    public NAR forEachConceptActive(Consumer<Concept> recip) {
-        nar.memory.getCycleProcess().forEachConcept(recip);
-        return this;
-    }
+//    public NAR forEachConceptActive(Consumer<Concept> recip) {
+//        nar.memory.getCycleProcess().forEachConcept(recip);
+//        return this;
+//    }
 
-    public NAR conceptIterator(Consumer<Iterator<Concept>> recip) {
-        recip.accept( nar.memory.concepts.iterator() );
-        return this;
-    }
-    public NAR conceptActiveIterator(Consumer<Iterator<Concept>> recip) {
-        recip.accept( nar.memory.getCycleProcess().iterator() );
-        return this;
-    }
+//    public NAR conceptIterator(Consumer<Iterator<Concept>> recip) {
+//        recip.accept( nar.memory.concepts.iterator() );
+//        return this;
+//    }
+
+//    public NAR conceptActiveIterator(Consumer<Iterator<Concept>> recip) {
+//        recip.accept( nar.memory.getCycleProcess().iterator() );
+//        return this;
+//    }
 
     //TODO iterate/query beliefs, etc
 
@@ -1039,11 +1254,11 @@ public class NAR implements Runnable {
         return this;
     }
 
-    public NAR onAfterFrame(final Runnable r) {
-        return onEachFrame(() -> {
-           nar.memory.taskNext(r);
-        });
-    }
+//    public NAR onAfterFrame(final Runnable r) {
+//        return onEachFrame(() -> {
+//           taskNext(r);
+//        });
+//    }
 
     abstract private class StreamNARReaction extends NARReaction {
 

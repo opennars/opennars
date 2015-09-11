@@ -5,7 +5,6 @@ import com.gs.collections.impl.map.mutable.primitive.LongDoubleHashMap;
 import com.gs.collections.impl.tuple.primitive.PrimitiveTuples;
 import nars.Events;
 import nars.Global;
-import nars.NAR;
 import nars.Op;
 import nars.io.out.TextOutput;
 import nars.nal.nal8.Operation;
@@ -51,7 +50,7 @@ public class NumberPerception extends NullOperator {
 
     private void observe(Term variable, final double n) {
         final LongDoubleHashMap h = data.computeIfAbsent(variable, k -> new LongDoubleHashMap());
-        final long now = getMemory().time();
+        final long now = nar().time();
         h.updateValue(now, n, (p) -> {
             if (!Precision.equals(p, n, epsilon)) {
                 onRevised(variable, now, p, n);
@@ -119,8 +118,7 @@ public class NumberPerception extends NullOperator {
     }
 
     public static void main(String[] args) {
-        Equalized e = new Equalized(1024, 3, 3);
-        NAR n = new NAR(e);
+        Equalized n = new Equalized(1024, 3, 3);
         n.on(new NumberPerception());
 
         TextOutput.out(n);

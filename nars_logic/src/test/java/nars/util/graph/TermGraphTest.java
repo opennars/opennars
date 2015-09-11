@@ -7,7 +7,7 @@ import nars.nar.Default;
 public class TermGraphTest {
 
 
-    NAR n = new NAR( new Default().setInternalExperience(null) );
+    NAR n = new Default();
 
 
 //    @Test

@@ -2,8 +2,7 @@ package nars.bag;
 
 import com.google.common.collect.Iterables;
 import nars.Global;
-import nars.NAR;
-import nars.Param;
+import nars.Memory;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.HeapBag;
@@ -27,7 +26,7 @@ public class HeapBagTest extends AbstractBagTest {
 
     }
 
-    Param p = new NAR(new Default()).param;
+    Memory p = new Default().memory();
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test 

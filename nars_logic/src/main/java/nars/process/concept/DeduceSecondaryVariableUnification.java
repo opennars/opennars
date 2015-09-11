@@ -1,11 +1,9 @@
 package nars.process.concept;
 
-import nars.Global;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
@@ -26,7 +24,6 @@ import org.apache.commons.collections.map.Flat3Map;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Predicate;
 
 import static nars.term.Terms.reduceUntilLayer2;
 import static nars.term.Terms.unwrapNegation;
@@ -73,84 +70,85 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
     boolean dedSecondLayerVariableUnification(final Task task, final ConceptProcess nal) {
 
-        final Random r = nal.memory.random;
+//        final Random r = nal.getRandom();
+//
+//
+//        //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
+//        List<Term> terms_dependent = null;
+//        List<Term> terms_independent = null;
+//        Map<Term, Term> Values = null;
+//        Map<Term, Term> smap = null;
+//    /*Map<Term, Term> Values2 = null;
+//    Map<Term, Term> Values3 = null;
+//    Map<Term, Term> Values4 = null;*/
+//
+//        final Truth taskTruth = task.getTruth();
+//
+//        //final int dur = nal.duration();
+//
+//        boolean unifiedAnything = false;
+//
+//        int remainingUnifications = 1;
+//
+//        final Term firstTerm = task.getTerm();
+//
+//        for (int k = 0; k < Global.DED_SECOND_UNIFICATION_ATTEMPTS; k++) {
+//            Concept secondConcept = nal.nar.memory.nextConcept(new Predicate<Concept>() {
+//
+//                @Override
+//                public boolean test(Concept concept) {
+//                    //prevent unification with itself
+//                    if (concept.getTerm().equals(firstTerm)) return false;
+//                    return concept.hasBeliefs();
+//
+//                }
+//
+//            }, Global.DED_SECOND_UNIFICATION_DEPTH);
+//
+//            if (secondConcept == null) {
+//                //no more concepts, stop
+//                break;
+//            }
+//
+//            final Term secTerm = secondConcept.getTerm();
+//
+//            final Task secondConceptStrongestBelief = secondConcept.getBeliefs().top();
+//            final Task second_belief = secondConceptStrongestBelief;
+//
+//            //getBeliefRandomByConfidence(task.sentence.isEternal());
+//
+//            final Truth truthSecond = second_belief.getTruth();
+//
+//            if (terms_dependent == null) {
+//                terms_dependent = Global.newArrayList(0);
+//                terms_independent = Global.newArrayList(0);
+//
+//                //TODO use one Map<Term, Term[]> instead of 4 Map<Term,Term> (values would be 4-element array)
+//                Values = newVariableSubstitutionMap();
+//                /*Values2 = newVariableSubstitutionMap();
+//                Values3 = newVariableSubstitutionMap();
+//                Values4 = newVariableSubstitutionMap();*/
+//                smap = newVariableSubstitutionMap();
+//            }
+//
+//            else {
+//                //we have to select a random belief
+//                terms_dependent.clear();
+//                terms_independent.clear();
+//            }
+//            unifiedAnything = dedSecondLayerUnifyAttempt(task, nal, r, terms_dependent, terms_independent, Values, smap, taskTruth, unifiedAnything, (Compound) firstTerm, secTerm, secondConceptStrongestBelief, second_belief, truthSecond);
+//
+//
+//            remainingUnifications--;
+//
+//            if (remainingUnifications == 0) {
+//                break;
+//            }
+//
+//        }
 
-
-        //these are intiailized further into the first cycle below. afterward, they are clear() and re-used for subsequent cycles to avoid reallocation cost
-        List<Term> terms_dependent = null;
-        List<Term> terms_independent = null;
-        Map<Term, Term> Values = null;
-        Map<Term, Term> smap = null;
-    /*Map<Term, Term> Values2 = null;
-    Map<Term, Term> Values3 = null;
-    Map<Term, Term> Values4 = null;*/
-
-        final Truth taskTruth = task.getTruth();
-
-        final int dur = nal.memory.duration();
-
-        boolean unifiedAnything = false;
-
-        int remainingUnifications = 1;
-
-        final Term firstTerm = task.getTerm();
-
-        for (int k = 0; k < Global.DED_SECOND_UNIFICATION_ATTEMPTS; k++) {
-            Concept secondConcept = nal.memory.getCycleProcess().nextConcept(new Predicate<Concept>() {
-
-                @Override
-                public boolean test(Concept concept) {
-                    //prevent unification with itself
-                    if (concept.getTerm().equals(firstTerm)) return false;
-                    return concept.hasBeliefs();
-
-                }
-
-            }, Global.DED_SECOND_UNIFICATION_DEPTH);
-
-            if (secondConcept == null) {
-                //no more concepts, stop
-                break;
-            }
-
-            final Term secTerm = secondConcept.getTerm();
-
-            final Task secondConceptStrongestBelief = secondConcept.getBeliefs().top();
-            final Task second_belief = secondConceptStrongestBelief;
-
-            //getBeliefRandomByConfidence(task.sentence.isEternal());
-
-            final Truth truthSecond = second_belief.getTruth();
-
-            if (terms_dependent == null) {
-                terms_dependent = Global.newArrayList(0);
-                terms_independent = Global.newArrayList(0);
-
-                //TODO use one Map<Term, Term[]> instead of 4 Map<Term,Term> (values would be 4-element array)
-                Values = newVariableSubstitutionMap();
-                /*Values2 = newVariableSubstitutionMap();
-                Values3 = newVariableSubstitutionMap();
-                Values4 = newVariableSubstitutionMap();*/
-                smap = newVariableSubstitutionMap();
-            }
-
-            else {
-                //we have to select a random belief
-                terms_dependent.clear();
-                terms_independent.clear();
-            }
-            unifiedAnything = dedSecondLayerUnifyAttempt(task, nal, r, terms_dependent, terms_independent, Values, smap, taskTruth, unifiedAnything, (Compound) firstTerm, secTerm, secondConceptStrongestBelief, second_belief, truthSecond);
-
-
-            remainingUnifications--;
-
-            if (remainingUnifications == 0) {
-                break;
-            }
-
-        }
-
-        return unifiedAnything;
+//        return unifiedAnything;
+        return false;
     }
 
     private boolean dedSecondLayerUnifyAttempt(Task task, ConceptProcess nal, Random r, List<Term> terms_dependent, List<Term> terms_independent, Map<Term, Term> values, Map<Term, Term> smap, Truth taskTruth, boolean unifiedAnything, Compound firstTerm, Term secTerm, Task secondConceptStrongestBelief, Task second_belief, Truth truthSecond) {
@@ -262,7 +260,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
             if (null!=newTask) {
 
                 //nal.emit(Events.ConceptUnification.class, newTask, firstTerm, secondConcept, second_belief);
-                nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
+                nal.memory().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
 
                 unifiedAnything = true;
 
@@ -292,7 +290,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
         Compound ctaskterm_subs = firstTerm;
         ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(values);
-        Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
+        Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory());
         if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
             termsPendent.add(taskterm_subs);
         }
@@ -350,7 +348,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
                 .parent(task, second_belief, occ), false, false, false)!=null) {
 
 
-            nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
+            nal.memory().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 
         }
         return truth;

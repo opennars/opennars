@@ -42,22 +42,22 @@ public interface Premise {
     public Task getTask();
 
 
-    public Memory getMemory();
+    public NAR nar();
 
 
     default public long time() {
-        return getMemory().time();
+        return nar().time();
     }
 
 
     default public void emit(final Class c, final Object... o) {
-        getMemory().emit(c, o);
+        nar().emit(c, o);
     }
 
 
     /** curent maximum allowed NAL level the reasoner is configured to support */
     default public int nal() {
-        return getMemory().nal();
+        return nar().nal();
     }
 
     /**
@@ -71,18 +71,22 @@ public interface Premise {
 
 
     default public float conceptPriority(Term target, float valueForMissing) {
-        return getMemory().conceptPriority(target, valueForMissing);
+        return memory().conceptPriority(target, valueForMissing);
+    }
+
+    default Memory memory() {
+        return nar().memory();
     }
 
 
 
     default public Term self() {
-        return getMemory().self();
+        return memory().self();
     }
 
 
     default public Random getRandom() {
-        return getMemory().random;
+        return memory().random;
     }
 
 
@@ -148,7 +152,7 @@ public interface Premise {
 
     }
 
-    default public int duration() { return getMemory().duration(); }
+    default public int duration() { return memory().duration(); }
 
     default public AbstractInterval newInterval(final long cycles) {
         //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
@@ -163,7 +167,7 @@ public interface Premise {
 
 
     default public <T extends Compound> TaskSeed newTask(final T term) {
-        return getMemory().newTask(term);
+        return TaskSeed.make(nar().memory(), term);
     }
 
     default public <T extends Compound> TaskSeed newTask(final T term, final char punc) {
@@ -186,7 +190,7 @@ public interface Premise {
 
 
     default public <C extends Compound> TaskSeed newDoublePremise(Task parentTask, Task parentBelief, boolean allowOverlap) {
-        TaskSeed x = new TaskSeed(getMemory());
+        TaskSeed x = new TaskSeed(memory());
         x.parent(parentTask, parentBelief);
         x.updateCyclic();
         if (!allowOverlap && x.isCyclic())
@@ -349,7 +353,7 @@ public interface Premise {
      */
     default Task validDerivation(Task task, boolean allowOverlap, @Deprecated boolean solution, boolean revised, boolean singleOrDouble) {
 
-        final Memory memory = getMemory();
+        final Memory memory = nar().memory();
 
         if (task.getTerm() == null) {
             throw new RuntimeException("task has null term");
@@ -398,7 +402,7 @@ public interface Premise {
                     if (cyclic) {
                         //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                         //re.printStackTrace();
-                        getMemory().removed(task, "Cyclic");
+                        nar().memory().removed(task, "Cyclic");
                         return null;
                     }
                 }
@@ -432,7 +436,7 @@ public interface Premise {
 
         //use this NAL's instance defaults for the values because specific values were not substituted:
 
-        String rejectionReason = memory.rules.getDerivationRejection(this, task, solution, revised, singleOrDouble, getBelief(), getTask());
+        String rejectionReason = memory.getDeriver().getDerivationRejection(this, task, solution, revised, singleOrDouble, getBelief(), getTask());
         if (rejectionReason != null) {
             memory.removed(task, rejectionReason);
             return null;
@@ -538,8 +542,7 @@ public interface Premise {
     default public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, boolean allowOverlap) {
 
 
-
-        final Memory memory = getMemory();
+        final Memory memory = memory();
 
         //TODO balance budget on input; original task + immediate eternalization budget should be shared
 
@@ -604,14 +607,8 @@ public interface Premise {
         return null;
     }
 
-
-
     default Concept concept(Term x) {
-        return getMemory().concept(x);
-    }
-
-    default Param param() {
-        return getMemory().param;
+        return nar().concept(x);
     }
 
     default boolean isEvent() {

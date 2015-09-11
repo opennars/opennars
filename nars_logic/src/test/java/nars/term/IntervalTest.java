@@ -59,7 +59,7 @@ public class IntervalTest {
     @Test
     public void testIntervalSequence() {
 
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         Memory m = n.memory;
         
         List<AbstractInterval> a11 = Interval.intervalSequence(1, 1, m);
@@ -73,7 +73,7 @@ public class IntervalTest {
 
         {
             //half duration = magnitude 1 ("+2")
-            long halfDuration = (n.param).duration.get()/2;
+            long halfDuration = n.memory().duration.get()/2;
             
             List<AbstractInterval> ad1 = Interval.intervalSequence(halfDuration, 1, m);
             assertEquals(1, ad1.size());
@@ -88,7 +88,7 @@ public class IntervalTest {
         }
         {
             //test ability to represent a range of time periods precisely with up to N terms
-            long duration = (n.param).duration.get();
+            long duration = n.memory().duration.get();
             int numTerms = 6;
             for (int t = 1; t < duration * duration * duration; t++) {
                 List<AbstractInterval> ad1 = Interval.intervalSequence(t, numTerms, m);

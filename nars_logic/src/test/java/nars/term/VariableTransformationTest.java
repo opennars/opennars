@@ -3,6 +3,7 @@ package nars.term;
 import nars.NAR;
 import nars.nal.nal5.Conjunction;
 import nars.nar.Default;
+import nars.task.Task;
 import nars.term.transform.TermVisitor;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 public class VariableTransformationTest {
 
     @Test public void testTransformVariables() {
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
         Compound c = nar.term("<$a --> x>");
         Compound d = Compound.transformIndependentToDependentVariables(c).normalized();
         assertTrue(c!=d);
@@ -27,7 +28,7 @@ public class VariableTransformationTest {
     public void testDestructiveNormalization() {
         String t = "<$x --> y>";
         String n = "<$1 --> y>";
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
         Term x = nar.term(t);
         assertEquals(n, x.toString());
         assertTrue("immediate construction of a term from a string should automatically be normalized", x.isNormalized());
@@ -78,7 +79,7 @@ public class VariableTransformationTest {
     }
 
     public void combine(String a, boolean scopedA, String b, boolean scopedB, String expect) {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         Term ta = scope(n.term(a), scopedA);
         Term tb = scope(n.term(b), scopedB);
         Term c = Conjunction.make(ta, tb).normalized();
@@ -88,6 +89,32 @@ public class VariableTransformationTest {
         assertNotNull(e);
         assertEquals(a + " (" + scopedA + ")  +    "   + b + " (" + scopedB + ")", d, c);
         assertEquals(a + " (" + scopedA + ")  +    "   + b + " (" + scopedB + ")", e, c);
+    }
+
+    @Test public void varNormTestIndVar() {
+        //<<($1, $2) --> bigger> ==> <($2, $1) --> smaller>>. gets changed to this: <<($1, $4) --> bigger> ==> <($2, $1) --> smaller>>. after input
+
+        NAR n = new Default();
+
+        String t = "<<($1, $2) --> bigger> ==> <($2, $1) --> smaller>>";
+
+        Term term = n.term(t);
+        Task task = n.task(t + ".");
+        //n.input("<<($1, $2) --> bigger> ==> <($2, $1) --> smaller>>.");
+
+        System.out.println(t);
+        System.out.println(term);
+        System.out.println(task);
+
+        task = task.normalized();
+        System.out.println(task);
+
+        Task t2 = n.inputTask(t + ".");
+        System.out.println(t2);
+
+        //TextOutput.out(n);
+        n.frame(10);
+
     }
 }
 

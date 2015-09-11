@@ -1,8 +1,7 @@
 package nars.bag;
 
 import nars.Global;
-import nars.NAR;
-import nars.Param;
+import nars.Memory;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.LevelBag;
@@ -33,7 +32,7 @@ public class CurveBagTest extends AbstractBagTest {
         Global.DEBUG = true;
     }
 
-    Param p = new NAR(new Default()).param;
+    Memory p = new Default().memory();
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
     @Test 

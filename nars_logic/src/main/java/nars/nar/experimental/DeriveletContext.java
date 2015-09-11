@@ -1,6 +1,7 @@
 package nars.nar.experimental;
 
 import nars.Memory;
+import nars.NAR;
 import nars.concept.Concept;
 import nars.term.Term;
 
@@ -18,14 +19,14 @@ abstract public class DeriveletContext implements Consumer<Memory> {
 
     /** current concept, next concept */
     public final Supplier<Concept> conceptSupply;
-    private final Memory memory;
+    public final NAR nar;
     private float forgetCycles;
 
-    public DeriveletContext(Memory memory, Random rng, Supplier<Concept> conceptSupply) {
-        this.memory = memory;
+    public DeriveletContext(NAR nar, Random rng, Supplier<Concept> conceptSupply) {
+        this.nar = nar;
         this.rng = rng;
         this.conceptSupply = conceptSupply;
-        memory.eventCycleStart.on(this);
+        nar.memory().eventCycleStart.on(this);
     }
 
     @Override

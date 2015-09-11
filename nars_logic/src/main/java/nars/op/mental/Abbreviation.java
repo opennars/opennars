@@ -12,6 +12,7 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -26,7 +27,6 @@ public class Abbreviation extends NARReaction {
 
     private static final float abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
     public static final Operator abbreviate = Operator.the("abbreviate");
-    public final Memory memory;
 
     final float abbreviationConfidence = 0.99f;
 
@@ -34,6 +34,7 @@ public class Abbreviation extends NARReaction {
     //when a concept is important and exceeds a syntactic complexity, let NARS name it:
     public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(24);
     public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.7f);
+    private final NAR nar;
 
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);
@@ -42,8 +43,7 @@ public class Abbreviation extends NARReaction {
     public Abbreviation(NAR n) {
         super(n, TaskDerive.class );
 
-        memory = n.memory;
-
+        this.nar = n;
     }
 
     private static final AtomicInteger currentTermSerial = new AtomicInteger(1);
@@ -80,7 +80,7 @@ public class Abbreviation extends NARReaction {
         if (event != TaskDerive.class)
             return;
 
-        if ((memory.random.nextFloat() < abbreviationProbability))
+        if ((nar.memory().random.nextFloat() < abbreviationProbability))
             return;
 
         Task task = (Task)a[0];
@@ -93,7 +93,7 @@ public class Abbreviation extends NARReaction {
             /*Operation compound = Operation.make(
                     Product.make(termArray(termAbbreviating)), abbreviate);*/
 
-            Concept concept = memory.concept(termAbbreviating);
+            Concept concept = nar.concept(termAbbreviating);
 
             if (concept!=null && concept.get(Abbreviation.class)==null) {
 
@@ -101,7 +101,7 @@ public class Abbreviation extends NARReaction {
 
                 concept.put(Abbreviation.class, atomic);
 
-                memory.input(memory.newTask(Similarity.make(termAbbreviating, atomic))
+                nar.input(TaskSeed.make(nar, Similarity.make(termAbbreviating, atomic))
                                 .judgment().truth(1, abbreviationConfidence)
                                 .parent(task).occurrNow()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
@@ -111,7 +111,7 @@ public class Abbreviation extends NARReaction {
             }
             else {
                 //already abbreviated, remember it
-                remind.remind(termAbbreviating, memory);
+                remind.remind(termAbbreviating, nar);
             }
         }
     }

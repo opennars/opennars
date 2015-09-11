@@ -19,7 +19,7 @@ public class TestMultistepEdited {
 
         Global.DEBUG = true;
 
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         n.input(LibraryInput.get(n, "original/Example-MultiStep-edited"));
         
         //new TextOutput(n, System.out);

@@ -12,8 +12,8 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.process.TaskProcess;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -87,7 +87,7 @@ public abstract class TermFunction<O> extends SynchOperator {
 
         float confidence = 0.99f;
         return Lists.newArrayList(
-                nar.memory.newTask(inh).
+                TaskSeed.make(nar.memory, inh).
                         truth(getResultFrequency(), getResultConfidence()).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
@@ -158,14 +158,14 @@ public abstract class TermFunction<O> extends SynchOperator {
 
         return Lists.newArrayList(
 
-                nar.memory.newTask(actual).judgment()
+                TaskSeed.make(nar.memory, actual).judgment()
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                         .truth(getResultFrequency(), getResultConfidence())
                         .parent(operation.getTask())
                         .tense(getResultTense()),
 
                 actual_dep_part != null ?
-                        nar.memory.newTask(actual_dep_part).judgment()
+                        TaskSeed.make(nar.memory, actual_dep_part).judgment()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                                 .truth(1f, confidence)
                                 .present()
@@ -214,11 +214,9 @@ public abstract class TermFunction<O> extends SynchOperator {
             //this will get the original input operation term, not after it has been inlined.
             Compound inputTerm = operation.getTask().getTerm();
 
-            Task b = memory.newTask(
-                    inputTerm
-            ).judgment().eternal().truth((Truth) y);
+            Task b = TaskSeed.make(memory, inputTerm).judgment().eternal().truth((Truth) y);
 
-            TaskProcess.queue(nar, b);
+            nar.input(b);
 
             return null;
         }

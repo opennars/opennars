@@ -29,6 +29,7 @@ import nars.NAR;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.event.Reaction;
@@ -51,7 +52,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
     public final Term term;
 
-    transient @Deprecated protected NAR nar;
+    transient protected NAR nar;
 
 
     @Override
@@ -87,10 +88,8 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
     }
 
 
-    public Memory getMemory() {
-        if (nar != null)
-            return nar.memory;
-        return null;
+    public final NAR nar() {
+        return nar;
     }
 
     public Decider decider() {
@@ -120,7 +119,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
 
 
-    public Term getTerm() {
+    public final Term getTerm() {
         return term;
     }
 
@@ -146,10 +145,10 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
      */
     protected void executed(Operation op, List<Task> feedback) {
 
-        final Memory memory = op.getMemory();
+        final NAR n = nar();
 
         //Display a message in the output stream to indicate the reportExecution of an operation
-        memory.emit(EXE.class, new ExecutionResult(op, feedback, memory));
+        n.emit(EXE.class, new ExecutionResult(op, feedback, n.mem()));
 
 
         if (!op.getTask().isCommand()) {
@@ -164,7 +163,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
                 t.setCause(op);
                 //t.log("Feedback");
 
-                memory.input(t);
+                n.input(t);
             }
         }
 
@@ -178,11 +177,13 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
         final Task opTask = operation.getTask();
         //if (opTask == null) return;
 
-        final Memory memory = operation.getMemory();
+
+
+        final Memory memory = nar().mem();
 
         memory.logic.TASK_EXECUTED.hit();
 
-        memory.input(memory.newTask(operation).
+        nar().input(TaskSeed.make(memory, operation).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
                 budget(operation.getTask().getBudget()).

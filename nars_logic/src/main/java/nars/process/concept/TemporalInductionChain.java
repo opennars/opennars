@@ -42,7 +42,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
         final Task belief = f.getBelief();
         if (belief == null) return true;
 
-        final Memory memory = f.memory;
+        final Memory memory = f.nar.memory();
 
         final Term beliefTerm = belief.getTerm();
 
@@ -58,7 +58,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
             for (int i = 0; i < chainSamples; i++) {
 
-                Concept next = memory.getCycleProcess().nextConcept();
+                Concept next = memory.nextConcept();
                 if (next == null) continue;
 
                 Term t = next.getTerm();
@@ -133,7 +133,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
         Map<Term, Term> res1 = Global.newHashMap();
         Map<Term, Term> res2 = Global.newHashMap();
 
-        if(Variables.findSubstitute(Op.VAR_INDEPENDENT, B1, realB2, res1, res2, nal.memory.random)) {
+        if(Variables.findSubstitute(Op.VAR_INDEPENDENT, B1, realB2, res1, res2, nal.getRandom())) {
             //ok it unifies, so lets create a &/ term
             for(int i=0;i<term.length;i++) {
                 final Term ti = term[i];

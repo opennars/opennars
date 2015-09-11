@@ -34,7 +34,7 @@ public class TimeOffset extends PreCondition2 {
     static long timeOffsetForward(final Term arg, final Premise nal) {
 
         if (arg instanceof AbstractInterval) {
-            return ((Interval) arg).cycles(nal.getMemory());
+            return ((Interval) arg).cycles(nal.memory());
         }
         else if (arg instanceof Atom) {
             if (arg.equals(forwardImpl))

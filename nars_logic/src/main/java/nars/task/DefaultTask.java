@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import nars.AbstractMemory;
 import nars.Global;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Item;
@@ -530,7 +530,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * @param judg The solution to be remembered
      */
     @Override
-    public void setBestSolution(final AbstractMemory memory, final Task judg) {
+    public void setBestSolution(final Memory memory, final Task judg) {
         InternalExperience.experienceFromBelief(memory, this, judg);
         bestSolution = reference(judg);
     }

@@ -1,12 +1,11 @@
 package nars.event;
 
-import nars.AbstractMemory;
 import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.task.Task;
-import nars.util.event.Observed;
+import nars.util.event.DefaultObserved;
 
 public abstract class MemoryReaction extends ConceptReaction {
 
@@ -27,28 +26,26 @@ public abstract class MemoryReaction extends ConceptReaction {
             //Output.OUT.class,
 
             Events.Restart.class};
-    private final AbstractMemory memory;
-    private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
-    private final Observed.DefaultObserved.DefaultObservableRegistration cycleStart;
-    private final Observed.DefaultObserved.DefaultObservableRegistration cycleEnd;
+
+    private final DefaultObserved.DefaultObservableRegistration taskRemoved;
+    private final DefaultObserved.DefaultObservableRegistration cycleStart;
+    private final DefaultObserved.DefaultObservableRegistration cycleEnd;
+
+
 
     public MemoryReaction(NAR n, boolean active) {
-        this(n.memory, active);
-    }
+        super(n, active, memoryEvents);
 
-    public MemoryReaction(Memory m, boolean active) {
-        super(m, active, memoryEvents);
-        this.memory = m;
-
+        Memory m = n.mem();
         taskRemoved = m.eventTaskRemoved.on(t -> {
             onTaskRemove(t);
         });
 
         cycleStart = m.eventCycleStart.on(c -> {
-            onCycleStart(memory.time());
+            onCycleStart(m.time());
         });
         cycleEnd = m.eventCycleEnd.on(c -> {
-            onCycleEnd(memory.time());
+            onCycleEnd(m.time());
         });
 
 

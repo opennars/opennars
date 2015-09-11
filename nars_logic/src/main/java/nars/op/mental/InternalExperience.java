@@ -165,7 +165,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         int k = 1;
 
         if (s.getTruth() != null) {
-            final float t = nal.memory.param.conceptCreationExpectation.floatValue();
+            final float t = nal.nar.memory().conceptCreationExpectation.floatValue();
             arg[k++] = s.getTruth().toWordTerm(t);
         }
         arg[k] = nal.self();
@@ -184,7 +184,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         if (belief == null) return;
 
         final Task task = p.getTask();
-        final Memory m = p.memory;
+        final Memory m = p.memory();
         final Random r = m.random;
 
         if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY) {
@@ -332,7 +332,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 
 
     //TODO
-    public static void experienceFromBelief(AbstractMemory memory, Task task, Sentence belief) {
+    public static void experienceFromBelief(Memory memory, Task task, Sentence belief) {
         //Task T=new Task(belief.clone(),new Budget(task),null);
         ///InternalExperienceFromTask(memory,T,false);
     }

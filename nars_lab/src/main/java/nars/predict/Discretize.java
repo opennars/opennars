@@ -12,6 +12,7 @@ import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.process.TaskProcess;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Term;
 
@@ -156,7 +157,7 @@ public class Discretize {
         }
         else if ((mode == BeliefInsertion.MemoryInput)|| (mode == BeliefInsertion.ImmediateProcess)) {
 
-            Task t = nar.memory.newTask(getValueTerm(variable, level)).judgment().truth(freq, conf).budget(1.0f, 0.8f);
+            Task t = TaskSeed.make(nar.memory, getValueTerm(variable, level)).judgment().truth(freq, conf).budget(1.0f, 0.8f);
 
             System.out.println(t);
             

@@ -1,7 +1,7 @@
 package nars.op.scheme;
 
 
-import nars.NARSeed;
+import nars.NAR;
 import nars.meter.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
@@ -13,25 +13,25 @@ import java.util.Collection;
 
 public class TestEvalScheme extends JavaNALTest {
 
-    public TestEvalScheme(NARSeed build) {
+    public TestEvalScheme(NAR build) {
         super(build);
     }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
-                {new Default().setInternalExperience(null)}});
+                {new Default() }});
     }
 
 
     @Test
     public void testCAR() {
 
-        n.input("scheme((car, (quote, (*, 2, 3))), #x)!");
+        tester.nar.input("scheme((car, (quote, (*, 2, 3))), #x)!");
 
-        n.requires.add(new OutputContainsCondition(n, "<2 --> (/, scheme, (car, (quote, (2, 3))), _, SELF)>. :|: %1.00;0.99%", 1));
+        tester.requires.add(new OutputContainsCondition(tester.nar, "<2 --> (/, scheme, (car, (quote, (2, 3))), _, SELF)>. :|: %1.00;0.99%", 1));
 
-        n.run(4);
+        tester.run(4);
 
     }
 }

@@ -18,7 +18,7 @@ public class VectorMapTest {
  
     @Test 
     public void testUniformVector() {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         
         double[] d = new double[3];
         
@@ -41,7 +41,7 @@ public class VectorMapTest {
     
     @Test
     public void testAE() {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
         
         
         

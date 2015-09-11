@@ -42,103 +42,103 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
      * @param nal      Reference to the memory
      */
     static void dedConjunctionByQuestion(final Task sentence, final Task belief, final NAL nal) {
-        if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
-            return;
-        }
-        Set<Concept> memoryQuestionConcepts = nal.memory.getQuestionConcepts();
-        if (memoryQuestionConcepts.isEmpty())
-            return;
-
-
-
-        final Term term1 = sentence.getTerm();
-        final boolean term1ContainVar = term1.hasVar();
-        final boolean term1Conjunction = term1 instanceof Conjunction;
-
-        if ((term1Conjunction) && (term1ContainVar)) {
-            return;
-        }
-
-        final Term term2 = belief.getTerm();
-        final boolean term2ContainVar = term2.hasVar();
-        final boolean term2Conjunction = term2 instanceof Conjunction;
-
-        if ((term2Conjunction) && (term2ContainVar)) {
-            return;
-        }
-
-
-        memoryQuestionConcepts.forEach(new Consumer<Concept>() {
-            @Override
-            public void accept(Concept concept) {
-
-                final Term pcontent = concept.getTerm();
-
-                //final List<Task> cQuestions = concept.getQuestions();
-                if (/*cQuestions == null || */ !concept.hasQuestions())
-                    throw new RuntimeException("Concept " + concept + " present in Concept Questions index, but has no questions");
-
-
-                if (!(pcontent instanceof Conjunction)) {
-                    return;
-                }
-
-                final Conjunction ctpcontent = (Conjunction) pcontent;
-                if (ctpcontent.hasVar()) {
-                    return;
-                }
-
-                if (!term1Conjunction && !term2Conjunction) {
-                    if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
-                        return;
-                    }
-                } else {
-                    if (term1Conjunction) {
-                        if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
-                            return;
-                        }
-                        if (!ctpcontent.containsAllTermsOf(term1)) {
-                            return;
-                        }
-                    }
-
-                    if (term2Conjunction) {
-                        if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
-                            return;
-                        }
-                        if (!ctpcontent.containsAllTermsOf(term2)) {
-                            return;
-                        }
-                    }
-                }
-
-                Compound conj = Sentence.termOrNull(Conjunction.make(term1, term2));
-                if (conj == null) return;
-
-            /*
-            since we already checked for term1 and term2 having a variable, the result
-            will not have a variable
-
-            if (Variables.containVarDepOrIndep(conj.name()))
-                continue;
-             */
-                Truth truthT = nal.getTask().getTruth();
-                Truth truthB = nal.getBelief().getTruth();
-            /*if(truthT==null || truthB==null) {
-                //continue; //<- should this be return and not continue?
-                return;
-            }*/
-
-                Truth truthAnd = intersection(truthT, truthB);
-                Budget budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
-
-                nal.derive(nal.newTask(conj).punctuation(sentence.getPunctuation()).truth(truthAnd).budget(budget)
-                        .parent(sentence, belief).temporalInductable(false));
-
-                nal.memory.logic.DED_CONJUNCTION_BY_QUESTION.hit();
-
-            }
-        });
+//        if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
+//            return;
+//        }
+//        Set<Concept> memoryQuestionConcepts = nal.nar.getQuestionConcepts();
+//        if (memoryQuestionConcepts.isEmpty())
+//            return;
+//
+//
+//
+//        final Term term1 = sentence.getTerm();
+//        final boolean term1ContainVar = term1.hasVar();
+//        final boolean term1Conjunction = term1 instanceof Conjunction;
+//
+//        if ((term1Conjunction) && (term1ContainVar)) {
+//            return;
+//        }
+//
+//        final Term term2 = belief.getTerm();
+//        final boolean term2ContainVar = term2.hasVar();
+//        final boolean term2Conjunction = term2 instanceof Conjunction;
+//
+//        if ((term2Conjunction) && (term2ContainVar)) {
+//            return;
+//        }
+//
+//
+//        memoryQuestionConcepts.forEach(new Consumer<Concept>() {
+//            @Override
+//            public void accept(Concept concept) {
+//
+//                final Term pcontent = concept.getTerm();
+//
+//                //final List<Task> cQuestions = concept.getQuestions();
+//                if (/*cQuestions == null || */ !concept.hasQuestions())
+//                    throw new RuntimeException("Concept " + concept + " present in Concept Questions index, but has no questions");
+//
+//
+//                if (!(pcontent instanceof Conjunction)) {
+//                    return;
+//                }
+//
+//                final Conjunction ctpcontent = (Conjunction) pcontent;
+//                if (ctpcontent.hasVar()) {
+//                    return;
+//                }
+//
+//                if (!term1Conjunction && !term2Conjunction) {
+//                    if (!ctpcontent.containsTerm(term1) || !ctpcontent.containsTerm(term2)) {
+//                        return;
+//                    }
+//                } else {
+//                    if (term1Conjunction) {
+//                        if (!term2Conjunction && !ctpcontent.containsTerm(term2)) {
+//                            return;
+//                        }
+//                        if (!ctpcontent.containsAllTermsOf(term1)) {
+//                            return;
+//                        }
+//                    }
+//
+//                    if (term2Conjunction) {
+//                        if (!term1Conjunction && !ctpcontent.containsTerm(term1)) {
+//                            return;
+//                        }
+//                        if (!ctpcontent.containsAllTermsOf(term2)) {
+//                            return;
+//                        }
+//                    }
+//                }
+//
+//                Compound conj = Sentence.termOrNull(Conjunction.make(term1, term2));
+//                if (conj == null) return;
+//
+//            /*
+//            since we already checked for term1 and term2 having a variable, the result
+//            will not have a variable
+//
+//            if (Variables.containVarDepOrIndep(conj.name()))
+//                continue;
+//             */
+//                Truth truthT = nal.getTask().getTruth();
+//                Truth truthB = nal.getBelief().getTruth();
+//            /*if(truthT==null || truthB==null) {
+//                //continue; //<- should this be return and not continue?
+//                return;
+//            }*/
+//
+//                Truth truthAnd = intersection(truthT, truthB);
+//                Budget budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
+//
+//                nal.derive(nal.newTask(conj).punctuation(sentence.getPunctuation()).truth(truthAnd).budget(budget)
+//                        .parent(sentence, belief).temporalInductable(false));
+//
+//                nal.nar.logic.DED_CONJUNCTION_BY_QUESTION.hit();
+//
+//            }
+//        });
 
     }
 

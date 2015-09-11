@@ -4,7 +4,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.Events;
 import nars.NAR;
-import nars.NARSeed;
 import nars.io.out.Output;
 import nars.task.Task;
 
@@ -24,9 +23,9 @@ public class NARComparator {
 
     final Output oa, ob;
 
-    public NARComparator(NARSeed sa, NARSeed sb) {
-        a = new NAR(sa);
-        b = new NAR(sb);
+    public NARComparator(NAR a, NAR b) {
+        this.a = a;
+        this.b = b;
 
         oa = new Output(a) {
             @Override protected boolean output(Channel channel, Class event, Object... args) {

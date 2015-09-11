@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 public class NarseseParserTest {
 
-    final static NAR n = new NAR(new Default());
+    final static NAR n = new Default();
     final static NarseseParser p = NarseseParser.the();
 
     static <T extends Term> T term(String s) throws InvalidInputException {

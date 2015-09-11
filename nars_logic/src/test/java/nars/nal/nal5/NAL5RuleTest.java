@@ -39,7 +39,7 @@ public class NAL5RuleTest {
 
         SimpleDeriver sd = new SimpleDeriver(d);
 
-        NAR n = new NAR(new Equalized());
+        NAR n = new Equalized();
         /*n.input("<(&&, m, a, b) ==> c>.");
         n.input("<(&&, a, b) ==> c>.");*/
 
@@ -87,7 +87,7 @@ public class NAL5RuleTest {
 
         );
 
-        ConceptTaskTermLinkProcess cp = new ConceptTaskTermLinkProcess(n.concept(t.getTerm()), tl, null) {
+        ConceptTaskTermLinkProcess cp = new ConceptTaskTermLinkProcess(n, n.concept(t.getTerm()), tl, null) {
 
             @Override
             public Task getTask() {

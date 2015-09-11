@@ -2,6 +2,7 @@ package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.clock.Clock;
+import nars.nal.PremiseProcessor;
 import nars.nal.nal7.Interval.AtomicDuration;
 import objenome.Container;
 
@@ -33,7 +34,8 @@ public abstract class Param extends Container implements Serializable {
     public AtomicInteger temporalRelationsMax = new AtomicInteger();
 
     protected Clock clock;
-    
+
+    PremiseProcessor deriver;
 
     /** converts durations to cycles */
     public final float durationToCycles(AtomicDouble durations) {
@@ -42,6 +44,10 @@ public abstract class Param extends Container implements Serializable {
 
     public final float durationToCycles(float durations) {
         return duration.floatValue() * durations;
+    }
+
+    public PremiseProcessor getDeriver() {
+        return deriver;
     }
 
     /**

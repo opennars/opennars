@@ -78,7 +78,7 @@ public class TextsTest {
     
     @Test
     public void testRope() throws InvalidInputException {
-        NAR n = new NAR(new Default());
+        NAR n = new Default();
 
         String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
         Term term1 = n.term(term1String);

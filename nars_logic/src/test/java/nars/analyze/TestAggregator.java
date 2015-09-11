@@ -104,8 +104,8 @@ public class TestAggregator extends RunListener {
     }
     public static void main(String args[])  {
         DefaultAlann da = new DefaultAlann(128);
-        da.param.realTime();
-        NAR nar = new NAR(da);
+        //da.memory.realTime();
+        NAR nar = da;
 
         //nar.input("<?x --> [fail]>?");
         //nar.input("<?x --> [ok]>?");

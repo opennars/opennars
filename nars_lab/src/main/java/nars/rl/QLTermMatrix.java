@@ -11,6 +11,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.process.TaskProcess;
 import nars.task.Task;
+import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
@@ -341,7 +342,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
     public void acted(Term action, char punctuation, float freq, float conf, float priority, float durability) {
-        Task t = nar.memory.newTask((Compound) action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).present();
+        Task t = TaskSeed.make(nar.memory, (Compound) action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).present();
         input(t);
     }
 
@@ -365,7 +366,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     protected void goalReward() {
         //seek reward goal
         if (rewardGoalConfidence > 0) {
-            input(nar.memory.newTask((Compound) getRewardTerm()).present().goal().truth(1.0f, rewardGoalConfidence));
+            input(TaskSeed.make(nar.memory, (Compound) getRewardTerm()).present().goal().truth(1.0f, rewardGoalConfidence));
         }
     }
 
@@ -401,7 +402,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             if (rFreq < 0) rFreq = 0;
             if (rFreq > 1f) rFreq = 1f;
 
-            input(nar.memory.newTask((Compound) getRewardTerm()).judgment().present().truth(rFreq, rewardGoalConfidence));
+            input(TaskSeed.make(nar.memory, (Compound) getRewardTerm()).judgment().present().truth(rFreq, rewardGoalConfidence));
         }
     }
 

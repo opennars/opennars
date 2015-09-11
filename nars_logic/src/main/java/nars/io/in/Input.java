@@ -19,7 +19,7 @@
 
 package nars.io.in;
 
-import nars.Memory;
+import nars.NAR;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
 
@@ -43,17 +43,7 @@ public interface Input extends Source<Task> {
 
     }
 
-    /** supplies consumer with tasks until get() returns null */
-    default int inputAll(Memory m) {
-        Task t;
-
-        int i =0;
-        while (( t = get() ) != null) {
-            i += m.input(t) ? 1 : 0;
-        }
-        return i;
-    }
-//    default int inputNext(Memory m, int max) {
+    //    default int inputNext(Memory m, int max) {
 //        Task t;
 //
 //        int i =0;

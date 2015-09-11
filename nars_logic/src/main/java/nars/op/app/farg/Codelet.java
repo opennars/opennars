@@ -5,7 +5,7 @@
 
 package nars.op.app.farg;
 
-import nars.AbstractMemory;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.term.Atom;
@@ -28,10 +28,10 @@ public class Codelet extends Item<Term> {
     public int timestamp;
     public Object bin=null;
     final Term t;
-    final AbstractMemory mem;
+    final Memory mem;
     public static int codeletid=0;
     
-    public Codelet(Budget budget, AbstractMemory mem, Object args) {
+    public Codelet(Budget budget, Memory mem, Object args) {
         super(budget);
         this.args=args;
         this.mem=mem;

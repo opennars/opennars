@@ -12,7 +12,7 @@ public class ActivationTest {
 
     @Test
     public void testDerivedBudgets() {
-        NAR n= new NAR(new Equalized(10, 1, 3));
+        NAR n= new Equalized(10, 1, 3);
 
         TextOutput.out(n);
 

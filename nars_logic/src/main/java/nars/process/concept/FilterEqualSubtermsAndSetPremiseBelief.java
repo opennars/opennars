@@ -14,7 +14,7 @@ public class FilterEqualSubtermsAndSetPremiseBelief extends ConceptFireTaskTerm 
         if(Terms.equalSubTermsInRespectToImageAndProduct(f.getTaskLink().getTerm(), termLink.getTerm()))
             return false;
 
-        final Concept beliefConcept = f.memory.concept(termLink.target);
+        final Concept beliefConcept = f.nar.concept(termLink.target);
         if (beliefConcept!=null) {
 
             Task t = beliefConcept.getBeliefs().top(f.getTask(), f.time());

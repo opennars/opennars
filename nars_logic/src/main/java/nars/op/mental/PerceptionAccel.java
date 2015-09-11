@@ -21,7 +21,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
-import nars.util.event.Observed;
+import nars.util.event.DefaultObserved;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,8 +36,8 @@ public class PerceptionAccel extends NARReaction {
 
     public final static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1; //new inference rule accelerating decision making: https://groups.google.com/forum/#!topic/open-nars/B8veE-WDd8Q
     public final static int ConjunctionMemorySize = 100;
-    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptActive;
-    private final Observed.DefaultObserved.DefaultObservableRegistration onConceptForget;
+    private final DefaultObserved.DefaultObservableRegistration onConceptActive;
+    private final DefaultObserved.DefaultObservableRegistration onConceptForget;
 
     //mostly only makes sense if perception plugin is loaded
     //keep track of how many conjunctions with related amount of component terms there are:
@@ -153,7 +153,7 @@ public class PerceptionAccel extends NARReaction {
 
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
-            boolean after = newEvent.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)), nal.memory.param.duration.get());
+            boolean after = newEvent.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)), nal.nar.memory().duration.get());
 
             //critical part: (not checked for correctness yet):
             //we now have to look at if the first half + the second half already exists as concept, before we add it
@@ -190,8 +190,8 @@ public class PerceptionAccel extends NARReaction {
             }
             Term firstC = Conjunction.make(firstHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             Term secondC = Conjunction.make(secondHalf, after ? ORDER_FORWARD : ORDER_CONCURRENT);
-            Concept C1 = nal.memory.concept(firstC);
-            Concept C2 = nal.memory.concept(secondC);
+            Concept C1 = nal.nar.concept(firstC);
+            Concept C2 = nal.nar.concept(secondC);
 
             if (after && (C1 == null || C2 == null)) { //everything which happens now we can summarize for now on
 //                if (debugMechanism) {                  //but only if the atomic events are also existing as concepts
@@ -214,7 +214,7 @@ public class PerceptionAccel extends NARReaction {
             for(int i=0; i<relterms.length; i++) {
                 if(!(relterms[i] instanceof AbstractInterval)) {
                     //ok it is not an interval, so it has to exist as concept else it needs to be eliminated
-                    Concept C=nal.memory.concept(relterms[i]);
+                    Concept C=nal.nar.concept(relterms[i]);
                     if(C !=null && C.getPriority() >= partConceptsPrioThreshold) {
                         relterms2[u] = relterms[i];
                         u++;

@@ -214,7 +214,7 @@ public final class CompositionalRules {
         if ((compound instanceof Statement) || (compound instanceof Image)) {
             return null;
         }
-        Term term2 = reduceComponents(compound, component, nal.memory);
+        Term term2 = reduceComponents(compound, component, nal.memory());
         if (term2 == null) {
             return null;
         }
@@ -326,7 +326,7 @@ public final class CompositionalRules {
 
 
 
-        Compound content = compoundOrNull(reduceComponents(compound, component, nal.memory));
+        Compound content = compoundOrNull(reduceComponents(compound, component, nal.memory()));
         if (content == null)
             return null;
 
@@ -343,7 +343,7 @@ public final class CompositionalRules {
             // special logic to answer conjunctive questions with query variables
             if (task.getTerm().hasVarQuery()) {
 
-                Concept contentConcept = nal.memory.concept(content);
+                Concept contentConcept = nal.nar.concept(content);
                 if (contentConcept == null) {
                     return null;
                 }
@@ -827,7 +827,7 @@ OUT: <lock1 --> lock>.
     http://code.google.com/p/open-nars/issues/detail?id=40&can=1
     */
     public static void eliminateVariableOfConditionAbductive(final int figure, final Task<Statement> sentence, final Sentence<Statement> belief, final NAL nal) {
-        final Random m = nal.memory.random;
+        final Random m = nal.getRandom();
 
         if (belief.isQuestOrQuestion() || sentence.isQuestOrQuestion())
             return;

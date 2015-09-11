@@ -174,7 +174,7 @@ public class js extends TermFunction implements Mental {
         bindings.put("global", global);
         bindings.put("js", this);
         bindings.put("arg", args);
-        bindings.put("memory", getMemory());
+        bindings.put("memory", nar());
         bindings.put("nar", nar);
 
         return bindings;

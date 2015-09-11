@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class TermIDTest {
 
-    final static NAR nar = new NAR(new Default().level(1));
+    final static NAR nar = new Default().nal(1);
 
 
     /* i will make these 3 pass soon, this is an improvement on the representation

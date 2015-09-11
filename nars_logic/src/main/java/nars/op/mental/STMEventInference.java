@@ -1,9 +1,6 @@
 package nars.op.app;
 
-import nars.AbstractMemory;
-import nars.Events;
-import nars.Global;
-import nars.NAR;
+import nars.*;
 import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.link.TaskLink;
@@ -64,7 +61,7 @@ public class STMEventInference extends NARReaction {
         }
     }
 
-    public static boolean isInputOrTriggeredOperation(final Task newEvent, AbstractMemory mem) {
+    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
         if (newEvent.isInput()) return true;
         if (containsMentalOperator(newEvent)) return true;
         return newEvent.getCause() != null;
@@ -79,13 +76,13 @@ public class STMEventInference extends NARReaction {
 
         final Task currentTask = nal.getTask();
 
-        stmSize = nal.memory.param.shortTermMemoryHistory.get();
+        stmSize = nal.memory().shortTermMemoryHistory.get();
 
         if (currentTask == null || (!currentTask.isTemporalInductable() && !anticipation)) { //todo refine, add directbool in task
             return false;
         }
 
-        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory) && !anticipation)) {
+        if (currentTask.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory()) && !anticipation)) {
             return false;
         }
 
@@ -127,8 +124,8 @@ public class STMEventInference extends NARReaction {
 
 
             //help me out seh, why doesnt this work? ^^
-            nal.memory.concept(currentTask.getTerm()).link(previousTask);
-            nal.memory.concept(previousTask.getTerm()).link(currentTask);
+            nal.nar.concept(currentTask.getTerm()).link(previousTask);
+            nal.nar.concept(previousTask.getTerm()).link(currentTask);
             //nal.setCurrentTask(currentTask);
 
            /* continue;
@@ -180,7 +177,7 @@ public class STMEventInference extends NARReaction {
 
         //deriver.reason(new STMPremise(currentTask, previousTask.getSentence(), previousTask.getTerm())
         public STMPremise(NAL parent, Task previousTask) {
-            super(parent.getMemory());
+            super(parent.nar());
             this.parent = parent;
             this.previousTask = previousTask;
         }
@@ -188,7 +185,7 @@ public class STMEventInference extends NARReaction {
 
         @Override
         public Concept getConcept() {
-            return getMemory().concept(getTask().getTerm());
+            return nar().concept(getTask().getTerm());
         }
 
         @Override

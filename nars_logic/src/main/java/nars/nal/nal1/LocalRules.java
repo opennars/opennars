@@ -99,7 +99,7 @@ public class LocalRules {
      * @param newBelief       The new belief in task
      * @param oldBelief       The previous belief with the same content
      * @param feedbackToLinks Whether to send feedback to the links
-     * @param memory          Reference to the memory
+
      */
     public static Task revision(final Task newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
@@ -121,7 +121,7 @@ public class LocalRules {
                 true);
 
         if (revised != null)
-            nal.memory.logic.BELIEF_REVISION.hit();
+            nal.memory().logic.BELIEF_REVISION.hit();
 
         return revised;
     }
@@ -155,7 +155,7 @@ public class LocalRules {
                     ,true); //.normalized();
 
         if (revised != null)
-            nal.getMemory().logic.BELIEF_REVISION.hit();
+            nal.memory().logic.BELIEF_REVISION.hit();
 
         return revised;
     }
@@ -181,7 +181,7 @@ public class LocalRules {
 
         final Task inputBelief = belief;
 
-        Memory memory = nal.getMemory();
+        Memory memory = nal.memory();
         Term content = belief.getTerm();
 
         if (!TemporalRules.matchingOrder(question, belief)) {
@@ -275,7 +275,7 @@ public class LocalRules {
                             .solution(belief),
                     "Adjusted Solution",
                     true, false, false);*/
-            nal.getMemory().input(belief);
+            nal.nar().input(belief);
         }
         else {
             belief.getBudget().accumulate(budget);

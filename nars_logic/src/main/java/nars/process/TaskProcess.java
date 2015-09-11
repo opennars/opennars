@@ -25,8 +25,8 @@ public class TaskProcess extends NAL {
 
     public final Task task;
 
-    public TaskProcess(Memory mem, Task task) {
-        super(mem);
+    public TaskProcess(NAR nar, Task task) {
+        super(nar);
 
         if (task.isDeleted()) {
             throw new RuntimeException("task is deleted");
@@ -57,7 +57,7 @@ public class TaskProcess extends NAL {
     }
 
     @Override public Concept getConcept() {
-        return memory.concept(getTerm());
+        return nar.concept(getTerm());
     }
 
 
@@ -69,7 +69,7 @@ public class TaskProcess extends NAL {
 
         sb.append(getClass().getSimpleName()).append('[');
 
-        getTask().toString(sb, getMemory(), true, false, true);
+        getTask().toString(sb, nar.mem(), true, false, true);
 
         sb.append(']');
 
@@ -89,7 +89,7 @@ public class TaskProcess extends NAL {
             return;
         }
 
-        final Memory memory = this.memory;
+        final Memory memory = this.nar.mem();
 
         final Concept c = memory.conceptualize(task, task.getBudget());
 
@@ -130,7 +130,7 @@ public class TaskProcess extends NAL {
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
         task.setTermShared((Compound) c.getTerm());
 
-        final LogicMeter logicMeter = memory.logic;
+        final LogicMeter logicMeter = nar.memory().logic;
 
         switch (task.getPunctuation()) {
 
@@ -176,17 +176,17 @@ public class TaskProcess extends NAL {
         inputDerivations();
     }
 
-    /** create and execute a direct process immediately */
-    public static Premise queue(final NAR nar, final Task task) {
-        return run(nar.memory, task);
-    }
+//    /** create and execute a direct process immediately */
+//    public static Premise queue(final NAR nar, final Task task) {
+//        return run(nar.memory, task);
+//    }
 
 
-    public static TaskProcess get(final Memory m, final Task task) {
+    public static TaskProcess get(final NAR m, final Task task) {
         return get(m, task, 1f);
     }
 
-    public static TaskProcess get(final Memory m, final Task task, float inputPriorityFactor) {
+    public static TaskProcess get(final NAR nar, final Task task, float inputPriorityFactor) {
 
         final Budget taskBudget = task.getBudget();
 
@@ -194,16 +194,16 @@ public class TaskProcess extends NAL {
             taskBudget.mulPriority( inputPriorityFactor );
         }
 
-        if (!taskBudget.summaryGreaterOrEqual(m.param.taskProcessThreshold)) {
-            m.removed(task, "Insufficient budget");
+        if (!taskBudget.summaryGreaterOrEqual(nar.mem().taskProcessThreshold)) {
+            nar.mem().removed(task, "Insufficient budget");
             return null;
         }
 
-        return new TaskProcess(m, task);
+        return new TaskProcess(nar, task);
     }
 
     /** create and execute a direct process immediately */
-    public static Premise run(final Memory m, final Task task) {
+    public static Premise run(final NAR m, final Task task) {
         TaskProcess d = get(m, task);
         if (d == null)
             return null;

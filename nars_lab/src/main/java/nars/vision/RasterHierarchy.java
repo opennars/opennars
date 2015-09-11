@@ -19,6 +19,7 @@ import nars.gui.NARSwing;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nar.Default;
+import nars.task.TaskSeed;
 import nars.term.Atom;
 
 import javax.swing.*;
@@ -420,12 +421,12 @@ public class RasterHierarchy extends JPanel {
         int cx = x - focusPoint.getX();
         int cy = y - focusPoint.getY();
 
-        nar.inputDirect(nar.memory.newTask(Inheritance.make(
-                        Product.make(
-                                //Atom.the("r" + step),
-                                Atom.the(cx),
-                                Atom.the(cy)
-                        ), GRAY))
+        nar.inputDirect(TaskSeed.make(nar.memory, Inheritance.make(
+                Product.make(
+                        //Atom.the("r" + step),
+                        Atom.the(cx),
+                        Atom.the(cy)
+                ), GRAY))
                         .belief()
                         .truth(grayness, conf)
                         .budget(pri, dur)

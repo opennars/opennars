@@ -26,7 +26,6 @@ import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.op.io.PauseInput;
 import nars.op.io.echo;
 import nars.task.DefaultTask;
 import nars.task.Sentence;
@@ -83,7 +82,7 @@ public class NarseseParser extends BaseParser<Object>  {
                     sequence(
                             firstOf(
                                     LineComment(),
-                                    PauseInput(),
+                                    //PauseInput(),
                                     Task()
                             ),
                             s()
@@ -175,11 +174,11 @@ public class NarseseParser extends BaseParser<Object>  {
                 push(echo.echo(match()) ));
     }
 
-    public Rule PauseInput() {
-        return sequence( s(), IntegerNonNegative(),
-                push( PauseInput.pause( (Integer) pop() ) ), sNonNewLine(),
-                "\n" );
-    }
+//    public Rule PauseInput() {
+//        return sequence( s(), IntegerNonNegative(),
+//                push( PauseInput.pause( (Integer) pop() ) ), sNonNewLine(),
+//                "\n" );
+//    }
 
 
     public Rule Task() {
@@ -217,7 +216,7 @@ public class NarseseParser extends BaseParser<Object>  {
     }
 
 
-    static Task decodeTask(final AbstractMemory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
+    static Task decodeTask(final Memory memory, float[] b, Term content, Character p, Truth t, Tense tense) {
 
         if (p == null)
             throw new RuntimeException("character is null");
@@ -960,7 +959,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
     /** returns number of tasks created */
-    public int tasks(String input, Collection<Task> c, AbstractMemory m) {
+    public int tasks(String input, Collection<Task> c, Memory m) {
         final int i[] = new int[1];
         tasks(input, t -> {
             c.add(t);
@@ -974,7 +973,7 @@ public class NarseseParser extends BaseParser<Object>  {
      * which can be re-used because a Memory can generate them
      * ondemand
      */
-    public void tasks(String input, Consumer<Task> c, final AbstractMemory m) {
+    public void tasks(String input, Consumer<Task> c, final Memory m) {
 
         tasksRaw(input, o -> {
             Object t = decodeTask(input, m, o);
@@ -1033,7 +1032,7 @@ public class NarseseParser extends BaseParser<Object>  {
     /**
      * parse one task
      */
-    public Task task(final String input, final AbstractMemory memory) throws InvalidInputException {
+    public Task task(final String input, final Memory memory) throws InvalidInputException {
         ParsingResult r;
         try {
             r = singleTaskParser.run(input);
@@ -1055,7 +1054,7 @@ public class NarseseParser extends BaseParser<Object>  {
         }
     }
 
-    public static Task decodeTask(String input, final AbstractMemory m, Object[] x) {
+    public static Task decodeTask(String input, final Memory m, Object[] x) {
         if (x.length == 1 && x[0] instanceof Task)
             return (Task)x[0];
         Task y = decodeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);

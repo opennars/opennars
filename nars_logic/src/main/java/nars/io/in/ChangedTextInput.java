@@ -1,7 +1,6 @@
 package nars.io.in;
 
 import nars.NAR;
-import nars.task.Task;
 
 
 /** TextInput subclass that only inputs when the next input value changes from previous */
@@ -11,7 +10,7 @@ public class ChangedTextInput  {
     private String last = null;
     private boolean allowRepeats = false;
 
-    boolean direct = true;
+
 
     public ChangedTextInput(NAR n) {
         this.nar = n;
@@ -20,13 +19,7 @@ public class ChangedTextInput  {
     public boolean set(String s) {
         if (!enable()) return false;
         if (allowRepeats() || (last == null) || (!last.equals(s))) {
-            if (direct) {
-                Task t = nar.task(s);
-                nar.inputDirect(t);
-            }
-            else {
-                nar.input(s);
-            }
+            nar.input(s);
             last = s;
             return true;
         }
