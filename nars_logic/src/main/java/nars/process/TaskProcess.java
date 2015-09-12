@@ -87,14 +87,18 @@ public class TaskProcess extends NAL {
 
     @Override final public void derive(Consumer<Premise> unused) {
 
+
         final Task task = getTask();
 
         /** deleted in the time between this was created, and run() */
         if (task.isDeleted()) {
-            return;
+            throw new RuntimeException(this + " deleted before creation");
+            //return;
         }
 
         final Memory memory = this.nar.mem();
+        memory.eventTaskProcess.emit(this);
+        memory.logic.TASK_PROCESS.hit();
 
         final Concept c = nar.conceptualize(task, task.getBudget());
 
@@ -103,13 +107,12 @@ public class TaskProcess extends NAL {
             return;
         }
 
+
+
         if (processConcept(c)) {
 
             link(c, task);
 
-            memory.eventTaskProcess.emit(this);
-
-            memory.logic.TASK_PROCESS.hit();
             memory.emotion.busy(task, this);
         }
         
@@ -203,7 +206,7 @@ public class TaskProcess extends NAL {
 
         termLinkBuilder.set(t, false, c.getMemory());
 
-        Concept otherConcept = nar.conceptualize(termLinkBuilder, t);
+        Concept otherConcept = nar.concept(termLinkBuilder.getTerm());
 
         if (otherConcept == null) {
             return false;

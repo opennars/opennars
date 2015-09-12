@@ -1,6 +1,7 @@
 package nars.concept;
 
 import junit.framework.TestCase;
+import nars.Global;
 import nars.NAR;
 import nars.meter.BeliefAnalysis;
 import nars.meter.MemoryBudget;
@@ -39,6 +40,8 @@ public class BeliefTableTest extends TestCase {
     @Test
     public void testRevision() {
 
+        Global.DEBUG = true;
+
         NAR n = newNAR(6);
 
         n.stdout();
@@ -47,11 +50,11 @@ public class BeliefTableTest extends TestCase {
                 .believe(1.0f, 0.9f)
                 .believe(0.0f, 0.9f).run(2);
 
+        b.print();
 
         assertEquals("revised", 3, b.size());
 
         n.frame(100);
-        b.print();
 
         assertEquals("no additional revisions", 3, b.size());
 

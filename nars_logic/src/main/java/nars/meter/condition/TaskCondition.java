@@ -44,6 +44,9 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     //@Expose
     public  long cycleEnd;  //-1 for not compared
 
+    /** accept confidences greater than max expected */
+    final boolean ignoreConfidenceMax = true;
+
     protected  boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
     private final NAR nar;
     //private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
@@ -323,7 +326,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
             float fr = task.getFrequency();
             float co = task.getConfidence();
 
-            if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
+            if ((!ignoreConfidenceMax && (co > confMax)) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
                 match = false;
                 distance += getTruthDistance(task.getTruth());
             }

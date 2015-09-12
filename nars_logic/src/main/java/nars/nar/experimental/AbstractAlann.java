@@ -1,7 +1,6 @@
 package nars.nar.experimental;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -284,7 +283,7 @@ public abstract class AbstractAlann extends NAR {
 
                     if (t.init(mem)) {
 
-                        nar().memory().eventDerived.emit(t);
+                        //nar().memory().eventDerived.emit(t);
 
                         //System.err.println("direct input: " + t);
                         TaskProcess.run(nar(), t);

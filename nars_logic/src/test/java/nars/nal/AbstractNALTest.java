@@ -9,6 +9,7 @@ import nars.meter.condition.TaskCondition;
 import nars.task.Task;
 import nars.util.meter.event.HitMeter;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -25,7 +26,7 @@ import java.util.List;
 abstract public class AbstractNALTest extends TestCase {
 
 
-    public static boolean analyzeStack = false;
+    //public static boolean analyzeStack = false;
 
 //    static {
 //        try {
@@ -57,24 +58,25 @@ abstract public class AbstractNALTest extends TestCase {
 //    }
 
 
-
-
-    public final TestNAR tester;
-    public NAR nar;
-
-
+    public TestNAR tester;
+    public final NAR nar;
 
     public AbstractNALTest(NAR b) {
         super();
 
         this.nar = b;
 
+    }
+
+    @Before
+    public void start() {
 
         Global.DEBUG = true;
 
+        /** TestNAR resets the nar */
         this.tester = new TestNAR(nar);
 
-
+        System.out.println(nar);
     }
 //
 //    /** called before test runs */
@@ -200,7 +202,6 @@ abstract public class AbstractNALTest extends TestCase {
             s = "";
         }
 
-        //tester.nar.reset();
     }
 
 

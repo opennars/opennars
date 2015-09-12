@@ -1,6 +1,5 @@
 package nars.meta;
 
-import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
 import org.junit.Test;
@@ -14,7 +13,6 @@ public class BasicRulesTest {
     public void testNAL1() {
         //Deriver d = Deriver.defaults;
 
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0f;
         Default n = new Default().nal(3);
 
 

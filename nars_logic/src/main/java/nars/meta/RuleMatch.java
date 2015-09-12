@@ -184,10 +184,18 @@ public class RuleMatch extends FindSubst {
 
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
+            Task tt;
             if (belief!=null) {
-                premise.deriveDouble(t.parent(task,belief));
+                tt = premise.deriveDouble(t.parent(task,belief));
             } else {
-                premise.deriveSingle(t.parent(task));
+                tt = premise.deriveSingle(t.parent(task));
+            }
+
+            if (Global.DEBUG) {
+                if (tt != null) {
+                    //tt.log(rule.toStringCompact());
+                    tt.log(premise + "," + rule);
+                }
             }
 
             return true;

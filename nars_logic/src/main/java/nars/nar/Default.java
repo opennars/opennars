@@ -61,7 +61,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
-//import sun.tools.jstat.Operator;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -330,7 +329,8 @@ public class Default extends NAR {
                     new ItemAccumulator(Budget.max),
                     newConceptBag()
             );
-            memory.eventCycleStart.on(c);
+            //run this on the end half cycle
+            memory.eventCycleEnd.on(c);
             c.capacity.set(maxConcepts);
             c.inputsMaxPerCycle.set(conceptsFirePerCycle);
             c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
@@ -665,20 +665,20 @@ public class Default extends NAR {
         @Override public void onCycle() {
             enhanceAttention();
 
-            runInputTasks();
+            runInputTasks(inputsMaxPerCycle.get());
 
-            runAllNewTasks();
+            runNewTasks(inputsMaxPerCycle.get());
 
-            fireConcepts();
+            fireConcepts(conceptsFiredPerCycle.get());
         }
 
-        protected void fireConcepts() {
+        protected void fireConcepts(int max) {
 
             active.setCapacity(capacity.intValue());
 
 
             //1 concept if (memory.newTasks.isEmpty())*/
-            final int conceptsToFire = newTasks.isEmpty() ? conceptsFiredPerCycle.get() : 0;
+            final int conceptsToFire = newTasks.isEmpty() ? max : 0;
             if (conceptsToFire == 0) return;
 
             final float conceptForgetDurations = nar.memory().conceptForgetDurations.floatValue();
@@ -718,9 +718,9 @@ public class Default extends NAR {
 
 
 
-        protected void runAllNewTasks() {
+        protected void runNewTasks(int max) {
 
-            int numNewTasks = newTasks.size();
+            int numNewTasks = Math.min(max, newTasks.size());
             if (numNewTasks == 0) return;
 
             //queueNewTasks();
@@ -736,10 +736,10 @@ public class Default extends NAR {
 
         }
 
-        protected void runInputTasks() {
+        protected void runInputTasks(int max) {
 
             int m = Math.min(percepts.size(),
-                        inputsMaxPerCycle.get());
+                        max);
 
             for (int n = m; n > 0; n--) {
                 run(percepts.removeFirst());

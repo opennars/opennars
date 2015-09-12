@@ -45,6 +45,8 @@ public class TestNAR  {
 
     public TestNAR(NAR nar) {
         super();
+
+        nar.reset();
         this.nar = nar;
 
         if (exitOnAllSuccess) {

@@ -2,6 +2,7 @@ package nars.nal.nal1;
 
 import nars.Global;
 import nars.NAR;
+import nars.io.out.TextOutput;
 import nars.meter.experiment.DeductiveChainTest;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
@@ -12,28 +13,29 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 
 public class NAL1Test extends JavaNALTest {
 
-    public NAL1Test(NAR b) { super(b); }
+    public NAL1Test(Supplier<NAR> b) { super(b.get()); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return Arrays.asList(new Object[][]{
+        return Arrays.asList(new Supplier[][]{
                 //{new Default()},
 //                {new Default().setInternalExperience(null)},
 
                 //{new NewDefault()},
-                {new Default().nal(1)},
-                {new Default().nal(2)},
-                {new Default() },
+                {() -> new Default().nal(1)},
+                {() -> new Default().nal(2)},
+                {() -> new Default() },
 
 //                {new Default().level(2)}, //why does this need level 2 for some tests?
 //                {new DefaultMicro().level(2) },
 //                {new Classic()},
 
-                {new DefaultAlann(48)},
+                {() -> new DefaultAlann(48)},
 
                 //{new Solid(1, 48, 1, 2, 1, 3).level(1)},
                 //{new Solid(1, 64, 1, 2, 1, 3).level(2)},
@@ -120,7 +122,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void conversion() throws InvalidInputException {
-        //TextOutput.out(nar);
+        TextOutput.out(nar);
 
         long time = /*tester.nal() <= 2 ? 15 :*/ 305;
         tester.believe("<bird --> swimmer>");

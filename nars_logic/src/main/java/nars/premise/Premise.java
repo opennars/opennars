@@ -15,6 +15,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.term.Variables;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.ArrayList;
@@ -367,10 +368,10 @@ public interface Premise {
             throw new RuntimeException((singleOrDouble ? "singleOrDouble" : "double") + " premise not consistent with Stamp on derived task: " + task);
         }
 
-        //its revision, of course its cyclic, apply evidental base policy
-
-
-
+        if (task.isJudgmentOrGoal() && task.getConfidence() < DefaultTruth.DEFAULT_TRUTH_EPSILON) {
+            memory.remove(task, "Insufficient confidence");
+            return null;
+        }
 
         if (!Terms.levelValid(task.getTerm(), nal())) {
             //TODO throw exception because we dont want this to happen
@@ -400,12 +401,13 @@ public interface Premise {
 
                         //THIS IS A HACK because Cyclic flag isnt semantically correct yet
                         if (cyclic && parentTask!=null) {
-                            if (!task.getTerm().equals(parentTask.getTerm())
-                                    &&
-                                    (!parentTask.isCyclic()))
+                            if /*(!task.getTerm().equals(parentTask.getTerm())
+                                    &&*/
+                                    (!parentTask.isCyclic())
                                 cyclic = false;
                         }
                     }
+
 
                     if (cyclic) {
                         //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());

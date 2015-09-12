@@ -204,6 +204,7 @@ public class TaskRule extends Rule<Premise, Task> {
         if (beliefTermPattern.has(Op.ATOM)) {
             throw new RuntimeException("belief term must be a pattern");
         }
+
         //if it contains an atom term, this means it is a modifier,
         //and not a belief term pattern
         //(which will not reference any particular atoms)

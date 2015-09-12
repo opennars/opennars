@@ -562,9 +562,14 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
 
+        if (normalized() != null) {
+            if (isInput())
+                log("Input");
+            return true;
 
+        }
 
-        return normalized() != null;
+        return false;
     }
 
 

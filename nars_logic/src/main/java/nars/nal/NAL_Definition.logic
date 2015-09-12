@@ -21,29 +21,21 @@
 //TODO Equivalence Theorems
 
     ({S} <-> {P}), S |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
-    ({S} <-> {P}), P |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), S |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), P |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
 
     ({S} <-> {P}), S |- ({P} --> {S}), (Truth:Identity, Desire:Identity)
-    ({S} <-> {P}), P |- ({P} --> {S}), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), S |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), P |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
 
     ({S} <-> {P}), S |- (S <-> P), (Truth:Identity, Desire:Identity)
-    ({S} <-> {P}), P |- (S <-> P), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), S |- (S <-> P), (Truth:Identity, Desire:Identity)
-    ([S] <-> [P]), P |- (S <-> P), (Truth:Identity, Desire:Identity)
 
 //Nothing is more specific than a instance, so its similar
 
     (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)
-    (S --> {P}), P |- (S <-> {P}), (Truth:Identity, Desire:Identity)
 
 //nothing is more general than a property, so its similar
 
     ([S] --> P), S |- ([S] <-> P), (Truth:Identity, Desire:Identity)
-    ([S] --> P), P |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 
 ////// Truth-value functions: see TruthFunctions.java
 
@@ -52,25 +44,16 @@
 //If after S usually P happens, then it might be a good guess that usually before P happens, S happens.
 
     (S --> P), S |- (P --> S), (Truth:Conversion)
-    (S --> P), P |- (P --> S), (Truth:Conversion)
     (S ==> P), S |- (P ==> S), (Truth:Conversion)
-    (S ==> P), P |- (P ==> S), (Truth:Conversion)
     (S =|> P), S |- (P =|> S), (Truth:Conversion)
-    (S =|> P), P |- (P =|> S), (Truth:Conversion)
     (S =/> P), S |- (P =\> S), (Truth:Conversion)
-    (S =/> P), P |- (P =\> S), (Truth:Conversion)
     (S =\> P), S |- (P =/> S), (Truth:Conversion)
-    (S =\> P), P |- (P =/> S), (Truth:Conversion)
 
 // "If not smoking lets you be healthy, being not healthy may be the result of smoking"
 
-    ( --S ==> P), P |- ( --P ==> S), (Truth:Contraposition)
     ( --S ==> P), S |- ( --P ==> S), (Truth:Contraposition)
-    ( --S =|> P), P |- ( --P =|> S), (Truth:Contraposition)
     ( --S =|> P), S |- ( --P =|> S), (Truth:Contraposition)
-    ( --S =/> P), P |- ( --P =\> S), (Truth:Contraposition)
     ( --S =/> P), S |- ( --P =\> S), (Truth:Contraposition)
-    ( --S =\> P), P |- ( --P =/> S), (Truth:Contraposition)
     ( --S =\> P), S |- ( --P =/> S), (Truth:Contraposition)
 
 //A belief b <f,c> is equal to --b <1-f,c>, which is the negation rule:
