@@ -16,7 +16,11 @@ public class Granulator {
 	public Granulator(float[] sourceBuffer, float sampleRate, float grainSizeSecs, float windowSizeFactor) {
 		this.sourceBuffer = sourceBuffer;
 		this.grainSizeSamples = Math.round(sampleRate * grainSizeSecs);
-		this.window = new HanningWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
+
+
+		    //this.window = new HanningWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
+            this.window = new NullWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
+
         this.sampleRate = sampleRate;
 	}
 
@@ -35,6 +39,8 @@ public class Granulator {
 
         long offset = now - showTime;
         int sourceIndex = (int)((startIndex + offset + sb.length) % sb.length);
+        while (sourceIndex < 0)
+            sourceIndex+=sb.length;
         float sample = sb[sourceIndex];
         float ww = 0;
         if (offset < 0) {

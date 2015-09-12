@@ -5,6 +5,8 @@ import nars.audio.SoundListener;
 import nars.audio.granular.Granulize;
 import nars.audio.granular.TimeStretchGui;
 import nars.audio.sample.SampleLoader;
+import nars.audio.sample.SamplePlayer;
+import nars.audio.sample.SonarSample;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -32,11 +34,11 @@ public class GranulizerDemo {
 
 
         final Audio audio = new Audio(4);
-        float[] samples = new float[44100];
-
-        for (int i = 0; i < samples.length; i++) {
-            samples[i] = (float) Math.sin((i / 44100.0) * 60.0 * 2.0 * Math.PI);
-        }
+//        float[] samples = new float[44100];
+//
+//        for (int i = 0; i < samples.length; i++) {
+//            samples[i] = (float) Math.sin((i / 44100.0) * 60.0 * 2.0 * Math.PI);
+//        }
 
 
         //player.loadFile(samples);
@@ -54,8 +56,14 @@ public class GranulizerDemo {
 
         TimeStretchGui gui = new TimeStretchGui(audio);
 
-        Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.01f, 0.2f);
-        ts.setStretchFactor(1f);
+        SonarSample smp = SampleLoader.load("/tmp/317683__jalastram__sfx-pickup-04.wav");
+
+        Granulize ts = new Granulize(smp, 0.3f, 0.2f);
+        ts.setStretchFactor(0.5f);
+
+        //audio.play(ts, SoundListener.zero, 1, 1);
+
+        audio.play(new SamplePlayer(smp, 0.5f), SoundListener.zero, 1, 1);
 
 
         frame.setLayout(new GridLayout());
@@ -63,9 +71,6 @@ public class GranulizerDemo {
         frame.getContentPane().add(new GranularControlPanel(ts));
         frame.setSize(200, 360);
         frame.setVisible(true);
-
-        audio.play(ts, SoundListener.zero, 1, 1);
-
 
         /*    }
         });*/

@@ -30,7 +30,7 @@ public class ConceptSonification extends FrameReaction {
     Map<Concept, SoundProducer> playing = new ConcurrentWeakKeyHashMap<>();
     //Global.newHashMap();
 
-    float audiblePriorityThreshold = 0.2f;
+    float audiblePriorityThreshold = 0.0f;
 
 
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
@@ -57,9 +57,22 @@ public class ConceptSonification extends FrameReaction {
 
     public static void main(String[] args) throws IOException, LineUnavailableException {
         Default d = new Default(1000, 1, 3);
-        new ConceptSonification(d, new Audio(64));
+        Audio a = new Audio(16);
+
+        new ConceptSonification(d, a);
+
+        new Thread( () -> {
+            try {
+                a.record("/tmp/x.WAV");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } ).start();
+
         d.input("<a-->b>.", "<b-->c>.", "<c-->d>.", "<d-->e>.");
-        d.loop(20);
+        d.loop(50);
+
+
     }
 
     protected void updateSamples() throws IOException {
@@ -110,44 +123,41 @@ public class ConceptSonification extends FrameReaction {
         return samples.get(Math.abs(c.hashCode()) % samples.size());
     }
 
-    public void update(Concept c) {
-        //if (c.getPriority() > audiblePriorityThreshold) {
+    public void update(final Concept c) {
         final boolean audible = audible(c);
         if (!audible) return;
 
-        Granulize g;// = playing.get(c);
+        // = playing.get(c);
 
         //if ((g == null) && audible) {
 
-        SonarSample sp = getSample(c);
+        SoundProducer g = playing.computeIfAbsent(c, cc -> {
+            SoundProducer sp = sound(cc);
+            sound.play(sp, 1f, 1);
+            playing.put(cc, sp);
+            return sp;
+        });
 
 
-        //do {
-        //try {
-        g = new Granulize(sp, 0.25f, 0.1f);
-        g.pitchFactor.set(0.1);
 
-        //g = new SineWave(Video.hashFloat(c.hashCode()));
-        SoundProducer removed = playing.put(c, g);
-        sound.play(g, 1f, 1);
-        if (removed != null)
-            removed.stop();
 
         if (g != null)
             update(c, g);
 
-            /*} catch (Exception e) {
-                e.printStackTrace();
-                samples.remove(sp);
-                return;
-            }*/
-        //} while ((g == null) && (!samples.isEmpty()));
 
+    }
 
-//        }
-//        else {
-//
-//        }
+    private SoundProducer sound(Concept c) {
+        //do {
+        //try {
+        SonarSample sp = getSample(c);
+
+        Granulize g = new Granulize(sp,
+                /* system duration */ 0.5f,
+                1f);
+        return g;
+
+        //g = new SineWave(Video.hashFloat(c.hashCode()));
 
 
     }
@@ -158,14 +168,15 @@ public class ConceptSonification extends FrameReaction {
 
     private void update(Concept c, SoundProducer g) {
 
-
-//        if (g instanceof Granulize) {
-//            ((Granulize) g).setStretchFactor(0.25f);// + 4f * (1f - c.getQuality()));
-//        }
+        if (g instanceof Granulize) {
+            Granulize gg = ((Granulize) g);
+            gg.setStretchFactor( 1f + c.getDurability() );// + 4f * (1f - c.getQuality()));
+            gg.pitchFactor.set(0.35f + c.getQuality() * 0.25f );
+        }
         if (audible(c)) {
             //TODO autmatic gain control
             float vol = 0.1f + 0.9f * c.getPriority();
-            System.out.println(c + " at " + vol);
+            //System.out.println(c + " at " + vol);
             ((SoundProducer.Amplifiable) g).setAmplitude(vol);
         }
         else {

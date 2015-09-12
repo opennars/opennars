@@ -8,6 +8,7 @@ import nars.audio.sample.SamplePlayer;
 import nars.audio.sample.SonarSample;
 
 import javax.sound.sampled.*;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
@@ -15,11 +16,14 @@ import java.util.List;
 
 public class Audio implements Runnable
 {
+    private final AudioFormat audioFormat;
+    private final Line.Info info;
+    private final int bufferBytes;
     private SonarSample silentSample;
     private SourceDataLine sdl;
     private int rate = 44100;
     private ListenerMixer listenerMixer;
-    private int bufferSize = rate / 400; // 40 ms
+    private int bufferSize = rate / 32;
     private ByteBuffer soundBuffer = ByteBuffer.allocate(bufferSize * 4);
     private final float[] leftBuf, rightBuf;
     //private float amplitude = 1;
@@ -27,16 +31,22 @@ public class Audio implements Runnable
     private boolean alive = true;
     private float alpha = 0;
 
-    
+
+    private FileOutputStream rec;
+
+
     public Audio(int maxChannels) throws LineUnavailableException {
 
         silentSample = new SonarSample(new float[] {0}, 44100);
         Mixer mixer = AudioSystem.getMixer(null);
 
-        sdl = (SourceDataLine) mixer.getLine(new Line.Info(SourceDataLine.class));
-        sdl.open(new AudioFormat(rate, 16, 2, true, false), bufferSize * 2 * 2 * 2 * 2 * 2);
+        bufferBytes = bufferSize * 2 * 2 * 2 * 2 * 2;
+
+        sdl = (SourceDataLine) mixer.getLine(info = new Line.Info(SourceDataLine.class));
+        sdl.open(audioFormat = new AudioFormat(rate, 16, 2, true, false), bufferBytes);
         soundBuffer.order(ByteOrder.LITTLE_ENDIAN);
         sdl.start();
+
 
 
         try {
@@ -57,6 +67,26 @@ public class Audio implements Runnable
         thread.setDaemon(true);
         thread.setPriority(10);
         thread.start();
+
+    }
+
+    public void record(String path) throws LineUnavailableException, IOException {
+
+        //if (rec != null) //...
+
+        System.out.println("recording to: " + path);
+        rec = new FileOutputStream(new File(path), false);
+
+//        PipedInputStream pi = new PipedInputStream();
+//        pi.connect(rec = new PipedOutputStream());
+//
+//        AudioInputStream ais = new AudioInputStream(
+//                pi,
+//                audioFormat, bufferBytes);
+//
+//
+//        // start recording
+//        AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(path));
 
     }
 
@@ -155,7 +185,15 @@ public class Audio implements Runnable
 
         }
 
-        sdl.write(soundBuffer.array(), 0, bufferSize * 2 * 2);
+        byte[] ba = soundBuffer.array();
+        sdl.write(ba, 0, bufferSize * 2 * 2);
+        if (rec!=null)
+            try {
+              rec.write(ba, 0, bufferSize * 2 * 2);
+              rec.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 
     public void run()

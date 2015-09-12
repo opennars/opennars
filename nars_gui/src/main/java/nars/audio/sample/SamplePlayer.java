@@ -19,21 +19,23 @@ public class SamplePlayer implements SoundProducer {
     public float read(float[] buf, int readRate)
     {
         float step = (sample.rate*rate)/readRate;
-        
+
+        final float[] sb = sample.buf;
+
         for (int i=0; i<buf.length; i++)
         {
-            if (pos>=sample.buf.length)
-            {
+
+            if (pos>= sb.length) {
                 buf[i] = 0;
                 alive = false;
             }
             else
             {
-                buf[i]=sample.buf[(int)(pos)];
+                buf[i]= sb[(int)(pos)];
             }
             pos+=step;
         }
-        
+
         return 1;
     }
 

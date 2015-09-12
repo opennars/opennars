@@ -3,6 +3,7 @@ package nars.audio;
 import nars.Sound;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,17 +77,18 @@ public class ListenerMixer implements StereoSoundProducer
             Collections.sort(sounds);
         }
 
-        //Arrays.fill(leftBuf, 0);
-        //Arrays.fill(rightBuf, 0);
+        Arrays.fill(leftBuf, 0);
+        Arrays.fill(rightBuf, 0);
         float maxAmplitude = 0;
 
-        for (int i = 0; i < sounds.size(); i++)        {
+        for (int i = 0; i < sounds.size() && i >= 0; )  {
             Sound sound = sounds.get(i);
 
             if (i < maxChannels) {
                 final float[] buf = this.buf;
 
                 sound.read(buf, readRate);
+
                 float pan = sound.pan;
 
                 final float rp = (pan <0?1:1- pan)*sound.amplitude;
@@ -110,6 +112,11 @@ public class ListenerMixer implements StereoSoundProducer
             {
                 sound.skip(leftBuf.length, readRate);
             }
+
+            if (!sound.isLive())
+                sounds.remove(i);
+            else
+                i++;
         }
         
         return maxAmplitude;
