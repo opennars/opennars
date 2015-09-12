@@ -92,18 +92,17 @@ abstract public class ConceptProcess extends NAL  {
 
 
 
-    public static void forEachPremise(NAR nar, @Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
-
-        final long now = nar.time();
+    public static void forEachPremise(NAR nar, @Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, long now) {
 
         Task belief = null;
 
-
         TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
+
+        if (taskLink == null) return;
 
         TermLink termLink = concept.getTermLinks().forgetNext(nar.memory().termLinkForgetDurations, nar.memory());
 
-        if (!Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
+        if (termLink!=null && !Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
             final Concept beliefConcept = nar.concept(termLink.target);
             if (beliefConcept != null) {
                 belief = beliefConcept.getBeliefs().top(taskLink.getTask(), now);

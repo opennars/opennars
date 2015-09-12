@@ -3,9 +3,15 @@ package nars.audio;
 import nars.Audio;
 import nars.audio.sample.SonarSample;
 
+import javax.sound.sampled.LineUnavailableException;
+
 
 public class FakeSoundEngine extends Audio
 {
+    public FakeSoundEngine(int maxChannels) throws LineUnavailableException {
+        super(maxChannels);
+    }
+
     public void setListener(SoundListener soundListener)
     {
     }

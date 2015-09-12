@@ -68,7 +68,7 @@ public class Sound implements SoundSource, Comparable
         producer.skip(samplesToSkip, readRate);
     }
 
-    public boolean isLive()
+    public final boolean isLive()
     {
         return producer.isLive();
     }
@@ -76,9 +76,7 @@ public class Sound implements SoundSource, Comparable
     public int compareTo(Object o)
     {
         Sound s = (Sound)o;
-        if (s.score>score) return 1;
-        if (s.score<score) return -1;
-        return 0;
+        return Double.compare(score, s.score);
     }
 
     @Override

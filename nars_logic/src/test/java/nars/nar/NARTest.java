@@ -49,8 +49,10 @@ public class NARTest {
 
         TextOutput.out(nar);
 
-        nar.input("<a-->b>.", "<b-->c>.").run(525);
+        nar.input("<a-->b>.", "<b-->c>.").run(25);
         nar.stop();
+
+        assertTrue(nar.concepts().size() > 5);
 
         int nc;
         assertTrue((nc = nar.concepts().size()) > 0);

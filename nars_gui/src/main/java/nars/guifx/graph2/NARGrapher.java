@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 public class NARGrapher implements Consumer<NARGraph1> {
 
     final Set<TermNode> active = Global.newHashSet(1);
-    int maxTerms = 64;
+    //int maxTerms = 64;
 
     final Map<Term, TermNode> termToAdd = new LinkedHashMap();
     //final Table<Term, Term, TermEdge> edges = HashBasedTable.create();
@@ -34,7 +34,7 @@ public class NARGrapher implements Consumer<NARGraph1> {
         if (graph.conceptsChanged.getAndSet(false)) {
             active.clear();
 
-            nar.memory.getCycleProcess().forEachConcept(maxTerms, c -> {
+            nar.concepts().forEach(/*maxTerms, */c -> {
 
                 final Term source = c.getTerm();
 

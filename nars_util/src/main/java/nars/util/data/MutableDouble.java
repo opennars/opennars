@@ -333,6 +333,14 @@ public class MutableDouble extends Number implements Comparable, Mutable {
     return String.valueOf(value);
   }
 
+  public void set(float v) {
+      setValue(v);
+  }
+
+  public void set(double v) {
+    setValue(v);
+  }
+
 //  protected int compare(Object o1, Object o2) {
 //
 //    if (o1 == null) {

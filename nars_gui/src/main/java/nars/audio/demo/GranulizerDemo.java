@@ -1,6 +1,5 @@
 package nars.audio.demo;
 
-import automenta.vivisect.swing.NSliderSwing;
 import nars.Audio;
 import nars.audio.SoundListener;
 import nars.audio.granular.Granulize;
@@ -23,8 +22,8 @@ public class GranulizerDemo {
 
         public GranularControlPanel(Granulize s) {
             super(new BorderLayout());
-            NSliderSwing p = new NSliderSwing(s.stretchFactor, 0.1f, 10.0f);
-            add(p, BorderLayout.NORTH);
+            //NSliderSwing p = new NSliderSwing(s.stretchFactor, 0.1f, 10.0f);
+            //add(p, BorderLayout.NORTH);
         }
 
     }
@@ -52,8 +51,8 @@ public class GranulizerDemo {
                 System.exit(0);
             }
         });
-        TimeStretchGui gui = new TimeStretchGui(audio);
 
+        TimeStretchGui gui = new TimeStretchGui(audio);
 
         Granulize ts = new Granulize(SampleLoader.load("/tmp/p.wav"), 0.01f, 0.2f);
         ts.setStretchFactor(1f);

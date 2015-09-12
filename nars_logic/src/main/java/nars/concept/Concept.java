@@ -144,7 +144,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     default public String toInstanceString() {
         String id = Integer.toString(System.identityHashCode(this), 16);
-        return this + "::" + id;
+        return this + "::" + id + " " + getBudget().toBudgetString();
     }
 
 

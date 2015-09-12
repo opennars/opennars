@@ -148,7 +148,7 @@ public class TreePane extends BorderPane {
 
         synchronized (pendingTasks) {
             pendingTasks.clear();
-            nar.memory.forEachTask(true, t -> {
+            nar.forEachTask(true, t -> {
                 if (visible(t))
                     pendingTasks.add(t);
                 else

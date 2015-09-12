@@ -174,7 +174,7 @@ public class TaskTree extends ReactionPanel implements Reaction<Class,Object[]>,
         //TODO get existing Tasks at the next frame event by new method: memory.getTasks() which iterates all concepts tasklinks
         if (needsRestart) {
             tasks.clear();
-            nar.memory.getTasks(true, false, false, tasks);
+            nar.getTasks(true, false, false, tasks);
             for (Task t : tasks)
                 if (isVisible(t))
                     add(t);

@@ -8,6 +8,7 @@ public class SamplePlayer implements SoundProducer {
     private float pos = 0;
     public boolean alive = true;
     private float rate;
+
     
     public SamplePlayer(SonarSample sample, float rate)
     {

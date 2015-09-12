@@ -50,8 +50,6 @@ import nars.term.Term;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.DefaultTopic;
-import nars.util.event.Topic;
-import nars.util.graph.TermLinkGraph;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.io.File;
@@ -63,7 +61,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.lang.System.out;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
@@ -247,7 +244,11 @@ public class Default extends NAR {
 
 
     public Default() {
-        this(new LocalMemory(new CycleClock()), 1024, 1, 3);
+        this(1024, 1, 3);
+    }
+
+    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
+        this(new LocalMemory(new CycleClock()), maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
     }
 
     public Default(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
@@ -347,6 +348,7 @@ public class Default extends NAR {
             }
         }
 
+        //core loop
         {
             DefaultCycle c = this.control = getCycleProcess();
             memory.eventCycleStart.on(c);
@@ -356,37 +358,41 @@ public class Default extends NAR {
             c.termLinksPerConcept.setValue(termLinksPerCycle);
         }
 
+//        {
+//            //print all concepts and their budgets
+//            memory.eventCycleEnd.on((mm) -> {
+//                System.out.println("system: ");
+//                mm.concepts.iterator().forEachRemaining(c -> {
+//                    System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
+//                });
+//                System.out.println("active: " + " " + control.active.size() + " / " + control.active.capacity());
+//                control.active.forEach(c -> {
+//                    System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
+//                });
+//            });
+//        }
 
-        //print all concepts and their budgets
-        memory.eventCycleEnd.on((mm) -> {
-            System.out.println("system: ");
-            mm.concepts.iterator().forEachRemaining(c -> {
-                System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
-            });
-            System.out.println("active: " + " " + control.active.size() + " / " + control.active.capacity());
-            control.active.forEach(c -> {
-                System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
-            });
-        });
+//        {
+//            //print termlinks graph
+//            memory.eventCycleEnd.on((mm) -> {
+//                TermLinkGraph g = new TermLinkGraph(mm);
+//                System.out.println("termlinks: " + g);
+//            });
+//        }
 
-        //print termlinks graph
-        memory.eventCycleEnd.on((mm) -> {
-            TermLinkGraph g = new TermLinkGraph(mm);
-            System.out.println("termlinks: " + g);
-        });
-
-        /* Trace */
-        Topic.all(memory, (k,v)-> {
-            out.print(k);
-            out.print(": ");
-            if (v instanceof Concept) {
-                Concept c = (Concept)v;
-                out.println(c + " " + c.getBudget().toBudgetString());
-            }
-            else {
-                out.println(v);
-            }
-        });
+//        {
+//            /* Trace */
+//            Topic.all(memory, (k, v) -> {
+//                out.print(k);
+//                out.print(": ");
+//                if (v instanceof Concept) {
+//                    Concept c = (Concept) v;
+//                    out.println(c + " " + c.getBudget().toBudgetString());
+//                } else {
+//                    out.println(v);
+//                }
+//            });
+//        }
 
 
         //n.on(new RuntimeNARSettings());
@@ -688,13 +694,15 @@ public class Default extends NAR {
 //            int n = active.forgetNext(conceptForgetDurations, buffer, time());
 //            if (n == 0) return;
 
+            final long now = nar.time();
+
             Concept[] buffer = new Concept[] { active.forgetNext(conceptForgetDurations, nar.memory()) };
 
             for (final Concept c : buffer) {
                 if (c == null) break;
                 ConceptProcess.forEachPremise(nar, c, termLinkSelections, conceptForgetDurations, (t) -> {
                     t.input(nar);
-                } );
+                }, now );
             }
 
         }

@@ -1,6 +1,8 @@
 package nars.audio.sample;
 
 
+import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -23,8 +25,15 @@ public class SampleLoader
         return buildSample(rip(ais), ais.getFormat());
     }
 
-    public static SonarSample load(String path) throws UnsupportedAudioFileException, IOException {
-        return loadSample(new FileInputStream(path));
+    public static SonarSample load(String path)  {
+        try {
+            return loadSample(new FileInputStream(path));
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -111,5 +120,20 @@ public class SampleLoader
         
         // Return the completed sample
         return new SonarSample(buf, rate);
+    }
+
+    /** digitize provided function at sample rate (ex: 44.1kh) */
+    public static SonarSample digitize(FloatToFloatFunction f, int sampleRate, float duration) {
+
+        int samples = (int)(duration * sampleRate);
+        final SonarSample ss = new SonarSample(new float[samples], sampleRate);
+        final float[] b = ss.buf;
+        float t = 0, dt = 1.0f / sampleRate;
+        for (int i = 0; i < samples; i++) {
+            b[i] = f.valueOf(t);
+            t+=dt;
+        }
+
+        return ss;
     }
 }

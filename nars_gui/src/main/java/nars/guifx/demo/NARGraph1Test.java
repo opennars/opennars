@@ -7,7 +7,6 @@ import nars.guifx.graph2.HyperassociativeMapLayout;
 import nars.guifx.graph2.NARGraph1;
 import nars.guifx.graph2.NARGrapher;
 import nars.guifx.graph2.QuadPolyEdgeRenderer;
-import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.TabX;
 import nars.nar.experimental.Equalized;
 
@@ -21,9 +20,8 @@ public class NARGraph1Test {
     public static void main(String[] args) throws IOException {
 
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.5f;
-        NAR n = new NAR(
-            new Equalized(60, 4, 3).setInternalExperience(null)
-        );
+        NAR n = new Equalized(60, 4, 3);
+
         //n.input(new File("/tmp/h.nal"));
         n.input("<a-->b>.");
         n.input("<b-->c>.");

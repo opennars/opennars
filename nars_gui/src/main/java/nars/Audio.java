@@ -4,6 +4,7 @@ import nars.audio.ListenerMixer;
 import nars.audio.SoundListener;
 import nars.audio.SoundProducer;
 import nars.audio.SoundSource;
+import nars.audio.sample.SamplePlayer;
 import nars.audio.sample.SonarSample;
 
 import javax.sound.sampled.*;
@@ -20,15 +21,12 @@ public class Audio implements Runnable
     private ListenerMixer listenerMixer;
     private int bufferSize = rate / 400; // 40 ms
     private ByteBuffer soundBuffer = ByteBuffer.allocate(bufferSize * 4);
-    private float[] leftBuf, rightBuf;
+    private final float[] leftBuf, rightBuf;
     //private float amplitude = 1;
     //private float targetAmplitude = 1;
     private boolean alive = true;
     private float alpha = 0;
 
-    protected Audio()
-    {
-    }
     
     public Audio(int maxChannels) throws LineUnavailableException {
 
@@ -74,7 +72,7 @@ public class Audio implements Runnable
 
 
     public void play(SonarSample sample, SoundSource soundSource, float volume, float priority) {
-        //play(new SamplePlayer(sample, rate), soundSource, volume, priority);
+        play(new SamplePlayer(sample, rate), soundSource, volume, priority);
     }
 
     static class DefaultSource implements SoundSource {
@@ -108,9 +106,9 @@ public class Audio implements Runnable
 //        if (!alive)
 //            return;
 //
-//        synchronized (listenerMixer) {
-//            listenerMixer.addSoundProducer(p, soundSource, volume, priority);
-//        }
+        synchronized (listenerMixer) {
+            listenerMixer.addSoundProducer(p, soundSource, volume, priority);
+        }
     }
 
     public List<Sound> getSounds() { return listenerMixer.sounds; }

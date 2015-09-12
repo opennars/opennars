@@ -4,7 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.meter.MemoryBudget;
 import nars.nar.Default;
-import nars.nar.experimental.Equalized;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 import nars.term.Term;
@@ -45,7 +44,7 @@ public class SimpleNARBudgetDynamics {
         float qua = 0.8f;
 
 
-        Default d = new Equalized(1024, 1, 3).setInternalExperience(null);
+        Default d = new Default(); //Equalized(1024, 1, 3);
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
 
@@ -102,7 +101,7 @@ public class SimpleNARBudgetDynamics {
 
                 })
                 .meter( (metrics, nar) -> {
-                    metrics.set("# concepts", nar.memory.numConcepts(true, false));
+                    metrics.set("# concepts", nar.numConcepts(true, false));
                 })
                 .meter( (metrics, nar) -> {
 

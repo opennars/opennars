@@ -8,11 +8,11 @@ public class GrainWindow {
 		this.factors = factors;
 	}
 	
-	public int getSize() {
+	public final int getSize() {
 		return factors.length;
 	}
 
-	public float getFactor(int offset) {
+	public final float getFactor(int offset) {
 		int index = offset;
 		if (offset < 0) { // Fade in
 			index = -offset;

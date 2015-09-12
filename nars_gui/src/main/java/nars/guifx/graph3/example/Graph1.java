@@ -9,7 +9,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import nars.NAR;
 import nars.guifx.NARide;
 import nars.guifx.graph3.SpacenetApp;
 import nars.guifx.graph3.Xform;
@@ -87,7 +86,7 @@ public class Graph1 extends SpacenetApp {
         {
             //oxygenSphere.getChildren().add(new Button(""));
 
-            NARide w = new NARide(new NAR(new Default()));
+            NARide w = new NARide(new Default());
             w.setScaleX(0.05f);
             w.setScaleY(0.03f);
             w.setScaleZ(0.1f);

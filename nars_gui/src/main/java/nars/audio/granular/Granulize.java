@@ -1,8 +1,8 @@
 package nars.audio.granular;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import nars.audio.SoundProducer;
 import nars.audio.sample.SonarSample;
+import nars.util.data.MutableDouble;
 
 public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 
@@ -10,12 +10,12 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 	private float now = 0L;
 
     /** this actually represents the target amplitude which the current amplitude will continuously interpolate towards */
-    public final AtomicDouble amplitude = new AtomicDouble(1.0);
+    public final MutableDouble amplitude = new MutableDouble(1.0);
 
     protected float currentAmplitude = amplitude.floatValue();
 
-	public final AtomicDouble stretchFactor = new AtomicDouble(1.0);
-    public final AtomicDouble pitchFactor = new AtomicDouble(1.0);
+	public final MutableDouble stretchFactor = new MutableDouble(1.0);
+    public final MutableDouble pitchFactor = new MutableDouble(1.0);
 
     /** grains are represented as a triple of long integers (see Granulator.createGrain() which constructs these) */
 	private long[] currentGrain = null;
@@ -24,18 +24,18 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 	private final Granulator granulator;
 	private boolean isPlaying = false;
 	private float playTime = 0L;
-	private int playOffset;
+	private int playOffset = -1;
 
 
 
     public Granulize(SonarSample s, float grainSizeSecs, float windowSizeFactor) {
         this(s.buf, s.rate, grainSizeSecs, windowSizeFactor);
-        play();
     }
 
 	public Granulize(float[] buffer, float sampleRate, float grainSizeSecs, float windowSizeFactor) {
 		this.sourceBuffer = buffer;
 		this.granulator = new Granulator(buffer, sampleRate, grainSizeSecs, windowSizeFactor);
+		play();
 	}
 
 	public void process(float[] output, int readRate) {
@@ -93,7 +93,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
         currentAmplitude = amp;
 	}
 
-    public void setAmplitude(float amplitude) {
+    public final void setAmplitude(final float amplitude) {
         this.amplitude.set(amplitude);
     }
 
@@ -105,6 +105,11 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
     public void play() {
 		playOffset = 0;
 		playTime = now;
+		isPlaying = true;
+	}
+
+	/** continue */
+	public void cont() {
 		isPlaying = true;
 	}
 
