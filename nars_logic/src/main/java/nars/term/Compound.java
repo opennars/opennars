@@ -1300,7 +1300,6 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
     protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I, T> trans, final int level) {
         final Term[] y = new Term[length()];
         int i = 0;
-        boolean mod = false;
         for (Term x : this.term) {
             if (trans.test(x)) {
                 x = trans.apply((I) this, (T) x, level);
@@ -1320,7 +1319,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
         return y;
     }
 
-    public int size() {
+    public final int size() {
         return length();
     }
 

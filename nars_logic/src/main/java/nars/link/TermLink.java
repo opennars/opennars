@@ -20,6 +20,7 @@
  */
 package nars.link;
 
+import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Item;
@@ -73,6 +74,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     public final short[] index;
     public final short type;
     private final int hash;
+    private static final byte[] emptyPrefix = new byte[0];
     private byte[] prefix;
 
 
@@ -88,9 +90,12 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     public TermLink(final Term t, final TermLinkTemplate template, final Budget v, final byte[] prefix, final int hash) {
         super(v);
 
-        if (!t.isNormalized()) {
-            throw new RuntimeException("not normalized: "+ t);
+        if (Global.DEBUG) {
+            if (!t.isNormalized()) {
+                throw new RuntimeException("not normalized: " + t);
+            }
         }
+
         this.target = t;
 
         this.type = template.getType(t); /* whether this points to subterm */
@@ -100,6 +105,23 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
         this.prefix = prefix;
 
         this.hash = hash;
+    }
+    public TermLink(final Term t, final Budget v) {
+        super(v);
+
+        if (Global.DEBUG) {
+            if (!t.isNormalized()) {
+                throw new RuntimeException("not normalized: "+ t);
+            }
+        }
+
+        this.target = t;
+
+        this.type = -1;
+
+        this.index = null;
+        this.prefix = emptyPrefix;
+        this.hash = TermLinkKey.hash(prefix, t);
     }
 
     @Override

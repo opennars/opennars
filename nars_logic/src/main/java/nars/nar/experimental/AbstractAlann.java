@@ -18,6 +18,8 @@ import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.nal.Deriver;
+import nars.nal.SimpleDeriver;
 import nars.op.app.Commander;
 import nars.process.ConceptProcess;
 import nars.process.ConceptTaskLinkProcess;
@@ -38,6 +40,8 @@ import java.util.Set;
  * Created by me on 9/5/15.
  */
 public abstract class AbstractAlann extends NAR {
+
+    final static Deriver deriver = new SimpleDeriver();
 
     final static Procedure2<Budget,Budget> budgetMerge = Budget.plus;
 
@@ -348,7 +352,7 @@ public abstract class AbstractAlann extends NAR {
 
             final ConceptProcess p = nextPremise(now);
             if (p!=null) {
-                p.input(context.nar);
+                p.input(context.nar, deriver);
             }
             else {
                 //no premise

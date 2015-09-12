@@ -1,7 +1,5 @@
 package nars.audio.granular;
 
-import nars.audio.sample.SonarSample;
-
 public class Granulator {
 
 	private final float[] sourceBuffer;
@@ -9,22 +7,22 @@ public class Granulator {
     private int grainSizeSamples;
 	private final GrainWindow window;
 
-    public Granulator(SonarSample source, float grainSizeSecs, float windowSizeFactor) {
-        this(source.buf, source.rate, grainSizeSecs, windowSizeFactor);
-    }
+//    public Granulator(SonarSample source, float grainSizeSecs, float windowSizeFactor) {
+//        this(source.buf, source.rate, grainSizeSecs, windowSizeFactor);
+//    }
 
 	public Granulator(float[] sourceBuffer, float sampleRate, float grainSizeSecs, float windowSizeFactor) {
 		this.sourceBuffer = sourceBuffer;
 		this.grainSizeSamples = Math.round(sampleRate * grainSizeSecs);
 
 
-		    //this.window = new HanningWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
-            this.window = new NullWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
+		    this.window = new HanningWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
+            //this.window = new NullWindow(Math.round(sampleRate * grainSizeSecs * windowSizeFactor));
 
         this.sampleRate = sampleRate;
 	}
 
-    public boolean hasMoreSamples(long[] grain, long now) {
+    public boolean hasMoreSamples(final long[] grain, final long now) {
         final long length = grain[1];
         final long showTime = grain[2];
         return now < showTime + length + window.getSize();
@@ -43,7 +41,7 @@ public class Granulator {
             sourceIndex+=sb.length;
         float sample = sb[sourceIndex];
         float ww = 0;
-        if (offset < 0) {
+        if (offset <= 0) {
             ww = window.getFactor((int)offset);
         }
         if (offset > length) {
@@ -58,11 +56,12 @@ public class Granulator {
         return now > showTime + length;
     }
 
-	public long[] createGrain(long[] grain, int startIndex, long fadeInTime) {
+	public long[] nextGrain(long[] grain, int startIndex, long fadeInTime) {
         if (grain == null) grain = new long[3];
-        grain[0] = (startIndex + window.getSize()) % sourceBuffer.length;
+        final int ws = window.getSize();
+        grain[0] = (startIndex + ws) % sourceBuffer.length;
         grain[1] = grainSizeSamples;
-        grain[2] = fadeInTime + window.getSize();
+        grain[2] = fadeInTime + ws;
         return grain;
 	}
 

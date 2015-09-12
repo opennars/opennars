@@ -14,8 +14,6 @@ import nars.event.CycleReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.nal.LogicStage;
-import nars.nal.PremiseProcessor;
 import nars.nal.SimpleDeriver;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.operator.NullOperator;
@@ -44,7 +42,6 @@ import nars.task.Task;
 import nars.task.filter.DerivationFilter;
 import nars.task.filter.FilterBelowConfidence;
 import nars.task.filter.FilterDuplicateExistingBelief;
-import nars.task.filter.LimitDerivationPriority;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.data.MutableInteger;
@@ -257,19 +254,19 @@ public class Default extends NAR {
 
 
 
-        m.setDeriver(new PremiseProcessor(
-                new LogicStage[]{
-                        //new QueryVariableExhaustiveResults(),
-                        new SimpleDeriver(NewDefault.standard)
-                        //---------------------------------------------
-                },
-                new DerivationFilter[]{
-                    new FilterBelowConfidence(0.005),
-                    new FilterDuplicateExistingBelief(),
-                    new LimitDerivationPriority()
-    //                //param.getDefaultDerivationFilters().add(new BeRational());
-                }
-        ) );
+//        m.setDeriver(new PremiseProcessor(
+//                new LogicStage[]{
+//                        //new QueryVariableExhaustiveResults(),
+//                        new SimpleDeriver(NewDefault.standard)
+//                        //---------------------------------------------
+//                },
+//                new DerivationFilter[]{
+//                    new FilterBelowConfidence(0.005),
+//                    new FilterDuplicateExistingBelief(),
+//                    new LimitDerivationPriority()
+//    //                //param.getDefaultDerivationFilters().add(new BeRational());
+//                }
+//        ) );
 
         //termLinkMaxMatched.set(5);
 
@@ -278,9 +275,9 @@ public class Default extends NAR {
         this.internalExperience =
                 maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
 
-        setTaskLinkBagSize(64);
+        setTaskLinkBagSize(32);
 
-        setTermLinkBagSize(96);
+        setTermLinkBagSize(64);
 
 
         //Runtime Initial Values
@@ -350,7 +347,12 @@ public class Default extends NAR {
 
         //core loop
         {
-            DefaultCycle c = this.control = getCycleProcess();
+            DefaultCycle c = this.control = new DefaultCycle(
+                this,
+                new ConceptBagActivator(this),
+                new ItemAccumulator(Budget.max),
+                newConceptBag()
+            );
             memory.eventCycleStart.on(c);
             c.capacity.set(maxConcepts);
             c.inputsMaxPerCycle.set(conceptsFirePerCycle);
@@ -380,19 +382,7 @@ public class Default extends NAR {
 //            });
 //        }
 
-//        {
-//            /* Trace */
-//            Topic.all(memory, (k, v) -> {
-//                out.print(k);
-//                out.print(": ");
-//                if (v instanceof Concept) {
-//                    Concept c = (Concept) v;
-//                    out.println(c + " " + c.getBudget().toBudgetString());
-//                } else {
-//                    out.println(v);
-//                }
-//            });
-//        }
+
 
 
         //n.on(new RuntimeNARSettings());
@@ -402,12 +392,7 @@ public class Default extends NAR {
 
 
     public DefaultCycle getCycleProcess() {
-        return new DefaultCycle(
-                this,
-                new ConceptBagActivator(this),
-                new ItemAccumulator(Budget.max),
-                newConceptBag()
-        );
+        return control;
     }
 
     static String readFile(String path, Charset encoding)
@@ -590,8 +575,13 @@ public class Default extends NAR {
          * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
          */
         public final AtomicInteger inputsMaxPerCycle;
+        private SimpleDeriver deriver = new SimpleDeriver(SimpleDeriver.standard);
 
 
+            /** samples an active concept */
+        public Concept next() {
+            return active.peekNext();
+        }
 
         /**
          * New tasks with novel composed terms, for delayed and selective processing
@@ -701,7 +691,7 @@ public class Default extends NAR {
             for (final Concept c : buffer) {
                 if (c == null) break;
                 ConceptProcess.forEachPremise(nar, c, termLinkSelections, conceptForgetDurations, (t) -> {
-                    t.input(nar);
+                    t.input(nar, deriver);
                 }, now );
             }
 
@@ -759,6 +749,10 @@ public class Default extends NAR {
         public Concept update(Term term, Budget b, boolean b1, float v, Bag<Term, Concept> active) {
             active.setCapacity(capacity.intValue());
             return ca.update(term.getTerm(), b, true, time(), 1f, active);
+        }
+
+        public Iterable<?> concepts() {
+            return active;
         }
 
 

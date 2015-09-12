@@ -4,7 +4,6 @@ package nars.nal.nal3;
 import nars.NAR;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
-import nars.nar.NewDefault;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -24,7 +23,7 @@ public class NAL3Test extends JavaNALTest {
                 {new Default()}, //NAL8 + NAL9 didnt solve it
                 {new Default().nal(3)}, //needs 3 for sets
                 //{new Default().setInternalExperience(null)},
-                {new NewDefault()},
+                //{new NewDefault()},
                 //{new NewDefault().setInternalExperience(null)},
                 //{new DefaultMicro() },
                 //{new Classic()}

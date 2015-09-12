@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
  *
  * it's broken, use equalized
  */
-@Deprecated public class NewDefault extends Default {
+@Deprecated abstract public class NewDefault extends Default {
 
     public NewDefault() {
         this(1024, 1, 3);
@@ -40,49 +40,6 @@ import java.net.URISyntaxException;
 //    }
 
 
-    /**
-     * default set of rules, statically available
-     */
-    public static DerivationRules standard;
-
-    public static final String key = "derivation_rules:standard";
-
-    static void loadCachedRules() {
-        standard = TemporaryCache.computeIfAbsent(
-                key, new GenericJBossMarshaller(),
-                () -> {
-                    try {
-//                        standard = new DerivationRules();
-
-                        return new DerivationRules();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.exit(1);
-                        return null;
-                    }
-                }
-//                //TODO compare hash/checksum of the input file
-//                //to what is stored in cached file
-//                (x) -> {
-//                    //this disables entirely and just creates a new one each time:
-//                    return  ...
-//                }
-        );
-    }
-
-    static void loadRules() {
-        try {
-            standard = new DerivationRules();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static {
-        loadRules();
-    }
 
 //    static {
 //        try {
@@ -130,7 +87,7 @@ import java.net.URISyntaxException;
         Deriver r;
 
         try {
-            r = new SimpleDeriver(standard);
+            r = new SimpleDeriver(SimpleDeriver.standard);
         } catch (Exception e) {
             r = null;
             e.printStackTrace();

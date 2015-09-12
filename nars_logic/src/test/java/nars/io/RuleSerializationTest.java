@@ -1,7 +1,7 @@
 package nars.io;
 
 import nars.meta.TaskRule;
-import nars.nar.NewDefault;
+import nars.nal.SimpleDeriver;
 import nars.term.Compound;
 import org.junit.Assert;
 
@@ -17,7 +17,7 @@ public class RuleSerializationTest extends AbstractSerializationTest<Collection<
 
 
     public RuleSerializationTest() {
-        super(NewDefault.standard);
+        super(SimpleDeriver.standard);
     }
 
 

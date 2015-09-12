@@ -7,16 +7,66 @@ import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.task.Task;
 import nars.term.Term;
+import nars.util.db.TemporaryCache;
+import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.EnumMap;
 import java.util.List;
 
 /** separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations */
-public class SimpleDeriver extends Deriver {
+public class SimpleDeriver extends Deriver  {
 
+    public static final String key = "derivation_rules:standard";
+
+    static void loadCachedRules() {
+        SimpleDeriver.standard = TemporaryCache.computeIfAbsent(
+                key, new GenericJBossMarshaller(),
+                () -> {
+                    try {
+//                        standard = new DerivationRules();
+
+                        return new DerivationRules();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                        return null;
+                    }
+                }
+//                //TODO compare hash/checksum of the input file
+//                //to what is stored in cached file
+//                (x) -> {
+//                    //this disables entirely and just creates a new one each time:
+//                    return  ...
+//                }
+        );
+    }
+
+    static void loadRules() {
+        try {
+            SimpleDeriver.standard = new DerivationRules();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static {
+        loadRules();
+    }
+
+    /**
+     * default set of rules, statically available
+     */
+    public static DerivationRules standard;
     private final EnumMap<Op, EnumMap<Op, List<TaskRule>>> taskTypeMap;
     private final EnumMap<Op, List<TaskRule>> beliefTypeMap;
 
+    public SimpleDeriver() {
+        this(SimpleDeriver.standard);
+    }
 
     public SimpleDeriver(DerivationRules rules) {
         super(rules);
@@ -52,7 +102,7 @@ public class SimpleDeriver extends Deriver {
             }
         }
 
-        //printSummary();
+        printSummary();
 
     }
 
@@ -105,5 +155,18 @@ public class SimpleDeriver extends Deriver {
 
 
     }
+
+
+
+//    public void fire(final Premise fireConcept) {
+//        final List<LogicStage<Premise>> rules = this.rules;
+//        final int n = rules.size();
+//        for (int l = 0; l < n; l++) {
+//            if (!rules.get(l).test(fireConcept))
+//                break;
+//        }
+//    }
+
+
 
 }

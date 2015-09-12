@@ -70,7 +70,7 @@ public class ConceptSonification extends FrameReaction {
         } ).start();
 
         d.input("<a-->b>.", "<b-->c>.", "<c-->d>.", "<d-->e>.");
-        d.loop(50);
+        d.loop(550);
 
 
     }
@@ -133,7 +133,7 @@ public class ConceptSonification extends FrameReaction {
 
         SoundProducer g = playing.computeIfAbsent(c, cc -> {
             SoundProducer sp = sound(cc);
-            sound.play(sp, 1f, 1);
+            sound.play(sp, 1f, 1f);
             playing.put(cc, sp);
             return sp;
         });
@@ -153,8 +153,8 @@ public class ConceptSonification extends FrameReaction {
         SonarSample sp = getSample(c);
 
         Granulize g = new Granulize(sp,
-                /* system duration */ 0.5f,
-                1f);
+                /* grain size = system duration? */ 0.8f,
+                0.75f);
         return g;
 
         //g = new SineWave(Video.hashFloat(c.hashCode()));
@@ -170,12 +170,12 @@ public class ConceptSonification extends FrameReaction {
 
         if (g instanceof Granulize) {
             Granulize gg = ((Granulize) g);
-            gg.setStretchFactor( 1f + c.getDurability() );// + 4f * (1f - c.getQuality()));
-            gg.pitchFactor.set(0.35f + c.getQuality() * 0.25f );
+            gg.setStretchFactor( 0.5f + c.getDurability() );// + 4f * (1f - c.getQuality()));
+            gg.pitchFactor.set(0.7f + c.getQuality() * 0.5f );
         }
         if (audible(c)) {
             //TODO autmatic gain control
-            float vol = 0.1f + 0.9f * c.getPriority();
+            float vol = 0.5f + 0.5f * c.getPriority();
             //System.out.println(c + " at " + vol);
             ((SoundProducer.Amplifiable) g).setAmplitude(vol);
         }

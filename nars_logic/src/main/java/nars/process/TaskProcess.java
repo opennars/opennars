@@ -18,6 +18,7 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static nars.budget.BudgetFunctions.divide;
 
@@ -84,7 +85,7 @@ public class TaskProcess extends NAL {
 
 
 
-    @Override final public void derive() {
+    @Override final public void derive(Consumer<Premise> unused) {
 
         final Task task = getTask();
 
@@ -413,7 +414,7 @@ public class TaskProcess extends NAL {
         if (d == null)
             return null;
 
-        d.input(m);
+        d.input(m, null);
 
         return d;
     }

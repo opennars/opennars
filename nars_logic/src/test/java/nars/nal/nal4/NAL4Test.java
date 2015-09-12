@@ -3,7 +3,6 @@ package nars.nal.nal4;
 import nars.NAR;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
-import nars.nar.NewDefault;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -23,7 +22,7 @@ public class NAL4Test extends JavaNALTest {
         return Arrays.asList(new Object[][]{
                 {new Default()},
                 //{new DefaultDeep()},
-                {new NewDefault()},
+                //{new NewDefault()},
                 //{new NewDefault().setInternalExperience(null)},
                 //{new Default().setInternalExperience(null) },
                 {new Default().nal(5)},

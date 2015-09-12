@@ -14,7 +14,6 @@ import nars.term.*;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +23,7 @@ import java.util.function.Consumer;
  * A rule which produces a Task
  * contains: preconditions, predicates, postconditions, post-evaluations and metainfo
  */
-public class TaskRule extends Rule<Premise,Task> {
+public class TaskRule extends Rule<Premise, Task> {
 
     //match first rule pattern with task
 
@@ -36,14 +35,12 @@ public class TaskRule extends Rule<Premise,Task> {
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
-
-
-
     public Product getPremises() {
-        return (Product)term(0);
+        return (Product) term(0);
     }
+
     public ProductN conclusion() {
-        return (ProductN)term(1);
+        return (ProductN) term(1);
     }
 
     public TaskRule(Product premises, Product result) {
@@ -62,7 +59,7 @@ public class TaskRule extends Rule<Premise,Task> {
 
 
     public ProductN premise() {
-        return (ProductN)term(0);
+        return (ProductN) term(0);
     }
 
     public Product result() {
@@ -75,6 +72,7 @@ public class TaskRule extends Rule<Premise,Task> {
 
 
     public static final Set<Atom> reservedPostconditions = new HashSet(6);
+
     static {
         reservedPostconditions.add(Atom.the("Truth"));
         reservedPostconditions.add(Atom.the("Stamp"));
@@ -84,8 +82,10 @@ public class TaskRule extends Rule<Premise,Task> {
         reservedPostconditions.add(Atom.the("Event"));
     }
 
-    /** non-null;
-     *  if it returns Op.VAR_PATTERN this means that any type can apply */
+    /**
+     * non-null;
+     * if it returns Op.VAR_PATTERN this means that any type can apply
+     */
     public final Op getTaskTermType() {
         return getTask().op();
     }
@@ -95,8 +95,10 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
 
-    /** returns Op.NONE if there is no belief term type;
-     if it returns Op.VAR_PATTERN this means that any type can apply */
+    /**
+     * returns Op.NONE if there is no belief term type;
+     * if it returns Op.VAR_PATTERN this means that any type can apply
+     */
     public Op getBeliefTermType() {
         return getBelief().op();
     }
@@ -110,14 +112,16 @@ public class TaskRule extends Rule<Premise,Task> {
     }
 
 
-    /** test applicability of this rule with a specific maximum NAL level */
+    /**
+     * test applicability of this rule with a specific maximum NAL level
+     */
     public boolean levelValid(final int nalLevel) {
         return Terms.levelValid(getTask(), nalLevel) &&
                 Terms.levelValid(getBelief(), nalLevel) &&
                 Terms.levelValid(getResult(), nalLevel);
     }
 
-    static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound,Term> {
+    static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
 
 
         @Override
@@ -133,7 +137,7 @@ public class TaskRule extends Rule<Premise,Task> {
         public Term apply(Compound containingCompound, Term v, int depth) {
 
             //do not alter postconditions
-            if ((containingCompound instanceof Inheritance) && reservedPostconditions.contains(((Inheritance)containingCompound).getPredicate()))
+            if ((containingCompound instanceof Inheritance) && reservedPostconditions.contains(((Inheritance) containingCompound).getPredicate()))
                 return v;
 
             return new Variable(Symbols.VAR_PATTERN + v.toString(), true);
@@ -155,20 +159,23 @@ public class TaskRule extends Rule<Premise,Task> {
     public TaskRule normalizeRule() {
         TaskRule tr = (TaskRule) new VariableNormalization(this, false) {
 
-                    @Override
-                    public boolean testSuperTerm(Compound t) {
-                        //descend all, because VAR_PATTERN is not yet always considered a variable
-                        return true;
-                    }
-                }.getResult();
+            @Override
+            public boolean testSuperTerm(Compound t) {
+                //descend all, because VAR_PATTERN is not yet always considered a variable
+                return true;
+            }
+        }.getResult();
 
+        if (tr == null) {
+            throw new RuntimeException("Unable to normalize: " + this);
+        }
         return tr.setup();
     }
 
 
     @Override
     public TaskRule clone(Term[] replaced) {
-        return new TaskRule((Product)replaced[0], (Product)replaced[1]);
+        return new TaskRule((Product) replaced[0], (Product) replaced[1]);
     }
 
     public TaskRule setup() {
@@ -177,8 +184,8 @@ public class TaskRule extends Rule<Premise,Task> {
         //1. construct precondition term array
         //Term[] terms = terms();
 
-        Term[] precon = ((Product)term(0)).terms();
-        Term[] postcons = ((Product)term(1)).terms();
+        Term[] precon = ((Product) term(0)).terms();
+        Term[] postcons = ((Product) term(1)).terms();
 
         postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
 
@@ -190,8 +197,6 @@ public class TaskRule extends Rule<Premise,Task> {
         List<PreCondition> afterConcs = Global.newArrayList(0);
 
 
-        int start = 0;
-
         Term taskTermPattern = precon[0];
 
 
@@ -199,9 +204,9 @@ public class TaskRule extends Rule<Premise,Task> {
         if (beliefTermPattern.has(Op.ATOM)) {
             throw new RuntimeException("belief term must be a pattern");
         }
-            //if it contains an atom term, this means it is a modifier,
-            //and not a belief term pattern
-            //(which will not reference any particular atoms)
+        //if it contains an atom term, this means it is a modifier,
+        //and not a belief term pattern
+        //(which will not reference any particular atoms)
 
 
         final MatchTaskBeliefPattern matcher = new MatchTaskBeliefPattern(taskTermPattern, beliefTermPattern, this);
@@ -230,8 +235,7 @@ public class TaskRule extends Rule<Premise,Task> {
                 args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
                 arg1 = args[0];
                 arg2 = (args.length > 1) ? args[1] : null;
-            }
-            else {
+            } else {
                 args = null;
                 arg1 = arg2 = null;
             }
@@ -272,7 +276,7 @@ public class TaskRule extends Rule<Premise,Task> {
                     break;
 
                 case "substitute":
-                    afterConcs.add( new Substitute(arg1, arg2) );
+                    afterConcs.add(new Substitute(arg1, arg2));
                     break;
 
                 case "not_implication_or_equivalence":
@@ -318,7 +322,7 @@ public class TaskRule extends Rule<Premise,Task> {
             postconditions[k++] = new PostCondition(t,
                     beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
                     afterConcs.toArray(new PreCondition[afterConcs.size()]),
-                    ((Product)postcons[i++]).terms() );
+                    ((Product) postcons[i++]).terms());
         }
 
         ensureValid();
@@ -330,16 +334,16 @@ public class TaskRule extends Rule<Premise,Task> {
     public void run(RuleMatch m) {
 
         //try {
-            m.start(this);
+        m.start(this);
 
-            for (final PreCondition p : preconditions) {
-                if (!p.test(m))
-                    return;
-            }
+        for (final PreCondition p : preconditions) {
+            if (!p.test(m))
+                return;
+        }
 
-            //if preconditions are met:
-            for (final PostCondition p : postconditions)
-                m.apply(p);
+        //if preconditions are met:
+        for (final PostCondition p : postconditions)
+            m.apply(p);
         /*}
         catch (Exception e) {
             System.err.println(this);
@@ -365,8 +369,9 @@ public class TaskRule extends Rule<Premise,Task> {
 //    }
 
 
-    /** for each calculable "question reverse" rule,
-     *  supply to the consumer
+    /**
+     * for each calculable "question reverse" rule,
+     * supply to the consumer
      */
     public void forEachQuestionReversal(Consumer<TaskRule> w) {
 
@@ -377,10 +382,10 @@ public class TaskRule extends Rule<Premise,Task> {
         Term C = this.getResult();
 
         //      %C, %B, [pre], task_is_question() |- %T , [post]
-        w.accept( clone(C, B, T) );
+        w.accept(clone(C, B, T));
 
         //      %T, %C, [pre], task_is_question() |- %B, [post]
-        w.accept( clone(T, C, B) );
+        w.accept(clone(T, C, B));
 
     }
 
@@ -392,13 +397,14 @@ public class TaskRule extends Rule<Premise,Task> {
         newPremise.term[0] = newT;
         newPremise.term[1] = newB;
 
-        final Product newConclusion = Product.make( conclusion().cloneTermsReplacing(0, newR) );
+        final Product newConclusion = Product.make(conclusion().cloneTermsReplacing(0, newR));
 
         return new TaskRule(newPremise, newConclusion);
     }
 
     /**
      * returns +1 if first arg=task, second arg = belief, -1 if opposite, and 0 if there was an incomplete match
+     *
      * @param arg1
      * @param arg2
      * @param rule
@@ -411,11 +417,9 @@ public class TaskRule extends Rule<Premise,Task> {
         Term beliefPattern = getPremises().term(1);
         if (arg2.equals(taskPattern) && arg1.equals(beliefPattern)) {
             return -1;
-        }
-        else if (arg1.equals(taskPattern) && arg2.equals(beliefPattern)) {
+        } else if (arg1.equals(taskPattern) && arg2.equals(beliefPattern)) {
             return 1;
-        }
-        else {
+        } else {
             //throw new RuntimeException("after(%X,%Y) needs to match both taks and belief patterns, in one of 2 orderings");
             return 0;
         }
@@ -428,6 +432,7 @@ public class TaskRule extends Rule<Premise,Task> {
         if (order == 0) return null;
         return new After(order == 1);
     }
+
     public Concurrent concurrent(Term arg1, Term arg2) {
         int order = getTaskOrder(arg1, arg2);
         if (order == 0)

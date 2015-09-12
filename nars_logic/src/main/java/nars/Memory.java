@@ -27,7 +27,6 @@ import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
-import nars.nal.PremiseProcessor;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -48,7 +47,6 @@ import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -424,46 +422,6 @@ public class Memory extends Param implements Serializable {
     }
 
 
-    /** safety checks which should not ordinarily be ncessary but maybe for debugging */
-    static void ensureValidTask(final Task t) {
-
-        switch (t.getPunctuation()) {
-            case Symbols.JUDGMENT:
-            case Symbols.QUESTION:
-            case Symbols.QUEST:
-            case Symbols.GOAL:
-            case Symbols.COMMAND:
-                break;
-            default:
-                throw new RuntimeException("Invalid sentence punctuation");
-        }
-
-        if (t.isJudgmentOrGoal() && (t.getTruth() == null)) {
-            throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
-        }
-
-        if ((t.getParentTaskRef() != null && t.getParentTask() == null))
-            throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
-
-        /*
-        if (t.equals( t.getParentTask()) ) {
-            throw new RuntimeException(t + " has parentTask equal to itself");
-        }
-        */
-
-        if (t.getEvidence()==null)
-            throw new RuntimeException(t + " from premise " + t.getParentTask() + "," + t.getParentBelief()
-                    + " yet no evidence provided");
-
-
-        if (Global.DEBUG) {
-            if (Sentence.invalidSentenceTerm(t.getTerm())) {
-                throw new RuntimeException("Invalid sentence content term: " + t.getTerm());
-            }
-        }
-
-    }
-
 
 
 
@@ -716,9 +674,7 @@ public class Memory extends Param implements Serializable {
         return concepts.size();
     }
 
-    public void setDeriver(PremiseProcessor p) {
-        this.deriver = p;
-    }
+
 
 
     //public Iterator<Concept> getConcepts(boolean active, boolean inactive) {

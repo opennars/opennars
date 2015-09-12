@@ -32,7 +32,7 @@ public class UselessProcess extends NARReaction {
     }
 
     void onConceptProcessed(ConceptProcess arg) {
-        Collection<Task> derived = arg.get();
+        Collection<Task> derived = arg.getCached();
         int numDerived = derived.size();
         if (numDerived == 0) {
             System.err.println(nar.time() + ": " +  arg + " no derivations" );

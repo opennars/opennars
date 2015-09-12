@@ -22,6 +22,7 @@ package nars.task;
 
 import nars.Global;
 import nars.Memory;
+import nars.Symbols;
 import nars.budget.Itemized;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
@@ -499,7 +500,45 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
                 setEvidence(memory.newStampSerial());
             }
 
+            switch (getPunctuation()) {
+                case Symbols.JUDGMENT:
+                case Symbols.QUESTION:
+                case Symbols.QUEST:
+                case Symbols.GOAL:
+                case Symbols.COMMAND:
+                    break;
+                default:
+                    throw new RuntimeException("Invalid sentence punctuation");
+            }
+
+            if (isJudgmentOrGoal() && (getTruth() == null)) {
+                throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
+            }
+
+            if ((getParentTaskRef() != null && getParentTask() == null))
+                throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
+
+        /*
+        if (t.equals( t.getParentTask()) ) {
+            throw new RuntimeException(t + " has parentTask equal to itself");
         }
+        */
+
+            if (getEvidence()==null)
+                throw new RuntimeException(this + " from premise " + getParentTask() + "," + getParentBelief()
+                        + " yet no evidence provided");
+
+            if (Global.DEBUG) {
+                if (Sentence.invalidSentenceTerm(getTerm())) {
+                    throw new RuntimeException("Invalid sentence content term: " + getTerm());
+                }
+            }
+
+        }
+
+
+
+
 
         return normalized() != null;
     }

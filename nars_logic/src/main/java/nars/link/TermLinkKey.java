@@ -31,7 +31,7 @@ public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix pa
 //        return hash(prefix(), getTarget());
 //    }
 
-    public static int hash(byte[] prefix, Term target) {
+    static int hash(byte[] prefix, Term target) {
         return (int)Util.ELFHash(prefix, target.hashCode());
     }
 

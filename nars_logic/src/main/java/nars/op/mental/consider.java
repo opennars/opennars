@@ -20,6 +20,8 @@ package nars.op.mental;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
+import nars.nal.Deriver;
+import nars.nal.SimpleDeriver;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.SynchOperator;
@@ -39,7 +41,8 @@ public class consider extends SynchOperator implements Mental {
     public static Budget budgetMentalConcept(final Operation o) {
         return o.getTask().getBudget();
     }
-    
+
+    final Deriver deriver = new SimpleDeriver();
 
     /**
      * To activate a concept as if a question has been asked about it
@@ -56,7 +59,7 @@ public class consider extends SynchOperator implements Mental {
 
         TaskLink taskLink = concept.getTaskLinks().peekNext();
         if (taskLink!=null) {
-            new ConceptTaskLinkProcess(nar, concept, taskLink).input(nar);
+            new ConceptTaskLinkProcess(nar, concept, taskLink).input(nar, deriver);
         }
         
         return null;

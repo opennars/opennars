@@ -12,7 +12,6 @@ import nars.testchamber.operator.Activate;
 import nars.testchamber.operator.Deactivate;
 import nars.testchamber.operator.Goto;
 import nars.testchamber.operator.Pick;
-import nars.gui.NARSwing;
 import nars.nar.Default;
 import nars.util.event.Reaction;
 import processing.core.PVector;
@@ -37,12 +36,12 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        NARSeed builder = new Default();
+        Default nar = new Default();
         
         //set NAR architecture parameters:
         //builder...
         Global.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
-        NAR nar = new NAR(builder);
+
         //set NAR runtime parmeters:  
 //
 //        for(NAR.OperatorRegistration pluginstate : nar.getPlugins()) {

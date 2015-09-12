@@ -73,7 +73,7 @@ public class RuleDerivationGraphTest {
 
         NARComparator c = new NARComparator(
                 new Default(),
-                new NewDefault()
+                new Default()
         ) {
 
 

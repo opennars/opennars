@@ -6,7 +6,6 @@ package nars.core;
 
 
 import com.google.common.collect.Iterables;
-import nars.NAR;
 import nars.concept.Concept;
 import nars.nar.Default;
 import org.junit.Test;
@@ -25,25 +24,28 @@ public class AttentionTest {
     @Test public void testSampleNextConcept() {
         
         int numConcepts = 32;
-        NAR n = new Default();
+        Default n = new Default();
         for (int i = 0; i < numConcepts; i++)
             n.believe("<x" + i + " <-> x" + (i + 1) + ">");
         
-        n.runWhileInputting(100);
+        //n.runWhileInputting(100);
+        n.frame(16);
         
         int c = Iterables.size(n.concepts());
         assertTrue(c > 16);
-        
+
+        n.trace(System.out);
+
         Set<Concept> uniqueconcepts = new HashSet();
         
         for (int i = 0; i < numConcepts; i++) {
-            Concept s = n.memory.nextConcept();
+            Concept s = n.getCycleProcess().next();
             uniqueconcepts.add(s);
         }
 
         assertTrue(uniqueconcepts.size() > 1);
         
-        int c2 = Iterables.size(n.concepts());
+        int c2 = Iterables.size(n.getCycleProcess().concepts());
         assertEquals("does not affect # of concepts", c, c2);
     }
     

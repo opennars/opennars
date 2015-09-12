@@ -40,7 +40,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 
 	public void process(float[] output, int readRate) {
 		if (currentGrain == null && isPlaying) {
-			currentGrain = createGrain(currentGrain);
+			currentGrain = nextGrain(currentGrain);
 		}
         final float dNow = ((granulator.sampleRate / (float)readRate)) * pitchFactor.floatValue();
 
@@ -69,7 +69,7 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 				if (g.isFading(cGrain, lnow)) {
 					fGrain = cGrain;
                     if (p)
-                        cGrain = createGrain(cGrain);
+                        cGrain = nextGrain(cGrain);
                     else
                         cGrain = null;
 				}
@@ -117,9 +117,9 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 		isPlaying = false;
 	}
 
-	private long[] createGrain(long[] targetGrain) {
+	private long[] nextGrain(long[] targetGrain) {
 		//System.out.println("create grain: " + calculateCurrentBufferIndex() + " " + now);
-        targetGrain = granulator.createGrain(targetGrain, calculateCurrentBufferIndex(), (long)now);
+        targetGrain = granulator.nextGrain(targetGrain, calculateCurrentBufferIndex(), (long)now);
         return targetGrain;
 	}
 

@@ -6,12 +6,13 @@ package nars.process;
 
 import nars.Global;
 import nars.NAR;
+import nars.premise.Premise;
 import nars.task.Task;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL extends AbstractPremise implements Supplier<Collection<Task>>, Consumer<Task> {
+public abstract class NAL extends AbstractPremise implements Function<Consumer<Premise>,Collection<Task>>, Consumer<Task> {
 
     /** derivation queue (this might also work as a Set) */
     protected Collection<Task> derived = null;
@@ -33,16 +34,26 @@ public abstract class NAL extends AbstractPremise implements Supplier<Collection
         super(n);
     }
 
-    @Override public final Collection<Task> get() {
+
+    abstract protected void derive(Consumer<Premise> processor);
+
+
+    @Override public final Collection<Task> apply(Consumer<Premise> processor) {
 
         beforeDerive();
 
-        derive();
+        derive(processor);
 
         if (derived == null)
             derived = Collections.EMPTY_LIST;
 
-        return afterDerive(derived);
+        return derived = afterDerive(derived);
+    }
+
+
+
+    public final Collection<Task> getCached() {
+        return derived;
     }
 
     /** implement if necessary in subclasses */
@@ -55,8 +66,6 @@ public abstract class NAL extends AbstractPremise implements Supplier<Collection
         return c;
     }
 
-    /** run the actual derivation process */
-    protected abstract void derive();
 
 
 
@@ -75,8 +84,8 @@ public abstract class NAL extends AbstractPremise implements Supplier<Collection
         }
     }
 
-    public void input(NAR nar) {
-        get().forEach(nar::input);
+    public void input(NAR nar, Consumer<Premise> premiseProcessor) {
+        apply(premiseProcessor).forEach(nar::input);
     }
 
 }

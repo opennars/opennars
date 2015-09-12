@@ -3,7 +3,6 @@ package nars.task;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
-import nars.nar.NewDefault;
 import nars.nar.experimental.Equalized;
 import org.junit.Test;
 
@@ -26,7 +25,7 @@ public class UniqueInputSerialTest {
         inputTwoUniqueTasks(new Equalized(4, 1, 1));
     }
     @Test public void inputTwoUniqueTasksNewDef() {
-        inputTwoUniqueTasks(new NewDefault());
+        inputTwoUniqueTasks(new Default());
     }
 
     public void inputTwoUniqueTasks(NAR n) {

@@ -5,6 +5,9 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.premise.Premise;
+
+import java.util.function.Consumer;
 
 /**
  * Created by me on 8/5/15.
@@ -33,11 +36,11 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
 
     @Override
-    protected void derive() {
+    protected void derive(Consumer<Premise> p) {
 
         final Memory memory = nar().memory();
 
-        memory.getDeriver().fire(this);
+        p.accept(this);
 
         memory.eventBeliefReason.emit(this);
         //emit(Events.BeliefReason.class, this);

@@ -39,6 +39,7 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
+import nars.util.event.Topic;
 
 import java.io.*;
 import java.util.*;
@@ -364,8 +365,10 @@ abstract public class NAR  {
         final Memory m = memory();
 
         if (t == null || !t.init(m)) {
+            m.removed(t, "Garbage");
             return false;
         }
+
 
         if (t.isCommand()) {
             int n = m.execute(t);
@@ -375,18 +378,13 @@ abstract public class NAR  {
             return false;
         }
 
-        if (Global.DEBUG) {
-            m.ensureValidTask(t);
-        }
-
         if (!Terms.levelValid(t, nal())) {
             m.removed(t, "Insufficient NAL level");
             return false;
         }
 
-        //broadcast event
-
         memory.eventInput.emit(t);
+
         return true;
     }
 
@@ -658,6 +656,25 @@ abstract public class NAR  {
 
     public NAR runWhileInputting(int extraCycles) {
         frame(extraCycles);
+        return this;
+    }
+
+    /* Print all statically known events (discovered via reflection)
+    *  for this reasoner to a stream
+    * */
+    public NAR trace(PrintStream out) {
+
+        Topic.all(memory(), (k, v) -> {
+            out.print(k);
+            out.print(": ");
+            if (v instanceof Concept) {
+                Concept c = (Concept) v;
+                out.println(c + " " + c.getBudget().toBudgetString());
+            } else {
+                out.println(v);
+            }
+        });
+
         return this;
     }
 

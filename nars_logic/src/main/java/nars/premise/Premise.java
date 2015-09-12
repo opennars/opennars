@@ -442,13 +442,7 @@ public interface Premise {
         task = task.normalized();
         if (task == null) return null;
 
-        //use this NAL's instance defaults for the values because specific values were not substituted:
 
-        String rejectionReason = memory.getDeriver().getDerivationRejection(this, task, solution, revised, singleOrDouble, getBelief(), getTask());
-        if (rejectionReason != null) {
-            memory.removed(task, rejectionReason);
-            return null;
-        }
 
 
 
