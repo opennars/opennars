@@ -284,7 +284,7 @@ public abstract class AbstractAlann extends NAR {
 
                     if (t.init(mem)) {
 
-                        mem.emit(Events.OUT.class, t);
+                        nar().memory().eventDerived.emit(t);
 
                         //System.err.println("direct input: " + t);
                         TaskProcess.run(nar(), t);

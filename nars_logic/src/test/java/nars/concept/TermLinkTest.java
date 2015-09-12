@@ -72,9 +72,9 @@ public class TermLinkTest {
         */
     }
 
-    private static NAR nn(String term) {
+    private static Default nn(String term) {
         String task = term + ". %1.00;0.90%";
-        NAR n = new Default();
+        Default n = new Default();
         n.input(task);
         n.frame(16);
         return n;
@@ -89,7 +89,7 @@ public class TermLinkTest {
     }
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {
-        NAR n = nn(term);
+        Default n = nn(term);
 
         //note: this method also seems to work
         //Concept c = n.memory.conceptualize(n.term(term), new Budget(1f, 1f, 1f) );
@@ -98,7 +98,7 @@ public class TermLinkTest {
         n.input(term + ".");
         n.frame(1);
 
-        assertTrue(n.numConcepts(true,false) >= 1);
+        assertTrue(n.control.concepts().iterator().hasNext());
 
         Concept c = n.concept(term);
 
@@ -184,7 +184,7 @@ public class TermLinkTest {
             assertEquals(t.type, 3); //all component_statement links
         }
 
-        assertEquals(4, getTermLinkTemplates(d).size());
+        assertEquals(6, getTermLinkTemplates(d).size());
 
 
         NAR n = new Default();
@@ -237,8 +237,8 @@ public class TermLinkTest {
         assertTrue("termlinks between the two input concepts form a fully connected graph",
                 ci.isGraphConnected());
 
-        assertEquals(4, g.vertexSet().size());
-        assertEquals(3, g.edgeSet().size());
+        assertEquals(5, g.vertexSet().size());
+        assertEquals(6, g.edgeSet().size());
 
         TermLinkGraph h = new TermLinkGraph().add(n.concept("{x}"), true);
         //System.out.println(h);

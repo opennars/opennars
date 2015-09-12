@@ -20,8 +20,6 @@
  */
 package nars.nal.nal8.operator;
 
-import nars.Events;
-import nars.Global;
 import nars.nal.nal8.Operation;
 import nars.task.Task;
 
@@ -44,9 +42,6 @@ public class NullOperator extends SynchOperator {
 
     @Override
     public List<Task> apply(Operation o) {
-        if (Global.DEBUG) {
-            o.getMemory().emit(Events.OUT.class, o );
-        }
         return null;
     }
 }

@@ -3,19 +3,15 @@ package nars;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import nars.Events.FrameEnd;
-import nars.Events.FrameStart;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.event.MemoryReaction;
 import nars.event.NARReaction;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
-import nars.io.out.Output;
 import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.link.TaskLink;
@@ -62,8 +58,7 @@ import java.util.function.Predicate;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-abstract public class NAR  {
-
+abstract public class NAR {
 
 
     /**
@@ -76,9 +71,9 @@ abstract public class NAR  {
      */
     public static final String WEBSITE =
             " Open-NARS website:  http://code.google.com/p/open-nars/ \n" +
-            "      NARS website:  http://sites.google.com/site/narswang/ \n" +
-            "    Github website:  http://github.com/opennars/ \n" +
-            "               IRC:  http://webchat.freenode.net/?channels=nars \n";
+                    "      NARS website:  http://sites.google.com/site/narswang/ \n" +
+                    "    Github website:  http://github.com/opennars/ \n" +
+                    "               IRC:  http://webchat.freenode.net/?channels=nars \n";
 
     public final NarseseParser narsese;
 
@@ -93,7 +88,6 @@ abstract public class NAR  {
     protected String name;
 
 
-
     /**
      * Flag for running continuously
      */
@@ -105,13 +99,28 @@ abstract public class NAR  {
      */
     private boolean enabled = true;
 
+    final static Consumer<Object> onError = e -> {
+        if (e instanceof Throwable) {
+            Throwable ex = (Throwable) e;
+
+            //TODO move this to a specific impl of error reaction:
+            ex.printStackTrace();
+
+            if (Global.DEBUG && Global.EXIT_ON_EXCEPTION) {
+                //throw the exception to the next lower stack catcher, or cause program exit if none exists
+                throw new RuntimeException(ex);
+            }
+        } else {
+            System.err.println(e);
+        }
+    };
 
 
     /**
      * normal way to construct a NAR, using a particular Build instance
      */
     public NAR(NARSeed b) {
-        this(  b.newMemory());
+        this(b.newMemory());
         //b.init(this);
     }
 
@@ -126,9 +135,9 @@ abstract public class NAR  {
     }
 
 
-    public final Memory memory() { return memory; }
-
-
+    public final Memory memory() {
+        return memory;
+    }
 
 
     public NAR input(ImmediateOperator o) {
@@ -144,7 +153,7 @@ abstract public class NAR  {
     public synchronized NAR reset() {
         nextTasks.clear();
 
-        if (laterTasks!=null) {
+        if (laterTasks != null) {
             laterTasks.shutdown();
             laterTasks = null;
         }
@@ -166,7 +175,6 @@ abstract public class NAR  {
     public Input input(final File input) throws IOException {
         return input(new FileInput(this, input));
     }
-
 
 
     /**
@@ -219,7 +227,6 @@ abstract public class NAR  {
     }
 
 
-
     /**
      * gets a concept if it exists, or returns null if it does not
      */
@@ -233,8 +240,9 @@ abstract public class NAR  {
 
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
-        return ask((Compound)narsese.compound(termString));
+        return ask((Compound) narsese.compound(termString));
     }
+
     public Task ask(Compound c) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
         return ask(c, Symbols.QUESTION);
@@ -274,7 +282,7 @@ abstract public class NAR  {
     }
 
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe((Compound)term(termString), tense, freq, conf);
+        return believe((Compound) term(termString), tense, freq, conf);
     }
 
     public Task believe(Compound term, float freq, float conf) throws InvalidInputException {
@@ -347,7 +355,6 @@ abstract public class NAR  {
     }
 
 
-
     protected boolean process(Task t) {
         throw new RuntimeException("this should be overridden in subclasses of NAR");
     }
@@ -356,7 +363,7 @@ abstract public class NAR  {
     /**
      * exposes the memory to an input, derived, or immediate task.
      * the memory then delegates it to its controller
-     *
+     * <p>
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
@@ -365,29 +372,27 @@ abstract public class NAR  {
         final Memory m = memory();
 
         if (t == null || !t.init(m)) {
-            m.removed(t, "Garbage");
+            m.remove(t, "Garbage");
             return false;
         }
-
 
         if (t.isCommand()) {
             int n = m.execute(t);
             if (n == 0) {
-                emit(Events.ERR.class, "Unknown command: " + t);
+                m.remove(t, "Unknown Command");
             }
             return false;
         }
 
         if (!Terms.levelValid(t, nal())) {
-            m.removed(t, "Insufficient NAL level");
+            m.remove(t, "Insufficient NAL level");
             return false;
         }
 
-        memory.eventInput.emit(t);
+        m.eventInput.emit(t);
 
         return true;
     }
-
 
 
 //    public static class InputBuffer {
@@ -425,7 +430,9 @@ abstract public class NAR  {
 //        return false;
 //    }
 
-    /** returns the global concept index */
+    /**
+     * returns the global concept index
+     */
     public final CacheBag<Term, Concept> concepts() {
         return memory().getConcepts();
     }
@@ -434,8 +441,8 @@ abstract public class NAR  {
     transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
 
-
-    @Deprecated public int numConcepts(boolean active, boolean inactive) {
+    @Deprecated
+    public int numConcepts(boolean active, boolean inactive) {
         int total = 0;
         if (active && !inactive) return -1; //numActiveConcepts();
         else if (!active && inactive) return -1; //return memory().concepts.size() - ();
@@ -444,7 +451,6 @@ abstract public class NAR  {
         else
             return 0;
     }
-
 
 
     public List<Task> input(final List<Task> t) {
@@ -459,7 +465,6 @@ abstract public class NAR  {
     }
 
 
-
 //    /** input a task via direct TaskProcessing
 //     * @return the TaskProcess, after it has executed (synchronously) */
 //    public Premise inputDirect(final Task t) {
@@ -469,28 +474,28 @@ abstract public class NAR  {
     /**
      * attach event handler to one or more event (classes)
      */
-    public EventEmitter.Registrations on(Reaction<Class,Object[]> o, Class... c) {
+    public EventEmitter.Registrations on(Reaction<Class, Object[]> o, Class... c) {
         return memory.event.on(o, c);
     }
 
-    public void on(Class<? extends Reaction<Class,Object[]>>... x) {
+    public void on(Class<? extends Reaction<Class, Object[]>>... x) {
 
-        for (Class<? extends Reaction<Class,Object[]>> c : x) {
+        for (Class<? extends Reaction<Class, Object[]>> c : x) {
             Reaction<Class, Object[]> v = memory().the(c);
             memory().the(c, v); //register singleton
             on(v);
         }
     }
+
     public void on(Class<? extends OpReaction> c) {
         //for (Class<? extends OpReaction> c : x) {
-            OpReaction v = memory().the(c);
-            on(v);
+        OpReaction v = memory().the(c);
+        on(v);
         //}
     }
 
 
-
-    public EventEmitter.Registrations on(Reaction<Term,Operation> o, Term... c) {
+    public EventEmitter.Registrations on(Reaction<Term, Operation> o, Term... c) {
         return memory.exe.on(o, c);
     }
 
@@ -500,7 +505,6 @@ abstract public class NAR  {
         o.setEnabled(this, true);
         return reg;
     }
-
 
 
     @Deprecated
@@ -553,8 +557,8 @@ abstract public class NAR  {
     public Input input(final Input i) {
         Task t;
 
-        int i1 =0;
-        while (( t = i.get() ) != null) {
+        int i1 = 0;
+        while ((t = i.get()) != null) {
             i1 += input(t) ? 1 : 0;
         }
         return i;
@@ -647,7 +651,21 @@ abstract public class NAR  {
 
         final int cpf = cyclesPerFrame;
         for (int f = 0; (f < frames) && running; f++) {
-            frameCycles(cpf);
+
+            if (!isEnabled())
+                throw new RuntimeException("NAR disabled");
+
+            if (memory.resource != null)
+                memory.resource.FRAME_DURATION.start();
+
+            memory.clock.preFrame(memory);
+
+            memory.cycle(cpf);
+
+            runNextTasks();
+
+            memory.eventFrameEnd.emit(this);
+
         }
 
         running = wasRunning;
@@ -657,17 +675,28 @@ abstract public class NAR  {
     /* Print all statically known events (discovered via reflection)
     *  for this reasoner to a stream
     * */
-    public NAR trace(PrintStream out) {
+    public NAR trace(Appendable out) {
 
         Topic.all(memory(), (k, v) -> {
-            out.print(k);
-            out.print(": ");
-            if (v instanceof Concept) {
-                Concept c = (Concept) v;
-                out.println(c + " " + c.getBudget().toBudgetString());
-            } else {
-                out.println(v);
+            try {
+                out
+                    .append(k.toString())
+                    .append(": ")
+                    .append(v.toString())
+                    .append(' ')
+                    .append(v.toString());
+
+                if (v instanceof Concept) {
+                    Concept c = (Concept) v;
+                    out.append(' ').append(c.getBudget().toBudgetString());
+                }
+
+                out.append('\n');
+
+            } catch (IOException e) {
+                error(e);
             }
+
         });
 
         return this;
@@ -768,6 +797,7 @@ abstract public class NAR  {
         memory.nal(level);
         return this;
     }
+
     public int nal() {
         return memory.nal();
     }
@@ -779,7 +809,6 @@ abstract public class NAR  {
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
-
 
 
     /**
@@ -796,18 +825,21 @@ abstract public class NAR  {
     }
 
 
-    /** adds a task to the queue of task which will be executed in batch
-     *  at the end of the current cycle.
-     *  checks if the queue already contains the pending
-     *  Runnable instance to ensure duplicates don't
-     *  don't accumulate
+    /**
+     * adds a task to the queue of task which will be executed in batch
+     * at the end of the current cycle.
+     * checks if the queue already contains the pending
+     * Runnable instance to ensure duplicates don't
+     * don't accumulate
      */
     final public void taskNext(final Runnable t) {
         if (!nextTasks.contains(t))
             nextTasks.addLast(t);
     }
 
-    /** runs all the tasks in the 'Next' queue */
+    /**
+     * runs all the tasks in the 'Next' queue
+     */
     protected final void runNextTasks() {
         int originalSize = nextTasks.size();
         if (originalSize == 0) return;
@@ -815,66 +847,31 @@ abstract public class NAR  {
         CycleProcess.run(nextTasks, originalSize);
     }
 
-    /** signals an error through one or more event notification systems */
+    /**
+     * signals an error through one or more event notification systems
+     */
     protected void error(Throwable ex) {
-        emit(Events.ERR.class, ex);
-
-        ex.printStackTrace();
-
-        if (Global.DEBUG && Global.EXIT_ON_EXCEPTION) {
-            //throw the exception to the next lower stack catcher, or cause program exit if none exists
-            throw new RuntimeException(ex);
-        }
+        memory.eventError.emit(ex);
 
     }
 
 
-    /** queues a task to (hopefully) be executed at an unknown time in the future,
-     *  in its own thread in a thread pool */
+    /**
+     * queues a task to (hopefully) be executed at an unknown time in the future,
+     * in its own thread in a thread pool
+     */
     public void taskLater(Runnable t) {
-        if (laterTasks==null) {
+        if (laterTasks == null) {
             laterTasks = Executors.newFixedThreadPool(1);
         }
 
-        laterTasks.submit(t);
+        //laterTasks.submit(t);
         laterTasks.execute(t);
-    }
-
-    /**
-     * A frame, consisting of one or more NAR memory cycles
-     */
-    protected void frameCycles(final int cycles) {
-
-        if (!isEnabled())
-            throw new RuntimeException("NAR disabled");
-
-        if (memory.resource!=null)
-            memory.resource.FRAME_DURATION.start();
-
-        memory.clock.preFrame(memory);
-
-        emit(FrameStart.class);
-
-        //try {
-        for (int i = 0; i < cycles; i++)
-            memory.cycle();
-
-        /*}
-        catch (Throwable e) {
-            Throwable c = e.getCause();
-            if (c == null) c = e;
-            error(c);
-        }*/
-
-        runNextTasks();
-
-        emit(FrameEnd.class);
-
     }
 
     @Override
     public String toString() {
-        return "NAR[" + memory.toString() + "]";
+        return getClass().getSimpleName() + "[" + memory.toTypeString() + "]";
     }
 
     /**
@@ -899,12 +896,6 @@ abstract public class NAR  {
     }
 
 
-    public void emit(Throwable e) {
-        emit(Events.ERR.class, e);
-    }
-
-    public final NAR nar = this;
-
     private final Multimap<Set<Class>, Reaction> reactions = HashMultimap.create();
     private List<Object> regs = new ArrayList();
 
@@ -915,7 +906,7 @@ abstract public class NAR  {
 
 
     public void conceptPriorityHistogram(double[] bins) {
-        if (bins!=null)
+        if (bins != null)
             mem().getConcepts().getPriorityHistogram(bins);
     }
 
@@ -931,8 +922,6 @@ abstract public class NAR  {
     }
 
 
-
-
     public Concept get(final Term key) {
         return concepts().get(key);
     }
@@ -946,6 +935,9 @@ abstract public class NAR  {
             throw new RuntimeException("NAR must be stopped to change memory");
 
         memory = m;
+
+        m.eventError.on(onError);
+
     }
 
 
@@ -955,7 +947,7 @@ abstract public class NAR  {
 
 
     protected boolean active(Term t) {
-        return mem().get(t)!=null;
+        return mem().get(t) != null;
     }
 
 
@@ -970,7 +962,7 @@ abstract public class NAR  {
             forEachConcept(c -> {
                 Bag<Sentence, TaskLink> tl = c.getTaskLinks();
                 if (tl != null)
-                    tl.forEach(t ->  target.add(t.targetTask) );
+                    tl.forEach(t -> target.add(t.targetTask));
             });
         }
 
@@ -989,7 +981,6 @@ abstract public class NAR  {
     }
 
 
-
     public void forEachTask(boolean includeTaskLinks, Consumer<Task> each) {
         forEachConcept(c -> {
             if (c.getTaskLinks() != null)
@@ -1000,22 +991,23 @@ abstract public class NAR  {
     }
 
 
-
     public NAR answer(String question, Consumer<Task> recvSolution) {
         //question punctuation optional
         if (!question.endsWith("?")) question = question + "?";
-        Task qt = nar.task(question);
+        Task qt = this.task(question);
         return answer(qt, recvSolution);
     }
 
     public NAR answer(Task question, Consumer<Task> recvSolution) {
-        new AnswerReaction(nar, question) {
+        new AnswerReaction(this, question) {
 
-            @Override public void onSolution(Task belief) {
+            @Override
+            public void onSolution(Task belief) {
                 recvSolution.accept(belief);
             }
 
-            @Override public void setActive(boolean b) {
+            @Override
+            public void setActive(boolean b) {
                 super.setActive(b);
                 manage(this, b);
             }
@@ -1025,7 +1017,7 @@ abstract public class NAR  {
     }
 
     protected final void ensureNotRunning() {
-        if (nar.isRunning())
+        if (this.isRunning())
             throw new RuntimeException("NAR is already running");
     }
 
@@ -1037,11 +1029,13 @@ abstract public class NAR  {
 //        return nar;
 //    }
 
-    /** blocks until finished */
+    /**
+     * blocks until finished
+     */
     public NAR run(int frames) {
         ensureNotRunning();
 
-        nar.frame(frames);
+        this.frame(frames);
 
         return this;
     }
@@ -1050,17 +1044,19 @@ abstract public class NAR  {
         ensureNotRunning();
         return this; //TODO
     }
+
     public NAR save(ObjectOutputStream clone) {
         ensureNotRunning();
         return this; //TODO
     }
+
     public NAR load(ObjectInputStream clone) {
         ensureNotRunning();
         return this; //TODO
     }
 
     public NAR input(String... ss) {
-        for (String s : ss) nar.input(s);
+        for (String s : ss) this.input(s);
         return this;
     }
 
@@ -1070,31 +1066,31 @@ abstract public class NAR  {
 //    }
 
     public NAR inputAt(long time, String... tt) {
-        return at(t -> t == time, () -> input(tt) );
+        return at(t -> t == time, () -> input(tt));
     }
 
     public NAR inputAt(LongPredicate timeCondition, Task... tt) {
-        return at(timeCondition, () -> input(tt) );
+        return at(timeCondition, () -> input(tt));
     }
 
     public NAR inputAt(long time, Task... tt) {
-        return at(t -> t == time, () -> input(tt) );
+        return at(t -> t == time, () -> input(tt));
     }
 
     public NAR forEachConceptTask(boolean b, boolean q, boolean g, boolean _q,
-                                        int maxPerConcept,
-                                        Consumer<Task> recip) {
+                                  int maxPerConcept,
+                                  Consumer<Task> recip) {
         forEachConcept(c -> {
-            if (b && c.hasBeliefs())   c.getBeliefs().top(maxPerConcept, recip);
+            if (b && c.hasBeliefs()) c.getBeliefs().top(maxPerConcept, recip);
             if (q && c.hasQuestions()) c.getQuestions().top(maxPerConcept, recip);
-            if (g && c.hasBeliefs())   c.getGoals().top(maxPerConcept, recip);
-            if (_q && c.hasQuests())   c.getQuests().top(maxPerConcept, recip);
+            if (g && c.hasBeliefs()) c.getGoals().top(maxPerConcept, recip);
+            if (_q && c.hasQuests()) c.getQuests().top(maxPerConcept, recip);
         });
         return this;
     }
 
     public NAR forEachConcept(Consumer<Concept> recip) {
-        nar.memory.concepts.forEach(recip);
+        this.memory.concepts.forEach(recip);
         return this;
     }
 
@@ -1116,14 +1112,14 @@ abstract public class NAR  {
     //TODO iterate/query beliefs, etc
 
     public NAR meterLogic(Consumer<LogicMeter> recip) {
-        recip.accept( nar.memory.logic );
-        return this;
-    }
-    public NAR meterEmotion(Consumer<EmotionMeter> recip) {
-        recip.accept( nar.memory.emotion );
+        recip.accept(this.memory.logic);
         return this;
     }
 
+    public NAR meterEmotion(Consumer<EmotionMeter> recip) {
+        recip.accept(this.memory.emotion);
+        return this;
+    }
 
 
     public NAR resetEvery(long minPeriodOfCycles) {
@@ -1132,11 +1128,11 @@ abstract public class NAR  {
     }
 
     public NAR onEachPeriod(long minPeriodOfCycles, Runnable action) {
-        final long start = nar.time();
+        final long start = this.time();
         final long[] next = new long[1];
         next[0] = start + minPeriodOfCycles;
-        forEachCycle(() -> {
-            long n = nar.time();
+        onEachCycle((m) -> {
+            long n = m.time();
             if (n >= next[0]) {
                 action.run();
             }
@@ -1146,13 +1142,13 @@ abstract public class NAR  {
 
     /**
      * Get the Concept associated to a Term, or create it.
-     *
+     * <p>
      * Existing concept: apply tasklink activation (remove from bag, adjust
      * budget, reinsert) New concept: set initial activation, insert Subconcept:
      * extract from cache, apply activation, insert
-     *
+     * <p>
      * If failed to insert as a result of null bag, returns null
-     *
+     * <p>
      * A displaced Concept resulting from insert is forgotten (but may be stored
      * in optional subconcept memory
      *
@@ -1215,14 +1211,14 @@ abstract public class NAR  {
 
 
     public NAR resetIf(Predicate<NAR> resetCondition) {
-        forEachCycle(() -> {
-            if (resetCondition.test(nar)) reset();
+        onEachFrame((n) -> {
+            if (resetCondition.test(n)) reset();
         });
         return this;
     }
 
     public NAR stopIf(BooleanSupplier stopCondition) {
-        forEachCycle(() -> {
+        onEachFrame((n) -> {
             if (stopCondition.getAsBoolean()) stop();
         });
         return this;
@@ -1230,8 +1226,8 @@ abstract public class NAR  {
 
 
     public NAR at(LongPredicate timeCondition, Runnable action) {
-        forEachCycle(() -> {
-            if (timeCondition.test(nar.time())) {
+        onEachCycle((m) -> {
+            if (timeCondition.test(m.time())) {
                 action.run();
             }
         });
@@ -1239,30 +1235,27 @@ abstract public class NAR  {
     }
 
 
-
-
-    public NAR forEachCycle(Runnable receiver) {
-        regs.add(nar.memory.eventCycleEnd.on( m -> {
-            receiver.run();
-        }));
+    public final NAR onEachCycle(Consumer<Memory> receiver) {
+        regs.add(this.memory.eventCycleEnd.on(receiver));
         return this;
     }
 
-    public NAR onEachFrame(Runnable receiver) {
-        return on(Events.FrameEnd.class, receiver);
+    public final NAR onEachFrame(Consumer<NAR> receiver) {
+        regs.add(this.memory.eventFrameEnd.on(receiver));
+        return this;
     }
 
     public NAR onEachNthFrame(Runnable receiver, int frames) {
-        return onEachFrame(() -> {
-            if (nar.time() % frames == 0)
+        return onEachFrame((n) -> {
+            if (n.time() % frames == 0)
                 receiver.run();
         });
     }
 
-    public NAR onEachDerived(Consumer<Object[] /* TODO: Task*/> receiver) {
-        NARReaction r = new ConsumedStreamNARReaction(receiver, Events.OUT.class);
-        return this;
-    }
+//    public NAR onEachDerived(Consumer<Object[] /* TODO: Task*/> receiver) {
+//        NARReaction r = new ConsumedStreamNARReaction(receiver, Events.OUT.class);
+//        return this;
+//    }
 
     public <X> NAR on(Class signal, Consumer<X> receiver) {
         NARReaction r = new ConsumedStreamNARReaction(receiver, signal);
@@ -1280,33 +1273,31 @@ abstract public class NAR  {
     }
 
     public NAR stdout() {
+
+        trace(System.out);
+
+        /*
         try {
             forEachEvent(System.out, Output.DefaultOutputEvents);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         return this;
     }
-    public NAR stdoutTrace() {
-        try {
-            forEachEvent(System.out, MemoryReaction.memoryEvents);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
+
 
     public NAR forEachEvent(Appendable o, Class... signal) throws Exception {
         NARReaction r = new StreamNARReaction(signal) {
-            @Override public void event(Class event, Object... args) {
+            @Override
+            public void event(Class event, Object... args) {
                 try {
-                    TextOutput.append(o, event, args, "\n", true, true, 0, nar);
+                    TextOutput.append(o, event, args, "\n", true, true, 0, (NAR) NAR.this);
 
                     if (o instanceof OutputStream)
-                        ((OutputStream)o).flush();
+                        ((OutputStream) o).flush();
 
                 } catch (IOException e) {
-                    nar.emit(e);
+                    error(e);
                 }
             }
         };
@@ -1331,20 +1322,20 @@ abstract public class NAR  {
     public NAR spawnThread(long periodMS, Consumer<Thread> t) {
         ensureNotRunning();
 
-        t.accept( new Thread(() -> {
+        t.accept(new Thread(() -> {
             loop(periodMS);
-        }) );
+        }));
 
         return this;
     }
 
     public NAR onConceptActive(final Consumer<Concept> c) {
-        regs.add( nar.memory.eventConceptActivated.on(c) );
+        regs.add(this.memory.eventConceptActivated.on(c));
         return this;
     }
 
     public NAR onConceptForget(final Consumer<Concept> c) {
-        regs.add( nar.memory.eventConceptForget.on(c) );
+        regs.add(this.memory.eventConceptForget.on(c));
         return this;
     }
 
@@ -1357,10 +1348,11 @@ abstract public class NAR  {
     abstract private class StreamNARReaction extends NARReaction {
 
         public StreamNARReaction(Class... signal) {
-            super(nar, signal);
+            super((NAR) NAR.this, signal);
         }
 
-        @Override public void setActive(boolean b) {
+        @Override
+        public void setActive(boolean b) {
             super.setActive(b);
             manage(this, b);
         }
@@ -1390,8 +1382,10 @@ abstract public class NAR  {
 
     }
 
-    /** ignores any event arguments and just invokes a Runnable when something
+    /**
+     * ignores any event arguments and just invokes a Runnable when something
      * is received (ex: cycle)
+     *
      * @param <X>
      */
     private class RunnableStreamNARReaction<X> extends StreamNARReaction {
@@ -1409,7 +1403,6 @@ abstract public class NAR  {
         }
 
     }
-
 
 
 //    private void debugTime() {

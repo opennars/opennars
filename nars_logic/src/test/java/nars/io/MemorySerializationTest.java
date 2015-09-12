@@ -1,7 +1,7 @@
 package nars.io;
 
 import nars.Memory;
-import nars.nar.experimental.Equalized;
+import nars.NAR;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,8 +21,7 @@ public class MemorySerializationTest extends AbstractSerializationTest<Memory,Me
         return Arrays.asList(new Object[][]{
 
                 //various memory setups
-                { new Equalized(250,2,3)
-                        .input("<a-->b>.","<b-->c>.").run(100).nar.memory }
+                { ((NAR) NAR.this).memory }
 
         });
     }

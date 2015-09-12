@@ -20,8 +20,7 @@
  */
 package nars;
 
-import nars.Events.ResetStart;
-import nars.Events.Restart;
+
 import nars.bag.impl.CacheBag;
 import nars.clock.Clock;
 import nars.concept.Concept;
@@ -43,6 +42,7 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.nal8.ExecutionResult;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
@@ -89,6 +89,9 @@ public class Memory extends Param implements Serializable {
     transient public final Topic<Concept> eventConceptActivated = new DefaultTopic();
     transient public final Topic<Concept> eventConceptForget = new DefaultTopic();
 
+    //transient public final Topic<NAR> eventFrameStart = new DefaultTopic();
+    transient public final Topic<NAR> eventFrameEnd = new DefaultTopic();
+
     transient public final Topic<Memory>
             /** fired at the beginning of each memory cycle */
             eventCycleStart = new DefaultTopic(),
@@ -97,6 +100,7 @@ public class Memory extends Param implements Serializable {
 
     transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
+    transient public final Topic<ExecutionResult> eventExecution = new DefaultTopic<>();
 
     transient public final EventEmitter<Term,Operation> exe;
 
@@ -129,6 +133,8 @@ public class Memory extends Param implements Serializable {
 
 
     public final Topic<Task> eventInput = new DefaultTopic<>();
+    public final Topic<Object> eventError = new DefaultTopic<>();
+    public final Topic<Task> eventDerived = new DefaultTopic();
 
 
     /**
@@ -357,7 +363,7 @@ public class Memory extends Param implements Serializable {
     public synchronized void clear() {
 
 
-        /*@Deprecated */ event.emit(ResetStart.class);
+
         eventReset.emit(this);
 
         clock.clear();
@@ -373,7 +379,7 @@ public class Memory extends Param implements Serializable {
 
         emotion.clear();
 
-        event.emit(Restart.class);
+
 
     }
 
@@ -431,7 +437,7 @@ public class Memory extends Param implements Serializable {
     /* ---------- new task entries ---------- */
 
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
-    public void removed(final Task task, String removalReason) {
+    public void remove(final Task task, String removalReason) {
 
         if (removalReason==null)
             removalReason = "Unknown";
@@ -447,8 +453,8 @@ public class Memory extends Param implements Serializable {
         task.delete();
     }
 
-    final public void removed(final Task task) {
-        removed(task, null);
+    final public void remove(final Task task) {
+        remove(task, null);
     }
 
     /** sends an event signal to listeners subscribed to channel 'c' */
@@ -587,27 +593,27 @@ public class Memory extends Param implements Serializable {
         return concepts;
     }
 
-    public synchronized void cycle() {
+    public synchronized void cycle(int num) {
 
-        inCycle = true;
+        for ( ; num > 0; num--) {
 
-        clock.preCycle();
+            inCycle = true;
 
-        eventCycleStart.emit(this);
+            clock.preCycle();
 
-        eventCycleEnd.emit(this);
+            eventCycleStart.emit(this);
 
-        inCycle = false;
+            eventCycleEnd.emit(this);
 
-        //deletePendingConcepts();
+            inCycle = false;
 
-        //randomUpdate();
+            //deletePendingConcepts();
+
+            //randomUpdate();
+        }
 
     }
 
-    public Concept nextConcept() {
-        throw new RuntimeException("not impl");
-    }
 
 
 //    /** called when a Concept's lifecycle has changed */
@@ -676,7 +682,10 @@ public class Memory extends Param implements Serializable {
         return concepts.size();
     }
 
-
+    /** identifies the type of memory as a string */
+    public String toTypeString() {
+        return getClass().getSimpleName();
+    }
 
 
     //public Iterator<Concept> getConcepts(boolean active, boolean inactive) {

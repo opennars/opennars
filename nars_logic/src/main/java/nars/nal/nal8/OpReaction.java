@@ -22,7 +22,6 @@
 package nars.nal.nal8;
 
 import com.google.common.collect.Lists;
-import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -148,7 +147,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
         final NAR n = nar();
 
         //Display a message in the output stream to indicate the reportExecution of an operation
-        n.emit(EXE.class, new ExecutionResult(op, feedback, n.mem()));
+        n.memory.eventExecution.emit(new ExecutionResult(op, feedback, n.mem()));
 
 
         if (!op.getTask().isCommand()) {

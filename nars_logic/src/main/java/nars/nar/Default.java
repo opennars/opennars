@@ -18,7 +18,7 @@ import nars.nal.SimpleDeriver;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
-import nars.op.app.STMInduction;
+import nars.op.app.STMEventInference;
 import nars.op.data.Flat;
 import nars.op.data.json;
 import nars.op.data.similaritree;
@@ -219,7 +219,7 @@ public class Default extends NAR {
 //        table.put("^strike", new Strike("^strike"));
 
     };
-    private final DefaultCycle control;
+    public final DefaultCycle control;
     public int cyclesPerFrame = 1;
     protected int maxNALLevel;
     /**
@@ -325,7 +325,7 @@ public class Default extends NAR {
 
         if (maxNALLevel >= 7) {
             on(PerceptionAccel.class);
-            on(STMInduction.class);
+            on(STMEventInference.class);
 
             if (maxNALLevel >= 8) {
 

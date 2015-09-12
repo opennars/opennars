@@ -374,7 +374,7 @@ public interface Premise {
 
         if (!Terms.levelValid(task.getTerm(), nal())) {
             //TODO throw exception because we dont want this to happen
-            memory.removed(task, "Insufficient NAL level");
+            memory.remove(task, "Insufficient NAL level");
             return null;
         }
 
@@ -410,7 +410,7 @@ public interface Premise {
                     if (cyclic) {
                         //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                         //re.printStackTrace();
-                        nar().memory().removed(task, "Cyclic");
+                        nar().memory().remove(task, "Cyclic");
                         return null;
                     }
                 }

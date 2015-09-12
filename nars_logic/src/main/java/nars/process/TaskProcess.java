@@ -99,7 +99,7 @@ public class TaskProcess extends NAL {
         final Concept c = nar.conceptualize(task, task.getBudget());
 
         if (c==null) {
-            memory.removed(task, "Unable to conceptualize");
+            memory.remove(task, "Unable to conceptualize");
             return;
         }
 
@@ -401,7 +401,7 @@ public class TaskProcess extends NAL {
         }
 
         if (!taskBudget.summaryGreaterOrEqual(nar.mem().taskProcessThreshold)) {
-            nar.mem().removed(task, "Insufficient budget");
+            nar.mem().remove(task, "Insufficient budget");
             return null;
         }
 

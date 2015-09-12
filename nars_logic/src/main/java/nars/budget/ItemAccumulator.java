@@ -196,7 +196,7 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
     }
 
     public static int limit(ItemAccumulator<Task> acc, int capacity, List<Task> temporary, Memory m) {
-        return acc.limit(capacity, task -> m.removed(task, "Ignored"), temporary);
+        return acc.limit(capacity, task -> m.remove(task, "Ignored"), temporary);
     }
 
 

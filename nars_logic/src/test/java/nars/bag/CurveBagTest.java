@@ -9,11 +9,13 @@ import nars.budget.Item;
 import nars.meter.bag.NullItem;
 import nars.nar.Default;
 import nars.util.data.Util;
-import nars.util.data.random.XORShiftRandom;
+import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
+import org.apache.commons.math3.util.MathArrays;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,7 +28,7 @@ import static org.junit.Assert.*;
  */
 public class CurveBagTest extends AbstractBagTest {
 
-    final static Random rng = new XORShiftRandom();
+    final static Random rng = new XorShift1024StarRandom(1);
 
     static {
         Global.DEBUG = true;
@@ -42,21 +44,37 @@ public class CurveBagTest extends AbstractBagTest {
         //FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
         //int[] d2 = testCurveBag(f1);
         //int[] d3 = testCurveBag(new RedBlackSortedIndex<>());        
-        int[] d1 = testCurveBag(new ArraySortedIndex<>(40));
+        //int[] d1 = testCurveBag(new ArraySortedIndex<>(40));
 
         
         //use the final distribution to compare that each implementation generates exact same results
         //assertTrue(Arrays.equals(d1, d2));
         //assertTrue(Arrays.equals(d2, d3));
-        
-        for (int capacity : new int[] { 6, 7, 13, 16, 100 } ) {
-            testRemovalDistribution(capacity);
+
+        int repeats = 2;
+
+
+        System.out.println("Bag sampling distributions");
+        for (int capacity : new int[] { 1, 2, 3, 6, 13, 27, 32, 64, 100 } ) {
+
+
+            double[] total = new double[capacity];
+
+            for (int i = 0; i < repeats; i++) {
+                double[] count = testRemovalDistribution(capacity);
+                total = MathArrays.ebeAdd(total, count);
+            }
+
+            System.out.println(capacity + "," + " = " + Arrays.toString(total));
+
             testRemovalDistribution(capacity);
         }
 
     }
     
-    public int[] testCurveBag(SortedIndex<NullItem> items) {
+    @Test  public void testCurveBag() {
+
+        ArraySortedIndex items = new ArraySortedIndex(1024);
 
         testCurveBag(true, items);
         testCurveBag(false, items);
@@ -72,7 +90,7 @@ public class CurveBagTest extends AbstractBagTest {
             d = AbstractBagTest.testRemovalPriorityDistribution(capacity, items);
         }
         
-        return d;
+
     }
     
     public void testCurveBag(boolean random, SortedIndex<NullItem> items) {
@@ -158,11 +176,12 @@ public class CurveBagTest extends AbstractBagTest {
     }
 
 
-    public static void testRemovalDistribution(int capacity) {
+    public static double[] testRemovalDistribution(int capacity) {
         int samples = 128 * capacity;
         
-        int count[] = new int[capacity];
-        
+        double[] count = new double[capacity];
+
+
         SortedIndex<NullItem> items = new ArraySortedIndex<>(capacity);
         CurveBag<CharSequence, NullItem> f = new CurveBag(rng, capacity, curve, items);
         
@@ -178,14 +197,13 @@ public class CurveBagTest extends AbstractBagTest {
         for (int i= 0; i < samples; i++) {
             count[f.sampler.applyAsInt(f)]++;
         }
-        
-        //System.out.println(capacity +"," + " = " + Arrays.toString(count));
-                
-        assert(Util.isSemiMonotonicallyDecreasing(count));
+
+        assert(Util.isSemiMonotonicallyDec(count));
         
         //System.out.println(random + " " + Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);
-        
+
+        return count;
     }
 
     public void testAveragePriority(int capacity, SortedIndex<NullItem> items) {

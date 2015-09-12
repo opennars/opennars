@@ -1,6 +1,5 @@
 package nars.nar;
 
-import nars.Events;
 import nars.LocalMemory;
 import nars.Memory;
 import nars.io.out.TextOutput;
@@ -10,7 +9,6 @@ import org.infinispan.marshall.core.JBossMarshaller;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -81,8 +79,8 @@ public class NARTest {
         new Default()
                 .input("<a --> b>.", "<b --> c>.")
                 .stopIf( () -> false )
-                .forEachCycle( cycled::incrementAndGet )
-                .forEachEvent(new PrintWriter(sw), Events.OUT.class)
+                .onEachCycle( n-> cycled.incrementAndGet() )
+                .trace(sw)
                 .run(frames)
                 //.conceptActiveIterator(i -> conceptsIterated.set(Iterators.size(i)))
                 .forEachConceptTask(true, true, true, true, 1, System.out::println );

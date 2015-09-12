@@ -1,7 +1,8 @@
 package nars.clock;
 
-import nars.Events;
 import nars.Memory;
+
+import java.io.Serializable;
 
 /**
  * Created by me on 7/2/15.
@@ -51,13 +52,28 @@ abstract public class RealtimeClock implements Clock {
             final int d = memory.param.duration.get();
 
             if (frameTime > d) {
-                memory.emit(Events.ERR.class,
-                        "Real-time consumed by frame (" +
-                                frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)");
+                memory.eventError.emit(new Lag(d, frameTime));
             }
 
         }
     }
+
+    static class Lag implements Serializable {
+
+        private final double frameTime;
+        private final int dur;
+
+        public Lag(int duration, double frameTime) {
+            this.dur= duration;
+            this.frameTime = frameTime;
+        }
+
+        public String toString() {
+            return "Lag frameTime=" +
+                    frameTime + ", duration=" + dur + " cycles)";
+        }
+    }
+
 
     protected void update() {
         long now = getRealTime();

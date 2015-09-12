@@ -141,7 +141,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         //System.out.println(capacity +"," + random + " = " + Arrays.toString(count));
                 
-        assert(Util.isSemiMonotonicallyDecreasing(count));
+        assert(Util.isSemiMonotonicallyInc(count));
         
         //System.out.println(Arrays.toString(count));
         //System.out.println(count[0] + " " + count[1] + " " + count[2] + " " + count[3]);

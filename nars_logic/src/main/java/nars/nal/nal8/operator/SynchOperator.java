@@ -1,6 +1,5 @@
 package nars.nal.nal8.operator;
 
-import nars.Events;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
 import nars.term.Term;
@@ -38,8 +37,7 @@ abstract public class SynchOperator extends OpReaction {
         try {
             executed(op, apply(op));
         } catch (Exception e) {
-            op.getMemory().emit(Events.ERR.class, e.toString());
-            e.printStackTrace();
+            op.getMemory().eventError.emit(e);
             return false;
         }
 

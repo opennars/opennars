@@ -34,7 +34,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
     public DefaultAlann(int derivelets) {
         this(new MapCacheBag<>(
 
-                new BoundedConcurrentHashMap(
+                new BoundedConcurrentHashMap<>(
                         /* capacity */ conceptLimit,
                         /* concurrency */ 1,
                         /* key equivalence */
@@ -62,8 +62,8 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
             derivers.add( d );
         }
 
-        defaultTTL = nar.memory.duration() * 3;
-        this.context = new MyDeriveletContext(nar);
+        defaultTTL = memory().duration() * 3;
+        this.context = new MyDeriveletContext(this);
 
     }
 

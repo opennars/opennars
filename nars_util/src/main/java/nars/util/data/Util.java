@@ -534,7 +534,7 @@ public class Util {
      * first items are highest, so it is actually descending order
      * TODO improve accuracy
      * */
-    public static boolean isSemiMonotonicallyIncreasing(int[] count) {
+    public static boolean isSemiMonotonicallyDec(double[] count) {
 
 
         int cl = count.length;
@@ -544,7 +544,7 @@ public class Util {
     }
 
     /* TODO improve accuracy */
-    public static boolean isSemiMonotonicallyDecreasing(int[] count) {
+    public static boolean isSemiMonotonicallyInc(int[] count) {
 
         int cl = count.length;
         return

@@ -10,15 +10,15 @@ import java.io.Serializable;
 public interface Clock extends Serializable {
 
     /** called when memory reset */
-    public void clear();
+    void clear();
 
     /** returns the current time, as measured in units determined by this clock */
-    public long time();
+    long time();
 
     /** called at the beginning of a new cycle */
-    public void preCycle();
+    void preCycle();
 
-    default public void preFrame(Memory m) { }
+    default void preFrame(Memory m) { }
 
     long timeSinceLastCycle();
 }
