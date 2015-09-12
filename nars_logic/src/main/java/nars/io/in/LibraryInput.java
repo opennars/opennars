@@ -5,7 +5,6 @@
 package nars.io.in;
 
 import nars.*;
-import nars.meter.condition.OutputCondition;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 
@@ -74,9 +73,9 @@ public class LibraryInput extends TextInput {
             return "nal/" + path;
     }
     
-    public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
-        return OutputCondition.getConditions(n, input, similarResultsToSave);
-    }
+//    public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
+//        return OutputCondition.getConditions(n, input, similarResultsToSave);
+//    }
 
     public static Map<String,String> getUnitTests() {
         return getUnitTests("test", "Examples/DecisionMaking", "Examples/ClassicalConditioning");

@@ -1,5 +1,6 @@
 package nars.event;
 
+import nars.Memory;
 import nars.NAR;
 import nars.util.event.DefaultTopic;
 
@@ -11,7 +12,10 @@ abstract public class FrameReaction implements Consumer<NAR> {
     private DefaultTopic.Subscription reg;
 
     public FrameReaction(NAR nar) {
-        reg = nar.memory.eventFrameEnd.on(this);
+        this(nar.memory);
+    }
+    public FrameReaction(Memory m) {
+        reg = m.eventFrameEnd.on(this);
     }
 
     public void off() {

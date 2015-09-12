@@ -23,7 +23,7 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 /**
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
  */
-public class STMEventInference extends NARReaction {
+public class STMEventInference  {
 
     public final Deque<Task> stm;
     private final Deriver deriver;
@@ -35,7 +35,7 @@ public class STMEventInference extends NARReaction {
 
 
     public STMEventInference(NAR nar, Deriver deriver) {
-        super(nar);
+
         this.deriver = deriver;
         this.stmSize = 1;
         stm = Global.THREADS == 1 ? new ArrayDeque() : new ConcurrentLinkedDeque<>();
@@ -45,20 +45,10 @@ public class STMEventInference extends NARReaction {
         nar.memory.eventTaskProcess.on(n -> {
             inductionOnSucceedingEvents(n, false);
         });
-    }
-
-    @Override
-    public Class[] getEvents() {
-        return new Class[]{ Events.ResetStart.class};
-    }
-
-
-    @Override
-    public void event(Class event, Object[] args) {
-
-        if (event == Events.ResetStart.class) {
+        nar.memory.eventReset.on(n -> {
             stm.clear();
-        }
+        });
+
     }
 
     public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
@@ -87,7 +77,7 @@ public class STMEventInference extends NARReaction {
         }
 
         //new one happened and duration is already over, so add as negative task
-        nal.emit(Events.EventBasedReasoningEvent.class, currentTask, nal);
+        //nal.emit(Events.EventBasedReasoningEvent.class, currentTask, nal);
 
         //final long now = nal.memory.time();
 
@@ -115,10 +105,7 @@ public class STMEventInference extends NARReaction {
         //iterate on a copy because temporalInduction seems like it sometimes calls itself recursively and this will cause a concurrent modification exception otherwise
         Task[] stmCopy = stm.toArray(new Task[stm.size()]);
 
-        RuleMatch m = matchers.get();
-
-
-
+        //RuleMatch m = matchers.get();
 
         for (Task previousTask : stmCopy) {
 

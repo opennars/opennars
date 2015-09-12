@@ -21,6 +21,7 @@
 package nars;
 
 
+import com.gs.collections.api.tuple.Twin;
 import nars.bag.impl.CacheBag;
 import nars.clock.Clock;
 import nars.concept.Concept;
@@ -100,7 +101,7 @@ public class Memory extends Param implements Serializable {
 
     transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
-    transient public final Topic<ExecutionResult> eventExecution = new DefaultTopic<>();
+    transient public final Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
 
     transient public final EventEmitter<Term,Operation> exe;
 
@@ -135,6 +136,7 @@ public class Memory extends Param implements Serializable {
     public final Topic<Task> eventInput = new DefaultTopic<>();
     public final Topic<Object> eventError = new DefaultTopic<>();
     public final Topic<Task> eventDerived = new DefaultTopic();
+    public Topic<Twin<Task>> eventAnswer = new DefaultTopic();
 
 
     /**

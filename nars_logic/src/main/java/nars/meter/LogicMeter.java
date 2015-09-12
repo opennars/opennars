@@ -1,10 +1,9 @@
 package nars.meter;
 
-import nars.Events;
 import nars.Memory;
 import nars.budget.Budgeted;
 import nars.concept.Concept;
-import nars.event.NARReaction;
+import nars.event.FrameReaction;
 import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
 
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
  * <p>
  * TODO add the remaining meter types for NARS data structures (ex: Concept metrics)
  */
-public class LogicMeter extends NARReaction {
+public class LogicMeter extends FrameReaction {
 
 
 
@@ -76,6 +75,7 @@ public class LogicMeter extends NARReaction {
     //public final DoubleMeter DERIVATION_LATENCY = new DoubleMeter("rule.derivation.latency");
     public final DoubleMeter SOLUTION_BEST = new DoubleMeter("task.solution.best");
 
+
     /*
     public final DoubleMeter PLAN_GRAPH_IN_DELAY_MAGNITUDE = new DoubleMeter("plan.graph.add#delay_magnitude");
     public final DoubleMeter PLAN_GRAPH_IN_OPERATION = new DoubleMeter("plan.graph.add#operation");
@@ -93,26 +93,15 @@ public class LogicMeter extends NARReaction {
 
 
     public LogicMeter(Memory m) {
-        super(m, false, /*Events.IN.class, */Events.FrameStart.class, Events.FrameEnd.class);
+        super(m);
         this.m = m;
-        reset();
     }
 
     @Override
-    public void event(Class event, Object... args) {
-//        if (event == Events.IN.class) {
-//            Task t = (Task) args[0];
-//            float p = t.getPriority();
-//            if (Float.isFinite(p))
-//                inputPriority.addValue(p);
-//        }
-        if (event == Events.FrameStart.class) {
-            reset();
-        }
-        if (event == Events.FrameEnd.class) {
-            commit();
-        }
-
+    public void onFrame() {
+        conceptMeter.reset();
+        m.getConcepts().forEach(conceptMeter);
+        conceptMeter.commit(m);
     }
 
     public static class ItemMeter<I extends Budgeted> implements Consumer<I> {
@@ -263,19 +252,7 @@ public class LogicMeter extends NARReaction {
     public final ConceptMeter conceptMeter = new ConceptMeter();
 
 
-    public void reset() {
-        conceptMeter.reset();
-    }
 
-    public void commit() {
-        if (isActive()) {
-            m.getConcepts().forEach(conceptMeter);
-            conceptMeter.commit(m);
-        }
-        else {
-            throw new RuntimeException(this + " is not active and should have nothing to commit");
-        }
-    }
 
 //    @Override
 //    public void commit(Memory memory) {

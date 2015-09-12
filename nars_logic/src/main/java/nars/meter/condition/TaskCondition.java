@@ -2,7 +2,6 @@ package nars.meter.condition;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -19,33 +18,34 @@ import nars.util.event.DefaultTopic;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-public class TaskCondition extends OutputCondition implements Serializable {
+public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Task> {
 
-    //@Expose
-    public final Class channel;
     //@Expose
 
     @JsonSerialize(using= JSONOutput.TermSerializer.class)
-    public final Term term;
+    public  Term term;
 
     //@Expose
-    public final char punc;
+    public  char punc;
 
     //@Expose
-    public final float freqMin;
+    public  float freqMin;
     //@Expose
-    public final float freqMax;
+    public  float freqMax;
     //@Expose
-    public final float confMin;
+    public  float confMin;
     //@Expose
-    public final float confMax;
+    public  float confMax;
     //@Expose
-    public final long cycleStart; //-1 for not compared
+    public  long cycleStart; //-1 for not compared
     //@Expose
-    public final long cycleEnd;  //-1 for not compared
+    public  long cycleEnd;  //-1 for not compared
 
-    protected final boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
+    protected  boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
+    private  NAR nar;
     //private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
     //@Expose
@@ -71,14 +71,41 @@ public class TaskCondition extends OutputCondition implements Serializable {
     final transient private boolean strictDurationWindow = true;
 
 
-    public TaskCondition(NAR n, Task t, Class channel, long creationTimeOffset, final boolean relativeToCondition, Class... channels)  {
-        super(n, TaskCondition.outAndAnswer(channel));
+    public TaskCondition()  {
+
+    }
+    public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+
+
+        this.relativeToCondition = false;
+        /*this.taskRemoved = */getTaskRemoved(n);
+
+        if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
+        if (confMax < confMin) throw new RuntimeException("confMax < confMin");
+
+        if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
+
+        this.creationTime = n.time();
+        this.cycleStart = cycleStart;
+        this.cycleEnd = cycleEnd;
+        setEternal();
+        this.freqMax = Math.min(1.0f, freqMax);
+        this.freqMin = Math.max(0.0f, freqMin);
+        this.confMax = Math.min(1.0f, confMax);
+        this.confMin = Math.max(0.0f, confMin);
+        this.punc = punc;
+        this.term = n.term(sentenceTerm);
+    }
+
+
+
+    public TaskCondition(NAR n, Task t, long creationTimeOffset, final boolean relativeToCondition)  {
+
+        this.nar = n;
 
         //TODO verify that channel is included in the listened events
 
-        this.channel = channel;
         this.relativeToCondition = relativeToCondition;
-
 
         /*this.taskRemoved = */getTaskRemoved(n);
 
@@ -112,65 +139,41 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     protected DefaultTopic.Subscription getTaskRemoved(NAR n) {
         return n.memory.eventTaskRemoved.on(task -> {
-            if (!succeeded) {
+            //if (!succeeded) {
                 if (matches(task)) {
                     ensureRemovals();
                     removals.addLast(task);
                     if (removals.size() > maxRemovals)
                         removals.removeFirst();
                 }
-            }
+            //}
         });
     }
 
-    public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-        super(n, TaskCondition.outAndAnswer(channel));
-
-        this.relativeToCondition = false;
-        /*this.taskRemoved = */getTaskRemoved(n);
-
-        if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
-        if (confMax < confMin) throw new RuntimeException("confMax < confMin");
-
-        if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
-
-        this.creationTime = n.time();
-        this.channel = channel;
-        this.cycleStart = cycleStart;
-        this.cycleEnd = cycleEnd;
-        setEternal();
-        this.freqMax = Math.min(1.0f, freqMax);
-        this.freqMin = Math.max(0.0f, freqMin);
-        this.confMax = Math.min(1.0f, confMax);
-        this.confMin = Math.max(0.0f, confMin);
-        this.punc = punc;
-        this.term = n.term(sentenceTerm);
-    }
-
-
-    private static Class[] outAndAnswer(Class channel) {
-        if (channel == Events.OUT.class) {
-            return new Class[] { Events.OUT.class, Events.Answer.class };
-        }
-        else return new Class[] { channel };
+//    public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+//
+//
+//        this.relativeToCondition = false;
+//        /*this.taskRemoved = */getTaskRemoved(n);
+//
+//        if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
+//        if (confMax < confMin) throw new RuntimeException("confMax < confMin");
+//
+//        if (cycleEnd - cycleStart < 1) throw new RuntimeException("cycleEnd must be after cycleStart by at least 1 cycle");
+//
+//        this.creationTime = n.time();
+//        this.cycleStart = cycleStart;
+//        this.cycleEnd = cycleEnd;
+//        setEternal();
+//        this.freqMax = Math.min(1.0f, freqMax);
+//        this.freqMin = Math.max(0.0f, freqMin);
+//        this.confMax = Math.min(1.0f, confMax);
+//        this.confMin = Math.max(0.0f, confMin);
+//        this.punc = punc;
+//        this.term = n.term(sentenceTerm);
+//    }
 
 
-    }
-
-    public TaskCondition(NAR n, Class inClass, Task t, int cycle, boolean b, int similarResultsToSave, Class ...channels) {
-        this(n, t, inClass, cycle, b, channels);
-
-        this.maxClose = similarResultsToSave;
-
-        if (similarResultsToSave == 0) {
-            this.maxRemovals = 0;
-        }
-    }
-
-
-    //continue examining output task in case a closer result appears
-    @Override
-    protected boolean continueAfterSuccess() { return true; }
 
     public double getAcceptableDistanceThreshold() {
         return 0.01;
@@ -243,123 +246,111 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
 
+
+
     @Override
-    public boolean condition(Class channel, Object signal) {
+    public boolean test(Task task) {
 
-        //consider ANS and OUT the same:
-        if (channel == Events.Answer.class)
-            channel = Events.OUT.class;
+        if (!matches(task)) return false;
 
-        if (channel == this.channel) {
-
-            if (signal instanceof Task) {
-
-                Task task = (Task) signal;
-
-                if (!matches(task)) return false;
-
-                double distance = 0;
-                long now = time();
+        double distance = 0;
+        long now = nar.time();
 
 
-                boolean match = true;
+        boolean match = true;
 
-                if ( ((cycleStart!=-1) && (now < cycleStart)) ||
-                        ((cycleEnd!=-1) && (now > cycleEnd)))  {
-                    distance += getTimeDistance(now);
-                    match = false;
-                }
+        if ( ((cycleStart!=-1) && (now < cycleStart)) ||
+                ((cycleEnd!=-1) && (now > cycleEnd)))  {
+            distance += getTimeDistance(now);
+            match = false;
+        }
 
 
-                float temporalityCost = 0.75f;
+        float temporalityCost = 0.75f;
 
-                //require right kind of tense
-                if (isEternal()) {
-                    if (!task.isEternal()) {
-                        distance += temporalityCost;
-                        match = false;
+        //require right kind of tense
+        if (isEternal()) {
+            if (!task.isEternal()) {
+                distance += temporalityCost;
+                match = false;
+            }
+        }
+        else {
+            if (task.isEternal()) {
+                distance += temporalityCost - 0.01;
+                match = false;
+            }
+            else {
+
+                    final long oc = task.getOccurrenceTime();
+
+                    final int durationWindow = task.getDuration();
+
+                    final int durationWindowNear = durationWindow / 2;
+                    final int durationWindowFar = strictDurationWindow ? durationWindowNear : durationWindow;
+
+
+                    long at = relativeToCondition ? creationTime : task.getCreationTime();
+
+                    final boolean tmatch;
+                    switch (tense) {
+                        case Past: tmatch = oc <= (-durationWindowNear + at); break;
+                        case Present: tmatch = oc >= (-durationWindowFar + at) && (oc <= +durationWindowFar + at); break;
+                        case Future: tmatch = oc > (+durationWindowNear + at); break;
+                        default:
+                            throw new RuntimeException("Invalid tense for non-eternal TaskCondition: " + this);
                     }
-                }
-                else {
-                    if (task.isEternal()) {
-                        distance += temporalityCost - 0.01;
+                    if (!tmatch) {
+                        //beyond tense boundaries
+                        //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
+                        float tenseCost = 0.35f;
+                        distance += tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
                         match = false;
                     }
                     else {
-
-                            final long oc = task.getOccurrenceTime();
-
-                            final int durationWindow = task.getDuration();
-
-                            final int durationWindowNear = durationWindow / 2;
-                            final int durationWindowFar = strictDurationWindow ? durationWindowNear : durationWindow;
-
-
-                            long at = relativeToCondition ? creationTime : task.getCreationTime();
-
-                            final boolean tmatch;
-                            switch (tense) {
-                                case Past: tmatch = oc <= (-durationWindowNear + at); break;
-                                case Present: tmatch = oc >= (-durationWindowFar + at) && (oc <= +durationWindowFar + at); break;
-                                case Future: tmatch = oc > (+durationWindowNear + at); break;
-                                default:
-                                    throw new RuntimeException("Invalid tense for non-eternal TaskCondition: " + this);
-                            }
-                            if (!tmatch) {
-                                //beyond tense boundaries
-                                //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
-                                float tenseCost = 0.35f;
-                                distance += tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
-                                match = false;
-                            }
-                            else {
-                                //System.out.println("matched time");
-                            }
-
+                        //System.out.println("matched time");
                     }
-
-                }
-
-
-                //TODO use range of acceptable occurrenceTime's for non-eternal tests
-
-
-                if ((punc == '.') || (punc == '!')) {
-                    float fr = task.getFrequency();
-                    float co = task.getConfidence();
-
-                    if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
-                        match = false;
-                        distance += getTruthDistance(task.getTruth());
-                    }
-                }
-
-                if (!match && distance < getAcceptableDistanceThreshold())
-                    match = true;
-
-                if (match) {
-                    //TODO record a different score for fine-tune optimization?
-
-                    if (exact==null || (exact.size() < maxExact)) {
-                        ensureExact();
-                        exact.add(task);
-                        return true;
-                    }
-                }
-
-                if (distance > 0) {
-                    ensureSimilar();
-                    similar.put(distance, task);
-                    if (similar.size() > maxClose) {
-                        similar.remove( similar.lastEntry().getKey() );
-                    }
-                }
-
-                return match;
 
             }
+
         }
-        return false;
+
+
+        //TODO use range of acceptable occurrenceTime's for non-eternal tests
+
+
+        if ((punc == '.') || (punc == '!')) {
+            float fr = task.getFrequency();
+            float co = task.getConfidence();
+
+            if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
+                match = false;
+                distance += getTruthDistance(task.getTruth());
+            }
+        }
+
+        if (!match && distance < getAcceptableDistanceThreshold())
+            match = true;
+
+        if (match) {
+            //TODO record a different score for fine-tune optimization?
+
+            if (exact==null || (exact.size() < maxExact)) {
+                ensureExact();
+                exact.add(task);
+                return true;
+            }
+        }
+
+        if (distance > 0) {
+            ensureSimilar();
+            similar.put(distance, task);
+            if (similar.size() > maxClose) {
+                similar.remove( similar.lastEntry().getKey() );
+            }
+        }
+
+        return match;
     }
 
     private void ensureExact() {
@@ -373,7 +364,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
 
-    @Override
     public String getFalseReason() {
         String x = "Unmatched; ";
 
@@ -399,7 +389,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         return new DefaultTruth(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
     }
 
-    @Override
+
     public List<Task> getTrueReasons() {
         return exact;
         //if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
@@ -426,6 +416,61 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
     public Memory getMemory() {
-        return getNAR().memory;
+        return nar.memory;
+    }
+
+    boolean succeeded = false;
+
+    long successTime = Stamp.TIMELESS;
+
+    @Override
+    public void accept(Task task) {
+        if (!succeeded && test(task)) {
+            succeeded = true;
+            successTime = nar.time();
+        }
+    }
+
+    public long getSuccessTime() {
+        return successTime;
+    }
+
+    /** calculates the "cost" of an execution according to certain evaluated condtions
+     *  this is the soonest time at which all output conditions were successful.
+     *  if any conditions were not successful, the cost is infinity
+     * */
+    public static double cost(Iterable<TaskCondition> conditions) {
+        long lastSuccess = Stamp.TIMELESS;
+        for (TaskCondition e : conditions) {
+            long est = e.getSuccessTime();
+            if (est != Stamp.TIMELESS) {
+                if (lastSuccess < est) {
+                    lastSuccess = est;
+                }
+            }
+        }
+        if (lastSuccess != Stamp.TIMELESS) {
+            //score = 1.0 + 1.0 / (1+lastSuccess);
+            return lastSuccess;
+        }
+
+        return Double.POSITIVE_INFINITY;
+    }
+
+    /** returns a function of the cost characterizing the optimality of the conditions
+     *  monotonically increasing from -1..+1 (-1 if there were errors,
+     *  0..1.0 if all successful.  limit 0 = takes forever, limit 1.0 = instantaneous
+     */
+    public static double score(List<TaskCondition> requirements) {
+        double cost = cost(requirements);
+        if (Double.isFinite(cost))
+            return 1.0 / (1.0 + cost);
+        else
+            return -1;
+
+    }
+
+    public final boolean isTrue() {
+        return succeeded;
     }
 }

@@ -98,7 +98,7 @@ public class TermLinkTest {
         n.input(term + ".");
         n.frame(1);
 
-        assertTrue(n.control.concepts().iterator().hasNext());
+        assertTrue(n.core.concepts().iterator().hasNext());
 
         Concept c = n.concept(term);
 

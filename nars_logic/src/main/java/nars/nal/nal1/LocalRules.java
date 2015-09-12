@@ -20,14 +20,13 @@
  */
 package nars.nal.nal1;
 
-import nars.Events.Answer;
+import com.gs.collections.impl.tuple.Tuples;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.io.out.Output;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
@@ -287,13 +286,12 @@ public class LocalRules {
         question.getBudget().decPriority(budget.getPriority());
 
         //Solution Activated
-        if (question.isQuestOrQuestion()) {
-            //if (questionTask.isInput()) { //only show input tasks as solutions
-            memory.emit(Answer.class, belief, question);
-        } else {
-            //goal quests only show silence related
-            memory.emit(Output.class, belief, question);
-        }
+//        if (question.isQuestOrQuestion()) {
+//            //if (questionTask.isInput()) { //only show input tasks as solutions
+            memory.eventAnswer.emit(Tuples.twin(belief, question));
+//        } else {
+//            memory.eventAnswer.emit(Tuples.twin(belief, question));
+//        }
 
         return belief;
     }

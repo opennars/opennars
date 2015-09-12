@@ -3,7 +3,7 @@ package nars.util.java;
 import junit.framework.TestCase;
 import nars.NAR;
 import nars.io.out.TextOutput;
-import nars.meter.CountIOEvents;
+import nars.meter.EventCount;
 import nars.nar.Default;
 import nars.term.Atom;
 import org.junit.Test;
@@ -39,7 +39,7 @@ public class NALObjectsTest extends TestCase {
 
         NAR n = new Default();
 
-        CountIOEvents count = new CountIOEvents(n);
+        EventCount count = new EventCount(n);
 
         TestClass tc = new NALObjects(n).build("myJavaObject", TestClass.class);
 

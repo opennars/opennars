@@ -1,15 +1,13 @@
 /*
  * Here comes the text of your license
- * Each line should be prefixed with  * 
+ * Each line should be prefixed with  *
  */
 package nars.op.mental;
 
 import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
-import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.NARReaction;
 import nars.nal.UtilityFunctions;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.AbstractInterval;
@@ -21,10 +19,11 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
-import nars.util.event.DefaultTopic;
+import nars.util.event.Topic;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
 import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
@@ -32,12 +31,11 @@ import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
 /**
  * @author tc
  */
-public class PerceptionAccel extends NARReaction {
+public class PerceptionAccel extends Topic.Registrations {
 
     public final static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1; //new inference rule accelerating decision making: https://groups.google.com/forum/#!topic/open-nars/B8veE-WDd8Q
     public final static int ConjunctionMemorySize = 100;
-    private final DefaultTopic.Subscription onConceptActive;
-    private final DefaultTopic.Subscription onConceptForget;
+    private final Supplier<Concept> sample;
 
     //mostly only makes sense if perception plugin is loaded
     //keep track of how many conjunctions with related amount of component terms there are:
@@ -50,43 +48,45 @@ public class PerceptionAccel extends NARReaction {
     final LongArrayList evBase = new LongArrayList();
 
 
-    public PerceptionAccel(NAR n) {
-        super(n, Events.InduceSucceedingEvent.class);
-
-        this.onConceptActive = n.memory.eventConceptActivated.on(c -> {
-            Term t = c.getTerm();
-            if (t instanceof Sequence)
-                handleConjunctionSequence((Sequence)t, true);
-        });
-        this.onConceptForget = n.memory.eventConceptForget.on(c -> {
-            Term t = c.getTerm();
-            if (t instanceof Sequence)
-                handleConjunctionSequence((Sequence)t, false);
-        });
+    /**
+     *
+     * @param sample where concepts are sampled from
+     */
+    public PerceptionAccel(NAR n, Supplier<Concept> sample) {
+        super();
+        this.sample = sample;
+        add(
+                n.memory.eventConceptActivated.on(c -> {
+                    Term t = c.getTerm();
+                    if (t instanceof Sequence)
+                        handleConjunctionSequence((Sequence) t, true);
+                }),
+                n.memory.eventConceptForget.on(c -> {
+                    Term t = c.getTerm();
+                    if (t instanceof Sequence)
+                        handleConjunctionSequence((Sequence) t, false);
+                })
+        );
     }
 
-    @Override
-    public Class[] getEvents() {
-        return super.getEvents();
-    }
-
-    @Override
-    public void event(Class event, Object[] args) {
-        if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
-            Task newEvent = (Task) args[0];
-            if (/*newEvent.isInput() &&*/ newEvent.isJudgment() && !newEvent.isEternal()) {
-
-                NAL nal = (NAL) args[1];
-
-                while (eventbuffer.size() + 1 > cur_maxlen + 1) {
-                    eventbuffer.remove(0);
-                }
-                eventbuffer.add(newEvent);
-
-                perceive(newEvent, nal);
-            }
-        }
-    }
+//
+//    @Override
+//    public void event(Class event, Object[] args) {
+//        if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
+//            Task newEvent = (Task) args[0];
+//            if (/*newEvent.isInput() &&*/ newEvent.isJudgment() && !newEvent.isEternal()) {
+//
+//                NAL nal = (NAL) args[1];
+//
+//                while (eventbuffer.size() + 1 > cur_maxlen + 1) {
+//                    eventbuffer.remove(0);
+//                }
+//                eventbuffer.add(newEvent);
+//
+//                perceive(newEvent, nal);
+//            }
+//        }
+//    }
 
 
     public void setPartConceptsPrioThreshold(float value) {
@@ -201,7 +201,6 @@ public class PerceptionAccel extends NARReaction {
             }
 
 
-
             if (C1 == null || C2 == null || C1.getPriority() < partConceptsPrioThreshold || C2.getPriority() < partConceptsPrioThreshold) {
                 continue; //too less priority
             }
@@ -209,31 +208,30 @@ public class PerceptionAccel extends NARReaction {
             relterms = CyclesInterval.removeZeros(relterms);
             if (relterms.length < 2) continue;
 
-            Term[] relterms2=new Term[relterms.length];
-            int u=0;
-            for(int i=0; i<relterms.length; i++) {
-                if(!(relterms[i] instanceof AbstractInterval)) {
+            Term[] relterms2 = new Term[relterms.length];
+            int u = 0;
+            for (int i = 0; i < relterms.length; i++) {
+                if (!(relterms[i] instanceof AbstractInterval)) {
                     //ok it is not an interval, so it has to exist as concept else it needs to be eliminated
-                    Concept C=nal.nar.concept(relterms[i]);
-                    if(C !=null && C.getPriority() >= partConceptsPrioThreshold) {
+                    Concept C = nal.nar.concept(relterms[i]);
+                    if (C != null && C.getPriority() >= partConceptsPrioThreshold) {
                         relterms2[u] = relterms[i];
                         u++;
                     }
-                }
-                else {
+                } else {
                     relterms2[u] = relterms[i];
                     u++;
                 }
             }
 
-            Term[] relterms2_real=new Term[u];
+            Term[] relterms2_real = new Term[u];
             System.arraycopy(relterms2, 0, relterms2_real, 0, u);
 
             Term C0 = Conjunction.make(relterms2_real, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             if (!(C0 instanceof Conjunction)) {
                 continue;
             }
-            Conjunction C = (Conjunction)C0;
+            Conjunction C = (Conjunction) C0;
 
 
 //            if (debugMechanism) {
@@ -246,12 +244,11 @@ public class PerceptionAccel extends NARReaction {
 
             //lets make the new event the parent task, and derive it
             Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth)
-                            .budget(UtilityFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
-                            .parent(task, newEvent)
-                            .occurrNow()
-                            .setEvidence(Stamp.toSetArray(evBase.toArray()))
-                            .setTemporalInducting(!longest_result_derived_already));
-
+                    .budget(UtilityFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
+                    .parent(task, newEvent)
+                    .occurrNow()
+                    .setEvidence(Stamp.toSetArray(evBase.toArray()))
+                    .setTemporalInducting(!longest_result_derived_already));
 
 
         }
@@ -270,7 +267,7 @@ public class PerceptionAccel extends NARReaction {
         } else {
             sv[c.length()]--;
         }
-        //determine cur_maxlen 
+        //determine cur_maxlen
         //by finding the first complexity which exists
         cur_maxlen = 1; //minimum size is 1 (the events itself), in which case only chaining of two will happen
         for (int i = sv.length - 1; i >= 2; i--) { //>=2 because a conjunction with size=1 doesnt exist

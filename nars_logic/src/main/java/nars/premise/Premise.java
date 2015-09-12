@@ -565,13 +565,14 @@ public interface Premise {
 
             accept(task);
 
-            emit(Events.TaskDerive.class, task, this);
+            memory.eventDerived.emit(task);
+
             memory.logic.TASK_DERIVED.hit();
 
             if (nal(7) && !task.isEternal()) {
-                if (task.getOccurrenceTime() > time()) {
+                /*if (task.getOccurrenceTime() > time()) {
                     emit(Events.TaskDeriveFuture.class, task, this);
-                }
+                }*/
 
 
 //                //TODO move this to ImmediateEternalization.java handler that reacts to TaskDeriveTemporal (to prune reacting to Eternal events)

@@ -4,13 +4,12 @@
  */
 package nars.nal.nal6;
 
-import nars.Events.Answer;
 import nars.NAR;
-import nars.event.NARReaction;
 import nars.io.out.TextOutput;
-import nars.meter.condition.OutputContainsCondition;
+import nars.io.qa.AnswerReaction;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
+import nars.task.Task;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,19 +46,22 @@ public class VariableUnificationTest extends JavaNALTest {
     @Test public void testDepQueryVariableDistinct() {
 
 
-
-        /*
+         /*
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
-            shouldn't happen because it should not unify #wat with 4 because its not a query variable      
-        */        
-        new NARReaction(nar, true, Answer.class) {
-            @Override public void event(Class event, Object[] args) {
+            shouldn't happen because it should not unify #wat with 4 because its not a query variable
+        */
+        new AnswerReaction(nar) {
+
+            @Override
+            public void onSolution(Task belief) {
                 //nothing should cause this event
-                assertTrue(Arrays.toString(args), false);
+                assertTrue(belief.toString(), false);
             }
         };
-        
-        tester.requires.add(new OutputContainsCondition(tester.nar, "=/> <a --> 4>>.", 5));
+
+
+        assertTrue("test impl unfinished: ", false);
+        //tester.requires.add(new OutputContainsCondition(tester.nar, "=/> <a --> 4>>.", 5));
 
 
         tester.nar.input(

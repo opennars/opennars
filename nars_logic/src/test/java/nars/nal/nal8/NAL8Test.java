@@ -51,7 +51,8 @@ public class NAL8Test extends JavaNALTest {
 
         tester.mustDesire(40, action, 1.0f, 0.42f);
 
-        tester.mustOutput(1, 10, action, '.', 1f, 1f, Global.OPERATOR_EXECUTION_CONFIDENCE, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
+        assertTrue("test impl unfinished", false);
+        //tester.mustOutput(nar.memory.eventExecute, 1, 10, action, '.', 1f, 1f, Global.OPERATOR_EXECUTION_CONFIDENCE, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
 
 
         tester.run(40);

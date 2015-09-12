@@ -1,17 +1,16 @@
 package nars.meter;
 
-import nars.Events;
 import nars.NAR;
 import nars.event.CycleReaction;
 import nars.io.in.TextInput;
 import nars.io.out.TextOutput;
-import nars.meter.condition.OutputCondition;
 import nars.meter.condition.TaskCondition;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.truth.DefaultTruth;
+import nars.util.event.Topic;
 import nars.util.meter.event.HitMeter;
 
 import java.io.PrintStream;
@@ -36,7 +35,7 @@ public class TestNAR  {
 
 
     /** "must" requirement conditions specification */
-    public final List<OutputCondition> requires = new ArrayList();
+    public final List<TaskCondition> requires = new ArrayList();
     public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
     final transient private boolean exitOnAllSuccess = true;
@@ -52,7 +51,7 @@ public class TestNAR  {
             new EarlyExit(1);
         }
 
-        eventMeters = new CountIOEvents(nar).eventMeters;
+        eventMeters = new EventCount(nar).eventMeters;
 
     }
 
@@ -66,7 +65,7 @@ public class TestNAR  {
      * completed prior to the limit.
      * */
     public double getCost() {
-        return OutputCondition.cost(requires);
+        return TaskCondition.cost(requires);
     }
 
     class EarlyExit extends CycleReaction {
@@ -91,7 +90,7 @@ public class TestNAR  {
 
                 int nr = requires.size();
                 for (int i = 0; i < nr; i++) {
-                    final OutputCondition oc = requires.get(i);
+                    final TaskCondition oc = requires.get(i);
                     if (!oc.isTrue()) {
                         finished = false;
                         break;
@@ -116,18 +115,19 @@ public class TestNAR  {
     }
 
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-        return mustEmit(Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+        return mustEmit(nar.memory().eventDerived, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
     }
 
-    public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
-        return mustEmit(Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, ocRelative );
+    public ExplainableTask mustOutput(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
+        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, ocRelative );
     }
 
-    public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+    public ExplainableTask mustEmit(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL );
     }
 
-    public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
+    public ExplainableTask mustEmit(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
+
         float h = (freqMin!=-1) ? DefaultTruth.DEFAULT_TRUTH_EPSILON / 2.0f : 0;
 
         if (freqMin == -1) freqMin = freqMax;
@@ -137,10 +137,13 @@ public class TestNAR  {
         cycleStart -= tt;
         cycleEnd += tt;
 
-        TaskCondition tc = new TaskCondition(nar, c,
+        TaskCondition tc;
+        c.on(tc = new TaskCondition(nar,
                 cycleStart,
                 cycleEnd,
-                sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
+                sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h)
+        );
+
         if (ocRelative!= Stamp.ETERNAL) {
             /** occurence time measured relative to the beginning */
             tc.setRelativeOccurrenceTime(cycleStart, (int)ocRelative, nar.memory().duration());
@@ -169,16 +172,16 @@ public class TestNAR  {
     }
 
     public ExplainableTask mustInput(long withinCycles, String task) {
-        return mustEmit(withinCycles, task, Events.IN.class);
+        return mustEmit(nar.memory.eventInput, withinCycles, task);
     }
 
     public ExplainableTask mustOutput(long withinCycles, String task) throws InvalidInputException {
-        return mustEmit(withinCycles, task, Events.OUT.class);
+        return mustEmit(nar.memory.eventDerived, withinCycles, task);
     }
 
     public final long time() { return nar.time(); }
 
-    public ExplainableTask mustEmit(long withinCycles, String task, Class channel) throws InvalidInputException {
+    public ExplainableTask mustEmit(Topic<Task> c, long withinCycles, String task) throws InvalidInputException {
         Task t = nar.task(task);
         //TODO avoid reparsing term from string
 
@@ -188,10 +191,10 @@ public class TestNAR  {
             final float freq = t.getFrequency();
             final float conf = t.getConfidence();
             long occurrence = t.getOccurrenceTime();
-            return mustEmit(channel, now, now + withinCycles, termString, t.getPunctuation(), freq, freq, conf, conf, occurrence);
+            return mustEmit(c, now, now + withinCycles, termString, t.getPunctuation(), freq, freq, conf, conf, occurrence);
         }
         else {
-            return mustEmit(channel, now, now + withinCycles, termString, t.getPunctuation(), -1, -1, -1, -1);
+            return mustEmit(c, now, now + withinCycles, termString, t.getPunctuation(), -1, -1, -1, -1);
         }
     }
 
@@ -270,12 +273,9 @@ public class TestNAR  {
 
     public void run() {
         long finalCycle = 0;
-        for (OutputCondition oc : requires) {
-            if (oc instanceof TaskCondition) {
-                TaskCondition tc = (TaskCondition) oc;
-                if (tc.cycleEnd > finalCycle)
-                    finalCycle = tc.cycleEnd+1;
-            }
+        for (TaskCondition oc : requires) {
+            if (oc.cycleEnd > finalCycle)
+                finalCycle = oc.cycleEnd+1;
         }
 
         runUntil(finalCycle);
@@ -312,20 +312,10 @@ public class TestNAR  {
         int conditions = requires.size();
         int failures = getError()!=null ? 1 : 0;
 
-        for (OutputCondition oc : requires) {
-            if (oc instanceof TaskCondition) {
-                TaskCondition tc = (TaskCondition) oc;
-                if (!tc.isTrue()) {
-                    failures++;
-                }
+        for (TaskCondition tc : requires) {
+            if (!tc.isTrue()) {
+                failures++;
             }
-            /*else if (oc instanceof OutputNotContainsCondition) {
-                if (!oc.isTrue())
-                    failures++;
-            }*/
-            /*else {
-                throw new RuntimeException("Unrecognized requirement type: " + oc);
-            }*/
         }
 
         int successes = conditions - failures;
@@ -357,7 +347,7 @@ public class TestNAR  {
 
         if (showFail || showSuccess) {
 
-            for (OutputCondition tc : requires) {
+            for (TaskCondition tc : requires) {
 
                 if (!tc.isTrue()) {
                     if (showFail) {

@@ -1,11 +1,5 @@
 package nars.nal.multistep;
 
-import nars.NAR;
-import nars.meter.condition.OutputContainsCondition;
-import nars.nal.nal7.Tense;
-import nars.nar.Default;
-import nars.narsese.InvalidInputException;
-
 /**
 I played a lot with 1.6.0 version for long time now. I'm am pleased that it works that nicely.
 
@@ -33,40 +27,42 @@ it may work much better then.
 Any ideas of a strategy to generate statements like "(&/,a,b,c) =/> d" with temporal induction in an effective way?
 */
 public class GoalSequence {
-    
-    final int maxCycles = 2000;
-    
-    public GoalSequence(int duration, int pause, int interSeqPause/*, float questionPriority, float questionDurability*/) throws InvalidInputException {
-        NAR n = new Default();
-        n.memory().duration.set(duration);
-    
-        System.out.println("duration=" + duration + ", pause=" + pause + ", interSeqPause=" + interSeqPause );
-        
-        OutputContainsCondition c = new OutputContainsCondition(n, "<(&/, <a-->meta-word>, <b-->meta-word>) =/> <c-->meta-word>>.", 4);
-        OutputContainsCondition c2 = new OutputContainsCondition(n, "<<b --> word> =/> <c --> word>>.", 4);
-                
-        while (n.time() < maxCycles) {
-           
-            n.believe("<a --> word>", Tense.Present, 1.0f, 0.9f);
-            n.frame(pause);
-            n.believe("<b --> word>", Tense.Present, 1.0f, 0.9f);
-            n.frame(pause);
-            n.believe("<c --> word>", Tense.Present, 1.0f, 0.9f);
-            n.frame(pause);
+    //TODO rewrite with TestNAR
 
-            n.ask("<?what =/> <c --> meta-word>>");
 
-            n.frame(interSeqPause);
-        }
-        
-        System.out.println(c);
-        System.out.println(c2);
-        System.out.println();
-    }
-    
-    public static void main(String[] args) throws InvalidInputException {
-        for (int pause = 1; pause < 10; pause++) {
-            new GoalSequence(5, pause, pause * 10);
-        }
-    }
+//    final int maxCycles = 2000;
+//
+//    public GoalSequence(int duration, int pause, int interSeqPause/*, float questionPriority, float questionDurability*/) throws InvalidInputException {
+//        NAR n = new Default();
+//        n.memory().duration.set(duration);
+//
+//        System.out.println("duration=" + duration + ", pause=" + pause + ", interSeqPause=" + interSeqPause );
+//
+//        OutputContainsCondition c = new OutputContainsCondition(n, "<(&/, <a-->meta-word>, <b-->meta-word>) =/> <c-->meta-word>>.", 4);
+//        OutputContainsCondition c2 = new OutputContainsCondition(n, "<<b --> word> =/> <c --> word>>.", 4);
+//
+//        while (n.time() < maxCycles) {
+//
+//            n.believe("<a --> word>", Tense.Present, 1.0f, 0.9f);
+//            n.frame(pause);
+//            n.believe("<b --> word>", Tense.Present, 1.0f, 0.9f);
+//            n.frame(pause);
+//            n.believe("<c --> word>", Tense.Present, 1.0f, 0.9f);
+//            n.frame(pause);
+//
+//            n.ask("<?what =/> <c --> meta-word>>");
+//
+//            n.frame(interSeqPause);
+//        }
+//
+//        System.out.println(c);
+//        System.out.println(c2);
+//        System.out.println();
+//    }
+//
+//    public static void main(String[] args) throws InvalidInputException {
+//        for (int pause = 1; pause < 10; pause++) {
+//            new GoalSequence(5, pause, pause * 10);
+//        }
+//    }
 }

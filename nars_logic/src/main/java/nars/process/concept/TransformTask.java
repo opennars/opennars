@@ -1,6 +1,5 @@
 package nars.process.concept;
 
-import nars.Events;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -72,7 +71,7 @@ public class TransformTask extends ConceptFireTask<ConceptTaskLinkProcess> {
             }
 
 
-            f.emit(Events.TermLinkTransformed.class, t, f.getConcept(), this);
+            //f.emit(Events.TermLinkTransformed.class, t, f.getConcept(), this);
             f.memory().logic.TERM_LINK_TRANSFORM.hit();
         }
 

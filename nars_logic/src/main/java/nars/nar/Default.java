@@ -219,7 +219,7 @@ public class Default extends NAR {
 //        table.put("^strike", new Strike("^strike"));
 
     };
-    public final DefaultCycle control;
+    public final DefaultCycle core;
     public int cyclesPerFrame = 1;
     protected int maxNALLevel;
     /**
@@ -322,10 +322,26 @@ public class Default extends NAR {
 
         setCyclesPerFrame(cyclesPerFrame);
 
+        //core loop
+        {
+            DefaultCycle c = this.core = new DefaultCycle(
+                    this,
+                    new ConceptBagActivator(this),
+                    new ItemAccumulator(Budget.max),
+                    newConceptBag()
+            );
+            memory.eventCycleStart.on(c);
+            c.capacity.set(maxConcepts);
+            c.inputsMaxPerCycle.set(conceptsFirePerCycle);
+            c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
+            c.termLinksPerConcept.setValue(termLinksPerCycle);
+        }
 
         if (maxNALLevel >= 7) {
-            on(PerceptionAccel.class);
-            on(STMEventInference.class);
+
+            //scope: control
+            new PerceptionAccel(this, () -> core.next());
+            new STMEventInference(this, core.deriver );
 
             if (maxNALLevel >= 8) {
 
@@ -337,7 +353,8 @@ public class Default extends NAR {
                 //n.on(Anticipate.class);      // expect an event
 
                 if (internalExperience == Minimal) {
-                    on(InternalExperience.class, Abbreviation.class);
+                    new InternalExperience(this);
+                    new Abbreviation(this);
                 } else if (internalExperience == Full) {
                     on(FullInternalExperience.class);
                     on(Counting.class);
@@ -345,20 +362,7 @@ public class Default extends NAR {
             }
         }
 
-        //core loop
-        {
-            DefaultCycle c = this.control = new DefaultCycle(
-                this,
-                new ConceptBagActivator(this),
-                new ItemAccumulator(Budget.max),
-                newConceptBag()
-            );
-            memory.eventCycleStart.on(c);
-            c.capacity.set(maxConcepts);
-            c.inputsMaxPerCycle.set(conceptsFirePerCycle);
-            c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
-            c.termLinksPerConcept.setValue(termLinksPerCycle);
-        }
+
 
 //        {
 //            //print all concepts and their budgets
@@ -392,7 +396,7 @@ public class Default extends NAR {
 
 
     public DefaultCycle getCycleProcess() {
-        return control;
+        return core;
     }
 
     static String readFile(String path, Charset encoding)
@@ -498,7 +502,7 @@ public class Default extends NAR {
 
     @Override
     protected final Concept doConceptualize(Term term, Budget b) {
-        return control.update(term.getTerm(), b, true, 1f, control.active);
+        return core.update(term.getTerm(), b, true, 1f, core.active);
     }
 
     /**

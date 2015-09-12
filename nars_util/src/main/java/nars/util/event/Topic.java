@@ -4,6 +4,7 @@ package nars.util.event;
 import nars.util.data.list.FasterList;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -70,6 +71,10 @@ abstract public interface Topic<V>  {
         Registrations() {
             this(1);
         }
+        public Registrations(DefaultTopic.Subscription... r) {
+            super(r.length);
+            Collections.addAll(this, r);
+        }
 
 //        public void resume() {
 //            for (Registration r : this)
@@ -90,6 +95,11 @@ abstract public interface Topic<V>  {
             }
             clear();
         }
+
+        public void add(DefaultTopic.Subscription... elements) {
+            Collections.addAll(this, elements);
+        }
+
         
     }
 

@@ -4,23 +4,25 @@
  */
 package nars.io.qa;
 
-import nars.Events.Answer;
+import com.gs.collections.api.tuple.Twin;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.NARReaction;
 import nars.narsese.InvalidInputException;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.util.event.DefaultTopic;
+
+import java.util.function.Consumer;
 
 /**
  *
  * @author me
  */
-public abstract class AnswerReaction extends NARReaction {
+public abstract class AnswerReaction implements Consumer<Twin<Task>> {
     
     private final Task question;
     private final NAR nar;
-    
+    private final DefaultTopic.Subscription reg;
 
 
     /** reacts to all questions */
@@ -34,7 +36,8 @@ public abstract class AnswerReaction extends NARReaction {
 
     /** reacts to a specific question */
     public AnswerReaction(NAR n, Task question) {
-        super(n, Answer.class);
+
+        reg = n.memory.eventAnswer.on(this);
 
         this.nar = n;
         this.question = question;
@@ -55,23 +58,22 @@ public abstract class AnswerReaction extends NARReaction {
         }
 
     }
-    
-    @Override
-    public void event(Class event, Object[] args) {                
-        
-        if (event == Answer.class) {
-            Task questionTask = (Task)args[1];
-            Task belief = ((Task)args[0]);
 
-            if ((question == null) || questionTask.equals(question)) {
-                onSolution(belief);
-            }
-            else if (questionTask.hasParent(question)) {
-                onChildSolution(questionTask, belief);
-            }
+    @Override
+    public void accept(Twin<Task> taskTwin) {
+        Task questionTask = taskTwin.getOne();
+        Task belief = taskTwin.getTwo();
+
+        if ((question == null) || questionTask.equals(question)) {
+            onSolution(belief);
         }
+        else if (questionTask.hasParent(question)) {
+            onChildSolution(questionTask, belief);
+        }
+
     }
-    
+
+
     /** called when the question task has been solved directly */
     abstract public void onSolution(Task belief);
     

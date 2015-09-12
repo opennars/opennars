@@ -1059,7 +1059,7 @@ public class NarseseParser extends BaseParser<Object>  {
             return (Task)x[0];
         Task y = decodeTask(m, (float[])x[0], (Term)x[1], (Character)x[2], (Truth)x[3], (Tense)x[4]);
         if (y == null) {
-            m.emit(Events.ERR.class, "Invalid task: " + input, -1);
+            m.eventError.emit("NarseseParser: Invalid task: " + input);
         }
         return y;
     }

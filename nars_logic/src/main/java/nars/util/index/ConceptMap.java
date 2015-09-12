@@ -1,20 +1,17 @@
 package nars.util.index;
 
-import nars.Events;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.event.NARReaction;
-import nars.util.event.DefaultTopic;
+import nars.util.event.Topic;
 
 /**
  * Created by me on 4/16/15.
  */
-abstract public class ConceptMap extends NARReaction {
+abstract public class ConceptMap  {
 
     public final NAR nar;
-    private final DefaultTopic.Subscription onCycleEnd;
-    private final DefaultTopic.Subscription onConceptForget;
-    private final DefaultTopic.Subscription onConceptActive;
+
+    Topic.Registrations regs;
     int frame = -1;
     protected int cycleInFrame = -1;
 
@@ -25,20 +22,33 @@ abstract public class ConceptMap extends NARReaction {
     public void reset() { }
 
     public ConceptMap(NAR nar) {
-        super(nar, Events.FrameEnd.class, Events.ResetStart.class);
+        super();
 
-        this.onConceptActive = nar.memory.eventConceptActivated.on(c -> {
+        regs = new Topic.Registrations(
+        nar.memory.eventReset.on(n -> {
+            frame = 0;
+            reset();
+        }),
+        nar.memory.eventFrameEnd.on(n -> {
+            frame++;
+            onFrame();
+            cycleInFrame = 0;
+        }),
+        nar.memory.eventConceptActivated.on(c -> {
             onConceptActive(c);
-        });
-        this.onConceptForget = nar.memory.eventConceptForget.on(c -> {
+        }),
+        nar.memory.eventConceptForget.on(c -> {
             onConceptForget(c);
-        });
-
-        this.onCycleEnd = nar.memory.eventCycleEnd.on(m -> {
+        }),
+        nar.memory.eventCycleEnd.on(m -> {
             cycleInFrame++;
             onCycle();
-        });
+        }) );
         this.nar = nar;
+
+    }
+
+    public void off() {
 
     }
 
@@ -49,18 +59,6 @@ abstract public class ConceptMap extends NARReaction {
 
     abstract public boolean contains(Concept c);
 
-    @Override
-    public void event(Class event, Object[] args) {
-        if (event == Events.FrameEnd.class) {
-            frame++;
-            onFrame();
-            cycleInFrame = 0;
-        }
-        if (event == Events.ResetStart.class) {
-            frame = 0;
-            reset();
-        }
-    }
 
     /** returns true if the concept was successfully removed (ie. it was already present and not permanently included) */
     protected abstract boolean onConceptForget(Concept c);

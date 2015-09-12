@@ -194,15 +194,6 @@ abstract public class Symbols {
             return o;
         return null;
     }
-    
-
-    
-
-    /* experience line prefix */
-    public static final String INPUT_LINE_PREFIX = Events.IN.class.getSimpleName();
-    public static final String OUTPUT_LINE_PREFIX = Events.OUT.class.getSimpleName();
-
-
 
     
     /* Stamp, display only */

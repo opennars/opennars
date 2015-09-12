@@ -1,7 +1,6 @@
 package nars.meta;
 
 import com.google.common.collect.Sets;
-import nars.meter.NARComparator;
 import nars.nal.Deriver;
 import nars.nar.Default;
 import nars.nar.NewDefault;

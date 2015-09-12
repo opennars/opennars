@@ -5,10 +5,9 @@ import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
 import nars.io.JSONOutput;
-import nars.meter.CountIOEvents;
+import nars.meter.EventCount;
 import nars.meter.TestNAR;
-import nars.meter.condition.CountDerivationCondition;
-import nars.meter.condition.OutputCondition;
+import nars.meter.condition.TaskCondition;
 import nars.task.Task;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.DoubleMeter;
@@ -76,8 +75,7 @@ abstract public class AbstractNALTest extends TestCase {
     }
 
 
-    public static CountIOEvents eventCounter;
-    public static CountDerivationCondition deriveMethodCounter;
+    public static EventCount eventCounter;
 
 
     public final TestNAR tester;
@@ -99,7 +97,6 @@ abstract public class AbstractNALTest extends TestCase {
         ///nar.reset();
 
         eventCounter = null; //new CountOutputEvents(nar, results);
-        deriveMethodCounter = null;
         //this.deriveMethodCounter = new CountDerivationCondition(nar, results);
 
     }
@@ -113,9 +110,7 @@ abstract public class AbstractNALTest extends TestCase {
         }
         */
         if (analyzeStack && eventCounter!=null) {
-            nar.on(eventCounter);
-            if (deriveMethodCounter!=null)
-                nar.on(deriveMethodCounter);
+            eventCounter = new EventCount(nar);
         }
 
 
@@ -124,7 +119,7 @@ abstract public class AbstractNALTest extends TestCase {
     public static void endAnalysis(String label, TestNAR nar, NARSeed build, long nanos, long seed, boolean success) {
 
         testBuild.set(build.toString());
-        testCost.set(OutputCondition.cost(nar.requires));
+        testCost.set(TaskCondition.cost(nar.requires));
         testSeed.set(seed);
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
         testConcepts.hit(nar.nar.concepts().size());
@@ -139,7 +134,6 @@ abstract public class AbstractNALTest extends TestCase {
         if (analyzeStack) {
             eventCounter.reset();
             eventCounter.off();
-            deriveMethodCounter.off();
         }
 
 
@@ -175,7 +169,7 @@ abstract public class AbstractNALTest extends TestCase {
         protected boolean success = true;
         protected Object error = null;
         protected Task[] inputs;
-        protected List<OutputCondition> cond = Global.newArrayList();
+        protected List<TaskCondition> cond = Global.newArrayList();
         transient final int stackElements = 4;
 
         public Report(TestNAR n) {
@@ -193,7 +187,7 @@ abstract public class AbstractNALTest extends TestCase {
         }
 
 
-        public void add(OutputCondition o) {
+        public void add(TaskCondition o) {
             cond.add(o);
             if (!o.isTrue()) success = false;
         }
@@ -213,21 +207,19 @@ abstract public class AbstractNALTest extends TestCase {
         assertTrue("No cycles elapsed", tester.nar.memory().timeSinceLastCycle() > 0);
 
 
-        Report r = new Report(tester);
+        Report report = new Report(tester);
 
-        r.setError(tester.getError());
+        report.setError(tester.getError());
 
-        for (OutputCondition e : tester.requires) {
-            r.add(e);
-        }
+        tester.requires.forEach(report::add);
 
         String s;
-        if (!r.isSuccess())
-            s = JSONOutput.stringFromFieldsPretty(r);
+        if (!report.isSuccess())
+            s = JSONOutput.stringFromFieldsPretty(report);
         else
             s = "";
 
-        assertTrue(s, r.isSuccess());
+        assertTrue(s, report.isSuccess());
 
         tester.nar.reset();
     }

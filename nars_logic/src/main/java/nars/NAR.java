@@ -2,7 +2,6 @@ package nars;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
@@ -12,7 +11,6 @@ import nars.event.NARReaction;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
-import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
 import nars.link.TaskLink;
 import nars.meter.EmotionMeter;
@@ -1006,11 +1004,11 @@ abstract public class NAR {
                 recvSolution.accept(belief);
             }
 
-            @Override
-            public void setActive(boolean b) {
-                super.setActive(b);
-                manage(this, b);
-            }
+//            @Override
+//            public void setActive(boolean b) {
+//                super.setActive(b);
+//                manage(reg, b);
+//            }
 
         };
         return this;
@@ -1286,23 +1284,23 @@ abstract public class NAR {
     }
 
 
-    public NAR forEachEvent(Appendable o, Class... signal) throws Exception {
-        NARReaction r = new StreamNARReaction(signal) {
-            @Override
-            public void event(Class event, Object... args) {
-                try {
-                    TextOutput.append(o, event, args, "\n", true, true, 0, (NAR) NAR.this);
-
-                    if (o instanceof OutputStream)
-                        ((OutputStream) o).flush();
-
-                } catch (IOException e) {
-                    error(e);
-                }
-            }
-        };
-        return this;
-    }
+//    public NAR forEachEvent(Appendable o, Class... signal) throws Exception {
+//        NARReaction r = new StreamNARReaction(signal) {
+//            @Override
+//            public void event(Class event, Object... args) {
+//                try {
+//                    TextOutput.append(o, event, args, "\n", true, true, 0, (NAR) NAR.this);
+//
+//                    if (o instanceof OutputStream)
+//                        ((OutputStream) o).flush();
+//
+//                } catch (IOException e) {
+//                    error(e);
+//                }
+//            }
+//        };
+//        return this;
+//    }
 
     public NAR output(ObjectOutputStream o, Class... signal) throws Exception {
 
@@ -1359,11 +1357,11 @@ abstract public class NAR {
     }
 
     protected void manage(NARReaction r, boolean b) {
-        if (!b) {
-            reactions.remove(Sets.newHashSet(r.getEvents()), r);
-        } else {
-            reactions.put(Sets.newHashSet(r.getEvents()), r);
-        }
+//        if (!b) {
+//            reactions.remove(Sets.newHashSet(r.getEvents()), r);
+//        } else {
+//            reactions.put(Sets.newHashSet(r.getEvents()), r);
+//        }
     }
 
     private class ConsumedStreamNARReaction<X> extends StreamNARReaction {

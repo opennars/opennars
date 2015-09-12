@@ -2,7 +2,6 @@ package nars.op.scheme;
 
 
 import nars.NAR;
-import nars.meter.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
 import org.junit.Test;
@@ -29,7 +28,8 @@ public class TestEvalScheme extends JavaNALTest {
 
         tester.nar.input("scheme((car, (quote, (*, 2, 3))), #x)!");
 
-        tester.requires.add(new OutputContainsCondition(tester.nar, "<2 --> (/, scheme, (car, (quote, (2, 3))), _, SELF)>. :|: %1.00;0.99%", 1));
+        assertTrue("test impl unfinished", false);
+        //tester.requires.add(new OutputContainsCondition(tester.nar, "<2 --> (/, scheme, (car, (quote, (2, 3))), _, SELF)>. :|: %1.00;0.99%", 1));
 
         tester.run(4);
 
