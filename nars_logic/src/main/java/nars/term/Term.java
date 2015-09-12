@@ -66,9 +66,10 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     public boolean isNormalized();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
-    default <T extends Term> T normalized() {
+    <T extends Term> T normalized();
+    /*{
         return (T) this;
-    }
+    }*/
 
     /** careful: this will modify the term and should not be used unless the instance is new and unreferenced. */
     default <T extends Term> T normalizeDestructively() {

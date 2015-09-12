@@ -76,7 +76,7 @@ public class TermLinkTest {
         String task = term + ". %1.00;0.90%";
         NAR n = new Default();
         n.input(task);
-        n.runWhileInputting(16);
+        n.frame(16);
         return n;
     }
 
@@ -118,7 +118,7 @@ public class TermLinkTest {
     public void testStatementComponent() {
         NAR n = new Default();
         n.input("<a --> b>.");
-        n.runWhileInputting(1);
+        n.frame(1);
 
         Set<String> tl = getTermLinks(n.concept("<a --> b>").getTermLinks());
         assertEquals("[Cb:b, Ca:a]", tl.toString());
@@ -133,7 +133,7 @@ public class TermLinkTest {
         n.input("<c --> <a --> b>>.");
         n.input("<c --> d>.");
         n.input("<f --> <a --> b>>.");
-        n.runWhileInputting(6);
+        n.frame(6);
 
 
         Set<String> ainhb = getTermLinks(n.concept("<a --> b>").getTermLinks());

@@ -31,11 +31,11 @@ public class NALLevelTest {
         String productSentence = "<(*,a,b) --> c>.\n<c <-> a>?\n";
 
         n1.input(productSentence);
-        n1.runWhileInputting(5);
+        n1.frame(5);
 
 
         n8.input(productSentence);
-        n8.runWhileInputting(5);
+        n8.frame(5);
 
         assertEquals(5, n1.time());
         assertEquals("NAL1 will NOT accept sentence containing a Product", 0, n1Count.getInputs());

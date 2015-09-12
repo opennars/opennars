@@ -544,6 +544,7 @@ public class Default extends NAR {
 
 
 
+
     @Override
     public String toString() {
         return getClass().getSimpleName() + '[' + maxNALLevel +
@@ -556,10 +557,10 @@ public class Default extends NAR {
     }
 
 
-        /**
-         * The original deterministic memory cycle implementation that is currently used as a standard
-         * for development and testing.
-         */
+    /**
+     * The original deterministic memory cycle implementation that is currently used as a standard
+     * for development and testing.
+     */
     public static class DefaultCycle extends CycleReaction  /*extends SequentialCycle*/ {
 
         final Deque<Task> percepts = new ArrayDeque();
@@ -607,6 +608,10 @@ public class Default extends NAR {
 
         public DefaultCycle(NAR nar, ConceptBagActivator ca, ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts) {
             super(nar);
+
+            nar.memory.eventReset.on((m) -> {
+                reset();
+            });
 
             this.nar = nar;
             this.ca = ca;

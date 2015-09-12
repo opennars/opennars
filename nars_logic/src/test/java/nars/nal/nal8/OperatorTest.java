@@ -65,7 +65,7 @@ public class OperatorTest {
 
         n.input("exe(a,b,c)!");
 
-        n.runWhileInputting(1);
+        n.frame(1);
 
         assertTrue(executed.get());
 
@@ -86,7 +86,7 @@ public class OperatorTest {
 
         n.input("exe(a,b,c)!");
 
-        n.runWhileInputting(1);
+        n.frame(1);
 
         assertTrue(executed.get());
 
@@ -105,7 +105,7 @@ public class OperatorTest {
 
         n.input("<a --> b>(a,b,c)!");
 
-        n.runWhileInputting(1);
+        n.frame(1);
 
         assertTrue(executed.get());
 

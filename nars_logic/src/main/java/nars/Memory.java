@@ -84,6 +84,7 @@ public class Memory extends Param implements Serializable {
     transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic();
     transient public final Topic<ConceptProcess> eventConceptProcessed = new DefaultTopic();
 
+    transient public final Topic<Memory> eventReset = new DefaultTopic();
 
     transient public final Topic<Concept> eventConceptActivated = new DefaultTopic();
     transient public final Topic<Concept> eventConceptForget = new DefaultTopic();
@@ -356,7 +357,8 @@ public class Memory extends Param implements Serializable {
     public synchronized void clear() {
 
 
-        event.emit(ResetStart.class);
+        /*@Deprecated */ event.emit(ResetStart.class);
+        eventReset.emit(this);
 
         clock.clear();
 

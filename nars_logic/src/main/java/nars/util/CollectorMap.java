@@ -96,8 +96,8 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         if (e != null) {
             V removed = removeItem(e);
             if (removed == null) {
-                if (Global.DEBUG)
-                    throw new RuntimeException(key + " removed from index but not from items list");
+                /*if (Global.DEBUG)
+                    throw new RuntimeException(key + " removed from index but not from items list");*/
                 return null;
             }
             if (removed!=e)

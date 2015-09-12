@@ -207,8 +207,7 @@ public class NarseseIRCBot extends IRCBot {
         };
 
 
-
-        n.runWhileInputting(1);
+        n.frame(1);
         n.frame(1); //one more to be sure
 
     }

@@ -604,9 +604,14 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
      */
     protected <T extends Term> T normalized(final boolean destructive) {
 
-        //if (!(hasVar() && !isNormalized())) return (T) this;
         if (isNormalized()) {
-            return (T)this;
+            return (T) this;
+        }
+        else {
+            if (!hasVar()) {
+                setNormalized();
+                return (T) this;
+            }
         }
 
         final Compound result;

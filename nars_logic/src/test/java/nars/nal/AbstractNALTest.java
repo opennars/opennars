@@ -96,7 +96,7 @@ abstract public class AbstractNALTest extends TestCase {
         results.clear();
 
         this.tester = new TestNAR(nar);
-        nar.memory.clear();
+        ///nar.reset();
 
         eventCounter = null; //new CountOutputEvents(nar, results);
         deriveMethodCounter = null;

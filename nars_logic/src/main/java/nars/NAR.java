@@ -654,11 +654,6 @@ abstract public class NAR  {
 
     }
 
-    public NAR runWhileInputting(int extraCycles) {
-        frame(extraCycles);
-        return this;
-    }
-
     /* Print all statically known events (discovered via reflection)
     *  for this reasoner to a stream
     * */
@@ -903,9 +898,6 @@ abstract public class NAR  {
         return Atom.the(s);
     }
 
-    public void runWhileInputting() {
-        runWhileInputting(0);
-    }
 
     public void emit(Throwable e) {
         emit(Events.ERR.class, e);
@@ -1201,11 +1193,10 @@ abstract public class NAR  {
         if (needsValidation) {
             if (!validConceptTerm(term))
                 return null;
-
-            if ((term = term.normalized()) == null)
-                return null;
         }
 
+        if ((term = term.normalized()) == null)
+            return null;
 
         final Concept c = doConceptualize(term, budget);
         if (c == null) {

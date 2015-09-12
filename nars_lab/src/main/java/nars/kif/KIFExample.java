@@ -46,8 +46,9 @@ public class KIFExample {
         //start before adding input to begin filling buffer
         k.start();
         n.input(k);
-        
-        n.runWhileInputting(1);
+
+        n.frame(1);
+        n;
         
         /*
         TextOutput t = new TextOutput(n, System.out);

@@ -128,7 +128,7 @@ public class NLPIRCBot extends IRCBot {
         System.out.print("initializing...");
         for (int i = 0; i < 10; i++) {
             System.out.print(i + " ");
-            n.runWhileInputting(10);
+            n.frame(10);
         }
         System.out.println("ok");
 

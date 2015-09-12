@@ -42,7 +42,7 @@ public class consider extends SynchOperator implements Mental {
         return o.getTask().getBudget();
     }
 
-    final Deriver deriver = new SimpleDeriver();
+    final Deriver deriver = null; //new SimpleDeriver();
 
     /**
      * To activate a concept as if a question has been asked about it

@@ -102,7 +102,7 @@ public class SimpleDeriver extends Deriver  {
             }
         }
 
-        printSummary();
+        //printSummary();
 
     }
 

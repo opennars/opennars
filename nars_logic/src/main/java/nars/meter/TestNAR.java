@@ -294,7 +294,7 @@ public class TestNAR  {
 
 
         //try {
-            nar.runWhileInputting((int)(finalCycle - time()));
+        nar.frame((int)(finalCycle - time()));
         /*}
         catch (Exception e) {
             error = e;
