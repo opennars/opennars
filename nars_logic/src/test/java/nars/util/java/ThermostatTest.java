@@ -1,11 +1,8 @@
 package nars.util.java;
 
-import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.concept.BeliefTable;
-import nars.io.out.TextOutput;
-import nars.nal.nal8.ExecutionResult;
 import nars.nar.experimental.Equalized;
 
 import java.util.Random;
@@ -91,19 +88,20 @@ public class ThermostatTest  {
 
         int range = 20;
 
-        new TextOutput(n, System.out)
+        n.trace(System.out);
+
         {
 
-            @Override
-            protected boolean output(Channel channel, Class event, Object... args) {
-                if (event == Events.EXE.class) {
-                    ExecutionResult t = (ExecutionResult)args[0];
-                    System.out.println( t.getTask().getExplanation() );
-                    return super.output(channel, event, args);
-
-                }
-                return false;
-            }
+//            @Override
+//            protected boolean output(Channel channel, Class event, Object... args) {
+//                if (event == Events.EXE.class) {
+//                    ExecutionResult t = (ExecutionResult)args[0];
+//                    System.out.println( t.getTask().getExplanation() );
+//                    return super.output(channel, event, args);
+//
+//                }
+//                return false;
+//            }
         };
 
         for (int i = 0; i < 2; i++) {

@@ -1,5 +1,7 @@
 package nars.clock;
 
+import nars.Memory;
+
 /**
  * Clock whose time change is managed by an external process
  */
@@ -25,7 +27,12 @@ public class SimulatedClock implements Clock {
     public void add(long dt) { set(this.t + dt); }
 
     @Override
-    public void preCycle() {
+    public void preFrame(Memory m) {
+
+    }
+
+    @Override
+    public final void preCycle() {
         t0 = t;
         t = tNext;
     }

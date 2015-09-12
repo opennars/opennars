@@ -2,6 +2,7 @@ package nars.concept;
 
 import nars.Memory;
 import nars.premise.Premise;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 
 import static nars.nal.nal1.LocalRules.revisibleTermsAlreadyEqual;
@@ -167,8 +168,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                     if (nal!=null) {
                         Task revised = tryRevision(t, existing, false, nal);
-                        if (revised != null) {
-                            //nal.setCurrentBelief( revised );
+                        if ((revised != null) && (nal instanceof ConceptProcess)) {
+                            ((ConceptProcess)nal).setBelief( revised );
                         }
                     }
 

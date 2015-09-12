@@ -424,7 +424,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
     default @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
-        return toString(buffer, memory, true, notCommand, notCommand);
+        return toString(buffer, memory, true, notCommand, notCommand, true);
     }
 
     /**
@@ -435,7 +435,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
      * @param showBudget
      * @return The String
      */
-    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget);
+    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog);
 
 
     default public boolean equalTerms(final Sentence s) {

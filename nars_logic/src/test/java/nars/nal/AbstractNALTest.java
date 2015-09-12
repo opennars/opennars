@@ -3,28 +3,19 @@ package nars.nal;
 import junit.framework.TestCase;
 import nars.Global;
 import nars.NAR;
-import nars.NARSeed;
 import nars.io.JSONOutput;
-import nars.meter.EventCount;
 import nars.meter.TestNAR;
 import nars.meter.condition.TaskCondition;
 import nars.task.Task;
-import nars.util.meter.Metrics;
-import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
-import nars.util.meter.event.ObjectMeter;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by me on 2/10/15.
@@ -33,16 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RunWith(Parameterized.class)
 abstract public class AbstractNALTest extends TestCase {
 
-    public static final long randomSeed = 1;
 
-    private static final int similarsToSave = 3;
-
-    final static Map<String,Task> conditionsCache = new ConcurrentHashMap<>();
-
-
-    public static OutputStream dataOut = null;
-    private static String script;
-    PrintStream log = System.out;
     public static boolean analyzeStack = false;
 
 //    static {
@@ -54,28 +36,27 @@ abstract public class AbstractNALTest extends TestCase {
 //    }
 
 
-    public static Metrics<String,Object> results;
-    static DoubleMeter testCost, testTime, testSeed;
-    static HitMeter testConcepts;
-    static ObjectMeter<String> testBuild;
+//    public static Metrics<String,Object> results;
+//    static DoubleMeter testCost, testTime, testSeed;
+//    static HitMeter testConcepts;
+//    static ObjectMeter<String> testBuild;
 
 
-    public static void reset() {
-        results = new Metrics().addViaReflection(
-                testCost = new DoubleMeter("Cost"),
-                testBuild = new ObjectMeter<String>("Build"),
-                testSeed = new DoubleMeter("Seed"),
-                testTime = new DoubleMeter("uSecPerCycle"),
-                testConcepts = new HitMeter("Concepts")
-        );
-    }
+//    public static void reset() {
+//        results = new Metrics().addViaReflection(
+//                testCost = new DoubleMeter("Cost"),
+//                testBuild = new ObjectMeter<String>("Build"),
+//                testSeed = new DoubleMeter("Seed"),
+//                testTime = new DoubleMeter("uSecPerCycle"),
+//                testConcepts = new HitMeter("Concepts")
+//        );
+//    }
+//
+//    static {
+//        reset();
+//    }
 
-    static {
-        reset();
-    }
 
-
-    public static EventCount eventCounter;
 
 
     public final TestNAR tester;
@@ -91,53 +72,49 @@ abstract public class AbstractNALTest extends TestCase {
 
         Global.DEBUG = true;
 
-        results.clear();
-
         this.tester = new TestNAR(nar);
-        ///nar.reset();
-
-        eventCounter = null; //new CountOutputEvents(nar, results);
-        //this.deriveMethodCounter = new CountDerivationCondition(nar, results);
-
-    }
-
-    /** called before test runs */
-    public static void initAnalysis(NAR nar) {
-
-        /*
-        if (this.derivations != null) {
-            derivations.record(nar);
-        }
-        */
-        if (analyzeStack && eventCounter!=null) {
-            eventCounter = new EventCount(nar);
-        }
 
 
     }
-
-    public static void endAnalysis(String label, TestNAR nar, NARSeed build, long nanos, long seed, boolean success) {
-
-        testBuild.set(build.toString());
-        testCost.set(TaskCondition.cost(nar.requires));
-        testSeed.set(seed);
-        testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
-        testConcepts.hit(nar.nar.concepts().size());
-
-        results.update(label);
-
-
-        /*if (derivations!=null)
-            derivations.print(log);*/
-
-
-        if (analyzeStack) {
-            eventCounter.reset();
-            eventCounter.off();
-        }
-
-
-    }
+//
+//    /** called before test runs */
+//    public static void initAnalysis(NAR nar) {
+//
+//        /*
+//        if (this.derivations != null) {
+//            derivations.record(nar);
+//        }
+//        */
+//        if (analyzeStack && eventCounter!=null) {
+//            eventCounter = new EventCount(nar);
+//        }
+//
+//
+//
+//    }
+//
+//    public static void endAnalysis(String label, TestNAR nar, NARSeed build, long nanos, long seed, boolean success) {
+//
+//        testBuild.set(build.toString());
+//        testCost.set(TaskCondition.cost(nar.requires));
+//        testSeed.set(seed);
+//        testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
+//        testConcepts.hit(nar.nar.concepts().size());
+//
+//        results.update(label);
+//
+//
+//        /*if (derivations!=null)
+//            derivations.print(log);*/
+//
+//
+//        if (analyzeStack) {
+//            eventCounter.reset();
+//            eventCounter.off();
+//        }
+//
+//
+//    }
 
 //    @Deprecated public static long runScript(TestNAR tester, String path, int maxCycles) {
 //
@@ -166,7 +143,6 @@ abstract public class AbstractNALTest extends TestCase {
 
         public final long time;
         public final HitMeter[] eventMeters;
-        protected boolean success = true;
         protected Object error = null;
         protected Task[] inputs;
         protected List<TaskCondition> cond = Global.newArrayList();
@@ -182,21 +158,23 @@ abstract public class AbstractNALTest extends TestCase {
         public void setError(Exception e) {
             if (e!=null) {
                 this.error = new Object[]{e.toString(), Arrays.copyOf(e.getStackTrace(), stackElements)};
-                success = false;
             }
         }
 
-
         public void add(TaskCondition o) {
             cond.add(o);
-            if (!o.isTrue()) success = false;
         }
 
         public boolean isSuccess() {
-            return success;
+            for (TaskCondition t : cond)
+                if (!t.isTrue())
+                    return false;
+            return true;
         }
 
     }
+
+
 
 
     //Default test procedure
@@ -204,7 +182,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         assertTrue("No conditions tested", !tester.requires.isEmpty());
 
-        assertTrue("No cycles elapsed", tester.nar.memory().timeSinceLastCycle() > 0);
+        //assertTrue("No cycles elapsed", tester.nar.memory().time/*SinceLastCycle*/() > 0);
 
 
         Report report = new Report(tester);
@@ -214,14 +192,15 @@ abstract public class AbstractNALTest extends TestCase {
         tester.requires.forEach(report::add);
 
         String s;
-        if (!report.isSuccess())
+        if (!report.isSuccess()) {
             s = JSONOutput.stringFromFieldsPretty(report);
-        else
+            assertTrue(s, false);
+        }
+        else {
             s = "";
+        }
 
-        assertTrue(s, report.isSuccess());
-
-        tester.nar.reset();
+        //tester.nar.reset();
     }
 
 

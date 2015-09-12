@@ -68,6 +68,10 @@ public class TestNAR  {
         return TaskCondition.cost(requires);
     }
 
+    public ExplainableTask mustDerive(long a, long b, String s, char c, float v, float v1, float v2, float v3, int i2) {
+        return mustOutput(nar.memory().eventDerived, a, b, s, c, v, v1, v2, v3, i2 );
+    }
+
     class EarlyExit extends CycleReaction {
 
         final int checkResolution; //every # cycles to check for completion

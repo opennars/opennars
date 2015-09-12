@@ -1,7 +1,6 @@
 package nars.analyze;
 
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.meter.MemoryBudget;
 import nars.nar.experimental.DefaultAlann;
 import org.junit.runner.Description;
@@ -127,7 +126,7 @@ public class TestAggregator extends RunListener {
 //            //System.out.println(new MemoryBudget(nar));
 //        });
 
-        TextOutput.out(nar).setOutputPriorityMin(0.5f);
+        //TextOutput.out(nar).setOutputPriorityMin(0.5f);
 
         for (int i = 0; i < 100; i++) {
             nar.frame(100);

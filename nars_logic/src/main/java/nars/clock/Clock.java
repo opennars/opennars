@@ -18,7 +18,7 @@ public interface Clock extends Serializable {
     /** called at the beginning of a new cycle */
     void preCycle();
 
-    default void preFrame(Memory m) { }
+    void preFrame(Memory m);
 
     long timeSinceLastCycle();
 }

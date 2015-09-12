@@ -8,6 +8,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.event.NARReaction;
+import nars.io.ANSI;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
@@ -675,13 +676,20 @@ abstract public class NAR {
     * */
     public NAR trace(Appendable out) {
 
+
         Topic.all(memory(), (k, v) -> {
             try {
+
+                //indent each cycle
+                if (!k.equals("eventCycleStart")) {
+                    out.append("  ");
+                }
+
                 out
+                    .append(ANSI.COLOR_CONFIG)
                     .append(k.toString())
+                    .append(ANSI.COLOR_RESET )
                     .append(": ")
-                    .append(v.toString())
-                    .append(' ')
                     .append(v.toString());
 
                 if (v instanceof Concept) {

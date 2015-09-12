@@ -294,9 +294,14 @@ public interface Stamp extends Cloneable, Serializable {
         if (getOccurrenceTime() != ETERNAL) {
             int estTimeLength = 10; /* # digits */
             sb.ensureCapacity(estTimeLength);
-            sb.append(Long.toString(getCreationTime()));
 
-            long relOc = (getOccurrenceTime() - getCreationTime());
+            long ct = getCreationTime();
+            if (ct == Stamp.TIMELESS)
+                sb.append('?');
+            else
+                sb.append(Long.toString(ct));
+
+            long relOc = (getOccurrenceTime() - ct);
             if (relOc >= 0)
                 sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
             sb.append(relOc);

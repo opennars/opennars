@@ -4,11 +4,10 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Memory;
 import nars.task.Task;
-import org.infinispan.commons.equivalence.AnyEquivalence;
-import org.infinispan.util.concurrent.BoundedConcurrentHashMap;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -23,14 +22,15 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
 
     public final Map<I,I> items =
 
-            new BoundedConcurrentHashMap(
-                        /* capacity */ 1024,
-                        /* concurrency */ 1,
-                        /* key equivalence */
-                    AnyEquivalence.getInstance(Budget.class),
-                    AnyEquivalence.getInstance(Budget.class));
 
-            //new ConcurrentHashMap();
+//            new BoundedConcurrentHashMap(
+//                        /* capacity */ 1024,
+//                        /* concurrency */ 1,
+//                        /* key equivalence */
+//                    AnyEquivalence.getInstance(Budget.class),
+//                    AnyEquivalence.getInstance(Budget.class));
+
+            new ConcurrentHashMap();
             //new UnifiedMap<>();
 
 //    final Comparator<? super I> floatValueComparator = new Comparator<I>() {

@@ -3,7 +3,7 @@ package nars.meter.experiment;
 import nars.io.qa.AnswerReaction;
 import nars.meter.TestNAR;
 import nars.nal.nal1.Inheritance;
-import nars.nar.experimental.DefaultAlann;
+import nars.nar.Default;
 import nars.task.Task;
 import nars.term.Atom;
 
@@ -50,8 +50,9 @@ public class DeductiveChainTest {
 
         int length = 4;
 
-        DefaultAlann da = new DefaultAlann(32);
-        //da.level(3);
+        Default da = new Default();
+        //DefaultAlann da = new DefaultAlann(32);
+        da.nal(3);
 
         TestNAR n = new TestNAR(
                 //new Equalized(1000, 8, 3) //.level(1)
@@ -59,6 +60,8 @@ public class DeductiveChainTest {
                 //new ParallelAlann(4,2)
                 da
         );
+
+        da.stdout();
 
         DeductiveChainTest test = new DeductiveChainTest(length);
         test.apply(n, 100000);

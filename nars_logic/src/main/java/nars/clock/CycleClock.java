@@ -1,6 +1,8 @@
 package nars.clock;
 
 
+import nars.Memory;
+
 /**
  * internal, subjective time (1 cycle = 1 time step)
  */
@@ -20,6 +22,11 @@ public class CycleClock implements Clock {
 
     public void tick() {
         t++;
+    }
+
+    @Override
+    public void preFrame(Memory m) {
+
     }
 
     @Override

@@ -156,7 +156,8 @@ public class TextOutput {
     }
 
     public static void out(NAR nar) {
-        System.err.println("TextOutput.out impl in progress");
+        //TODO System.err.println("TextOutput.out impl in progress");
+        nar.stdout();
     }
 
 

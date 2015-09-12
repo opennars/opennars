@@ -74,7 +74,7 @@ public class TaskProcess extends NAL {
 
         sb.append(getClass().getSimpleName()).append('[');
 
-        getTask().toString(sb, nar.mem(), true, false, true);
+        getTask().toString(sb, nar.mem(), true, false, true, true);
 
         sb.append(']');
 

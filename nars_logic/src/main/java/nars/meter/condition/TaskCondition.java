@@ -45,7 +45,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     public  long cycleEnd;  //-1 for not compared
 
     protected  boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
-    private  NAR nar;
+    private final NAR nar;
     //private final Observed.DefaultObserved.DefaultObservableRegistration taskRemoved;
 
     //@Expose
@@ -65,17 +65,17 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     transient int maxClose = 7;
 
     protected TreeMap<Double,Task> similar;
-    transient int maxRemovals = 2;
+    transient int maxRemovals = 32;
 
     //enable true for more precise temporality constraints; this may be necessary or not
     final transient private boolean strictDurationWindow = true;
 
 
-    public TaskCondition()  {
 
-    }
     public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
 
+
+        this.nar = n;
 
         this.relativeToCondition = false;
         /*this.taskRemoved = */getTaskRemoved(n);

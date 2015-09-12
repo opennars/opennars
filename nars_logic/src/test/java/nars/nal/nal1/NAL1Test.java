@@ -4,10 +4,9 @@ import nars.Global;
 import nars.NAR;
 import nars.meter.experiment.DeductiveChainTest;
 import nars.nal.JavaNALTest;
+import nars.nar.Default;
 import nars.nar.experimental.DefaultAlann;
-import nars.nar.experimental.Equalized;
 import nars.narsese.InvalidInputException;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -26,9 +25,9 @@ public class NAL1Test extends JavaNALTest {
 //                {new Default().setInternalExperience(null)},
 
                 //{new NewDefault()},
-                {new Equalized().nal(1)},
-                {new Equalized().nal(2)},
-                {new Equalized() },
+                {new Default().nal(1)},
+                {new Default().nal(2)},
+                {new Default() },
 
 //                {new Default().level(2)}, //why does this need level 2 for some tests?
 //                {new DefaultMicro().level(2) },
@@ -41,11 +40,12 @@ public class NAL1Test extends JavaNALTest {
         });
     }
 
-
-    @Before
-    public void setup() {
-        tester.setTemporalTolerance(50 /* cycles */);
-    }
+//
+//    @Before
+//    public void setup() {
+//
+//        //tester.setTemporalTolerance(50 /* cycles */);
+//    }
 
     @Test public void revision() throws InvalidInputException {
 
@@ -77,6 +77,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void abduction() throws InvalidInputException {
+
         tester.mustBelieve(123, "<sport --> chess>", 1.0f, 0.42f)
                 .en("I guess sport is a type of chess.")
                 .en("sport is possibly a type of chess.")
@@ -176,7 +177,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void multistep() throws InvalidInputException {
-        long time = /*nar instanceof Solid ? 150 :*/ 25;
+        long time = 150;
 
         //TextOutput.out(n);
 

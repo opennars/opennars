@@ -2,12 +2,12 @@ package nars.util.java;
 
 import junit.framework.TestCase;
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.meter.EventCount;
 import nars.nar.Default;
 import nars.term.Atom;
 import org.junit.Test;
 
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -72,8 +72,8 @@ public class NALObjectsTest extends TestCase {
         assertNotNull( n.memory.exe.all(Atom.the("TestClass_multiply")) );
 
         StringWriter ns, ms;
-        new TextOutput(n, ns = new StringWriter());
-        new TextOutput(m, ms = new StringWriter());
+        n.trace(new PrintWriter(ns = new StringWriter()));
+        m.trace(new PrintWriter(ms = new StringWriter()));
 
         n.input("TestClass_multiply(" + instance + ", 2, 3, #x)!");
 

@@ -14,6 +14,8 @@ import java.util.Locale;
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms
  */
 abstract public class Texts {
+
+
     //TODO find more appropriate symbol mapping
     //TODO escape any mapped characters if they appear in input during encoding
     //http://www.ssec.wisc.edu/~tomw/java/unicode.html

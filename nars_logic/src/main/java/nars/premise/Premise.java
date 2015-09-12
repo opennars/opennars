@@ -399,7 +399,7 @@ public interface Premise {
                         final Task parentTask = task.getParentTask();
 
                         //THIS IS A HACK because Cyclic flag isnt semantically correct yet
-                        if (cyclic) {
+                        if (cyclic && parentTask!=null) {
                             if (!task.getTerm().equals(parentTask.getTerm())
                                     &&
                                     (!parentTask.isCyclic()))

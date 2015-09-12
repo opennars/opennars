@@ -2,7 +2,6 @@ package nars.meta;
 
 import com.google.common.collect.Sets;
 import nars.nal.Deriver;
-import nars.nar.Default;
 import nars.nar.NewDefault;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
@@ -67,37 +66,37 @@ public class RuleDerivationGraphTest {
 
     }
 
-    @Test
-    public void testDerivationComparator() {
-
-        NARComparator c = new NARComparator(
-                new Default(),
-                new Default()
-        ) {
-
-
-        };
-        c.input("<x --> y>.\n<y --> z>.\n");
-
-
-
-        int cycles = 64;
-        for (int i = 0; i < cycles; i++) {
-            if (!c.areEqual()) {
-
-                /*System.out.println("\ncycle: " + c.time());
-                c.printTasks("Original:", c.a);
-                c.printTasks("Rules:", c.b);*/
-
-//                System.out.println(c.getAMinusB());
-//                System.out.println(c.getBMinusA());
-            }
-            c.frame(1);
-        }
-
-        System.out.println("\nDifference: " + c.time());
-        System.out.println("Original - Rules:\n" + c.getAMinusB());
-        System.out.println("Rules - Original:\n" + c.getBMinusA());
-
-    }
+//    @Test
+//    public void testDerivationComparator() {
+//
+//        NARComparator c = new NARComparator(
+//                new Default(),
+//                new Default()
+//        ) {
+//
+//
+//        };
+//        c.input("<x --> y>.\n<y --> z>.\n");
+//
+//
+//
+//        int cycles = 64;
+//        for (int i = 0; i < cycles; i++) {
+//            if (!c.areEqual()) {
+//
+//                /*System.out.println("\ncycle: " + c.time());
+//                c.printTasks("Original:", c.a);
+//                c.printTasks("Rules:", c.b);*/
+//
+////                System.out.println(c.getAMinusB());
+////                System.out.println(c.getBMinusA());
+//            }
+//            c.frame(1);
+//        }
+//
+//        System.out.println("\nDifference: " + c.time());
+//        System.out.println("Original - Rules:\n" + c.getAMinusB());
+//        System.out.println("Rules - Original:\n" + c.getBMinusA());
+//
+//    }
 }

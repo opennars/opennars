@@ -151,10 +151,12 @@ public class LocalRules {
                                 //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
                                 //Arrays.toString(oldBelief.getEvidentialSet())
                         )
-                    ,true); //.normalized();
+                    ,true).normalized(); //.normalized();
 
-        if (revised != null)
+        if (revised != null) {
             nal.memory().logic.BELIEF_REVISION.hit();
+            revised.setCyclic(true);
+        }
 
         return revised;
     }

@@ -3,7 +3,7 @@ package nars.term;
 
 import nars.Global;
 import nars.NAR;
-import nars.meter.condition.EventCount;
+import nars.meter.EventCount;
 import nars.nar.Default;
 import org.junit.Test;
 
@@ -38,8 +38,8 @@ public class NALLevelTest {
         n8.frame(5);
 
         assertEquals(5, n1.time());
-        assertEquals("NAL1 will NOT accept sentence containing a Product", 0, n1Count.getInputs());
-        assertTrue("NAL8 will accept sentence containing a Product", n8Count.getInputs() >= 1);
+        assertEquals("NAL1 will NOT accept sentence containing a Product", 0, n1Count.numInputs());
+        assertTrue("NAL8 will accept sentence containing a Product", n8Count.numInputs() >= 1);
 
 
 

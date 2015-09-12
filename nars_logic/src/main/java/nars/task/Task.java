@@ -271,7 +271,12 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return toString(sb, memory, false);
     }
 
-    default public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget) {
+    default @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
+        final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
+        return toString(buffer, memory, true, notCommand, notCommand, true);
+    }
+
+    default StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog) {
 
 
         String contentName;
@@ -304,6 +309,15 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             stringLength += 1 + 6 + 1 + 6 + 1 + 6 + 1  + 1;
         }
 
+        String finalLog = getLogLast();
+        if (showLog) {
+            if (finalLog!=null)
+                stringLength += finalLog.length()+1;
+            else
+                showLog = false;
+        }
+
+
         if (buffer == null)
             buffer = new StringBuilder(stringLength);
         else
@@ -327,7 +341,17 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         if (showStamp)
             buffer.append(' ').append(stampString);
 
+        if (showLog) {
+            buffer.append(' ').append(finalLog);
+        }
+
         return buffer;
+    }
+
+    default String getLogLast() {
+        final List<String> log = getLog();
+        if (log ==null || log.isEmpty()) return null;
+        return log.get(log.size()-1);
     }
 
 

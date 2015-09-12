@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
 import nars.nar.experimental.DefaultAlann;
-import nars.nar.experimental.Equalized;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -25,9 +24,8 @@ public class NAL2Test extends JavaNALTest {
                 //{new Default().setInternalExperience(null)},
 
 
-                {new Equalized() },
                 {new Default() },
-
+                {new Default().nal(2) },
                 //{new Equalized().setInternalExperience(null)},
                 //{new Equalized().setInternalExperience(null).level(4)},
 

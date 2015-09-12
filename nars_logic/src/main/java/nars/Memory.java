@@ -441,6 +441,10 @@ public class Memory extends Param implements Serializable {
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
     public void remove(final Task task, String removalReason) {
 
+        if (task.isDeleted()) {
+            throw new RuntimeException(task + " already deleted");
+        }
+
         if (removalReason==null)
             removalReason = "Unknown";
 
