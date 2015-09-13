@@ -83,11 +83,12 @@ public class NAL1Test extends AbstractNALTest {
     @Test
     public void abduction() throws InvalidInputException {
 
-        test().mustBelieve(123, "<sport --> chess>", 1.0f, 0.42f)
+        int time = 64;
+        test().mustBelieve(time, "<sport --> chess>", 1.0f, 0.42f)
               /*  .en("I guess sport is a type of chess.")
                 .en("sport is possibly a type of chess.")
                 .es("es posible que sport es un tipo de chess.");*/
-                .mustBelieve(123, "<chess --> sport>", 0.90f, 0.45f)
+                .mustBelieve(time, "<chess --> sport>", 0.90f, 0.45f)
                         //.en("I guess chess is a type of sport");
                 .believe("<sport --> competition>")
                         //.en("sport is a type of competition.");
@@ -167,9 +168,10 @@ public class NAL1Test extends AbstractNALTest {
 
 
     public void multistepN(int length) {
-        TestNAR test = test();
-        new DeductiveChainTest(length).apply(test, length * 200);
-        test.run();
+
+        new DeductiveChainTest(nar(), length, length * 200)
+                .run();
+
     }
 
     @Test

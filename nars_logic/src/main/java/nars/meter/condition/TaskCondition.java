@@ -45,7 +45,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     public  long cycleEnd;  //-1 for not compared
 
     /** accept confidences greater than max expected */
-    final boolean ignoreConfidenceMax = true;
+    final static boolean ignoreConfidenceMax = false;
 
     protected  boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
     private final NAR nar;

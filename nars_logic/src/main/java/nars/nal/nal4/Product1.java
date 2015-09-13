@@ -5,7 +5,6 @@ import nars.term.Compound1;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Higher efficiency 1-subterm implementation of Product
@@ -45,7 +44,7 @@ public class Product1<T extends Term> extends Compound1<T>  implements Product<T
     }
 
     @Override
-    public boolean appendOperator(Writer p) throws IOException {
+    public boolean appendOperator(Appendable p) throws IOException {
         //skip
         return false;
     }

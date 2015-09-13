@@ -103,6 +103,8 @@ public class NAL5RuleTest {
         sd.accept(cp);
 
 
+
+
         assertEquals(
             "[$1.00;0.33;0.24$ <m <-> n>. %1.00;0.45% {?: 1;2}]",
             cp.getCached().toString()

@@ -7,6 +7,7 @@ import nars.nar.Default;
 import nars.nar.experimental.Equalized;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
 /**
  * Created by me on 8/19/15.
  */
+@RunWith(Parameterized.class)
 public class NAL6Test extends JavaNALTest {
 
 

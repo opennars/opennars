@@ -1,5 +1,6 @@
 package nars.meter.experiment;
 
+import nars.NAR;
 import nars.io.qa.AnswerReaction;
 import nars.meter.TestNAR;
 import nars.nal.nal1.Inheritance;
@@ -10,12 +11,14 @@ import nars.term.Atom;
 /**
  * Created by me on 8/25/15.
  */
-public class DeductiveChainTest {
+public class DeductiveChainTest extends TestNAR {
 
     public final Inheritance q;
     public final Inheritance[] beliefs;
 
-    public DeductiveChainTest(int length) {
+    public DeductiveChainTest(NAR n, int length, int timeLimit) {
+        super(n);
+
 
         beliefs = new Inheritance[length];
         for (int x = 0; x < length; x++) {
@@ -23,20 +26,16 @@ public class DeductiveChainTest {
         }
 
         q = i(0, length);
-    }
-
-    public void apply(TestNAR t, long timeLimit) {
-
-        //Global.OVERLAP_ALLOW = true;
-        //TextOutput.out(t);
 
         for (int x = 0; x < beliefs.length; x++) {
-            t.nar.believe( beliefs[x]  );
+            n.believe( beliefs[x]  );
         }
-        t.nar.ask( q );
+        n.ask( q );
 
-        t.mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 0.99f);
+        mustBelieve(timeLimit, q.toString(), 1f, 1f, 0.01f, 0.99f);
+
     }
+
 
     public static Atom a(int i) {
         return Atom.the((byte)('a' + i));
@@ -52,37 +51,37 @@ public class DeductiveChainTest {
 
         Default da = new Default();
         //DefaultAlann da = new DefaultAlann(32);
-        da.nal(3);
+        //da.nal(3);
 
-        TestNAR n = new TestNAR(
+        NAR n = //new TestNAR(
                 //new Equalized(1000, 8, 3) //.level(1)
                 //new NewDefault().level(2)
                 //new ParallelAlann(4,2)
-                da
-        );
+                da;
+        //);
 
-        da.stdout();
+        //da.stdout();
 
-        DeductiveChainTest test = new DeductiveChainTest(length);
-        test.apply(n, 100000);
+        DeductiveChainTest test = new DeductiveChainTest(n, length, 100000);
 
         System.out.println("derivation chain test: " + test.q + "?");
 
         final long start = System.currentTimeMillis();
 
-        new AnswerReaction(n.nar) {
+        new AnswerReaction(n) {
 
             @Override
             public void onSolution(Task belief) {
                 if (belief.getTerm().equals(test.q)) {
-                    System.out.println(belief + " " + timestamp(start) + " " + n.nar.concepts().size() + " concepts");
+                    System.out.println(belief + " " + timestamp(start) + " " +
+                            n.concepts().size() + " concepts");
                     System.out.println(belief.getExplanation());
                     System.out.println();
                 }
             }
         };
 
-        //n.frame(5000);
+        n.run(5000);
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);
 
@@ -95,7 +94,7 @@ public class DeductiveChainTest {
 
             if (n.time() % printEvery == 0) {
                 System.out.println(n.time() + " " + timestamp(start) + " " +
-                        n.nar.numConcepts(true, true));
+                        n.memory().size());
             }
         }
 

@@ -7,7 +7,6 @@ import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.io.Writer;
 
 public interface SetTensional<T extends Term> extends Term, Iterable<T> {
 
@@ -68,7 +67,7 @@ public interface SetTensional<T extends Term> extends Term, Iterable<T> {
 
 
     @Override
-    default public void append(Writer p, boolean pretty) throws IOException {
+    default public void append(Appendable p, boolean pretty) throws IOException {
 
         final int len = length();
 

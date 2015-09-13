@@ -5,7 +5,6 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Created by me on 5/20/15.
@@ -55,7 +54,7 @@ public class ProductN extends Compound implements Product {
 
 
     @Override
-    public boolean appendOperator(Writer p) throws IOException {
+    public boolean appendOperator(Appendable p) throws IOException {
         //skip
         return false;
     }

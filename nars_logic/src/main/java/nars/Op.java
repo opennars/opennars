@@ -5,7 +5,6 @@ import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.Writer;
 
 /** NAL symbol table */
 public enum Op implements Serializable {
@@ -179,11 +178,11 @@ public enum Op implements Serializable {
 
 
     /** writes this operator to a Writer in (human-readable) expanded UTF16 mode */
-    public final void expand(final Writer w) throws IOException {
+    public final void expand(final Appendable w) throws IOException {
         if (this.ch == 0)
-            w.write(str);
+            w.append(str);
         else
-            w.write(ch);
+            w.append(ch);
     }
 
     public boolean has8BitRepresentation() {

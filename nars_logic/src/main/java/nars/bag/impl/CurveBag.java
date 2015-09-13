@@ -330,9 +330,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             final V i =
                     remove ? removeItem(index): items.get(index);
 
-            if (i == null)
-                return null;
-
             if (!i.getBudget().isDeleted()) {
                 return i;
             }
@@ -513,13 +510,13 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     protected final V removeItem(final int index) {
 
         final V ii = items.get(index);
-        if (ii == null)
-            throw new RuntimeException("invalid index: " + index + ", size=" + size());
+        /*if (ii == null)
+            throw new RuntimeException("invalid index: " + index + ", size=" + size());*/
 
         final V jj = remove( ii.name() );
-        /*if (ii!=jj) {
-            throw new RuntimeException("removal fault");
-        }*/
+//        if (ii!=jj) {
+//            throw new RuntimeException("removal fault");
+//        }
 
         return jj;
     }

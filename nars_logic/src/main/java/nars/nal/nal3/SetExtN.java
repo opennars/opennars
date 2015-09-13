@@ -74,7 +74,7 @@ public class SetExtN extends AbstractSetN implements SetExt {
     }
 
     @Override
-    public boolean appendOperator(Writer p) throws IOException {
+    public boolean appendOperator(Appendable p) throws IOException {
         super.appendOperator(p);
         return false;
     }

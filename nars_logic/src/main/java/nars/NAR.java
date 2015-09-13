@@ -804,8 +804,9 @@ abstract public class NAR {
         return this;
     }
 
+    protected int maxNALLevel;
     public int nal() {
-        return memory.nal();
+        return maxNALLevel;
     }
 
     public void emit(final Class c) {

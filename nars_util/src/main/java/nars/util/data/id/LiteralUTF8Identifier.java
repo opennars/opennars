@@ -5,7 +5,7 @@ import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.nio.CharBuffer;
 
 /**
  * Constant-value UTF8 identifier, populated by String or byte[] on construction
@@ -157,9 +157,14 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
 
     /** writes an expanded representation to a writer (output) */
-    @Override public void append(Writer output, boolean pretty) throws IOException {
+    @Override public void append(Appendable output, boolean pretty) throws IOException {
         //default behavior: string representation of name
-        output.write(Utf8.fromUtf8ToChars(bytes()));
+        byte[] b = bytes();
+        if (b.length == 1)
+            output.append((char)b[0]);
+        else {
+            output.append(CharBuffer.wrap(Utf8.fromUtf8ToChars(b)));
+        }
     }
 
 

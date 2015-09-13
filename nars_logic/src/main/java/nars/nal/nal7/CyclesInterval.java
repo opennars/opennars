@@ -7,7 +7,6 @@ import nars.term.Atom;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Interval represented directly as a measure of cycles encoded as an integer in some # of bits
@@ -95,7 +94,7 @@ public class CyclesInterval extends Atom implements AbstractInterval {
     }
 
     @Override
-    public void append(Writer output, boolean pretty) throws IOException {
+    public void append(Appendable output, boolean pretty) throws IOException {
         output.append('/').append(Long.toString(cyc)).append('/');
     }
 

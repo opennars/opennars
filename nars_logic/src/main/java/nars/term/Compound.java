@@ -29,13 +29,11 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.*;
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,7 +43,7 @@ import static nars.Symbols.*;
 /**
  * a compound term
  */
-public abstract class Compound<T extends Term> extends DynamicUTF8Identifier implements Term, Iterable<T>, IPair {
+public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPair {
 
 
     /**
@@ -80,6 +78,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
      */
     public Compound(final T... components) {
         super();
+
 
         this.complexity = -1;
         this.term = components;
@@ -169,10 +168,10 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
         init(term);
     }
 
-    @Override
+
     public void invalidate() {
         if (hasVar()) {
-            super.invalidate(); //invalidate name so it will be (re-)created lazily
+            //super.invalidate(); //invalidate name so it will be (re-)created lazily
 
             for (final Term t : term) {
                 if (t instanceof Compound)
@@ -201,7 +200,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
 
 
     @Override
-    public byte[] init() {
+    public byte[] bytes() {
 
         final int numArgs = term.length;
 
@@ -235,7 +234,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
     }
 
     @Override
-    public void append(final Writer p, final boolean pretty) throws IOException {
+    public void append(final Appendable p, final boolean pretty) throws IOException {
 
         boolean opener = appendTermOpener();
         if (opener)
@@ -261,17 +260,22 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
 
     }
 
-    public static void appendSeparator(final Writer p, final boolean pretty) throws IOException {
+    @Override
+    public String toString() {
+        return toString(true);
+    }
+
+    public static void appendSeparator(final Appendable p, final boolean pretty) throws IOException {
         p.append(ARGUMENT_SEPARATOR);
         if (pretty) p.append(' ');
     }
 
-    public boolean appendOperator(Writer p) throws IOException {
+    public boolean appendOperator(Appendable p) throws IOException {
         p.append(op().str);
         return true;
     }
 
-    public void appendCloser(Writer p) throws IOException {
+    public void appendCloser(Appendable p) throws IOException {
         p.append(COMPOUND_TERM_CLOSER);
     }
 
@@ -295,7 +299,7 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
     }
 
 
-    public static void writeCompound1(final Op op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
+    public static void writeCompound1(final Op op, final Term singleTerm, Appendable writer, boolean pretty) throws IOException {
         writer.append(COMPOUND_TERM_OPENER);
         writer.append(op.str);
         writer.append(ARGUMENT_SEPARATOR);
@@ -414,6 +418,16 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
         return x;
     }
 
+    @Override
+    public StringBuilder toStringBuilder(boolean pretty) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            append(sb, pretty);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb;
+    }
 
     /**
      * Abstract method to get the operate of the compound
@@ -444,13 +458,13 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
 //        return compare(c);
 //    }
 
-    public static int compareClass(final Object b, final Object c) {
-        Class c1 = b.getClass();
-        Class c2 = c.getClass();
-        int h = Integer.compare(c1.hashCode(), c2.hashCode());
-        if (h != 0) return h;
-        return c1.getName().compareTo(c2.getName());
-    }
+//    public static int compareClass(final Object b, final Object c) {
+//        Class c1 = b.getClass();
+//        Class c2 = c.getClass();
+//        int h = Integer.compare(c1.hashCode(), c2.hashCode());
+//        if (h != 0) return h;
+//        return c1.getName().compareTo(c2.getName());
+//    }
 
     /**
      * compares only the contents of the subterms; assume that the other term is of the same operator type
@@ -460,28 +474,27 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
     }
 
 
-    final static int maxSubTermsForNameCompare = 2; //tunable
-
-    protected int compare(final Compound otherCompoundOfEqualType) {
-
-        int l = length();
-
-        if ((l != otherCompoundOfEqualType.length()) || (l < maxSubTermsForNameCompare))
-            return compareSubterms(otherCompoundOfEqualType);
-
-        return compareName(otherCompoundOfEqualType);
-    }
-
-
-    public int compareName(final Compound c) {
-        return super.compareTo(c);
-    }
+//    final static int maxSubTermsForNameCompare = 2; //tunable
+//
+//    protected int compare(final Compound otherCompoundOfEqualType) {
+//
+//        int l = length();
+//
+//        if ((l != otherCompoundOfEqualType.length()) || (l < maxSubTermsForNameCompare))
+//            return compareSubterms(otherCompoundOfEqualType);
+//
+//        return compareName(otherCompoundOfEqualType);
+//    }
+//
+//
+//    public int compareName(final Compound c) {
+//        return super.compareTo(c);
+//    }
 
 
 
     @Override
     final public int hashCode() {
-        ensureNamed();
         return contentHash;
     }
 
@@ -612,25 +625,22 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
                 setNormalized();
                 return (T) this;
             }
-        }
+            else {
+                VariableNormalization vn = new VariableNormalization(this, destructive);
+                final Compound result = vn.getResult();
+                if (result == null) return null;
 
-        final Compound result;
-        if (hasVar()) {
-            VariableNormalization vn = new VariableNormalization(this, destructive);
-            result = vn.getResult();
-            if (result == null) return null;
+                if (vn.hasRenamed()) {
+                    result.invalidate();
+                }
 
-            if (vn.hasRenamed()) {
-                result.invalidate();
+                result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
+
+                return (T) result;
+
             }
         }
-        else {
-            result = this;
-        }
 
-        result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
-
-        return (T) result;
     }
 
     @Override
@@ -1353,6 +1363,10 @@ public abstract class Compound<T extends Term> extends DynamicUTF8Identifier imp
         return toString(false);
     }
 
+    @Override
+    public String toString(boolean pretty) {
+        return toStringBuilder(pretty).toString();
+    }
 
     @Override
     public Object first() {

@@ -16,7 +16,6 @@ import nars.term.Term;
 import nars.term.transform.TermVisitor;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -167,7 +166,7 @@ public class TermSpect extends TermCept implements Term, Concept {
     }
 
     @Override
-    public void append(Writer w, boolean pretty) throws IOException {
+    public void append(Appendable w, boolean pretty) throws IOException {
 
     }
 

@@ -13,6 +13,7 @@ public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix pa
 
 
 
+
 //    default public int termLinkHashCode() {
 //        //TODO cache this value while prefix and target remain the same; it is called more than necessary
 //        return Objects.hash(getPrefix(), getTarget());
@@ -21,6 +22,7 @@ public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix pa
     public static boolean termLinkEquals(final TermLinkKey a, final TermLinkKey b) {
         if (a == b) return true;
         //if (!(b instanceof TermLinkKey)) return false;
+
 
         return Byted.equals(a, b) &&
                 a.getTerm().equals(b.getTerm());

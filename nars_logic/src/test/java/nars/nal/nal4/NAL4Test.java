@@ -6,13 +6,14 @@ import nars.nal.JavaNALTest;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-
+@RunWith(Parameterized.class)
 public class NAL4Test extends JavaNALTest {
 
 

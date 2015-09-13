@@ -35,8 +35,8 @@ public class VariableUnificationTest extends JavaNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return Arrays.asList(new Object[][]{
-                {new Default() },
+        return Arrays.asList(new Supplier[][]{
+                {()->new Default() },
                 //{new Default()},
                 //{new DefaultBuffered()},
                 //{new DefaultBuffered().setInternalExperience(null)},

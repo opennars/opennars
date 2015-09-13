@@ -40,7 +40,6 @@ import nars.truth.Truth;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Arrays;
 
 import static nars.Symbols.COMPOUND_TERM_CLOSER;
@@ -94,7 +93,6 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
      * Try to make a new compound from two components. Called by the logic
      * rules.
      *
-     * @param self specify a SELF, or null to use memory's current self
      * @return A compound generated or null
      */
     public static Operation op(Product arg, final Operator oper) {
@@ -303,8 +301,9 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
     }
 
 
+
     @Override
-    public byte[] init() {
+    public byte[] bytes() {
 
         byte[] op = getOperator().bytes();
         //Term[] arg = argArray();
@@ -344,7 +343,7 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
     }
 
     @Override
-    public void append(Writer p, boolean pretty) throws IOException {
+    public void append(Appendable p, boolean pretty) throws IOException {
 
         Term predTerm = getOperator();
 

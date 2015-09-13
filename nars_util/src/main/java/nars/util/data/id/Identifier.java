@@ -55,7 +55,6 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     /** use this when this class must generate an output by a writer
      *  this is the default general implementation.  */
     public char[] chars(final boolean pretty) {
-
         return charsFromWriter(pretty);
     }
 
@@ -68,7 +67,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
      * implementations should call Writer.append() sometimes instead of Writer.write()
      * to avoid allocating a temporary buffer
      */
-    public abstract void append(Writer p, boolean pretty) throws IOException;
+    public abstract void append(Appendable p, boolean pretty) throws IOException;
 
 
     @Override

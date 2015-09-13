@@ -76,10 +76,10 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
         return vars() > 0;
     }
 
-    @Override
-    protected int compare(Compound otherCompoundOfEqualType) {
-        return compareSubterms(otherCompoundOfEqualType);
-    }
+//    @Override
+//    protected int compare(Compound otherCompoundOfEqualType) {
+//        return compareSubterms(otherCompoundOfEqualType);
+//    }
 
 
     //    @Override

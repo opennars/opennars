@@ -31,7 +31,10 @@ abstract public class AbstractNALTest  {
     }
 
     public final TestNAR test() {
-        return new TestNAR(nar.get());
+        return new TestNAR(nar());
+    }
+    public final NAR nar() {
+        return nar.get();
     }
 
 }

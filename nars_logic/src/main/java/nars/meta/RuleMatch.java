@@ -224,7 +224,7 @@ public class RuleMatch extends FindSubst {
             if (Global.DEBUG) {
                 if (tt != null) {
                     //tt.log(rule.toStringCompact());
-                    tt.log(premise + "," + rule);
+                    //tt.log(premise + "," + rule);
                 }
             }
 

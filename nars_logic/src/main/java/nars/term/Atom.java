@@ -9,7 +9,7 @@ import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -54,8 +54,8 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
     }
 
     @Override
-    public void append(final Writer w, final boolean pretty) throws IOException {
-        w.write(Utf8.fromUtf8ToChars(bytes()));
+    public void append(final Appendable w, final boolean pretty) throws IOException {
+        w.append(CharBuffer.wrap(Utf8.fromUtf8ToChars(bytes())));
     }
 
 
@@ -68,7 +68,8 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 
     @Override
     public String toString() {
-        return toStringBuilder(true).toString();
+        return new String(chars(true));
+        //return toStringBuilder(true).toString();
     }
 
     public char[] chars(final boolean pretty) {
@@ -256,7 +257,10 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
     }
 
 
-
+    @Override
+    public final String toString(boolean pretty) {
+        return toString();
+    }
 
     /**
      * Whether this compound term contains any variable term

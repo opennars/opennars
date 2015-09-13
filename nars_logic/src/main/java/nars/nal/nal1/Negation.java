@@ -26,7 +26,6 @@ import nars.term.Compound1;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * A negation of a statement.
@@ -111,12 +110,12 @@ public class Negation extends Compound1 {
 
 
     @Override
-    public byte[] init() {
+    public byte[] bytes() {
         return Compound.newCompound1Key(Op.NEGATION, the());
     }
 
     @Override
-    public void append(Writer p, boolean pretty) throws IOException {
+    public void append(Appendable p, boolean pretty) throws IOException {
         Compound.writeCompound1(op(), the(), p, pretty);
     }
 

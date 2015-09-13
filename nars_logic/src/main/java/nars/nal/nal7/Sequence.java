@@ -7,7 +7,6 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -140,14 +139,14 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
     @Override
-    public void append(Writer p, boolean pretty) throws IOException {
+    public void append(Appendable p, boolean pretty) throws IOException {
 
         boolean opener = appendTermOpener();
         if (opener)
             p.append(COMPOUND_TERM_OPENER);
 
 
-        final boolean appendedOperator = appendOperator(p);
+        appendOperator(p);
 
         appendSeparator(p, pretty);
 
@@ -196,7 +195,7 @@ public class Sequence extends Conjunction implements Intermval {
 
     }
 
-    protected void appendInterval(Writer p, long iii) throws IOException {
+    protected void appendInterval(Appendable p, long iii) throws IOException {
         p.append(Symbols.INTERVAL_PREFIX);
         p.append(Long.toString(iii));
     }

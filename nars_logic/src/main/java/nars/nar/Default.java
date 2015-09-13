@@ -220,7 +220,7 @@ public class Default extends NAR {
     };
     public final DefaultCycle core;
     public int cyclesPerFrame = 1;
-    protected int maxNALLevel;
+
     /**
      * Size of TaskLinkBag
      */

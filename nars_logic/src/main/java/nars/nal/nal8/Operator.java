@@ -7,7 +7,6 @@ import nars.term.Compound1;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Wraps a term to represent an operator that can be used as the predicate
@@ -39,12 +38,12 @@ public class Operator<T extends Term> extends Compound1<T> {
     }
 
     @Override
-    public byte[] init() {
+    public byte[] bytes() {
         return Compound.newCompound1Key(op(), the());
     }
 
     @Override
-    public void append(Writer p, boolean pretty) throws IOException {
+    public void append(Appendable p, boolean pretty) throws IOException {
         p.append(op().ch);
         the().append(p, pretty);
     }

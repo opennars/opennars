@@ -83,10 +83,13 @@ public class Utf8 implements CharSequence, Comparable<Utf8>, Byted {
         }
     }
 
-    /**
-     * use fromUtf8ToChars when possible, because fromUtf8 creates a String
-     * which creates an unnecessary duplicate of the decode buffer
-     */
+
+
+
+        /**
+         * use fromUtf8ToChars when possible, because fromUtf8 creates a String
+         * which creates an unnecessary duplicate of the decode buffer
+         */
     public static final String fromUtf8(final byte[] bytes, final int length) {
         //return new String(bytes, 0, length, utf8Charset);
         return new String(fromUtf8ToChars(bytes, length));

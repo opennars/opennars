@@ -115,8 +115,12 @@ public class STMEventInference  {
             //nal.nar.concept(previousTask.getTerm()).link(currentTask);
             //nal.setCurrentTask(currentTask);
 
-            nal.link(nal.nar.concept(currentTask.getTerm()), previousTask);
-            nal.link(nal.nar.concept(previousTask.getTerm()), currentTask);
+            Concept cTerm = nal.nar.concept(currentTask.getTerm());
+            if (cTerm!=null)
+                nal.link(cTerm, previousTask);
+            Concept pTerm = nal.nar.concept(previousTask.getTerm());
+            if (pTerm!=null)
+                nal.link(pTerm, currentTask);
 
            /* continue;
             //nal.setBelief(previousTask);

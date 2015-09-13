@@ -124,6 +124,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
         this.hash = TermLinkKey.hash(prefix, t);
     }
 
+
     @Override
     public final byte[] bytes() {
         return prefix;

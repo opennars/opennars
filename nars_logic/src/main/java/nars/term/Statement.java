@@ -35,7 +35,6 @@ import nars.nal.nal7.TemporalRules;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Arrays;
 
 import static nars.Symbols.STATEMENT_CLOSER;
@@ -229,8 +228,8 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 //        return cb.toString();
     }
 
-    @Override
-    public byte[] init() {
+
+    public byte[] bytes() {
         final byte[] subjBytes = getSubject().bytes();
         final byte[] predBytes = getPredicate().bytes();
         final byte[] relationBytes = op().bytes;
@@ -249,7 +248,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
 
     @Override
-    public void append(final Writer w, final boolean pretty) throws IOException {
+    public void append(final Appendable w, final boolean pretty) throws IOException {
 
         w.append(STATEMENT_OPENER);
 

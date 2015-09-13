@@ -27,7 +27,6 @@ import nars.term.transform.TermVisitor;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.Map;
 
 public interface Term extends Cloneable, Comparable, Termed, Serializable {
@@ -150,7 +149,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     public int structure();
 
 
-    public void append(Writer w, boolean pretty) throws IOException;
+    public void append(Appendable w, boolean pretty) throws IOException;
 
 //    default public void append(Writer w, boolean pretty) throws IOException {
 //        //try {
@@ -166,9 +165,10 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 //        return name().toStringBuilder(pretty);
 //    }
 
-    default public String toString(boolean pretty) {
-        return toStringBuilder(pretty).toString();
-    }
+    String toString(boolean pretty);
+//    default public String toString(boolean pretty) {
+//        return toStringBuilder(pretty).toString();
+//    }
 
     default String toStringCompact() {
         return toString();

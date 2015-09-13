@@ -38,6 +38,7 @@ public enum TruthFunction {
     },
     Abduction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.abduction(T, B);
         }
     },
@@ -84,6 +85,7 @@ public enum TruthFunction {
     },
     Analogy() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.analogy(T,B);
         }
     },
@@ -104,31 +106,37 @@ public enum TruthFunction {
     },
     AnonymousAnalogy() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B==null) return null;
             return TruthFunctions.anonymousAnalogy(T,B);
         }
     },
     Exemplification() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B==null) return null;
             return TruthFunctions.exemplification(T,B);
         }
     },
     DecomposeNegativeNegativeNegative() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B==null) return null;
             return TruthFunctions.decomposeNegativeNegativeNegative(T,B);
         }
     },
     DecomposePositiveNegativePositive() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B==null) return null;
             return TruthFunctions.decomposePositiveNegativePositive(T,B);
         }
     },
     DecomposeNegativePositivePositive() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B==null) return null;
             return TruthFunctions.decomposeNegativePositivePositive(T,B);
         }
     },
     DecomposePositiveNegativeNegative() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.decomposePositiveNegativeNegative(T,B);
         }
     },

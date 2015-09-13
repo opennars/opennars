@@ -17,9 +17,13 @@ public class EventCount {
 
     public EventCount(NAR n) {
         this.sub = Topic.all(n.memory, (event,value) -> {
-            final HitMeter h = eventMeters.computeIfAbsent(event, k -> new HitMeter(event));
+            final HitMeter h = getHitMeter(event);
             h.hit();
         });
+    }
+
+    protected HitMeter getHitMeter(String event) {
+        return eventMeters.computeIfAbsent(event, k -> new HitMeter(event));
     }
 
     public void off() {
@@ -30,11 +34,11 @@ public class EventCount {
     }
 
 
-    public long numOutputs() { return eventMeters.get("eventDerived").count(); }
-    public long numInputs() { return eventMeters.get("eventInput").count(); }
-    public long numExecutions() { return eventMeters.get("eventExecute").count(); }
-    public long numErrors() { return eventMeters.get("eventError").count(); }
-    public long numAnswers() { return eventMeters.get("eventAnswer").count(); }
+    public long numOutputs() { return getHitMeter("eventDerived").count(); }
+    public long numInputs() { return getHitMeter("eventInput").count(); }
+    public long numExecutions() { return getHitMeter("eventExecute").count(); }
+    public long numErrors() { return getHitMeter("eventError").count(); }
+    public long numAnswers() { return getHitMeter("eventAnswer").count(); }
 
 
     public void reset() {

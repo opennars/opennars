@@ -6,6 +6,7 @@ import nars.meter.TestNAR;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.function.Supplier;
 
 import static org.jgroups.util.Util.assertTrue;
 
+@RunWith(Parameterized.class)
 public class TestEvalScheme extends JavaNALTest {
 
     public TestEvalScheme(Supplier<NAR> build) {

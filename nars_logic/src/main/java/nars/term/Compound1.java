@@ -52,8 +52,8 @@ abstract public class Compound1<T extends Term> extends Compound<T> {
         return Terms.compareSubterms(term, otherCompoundOfEqualType.term);
     }
 
-    @Override
-    protected int compare(Compound otherCompoundOfEqualType) {
-        return compareSubterms(otherCompoundOfEqualType);
-    }
+//    @Override
+//    protected int compare(Compound otherCompoundOfEqualType) {
+//        return compareSubterms(otherCompoundOfEqualType);
+//    }
 }
