@@ -1,6 +1,7 @@
 package nars.meta;
 
 import com.google.common.collect.Sets;
+import nars.meta.pre.PairMatchingProduct;
 import nars.nal.Deriver;
 import nars.nar.NewDefault;
 import org.apache.commons.math3.stat.Frequency;
@@ -52,10 +53,19 @@ public class RuleDerivationGraphTest {
         //preconds.forEach(p -> System.out.println(p));
 
 
+        Set<PairMatchingProduct> ks = d.ruleIndex.keySet();
+        System.out.println("Patterns: keys=" + ks.size() + ", values=" + d.ruleIndex.size());
+        for (PairMatchingProduct pp : ks) {
+            System.out.println(pp + " x " + d.ruleIndex.get(pp).size());
+
+        }
 
         for (TaskRule s : R) {
             System.out.println(s);
+
         }
+
+
     }
 
     @Test public void testPostconditionSingletons() {

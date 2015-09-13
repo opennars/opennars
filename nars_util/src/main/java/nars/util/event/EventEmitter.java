@@ -204,13 +204,13 @@ abstract public class EventEmitter<K,V>  {
 
 
         @Override
-        public List<Reaction<K,V>> all(K c) {
+        public final List<Reaction<K,V>> all(K c) {
             return reactions.get(c);
         }
 
         @Override
         public int emit(final K channel, final V arg) {
-            List<Reaction<K,V>> c = all(channel);
+            final List<Reaction<K,V>> c = all(channel);
             if (c==null) return 0;
             final int cSize=c.size();
             for (int i = 0; i < cSize; i++) {

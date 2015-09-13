@@ -70,7 +70,7 @@ public class VariableTransformationTest {
                     }
 
                     if (changed)
-                        ct.invalidate();
+                        ct.rehash();
                 }
             }
         });

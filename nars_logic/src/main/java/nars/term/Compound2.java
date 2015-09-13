@@ -87,20 +87,20 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
 //        //return hashCode();
 //        return Util.hash(operator().ordinal(), getTemporalOrder(), b(), a() );
 //    }
-
-    /**
-     * compares only the contents of the subterms; assume that the other term is of the same operator type
-     */
-    @Override
-    public int compareSubterms(final Compound otherCompoundOfEqualType) {
-        //this is what we want to avoid - generating string names
-        //override in subclasses where a different non-string comparison can be made
-
-
-        final Compound2 other = ((Compound2) otherCompoundOfEqualType);
-
-        return Terms.compareSubterms(term, other.term);
-    }
+//
+//    /**
+//     * compares only the contents of the subterms; assume that the other term is of the same operator type
+//     */
+//    @Override
+//    public int compareSubterms(final Compound otherCompoundOfEqualType) {
+//        //this is what we want to avoid - generating string names
+//        //override in subclasses where a different non-string comparison can be made
+//
+//
+//        final Compound2 other = ((Compound2) otherCompoundOfEqualType);
+//
+//        return Terms.compareSubterms(term, other.term);
+//    }
 
 
 }

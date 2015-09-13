@@ -44,13 +44,13 @@ abstract public class Compound1<T extends Term> extends Compound<T> {
 
 
 
-    /** compares only the contents of the subterms; assume that the other term is of the same operator type */
-    @Override
-    public int compareSubterms(final Compound otherCompoundOfEqualType) {
-        //this is what we want to avoid - generating string names
-        //override in subclasses where a different non-string comparison can be made
-        return Terms.compareSubterms(term, otherCompoundOfEqualType.term);
-    }
+//    /** compares only the contents of the subterms; assume that the other term is of the same operator type */
+//    @Override
+//    public int compareSubterms(final Compound otherCompoundOfEqualType) {
+//        //this is what we want to avoid - generating string names
+//        //override in subclasses where a different non-string comparison can be made
+//        return Terms.compareSubterms(term, otherCompoundOfEqualType.term);
+//    }
 
 //    @Override
 //    protected int compare(Compound otherCompoundOfEqualType) {

@@ -36,6 +36,23 @@ public class Variable extends Atom {
     public final Op op;
     final int structure;
 
+    public static Variable make(Op varType, byte[] baseName, boolean scoped) {
+        return make(varType.ch, baseName, scoped);
+    }
+
+    public static Variable make(char varType, String baseName, boolean scoped) {
+        return make(varType, Utf8.toUtf8(baseName), scoped);
+    }
+
+    public static Variable make(char ch, byte[] baseName, boolean scoped) {
+        int bl = baseName.length;
+        final byte[] name = new byte[bl + 1];
+        name[0] = (byte)ch;
+        System.arraycopy(baseName, 0, name, 1, bl);
+
+        return new Variable(name, scoped);
+    }
+
     @Override
     public int compareTo(Object that) {
         if (this == that) return 0;

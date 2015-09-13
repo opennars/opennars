@@ -148,8 +148,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
             throw new RuntimeException("volume limit exceeded for new Compound[" + op() + "] " + Arrays.toString(term));
         }
 
-        //invalidate();
-
         if (!hasVar())
             setNormalized();
     }
@@ -160,28 +158,14 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return 1 << opOrdinal;
     }
 
-    public void rehash() {
-        for (Term t : term) {
-            ((Term)t).rehash();
+    public final void rehash() {
+        for (final Term t : term) {
+            t.rehash();
         }
 
         init(term);
     }
 
-
-    public void invalidate() {
-        if (hasVar()) {
-            //super.invalidate(); //invalidate name so it will be (re-)created lazily
-
-            for (final Term t : term) {
-                if (t instanceof Compound)
-                    ((Compound) t).invalidate();
-            }
-        }
-        else {
-            setNormalized();
-        }
-    }
 
     /** allows implementations to include a 32 bit identifier within the struturehash
      * which will be used to exclude inequalities. by default, it returns 0 which
@@ -466,12 +450,12 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 //        return c1.getName().compareTo(c2.getName());
 //    }
 
-    /**
-     * compares only the contents of the subterms; assume that the other term is of the same operator type
-     */
-    public int compareSubterms(final Compound otherCompoundOfEqualType) {
-        return Terms.compareSubterms(term, otherCompoundOfEqualType.term);
-    }
+//    /**
+//     * compares only the contents of the subterms; assume that the other term is of the same operator type
+//     */
+//    public int compareSubterms(final Compound otherCompoundOfEqualType) {
+//        return Terms.compareSubterms(term, otherCompoundOfEqualType.term);
+//    }
 
 
 //    final static int maxSubTermsForNameCompare = 2; //tunable
@@ -631,7 +615,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
                 if (result == null) return null;
 
                 if (vn.hasRenamed()) {
-                    result.invalidate();
+                    result.rehash();
                 }
 
                 result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)

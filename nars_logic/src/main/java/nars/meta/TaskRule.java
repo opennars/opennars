@@ -32,6 +32,7 @@ public class TaskRule extends Rule<Premise, Task> {
     //private final Term[] preconditions; //the terms to match
 
     public PostCondition[] postconditions;
+    public PairMatchingProduct pattern;
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
@@ -140,7 +141,7 @@ public class TaskRule extends Rule<Premise, Task> {
             if ((containingCompound instanceof Inheritance) && reservedPostconditions.contains(((Inheritance) containingCompound).getPredicate()))
                 return v;
 
-            return new Variable(Symbols.VAR_PATTERN + v.toString(), true);
+            return Variable.make(Op.VAR_PATTERN, v.bytes(), true);
         }
     }
 
@@ -157,6 +158,7 @@ public class TaskRule extends Rule<Premise, Task> {
     }
 
     public TaskRule normalizeRule() {
+
         TaskRule tr = (TaskRule) new VariableNormalization(this, false) {
 
             @Override
@@ -166,9 +168,24 @@ public class TaskRule extends Rule<Premise, Task> {
             }
         }.getResult();
 
+
         if (tr == null) {
-            throw new RuntimeException("Unable to normalize: " + this);
+            return null;
         }
+
+        //normalize a VAR_PATTERN term as belief pattern to %1
+        Term[] prem = ((Product) tr.term(0)).terms();
+        Term taskPattern = prem[0];
+        Term beliefPattern = prem[1];
+        if ((beliefPattern instanceof Variable) &&
+                (beliefPattern.op() == Op.VAR_PATTERN) &&
+                (!taskPattern.equals(PairMatchingProduct.any)) &&
+                (!beliefPattern.equals(PairMatchingProduct.any)) ) {
+            prem[1] = PairMatchingProduct.any;
+        }
+
+        tr.rehash();
+
         return tr.setup();
     }
 
@@ -210,7 +227,9 @@ public class TaskRule extends Rule<Premise, Task> {
         //(which will not reference any particular atoms)
 
 
-        final MatchTaskBeliefPattern matcher = new MatchTaskBeliefPattern(taskTermPattern, beliefTermPattern, this);
+        this.pattern = new PairMatchingProduct(taskTermPattern, beliefTermPattern);
+
+        final MatchTaskBeliefPattern matcher = new MatchTaskBeliefPattern(pattern);
         early.add(matcher);
 
 

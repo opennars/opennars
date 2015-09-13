@@ -26,7 +26,6 @@ package automenta.vnc.viewer;
 
 import automenta.vnc.rfb.client.ClientToServerMessage;
 import automenta.vnc.rfb.protocol.ProtocolSettings;
-import automenta.vnc.viewer.swing.Surface;
 
 import java.net.Socket;
 

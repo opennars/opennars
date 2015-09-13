@@ -14,10 +14,10 @@ public class PairMatchingProduct extends ProductN {
     public int volA, volB;
     public int structureA, structureB; //should use the long stuctureHash?
 
-    final static Variable empty = new Variable("%1"); //just use the first pattern variable because it will overlap with it
+    public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
 
     public PairMatchingProduct() {
-        this(empty, empty);
+        this(any, any);
     }
 
     public PairMatchingProduct(Term a, Term b) {
@@ -38,7 +38,7 @@ public class PairMatchingProduct extends ProductN {
 
 
     public void set(final Task a, final Task b) {
-        set(a.getTerm(), b == null ? empty : b.getTerm());
+        set(a.getTerm(), b == null ? any : b.getTerm());
     }
 
     public void set(final Term a, final Term b) {

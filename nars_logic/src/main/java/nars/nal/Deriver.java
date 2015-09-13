@@ -1,6 +1,10 @@
 package nars.nal;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 import nars.meta.RuleMatch;
+import nars.meta.TaskRule;
+import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -14,9 +18,16 @@ abstract public class Deriver implements Consumer<Premise> {
 
     public final DerivationRules rules;
 
+    public final ListMultimap<PairMatchingProduct, TaskRule> ruleIndex;
+
 
     public Deriver(DerivationRules rules) {
+
         this.rules = rules;
+
+        this.ruleIndex = MultimapBuilder.treeKeys().arrayListValues().build();
+
+        rules.forEach(r -> ruleIndex.put(r.pattern, r));
     }
 
 

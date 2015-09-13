@@ -98,7 +98,6 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
     @Override
     public void event(Term event, Operation o) {
-        Memory m = o.getMemory();
         if (o.getTask().isCommand() || decider().test(o)) {
             execute(o);
         }

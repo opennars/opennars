@@ -184,7 +184,7 @@ public class TermLinkTest {
             assertEquals(t.type, 3); //all component_statement links
         }
 
-        assertEquals(6, getTermLinkTemplates(d).size());
+        assertEquals(4, getTermLinkTemplates(d).size());
 
 
         NAR n = new Default();
@@ -237,8 +237,8 @@ public class TermLinkTest {
         assertTrue("termlinks between the two input concepts form a fully connected graph",
                 ci.isGraphConnected());
 
-        assertEquals(5, g.vertexSet().size());
-        assertEquals(6, g.edgeSet().size());
+        assertEquals(6, g.vertexSet().size());
+        assertEquals(9, g.edgeSet().size());
 
         TermLinkGraph h = new TermLinkGraph().add(n.concept("{x}"), true);
         //System.out.println(h);

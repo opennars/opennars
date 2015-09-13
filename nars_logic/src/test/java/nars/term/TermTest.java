@@ -270,7 +270,7 @@ public class TermTest {
 
             forced.term[0] = subj;
             forced.term[1] = pred;
-            forced.invalidate();
+            forced.rehash();
 
             assertEquals(t, forced.toStringCompact());
 
@@ -360,6 +360,17 @@ public class TermTest {
         assertEquals(n.term(b), n.term(b));
     }
 
+    @Test public void termEqualityWithMixedVariables() {
+        NAR n = new Default();
+        String s = "(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)";
+        Term a = n.term(s);
+        Term b = n.term(s);
+        assertTrue(a!=b);
+        assertTrue(a.equals(b));
+        assertTrue(a.isNormalized());
+        assertTrue("re-normalizing doesn't affect", a.normalized().equals(b));
+
+    }
     @Test
     public void validStatement() {
         NAR n = new Default();

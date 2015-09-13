@@ -1,5 +1,6 @@
 package nars.meter.experiment;
 
+import nars.Global;
 import nars.NAR;
 import nars.io.qa.AnswerReaction;
 import nars.meter.TestNAR;
@@ -47,7 +48,9 @@ public class DeductiveChainTest extends TestNAR {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int length = 4;
+        int length = 3;
+
+        Global.DEBUG = true;
 
         Default da = new Default();
         //DefaultAlann da = new DefaultAlann(32);
@@ -60,7 +63,7 @@ public class DeductiveChainTest extends TestNAR {
                 da;
         //);
 
-        //da.stdout();
+        da.stdout();
 
         DeductiveChainTest test = new DeductiveChainTest(n, length, 100000);
 
@@ -81,7 +84,7 @@ public class DeductiveChainTest extends TestNAR {
             }
         };
 
-        n.run(5000);
+        //n.run(100);
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);
 

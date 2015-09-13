@@ -13,9 +13,9 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Variable;
@@ -130,7 +130,10 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
 
         //TODO use task of callee as Parent task, if self-invoked
-        nar.input(TaskSeed.make(nar.memory, Operation.result(op, Product.make(instancePlusArgs), effect)).belief().present().truth(1f, 0.9f));
+        nar.believe(
+                Operation.result(op, Product.make(instancePlusArgs), effect),
+                Tense.Present,
+                1f, 0.9f);
 
 
         lock.set(false);

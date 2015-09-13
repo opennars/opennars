@@ -696,8 +696,8 @@ public class NarseseParser extends BaseParser<Object>  {
         */
         return sequence(
                 anyOf(variables),
-                push(match()), Atom(), swap(),
-                    push(new Variable(pop() + (String) pop(), true)
+                push(match().charAt(0)), Atom(), swap(),
+                    push(Variable.make((char)pop(), (String) pop(), true)
                 )
 
         );

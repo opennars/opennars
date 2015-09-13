@@ -14,6 +14,8 @@ final public class NotImplicationOrEquivalence extends PreCondition1 {
     @Override
     public boolean test(final RuleMatch m, final Term arg1) {
 
+        if (arg1 == null) return false;
+
         final Op o = arg1.op();
         switch (o) {
             case IMPLICATION:

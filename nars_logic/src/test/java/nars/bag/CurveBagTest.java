@@ -37,8 +37,21 @@ public class CurveBagTest extends AbstractBagTest {
     Memory p = new Default().memory();
     final static BagCurve curve = new CurveBag.FairPriorityProbabilityCurve();
 
-    @Test 
-    public void testBags() {
+    @Test
+    public void testBagSampling() {
+
+        /** for testing normalization:
+         * these should produce similar results regardless of the input ranges */
+        testBags(0.25f, 0.75f,
+                1, 2, 3, 7, 12);
+        testBags(0.5f, 0.6f,
+                1, 2, 3, 7, 12);
+
+        testBags(0, 1f,
+                1, 2, 3, 6, 13, 27, 32, 64, 100);
+    }
+
+    public void testBags(float pMin, float pMax, int... capacities) {
 
         
         //FractalSortedItemList<NullItem> f1 = new FractalSortedItemList<>();
@@ -53,21 +66,19 @@ public class CurveBagTest extends AbstractBagTest {
 
         int repeats = 2;
 
-
-        System.out.println("Bag sampling distributions");
-        for (int capacity : new int[] { 1, 2, 3, 6, 13, 27, 32, 64, 100 } ) {
+        System.out.println("Bag sampling distributions, inputs priority range=" + pMin + " .. " + pMax);
+        for (int capacity : capacities ) {
 
 
             double[] total = new double[capacity];
 
             for (int i = 0; i < repeats; i++) {
-                double[] count = testRemovalDistribution(capacity);
+                double[] count = testRemovalDistribution(pMin, pMax, capacity);
                 total = MathArrays.ebeAdd(total, count);
             }
 
-            System.out.println(capacity + "," + " = " + Arrays.toString(total));
+            System.out.println("  " + capacity + "," + " = " + Arrays.toString(total));
 
-            testRemovalDistribution(capacity);
         }
 
     }
@@ -176,7 +187,8 @@ public class CurveBagTest extends AbstractBagTest {
     }
 
 
-    public static double[] testRemovalDistribution(int capacity) {
+
+    public static double[] testRemovalDistribution(float priMin, float priMax, int capacity) {
         int samples = 128 * capacity;
         
         double[] count = new double[capacity];
@@ -187,7 +199,7 @@ public class CurveBagTest extends AbstractBagTest {
         
         //fill
         for (int i= 0; i < capacity; i++) {
-            f.put(new NullItem());
+            f.put(new NullItem(priMin, priMax));
             assertTrue(f.isSorted());
         }
         

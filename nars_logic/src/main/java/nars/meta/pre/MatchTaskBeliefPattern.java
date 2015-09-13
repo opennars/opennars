@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
-import nars.meta.TaskRule;
 import nars.term.Term;
 
 /**
@@ -16,9 +15,10 @@ public class MatchTaskBeliefPattern extends PreCondition {
     private final String id;
 
 
-    public MatchTaskBeliefPattern(Term taskPattern, Term beliefPattern, TaskRule rule) {
+    public MatchTaskBeliefPattern(PairMatchingProduct pattern) {
 
-        this.pattern = new PairMatchingProduct(taskPattern, beliefPattern);
+        this.pattern = pattern;
+        Term beliefPattern = pattern.term(1);
 
         if (Global.DEBUG) {
             if (beliefPattern.structure() == 0) {

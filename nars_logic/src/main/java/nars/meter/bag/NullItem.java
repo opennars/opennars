@@ -17,6 +17,11 @@ public class NullItem extends Item.StringKeyItem {
         this(rng.nextFloat()); // * (1.0f - DefaultTruth.DEFAULT_TRUTH_EPSILON));
     }
 
+    /** random between range of priorities */
+    public NullItem(float priMin, float priMax) {
+        this(rng.nextFloat() * ( priMax-priMin) + priMin);
+    }
+
     public NullItem(float priority, String key) {
         super(priority, priority, priority);
         this.key = key;
