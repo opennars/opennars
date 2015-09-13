@@ -2,15 +2,13 @@ package nars.nal.nal6;
 
 import nars.NAR;
 import nars.meter.TestNAR;
+import nars.nal.AbstractNALTest;
 import nars.nal.JavaNALTest;
-import nars.nar.Default;
-import nars.nar.experimental.Equalized;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Supplier;
 
@@ -26,19 +24,21 @@ public class NAL6Test extends JavaNALTest {
 
         @Parameterized.Parameters(name= "{0}")
         public static Collection configurations() {
-            return Arrays.asList(new Supplier[][]{
-                    {()->new Default()},
-//                    {new DefaultDeep()},
-                    {()->new Equalized().nal(6) },
-                    {()->new Equalized() },
-//                    {new Default().setInternalExperience(null) },
-                    {()->new Default().nal(6)},
-//                    {new Classic().setInternalExperience(null) },
+            return AbstractNALTest.core;
 
-                    //{new Solid(1, 128, 1, 1, 1, 2).level(6)}
-
-
-            });
+//            return Arrays.asList(new Supplier[][]{
+//                    {()->new Default()},
+////                    {new DefaultDeep()},
+//                    {()->new Equalized().nal(6) },
+//                    {()->new Equalized() },
+////                    {new Default().setInternalExperience(null) },
+//                    {()->new Default().nal(6)},
+////                    {new Classic().setInternalExperience(null) },
+//
+//                    //{new Solid(1, 128, 1, 1, 1, 2).level(6)}
+//
+//
+//            });
         }
 
 

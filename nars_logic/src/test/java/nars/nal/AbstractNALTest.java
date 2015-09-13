@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nar.Default;
-import nars.nar.experimental.DefaultAlann;
 import org.junit.Ignore;
 
 import java.util.List;
@@ -19,8 +18,8 @@ abstract public class AbstractNALTest  {
     public static final List<Supplier<NAR>> core =Lists.newArrayList(
         //() -> new Default().nal(1),
         //() -> new Default().nal(2),
-        () -> new Default(),
-        () -> new DefaultAlann(48)
+        () -> new Default()
+        //() -> new DefaultAlann(48)
     );
 
 

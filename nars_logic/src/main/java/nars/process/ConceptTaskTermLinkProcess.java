@@ -19,10 +19,6 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     public ConceptTaskTermLinkProcess(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink) {
         super(nar, concept, taskLink);
 
-        if (taskLink.type == TermLink.TRANSFORM) {
-            throw new RuntimeException("ConceptProcessTaskTermLink must involve a TaskLink non-Transform type");
-        }
-
         this.termLink = termLink;
     }
 
