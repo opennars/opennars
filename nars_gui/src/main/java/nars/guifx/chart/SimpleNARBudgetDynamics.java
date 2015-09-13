@@ -77,18 +77,18 @@ public class SimpleNARBudgetDynamics {
             String[] x = abcClosed.clone();
             for (int i = 0; i < x.length; i++) {
 
-                Task t = ((NAR) NAR.this).task(x[i]);
+                Task t = n.task(x[i]);
                 t.getBudget().setPriority(pri);
                 t.getBudget().setQuality(qua);
                 t.getBudget().setDurability(dur);
 
-                ((NAR) NAR.this).input(t);
+                n.input(t);
             }
 
             n.run(cycles);
 
             //n.nar.memory.concepts.forEach(System.out::println);
-            ((NAR) NAR.this).memory.concepts.forEach(c -> c.print(System.out));
+            n.memory.concepts.forEach(c -> c.print(System.out));
 
         };
 
@@ -97,7 +97,7 @@ public class SimpleNARBudgetDynamics {
         new NARui(d)
 
                 .then(n -> {
-                    ((NAR) NAR.this).frame(preCycles);
+                    n.frame(preCycles);
 
                 })
                 .meter( (metrics, nar) -> {

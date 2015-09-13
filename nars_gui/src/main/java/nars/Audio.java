@@ -23,7 +23,7 @@ public class Audio implements Runnable
     private SourceDataLine sdl;
     private int rate = 44100;
     private ListenerMixer listenerMixer;
-    private int bufferSize = rate / 32;
+    private int bufferSize = rate / 16;
     private ByteBuffer soundBuffer = ByteBuffer.allocate(bufferSize * 4);
     private final float[] leftBuf, rightBuf;
     //private float amplitude = 1;

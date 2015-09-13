@@ -31,7 +31,7 @@ public class ConceptSonification extends FrameReaction {
     //Global.newHashMap();
 
     float audiblePriorityThreshold = 0.0f;
-
+    static int maxVoices = 7;
 
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
         super(nar);
@@ -57,7 +57,7 @@ public class ConceptSonification extends FrameReaction {
 
     public static void main(String[] args) throws IOException, LineUnavailableException {
         Default d = new Default(1000, 1, 3);
-        Audio a = new Audio(16);
+        Audio a = new Audio(maxVoices);
 
         new ConceptSonification(d, a);
 
@@ -69,8 +69,10 @@ public class ConceptSonification extends FrameReaction {
             }
         } ).start();
 
-        d.input("<a-->b>.", "<b-->c>.", "<c-->d>.", "<d-->e>.");
-        d.loop(550);
+        d.input("$0.1$ <a-->b>.", "$0.5$ <b-->c>.",
+                "$0.3$ <c-->d>.", "$0.1$ <d-->e>."
+        );
+        d.loop(50);
 
 
     }
@@ -120,7 +122,7 @@ public class ConceptSonification extends FrameReaction {
      */
     final SonarSample getSample(final Concept c) {
         final List<SonarSample> samples = this.samples;
-        return samples.get(Math.abs(c.hashCode()) % samples.size());
+        return samples.get(Math.abs(c.getTerm().hashCode() % samples.size()));
     }
 
     public void update(final Concept c) {
@@ -153,8 +155,7 @@ public class ConceptSonification extends FrameReaction {
         SonarSample sp = getSample(c);
 
         Granulize g = new Granulize(sp,
-                /* grain size = system duration? */ 0.8f,
-                0.75f);
+                /* grain size = system duration? */ 0.8f);
         return g;
 
         //g = new SineWave(Video.hashFloat(c.hashCode()));
@@ -171,13 +172,13 @@ public class ConceptSonification extends FrameReaction {
         if (g instanceof Granulize) {
             Granulize gg = ((Granulize) g);
             gg.setStretchFactor( 0.5f + c.getDurability() );// + 4f * (1f - c.getQuality()));
-            gg.pitchFactor.set(0.7f + c.getQuality() * 0.5f );
+            gg.pitchFactor.set( 0.5f + 0.5f * c.getQuality() );
         }
         if (audible(c)) {
             //TODO autmatic gain control
-            float vol = 0.5f + 0.5f * c.getPriority();
+            float vol = 0.1f + 0.9f * c.getPriority();
             //System.out.println(c + " at " + vol);
-            ((SoundProducer.Amplifiable) g).setAmplitude(vol);
+            ((SoundProducer.Amplifiable) g).setAmplitude(vol/maxVoices);
         }
         else {
             SoundProducer x = playing.remove(c);

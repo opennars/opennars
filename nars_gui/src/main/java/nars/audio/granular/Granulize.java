@@ -28,6 +28,10 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 
 
 
+	public Granulize(SonarSample s, float grainSizeSecs) {
+		this(s, grainSizeSecs, 1f);
+	}
+
     public Granulize(SonarSample s, float grainSizeSecs, float windowSizeFactor) {
         this(s.buf, s.rate, grainSizeSecs, windowSizeFactor);
     }

@@ -16,13 +16,10 @@ import nars.event.FrameReaction;
 import nars.event.NARReaction;
 import nars.guifx.util.SizeAwareWindow;
 import nars.guifx.util.TabX;
-import nars.util.event.Reaction;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static javafx.application.Platform.runLater;
-import static nars.guifx.NARfx.scrolled;
 
 /**
  * NAR ide panel
@@ -181,7 +178,7 @@ public class NARide extends BorderPane {
                 new TabX("Tasks",
                         new TreePane(n)).closeable(false),
 
-                new TabX.TabButton("+",
+                /*new TabX.TabButton("+",
                         scrolled(new NARReactionPane()))
                         .button("I/O", (e) -> {
                         })
@@ -189,7 +186,7 @@ public class NARide extends BorderPane {
                         })
                         .button("About", (e) -> {
                         })
-                ,
+                ,*/
 
 
                 new TabX("Concepts",
@@ -260,19 +257,19 @@ public class NARide extends BorderPane {
     }
 
 
-    public class NARReactionPane extends NARCollectionPane<Reaction> {
-
-        public NARReactionPane() {
-            super(nar, r ->
-                            new Label(r.toString())
-            );
-        }
-
-        @Override
-        public void collect(Consumer<Reaction> c) {
-            nar.memory.exe.forEachReaction(c);
-        }
-    }
+//    public class NARReactionPane extends NARCollectionPane<Reaction> {
+//
+//        public NARReactionPane() {
+//            super(nar, r ->
+//                            new Label(r.toString())
+//            );
+//        }
+//
+//        @Override
+//        public void collect(Consumer<Reaction> c) {
+//            nar.memory.exe.forEachReaction(c);
+//        }
+//    }
 
     public static SizeAwareWindow newWindow(NAR n, Parent main) {
 

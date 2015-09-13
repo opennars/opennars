@@ -71,7 +71,7 @@ public class NARui {
                 return this;
             }
         };
-        nar.onEachFrame(() -> {
+        nar.onEachFrame((n) -> {
             eachFrame.eachFrame(mc, nar);
             meter.update(nar.time());
         });

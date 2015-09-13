@@ -103,7 +103,7 @@ public class DemoTimeline  {
 
             runLater(() -> {
 
-                n.onEachDerived(task -> { time.addOccurrence((Task)task[0]); });
+                //n.forEachDerived(task -> { time.addOccurrence((Task)task[0]); });
 
                 updateAll();
             });
