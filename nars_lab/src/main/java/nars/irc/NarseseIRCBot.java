@@ -15,7 +15,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nar.Default;
-import nars.rdfowl.NQuadsInput;
+import nars.io.NQuadsInput;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;

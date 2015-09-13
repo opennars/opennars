@@ -10,7 +10,6 @@ import nars.testchamber.operator.Activate;
 import nars.testchamber.operator.Deactivate;
 import nars.testchamber.operator.Goto;
 import nars.testchamber.operator.Pick;
-import nars.gui.NARSwing;
 import nars.nar.Default;
 import processing.core.PVector;
 
@@ -286,12 +285,12 @@ public class TestChamber2 extends TestChamber {
     }
 
     public static void main(String[] arg) {
-        NAR nar = new NAR(new Default());
+        NAR nar = new Default();
         
         
         new TestChamber2(nar);
         
-        new NARSwing(nar);
+        //new NARSwing(nar);
         
         nar.start(200);
     }

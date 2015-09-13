@@ -62,7 +62,7 @@ abstract public class ConceptProcess extends NAL  {
 
     protected void beforeFinish(final long now) {
 
-        Memory m = nar.mem();
+        Memory m = nar.memory();
         m.eventConceptProcessed.emit(this);
         m.logic.TASKLINK_FIRE.hit();
         m.emotion.busy(getTask(), this);

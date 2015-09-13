@@ -74,7 +74,7 @@ public class TaskProcess extends NAL {
 
         sb.append(getClass().getSimpleName()).append('[');
 
-        getTask().toString(sb, nar.mem(), true, false, true, true);
+        getTask().toString(sb, nar.memory(), true, false, true, true);
 
         sb.append(']');
 
@@ -96,7 +96,7 @@ public class TaskProcess extends NAL {
             //return;
         }
 
-        final Memory memory = this.nar.mem();
+        final Memory memory = this.nar.memory();
         memory.eventTaskProcess.emit(this);
         memory.logic.TASK_PROCESS.hit();
 
@@ -403,8 +403,8 @@ public class TaskProcess extends NAL {
             taskBudget.mulPriority( inputPriorityFactor );
         }
 
-        if (!taskBudget.summaryGreaterOrEqual(nar.mem().taskProcessThreshold)) {
-            nar.mem().remove(task, "Insufficient budget");
+        if (!taskBudget.summaryGreaterOrEqual(nar.memory().taskProcessThreshold)) {
+            nar.memory().remove(task, "Insufficient budget");
             return null;
         }
 

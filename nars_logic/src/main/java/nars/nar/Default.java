@@ -506,7 +506,7 @@ public class Default extends NAR {
      */
     public PremiseGenerator newPremiseGenerator() {
         int novelCycles = 1;
-        return new HashTableNovelPremiseGenerator(mem().termLinkMaxMatched, novelCycles);
+        return new HashTableNovelPremiseGenerator(memory().termLinkMaxMatched, novelCycles);
 
 //        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
 //                novelCycles * conceptTaskTermProcessPerCycle.get(),

@@ -147,7 +147,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
         final NAR n = nar();
 
         //Display a message in the output stream to indicate the reportExecution of an operation
-        n.memory.eventExecute.emit(new ExecutionResult(op, feedback, n.mem()));
+        n.memory.eventExecute.emit(new ExecutionResult(op, feedback, n.memory()));
 
 
         if (!op.getTask().isCommand()) {
@@ -177,8 +177,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
         //if (opTask == null) return;
 
 
-
-        final Memory memory = nar().mem();
+        final Memory memory = nar().memory();
 
         memory.logic.TASK_EXECUTED.hit();
 

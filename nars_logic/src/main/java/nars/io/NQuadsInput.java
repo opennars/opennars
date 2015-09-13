@@ -1,9 +1,7 @@
-package nars.rdfowl;
+package nars.io;
 
 import nars.Global;
 import nars.NAR;
-import nars.Video;
-import nars.gui.NARSwing;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -310,15 +308,14 @@ abstract public class NQuadsInput {
     }
 
     public static void main(String[] args) throws Exception {
-        Default d = new Default(1000,16,3).setInternalExperience(null).level(7);
+        Default n = new Default(1000,16,3);
         //Solid d = new Solid(32, 4096,1,3,1,2);
-        d.setInternalExperience(null).level(7);
-        d.inputsMaxPerCycle.set(256);
-        d.setTermLinkBagSize(64);
+        //d.setInternalExperience(null).level(7);
+        //d.inputsMaxPerCycle.set(256);
+        //d.setTermLinkBagSize(64);
 
 
 
-        NAR n = new NAR(d);
         //n.input("schizo(I)!"); //needs nal8
 
 
@@ -340,10 +337,6 @@ abstract public class NQuadsInput {
         n.frame(1);
         n.frame(1); //one more to be sure
 
-
-
-        Video.themeInvert();
-        new NARSwing(n);
 
 /*
         //n.frame(100);

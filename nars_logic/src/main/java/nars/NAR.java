@@ -65,6 +65,16 @@ abstract public class NAR {
      */
     public static final String VERSION = "Open-NARS v1.7.0";
 
+    float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
+
+    float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
+    float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
+    float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
+    float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
+    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
+    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
+
+
     /**
      * The project web sites.
      */
@@ -234,7 +244,7 @@ abstract public class NAR {
     }
 
     public Task goal(final String goalTerm, final float freq, final float conf) {
-        return goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goalTerm, freq, conf);
+        return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, freq, conf);
     }
 
     public Task ask(String termString) throws InvalidInputException {
@@ -250,22 +260,29 @@ abstract public class NAR {
     public Task quest(String questString) throws InvalidInputException {
         return ask(narsese.term(questString), Symbols.QUEST);
     }
-
     public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
+        return goal(pri, dur, (Compound)narsese.compound(goalTerm), freq, conf);
+    }
+
+
+    public Task goal(Compound goalTerm, float freq, float conf) throws InvalidInputException {
+        return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, freq, conf);
+    }
+
+    /** TODO add parameter for Tense control. until then, default is Now */
+    public Task goal(float pri, float dur, Compound goalTerm, float freq, float conf) throws InvalidInputException {
 
         final Truth tv;
 
         Task t = new DefaultTask(
-
-                narsese.compound(goalTerm),
+                goalTerm,
                 Symbols.GOAL,
                 tv = new DefaultTruth(freq, conf),
-
-
                 pri,
                 dur, BudgetFunctions.truthToQuality(tv)
-
         );
+        t.setOccurrenceTime(time());
+
         t.setCreationTime(time());
 
         input(t);
@@ -273,11 +290,11 @@ abstract public class NAR {
     }
 
     public Task believe(float priority, String termString, long when, float freq, float conf) throws InvalidInputException {
-        return believe(priority, Global.DEFAULT_JUDGMENT_DURABILITY, termString, when, freq, conf);
+        return believe(priority, defaultJudgmentDurability, termString, when, freq, conf);
     }
 
     public Task believe(float priority, Compound term, long when, float freq, float conf) throws InvalidInputException {
-        return believe(priority, Global.DEFAULT_JUDGMENT_DURABILITY, term, when, freq, conf);
+        return believe(priority, defaultJudgmentDurability, term, when, freq, conf);
     }
 
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
@@ -289,7 +306,7 @@ abstract public class NAR {
     }
 
     public Task believe(Compound term, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term, tense, freq, conf);
+        return believe(defaultJudgmentPriority, defaultJudgmentDurability, term, tense, freq, conf);
     }
 
     public Task believe(String termString, float freq, float conf) throws InvalidInputException {
@@ -300,12 +317,14 @@ abstract public class NAR {
         return believe(termString, 1.0f, conf);
     }
 
+
     public Task believe(String termString) throws InvalidInputException {
-        return believe(termString, 1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+
+        return believe(termString, 1.0f, defaultJudgmentConfidence);
     }
 
     public Task believe(Compound term) throws InvalidInputException {
-        return believe(term, 1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+        return believe(term, 1.0f, defaultJudgmentConfidence);
     }
 
     public Task believe(float pri, float dur, Compound beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
@@ -341,8 +360,8 @@ abstract public class NAR {
                 term,
                 questionOrQuest,
                 null,
-                Global.DEFAULT_QUESTION_PRIORITY,
-                Global.DEFAULT_QUESTION_DURABILITY,
+                defaultQuestionPriority,
+                defaultQuestionDurability,
                 1);
         t.setCreationTime(time());
         input(t);
@@ -908,24 +927,24 @@ abstract public class NAR {
 
 
     public Iterator<Concept> iterator() {
-        return mem().getConcepts().iterator();
+        return memory().getConcepts().iterator();
     }
 
 
     public void conceptPriorityHistogram(double[] bins) {
         if (bins != null)
-            mem().getConcepts().getPriorityHistogram(bins);
+            memory().getConcepts().getPriorityHistogram(bins);
     }
 
 
     public Concept put(Concept concept) {
-        mem().put(concept);
+        memory().put(concept);
         return concept;
     }
 
 
     public Concept remove(Term key) {
-        return remove(mem().get(key));
+        return remove(memory().get(key));
     }
 
 
@@ -948,13 +967,8 @@ abstract public class NAR {
     }
 
 
-    public final Memory mem() {
-        return memory;
-    }
-
-
     protected boolean active(Term t) {
-        return mem().get(t) != null;
+        return memory().get(t) != null;
     }
 
 
@@ -1052,15 +1066,7 @@ abstract public class NAR {
         return this; //TODO
     }
 
-    public NAR save(ObjectOutputStream clone) {
-        ensureNotRunning();
-        return this; //TODO
-    }
 
-    public NAR load(ObjectInputStream clone) {
-        ensureNotRunning();
-        return this; //TODO
-    }
 
     public NAR input(String... ss) {
         for (String s : ss) this.input(s);

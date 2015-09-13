@@ -12,7 +12,7 @@ abstract public class CycleReaction implements Consumer<Memory> {
     private final DefaultTopic.On cycleReg;
 
     public CycleReaction(NAR nar) {
-        this(nar.mem());
+        this(nar.memory());
     }
 
     public CycleReaction(Memory memory) {

@@ -18,10 +18,10 @@ abstract public class ConceptReaction extends OnTopics {
     public ConceptReaction(NAR n) {
 
 
-        this.onConceptActive = n.mem().eventConceptActivated.on(c -> {
+        this.onConceptActive = n.memory().eventConceptActivated.on(c -> {
             onConceptActive(c);
         });
-        this.onConceptForget = n.mem().eventConceptForget.on(c -> {
+        this.onConceptForget = n.memory().eventConceptForget.on(c -> {
             onConceptForget(c);
         });
 

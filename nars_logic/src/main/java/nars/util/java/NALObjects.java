@@ -116,7 +116,10 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         instancePlusArgs[instancePlusArgs.length-1] = Variable.the(Symbols.VAR_DEPENDENT + "1");
 
 
-        nar.input(TaskSeed.make(nar.memory, Operation.op(Product.make(instancePlusArgs), op)).goal().present().truth(1f, 0.9f));
+        nar.goal(
+                Operation.op(Product.make(instancePlusArgs), op),
+                1f, 0.9f);
+
 
         if (result!=null) {
             effect = term(result);

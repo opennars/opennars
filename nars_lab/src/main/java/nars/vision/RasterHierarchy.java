@@ -15,7 +15,6 @@ import com.github.sarxos.webcam.Webcam;
 import georegression.struct.point.Point2D_F64;
 import georegression.struct.point.Point2D_I32;
 import nars.NAR;
-import nars.gui.NARSwing;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nar.Default;
@@ -421,7 +420,7 @@ public class RasterHierarchy extends JPanel {
         int cx = x - focusPoint.getX();
         int cy = y - focusPoint.getY();
 
-        nar.inputDirect(TaskSeed.make(nar.memory, Inheritance.make(
+        nar.input(TaskSeed.make(nar.memory, Inheritance.make(
                 Product.make(
                         //Atom.the("r" + step),
                         Atom.the(cx),
@@ -508,9 +507,9 @@ public class RasterHierarchy extends JPanel {
 
         //RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
         // RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 5, 2);
-        nar = new NAR(new Default.CommandLineNARBuilder(args));
+        nar = new Default();
 
-        NARSwing swing = new NARSwing(nar);
+        //NARSwing swing = new NARSwing(nar);
 
         RasterHierarchy rh = new RasterHierarchy(6, 800, 600, 16, 1.619f);
         if (rh != null)
