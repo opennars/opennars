@@ -24,7 +24,7 @@ public enum TruthFunction {
             return TruthFunctions.deduction(T, new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
-    Deduction() {
+    Deduction(true) {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
             return TruthFunctions.deduction(T, B);
@@ -83,7 +83,7 @@ public enum TruthFunction {
             return TruthFunctions.difference(T,B);
         }
     },
-    Analogy() {
+    Analogy(true) {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
             return TruthFunctions.analogy(T,B);
@@ -145,8 +145,13 @@ public enum TruthFunction {
             return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
     }
-
     ;
+
+
+
+    public final boolean allowOverlap;
+
+
     /**
      * @param T taskTruth
      * @param B beliefTruth (possibly null)
@@ -167,4 +172,11 @@ public enum TruthFunction {
         return atomToTruthModifier.get(a);
     }
 
+    TruthFunction() {
+        this(false);
+    }
+
+    TruthFunction(boolean allowOverlap) {
+        this.allowOverlap = allowOverlap;
+    }
 }

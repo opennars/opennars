@@ -8,6 +8,7 @@ import nars.Global;
 import nars.NAR;
 import nars.premise.Premise;
 import nars.task.Task;
+import nars.task.stamp.Stamp;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,10 +33,12 @@ public abstract class NAL extends AbstractPremise implements Function<Consumer<P
 
     public NAL(final NAR n) {
         super(n);
+
     }
 
 
     abstract protected void derive(Consumer<Premise> processor);
+
 
 
     @Override public final Collection<Task> apply(Consumer<Premise> processor) {

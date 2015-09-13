@@ -10,6 +10,7 @@ import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.task.Task;
+import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
 import javax.annotation.Nullable;
@@ -31,6 +32,7 @@ abstract public class ConceptProcess extends NAL  {
     protected final Concept concept;
 
     private Task currentBelief;
+    private transient boolean cyclic;
 
     @Override public Task getTask() {
         return getTaskLink().getTask();
@@ -88,6 +90,19 @@ abstract public class ConceptProcess extends NAL  {
 
     @Deprecated public void setBelief(Task nextBelief) {
         this.currentBelief = nextBelief;
+
+        if (nextBelief == null)
+            cyclic = false;
+        else {
+            Task t = getTask();
+            cyclic = Stamp.overlapping(t, nextBelief);
+        }
+    }
+
+    //TODO cache this value
+    @Override
+    public boolean isCyclic() {
+        return cyclic;
     }
 
 

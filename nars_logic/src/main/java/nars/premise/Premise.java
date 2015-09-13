@@ -620,4 +620,14 @@ public interface Premise {
         return (!getTask().isEternal() && (getBelief()!=null && !getBelief().isEternal()));
     }
 
+    //TODO cache this value
+    default boolean isCyclic() {
+        Task t = getTask();
+        Task b = getBelief();
+        if (b!=null) {
+            return Stamp.overlapping(t, b);
+        }
+        return false;
+    }
+
 }

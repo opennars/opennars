@@ -8,7 +8,6 @@ import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.task.TaskSeed;
-import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
@@ -88,30 +87,33 @@ public class RuleMatch extends FindSubst {
         //stamp cyclic filter
         final boolean single = belief != null;
 
-        {
-
-            boolean allowOverlap = false; //to be refined
-            if (!allowOverlap) {
-
-                //determine cyclicity before creating task
-                boolean cyclic;
-                boolean allowed = true;
-                if (single) {
-                    cyclic = (task.isCyclic());
-                    //it will be cyclic but only make the task if it's parent is not also cyclic
-                    allowed = cyclic && (!task.isParentCyclic());
-                } else {
-                    cyclic = Stamp.overlapping(task, belief);
-                    allowed = cyclic && (!task.isParentCyclic() && !belief.isParentCyclic());
-                }
-
-                if (allowed) {
-                    //System.err.println( ": " + premise + " cyclic");
-                    return false;
-                }
-
-
-            }
+//        {
+//
+//            boolean allowOverlap = false; //to be refined
+//            if (!allowOverlap) {
+//
+//                //determine cyclicity before creating task
+//                boolean cyclic;
+//                boolean allowed = true;
+//                if (single) {
+//                    cyclic = (task.isCyclic());
+//                    //it will be cyclic but only make the task if it's parent is not also cyclic
+//                    allowed = cyclic && (!task.isParentCyclic());
+//                } else {
+//                    cyclic = Stamp.overlapping(task, belief);
+//                    allowed = cyclic && (!task.isParentCyclic() && !belief.isParentCyclic());
+//                }
+//
+//                if (allowed) {
+//                    //System.err.println( ": " + premise + " cyclic");
+//                    return false;
+//                }
+//
+//
+//            }
+//        }
+        if (!single && !p.truth.allowOverlap && premise.isCyclic()) {
+            return false;
         }
 
 
