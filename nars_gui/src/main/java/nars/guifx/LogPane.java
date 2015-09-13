@@ -112,6 +112,9 @@ public class LogPane extends VBox implements Runnable {
     }
 
     protected void output(Object channel, Object signal) {
+        boolean trace=false;
+        if (!trace && !channel.equals("eventDerived") && !channel.equals("eventInput"))
+            return;
         Node n = getNode(channel, signal);
         if (n!=null) {
 
