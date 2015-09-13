@@ -22,7 +22,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
     
     private final Task question;
     private final NAR nar;
-    private final DefaultTopic.Subscription reg;
+    private final DefaultTopic.On reg;
 
 
     /** reacts to all questions */

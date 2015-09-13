@@ -17,7 +17,7 @@ import java.util.Collection;
 public class UselessProcess extends NARReaction {
 
     private final NAR nar;
-    private final DefaultTopic.Subscription conceptProcessed;
+    private final DefaultTopic.On conceptProcessed;
 
     public UselessProcess(NAR n) {
         super(n);

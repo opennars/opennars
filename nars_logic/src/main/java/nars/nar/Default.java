@@ -1,5 +1,6 @@
 package nars.nar;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.Global;
 import nars.LocalMemory;
 import nars.Memory;
@@ -250,9 +251,6 @@ public class Default extends NAR {
     public Default(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(m);
 
-
-
-
 //        m.setDeriver(new PremiseProcessor(
 //                new LogicStage[]{
 //                        //new QueryVariableExhaustiveResults(),
@@ -292,7 +290,6 @@ public class Default extends NAR {
         m.conceptForgetDurations.set(3.0);
         m.taskLinkForgetDurations.set(4.0);
         m.termLinkForgetDurations.set(10.0);
-        m.novelTaskForgetDurations.set(2.0);
 
         //param.budgetThreshold.set(0.01f);
 
@@ -313,7 +310,6 @@ public class Default extends NAR {
         m.executionThreshold.set(0.6);
         //executionThreshold.set(0.60);
 
-        m.outputVolume.set(100);
 
         m.reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
 
@@ -596,7 +592,7 @@ public class Default extends NAR {
         /** concepts active in this cycle */
         private final Bag<Term, Concept> active;
 
-        private final DefaultTopic.Subscription onInput;
+        private final DefaultTopic.On onInput;
 
         private final NAR nar;
 
@@ -604,6 +600,7 @@ public class Default extends NAR {
 
         private final ConceptBagActivator ca;
 
+        private final AtomicDouble conceptForget;
 
 
         /* ---------- Short-term workspace for a single cycle ------- */
@@ -619,6 +616,9 @@ public class Default extends NAR {
 
             this.nar = nar;
             this.ca = ca;
+
+
+            this.conceptForget = nar.memory().conceptForgetDurations;
 
             this.newTasks = newTasks;
             this.inputsMaxPerCycle = new AtomicInteger(1);
@@ -710,7 +710,7 @@ public class Default extends NAR {
 
         protected void enhanceAttention() {
             active.forgetNext(
-                    nar.memory().conceptForgetDurations,
+                    conceptForget,
                     Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
                     nar.memory());
         }

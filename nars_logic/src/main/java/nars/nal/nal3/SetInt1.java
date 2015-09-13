@@ -5,7 +5,6 @@ import nars.Symbols;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /** efficient implementation of a set with one element */
 public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt<T> {
@@ -32,7 +31,7 @@ public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt<T
     }
 
     @Override
-    public void appendCloser(Writer p) throws IOException {
+    public void appendCloser(Appendable p) throws IOException {
         p.append(Symbols.SET_INT_CLOSER);
     }
 

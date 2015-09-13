@@ -3,7 +3,6 @@ package nars.rl;
 import nars.Memory;
 import nars.Symbols;
 import nars.concept.Concept;
-import nars.nal.nal5.Implication;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -12,14 +11,15 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.truth.Truth;
 import nars.util.index.ConceptMatrix;
-import nars.util.index.ConceptMatrixEntry;
 import org.apache.commons.math3.util.FastMath;
 
 /**
  * Represents a 'row' in the q-matrix
  */
-public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S,A,Implication,QEntry> {
+public class QEntry<S extends Term, A extends Term> /*extends ConceptMatrixEntry<S,A,Implication,QEntry>*/ {
 
+    private final Concept concept;
+    private final ConceptMatrix conceptMatrix;
     double dq = 0; //delta-Q; current q = q0 + dq, temporary
     double q0 = 0; //previous Q value, for comparing nar vs. QL influence
     double q = 0; //current q-value
@@ -29,7 +29,9 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     boolean defaultQMode = true;
 
     public QEntry(Concept c, ConceptMatrix matrix) {
-        super(matrix, c);
+        this.concept = c;
+        this.conceptMatrix = matrix;
+        //super(matrix, c);
     }
 
 
@@ -111,7 +113,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     float lastFreq = 0.5f; //start in neutral
 
     public void commitDirect(Task t) {
-        TaskProcess.run((Memory)concept.getMemory(), t);
+        TaskProcess.run(conceptMatrix.nar, t);
     }
 
 //    /** inserts the belief directly into the table */

@@ -562,10 +562,14 @@ public class Memory extends Param implements Serializable {
     }
 
 
+    @Override
+    public final boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Memory)) return false;
+        return Memory.equals(this, (Memory)obj);
+    }
 
-
-
-    public static boolean equals(Memory a, Memory b) {
+    public static boolean equals(final Memory a, final Memory b) {
 
         //TODO
         //for now, just accept that they include the same set of terms

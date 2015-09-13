@@ -1,13 +1,10 @@
 package nars.nal.nal3;
 
 import nars.Op;
-import nars.Symbols;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Collection;
 
 /**
@@ -16,12 +13,12 @@ import java.util.Collection;
 public interface SetExt<T extends Term> extends SetTensional<T> {
 
     @Override
-    default public Op op() {
+    default Op op() {
         return Op.SET_EXT;
     }
 
 
-    public static Compound make(final Term... t) {
+    static Compound make(final Term... t) {
         switch (t.length) {
             case 0: return null;
             case 1: return new SetExt1(t[0]);
@@ -29,11 +26,11 @@ public interface SetExt<T extends Term> extends SetTensional<T> {
         }
     }
 
-    public static Compound make(Collection<Term> l) {
+    static Compound make(Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }
 
-    default void appendCloser(Writer p) throws IOException {
-        p.append(Symbols.SET_EXT_CLOSER);
-    }
+//    default void appendCloser(Appendable p) throws IOException {
+//        p.append(Symbols.SET_EXT_CLOSER);
+//    }
 }

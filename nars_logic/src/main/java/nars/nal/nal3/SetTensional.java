@@ -67,7 +67,7 @@ public interface SetTensional<T extends Term> extends Term, Iterable<T> {
 
 
     @Override
-    default public void append(Appendable p, boolean pretty) throws IOException {
+    default void append(Appendable p, boolean pretty) throws IOException {
 
         final int len = length();
 
@@ -91,8 +91,8 @@ public interface SetTensional<T extends Term> extends Term, Iterable<T> {
     }
 
 
-    default boolean showsTermOpenerAndCloser() {
-        return false;
-    }
+//    default boolean showsTermOpenerAndCloser() {
+//        return false;
+//    }
 
 }

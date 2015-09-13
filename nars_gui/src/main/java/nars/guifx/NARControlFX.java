@@ -12,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import nars.NAR;
 import nars.guifx.util.NSlider;
-import nars.util.event.Topic;
+import nars.util.event.OnTopics;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -40,7 +40,7 @@ public class NARControlFX extends HBox {
         final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
         final Label clock = new Label("0");
         private final NAR nar;
-        private final Topic.Registrations regs;
+        private final OnTopics regs;
         boolean wasRunning = false;
         final AtomicBoolean pendingClockUpdate = new AtomicBoolean(false);
         ////TODO: public final SimpleBooleanProperty pendingClockUpdate
@@ -75,7 +75,7 @@ public class NARControlFX extends HBox {
 
 
             //nar.on(this, Events.FrameEnd.class, Events.ResetStart.class);
-            this.regs = new Topic.Registrations().add(
+            this.regs = new OnTopics().add(
                     n.memory.eventFrameEnd.on(nn -> {
 
                     }),

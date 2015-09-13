@@ -140,7 +140,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         this.term = t.getTerm();
     }
 
-    protected DefaultTopic.Subscription getTaskRemoved(NAR n) {
+    protected DefaultTopic.On getTaskRemoved(NAR n) {
         return n.memory.eventTaskRemoved.on(task -> {
             //if (!succeeded) {
                 if (matches(task)) {

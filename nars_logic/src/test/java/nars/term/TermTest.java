@@ -238,8 +238,8 @@ public class TermTest {
 
 
         try {
-            Task x = n.inputTask(new StringBuilder(t + ".").toString());
-            assertNull(t + " is invalid compound term", x);
+            Task x = n.inputTask(t + ".");
+            assertFalse(t + " is invalid compound term", true);
         } catch (Throwable tt) {
             assertTrue(true);
         }

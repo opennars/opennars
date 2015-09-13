@@ -30,10 +30,10 @@ public class KIFExample {
     public static void main(String[] args) throws Exception {
 
 
-        NAR n = new NAR(new Default().setActiveConcepts(16192));
+        NAR n = new Default();
                 
         
-        (n.param).outputVolume.set(40);
+
         
         KIFInput k = new KIFInput(n, "/home/me/sigma/KBs/Merge.kif");
         k.setIncludeSubclass(true);
@@ -48,8 +48,7 @@ public class KIFExample {
         n.input(k);
 
         n.frame(1);
-        n;
-        
+
         /*
         TextOutput t = new TextOutput(n, System.out);
         t.setErrors(true);

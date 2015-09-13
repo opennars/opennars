@@ -2,7 +2,6 @@ package nars.nar;
 
 import nars.LocalMemory;
 import nars.Memory;
-import nars.io.out.TextOutput;
 import nars.narsese.InvalidInputException;
 import nars.util.language.JSON;
 import org.infinispan.marshall.core.JBossMarshaller;
@@ -24,8 +23,14 @@ public class NARTest {
 
     @Test
     public void testEmptyMemoryToJSON() throws IOException, InterruptedException, ClassNotFoundException {
-        String j = JSON.omDeep.writeValueAsString(new LocalMemory());
-        System.out.println(j);
+        LocalMemory m = new LocalMemory();
+        String j = JSON.omDeep.writeValueAsString(m);
+        assertTrue(j.length() > 16);
+
+        String pretty = JSON.omDeep.writerWithDefaultPrettyPrinter().writeValueAsString(m);
+        System.out.println(pretty);
+
+        assertTrue(pretty.length() > j.length() );
     }
 
     @Test
@@ -45,7 +50,7 @@ public class NARTest {
         Default nar = new Default(m, 1000, 1, 5);
         //DefaultAlann nar = new DefaultAlann(m, 32);
 
-        TextOutput.out(nar);
+        //TextOutput.out(nar);
 
         nar.input("<a-->b>.", "<b-->c>.").run(25);
         nar.stop();
@@ -72,23 +77,20 @@ public class NARTest {
     @Test
     public void testFluentBasics() throws Exception {
         int frames = 32;
-        AtomicInteger cycled = new AtomicInteger(0),
-            conceptsIterated = new AtomicInteger(0);
+        AtomicInteger cycCount = new AtomicInteger(0);
         StringWriter sw = new StringWriter( );
 
         new Default()
                 .input("<a --> b>.", "<b --> c>.")
                 .stopIf( () -> false )
-                .onEachCycle( n-> cycled.incrementAndGet() )
+                .onEachCycle( n -> cycCount.incrementAndGet() )
                 .trace(sw)
                 .run(frames)
-                //.conceptActiveIterator(i -> conceptsIterated.set(Iterators.size(i)))
                 .forEachConceptTask(true, true, true, true, 1, System.out::println );
 
         //System.out.println(sw.getBuffer());
-        assertTrue(sw.toString().length() > 0);
-        assertEquals(frames, cycled.get());
-        assertTrue(conceptsIterated.get() > 4);
+        assertTrue(sw.toString().length() > 16);
+        assertEquals(frames, cycCount.get());
 
 
     }

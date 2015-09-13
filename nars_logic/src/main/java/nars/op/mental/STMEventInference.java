@@ -1,8 +1,9 @@
 package nars.op.app;
 
-import nars.*;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
 import nars.concept.Concept;
-import nars.event.NARReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.meta.RuleMatch;
@@ -11,6 +12,7 @@ import nars.process.AbstractPremise;
 import nars.process.NAL;
 import nars.process.TaskProcess;
 import nars.task.Task;
+import nars.term.Compound;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -66,6 +68,10 @@ public class STMEventInference  {
 
         final Task currentTask = nal.getTask();
 
+        if (currentTask.isDeleted()) {
+            throw new RuntimeException(currentTask + " deleted");
+        }
+
         stmSize = nal.memory().shortTermMemoryHistory.get();
 
         if (currentTask == null || (!currentTask.isTemporalInductable() && !anticipation)) { //todo refine, add directbool in task
@@ -86,12 +92,18 @@ public class STMEventInference  {
 
         int numToRemoveFromBeginning = stm.size() - stmSize;
 
+        /** current task's... */
+        final Compound term = currentTask.getTerm();
+        final Concept concept = nal.nar.concept(term);
+        if (concept == null)
+            return false;
+
         while (ss.hasNext()) {
 
             Task stmLast = ss.next();
 
 
-            if (!equalSubTermsInRespectToImageAndProduct(currentTask.getTerm(), stmLast.getTerm())) {
+            if (!equalSubTermsInRespectToImageAndProduct(term, stmLast.getTerm())) {
                 continue;
             }
 
@@ -115,12 +127,14 @@ public class STMEventInference  {
             //nal.nar.concept(previousTask.getTerm()).link(currentTask);
             //nal.setCurrentTask(currentTask);
 
-            Concept cTerm = nal.nar.concept(currentTask.getTerm());
-            if (cTerm!=null)
-                nal.link(cTerm, previousTask);
-            Concept pTerm = nal.nar.concept(previousTask.getTerm());
-            if (pTerm!=null)
-                nal.link(pTerm, currentTask);
+            if (!previousTask.isDeleted()) {
+                Concept previousConcept = nal.nar.concept(previousTask.getTerm());
+                if (previousConcept!=null) {
+                    nal.link(previousConcept, currentTask);
+                    nal.link(concept, previousTask);
+                }
+            }
+
 
            /* continue;
             //nal.setBelief(previousTask);

@@ -80,7 +80,7 @@ public class SetExtN extends AbstractSetN implements SetExt {
     }
 
     @Override
-    public void appendCloser(Writer p) throws IOException {
+    public void appendCloser(Appendable p) throws IOException {
         p.append(Symbols.SET_EXT_CLOSER);
     }
 

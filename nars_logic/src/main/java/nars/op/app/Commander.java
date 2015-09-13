@@ -29,7 +29,7 @@ public class Commander extends NARReaction implements Consumer<Memory> {
 
     public final ItemAccumulator<Task> commands;
     public final Iterator<Task> commandIterator;
-    private final DefaultTopic.Subscription cycleEnd;
+    private final DefaultTopic.On cycleEnd;
     private final NAR nar;
 
     /** how far away from the occurence time of a temporal belief before it is deleted */

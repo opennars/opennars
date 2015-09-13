@@ -19,7 +19,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
-import nars.util.event.Topic;
+import nars.util.event.OnTopics;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +31,7 @@ import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
 /**
  * @author tc
  */
-public class PerceptionAccel extends Topic.Registrations {
+public class PerceptionAccel extends OnTopics {
 
     public final static int PERCEPTION_DECISION_ACCEL_SAMPLES = 1; //new inference rule accelerating decision making: https://groups.google.com/forum/#!topic/open-nars/B8veE-WDd8Q
     public final static int ConjunctionMemorySize = 100;

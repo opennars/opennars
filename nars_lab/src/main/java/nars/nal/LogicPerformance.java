@@ -276,7 +276,7 @@ public class LogicPerformance {
 //            }
 //        }, TaskImmediateProcessed.class);
 
-        DefaultTopic.Subscription conceptProcessed = n.memory.eventConceptProcessed.on(f -> {
+        DefaultTopic.On conceptProcessed = n.memory.eventConceptProcessed.on(f -> {
             process.explain(n.time(), f);
         });
 

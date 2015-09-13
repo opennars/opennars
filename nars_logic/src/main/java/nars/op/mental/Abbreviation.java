@@ -34,7 +34,7 @@ public class Abbreviation implements Consumer<Task> {
     public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(24);
     public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.7f);
     private final NAR nar;
-    private final DefaultTopic.Subscription reg;
+    private final DefaultTopic.On reg;
 
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);

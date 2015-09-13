@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /** default cycle reaction, called at end of cycle */
 abstract public class CycleReaction implements Consumer<Memory> {
 
-    private final DefaultTopic.Subscription cycleReg;
+    private final DefaultTopic.On cycleReg;
 
     public CycleReaction(NAR nar) {
         this(nar.mem());

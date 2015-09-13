@@ -1,10 +1,7 @@
 
 package nars.util.event;
 
-import nars.util.data.list.FasterList;
-
 import java.lang.reflect.Field;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -14,19 +11,32 @@ import java.util.function.Consumer;
  */
 abstract public interface Topic<V>  {
 
-    abstract void delete();
+    final static class On<V>  {
 
-    
+        final Consumer<V> reaction;
+        final Topic topic;
+
+        On(Topic t, Consumer<V> o) {
+            this.reaction = o;
+            this.topic = t;
+        }
+
+        final public void off() {
+            topic.off(this);
+        }
+    }
+
+    abstract void delete();
 
     abstract public List<Consumer<V>> all();
 
 
 
     /** registers to all public Topic fields in an object */
-    public static Registrations all(final Object obj, BiConsumer<String /* fieldName*/,Object /* value */> f) {
+    public static OnTopics all(final Object obj, BiConsumer<String /* fieldName*/,Object /* value */> f) {
 
 
-        Registrations s = new Registrations();
+        OnTopics s = new OnTopics();
 
         /** TODO cache the fields because reflection may be slow */
         for (Field field : obj.getClass().getFields()) {
@@ -59,60 +69,19 @@ abstract public interface Topic<V>  {
 
     void emit(V arg);
 
-    DefaultTopic.Subscription on(Consumer<V> o);
+    On on(Consumer<V> o);
+    void off(On<V> reaction);
 
-
-
-    public static class Registrations extends FasterList<DefaultTopic.Subscription> {
-
-        Registrations(int length) {
-            super(length);
-        }
-        Registrations() {
-            this(1);
-        }
-        public Registrations(DefaultTopic.Subscription... r) {
-            super(r.length);
-            Collections.addAll(this, r);
-        }
-
-//        public void resume() {
-//            for (Registration r : this)
-//                r.resume();
-//        }
-//        public void pause() {
-//            for (Registration r : this)
-//                r.pause();
-//        }
-//        public void cancelAfterUse() {
-//            for (Registration r : this)
-//                r.cancelAfterUse();
-//        }
-
-        public synchronized void off() {
-            for (int i = 0; i < this.size(); i++) {
-                this.get(i).off();
-            }
-            clear();
-        }
-
-        public void add(DefaultTopic.Subscription... elements) {
-            Collections.addAll(this, elements);
-        }
-
-        
-    }
-
-
-    
-    public static <V> Registrations onAll(final Consumer<V> o, final Topic<V>... w) {
-        Registrations r = new Registrations(w.length);
+    public static <V> OnTopics onAll(final Consumer<V> o, final Topic<V>... w) {
+        OnTopics r = new OnTopics(w.length);
     
         for (final Topic<V> c : w)
             r.add( c.on(o) );
         
         return r;
     }
+
+
 
 //
 //    @Override

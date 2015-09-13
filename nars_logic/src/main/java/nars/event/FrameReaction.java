@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /**  call at the end of a frame (a batch of cycles) */
 abstract public class FrameReaction implements Consumer<NAR> {
 
-    private DefaultTopic.Subscription reg;
+    private DefaultTopic.On reg;
 
     public FrameReaction(NAR nar) {
         this(nar.memory);

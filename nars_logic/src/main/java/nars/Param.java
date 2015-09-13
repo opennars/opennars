@@ -1,7 +1,6 @@
 package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.clock.Clock;
 import nars.nal.nal7.Interval.AtomicDuration;
 import objenome.Container;
 
@@ -16,11 +15,11 @@ public abstract class Param extends Container implements Serializable {
 
     public Param() {    }
 
-    /** Silent threshold for task reporting, in [0, 100]. 
-     *  Noise level = 100 - silence level; noise 0 = always silent, noise 100 = never silent
-     */
-    public final AtomicInteger outputVolume = new AtomicInteger();
-    
+//    /** Silent threshold for task reporting, in [0, 100].
+//     *  Noise level = 100 - silence level; noise 0 = always silent, noise 100 = never silent
+//     */
+//    public final AtomicInteger outputVolume = new AtomicInteger();
+
     /** 
        Cycles per duration.
        Past/future tense usage convention;
@@ -31,8 +30,6 @@ public abstract class Param extends Container implements Serializable {
     public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
 
     public AtomicInteger temporalRelationsMax = new AtomicInteger();
-
-    protected Clock clock;
 
 
     /** converts durations to cycles */
@@ -52,8 +49,8 @@ public abstract class Param extends Container implements Serializable {
      */
     public AtomicDouble conceptActivationFactor = new AtomicDouble(1.0);
 
-    /** scaling factor for priority of input tasks */
-    public AtomicDouble inputActivationFactor = new AtomicDouble(1.0);
+//    /** scaling factor for priority of input tasks */
+//    public AtomicDouble inputActivationFactor = new AtomicDouble(1.0);
 
     /** minimum expectation necessary to create a concept
      *  original value: 0.66
@@ -68,16 +65,15 @@ public abstract class Param extends Container implements Serializable {
      *  How many cycles it takes an item to decay completely to a threshold value (ex: 0.1).
      *  Lower means faster rate of decay.
      */
-    public final AtomicDouble conceptForgetDurations = new AtomicDouble();
+    @Deprecated public final AtomicDouble conceptForgetDurations = new AtomicDouble();
     
     /** TermLink decay rate in TermLinkBag, in [1, 99]. originally: TERM_LINK_FORGETTING_CYCLE */
     //TODO use separate termlink forget rates whether the termlink was actually selected for firing or not.
-    public final AtomicDouble termLinkForgetDurations = new AtomicDouble();
+    @Deprecated public final AtomicDouble termLinkForgetDurations = new AtomicDouble();
     
     /** TaskLink decay rate in TaskLinkBag, in [1, 99]. originally: TASK_LINK_FORGETTING_CYCLE */
-    public final AtomicDouble taskLinkForgetDurations = new AtomicDouble();
+    @Deprecated public final AtomicDouble taskLinkForgetDurations = new AtomicDouble();
     
-    public final AtomicDouble novelTaskForgetDurations = new AtomicDouble();
 
      /*
      BUDGET THRESHOLDS
@@ -140,13 +136,6 @@ public abstract class Param extends Container implements Serializable {
     /** Reliance factor, the empirical confidence of analytical truth.
         (generally, the same as default judgment confidence)  */
     public final AtomicDouble reliance = new AtomicDouble();
-
-
-    
-
-    public Clock getTiming() {
-        return clock;
-    }
 
 
 
@@ -220,10 +209,5 @@ public abstract class Param extends Container implements Serializable {
 //
 //        json = b.create();
 //    }
-
-
-    public Clock getClock() {
-        return clock;
-    }
 
 }

@@ -2,7 +2,7 @@ package nars.util.index;
 
 import nars.NAR;
 import nars.concept.Concept;
-import nars.util.event.Topic;
+import nars.util.event.OnTopics;
 
 /**
  * Created by me on 4/16/15.
@@ -11,7 +11,7 @@ abstract public class ConceptMap  {
 
     public final NAR nar;
 
-    Topic.Registrations regs;
+    OnTopics regs;
     int frame = -1;
     protected int cycleInFrame = -1;
 
@@ -24,7 +24,7 @@ abstract public class ConceptMap  {
     public ConceptMap(NAR nar) {
         super();
 
-        regs = new Topic.Registrations(
+        regs = new OnTopics(
         nar.memory.eventReset.on(n -> {
             frame = 0;
             reset();

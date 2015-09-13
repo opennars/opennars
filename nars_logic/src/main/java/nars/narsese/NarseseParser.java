@@ -837,6 +837,7 @@ public class NarseseParser extends BaseParser<Object>  {
     }
 
     static Object the(final Object o) {
+        if (o == null) return null; //pass through
         if (o instanceof Term) return o;
         if (o instanceof String) {
             String s= (String)o;

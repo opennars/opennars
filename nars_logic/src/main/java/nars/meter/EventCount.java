@@ -1,6 +1,7 @@
 package nars.meter;
 
 import nars.NAR;
+import nars.util.event.OnTopics;
 import nars.util.event.Topic;
 import nars.util.meter.event.HitMeter;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 public class EventCount {
 
     public final Map<Object, HitMeter> eventMeters = new HashMap();
-    private Topic.Registrations sub;
+    private OnTopics sub;
 
     public EventCount(NAR n) {
         this.sub = Topic.all(n.memory, (event,value) -> {
