@@ -49,13 +49,13 @@ import java.util.*;
  */
 public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Serializable {
 
-    public char getPunctuation();
-    public long[] getEvidence();
-    public long getCreationTime();
-    public long getOccurrenceTime();
-    public int getDuration();
-    public Sentence setCreationTime(long c);
-    public Sentence setOccurrenceTime(long o);
+    char getPunctuation();
+    long[] getEvidence();
+    long getCreationTime();
+    long getOccurrenceTime();
+    int getDuration();
+    Sentence setCreationTime(long c);
+    Sentence setOccurrenceTime(long o);
     //public Sentence setDuration(int d);
 
 
@@ -97,7 +97,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //    }
 
     /** returns a valid sentence CompoundTerm, or returns null */
-    public static <X extends Compound> X termOrNull(Term t) {
+    static <X extends Compound> X termOrNull(Term t) {
         //if (invalidSentenceTerm(t))
             //return null;
         Term x = t.normalized();
@@ -115,13 +115,13 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         return (X)x;
     }
 
-    public static List<Sentence> sortExpectation(Collection<Sentence> s) {
+    static List<Sentence> sortExpectation(Collection<Sentence> s) {
         List<Sentence> l = new ArrayList(s);
         Collections.sort(l, ExpectationComparator.the);
         return l;
     }
 
-    public static List<Sentence> sortConfidence(Collection<Sentence> s) {
+    static List<Sentence> sortConfidence(Collection<Sentence> s) {
         List<Sentence> l = new ArrayList(s);
         Collections.sort(l, ConfidenceComparator.the);
         return l;
@@ -147,7 +147,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     /** performs some (but not exhaustive) tests on a term to determine some cases where it is invalid as a sentence content
      * returns true if the term is invalid for use as sentence content term
      * */
-    static public boolean invalidSentenceTerm(final Term t) {
+    static boolean invalidSentenceTerm(final Term t) {
         if (!(t instanceof Compound)) { //(t instanceof Interval) || (t instanceof Variable)
             return true;
         }
@@ -182,11 +182,11 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime);
 
 
-    default public Sentence setOccurrenceTime(Tense tense, int duration) {
+    default Sentence setOccurrenceTime(Tense tense, int duration) {
         return setOccurrenceTime(getCreationTime(), tense, duration);
     }
 
-    default public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
+    default Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
         return setOccurrenceTime(Stamp.getOccurrenceTime(creation, tense, duration));
     }
 
@@ -201,7 +201,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //        return clon;
 //    }
 
-    default public Sentence setEternal() {
+    default Sentence setEternal() {
         setTime(getCreationTime(), Stamp.ETERNAL);
         return this;
     }
@@ -274,7 +274,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //        return s;
 //    }
 
-    default public ProjectedTruth projection(final long targetTime, final long currentTime) {
+    default ProjectedTruth projection(final long targetTime, final long currentTime) {
 
         final Truth currentTruth = getTruth();
 
@@ -299,12 +299,12 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
     /** calculates projection truth quality without creating new TruthValue instances */
-    default public float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
+    default float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
         return projectionTruthQuality(getTruth(), targetTime, currentTime, problemHasQueryVar);
     }
 
     /** calculates projection truth quality without creating new TruthValue instances */
-    default public float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
+    default float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
         return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
     }
 
@@ -313,7 +313,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
      *
      * @return Whether the object is a Question
      */
-    default public boolean isQuestion() {
+    default boolean isQuestion() {
         return (getPunctuation() == Symbols.QUESTION);
     }
 
@@ -322,31 +322,31 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
      *
      * @return Whether the object is a Judgment
      */
-    default public boolean isJudgment() {
+    default boolean isJudgment() {
         return (getPunctuation() == Symbols.JUDGMENT);
     }
 
-    default public boolean isGoal() {
+    default boolean isGoal() {
         return (getPunctuation() == Symbols.GOAL);
     }
     
-    default public boolean isQuest() {
+    default boolean isQuest() {
         return (getPunctuation() == Symbols.QUEST);
     }
 
-    default public boolean isCommand()  {
+    default boolean isCommand()  {
         return (getPunctuation() == Symbols.COMMAND);
     }
 
-    default public boolean hasQueryVar() {
+    default boolean hasQueryVar() {
         return getTerm().hasVarQuery();
     }
 
-    default public boolean isRevisible() {
+    default boolean isRevisible() {
         return !((getTerm() instanceof Conjunction) && getTerm().hasVarDep());
     }
 
-    default public int getTemporalOrder() {
+    default int getTemporalOrder() {
         int t = getTerm().getTemporalOrder();
         if (t == TemporalRules.ORDER_INVALID)
             throw new RuntimeException(this + " has INVALID temporal order");
@@ -354,7 +354,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     }
 
 
-    default public StringBuilder appendTo(StringBuilder sb) {
+    default StringBuilder appendTo(StringBuilder sb) {
         return appendTo(sb, null);
     }
 
@@ -410,19 +410,20 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 //    }
 
     @Override
-    default public Sentence name() {
+    default Sentence name() {
         return this;
     }
 
-    default public CharSequence toString(NAR nar, boolean showStamp) {
+    default CharSequence toString(NAR nar, boolean showStamp) {
         return toString(nar.memory, showStamp);
     }
 
-    default public CharSequence toString(final Memory memory, final boolean showStamp) {
+    default CharSequence toString(final Memory memory, final boolean showStamp) {
         return toString(new StringBuilder(), memory, showStamp);
     }
 
-    default @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
+    default @Deprecated
+    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return toString(buffer, memory, true, notCommand, notCommand, true);
     }
@@ -438,19 +439,19 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
     StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog);
 
 
-    default public boolean equalTerms(final Sentence s) {
+    default boolean equalTerms(final Sentence s) {
         return getTerm().equals(s.getTerm());
     }
 
-    default public boolean equalPunctuations(Sentence s) {
+    default boolean equalPunctuations(Sentence s) {
         return getPunctuation() == s.getPunctuation();
     }
 
-    default public boolean isEternal() {
+    default boolean isEternal() {
         return getOccurrenceTime() == Stamp.ETERNAL;
     }
 
-    default public boolean isTimeless() {
+    default boolean isTimeless() {
         return getOccurrenceTime() == Stamp.TIMELESS;
     }
 
@@ -468,51 +469,41 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
 
-    default public boolean after(Sentence s, int duration) {
+    default boolean after(Sentence s, int duration) {
         return TemporalRules.occurrsAfter(s, this);
     }
 
-    default public boolean before(final Sentence s, final int duration) {
+    default boolean before(final Sentence s, final int duration) {
         return TemporalRules.occurrsAfter(this, s);
     }
 
-    default public boolean concurrent(final Sentence s, final int duration) {
+    default boolean concurrent(final Sentence s, final int duration) {
         return TemporalRules.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
-//    /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
-//    @Override
-//    public void applyToStamp(Stamp target) {
-//        target.setDuration(getDuration());
-//        target.setTime(getCreationTime(), getOccurrenceTime());
-//        target.setEvidentialSet(getEvidentialSet());
-//        target.setCyclic(isCyclic());
-//    }
-    
     /** WARNING: calling this should not change the value of equivalentInstance, but just the
      * particular instance that it references
      */
-    public void setTermShared(final T equivalentInstance);
+    void setTermShared(final T equivalentInstance);
 
-    public T getTerm();
-    public Truth getTruth();
-    public boolean isCyclic();
+    T getTerm();
+    Truth getTruth();
 
-    default public boolean isQuestOrQuestion() {
+    default boolean isQuestOrQuestion() {
         return isQuestion() || isQuest();
     }
-    default public boolean isJudgmentOrGoal() {
+    default boolean isJudgmentOrGoal() {
         return isJudgment() || isGoal();
     }
 
-    public static final class ExpectationComparator implements Comparator<Sentence> {
+    final class ExpectationComparator implements Comparator<Sentence> {
         final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.getExpectation(), b.getExpectation());
         }
     }
 
-    public static final class ConfidenceComparator implements Comparator<Sentence> {
+    final class ConfidenceComparator implements Comparator<Sentence> {
         final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.getConfidence(), b.getConfidence());

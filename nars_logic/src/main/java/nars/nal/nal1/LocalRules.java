@@ -100,7 +100,7 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
 
      */
-    public static Task revision(final Task newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+    public static Task revision(final Task newBelief, final Task oldBelief, final boolean feedbackToLinks, final NAL nal) {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
         //if (stamp == null) return null;
 
@@ -155,7 +155,6 @@ public class LocalRules {
 
         if (revised != null) {
             nal.memory().logic.BELIEF_REVISION.hit();
-            revised.setCyclic(true);
         }
 
         return revised;

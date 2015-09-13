@@ -42,13 +42,13 @@ public interface Stamp extends Cloneable, Serializable {
      * default for atemporal events
      * means "always" in Judgment/Question, but "current" in Goal/Quest
      */
-    public static final long ETERNAL = Integer.MIN_VALUE;
+    long ETERNAL = Integer.MIN_VALUE;
     /**
      * flag for an unknown time, or as-yet-un-perceived time,
      * signalling a missing value to set to some default
      * if eventually perceived or derived
      */
-    public static final long TIMELESS = Integer.MIN_VALUE + 1;
+    long TIMELESS = Integer.MIN_VALUE + 1;
 
     /*** zips two evidentialBase arrays into a new one */
     static long[] zip(final long[] a, final long[] b) {
@@ -72,11 +72,11 @@ public interface Stamp extends Cloneable, Serializable {
         return c;
     }
 
-    public static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {
+    static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {
         return getOccurrenceTime(creationTime, tense, m.duration());
     }
 
-    public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
+    static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
 
         if (creationTime == Stamp.TIMELESS) {
             //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
@@ -101,7 +101,7 @@ public interface Stamp extends Cloneable, Serializable {
         }
     }
 
-    public static long[] toSetArray(final long[] x) {
+    static long[] toSetArray(final long[] x) {
         final int l = x.length;
 
         if (l < 2)
@@ -143,7 +143,7 @@ public interface Stamp extends Cloneable, Serializable {
     }
 
     /** true if there are any common elements; assumes the arrays are sorted and contain no duplicates */
-    public static boolean overlapping(final long[] a, final long[] b) {
+    static boolean overlapping(final long[] a, final long[] b) {
 
         /** TODO there may be additional ways to exit early from this loop */
 
@@ -161,7 +161,7 @@ public interface Stamp extends Cloneable, Serializable {
         return false;
     }
 
-    public static boolean overlapping(final Sentence a, final Sentence b) {
+    static boolean overlapping(final Sentence a, final Sentence b) {
 
 
         if (a == b) return true;
@@ -190,15 +190,15 @@ public interface Stamp extends Cloneable, Serializable {
 //        }
 //    }
 
-    public long getCreationTime();
+    long getCreationTime();
 
-    public Stamp setCreationTime(long t);
+    Stamp setCreationTime(long t);
 
-    public int getDuration();
+    int getDuration();
 
-    public long getOccurrenceTime();
+    long getOccurrenceTime();
 
-    public Stamp setOccurrenceTime(long t);
+    Stamp setOccurrenceTime(long t);
 
 
 
@@ -222,7 +222,7 @@ public interface Stamp extends Cloneable, Serializable {
      }
      */
 
-    default public boolean before(Stamp s, int duration) {
+    default boolean before(Stamp s, int duration) {
         if (isEternal() || s.isEternal())
             return false;
         return order(s.getOccurrenceTime(), getOccurrenceTime(), duration) == TemporalRules.ORDER_BACKWARD;
@@ -242,13 +242,13 @@ public interface Stamp extends Cloneable, Serializable {
     }*/
 
     /** true if this instance is after 's' */
-    default public boolean after(Stamp s, int duration) {
+    default boolean after(Stamp s, int duration) {
         if (isEternal() || s.isEternal())
             return false;
         return TemporalRules.after(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
-    default public float getOriginality() {
+    default float getOriginality() {
         return 1.0f / (getEvidence().length + 1);
     }
 //
@@ -265,7 +265,7 @@ public interface Stamp extends Cloneable, Serializable {
 //        }
 //    }
 
-    default public boolean isEternal() {
+    default boolean isEternal() {
         return getOccurrenceTime() == ETERNAL;
     }
 
@@ -290,7 +290,7 @@ public interface Stamp extends Cloneable, Serializable {
 
 
 
-    default public StringBuilder appendOccurrenceTime(final StringBuilder sb) {
+    default StringBuilder appendOccurrenceTime(final StringBuilder sb) {
         if (getOccurrenceTime() != ETERNAL) {
             int estTimeLength = 10; /* # digits */
             sb.ensureCapacity(estTimeLength);
@@ -309,7 +309,7 @@ public interface Stamp extends Cloneable, Serializable {
         return sb;
     }
 
-    default public String getTense(final long currentTime, final int duration) {
+    default String getTense(final long currentTime, final int duration) {
 
         if (isEternal()) {
             return "";
@@ -325,7 +325,7 @@ public interface Stamp extends Cloneable, Serializable {
         }
     }
 
-    default public CharSequence stampAsStringBuilder() {
+    default CharSequence stampAsStringBuilder() {
 
         final long[] ev = getEvidence();
         final int len = ev != null ? ev.length : 0;
@@ -363,11 +363,10 @@ public interface Stamp extends Cloneable, Serializable {
     /** deduplicated and sorted version of the evidentialBase.
      * this can always be calculated deterministically from the evidentialBAse
      * since it is the deduplicated and sorted form of it. */
-    abstract public long[] getEvidence();
+    long[] getEvidence();
 
-    abstract public Stamp setEvidence(long... evidentialSet);
+    Stamp setEvidence(long... evidentialSet);
 
-    public boolean isCyclic();
 
     /**
      * Get a String form of the Stamp for display Format: {creationTime [:
@@ -404,11 +403,7 @@ public interface Stamp extends Cloneable, Serializable {
      }
      */
 
-
-
-    abstract void setCyclic(boolean cyclic);
-
-    default public boolean isInput() {
+    default boolean isInput() {
         return false;
     }
 

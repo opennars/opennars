@@ -58,7 +58,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     long creationTime = Stamp.TIMELESS;
     long occurrenceTime = Stamp.ETERNAL;
     int duration = 0;
-    boolean cyclic;
+
 
     /**
      * TODO move to SolutionTask subclass
@@ -182,18 +182,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         }
     }
 
-    @Override
-    final public boolean isCyclic() {
-        return cyclic;
-    }
-
-    @Override
-    final public void setCyclic(boolean cyclic) {
-        if (Global.OVERLAP_ALLOW) cyclic = false;
-        else
-            this.cyclic = cyclic;
-        //TODO decide if to include cyclic ni equality and hash, then invalidate() here
-    }
 
 
     @Override
@@ -366,13 +354,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
                     <patham9> revision is allowed here because the two premises to revise dont have an overlapping evidental base element
                     */
 
-            setCyclic(
-                    //boolean bothParentsCyclic =
-                    ((getParentTask().isCyclic() && getParentBelief().isCyclic())
-                            ||
-                            //boolean overlapBetweenParents = if the sum of the two parents length is greater than the result then there was some overlap
-                            (zipped.length > uniques.length))
-            );
+//            setCyclic(
+//                    //boolean bothParentsCyclic =
+//                    ((getParentTask().isCyclic() && getParentBelief().isCyclic())
+//                            ||
+//                            //boolean overlapBetweenParents = if the sum of the two parents length is greater than the result then there was some overlap
+//                            (zipped.length > uniques.length))
+//            );
 
             //}
 
@@ -380,10 +368,10 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
             //Single premise
             setEvidence(getParentTask().getEvidence());
 
-            setCyclic(true); //p.isCyclic());
+            //setCyclic(true); //p.isCyclic());
         }
         else {
-            setCyclic(false);
+            //setCyclic(false);
         }
 
     }

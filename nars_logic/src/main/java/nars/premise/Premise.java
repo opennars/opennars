@@ -194,8 +194,6 @@ public interface Premise {
         TaskSeed x = new TaskSeed(memory());
         x.parent(parentTask, parentBelief);
         x.updateCyclic();
-        if (!allowOverlap && x.isCyclic())
-            return null;
         return x;
     }
 

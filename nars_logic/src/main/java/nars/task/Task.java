@@ -210,7 +210,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         //tt.setLastForgetTime(getLastForgetTime());
 
         tt.setEvidence(getEvidence());
-        tt.setCyclic(isCyclic());
 
         tt.setCreationTime(getCreationTime());
         tt.setOccurrenceTime(occ);
@@ -600,9 +599,5 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
     public boolean isDeleted();
 
-    default boolean isParentCyclic() {
-        final Task p = getParentTask();
-        if (p == null) return false;
-        return p.isCyclic();
-    }
+
 }
