@@ -1,10 +1,13 @@
 package nars.guifx;
 
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import nars.Global;
 import nars.NAR;
 import nars.util.data.list.CircularArrayList;
+import nars.util.event.Topic;
 
 import java.util.List;
 
@@ -58,6 +61,9 @@ public class LogPane extends VBox implements Runnable {
         sceneProperty().addListener((c) -> {
             updateParent();
         });
+        Topic.all(nar.memory(), (k,v) -> {
+            output(k,v);
+        });
 
         nar.onEachFrame( (n) -> {
             List<Node> p = pending;
@@ -103,6 +109,22 @@ public class LogPane extends VBox implements Runnable {
             }
 
         };*/
+    }
+
+    protected void output(Object channel, Object signal) {
+        Node n = getNode(channel, signal);
+        if (n!=null) {
+
+            if (pending==null)
+                pending = Global.newArrayList();
+
+            pending.add(n);
+
+        }
+    }
+
+    private Node getNode(Object channel, Object signal) {
+        return new Label(channel.toString() + ": " + signal.toString());
     }
 
 //    public Node getNode(Output.Channel channel, Class event, Object[] args) {

@@ -1,5 +1,6 @@
 package nars.guifx.demo;
 
+import nars.Global;
 import nars.guifx.NARfx;
 import nars.nar.Default;
 
@@ -21,6 +22,8 @@ public class NARfxDefaultIterative {
 //        });
 
         //Application.launch(NARfx.class, arg);
+
+        Global.DEBUG = true;
 
         NARfx.newWindow(new Default(), (i) -> {
             try {
