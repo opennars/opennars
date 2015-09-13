@@ -101,7 +101,7 @@ public class AutoLabel extends Label implements ChangeListener {
         sb.append(prefix);
 
         //sb.append(task.getTerm());
-        task.toString(sb, nar.memory, true, false, false);
+        task.toString(sb, nar.memory(), true, false, false, true);
 
         setText(sb.toString());
 

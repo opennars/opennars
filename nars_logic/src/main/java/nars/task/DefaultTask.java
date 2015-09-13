@@ -579,12 +579,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 //        this.hash = 0;
     }*/
 
-    public void setParentTask(Task parentTask) {
+    public final void setParentTask(Task parentTask) {
         this.parentTask = reference(parentTask);
         invalidate();
     }
 
-    public void setParentBelief(Task parentBelief) {
+    public final void setParentBelief(Task parentBelief) {
         this.parentBelief = reference(parentBelief);
         invalidate();
     }

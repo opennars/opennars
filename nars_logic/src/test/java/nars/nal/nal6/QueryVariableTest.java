@@ -1,6 +1,7 @@
 package nars.nal.nal6;
 
 import nars.NAR;
+import nars.meter.TestNAR;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
@@ -9,17 +10,18 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Supplier;
 
 
 public class QueryVariableTest extends JavaNALTest {
 
-    public QueryVariableTest(NAR b) { super(b); }
+    public QueryVariableTest(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return Arrays.asList(new Object[][]{
-                {new Default()},
-                {new Default().nal(5)}
+        return Arrays.asList(new Supplier[][]{
+                {() -> new Default()},
+                {() -> new Default().nal(5)}
                 //{new Neuromorphic(4)},
         });
     }
@@ -41,6 +43,7 @@ public class QueryVariableTest extends JavaNALTest {
         //TextOutput.out(n);
         //new TraceWriter(n, System.out);
 
+        TestNAR tester = test();
         tester.nar.frame(time1);
         tester.believe("<a --> b>");
         tester.nar.frame(time2);

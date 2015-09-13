@@ -34,11 +34,6 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-            <version>2.7.0</version>
-        </dependency>
 
         <dependency>
             <groupId>opennars</groupId>
@@ -54,26 +49,32 @@
             <groupId>io.undertow</groupId>        
             <artifactId>undertow-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
-            <version>2.7.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sksamuel.gwt</groupId>
-            <artifactId>gwt-websockets</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.googlecode.gwtquery</groupId>
-            <artifactId>gwtquery</artifactId>
-            <version>1.4.3</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
-  
-  
-  
+
+
+    <!-- GWT -->
+    <!--<dependency>-->
+    <!--<groupId>com.google.gwt</groupId>-->
+    <!--<artifactId>gwt-dev</artifactId>-->
+    <!--<version>2.7.0</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>com.google.gwt</groupId>-->
+    <!--<artifactId>gwt-user</artifactId>-->
+    <!--<version>2.7.0</version>-->
+    <!--</dependency>-->
+
+    <!--<dependency>-->
+    <!--<groupId>com.sksamuel.gwt</groupId>-->
+    <!--<artifactId>gwt-websockets</artifactId>-->
+    <!--<version>1.0.4</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>com.googlecode.gwtquery</groupId>-->
+    <!--<artifactId>gwtquery</artifactId>-->
+    <!--<version>1.4.3</version>-->
+    <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+
 </project>
 

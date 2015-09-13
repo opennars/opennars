@@ -3,16 +3,9 @@ package nars.guifx;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import nars.Global;
 import nars.NAR;
-import nars.io.out.Output;
-import nars.io.out.TextOutput;
-import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static javafx.application.Platform.runLater;
@@ -22,7 +15,7 @@ import static javafx.application.Platform.runLater;
  */
 public class LogPane extends VBox implements Runnable {
 
-    private final Output incoming;
+    //private final Output incoming;
     private final NAR nar;
     final int maxLines = 128;
     CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
@@ -66,7 +59,7 @@ public class LogPane extends VBox implements Runnable {
             updateParent();
         });
 
-        nar.onEachFrame( () -> {
+        nar.onEachFrame( (n) -> {
             List<Node> p = pending;
             if (p!=null) {
                 pending = null;
@@ -93,7 +86,7 @@ public class LogPane extends VBox implements Runnable {
             }
         });
 
-        incoming = new Output(nar) {
+        /*incoming = new Output(nar) {
 
             @Override
             protected boolean output(Channel channel, Class event, Object... args) {
@@ -109,39 +102,39 @@ public class LogPane extends VBox implements Runnable {
                 return false;
             }
 
-        };
+        };*/
     }
 
-    public Node getNode(Output.Channel channel, Class event, Object[] args) {
-
-        if (args[0] instanceof Task) {
-            /*TaskLabel tl = new TaskLabel(channel.getLinePrefix(event, args) + ' ',
-                    (Task)args[0], nar);*/
-
-            Task t = (Task)args[0];
-            /*ItemButton tl = new ItemButton( t, (i) -> i.toString(),
-                    (i) -> {
-                        NARfx.window(nar, t);
-                    }
-            );*/
-            //AutoLabel tl = new AutoLabel( "", t, nar);
-            //tl.enablePopupClickHandler(nar);
-            //return tl;
-
-            return new AutoLabel(t, nar);
-        }
-
-        StringBuilder sb = TextOutput.append(event, args, false, nar, new StringBuilder());
-        final String s;
-        if (sb != null)
-            s = sb.toString();
-        else
-            s = "null: " + channel.get(event, args) + " " + event + " " + Arrays.toString(args);
-
-        Text t = new Text(s.toString());
-        t.setFill(Color.ORANGE);
-        t.setCache(true);
-        return t;
-    }
+//    public Node getNode(Output.Channel channel, Class event, Object[] args) {
+//
+//        if (args[0] instanceof Task) {
+//            /*TaskLabel tl = new TaskLabel(channel.getLinePrefix(event, args) + ' ',
+//                    (Task)args[0], nar);*/
+//
+//            Task t = (Task)args[0];
+//            /*ItemButton tl = new ItemButton( t, (i) -> i.toString(),
+//                    (i) -> {
+//                        NARfx.window(nar, t);
+//                    }
+//            );*/
+//            //AutoLabel tl = new AutoLabel( "", t, nar);
+//            //tl.enablePopupClickHandler(nar);
+//            //return tl;
+//
+//            return new AutoLabel(t, nar);
+//        }
+//
+//        StringBuilder sb = TextOutput.append(event, args, false, nar, new StringBuilder());
+//        final String s;
+//        if (sb != null)
+//            s = sb.toString();
+//        else
+//            s = "null: " + channel.get(event, args) + " " + event + " " + Arrays.toString(args);
+//
+//        Text t = new Text(s.toString());
+//        t.setFill(Color.ORANGE);
+//        t.setCache(true);
+//        return t;
+//    }
 
 }

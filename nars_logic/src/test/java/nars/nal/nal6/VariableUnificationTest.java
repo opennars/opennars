@@ -5,8 +5,8 @@
 package nars.nal.nal6;
 
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.io.qa.AnswerReaction;
+import nars.meter.TestNAR;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
 import nars.task.Task;
@@ -17,6 +17,9 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Supplier;
+
+import static org.jgroups.util.Util.assertTrue;
 
 /**
  *
@@ -26,7 +29,7 @@ import java.util.Collection;
 public class VariableUnificationTest extends JavaNALTest {
 
 
-    public VariableUnificationTest(NAR b) {
+    public VariableUnificationTest(Supplier<NAR> b) {
         super(b);
     }
 
@@ -45,12 +48,13 @@ public class VariableUnificationTest extends JavaNALTest {
     
     @Test public void testDepQueryVariableDistinct() {
 
+        TestNAR tester = test();
 
          /*
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable
         */
-        new AnswerReaction(nar) {
+        new AnswerReaction(tester.nar) {
 
             @Override
             public void onSolution(Task belief) {
@@ -76,7 +80,8 @@ public class VariableUnificationTest extends JavaNALTest {
 
     void unaffected(String left, String right) {
 
-        TextOutput.out(tester.nar);
+
+        TestNAR tester = test();
 
         tester.mustInput(1, "<" + left + " ==> " + right + ">.");
         tester.nar.input("<" + left + " ==> " + right + ">.");

@@ -388,35 +388,35 @@ public interface Premise {
         {
             //if revised, the stamp should already have been prevented from even being created
 
-            if (!task.isInput()) {
-                if (!Global.OVERLAP_ALLOW && (!allowOverlap || revised)) {
-
-                    //if this is a single derivation, newly cyclic
-                    //tasks are allowed as long as
-                    //its parent is not cyclic
-
-                    boolean cyclic = task.isCyclic();
-                    if (singleOrDouble) {
-                        final Task parentTask = task.getParentTask();
-
-                        //THIS IS A HACK because Cyclic flag isnt semantically correct yet
-                        if (cyclic && parentTask!=null) {
-                            if /*(!task.getTerm().equals(parentTask.getTerm())
-                                    &&*/
-                                    (!parentTask.isCyclic())
-                                cyclic = false;
-                        }
-                    }
-
-
-                    if (cyclic) {
-                        //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
-                        //re.printStackTrace();
-                        nar().memory().remove(task, "Cyclic");
-                        return null;
-                    }
-                }
-            }
+//            if (!task.isInput()) {
+//                if (!Global.OVERLAP_ALLOW && (!allowOverlap || revised)) {
+//
+//                    //if this is a single derivation, newly cyclic
+//                    //tasks are allowed as long as
+//                    //its parent is not cyclic
+//
+//                    boolean cyclic = task.isCyclic();
+////                    if (singleOrDouble) {
+////                        final Task parentTask = task.getParentTask();
+////
+////                        //THIS IS A HACK because Cyclic flag isnt semantically correct yet
+////                        if (cyclic && parentTask!=null) {
+////                            if /*(!task.getTerm().equals(parentTask.getTerm())
+////                                    &&*/
+////                                    (!parentTask.isCyclic())
+////                                cyclic = false;
+////                        }
+////                    }
+//
+//
+//                    if (cyclic) {
+//                        //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
+//                        //re.printStackTrace();
+//                        nar().memory().remove(task, "Cyclic");
+//                        return null;
+//                    }
+//                }
+//            }
         }
 
 

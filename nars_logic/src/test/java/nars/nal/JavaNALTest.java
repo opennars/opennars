@@ -2,17 +2,16 @@ package nars.nal;
 
 import nars.NAR;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+
+import java.util.function.Supplier;
 
 /**
  * NAL tests implemented in Java
  */
 @Ignore
-@RunWith(Parameterized.class)
 public class JavaNALTest extends AbstractNALTest {
 
-    public JavaNALTest(NAR b) {
+    public JavaNALTest(Supplier<NAR> b) {
         super(b);
     }
 

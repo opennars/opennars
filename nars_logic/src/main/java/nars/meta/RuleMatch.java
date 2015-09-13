@@ -8,6 +8,7 @@ import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
@@ -83,30 +84,61 @@ public class RuleMatch extends FindSubst {
         if (task == null)
             throw new RuntimeException("null task");
 
-        final Truth T = task.getTruth();
-        final Truth B = belief == null ? null : belief.getTruth();
+
+        //stamp cyclic filter
+        final boolean single = belief != null;
+
+        {
+
+            boolean allowOverlap = false; //to be refined
+            if (!allowOverlap) {
+
+                //determine cyclicity before creating task
+                boolean cyclic;
+                boolean allowed = true;
+                if (single) {
+                    cyclic = (task.isCyclic());
+                    //it will be cyclic but only make the task if it's parent is not also cyclic
+                    allowed = cyclic && (!task.isParentCyclic());
+                } else {
+                    cyclic = Stamp.overlapping(task, belief);
+                    allowed = cyclic && (!task.isCyclic() && !belief.isCyclic());
+                }
+
+                if (allowed) {
+                    //System.err.println( ": " + premise + " cyclic");
+                    return false;
+                }
 
 
-        final Truth truth;
-
-        if (task.isJudgment()) {
-            truth = p.truth.get(T, B);
-        } else if (task.isGoal()) {
-            if (p.desire != null)
-                truth = p.desire.get(T, B);
-            else
-                truth = null;
-        } else {
-            truth = null;
+            }
         }
 
-        if (truth == null && task.isJudgmentOrGoal()) {
-            //if this happens it could have been known before any substitution/matching happened
-            //set a precondition when a rule precludes certain punctuations */
-            /*if (Global.DEBUG) {
-                System.err.println("truth rule missing: " + this);
-            }*/
-            return false; //not specified!!
+
+        final Truth T = task.getTruth();
+        final Truth B = belief == null ? null : belief.getTruth();
+        final Truth truth;
+        {
+
+            if (task.isJudgment()) {
+                truth = p.truth.get(T, B);
+            } else if (task.isGoal()) {
+                if (p.desire != null)
+                    truth = p.desire.get(T, B);
+                else
+                    truth = null;
+            } else {
+                truth = null;
+            }
+
+            if (truth == null && task.isJudgmentOrGoal()) {
+                //if this happens it could have been known before any substitution/matching happened
+                //set a precondition when a rule precludes certain punctuations */
+                /*if (Global.DEBUG) {
+                    System.err.println("truth rule missing: " + this);
+                }*/
+                return false; //not specified!!
+            }
         }
 
         //test and apply late preconditions
@@ -163,8 +195,6 @@ public class RuleMatch extends FindSubst {
         //a difference in occuring, not a difference in matching
         //CALCULATE OCCURENCE TIME HERE AND SET DERIVED TASK OCCURENCE TIME ACCORDINGLY!
 
-        boolean allowOverlap = false; //to be refined
-
 
 
 
@@ -185,7 +215,7 @@ public class RuleMatch extends FindSubst {
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
             Task tt;
-            if (belief!=null) {
+            if (!single) {
                 tt = premise.deriveDouble(t.parent(task,belief));
             } else {
                 tt = premise.deriveSingle(t.parent(task));

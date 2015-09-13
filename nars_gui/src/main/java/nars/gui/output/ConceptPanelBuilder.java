@@ -5,15 +5,13 @@
 package nars.gui.output;
 
 import javolution.util.FastMap;
-import nars.Events;
-import nars.Events.FrameEnd;
 import nars.NAR;
 import nars.Video;
 import nars.bag.Bag;
 import nars.budget.Budgeted;
 import nars.budget.Itemized;
 import nars.concept.Concept;
-import nars.event.NARReaction;
+import nars.event.FrameReaction;
 import nars.link.TaskLink;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -36,7 +34,7 @@ import static java.awt.BorderLayout.WEST;
  * TODO use a minimum framerate for updating
  * TODO use ConceptMapSet and remove the MultiMap
  */
-public class ConceptPanelBuilder extends NARReaction {
+public class ConceptPanelBuilder extends FrameReaction {
 
     private Set<Concept> changed = null;
 
@@ -47,11 +45,10 @@ public class ConceptPanelBuilder extends NARReaction {
 
 
     public ConceptPanelBuilder(NAR n) {
-        super(n, Events.FrameEnd.class
-                );
+        super(n);
 
         this.nar = n;
-
+        //this.concepts = new ConceptReaction..
     }
 
     public Set<Concept> changes() {
@@ -95,37 +92,34 @@ public class ConceptPanelBuilder extends NARReaction {
     }
 
     @Override
-    public void event(Class event, Object[] args) {
-
-
-        if (event == FrameEnd.class) {
-            //SwingUtilities.invokeLater(this);
-            /*if (isAutoRemove())
-                updateAll();
-            else*/
-                updateChanged();
-            return;
-        }
-
-        if (concept.size() == 0) return;
-
-        Concept c = null;
-        /*if (event == Events.ConceptProcessed.class) {
-            c = ((Premise)args[0]).getConcept();
-        }
-        else */{
-            if (args[0] instanceof Concept)
-            c = (Concept)args[0];
-        }
-
-
-        if (c!=null) {
-            changes().add(c);
-        } else {
-            throw new RuntimeException(this + " " + event + " unable to process unknown event format: " + event + " with " + Arrays.toString(args) + " 0:" + args[0].getClass());
-        }
-
+    public void onFrame() {
+        updateChanged();
     }
+
+//    @Override
+//    public void onConcept(...) {
+//
+//
+//
+//        if (concept.size() == 0) return;
+//
+//        Concept c = null;
+//        /*if (event == Events.ConceptProcessed.class) {
+//            c = ((Premise)args[0]).getConcept();
+//        }
+//        else */{
+//            if (args[0] instanceof Concept)
+//            c = (Concept)args[0];
+//        }
+//
+//
+//        if (c!=null) {
+//            changes().add(c);
+//        } else {
+//            throw new RuntimeException(this + " " + event + " unable to process unknown event format: " + event + " with " + Arrays.toString(args) + " 0:" + args[0].getClass());
+//        }
+//
+//    }
 
     @Deprecated
     public boolean isAutoRemove() {
