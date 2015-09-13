@@ -168,20 +168,8 @@ public class TaskRule extends Rule<Premise, Task> {
             }
         }.getResult();
 
-
         if (tr == null) {
             return null;
-        }
-
-        //normalize a VAR_PATTERN term as belief pattern to %1
-        Term[] prem = ((Product) tr.term(0)).terms();
-        Term taskPattern = prem[0];
-        Term beliefPattern = prem[1];
-        if ((beliefPattern instanceof Variable) &&
-                (beliefPattern.op() == Op.VAR_PATTERN) &&
-                (!taskPattern.equals(PairMatchingProduct.any)) &&
-                (!beliefPattern.equals(PairMatchingProduct.any)) ) {
-            prem[1] = PairMatchingProduct.any;
         }
 
         tr.rehash();

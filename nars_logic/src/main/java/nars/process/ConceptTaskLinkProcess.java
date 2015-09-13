@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 /**
  * Created by me on 8/5/15.
  */
-public class ConceptTaskLinkProcess extends ConceptProcess {
+@Deprecated public class ConceptTaskLinkProcess extends ConceptProcess {
 
     public ConceptTaskLinkProcess(NAR nar, Concept concept, TaskLink taskLink) {
         super(nar, concept, taskLink);

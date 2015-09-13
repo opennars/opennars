@@ -329,19 +329,19 @@ public final class Fast {
 		0x4040404040404040L
 	};
 
-	private static int selectGogPetri( final long x, final int rank ) {
-		assert rank < Long.bitCount( x );
-		// Phase 1: sums by byte
-		long byteSums = x - ( ( x >>> 1 ) & 0x5 * ONES_STEP_4 );
-		byteSums = ( byteSums & 3 * ONES_STEP_4 ) + ( ( byteSums >>> 2 ) & 3 * ONES_STEP_4 );
-		byteSums = ( byteSums + ( byteSums >>> 4 ) ) & 0x0f * ONES_STEP_8;
-		byteSums *= ONES_STEP_8;
-
-		// Phase 2: compare each byte sum with rank to obtain the relevant byte
-		final int byteOffset = ( Long.numberOfTrailingZeros( byteSums + overflow[ rank ] & 0x8080808080808080L ) >> 3 ) << 3; 
-
-		return byteOffset + selectInByte[ (int)( x >>> byteOffset & 0xFF ) | (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) ) << 8 ];
-	}
+//	private static int selectGogPetri( final long x, final int rank ) {
+//		assert rank < Long.bitCount( x );
+//		// Phase 1: sums by byte
+//		long byteSums = x - ( ( x >>> 1 ) & 0x5 * ONES_STEP_4 );
+//		byteSums = ( byteSums & 3 * ONES_STEP_4 ) + ( ( byteSums >>> 2 ) & 3 * ONES_STEP_4 );
+//		byteSums = ( byteSums + ( byteSums >>> 4 ) ) & 0x0f * ONES_STEP_8;
+//		byteSums *= ONES_STEP_8;
+//
+//		// Phase 2: compare each byte sum with rank to obtain the relevant byte
+//		final int byteOffset = ( Long.numberOfTrailingZeros( byteSums + overflow[ rank ] & 0x8080808080808080L ) >> 3 ) << 3;
+//
+//		return byteOffset + selectInByte[ (int)( x >>> byteOffset & 0xFF ) | (int)( rank - ( ( ( byteSums << 8 ) >>> byteOffset ) & 0xFF ) ) << 8 ];
+//	}
 
 
 	/** Returns the position of a bit of given rank (starting from zero).
@@ -388,43 +388,43 @@ public final class Fast {
 	}
 	
 
-	public static void main( final String a[] ) {
-		final long n = Long.parseLong( a[ 0 ] );
-				
-		long start, elapsed;
-
-		long w = 0xFFFFFFFFFFFFFFFFL;
-		int x = 0;
-		
-		for( int k = 10; k-- !=0;  ) {
-			System.out.print( "Broadword select (new): " );
-			
-			start = System.nanoTime();
-			for( long i = n; i-- != 0; ) x ^= Fast.select( w, (int)( i & 63 ) );
-			elapsed = System.nanoTime() - start;
-
-			System.out.println( "elapsed " + elapsed + ", " + (double)elapsed / n + " ns/call" );
-
-			System.out.print( "Broadword select (Gog & Petri): " );
-			
-			start = System.nanoTime();
-			for( long i = n; i-- != 0; ) x ^= Fast.selectGogPetri( w, (int)( i & 63 ) );
-			elapsed = System.nanoTime() - start;
-
-			System.out.println( "elapsed " + elapsed + ", " + (double)elapsed / n + " ns/call" );
-
-			System.out.print( "Broadword select (old): " );
-			
-			start = System.nanoTime();
-			for( long i = n; i-- != 0; ) x ^= Fast.selectBroadword( w, (int)( i & 63 ) );
-			elapsed = System.nanoTime() - start;
-
-			System.out.println( "elapsed " + elapsed + ", " + (double)elapsed / n + " ns/call" );
-
-		}
-		
-		if ( x == 0 ) System.out.println( 0 );
-
-	}
+//	public static void main( final String a[] ) {
+//		final long n = Long.parseLong( a[ 0 ] );
+//
+//		long start, elapsed;
+//
+//		long w = 0xFFFFFFFFFFFFFFFFL;
+//		int x = 0;
+//
+//		for( int k = 10; k-- !=0;  ) {
+//			System.out.print( "Broadword select (new): " );
+//
+//			start = System.nanoTime();
+//			for( long i = n; i-- != 0; ) x ^= Fast.select( w, (int)( i & 63 ) );
+//			elapsed = System.nanoTime() - start;
+//
+//			System.out.println( "elapsed " + elapsed + ", " + (double)elapsed / n + " ns/call" );
+//
+//			System.out.print( "Broadword select (Gog & Petri): " );
+//
+//			start = System.nanoTime();
+//			for( long i = n; i-- != 0; ) x ^= Fast.selectGogPetri( w, (int)( i & 63 ) );
+//			elapsed = System.nanoTime() - start;
+//
+//			System.out.println( "elapsed " + elapsed + ", " + (double)elapsed / n + " ns/call" );
+//
+//			System.out.print( "Broadword select (old): " );
+//
+//			start = System.nanoTime();
+//			for( long i = n; i-- != 0; ) x ^= Fast.selectBroadword( w, (int)( i & 63 ) );
+//			elapsed = System.nanoTime() - start;
+//
+//			System.out.println( "elapsed " + elapsed + ", " + (double)elapsed / n + " ns/call" );
+//
+//		}
+//
+//		if ( x == 0 ) System.out.println( 0 );
+//
+//	}
 	
 }

@@ -109,33 +109,26 @@ abstract public class ConceptProcess extends NAL  {
 
     public static void forEachPremise(NAR nar, @Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, long now) {
 
-        TermLink termLink = null;
-
         TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
-
         if (taskLink == null) return;
 
-        if (taskLink.type!=TermLink.TRANSFORM) {
-            termLink = concept.getTermLinks().forgetNext(nar.memory().termLinkForgetDurations, nar.memory());
-        }
+        TermLink termLink = concept.getTermLinks().forgetNext(nar.memory().termLinkForgetDurations, nar.memory());
+        if (termLink == null) return;
 
-        ConceptProcess cp = null;
-        if (termLink != null && !Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
+
+        if (!Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
             final Concept beliefConcept = nar.concept(termLink.target);
             if (beliefConcept != null) {
+                //belief can be null:
                 Task belief = beliefConcept.getBeliefs().top(taskLink.getTask(), now);
-                if (belief!=null) {
-                    cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
-                    cp.setBelief(belief);
-                }
-            }
+
+                ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
+                cp.setBelief(belief);
+                proc.accept(cp);
+           }
         }
 
-        if (cp == null) {
-            cp = new ConceptTaskLinkProcess(nar, concept, taskLink);
-        }
 
-        proc.accept(cp);
     }
 
 //    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
