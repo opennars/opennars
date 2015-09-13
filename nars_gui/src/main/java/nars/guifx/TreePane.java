@@ -82,6 +82,8 @@ public class TreePane extends BorderPane {
                     ns = new NSlider(80, 20)
             ));
 
+            ns.value.set(0);
+
             (this.minPriority = ns.value).addListener((v) -> {
                 update();
             });

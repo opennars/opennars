@@ -64,6 +64,7 @@ public class VariableUnificationTest extends JavaNALTest {
         };
 
 
+        //tester.nar.stdout();
         assertTrue("test impl unfinished: ", false);
         //tester.requires.add(new OutputContainsCondition(tester.nar, "=/> <a --> 4>>.", 5));
 

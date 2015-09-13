@@ -1,15 +1,19 @@
 package nars.guifx;
 
+import com.gs.collections.impl.map.mutable.ConcurrentHashMap;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nars.Global;
 import nars.NAR;
+import nars.guifx.util.NSlider;
 import nars.util.data.list.CircularArrayList;
 import nars.util.event.Topic;
 
 import java.util.List;
+import java.util.Map;
 
 import static javafx.application.Platform.runLater;
 
@@ -18,13 +22,36 @@ import static javafx.application.Platform.runLater;
  */
 public class LogPane extends VBox implements Runnable {
 
+    public static class FilterBank<K>  {
+        protected Map<K,NSlider> data = new ConcurrentHashMap<>();
+
+
+        public final double value(K k) { return data.get(k).value.doubleValue(); }
+        public final NSlider value(K k, double newValue) {
+            NSlider s = data.computeIfAbsent(k, kk-> {
+               return new NSlider(40,15); /*.label(kk); */
+            });
+            s.value.set(newValue);
+            return s;
+        }
+
+        public void addTo(Pane p) {
+            p.getChildren().addAll(data.values());
+        }
+
+    }
+
     //private final Output incoming;
     private final NAR nar;
     final int maxLines = 128;
     CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
     List<Node> pending;
 
+    FilterBank filter = new FilterBank();
+
     ScrollPane scrollParent = null;
+
+
 
     /* to be run in javafx thread */
     @Override public void run() {
@@ -53,10 +80,14 @@ public class LogPane extends VBox implements Runnable {
 
     }
 
-    public LogPane(NAR nar) {
+    public LogPane(NAR nar, Object... enabled) {
         super();
 
         this.nar = nar;
+
+        for (Object o : enabled)
+            filter.value(o, 1);
+        filter.addTo(this);
 
         sceneProperty().addListener((c) -> {
             updateParent();

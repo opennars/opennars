@@ -61,7 +61,7 @@
                         <!-- because they dont all have the pattern: ____Test.java yet -->
                         <include>**/*.java</include>
                     </includes>
-                    <parallel>true</parallel>
+                    <!--<parallel>true</parallel>-->
                     <parallelOptimized>true</parallelOptimized>
                     <!--<skipTests>true</skipTests>-->
                     <!--<reuseForks>true</reuseForks>-->
