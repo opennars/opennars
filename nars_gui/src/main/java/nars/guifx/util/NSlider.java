@@ -3,18 +3,22 @@ package nars.guifx.util;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
 /**
  * versatile light-weight slider component for javafx
  */
-public class NSlider extends Canvas {
+public class NSlider extends StackPane {
 
 
     public final DoubleProperty value = new SimpleDoubleProperty(0.5);
@@ -27,14 +31,30 @@ public class NSlider extends Canvas {
         //TODO debounce these with a AtomicBoolean or something
         redrawLater();
     };
-
+    private final Canvas canvas;
 
     public NSlider(double w, double h) {
+        this(null, w, h);
+    }
+
+    final StringProperty label;
+
+    public NSlider(String label, double w, double h) {
         super();
 
+        this.canvas = new Canvas(w, h);
+
+        Label overlay = new Label();
+        {
+            this.label = overlay.textProperty();
+            overlay.setMouseTransparent(true);
+            overlay.setBlendMode(BlendMode.DIFFERENCE);
+        }
+        this.label.set(label);
+
         if (h <= 0) {
-            maxHeight(Double.MAX_VALUE);
-            boundsInParentProperty().addListener((b) -> {
+            canvas.maxHeight(Double.MAX_VALUE);
+            canvas.boundsInParentProperty().addListener((b) -> {
                 setHeight( boundsInParentProperty().get().getHeight() );
                 redraw();
             });
@@ -65,23 +85,23 @@ public class NSlider extends Canvas {
         //widthProperty().bind(widthProperty());
         //heightProperty().bind(heightProperty());
 
-        setOnMousePressed(new EventHandler<MouseEvent>() {
+        canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent mouseEvent) {
-                setCursor(Cursor.MOVE);
+                canvas.setCursor(Cursor.MOVE);
                 dragChange(mouseEvent);
             }
         });
 
-        setCursor(Cursor.CROSSHAIR);
+        canvas.setCursor(Cursor.CROSSHAIR);
 
-        setOnMouseReleased(new EventHandler<MouseEvent>() {
+        canvas.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent mouseEvent) {
-                setCursor(Cursor.CROSSHAIR);
+                canvas.setCursor(Cursor.CROSSHAIR);
             }
         });
-        setOnMouseDragged(new EventHandler<MouseEvent>() {
+        canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent mouseEvent) {
-                setCursor(Cursor.MOVE);
+                canvas.setCursor(Cursor.MOVE);
                 dragChange(mouseEvent);
             }
         });
@@ -89,11 +109,15 @@ public class NSlider extends Canvas {
         value.addListener(redrawOnDoubleChange);
         min.addListener(redrawOnDoubleChange);
         max.addListener(redrawOnDoubleChange);
-        widthProperty().addListener(redrawOnDoubleChange);
-        heightProperty().addListener(redrawOnDoubleChange);
+        canvas.widthProperty().addListener(redrawOnDoubleChange);
+        canvas.heightProperty().addListener(redrawOnDoubleChange);
 
-        g = getGraphicsContext2D();
+        g = canvas.getGraphicsContext2D();
         redraw();
+
+
+
+        getChildren().setAll(canvas, overlay);
 
 
     }
@@ -112,7 +136,7 @@ public class NSlider extends Canvas {
     }
 
     private double p(double dx, double dy) {
-        return dx / getWidth();
+        return dx / canvas.getWidth();
     }
 
     protected void redrawLater() {
@@ -128,8 +152,8 @@ public class NSlider extends Canvas {
     }
 
     protected void redraw() {
-        double W = getWidth();
-        double H = getHeight();
+        double W = canvas.getWidth();
+        double H = canvas.getHeight();
 
         double p = p();
         double barSize = W * p;
@@ -159,10 +183,12 @@ public class NSlider extends Canvas {
         return this;
     }
 
-    public NSlider bind(DoubleProperty minPriority) {
-        minPriority.bindBidirectional(value);
+    public NSlider bind(DoubleProperty p) {
+        p.bindBidirectional(value);
         return this;
     }
+
+
 
 //    public static void makeDraggable(final Stage stage, final Node byNode) {
 //        final Delta dragDelta = new Delta();

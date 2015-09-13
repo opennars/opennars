@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.Menu;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -343,7 +344,8 @@ public class NARfx  {
     }
 
     public static void newWindow(NAR nar, Concept c) {
-        ConceptPane wn = new ConceptPane(nar, c);
+        //TODO //ConceptPane wn = new ConceptPane(nar, c);
+        Pane wn = new Pane();
 
         Stage st;
         Stage removed = window.put(nar, st = newWindow(c.toString(), wn));

@@ -19,7 +19,7 @@ public class TerminalPane extends BorderPane {
         split.setOrientation(Orientation.VERTICAL);
 
         split.getItems().addAll(NARfx.scrolled(
-                NARfx.scrolled(new LogPane(nar))),
+                new LogPane(nar, "eventCycle", "eventFrame")),
                 new InputPane(nar));
 
         split.setDividerPosition(0,0.85);

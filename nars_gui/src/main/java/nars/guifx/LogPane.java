@@ -1,45 +1,28 @@
 package nars.guifx;
 
-import com.gs.collections.impl.map.mutable.ConcurrentHashMap;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nars.Global;
 import nars.NAR;
-import nars.guifx.util.NSlider;
 import nars.util.data.list.CircularArrayList;
 import nars.util.event.Topic;
 
 import java.util.List;
-import java.util.Map;
 
 import static javafx.application.Platform.runLater;
+import static nars.guifx.NARfx.scrolled;
 
 /**
  * Created by me on 8/2/15.
  */
-public class LogPane extends VBox implements Runnable {
+public class LogPane extends BorderPane implements Runnable {
 
-    public static class FilterBank<K>  {
-        protected Map<K,NSlider> data = new ConcurrentHashMap<>();
-
-
-        public final double value(K k) { return data.get(k).value.doubleValue(); }
-        public final NSlider value(K k, double newValue) {
-            NSlider s = data.computeIfAbsent(k, kk-> {
-               return new NSlider(40,15); /*.label(kk); */
-            });
-            s.value.set(newValue);
-            return s;
-        }
-
-        public void addTo(Pane p) {
-            p.getChildren().addAll(data.values());
-        }
-
-    }
+    final Pane content;
 
     //private final Output incoming;
     private final NAR nar;
@@ -47,7 +30,7 @@ public class LogPane extends VBox implements Runnable {
     CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
     List<Node> pending;
 
-    FilterBank filter = new FilterBank();
+    NSliderSet filter = new NSliderSet();
 
     ScrollPane scrollParent = null;
 
@@ -58,25 +41,25 @@ public class LogPane extends VBox implements Runnable {
 
         Node[] c = toShow.toArray(new Node[toShow.size()]);
 
-        getChildren().setAll(c);
+        content.getChildren().setAll(c);
 
 
-        scrollBottom.run();
+        //scrollBottom.run();
     }
 
-    final Runnable scrollBottom = () -> scrollParent.setVvalue(1f);
+    //final Runnable scrollBottom = () -> scrollParent.setVvalue(1f);
 
     void updateParent() {
-        if (getParent()!=null) {
-            if (getParent().getParent() != null)
-                if (getParent().getParent().getParent() != null) {
-                    Node s = getParent().getParent().getParent();
-                    if (s instanceof ScrollPane)
-                        scrollParent = (ScrollPane) s;
-                    else
-                        scrollParent = null;
-                }
-        }
+//        if (content.getParent()!=null) {
+//            if (content.getParent().getParent() != null)
+//                if (content.getParent().getParent().getParent() != null) {
+//                    Node s = content.getParent().getParent().getParent();
+//                    if (s instanceof ScrollPane)
+//                        scrollParent = (ScrollPane) s;
+//                    else
+//                        scrollParent = null;
+//                }
+//        }
 
     }
 
@@ -84,10 +67,16 @@ public class LogPane extends VBox implements Runnable {
         super();
 
         this.nar = nar;
+        content = new VBox();
+
 
         for (Object o : enabled)
             filter.value(o, 1);
         filter.addTo(this);
+
+        setCenter(scrolled(content));
+        setBottom(filter.addTo(new FlowPane()));
+
 
         sceneProperty().addListener((c) -> {
             updateParent();
@@ -141,6 +130,8 @@ public class LogPane extends VBox implements Runnable {
 
         };*/
     }
+
+
 
     protected void output(Object channel, Object signal) {
         boolean trace=false;

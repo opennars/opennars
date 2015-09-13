@@ -1,15 +1,12 @@
 package nars.io;
 
-import nars.Global;
 import nars.NAR;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -307,46 +304,46 @@ abstract public class NQuadsInput {
         return englishNameBuilder.toString();
     }
 
-    public static void main(String[] args) throws Exception {
-        Default n = new Default(1000,16,3);
-        //Solid d = new Solid(32, 4096,1,3,1,2);
-        //d.setInternalExperience(null).level(7);
-        //d.inputsMaxPerCycle.set(256);
-        //d.setTermLinkBagSize(64);
-
-
-
-        //n.input("schizo(I)!"); //needs nal8
-
-
-
-        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
-
-            @Override
-            protected void believe(Compound assertion) {
-                float freq = 1.0f;
-
-                //insert with zero priority to bypass main memory go directly to subconcepts
-                n.believe(0.01f, Global.DEFAULT_JUDGMENT_DURABILITY, assertion, Tense.Eternal, freq, beliefConfidence);
-            }
-        };
-
-
-        //new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
-
-        n.frame(1);
-        n.frame(1); //one more to be sure
-
-
-/*
-        //n.frame(100);
-        n.believe(0.75f, 0.8f, n.term("<Spacecraft <-> PopulatedPlace>!"),
-                Tense.Eternal, 1.0f, 0.95f);
-        n.believe(0.75f, 0.8f, n.term("(&&,SpaceMission,Work). :|:"),
-                Tense.Eternal, 1.0f, 0.95f);
-        //n.frame(5000);
-*/
-        //n.run();
-    }
+//    public static void main(String[] args) throws Exception {
+//        Default n = new Default(1000,16,3);
+//        //Solid d = new Solid(32, 4096,1,3,1,2);
+//        //d.setInternalExperience(null).level(7);
+//        //d.inputsMaxPerCycle.set(256);
+//        //d.setTermLinkBagSize(64);
+//
+//
+//
+//        //n.input("schizo(I)!"); //needs nal8
+//
+//
+//
+//        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
+//
+//            @Override
+//            protected void believe(Compound assertion) {
+//                float freq = 1.0f;
+//
+//                //insert with zero priority to bypass main memory go directly to subconcepts
+//                n.believe(0.01f, Global.DEFAULT_JUDGMENT_DURABILITY, assertion, Tense.Eternal, freq, beliefConfidence);
+//            }
+//        };
+//
+//
+//        //new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
+//
+//        n.frame(1);
+//        n.frame(1); //one more to be sure
+//
+//
+///*
+//        //n.frame(100);
+//        n.believe(0.75f, 0.8f, n.term("<Spacecraft <-> PopulatedPlace>!"),
+//                Tense.Eternal, 1.0f, 0.95f);
+//        n.believe(0.75f, 0.8f, n.term("(&&,SpaceMission,Work). :|:"),
+//                Tense.Eternal, 1.0f, 0.95f);
+//        //n.frame(5000);
+//*/
+//        //n.run();
+//    }
 }
 
