@@ -102,7 +102,7 @@ public class RuleMatch extends FindSubst {
                     allowed = cyclic && (!task.isParentCyclic());
                 } else {
                     cyclic = Stamp.overlapping(task, belief);
-                    allowed = cyclic && (!task.isCyclic() && !belief.isCyclic());
+                    allowed = cyclic && (!task.isParentCyclic() && !belief.isParentCyclic());
                 }
 
                 if (allowed) {

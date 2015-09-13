@@ -1,14 +1,14 @@
 package nars.guifx.demo;
 
 import nars.guifx.NARfx;
-import nars.nar.experimental.Equalized;
+import nars.nar.Default;
 
 import java.io.File;
 
 /**
  * Created by me on 9/7/15.
  */
-public class NARfxEqualizedIterative {
+public class NARfxDefaultIterative {
     public static void main(String[] arg) {
 
 
@@ -22,7 +22,7 @@ public class NARfxEqualizedIterative {
 
         //Application.launch(NARfx.class, arg);
 
-        NARfx.newWindow(new Equalized(1000,3,2), (i) -> {
+        NARfx.newWindow(new Default(), (i) -> {
             try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {

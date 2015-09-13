@@ -32,7 +32,7 @@ abstract public class DeriveletContext implements Consumer<Memory> {
     @Override
     public void accept(final Memory memory) {
         //each cycle
-        forgetCycles = memory.duration() * memory.param.conceptForgetDurations.floatValue();
+        forgetCycles = memory.duration() * memory.conceptForgetDurations.floatValue();
     }
 
     public float nextFloat() {

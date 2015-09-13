@@ -68,19 +68,21 @@ public class AtomConcept extends AbstractConcept {
     public void updateLinks() {
 
 
+        final Memory memory = getMemory();
+
         if (Global.TERMLINK_FORGETTING_EXTRA_DEPTH > 0)
             getTermLinks().forgetNext(
-                    getMemory().param.termLinkForgetDurations,
+                    memory.termLinkForgetDurations,
                     Global.TERMLINK_FORGETTING_EXTRA_DEPTH,
-                    getMemory());
+                    memory);
 
 
 
         if (Global.TASKLINK_FORGETTING_EXTRA_DEPTH > 0)
             getTaskLinks().forgetNext(
-                    getMemory().param.taskLinkForgetDurations,
+                    memory.taskLinkForgetDurations,
                     Global.TASKLINK_FORGETTING_EXTRA_DEPTH,
-                    getMemory());
+                    memory);
 
 
         //linkTerms(null, true);

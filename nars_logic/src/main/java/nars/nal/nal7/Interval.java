@@ -89,8 +89,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         return interval(Integer.parseInt(i.substring(1)) - 1);
     }
     
-    public static Interval interval(final long time, final Memory memory) {
-        return interval(magnitude(time, memory.param.duration));
+    public static Interval interval(final long time, final Memory m) {
+        return interval(magnitude(time, m.duration));
     }
     
     public static Interval interval(final long time, final AtomicDuration duration) {
@@ -158,7 +158,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
     @Override
     public final long cycles(final Memory m) {
-        return cycles(m.param.duration);
+        return cycles(m.duration);
     }
 
     public final long cycles(final AtomicDuration duration) {

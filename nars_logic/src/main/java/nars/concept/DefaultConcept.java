@@ -74,10 +74,10 @@ public class DefaultConcept extends AtomConcept {
         if (ps!=null)
             ps.setConcept(this);
 
-        this.beliefs = new ArrayListBeliefTable(memory.param.conceptBeliefsMax.intValue(), rb.get(this, true));
-        this.goals = new ArrayListBeliefTable(memory.param.conceptGoalsMax.intValue(), rb.get(this, false));
+        this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue(), rb.get(this, true));
+        this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue(), rb.get(this, false));
 
-        final int maxQuestions = memory.param.conceptQuestionsMax.intValue();
+        final int maxQuestions = memory.conceptQuestionsMax.intValue();
         this.questions = new ArrayListTaskTable(maxQuestions);
         this.quests = new ArrayListTaskTable(maxQuestions);
 
@@ -266,7 +266,7 @@ public class DefaultConcept extends AtomConcept {
 //
 //        }
 
-        if (goal.getBudget().summaryGreaterOrEqual(memory.param.questionFromGoalThreshold)) {
+        if (goal.getBudget().summaryGreaterOrEqual(memory.questionFromGoalThreshold)) {
 
             // check if the Goal is already satisfied
             Task beliefSatisfied = getBeliefs().topRanked();

@@ -355,7 +355,7 @@ public class NAL6Test extends JavaNALTest {
         //TextOutput.out(nar);
 
 
-        long time = /*seed instanceof Solid ? 100 :*/ 2500;
+        long time = /*seed instanceof Solid ? 100 :*/ 1500;
 
         float minConf = 0.66f;
         TestNAR tester = test();

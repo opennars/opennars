@@ -11,7 +11,7 @@ public class DecideAboveDecisionThreshold extends DecideAllGoals {
     public boolean test(final Operation task) {
         if (super.test(task)) {
             return task.getConcept().isDesired(
-                    task.getMemory().param.executionThreshold.floatValue()
+                task.getMemory().executionThreshold.floatValue()
             );
         }
         return false;

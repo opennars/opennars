@@ -15,9 +15,9 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     private long now;
 
 
-    public TaskLinkBuilder(Memory memory) {
+    public TaskLinkBuilder(Memory m) {
         super();
-        this.memory = memory;
+        this.memory = m;
     }
 
     public void setTask(Task t) {
@@ -28,8 +28,8 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 //            setKey(TaskLink.key(template.type, template.index, t));
         setKey(t);
         setBudget(t.getBudget());
-        this.forgetCycles = memory.param.durationToCycles(
-                memory.param.taskLinkForgetDurations.floatValue()
+        this.forgetCycles = memory.durationToCycles(
+                memory.taskLinkForgetDurations.floatValue()
         );
         this.now = memory.time();
     }

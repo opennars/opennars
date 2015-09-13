@@ -41,13 +41,12 @@ public class NAL2Test extends JavaNALTest {
         tester.run();
     }
 
-    @Test
-    public void comparison2() throws InvalidInputException {
-        TestNAR tester = test();
-        tester.believe("<sport --> competition>");//Sport is a type of competition.");
-        tester.believe("<chess --> competition>",0.9f,0.9f);//Chess is a type of competition.");
-        tester.mustBelieve(30,"<chess <-> sport>",0.9f,0.45f);//I guess chess is similar to sport.");
-        tester.run();
+    @Test public void comparison2() throws InvalidInputException {
+        test()
+            .believe("<sport --> competition>") //Sport is a type of competition.");
+            .believe("<chess --> competition>",0.9f,0.9f)//Chess is a type of competition.");
+            .mustBelieve(30,"<chess <-> sport>",0.9f,0.45f)//I guess chess is similar to sport.");
+            .run();
     }
 
     @Test

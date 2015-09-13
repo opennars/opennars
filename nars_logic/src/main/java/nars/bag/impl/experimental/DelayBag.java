@@ -168,8 +168,8 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
         
         this.now = memory.time();
 
-        this.latencyMin = memory.param.durationToCycles(forgetRate);
-        float forgetCycles = memory.param.durationToCycles(forgetRate);
+        this.latencyMin = memory.durationToCycles(forgetRate);
+        float forgetCycles = memory.durationToCycles(forgetRate);
 
         int originalSize = size();
 

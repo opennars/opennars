@@ -73,14 +73,14 @@ public class NARControlFX extends HBox {
 
             this.nar = n;
 
-
             //nar.on(this, Events.FrameEnd.class, Events.ResetStart.class);
             this.regs = new OnTopics().add(
                     n.memory.eventFrameEnd.on(nn -> {
-
+                        //System.out.println("frame: " + nn.time());
+                        run();
                     }),
                     n.memory.eventReset.on(nn -> {
-
+                        run();
                     })
             );
 

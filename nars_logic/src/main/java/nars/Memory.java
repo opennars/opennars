@@ -110,8 +110,6 @@ public class Memory extends Param implements Serializable {
     transient public final LogicMeter logic;
     transient public final ResourceMeter resource;
 
-    @Deprecated transient public final Param param = this;
-
 
     /*transient private final Set<Concept> questionConcepts = Global.newHashSet(16);
     transient private final Set<Concept> goalConcepts = Global.newHashSet(16);
@@ -133,10 +131,10 @@ public class Memory extends Param implements Serializable {
     private boolean inCycle = false;
 
 
-    public final Topic<Task> eventInput = new DefaultTopic<>();
-    public final Topic<Object> eventError = new DefaultTopic<>();
-    public final Topic<Task> eventDerived = new DefaultTopic();
-    public Topic<Twin<Task>> eventAnswer = new DefaultTopic();
+    public transient final Topic<Task> eventInput = new DefaultTopic<>();
+    public transient final Topic<Object> eventError = new DefaultTopic<>();
+    public transient final Topic<Task> eventDerived = new DefaultTopic();
+    public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic();
 
 
     /**
@@ -428,7 +426,7 @@ public class Memory extends Param implements Serializable {
 
 
     public int duration() {
-        return param.duration.get();
+        return this.duration.get();
     }
 
 

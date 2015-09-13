@@ -170,7 +170,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     /** configures this selector's current bag key for the next bag operation */
-    public final  TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory memory) {
+    public final  TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory m) {
         if ((temp != currentTemplate) || (this.incoming != initialDirection)) {
             this.currentTemplate = temp;
             this.incoming = initialDirection;
@@ -178,10 +178,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             validate();
         }
 
-        this.forgetCycles = memory.param.durationToCycles(
-                memory.param.termLinkForgetDurations.floatValue()
+        this.forgetCycles = m.durationToCycles(
+                m.termLinkForgetDurations.floatValue()
         );
-        this.now = memory.time();
+        this.now = m.time();
         return this;
     }
 

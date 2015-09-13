@@ -266,8 +266,9 @@ public class TestNAR  {
         return explainable(t);
     }
 
-    public TestNAR believe(String termString) throws InvalidInputException {
-        nar.believe(termString);
+    public TestNAR believe(String... termString) throws InvalidInputException {
+        for (String s : termString)
+            nar.believe(s);
         return this;
     }
 
