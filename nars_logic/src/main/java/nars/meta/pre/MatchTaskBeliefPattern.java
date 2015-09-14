@@ -47,6 +47,7 @@ public class MatchTaskBeliefPattern extends PreCondition {
 //            return false;
 
         final PairMatchingProduct tb = m.taskBelief;
+
         if (!tb.substitutesMayExist(pattern)) {
             return false;
         }

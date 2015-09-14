@@ -20,6 +20,24 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 
     private static final Map<String,Atom> atoms = Global.newHashMap(4096);
     public static final Function<String, Atom> AtomInterner = Atom::new;
+
+    public static final Term Null = new Atom(new byte[0]) {
+        @Override
+        public String toString() {
+            return "NULL";
+        }
+
+        @Override
+        public Op op() {
+            return Op.NONE;
+        }
+
+        @Override
+        public int hashCode() {
+            return 0;
+        }
+    };
+
     private byte[] data;
     private int hash;
 

@@ -4,7 +4,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nars.Global;
@@ -72,10 +71,10 @@ public class LogPane extends BorderPane implements Runnable {
 
         for (Object o : enabled)
             filter.value(o, 1);
-        filter.addTo(this);
+
 
         setCenter(scrolled(content));
-        setBottom(filter.addTo(new FlowPane()));
+        setTop(filter);
 
 
         sceneProperty().addListener((c) -> {
@@ -135,8 +134,13 @@ public class LogPane extends BorderPane implements Runnable {
 
     protected void output(Object channel, Object signal) {
         boolean trace=false;
+
+        System.out.println(channel);
+        double f = filter.value(channel);
+
         if (!trace && !channel.equals("eventDerived") && !channel.equals("eventInput"))
             return;
+
         Node n = getNode(channel, signal);
         if (n!=null) {
 
