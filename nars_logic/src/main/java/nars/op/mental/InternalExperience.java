@@ -115,7 +115,6 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 
     public InternalExperience(NAR n) {
         super(n);
-        n.memory.eventBeliefReason.on(this);
 
         n.memory.eventTaskProcess.on(tp -> {
 

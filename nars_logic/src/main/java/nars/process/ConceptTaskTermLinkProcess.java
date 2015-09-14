@@ -38,8 +38,6 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
         p.accept(this);
 
-        memory.eventBeliefReason.emit(this);
-        //emit(Events.BeliefReason.class, this);
     }
 
     /**
@@ -56,8 +54,10 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     @Override
     public String toString() {
         return new StringBuilder().append(getClass().getSimpleName())
-                .append("[").append(concept.toString()).append(':').append(taskLink).append(',')
-                .append(termLink).append(']')
+                .append("[").append(getTask()).append(',')
+                .append(getTermLink())
+                .append("," + getBelief())
+                .append(']')
                 .toString();
     }
 

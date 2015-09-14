@@ -306,10 +306,10 @@ public interface Premise {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    @Deprecated
-    default public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
-        return deriveDouble(newTaskContent, getTask().getPunctuation(), newTruth, newBudget, getTask(), getBelief(), false, allowOverlap);
-    }
+//    @Deprecated
+//    default public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, boolean temporalAdd, boolean allowOverlap) {
+//        return deriveDouble(newTaskContent, getTask().getPunctuation(), newTruth, newBudget, getTask(), getBelief(), false, allowOverlap);
+//    }
 
     default public Task deriveDoubleTemporal(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Task parentTask, Task previousBelief) {
         return deriveDouble(newTaskContent, parentTask.getPunctuation(), newTruth, newBudget, parentTask, previousBelief, true, false);

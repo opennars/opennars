@@ -87,7 +87,7 @@ public class RuleMatch extends FindSubst {
 
 
         //stamp cyclic filter
-        final boolean single = belief != null;
+        final boolean single = (belief == null);
 
 //        {
 //

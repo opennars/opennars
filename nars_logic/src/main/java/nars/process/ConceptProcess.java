@@ -13,7 +13,6 @@ import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
@@ -89,6 +88,7 @@ abstract public class ConceptProcess extends NAL  {
     }
 
     @Deprecated public void setBelief(Task nextBelief) {
+
         this.currentBelief = nextBelief;
 
         if (nextBelief == null)
@@ -107,7 +107,7 @@ abstract public class ConceptProcess extends NAL  {
 
 
 
-    public static void forEachPremise(NAR nar, @Nullable final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, long now) {
+    public static void forEachPremise(NAR nar, final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, long now) {
 
         TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
         if (taskLink == null) return;

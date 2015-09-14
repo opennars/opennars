@@ -81,7 +81,6 @@ public class Memory extends Param implements Serializable {
 
     @Deprecated transient public final EventEmitter<Class,Object[]> event;
 
-    transient public final Topic<ConceptProcess> eventBeliefReason = new DefaultTopic();
     transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic();
     transient public final Topic<ConceptProcess> eventConceptProcessed = new DefaultTopic();
 

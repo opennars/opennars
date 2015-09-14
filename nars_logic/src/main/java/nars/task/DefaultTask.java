@@ -54,7 +54,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public Truth truth;
     protected T term;
     transient private int hash;
-    long[] evidentialSet = null;
+    private long[] evidentialSet = null;
     long creationTime = Stamp.TIMELESS;
     long occurrenceTime = Stamp.ETERNAL;
     int duration = 0;
@@ -342,6 +342,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
             final long[] zipped = Stamp.zip(as, bs);
             final long[] uniques = Stamp.toSetArray(zipped);
+
             setEvidence(uniques);
 
                 /*if (getParentTask().isInput() || getParentBelief().isInput()) {
@@ -364,7 +365,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
             //}
 
-        } if (isSingle()) {
+        } else if (isSingle()) {
             //Single premise
             setEvidence(getParentTask().getEvidence());
 
