@@ -36,10 +36,10 @@ abstract public class RuleTest {
         Task b = n.inputTask(task);
         n.frame(1);
 
-        setupAfterTaskInput(n);
 
         Concept c = n.concept(b.getTerm());
 
+        setupAfterTaskInput(n);
 
 
         RuleMatch rm = new RuleMatch(new XorShift1024StarRandom(1));

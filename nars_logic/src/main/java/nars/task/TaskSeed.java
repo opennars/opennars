@@ -1,5 +1,7 @@
 package nars.task;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
@@ -14,11 +16,12 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 /**
- * utility method for creating new tasks following a fluent builder pattern
+ * task with additional fluent api utility methods for creating new tasks following a fluent builder pattern
  * warning: does not correctly support parent stamps, use .stamp() to specify one
  * <p>
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
+@JsonSerialize(using = ToStringSerializer.class)
 public class TaskSeed extends DefaultTask<Compound> implements Stamp {
 
 

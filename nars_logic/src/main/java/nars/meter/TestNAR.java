@@ -79,6 +79,12 @@ public class TestNAR  {
         return mustOutput(nar.memory().eventDerived, a, b, s, c, v, v1, v2, v3, i2 );
     }
 
+    public TestNAR debug() {
+        Global.DEBUG = true;
+        nar.stdout();
+        return this;
+    }
+
     class EarlyExit extends CycleReaction {
 
         final int checkResolution; //every # cycles to check for completion
@@ -348,6 +354,8 @@ public class TestNAR  {
         String s;
         if (!report.isSuccess()) {
             s = JSONOutput.stringFromFieldsPretty(report);
+
+            //TODO rerun withh trace and ddebug
             assertTrue(s, false);
         }
         else {

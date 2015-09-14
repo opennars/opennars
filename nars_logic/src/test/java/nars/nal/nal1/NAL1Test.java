@@ -114,11 +114,14 @@ public class NAL1Test extends AbstractNALTest {
 
     @Test
     public void exemplification() throws InvalidInputException {
-        test().believe("<robin --> bird>")
-                .believe("<bird --> animal>")
-                .mustOutput(125, "<animal --> robin>. %1.00;0.45%")
-                        //.en("I guess animal is a type of robin.");
-                .run();
+
+        test()
+            //.debug()
+            .believe("<robin --> bird>")
+            .believe("<bird --> animal>")
+            .mustOutput(125, "<animal --> robin>. %1.00;0.4475%")
+                    //.en("I guess animal is a type of robin.");
+            .run();
     }
 
 

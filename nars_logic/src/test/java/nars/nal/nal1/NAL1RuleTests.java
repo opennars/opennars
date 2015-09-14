@@ -35,7 +35,7 @@ public class NAL1RuleTests {
                 n.input("<b --> c>.");
 
                 new TestNAR(n).
-                        mustBelieve(48, "<a-->c>", 0.9f).
+                        mustBelieve(48, "<a-->c>", 0.81f).
                         run();
             }
 
