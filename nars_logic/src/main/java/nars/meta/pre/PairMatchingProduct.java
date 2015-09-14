@@ -65,11 +65,11 @@ public class PairMatchingProduct extends ProductN {
         if (volB < pattern.volB)
             return false;
 
-        final Term c = term[0];
+        /*final Term c = term[0];
         if (c.impossibleStructure(pattern.structureA)) return false;
 
         final Term d = term[1];
-        if (d.impossibleStructure(pattern.structureB)) return false;
+        if (d.impossibleStructure(pattern.structureB)) return false;*/
 
         return true;
     }

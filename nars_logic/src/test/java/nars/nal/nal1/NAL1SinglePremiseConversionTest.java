@@ -13,9 +13,11 @@ import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 9/5/15.
@@ -49,16 +51,17 @@ public class NAL1SinglePremiseConversionTest {
         //Task q = n.inputTask("<swimmer --> bird>?");
 
         SimpleDeriver sd = new SimpleDeriver(d);
-        sd.printSummary();
+        //sd.printSummary();
 
         RuleMatch rm = new RuleMatch(new XorShift1024StarRandom(1)) {
             @Override
             public void run(List<TaskRule> u) {
                 super.run(u);
-                for (TaskRule x : u)
-                    System.out.println(this + " run " + x);
             }
         };
+
+        List<Task> derivations = new ArrayList();
+
         for (TermLink tl : c.getTermLinks().values() ) {
             rm.start(new Premise() {
 
@@ -89,12 +92,14 @@ public class NAL1SinglePremiseConversionTest {
 
                 @Override
                 public void accept(Task derivedTask) {
-                    System.out.println("derived: " + derivedTask);
+                    derivations.add(derivedTask);
                 }
             });
             sd.forEachRule(rm);
         }
 
+        assertTrue(!derivations.isEmpty());
+        System.out.println("derived: " + derivations);
 
 
 
