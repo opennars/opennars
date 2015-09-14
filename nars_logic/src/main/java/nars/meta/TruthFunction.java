@@ -80,6 +80,7 @@ public enum TruthFunction {
     },
     Difference() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.difference(T,B);
         }
     },

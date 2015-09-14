@@ -6,7 +6,6 @@ import nars.Memory;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.HeapBag;
-import nars.bag.impl.LevelBag;
 import nars.budget.Item;
 import nars.meter.bag.NullItem;
 import nars.nar.Default;
@@ -155,7 +154,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
         c.mergePlus();
-        LevelBag<CharSequence, NullItem> d = new LevelBag<>(capacity, 10);
+        CurveBag<CharSequence, NullItem> d = new CurveBag(rng, capacity);
         d.mergePlus();
         
         assertEquals(c.getPrioritySum(), d.getPrioritySum(), 0);
