@@ -223,11 +223,10 @@ public class Default extends NAR {
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
-        this.internalExperience =
-                maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
+        this.internalExperience = InternalExperience.InternalExperienceMode.None; //much too early, this is nonsensical without working NAL
+               // maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
 
         setTaskLinkBagSize(32);
-
         setTermLinkBagSize(64);
 
         //Runtime Initial Values
