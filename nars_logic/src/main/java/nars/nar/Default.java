@@ -72,14 +72,6 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
  */
 public class Default extends NAR {
 
-    /**
-     * for fairly absorbing streams of task as originally designed;
-     * this functionality will be moved to a separate system outside of
-     * Memory
-     */
-    //@Deprecated final protected Perception percepts = new DefaultPerception();
-
-
     public static final OpReaction[] exampleOperators = new OpReaction[]{
             //new Wait(),
             new NullOperator("break"),
@@ -96,35 +88,27 @@ public class Default extends NAR {
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng = new XorShift1024StarRandom(1);
 
-
-
     public final OpReaction[] defaultOperators = new OpReaction[]{
 
             //system control
             echo.the,
             //PauseInput.the,
             new reset(),
-
             new eval(),
-
             //new Wait(),
+
             new believe(),  // accept a statement with a default truth-value
             new want(),     // accept a statement with a default desire-value
             new wonder(),   // find the truth-value of a statement
             new evaluate(), // find the desire-value of a statement
-
             //concept operations for internal perceptions
             new remind(),   // create/activate a concept
             new consider(),  // do one inference step on a concept
             new name(),         // turn a compount term into an atomic term
             //new Abbreviate(),
-
             //new Register(),
-
-            // truth-value operations
             new doubt(),        // decrease the confidence of a belief
             new hesitate(),      // decrease the confidence of a goal
-
 
             //Meta
             new reflect(),
@@ -138,7 +122,6 @@ public class Default extends NAR {
             new add(),
             //new MathExpression(),
 
-
             new complexity(),
 
             //Term manipulation
@@ -147,7 +130,6 @@ public class Default extends NAR {
 
             //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
             new scheme(),      // scheme evaluation
-
 
             //new NumericCertainty(),
 
@@ -208,16 +190,6 @@ public class Default extends NAR {
         * name             // turn a compount term into an atomic term ???
          * -???              // rememberAction the history of the system? excutions of operatons?
          */
-
-        /* operators for testing examples */
-//        table.put("^goto", new GoTo("^go-to"));
-//        table.put("^pick", new Pick("^pick"));
-//        table.put("^open", new Open("^open"));
-//        table.put("^break", new Break("^break"));
-//        table.put("^drop", new Drop("^drop"));
-//        table.put("^throw", new Throw("^throw"));
-//        table.put("^strike", new Strike("^strike"));
-
     };
     public final DefaultCycle core;
     public int cyclesPerFrame = 1;
@@ -231,15 +203,11 @@ public class Default extends NAR {
      */
     int termLinkBagSize;
 
-
     InternalExperience.InternalExperienceMode internalExperience;
-
 
     /**
      * Default DEFAULTS
      */
-
-
     public Default() {
         this(1024, 1, 3);
     }
@@ -250,20 +218,6 @@ public class Default extends NAR {
 
     public Default(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         super(m);
-
-//        m.setDeriver(new PremiseProcessor(
-//                new LogicStage[]{
-//                        //new QueryVariableExhaustiveResults(),
-//                        new SimpleDeriver(NewDefault.standard)
-//                        //---------------------------------------------
-//                },
-//                new DerivationFilter[]{
-//                    new FilterBelowConfidence(0.005),
-//                    new FilterDuplicateExistingBelief(),
-//                    new LimitDerivationPriority()
-//    //                //param.getDefaultDerivationFilters().add(new BeRational());
-//                }
-//        ) );
 
         //termLinkMaxMatched.set(5);
 
@@ -276,43 +230,28 @@ public class Default extends NAR {
 
         setTermLinkBagSize(64);
 
-
         //Runtime Initial Values
 
         m.duration.set(5);
-
         m.shortTermMemoryHistory.set(1);
         m.temporalRelationsMax.set(4);
-
         m.conceptActivationFactor.set(1.0);
         m.conceptFireThreshold.set(0.0);
-
         m.conceptForgetDurations.set(3.0);
         m.taskLinkForgetDurations.set(4.0);
         m.termLinkForgetDurations.set(10.0);
-
         //param.budgetThreshold.set(0.01f);
-
         m.conceptBeliefsMax.set(11);
         m.conceptGoalsMax.set(8);
         m.conceptQuestionsMax.set(4);
-
-
-
-
         m.activeConceptThreshold.set(0.0);
         m.questionFromGoalThreshold.set(0.35);
-
         m.taskProcessThreshold.set(Global.BUDGET_EPSILON);
         m.termLinkThreshold.set(Global.BUDGET_EPSILON);
         m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
-
         m.executionThreshold.set(0.6);
         //executionThreshold.set(0.60);
-
-
         m.reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
-
         m.conceptCreationExpectation.set(0.66);
 
         setCyclesPerFrame(cyclesPerFrame);
@@ -358,39 +297,9 @@ public class Default extends NAR {
                 }
             }
         }
-
-
-
-//        {
-//            //print all concepts and their budgets
-//            memory.eventCycleEnd.on((mm) -> {
-//                System.out.println("system: ");
-//                mm.concepts.iterator().forEachRemaining(c -> {
-//                    System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
-//                });
-//                System.out.println("active: " + " " + control.active.size() + " / " + control.active.capacity());
-//                control.active.forEach(c -> {
-//                    System.out.println("\t" + c.getBudget().toBudgetString() + " " + c);
-//                });
-//            });
-//        }
-
-//        {
-//            //print termlinks graph
-//            memory.eventCycleEnd.on((mm) -> {
-//                TermLinkGraph g = new TermLinkGraph(mm);
-//                System.out.println("termlinks: " + g);
-//            });
-//        }
-
-
-
-
         //n.on(new RuntimeNARSettings());
 
     }
-
-
 
     public DefaultCycle getCycleProcess() {
         return core;
@@ -410,7 +319,6 @@ public class Default extends NAR {
         };
     }
 
-
     public Default nal(int maxNALlevel) {
         this.maxNALLevel = maxNALlevel;
         if (maxNALlevel < 8) {
@@ -419,14 +327,11 @@ public class Default extends NAR {
         return this;
     }
 
-
-
     public Concept newConcept(final Term t, final Budget b) {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
         taskLinks.mergePlus();
-
 
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
@@ -444,42 +349,6 @@ public class Default extends NAR {
         //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
 
     }
-
-
-//    public PremiseProcessor getPremiseProcessor(Param p) {
-//
-//        return new PremiseProcessor(
-//
-//                new LogicStage /* <ConceptProcess> */ []{
-//
-//                        //A. concept fire tasklink derivation
-//                        new TransformTask(),
-//                        new Contraposition(),
-//
-//                        //B. concept fire tasklink termlink (pre-filter)
-//                        new FilterEqualSubtermsAndSetPremiseBelief(),
-//                        new MatchTaskBelief(),
-//
-//                        //C. concept fire tasklink termlink derivation ---------
-//                        new ForwardImplicationProceed(),
-//
-//                        //temporalInduce(nal, task, taskSentence, memory);
-//                        //(new TemporalInductionChain()),
-//                        new TemporalInductionChain2(),
-//
-//                        new PerceptionDetachment(),
-//
-//                        new DeduceSecondaryVariableUnification(),
-//                        new DeduceConjunctionByQuestion(),
-//
-//                        new TableDerivations()
-//                        //---------------------------------------------
-//                },
-//
-//                getDerivationFilters()
-//
-//        );
-//    }
 
     public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
 
@@ -508,12 +377,6 @@ public class Default extends NAR {
     public PremiseGenerator newPremiseGenerator() {
         int novelCycles = 1;
         return new HashTableNovelPremiseGenerator(memory().termLinkMaxMatched, novelCycles);
-
-//        return new BloomFilterNovelPremiseGenerator(termLinkMaxMatched, novelCycles /* cycle to clear after */,
-//                novelCycles * conceptTaskTermProcessPerCycle.get(),
-//                0.01f /* false positive probability */ );
-
-
     }
 
     public Bag<Term, Concept> newConceptBag() {
@@ -521,8 +384,6 @@ public class Default extends NAR {
         b.mergePlus();
         return b;
     }
-
-
 
     public int getConceptTaskLinks() {
         return taskLinkBagSize;
@@ -542,10 +403,6 @@ public class Default extends NAR {
         return this;
     }
 
-
-
-
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + '[' + maxNALLevel +
@@ -556,8 +413,6 @@ public class Default extends NAR {
     protected boolean process(Task t) {
         return true;
     }
-
-
 
     /**
      * The original deterministic memory cycle implementation that is currently used as a standard
@@ -607,9 +462,6 @@ public class Default extends NAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-
-
-
         public DefaultCycle(NAR nar, ConceptBagActivator ca, ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts) {
             super(nar);
 
@@ -644,20 +496,6 @@ public class Default extends NAR {
 
             }
 
-
-//        @Override
-//        public void delete() {
-//            super.delete();
-//            novelTasks.delete();
-//        }
-
-
-
-
-
-
-
-
         /**
          * An atomic working cycle of the system:
          * 0) optionally process inputs
@@ -667,11 +505,8 @@ public class Default extends NAR {
          **/
         @Override public void onCycle() {
             enhanceAttention();
-
             runInputTasks(inputsMaxPerCycle.get());
-
             runNewTasks(inputsMaxPerCycle.get());
-
             fireConcepts(conceptsFiredPerCycle.get());
         }
 
@@ -679,18 +514,15 @@ public class Default extends NAR {
 
             active.setCapacity(capacity.intValue());
 
-
             //1 concept if (memory.newTasks.isEmpty())*/
             final int conceptsToFire = newTasks.isEmpty() ? max : 0;
             if (conceptsToFire == 0) return;
 
             final float conceptForgetDurations = nar.memory().conceptForgetDurations.floatValue();
 
-
             //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
 
             final int termLinkSelections = termLinksPerConcept.getValue();
-
 
 //            Concept[] buffer = new Concept[conceptsToFire];
 //            int n = active.forgetNext(conceptForgetDurations, buffer, time());
@@ -706,10 +538,7 @@ public class Default extends NAR {
                     t.input(nar, deriver);
                 }, now );
             }
-
         }
-
-
 
         protected void enhanceAttention() {
             active.forgetNext(
@@ -717,9 +546,6 @@ public class Default extends NAR {
                     Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
                     nar.memory());
         }
-
-
-
 
         protected void runNewTasks(int max) {
 
@@ -734,9 +560,7 @@ public class Default extends NAR {
 
                 run(highest);
             }
-
             //commitNewTasks();
-
         }
 
         protected void runInputTasks(int max) {
@@ -748,9 +572,6 @@ public class Default extends NAR {
                 run(percepts.removeFirst());
             }
         }
-
-
-
 
         protected boolean run(Task task) {
             return TaskProcess.run(nar, task) != null;
@@ -766,61 +587,7 @@ public class Default extends NAR {
         public Iterable<?> concepts() {
             return active;
         }
-
-
-//        /**
-//         * returns whether the task was run
-//         */
-//        protected boolean runWithNoveltyBag(Task task) {
-//
-//            //memory.emotion.busy(task);
-//
-//            final Memory memory = nar.memory();
-//
-//            if (task.isInput() || !(task.isJudgment())
-//                    || (memory.concept(task.getTerm()) != null)
-//                    ) {
-//
-//                //it is a question/quest or a judgment for a concept which exists:
-//                return TaskProcess.run(nar, task) != null;
-//
-//            } else {
-//                //it is a judgment or goal which would create a new concept:
-//
-//
-//                //if (s.isJudgment() || s.isGoal()) {
-//
-//                final double exp = task.getExpectation();
-//                if (exp > memory.param.conceptCreationExpectation.floatValue()) {//Global.DEFAULT_CREATION_EXPECTATION) {
-//
-//                    // new concept formation
-//                    Task overflow = novelTasks.put(task);
-//
-//                    if (overflow != null) {
-//                        if (overflow == task) {
-//                            memory.removed(task, "Ignored");
-//                            return false;
-//                        } else {
-//                            memory.removed(overflow, "Displaced novel task");
-//                        }
-//                    }
-//
-//                    memory.logic.TASK_ADD_NOVEL.hit();
-//                    return true;
-//
-//                } else {
-//                    memory.removed(task, "Neglected");
-//                }
-//                //}
-//            }
-//            return false;
-//        }
-//
-//
-
     }
-
-
 
     @Deprecated
     public static class CommandLineNARBuilder extends Default {
@@ -843,7 +610,6 @@ public class Default extends NAR {
                 } else {
                     filesToLoad.add(arg);
                 }
-
             }
 
             for (String x : filesToLoad) {
@@ -859,7 +625,6 @@ public class Default extends NAR {
 
                 //n.run(1);
             }
-
         }
 
         /**
@@ -871,9 +636,7 @@ public class Default extends NAR {
         public static boolean isReallyFile(String param) {
             return !"--silence".equals(param);
         }
-
     }
-
 
     private class ConceptBagActivator extends ConceptActivator {
 
