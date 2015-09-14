@@ -72,15 +72,15 @@ public class TaskRule extends Rule<Premise, Task> {
     }
 
 
-    public static final Set<Atom> reservedPostconditions = new HashSet(6);
+    public static final Set<Atom> reservedMetaInfoCategories = new HashSet(6);
 
     static {
-        reservedPostconditions.add(Atom.the("Truth"));
-        reservedPostconditions.add(Atom.the("Stamp"));
-        reservedPostconditions.add(Atom.the("Desire"));
-        reservedPostconditions.add(Atom.the("Order"));
-        reservedPostconditions.add(Atom.the("Info"));
-        reservedPostconditions.add(Atom.the("Event"));
+        reservedMetaInfoCategories.add(Atom.the("Truth"));
+        reservedMetaInfoCategories.add(Atom.the("Stamp"));
+        reservedMetaInfoCategories.add(Atom.the("Desire"));
+        reservedMetaInfoCategories.add(Atom.the("Order"));
+        reservedMetaInfoCategories.add(Atom.the("Info"));
+        reservedMetaInfoCategories.add(Atom.the("Event"));
     }
 
     /**
@@ -138,7 +138,7 @@ public class TaskRule extends Rule<Premise, Task> {
         public Term apply(Compound containingCompound, Term v, int depth) {
 
             //do not alter postconditions
-            if ((containingCompound instanceof Inheritance) && reservedPostconditions.contains(((Inheritance) containingCompound).getPredicate()))
+            if ((containingCompound instanceof Inheritance) && reservedMetaInfoCategories.contains(((Inheritance) containingCompound).getPredicate()))
                 return v;
 
             return Variable.make(Op.VAR_PATTERN, v.bytes(), true);
