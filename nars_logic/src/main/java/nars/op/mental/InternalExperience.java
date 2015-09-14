@@ -1,6 +1,9 @@
 package nars.op.mental;
 
-import nars.*;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
+import nars.Symbols;
 import nars.event.NARReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
@@ -93,11 +96,8 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 
     public final static Operator believe = Operator.the("believe");
     public final static Operator want = Operator.the("want");
-    ;
     public final static Operator wonder = Operator.the("wonder");
-    ;
     public final static Operator evaluate = Operator.the("evaluate");
-    ;
     public final static Operator anticipate = Operator.the("anticipate");
 
 
@@ -326,7 +326,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
     }
 
 
-    public static enum InternalExperienceMode {
+    public enum InternalExperienceMode {
         None, Minimal, Full
     }
 

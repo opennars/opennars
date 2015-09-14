@@ -9,13 +9,13 @@ import nars.term.Term;
  */
 public interface Termizer {
 
-    public final static Atom TRUE = Atom.the("true");
-    public final static Negation FALSE = Atom.notThe("true");
-    public final static Atom VOID = Atom.the("void");
-    public final static Atom EMPTY = Atom.the("empty");
-    public final static Atom NULL = Atom.the("null");
+    Atom TRUE = Atom.the("true");
+    Negation FALSE = Atom.notThe("true");
+    Atom VOID = Atom.the("void");
+    Atom EMPTY = Atom.the("empty");
+    Atom NULL = Atom.the("null");
 
-    public Term term(Object o);
-    public Object object(Term t);
+    Term term(Object o);
+    Object object(Term t);
 
 }

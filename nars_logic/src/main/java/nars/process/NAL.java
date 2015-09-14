@@ -8,7 +8,6 @@ import nars.Global;
 import nars.NAR;
 import nars.premise.Premise;
 import nars.task.Task;
-import nars.task.stamp.Stamp;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -76,7 +75,8 @@ public abstract class NAL extends AbstractPremise implements Function<Consumer<P
 
     @Override public void accept(Task derivedTask) {
         if (derived == null)
-            derived = Global.newHashSet(1);
+            derived = Global.newArrayList();
+                    //Global.newHashSet(1);
 
         if (!derived.add(derivedTask)) {
             if (Global.DEBUG && Global.PRINT_DUPLICATE_DERIVATIONS) {

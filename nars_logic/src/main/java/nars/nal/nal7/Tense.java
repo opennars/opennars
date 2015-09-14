@@ -15,7 +15,7 @@ public enum Tense {
 
     public final String symbol;
 
-    private Tense(String string) {
+    Tense(String string) {
         this.symbol = string;
     }
 

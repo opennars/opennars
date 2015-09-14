@@ -19,7 +19,6 @@
 
 package nars.io.in;
 
-import nars.NAR;
 import nars.task.Task;
 import nars.util.data.buffer.Source;
 
@@ -31,7 +30,7 @@ import nars.util.data.buffer.Source;
 public interface Input extends Source<Task> {
 
     @Override
-    abstract public Task get();
+    Task get();
 
     /**
      *
@@ -39,7 +38,7 @@ public interface Input extends Source<Task> {
      * this input to close any connections or free resources
      */
     @Override
-    default public void stop() {
+    default void stop() {
 
     }
 

@@ -1,6 +1,6 @@
 package nars.truth;
 
-import nars.nal.UtilityFunctions;
+import nars.util.data.Util;
 import org.apache.commons.math3.util.FastMath;
 
 /**
@@ -68,6 +68,6 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
 
     @Override
     protected boolean equalsValue(Truth t) {
-        return (UtilityFunctions.isEqual(getFrequency(), t.getFrequency(), DefaultTruth.DEFAULT_TRUTH_EPSILON));
+        return (Util.isEqual(getFrequency(), t.getFrequency(), DefaultTruth.DEFAULT_TRUTH_EPSILON));
     }
 }

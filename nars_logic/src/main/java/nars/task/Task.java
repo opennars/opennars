@@ -48,7 +48,7 @@ import java.util.Set;
 public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence<T>>, Truthed {
 
 
-    public static void getExplanation(Task task, int indent, StringBuilder sb) {
+    static void getExplanation(Task task, int indent, StringBuilder sb) {
         //TODO StringBuilder
 
         for (int i = 0; i < indent; i++)
@@ -89,7 +89,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         }
     }
 
-    public static Set<Truthed> getSentences(Iterable<Task> tasks) {
+    static Set<Truthed> getSentences(Iterable<Task> tasks) {
 
 
         int size;
@@ -105,9 +105,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return s;
     }
 
-    public Task getParentTask();
+    Task getParentTask();
 
-    public Reference<Task> getParentTaskRef();
+    Reference<Task> getParentTaskRef();
 
 //    /**
 //     * Constructor for an activated task
@@ -140,16 +140,16 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 //        return new Task(replacedSentence, this, parentTask, parentBelief, bestSolution);
 //    }
 
-    public Task getParentBelief();
+    Task getParentBelief();
 
-    public Reference<Task> getParentBeliefRef();
+    Reference<Task> getParentBeliefRef();
 
     /** clones this Task with a new Term */
-    default public <X extends Compound> Task<X> clone(final X t) {
+    default <X extends Compound> Task<X> clone(final X t) {
         return clone(t, true);
     }
 
-    default public <X extends Compound> Task<X> clone(X t, boolean cloneEvenIfTruthEqual) {
+    default <X extends Compound> Task<X> clone(X t, boolean cloneEvenIfTruthEqual) {
         return clone(t, getTruth(), cloneEvenIfTruthEqual);
     }
 
@@ -166,11 +166,11 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 //    }
 
     /** clones this Task with a new Term and truth  */
-    default public Task clone(Compound newTerm, Truth newTruth, boolean cloneEvenIfTruthEqual) {
+    default Task clone(Compound newTerm, Truth newTruth, boolean cloneEvenIfTruthEqual) {
         return clone(newTerm, newTruth, getOccurrenceTime());
     }
 
-    default public <X extends Compound> Task<X> clone(X t, Truth newTruth, long occ) {
+    default <X extends Compound> Task<X> clone(X t, Truth newTruth, long occ) {
         return clone(t, newTruth, occ, true);
     }
 
@@ -186,7 +186,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 //        return false;
 //    }
 
-    default public Task clone(Compound t, Truth newTruth, long occ, boolean cloneEvenIfTruthEqual) {
+    default Task clone(Compound t, Truth newTruth, long occ, boolean cloneEvenIfTruthEqual) {
         if (newTruth instanceof ProjectedTruth) {
             long target = ((ProjectedTruth) newTruth).getTargetTime();
             if (occ!=target) {
@@ -218,7 +218,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     }
 
     /** clones this Task with a new truth */
-    default public Task<T> clone(Truth newTruth, boolean cloneEvenIfTruthEqual) {
+    default Task<T> clone(Truth newTruth, boolean cloneEvenIfTruthEqual) {
         if (!cloneEvenIfTruthEqual) {
             if (getTruth().equals(newTruth)) return this;
         }
@@ -232,7 +232,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return budget.aboveThreshold(additionalPriority);
     }*/
 
-    default public boolean equalParents(final Task t) {
+    default boolean equalParents(final Task t) {
         Task p = getParentTask();
         Task tp = t.getParentTask();
         if (p == null) {
@@ -255,22 +255,22 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 //    }
 
 
+    Sentence getBestSolution();
 
-    public Sentence getBestSolution();
+    Reference<Task> getBestSolutionRef();
 
-    public Reference<Task> getBestSolutionRef();
-
-    default public StringBuilder toString(@Nullable Memory memory) {
+    default StringBuilder toString(@Nullable Memory memory) {
         return appendTo(null, memory);
     }
 
     @Override
-    default public StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
+    default StringBuilder appendTo(StringBuilder sb, @Nullable Memory memory) {
         if (sb == null) sb = new StringBuilder();
         return toString(sb, memory, false);
     }
 
-    default @Deprecated public StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
+    default @Deprecated
+    StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return toString(buffer, memory, true, notCommand, notCommand, true);
     }
@@ -354,7 +354,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     }
 
 
-    default public boolean hasParent(Task t) {
+    default boolean hasParent(Task t) {
         if (getParentTask() == null)
             return false;
         Task p = getParentTask();
@@ -368,7 +368,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return false;
     }
 
-    default public Task getRootTask() {
+    default Task getRootTask() {
         if (getParentTask() == null) {
             return null;
         }
@@ -381,16 +381,16 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return p;
     }
 
-    public Operation getCause();
+    Operation getCause();
 
-    public Task setCause(final Operation op);
+    Task setCause(final Operation op);
 
-    default public String getExplanation() {
+    default String getExplanation() {
         StringBuilder sb = new StringBuilder();
         return getExplanation(sb).toString();
     }
 
-    default public StringBuilder getExplanation(StringBuilder temporary) {
+    default StringBuilder getExplanation(StringBuilder temporary) {
         temporary.setLength(0);
         getExplanation(this, 0, temporary);
         return temporary;
@@ -442,35 +442,35 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 //    }
 //
 
-    default public Truth getDesire() {
+    default Truth getDesire() {
         return getTruth();
     }
 
     /**
      * signaling that the Task has ended or discarded
      */
-    public void delete();
+    void delete();
 
-    public Task setTemporalInducting(boolean b);
+    Task setTemporalInducting(boolean b);
 
-    public boolean isTemporalInductable();
+    boolean isTemporalInductable();
 
-    default public void logUnrepeated(String reason) {
+    default void logUnrepeated(String reason) {
         if (getLog()!=null &&
                 getLog().get(getLog().size()-1).equals(reason))
             return;
         log(reason);
     }
 
-    public void log(String reason);
-    public Task log(List<String> historyToCopy);
-    public List<String> getLog();
+    void log(String reason);
+    Task log(List<String> historyToCopy);
+    List<String> getLog();
 
 
     //TODO make a Source.{ INPUT, SINGLE, DOUBLE } enum
 
     /** is double-premise */
-    public boolean isDouble();
+    boolean isDouble();
 
     /** is single premise */
     boolean isSingle();
@@ -480,7 +480,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
      *
      * @return Whether the Task is derived from another task
      */
-    @Override default public boolean isInput() {
+    default boolean isInput() {
         return getParentTask() == null;
     }
 
@@ -488,7 +488,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     /**
      * a task is considered amnesiac (origin not rememebered) if its parent task has been forgotten (garbage collected via a soft/weakref)
      */
-    default public boolean isAmnesiac() {
+    default boolean isAmnesiac() {
         return !isInput() && getParentTask() == null;
     }
 
@@ -496,10 +496,10 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     boolean isNormalized();
 
     /** updates all implied fields and re-hashes; returns this task */
-    public Task normalized();
+    Task normalized();
 
 
-    @Deprecated default public boolean init(final Memory memory) {
+    @Deprecated default boolean init(final Memory memory) {
 
         if (!isCommand()) {
 
@@ -574,7 +574,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
 
-    default public Task projectTask(final long targetTime, final long currentTime) {
+    default Task projectTask(final long targetTime, final long currentTime) {
 
         final ProjectedTruth t = projection(targetTime, currentTime);
 
@@ -586,18 +586,18 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
     @Override
-    default public int getTemporalOrder() {
+    default int getTemporalOrder() {
         return getTerm().getTemporalOrder();
     }
 
-    public void setTruth(Truth t);
-    public void discountConfidence();
+    void setTruth(Truth t);
+    void discountConfidence();
 
 
     void setBestSolution(Memory memory, Task belief);
 
 
-    public boolean isDeleted();
+    boolean isDeleted();
 
 
 }

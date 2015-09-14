@@ -3,7 +3,10 @@ package nars.term.transform;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal4.Image;
-import nars.term.*;
+import nars.term.CommonVariable;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Variable;
 
 import java.util.Map;
 import java.util.Random;

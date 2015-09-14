@@ -10,13 +10,13 @@ import java.util.function.Function;
  */
 public interface BagSelector<K, V extends Itemized<K>> {
 
-    public static enum ForgetAction {
+    enum ForgetAction {
         Select, SelectAndForget, Ignore, IgnoreAndForget
     }
 
     //final static Function<Object,ForgetAction> defaultModel = (o) -> ForgetAction.SelectAndForget;
 
-    default public Function<V, ForgetAction> getModel() {
+    default Function<V, ForgetAction> getModel() {
         return null;
     }
 
@@ -41,7 +41,7 @@ public interface BagSelector<K, V extends Itemized<K>> {
         overflow.delete();
     }
 
-    public static class AnyItemSelector implements BagSelector {
+    class AnyItemSelector implements BagSelector {
 
         @Override
         public Budget updateItem(Itemized v, Budget result) {
@@ -50,6 +50,6 @@ public interface BagSelector<K, V extends Itemized<K>> {
 
     }
 
-    public static final AnyItemSelector anyItemSelector = new AnyItemSelector();
+    AnyItemSelector anyItemSelector = new AnyItemSelector();
 
 }

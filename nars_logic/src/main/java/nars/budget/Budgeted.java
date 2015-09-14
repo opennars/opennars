@@ -5,21 +5,21 @@ package nars.budget;
  */
 public interface Budgeted  {
 
-    public Budget getBudget();
+    Budget getBudget();
 
-    default public float getPriority() {
+    default float getPriority() {
         return getBudget().getPriority();
     }
 
-    default public float getDurability() {
+    default float getDurability() {
         return getBudget().getDurability();
     }
 
-    default public float getQuality() {
+    default float getQuality() {
         return getBudget().getQuality();
     }
 
-    default public long getLastForgetTime() {
+    default long getLastForgetTime() {
         return getBudget().getLastForgetTime();
     }
 

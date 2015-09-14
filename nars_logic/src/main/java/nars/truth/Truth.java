@@ -30,13 +30,13 @@ import nars.term.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /** scalar (1D) truth value "frequency", stored as a floating point value */
-abstract public interface Truth extends MetaTruth<Float> {
+public interface Truth extends MetaTruth<Float> {
 
 
 
-    final static Term Truth_TRUE = Atom.the("TRUE");
-    final static Term Truth_FALSE = Atom.the("FALSE");
-    final static Term Truth_UNSURE = Atom.the("UNSURE");
+    Term Truth_TRUE = Atom.the("TRUE");
+    Term Truth_FALSE = Atom.the("FALSE");
+    Term Truth_UNSURE = Atom.the("UNSURE");
 
 
     /**
@@ -44,9 +44,9 @@ abstract public interface Truth extends MetaTruth<Float> {
      *
      * @return The frequency value
      */
-    public float getFrequency();
+    float getFrequency();
 
-    public Truth setFrequency(float f);
+    Truth setFrequency(float f);
 
 
 
@@ -56,7 +56,7 @@ abstract public interface Truth extends MetaTruth<Float> {
      *
      * @return The isAnalytic value
      */
-    public boolean isAnalytic();
+    boolean isAnalytic();
 
 
 
@@ -67,22 +67,22 @@ abstract public interface Truth extends MetaTruth<Float> {
      *
      * @return The expectation value
      */
-    default public float getExpectation() {
+    default float getExpectation() {
         return getExpectationPositive();
     }
 
     /** expectation inverse, ie. the expectation of freq=1 */
-    default public float getExpectationPositive() {
+    default float getExpectationPositive() {
         return expectation(getFrequency(), getConfidence());
     }
 
 
     /** expectation inverse, ie. the expectation of freq=0  */
-    default public float getExpectationNegative() {
+    default float getExpectationNegative() {
         return expectation(1f-getFrequency(), getConfidence());
     }
 
-    public static float expectation(final float frequency, final float confidence) {
+    static float expectation(final float frequency, final float confidence) {
         return (confidence * (frequency - 0.5f) + 0.5f);
     }
 
@@ -93,7 +93,7 @@ abstract public interface Truth extends MetaTruth<Float> {
      * @param t The given value
      * @return The absolute difference
      */
-    default public float getExpDifAbs(final Truth t) {
+    default float getExpDifAbs(final Truth t) {
         return Math.abs(getExpectation() - t.getExpectation());
     }
 
@@ -102,7 +102,7 @@ abstract public interface Truth extends MetaTruth<Float> {
      *
      * @return True if the frequence is less than 1/2
      */
-    default public boolean isNegative() {
+    default boolean isNegative() {
         return getFrequency() < 0.5;
     }
 
@@ -111,7 +111,7 @@ abstract public interface Truth extends MetaTruth<Float> {
      * The hash code of a TruthValue
      * @return The hash code
      */
-    static public int hash(final Truth t) {
+    static int hash(final Truth t) {
         final int discreteness = (int)(1.0f / DefaultTruth.DEFAULT_TRUTH_EPSILON);
         return (31 + hash(t.getFrequency(), discreteness))
                 * 91 + hash(t.getConfidence(), discreteness);
@@ -133,7 +133,7 @@ abstract public interface Truth extends MetaTruth<Float> {
 
 
     @Override
-    default public StringBuilder appendString(final StringBuilder sb) {
+    default StringBuilder appendString(final StringBuilder sb) {
         return appendString(sb, 2);
     }
 
@@ -142,7 +142,7 @@ abstract public interface Truth extends MetaTruth<Float> {
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
      */
-    default public StringBuilder appendString(final StringBuilder sb, final int decimals) {
+    default StringBuilder appendString(final StringBuilder sb, final int decimals) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -165,21 +165,21 @@ abstract public interface Truth extends MetaTruth<Float> {
 
     
     /** displays the truth value as a short string indicating degree of true/false */
-    default public String toTrueFalseString() {
+    default String toTrueFalseString() {
         //TODO:
         //  F,f,~,t,T
         return null;
     }
 
     /** displays the truth value as a short string indicating degree of yes/no */
-    default public String toYesNoString() {
+    default String toYesNoString() {
         //TODO
         // N,n,~,y,Y
         return null;
     }
 
     
-    default public Term toWordTerm(float t) {
+    default Term toWordTerm(float t) {
         float e = getExpectation();
         if (e > t) {
             return Truth_TRUE;
@@ -190,14 +190,14 @@ abstract public interface Truth extends MetaTruth<Float> {
         return Truth_UNSURE;
     }
 
-    default public Truth set(final float frequency, final float confidence) {
+    default Truth set(final float frequency, final float confidence) {
         setFrequency(frequency);
         setConfidence(confidence);
         return this;
     }
 
     /** negation that modifies the truth instance itself */
-    default public Truth negate() {
+    default Truth negate() {
         //final float f = 1 - getFrequency();
         return setFrequency(1f - getFrequency());
     }
@@ -228,11 +228,11 @@ abstract public interface Truth extends MetaTruth<Float> {
 
 
 
-    public enum TruthComponent {
+    enum TruthComponent {
         Frequency, Confidence, Expectation
     }
     
-    default public float getComponent(TruthComponent c) {
+    default float getComponent(TruthComponent c) {
         switch (c) {
             case Frequency: return getFrequency();
             case Confidence: return getConfidence();
@@ -242,7 +242,7 @@ abstract public interface Truth extends MetaTruth<Float> {
     }
     
     /** provides a statistics summary (mean, min, max, variance, etc..) of a particular TruthValue component across a given list of Truthables (sentences, TruthValue's, etc..).  null values in the iteration are ignored */
-    public static DescriptiveStatistics statistics(Iterable<? extends Truthed> t, TruthComponent component) {
+    static DescriptiveStatistics statistics(Iterable<? extends Truthed> t, TruthComponent component) {
         DescriptiveStatistics d = new DescriptiveStatistics();
         for (Truthed x : t) {
             Truth v = x.getTruth();
@@ -259,18 +259,18 @@ abstract public interface Truth extends MetaTruth<Float> {
      *
      * @return Truth value, null for question
      */
-    default public AnalyticTruth discountConfidence() {
+    default AnalyticTruth discountConfidence() {
         return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE);
     }
 
 
     /** use getFrequency() when possible because this may box the result as a non-primitive */
     @Override
-    default public Float value() { return getFrequency(); }
+    default Float value() { return getFrequency(); }
 
 
     /** use setFrequency(v) when possible because this may box the result as a non-primitive */
     @Override
-    default public void setValue(Float v) { setFrequency(v); }
+    default void setValue(Float v) { setFrequency(v); }
 
 }

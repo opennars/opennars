@@ -7,6 +7,6 @@ import nars.term.Term;
 
 @FunctionalInterface public interface ConceptBuilder {
 
-    public Concept newConcept(Term t, Budget b, Memory m);
+    Concept newConcept(Term t, Budget b, Memory m);
 
 }

@@ -17,11 +17,11 @@ public interface Perception extends Consumer<Source<Task>>,Supplier<Task> {
     @Override
     Task get();
 
-    default public Task pop() {
+    default Task pop() {
         return get();
     }
 
-    default public Task pop(float minPriority) {
+    default Task pop(float minPriority) {
         Task t;
         while ((t = get())!=null) {
             if (t.getPriority() >= minPriority)

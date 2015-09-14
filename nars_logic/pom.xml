@@ -252,6 +252,7 @@
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>nars_util</artifactId>
+            <scope>compile</scope>
         </dependency>
 
 
@@ -267,7 +268,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 

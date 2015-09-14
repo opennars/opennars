@@ -84,9 +84,6 @@ public interface Stamp extends Cloneable, Serializable {
             creationTime = 0;
         }
 
-        if (tense == null)
-            return Stamp.ETERNAL;
-
         switch (tense) {
             case Present:
                 return creationTime;
@@ -403,9 +400,9 @@ public interface Stamp extends Cloneable, Serializable {
      }
      */
 
-    default boolean isInput() {
-        return false;
-    }
+//    default boolean isInput() {
+//        return false;
+//    }
 
 
     /*public int getDuration() {

@@ -7,11 +7,11 @@ import nars.budget.Itemized;
 public interface BagTransaction<K,V extends Itemized<K>> extends BagSelector<K,V> {
 
     /** item's key; if null, the bag will use a peekNext operation to as the next item */
-    public K name();
+    K name();
 
     /** called if putIn a bag and the item specified by the key doesn't exist,
      * so this will create it and the bag will insert the new instance  */
-    public V newItem();
+    V newItem();
 
 
 

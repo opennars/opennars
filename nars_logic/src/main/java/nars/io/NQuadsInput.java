@@ -6,7 +6,6 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
-import nars.nal.nal8.Operation;
 import nars.narsese.InvalidInputException;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -250,7 +249,7 @@ abstract public class NQuadsInput {
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);
-            belief = (Operation.make(predicate,
+            belief = (Inheritance.make(predicate,
                     Product.make(subject, object)));
         }
 

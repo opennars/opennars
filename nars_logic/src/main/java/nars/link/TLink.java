@@ -9,14 +9,14 @@ import java.io.Serializable;
 
 public interface TLink<T extends Termed> extends Budgeted, Serializable, Termed {
 
-    public short getIndex(final int i);
+    short getIndex(final int i);
     
-    public Term getTerm();
+    Term getTerm();
     
     @Override
-    public float getPriority();
+    float getPriority();
 
-    public static void print(TLink t, PrintStream out) {
+    static void print(TLink t, PrintStream out) {
         out.print(t.toString());
     }
 

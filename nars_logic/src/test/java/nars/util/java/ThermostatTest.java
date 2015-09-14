@@ -102,7 +102,7 @@ public class ThermostatTest  {
 //                }
 //                return false;
 //            }
-        };
+        }
 
         for (int i = 0; i < 2; i++) {
             demonstrate(n, tc, range);

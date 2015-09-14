@@ -10,6 +10,6 @@ import java.util.function.Consumer;
  */
 public interface ObjectReaction<I,O> {
 
-    public void react(I input, Consumer<O> receiver);
+    void react(I input, Consumer<O> receiver);
 
 }

@@ -6,8 +6,8 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagSelector;
 import nars.budget.Itemized;
-import nars.nal.UtilityFunctions;
 import nars.util.CollectorMap;
+import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 
@@ -128,7 +128,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
             if (y <= 0) return 0;
 
-            int i= UtilityFunctions.floorInt(y * size);
+            int i= Util.floorInt(y * size);
 
             if (i >= size) return size-1;
             if (i < 0) return 0;
@@ -557,7 +557,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      */
 
     @FunctionalInterface
-    public static interface BagCurve extends FloatToFloatFunction {
+    public interface BagCurve extends FloatToFloatFunction {
         //public float valueOf(float x);
     }
 

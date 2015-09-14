@@ -6,6 +6,6 @@ package nars.budget;
 public interface BudgetTarget {
 
     /** returns "change" that was reimbursed */
-    public float receive(float amount);
+    float receive(float amount);
 
 }

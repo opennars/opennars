@@ -27,10 +27,7 @@ public class IsEvent extends PreCondition2 {
         }
 
         Sentence belief = m.premise.getBelief();
-        if (b.equals(belief.getTerm()) && (belief == null || belief.getOccurrenceTime() == Stamp.ETERNAL)) {
-            return false;
-        }
+        return !(b.equals(belief.getTerm()) && (belief == null || belief.getOccurrenceTime() == Stamp.ETERNAL));
 
-        return true;
     }
 }

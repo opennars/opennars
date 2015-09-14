@@ -18,7 +18,6 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.term.Atom;
 import nars.term.Term;
-import nars.term.Variable;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -113,7 +112,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         Term[] instancePlusArgs = new Term[argterm.length+2];
         instancePlusArgs[0] = instance;
         System.arraycopy(argterm, 0, instancePlusArgs, 1, argterm.length);
-        instancePlusArgs[instancePlusArgs.length-1] = Variable.the(Symbols.VAR_DEPENDENT + "1");
+        instancePlusArgs[instancePlusArgs.length-1] = Atom.the(Symbols.VAR_DEPENDENT + "1");
 
 
         nar.goal(

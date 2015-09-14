@@ -10,7 +10,7 @@ abstract public class Compound1<T extends Term> extends Compound<T> {
     }
 
     public T the() {
-        return (T)term[0];
+        return term[0];
     }
 
 //    @Override

@@ -4,7 +4,10 @@
  */
 package nars.io.in;
 
-import nars.*;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
+import nars.NARSeed;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 

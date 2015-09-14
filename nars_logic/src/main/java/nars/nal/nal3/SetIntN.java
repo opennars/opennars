@@ -26,7 +26,6 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.

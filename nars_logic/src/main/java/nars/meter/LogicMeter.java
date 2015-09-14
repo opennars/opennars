@@ -247,7 +247,7 @@ public class LogicMeter extends FrameReaction {
             setConceptPriorityHistogram(histogram);
             */
         }
-    };
+    }
 
     public final ConceptMeter conceptMeter = new ConceptMeter();
 

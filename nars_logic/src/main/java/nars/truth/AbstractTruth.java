@@ -1,7 +1,7 @@
 package nars.truth;
 
 import nars.Global;
-import nars.nal.UtilityFunctions;
+import nars.util.data.Util;
 
 import static nars.Symbols.GOAL;
 import static nars.Symbols.JUDGMENT;
@@ -51,7 +51,7 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
 
             if (!equalsValue(t))
                 return false;
-            return UtilityFunctions.isEqual(getConfidence(), t.getConfidence(), e);
+            return Util.isEqual(getConfidence(), t.getConfidence(), e);
         }
         return false;
     }

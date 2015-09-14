@@ -10,5 +10,5 @@ import nars.task.Task;
  *  after any postprocessing it wants to apply.
  * */
 public interface DerivationReaction {
-    public void onDerivation(Premise p, Iterable<Task> derived, Memory m);
+    void onDerivation(Premise p, Iterable<Task> derived, Memory m);
 }

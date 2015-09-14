@@ -37,9 +37,9 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
     /**
      * determines which NARS term can result in added graph features
      */
-    public static interface Filter {
+    public interface Filter {
 
-        default public float getMinPriority() {
+        default float getMinPriority() {
             return 0;
         }
 
@@ -88,9 +88,9 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
     /**
      * creates graph features from NARS term
      */
-    public static interface Grapher {
+    public interface Grapher {
 
-        public Grapher on(NARGraph g, Object o);
+        Grapher on(NARGraph g, Object o);
 
         /**
          * called at beginning of operation

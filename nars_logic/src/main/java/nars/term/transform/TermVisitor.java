@@ -7,5 +7,5 @@ import nars.term.Term;
  */
 @FunctionalInterface
 public interface TermVisitor {
-    public void visit(Term t, Term superterm);
+    void visit(Term t, Term superterm);
 }

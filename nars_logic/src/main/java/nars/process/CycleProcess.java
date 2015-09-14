@@ -72,7 +72,7 @@ public interface CycleProcess<M> extends Iterable<Concept>, Consumer<Memory> { /
      *      --fired concepts (FireConcept)
      *      --otherTasks
      */
-    public void cycle();
+    void cycle();
 
 
 
@@ -81,7 +81,7 @@ public interface CycleProcess<M> extends Iterable<Concept>, Consumer<Memory> { /
      *
      * Note this does not retrieve Concepts that are not active - for that, use Memory.concept(term)
      * */
-    public Concept concept(Term term);
+    Concept concept(Term term);
 
     /**
      * Creates and adds new concept to the memory.  May also be called 'cognize' because
@@ -89,24 +89,24 @@ public interface CycleProcess<M> extends Iterable<Concept>, Consumer<Memory> { /
      * @return the new concept, or null if the memory is full
      *
      */
-    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing);
+    Concept conceptualize(Termed term, Budget budget, boolean createIfMissing);
 
     /**
      * Provides a "next" concept for sampling during logic.
      */
-    public Concept nextConcept();
+    Concept nextConcept();
 
 
     /** set the priority of a concept. returns false if the concept is no longer active after the change */
-    public boolean reprioritize(Term term, float newPriority);
+    boolean reprioritize(Term term, float newPriority);
     
     /** Generic utility method for running a list of tasks in current thread */
-    public static void run(final Deque<Runnable> tasks) {
+    static void run(final Deque<Runnable> tasks) {
         run(tasks, tasks.size());
     }
 
     /** Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish) */
-    public static void run(final Deque<Runnable> tasks, int maxTasksToRun) {
+    static void run(final Deque<Runnable> tasks, int maxTasksToRun) {
 
         final int concurrency = Math.min(Global.THREADS, maxTasksToRun);
 
@@ -154,7 +154,7 @@ public interface CycleProcess<M> extends Iterable<Concept>, Consumer<Memory> { /
 //        return total[0];
 //    }
 
-    default public double getActivePriorityPerConcept(final Memory memory, final boolean tasklink, final boolean termlink) {
+    default double getActivePriorityPerConcept(final Memory memory, final boolean tasklink, final boolean termlink) {
         return 0;
 //        int c = numConcepts(true, false);
 //        if (c == 0) return 0;

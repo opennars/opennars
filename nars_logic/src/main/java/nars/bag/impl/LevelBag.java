@@ -100,7 +100,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
      */
     public final Level[] level;
 
-    public static enum NextNonEmptyLevelMode {
+    public enum NextNonEmptyLevelMode {
         Default, Fast
     }
 

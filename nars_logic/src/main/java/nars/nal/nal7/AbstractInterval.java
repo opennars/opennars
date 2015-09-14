@@ -8,10 +8,10 @@ import nars.term.Term;
  */
 public interface AbstractInterval extends Term {
 
-    public long cycles(@Deprecated Memory m);
+    long cycles(@Deprecated Memory m);
 
     /** returns a count of how many interval terms are in the array */
-    public static int intervalCount(Term[] a) {
+    static int intervalCount(Term[] a) {
         int c = 0;
         for (Term x : a) {
             if (x instanceof AbstractInterval) c++;

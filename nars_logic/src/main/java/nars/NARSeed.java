@@ -8,7 +8,8 @@ import nars.concept.ConceptBuilder;
  * These do not change after initialization.
  * For runtime parameters, @see Param
  */
-@Deprecated abstract public interface NARSeed<P extends Param> extends ConceptBuilder {
+@Deprecated
+public interface NARSeed<P extends Param> extends ConceptBuilder {
     Memory newMemory();
 
 //

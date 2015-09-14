@@ -116,11 +116,16 @@ public class SimpleDeriver extends Deriver  {
         });
     }
 
+    public void forEachRule(final RuleMatch match) {
+        //forEachRuleExhaustive(match);
+        forEachRuleByType(match);
+    }
+
     public void forEachRuleExhaustive(final RuleMatch match) {
         match.run(rules);
     }
 
-    public void forEachRule(final RuleMatch match) {
+    public void forEachRuleByType(final RuleMatch match) {
 
         //final Term taskTerm = match.premise.getTask().getTerm();
 

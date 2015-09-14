@@ -14,11 +14,11 @@ public interface Intermval extends TermMetadata {
      * index i means the interval preceding term i
      * the final index is the interval following the final term
      */
-    public long[] intervals();
+    long[] intervals();
 
 
     /** total amount of time contained from begining to end */
-    default public long intervalLength() {
+    default long intervalLength() {
         long l = 0;
         for (final long x : intervals())
             l += x;
@@ -28,13 +28,13 @@ public interface Intermval extends TermMetadata {
     /** l1 distance: sum absolute differnce of items normalized to total length
      *  distance = 0: equal
      * */
-    default public long distance1(final Intermval other) {
+    default long distance1(final Intermval other) {
         return distance1(other, Long.MAX_VALUE);
     }
 
     /** return distance1 but as soon as distance exceeds 'onlyIfLessThan'
      *  threshold. otherwise returns Long.MAX_VALUE */
-    default public long distance1(final Intermval other, final long onlyIfLessthan) {
+    default long distance1(final Intermval other, final long onlyIfLessthan) {
         final long[] a = intervals();
         final long[] b = other.intervals();
 

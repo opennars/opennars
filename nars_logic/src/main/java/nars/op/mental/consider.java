@@ -21,7 +21,6 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.nal.Deriver;
-import nars.nal.SimpleDeriver;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.SynchOperator;

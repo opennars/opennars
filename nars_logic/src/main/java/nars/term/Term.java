@@ -37,32 +37,32 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
         return this;
     }
 
-    public Op op();
+    Op op();
 
 
     /** volume = total number of terms = complexity + # total variables */
-    public int volume();
+    int volume();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
-    public int complexity();
+    int complexity();
 
 
 
     void recurseTerms(final TermVisitor v, Term parent);
 
-    public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
+    void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
 
-    public int containedTemporalRelations();
+    int containedTemporalRelations();
 
 
-    default public void recurseTerms(final TermVisitor v) {
+    default void recurseTerms(final TermVisitor v) {
         recurseTerms(v, null);
     }
 
     /** number of subterms. if atomic, length=1 */
-    public int length();
+    int length();
 
-    public boolean isNormalized();
+    boolean isNormalized();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
     <T extends Term> T normalized();
@@ -75,8 +75,8 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
         return (T) this;
     }
 
-    public boolean containsTerm(final Term target);
-    public boolean containsTermRecursivelyOrEquals(final Term target);
+    boolean containsTerm(final Term target);
+    boolean containsTermRecursivelyOrEquals(final Term target);
 
 
 
@@ -85,19 +85,19 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 //    }
 
     /** shallow clone, using the same subterm references */
-    public Term clone();
+    Term clone();
 
     /** deep clone, creating clones of all subterms recursively */
-    public Term cloneDeep();
+    Term cloneDeep();
 
     /**
      * Whether this compound term contains any variable term
      *
      * @return Whether the name contains a variable
      */
-    public boolean hasVar();
+    boolean hasVar();
 
-    default public int getTemporalOrder() {
+    default int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
     }
 
@@ -106,15 +106,15 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
     /** # of contained independent variables */
-    public int varIndep();
+    int varIndep();
     /** # of contained dependent variables */
-    public int varDep();
+    int varDep();
     /** # of contained query variables */
-    public int varQuery();
+    int varQuery();
 
 
     /** total # of variables */
-    public int vars();
+    int vars();
 
 //    /** tests if num variables of any type exceed a value */
 //    default public boolean varsInAnyTypeMoreThan(final int n) {
@@ -122,15 +122,15 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 //    }
 
 
-    default public boolean hasVarIndep() {
+    default boolean hasVarIndep() {
         return varIndep()!=0;
     }
 
-    default public boolean hasVarDep() {
+    default boolean hasVarDep() {
         return varDep()!=0;
     }
 
-    default public boolean hasVarQuery() {
+    default boolean hasVarQuery() {
         return varQuery()!=0;
     }
 
@@ -138,7 +138,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 //        return (op()== t.op());
 //    }
 
-    public byte[] bytes();
+    byte[] bytes();
 
 //    default public byte[] bytes() {
 //        return name().bytes();
@@ -146,10 +146,10 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
     /** self+subterm types bitvector */
-    public int structure();
+    int structure();
 
 
-    public void append(Appendable w, boolean pretty) throws IOException;
+    void append(Appendable w, boolean pretty) throws IOException;
 
 //    default public void append(Writer w, boolean pretty) throws IOException {
 //        //try {
@@ -159,7 +159,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 ////        }
 //    }
 
-    public StringBuilder toStringBuilder(boolean pretty);
+    StringBuilder toStringBuilder(boolean pretty);
 
 //    default public StringBuilder toStringBuilder(boolean pretty) {
 //        return name().toStringBuilder(pretty);
@@ -188,31 +188,31 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     }
 
 
-    default public boolean impossibleSubterm(final Term target) {
+    default boolean impossibleSubterm(final Term target) {
         return ((impossibleStructure(target.structure())) ||
                 (impossibleSubTermVolume(target.volume())));
     }
-    default public boolean impossibleSubTermOrEquality(final Term target) {
+    default boolean impossibleSubTermOrEquality(final Term target) {
         return ((impossibleStructure(target.structure())) ||
                 (impossibleSubTermOrEqualityVolume(target.volume())));
     }
 
 
 
-    default public boolean impossibleStructure(final Term c) {
+    default boolean impossibleStructure(final Term c) {
         return impossibleStructure(c.structure());
     }
 
-    public boolean impossibleStructure(final int possibleSubtermStructure);
+    boolean impossibleStructure(final int possibleSubtermStructure);
 
 
-    public boolean impossibleSubTermVolume(final int otherTermVolume);
+    boolean impossibleSubTermVolume(final int otherTermVolume);
 
 
     /** if it's larger than this term it can not be equal to this.
      * if it's larger than some number less than that, it can't be a subterm.
      */
-    default public boolean impossibleSubTermOrEqualityVolume(int otherTermsVolume) {
+    default boolean impossibleSubTermOrEqualityVolume(int otherTermsVolume) {
         return otherTermsVolume > volume();
     }
 

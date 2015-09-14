@@ -16,18 +16,18 @@ public interface SetTensional<T extends Term> extends Term, Iterable<T> {
      * @return true for communitative
      */
 
-    default public boolean isCommutative() {
+    default boolean isCommutative() {
         return true;
     }
 
     @Override
-    abstract public Op op();
+    Op op();
 
 
-    public T term(int subterm);
+    T term(int subterm);
 
 
-    default public byte[] init() {
+    default byte[] init() {
 
         //TODO calculate length exactly
 

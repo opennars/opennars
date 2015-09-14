@@ -5,7 +5,7 @@ import nars.op.software.scheme.exception.UnexpectedExpression;
 
 public interface Expression  {
 
-    static final Expression NONE = new Expression() {
+    Expression NONE = new Expression() {
         public String toString() {
             return "none()";
         }

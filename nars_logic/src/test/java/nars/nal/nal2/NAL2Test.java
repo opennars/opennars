@@ -26,7 +26,7 @@ public class NAL2Test extends JavaNALTest {
     @Test
     public void revision() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<robin <-> swan>") ;;//;//Robin is similar to swan.");
+        tester.believe("<robin <-> swan>") ;//;//Robin is similar to swan.");
         tester.believe("<robin <-> swan>", 0.1f, 0.6f);
         tester.mustBelieve(100,"<robin <-> swan>",0.87f,0.91f) ;//;//Robin is probably similar to swan.");
         tester.run();

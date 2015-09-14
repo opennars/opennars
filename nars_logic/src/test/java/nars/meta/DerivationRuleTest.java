@@ -1,8 +1,6 @@
 package nars.meta;
 
 import junit.framework.TestCase;
-import nars.nal.Deriver;
-import nars.nar.NewDefault;
 import nars.narsese.NarseseParser;
 import org.junit.Test;
 
@@ -11,7 +9,6 @@ import org.junit.Test;
  */
 public class DerivationRuleTest extends TestCase {
 
-    static final Deriver executer = NewDefault.der; //all the inference rules have to pass of course
 
     static final NarseseParser p = NarseseParser.the();
 

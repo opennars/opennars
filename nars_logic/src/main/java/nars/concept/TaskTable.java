@@ -13,14 +13,14 @@ import java.util.function.Consumer;
  * */
 public interface TaskTable extends Iterable<Task> {
 
-    public void setCapacity(int newCapacity);
+    void setCapacity(int newCapacity);
 
     /** number of items in this collection */
-    public int size();
+    int size();
 
-    public void clear();
+    void clear();
 
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /** attempt to insert a task.
      *
@@ -30,13 +30,13 @@ public interface TaskTable extends Iterable<Task> {
      *      a previous stored task if this was a duplicate
      *
      */
-    public Task add(Task q, Equality<Task> e, Concept c);
+    Task add(Task q, Equality<Task> e, Concept c);
 
     /**
      *
      * @return null if no duplicate was discovered, or the first Task that matched if one was
      */
-    default public Task getFirstEquivalent(final Task t, final Equality<Task> e) {
+    default Task getFirstEquivalent(final Task t, final Equality<Task> e) {
         for (final Task a : this) {
             if (e.areEqual(a, t))
                 return a;
@@ -44,25 +44,25 @@ public interface TaskTable extends Iterable<Task> {
         return null;
     }
 
-    default public int inputNum() {
+    default int inputNum() {
         return Iterators.size( Iterators.filter(iterator(), t -> t.isInput() ));
     }
 
     /** value in 0.,1.0 */
-    default public float inputPercent() {
+    default float inputPercent() {
         if (isEmpty()) return 0;
         return ((float)inputNum())/size();
     }
 
-    default public BivariateGridInterpolator getWaveFrequencyConfidenceTime() {
+    default BivariateGridInterpolator getWaveFrequencyConfidenceTime() {
         return null;
     }
 
-    default public UnivariateInterpolator getWaveFrequencyConfidence() {
+    default UnivariateInterpolator getWaveFrequencyConfidence() {
         return null;
     }
 
-    default public UnivariateInterpolator getWaveConfidenceTime() {
+    default UnivariateInterpolator getWaveConfidenceTime() {
         return null;
     }
 

@@ -157,7 +157,7 @@ public class NAL1Test extends AbstractNALTest {
 
     @Test
     public void backwardInference() throws InvalidInputException {
-        long time = /*nar instanceof Solid ? 15 :*/ 350;
+        long time = /*nar instanceof Solid ? 15 :*/ 32;
 
 
         test().mustOutput(time, "<?1 --> bird>?") //.en("What is a type of bird?");

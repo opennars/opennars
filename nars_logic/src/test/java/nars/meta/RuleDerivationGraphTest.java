@@ -3,7 +3,7 @@ package nars.meta;
 import com.google.common.collect.Sets;
 import nars.meta.pre.PairMatchingProduct;
 import nars.nal.Deriver;
-import nars.nar.NewDefault;
+import nars.nal.SimpleDeriver;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ public class RuleDerivationGraphTest {
 
     @Test
     public void testRuleStatistics() {
-        Deriver d = NewDefault.der;
+        Deriver d = new SimpleDeriver(SimpleDeriver.standard);
 
         List<TaskRule> R = d.rules;
         int registeredRules = R.size();

@@ -8,12 +8,12 @@ import java.io.Serializable;
 /** abstract typed Truth  */
 public interface MetaTruth<T> extends Cloneable, Serializable {
 
-    public T value();
+    T value();
 
-    public void setValue(T v);
+    void setValue(T v);
 
     //TODO add appendString(sb, decimals)
-    default public StringBuilder appendString(final StringBuilder sb) {
+    default StringBuilder appendString(final StringBuilder sb) {
         String vs = value().toString();
         final int decimals = 2;
         sb.ensureCapacity(3 + (2 + decimals) + vs.length() );
@@ -30,16 +30,16 @@ public interface MetaTruth<T> extends Cloneable, Serializable {
      *
      * @return The confidence value
      */
-    public float getConfidence();
+    float getConfidence();
 
 
 
     /** TODO move this to a MutableTruth interface to separate a read-only impl */
-    public void setConfidence(float c);
+    void setConfidence(float c);
 
 
 
-    default public CharSequence toCharSequence() {
+    default CharSequence toCharSequence() {
         StringBuilder sb =  new StringBuilder();
         return appendString(sb);
     }

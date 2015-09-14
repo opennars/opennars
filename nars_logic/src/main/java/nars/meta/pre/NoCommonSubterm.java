@@ -44,9 +44,7 @@ public class NoCommonSubterm extends PreCondition2 {
 
     @Override
     public boolean test(RuleMatch m, Term a, Term b) {
-        if(Share_Any_Subterm(a,b))
-            return false;
-        return true;
+        return !Share_Any_Subterm(a, b);
     }
 
 }

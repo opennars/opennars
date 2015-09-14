@@ -2,7 +2,6 @@ package nars.meta;
 
 import nars.Global;
 import nars.Op;
-import nars.Symbols;
 import nars.meta.pre.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;

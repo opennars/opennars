@@ -75,14 +75,14 @@ public class SequenceTest {
         Task t = nar.task("(&/, a, /1, b, /2).");
         assertEquals(Sequence.class, t.getTerm().getClass());
         Sequence ts = (Sequence)t.getTerm();
-        assertEquals(2, ((Sequence)ts).length());
+        assertEquals(2, ts.length());
         assertEquals("(&/, a, /1, b)", t.getTerm().toString());
 
         //no trailing suffix, unchanged
         Task u = nar.task("(&/, a, /1, b).");
         assertEquals(Sequence.class, u.getTerm().getClass());
         Sequence tu = (Sequence)u.getTerm();
-        assertEquals(2, ((Sequence)tu).length());
+        assertEquals(2, tu.length());
         assertEquals("(&/, a, /1, b)", u.getTerm().toString());
 
         //TODO test for the sentence's term to be a different instance if it was modified

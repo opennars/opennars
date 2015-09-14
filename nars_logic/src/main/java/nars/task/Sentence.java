@@ -447,9 +447,6 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         return getPunctuation() == s.getPunctuation();
     }
 
-    default boolean isEternal() {
-        return getOccurrenceTime() == Stamp.ETERNAL;
-    }
 
     default boolean isTimeless() {
         return getOccurrenceTime() == Stamp.TIMELESS;

@@ -21,7 +21,7 @@ public interface Prioritized {
 
     void mulPriority(float factor);
 
-    default public void maxPriority(final float otherPriority) {
+    default void maxPriority(final float otherPriority) {
         setPriority(max(getPriority(), otherPriority)); //max durab
     }
 }

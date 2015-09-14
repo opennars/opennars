@@ -11,12 +11,12 @@ import java.util.function.Predicate;
  */
 public interface LogicStage<X> extends Predicate<X> {
 
-    public static final boolean CONTINUE = true;
-    public static final boolean STOP = false;
+    boolean CONTINUE = true;
+    boolean STOP = false;
 
     /** return false to stop subsequent rules for this item; true to continue */
     @Override
-    abstract public boolean test(X x);
+    boolean test(X x);
 
 //    public LogicRule setAction(Consumer<Event<X>> action) {
 //        this.action = action;

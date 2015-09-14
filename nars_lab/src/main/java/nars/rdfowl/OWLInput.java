@@ -1,7 +1,6 @@
 package nars.rdfowl;
 
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
@@ -526,9 +525,9 @@ public class OWLInput  {
     }
 
     public static void main(String[] args) throws Exception {
-        NAR n = new NAR(new Default(4096,128,8).setInternalExperience(null).level(6));
+        NAR n = new Default(4096,128,8).nal(6);
 
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out);
 
         //new NARSwing(n);
         new OWLInput(n, "/home/me/Downloads/dbpedia.owl");

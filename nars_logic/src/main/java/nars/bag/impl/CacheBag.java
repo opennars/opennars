@@ -10,29 +10,29 @@ import java.util.function.Consumer;
 public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Serializable {
     
 
-    public void clear();
+    void clear();
 
-    public V get(K key);
+    V get(K key);
 
-    public V remove(K key);
+    V remove(K key);
 
     /** same semantics as Map.put; output value is an existing value or null if none */
-    public V put(V v);
+    V put(V v);
 
-    public int size();
+    int size();
 
-    public void setOnRemoval(Consumer<V> onRemoval);
-    public Consumer<V> getOnRemoval();
+    void setOnRemoval(Consumer<V> onRemoval);
+    Consumer<V> getOnRemoval();
 
     default void delete() {
 
     }
 
-    default public double[] getPriorityHistogram(int bins) {
+    default double[] getPriorityHistogram(int bins) {
         return getPriorityHistogram(new double[bins]);
     }
 
-    default public double[] getPriorityHistogram(final double[] x) {
+    default double[] getPriorityHistogram(final double[] x) {
         int bins = x.length;
         forEach(e -> {
             final float p = e.getPriority();
@@ -50,18 +50,18 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
         return x;
     }
 
-    public static int bin(final float x, final int bins) {
+    static int bin(final float x, final int bins) {
         return (int) FastMath.floor((x + (0.5f / bins)) * bins);
     }
 
     /** bins a priority value to an integer */
-    public static int decimalize(float v) {
+    static int decimalize(float v) {
         return bin(v,10);
     }
 
 
     /** finds the mean value of a given bin */
-    public static float unbinCenter(final int b, final int bins) {
+    static float unbinCenter(final int b, final int bins) {
         return ((float)b)/bins;
     }
 

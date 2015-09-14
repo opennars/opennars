@@ -35,14 +35,14 @@ import java.util.List;
  */
 public interface Product<T extends Term> extends Term, Iterable<T> {
 
-    public final static Product empty = new ProductN();
+    Product empty = new ProductN();
 
     /**
      * Get the operate of the term.
      * @return the operate of the term
      */
     @Override
-    default public Op op() {
+    default Op op() {
         return Op.PRODUCT;
     }
 
@@ -53,13 +53,13 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
      * @param index The index of the place-holder in the new Image -- optional parameter
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final Compound image, final Term component, final int index) {
+    static Term make(final Compound image, final Term component, final int index) {
         Term[] argument = image.cloneTerms();
         argument[index] = component;
         return make(argument);
     }
 
-    public static Product make(final Term[] pre, final Term... suf) {
+    static Product make(final Term[] pre, final Term... suf) {
         final int pLen = pre.length;
         final int sLen = suf.length;
         Term[] x = new Term[pLen + suf.length];
@@ -68,24 +68,24 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return make(x);
     }
 
-    public static Product make(final Collection<Term> t) {
+    static Product make(final Collection<Term> t) {
         return make(t.toArray(new Term[t.size()]));
     }
-    public static Product makeFromIterable(final Iterable<Term> t) {
+    static Product makeFromIterable(final Iterable<Term> t) {
         return make(Iterables.toArray(t, Term.class));
     }
 
-    public static Product only(final Term the) {
+    static Product only(final Term the) {
         return new Product1(the);
     }
 
     /** 2 term constructor */
-    public static Product make(final Term a, final Term b) {
+    static Product make(final Term a, final Term b) {
         return new ProductN(a, b);
     }
 
     /** creates from a sublist of a list */
-    public static Product make(final List<Term> l, int from, int to) {
+    static Product make(final List<Term> l, int from, int to) {
         Term[] x = new Term[to - from];
 
         for (int j = 0, i = from; i < to; i++)
@@ -94,33 +94,33 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return make(x);
     }
 
-    public static Product make(final Term... arg) {
+    static Product make(final Term... arg) {
         if (arg.length == 1)
             return only(arg[0]);
 
         return new ProductN(arg);
     }
 
-    public static Product make(final String... argAtoms) {
+    static Product make(final String... argAtoms) {
         return Product.make( Atom.the(argAtoms) );
     }
 
-    public Term[] cloneTermsReplacing(final Term from, final Term to);
+    Term[] cloneTermsReplacing(final Term from, final Term to);
 
-    public Term[] cloneTerms();
+    Term[] cloneTerms();
 
-    public Term term(int i);
+    Term term(int i);
 
-    public Term[] terms();
+    Term[] terms();
 
 
-    default public Object first() {
+    default Object first() {
         return term(0);
     }
 
 
     /** apply Atom.quoteI */
-    public static Product arrayToStringAtomProduct(final Object[] args) {
+    static Product arrayToStringAtomProduct(final Object[] args) {
         if (args.length == 0) return Product.empty;
         Term[] x = new Term[args.length];
         for (int i = 0; i < args.length; i++)

@@ -1,13 +1,11 @@
 package nars.term;
 
-import nars.Memory;
 import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Junction;
 import nars.term.transform.FindSubst;
 import org.apache.commons.collections.map.Flat3Map;
-import org.infinispan.commons.equivalence.ByteArrayEquivalence;
 
 import java.util.Map;
 import java.util.Random;

@@ -19,7 +19,7 @@ public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix pa
 //        return Objects.hash(getPrefix(), getTarget());
 //    }
 
-    public static boolean termLinkEquals(final TermLinkKey a, final TermLinkKey b) {
+    static boolean termLinkEquals(final TermLinkKey a, final TermLinkKey b) {
         if (a == b) return true;
         //if (!(b instanceof TermLinkKey)) return false;
 

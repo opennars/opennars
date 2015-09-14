@@ -539,12 +539,12 @@ public class TermTest {
         NAR n = new Default();
 
         assertTrue(
-                ((Compound)n.term("<a --> b>")).impossibleSubterm(
+                n.term("<a --> b>").impossibleSubterm(
                         n.term("<a-->b>")
                 )
         );
         assertTrue(
-                ((Compound)n.term("<a --> b>")).impossibleStructure(
+                n.term("<a --> b>").impossibleStructure(
                         n.term("<a-->#b>")
                 )
         );

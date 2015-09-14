@@ -105,25 +105,25 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
     public interface IConcept {
 
-        public Term getTerm();
+        Term getTerm();
 
-        public List<Task> getQuestions();
+        List<Task> getQuestions();
 
-        public List<Sentence> getBeliefs();
+        List<Sentence> getBeliefs();
 
-        public List<TermLink> getTermLinks();
+        List<TermLink> getTermLinks();
 
-        public List<TaskLink> getTaskLinks();
+        List<TaskLink> getTaskLinks();
     }
 
     public interface ITerm {
 
-        public ArrayList<Term> getComponents();
+        ArrayList<Term> getComponents();
 
         /**
          * Set of all contained components, recursively
          */
-        public Set<Term> getContainedTerms();
+        Set<Term> getContainedTerms();
     }
 
     /**
