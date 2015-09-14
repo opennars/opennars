@@ -38,7 +38,7 @@ abstract public class ConceptProcess extends NAL  {
         return getTaskLink().getTask();
     }
 
-    @Override public TaskLink getTaskLink() {
+    public TaskLink getTaskLink() {
         return taskLink;
     }
 

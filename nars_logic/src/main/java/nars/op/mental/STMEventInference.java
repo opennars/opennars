@@ -4,12 +4,8 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.link.TaskLink;
-import nars.link.TermLink;
 import nars.meta.RuleMatch;
 import nars.nal.Deriver;
-import nars.process.AbstractPremise;
-import nars.process.NAL;
 import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Compound;
@@ -178,42 +174,42 @@ public class STMEventInference  {
     }
 
 
-    public static class STMPremise extends AbstractPremise {
-
-        private final Task previousTask;
-        private final NAL parent;
-
-        //deriver.reason(new STMPremise(currentTask, previousTask.getSentence(), previousTask.getTerm())
-        public STMPremise(NAL parent, Task previousTask) {
-            super(parent.nar());
-            this.parent = parent;
-            this.previousTask = previousTask;
-        }
-
-
-        @Override
-        public Concept getConcept() {
-            return nar().concept(getTask().getTerm());
-        }
-
-        @Override
-        public Task getBelief() {
-            return previousTask;
-        }
-
-        @Override
-        public TermLink getTermLink() {
-            return parent.getTermLink();
-        }
-
-        @Override
-        public TaskLink getTaskLink() {
-            return parent.getTaskLink();
-        }
-
-        @Override
-        public Task getTask() {
-            return parent.getTask();
-        }
-    }
+//    public static class STMPremise extends AbstractPremise {
+//
+//        private final Task previousTask;
+//        private final NAL parent;
+//
+//        //deriver.reason(new STMPremise(currentTask, previousTask.getSentence(), previousTask.getTerm())
+//        public STMPremise(NAL parent, Task previousTask) {
+//            super(parent.nar());
+//            this.parent = parent;
+//            this.previousTask = previousTask;
+//        }
+//
+//
+//        @Override
+//        public Concept getConcept() {
+//            return nar().concept(getTask().getTerm());
+//        }
+//
+//        @Override
+//        public Task getBelief() {
+//            return previousTask;
+//        }
+//
+//        @Override
+//        public TermLink getTermLink() {
+//            return parent.getTermLink();
+//        }
+//
+//        @Override
+//        public TaskLink getTaskLink() {
+//            return parent.getTaskLink();
+//        }
+//
+//        @Override
+//        public Task getTask() {
+//            return parent.getTask();
+//        }
+//    }
 }

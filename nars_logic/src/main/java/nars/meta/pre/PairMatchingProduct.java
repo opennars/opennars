@@ -2,7 +2,6 @@ package nars.meta.pre;
 
 import nars.nal.nal4.ProductN;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
 import nars.term.Variable;
 
@@ -38,11 +37,11 @@ public class PairMatchingProduct extends ProductN {
 
 
 
-    public void set(final Task a, final Task b) {
-        set(a.getTerm(), b == null ? Atom.Null : b.getTerm());
+    public void set(final Task a, final Term b) {
+        set(a.getTerm(), b);
     }
 
-    public void set(final Term a, final Term b) {
+    void set(final Term a, final Term b) {
         this.term[0] = a;
         this.term[1] = b;
         rehash();

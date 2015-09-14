@@ -57,10 +57,6 @@ public class TaskProcess extends NAL {
         return null;
     }
 
-    @Override public TaskLink getTaskLink() {
-        return null;
-    }
-
     @Override public Concept getConcept() {
         return nar.concept(getTerm());
     }

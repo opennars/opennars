@@ -15,7 +15,7 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
     public final boolean apply(ConceptProcess f, TermLink termLink) {
         Task currentBelief = f.getBelief();
         if ((currentBelief != null) &&
-                (match(f.getTaskLink().getTask(), currentBelief, f))) {
+                (match(f.getTask(), currentBelief, f))) {
 
             //Unification occurred, Filter this from further processing
             return STOP;

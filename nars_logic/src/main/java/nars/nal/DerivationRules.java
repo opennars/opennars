@@ -1,5 +1,6 @@
 package nars.nal;
 
+import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Op;
 import nars.meta.TaskRule;
@@ -8,6 +9,7 @@ import nars.narsese.NarseseParser;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,14 +26,15 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
 
     public DerivationRules() throws IOException, URISyntaxException {
-        this("NAL_Definition.logic");
+        this(Paths.get(Deriver.class.getResource("NAL_Definition.logic").toURI()));
     }
 
-    public DerivationRules(String ruleFile) throws IOException, URISyntaxException {
+    public DerivationRules(Path path) throws IOException, URISyntaxException {
+        this(Files.readAllLines(path));
+    }
 
-        this(Files.readAllLines(Paths.get(
-                Deriver.class.getResource(ruleFile).toURI()
-        )));
+    public DerivationRules(String... ruleStrings) {
+        this(Lists.newArrayList(ruleStrings));
     }
 
     public DerivationRules(final Iterable<String> ruleStrings) {

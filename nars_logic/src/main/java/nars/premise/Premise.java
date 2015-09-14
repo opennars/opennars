@@ -1,9 +1,11 @@
 package nars.premise;
 
-import nars.*;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
+import nars.Op;
 import nars.budget.Budget;
 import nars.concept.Concept;
-import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
@@ -31,7 +33,7 @@ public interface Premise {
 
     TermLink getTermLink();
 
-    TaskLink getTaskLink();
+    //TaskLink getTaskLink();
 
     Task getBelief();
 

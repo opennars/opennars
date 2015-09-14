@@ -32,6 +32,10 @@ public class RuleMatch extends FindSubst {
 
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
 
+    @Override
+    public String toString() {
+        return taskBelief.toString() + ":<" + super.toString() + ">:" + resolutions;
+    }
 
     /**
      * @param type
@@ -47,13 +51,11 @@ public class RuleMatch extends FindSubst {
     }
 
     /** set the next premise */
-    public void start(Premise nal) {
-        this.premise = nal;
-
-        taskBelief.set(nal.getTask(), nal.getBelief());
-
-        //testCache.clear();
+    public void start(Premise p) {
+        this.premise = p;
+        taskBelief.set(p.getTask(), p.getTermLink().getTerm());
     }
+
 
 //    @Override protected void putCommon(Variable a, Variable b) {
 //        //no common variables; use the variable from term1 as the unification target
@@ -258,7 +260,7 @@ public class RuleMatch extends FindSubst {
     }
 
 
-    public final void run(final List<TaskRule> u) {
+    public void run(final List<TaskRule> u) {
 
         final int size = u.size();
         for (int i = 0; i < size; i++)

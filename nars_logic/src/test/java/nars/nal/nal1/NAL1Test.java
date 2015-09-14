@@ -125,12 +125,12 @@ public class NAL1Test extends AbstractNALTest {
     @Test
     public void conversion() throws InvalidInputException {
 
-        long time = /*tester.nal() <= 2 ? 15 :*/ 305;
-        test().believe("<bird --> swimmer>")
-                .ask("<swimmer --> bird>")
-                        //.en("Is swimmer a type of bird?");
-                .mustOutput(time, "<swimmer --> bird>. %1.00;0.47%")
-                .run();
+        long time = /*tester.nal() <= 2 ? 15 :*/ 16;
+        TestNAR test = test();
+        test.believe("<bird --> swimmer>")
+            .ask("<swimmer --> bird>") //.en("Is swimmer a type of bird?");
+            .mustOutput(time, "<swimmer --> bird>. %1.00;0.47%")
+            .run();
     }
 
     @Test

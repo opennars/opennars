@@ -77,7 +77,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         boolean feedbackToLinks = (p instanceof ConceptProcess);
         if (feedbackToLinks) {
             Premise fc = p;
-            TaskLink tLink = fc.getTaskLink();
+            TaskLink tLink = ((ConceptProcess)fc).getTaskLink();
             tLink.decPriority(1f - difT);
             tLink.andDurability(1f - difT);
             TermLink bLink = fc.getTermLink();
@@ -385,7 +385,10 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget of the conclusion task
      */
     private static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
-        final TaskLink nalTL = nal.getTaskLink();
+
+        final TaskLink nalTL =
+                nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;
+
         final Budget t = (nalTL !=null) ? nalTL :  nal.getTask().getBudget();
 
         float priority = t.getPriority();
