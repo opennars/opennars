@@ -280,6 +280,8 @@ public class NARfx  {
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
             ni.addTool("Web Browser", () -> new WebBrowser());
 
+            ni.addTool("HTTP Server", () -> new Pane());
+
             ni.addTool(new Menu("Interface..."));
             ni.addTool(new Menu("Cognition..."));
             ni.addTool(new Menu("Sensor..."));

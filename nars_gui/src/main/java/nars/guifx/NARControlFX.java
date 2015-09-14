@@ -139,7 +139,7 @@ public class NARControlFX extends HBox {
 
     }
 
-    public NARControlFX(NAR n, boolean runButtons, boolean memoryButtons, boolean guiButtons) {
+    public NARControlFX(NAR n) {
         super();
 
         this.nar = n;

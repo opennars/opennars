@@ -1,6 +1,7 @@
 package nars.guifx;
 
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import nars.NAR;
@@ -8,12 +9,16 @@ import nars.NAR;
 /**
  * Created by me on 8/2/15.
  */
-public class TerminalPane extends BorderPane {
+public class TerminalPane extends BorderPane implements FXIconPaneBuilder {
 
+
+    private final NAR nar;
 
     public TerminalPane(NAR nar) {
         super();
 
+
+        this.nar = nar;
 
         SplitPane split = new SplitPane();
         split.setOrientation(Orientation.VERTICAL);
@@ -32,4 +37,25 @@ public class TerminalPane extends BorderPane {
         setCenter(split);
     }
 
+    @Override
+    public Node newIconPane() {
+        return new StatusPane(nar);
+
+        //return new NSlider(150, 60);
+
+        /*return new HBox(
+            new LinePlot(
+                    "# Concepts",
+                    () -> nar.concepts().size(),
+                    300,
+                    200,200
+            ),
+            new LinePlot(
+                    "Memory",
+                    () -> Runtime.getRuntime().freeMemory(),
+                    300,
+                    200,200
+            )
+        );*/
+    }
 }

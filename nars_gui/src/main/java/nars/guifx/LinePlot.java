@@ -1,12 +1,8 @@
 package nars.guifx;
 
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import nars.guifx.util.ColorArray;
 import nars.io.Texts;
@@ -31,15 +27,19 @@ public class LinePlot extends Canvas /*implements ChangeListener*/ {
     private double mean;
     int count;
 
-    public LinePlot(String name, DoubleSupplier valueFunc, int history, int width, int height) {
-        super(width,height);
 
+    public LinePlot(String name, DoubleSupplier valueFunc, int history) {
+        super(100, 100);
+
+
+        maxWidth(Double.MAX_VALUE);
+        maxHeight(Double.MAX_VALUE);
 
 //        parentProperty().addListener(p-> {
 //            if (p!=null) {
-//                Region parent = (Region)p;
-//                parent.widthProperty().addListener(LinePlot.this);
-//                heightProperty().addListener(LinePlot.this);
+//                //parent.widthProperty().addListener(LinePlot.this);
+//                widthProperty().bind(parent.widthProperty());
+//                heightProperty().bind(parent.heightProperty());
 //            }
 //        });
 //        layoutBoundsProperty().addListener((b) -> {
@@ -55,12 +55,13 @@ public class LinePlot extends Canvas /*implements ChangeListener*/ {
         this.maxHistory = history;
         this.valueFunc = valueFunc;
 
-        update();
+        draw();
+
     }
 
 
 
-    public void update() {
+    public void draw() {
 
         GraphicsContext g = getGraphicsContext2D();
 

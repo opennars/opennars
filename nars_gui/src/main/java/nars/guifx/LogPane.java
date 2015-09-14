@@ -135,7 +135,6 @@ public class LogPane extends BorderPane implements Runnable {
     protected void output(Object channel, Object signal) {
         boolean trace=false;
 
-        System.out.println(channel);
         double f = filter.value(channel);
 
         if (!trace && !channel.equals("eventDerived") && !channel.equals("eventInput"))

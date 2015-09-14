@@ -138,6 +138,8 @@ abstract public class NAR {
 
         setMemory(m);
 
+        m.the("memory", m);
+        m.the("clock", m.clock);
 
         this.narsese = NarseseParser.the();
 

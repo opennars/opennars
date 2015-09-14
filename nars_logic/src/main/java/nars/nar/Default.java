@@ -325,6 +325,7 @@ public class Default extends NAR {
                     new ItemAccumulator(Budget.max),
                     newConceptBag()
             );
+            m.the("core", c);
             //run this on the end half cycle
             memory.eventCycleEnd.on(c);
             c.capacity.set(maxConcepts);
@@ -336,7 +337,7 @@ public class Default extends NAR {
         if (maxNALLevel >= 7) {
 
             //scope: control
-            new PerceptionAccel(this, () -> core.next());
+            m.the(new PerceptionAccel(this, () -> core.next()));
             new STMEventInference(this, core.deriver );
 
             if (maxNALLevel >= 8) {
@@ -557,6 +558,7 @@ public class Default extends NAR {
     }
 
 
+
     /**
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
@@ -604,6 +606,7 @@ public class Default extends NAR {
 
 
         /* ---------- Short-term workspace for a single cycle ------- */
+
 
 
 

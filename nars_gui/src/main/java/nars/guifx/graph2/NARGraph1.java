@@ -199,6 +199,7 @@ public class NARGraph1<V, E> extends Spacegraph {
 
     public final void updateGraph() {
 
+
         if (!isVisible()) {
             return;
         }
@@ -306,7 +307,7 @@ public class NARGraph1<V, E> extends Spacegraph {
         super();
 
 
-        n
+        this.nar = n
                 //.stdout()
                 //.stdoutTrace()
 //                .input("<a --> b>. %1.00;0.7%", //$0.9;0.75;0.2$

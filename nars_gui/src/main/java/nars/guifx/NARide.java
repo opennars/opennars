@@ -1,25 +1,24 @@
 package nars.guifx;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Side;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.event.FrameReaction;
-import nars.event.NARReaction;
 import nars.guifx.util.SizeAwareWindow;
 import nars.guifx.util.TabX;
 
 import java.util.function.Supplier;
 
 import static javafx.application.Platform.runLater;
+import static nars.guifx.NARfx.scrolled;
 
 /**
  * NAR ide panel
@@ -27,20 +26,19 @@ import static javafx.application.Platform.runLater;
 public class NARide extends BorderPane {
 
 
-    private final TabPane menu = new TabPane();
+    private final TabPane taskBar = new TabPane();
 
     public final TabPane content = new TabPane();
 
     public final NARControlFX controlPane;
 
-    Tab console = null;
-
-
 
     public void addView(Pane n) {
+        nar.memory().the(n);
+
         content.getTabs().add(new TabX(
-                n.getClass().getSimpleName(),
-                n));
+            n.getClass().getSimpleName(),
+            n));
     }
 
     public void addTool(String name, Supplier<Pane> builder) {
@@ -55,82 +53,6 @@ public class NARide extends BorderPane {
         controlPane.tool.getItems().add(submenu);
     }
 
-    public static class ResizableCanvas extends Canvas {
-
-        private final Pane parent;
-
-        public ResizableCanvas(Pane parent) {
-            super();
-            this.parent = parent;
-
-            // Bind canvas size to stack pane size.
-            widthProperty().bind(parent.widthProperty());
-            heightProperty().bind(parent.heightProperty());
-
-
-            final boolean bindRedraw = false; //TODO parameter to make this optional to avoid unnecessary event being attached
-            if (bindRedraw) {
-                // Redraw canvas when size changes.
-                widthProperty().addListener(evt -> draw());
-                heightProperty().addListener(evt -> draw());
-            }
-        }
-
-        protected void draw() {
-            /*double width = getWidth();
-            double height = getHeight();
-
-            GraphicsContext gc = getGraphicsContext2D();
-            gc.clearRect(0, 0, width, height);
-
-            gc.setStroke(Color.RED);
-            gc.strokeLine(0, 0, width, height);
-            gc.strokeLine(0, height, width, 0);*/
-        }
-
-        @Override
-        public boolean isResizable() {
-            return true;
-        }
-
-        @Override
-        public double prefWidth(double height) {
-            return getWidth();
-        }
-
-        @Override
-        public double prefHeight(double width) {
-            return getHeight();
-        }
-    }
-
-    //TODO detect when component is hidden and disable the event
-    abstract public static class FXReaction extends NARReaction implements ChangeListener {
-
-        private final Node fx;
-
-        public FXReaction(NAR nar, Node fx, Class... events) {
-            super(nar, true, events);
-            this.fx = fx;
-
-
-            //fx.visibleProperty().addListener(this);
-            //if (fx.visibleProperty().get())
-            //setActive(true);
-
-        }
-
-        @Override
-        public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-            System.out.println(newValue);
-
-            if ((boolean) newValue == true) {
-                setActive(true);
-            } else {
-                setActive(false);
-            }
-        }
-    }
 
     public final NAR nar;
 
@@ -147,7 +69,7 @@ public class NARide extends BorderPane {
 
 
 
-        controlPane = new NARControlFX(nar, true, true, true);
+        controlPane = new NARControlFX(nar);
 
 
         final BorderPane f = new BorderPane();
@@ -168,12 +90,12 @@ public class NARide extends BorderPane {
 //        vb.autosize();
 
 
-        //s.forEachCycle(lp::update);
 
-        //f.setCenter( scrolled(lp)       );
+        taskBar.setSide(Side.LEFT);
+        taskBar.getTabs().addAll(
 
-        menu.setSide(Side.LEFT);
-        menu.getTabs().addAll(
+                new TabX("Plugins",
+                        scrolled(new PluginPanel(n))).closeable(false),
 
                 new TabX("Tasks",
                         new TreePane(n)).closeable(false),
@@ -202,9 +124,9 @@ public class NARide extends BorderPane {
 
         );
 
-        menu.setRotateGraphic(true);
+        taskBar.setRotateGraphic(true);
 
-        f.setCenter(menu);
+        f.setCenter(taskBar);
 
         f.setTop(controlPane);
 
@@ -279,9 +201,7 @@ public class NARide extends BorderPane {
             LinePlot bp = new LinePlot(
                     "Concepts",
                     () -> (n.memory.getConcepts().size()),
-                    300,
-
-                    100,100
+                    300
             );
 
             new FrameReaction(n) {
@@ -293,7 +213,7 @@ public class NARide extends BorderPane {
                                         ((LinePlot) o).update();
                                 }*/
 
-                    bp.update();
+                    bp.draw();
 
                 }
             };

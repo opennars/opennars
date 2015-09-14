@@ -61,3 +61,19 @@
 .monoconsole {
     /*-fx-font-size: 350%;*/
 }
+
+.plugin_button {
+    -fx-padding: 1.5em;
+    -fx-background: transparent !important;
+    -fx-control-inner-background:  transparent !important;
+    -fx-background-color: transparent !important;
+    -fx-border-width: 2px 2px 2px 2px;
+    -fx-border-color: gray;
+    -fx-border-insets: 2px 2px 2px 2px;
+}
+.plugin_button:hover {
+    -fx-background-color: blue !important;
+}
+.plugin_button:armed {
+    -fx-background-color: green !important;
+}

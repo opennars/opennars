@@ -1,44 +1,55 @@
-package nars.gui.output;
+package nars.guifx;
 
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import nars.Global;
 import nars.NAR;
 
-import javax.swing.*;
-import java.awt.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static javafx.application.Platform.runLater;
 
 /**
  * Manages the activated set of plugins in a NAR, and a menu for adding additional ones
  * and presets of them.
  */
-public class PluginPanel extends VerticalPanel {
+public class PluginPanel extends VBox {
+
     private final NAR nar;
-    private final JMenuBar menu;
-//    final NARReaction observer;
-    
+
+
 
     public PluginPanel(NAR nar) {
         super();
-        
         this.nar = nar;
-//        this.observer = new NARReaction(nar, false, Events.PluginsChange.class) {
-//            @Override
-//            public void event(Class event, Object[] args) {
-//                if (event == Events.PluginsChange.class)
-//                    update();
-//            }
-//        };
-        
-        
-        menu = new JMenuBar();
-        initMenu();
-        
-        
-        add(menu, BorderLayout.NORTH);
-        
-        //update();
+
+        nar.onEachFrame((n) -> {
+            runLater(() -> {
+                update();
+            });
+        });
+        update();
+
+
         
     }
-    
-    protected void initMenu() {
+
+
+    protected void update() {
+
+        final List<Node> toAdd = Global.newArrayList();
+        nar.memory().getSingletons().forEach((k,v)-> {
+            toAdd.add(node(k,v));
+        });
+        getChildren().setAll(toAdd);
+
+        layout();
+
 //        menu.add(new JLabel(" + "));
 //
 //        TreeMap<String, JMenu> menus = new TreeMap();
@@ -73,7 +84,45 @@ public class PluginPanel extends VerticalPanel {
 //
     }
 
-    
+    Map<String,Node> nodes = new HashMap();
+
+    private Node node(String k, Object v) {
+        return nodes.computeIfAbsent(k, (K) -> {
+            ToggleButton p = new ToggleButton();
+            p.getStyleClass().add("plugin_button");
+            p.setGraphic(icon(K,v));
+            p.setMaxWidth(Double.MAX_VALUE);
+            return p;
+        });
+    }
+
+    private Node icon(String k, Object v) {
+        if (v instanceof FXIconPaneBuilder) {
+            return ((FXIconPaneBuilder)v).newIconPane();
+        }
+        BorderPane bp = new BorderPane();
+        ToggleButton label;
+        bp.setTop(label = new ToggleButton(k));
+        label.setOnAction(e -> {
+            System.out.println(label + " " + label.isSelected());
+            if (label.isSelected()) {
+                Label content = new Label(v.toString());
+                content.setWrapText(true);
+                bp.setCenter(content);
+                content.setCache(true);
+            }
+            else {
+                bp.setCenter(null);
+            }
+
+        });
+
+        label.setCache(true);
+
+        return bp;
+    }
+
+
 //    public class PluginPane extends JPanel {
 //        private final OperatorRegistration plugin;
 //

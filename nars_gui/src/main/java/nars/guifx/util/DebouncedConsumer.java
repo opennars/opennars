@@ -1,17 +1,19 @@
 package nars.guifx.util;
 
 import javafx.application.Platform;
+import nars.NAR;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 /**
  * Created by me on 8/30/15.
  */
-public interface DebouncedRunnable extends Runnable {
+public interface DebouncedConsumer extends Consumer<NAR> {
 
     @Override
-    default void run() {
+    default void accept(NAR n) {
         if (canQueue().compareAndSet(true, false)) {
 
             final long now = System.currentTimeMillis();

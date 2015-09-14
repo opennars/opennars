@@ -15,7 +15,7 @@ import static javafx.application.Platform.runLater;
 public class DemoRealtimeClock extends NARControlFX {
 
     public DemoRealtimeClock(NAR nar) {
-        super(nar, true, true, true);
+        super(nar);
 
     }
 

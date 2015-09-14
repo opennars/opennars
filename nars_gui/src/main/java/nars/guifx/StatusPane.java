@@ -1,7 +1,6 @@
 package nars.guifx;
 
-import javafx.scene.Node;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import nars.Global;
 import nars.NAR;
 import nars.event.FrameReaction;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Created by me on 9/6/15.
  */
-public class StatusPane extends GridPane {
+public class StatusPane extends HBox {
 
 
     final List<LinePlot> plots = Global.newArrayList();
@@ -24,16 +23,15 @@ public class StatusPane extends GridPane {
         super();
 
 
-        addColumn(0,
+        getChildren().addAll(
                 addPlot(new LinePlot(
-                    "Concepts",
+                        "Concepts",
                         () -> {
                             nConcepts = b.getLong(MemoryBudget.Budgeted.ActiveConcepts);
                             return nConcepts;
                         },
-                        300,
-                        200,200
-                )),
+                        300)
+                ),
 
                 addPlot(new LinePlot(
                         "Concept Pri Avg",
@@ -41,15 +39,14 @@ public class StatusPane extends GridPane {
                             if (nConcepts == 0) return 0;
                             return b.getDouble(MemoryBudget.Budgeted.ActiveConceptPrioritySum)/nConcepts;
                         },
-                        300,
-                        200,200)
+                        300)
                 ),
+
                 addPlot(new LinePlot(
                         "Concept StdDev",
                         () -> b.getDouble(MemoryBudget.Budgeted.ActiveConceptPriorityStdDev),
-                        300,
-                        200,200
-                ))
+                        300)
+                )
         );
 
         new FrameReaction(nar) {
@@ -60,16 +57,20 @@ public class StatusPane extends GridPane {
                 b.update(nar.memory);
 
                 for (LinePlot p: plots)
-                    p.update();
+                    p.draw();
             }
         };
 
+
+        maxWidth(Double.MAX_VALUE);
+        maxHeight(Double.MAX_VALUE);
+
+        layout();
+
     }
 
-    private Node addPlot(LinePlot p) {
+    private LinePlot addPlot(LinePlot p) {
         plots.add(p);
-        p.maxWidth(Double.MAX_VALUE);
-        p.maxHeight(Double.MAX_VALUE);
         return p;
     }
 }
