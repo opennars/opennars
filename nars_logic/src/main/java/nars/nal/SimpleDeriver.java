@@ -5,7 +5,6 @@ import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
-import nars.task.Task;
 import nars.term.Term;
 import nars.util.db.TemporaryCache;
 import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
@@ -118,22 +117,28 @@ public class SimpleDeriver extends Deriver  {
     }
 
     public void forEachRule(final RuleMatch match) {
+        match.run(rules);
+    }
 
-        final Term taskTerm = match.premise.getTask().getTerm();
+    public void forEachRule2(final RuleMatch match) {
+
+        //final Term taskTerm = match.premise.getTask().getTerm();
+
+        final Term taskTerm = match.taskBelief.term(0);
+        final Term beliefTerm = match.taskBelief.term(1); //belief!=null ? belief.getTerm() : null;
 
         EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.op());
 
-        final Task belief = match.premise.getBelief();
-        final Term beliefTerm = belief!=null ? belief.getTerm() : null;
+        //final Task belief = match.premise.getBelief();
 
         if (taskSpecific!=null) {
 
-            if (beliefTerm != null) {
-                // <T>,<B>
-                List<TaskRule> u = taskSpecific.get(beliefTerm.op());
-                if (u != null)
-                    match.run(u);
-            }
+
+            // <T>,<B>
+            List<TaskRule> u = taskSpecific.get(beliefTerm.op());
+            if (u != null)
+                match.run(u);
+
 
             // <T>,%
             List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
@@ -141,12 +146,12 @@ public class SimpleDeriver extends Deriver  {
                 match.run(taskSpecificBeliefAny);
         }
 
-        if (beliefTerm!=null) {
-            // %,<B>
-            List<TaskRule> beliefSpecific = beliefTypeMap.get(Op.VAR_PATTERN);
-            if (beliefSpecific!=null)
-                match.run(beliefSpecific);
-        }
+
+        // %,<B>
+        List<TaskRule> beliefSpecific = beliefTypeMap.get(beliefTerm.op());
+        if (beliefSpecific!=null)
+            match.run(beliefSpecific);
+
 
         // %,%
         List<TaskRule> bAny = beliefTypeMap.get(Op.VAR_PATTERN);

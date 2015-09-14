@@ -28,7 +28,6 @@ import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.link.*;
 import nars.premise.Premise;
-import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -38,6 +37,7 @@ import nars.truth.Truth;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static com.google.common.collect.Iterators.*;
@@ -62,7 +62,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     TermLink activateTermLink(TermLinkBuilder termLinkBuilder);
 //      boolean link(Task currentTask);
 
-    void updateLinks();
 
     @Override
     float getPriority();
@@ -350,8 +349,9 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
     }
 
-    PremiseGenerator getPremiseGenerator();
 
+
+    List<TermLinkTemplate> getTermLinkTemplates();
 
 
 //    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);

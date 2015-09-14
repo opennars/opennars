@@ -2,13 +2,11 @@ package nars.concept;
 
 import infinispan.com.google.common.collect.Iterators;
 import javolution.util.function.Equality;
-import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.link.*;
 import nars.premise.Premise;
-import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -31,22 +29,16 @@ public class AtomConcept extends AbstractConcept {
      */
     protected final TermLinkBuilder termLinkBuilder;
     protected transient final TaskLinkBuilder taskLinkBuilder;
-    protected final PremiseGenerator premiseGenerator;
 
-    public AtomConcept(Term atom, Budget budget, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks, PremiseGenerator ps, Memory memory) {
+    public AtomConcept(Term atom, Budget budget, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks, Memory memory) {
         super(atom, budget, memory);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
-        this.premiseGenerator = ps;
         this.termLinkBuilder = new TermLinkBuilder(this);
     }
 
 
-    @Override
-    public PremiseGenerator getPremiseGenerator() {
-        return premiseGenerator;
-    }
 
     /**
      * Task links for indirect processing
@@ -62,32 +54,7 @@ public class AtomConcept extends AbstractConcept {
         return termLinks;
     }
 
-    /**
-     * called by concept before it fires to update any pending changes
-     */
-    public void updateLinks() {
 
-
-        final Memory memory = getMemory();
-
-        if (Global.TERMLINK_FORGETTING_EXTRA_DEPTH > 0)
-            getTermLinks().forgetNext(
-                    memory.termLinkForgetDurations,
-                    Global.TERMLINK_FORGETTING_EXTRA_DEPTH,
-                    memory);
-
-
-
-        if (Global.TASKLINK_FORGETTING_EXTRA_DEPTH > 0)
-            getTaskLinks().forgetNext(
-                    memory.taskLinkForgetDurations,
-                    Global.TASKLINK_FORGETTING_EXTRA_DEPTH,
-                    memory);
-
-
-        //linkTerms(null, true);
-
-    }
 
     @Override
     public TaskLinkBuilder getTaskLinkBuilder() {
@@ -202,7 +169,7 @@ public class AtomConcept extends AbstractConcept {
     }
 
     public List<TermLinkTemplate> getTermLinkTemplates() {
-        return termLinkBuilder.templates();
+        return getTermLinkBuilder().templates();
     }
 
 

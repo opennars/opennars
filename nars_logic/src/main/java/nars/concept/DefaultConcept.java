@@ -68,7 +68,7 @@ public class DefaultConcept extends AtomConcept {
      * @param memory    A reference to the memory
      */
     public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, @Deprecated PremiseGenerator ps, BeliefTable.RankBuilder rb, final Memory memory) {
-        super(term, b, termLinks, taskLinks, ps, memory);
+        super(term, b, termLinks, taskLinks, memory);
 
         //TODO move PremiseGenerator into ConceptProcess , and only in one subclass of them
         if (ps!=null)

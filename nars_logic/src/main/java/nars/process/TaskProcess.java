@@ -215,8 +215,6 @@ public class TaskProcess extends NAL {
         //activate peer termlink to this
         otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
-
-
         final Budget termlinkBudget = termLinkBuilder.getBudget();
 
         //if (otherConcept.getTerm() instanceof Compound) {

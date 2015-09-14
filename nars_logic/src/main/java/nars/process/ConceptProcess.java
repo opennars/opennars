@@ -117,17 +117,19 @@ abstract public class ConceptProcess extends NAL  {
 
 
         if (!Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
+
+            ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
+
             final Concept beliefConcept = nar.concept(termLink.target);
             if (beliefConcept != null) {
                 //belief can be null:
                 Task belief = beliefConcept.getBeliefs().top(taskLink.getTask(), now);
-
-                ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
                 cp.setBelief(belief);
-                proc.accept(cp);
-           }
-        }
+            }
 
+            proc.accept(cp);
+
+        }
 
     }
 

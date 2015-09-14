@@ -130,7 +130,7 @@ public class PhenotainerTest {
                         
         Objenome o = g.random(Machine.class);
 
-        Set<Class> uniqueClasses = new HashSet();
+        Set<Class<?>> uniqueClasses = new HashSet<>();
         for (int i = 0; i < 55; i++) {  
             
             Container c = o.container();

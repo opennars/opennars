@@ -6,7 +6,6 @@ import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
-import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.function.Consumer;
@@ -52,14 +51,14 @@ abstract public class Deriver implements Consumer<Premise> {
         RuleMatch m = matchers.get();
         m.start(f);
 
-        final Task task = f.getTask();
+        //final Task task = f.getTask();
 
-        if (task.isJudgment() || task.isGoal()) {
+        //if (task.isJudgment() || task.isGoal()) {
 
             forEachRule(m);
 
             //TODO also allow backward inference by traversing
-        }
+        //}
 
     }
 

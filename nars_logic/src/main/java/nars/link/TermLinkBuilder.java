@@ -12,6 +12,7 @@ import nars.nal.nal5.Implication;
 import nars.term.*;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -49,7 +50,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             prepareComponentLinks((Compound)host);
         }
         else {
-            template = null;
+            template = Collections.emptyList();
         }
 
 
@@ -170,7 +171,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     /** configures this selector's current bag key for the next bag operation */
-    public final  TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory m) {
+    public final TermLinkBuilder set(final TermLinkTemplate temp, boolean initialDirection, final Memory m) {
         if ((temp != currentTemplate) || (this.incoming != initialDirection)) {
             this.currentTemplate = temp;
             this.incoming = initialDirection;
@@ -248,8 +249,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }*/
 
     public void delete() {
-        if (template!=null)
-            template.clear();
+        template.clear();
         nonTransforms = 0;
         currentTemplate = null;
     }

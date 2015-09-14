@@ -1,6 +1,5 @@
 package nars.meta.pre;
 
-import nars.Global;
 import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
@@ -20,7 +19,7 @@ public class MatchTaskBeliefPattern extends PreCondition {
         this.pattern = pattern;
         Term beliefPattern = pattern.term(1);
 
-        if (Global.DEBUG) {
+        //if (Global.DEBUG) {
             if (beliefPattern.structure() == 0) {
 
                 // if nothing else in the rule involves this term
@@ -30,7 +29,7 @@ public class MatchTaskBeliefPattern extends PreCondition {
                     throw new RuntimeException("not what was expected");
 
             }
-        }
+        //}
 
         /*System.out.println( Long.toBinaryString(
                         pStructure) + " " + pattern
@@ -42,9 +41,6 @@ public class MatchTaskBeliefPattern extends PreCondition {
     //TODO this caching is not thread-safe yet
     @Override
     public final boolean test(final RuleMatch m) {
-
-//        if (!allowNullBelief && m.premise.getBelief() == null)
-//            return false;
 
         final PairMatchingProduct tb = m.taskBelief;
 

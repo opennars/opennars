@@ -205,7 +205,14 @@ public class RuleMatch extends FindSubst {
         TaskSeed t = premise.newTask((Compound)derive); //, task, belief, allowOverlap);
         if (t != null) {
 
-            Budget budget = BudgetFunctions.compoundForward(truth, derive, premise);
+            final Budget budget;
+            if (truth!=null) {
+                budget = BudgetFunctions.compoundForward(truth, derive, premise);
+            }
+            else {
+                budget = BudgetFunctions.compoundBackward(derive, premise);
+            }
+
 
             t
                 .punctuation(task.getPunctuation())

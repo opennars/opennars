@@ -259,13 +259,13 @@ public class Default extends NAR {
         {
             DefaultCycle c = this.core = new DefaultCycle(
                     this,
+                    getDeriver(),
                     new ConceptBagActivator(this),
                     new ItemAccumulator(Budget.max),
                     newConceptBag()
             );
             m.the("core", c);
-            //run this on the end half cycle
-            memory.eventCycleEnd.on(c);
+
             c.capacity.set(maxConcepts);
             c.inputsMaxPerCycle.set(conceptsFirePerCycle);
             c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
@@ -339,6 +339,35 @@ public class Default extends NAR {
         return newConcept(t, b, taskLinks, termLinks, memory());
     }
 
+    public class ConceptAttentionEnhancer {
+
+        /**
+         * called by concept before it fires to update any pending changes
+         */
+        public void updateLinks(Concept c) {
+
+
+            final Memory memory = memory();
+
+            if (Global.TERMLINK_FORGETTING_EXTRA_DEPTH > 0)
+                c.getTermLinks().forgetNext(
+                        memory.termLinkForgetDurations,
+                        Global.TERMLINK_FORGETTING_EXTRA_DEPTH,
+                        memory);
+
+
+
+            if (Global.TASKLINK_FORGETTING_EXTRA_DEPTH > 0)
+                c.getTaskLinks().forgetNext(
+                        memory.taskLinkForgetDurations,
+                        Global.TASKLINK_FORGETTING_EXTRA_DEPTH,
+                        memory);
+
+
+            //linkTerms(null, true);
+
+        }
+    }
     /**
      * rank function used for concept belief and goal tables
      */
@@ -352,7 +381,7 @@ public class Default extends NAR {
     public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
 
         if (t instanceof Atom) {
-            return new AtomConcept(t, b, termLinks, taskLinks, newPremiseGenerator(), m
+            return new AtomConcept(t, b, termLinks, taskLinks, m
             );
         }
         else {
@@ -409,6 +438,10 @@ public class Default extends NAR {
                 + ']';
     }
 
+    protected SimpleDeriver getDeriver() {
+        return new SimpleDeriver(SimpleDeriver.standard);
+    }
+
     protected boolean process(Task t) {
         return true;
     }
@@ -432,10 +465,11 @@ public class Default extends NAR {
          * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
          */
         public final AtomicInteger inputsMaxPerCycle;
-        private SimpleDeriver deriver = new SimpleDeriver(SimpleDeriver.standard);
+        private final SimpleDeriver deriver;
 
 
-            /** samples an active concept */
+
+        /** samples an active concept */
         public Concept next() {
             return active.peekNext();
         }
@@ -461,7 +495,7 @@ public class Default extends NAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-        public DefaultCycle(NAR nar, ConceptBagActivator ca, ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts) {
+        public DefaultCycle(NAR nar, SimpleDeriver deriver, ConceptBagActivator ca, ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts) {
             super(nar);
 
             nar.memory.eventReset.on((m) -> {
@@ -471,6 +505,7 @@ public class Default extends NAR {
             this.nar = nar;
             this.ca = ca;
 
+            this.deriver = deriver;
 
             this.conceptForget = nar.memory().conceptForgetDurations;
 

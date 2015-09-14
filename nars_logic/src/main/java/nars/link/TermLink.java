@@ -179,10 +179,15 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     
     @Override
     public String toString() {
-        return new StringBuilder()
+        final StringBuilder sb = new StringBuilder();
+        if (index!=null) {
+            sb
                 .append(Utf8.fromUtf8(TermLinkTemplate.prefix(type, index, false)))
-                .append(Symbols.TLinkSeparator)
-                .append(getTerm().toString()).toString();
+                .append(Symbols.TLinkSeparator);
+        }
+
+        return sb
+            .append(getTerm().toString()).toString();
     }
 
 
