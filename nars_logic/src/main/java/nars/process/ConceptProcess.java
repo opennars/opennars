@@ -4,6 +4,7 @@
  */
 package nars.process;
 
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
@@ -14,6 +15,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
@@ -110,8 +112,36 @@ abstract public class ConceptProcess extends NAL  {
     }
 
 
+    /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
+    public static void nextPremiseSquare(NAR nar, final Concept concept, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, int maxTaskLinks, int maxTermLinks, long now) {
 
-    public static void forEachPremise(NAR nar, final Concept concept, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, long now) {
+        Set<TaskLink> tasks = Global.newHashSet(maxTaskLinks);
+        //TODO replace with one batch selector call
+        for (int i = 0; i < maxTaskLinks; i++) {
+            TaskLink tl = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
+            if (tl!=null) tasks.add(tl);
+        }
+        if (tasks.isEmpty()) return;
+
+        Set<TermLink> terms = Global.newHashSet(maxTaskLinks);
+        float termLinkForgetDurations = concept.getMemory().termLinkForgetDurations.floatValue();
+
+        //TODO replace with one batch selector call
+        for (int i = 0; i < maxTermLinks; i++) {
+            TermLink tl = concept.getTermLinks().forgetNext(termLinkForgetDurations, nar.memory());
+            if (tl!=null) terms.add(tl);
+        }
+
+        if (terms.isEmpty()) return;
+
+        for (final TaskLink a : tasks)
+            for (final TermLink b : terms)
+                tryPremise(nar, concept, proc, now, a, b);
+
+    }
+
+    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
+    public static void nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, long now) {
 
         TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
         if (taskLink == null) return;
@@ -120,6 +150,11 @@ abstract public class ConceptProcess extends NAL  {
         if (termLink == null) return;
 
 
+        tryPremise(nar, concept, proc, now, taskLink, termLink);
+
+    }
+
+    public static void tryPremise(NAR nar, Concept concept, Consumer<ConceptProcess> proc, long now, TaskLink taskLink, TermLink termLink) {
         if (!Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
 
             ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
@@ -134,7 +169,6 @@ abstract public class ConceptProcess extends NAL  {
             proc.accept(cp);
 
         }
-
     }
 
 //    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {

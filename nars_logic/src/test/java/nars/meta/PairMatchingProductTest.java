@@ -1,5 +1,6 @@
-package nars.meta.pre;
+package nars.meta;
 
+import nars.meta.pre.PairMatchingProduct;
 import nars.narsese.NarseseParser;
 import nars.term.Term;
 import org.junit.Test;

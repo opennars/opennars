@@ -14,10 +14,11 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.event.On;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -44,8 +45,9 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     //@Expose
     public  long cycleEnd;  //-1 for not compared
 
-    /** accept confidences greater than max expected */
-    final static boolean ignoreConfidenceMax = false;
+    /*float tenseCost = 0.35f;
+    float temporalityCost = 0.75f;*/
+
 
     protected  boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
     private final NAR nar;
@@ -61,14 +63,10 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
     protected List<Task> exact;
 
-    transient final static int maxExact = 4;
 
-    protected Deque<Task> removals;
-
-    transient int maxClose = 7;
+    transient int maxSimilars = 16;
 
     protected TreeMap<Double,Task> similar;
-    transient int maxRemovals = 32;
 
 
     public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
@@ -77,7 +75,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         this.nar = n;
 
         this.relativeToCondition = false;
-        /*this.taskRemoved = */getTaskRemoved(n);
+
 
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
@@ -98,56 +96,44 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
 
 
-    public TaskCondition(NAR n, Task t, long creationTimeOffset, final boolean relativeToCondition)  {
+//    public TaskCondition(NAR n, Task t, long creationTimeOffset, final boolean relativeToCondition)  {
+//
+//        this.nar = n;
+//
+//        //TODO verify that channel is included in the listened events
+//
+//        this.relativeToCondition = relativeToCondition;
+//
+//        /*this.taskRemoved = */getTaskRemoved(n);
+//
+//        if (t.isEternal()) {
+//            setEternal();
+//            t.setTime(creationTimeOffset, Stamp.ETERNAL);
+//        }
+//        else {
+//            long oc = t.getOccurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
+//            setRelativeOccurrenceTime(oc, n.memory.duration());
+//            t.setTime(creationTimeOffset, oc);
+//        }
+//
+//
+//        this.cycleStart = this.cycleEnd = -1;
+//        if (t.isJudgmentOrGoal()) {
+//            float f = t.getFrequency();
+//            float c = t.getConfidence();
+//            float e = Global.TESTS_TRUTH_ERROR_TOLERANCE/ 2.0f; //error tolerance epsilon
+//            this.freqMin = f - e;
+//            this.freqMax = f + e;
+//            this.confMin = c - e;
+//            this.confMax = c + e;
+//        }
+//        else {
+//            this.freqMin = this.freqMax =this.confMin = this.confMax = -1;
+//        }
+//        this.punc = t.getPunctuation();
+//        this.term = t.getTerm();
+//    }
 
-        this.nar = n;
-
-        //TODO verify that channel is included in the listened events
-
-        this.relativeToCondition = relativeToCondition;
-
-        /*this.taskRemoved = */getTaskRemoved(n);
-
-        if (t.isEternal()) {
-            setEternal();
-            t.setTime(creationTimeOffset, Stamp.ETERNAL);
-        }
-        else {
-            long oc = t.getOccurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
-            setRelativeOccurrenceTime(oc, n.memory.duration());
-            t.setTime(creationTimeOffset, oc);
-        }
-
-
-        this.cycleStart = this.cycleEnd = -1;
-        if (t.isJudgmentOrGoal()) {
-            float f = t.getFrequency();
-            float c = t.getConfidence();
-            float e = Global.TESTS_TRUTH_ERROR_TOLERANCE/ 2.0f; //error tolerance epsilon
-            this.freqMin = f - e;
-            this.freqMax = f + e;
-            this.confMin = c - e;
-            this.confMax = c + e;
-        }
-        else {
-            this.freqMin = this.freqMax =this.confMin = this.confMax = -1;
-        }
-        this.punc = t.getPunctuation();
-        this.term = t.getTerm();
-    }
-
-    protected On getTaskRemoved(NAR n) {
-        return n.memory.eventTaskRemoved.on(task -> {
-            //if (!succeeded) {
-                if (matches(task)) {
-                    ensureRemovals();
-                    removals.addLast(task);
-                    if (removals.size() > maxRemovals)
-                        removals.removeFirst();
-                }
-            //}
-        });
-    }
 
 //    public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
 //
@@ -252,7 +238,9 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
         if (!matches(task)) return false;
 
+        /** how many errors accumulated while testing it  */
         double distance = 0;
+
         long now = nar.time();
 
 
@@ -260,23 +248,22 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
         if ( ((cycleStart!=-1) && (now < cycleStart)) ||
                 ((cycleEnd!=-1) && (now > cycleEnd)))  {
-            distance += getTimeDistance(now);
+            distance += 1; //getTimeDistance(now);
             match = false;
         }
 
 
-        float temporalityCost = 0.75f;
 
         //require right kind of tense
         if (isEternal()) {
             if (!task.isEternal()) {
-                distance += temporalityCost;
+                distance += 1; //temporalityCost;
                 match = false;
             }
         }
         else {
             if (task.isEternal()) {
-                distance += temporalityCost - 0.01;
+                distance += 1;// temporalityCost - 0.01;
                 match = false;
             }
             else {
@@ -302,8 +289,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
                     if (!tmatch) {
                         //beyond tense boundaries
                         //distance += rangeError(oc, -halfDur, halfDur, true) * tenseCost;
-                        float tenseCost = 0.35f;
-                        distance += tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
+                        distance += 1; //tenseCost + rangeError(oc, creationTime, creationTime, true); //error distance proportional to occurence time distance
                         match = false;
                     }
                     else {
@@ -322,29 +308,34 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
             float fr = task.getFrequency();
             float co = task.getConfidence();
 
-            if ((!ignoreConfidenceMax && (co > confMax)) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
+            if ((co > confMax) || (co < confMin) || (fr > freqMax) || (fr < freqMin)) {
                 match = false;
                 distance += getTruthDistance(task.getTruth());
             }
         }
 
-        if (!match && distance < getAcceptableDistanceThreshold())
+        if (!match && distance <= getAcceptableDistanceThreshold())
             match = true;
 
         if (match) {
             //TODO record a different score for fine-tune optimization?
-
-            if (exact==null || (exact.size() < maxExact)) {
+            ensureExact();
+            exact.add(task);
+            /*if (exact==null || (exact.size() < maxExact)) {
                 ensureExact();
                 exact.add(task);
                 return true;
-            }
+            }*/
         }
 
         if (distance > 0) {
             ensureSimilar();
-            similar.put(distance, task);
-            if (similar.size() > maxClose) {
+
+            //TODO more efficient way than this
+            if (!similar.values().contains(task))
+                similar.put(distance, task);
+
+            if (similar.size() > maxSimilars) {
                 similar.remove( similar.lastEntry().getKey() );
             }
         }
@@ -357,9 +348,6 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     }
     private void ensureSimilar() {
         if (similar == null) similar = new TreeMap();
-    }
-    private void ensureRemovals() {
-        if (removals == null) removals = new ArrayDeque();
     }
 
 
@@ -375,11 +363,6 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         }
         else {
             x += "No similar: " + term;
-        }
-        if (removals!=null) {
-            x += " Matching removals:\n";
-            for (Task t : removals)
-                x += t.toString() + ' ' + t.getLog() + '\n';
         }
         return x;
     }

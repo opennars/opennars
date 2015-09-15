@@ -43,6 +43,7 @@ import java.util.Set;
  */
 public class Global {
 
+    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.33f;
 
     //TODO use 'I' for SELf, it is 3 characters shorter
     public static final Atom DEFAULT_SELF = Atom.the("I");
@@ -148,7 +149,7 @@ public class Global {
 
           
 
-    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.02f;
+
 
 
     public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;

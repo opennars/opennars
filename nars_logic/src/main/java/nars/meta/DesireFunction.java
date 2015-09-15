@@ -35,6 +35,7 @@ public enum DesireFunction {
     },
     Deduction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B==null) return null;
             return TruthFunctions.desireDed(T,B);
         }
     },

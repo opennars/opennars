@@ -41,7 +41,7 @@ public class PairMatchingProduct extends ProductN {
         set(a.getTerm(), b);
     }
 
-    void set(final Term a, final Term b) {
+    public void set(final Term a, final Term b) {
         this.term[0] = a;
         this.term[1] = b;
         init(term);

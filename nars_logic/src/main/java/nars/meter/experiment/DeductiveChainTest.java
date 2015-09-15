@@ -21,6 +21,7 @@ public class DeductiveChainTest extends TestNAR {
         super(n);
 
 
+
         beliefs = new Inheritance[length];
         for (int x = 0; x < length; x++) {
             beliefs[x] = i(x, x+1);

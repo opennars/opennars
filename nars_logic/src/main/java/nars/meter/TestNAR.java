@@ -11,7 +11,6 @@ import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.truth.DefaultTruth;
 import nars.util.event.Topic;
 import nars.util.meter.event.HitMeter;
 
@@ -40,6 +39,9 @@ public class TestNAR  {
     boolean resetOnStop = true; //should help GC if successively run
 
 
+
+
+
     /** "must" requirement conditions specification */
     public final List<TaskCondition> requires = new ArrayList();
     public final List<ExplainableTask> explanations = new ArrayList();
@@ -47,6 +49,7 @@ public class TestNAR  {
     final transient private boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
     private int temporalTolerance = 0;
+    private float defaultTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
 
 
     public TestNAR(NAR nar) {
@@ -74,10 +77,6 @@ public class TestNAR  {
     public double getCost() {
         return TaskCondition.cost(requires);
     }
-
-//    public TestNAR mustDerive(long a, long b, String s, char c, float v, float v1, float v2, float v3, int i2) {
-//        return mustOutput(nar.memory().eventDerived, a, b, s, c, v, v1, v2, v3, i2 );
-//    }
 
     public TestNAR debug() {
         Global.DEBUG = true;
@@ -131,8 +130,15 @@ public class TestNAR  {
         }
     }
 
+    Topic<Task>[] outputEvents;
+
     public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-        mustEmit(nar.memory().eventDerived, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+
+        if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved };
+
+        for (Topic<Task> x: outputEvents)
+            mustEmit(x, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+
         return this;
     }
 
@@ -146,7 +152,7 @@ public class TestNAR  {
 
     public TestNAR mustEmit(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
 
-        float h = (freqMin!=-1) ? DefaultTruth.DEFAULT_TRUTH_EPSILON / 2.0f : 0;
+        float h = (freqMin!=-1) ? defaultTolerance / 2.0f : 0;
 
         if (freqMin == -1) freqMin = freqMax;
 

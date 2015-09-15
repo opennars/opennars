@@ -561,10 +561,18 @@ public class Default extends NAR {
 
             for (final Concept c : buffer) {
                 if (c == null) break;
-                ConceptProcess.forEachPremise(nar, c, termLinkSelections, conceptForgetDurations, (t) -> {
-                    t.input(nar, deriver);
-                }, now );
+                fireConcept(conceptForgetDurations, now, c);
             }
+        }
+
+        private void fireConcept(float conceptForgetDurations, long now, Concept c) {
+            /*ConceptProcess.nextPremise(nar, c, conceptForgetDurations, (t) -> {
+                t.input(nar, deriver);
+            }, now );*/
+
+            ConceptProcess.nextPremiseSquare(nar, c, conceptForgetDurations, (t) -> {
+                t.input(nar, deriver);
+            }, 4,4,now );
         }
 
         protected void enhanceAttention() {

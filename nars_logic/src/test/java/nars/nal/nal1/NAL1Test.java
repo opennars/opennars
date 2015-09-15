@@ -172,27 +172,19 @@ public class NAL1Test extends AbstractNALTest {
     }
 
 
-    public void multistepN(int length) {
-
-        new DeductiveChainTest(nar(), length, length * 300)
-                .run();
-
-    }
-
     @Test
     public void multistep2() {
-        multistepN(2);
+        DeductiveChainTest dc = new DeductiveChainTest(nar(), 2, 600);
+        dc.nar.stdout();
+        dc.run();
+
     }
 
     @Test
     public void multistep3() {
-        multistepN(3);
+        new DeductiveChainTest(nar(), 3, 900).run();
     }
 
-    @Test
-    public void multistep4() {
-        multistepN(4);
-    }
 
     @Test
     public void multistep() throws InvalidInputException {
