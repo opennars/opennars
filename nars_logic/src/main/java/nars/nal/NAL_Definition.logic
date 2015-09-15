@@ -75,19 +75,15 @@
 
 //A belief b <f,c> is equal to --b <1-f,c>, which is the negation rule:
 
-// --S, X, task(negative) |- S, (Truth:Negation, Desire:Negation)
-//  S, X, task(negative) |- --S, (Truth:Negation, Desire:Negation)
+  (A --> B), A, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation)
+  (A --> B), B, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation)
+  --(A --> B), A, task(negative) |- (A --> B), (Truth:Negation, Desire:Negation)
+  --(A --> B), B, task(negative) |- (A --> B), (Truth:Negation, Desire:Negation)
 
-  (A --> B), A |- --(A --> B), (Truth:Negation, Desire:Negation)
-  (A --> B), B |- --(A --> B), (Truth:Negation, Desire:Negation)
-  (A ==> B), A |- --(A ==> B), (Truth:Negation, Desire:Negation, Order:ForAllSame)
-  (A ==> B), B |- --(A ==> B), (Truth:Negation, Desire:Negation, Order:ForAllSame)
-
-  --(A --> B), A |- (A --> B), (Truth:Negation, Desire:Negation)
-  --(A --> B), B |- (A --> B), (Truth:Negation, Desire:Negation)
-  --(A ==> B), A |- (A ==> B), (Truth:Negation, Desire:Negation, Order:ForAllSame)
-  --(A ==> B), B |- (A ==> B), (Truth:Negation, Desire:Negation, Order:ForAllSame)
-
+  (A <-> B), A, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation)
+  (A <-> B), B, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation)
+  --(A <-> B), A, task(negative) |- (A <-> B), (Truth:Negation, Desire:Negation)
+  --(A <-> B), B, task(negative) |- (A <-> B), (Truth:Negation, Desire:Negation)
 
 //// inheritance-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //       (A --> B) ------- (B --> C)
