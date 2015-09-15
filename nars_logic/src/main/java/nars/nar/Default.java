@@ -51,6 +51,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -459,7 +460,7 @@ public class Default extends NAR {
          */
         public final AtomicInteger inputsMaxPerCycle;
         private final SimpleDeriver deriver;
-
+        private final Consumer<ConceptProcess> conceptProcessor;
 
 
         /** samples an active concept */
@@ -499,6 +500,18 @@ public class Default extends NAR {
             this.ca = ca;
 
             this.deriver = deriver;
+
+            this.conceptProcessor = (t) -> {
+
+                //OPTION 1: re-input to input buffers
+                //t.input(nar, deriver);
+
+                //OPTION 2: immediate process
+                t.apply(deriver).forEach(r -> {
+                    run(r);
+                });
+
+            };
 
             this.conceptForget = nar.memory().conceptForgetDurations;
 
@@ -565,16 +578,21 @@ public class Default extends NAR {
             }
         }
 
-        private void fireConcept(float conceptForgetDurations, long now, Concept c) {
-            /*ConceptProcess.nextPremise(nar, c, conceptForgetDurations, (t) -> {
-                t.input(nar, deriver);
-            }, now );*/
 
-            ConceptProcess.nextPremiseSquare(nar, c, conceptForgetDurations, (t) -> {
-                t.input(nar, deriver);
-            }, 4,4,now );
+
+        private void fireConcept(float conceptForgetDurations, long now, Concept c) {
+
+            /*ConceptProcess.nextPremise(nar, c,
+                    conceptForgetDurations,
+                    conceptProcessor, now );*/
+
+            ConceptProcess.nextPremiseSquare(nar, c,
+                    conceptForgetDurations,
+                    conceptProcessor, 6,6,now );
         }
 
+
+        //TODO move this to separate enhance plugin
         protected void enhanceAttention() {
             active.forgetNext(
                     conceptForget,

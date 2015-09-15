@@ -61,7 +61,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     public Tense tense = Tense.Eternal;
 
 
-    protected List<Task> exact;
+    protected List<Task> valid;
 
 
     transient int maxSimilars = 16;
@@ -320,7 +320,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         if (match) {
             //TODO record a different score for fine-tune optimization?
             ensureExact();
-            exact.add(task);
+            valid.add(task);
             /*if (exact==null || (exact.size() < maxExact)) {
                 ensureExact();
                 exact.add(task);
@@ -344,7 +344,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     }
 
     private void ensureExact() {
-        if (exact == null) exact = Global.newArrayList(1);
+        if (valid == null) valid = Global.newArrayList(1);
     }
     private void ensureSimilar() {
         if (similar == null) similar = new TreeMap();
@@ -373,7 +373,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
 
     public List<Task> getTrueReasons() {
-        return exact;
+        return valid;
         //if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
         /*return Lists.newArrayList("match at: " +
 

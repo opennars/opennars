@@ -16,10 +16,7 @@ import nars.util.meter.event.HitMeter;
 
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jgroups.util.Util.assertTrue;
 
@@ -130,27 +127,29 @@ public class TestNAR  {
         }
     }
 
+    //TODO initialize this once in constructor
     Topic<Task>[] outputEvents;
 
     public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-
         if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved };
-
-        for (Topic<Task> x: outputEvents)
-            mustEmit(x, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
-
+        mustEmit(outputEvents, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
         return this;
+    }
+
+    public TestNAR mustOutput(long withinCycles, String task) throws InvalidInputException {
+        if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved };
+        return mustEmit(outputEvents, withinCycles, task);
     }
 
 //    public TestNAR mustOutput(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
 //        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, ocRelative );
 //    }
 
-    public TestNAR mustEmit(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
+    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL );
     }
 
-    public TestNAR mustEmit(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
+    public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
 
         float h = (freqMin!=-1) ? defaultTolerance / 2.0f : 0;
 
@@ -161,12 +160,14 @@ public class TestNAR  {
         cycleStart -= tt;
         cycleEnd += tt;
 
-        TaskCondition tc;
-        c.on(tc = new TaskCondition(nar,
+        TaskCondition tc = new TaskCondition(nar,
                 cycleStart,
                 cycleEnd,
-                sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h)
-        );
+                sentenceTerm, punc, freqMin - h, freqMax + h, confMin - h, confMax + h);
+
+        for (Topic<Task> cc : c) {
+            cc.on(tc);
+        }
 
         if (ocRelative!= Stamp.ETERNAL) {
             /** occurence time measured relative to the beginning */
@@ -198,16 +199,15 @@ public class TestNAR  {
     }
 
     public TestNAR mustInput(long withinCycles, String task) {
-        return mustEmit(nar.memory.eventInput, withinCycles, task);
+        return mustEmit(
+                new Topic[] { nar.memory.eventInput },
+                withinCycles, task);
     }
 
-    public TestNAR mustOutput(long withinCycles, String task) throws InvalidInputException {
-        return mustEmit(nar.memory.eventDerived, withinCycles, task);
-    }
 
     public final long time() { return nar.time(); }
 
-    public TestNAR mustEmit(Topic<Task> c, long withinCycles, String task) throws InvalidInputException {
+    public TestNAR mustEmit(Topic<Task>[] c, long withinCycles, String task) throws InvalidInputException {
         Task t = nar.task(task);
         //TODO avoid reparsing term from string
 
@@ -308,7 +308,7 @@ public class TestNAR  {
         public final HitMeter[] eventMeters;
         protected Serializable error = null;
         protected Task[] inputs;
-        protected List<TaskCondition> cond = Global.newArrayList();
+        protected Set<TaskCondition> cond = Global.newHashSet(1);
         transient final int stackElements = 4;
 
         public Report(TestNAR n) {
@@ -358,12 +358,14 @@ public class TestNAR  {
 
         requires.forEach(report::add);
 
-        String s;
+        String s = JSONOutput.stringFromFieldsPretty(report);
         if (!report.isSuccess()) {
-            s = JSONOutput.stringFromFieldsPretty(report);
-
             //TODO rerun withh trace and ddebug
             assertTrue(s, false);
+        }
+        else {
+            //print report
+            System.out.println(s);
         }
 
         return this;
