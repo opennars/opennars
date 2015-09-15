@@ -63,9 +63,6 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         this(Utf8.toUtf8(s));
     }
 
-    public LiteralUTF8Identifier(char[] s) {
-        this(Utf8.toUtf8(s));
-    }
 
     final public int makeHash() {
         return (int) Util.ELFHash(data, 0);

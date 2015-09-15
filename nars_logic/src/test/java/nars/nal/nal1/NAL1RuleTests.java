@@ -67,14 +67,14 @@ public class NAL1RuleTests {
                 assertEquals(3, d.size());
             }
 
-            @Override
-            protected void setupAfterTaskInput(NAR n) {
-                super.setupAfterTaskInput(n);
-
-                n.stdout();
-                n.frame(53);
-
-            }
+//            @Override
+//            protected void setupAfterTaskInput(NAR n) {
+//                super.setupAfterTaskInput(n);
+//
+//                n.stdout();
+//                n.frame(53);
+//
+//            }
 
             @Override
             public void onDerivations(List<Task> derivations) {

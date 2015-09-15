@@ -158,6 +158,8 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 
     @Override
     public int hashCode() {
+        if (hash == 0)
+            rehash();
         return hash;
     }
 
@@ -377,7 +379,8 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
         bit set in this (for the operator). if it does not equal
         the parameter, then the structure can not match.
         */
-        return structure()!=possibleSubtermStructure;
+        return possibleSubtermStructure != 0 &&
+            structure()!=possibleSubtermStructure;
     }
 
     @Override

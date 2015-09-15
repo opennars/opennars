@@ -81,8 +81,8 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
         if (isCommutative()) {
             if (t[0].compareTo(t[1]) > 0) {
-                if (Global.DEBUG)
-                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
+                /*if (Global.DEBUG)
+                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));*/
 
                 //swap the terms here:
                 Term x = t[0];

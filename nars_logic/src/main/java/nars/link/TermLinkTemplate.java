@@ -72,8 +72,8 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
     }
 
-    protected int newHash(boolean in) {
-        return TermLinkKey.hash(prefix(in), term(in));
+    final protected int newHash(final boolean in) {
+        return term(in).hashCode();
     }
 
     public TermLinkTemplate(final Termed host, final short type, final Term target, final int i0) {

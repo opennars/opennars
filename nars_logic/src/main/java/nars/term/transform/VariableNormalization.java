@@ -72,12 +72,23 @@ public class VariableNormalization implements VariableTransform {
 
         final Compound result1;
 
-        if (destructively)
-            result1 = target.transform(tx);
-        else
+        if (destructively) {
+            target.transform(tx);
+            result1 = target;
+        }
+        else {
             result1 = target.cloneTransforming(tx);
+        }
 
         this.result = result1;
+
+        if (renamed) {
+            int h = this.result.hashCode();
+            this.result.rehash();
+            if (this.result.hashCode()!=h)
+                System.out.println(this.result.hashCode() + " <- " + h);
+
+        }
 
         if (rename != null)
             rename.clear(); //assists GC
@@ -86,8 +97,7 @@ public class VariableNormalization implements VariableTransform {
 
     @Override
     public Variable apply(final Compound ct, final Variable v, int depth) {
-        Variable vname = v;
-//            if (!v.hasVarIndep() && v.isScoped()) //already scoped; ensure uniqueness?
+        //            if (!v.hasVarIndep() && v.isScoped()) //already scoped; ensure uniqueness?
 //                vname = vname.toString() + v.getScope().name();
 
 
@@ -104,10 +114,11 @@ public class VariableNormalization implements VariableTransform {
 //        }
 
         final VariableMap finalRename = rename;
-        Variable vv = rename.computeIfAbsent(vname, _vname -> {
+        Variable vv = rename.computeIfAbsent(v, _vname -> {
             //type + id
             Variable rvv = newVariable(v.op, finalRename.size() + 1);
-            renamed = !Byted.equals(rvv, v);
+            if (!renamed) //test for any rename to know if we need to rehash
+                renamed |= !Byted.equals(rvv, v);
             return rvv;
         });
 

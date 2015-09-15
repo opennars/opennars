@@ -25,7 +25,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     transient int nonTransforms;
     transient TermLinkTemplate currentTemplate;
     transient boolean incoming;
-    private byte[] prefix;
     private int hash;
     private float forgetCycles;
     private long now;
@@ -196,19 +195,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return this;
     }
 
-    @Override
-    public final byte[] bytes() {
-        return prefix;
-    }
-
-
-    @Override
-    public final void setBytes(byte[] b) {
-        this.prefix = b;
-    }
 
     protected final void validate() {
-        this.prefix = currentTemplate.prefix(incoming);
         this.hash = currentTemplate.hash(incoming);
     }
 
@@ -236,7 +224,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public final TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTerm(), currentTemplate, getBudget(), prefix, hash);
+        return new TermLink(getTerm(), currentTemplate, getBudget(), hash);
     }
 
 //    public final TermLink out(TermLinkTemplate tlt) {

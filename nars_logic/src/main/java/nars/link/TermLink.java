@@ -20,12 +20,10 @@
  */
 package nars.link;
 
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Item;
 import nars.term.Term;
 import nars.term.Termed;
-import nars.util.utf8.Utf8;
 
 /**
  * A tlink between a compound term and a component term
@@ -72,9 +70,9 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
     public final short type;
-    private final int hash;
-    private static final byte[] emptyPrefix = new byte[0];
-    private byte[] prefix;
+
+
+
 
 
     /**
@@ -82,11 +80,10 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
      * <p>
      * called in Concept.buildTermLinks only
      * @param
-     * @param incoming or outgoing
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(final Term t, final TermLinkTemplate template, final Budget v, final byte[] prefix, final int hash) {
+    public TermLink(final Term t, final TermLinkTemplate template, final Budget v, final int hash) {
         super(v);
 
 
@@ -95,10 +92,6 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
         this.type = template.getType(t); /* whether this points to subterm */
 
         this.index = template.index;
-
-        this.prefix = prefix;
-
-        this.hash = hash;
     }
     public TermLink(final Term t, final Budget v) {
         super(v);
@@ -109,20 +102,8 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
         this.type = -1;
 
         this.index = null;
-        this.prefix = emptyPrefix;
-        this.hash = TermLinkKey.hash(prefix, t);
     }
 
-
-    @Override
-    public final byte[] bytes() {
-        return prefix;
-    }
-
-    @Override
-    public final void setBytes(byte[] b) {
-        this.prefix = b;
-    }
 
     @Override
     public final TermLinkKey name() {
@@ -144,7 +125,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 
     @Override
     public final int hashCode() {
-        return hash;
+        return getTerm().hashCode();
     }
 
 
@@ -168,15 +149,16 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        if (index!=null) {
-            sb
-                .append(Utf8.fromUtf8(TermLinkTemplate.prefix(type, index, false)))
-                .append(Symbols.TLinkSeparator);
-        }
-
-        return sb
-            .append(getTerm().toString()).toString();
+//        final StringBuilder sb = new StringBuilder();
+//        if (index!=null) {
+//            sb
+//                .append(Utf8.fromUtf8(TermLinkTemplate.prefix(type, index, false)))
+//                .append(Symbols.TLinkSeparator);
+//        }
+//
+//        return sb
+//            .append(getTerm().toString()).toString();
+        return getTerm().toString();
     }
 
 

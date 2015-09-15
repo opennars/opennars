@@ -359,6 +359,34 @@ public class TermTest {
         assertEquals(n.term(b), n.term(b));
     }
 
+    protected void testTermEquality(String s) {
+        Term a = n.term(s);
+        a.hashCode();
+        Term b = n.term(s);
+        assertTrue(a!=b);
+        assertEquals(a.toString(), b.toString());
+        assertEquals(a, b);
+        assertEquals(a.normalized().toString(), b.toString());
+        assertEquals(a.normalized(), b);
+
+    }
+
+
+    @Test public void termEqualityWithVariables1() {
+        testTermEquality("<#2 --> lock>");
+    }
+
+    @Test public void termEqualityWithVariables2() {
+        testTermEquality("<<#2 --> lock> --> x>");
+    }
+    @Test public void termEqualityWithVariables3() {
+        testTermEquality("(&&, x, <#2 --> lock>)");
+        testTermEquality("(&&, x, <#1 --> lock>)");
+    }
+    @Test public void termEqualityWithVariables4() {
+        testTermEquality("(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)");
+    }
+
     @Test public void termEqualityWithMixedVariables() {
         NAR n = new Default();
         String s = "(&&, <<$1 --> key> ==> <#2 --> (/, open, $1, _)>>, <#2 --> lock>)";
@@ -366,8 +394,10 @@ public class TermTest {
         Term b = n.term(s);
         assertTrue(a!=b);
         assertTrue(a.equals(b));
-        //assertTrue(a.isNormalized());
-        assertTrue("re-normalizing doesn't affect", a.normalized().equals(b));
+        b.equals(a.normalized());
+
+        assertEquals("re-normalizing doesn't affect: " + a.normalized(), b,
+                a.normalized() );
 
     }
     @Test

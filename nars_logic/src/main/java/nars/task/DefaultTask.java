@@ -140,8 +140,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     private final int getHash() {
         //stamp (evidentialset, occurrencetime), truth, term, punctuation
 
-        if (getTerm().hashCode()==0)
-            throw new RuntimeException("term " + getTerm() + " with invalid hash");
+
+        if (getTerm().hashCode()==0) {
+            getTerm().rehash();
+            //throw new RuntimeException("term " + getTerm() + " with invalid hash");
+        }
 
         int hashStamp = Util.hash(Arrays.hashCode(getEvidence()), (int) this.getOccurrenceTime());
 

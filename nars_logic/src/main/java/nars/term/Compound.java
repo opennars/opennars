@@ -168,9 +168,10 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
     }
 
     public final void rehash() {
-        /*for (final Term t : term) {
+        //this may not be necessary
+        for (final Term t : term) {
             t.rehash();
-        }*/
+        }
 
         init(term);
     }
@@ -487,8 +488,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     @Override
     final public int hashCode() {
-        if (contentHash == 0)
-            rehash();
         return contentHash;
     }
 
@@ -500,7 +499,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         Compound c = (Compound) that;
         if (contentHash != c.contentHash ||
                 structureHash != c.structureHash ||
-                length() != c.length())
+                volume() != c.volume())
             return false;
 
         final int s = this.length();
@@ -616,13 +615,9 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         if (isNormalized()) {
             return (T) this;
         } else {
-            VariableNormalization vn = new VariableNormalization(this, destructive);
-            final Compound result = vn.getResult();
-            if (result == null) return null;
-
-            if (vn.hasRenamed()) {
-                result.rehash();
-            }
+            final Compound result = new VariableNormalization(this, destructive).getResult();
+            if (result == null)
+                return null;
 
             return (T) result;
         }
@@ -922,9 +917,8 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return l;
     }
 
-    public <T extends Compound> T transform(CompoundTransform trans) {
-        transform(trans, 0);
-        return (T) this;
+    public <T extends Compound> boolean transform(CompoundTransform trans) {
+        return transform(trans, 0);
     }
 
     @Override
@@ -942,9 +936,12 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     /**
      * transforms destructively, may need to use on a new clone
+     * @return if changed
      */
-    protected <I extends Compound> void transform(CompoundTransform<I, T> trans, int depth) {
+    protected <I extends Compound> boolean transform(CompoundTransform<I, T> trans, int depth) {
         final int len = length();
+
+        boolean changed = false;
 
         I thiss = null;
         for (int i = 0; i < len; i++) {
@@ -952,13 +949,23 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
             if (trans.test(t)) {
                 if (thiss == null) thiss = (I) this;
-                term[i] = trans.apply(thiss, (T) t, depth + 1);
+                T s = trans.apply(thiss, (T) t, depth + 1);
+                if (!s.equals(t)) {
+                    term[i] = s;
+                    changed = true;
+                }
             } else if (t instanceof Compound) {
                 //recurse
-                ((Compound) t).transform(trans);
+                changed |= ((Compound) t).transform(trans);
             }
 
         }
+
+        if (changed) {
+            rehash();
+        }
+
+        return changed;
     }
 
     /**

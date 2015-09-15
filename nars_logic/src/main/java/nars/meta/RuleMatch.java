@@ -10,6 +10,7 @@ import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
@@ -199,6 +200,10 @@ public class RuleMatch extends FindSubst {
 
 
 
+        if (Variable.hasPatternVariable(derive)) {
+            //throw new RuntimeException("reactor leak: " + derive);
+            return false;
+        }
 
         TaskSeed t = premise.newTask((Compound)derive); //, task, belief, allowOverlap);
         if (t != null) {

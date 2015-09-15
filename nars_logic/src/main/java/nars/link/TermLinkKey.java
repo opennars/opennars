@@ -2,11 +2,9 @@ package nars.link;
 
 import nars.term.Term;
 import nars.term.Termed;
-import nars.util.data.Util;
-import nars.util.utf8.Byted;
 
 
-public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix part */ {
+public interface TermLinkKey extends Termed /* byte[] holds the prefix part */ {
 
     Term getTerm();
 
@@ -23,9 +21,11 @@ public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix pa
         if (a == b) return true;
         //if (!(b instanceof TermLinkKey)) return false;
 
-
-        return Byted.equals(a, b) &&
+        return //Byted.equals(a, b) &&
                 a.getTerm().equals(b.getTerm());
+
+        /*return Byted.equals(a, b) &&
+                a.getTerm().equals(b.getTerm());*/
     }
 
 //    /** the result of this should be cached */
@@ -33,9 +33,10 @@ public interface TermLinkKey extends Byted, Termed /* byte[] holds the prefix pa
 //        return hash(prefix(), getTarget());
 //    }
 
-    static int hash(byte[] prefix, Term target) {
-        return (int)Util.ELFHash(prefix, target.hashCode());
-    }
+//    static int hash(Term target) {
+//        return target.hashCode();
+//        //return (int)Util.ELFHash(prefix, target.hashCode());
+//    }
 
 //    /** key + target */
 //    default public boolean termLinkEquals(Object obj, boolean testHash) {

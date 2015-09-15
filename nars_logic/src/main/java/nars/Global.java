@@ -45,7 +45,7 @@ public class Global {
 
 
     //TODO use 'I' for SELf, it is 3 characters shorter
-    public static final Atom DEFAULT_SELF = Atom.the("SELF");
+    public static final Atom DEFAULT_SELF = Atom.the("I");
 
 
 

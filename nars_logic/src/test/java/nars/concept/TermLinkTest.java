@@ -1,7 +1,6 @@
 package nars.concept;
 
 import nars.NAR;
-import nars.Symbols;
 import nars.bag.Bag;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -42,8 +41,8 @@ public class TermLinkTest {
     public void testConjunctionTermLinks() {
 
         Bag<TermLinkKey, TermLink> cj0 = getTermLinks("(&&,a,b)", false);
-        assertTrue(cj0.keySet().toString(), cj0.keySet().toString().contains("Aa"));
-        assertTrue(cj0.keySet().toString(), cj0.keySet().toString().contains("Ab"));
+        assertEquals("[b, a]", cj0.keySet().toString());
+
         assertEquals(2, cj0.size());
 
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", false);
@@ -157,8 +156,8 @@ public class TermLinkTest {
         Set<String> ainhb = getTermLinks(n.concept("<a --> b>").getTermLinks());
 
         assertTrue(6 <= ainhb.size());
-        assertTrue(ainhb.contains("Ca:a"));
-        assertTrue(ainhb.contains("Cb:b"));
+        assertTrue(ainhb.contains("a"));
+        assertTrue(ainhb.contains("b"));
         //assertTrue("not necessary to include the term's own name in comopnent links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
 
         Set<String> atl = getTermLinks(n.concept("a").getTermLinks());
@@ -177,16 +176,16 @@ public class TermLinkTest {
 //
         Set<String> f = getTermLinks(n.concept("f").getTermLinks());
         assertTrue(f.toString(), f.size() >= 1);
-        assertTrue(f.contains("Da" + Symbols.TLinkSeparator + "<f --> <a --> b>>"));
+        assertTrue(f.contains("<f --> <a --> b>>"));
 
 
         //this compound involving f has no incoming links, all links are internal
         Set<String> fc = getTermLinks(n.concept("<f --> <a --> b>>").getTermLinks());
         assertEquals(4, fc.size());
-        assertTrue(fc.contains("Ca:f"));
-        assertTrue(fc.contains("Cb:<a --> b>"));
-        assertTrue(fc.contains("Cba:a"));
-        assertTrue(fc.contains("Cbb:b"));
+        assertTrue(fc.contains("f"));
+        assertTrue(fc.contains("<a --> b>"));
+        assertTrue(fc.contains("a"));
+        assertTrue(fc.contains("b"));
 
 
     }
