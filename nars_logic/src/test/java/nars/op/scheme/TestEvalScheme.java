@@ -5,6 +5,7 @@ import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.JavaNALTest;
 import nars.nar.Default;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -29,6 +30,7 @@ public class TestEvalScheme extends JavaNALTest {
     }
 
 
+    @Ignore
     @Test
     public void testCAR() {
 

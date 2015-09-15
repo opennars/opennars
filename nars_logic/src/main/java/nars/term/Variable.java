@@ -101,7 +101,12 @@ public class Variable extends Atom {
 
     @Override
     final public int structure() {
-        return 1 << op().ordinal();
+        final int i = op().ordinal();
+        if (i < 31) {
+            //include only non-pattern variables in structure
+            return 1 << i;
+        }
+        return 0;
     }
 
     /**
@@ -125,8 +130,9 @@ public class Variable extends Atom {
      */
     @Override
     public Variable clone() {
-        //return new Variable(name());
-        return this;
+        throw new RuntimeException("n/a");
+        //return new Variable(bytes());
+        //return this;
     }
 
 
@@ -158,15 +164,14 @@ public class Variable extends Atom {
 
         final Variable vthat = ((Variable) that);
 
-        Op vop = vthat.op;
+        /*Op vop = vthat.op;
         if (vop != op)
-            return false; //different type
+            return false; //different type*/
 
 //        if (!isScoped()) return false;
 //        if (!vthat.isScoped()) return false;
 
-        return super.equals(that);
-
+        return Byted.equals(this, vthat);
     }
 
     //    public boolean equalsTerm(Object that) {

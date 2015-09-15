@@ -70,19 +70,20 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
     @Override
     protected void init(Term... t) {
-        if (Global.DEBUG) {
-            if (t.length != 2)
-                throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
-            if (t[0] == null)
-                throw new RuntimeException("Null subject: " + this);
-            if (t[1] == null)
-                throw new RuntimeException("Null predicate: " + this);
+//        if (Global.DEBUG) {
+//            if (t.length != 2)
+//                throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
+//            if (t[0] == null)
+//                throw new RuntimeException("Null subject: " + this);
+//            if (t[1] == null)
+//                throw new RuntimeException("Null predicate: " + this);
+//        }
 
-
-        }
         if (isCommutative()) {
             if (t[0].compareTo(t[1]) > 0) {
-                //throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
+                if (Global.DEBUG)
+                    throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
+
                 //swap the terms here:
                 Term x = t[0];
                 t[0] = t[1];
@@ -99,64 +100,64 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     }
 
 
-    /**
-     * Make a Statement from String, called by StringParser
-     *
-     * @param o         The relation String
-     * @param subject   The first component
-     * @param predicate The second component
-     * @return The Statement built
-     */
-    final public static Statement make(final Op o, final Term subject, final Term predicate, boolean customOrder, int order) {
+//    /**
+//     * Make a Statement from String, called by StringParser
+//     *
+//     * @param o         The relation String
+//     * @param subject   The first component
+//     * @param predicate The second component
+//     * @return The Statement built
+//     */
+//    final public static Statement make(final Op o, final Term subject, final Term predicate, boolean customOrder, int order) {
+//
+//        switch (o) {
+//            case INHERITANCE:
+//                return Inheritance.make(subject, predicate);
+//            case SIMILARITY:
+//                return Similarity.make(subject, predicate);
+//            case INSTANCE:
+//                return Instance.make(subject, predicate);
+//            case PROPERTY:
+//                return Property.make(subject, predicate);
+//            case INSTANCE_PROPERTY:
+//                return InstanceProperty.make(subject, predicate);
+//            case IMPLICATION:
+//                return Implication.make(subject, predicate);
+//            case IMPLICATION_AFTER:
+//                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
+//            case IMPLICATION_BEFORE:
+//                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_BACKWARD);
+//            case IMPLICATION_WHEN:
+//                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);
+//            case EQUIVALENCE:
+//                return Equivalence.make(subject, predicate);
+//            case EQUIVALENCE_AFTER:
+//                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
+//            case EQUIVALENCE_WHEN:
+//                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);
+//        }
+//
+//        return null;
+//    }
 
-        switch (o) {
-            case INHERITANCE:
-                return Inheritance.make(subject, predicate);
-            case SIMILARITY:
-                return Similarity.make(subject, predicate);
-            case INSTANCE:
-                return Instance.make(subject, predicate);
-            case PROPERTY:
-                return Property.make(subject, predicate);
-            case INSTANCE_PROPERTY:
-                return InstanceProperty.make(subject, predicate);
-            case IMPLICATION:
-                return Implication.make(subject, predicate);
-            case IMPLICATION_AFTER:
-                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
-            case IMPLICATION_BEFORE:
-                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_BACKWARD);
-            case IMPLICATION_WHEN:
-                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);
-            case EQUIVALENCE:
-                return Equivalence.make(subject, predicate);
-            case EQUIVALENCE_AFTER:
-                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
-            case EQUIVALENCE_WHEN:
-                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);
-        }
-
-        return null;
-    }
-
-    /**
-     * Make a Statement from given term, called by the rules
-     *
-     * @param order     The temporal order of the statement
-     * @param subj      The first component
-     * @param pred      The second component
-     * @param statement A sample statement providing the class type
-     * @param memory    Reference to the memory
-     * @return The Statement built
-     */
-    final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
-        return make(statement.op(), subj, pred, order);
-    }
-
-    /** op needs to be a Statement operator */
-    final public static Statement make(final Op o, final Term subject, final Term predicate, int order) {
-        return make(o, subject, predicate, true, order);
-    }
+//    /**
+//     * Make a Statement from given term, called by the rules
+//     *
+//     * @param order     The temporal order of the statement
+//     * @param subj      The first component
+//     * @param pred      The second component
+//     * @param statement A sample statement providing the class type
+//     * @param memory    Reference to the memory
+//     * @return The Statement built
+//     */
+//    final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
+//        return make(statement.op(), subj, pred, order);
+//    }
+//
+//    /** op needs to be a Statement operator */
+//    final public static Statement make(final Op o, final Term subject, final Term predicate, int order) {
+//        return make(o, subject, predicate, true, order);
+//    }
 
 //    /**
 //     * Override the default in making the nameStr of the current term from

@@ -643,4 +643,26 @@ public class Terms {
 
         return true;
     }
+
+    /** for printing complex terms as a recursive tree */
+    public static void printRecursive(Term x) {
+        printRecursive(x, 0);
+    }
+    public static void printRecursive(Term x, int level) {
+        //indent
+        for (int i = 0; i < level; i++)
+            System.out.print("  ");
+
+        System.out.print(x);
+        System.out.print(" (");
+        System.out.print(x.op() + "[" + x.getClass().getSimpleName() + "] ");
+        System.out.print("c" + x.complexity() + ",v" + x.volume() + " ");
+        System.out.print(Integer.toBinaryString(x.structure()) + ")");
+        System.out.println();
+
+        if (x instanceof Compound) {
+            for (Term z : ((Compound<?>)x))
+                printRecursive(z, level+1);
+        }
+    }
 }

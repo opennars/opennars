@@ -490,6 +490,14 @@ public class NarseseParserTest {
         assertEquals("op", o.the().toString());
         assertEquals(Atom.class, o.the().getClass());
     }
+
+    @Test
+    public void testOperatorWithNoParams() {
+        Operation t = term("op()");
+        assertNotNull(t);
+        assertEquals(0, t.arg().length());
+    }
+
 }
 //class OldNarseseParser {
 //

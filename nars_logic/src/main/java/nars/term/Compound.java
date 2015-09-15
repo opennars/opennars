@@ -35,7 +35,6 @@ import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.copyOf;
@@ -94,7 +93,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
                 ;
     }
 
-    public boolean impossibleStructure(final int possibleSubtermStructure) {
+    public boolean impossibleToMatch(final int possibleSubtermStructure) {
         final int existingStructure = structureHash;
 
         //if the OR produces a different result compared to subterms,
@@ -131,7 +130,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
                 throw new RuntimeException("null subterm");*/
 
             //first to trigger subterm update if necessary
-            contentHash = (PRIME1 * contentHash) + (t.hashCode() + p) * PRIME2;
+            contentHash = (PRIME1 * contentHash) + (t.hashCode() + p);
 
             compl += t.complexity();
             vol += t.volume();
@@ -163,7 +162,9 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     protected int getStructureBase() {
         final int opOrdinal = op().ordinal();
-        return 1 << opOrdinal;
+        if (opOrdinal < 31)
+            return 1 << opOrdinal;
+        return 0;
     }
 
     public final void rehash() {
@@ -1382,18 +1383,18 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         throw new RuntimeException(this + " not modifiable");
     }
 
-    public int countOccurrences(final Term t) {
-        final AtomicInteger o = new AtomicInteger(0);
-
-        if (equals(t)) return 1;
-
-        recurseTerms((n, p) -> {
-            if (n.equals(t))
-                o.incrementAndGet();
-        });
-
-        return o.get();
-    }
+//    public int countOccurrences(final Term t) {
+//        final AtomicInteger o = new AtomicInteger(0);
+//
+//        if (equals(t)) return 1;
+//
+//        recurseTerms((n, p) -> {
+//            if (n.equals(t))
+//                o.incrementAndGet();
+//        });
+//
+//        return o.get();
+//    }
 
     /** unordered set */
     public Set<T> asTermSet() {

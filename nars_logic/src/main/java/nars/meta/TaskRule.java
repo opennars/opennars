@@ -144,7 +144,8 @@ public class TaskRule extends Rule<Premise, Task> {
 
             //do not alter postconditions
             if ((containingCompound instanceof Inheritance)
-                    && reservedMetaInfoCategories.contains((Atom)((Inheritance) containingCompound).getPredicate()))
+                    && reservedMetaInfoCategories.contains(
+                    ((Inheritance) containingCompound).getPredicate()))
                 return v;
 
             return Variable.make(Op.VAR_PATTERN, v.bytes());

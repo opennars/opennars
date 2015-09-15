@@ -344,7 +344,7 @@ public class DefaultConcept extends AtomConcept {
                         .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
 
 
-                p.deriveSingle(t.term(q));
+                p.derive(t.term(q));
             }
         }
     }

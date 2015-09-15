@@ -84,9 +84,9 @@ public class NALObjectsTest extends TestCase {
 
         m.frame(32);
 
-        System.out.println(ns.getBuffer().toString());
-        System.out.println();
-        System.out.println(ms.getBuffer().toString());
+        //System.out.println(ns.getBuffer().toString());
+        //System.out.println();
+        //System.out.println(ms.getBuffer().toString());
 
         String expect = "IN: <\"6.0\" --> (/, ^TestClass_multiply, obj, \"2.0\", \"3.0\", _)>. :|: %1.00;";
         assertTrue(ns.getBuffer().toString().contains(expect));

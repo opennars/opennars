@@ -7,7 +7,17 @@ import org.infinispan.commons.equivalence.ByteArrayEquivalence;
  */
 public class CommonVariable extends Variable {
 
-    public static CommonVariable make(Term v1, Term v2) {
+    public static CommonVariable make(Variable v1, Variable v2) {
+
+        if (v1 instanceof CommonVariable) {
+            return (CommonVariable)v1; //combine into common common variable
+            //System.out.println(v1 + " " + v2);
+        }
+        if (v2 instanceof CommonVariable) {
+            return (CommonVariable)v2; //combine into common common variable
+            //System.out.println(v1 + " " + v2);
+        }
+
         //TODO use more efficient string construction
         byte[] a = v1.bytes();
         byte[] b = v2.bytes();

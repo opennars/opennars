@@ -8,7 +8,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.event.NARReaction;
-import nars.io.ANSI;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
@@ -714,9 +713,9 @@ abstract public class NAR {
                 String chan = k.toString();
                 if (!chan.equals(previous[0])) {
                     out
-                        .append(ANSI.COLOR_CONFIG)
+                        //.append(ANSI.COLOR_CONFIG)
                         .append(chan)
-                        .append(ANSI.COLOR_RESET )
+                        //.append(ANSI.COLOR_RESET )
                         .append(": ");
                     previous[0] = chan;
                 }

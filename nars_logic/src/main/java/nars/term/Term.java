@@ -189,21 +189,21 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
     default boolean impossibleSubterm(final Term target) {
-        return ((impossibleStructure(target.structure())) ||
+        return ((impossibleToMatch(target.structure())) ||
                 (impossibleSubTermVolume(target.volume())));
     }
     default boolean impossibleSubTermOrEquality(final Term target) {
-        return ((impossibleStructure(target.structure())) ||
+        return ((impossibleToMatch(target.structure())) ||
                 (impossibleSubTermOrEqualityVolume(target.volume())));
     }
 
 
 
-    default boolean impossibleStructure(final Term c) {
-        return impossibleStructure(c.structure());
+    default boolean impossibleToMatch(final Term c) {
+        return impossibleToMatch(c.structure());
     }
 
-    boolean impossibleStructure(final int possibleSubtermStructure);
+    boolean impossibleToMatch(final int possibleSubtermStructure);
 
 
     boolean impossibleSubTermVolume(final int otherTermVolume);

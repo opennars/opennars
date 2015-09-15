@@ -49,6 +49,8 @@ public class Global {
 
 
 
+    public static int UNIFICATION_POWER = 12;
+
     public static int DEFAULT_NAL_LEVEL = 8;
 
     /** use this for advanced error checking, at the expense of lower performance.

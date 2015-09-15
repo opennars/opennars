@@ -63,6 +63,7 @@ public enum TruthFunction {
     },
     Resemblance() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.resemblance(T,B);
         }
     },

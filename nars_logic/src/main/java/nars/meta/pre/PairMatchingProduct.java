@@ -53,8 +53,8 @@ public class PairMatchingProduct extends ProductN {
     }
 
     public final boolean substitutesMayExist(final PairMatchingProduct pattern) {
-        return substitutesMayExistParanoid(pattern);
-        //return substitutesMayExistFast(pattern);
+        //return substitutesMayExistParanoid(pattern);
+        return substitutesMayExistFast(pattern);
     }
 
     public final boolean substitutesMayExistParanoid(final PairMatchingProduct pattern) {
@@ -63,8 +63,16 @@ public class PairMatchingProduct extends ProductN {
     }
 
     public final boolean substitutesMayExistFast(final PairMatchingProduct pattern) {
-        if (impossibleStructure(pattern.structure()))
+        //the pattern structure will include a Product
+        if (impossibleToMatch(pattern.structure())) {
+//            System.out.println(
+//                "impossible? " +
+//                        Integer.toBinaryString(structure()) + " " + this +
+//                        Integer.toBinaryString(pattern.structure()) + " " + pattern
+//            );
+
             return false;
+        }
 
         if (volume() < pattern.volume())
             return false;
@@ -76,10 +84,10 @@ public class PairMatchingProduct extends ProductN {
             return false;
 
         final Term c = term[0];
-        if (c.impossibleStructure(pattern.structureA)) return false;
+        if (c.impossibleToMatch(pattern.structureA)) return false;
 
         final Term d = term[1];
-        if (d.impossibleStructure(pattern.structureB)) return false;
+        if (d.impossibleToMatch(pattern.structureB)) return false;
 
         return true;
     }

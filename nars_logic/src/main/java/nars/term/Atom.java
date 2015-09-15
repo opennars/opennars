@@ -371,7 +371,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
         rehash();
     }
 
-    @Override public final boolean impossibleStructure(int possibleSubtermStructure) {
+    @Override public final boolean impossibleToMatch(int possibleSubtermStructure) {
         /*
         for atomic terms, there will be only one
         bit set in this (for the operator). if it does not equal

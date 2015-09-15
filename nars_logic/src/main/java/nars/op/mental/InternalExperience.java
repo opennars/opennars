@@ -249,7 +249,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
             dur *= INTERNAL_EXPERIENCE_DURABILITY_MUL;
         }
 
-        return nal.deriveSingle(
+        return nal.derive(
                 nal.newTask(ret).judgment()
                         .parent(full ? null : task, nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)

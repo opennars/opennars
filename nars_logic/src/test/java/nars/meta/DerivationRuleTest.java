@@ -2,6 +2,7 @@ package nars.meta;
 
 import junit.framework.TestCase;
 import nars.narsese.NarseseParser;
+import nars.term.Terms;
 import org.junit.Test;
 
 /**
@@ -24,6 +25,14 @@ public class DerivationRuleTest extends TestCase {
         assertNotNull("metaparser can is a superset of narsese", p.termRaw("<A --> b>"));
 
         //
+
+        assertEquals(0, p.term("#A").complexity());
+        assertEquals(1, p.term("#A").volume());
+        assertEquals(0, p.term("%A").complexity());
+        assertEquals(1, p.term("%A").volume());
+
+        assertEquals(3, p.term("<A --> B>").complexity());
+        assertEquals(1, p.term("<%A --> %B>").complexity());
 
         {
             TaskRule x = p.termRaw("< A, A |- A, (Truth:Revision, Desire:Weak)>");
@@ -78,13 +87,21 @@ public class DerivationRuleTest extends TestCase {
 
 
         TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
-        assertEquals("((<%S --> %P>, (--,%S)), (<%P --> %S>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
-        assertEquals(18, y.volume());
+        y = y.normalizeRule();
+        Terms.printRecursive(y);
+
+        assertEquals("((<%1 --> %2>, (--,%1)), (<%2 --> %1>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
         assertEquals(13, y.complexity());
+        assertEquals(18, y.volume());
 
 
     }
 
+
+    @Test public void printTermRecursive() {
+        TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
+        Terms.printRecursive(y);
+    }
 
     @Test public void testRangeTerm() {
         NarseseParser p = NarseseParser.the();

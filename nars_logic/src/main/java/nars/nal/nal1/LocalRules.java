@@ -24,7 +24,6 @@ import com.gs.collections.impl.tuple.Tuples;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.TemporalRules;
@@ -32,13 +31,10 @@ import nars.premise.Premise;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
-import nars.term.Statement;
 import nars.term.Term;
 import nars.term.Variables;
-import nars.truth.AnalyticTruth;
 import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -115,8 +111,8 @@ public class LocalRules {
                         .punctuation(newBelief.getPunctuation())
                         .truth(truth)
                         .budget(budget)
-                        .parent(newBelief),
-                true);
+                        .parent(newBelief)
+                );
 
         if (revised != null)
             nal.memory().logic.BELIEF_REVISION.hit();
@@ -150,7 +146,7 @@ public class LocalRules {
                                 //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
                                 //Arrays.toString(oldBelief.getEvidentialSet())
                         )
-                    ,true).normalized(); //.normalized();
+                    ).normalized(); //.normalized();
 
         if (revised != null) {
             nal.memory().logic.BELIEF_REVISION.hit();
@@ -337,112 +333,112 @@ public class LocalRules {
 //        }
 //    }
 
-    /* -------------------- two-premise logic rules -------------------- */
-
-    /**
-     * {<S <-> P>, <P --> S>} |- <S --> P> Produce an Inheritance/Implication
-     * from a Similarity/Equivalence and a reversed Inheritance/Implication
-     *
-     * @param asym The asymmetric premise
-     * @param sym  The symmetric premise
-     * @param p  Reference to the memory
-     */
-    private static Task inferToAsym(Task asym, Task sym, Premise p) {
-        TaskSeed s = p.newDoublePremise(asym, sym);
-        if (s == null)
-            return null;
-
-        Statement statement = (Statement) asym.getTerm();
-        Term sub = statement.getPredicate();
-        Term pre = statement.getSubject();
-
-        Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
-        if (content == null) return null;
-
-        Truth truth = TruthFunctions.reduceConjunction(sym.getTruth(), asym.getTruth());
-
-
-            return p.deriveDouble(
-                    s.term(content)
-                            .punctuation(asym.getPunctuation())
-                            .truth(truth)
-                            .budget(BudgetFunctions.forward(truth, p)),
-                    false);
-
-
-
-    }
-
-    /* -------------------- one-premise logic rules -------------------- */
-
-    /**
-     * {<P --> S>} |- <S --> P> Produce an Inheritance/Implication from a
-     * reversed Inheritance/Implication
-     *
-     * @param p Reference to the memory
-     */
-    private static Task conversion(final Premise p) {
-        Truth truth = TruthFunctions.conversion(p.getBelief().getTruth());
-        Budget budget = BudgetFunctions.forward(truth, p);
-        return convertedJudgment(truth, budget, p);
-    }
-
-    /**
-     * {<S --> P>} |- <S <-> P> {<S <-> P>} |- <S --> P> Switch between
-     * Inheritance/Implication and Similarity/Equivalence
-     *
-     * @param p Reference to the memory
-     */
-    private static Task convertRelation(final Premise p) {
-        final Truth beliefTruth = p.getBelief().getTruth();
-        final AnalyticTruth truth;
-        if ((p.getTask().getTerm()).isCommutative()) {
-            truth = TruthFunctions.abduction(beliefTruth, 1.0f);
-        } else {
-            truth = TruthFunctions.deduction(beliefTruth, 1.0f);
-        }
-        if (truth != null) {
-            Budget budget = BudgetFunctions.forward(truth, p);
-            return convertedJudgment(truth, budget, p);
-        }
-        return null;
-    }
-
-    /**
-     * Convert judgment into different relation
-     * <p>
-     * called in MatchingRules
-     *
-     * @param budget The budget value of the new task
-     * @param truth  The truth value of the new task
-     * @param p    Reference to the memory
-     */
-    private static Task convertedJudgment(final Truth newTruth, final Budget newBudget, final Premise p) {
-        Statement content = (Statement) p.getTask().getTerm();
-        Statement beliefContent = (Statement) p.getBelief().getTerm();
-        int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
-        final Term subjT = content.getSubject();
-        final Term predT = content.getPredicate();
-        final Term subjB = beliefContent.getSubject();
-        final Term predB = beliefContent.getPredicate();
-        Term otherTerm;
-
-        if (subjT.hasVarQuery() && predT.hasVarQuery()) {
-            //System.err.println("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
-            //throw new RuntimeException("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
-        } else if (subjT.hasVarQuery()) {
-            otherTerm = (predT.equals(subjB)) ? predB : subjB;
-            content = Statement.make(content, otherTerm, predT, order);
-        } else if (predT.hasVarQuery()) {
-            otherTerm = (subjT.equals(subjB)) ? predB : subjB;
-            content = Statement.make(content, subjT, otherTerm, order);
-        }
-
-        if (content != null)
-            return p.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
-
-        return null;
-    }
+//    /* -------------------- two-premise logic rules -------------------- */
+//
+//    /**
+//     * {<S <-> P>, <P --> S>} |- <S --> P> Produce an Inheritance/Implication
+//     * from a Similarity/Equivalence and a reversed Inheritance/Implication
+//     *
+//     * @param asym The asymmetric premise
+//     * @param sym  The symmetric premise
+//     * @param p  Reference to the memory
+//     */
+//    private static Task inferToAsym(Task asym, Task sym, Premise p) {
+//        TaskSeed s = p.newDoublePremise(asym, sym);
+//        if (s == null)
+//            return null;
+//
+//        Statement statement = (Statement) asym.getTerm();
+//        Term sub = statement.getPredicate();
+//        Term pre = statement.getSubject();
+//
+//        Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
+//        if (content == null) return null;
+//
+//        Truth truth = TruthFunctions.reduceConjunction(sym.getTruth(), asym.getTruth());
+//
+//
+//            return p.deriveDouble(
+//                    s.term(content)
+//                            .punctuation(asym.getPunctuation())
+//                            .truth(truth)
+//                            .budget(BudgetFunctions.forward(truth, p)),
+//                    false);
+//
+//
+//
+//    }
+//
+//    /* -------------------- one-premise logic rules -------------------- */
+//
+//    /**
+//     * {<P --> S>} |- <S --> P> Produce an Inheritance/Implication from a
+//     * reversed Inheritance/Implication
+//     *
+//     * @param p Reference to the memory
+//     */
+//    private static Task conversion(final Premise p) {
+//        Truth truth = TruthFunctions.conversion(p.getBelief().getTruth());
+//        Budget budget = BudgetFunctions.forward(truth, p);
+//        return convertedJudgment(truth, budget, p);
+//    }
+//
+//    /**
+//     * {<S --> P>} |- <S <-> P> {<S <-> P>} |- <S --> P> Switch between
+//     * Inheritance/Implication and Similarity/Equivalence
+//     *
+//     * @param p Reference to the memory
+//     */
+//    private static Task convertRelation(final Premise p) {
+//        final Truth beliefTruth = p.getBelief().getTruth();
+//        final AnalyticTruth truth;
+//        if ((p.getTask().getTerm()).isCommutative()) {
+//            truth = TruthFunctions.abduction(beliefTruth, 1.0f);
+//        } else {
+//            truth = TruthFunctions.deduction(beliefTruth, 1.0f);
+//        }
+//        if (truth != null) {
+//            Budget budget = BudgetFunctions.forward(truth, p);
+//            return convertedJudgment(truth, budget, p);
+//        }
+//        return null;
+//    }
+//
+//    /**
+//     * Convert judgment into different relation
+//     * <p>
+//     * called in MatchingRules
+//     *
+//     * @param budget The budget value of the new task
+//     * @param truth  The truth value of the new task
+//     * @param p    Reference to the memory
+//     */
+//    private static Task convertedJudgment(final Truth newTruth, final Budget newBudget, final Premise p) {
+//        Statement content = (Statement) p.getTask().getTerm();
+//        Statement beliefContent = (Statement) p.getBelief().getTerm();
+//        int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
+//        final Term subjT = content.getSubject();
+//        final Term predT = content.getPredicate();
+//        final Term subjB = beliefContent.getSubject();
+//        final Term predB = beliefContent.getPredicate();
+//        Term otherTerm;
+//
+//        if (subjT.hasVarQuery() && predT.hasVarQuery()) {
+//            //System.err.println("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
+//            //throw new RuntimeException("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
+//        } else if (subjT.hasVarQuery()) {
+//            otherTerm = (predT.equals(subjB)) ? predB : subjB;
+//            content = Statement.make(content, otherTerm, predT, order);
+//        } else if (predT.hasVarQuery()) {
+//            otherTerm = (subjT.equals(subjB)) ? predB : subjB;
+//            content = Statement.make(content, subjT, otherTerm, order);
+//        }
+//
+//        if (content != null)
+//            return p.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
+//
+//        return null;
+//    }
 
 
 }

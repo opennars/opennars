@@ -22,7 +22,7 @@ public class FindSubst {
         this(type, null, null, random);
     }
 
-    public FindSubst(Op type, Map<Term,Term> map1, Map<Term,Term> map2, Random random) {
+    public FindSubst(Op type, Map<Term, Term> map1, Map<Term, Term> map2, Random random) {
         if (map1 == null)
             map1 = Global.newHashMap(0);
         if (map2 == null)
@@ -58,58 +58,56 @@ public class FindSubst {
     /**
      * recursess into the next sublevel of the term
      */
-    public boolean next(Term term1, Term term2) {
+    public boolean next(final Term term1, final Term term2, int power) {
+
+        if (power <= 0)
+            return false;
 
         final Op type = this.type;
 
-        do {
 
-            final Op op1 = term1.op();
-            final Op op2 = term2.op();
+        final Op op1 = term1.op();
+        final Op op2 = term2.op();
 
-            final boolean termsEqual = term1.equals(term2);
+        final boolean termsEqual = term1.equals(term2);
 
-            if (op1.isVar() && op2.isVar() && termsEqual) {
-                return true;
+        if (op1.isVar() && op2.isVar() && termsEqual) {
+            return true;
+        }
+
+        if (op1 == type) {
+
+            final Term t = map1.get(term1);
+
+            if (t != null) {
+                //RECURSE, ie: return next(t, term2);
+                return next(t, term2, power-1);
             }
 
-            if (op1 == type) {
+            return nextTerm1Var(
+                    (Variable) term1,
+                    term2
+            );
 
-                final Term t = map1.get(term1);
+        } else if (op2 == type) {
 
-                if (t != null) {
-                    //RECURSE, ie: return next(t, term2);
-                    term1 = t; /*term2 = term2;*/
-                    continue;
-                }
+            final Term t = map2.get(term2);
 
-                return nextTerm1Var(
-                        (Variable)term1,
-                        term2
-                );
 
-            } else if (op2 == type) {
 
-                final Term t = map2.get(term2);
-
-                if (t != null) {
-                    //RECURSE, ie: return next(term1, t);
-                    term2 = t; /* term1 = term1 */
-                    continue;
-                }
-
-                put2To1(term1, (Variable)term2);
-                return true;
-
-            } else if ((op1 == op2) && (term1 instanceof Compound) && (term1.hasVar(type) || term2.hasVar(type))) {
-                return recurseAndPermute((Compound) term1, (Compound) term2);
+            if (t != null) {
+                //RECURSE, ie: return next(term1, t);
+                return next(term1, t, power-1);
             }
 
-            return termsEqual;
+            put2To1(term1, (Variable) term2);
+            return true;
 
-        } while (true);
+        } else if ((op1 == op2) && (term1 instanceof Compound) && (term1.hasVar(type) || term2.hasVar(type))) {
+            return recurseAndPermute((Compound) term1, (Compound) term2, power);
+        }
 
-
+        return termsEqual;
 
 
         //throw new RuntimeException("substitution escape");
@@ -122,8 +120,7 @@ public class FindSubst {
         if (term2 instanceof Variable) {
             term2Var = (Variable) term2;
             op2 = term2Var.op;
-        }
-        else
+        } else
             term2Var = null;
 
         if ((term2Var != null) && (op2 == type)) {
@@ -139,7 +136,10 @@ public class FindSubst {
         return true;
     }
 
-    protected boolean recurseAndPermute(final Compound term1, final Compound term2) {
+    /**
+     * term1 and term2 are of the same operator type and length (arity)
+     */
+    protected boolean recurseAndPermute(final Compound term1, final Compound term2, final int power) {
 
         final Compound cTerm1 = term1;
         final Compound cTerm2 = term2;
@@ -156,27 +156,29 @@ public class FindSubst {
 
         if (cTerm1.isCommutative() && c1Len > 1) {
 
-            switch(c1Len) {
+            switch (c1Len) {
                 case 2:
-                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2);
+                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2, power);
                 case 3:
-                    return permute3(cTerm1.term, cTerm2);
+                    return permute3(cTerm1.term, cTerm2, power);
                 default:
-                    return permuteN(cTerm1, cTerm2);
+                    return permuteN(cTerm1, cTerm2, power);
             }
         }
 
-        return matchAll(cTerm2, cTerm1.term);
+        return matchAll(cTerm2, cTerm1.term, power);
     }
 
-    boolean permuteN(final Compound cTerm1, final Compound cTerm2) {
+    boolean permuteN(final Compound cTerm1, final Compound cTerm2, int power) {
         Term[] list = cTerm1.cloneTerms();
         Compound.shuffle(list, random);
-        return matchAll(cTerm2, list);
+        return matchAll(cTerm2, list, power-1);
     }
 
 
-    /** //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3 */
+    /**
+     * //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
+     */
     static protected boolean queryVarMatch(final Op term1Var, final Op term2Var) {
 
         final boolean t1Query = (term1Var == Op.VAR_QUERY);
@@ -185,7 +187,9 @@ public class FindSubst {
         return (t1Query ^ t2Query);
     }
 
-    /** elimination */
+    /**
+     * elimination
+     */
     private final void put2To1(final Term term1, final Variable term2Var) {
         if (term2Var instanceof CommonVariable) {
             map1.put(term2Var, term1);
@@ -193,7 +197,9 @@ public class FindSubst {
         map2.put(term2Var, term1);
     }
 
-    /** elimination */
+    /**
+     * elimination
+     */
     private final void put1To2(final Term term2, final Variable term1Var) {
         map1.put(term1Var, term2);
         if (term1Var instanceof CommonVariable) {
@@ -201,21 +207,14 @@ public class FindSubst {
         }
     }
 
-    /**
-     * unification.
-     *
-     * override this to disable common variables.
-     * for example, it may be required to default to variable a
-     * (Term 1 if it is a variable and of the target type)
-     * instead of a new common variable.
-     * */
+
     protected final void putCommon(final Variable a, final Variable b) {
         final Variable commonVar = CommonVariable.make(a, b);
         map1.put(a, commonVar);
         map2.put(b, commonVar);
     }
 
-    private boolean permute3(final Term[] c3, final Compound cTerm2) {
+    private boolean permute3(final Term[] c3, final Compound cTerm2, int power) {
         int order = random.nextInt(6);
         final Term a = c3[0];
         final Term b = c3[1];
@@ -226,14 +225,40 @@ public class FindSubst {
         boolean solved;
         do {
             switch (order) {
-                case 0: list[0] = a; list[1] = b; list[2] = c; break;
-                case 1: list[0] = a; list[1] = c; list[2] = b; break;
-                case 2: list[0] = b; list[1] = a; list[2] = c; break;
-                case 3: list[0] = b; list[1] = c; list[2] = a; break;
-                case 4: list[0] = c; list[1] = a; list[2] = b; break;
-                case 5: list[0] = c; list[1] = b; list[2] = a; break;
+                case 0:
+                    list[0] = a;
+                    list[1] = b;
+                    list[2] = c;
+                    break;
+                case 1:
+                    list[0] = a;
+                    list[1] = c;
+                    list[2] = b;
+                    break;
+                case 2:
+                    list[0] = b;
+                    list[1] = a;
+                    list[2] = c;
+                    break;
+                case 3:
+                    list[0] = b;
+                    list[1] = c;
+                    list[2] = a;
+                    break;
+                case 4:
+                    list[0] = c;
+                    list[1] = a;
+                    list[2] = b;
+                    break;
+                case 5:
+                    list[0] = c;
+                    list[1] = b;
+                    list[2] = a;
+                    break;
+                default:
+                    throw new RuntimeException("invalid permutation");
             }
-            solved = matchAll(cTerm2, list);
+            solved = matchAll(cTerm2, list, --power);
             order = (order + 1) % 6;
             tries++;
         } while (tries < maxTries && !solved);
@@ -243,7 +268,7 @@ public class FindSubst {
         return solved;
     }
 
-    private boolean permute2(final Term cTerm1_0, final Term cTerm1_1, final Compound cTerm2) {
+    private boolean permute2(final Term cTerm1_0, final Term cTerm1_1, final Compound cTerm2, int power) {
         Term[] list = new Term[2];
         boolean order = random.nextBoolean();
         int tries = 0;
@@ -257,7 +282,7 @@ public class FindSubst {
                 list[1] = cTerm1_0;
             }
             order = !order;
-            solved = matchAll(cTerm2, list);
+            solved = matchAll(cTerm2, list, --power);
             tries++;
         } while (tries < 2 && !solved);
 
@@ -272,11 +297,11 @@ public class FindSubst {
     /**
      * a branch for comparing a particular permutation, called from the main next()
      */
-    final protected boolean matchAll(final Compound x, final Term[] t) {
+    final protected boolean matchAll(final Compound x, final Term[] t, int power) {
         final Term X[] = x.term;
         final int tlen = t.length;
         for (int i = 0; i < tlen; i++) {
-            final boolean r = next(t[i], X[i]);
+            final boolean r = next(t[i], X[i], power-1);
             if (!r) {
                 return false;
             }

@@ -228,11 +228,11 @@ public class RuleMatch extends FindSubst {
                 //t.log(premise + "," + rule);
             }
 
-            Task tt;
+
             if (!single) {
-                tt = premise.deriveDouble(t.parent(task,belief));
+                premise.derive(t.parent(task,belief));
             } else {
-                tt = premise.deriveSingle(t.parent(task));
+                premise.derive(t.parent(task));
             }
 
 

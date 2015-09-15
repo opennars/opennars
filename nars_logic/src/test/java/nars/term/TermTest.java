@@ -18,7 +18,6 @@ package nars.term;
 
 import nars.Global;
 import nars.NAR;
-import nars.Op;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
@@ -256,7 +255,7 @@ public class TermTest {
         }
 
 
-        Term s = Statement.make(Op.INHERITANCE, subj, pred, false, 0);
+        Term s = Inheritance.make(subj, pred);
         assertEquals(null, s);
 
 
@@ -479,8 +478,8 @@ public class TermTest {
         Compound a = testStructure("<<a --> b> </> c>", "100000000000000000001000001");
         Compound b = testStructure("<<$a --> #b> </> ?c>", "100000000000000000001001110");
 
-        assertTrue( a.impossibleStructure(b) );
-        assertFalse( a.impossibleStructure(a3));
+        assertTrue( a.impossibleToMatch(b) );
+        assertFalse( a.impossibleToMatch(a3));
 
 
         assertEquals("no additional structure code in upper bits",
@@ -544,7 +543,7 @@ public class TermTest {
                 )
         );
         assertTrue(
-                n.term("<a --> b>").impossibleStructure(
+                n.term("<a --> b>").impossibleToMatch(
                         n.term("<a-->#b>")
                 )
         );

@@ -123,7 +123,7 @@ public class NarseseParserExtendedTest  {
         NarseseParser p = NarseseParser.the();
         Term a = p.term("{ a:x, b:{x,y} }");
         assertNotNull(a);
-        assertEquals("{<x --> a>, <{x, y} --> b>}", a.toString());
+        assertEquals("{<{x, y} --> b>, <x --> a>}", a.toString());
 
     }
 

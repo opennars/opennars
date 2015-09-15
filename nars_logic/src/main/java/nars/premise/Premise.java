@@ -1,14 +1,11 @@
 package nars.premise;
 
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
-import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
@@ -16,7 +13,6 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
 import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +52,9 @@ public interface Premise {
 //    }
 
 
-    /** curent maximum allowed NAL level the reasoner is configured to support */
+    /**
+     * curent maximum allowed NAL level the reasoner is configured to support
+     */
     default public int nal() {
         return nar().nal();
     }
@@ -69,8 +67,6 @@ public interface Premise {
     }
 
 
-
-
     default public float conceptPriority(Term target, float valueForMissing) {
         return memory().conceptPriority(target, valueForMissing);
     }
@@ -78,7 +74,6 @@ public interface Premise {
     default Memory memory() {
         return nar().memory();
     }
-
 
 
     default public Term self() {
@@ -89,7 +84,6 @@ public interface Premise {
     default public Random getRandom() {
         return memory().random;
     }
-
 
 
     /**
@@ -153,7 +147,9 @@ public interface Premise {
 
     }
 
-    default public int duration() { return memory().duration(); }
+    default public int duration() {
+        return memory().duration();
+    }
 
     default public AbstractInterval newInterval(final long cycles) {
         //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
@@ -166,7 +162,6 @@ public interface Premise {
     /* --------------- new task building --------------- */
 
 
-
     default public <T extends Compound> TaskSeed newTask(final T term) {
         return TaskSeed.make(nar().memory(), term);
     }
@@ -176,10 +171,11 @@ public interface Premise {
     }
 
 
-    /** queues a derivation during a reasoning process.
-     * this is in order to combine duplicates at the end before inputting to memory */
+    /**
+     * queues a derivation during a reasoning process.
+     * this is in order to combine duplicates at the end before inputting to memory
+     */
     void accept(Task derivedTask);
-
 
 
     /**
@@ -216,22 +212,7 @@ public interface Premise {
 
 
 
-    default public Task derive(final Task task) {
-        return derive(task, false);
-    }
 
-    default public Task derive(final Task task, final boolean revised) {
-        return derive(task, revised, !task.isDouble());
-    }
-
-    @Deprecated
-    default public Task derive(final Task task, final boolean revised, final boolean single) {
-        return derive(task, revised, single, false);
-    }
-
-    default public Task deriveDouble(final Task task) {
-        return derive(task, false, false);
-    }
 
 //    /**
 //     * TEMPORARY ADAPTER FOR OLD API
@@ -241,49 +222,49 @@ public interface Premise {
 //        return derive(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
 //    }
 
-
-    default public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
-        return deriveSingle(newContent, punctuation, newTruth, newBudget, 1f, 1f);
-    }
-
-    default public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
-        final Task parentTask = getTask();
-        //final Task grandParentTask = parentTask.getParentTask();
-        /*if (parentTask != null) {
-            final Compound parentTaskTerm = parentTask.getTerm();
-            if (parentTaskTerm == null) {
-                return null;
-            }
-            if (parentTaskTerm.equals(newContent)) {
-                return null;
-            }
-        }*/
-
-        newContent = Sentence.termOrNull(newContent);
-        if (newContent == null)
-            return null;
-
-
-//        final Task ptask;
-//        final Task currentBelief = getBelief();
-//        if (parentTask.isJudgment() || currentBelief == null) {
-//            ptask = parentTask;
-//        } else { //Unspecified cheat we need to get rid of.
-//            // to answer a question with negation in NAL-5 --- move to activated task?
-//            ptask = currentBelief;
-//        }
-
-
-        return deriveSingle(newTask(newContent, punctuation)
-                .truth(newTruth)
-                .budget(newBudget, priMult, durMult)
-                .parent(parentTask,null));
-
-    }
-
-    default public Task deriveSingle(Task t) {
-        return derive(t, false, true);
-    }
+//
+//    default public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
+//        return deriveSingle(newContent, punctuation, newTruth, newBudget, 1f, 1f);
+//    }
+//
+//    default public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
+//        final Task parentTask = getTask();
+//        //final Task grandParentTask = parentTask.getParentTask();
+//        /*if (parentTask != null) {
+//            final Compound parentTaskTerm = parentTask.getTerm();
+//            if (parentTaskTerm == null) {
+//                return null;
+//            }
+//            if (parentTaskTerm.equals(newContent)) {
+//                return null;
+//            }
+//        }*/
+//
+//        newContent = Sentence.termOrNull(newContent);
+//        if (newContent == null)
+//            return null;
+//
+//
+////        final Task ptask;
+////        final Task currentBelief = getBelief();
+////        if (parentTask.isJudgment() || currentBelief == null) {
+////            ptask = parentTask;
+////        } else { //Unspecified cheat we need to get rid of.
+////            // to answer a question with negation in NAL-5 --- move to activated task?
+////            ptask = currentBelief;
+////        }
+//
+//
+//        return deriveSingle(newTask(newContent, punctuation)
+//                .truth(newTruth)
+//                .budget(newBudget, priMult, durMult)
+//                .parent(parentTask, null));
+//
+//    }
+//
+//    default public Task deriveSingle(Task t) {
+//        return derive(t, false, true);
+//    }
 
     /**
      * Shared final operations by all double-premise rules, called from the
@@ -295,29 +276,29 @@ public interface Premise {
      */
 
 
-    default public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Task parentBelief, final boolean temporalAdd, boolean allowOverlap) {
+//    default public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Task parentBelief, final boolean temporalAdd, boolean allowOverlap) {
+//
+//
+//        newTaskContent = Sentence.termOrNull(newTaskContent);
+//        if (newTaskContent == null)
+//            return null;
+//
+//        if ((parentTask == null) || (parentBelief == null))
+//            throw new RuntimeException("should not derive doublePremiseTask with non-double Stamp");
+//
+//        TaskSeed task = newTask(newTaskContent)
+//                .punctuation(punctuation)
+//                .truth(newTruth)
+//                .parent(parentTask, parentBelief)
+//                .temporalInductable(!temporalAdd)
+//                .budget(newBudget);
+//
+//        return deriveDouble(task, allowOverlap);
+//    }
 
-
-        newTaskContent = Sentence.termOrNull(newTaskContent);
-        if (newTaskContent == null)
-            return null;
-
-        if ((parentTask == null) || (parentBelief == null))
-            throw new RuntimeException("should not derive doublePremiseTask with non-double Stamp");
-
-        TaskSeed task = newTask(newTaskContent)
-                .punctuation(punctuation)
-                .truth(newTruth)
-                .parent(parentTask, parentBelief)
-                .temporalInductable(!temporalAdd)
-                .budget(newBudget);
-
-        return deriveDouble(task, allowOverlap);
-    }
-
-    default public Task deriveDouble(TaskSeed task, boolean allowOverlap) {
-        return derive(task, false, false, allowOverlap);
-    }
+//    default public Task deriveDouble(TaskSeed task, boolean allowOverlap) {
+//        return derive(task, false, false);
+//    }
 
 
     /**
@@ -331,7 +312,7 @@ public interface Premise {
      * <p>
      * if solution is false, it means it is a derivation
      */
-    default Task validDerivation(Task task, boolean allowOverlap, @Deprecated boolean solution, boolean revised, boolean singleOrDouble) {
+    default Task validDerivation(Task task) {
 
         final Memory memory = nar().memory();
 
@@ -343,9 +324,6 @@ public interface Premise {
             throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
         }
 
-        if (singleOrDouble && !task.isSingle()) {
-            throw new RuntimeException((singleOrDouble ? "singleOrDouble" : "double") + " premise not consistent with Stamp on derived task: " + task);
-        }
 
         if (task.isJudgmentOrGoal() && task.getConfidence() < DefaultTruth.DEFAULT_TRUTH_EPSILON) {
             memory.remove(task, "Insufficient confidence");
@@ -357,47 +335,6 @@ public interface Premise {
             memory.remove(task, "Insufficient NAL level");
             return null;
         }
-
-        task = task.normalized();
-        if (task == null) return null;
-
-
-
-        /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain
-        {
-            //if revised, the stamp should already have been prevented from even being created
-
-//            if (!task.isInput()) {
-//                if (!Global.OVERLAP_ALLOW && (!allowOverlap || revised)) {
-//
-//                    //if this is a single derivation, newly cyclic
-//                    //tasks are allowed as long as
-//                    //its parent is not cyclic
-//
-//                    boolean cyclic = task.isCyclic();
-////                    if (singleOrDouble) {
-////                        final Task parentTask = task.getParentTask();
-////
-////                        //THIS IS A HACK because Cyclic flag isnt semantically correct yet
-////                        if (cyclic && parentTask!=null) {
-////                            if /*(!task.getTerm().equals(parentTask.getTerm())
-////                                    &&*/
-////                                    (!parentTask.isCyclic())
-////                                cyclic = false;
-////                        }
-////                    }
-//
-//
-//                    if (cyclic) {
-//                        //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
-//                        //re.printStackTrace();
-//                        nar().memory().remove(task, "Cyclic");
-//                        return null;
-//                    }
-//                }
-//            }
-        }
-
 
         if (nal(7)) {
             //adjust occurence time
@@ -414,20 +351,12 @@ public interface Premise {
         } else {
             if (task.isTimeless()) {
                 task.setEternal();
-            }
-            else if (!task.isEternal()) {
+            } else if (!task.isEternal()) {
                 throw new RuntimeException("non-eternal Task derived in non-temporal mode");
             }
         }
 
-        task = task.normalized();
-        if (task == null) return null;
-
-
-
-
-
-        return task; //valid
+        return task.normalized();
     }
 
 
@@ -518,77 +447,28 @@ public interface Premise {
 
     /**
      * iived task comes from the logic rules.
-     *  @param task         the derived task
+     *
      * @param allowOverlap
+     * @param task         the derived task
      */
-    @Deprecated
-    default public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, boolean allowOverlap) {
-
+    default public Task derive(final Task task) {
 
         final Memory memory = memory();
 
-        //TODO balance budget on input; original task + immediate eternalization budget should be shared
-
-
-        if (null != validDerivation(task, allowOverlap, false, revised, single)) {
-
-            //taskCreated.setTemporalInducting(false);
-
-            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                task.log(System.nanoTime() + " " + this.toString());
-            }
-
-            //task.log("Derived");
-
-            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                task.log(Premise.getStack());
-            }
-
-            accept(task);
-
-            memory.eventDerived.emit(task);
-
-            memory.logic.TASK_DERIVED.hit();
-
-            if (nal(7) && !task.isEternal()) {
-                /*if (task.getOccurrenceTime() > time()) {
-                    emit(Events.TaskDeriveFuture.class, task, this);
-                }*/
-
-
-//                //TODO move this to ImmediateEternalization.java handler that reacts to TaskDeriveTemporal (to prune reacting to Eternal events)
-//
-//                //TODO budget and/or confidence thresholds
-//
-//
-//                //"Since in principle it is always valid to eternalize a tensed belief"
-//                if (Global.IMMEDIATE_ETERNALIZATION /*&& task.temporalInductable()*/) {
-//                    //temporal induction generated ones get eternalized directly
-//                    /*Task eternalized = derived.cloneEternal();
-//
-//                    eternalized.mulPriority(0.25f);
-//                    eternalized.log("ImmediateEternalize");
-//                    memory.taskAdd(eternalized);*/
-//
-//                    derive(
-//                            newTask(derived.getTerm())
-//                                    .punctuation(derived.getPunctuation())
-//                                    .truth(TruthFunctions.eternalize(derived.getTruth()))
-//                                    .parent(derived)
-//
-//                                    .budget(derived)
-//                                            //.budget(derived, 0.25f, 1f) //TODO scale eternalized
-//
-//                                    .eternal(),
-//                            false);
-//                }
-            }
-
-            return task;
+        if (null == validDerivation(task)) {
+            return null;
         }
 
+        //taskCreated.setTemporalInducting(false);
 
-        return null;
+
+        accept(task);
+
+        memory.eventDerived.emit(task);
+
+        memory.logic.TASK_DERIVED.hit();
+
+        return task;
     }
 
     default Concept concept(Term x) {
@@ -596,14 +476,14 @@ public interface Premise {
     }
 
     default boolean isEvent() {
-        return (!getTask().isEternal() && (getBelief()!=null && !getBelief().isEternal()));
+        return (!getTask().isEternal() && (getBelief() != null && !getBelief().isEternal()));
     }
 
     //TODO cache this value
     default boolean isCyclic() {
         Task t = getTask();
         Task b = getBelief();
-        if (b!=null) {
+        if (b != null) {
             return Stamp.overlapping(t, b);
         }
         return false;

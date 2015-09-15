@@ -1,5 +1,6 @@
 package nars.meta.pre;
 
+import nars.Global;
 import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
@@ -52,7 +53,8 @@ public class MatchTaskBeliefPattern extends PreCondition {
     }
 
     final protected boolean subst(final RuleMatch m, final PairMatchingProduct t) {
-        return m.next(pattern, t);
+        //TODO parameterize the power by budget
+        return m.next(pattern, t, Global.UNIFICATION_POWER);
     }
 
     @Override
