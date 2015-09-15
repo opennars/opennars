@@ -40,23 +40,16 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.filter.DerivationFilter;
-import nars.task.filter.FilterBelowConfidence;
-import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
-import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 import org.apache.commons.lang3.mutable.MutableInt;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
@@ -304,19 +297,19 @@ public class Default extends NAR {
         return core;
     }
 
-    static String readFile(String path, Charset encoding)
-            throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, encoding);
-    }
+//    static String readFile(String path, Charset encoding)
+//            throws IOException {
+//        byte[] encoded = Files.readAllBytes(Paths.get(path));
+//        return new String(encoded, encoding);
+//    }
 
-    protected DerivationFilter[] getDerivationFilters() {
-        return new DerivationFilter[]{
-                new FilterBelowConfidence(0.01),
-                new FilterDuplicateExistingBelief()
-                //param.getDefaultDerivationFilters().add(new BeRational());
-        };
-    }
+//    protected DerivationFilter[] getDerivationFilters() {
+//        return new DerivationFilter[]{
+//                new FilterBelowConfidence(0.01),
+//                new FilterDuplicateExistingBelief()
+//                //param.getDefaultDerivationFilters().add(new BeRational());
+//        };
+//    }
 
     public Default nal(int maxNALlevel) {
         this.maxNALLevel = maxNALlevel;
@@ -482,7 +475,7 @@ public class Default extends NAR {
         /** concepts active in this cycle */
         private final Bag<Term, Concept> active;
 
-        private final DefaultTopic.On onInput;
+        private final On onInput;
 
         private final NAR nar;
 
@@ -623,54 +616,54 @@ public class Default extends NAR {
         }
     }
 
-    @Deprecated
-    public static class CommandLineNARBuilder extends Default {
-
-        List<String> filesToLoad = new ArrayList();
-
-        public CommandLineNARBuilder(String[] args) {
-            super();
-
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                if ("--silence".equals(arg)) {
-                    arg = args[++i];
-                    int sl = Integer.parseInt(arg);
-                    //outputVolume.set(100 - sl);
-                } else if ("--noise".equals(arg)) {
-                    arg = args[++i];
-                    int sl = Integer.parseInt(arg);
-                    //outputVolume.set(sl);
-                } else {
-                    filesToLoad.add(arg);
-                }
-            }
-
-            for (String x : filesToLoad) {
-                taskNext(() -> {
-                    try {
-                        input(new File(x));
-                    } catch (FileNotFoundException fex) {
-                        System.err.println(getClass() + ": " + fex.toString());
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
-
-                //n.run(1);
-            }
-        }
-
-        /**
-         * Decode the silence level
-         *
-         * @param param Given argument
-         * @return Whether the argument is not the silence level
-         */
-        public static boolean isReallyFile(String param) {
-            return !"--silence".equals(param);
-        }
-    }
+//    @Deprecated
+//    public static class CommandLineNARBuilder extends Default {
+//
+//        List<String> filesToLoad = new ArrayList();
+//
+//        public CommandLineNARBuilder(String[] args) {
+//            super();
+//
+//            for (int i = 0; i < args.length; i++) {
+//                String arg = args[i];
+//                if ("--silence".equals(arg)) {
+//                    arg = args[++i];
+//                    int sl = Integer.parseInt(arg);
+//                    //outputVolume.set(100 - sl);
+//                } else if ("--noise".equals(arg)) {
+//                    arg = args[++i];
+//                    int sl = Integer.parseInt(arg);
+//                    //outputVolume.set(sl);
+//                } else {
+//                    filesToLoad.add(arg);
+//                }
+//            }
+//
+//            for (String x : filesToLoad) {
+//                taskNext(() -> {
+//                    try {
+//                        input(new File(x));
+//                    } catch (FileNotFoundException fex) {
+//                        System.err.println(getClass() + ": " + fex.toString());
+//                    } catch (Exception ex) {
+//                        ex.printStackTrace();
+//                    }
+//                });
+//
+//                //n.run(1);
+//            }
+//        }
+//
+//        /**
+//         * Decode the silence level
+//         *
+//         * @param param Given argument
+//         * @return Whether the argument is not the silence level
+//         */
+//        public static boolean isReallyFile(String param) {
+//            return !"--silence".equals(param);
+//        }
+//    }
 
     private class ConceptBagActivator extends ConceptActivator {
 
@@ -702,8 +695,8 @@ public class Default extends NAR {
 
         }
 
-        public Concept update(Bag<Term,Concept> bag) {
-            return bag.update(this);
-        }
+//        public Concept update(Bag<Term,Concept> bag) {
+//            return bag.update(this);
+//        }
     }
 }

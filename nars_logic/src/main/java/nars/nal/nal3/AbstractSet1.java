@@ -17,4 +17,13 @@ abstract public class AbstractSet1<T extends Term> extends Compound1<T> implemen
     public boolean appendTermOpener() {
         return false;
     }
+
+    @Override
+    public Term[] terms() {
+        return this.term;
+    }
+
+    public final boolean isCommutative() {
+        return true;
+    }
 }

@@ -26,7 +26,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * mapping from key to item
      */
-    public final HeapMap index;
+    private final HeapMap index;
 
     /**
      * array of lists of items, for items on different level
@@ -67,7 +67,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     class HeapMap extends CollectorMap<K, E> {
 
         public HeapMap(int capacity) {
-            super(new CuckooMap(rng, capacity * 1 + 1));
+            super(new CuckooMap(rng, capacity + 1));
         }
 
         public HeapMap(Map<K, E> map) {
@@ -419,7 +419,8 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
             return oldItem;
         } else if (contains) {
             //TODO check this mass calculation
-            E existingToReplace = index.put(i);
+            /*E existingToReplace = */
+            index.put(i);
             mass += i.getPriority();
             return null;
         } else /* if (!contains) */ {

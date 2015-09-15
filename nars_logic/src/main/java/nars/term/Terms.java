@@ -6,19 +6,17 @@ import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal3.Difference;
-import nars.nal.nal3.Intersect;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.ImageInt;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Equivalence;
-import nars.nal.nal5.Implication;
-import nars.nal.nal5.Junction;
 import nars.task.Sentence;
 import nars.util.data.sorted.SortedList;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -86,39 +84,39 @@ public class Terms {
         return true;
     }
 
-    public static Term reduceUntilLayer2(final Compound _itself, Term replacement, Memory memory) {
-        if (_itself == null)
-            return null;
-        
-        Term reduced = reduceComponentOneLayer(_itself, replacement, memory);
-        if (!(reduced instanceof Compound))
-            return null;
-        
-        Compound itself = (Compound)reduced;
-        int j = 0;
-        for (Term t : itself.term) {
-            Term t2 = unwrapNegation(t);
-            if (!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Junction)) {
-                j++;
-                continue;
-            }
-            Term ret2 = reduceComponentOneLayer((Compound) t2, replacement, memory);
-            
-            //CompoundTerm itselfCompound = itself;
-            Term replaced = null;
-            if (j < itself.term.length  )
-                replaced = itself.cloneReplacingSubterm(j, ret2);
-            
-            if (replaced != null) {
-                if (replaced instanceof Compound)
-                    itself = (Compound)replaced;
-                else
-                    return replaced;
-            }
-            j++;
-        }
-        return itself;
-    }
+//    public static Term reduceUntilLayer2(final Compound _itself, Term replacement, Memory memory) {
+//        if (_itself == null)
+//            return null;
+//
+//        Term reduced = reduceComponentOneLayer(_itself, replacement, memory);
+//        if (!(reduced instanceof Compound))
+//            return null;
+//
+//        Compound itself = (Compound)reduced;
+//        int j = 0;
+//        for (Term t : itself.term) {
+//            Term t2 = unwrapNegation(t);
+//            if (!(t2 instanceof Implication) && !(t2 instanceof Equivalence) && !(t2 instanceof Junction)) {
+//                j++;
+//                continue;
+//            }
+//            Term ret2 = reduceComponentOneLayer((Compound) t2, replacement, memory);
+//
+//            //CompoundTerm itselfCompound = itself;
+//            Term replaced = null;
+//            if (j < itself.term.length  )
+//                replaced = itself.cloneReplacingSubterm(j, ret2);
+//
+//            if (replaced != null) {
+//                if (replaced instanceof Compound)
+//                    itself = (Compound)replaced;
+//                else
+//                    return replaced;
+//            }
+//            j++;
+//        }
+//        return itself;
+//    }
     /*
     @Deprecated public static Term make(final String op, final ArrayList<Term> arg, final Memory memory) {
     final int length = op.length();
@@ -168,38 +166,38 @@ public class Terms {
     }
      */
 
-    /**
-     * Try to remove a component from a compound
-     *
-     * @param t1 The compound
-     * @param t2 The component
-     * @param memory Reference to the memory
-     * @return The new compound
-     */
-    public static Term reduceComponents(final Compound t1, final Term t2, final Memory memory) {
-
-        final Term[] list;
-
-        if ((t1.op() == t2.op()))  {
-            list = t1.cloneTermsExcept(true, ((Compound) t2).term);
-        } else {
-            list = t1.cloneTermsExcept(true, t2);
-        }
-
-        if (list == null)
-            return null;
-
-        if (list.length == 1)  {
-            if ((t1 instanceof Junction) || (t1 instanceof Intersect) || (t1 instanceof Difference)) {
-                return list[0];
-            }
-
-        }
-        //else  /*if (list.length > 1)*/ {
-            return Memory.term(t1, list);
-        //}
-
-    }
+//    /**
+//     * Try to remove a component from a compound
+//     *
+//     * @param t1 The compound
+//     * @param t2 The component
+//     * @param memory Reference to the memory
+//     * @return The new compound
+//     */
+//    public static Term reduceComponents(final Compound t1, final Term t2, final Memory memory) {
+//
+//        final Term[] list;
+//
+//        if ((t1.op() == t2.op()))  {
+//            list = t1.cloneTermsExcept(true, ((Compound) t2).term);
+//        } else {
+//            list = t1.cloneTermsExcept(true, t2);
+//        }
+//
+//        if (list == null)
+//            return null;
+//
+//        if (list.length == 1)  {
+//            if ((t1 instanceof Junction) || (t1 instanceof Intersect) || (t1 instanceof Difference)) {
+//                return list[0];
+//            }
+//
+//        }
+//        //else  /*if (list.length > 1)*/ {
+//            return Memory.term(t1, list);
+//        //}
+//
+//    }
 
     public static Term reduceComponentOneLayer(Compound t1, Term t2, Memory memory) {
         Term[] list;
@@ -372,13 +370,13 @@ public class Terms {
         return true;
     }
 
-    public static <T extends Term> boolean containsAll(final Compound container, final T[] content) {
-        for (final T x : content) {
-            if (!container.containsTerm(x))
-                return false;
-        }
-        return true;
-    }
+//    public static <T extends Term> boolean containsAll(final Compound container, final T[] content) {
+//        for (final T x : content) {
+//            if (!container.containsTerm(x))
+//                return false;
+//        }
+//        return true;
+//    }
     
     /** a contains any of b  NOT TESTED YET */
     public static boolean containsAny(Compound<?> a, final Collection<Term> b) {
@@ -445,34 +443,34 @@ public class Terms {
         return s;
     }
 
-    /**
-     * comparison that will match constant terms, allowing variables to match regardless
-     * ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
-     */
-    public static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {
-        Compound bCompound = (b instanceof Compound) ? ((Compound)b) : null;
-        for (Term a : term) {
-            if (a.equals(b)) return true;
-            
-            if ((a instanceof Compound) && (bCompound!=null))  {
-                if (((Compound)a).equalsVariablesAsWildcards(bCompound))
-                        return true;
-            }
-        }
-        return false;
-    }
+//    /**
+//     * comparison that will match constant terms, allowing variables to match regardless
+//     * ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
+//     */
+//    public static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {
+//        Compound bCompound = (b instanceof Compound) ? ((Compound)b) : null;
+//        for (Term a : term) {
+//            if (a.equals(b)) return true;
+//
+//            if ((a instanceof Compound) && (bCompound!=null))  {
+//                if (((Compound)a).equalsVariablesAsWildcards(bCompound))
+//                        return true;
+//            }
+//        }
+//        return false;
+//    }
 
     
-    /** true if any of the terms contains a variable */
-    public static boolean containsVariables(Term... args) {
-        for (Term t : args) {
-            if (t.hasVar())
-                return true;
-        }
-        return false;
-    }
+//    /** true if any of the terms contains a variable */
+//    public static boolean containsVariables(Term... args) {
+//        for (Term t : args) {
+//            if (t.hasVar())
+//                return true;
+//        }
+//        return false;
+//    }
 
-    public static Predicate<? super TaskRule> levelValid(int nalLevel) {
+    public static final Predicate<? super TaskRule> levelValid(int nalLevel) {
         return (t) -> Terms.levelValid(t, nalLevel);
     }
 
@@ -488,53 +486,53 @@ public class Terms {
         return levelValid(t, nal);
     }
 
-    /**
-     * Make a Statement from given components, called by the rules
-     * @return The Statement built
-     * @param subj The first component
-     * @param pred The second component
-     * @param statement A sample statement providing the class type
-     */
-    public static Statement makeStatement(final Statement statement, final Term subj, final Term pred) {
-        if (statement instanceof Inheritance) {
-            return Inheritance.make(subj, pred);
-        }
-        if (statement instanceof Similarity) {
-            return Similarity.make(subj, pred);
-        }
-        if (statement instanceof Implication) {
-            return Implication.make(subj, pred, statement.getTemporalOrder());
-        }
-        if (statement instanceof Equivalence) {
-            return Equivalence.make(subj, pred, statement.getTemporalOrder());
-        }
-        return null;
-    }
+//    /**
+//     * Make a Statement from given components, called by the rules
+//     * @return The Statement built
+//     * @param subj The first component
+//     * @param pred The second component
+//     * @param statement A sample statement providing the class type
+//     */
+//    public static Statement makeStatement(final Statement statement, final Term subj, final Term pred) {
+//        if (statement instanceof Inheritance) {
+//            return Inheritance.make(subj, pred);
+//        }
+//        if (statement instanceof Similarity) {
+//            return Similarity.make(subj, pred);
+//        }
+//        if (statement instanceof Implication) {
+//            return Implication.make(subj, pred, statement.getTemporalOrder());
+//        }
+//        if (statement instanceof Equivalence) {
+//            return Equivalence.make(subj, pred, statement.getTemporalOrder());
+//        }
+//        return null;
+//    }
 
-    /**
-     * Make a symmetric Statement from given term and temporal
- information, called by the rules
-     *
-     * @param statement A sample asymmetric statement providing the class type
-     * @param subj The first component
-     * @param pred The second component
-     * @param order The temporal order
-     * @return The Statement built
-     */
-    final public static Statement makeSymStatement(final Statement statement, final Term subj, final Term pred, final int order) {
-        if (statement instanceof Inheritance) {
-            return Similarity.make(subj, pred);
-        }
-        if (statement instanceof Implication) {
-            return Equivalence.make(subj, pred, order);
-        }
-        return null;
-    }
+//    /**
+//     * Make a symmetric Statement from given term and temporal
+// information, called by the rules
+//     *
+//     * @param statement A sample asymmetric statement providing the class type
+//     * @param subj The first component
+//     * @param pred The second component
+//     * @param order The temporal order
+//     * @return The Statement built
+//     */
+//    final public static Statement makeSymStatement(final Statement statement, final Term subj, final Term pred, final int order) {
+//        if (statement instanceof Inheritance) {
+//            return Similarity.make(subj, pred);
+//        }
+//        if (statement instanceof Implication) {
+//            return Equivalence.make(subj, pred, order);
+//        }
+//        return null;
+//    }
 
-    public static Compound<?> compoundOrNull(Term t) {
-        if (t instanceof Compound) return (Compound)t;
-        return null;
-    }
+//    public static Compound<?> compoundOrNull(Term t) {
+//        if (t instanceof Compound) return (Compound)t;
+//        return null;
+//    }
 
 
     public static Term[] reverse(Term[] arg) {
@@ -547,12 +545,12 @@ public class Terms {
     }
 
 
-    public static TreeSet<Term> toSortedSet(final Term... arg) {
-        //use toSortedSetArray where possible
-        TreeSet<Term> t = new TreeSet();
-        Collections.addAll(t, arg);
-        return t;
-    }
+//    public static TreeSet<Term> toSortedSet(final Term... arg) {
+//        //use toSortedSetArray where possible
+//        TreeSet<Term> t = new TreeSet();
+//        Collections.addAll(t, arg);
+//        return t;
+//    }
 
     public static Term[] toSortedSetArray(final Term... arg) {
         switch (arg.length) {

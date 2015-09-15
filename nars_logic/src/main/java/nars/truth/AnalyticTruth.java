@@ -3,7 +3,7 @@ package nars.truth;
 /**
  * Truth value used to store values when in the 'analytic' state
  */
-public class AnalyticTruth extends AbstractScalarTruth {
+public class AnalyticTruth extends DefaultTruth {
 
 //
 //    /** returns null if the confidence is zero */

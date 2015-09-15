@@ -18,13 +18,11 @@ package nars.narsese;
 
 import com.github.fge.grappa.buffers.CharSequenceInputBuffer;
 import com.github.fge.grappa.buffers.InputBuffer;
-import com.github.fge.grappa.exceptions.GrappaException;
 import com.github.fge.grappa.internal.NonFinalForTesting;
 import com.github.fge.grappa.matchers.base.Matcher;
 import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.run.AbstractParseRunner;
 import com.github.fge.grappa.run.MatchHandler;
-import com.github.fge.grappa.run.ParseRunnerListener;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.DefaultValueStack;
@@ -67,11 +65,11 @@ public class ListeningParseRunner3<V>
         super(rule);
     }
 
-    // TODO: replace with a supplier mechanism
-    public final void registerListener(final ParseRunnerListener<V> listener) {
-        throw new RuntimeException(this + " doesn't involve an unnecessary eventbus because we like to conserve Memory");
-        //bus.register(listener);
-    }
+//    // TODO: replace with a supplier mechanism
+//    public final void registerListener(final ParseRunnerListener<V> listener) {
+//        throw new RuntimeException(this + " doesn't involve an unnecessary eventbus because we like to conserve Memory");
+//        //bus.register(listener);
+//    }
 
     @Override
     public ParsingResult<V> run(final InputBuffer inputBuffer)
@@ -86,9 +84,9 @@ public class ListeningParseRunner3<V>
 //        if (busRun())
 //            bus.post(new PreParseEvent<>(rootContext));
 
-        if (throwable != null)
+        /*if (throwable != null)
             throw new GrappaException("parsing listener error (before parse)",
-                    throwable);
+                    throwable);*/
 
         final boolean matched = rootContext.runMatcher();
         final ParsingResult<V> result
@@ -97,9 +95,9 @@ public class ListeningParseRunner3<V>
 //        if (busRun())
 //            bus.post(new PostParseEvent<>(result));
 
-        if (throwable != null)
+        /*if (throwable != null)
             throw new GrappaException("parsing listener error (after parse)",
-                    throwable);
+                    throwable);*/
 
         return result;
     }
@@ -114,9 +112,9 @@ public class ListeningParseRunner3<V>
 //            bus.post(preMatchEvent);
 //        }
 
-        if (throwable != null)
+        /*if (throwable != null)
             throw new GrappaException("parsing listener error (before match)",
-                    throwable);
+                    throwable);*/
 
         // FIXME: is there any case at all where context.getMatcher() is null?
         @SuppressWarnings("ConstantConditions")
@@ -130,9 +128,9 @@ public class ListeningParseRunner3<V>
 //            bus.post(postMatchEvent);
 //        }
 
-        if (throwable != null)
+        /*if (throwable != null)
             throw new GrappaException("parsing listener error (after match)",
-                    throwable);
+                    throwable);*/
 
 
         return match;
@@ -151,6 +149,6 @@ public class ListeningParseRunner3<V>
         this.stackSnapshot = null;
     }
 
-    public boolean busMatch() { return false; }
-    public boolean busRun() { return false; }
+//    public boolean busMatch() { return false; }
+//    public boolean busRun() { return false; }
 }

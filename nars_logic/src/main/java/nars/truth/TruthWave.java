@@ -94,7 +94,7 @@ public class TruthWave {
 
                 float v = expect[c][i];
 
-                System.out.print(Texts.n2u(v).toString() + ' ');
+                System.out.print(Texts.n2u(v) + ' ');
 
             }
             System.out.println();

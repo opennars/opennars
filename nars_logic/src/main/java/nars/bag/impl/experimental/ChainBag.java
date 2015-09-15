@@ -98,7 +98,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
      */
     public final DDList<V> chain;
 
-    private final float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f; //slightly below half
+    private static final float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f; //slightly below half
     private float estimatedMax = 0.5f;
     private float estimatedMin = 0.5f;
     private float estimatedMean = 0.5f;

@@ -128,9 +128,10 @@ public class NAL1Test extends AbstractNALTest {
     @Test
     public void conversion() throws InvalidInputException {
 
-        long time = /*tester.nal() <= 2 ? 15 :*/ 16;
+        long time = /*tester.nal() <= 2 ? 15 :*/ 32;
         TestNAR test = test();
-        test.believe("<bird --> swimmer>")
+        test.debug()
+                .believe("<bird --> swimmer>")
             .ask("<swimmer --> bird>") //.en("Is swimmer a type of bird?");
             .mustOutput(time, "<swimmer --> bird>. %1.00;0.47%")
             .run();
@@ -173,7 +174,7 @@ public class NAL1Test extends AbstractNALTest {
 
     public void multistepN(int length) {
 
-        new DeductiveChainTest(nar(), length, length * 200)
+        new DeductiveChainTest(nar(), length, length * 300)
                 .run();
 
     }

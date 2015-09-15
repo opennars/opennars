@@ -46,6 +46,8 @@ public class DefaultConcept extends AtomConcept {
     };
 
 
+
+
     final static public Equality<Task> questionEquivalence = new Equality<Task>() {
 
         @Override
@@ -80,6 +82,7 @@ public class DefaultConcept extends AtomConcept {
         final int maxQuestions = memory.conceptQuestionsMax.intValue();
         this.questions = new ArrayListTaskTable(maxQuestions);
         this.quests = new ArrayListTaskTable(maxQuestions);
+
 
     }
 

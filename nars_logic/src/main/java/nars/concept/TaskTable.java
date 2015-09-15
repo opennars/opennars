@@ -1,6 +1,5 @@
 package nars.concept;
 
-import com.google.common.collect.Iterators;
 import javolution.util.function.Equality;
 import nars.task.Task;
 import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
@@ -44,15 +43,6 @@ public interface TaskTable extends Iterable<Task> {
         return null;
     }
 
-    default int inputNum() {
-        return Iterators.size( Iterators.filter(iterator(), t -> t.isInput() ));
-    }
-
-    /** value in 0.,1.0 */
-    default float inputPercent() {
-        if (isEmpty()) return 0;
-        return ((float)inputNum())/size();
-    }
 
     default BivariateGridInterpolator getWaveFrequencyConfidenceTime() {
         return null;

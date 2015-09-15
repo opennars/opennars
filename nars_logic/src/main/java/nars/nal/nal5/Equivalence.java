@@ -121,7 +121,7 @@ public class Equivalence extends Statement {
 
         //Term[] t;
         if (temporalOrder==TemporalRules.ORDER_FORWARD) {
-            //t = new Term[]{subject, predicate};
+            //already in final order
         }
         else {
             int c = subject.compareTo(predicate);

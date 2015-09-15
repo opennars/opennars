@@ -10,7 +10,6 @@ import nars.term.Terms;
  */
 abstract public class AbstractSetN extends Compound implements SetTensional {
 
-
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term
@@ -27,6 +26,13 @@ abstract public class AbstractSetN extends Compound implements SetTensional {
         init(arg);
     }
 
+    @Override
+    public Term[] terms() {
+        return this.term;
+    }
 
+    public final boolean isCommutative() {
+        return true;
+    }
 
 }

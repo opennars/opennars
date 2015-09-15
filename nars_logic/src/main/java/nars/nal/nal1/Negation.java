@@ -101,12 +101,12 @@ public class Negation extends Compound1 {
         return Op.NEGATION;
     }
 
-    
-    public static boolean areMutuallyInverse(Term a, Term b) {
-        //doesnt seem necessary to check both, one seems sufficient.
-        //incurs cost of creating a Negation and its id
-        return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
-    }
+
+//    public static boolean areMutuallyInverse(Term a, Term b) {
+//        //doesnt seem necessary to check both, one seems sufficient.
+//        //incurs cost of creating a Negation and its id
+//        return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
+//    }
 
 
     @Override

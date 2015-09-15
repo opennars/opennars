@@ -11,8 +11,8 @@ import java.util.function.Predicate;
  */
 public interface LogicStage<X> extends Predicate<X> {
 
-    boolean CONTINUE = true;
-    boolean STOP = false;
+//    final static boolean CONTINUE = true;
+//    final static boolean STOP = false;
 
     /** return false to stop subsequent rules for this item; true to continue */
     @Override

@@ -4,7 +4,6 @@
  */
 package nars.process;
 
-import nars.Global;
 import nars.NAR;
 import nars.premise.Premise;
 import nars.task.Task;
@@ -25,7 +24,7 @@ import java.util.function.Function;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL extends AbstractPremise implements Function<Consumer<Premise>,Collection<Task>>, Consumer<Task> {
+public abstract class NAL extends AbstractPremise implements Function<Consumer<Premise>,Collection<Task>> {
 
     /** derivation queue (this might also work as a Set) */
     protected Collection<Task> derived = null;
@@ -71,21 +70,19 @@ public abstract class NAL extends AbstractPremise implements Function<Consumer<P
 
 
 
-
-
-    @Override public void accept(Task derivedTask) {
-        if (derived == null)
-            derived = Global.newArrayList();
-                    //Global.newHashSet(1);
-
-        if (!derived.add(derivedTask)) {
-            if (Global.DEBUG && Global.PRINT_DUPLICATE_DERIVATIONS) {
-                System.err.println(
-                        new RuntimeException("duplicate derivation: " + derivedTask)
-                );
-            }
-        }
-    }
+//    @Override public void accept(Task derivedTask) {
+//        if (derived == null)
+//            derived = Global.newArrayList();
+//                    //Global.newHashSet(1);
+//
+//        if (!derived.add(derivedTask)) {
+//            if (Global.DEBUG && Global.PRINT_DUPLICATE_DERIVATIONS) {
+//                System.err.println(
+//                        new RuntimeException("duplicate derivation: " + derivedTask)
+//                );
+//            }
+//        }
+//    }
 
     public void input(NAR nar, Consumer<Premise> premiseProcessor) {
         apply(premiseProcessor).forEach(nar::input);

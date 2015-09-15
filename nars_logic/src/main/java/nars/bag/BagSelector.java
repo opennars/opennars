@@ -50,6 +50,6 @@ public interface BagSelector<K, V extends Itemized<K>> {
 
     }
 
-    AnyItemSelector anyItemSelector = new AnyItemSelector();
+    BagSelector anyItemSelector = new AnyItemSelector();
 
 }

@@ -101,6 +101,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
         return Byted.equals(this, (Byted)x);
     }
 
+
     /**
      * @param that The Term to be compared with the current Term
      */
@@ -157,7 +158,6 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 
     @Override
     public int hashCode() {
-
         return hash;
     }
 
@@ -166,7 +166,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
     }
     public final static Atom the(Number o) {
         if (o instanceof Integer) return the(o.intValue());
-        return the(String.valueOf(o), true);
+        return the(o.toString(), true);
     }
 
     /** gets the atomic term given a name */
@@ -386,7 +386,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
     }
 
     @Override
-    public final boolean containsTermRecursivelyOrEquals(Term target) {
+    public final boolean equalsOrContainsTermRecursively(Term target) {
         return equals(target);
     }
 
@@ -415,7 +415,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
     }
 
     @Override
-    public final Term normalized() {
+    public final Atom normalized() {
         return this;
     }
 

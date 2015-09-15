@@ -21,7 +21,6 @@
 
 package nars.nal.nal8;
 
-import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -135,9 +134,9 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
     //abstract public boolean decide(final Operation op);
 
-    protected void executed(Operation op, Task... feedback) {
-        executed(op, Lists.newArrayList(feedback));
-    }
+//    protected void executed(Operation op, Task... feedback) {
+//        executed(op, Lists.newArrayList(feedback));
+//    }
     /**
      * called after execution completed
      */

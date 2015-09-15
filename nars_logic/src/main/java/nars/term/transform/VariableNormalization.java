@@ -40,8 +40,6 @@ public class VariableNormalization implements VariableTransform {
         public final boolean keyEquals(final Variable a, final Object ob) {
             if (a == ob) return true;
             Variable b = ((Variable) ob);
-            if (!b.isScoped() || !a.isScoped())
-                return false;
             return Byted.equals(a, b);
         }
 
@@ -56,12 +54,8 @@ public class VariableNormalization implements VariableTransform {
 
 
     /** for use with compounds that have exactly one variable */
-    public static final VariableTransform singleVariableNormalization = new VariableTransform( ) {
-
-        @Override public Variable apply(Compound c, Variable v, int depth) {
-            return Variable.theUnscoped(v.op, 1);
-        }
-    };
+    public static final VariableTransform singleVariableNormalization =
+            (containing, current, depth) -> Variable.the(current.op, 1);
 
     VariableMap rename = null;
 
@@ -120,10 +114,8 @@ public class VariableNormalization implements VariableTransform {
         return vv;
     }
 
-
-
     final static protected Variable newVariable(final Op type, final int i) {
-        return Variable.theUnscoped(type, i);
+        return Variable.the(type, i);
     }
 
     public boolean hasRenamed() {

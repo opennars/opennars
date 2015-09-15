@@ -8,9 +8,7 @@ import nars.nal.nal8.Operation;
 abstract public class AsynchOperator extends SynchOperator {
 
     @Override public boolean execute(final Operation op) {
-        nar.taskLater(() -> {
-            super.execute(op);
-        });
+        nar.taskLater(() -> super.execute(op));
         return true;
     }
 

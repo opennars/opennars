@@ -141,7 +141,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         //stamp (evidentialset, occurrencetime), truth, term, punctuation
 
         if (getTerm().hashCode()==0)
-            getTerm().rehash();
+            throw new RuntimeException("term " + getTerm() + " with invalid hash");
 
         int hashStamp = Util.hash(Arrays.hashCode(getEvidence()), (int) this.getOccurrenceTime());
 
@@ -401,6 +401,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     @Override
     public final int hashCode() {
+        int hash = this.hash;
         if (hash == 0) {
             throw new RuntimeException(this + " not normalized");
         }

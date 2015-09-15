@@ -16,9 +16,9 @@ public interface SetTensional<T extends Term> extends Term, Iterable<T> {
      * @return true for communitative
      */
 
-    default boolean isCommutative() {
-        return true;
-    }
+//    default boolean isCommutative() {
+//        return true;
+//    }
 
     @Override
     Op op();
@@ -89,6 +89,8 @@ public interface SetTensional<T extends Term> extends Term, Iterable<T> {
         }
         p.append(closer);
     }
+
+    Term[] terms();
 
 
 //    default boolean showsTermOpenerAndCloser() {

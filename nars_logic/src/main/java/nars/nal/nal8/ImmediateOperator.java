@@ -6,7 +6,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.NullOperator;
 import nars.task.DefaultTask;
 import nars.task.Task;
-import nars.term.Term;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -25,9 +24,9 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     public Operation newOperation(Object...args) {
         return newOperation(Product.arrayToStringAtomProduct(args));
     }
-    public Operation newOperation(Term...args) {
-        return newOperation(Product.make(args));
-    }
+//    public Operation newOperation(Term...args) {
+//        return newOperation(Product.make(args));
+//    }
     public Operation newOperation(Product args) {
         return Operation.op(args, op);
     }

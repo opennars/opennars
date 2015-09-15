@@ -75,9 +75,9 @@ public class TestNAR  {
         return TaskCondition.cost(requires);
     }
 
-    public TestNAR mustDerive(long a, long b, String s, char c, float v, float v1, float v2, float v3, int i2) {
-        return mustOutput(nar.memory().eventDerived, a, b, s, c, v, v1, v2, v3, i2 );
-    }
+//    public TestNAR mustDerive(long a, long b, String s, char c, float v, float v1, float v2, float v3, int i2) {
+//        return mustOutput(nar.memory().eventDerived, a, b, s, c, v, v1, v2, v3, i2 );
+//    }
 
     public TestNAR debug() {
         Global.DEBUG = true;
@@ -132,12 +132,13 @@ public class TestNAR  {
     }
 
     public TestNAR mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-        return mustEmit(nar.memory().eventDerived, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+        mustEmit(nar.memory().eventDerived, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);
+        return this;
     }
 
-    public TestNAR mustOutput(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
-        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, ocRelative );
-    }
+//    public TestNAR mustOutput(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {
+//        return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, ocRelative );
+//    }
 
     public TestNAR mustEmit(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         return mustEmit(c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax, Stamp.ETERNAL );
@@ -299,7 +300,7 @@ public class TestNAR  {
 
         public final long time;
         public final HitMeter[] eventMeters;
-        protected Object error = null;
+        protected Serializable error = null;
         protected Task[] inputs;
         protected List<TaskCondition> cond = Global.newArrayList();
         transient final int stackElements = 4;
@@ -358,9 +359,7 @@ public class TestNAR  {
             //TODO rerun withh trace and ddebug
             assertTrue(s, false);
         }
-        else {
-            s = "";
-        }
+
         return this;
     }
 

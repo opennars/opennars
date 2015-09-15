@@ -10,7 +10,7 @@ import nars.concept.Concept;
 import nars.narsese.InvalidInputException;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 
 import java.util.function.Consumer;
 
@@ -22,7 +22,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
     
     private final Task question;
     private final NAR nar;
-    private final DefaultTopic.On reg;
+    private final On reg;
 
 
     /** reacts to all questions */

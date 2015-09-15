@@ -43,7 +43,6 @@ public abstract class AbstractScalarTruth extends AbstractTruth<Float> implement
     }
 
 
-
     @Override
     public float getFrequency() {
         return frequency;

@@ -108,7 +108,7 @@ public class LogicMeter extends FrameReaction {
 
         double prioritySum = 0;
         double prioritySumSq = 0;
-        final int histogramBins = 4;
+        static final int histogramBins = 4;
         double[] histogram = new double[histogramBins];
         int count;
         private double mean;

@@ -11,21 +11,6 @@ import java.util.function.Consumer;
  */
 abstract public interface Topic<V>  {
 
-    final static class On<V>  {
-
-        final Consumer<V> reaction;
-        final Topic topic;
-
-        On(Topic t, Consumer<V> o) {
-            this.reaction = o;
-            this.topic = t;
-        }
-
-        final public void off() {
-            topic.off(this);
-        }
-    }
-
     abstract void delete();
 
     abstract public List<Consumer<V>> all();

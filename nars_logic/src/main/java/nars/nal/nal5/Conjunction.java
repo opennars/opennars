@@ -106,7 +106,7 @@ public class Conjunction extends Junction {
      */
     public static Term[] flatten(Term[] args, int order) {
         //determine how many there are with same order
-        int currentLen = args.length;
+
         int expandedSize;
         while ((expandedSize = getFlattenedLength(args, order)) != args.length) {
             args = _flatten(args, order, expandedSize);
@@ -301,9 +301,9 @@ public class Conjunction extends Junction {
         return term[0];
     }
 
-    public Term last() {
-        return term[term.length - 1];
-    }
+//    public Term last() {
+//        return term[term.length - 1];
+//    }
 
 
 }

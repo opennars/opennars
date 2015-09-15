@@ -7,9 +7,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.tx.BagActivator;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.term.Term;
-import nars.term.Termed;
 
 /**
  * Created by me on 3/15/15.
@@ -20,7 +18,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
 
     private boolean createIfMissing;
     private long now;
-    private static final nars.budget.BudgetFunctions.Activating activationFunction = BudgetFunctions.Activating.Accum;
+
     private float conceptForgetCycles;
     private float activationFactor;
 
@@ -153,53 +151,53 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
         off(c);
     }
 
-    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing, long time, Bag<Term, Concept> bag) {
-
-        float activationFactor = 1.0f;
-
-        Concept c = update(term.getTerm(), budget, createIfMissing, time, activationFactor, bag);
-
-
-        if (c == null) {
-
-            c = forgottenOrNewConcept();
-
-            remember(c);
-
-        }
-
-
-
-        return c;
-
-
-//        if (c != null) {
+//    public Concept conceptualize(Termed term, Budget budget, boolean createIfMissing, long time, Bag<Term, Concept> bag) {
 //
-//            if (c.isDeleted()) {
-//                throw new RuntimeException("deleted concept should not have been returned by index");
-//                //throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
-//                //return null;
-//            }
+//        float activationFactor = 1.0f;
 //
-//            if (!c.isActive()) {
-//
-//                if (c.getBudget().summaryGreaterOrEqual(getMemory().param.activeConceptThreshold) ) {
-//                    c.setState(Concept.State.Active);
-//                    remember(c);
-//                }
-//                else {
-//                    if (c.getState()!= Concept.State.Forgotten)
-//                        c.setState(Concept.State.Forgotten);
-//                }
-//
-//            }
+//        Concept c = update(term.getTerm(), budget, createIfMissing, time, activationFactor, bag);
 //
 //
-//            return c;
+//        if (c == null) {
+//
+//            c = forgottenOrNewConcept();
+//
+//            remember(c);
 //
 //        }
-//        return null;
-    }
+//
+//
+//
+//        return c;
+//
+//
+////        if (c != null) {
+////
+////            if (c.isDeleted()) {
+////                throw new RuntimeException("deleted concept should not have been returned by index");
+////                //throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
+////                //return null;
+////            }
+////
+////            if (!c.isActive()) {
+////
+////                if (c.getBudget().summaryGreaterOrEqual(getMemory().param.activeConceptThreshold) ) {
+////                    c.setState(Concept.State.Active);
+////                    remember(c);
+////                }
+////                else {
+////                    if (c.getState()!= Concept.State.Forgotten)
+////                        c.setState(Concept.State.Forgotten);
+////                }
+////
+////            }
+////
+////
+////            return c;
+////
+////        }
+////        return null;
+//    }
 
 
 

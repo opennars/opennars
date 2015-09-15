@@ -23,7 +23,6 @@ package nars.concept;
 import com.google.common.base.Function;
 import nars.Global;
 import nars.Memory;
-import nars.Op;
 import nars.bag.Bag;
 import nars.budget.Itemized;
 import nars.link.*;
@@ -65,12 +64,6 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     @Override
     float getPriority();
-
-
-    default Op operator() {
-        return getTerm().op();
-    }
-
 
     default boolean isDesired(float threshold) {
         Truth desire=this.getDesire();
@@ -194,10 +187,10 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
         if (hasBeliefs() && hasGoals()) {
 
             Truth d = getDesire();
+            if (d == null) return 0;
+
             float de = d.getExpectation();
 
-
-            if (d == null) return 0;
             Truth b = getBeliefs().top().getTruth();
             float be = b.getExpectation();
 

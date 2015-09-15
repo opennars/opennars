@@ -61,8 +61,7 @@ abstract public class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRe
             @Override
             protected void onCycle() {
                 super.onCycle();
-                for (Concept c : toAdd)
-                    addConcept(c);
+                toAdd.forEach(SentenceGraph.this::addConcept);
             }
 
             @Override

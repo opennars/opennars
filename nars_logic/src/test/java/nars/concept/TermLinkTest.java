@@ -139,7 +139,7 @@ public class TermLinkTest {
         n.frame(1);
 
         Set<String> tl = getTermLinks(n.concept("<a --> b>").getTermLinks());
-        assertEquals(3, tl.size());
+        assertEquals(2, tl.size());
     }
 
     @Test

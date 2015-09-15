@@ -50,7 +50,7 @@ public class DefaultTermizer implements Termizer {
             return Atom.the((String) o, true);
         }
         if (o instanceof Boolean) {
-            boolean b = ((Boolean) o).booleanValue();
+            boolean b = (Boolean) o;
             if (b) return TRUE;
             else return FALSE;
         } else if (o instanceof Number) {

@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.event.NARReaction;
 import nars.process.ConceptProcess;
 import nars.task.Task;
-import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 
 import java.util.Collection;
 
@@ -17,11 +17,11 @@ import java.util.Collection;
 public class UselessProcess extends NARReaction {
 
     private final NAR nar;
-    private final DefaultTopic.On conceptProcessed;
+    private final On conceptProcessed;
 
     public UselessProcess(NAR n) {
         super(n);
-        conceptProcessed = n.memory.eventConceptProcessed.on(c -> {
+        conceptProcessed = n.memory.eventConceptProcess.on(c -> {
             onConceptProcessed(c);
         });
         this.nar = n;

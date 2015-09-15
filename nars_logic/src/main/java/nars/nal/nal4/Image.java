@@ -78,18 +78,18 @@ abstract public class Image extends Compound {
 //    }
 
 
-    /**
-     * Get the other term in the Image
-     *
-     * @return The term related
-     */
-    public Term getTheOtherComponent() {
-        if (term.length != 2) {
-            return null;
-        }
-        Term r = (relationIndex == 0) ? term[1] : term[0];
-        return r;
-    }
+//    /**
+//     * Get the other term in the Image
+//     *
+//     * @return The term related
+//     */
+//    public Term getTheOtherComponent() {
+//        if (term.length != 2) {
+//            return null;
+//        }
+//        Term r = (relationIndex == 0) ? term[1] : term[0];
+//        return r;
+//    }
 
 
     @Override

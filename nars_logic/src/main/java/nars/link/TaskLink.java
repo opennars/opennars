@@ -104,12 +104,17 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
     public final Sentence name() { return targetTask; }
 
 
-//    @Override
+
+
+    //    @Override
 //    public int hashCode() {
 //        return getSentence().hashCode();
 //    }
 
-
+    @Override
+    public final int hashCode() {
+        return targetTask.hashCode();
+    }
 
     @Override
     public final boolean equals(final Object obj) {
@@ -118,9 +123,11 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
         //throw new RuntimeException("tasklinks should be compared by their sentences, not directly");
 
         if (obj == this) return true;
+
+
         //if (obj instanceof TaskLink) {
-            TaskLink t = (TaskLink) obj;
-            return targetTask.equals(t.targetTask);
+        TaskLink t = (TaskLink) obj;
+        return targetTask.equals(t.targetTask);
         //}
         //return false;
 //
@@ -131,21 +138,21 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
 //        return false;
     }
 
-    /**
-     * Get one index by level
-     *
-     * @param i The index level
-     * @return The index value
-     */
-    @Override
-    public final short getIndex(final int i) {
-        final short[] index = this.index;
-        if ((index != null) && (i < index.length)) {
-            return index[i];
-        } else {
-            return -1;
-        }
-    }
+//    /**
+//     * Get one index by level
+//     *
+//     * @param i The index level
+//     * @return The index value
+//     */
+//    @Override
+//    public final short getIndex(final int i) {
+//        final short[] index = this.index;
+//        if ((index != null) && (i < index.length)) {
+//            return index[i];
+//        } else {
+//            return -1;
+//        }
+//    }
 
 
 

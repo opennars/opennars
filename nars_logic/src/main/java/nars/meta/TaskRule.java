@@ -62,13 +62,10 @@ public class TaskRule extends Rule<Premise, Task> {
         return (ProductN) term(0);
     }
 
-    public Product result() {
-        return (Product) term(1);
-    }
+//    public Product result() {
+//        return (Product) term(1);
+//    }
 
-    public int premiseCount() {
-        return premise().length();
-    }
 
 
     public static final Set<Atom> reservedMetaInfoCategories = new HashSet(6);
@@ -121,6 +118,15 @@ public class TaskRule extends Rule<Premise, Task> {
                 Terms.levelValid(getResult(), nalLevel);
     }
 
+    public boolean isReversible() {
+        //TEST
+        if (toString().contains("shift_occurrence"))
+            return false;
+        if (toString().contains("substitute"))
+            return false;
+        return true;
+    }
+
     static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
 
 
@@ -137,10 +143,11 @@ public class TaskRule extends Rule<Premise, Task> {
         public Term apply(Compound containingCompound, Term v, int depth) {
 
             //do not alter postconditions
-            if ((containingCompound instanceof Inheritance) && reservedMetaInfoCategories.contains(((Inheritance) containingCompound).getPredicate()))
+            if ((containingCompound instanceof Inheritance)
+                    && reservedMetaInfoCategories.contains((Atom)((Inheritance) containingCompound).getPredicate()))
                 return v;
 
-            return Variable.make(Op.VAR_PATTERN, v.bytes(), true);
+            return Variable.make(Op.VAR_PATTERN, v.bytes());
         }
     }
 
@@ -243,8 +250,9 @@ public class TaskRule extends Rule<Premise, Task> {
                 arg1 = args[0];
                 arg2 = (args.length > 1) ? args[1] : null;
             } else {
-                args = null;
-                arg1 = arg2 = null;
+                throw new RuntimeException("invalid arguments");
+                /*args = null;
+                arg1 = arg2 = null;*/
             }
 
             switch (predicateNameStr) {
@@ -279,7 +287,8 @@ public class TaskRule extends Rule<Premise, Task> {
                     next = new TimeOffset(arg1, arg2, false);
                     break;
                 case "measure_time":
-                    next = new MeasureTime(arg1, arg2, args[2]);
+                    if (args.length>2)
+                        next = new MeasureTime(arg1, arg2, args[2]);
                     break;
 
                 case "substitute":
@@ -419,7 +428,6 @@ public class TaskRule extends Rule<Premise, Task> {
      */
     public int getTaskOrder(Term arg1, Term arg2) {
 
-        final boolean t;
         Term taskPattern = getPremises().term(0);
         Term beliefPattern = getPremises().term(1);
         if (arg2.equals(taskPattern) && arg1.equals(beliefPattern)) {

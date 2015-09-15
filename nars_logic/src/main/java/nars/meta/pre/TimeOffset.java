@@ -2,7 +2,6 @@ package nars.meta.pre;
 
 import nars.meta.RuleMatch;
 import nars.nal.nal7.AbstractInterval;
-import nars.nal.nal7.Interval;
 import nars.premise.Premise;
 import nars.term.Atom;
 import nars.term.Term;
@@ -34,7 +33,7 @@ public class TimeOffset extends PreCondition2 {
     static long timeOffsetForward(final Term arg, final Premise nal) {
 
         if (arg instanceof AbstractInterval) {
-            return ((Interval) arg).cycles(nal.memory());
+            return ((AbstractInterval) arg).cycles(nal.memory());
         }
         else if (arg instanceof Atom) {
             if (arg.equals(forwardImpl))

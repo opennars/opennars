@@ -153,7 +153,7 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
 
 
 
-    public int update(final int targetSize, @Nullable List<I> sortedResult) {
+    public int update(final int targetSize, List<I> sortedResult) {
 
         sortedResult.clear();
 
@@ -178,7 +178,7 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
         return s - r;
     }
 
-    public void addAll(final Collection<I> x) {
+    public void addAll(final Iterable<I> x) {
         x.forEach( this::add );
     }
 

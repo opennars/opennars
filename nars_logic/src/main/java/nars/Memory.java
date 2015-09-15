@@ -82,7 +82,7 @@ public class Memory extends Param implements Serializable {
     @Deprecated transient public final EventEmitter<Class,Object[]> event;
 
     transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic();
-    transient public final Topic<ConceptProcess> eventConceptProcessed = new DefaultTopic();
+    transient public final Topic<ConceptProcess> eventConceptProcess = new DefaultTopic();
 
     transient public final Topic<Memory> eventReset = new DefaultTopic();
 
@@ -282,11 +282,6 @@ public class Memory extends Param implements Serializable {
         return null;
     }
 
-    public void setLevel(int nalLevel) {
-        if ((nalLevel < 1) || (nalLevel > 8))
-            throw new RuntimeException("NAL level must be between 1 and 8 (inclusive)");
-        this.level = nalLevel;
-    }
 
     public int nal() {
         return level;
@@ -296,9 +291,9 @@ public class Memory extends Param implements Serializable {
         return nal() >= isEqualToOrGreater;
     }
 
-    public Concept concept(final String t) {
-        return concept(Atom.the(t));
-    }
+//    public Concept concept(final String t) {
+//        return concept(Atom.the(t));
+//    }
 
 //    /** provides fast iteration to concepts with questions */
 //    public Set<Concept> getQuestionConcepts() {
@@ -345,12 +340,6 @@ public class Memory extends Param implements Serializable {
     }
 
 
-
-
-    public void setRandomSeed(long l) { random.setSeed(l); }
-
-
-
     public void delete() {
         clear();
 
@@ -383,12 +372,6 @@ public class Memory extends Param implements Serializable {
     }
 
 
-    /**
-     * difference in time since last cycle
-     */
-    public long timeSinceLastCycle() {
-        return clock.timeSinceLastCycle();
-    }
 
 
 
@@ -442,8 +425,6 @@ public class Memory extends Param implements Serializable {
             throw new RuntimeException(task + " already deleted");
         }
 
-        if (removalReason==null)
-            removalReason = "Unknown";
 
         task.log(removalReason);
 
@@ -454,10 +435,6 @@ public class Memory extends Param implements Serializable {
 
         eventTaskRemoved.emit(task);
         task.delete();
-    }
-
-    final public void remove(final Task task) {
-        remove(task, null);
     }
 
     /** sends an event signal to listeners subscribed to channel 'c' */

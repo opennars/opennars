@@ -195,7 +195,7 @@ public class Sequence extends Conjunction implements Intermval {
 
     }
 
-    protected void appendInterval(Appendable p, long iii) throws IOException {
+    protected static void appendInterval(Appendable p, long iii) throws IOException {
         p.append(Symbols.INTERVAL_PREFIX);
         p.append(Long.toString(iii));
     }

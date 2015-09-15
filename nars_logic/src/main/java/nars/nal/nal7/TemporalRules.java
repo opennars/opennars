@@ -17,31 +17,23 @@
 package nars.nal.nal7;
 
 
-import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.concept.Concept;
 import nars.nal.UtilityFunctions;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.op.mental.Mental;
 import nars.premise.Premise;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.term.*;
-import nars.term.transform.Substitution;
+import nars.term.Compound;
+import nars.term.Statement;
+import nars.term.Term;
+import nars.term.Termed;
 import nars.truth.Truth;
-import nars.truth.TruthFunctions;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author peiwang
@@ -237,400 +229,400 @@ public class TemporalRules {
     }*/
 
 
-    public static void temporalInduction(final Task snext, final Task sprev, final NAL nal) {
-        temporalInduction(snext, sprev, nal, nal.getTask(), true);
-    }
-
-    final static Variable var1 = new Variable("$0");
-    final static Variable v91 = new Variable("$91");
-    final static Variable v92 = new Variable("$92");
-
-    public static void temporalInduction(final Task snext, final Task sprev, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
-
-        if (!snext.isJudgment() || !sprev.isJudgment())
-            return;
-
-        Term t1 = snext.getTerm();
-        Term t2 = sprev.getTerm();
-
-        if (Statement.invalidStatement(t1, t2))
-            return;
-
-        Term t11 = null;
-        Term t22 = null;
-
-        if (termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
-
-            Statement ss1 = (Statement) t1;
-            Statement ss2 = (Statement) t2;
-
-
-            final Variable var2 = var1;
-
-
-            if (ss1.getSubject().equals(ss2.getSubject())) {
-                t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
-                t22 = Terms.makeStatement(ss2, var2, ss2.getPredicate());
-            } else if (ss1.getPredicate().equals(ss2.getPredicate())) {
-                t11 = Terms.makeStatement(ss1, ss1.getSubject(), var1);
-                t22 = Terms.makeStatement(ss2, ss2.getSubject(), var2);
-            }
-
-
-            Map<Term, Term> subs = null;
-
-            if (ss2.containsTermRecursively(ss1.getSubject())) {
-                subs = Global.newHashMap(1);
-                subs.put(ss1.getSubject(), var1);
-                if (ss2.containsTermRecursively(ss1.getPredicate())) {
-                    subs.put(ss1.getPredicate(), var2);
-                }
-
-                Substitution sub = new Substitution(subs);
-                t11 = ss1.applySubstitute(sub);
-                t22 = ss2.applySubstitute(sub);
-            }
-
-            if (ss1.containsTermRecursively(ss2.getSubject())) {
-                if (subs == null) subs = Global.newHashMap(1); else subs.clear();
-
-                subs.put(ss2.getSubject(), var1);
-
-                if (ss1.containsTermRecursively(ss2.getPredicate())) {
-                    subs.put(ss2.getPredicate(), var2);
-                }
-
-                Substitution sub = new Substitution(subs);
-                t11 = ss1.applySubstitute(sub);
-                t22 = ss2.applySubstitute(sub);
-            }
-
-            //TODO combine the below blocks they are similar
-
-            //allow also temporal induction on operation arguments:
-            if (ss2 instanceof Operation ^ ss1 instanceof Operation) {
-                if (ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    Term comp = ss1.getSubject();
-                    Term ss2_term = ss2.getSubject();
-
-                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
-
-                    if (ss2_term instanceof Product) {
-                        Product ss2_prod = (Product) ss2_term;
-
-                        if (applicableVariableType && Terms.contains(ss2_prod.terms(), comp)) { //only if there is one and it isnt a variable already
-                            Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
-
-                            t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
-
-                            Operation op = (Operation) Operation.make(
-                                    ss2.getPredicate(),
-                                    Product.make(ars)
-                            );
-
-                            t22 = op;
-                        }
-                    }
-                }
-                if (ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
-                    Term comp = ss2.getSubject();
-                    Term ss1_term = ss1.getSubject();
-
-                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
-
-                    if (ss1_term instanceof Product) {
-                        Product ss1_prod = (Product) ss1_term;
-
-                        if (applicableVariableType && Terms.contains(ss1_prod.terms(), comp)) { //only if there is one and it isnt a variable already
-
-                            Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
-
-
-                            t22 = Terms.makeStatement(ss2, var1, ss2.getPredicate());
-
-                            Operation op = (Operation) Operation.make(
-                                    ss1.getPredicate(),
-                                    Product.make(ars)
-                            );
-
-                            t11 = op;
-                        }
-                    }
-                }
-            }
-        }
-
-
-        int durationCycles = nal.memory().duration();
-
-        long time1 = snext.getOccurrenceTime();
-        long time2 = sprev.getOccurrenceTime();
-
-        final long timeDiff;
-        if ((time1 == Stamp.ETERNAL) || (time2 == Stamp.ETERNAL))
-            throw new RuntimeException("induction on eternal terms"); //timeDiff = 0;
-
-        timeDiff = time2 - time1;
-
-        if (!concurrent(time1, time2, durationCycles)) {
-
-            AbstractInterval interval = nal.newInterval(Math.abs(timeDiff));
-
-            if (timeDiff > 0) {
-                t1 = Conjunction.make(ORDER_FORWARD, t1, interval);
-                if (t11 != null) {
-                    t11 = Conjunction.make(ORDER_FORWARD, t11, interval);
-                }
-            } else {
-                t2 = Conjunction.make(ORDER_FORWARD, t2, interval);
-                if (t22 != null) {
-                    t22 = Conjunction.make(ORDER_FORWARD, t22, interval);
-                }
-            }
-        }
-
-
-        int order = order(timeDiff, durationCycles);
-        Truth givenTruth1 = snext.getTruth();
-        Truth givenTruth2 = sprev.getTruth();
-        //   TruthFunctions.
-        Truth truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
-        Budget budget1 = truth1!=null ? BudgetFunctions.forward(truth1, nal) : null;
-        Statement statement1 = truth1!=null ? Implication.make(t1, t2, order) : null;
-
-        Truth truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
-        Budget budget2 = truth2!=null ? BudgetFunctions.forward(truth2, nal) : null;
-        Statement statement2 = truth2!=null ? Implication.make(t2, t1, reverseOrder(order)) : null;
-
-        Truth truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
-        Budget budget3 = truth3!=null ? BudgetFunctions.forward(truth3, nal) : null;
-        Statement statement3 = truth3!=null ? Equivalence.make(t1, t2, order) : null;
-
-        //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
-        if (!SucceedingEventsInduction) { //reduce priority according to temporal distance
-            //it was not "semantically" connected by temporal succession
-            int tt1 = (int) snext.getOccurrenceTime();
-            int tt2 = (int) sprev.getOccurrenceTime();
-            float d = Math.abs(tt1 - tt2) / ((float)nal.memory().duration.get());
-            if (d != 0) {
-                float mul = 1.0f / d;
-                if (budget1!=null)  budget1.mulPriority(mul);
-                if (budget2!=null)  budget2.mulPriority(mul);
-                if (budget3!=null)  budget3.mulPriority(mul);
-            }
-        }
-
-
-
-
-
-        //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
-        //TODO: rethink this for 1.6.3
-        //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-        if (statement2 != null) { //there is no general form
-            //ok then it may be the (&/ =/> case which
-            //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
-            Statement st = statement2;
-            if (st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
-                Term precon = st.getSubject();
-                Inheritance consequence = (Inheritance) st.getPredicate();
-                Term pred = consequence.getPredicate();
-                Term sub = consequence.getSubject();
-                //look if subject is contained in precon:
-                boolean SubsSub = precon.containsTermRecursivelyOrEquals(sub);
-                boolean SubsPred = precon.containsTermRecursivelyOrEquals(pred);
-                HashMap<Term, Term> app = new HashMap<Term, Term>();
-                if (SubsSub || SubsPred) {
-                    if (SubsSub)
-                        app.put(sub, v91);
-                    if (SubsPred)
-                        app.put(pred, v92);
-                    Term res = statement2.applySubstitute(app);
-                    if (res != null) { //ok we applied it, all we have to do now is to use it
-                        t22 = ((Statement) res).getSubject();
-                        t11 = ((Statement) res).getPredicate();
-                    }
-                }
-            }
-        }
-
-
-        final int inductionLimit = nal.memory().temporalRelationsMax.get();
-
-        //List<Task> success = new ArrayList<Task>();
-        if (t11 != null && t22 != null) {
-            Statement statement11 = Implication.make(t11, t22, order);
-            Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
-            Statement statement33 = Equivalence.make(t11, t22, order);
-            if (!tooMuchTemporalStatements(statement11, inductionLimit)) {
-                Task t = nal.deriveDoubleTemporal(statement11, truth1, budget1, subbedTask, sprev);
-            }
-            if (!tooMuchTemporalStatements(statement22, inductionLimit)) {
-                Task t = nal.deriveDoubleTemporal(statement22, truth2, budget2, subbedTask, sprev);
-            }
-            if (!tooMuchTemporalStatements(statement33, inductionLimit)) {
-                Task t = nal.deriveDoubleTemporal(statement33, truth3, budget3, subbedTask, sprev);
-            }
-        }
-        if (!tooMuchTemporalStatements(statement1, inductionLimit)) {
-            Task t = nal.deriveDoubleTemporal(statement1, truth1, budget1, subbedTask, sprev);
-        }
-        if (!tooMuchTemporalStatements(statement2, inductionLimit)) {
-
-            /*  =/>  */
-
-            Task task = nal.deriveDoubleTemporal(statement2, truth2, budget2, subbedTask, sprev);
-
-            if (task!=null) {
-
-                deriveCompiledInferenceHelper(snext, sprev, nal, task);
-            }
-
-
-        }
-        if (!tooMuchTemporalStatements(statement3, inductionLimit)) {
-            nal.deriveDoubleTemporal(statement3, truth3, budget3, subbedTask, sprev);
-        }
-
-    }
-
-    /** //micropsi inspired strive for knowledge
-     //get strongest belief of that concept and use the revison truth, if there is no, use this truth */
-    protected static void deriveCompiledInferenceHelper(Sentence snext, Sentence sprev, NAL nal, Task task) {
-
-        desireUpdateCompiledInferenceHelper(snext, task, nal, sprev);
-
-        double conf = task.getTruth().getConfidence();
-        Concept C = nal.nar.concept(task.getTerm());
-        if (C != null && C.hasBeliefs()) {
-            Task bel = C.getBeliefs().top();
-            Truth cur = bel.getTruth();
-            conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
-            //if there is no overlapping evidental base, use revision:
-            boolean revisable;
-            revisable = !Stamp.overlapping(bel, task);
-            if (revisable) {
-                conf = TruthFunctions.revision(task.getTruth(), bel.getTruth()).getConfidence();
-            }
-        }
-
-        questionFromLowConfidenceHighPriorityJudgement(task, conf, nal);
-    }
-
-    static Task desireUpdateCompiledInferenceHelper(final Sentence s1, Task task, final NAL nal, final Sentence s2) {
-        /*
-        IN <SELF --> [good]>! %1.00;0.90%
-        IN (^pick,left). :|: %1.00;0.90%
-        IN  PauseInput(3)
-        IN <SELF --> [good]>. :|: %0.00;0.90%
-        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. %0.00;0.31%
-        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. %0.00;0.31%
-        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. %0.00;0.31%
-        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. :|: %0.00;0.45%
-        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. %0.00;0.31%
-        
-        It takes the system sometimes like 1000 steps to go from
-        "(^pick,left) leads to SELF not being good"
-        to
-        "since <SELF --> good> is a goal, (^pick,left) is not desired"
-        making it bad for RL tasks but this will change, maybe with the following principle:
-        
-        
-        task: <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>.
-        belief: <SELF --> [good]>!
-        |-
-        (^pick,left)! (note the change of punctuation, it needs the punctuation of the belief here)
-        
-        */
-        if (s1.isJudgment()) { //necessary check?
-            Sentence belief=task;
-            Concept S1_State_C=nal.nar.concept(s1.getTerm());
-            if(S1_State_C != null && S1_State_C.hasGoals() &&
-                    !(((Statement) belief.getTerm()).getPredicate() instanceof Operation)) {
-                Task a_desire = S1_State_C.getGoals().top();
-
-//                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
-//                        new DefaultTruth(1.0f,0.99f), a_desire);
+//    public static void temporalInduction(final Task snext, final Task sprev, final NAL nal) {
+//        temporalInduction(snext, sprev, nal, nal.getTask(), true);
+//    }
+//
+//    final static Variable var1 = new Variable("$0");
+//    final static Variable v91 = new Variable("$91");
+//    final static Variable v92 = new Variable("$92");
+//
+//    public static void temporalInduction(final Task snext, final Task sprev, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
+//
+//        if (!snext.isJudgment() || !sprev.isJudgment())
+//            return;
+//
+//        Term t1 = snext.getTerm();
+//        Term t2 = sprev.getTerm();
+//
+//        if (Statement.invalidStatement(t1, t2))
+//            return;
+//
+//        Term t11 = null;
+//        Term t22 = null;
+//
+//        if (termForTemporalInduction(t1) && termForTemporalInduction(t2)) {
+//
+//            Statement ss1 = (Statement) t1;
+//            Statement ss2 = (Statement) t2;
 //
 //
-//                g.setOccurrenceTime(s1.getOccurrenceTime());
+//            final Variable var2 = var1;
+//
+//
+//            if (ss1.getSubject().equals(ss2.getSubject())) {
+//                t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
+//                t22 = Terms.makeStatement(ss2, var2, ss2.getPredicate());
+//            } else if (ss1.getPredicate().equals(ss2.getPredicate())) {
+//                t11 = Terms.makeStatement(ss1, ss1.getSubject(), var1);
+//                t22 = Terms.makeStatement(ss2, ss2.getSubject(), var2);
+//            }
+//
+//
+//            Map<Term, Term> subs = null;
+//
+//            if (ss2.containsTermRecursively(ss1.getSubject())) {
+//                subs = Global.newHashMap(1);
+//                subs.put(ss1.getSubject(), var1);
+//                if (ss2.containsTermRecursively(ss1.getPredicate())) {
+//                    subs.put(ss1.getPredicate(), var2);
+//                }
+//
+//                Substitution sub = new Substitution(subs);
+//                t11 = ss1.applySubstitute(sub);
+//                t22 = ss2.applySubstitute(sub);
+//            }
+//
+//            if (ss1.containsTermRecursively(ss2.getSubject())) {
+//                if (subs == null) subs = Global.newHashMap(1); else subs.clear();
+//
+//                subs.put(ss2.getSubject(), var1);
+//
+//                if (ss1.containsTermRecursively(ss2.getPredicate())) {
+//                    subs.put(ss2.getPredicate(), var2);
+//                }
+//
+//                Substitution sub = new Substitution(subs);
+//                t11 = ss1.applySubstitute(sub);
+//                t22 = ss2.applySubstitute(sub);
+//            }
+//
+//            //TODO combine the below blocks they are similar
+//
+//            //allow also temporal induction on operation arguments:
+//            if (ss2 instanceof Operation ^ ss1 instanceof Operation) {
+//                if (ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
+//                    Term comp = ss1.getSubject();
+//                    Term ss2_term = ss2.getSubject();
+//
+//                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
+//
+//                    if (ss2_term instanceof Product) {
+//                        Product ss2_prod = (Product) ss2_term;
+//
+//                        if (applicableVariableType && Terms.contains(ss2_prod.terms(), comp)) { //only if there is one and it isnt a variable already
+//                            Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
+//
+//                            t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
+//
+//                            Operation op = (Operation) Operation.make(
+//                                    ss2.getPredicate(),
+//                                    Product.make(ars)
+//                            );
+//
+//                            t22 = op;
+//                        }
+//                    }
+//                }
+//                if (ss1 instanceof Operation && !(ss1.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
+//                    Term comp = ss2.getSubject();
+//                    Term ss1_term = ss1.getSubject();
+//
+//                    boolean applicableVariableType = !(comp instanceof Variable && comp.hasVarIndep());
+//
+//                    if (ss1_term instanceof Product) {
+//                        Product ss1_prod = (Product) ss1_term;
+//
+//                        if (applicableVariableType && Terms.contains(ss1_prod.terms(), comp)) { //only if there is one and it isnt a variable already
+//
+//                            Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
+//
+//
+//                            t22 = Terms.makeStatement(ss2, var1, ss2.getPredicate());
+//
+//                            Operation op = (Operation) Operation.make(
+//                                    ss1.getPredicate(),
+//                                    Product.make(ars)
+//                            );
+//
+//                            t11 = op;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        int durationCycles = nal.memory().duration();
+//
+//        long time1 = snext.getOccurrenceTime();
+//        long time2 = sprev.getOccurrenceTime();
+//
+//        final long timeDiff;
+//        if ((time1 == Stamp.ETERNAL) || (time2 == Stamp.ETERNAL))
+//            throw new RuntimeException("induction on eternal terms"); //timeDiff = 0;
+//
+//        timeDiff = time2 - time1;
+//
+//        if (!concurrent(time1, time2, durationCycles)) {
+//
+//            AbstractInterval interval = nal.newInterval(Math.abs(timeDiff));
+//
+//            if (timeDiff > 0) {
+//                t1 = Conjunction.make(ORDER_FORWARD, t1, interval);
+//                if (t11 != null) {
+//                    t11 = Conjunction.make(ORDER_FORWARD, t11, interval);
+//                }
+//            } else {
+//                t2 = Conjunction.make(ORDER_FORWARD, t2, interval);
+//                if (t22 != null) {
+//                    t22 = Conjunction.make(ORDER_FORWARD, t22, interval);
+//                }
+//            }
+//        }
+//
+//
+//        int order = order(timeDiff, durationCycles);
+//        Truth givenTruth1 = snext.getTruth();
+//        Truth givenTruth2 = sprev.getTruth();
+//        //   TruthFunctions.
+//        Truth truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
+//        Budget budget1 = truth1!=null ? BudgetFunctions.forward(truth1, nal) : null;
+//        Statement statement1 = truth1!=null ? Implication.make(t1, t2, order) : null;
+//
+//        Truth truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
+//        Budget budget2 = truth2!=null ? BudgetFunctions.forward(truth2, nal) : null;
+//        Statement statement2 = truth2!=null ? Implication.make(t2, t1, reverseOrder(order)) : null;
+//
+//        Truth truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
+//        Budget budget3 = truth3!=null ? BudgetFunctions.forward(truth3, nal) : null;
+//        Statement statement3 = truth3!=null ? Equivalence.make(t1, t2, order) : null;
+//
+//        //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
+//        if (!SucceedingEventsInduction) { //reduce priority according to temporal distance
+//            //it was not "semantically" connected by temporal succession
+//            int tt1 = (int) snext.getOccurrenceTime();
+//            int tt2 = (int) sprev.getOccurrenceTime();
+//            float d = Math.abs(tt1 - tt2) / ((float)nal.memory().duration.get());
+//            if (d != 0) {
+//                float mul = 1.0f / d;
+//                if (budget1!=null)  budget1.mulPriority(mul);
+//                if (budget2!=null)  budget2.mulPriority(mul);
+//                if (budget3!=null)  budget3.mulPriority(mul);
+//            }
+//        }
+//
+//
+//
+//
+//
+//        //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
+//        //TODO: rethink this for 1.6.3
+//        //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+//        if (statement2 != null) { //there is no general form
+//            //ok then it may be the (&/ =/> case which
+//            //is discussed here: https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
+//            Statement st = statement2;
+//            if (st.getPredicate() instanceof Inheritance && (st.getSubject() instanceof Conjunction || st.getSubject() instanceof Operation)) {
+//                Term precon = st.getSubject();
+//                Inheritance consequence = (Inheritance) st.getPredicate();
+//                Term pred = consequence.getPredicate();
+//                Term sub = consequence.getSubject();
+//                //look if subject is contained in precon:
+//                boolean SubsSub = precon.containsTermRecursivelyOrEquals(sub);
+//                boolean SubsPred = precon.containsTermRecursivelyOrEquals(pred);
+//                HashMap<Term, Term> app = new HashMap<Term, Term>();
+//                if (SubsSub || SubsPred) {
+//                    if (SubsSub)
+//                        app.put(sub, v91);
+//                    if (SubsPred)
+//                        app.put(pred, v92);
+//                    Term res = statement2.applySubstitute(app);
+//                    if (res != null) { //ok we applied it, all we have to do now is to use it
+//                        t22 = ((Statement) res).getSubject();
+//                        t11 = ((Statement) res).getPredicate();
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        final int inductionLimit = nal.memory().temporalRelationsMax.get();
+//
+//        //List<Task> success = new ArrayList<Task>();
+//        if (t11 != null && t22 != null) {
+//            Statement statement11 = Implication.make(t11, t22, order);
+//            Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
+//            Statement statement33 = Equivalence.make(t11, t22, order);
+//            if (!tooMuchTemporalStatements(statement11, inductionLimit)) {
+//                Task t = nal.deriveDoubleTemporal(statement11, truth1, budget1, subbedTask, sprev);
+//            }
+//            if (!tooMuchTemporalStatements(statement22, inductionLimit)) {
+//                Task t = nal.deriveDoubleTemporal(statement22, truth2, budget2, subbedTask, sprev);
+//            }
+//            if (!tooMuchTemporalStatements(statement33, inductionLimit)) {
+//                Task t = nal.deriveDoubleTemporal(statement33, truth3, budget3, subbedTask, sprev);
+//            }
+//        }
+//        if (!tooMuchTemporalStatements(statement1, inductionLimit)) {
+//            Task t = nal.deriveDoubleTemporal(statement1, truth1, budget1, subbedTask, sprev);
+//        }
+//        if (!tooMuchTemporalStatements(statement2, inductionLimit)) {
+//
+//            /*  =/>  */
+//
+//            Task task = nal.deriveDoubleTemporal(statement2, truth2, budget2, subbedTask, sprev);
+//
+//            if (task!=null) {
+//
+//                deriveCompiledInferenceHelper(snext, sprev, nal, task);
+//            }
+//
+//
+//        }
+//        if (!tooMuchTemporalStatements(statement3, inductionLimit)) {
+//            nal.deriveDoubleTemporal(statement3, truth3, budget3, subbedTask, sprev);
+//        }
+//
+//    }
 
-                final long now = nal.time();
-
-                //strongest desire for that time is what we want to know
-                Task strongest_desireT = S1_State_C.getGoals().top(S1_State_C.getTerm().hasVarQuery(), now, s1.getOccurrenceTime(), s1.getTruth());
-
-                Task strongest_desire = strongest_desireT.projectTask(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
-                Truth T=TruthFunctions.desireDed(belief.getTruth(), strongest_desire.getTruth());
-
-                //Stamp st=new Stamp(strongest_desire.stamp.clone(),belief.stamp, nal.memory.time());
-
-                final long occ;
-                
-                if(strongest_desire.isEternal()) {
-                    occ = Stamp.ETERNAL;
-                } else {
-                    long shift=0;
-                    if(task.getTerm().getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                        shift=nal.memory().duration();
-                    }
-                    occ = (strongest_desire.getOccurrenceTime()-shift);
-                }
-                
-
-                
-                //nal.setCurrentBelief(belief);
-                
-                //Sentence W=new Sentence(s2.term,Symbols.GOAL,T, belief).setOccurrenceTime(occ);
-
-                Budget val=BudgetFunctions.forward(T, nal);
-
-                return nal.derive(nal.newTask(s2.getTerm()).goal().truth(T).budget(val)
-                                .parent(task, strongest_desireT)
-                                .occurr(occ).temporalInductable(false)
-                );
-
-            }
-        }
-        
-        //PRINCIPLE END
-        return null;
-    }
-
-
-
-    private static Task questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
-        if(!(task.getTerm() instanceof Implication)) return null;
-
-        if(nal.memory().emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
-                && Global.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF
-                && task.isJudgment()
-                && conf<Global.CURIOSITY_CONFIDENCE_THRESHOLD
-                && task.getPriority()>Global.CURIOSITY_PRIORITY_THRESHOLD) {
-
-                boolean valid=false;
-
-                Implication equ=(Implication) task.getTerm();
-                if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-                    valid=true;
-                }
-
-                if(valid) {
-                    return nal.derive(nal.newTask(task.getTerm())
-                                    .question()
-                                    .parent(task)
-                                    .occurrNow()
-                                    .budget(task.getBudget(), Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL)
-                    );
-                }
-
-        }
-        return null;
-    }
-
+//    /** //micropsi inspired strive for knowledge
+//     //get strongest belief of that concept and use the revison truth, if there is no, use this truth */
+//    protected static void deriveCompiledInferenceHelper(Sentence snext, Sentence sprev, NAL nal, Task task) {
+//
+//        desireUpdateCompiledInferenceHelper(snext, task, nal, sprev);
+//
+//        double conf = task.getTruth().getConfidence();
+//        Concept C = nal.nar.concept(task.getTerm());
+//        if (C != null && C.hasBeliefs()) {
+//            Task bel = C.getBeliefs().top();
+//            Truth cur = bel.getTruth();
+//            conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
+//            //if there is no overlapping evidental base, use revision:
+//            boolean revisable;
+//            revisable = !Stamp.overlapping(bel, task);
+//            if (revisable) {
+//                conf = TruthFunctions.revision(task.getTruth(), bel.getTruth()).getConfidence();
+//            }
+//        }
+//
+//        questionFromLowConfidenceHighPriorityJudgement(task, conf, nal);
+//    }
+//
+//    static Task desireUpdateCompiledInferenceHelper(final Sentence s1, Task task, final NAL nal, final Sentence s2) {
+//        /*
+//        IN <SELF --> [good]>! %1.00;0.90%
+//        IN (^pick,left). :|: %1.00;0.90%
+//        IN  PauseInput(3)
+//        IN <SELF --> [good]>. :|: %0.00;0.90%
+//        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. :|: %0.00;0.45%
+//        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. %0.00;0.31%
+//        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. :|: %0.00;0.45%
+//        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. %0.00;0.31%
+//        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. :|: %0.00;0.45%
+//        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. %0.00;0.31%
+//        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. :|: %0.00;0.45%
+//        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. %0.00;0.31%
+//
+//        It takes the system sometimes like 1000 steps to go from
+//        "(^pick,left) leads to SELF not being good"
+//        to
+//        "since <SELF --> good> is a goal, (^pick,left) is not desired"
+//        making it bad for RL tasks but this will change, maybe with the following principle:
+//
+//
+//        task: <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>.
+//        belief: <SELF --> [good]>!
+//        |-
+//        (^pick,left)! (note the change of punctuation, it needs the punctuation of the belief here)
+//
+//        */
+//        if (s1.isJudgment()) { //necessary check?
+//            Sentence belief=task;
+//            Concept S1_State_C=nal.nar.concept(s1.getTerm());
+//            if(S1_State_C != null && S1_State_C.hasGoals() &&
+//                    !(((Statement) belief.getTerm()).getPredicate() instanceof Operation)) {
+//                Task a_desire = S1_State_C.getGoals().top();
+//
+////                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
+////                        new DefaultTruth(1.0f,0.99f), a_desire);
+////
+////
+////                g.setOccurrenceTime(s1.getOccurrenceTime());
+//
+//                final long now = nal.time();
+//
+//                //strongest desire for that time is what we want to know
+//                Task strongest_desireT = S1_State_C.getGoals().top(S1_State_C.getTerm().hasVarQuery(), now, s1.getOccurrenceTime(), s1.getTruth());
+//
+//                Task strongest_desire = strongest_desireT.projectTask(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
+//                Truth T=TruthFunctions.desireDed(belief.getTruth(), strongest_desire.getTruth());
+//
+//                //Stamp st=new Stamp(strongest_desire.stamp.clone(),belief.stamp, nal.memory.time());
+//
+//                final long occ;
+//
+//                if(strongest_desire.isEternal()) {
+//                    occ = Stamp.ETERNAL;
+//                } else {
+//                    long shift=0;
+//                    if(task.getTerm().getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+//                        shift=nal.memory().duration();
+//                    }
+//                    occ = (strongest_desire.getOccurrenceTime()-shift);
+//                }
+//
+//
+//
+//                //nal.setCurrentBelief(belief);
+//
+//                //Sentence W=new Sentence(s2.term,Symbols.GOAL,T, belief).setOccurrenceTime(occ);
+//
+//                Budget val=BudgetFunctions.forward(T, nal);
+//
+//                return nal.derive(nal.newTask(s2.getTerm()).goal().truth(T).budget(val)
+//                                .parent(task, strongest_desireT)
+//                                .occurr(occ).temporalInductable(false)
+//                );
+//
+//            }
+//        }
+//
+//        //PRINCIPLE END
+//        return null;
+//    }
+//
+//
+//
+//    private static Task questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
+//        if(!(task.getTerm() instanceof Implication)) return null;
+//
+//        if(nal.memory().emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
+//                && Global.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF
+//                && task.isJudgment()
+//                && conf<Global.CURIOSITY_CONFIDENCE_THRESHOLD
+//                && task.getPriority()>Global.CURIOSITY_PRIORITY_THRESHOLD) {
+//
+//                boolean valid=false;
+//
+//                Implication equ=(Implication) task.getTerm();
+//                if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+//                    valid=true;
+//                }
+//
+//                if(valid) {
+//                    return nal.derive(nal.newTask(task.getTerm())
+//                                    .question()
+//                                    .parent(task)
+//                                    .occurrNow()
+//                                    .budget(task.getBudget(), Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL)
+//                    );
+//                }
+//
+//        }
+//        return null;
+//    }
+//
 
     /**
      * Evaluate the quality of the judgment as a solution to a problem

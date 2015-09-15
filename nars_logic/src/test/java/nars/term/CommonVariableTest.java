@@ -53,7 +53,7 @@ public class CommonVariableTest {
                 p.term("%2"),
                 p.term("%1"));
 
-        //same instance
-        assertTrue(ca == cb);
+        assertEquals(ca, cb);
+        assertTrue("efficient re-use of common variable of name length=1", ca == cb);
     }
 }

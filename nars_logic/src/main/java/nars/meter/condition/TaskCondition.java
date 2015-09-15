@@ -14,7 +14,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 
 import java.io.Serializable;
 import java.util.*;
@@ -61,7 +61,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
     protected List<Task> exact;
 
-    transient final int maxExact = 4;
+    transient final static int maxExact = 4;
 
     protected Deque<Task> removals;
 
@@ -69,10 +69,6 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
     protected TreeMap<Double,Task> similar;
     transient int maxRemovals = 32;
-
-    //enable true for more precise temporality constraints; this may be necessary or not
-    final transient private boolean strictDurationWindow = true;
-
 
 
     public TaskCondition(NAR n, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
@@ -140,7 +136,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
         this.term = t.getTerm();
     }
 
-    protected DefaultTopic.On getTaskRemoved(NAR n) {
+    protected On getTaskRemoved(NAR n) {
         return n.memory.eventTaskRemoved.on(task -> {
             //if (!succeeded) {
                 if (matches(task)) {
@@ -290,7 +286,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
                     final int durationWindow = task.getDuration();
 
                     final int durationWindowNear = durationWindow / 2;
-                    final int durationWindowFar = strictDurationWindow ? durationWindowNear : durationWindow;
+                    final int durationWindowFar = true ? durationWindowNear : durationWindow;
 
 
                     long at = relativeToCondition ? creationTime : task.getCreationTime();

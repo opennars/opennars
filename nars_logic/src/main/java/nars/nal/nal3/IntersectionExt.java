@@ -30,7 +30,7 @@ import nars.term.Terms;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.Set;
 
 /**
  * A compound term whose extension is the intersection of the extensions of its term
@@ -77,15 +77,15 @@ public class IntersectionExt extends Intersect {
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set union
             Term[] both = ObjectArrays.concat(
-                    ((Compound) term1).term,
-                    ((Compound) term2).term, Term.class);
+                    ((SetInt) term1).terms(),
+                    ((SetInt) term2).terms(), Term.class);
             return SetInt.make(both);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set intersection
-            TreeSet<Term> set = Terms.toSortedSet(((Compound) term1).term);
+            Set<Term> set = ((Compound) term1).asTermSortedSet();
             
-            set.retainAll(((Compound) term2).asTermList());
+            set.retainAll(((Compound) term2).asTermSet());
             
             //technically this can be used directly if it can be converted to array
             //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously

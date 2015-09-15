@@ -2,15 +2,12 @@ package nars.nal;
 
 import nars.Global;
 import nars.Op;
-import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.term.Term;
 import nars.util.db.TemporaryCache;
 import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.EnumMap;
 import java.util.List;
 
@@ -45,9 +42,7 @@ public class SimpleDeriver extends Deriver  {
     static void loadRules() {
         try {
             SimpleDeriver.standard = new DerivationRules();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -77,7 +72,7 @@ public class SimpleDeriver extends Deriver  {
         for (int i = 0; i < rs; i++) {
             final TaskRule r = rules.get(i);
 
-            final PreCondition[] p = r.preconditions;
+            //final PreCondition[] p = r.preconditions;
 
             final Op o1 = r.getTaskTermType();
             final Op o2 = r.getBeliefTermType();

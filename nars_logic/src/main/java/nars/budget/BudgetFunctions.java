@@ -146,11 +146,6 @@ public final class BudgetFunctions extends UtilityFunctions {
         return new Budget(newPriority, b.getDurability(), b.getQuality());
     }
 
-
-    public enum Activating {
-        Classic, Accum, WTF
-    }
-    
     
 //    /* ----------------------- Concept ----------------------- */
 //    /**

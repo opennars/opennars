@@ -2,14 +2,14 @@ package nars.event;
 
 import nars.Memory;
 import nars.NAR;
-import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 
 import java.util.function.Consumer;
 
 /**  call at the end of a frame (a batch of cycles) */
 abstract public class FrameReaction implements Consumer<NAR> {
 
-    private DefaultTopic.On reg;
+    private On reg;
 
     public FrameReaction(NAR nar) {
         this(nar.memory);

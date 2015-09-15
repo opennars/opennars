@@ -234,7 +234,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final AbstractScalarTruth comparison(final Truth a, final Truth b) {
+    public static final Truth comparison(final Truth a, final Truth b) {
         final float f1 = a.getFrequency();
         final float f2 = b.getFrequency();
         final float c1 = a.getConfidence();
@@ -253,7 +253,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final AbstractScalarTruth desireStrong(final Truth a, final Truth b) {
+    public static final Truth desireStrong(final Truth a, final Truth b) {
         final float f1 = a.getFrequency();
         final float f2 = b.getFrequency();
         final float c1 = a.getConfidence();
@@ -350,7 +350,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final AnalyticTruth reduceDisjunction(final Truth a, final Truth b) {
+    public static final Truth reduceDisjunction(final Truth a, final Truth b) {
         return deduction(intersection(a, negation(b)), 1f);
     }
 

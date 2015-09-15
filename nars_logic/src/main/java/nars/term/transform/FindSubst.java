@@ -209,8 +209,8 @@ public class FindSubst {
      * (Term 1 if it is a variable and of the target type)
      * instead of a new common variable.
      * */
-    protected void putCommon(Variable a, Variable b) {
-        Variable commonVar = CommonVariable.make(a, b);
+    protected final void putCommon(final Variable a, final Variable b) {
+        final Variable commonVar = CommonVariable.make(a, b);
         map1.put(a, commonVar);
         map2.put(b, commonVar);
     }

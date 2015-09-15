@@ -286,34 +286,35 @@ abstract public class Texts {
     }
 
 
-    final static Format oneDecimal = new DecimalFormat("0.0");
+    final static ThreadLocal<Format> oneDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0") );
 
     public static final String n1(final float x) {
-        return oneDecimal.format(x);
+        return oneDecimal.get().format(x);
     }
 
     public static final String n1char(final double x) {
-        return oneDecimal.format(x);
+        return oneDecimal.get().format(x);
     }
 
-    final static Format threeDecimal = new DecimalFormat("0.000");
+
+    final static ThreadLocal<Format> threeDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.000") );
 
     public static final String n3(final float x) {
-        return threeDecimal.format(x);
+        return threeDecimal.get().format(x);
     }
 
     public static final String n3(final double x) {
-        return threeDecimal.format(x);
+        return threeDecimal.get().format(x);
     }
 
-    final static Format fourDecimal = new DecimalFormat("0.0000");
+    final static ThreadLocal<Format> fourDecimal = ThreadLocal.withInitial( () -> new DecimalFormat("0.0000") );
 
     public static final String n4(final float x) {
-        return fourDecimal.format(x);
+        return fourDecimal.get().format(x);
     }
 
     public static final String n4(final double x) {
-        return fourDecimal.format(x);
+        return fourDecimal.get().format(x);
     }
 
     final static Format twoDecimal = new DecimalFormat("0.00");

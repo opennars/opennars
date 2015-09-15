@@ -7,7 +7,7 @@ import java.util.Collections;
 /**
  * Created by me on 9/13/15.
  */
-public class OnTopics<T extends Topic> extends FasterList<DefaultTopic.On> {
+public class OnTopics<T extends Topic> extends FasterList<On> {
 
     OnTopics(int length) {
         super(length);
@@ -17,7 +17,7 @@ public class OnTopics<T extends Topic> extends FasterList<DefaultTopic.On> {
         this(1);
     }
 
-    public OnTopics(DefaultTopic.On... r) {
+    public OnTopics(On... r) {
         super(r.length);
         Collections.addAll(this, r);
     }
@@ -42,7 +42,7 @@ public class OnTopics<T extends Topic> extends FasterList<DefaultTopic.On> {
         clear();
     }
 
-    public OnTopics add(DefaultTopic.On... elements) {
+    public OnTopics add(On... elements) {
         Collections.addAll(this, elements);
         return this;
     }

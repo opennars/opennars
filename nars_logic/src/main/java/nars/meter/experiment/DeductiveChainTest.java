@@ -52,7 +52,7 @@ public class DeductiveChainTest extends TestNAR {
 
         Global.DEBUG = true;
 
-        Default da = new Default();
+        Default da = new Default().nal(6);
         //DefaultAlann da = new DefaultAlann(32);
         //da.nal(3);
 
@@ -84,22 +84,22 @@ public class DeductiveChainTest extends TestNAR {
             }
         };
 
-        //n.run(100);
+        n.run(5000);
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);
 
         final int printEvery = 6000;
 
-        while (true) {
-
-            n.run(500);
-            //sleep(20);
-
-            if (n.time() % printEvery == 0) {
-                System.out.println(n.time() + " " + timestamp(start) + " " +
-                        n.memory().size());
-            }
-        }
+//        while (true) {
+//
+//            n.run(500);
+//            //sleep(20);
+//
+//            if (n.time() % printEvery == 0) {
+//                System.out.println(n.time() + " " + timestamp(start) + " " +
+//                        n.memory().size());
+//            }
+//        }
 
 
     }

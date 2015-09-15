@@ -700,7 +700,7 @@ public class NarseseParser extends BaseParser<Object>  {
         return sequence(
                 anyOf(variables),
                 push(match().charAt(0)), Atom(), swap(),
-                    push(Variable.make((char)pop(), (String) pop(), true)
+                    push(Variable.make((char)pop(), (String) pop())
                 )
 
         );
@@ -889,8 +889,9 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
             if (p instanceof String) {
-                Term t = Atom.the((String) p);
-                vectorterms.add(t);
+                throw new RuntimeException("string not expected here");
+//                Term t = Atom.the((String) p);
+//                vectorterms.add(t);
             } else if (p instanceof Term) {
                 Term t = (Term) p;
                 vectorterms.add(t);

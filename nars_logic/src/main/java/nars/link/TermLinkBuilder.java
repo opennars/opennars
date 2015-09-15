@@ -81,6 +81,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
             if (ti == null) {
                 throw new RuntimeException("prepareComponentLinks: " + t.term[i] + " normalized to null in superterm " + t);
+                //System.err.println("prepareComponentLinks: " + t + " normalized to null");// in superterm " + t);
+                //continue;
             }
 
             if (!(ti instanceof Variable)) {

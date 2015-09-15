@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class js extends TermFunction implements Mental {
 
-    ScriptEngine js = null;
+    private static ScriptEngine js = null;
 
     final HashMap global = new HashMap();
 
@@ -73,7 +73,7 @@ public class js extends TermFunction implements Mental {
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));
-            DynamicFunction d = new DynamicFunction(funcName, functionCode.toString());
+            DynamicFunction d = new DynamicFunction(funcName, functionCode);
             nar.on(d);
 
             op.stop();

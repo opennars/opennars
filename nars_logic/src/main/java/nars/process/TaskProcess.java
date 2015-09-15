@@ -315,7 +315,7 @@ public class TaskProcess extends NAL {
      * @param taskLink The termLink to be inserted
      * @return the tasklink which was selected or updated
      */
-    protected final TaskLink activateTaskLink(Concept c, final TaskLinkBuilder taskLink) {
+    protected static TaskLink activateTaskLink(Concept c, final TaskLinkBuilder taskLink) {
         return c.getTaskLinks().update(taskLink);
     }
 

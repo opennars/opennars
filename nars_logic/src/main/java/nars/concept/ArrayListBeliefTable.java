@@ -131,7 +131,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         final Memory memory = c.getMemory();
 
 
-        final Task input = t; //store in case input changes
+        //final Task input = t; //store in case input changes
 
         long now = memory.time();
 

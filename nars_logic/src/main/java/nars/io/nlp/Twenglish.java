@@ -34,6 +34,7 @@ import nars.util.language.Twokenize;
 import nars.util.language.Twokenize.Span;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Twitter English - english with additional tags for twitter-like content 
@@ -146,12 +147,9 @@ public class Twenglish {
         
         //2. add the 'heard' sequence of just the terms
         if (inputConjSeq) {
-            LinkedList<Term> cont = new LinkedList();
-            for (Span cp : s) {
-                cont.add(lexToTerm(cp.content));
-                //separate each by a duration interval
-                //cont.add(Interval.interval(memory.duration(), memory));
-            }
+            LinkedList<Term> cont = s.stream().map(cp -> lexToTerm(cp.content)).collect(Collectors.toCollection(LinkedList::new));
+            //separate each by a duration interval
+//cont.add(Interval.interval(memory.duration(), memory));
             cont.removeLast(); //remove trailnig interval term
 
             Compound con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD));

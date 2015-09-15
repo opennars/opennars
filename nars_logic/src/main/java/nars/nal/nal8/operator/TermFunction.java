@@ -85,7 +85,6 @@ public abstract class TermFunction<O> extends SynchOperator {
 
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
-        float confidence = 0.99f;
         return Lists.newArrayList(
                 TaskSeed.make(nar.memory, inh).
                         truth(getResultFrequency(), getResultConfidence()).
@@ -245,6 +244,7 @@ public abstract class TermFunction<O> extends SynchOperator {
                 if (t != null)
                     return Lists.newArrayList(t);
             } catch (Throwable t) {
+                t.printStackTrace();
             }
         }
 

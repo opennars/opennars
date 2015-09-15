@@ -236,19 +236,21 @@ public class DerivationRules extends ArrayList<TaskRule> {
                                     .pattern.structure()
                                     )
                     );*/
+                    if (rNorm.isReversible()) {
 
-                    //add reverse questions
-                    rUnnorm.forEachQuestionReversal(q -> {
+                        //add reverse questions
+                        rUnnorm.forEachQuestionReversal(q -> {
 
-                        q = q.normalizeRule();
+                            q = q.normalizeRule();
 
-                        //normalize may be returned null if the rearranging produced an invalid result
-                        //so do not add null
+                            //normalize may be returned null if the rearranging produced an invalid result
+                            //so do not add null
 
-                        if (q!=null && ur.add(q)) {
-                            //System.out.println("  " + q);
-                        }
-                    });
+                            if (q != null && ur.add(q)) {
+                                //System.out.println("  " + q);
+                            }
+                        });
+                    }
                 }
 
                 /*String s2 = rUnnorm.toString();
@@ -263,6 +265,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
         return ur;
     }
+
 
     private static void addUnrolledVarArgs(NarseseParser parser,
                                            Set<String> expanded,
@@ -326,17 +329,15 @@ public class DerivationRules extends ArrayList<TaskRule> {
         int violations = 0;
         for (TaskRule r : this) {
 
-            r.rehash();
-
             final Op o1 = r.getTaskTermType();
             if (o1==null) {
                 System.err.println(r + " has null taskterm type");
-                //violations++;
+                violations++;
             }
             final Op o2 = r.getBeliefTermType();
             if (o2==null) {
                 System.err.println(r + " has null beliefterm type");
-                //violations++;
+                violations++;
             }
         }
 

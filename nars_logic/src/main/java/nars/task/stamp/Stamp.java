@@ -219,11 +219,11 @@ public interface Stamp extends Cloneable, Serializable {
      }
      */
 
-    default boolean before(Stamp s, int duration) {
-        if (isEternal() || s.isEternal())
-            return false;
-        return order(s.getOccurrenceTime(), getOccurrenceTime(), duration) == TemporalRules.ORDER_BACKWARD;
-    }
+//    default boolean before(Stamp s, int duration) {
+//        if (isEternal() || s.isEternal())
+//            return false;
+//        return order(s.getOccurrenceTime(), getOccurrenceTime(), duration) == TemporalRules.ORDER_BACKWARD;
+//    }
 
     /*
     public Stamp cloneWithNewCreationTime(long newCreationTime) {
@@ -238,12 +238,12 @@ public interface Stamp extends Cloneable, Serializable {
         return cloneWithNewOccurrenceTime(ETERNAL);
     }*/
 
-    /** true if this instance is after 's' */
-    default boolean after(Stamp s, int duration) {
-        if (isEternal() || s.isEternal())
-            return false;
-        return TemporalRules.after(s.getOccurrenceTime(), getOccurrenceTime(), duration);
-    }
+//    /** true if this instance is after 's' */
+//    default boolean after(Stamp s, int duration) {
+//        if (isEternal() || s.isEternal())
+//            return false;
+//        return TemporalRules.after(s.getOccurrenceTime(), getOccurrenceTime(), duration);
+//    }
 
     default float getOriginality() {
         return 1.0f / (getEvidence().length + 1);

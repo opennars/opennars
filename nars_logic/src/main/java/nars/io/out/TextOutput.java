@@ -149,7 +149,7 @@ public class TextOutput {
                     out.println(s);
 
                 //if (flushAfterEachOutput)
-                    out.flush();
+                out.flush();
 
 
             return true;

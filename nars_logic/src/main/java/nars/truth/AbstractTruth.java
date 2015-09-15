@@ -44,7 +44,7 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
     @Override
     public boolean equals(final Object that) {
         if (that == this) return true;
-        if (that instanceof AbstractTruth) {
+        if (that instanceof Truth) {
             final Truth t = ((Truth) that);
 
             final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();

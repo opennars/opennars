@@ -34,23 +34,23 @@ public class Variable extends Atom {
 
 
     public final Op op;
-    final int structure;
 
-    public static Variable make(Op varType, byte[] baseName, boolean scoped) {
-        return make(varType.ch, baseName, scoped);
+
+    public static Variable make(Op varType, byte[] baseName) {
+        return make(varType.ch, baseName);
     }
 
-    public static Variable make(char varType, String baseName, boolean scoped) {
-        return make(varType, Utf8.toUtf8(baseName), scoped);
+    public static Variable make(char varType, String baseName) {
+        return make(varType, Utf8.toUtf8(baseName));
     }
 
-    public static Variable make(char ch, byte[] baseName, boolean scoped) {
+    public static Variable make(char ch, byte[] baseName) {
         int bl = baseName.length;
         final byte[] name = new byte[bl + 1];
         name[0] = (byte)ch;
         System.arraycopy(baseName, 0, name, 1, bl);
 
-        return new Variable(name, scoped);
+        return new Variable(name);
     }
 
     @Override
@@ -63,15 +63,9 @@ public class Variable extends Atom {
     }
 
 
-    final boolean scope;
+    final boolean scope = false;
 
 
-    public Variable(final String name) {
-        this(name, false);
-    }
-    public Variable(final byte[] name) {
-        this(name, false);
-    }
 
 //    public Variable(char varType, final String name) {
 //        super(Utf8.toUtf8((byte) varType, name));
@@ -79,10 +73,10 @@ public class Variable extends Atom {
 //        this.scope = false;
 //    }
 
-    public Variable(final byte[] n, final boolean scope) {
+    public Variable(final byte[] n) {
         super(n);
 
-        this.scope = scope;
+        //this.scope = scope;
 
         switch ((char)n[0]) {
             case VAR_INDEPENDENT:
@@ -101,10 +95,7 @@ public class Variable extends Atom {
                 throw new RuntimeException("Invalid variable type");
 
         }
-        if (op != Op.VAR_PATTERN)
-            structure = 1 << op().ordinal();
-        else
-            structure = 0;
+
 
 
     }
@@ -116,7 +107,7 @@ public class Variable extends Atom {
 
     @Override
     final public int structure() {
-        return structure;
+        return 1 << op().ordinal();
     }
 
     /**
@@ -124,8 +115,8 @@ public class Variable extends Atom {
      *
      * @param name A String read from input
      */
-    public Variable(final String n, final boolean scope) {
-        this(Utf8.toUtf8(n), scope);
+    public Variable(final String n) {
+        this(Utf8.toUtf8(n));
     }
 
 
@@ -140,15 +131,11 @@ public class Variable extends Atom {
      */
     @Override
     public Variable clone() {
-        //return new Variable(name(), scope == this ? null : scope);
+        //return new Variable(name());
         return this;
     }
 
-    public final Variable clone(boolean newScope) {
-        if (newScope!=scope)
-            return new Variable(bytes(), newScope);
-        return this;
-    }
+
 
 //    /** clones the variable with its scope removed/reset */
 //    public Variable cloneUnscoped() {
@@ -186,8 +173,8 @@ public class Variable extends Atom {
             return super.equals(vthat);
         }
 
-        if (!isScoped()) return false;
-        if (!vthat.isScoped()) return false;
+//        if (!isScoped()) return false;
+//        if (!vthat.isScoped()) return false;
 
         return super.equals(that);
     }
@@ -205,25 +192,25 @@ public class Variable extends Atom {
             return c;
 
         //otherwise, if they have the same name:
-        final boolean ascoped = a.isScoped();
-        final boolean bscoped = b.isScoped();
+//        final boolean ascoped = a.isScoped();
+//        final boolean bscoped = b.isScoped();
 
-        if (!ascoped && !bscoped) {
-            //if the two variables are each without scope, they are not equal.
-            //so use their identityHashCode to determine a stable ordering
-            int as = System.identityHashCode(a);
-            int bs = System.identityHashCode(b);
-            return Integer.compare(as, bs);
-        }
-        else if (ascoped && !bscoped) {
-            return 1;
-        }
-        else if (/*bscoped && */ !ascoped) {
-            return -1;
-        }
-        else {
+//        if (!ascoped && !bscoped) {
+//            //if the two variables are each without scope, they are not equal.
+//            //so use their identityHashCode to determine a stable ordering
+//            int as = System.identityHashCode(a);
+//            int bs = System.identityHashCode(b);
+//            return Integer.compare(as, bs);
+//        }
+//        else if (ascoped && !bscoped) {
+//            return 1;
+//        }
+//        else if (/*bscoped && */ !ascoped) {
+//            return -1;
+//        }
+//        else {
             return 0; //must be equal
-        }
+//      }
     }
 //    public boolean equalsTerm(Object that) {
 //        //TODO factor these comparisons into 2 nested if's
@@ -290,7 +277,7 @@ public class Variable extends Atom {
 //    }
 
 
-    public final boolean isScoped() { return scope; }
+//    public final boolean isScoped() { return scope; }
 
 
 //    public static boolean validVariableType(final char c) {
@@ -370,9 +357,7 @@ public class Variable extends Atom {
     public static Variable the(Op type, int counter) {
         return new Variable(name(type, counter));
     }
-    public static Variable theUnscoped(final Op type, final int counter) {
-        return new Variable(name(type, counter), true);
-    }
+
 
 //    /** returns the default dependent variable */
 //    public static Variable theDependent() {

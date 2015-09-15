@@ -20,7 +20,6 @@
  */
 package nars.link;
 
-import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.Item;
@@ -90,11 +89,6 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     public TermLink(final Term t, final TermLinkTemplate template, final Budget v, final byte[] prefix, final int hash) {
         super(v);
 
-        if (Global.DEBUG) {
-            if (!t.isNormalized()) {
-                throw new RuntimeException("not normalized: " + t);
-            }
-        }
 
         this.target = t;
 
@@ -109,11 +103,6 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     public TermLink(final Term t, final Budget v) {
         super(v);
 
-        if (Global.DEBUG) {
-            if (!t.isNormalized()) {
-                throw new RuntimeException("not normalized: "+ t);
-            }
-        }
 
         this.target = t;
 
@@ -194,22 +183,22 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 
 
 
-    /**
-     * Get one index by level
-     * @param i The index level
-     * @return The index value
-     */
-    @Override
-    public final short getIndex(final int i) {
-        /*if ((i < 0) || ( i >= index.length))
-            throw new RuntimeException(this + " index fault: " + i);*/
-        //if (/*(index != null) &&*/ (i < index.length)) {
-
-        return index[i];
-        //} else {
-            //return -1;
-        //}
-    }
+//    /**
+//     * Get one index by level
+//     * @param i The index level
+//     * @return The index value
+//     */
+//    @Override
+//    public final short getIndex(final int i) {
+//        /*if ((i < 0) || ( i >= index.length))
+//            throw new RuntimeException(this + " index fault: " + i);*/
+//        //if (/*(index != null) &&*/ (i < index.length)) {
+//
+//        return index[i];
+//        //} else {
+//            //return -1;
+//        //}
+//    }
 
     @Override
     public Term getTerm() {

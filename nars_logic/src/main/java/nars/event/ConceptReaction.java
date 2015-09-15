@@ -3,7 +3,7 @@ package nars.event;
 
 import nars.NAR;
 import nars.concept.Concept;
-import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 import nars.util.event.OnTopics;
 
 /** watches for concept lifecycle (creation and forget) events */
@@ -11,19 +11,19 @@ abstract public class ConceptReaction extends OnTopics {
 
     public final NAR nar;
 
-    private final DefaultTopic.On onConceptActive;
-    private final DefaultTopic.On onConceptForget;
+    private final On onConceptActive;
+    private final On onConceptForget;
 
 
     public ConceptReaction(NAR n) {
+        super();
 
-
-        this.onConceptActive = n.memory().eventConceptActivated.on(c -> {
-            onConceptActive(c);
-        });
-        this.onConceptForget = n.memory().eventConceptForget.on(c -> {
-            onConceptForget(c);
-        });
+        add(
+            this.onConceptActive = n.memory().eventConceptActivated.on(
+                    this::onConceptActive),
+            this.onConceptForget = n.memory().eventConceptForget.on(
+                    this::onConceptForget)
+        );
 
         this.nar = n;
         nar.taskLater(this::init);

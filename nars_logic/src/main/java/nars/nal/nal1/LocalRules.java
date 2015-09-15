@@ -59,23 +59,23 @@ import java.util.Arrays;
  */
 public class LocalRules {
 
-
-    /**
-     * Check whether two sentences can be used in revision
-     *
-     * @param newBelief The first sentence
-     * @param oldBelief The second sentence
-     * @return If revision is possible between the two sentences
-     */
-    public static boolean revisible(final Sentence newBelief, final Sentence oldBelief) {
-        if (newBelief.isRevisible())
-            if (newBelief.equalTerms(oldBelief))
-                if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder())) {
-                    return true;
-                }
-
-        return false;
-    }
+//
+//    /**
+//     * Check whether two sentences can be used in revision
+//     *
+//     * @param newBelief The first sentence
+//     * @param oldBelief The second sentence
+//     * @return If revision is possible between the two sentences
+//     */
+//    public static boolean revisible(final Sentence newBelief, final Sentence oldBelief) {
+//        if (newBelief.isRevisible())
+//            if (newBelief.equalTerms(oldBelief))
+//                if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder())) {
+//                    return true;
+//                }
+//
+//        return false;
+//    }
 
     /**
      * avoids term comparison if the two inputs are already known to have equal terms
@@ -289,7 +289,10 @@ public class LocalRules {
         //Solution Activated
 //        if (question.isQuestOrQuestion()) {
 //            //if (questionTask.isInput()) { //only show input tasks as solutions
+
             memory.eventAnswer.emit(Tuples.twin(belief, question));
+            memory.eventDerived.emit(belief);
+
 //        } else {
 //            memory.eventAnswer.emit(Tuples.twin(belief, question));
 //        }
@@ -319,21 +322,21 @@ public class LocalRules {
         return null;
     }
 
-    /**
-     * Inheritance/Implication matches Similarity/Equivalence
-     *
-     * @param asym   A Inheritance/Implication sentence
-     * @param sym    A Similarity/Equivalence sentence
-     * @param figure location of the shared term
-     * @param p    Reference to the memory
-     */
-    public static void matchAsymSym(final Task asym, final Task sym, int figure, final Premise p) {
-        if (p.getTask().isJudgment()) {
-            inferToAsym(asym, sym, p);
-        } else {
-            convertRelation(p);
-        }
-    }
+//    /**
+//     * Inheritance/Implication matches Similarity/Equivalence
+//     *
+//     * @param asym   A Inheritance/Implication sentence
+//     * @param sym    A Similarity/Equivalence sentence
+//     * @param figure location of the shared term
+//     * @param p    Reference to the memory
+//     */
+//    public static void matchAsymSym(final Task asym, final Task sym, int figure, final Premise p) {
+//        if (p.getTask().isJudgment()) {
+//            inferToAsym(asym, sym, p);
+//        } else {
+//            convertRelation(p);
+//        }
+//    }
 
     /* -------------------- two-premise logic rules -------------------- */
 

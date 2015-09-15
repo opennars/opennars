@@ -46,7 +46,7 @@ import static nars.nal.UtilityFunctions.*;
  * some subclasses / adapter classes for statistics,
  * monitoring or event notification on changes
  */
-public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializable {
+public class Budget implements Cloneable, Prioritized, Serializable {
 
     public static final Procedure2<Budget,Budget> average = (Procedure2<Budget, Budget>) Budget::merge;
     public static final Procedure2<Budget,Budget> plus = (Procedure2<Budget, Budget>) Budget::accumulate;
@@ -550,7 +550,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
     public static String toString(final Budget b) {
         //return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
-        return b.toStringBuilder(new StringBuilder(), Texts.n4(b.priority), Texts.n4(b.durability), Texts.n4(b.quality)).toString();
+        return Budget.toStringBuilder(new StringBuilder(), Texts.n4(b.priority), Texts.n4(b.durability), Texts.n4(b.quality)).toString();
     }
 
     /**
@@ -572,7 +572,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return toStringBuilder(sb, priorityString, durabilityString, qualityString);
     }
 
-    private StringBuilder toStringBuilder(StringBuilder sb, final CharSequence priorityString, final CharSequence durabilityString, final CharSequence qualityString) {
+    private static StringBuilder toStringBuilder(StringBuilder sb, final CharSequence priorityString, final CharSequence durabilityString, final CharSequence qualityString) {
         final int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
         if (sb == null)
             sb = new StringBuilder(c);
@@ -630,26 +630,16 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     final public long setLastForgetTime(final long currentTime) {
 
         final long period;
-        final boolean save;
 
         if (this.lastForgetTime == -1) {
             period = 0;
-            save = true;
         }
         else {
             period = currentTime - lastForgetTime;
-            save = !(period == 0);
         }
 
-        if (save) {
-            this.lastForgetTime = currentTime;
-            return period;
-        }
-
-        if (period > 0)
-            System.err.println("wtf");
-
-        return 0;
+        this.lastForgetTime = currentTime;
+        return period;
     }
 
     @Override
@@ -758,20 +748,15 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
 
-    final public boolean isNew() {
-        return this.lastForgetTime == -1;
-    }
-
-
-    @Override
-    public float receive(float amount) {
-        float maxReceivable = 1.0f - getPriority();
-
-        float received = Math.min(amount, maxReceivable);
-        addPriority(received);
-
-        return amount - received;
-    }
+//    @Override
+//    public float receive(float amount) {
+//        float maxReceivable = 1.0f - getPriority();
+//
+//        float received = Math.min(amount, maxReceivable);
+//        addPriority(received);
+//
+//        return amount - received;
+//    }
 
     @Override
     public void mulPriority(final float factor) {

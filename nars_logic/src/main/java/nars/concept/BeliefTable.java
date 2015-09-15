@@ -221,9 +221,7 @@ public interface BeliefTable extends TaskTable {
         if (size == 0) return 0;
 
         final float[] d = {0};
-        this.forEach(t -> {
-            d[0] += t.projectionTruthQuality(time, time, false) * t.getExpectation();
-        });
+        this.forEach(t -> d[0] += t.projectionTruthQuality(time, time, false) * t.getExpectation());
 
         final float dd = d[0];
 

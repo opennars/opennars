@@ -101,9 +101,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         @Override
         protected V addItem(final V i) {
 
-            final V e = items.insert(i);
-
-            return e;
+            return items.insert(i);
         }
     }
 
@@ -122,7 +120,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         }
 
         /** maps y in 0..1.0 to an index in 0..size */
-        final int index(float y, final int size) {
+        static final int index(float y, final int size) {
 
             //y = 1f - y; //reverse for the ordering of the bag
 
@@ -157,14 +155,15 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
             //TODO cache these curvepoints when min/max dont change
             final float min = b.getPriorityMin();
             final float max = b.getPriorityMax();
-            if (min!=max) {
+            final boolean normalizing = (min!=max);
+            if (normalizing) {
                 //rescale to dynamic range
                 x = min + (x * (max-min));
             }
 
             float y = curve.valueOf(x);
 
-            if (min!=max) {
+            if (normalizing) {
                 final float yMin = curve.valueOf(min);
                 final float yMax = curve.valueOf(max);
                 y = (y - yMin) / (yMax - yMin);
@@ -513,12 +512,11 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         /*if (ii == null)
             throw new RuntimeException("invalid index: " + index + ", size=" + size());*/
 
-        final V jj = remove( ii.name() );
-//        if (ii!=jj) {
+        //        if (ii!=jj) {
 //            throw new RuntimeException("removal fault");
 //        }
 
-        return jj;
+        return remove( ii.name() );
     }
 
 
@@ -716,7 +714,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
         int remaining = maxAttempts;
 
-        boolean direction = true;
+
 
         int nextUp = center, nextDown = center;
         boolean finishedUp = false, finishedDown = false;

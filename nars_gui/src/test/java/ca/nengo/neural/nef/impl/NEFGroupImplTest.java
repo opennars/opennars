@@ -17,6 +17,7 @@ import ca.nengo.util.Probe;
 import ca.nengo.util.TimeSeries;
 import ca.nengo.util.impl.TimeSeriesImpl;
 import junit.framework.TestCase;
+import org.junit.Ignore;
 
 //import ca.nengo.math.impl.ConstantFunction;
 //import ca.nengo.model.nef.impl.DecodedOrigin;
@@ -30,6 +31,7 @@ import junit.framework.TestCase;
  * 
  * @author Bryan Tripp
  */
+@Ignore
 public class NEFGroupImplTest extends TestCase {
 
 	protected void setUp() throws Exception {

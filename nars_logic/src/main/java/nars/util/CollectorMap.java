@@ -105,7 +105,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
             return removed;
         }
 
-        return e;
+        return null;
     }
 
 

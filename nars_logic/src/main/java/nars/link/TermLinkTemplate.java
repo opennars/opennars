@@ -207,4 +207,8 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     }
 
 
+    @Override
+    public int hashCode() {
+        throw new RuntimeException("unimplemented");
+    }
 }

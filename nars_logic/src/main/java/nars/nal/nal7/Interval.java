@@ -17,13 +17,10 @@
 
 package nars.nal.nal7;
 
-import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.Symbols;
 import nars.term.Atom;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -174,49 +171,49 @@ import java.util.concurrent.atomic.AtomicInteger;
         return this;
     }
 
-    /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
-    public static List<AbstractInterval> intervalSequence(final long t, final int maxTerms, final Memory memory) {
-        if (maxTerms == 1)
-            return Lists.newArrayList(interval(t, memory));
-
-        Interval first = interval(t, memory);
-        long a = first.cycles(memory); //current approximation value
-        if (a == t) return Lists.newArrayList(first);
-        else if (a < t) {
-            //ok we will add to it. nothing to do here
-        }
-        else if ((a > t) && (first.magnitude > 0)) {
-            //use next lower magnitude
-            first = interval(first.magnitude - 1);
-            a = first.cycles(memory);
-        }
-                
-        List c = new ArrayList(maxTerms);
-        c.add(first);
-        
-        long remaining = t - a;
-        c.addAll( intervalSequence(remaining, maxTerms - 1, memory));
-        
-        /*
-        Interval approx = Interval.intervalTime(t, memory);                
-        System.out.println(t + " = " + c + "; ~= " + 
-                        approx + " (t=" + t + ", seq=" + intervalSequenceTime(c, memory) + ", one=" + approx.getTime(memory) + ")");
-        */
-        
-        return c;
-    }
-
-    /** sum the time period contained in the Intervals (if any) in a sequence of objects (usually list of Terms) */
-    public static long intervalSequence(final Iterable s, final Memory memory) {
-        long time = 0;
-        for (final Object t : s) {
-            if (t instanceof AbstractInterval) {
-                AbstractInterval i = (AbstractInterval)t;
-                time += i.cycles(memory);
-            }
-        }
-        return time;
-    }
+//    /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
+//    public static List<AbstractInterval> intervalSequence(final long t, final int maxTerms, final Memory memory) {
+//        if (maxTerms == 1)
+//            return Lists.newArrayList(interval(t, memory));
+//
+//        Interval first = interval(t, memory);
+//        long a = first.cycles(memory); //current approximation value
+//        if (a == t) return Lists.newArrayList(first);
+//        else if (a < t) {
+//            //ok we will add to it. nothing to do here
+//        }
+//        else if ((a > t) && (first.magnitude > 0)) {
+//            //use next lower magnitude
+//            first = interval(first.magnitude - 1);
+//            a = first.cycles(memory);
+//        }
+//
+//        List c = new ArrayList(maxTerms);
+//        c.add(first);
+//
+//        long remaining = t - a;
+//        c.addAll( intervalSequence(remaining, maxTerms - 1, memory));
+//
+//        /*
+//        Interval approx = Interval.intervalTime(t, memory);
+//        System.out.println(t + " = " + c + "; ~= " +
+//                        approx + " (t=" + t + ", seq=" + intervalSequenceTime(c, memory) + ", one=" + approx.getTime(memory) + ")");
+//        */
+//
+//        return c;
+//    }
+//
+//    /** sum the time period contained in the Intervals (if any) in a sequence of objects (usually list of Terms) */
+//    public static long intervalSequence(final Iterable s, final Memory memory) {
+//        long time = 0;
+//        for (final Object t : s) {
+//            if (t instanceof AbstractInterval) {
+//                AbstractInterval i = (AbstractInterval)t;
+//                time += i.cycles(memory);
+//            }
+//        }
+//        return time;
+//    }
 
     
 

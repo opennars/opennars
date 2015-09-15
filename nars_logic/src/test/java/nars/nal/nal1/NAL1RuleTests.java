@@ -1,5 +1,6 @@
 package nars.nal.nal1;
 
+import nars.Global;
 import nars.NAR;
 import nars.meta.RuleTest;
 import nars.meter.TestNAR;
@@ -55,6 +56,9 @@ public class NAL1RuleTests {
 
     @Test
     public void testConversion() {
+
+        Global.DEBUG = true;
+
         new RuleTest("<bird --> swimmer>.",
                 "(S --> P), S |- (P --> S), (Truth:Conversion)") {
 
@@ -64,14 +68,25 @@ public class NAL1RuleTests {
             }
 
             @Override
+            protected void setupAfterTaskInput(NAR n) {
+                super.setupAfterTaskInput(n);
+
+                n.stdout();
+                n.frame(53);
+
+            }
+
+            @Override
             public void onDerivations(List<Task> derivations) {
                 assertTrue(!derivations.isEmpty());
+
+                System.out.println("derived: " + derivations);
+
                 assertTrue(
                         derivations.toString().contains(
                             "<swimmer --> bird>. %1.00;0.47%"
                         )
                 );
-                //System.out.println("derived: " + derivations);
             }
         };
     }

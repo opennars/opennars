@@ -701,6 +701,8 @@ abstract public class NAR {
     public NAR trace(Appendable out) {
 
 
+        final String[] previous = {null};
+
         Topic.all(memory(), (k, v) -> {
             try {
 
@@ -709,11 +711,22 @@ abstract public class NAR {
                     out.append("  ");
                 }
 
+                String chan = k.toString();
+                if (!chan.equals(previous[0])) {
+                    out
+                        .append(ANSI.COLOR_CONFIG)
+                        .append(chan)
+                        .append(ANSI.COLOR_RESET )
+                        .append(": ");
+                    previous[0] = chan;
+                }
+                else {
+                    //indent
+                    for (int i = 0; i < chan.length() + 2; i++)
+                        out.append(' ');
+                }
+
                 out
-                    .append(ANSI.COLOR_CONFIG)
-                    .append(k.toString())
-                    .append(ANSI.COLOR_RESET )
-                    .append(": ")
                     .append(v.toString());
 
                 if (v instanceof Concept) {

@@ -1,6 +1,5 @@
 package nars.process;
 
-import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
@@ -34,29 +33,28 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     @Override
     protected void derive(Consumer<Premise> p) {
 
-        final Memory memory = nar().memory();
+        //final Memory memory = nar().memory();
 
         p.accept(this);
 
     }
 
-    /**
-     * the current termlink / belieflink's concept
-     */
-    public Concept getTermLinkConcept() {
-        final TermLink tl = getTermLink();
-        if (tl != null) {
-            return concept(tl.getTerm());
-        }
-        return null;
-    }
+//    /**
+//     * the current termlink / belieflink's concept
+//     */
+//    public Concept getTermLinkConcept() {
+//        final TermLink tl = getTermLink();
+//        if (tl != null) {
+//            return concept(tl.getTerm());
+//        }
+//        return null;
+//    }
 
     @Override
     public String toString() {
         return new StringBuilder().append(getClass().getSimpleName())
                 .append("[").append(getTask()).append(',')
-                .append(getTermLink())
-                .append("," + getBelief())
+                .append(getTermLink()).append(",").append(getBelief())
                 .append(']')
                 .toString();
     }

@@ -76,7 +76,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     }
 
     boolean containsTerm(final Term target);
-    boolean containsTermRecursivelyOrEquals(final Term target);
+    boolean equalsOrContainsTermRecursively(final Term target);
 
 
 

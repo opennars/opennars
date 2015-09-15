@@ -21,7 +21,6 @@
 package nars.bag.impl;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
@@ -38,6 +37,7 @@ import nars.util.math.Distributor;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Original Bag implementation which distributes items into
@@ -776,9 +776,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
     @Override
     @Deprecated public Iterable<E> values() {
-        return Iterables.transform(
-                index.values(),
-                (d) -> d.item );
+        return index.values().stream().map((d) -> d.item).collect(Collectors.toList());
 
         //throw new RuntimeException("Coming soon");
     }

@@ -2,8 +2,8 @@ package nars.meta.pre;
 
 import nars.nal.nal4.ProductN;
 import nars.task.Task;
+import nars.term.Atom;
 import nars.term.Term;
-import nars.term.Variable;
 
 /**
  * TODO decide if the volume bounds are correct when varargs are involved,
@@ -14,10 +14,10 @@ public class PairMatchingProduct extends ProductN {
     public int volA, volB;
     public int structureA, structureB; //should use the long stuctureHash?
 
-    public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
+    //public final static Variable any = new Variable("%1"); //just use the first pattern variable because it will overlap with it
 
     public PairMatchingProduct() {
-        this(any, any);
+        this(Atom.Null, Atom.Null);
     }
 
     public PairMatchingProduct(Term a, Term b) {
@@ -44,7 +44,7 @@ public class PairMatchingProduct extends ProductN {
     void set(final Term a, final Term b) {
         this.term[0] = a;
         this.term[1] = b;
-        rehash();
+        init(term);
     }
 
     @Override
@@ -53,15 +53,21 @@ public class PairMatchingProduct extends ProductN {
     }
 
     public final boolean substitutesMayExist(final PairMatchingProduct pattern) {
+        return substitutesMayExistParanoid(pattern);
+        //return substitutesMayExistFast(pattern);
+    }
+
+    public final boolean substitutesMayExistParanoid(final PairMatchingProduct pattern) {
         return true;
+
     }
 
     public final boolean substitutesMayExistFast(final PairMatchingProduct pattern) {
         if (impossibleStructure(pattern.structure()))
             return false;
 
-        /*if (volume() < pattern.volume())
-            return false;*/
+        if (volume() < pattern.volume())
+            return false;
 
         if (volA < pattern.volA)
             return false;
@@ -69,11 +75,11 @@ public class PairMatchingProduct extends ProductN {
         if (volB < pattern.volB)
             return false;
 
-        /*final Term c = term[0];
+        final Term c = term[0];
         if (c.impossibleStructure(pattern.structureA)) return false;
 
         final Term d = term[1];
-        if (d.impossibleStructure(pattern.structureB)) return false;*/
+        if (d.impossibleStructure(pattern.structureB)) return false;
 
         return true;
     }

@@ -188,12 +188,7 @@ public class RuleMatch extends FindSubst {
 
         //}
 
-        if (derive != null && derive.toString().contains("%")) {
-            System.err.println("Reactor leak - Pattern variable detected in output: " + derive);
-            //System.err.println("  " + this);
-            //System.err.println("  " + premise);
-            return false;
-        }
+
 
         //TODO also allow substituted evaluation on output side (used by 2 rules I think)
 
@@ -267,7 +262,10 @@ public class RuleMatch extends FindSubst {
     /** provides the cached result if it exists, otherwise computes it and adds to cache */
     public final Term resolve(final Term t) {
         //cached:
-        return resolutions.computeIfAbsent(t, resolver);
+        Term r = resolutions.computeIfAbsent(t, resolver);
+
+
+        return r;
 
         //uncached:
         //return resolver.apply(t);

@@ -1,13 +1,11 @@
 package nars.bag;
 
-import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Memory;
 import nars.bag.impl.CacheBag;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
-import nars.budget.BudgetSource;
 import nars.budget.Itemized;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
@@ -26,7 +24,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements CacheBag<K,V>, Consumer<V>, Supplier<V>, Serializable {
+public abstract class Bag<K, V extends Itemized<K>>  implements CacheBag<K,V>, Consumer<V>, Supplier<V>, Serializable {
 
     transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
@@ -148,19 +146,19 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         return pop();
     }
 
-    /**
-     * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected
-     */
-    public final V remove(final Predicate<V> iff) {
-        V v = peekNext();
-
-        if (v == null) return null;
-        if (iff.apply(v)) {
-            remove(v.name());
-            return v;
-        }
-        return null;
-    }
+//    /**
+//     * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected
+//     */
+//    public final V remove(final Predicate<V> iff) {
+//        V v = peekNext();
+//
+//        if (v == null) return null;
+//        if (iff.apply(v)) {
+//            remove(v.name());
+//            return v;
+//        }
+//        return null;
+//    }
 
 
     public boolean isEmpty() {
@@ -293,9 +291,9 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
 
 
-    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
-        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);
-    }
+//    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
+//        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);
+//    }
 
     /** collects a batch of values and returns them after applying forgetting to each
      *  returns number of items collected.
@@ -400,7 +398,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
         forgetNext.set(forgetCycles, m.time());
 
-        int affected = 0;
         for (int i = 0; i < conceptsToForget; i++) {
             peekNext(forgetNext);
         }
@@ -478,7 +475,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      * @param selector
      * @return
      */
-    protected V putReplacing(final V n, final BagTransaction<K, V> selector) {
+    protected V putReplacing(final V n, final BagSelector<K,V> selector) {
         final V overflow = put(n);
 
         if (overflow!=null) {

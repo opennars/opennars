@@ -97,16 +97,20 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
         int subsApplicable = numSubs;
 
-        if (!superterm.hasVarDep())
-            if ((subsApplicable -= numDep) <= 0)
+        if (!superterm.hasVarDep()) {
+            subsApplicable -= numDep;
+            if (subsApplicable <= 0)
                 return true;
+        }
 
         if (!superterm.hasVarIndep())
-            if ((subsApplicable -= numIndep) <= 0)
+            subsApplicable -= numIndep;
+            if (subsApplicable <= 0)
                 return true;
 
         if (!superterm.hasVarQuery())
-            if ((subsApplicable -= numQuery) <= 0)
+            subsApplicable -= numQuery;
+            if (subsApplicable <= 0)
                 return true;
 
 
@@ -126,7 +130,7 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
             return t;
 
 
-        Term[] in = t.term;
+        final Term[] in = t.term;
         Term[] out = in;
 
         final int subterms = in.length;
@@ -170,8 +174,20 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
             return t;
 
 
-        return t.clone(out);
+        Term s = t.clone(out);
 
+        return s;
     }
 
+    @Override
+    public String toString() {
+        return "Substitution{" +
+                "subs=" + subs +
+                ", minMatchVolume=" + minMatchVolume +
+                ", numSubs=" + numSubs +
+                ", numDep=" + numDep +
+                ", numIndep=" + numIndep +
+                ", numQuery=" + numQuery +
+                '}';
+    }
 }

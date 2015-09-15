@@ -1,7 +1,6 @@
 package nars.concept;
 
 import javolution.util.function.Equality;
-import nars.Memory;
 import nars.task.Task;
 import nars.util.data.list.FasterList;
 
@@ -53,11 +52,12 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable {
             return t;
         }
 
-        Memory m = c.getMemory();
+        //Memory m = c.getMemory();
         final int siz = size();
         if (siz + 1 > cap) {
             // FIFO, remove oldest question (last)
-            Task removed = remove(siz - 1);
+            /*Task removed = */
+            remove(siz - 1);
             //m.emit(Events.ConceptQuestionRemove.class, c, removed /*, t*/);
         }
 

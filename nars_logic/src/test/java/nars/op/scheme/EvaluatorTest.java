@@ -160,7 +160,7 @@ public class EvaluatorTest {
     }
 
     private static Map<SymbolExpression, Expression> bindings(Expression... keyValues) {
-        HashMap<SymbolExpression, Expression> bindings = new HashMap<>();
+        Map<SymbolExpression, Expression> bindings = new HashMap<>();
         for (int i = 0; i < keyValues.length; i += 2) {
             bindings.put((SymbolExpression) keyValues[i], keyValues[i + 1]);
         }

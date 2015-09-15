@@ -13,7 +13,7 @@ import nars.task.TaskSeed;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.util.event.DefaultTopic;
+import nars.util.event.On;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -34,7 +34,7 @@ public class Abbreviation implements Consumer<Task> {
     public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(24);
     public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.7f);
     private final NAR nar;
-    private final DefaultTopic.On reg;
+    private final On reg;
 
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);

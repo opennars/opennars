@@ -5,6 +5,7 @@
  */
 package nars.util.meter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Convenience implementation for a 1-signal meter
  */
-public abstract class FunctionMeter<M> implements Signals<M> {
+public abstract class FunctionMeter<M> implements Signals<M>, Serializable {
 
     private final List<Signal> signals;
     private M[] vector;
