@@ -122,8 +122,10 @@ public class IntersectionInt extends Intersect {
     public static Term make(Term[] t) {
         t = Terms.toSortedSetArray(t);
         switch (t.length) {
-            case 0: return null;
+            case 0: throw new RuntimeException("zero arguments invalid for set");
             case 1: return t[0];
+            //TODO case 2: return make(t[0], t[1]);
+            //TODO 3: make(t[0], make(t[1], t[2]) ... etc??
             default:
                return new IntersectionInt(t); 
         }

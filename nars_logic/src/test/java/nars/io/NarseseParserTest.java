@@ -479,18 +479,7 @@ public class NarseseParserTest {
         assertEquals("[\"comment1234\"]", op.argString());
     }
 
-    @Test
-    public void testPauseInput() {
-        String a = "100\n<a-->b>.";
-        List<Task> l = tasks(a);
-        assertEquals(2, l.size());
 
-        //TODO update to new api:
-
-        //ImmediateOperator op = immediate(l.get(0));
-        //assertEquals(PauseInput.class, op.getClass());
-        //assertEquals(100, ((PauseInput)op).cycles);
-    }
 
 
 

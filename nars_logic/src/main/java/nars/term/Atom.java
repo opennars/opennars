@@ -262,17 +262,17 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 //        recurseSubtermsContainingVariables(v, null);
 //    }
 
-    /**
-     * Recursively check if a compound contains a term
-     *
-     * @param target The term to be searched
-     * @return Whether the two have the same content
-     */
-    @Override public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
-        //TODO move to Variable subclass and leave this empty here
-        if (hasVar())
-            v.visit(this, parent);
-    }
+//    /**
+//     * Recursively check if a compound contains a term
+//     *
+//     * @param target The term to be searched
+//     * @return Whether the two have the same content
+//     */
+//    @Override public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+//        //TODO move to Variable subclass and leave this empty here
+//        if (hasVar())
+//            v.visit(this, parent);
+//    }
 
 
     @Override

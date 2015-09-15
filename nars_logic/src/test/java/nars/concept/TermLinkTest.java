@@ -66,14 +66,15 @@ public class TermLinkTest {
     @Test
     public void testImplicationTermLinks() {
         Bag<TermLinkKey, TermLink> cj3 = getTermLinks("<d ==> e>", true);
-        assertEquals(3, cj3.size());
+        assertEquals(2, cj3.size());
         List<TermLinkTemplate> tj3 = getTermLinkTemplates("<d ==> e>");
         assertEquals(2, tj3.size());
 
 
-        List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(*,c,d) ==> e>");
+        List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(c,d) ==> e>");
         assertEquals(4, tj2.size()); //4 templates: [<(*,c,d) ==> e>:Ea|Da:(*,c,d), <(*,c,d) ==> e>:Iaa|Haa:c, <(*,c,d) ==> e>:Iab|Hab:d, <(*,c,d) ==> e>:Eb|Db:e]
-        Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<(*,c,d) ==> e>", true);
+        Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<(c,d) ==> e>", true);
+        cj2.printAll();
         assertEquals(3, cj2.size());
         //assertEquals("2 of the links are transform and will not appear in the bag", 2, cj2.size());
 
@@ -89,11 +90,10 @@ public class TermLinkTest {
     }
 
     private static Default nar(String term, boolean firing) {
-        String task = term + ". %1.00;0.90%";
         Default n = new Default();
         if (!firing)
             n.core.conceptsFiredPerCycle.set(0);
-        n.input(task);
+        n.believe(term);
         n.frame(1);
         return n;
     }

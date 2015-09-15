@@ -27,7 +27,6 @@ import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
 import nars.process.NAL;
@@ -302,25 +301,25 @@ public class LocalRules {
 
 
     /* -------------------- same terms, difference relations -------------------- */
-
-    /**
-     * The task and belief match reversely
-     *
-     * @param p Reference to the memory
-     */
-    public static Task matchReverse(final Premise p) {
-        final Task task = p.getTask();
-        final Task belief = p.getBelief();
-
-        if (TemporalRules.matchingOrder(task.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
-            if (task.isJudgment()) {
-                return NAL2.inferToSym(task, belief, p);
-            } else {
-                return conversion(p);
-            }
-        }
-        return null;
-    }
+//
+//    /**
+//     * The task and belief match reversely
+//     *
+//     * @param p Reference to the memory
+//     */
+//    public static Task matchReverse(final Premise p) {
+//        final Task task = p.getTask();
+//        final Task belief = p.getBelief();
+//
+//        if (TemporalRules.matchingOrder(task.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
+//            if (task.isJudgment()) {
+//                return NAL2.inferToSym(task, belief, p);
+//            } else {
+//                return conversion(p);
+//            }
+//        }
+//        return null;
+//    }
 
 //    /**
 //     * Inheritance/Implication matches Similarity/Equivalence

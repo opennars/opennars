@@ -52,9 +52,6 @@ public enum DesireFunction {
      */
     abstract public Truth get(Truth T, Truth B);
 
-    public final Truth get(final Truth t) {
-        return get(t, null);
-    }
 
     static final Map<Term, DesireFunction> atomToTruthModifier = Global.newHashMap(DesireFunction.values().length);
 

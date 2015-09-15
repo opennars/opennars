@@ -551,16 +551,16 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         //}
     }
 
-    public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
-        if (hasVar()) {
-            v.visit(this, parent);
-            //if (this instanceof Compound) {
-            for (Term t : term) {
-                t.recurseSubtermsContainingVariables(v, this);
-            }
-            //}
-        }
-    }
+//    public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+//        if (hasVar()) {
+//            v.visit(this, parent);
+//            //if (this instanceof Compound) {
+//            for (Term t : term) {
+//                t.recurseSubtermsContainingVariables(v, this);
+//            }
+//            //}
+//        }
+//    }
 
     /**
      * extracts a subterm provided by the address tuple

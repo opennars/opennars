@@ -50,7 +50,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
     void recurseTerms(final TermVisitor v, Term parent);
 
-    void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
+//    void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
 
     int containedTemporalRelations();
 

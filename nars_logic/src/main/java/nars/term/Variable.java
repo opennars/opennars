@@ -57,14 +57,10 @@ public class Variable extends Atom {
     public int compareTo(Object that) {
         if (this == that) return 0;
         if (that instanceof Variable) {
-            return Variable.compare(this, (Variable)that);
+            return Byted.compare(this, (Variable)that);
         }
         return -1; /** variables have earlier sorting order than non-variables */
     }
-
-
-    final boolean scope = false;
-
 
 
 //    public Variable(char varType, final String name) {
@@ -75,8 +71,6 @@ public class Variable extends Atom {
 
     public Variable(final byte[] n) {
         super(n);
-
-        //this.scope = scope;
 
         switch ((char)n[0]) {
             case VAR_INDEPENDENT:
@@ -168,51 +162,14 @@ public class Variable extends Atom {
         if (vop != op)
             return false; //different type
 
-        if (op == Op.VAR_PATTERN) {
-            //both VAR_PATTERN
-            return super.equals(vthat);
-        }
-
 //        if (!isScoped()) return false;
 //        if (!vthat.isScoped()) return false;
 
         return super.equals(that);
+
     }
 
-    public static int compare(final Variable a, final Variable b) {
-        if (a == b) return 0;
-
-
-        int c;
-
-        if ((c = Integer.compare(a.hashCode(), b.hashCode())) != 0)
-            return c;
-
-        if ((c = Byted.compare(a, b)) != 0)
-            return c;
-
-        //otherwise, if they have the same name:
-//        final boolean ascoped = a.isScoped();
-//        final boolean bscoped = b.isScoped();
-
-//        if (!ascoped && !bscoped) {
-//            //if the two variables are each without scope, they are not equal.
-//            //so use their identityHashCode to determine a stable ordering
-//            int as = System.identityHashCode(a);
-//            int bs = System.identityHashCode(b);
-//            return Integer.compare(as, bs);
-//        }
-//        else if (ascoped && !bscoped) {
-//            return 1;
-//        }
-//        else if (/*bscoped && */ !ascoped) {
-//            return -1;
-//        }
-//        else {
-            return 0; //must be equal
-//      }
-    }
-//    public boolean equalsTerm(Object that) {
+    //    public boolean equalsTerm(Object that) {
 //        //TODO factor these comparisons into 2 nested if's
 //        Variable v = (Variable)that;
 //

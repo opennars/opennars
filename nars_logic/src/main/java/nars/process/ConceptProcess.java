@@ -91,7 +91,7 @@ abstract public class ConceptProcess extends NAL  {
         return currentBelief;
     }
 
-    @Deprecated public void setBelief(Task nextBelief) {
+    public void setBelief(Task nextBelief) {
 
         this.currentBelief = nextBelief;
 

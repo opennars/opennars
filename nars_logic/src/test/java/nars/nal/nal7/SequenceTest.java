@@ -71,12 +71,18 @@ public class SequenceTest {
         //sequences at the top level as terms must not have any trailing intervals
         NAR nar = new Default();
 
+        String tt = "(&/, a, /1, b, /2)";
+        Sequence term = nar.term(tt);
+        assertNotNull(term);
+
         //trailng suffix that should be removed when it becomes the sentence's content term
-        Task t = nar.task("(&/, a, /1, b, /2).");
-        assertEquals(Sequence.class, t.getTerm().getClass());
-        Sequence ts = (Sequence)t.getTerm();
+        Task task = nar.task(tt + ".");
+        assertNotNull(task);
+        assertNotNull(task.getTerm());
+        assertEquals(Sequence.class, task.getTerm().getClass());
+        Sequence ts = (Sequence)task.getTerm();
         assertEquals(2, ts.length());
-        assertEquals("(&/, a, /1, b)", t.getTerm().toString());
+        assertEquals("(&/, a, /1, b)", task.getTerm().toString());
 
         //no trailing suffix, unchanged
         Task u = nar.task("(&/, a, /1, b).");

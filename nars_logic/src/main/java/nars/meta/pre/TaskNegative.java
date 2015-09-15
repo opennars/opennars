@@ -15,9 +15,9 @@ final public class TaskNegative extends PreCondition {
     }
 
     @Override
-    public boolean test(final RuleMatch m) {
+    public final boolean test(final RuleMatch m) {
         final Task task = m.premise.getTask();
-        return (task.getFrequency() < PostCondition.HALF);
+        return (task.isJudgmentOrGoal() && task.getFrequency() < PostCondition.HALF);
     }
 
     @Override

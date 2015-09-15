@@ -91,8 +91,9 @@ public class IntersectionExt extends Intersect {
             //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously
             return SetExt.make(set.toArray(new Term[set.size()]));
         }
-        List<Term> se = new ArrayList();
+
         if (term1 instanceof IntersectionExt) {
+            List<Term> se = Global.newArrayList();
             ((Compound) term1).addTermsTo(se);
             if (term2 instanceof IntersectionExt) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)                
@@ -101,16 +102,18 @@ public class IntersectionExt extends Intersect {
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
                 se.add(term2);
-            }               
+            }
+            return make(se.toArray(new Term[se.size()]));
         } else if (term2 instanceof IntersectionExt) {
+            List<Term> se = Global.newArrayList();
             // (&,R,(&,P,Q)) = (&,P,Q,R)
             ((Compound) term2).addTermsTo(se);
             se.add(term1);
+            return make(se.toArray(new Term[se.size()]));
         } else {
-            se.add(term1);
-            se.add(term2);
+            return make(new Term[] { term1, term2 } );
         }
-        return make(se.toArray(new Term[se.size()]));
+
     }
 
 
@@ -118,11 +121,21 @@ public class IntersectionExt extends Intersect {
     public static Term make(Term[] t) {
         t = Terms.toSortedSetArray(t);
         switch (t.length) {
-            case 0: return null;
+            case 0: throw new RuntimeException("zero arguments invalid for set");
             case 1: return t[0];
-            default:
-               return new IntersectionExt(t); 
+            /*case 2:
+                //flatten
+                if ((t[0] instanceof SetTensional) &&
+                    (t[1] instanceof SetTensional) && t[0].op() == t[1].op())
+                        return IntersectionExt.make(t[0], t[1]);
+                else {
+                    //fall-through to default
+                }
+            } */
+            //TODO 3: make(t[0], make(t[1], t[2]) ... etc??
+
         }
+        return new IntersectionExt(t);
     }
 
     public static Term make(Collection<Term> unsorted) {

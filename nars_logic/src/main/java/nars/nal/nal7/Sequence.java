@@ -51,8 +51,14 @@ public class Sequence extends Conjunction implements Intermval {
 
     public Sequence clone(Term[] t, long[] ii) {
         //for now, require that cloning require same # of terms because intervals will be copied as-is
-        if (t.length != length())
+        int tlen = t.length;
+
+        if (ii.length != tlen +1) {
+            /*throw new RuntimeException("invalid parameters for Sequence clone: " +
+                    Arrays.toString(t) + " (len=" + t.length + ") and intervals " +
+                    Arrays.toString(ii) + " (len=" + ii.length + ")");*/
             return null;
+        }
 
         return new nars.nal.nal7.Sequence(t, ii);
     }
