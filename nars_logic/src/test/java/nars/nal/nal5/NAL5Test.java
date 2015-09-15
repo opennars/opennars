@@ -21,7 +21,7 @@ public class NAL5Test extends JavaNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.core;
+        return AbstractNALTest.core6;
     }
 
     @Test

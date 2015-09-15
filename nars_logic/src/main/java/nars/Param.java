@@ -29,7 +29,6 @@ public abstract class Param extends Container implements Serializable {
 
     public final AtomicInteger shortTermMemoryHistory = new AtomicDuration();
 
-    public AtomicInteger temporalRelationsMax = new AtomicInteger();
 
 
     /** converts durations to cycles */

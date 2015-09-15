@@ -25,6 +25,7 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.task.Task;
 import nars.term.Atom;
+import nars.truth.DefaultTruth;
 import nars.util.data.list.FasterList;
 
 import java.lang.ref.Reference;
@@ -102,11 +103,11 @@ public class Global {
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = 0.9f;
     /** Default priority of input judgment */
-    public static float DEFAULT_JUDGMENT_PRIORITY = 0.8f;
+    public static float DEFAULT_JUDGMENT_PRIORITY = 0.5f;
     /** Default durability of input judgment */
-    public static float DEFAULT_JUDGMENT_DURABILITY = 0.5f; //was 0.8 in 1.5.5; 0.5 after
+    public static float DEFAULT_JUDGMENT_DURABILITY = 0.9f; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
-    public static final float DEFAULT_QUESTION_PRIORITY = 0.9f;
+    public static final float DEFAULT_QUESTION_PRIORITY = 0.5f;
     /** Default durability of input question */
     public static final float DEFAULT_QUESTION_DURABILITY = 0.9f;
 
@@ -114,11 +115,11 @@ public class Global {
      /** Default confidence of input goal. */
      public static final float DEFAULT_GOAL_CONFIDENCE = 0.9f;
      /** Default priority of input judgment */
-     public static final float DEFAULT_GOAL_PRIORITY = 0.9f;
+     public static final float DEFAULT_GOAL_PRIORITY = 0.6f;
      /** Default durability of input judgment */
      public static final float DEFAULT_GOAL_DURABILITY = 0.9f;
      /** Default priority of input question */
-     public static final float DEFAULT_QUEST_PRIORITY = 0.9f;
+     public static final float DEFAULT_QUEST_PRIORITY = 0.5f;
      /** Default durability of input question */
      public static final float DEFAULT_QUEST_DURABILITY = 0.9f;
  
@@ -152,13 +153,13 @@ public class Global {
 
 
 
-    public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
+    public static float MAX_CONFIDENCE = 0.99f - DefaultTruth.DEFAULT_TRUTH_EPSILON;
+
     public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - 0.01f /*DEFAULT_TRUTH_EPSILON*/;
 
     //temporary parameter for setting #threads to use, globally
     @Deprecated public static int THREADS = 1;
 
-    public static boolean IMMEDIATE_ETERNALIZATION = false; //TODO move to plugin
 
 
 
@@ -196,20 +197,8 @@ public class Global {
     @Deprecated public static float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.0f;
     @Deprecated public static float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.0f;
 
-    /** global switch to allow derivation evidence to overlap */
-    /* NOTE:
-            and that entire thing was eliminated by just checking cyclic at the begining of the method, or even better, in a callee
-            (if all its derivations do not allow overlap)
-            i guess this breaks the allow overlap flag, ill make a note of that and leave it set to false
-            it breaks the allow overlap unless this is checked each time
-            but i never have had to set it to true
-     */
-    public static boolean OVERLAP_ALLOW = false;
 
 
-    /** approx max percentage of concepts considered during a unification attempt */
-    public static float DED_SECOND_UNIFICATION_DEPTH = 0.01f;
-    public static final int DED_SECOND_UNIFICATION_ATTEMPTS = 1;
 
 
     /** hard upper-bound limit on Compound term complexity;
@@ -219,12 +208,12 @@ public class Global {
 
 
 
-    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
-        return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts
-    }
-
-    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
-
+//    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
+//        return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts
+//    }
+//
+//    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
+//
 
 
 
@@ -315,15 +304,14 @@ public class Global {
     public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=true;
     
     //public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
-    public static float HAPPY_EVENT_CHANGE_THRESHOLD =0.25f;
+    public static float HAPPY_EVENT_CHANGE_THRESHOLD =0.01f;
     //public static float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
     public static float BUSY_EVENT_CHANGE_THRESHOLD =0.5f;
     public static boolean REFLECT_META_HAPPY_GOAL = false;
     public static boolean REFLECT_META_BUSY_BELIEF = false;
     public static boolean CONSIDER_REMIND=true;
 
-    public static boolean BREAK_NAL_HOL_BOUNDARY=true;
-    
+
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=true;
     public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
     

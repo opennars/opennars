@@ -182,27 +182,16 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
-        final Task input = belief;
+        final Task newSolution = getBeliefs().add(belief, this, nal);
 
-        belief = getBeliefs().add(input, this, nal);
+        if (newSolution != null) {
 
-        boolean added;
-
-
-        if (belief!=input) {
 //            String reason = "Unbelievable or Duplicate";
 //            //String reason = input.equals(belief) ? "Duplicate" : "Unbelievable";
 //                // + "compared to: " + belief
 //            getMemory().removed(input, reason);
-            added = false;
-        }
-        else {
-            added = (belief!=null);
-        }
-
-        if (added) {
             /*if (task.aboveThreshold())*/
-                //if (nal != null) {
+            //if (nal != null) {
             if (hasQuestions()) {
                 final Task b = belief;
                 //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
@@ -214,9 +203,13 @@ public class DefaultConcept extends AtomConcept {
             float delta = successAfter - successBefore;
             if (delta!=0)
                 memory.emotion.happy(delta);
+
+            return true;
+        } else {
+            getMemory().remove(belief, "Ineffective Belief");
+            return false;
         }
 
-        return added;
     }
 
 
@@ -232,33 +225,20 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
-        final Task input = goal;
+        final Task newSolution = getGoals().add(goal, this, nal);
 
-        goal = getGoals().add(input, this, nal);
-
-        boolean added;
-
-        if (goal!=input) {
-            //String reason = "Undesirable or Duplicate";
-            //String reason = input.equals(goal) ? "Duplicate" : "Undesirable";
-            // + "compared to: " + belief
-            //getMemory().removed(input, reason);
-            added = false;
+        if (newSolution==null) {
+            getMemory().remove(goal, "Ineffective Goal");
+            return false;
         }
         else {
-            added = (goal!=null);
-        }
+            float successAfter = getSuccess();
+            float delta = successAfter - successBefore;
+            if (delta!=0)
+                memory.emotion.happy(delta);
 
-        if (!added) return false;
-
-
-        float successAfter = getSuccess();
-        float delta = successAfter - successBefore;
-        if (delta!=0)
-            memory.emotion.happy(delta);
-
-        //long then = goal.getOccurrenceTime();
-        int dur = nal.duration();
+            //long then = goal.getOccurrenceTime();
+            //int dur = nal.duration();
 
 //        //this task is not up to date (now is ahead of then) we have to project it first
 //        if(TemporalRules.after(then, now, dur)) {
@@ -269,10 +249,10 @@ public class DefaultConcept extends AtomConcept {
 //
 //        }
 
-        if (goal.getBudget().summaryGreaterOrEqual(memory.questionFromGoalThreshold)) {
+            if (goal.getBudget().summaryGreaterOrEqual(memory.questionFromGoalThreshold)) {
 
-            // check if the Goal is already satisfied
-            Task beliefSatisfied = getBeliefs().topRanked();
+                // check if the Goal is already satisfied
+                //Task beliefSatisfied = getBeliefs().topRanked();
 
             /*float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {
@@ -294,17 +274,20 @@ public class DefaultConcept extends AtomConcept {
             if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
 */
 
-            questionFromGoal(goal, nal);
+                questionFromGoal(goal, nal);
 
-            //TODO
-            //InternalExperience.experienceFromTask(nal, task, false);
+                //TODO
+                //InternalExperience.experienceFromTask(nal, task, false);
 
-            nal.memory().execute(goal);
+                nal.memory().execute(goal);
 
-            //}
+                //}
+            }
+
+            return true;
+
         }
 
-        return true;
     }
 
 

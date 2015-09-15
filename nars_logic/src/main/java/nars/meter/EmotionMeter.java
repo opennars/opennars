@@ -74,7 +74,7 @@ public class EmotionMeter extends CycleReaction implements Serializable {
 
 
         if (lasthappy != -1) {
-            float frequency = changeSignificance(lasthappy, happy, Global.HAPPY_EVENT_CHANGE_THRESHOLD);
+            //float frequency = changeSignificance(lasthappy, happy, Global.HAPPY_EVENT_CHANGE_THRESHOLD);
 //            if (happy > Global.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy <= Global.HAPPY_EVENT_HIGHER_THRESHOLD) {
 //                frequency = 1.0f;
 //            }

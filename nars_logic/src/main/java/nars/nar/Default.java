@@ -218,34 +218,32 @@ public class Default extends NAR {
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
         this.internalExperience = InternalExperience.InternalExperienceMode.None; //much too early, this is nonsensical without working NAL
-               // maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal : InternalExperience.InternalExperienceMode.None;
 
-        setTaskLinkBagSize(32);
-        setTermLinkBagSize(64);
+        setTaskLinkBagSize(16);
+        setTermLinkBagSize(32);
 
-        //Runtime Initial Values
 
         m.duration.set(5);
-        m.shortTermMemoryHistory.set(1);
-        m.temporalRelationsMax.set(4);
+        m.shortTermMemoryHistory.set(5);
         m.conceptActivationFactor.set(1.0);
         m.conceptFireThreshold.set(0.0);
-        m.conceptForgetDurations.set(3.0);
-        m.taskLinkForgetDurations.set(4.0);
-        m.termLinkForgetDurations.set(10.0);
-        //param.budgetThreshold.set(0.01f);
+
+        m.conceptForgetDurations.set(1.0);
+        m.taskLinkForgetDurations.set(2.0);
+        m.termLinkForgetDurations.set(3.0);
+
         m.conceptBeliefsMax.set(11);
-        m.conceptGoalsMax.set(8);
+        m.conceptGoalsMax.set(5);
         m.conceptQuestionsMax.set(4);
         m.activeConceptThreshold.set(0.0);
         m.questionFromGoalThreshold.set(0.35);
         m.taskProcessThreshold.set(Global.BUDGET_EPSILON);
         m.termLinkThreshold.set(Global.BUDGET_EPSILON);
         m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
-        m.executionThreshold.set(0.6);
+        m.executionThreshold.set(0.5);
         //executionThreshold.set(0.60);
         m.reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        m.conceptCreationExpectation.set(0.66);
+        m.conceptCreationExpectation.set(0);//.66);
 
         setCyclesPerFrame(cyclesPerFrame);
 
@@ -270,7 +268,7 @@ public class Default extends NAR {
 
             //scope: control
             m.the(new PerceptionAccel(this, () -> core.next()));
-            new STMEventInference(this, core.deriver );
+            m.the(new STMEventInference(this, core.deriver ) );
 
             if (maxNALLevel >= 8) {
 

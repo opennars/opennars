@@ -16,13 +16,13 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends JavaNALTest {
 
-    public static final int cycles = 500;
+    public static final int cycles = 50;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{index}:{0}")
     public static Collection configurations() {
-        return AbstractNALTest.core;
+        return AbstractNALTest.core3;
     }
 
 

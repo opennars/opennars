@@ -13,7 +13,7 @@
     -fx-border-width: 0;
     -fx-border-style: none;
 
-    -fx-control-inner-background:  rgb(30, 30, 30);
+    -fx-control-inner-background: transparent;/*  rgb(30, 30, 30);*/
 
     /* A bright blue for highlighting/accenting objects.  For example: selected
      * text; selected items in menus, lists, trees, and tables; progress bars;
@@ -156,13 +156,16 @@
 .button:default:armed {
      -fx-background-color: derive(-flatter-red, -20.0%);
 }*/
-
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
 
 /*******************************************************************************
  *                                                                             *
  * TextField & TextArea                                                        *
  *                                                                             *
  ******************************************************************************/
+
 
 .text-area , .text-field {
     /*-fx-background-color: rgb(0,0,0);

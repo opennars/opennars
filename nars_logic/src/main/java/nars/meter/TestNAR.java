@@ -16,6 +16,7 @@ import nars.util.meter.event.HitMeter;
 
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.*;
 
 import static org.jgroups.util.Util.assertTrue;
@@ -345,6 +346,9 @@ public class TestNAR  {
                 finalCycle = oc.cycleEnd+1;
         }
 
+        StringWriter trace;
+        nar.trace(trace = new StringWriter());
+
         runUntil(finalCycle);
 
         assertTrue("No conditions tested", !requires.isEmpty());
@@ -360,13 +364,17 @@ public class TestNAR  {
 
         String s = JSONOutput.stringFromFieldsPretty(report);
         if (!report.isSuccess()) {
-            //TODO rerun withh trace and ddebug
+
+            System.err.append(trace.getBuffer());
+
             assertTrue(s, false);
+
         }
         else {
             //print report
             System.out.println(s);
         }
+
 
         return this;
     }

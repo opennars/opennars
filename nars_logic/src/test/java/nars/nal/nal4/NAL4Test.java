@@ -20,7 +20,7 @@ public class NAL4Test extends JavaNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.core;
+        return AbstractNALTest.core6;
 //        return Arrays.asList(new Supplier[][]{
 //                {() -> new Default()},
 //                //{new DefaultDeep()},

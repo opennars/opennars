@@ -15,11 +15,29 @@ import java.util.function.Supplier;
 @Ignore
 abstract public class AbstractNALTest  {
 
-    public static final List<Supplier<NAR>> core =Lists.newArrayList(
+    public static final List<Supplier<NAR>> core1 =Lists.newArrayList(
         //() -> new Default().nal(1),
         //() -> new Default().nal(2),
-        () -> new Default().nal(6)
+        () -> new Default().nal(1)
         //() -> new DefaultAlann(48)
+    );
+    public static final List<Supplier<NAR>> core2 =Lists.newArrayList(
+            //() -> new Default().nal(1),
+            //() -> new Default().nal(2),
+            () -> new Default().nal(2)
+            //() -> new DefaultAlann(48)
+    );
+    public static final List<Supplier<NAR>> core3 =Lists.newArrayList(
+            //() -> new Default().nal(1),
+            //() -> new Default().nal(2),
+            () -> new Default().nal(3)
+            //() -> new DefaultAlann(48)
+    );
+    public static final List<Supplier<NAR>> core6 =Lists.newArrayList(
+            //() -> new Default().nal(1),
+            //() -> new Default().nal(2),
+            () -> new Default().nal(6)
+            //() -> new DefaultAlann(48)
     );
 
 
