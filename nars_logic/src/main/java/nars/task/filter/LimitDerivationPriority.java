@@ -18,6 +18,12 @@ public class LimitDerivationPriority implements DerivationFilter {
     @Override
     final public String reject(final Premise nal, final Task task, final boolean solution, final boolean revised) {
 
+        limitDerivation(nal, task);
+        
+        return null;
+    }
+
+    public static void limitDerivation(Premise nal, Task task) {
         final Budget targetBudget = task.getBudget();
 
         final Budget currentTaskBudget = nal.getTask().getBudget();
@@ -29,8 +35,32 @@ public class LimitDerivationPriority implements DerivationFilter {
         }
 
         targetBudget.andPriority(m);
-        
-        return null;
     }
-    
+    /** limits budget to be no more than its parents */
+    public static Task limitDerivation(final Task task) {
+
+        float total = 0;
+        int n = 0;
+
+        Task pt = task.getParentTask();
+        if (pt!=null) {
+            total += pt.getBudget().summary();
+            n++;
+        }
+        Task pb = task.getParentBelief();
+        if (pb!=null) {
+            total += pb.getBudget().summary();
+            n++;
+        }
+
+        /** input/original source */
+        if (n == 0) return task;
+
+        float avg = total/n;
+        task.getBudget().andPriority(avg);
+
+        return task;
+    }
+
+
 }

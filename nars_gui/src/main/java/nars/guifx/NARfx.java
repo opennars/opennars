@@ -271,6 +271,9 @@ public class NARfx  {
 
             {
                 ni.addView(new TerminalPane(nar));
+                ni.addIcon(() -> {
+                    return new InputPane(nar);
+                });
                 //ni.addView(additional components);
             }
 

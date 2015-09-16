@@ -33,6 +33,10 @@ public class NARide extends BorderPane {
     public final NARControlFX controlPane;
 
 
+    public void addIcon(FXIconPaneBuilder n) {
+        nar.memory().the(n);
+    }
+
     public void addView(Pane n) {
         nar.memory().the(n);
 

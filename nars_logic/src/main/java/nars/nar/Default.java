@@ -40,6 +40,7 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
+import nars.task.filter.LimitDerivationPriority;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.data.MutableInteger;
@@ -52,6 +53,7 @@ import java.util.Deque;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -459,6 +461,9 @@ public class Default extends NAR {
         public final AtomicInteger inputsMaxPerCycle;
         private final SimpleDeriver deriver;
         private final Consumer<ConceptProcess> conceptProcessor;
+        final Function<Task, Task> derivationPostProcess = d -> {
+            return LimitDerivationPriority.limitDerivation(d);
+        };
 
 
         /** samples an active concept */
@@ -502,12 +507,12 @@ public class Default extends NAR {
             this.conceptProcessor = (t) -> {
 
                 //OPTION 1: re-input to input buffers
-                //t.input(nar, deriver);
+                t.input(nar, deriver, derivationPostProcess);
 
                 //OPTION 2: immediate process
-                t.apply(deriver).forEach(r -> {
+                /*t.apply(deriver).forEach(r -> {
                     run(r);
-                });
+                });*/
 
             };
 
@@ -521,8 +526,9 @@ public class Default extends NAR {
             onInput = nar.memory().eventInput.on(t-> {
                 if (t.isInput())
                     percepts.add(t);
-                else
+                else {
                     newTasks.add(t);
+                }
             });
         }
 
@@ -544,7 +550,7 @@ public class Default extends NAR {
         @Override public void onCycle() {
             enhanceAttention();
             runInputTasks(inputsMaxPerCycle.get());
-            runNewTasks(inputsMaxPerCycle.get());
+            runNewTasks(/*inputsMaxPerCycle.get()*/);
             fireConcepts(conceptsFiredPerCycle.get());
         }
 
@@ -596,6 +602,10 @@ public class Default extends NAR {
                     conceptForget,
                     Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
                     nar.memory());
+        }
+
+        protected void runNewTasks() {
+            runNewTasks(newTasks.size()); //all
         }
 
         protected void runNewTasks(int max) {

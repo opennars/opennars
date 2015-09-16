@@ -1,6 +1,7 @@
 package nars.guifx;
 
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
@@ -8,6 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nars.Global;
 import nars.NAR;
+import nars.concept.Concept;
+import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
 import nars.util.event.Topic;
 
@@ -137,7 +140,7 @@ public class LogPane extends BorderPane implements Runnable {
 
         double f = filter.value(channel);
 
-        if (!trace && !channel.equals("eventDerived") && !channel.equals("eventInput"))
+        if (!trace && channel.equals("eventDerive"))
             return;
 
         Node n = getNode(channel, signal);
@@ -152,7 +155,40 @@ public class LogPane extends BorderPane implements Runnable {
     }
 
     private Node getNode(Object channel, Object signal) {
-        return new Label(channel.toString() + ": " + signal.toString());
+        if (channel.equals("eventConceptActivated")) {
+            return new ConceptActivationIcon((Concept)signal);
+        }
+        else if (channel.equals("eventCycleStart")) {
+            return new CycleActivationBar(nar.time());
+        }
+        else if (channel.equals("eventCycleEnd")) {
+            return null;
+            //
+        }
+        else if (channel.equals("eventFrameEnd")) {
+            return null;
+            //
+        } else if (channel.equals("eventInput")) {
+            return new AutoLabel((Task)signal, nar);
+        } else {
+            return new Label(channel.toString() + ": " + signal.toString());
+        }
+    }
+
+
+    static class ConceptActivationIcon extends Button {
+
+        public ConceptActivationIcon(Concept c) {
+           super(c.getTerm().toStringCompact());
+            setCache(true);
+        }
+    }
+
+    static class CycleActivationBar extends Label {
+        public CycleActivationBar(long time) {
+            super(Long.toString(time));
+            setCache(true);
+        }
     }
 
 //    public Node getNode(Output.Channel channel, Class event, Object[] args) {

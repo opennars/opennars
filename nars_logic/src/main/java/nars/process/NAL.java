@@ -87,5 +87,8 @@ public abstract class NAL extends AbstractPremise implements Function<Consumer<P
     public void input(NAR nar, Consumer<Premise> premiseProcessor) {
         apply(premiseProcessor).forEach(nar::input);
     }
+    public void input(NAR nar, Consumer<Premise> premiseProcessor, Function<Task,Task> postfilter) {
+        apply(premiseProcessor).stream().map(postfilter).forEach(nar::input);
+    }
 
 }

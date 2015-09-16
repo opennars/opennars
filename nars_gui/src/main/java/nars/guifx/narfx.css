@@ -63,17 +63,19 @@
 }
 
 .plugin_button {
-    -fx-padding: 1.5em;
-    -fx-background: transparent !important;
+    -fx-padding: 8px;
+    -fx-background-color: rgb(10,10,10) !important;
     -fx-control-inner-background:  transparent !important;
-    -fx-background-color: transparent !important;
-    -fx-border-width: 2px 2px 2px 2px;
-    -fx-border-color: gray;
-    -fx-border-insets: 2px 2px 2px 2px;
+    /*-fx-border-width: 8px 1px 8px 1px;
+    -fx-border-color: black;*/
+    -fx-border-insets: 8px 1px 8px 1px;
 }
 .plugin_button:hover {
-    -fx-background-color: blue !important;
+    -fx-background-color: rgb(50,50,50) !important;
 }
 .plugin_button:armed {
     -fx-background-color: green !important;
+}
+.plugin_button:selected {
+    -fx-background-color: rgb(30,30,30) !important;
 }
