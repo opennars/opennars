@@ -29,7 +29,8 @@ public class NARfxDefaultIterative {
             try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {
-                e.printStackTrace();
+                i.nar.memory().eventError.emit(e);
+                //e.printStackTrace();
             }
         });
 

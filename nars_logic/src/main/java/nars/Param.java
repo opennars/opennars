@@ -132,9 +132,9 @@ public abstract class Param extends Container implements Serializable {
 
 
 
-    /** Reliance factor, the empirical confidence of analytical truth.
-        (generally, the same as default judgment confidence)  */
-    public final AtomicDouble reliance = new AtomicDouble();
+//    /** Reliance factor, the empirical confidence of analytical truth.
+//        (generally, the same as default judgment confidence)  */
+//    public final AtomicDouble reliance = new AtomicDouble();
 
 
 

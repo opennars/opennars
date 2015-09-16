@@ -34,18 +34,18 @@ public class AttentionTest {
         int c = Iterables.size(n.concepts());
         assertTrue(c > 16);
 
-        n.trace(System.out);
+        //n.trace(System.out);
 
         Set<Concept> uniqueconcepts = new HashSet();
         
         for (int i = 0; i < numConcepts; i++) {
-            Concept s = n.getCycleProcess().next();
+            Concept s = n.core.next();
             uniqueconcepts.add(s);
         }
 
         assertTrue(uniqueconcepts.size() > 1);
         
-        int c2 = Iterables.size(n.getCycleProcess().concepts());
+        int c2 = Iterables.size(n.core.concepts());
         assertEquals("does not affect # of concepts", c, c2);
     }
     

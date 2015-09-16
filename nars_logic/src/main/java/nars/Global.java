@@ -44,7 +44,7 @@ import java.util.Set;
  */
 public class Global {
 
-    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.33f;
+    public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.05f;
 
     //TODO use 'I' for SELf, it is 3 characters shorter
     public static final Atom DEFAULT_SELF = Atom.the("I");
@@ -105,7 +105,7 @@ public class Global {
     /** Default priority of input judgment */
     public static float DEFAULT_JUDGMENT_PRIORITY = 0.5f;
     /** Default durability of input judgment */
-    public static float DEFAULT_JUDGMENT_DURABILITY = 0.9f; //was 0.8 in 1.5.5; 0.5 after
+    public static float DEFAULT_JUDGMENT_DURABILITY = 0.5f; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
     public static final float DEFAULT_QUESTION_PRIORITY = 0.5f;
     /** Default durability of input question */

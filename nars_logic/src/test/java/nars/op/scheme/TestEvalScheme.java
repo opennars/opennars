@@ -3,7 +3,7 @@ package nars.op.scheme;
 
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.JavaNALTest;
+import nars.nal.AbstractNALTest;
 import nars.nar.Default;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import static org.jgroups.util.Util.assertTrue;
 
 @RunWith(Parameterized.class)
-public class TestEvalScheme extends JavaNALTest {
+public class TestEvalScheme extends AbstractNALTest {
 
     public TestEvalScheme(Supplier<NAR> build) {
         super(build);

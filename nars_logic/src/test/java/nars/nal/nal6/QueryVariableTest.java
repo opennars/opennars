@@ -2,7 +2,7 @@ package nars.nal.nal6;
 
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.nal.JavaNALTest;
+import nars.nal.AbstractNALTest;
 import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
-public class QueryVariableTest extends JavaNALTest {
+public class QueryVariableTest extends AbstractNALTest {
 
     public QueryVariableTest(Supplier<NAR> b) { super(b); }
 

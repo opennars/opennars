@@ -19,6 +19,8 @@ public class Audio implements Runnable
     private final AudioFormat audioFormat;
     private final Line.Info info;
     private final int bufferBytes;
+    public final int maxChannels
+            ;
     private SonarSample silentSample;
     private SourceDataLine sdl;
     private int rate = 44100;
@@ -37,6 +39,7 @@ public class Audio implements Runnable
 
     public Audio(int maxChannels) throws LineUnavailableException {
 
+        this.maxChannels = maxChannels;
         silentSample = new SonarSample(new float[] {0}, 44100);
         Mixer mixer = AudioSystem.getMixer(null);
 

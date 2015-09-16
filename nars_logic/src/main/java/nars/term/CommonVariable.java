@@ -35,21 +35,21 @@ public class CommonVariable extends Variable {
                     //return Byte.compare(a[0], b[0]);
 
 
-//                case 2:
-//                    //optimized case: very common, since vars are normalized to digit %1,%2,...%3 often
-//                    byte type = a[0];
-//                    if (b[0]!=type) throw new RuntimeException("common variable type mismatch");
-//                    int diff = a[1] - b[1];
-//
-//                    if (diff==0) {
-//                        throw new RuntimeException("variables equal");
-//                    }
-//                    else if (diff < 0) {
-//                        return CommonVariable.make(type, a[1], b[1]);
-//                    }
-//                    else {
-//                        return CommonVariable.make(type, b[1], a[1]);
-//                    }
+                case 2:
+                    //optimized case: very common, since vars are normalized to digit %1,%2,...%3 often
+                    byte type = a[0];
+                    if (b[0]!=type) throw new RuntimeException("common variable type mismatch");
+                    int diff = a[1] - b[1];
+
+                    if (diff==0) {
+                        throw new RuntimeException("variables equal");
+                    }
+                    else if (diff < 0) {
+                        return CommonVariable.make(type, a[1], b[1]);
+                    }
+                    else {
+                        return CommonVariable.make(type, b[1], a[1]);
+                    }
 
                 default:
                     cmp = ByteArrayEquivalence.INSTANCE.compare(a, b);

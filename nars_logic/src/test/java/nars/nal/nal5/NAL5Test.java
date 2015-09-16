@@ -3,7 +3,6 @@ package nars.nal.nal5;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
-import nars.nal.JavaNALTest;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +14,7 @@ import java.util.function.Supplier;
 import static nars.nal.nal7.Tense.Eternal;
 
 @RunWith(Parameterized.class)
-public class NAL5Test extends JavaNALTest {
+public class NAL5Test extends AbstractNALTest {
 
     public NAL5Test(Supplier<NAR> b) { super(b); }
 

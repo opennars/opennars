@@ -202,17 +202,18 @@ public class Default extends NAR {
      * Default DEFAULTS
      */
     public Default() {
-        this(1024, 1, 3);
+        this(768, 1, 2, 3);
     }
 
-    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
-        this(new LocalMemory(new CycleClock()), maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
+    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+        this(new LocalMemory(new CycleClock()), maxConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
     }
 
-    public Default(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
+    public Default(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(m);
 
         //termLinkMaxMatched.set(5);
+
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
@@ -236,12 +237,12 @@ public class Default extends NAR {
         m.conceptQuestionsMax.set(4);
         m.activeConceptThreshold.set(0.0);
         m.questionFromGoalThreshold.set(0.35);
-        m.taskProcessThreshold.set(Global.BUDGET_EPSILON);
-        m.termLinkThreshold.set(Global.BUDGET_EPSILON);
-        m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
+        m.taskProcessThreshold.set(Global.BUDGET_EPSILON*2);
+        m.termLinkThreshold.set(0); //Global.BUDGET_EPSILON);
+        m.taskLinkThreshold.set(0); //Global.BUDGET_EPSILON);
         m.executionThreshold.set(0.5);
-        //executionThreshold.set(0.60);
-        m.reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
+
+        //m.reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
         m.conceptCreationExpectation.set(0);//.66);
 
         setCyclesPerFrame(cyclesPerFrame);
@@ -249,14 +250,17 @@ public class Default extends NAR {
         //core loop
         {
             DefaultCycle c = this.core = new DefaultCycle(
-                    this,
-                    getDeriver(),
+                    m.the("defaultCore", this),
+                    m.the("logic", getDeriver()),
                     new ConceptBagActivator(this),
-                    new ItemAccumulator(Budget.max),
+                    m.the("inputBuffer", new ItemAccumulator(Budget.max)),
                     newConceptBag()
             );
             m.the("core", c);
 
+            c.conceptsFired = conceptsFirePerCycle;
+            c.termlinks = termLinksPerCycle; //TODO make mutable int
+            c.tasklinks = taskLinksPerCycle; //TODO make mutable int
             c.capacity.set(maxConcepts);
             c.inputsMaxPerCycle.set(conceptsFirePerCycle);
             c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
@@ -273,8 +277,8 @@ public class Default extends NAR {
 
                 for (OpReaction o : defaultOperators)
                     on(o);
-                for (OpReaction o : exampleOperators)
-                    on(o);
+                /*for (OpReaction o : exampleOperators)
+                    on(o);*/
 
                 //n.on(Anticipate.class);      // expect an event
 
@@ -291,9 +295,6 @@ public class Default extends NAR {
 
     }
 
-    public DefaultCycle getCycleProcess() {
-        return core;
-    }
 
 //    static String readFile(String path, Charset encoding)
 //            throws IOException {
@@ -452,6 +453,7 @@ public class Default extends NAR {
         public final AtomicInteger inputsMaxPerCycle;
         private final SimpleDeriver deriver;
         private final Function<ConceptProcess,Stream<Task>> premiseProcessor;
+        public int conceptsFired;
 
 //        final Function<Task, Task> derivationPostProcess = d -> {
 //            return LimitDerivationPriority.limitDerivation(d);
@@ -481,8 +483,8 @@ public class Default extends NAR {
 
         private final AtomicDouble conceptForget;
 
-        final int tasklinks = 2;
-        final int termlinks = 5;
+        int tasklinks = 2;
+        int termlinks = 3;
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
@@ -576,12 +578,14 @@ public class Default extends NAR {
 
             final long now = nar.time();
 
-            //active.forgetNext(conceptForgetDurations, nar.memory(), 1)
-            Concept[] buffer = new Concept[] { active.forgetNext(conceptForgetDurations, nar.memory()) };
+            for (int i = 0; i < conceptsToFire; i++) {
+                //active.forgetNext(conceptForgetDurations, nar.memory(), 1)
+                Concept[] buffer = new Concept[]{active.forgetNext(conceptForgetDurations, nar.memory())};
 
-            for (final Concept c : buffer) {
-                if (c == null) break;
-                fireConcept(conceptForgetDurations, now, c);
+                for (final Concept c : buffer) {
+                    if (c == null) break;
+                    fireConcept(conceptForgetDurations, now, c);
+                }
             }
         }
 

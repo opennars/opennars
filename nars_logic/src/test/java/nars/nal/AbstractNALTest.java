@@ -41,17 +41,28 @@ abstract public class AbstractNALTest  {
     );
 
 
-    private final Supplier<NAR> nar;
+    //final ThreadLocal<NAR> nars;
+    //private final Supplier<NAR> nar;
+    private final NAR the;
+
+    protected AbstractNALTest(NAR nar) {
+        this.the = nar;
+    }
 
     protected AbstractNALTest(Supplier<NAR> nar) {
-        this.nar = nar;
+        //this.nar = nar;
+        this.the = nar.get();
+        //this.nars = ThreadLocal.withInitial( nar );
     }
+
 
     public final TestNAR test() {
         return new TestNAR(nar());
     }
+
+
     public final NAR nar() {
-        return nar.get();
+        return the;
     }
 
 }

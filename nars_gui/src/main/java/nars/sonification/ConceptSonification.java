@@ -10,14 +10,12 @@ import nars.audio.sample.SonarSample;
 import nars.concept.Concept;
 import nars.event.FrameReaction;
 import nars.nar.Default;
-import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Sonifies the activity of concepts being activated and forgotten
@@ -27,7 +25,28 @@ public class ConceptSonification extends FrameReaction {
     List<SonarSample> samples = Global.newArrayList();
 
     private final Audio sound;
-    Map<Concept, SoundProducer> playing = new ConcurrentWeakKeyHashMap<>();
+    //TODO use bag
+    public Map<Concept, SoundProducer> playing;
+
+    class PlayingMap extends LinkedHashMap<Concept, SoundProducer> {
+        private final int maxSize;
+
+        public PlayingMap(int maxSize) {
+            super(maxSize);
+            this.maxSize = maxSize;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Concept, SoundProducer> eldest) {
+            if (size() > maxSize) {
+                //Concept c = eldest.getKey();
+                SoundProducer s = eldest.getValue();
+                s.stop();
+                return true;
+            }
+            return false;
+        }
+    };
     //Global.newHashMap();
 
     float audiblePriorityThreshold = 0.0f;
@@ -35,6 +54,10 @@ public class ConceptSonification extends FrameReaction {
 
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
         super(nar);
+
+        playing = Collections.synchronizedMap(
+                new PlayingMap(sound.maxChannels)
+        );
 
         this.sound = sound;
 
@@ -56,7 +79,7 @@ public class ConceptSonification extends FrameReaction {
     }
 
     public static void main(String[] args) throws IOException, LineUnavailableException {
-        Default d = new Default(1000, 1, 3);
+        Default d = new Default(2000, 2, 3, 4);
         Audio a = new Audio(maxVoices);
 
         new ConceptSonification(d, a);
@@ -167,31 +190,41 @@ public class ConceptSonification extends FrameReaction {
         return c.getPriority() > audiblePriorityThreshold;
     }
 
-    private void update(Concept c, SoundProducer g) {
+    /** return if it should continue */
+    private boolean update(Concept c, SoundProducer g) {
 
-        if (g instanceof Granulize) {
-            Granulize gg = ((Granulize) g);
-            gg.setStretchFactor( 0.5f + c.getDurability() );// + 4f * (1f - c.getQuality()));
-            gg.pitchFactor.set( 0.5f + 0.5f * c.getQuality() );
-        }
         if (audible(c)) {
             //TODO autmatic gain control
             float vol = 0.1f + 0.9f * c.getPriority();
             //System.out.println(c + " at " + vol);
             ((SoundProducer.Amplifiable) g).setAmplitude(vol/maxVoices);
+
+            if (g instanceof Granulize) {
+                Granulize gg = ((Granulize) g);
+                gg.setStretchFactor( 0.5f + c.getDurability() );// + 4f * (1f - c.getQuality()));
+                gg.pitchFactor.set( 0.5f + 0.5f * c.getQuality() );
+            }
+            return true;
         }
         else {
-            SoundProducer x = playing.remove(c);
-            if (x != null)
-                x.stop();
+            return false;
         }
     }
 
     protected void updateConceptsPlaying() {
-        for (Map.Entry<Concept, SoundProducer> e : playing.entrySet()) {
-            update(e.getKey(), e.getValue());
+        Iterator<Map.Entry<Concept, SoundProducer>> ie = playing.entrySet().iterator();
+        while (ie.hasNext()) {
+            Map.Entry<Concept, SoundProducer> e = ie.next();
+
+            final Concept c = e.getKey();
+            boolean cont = update(c, e.getValue());
+            if (!cont) {
+                ie.remove();
+                SoundProducer x = playing.remove(c);
+                if (x != null)
+                    x.stop();
+            }
         }
     }
-
 
 }

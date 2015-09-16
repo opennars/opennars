@@ -35,14 +35,12 @@ abstract public class Deriver implements Function<Premise,Stream<Task>> {
     abstract public Stream<Task> forEachRule(final RuleMatch match);
 
 
-    public static final ThreadLocal<RuleMatch> newThreadLocalRuleMatches() {
-        return ThreadLocal.withInitial(() -> {
-            //TODO use the memory's RNG for complete deterministic reproducibility
-            return new RuleMatch(new XorShift1024StarRandom(1));
-        });
-    }
-
-    static final ThreadLocal<RuleMatch> matchers = newThreadLocalRuleMatches();
+    /** thread-specific pool of RuleMatchers
+        this pool is local to this deriver */
+    final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
+        //TODO use the memory's RNG for complete deterministic reproducibility
+        return new RuleMatch(new XorShift1024StarRandom(1));
+    });
 
     @Override
     public final Stream<Task> apply(final Premise f) {

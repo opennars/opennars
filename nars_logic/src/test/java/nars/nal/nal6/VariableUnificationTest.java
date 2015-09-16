@@ -7,7 +7,7 @@ package nars.nal.nal6;
 import nars.NAR;
 import nars.io.qa.AnswerReaction;
 import nars.meter.TestNAR;
-import nars.nal.JavaNALTest;
+import nars.nal.AbstractNALTest;
 import nars.nar.Default;
 import nars.task.Task;
 import org.junit.Ignore;
@@ -26,7 +26,7 @@ import static org.jgroups.util.Util.assertTrue;
  TODO convert this to AbstractNALTest
  */
 @RunWith(Parameterized.class)
-public class VariableUnificationTest extends JavaNALTest {
+public class VariableUnificationTest extends AbstractNALTest {
 
 
     public VariableUnificationTest(Supplier<NAR> b) {

@@ -1,20 +1,33 @@
 package nars.guifx;
 
+import javafx.collections.ObservableList;
+import javafx.geometry.Side;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.premise.Premise;
 import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
 import nars.util.event.Topic;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static javafx.application.Platform.runLater;
 import static nars.guifx.NARfx.scrolled;
@@ -28,7 +41,7 @@ public class LogPane extends BorderPane implements Runnable {
 
     //private final Output incoming;
     private final NAR nar;
-    final int maxLines = 128;
+    final int maxLines = 64;
     CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
     List<Node> pending;
 
@@ -46,10 +59,10 @@ public class LogPane extends BorderPane implements Runnable {
         content.getChildren().setAll(c);
 
 
-        //scrollBottom.run();
+        scrollBottom.run();
     }
 
-    //final Runnable scrollBottom = () -> scrollParent.setVvalue(1f);
+    final Runnable scrollBottom = () -> scrollParent.setVvalue(1f);
 
     void updateParent() {
 //        if (content.getParent()!=null) {
@@ -76,7 +89,7 @@ public class LogPane extends BorderPane implements Runnable {
             filter.value(o, 1);
 
 
-        setCenter(scrolled(content));
+        setCenter(scrollParent = scrolled(content));
         setTop(filter);
 
 
@@ -140,7 +153,10 @@ public class LogPane extends BorderPane implements Runnable {
 
         double f = filter.value(channel);
 
-        if (!trace && channel.equals("eventDerive"))
+        //temporary until filter working
+        if (!trace && channel.equals("eventDerive") ||
+                channel.equals("eventTaskRemoved")
+                )
             return;
 
         Node n = getNode(channel, signal);
@@ -154,14 +170,122 @@ public class LogPane extends BorderPane implements Runnable {
         }
     }
 
+    ActivationSet activationSet = null;
+    Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
+
+    public static class ActivationSet extends FlowPane {
+        private final ObservableList pri;
+        private final BarChart<String, Number> bc;
+        private final XYChart.Series priSeries;
+        Set<Concept> concept = new HashSet();
+
+        public ActivationSet() {
+            super();
+
+            final CategoryAxis xAxis = new CategoryAxis();
+
+
+            final NumberAxis yAxis = new NumberAxis();
+            //yAxis.setForceZeroInRange(true);
+            yAxis.setLabel("Activation: Current Priority");
+            yAxis.setAutoRanging(true);
+
+            bc = new BarChart<>(xAxis,yAxis);
+
+            bc.setLegendVisible(false);
+            bc.setAnimated(false);
+            bc.setTitleSide(Side.LEFT);
+
+
+            priSeries = new XYChart.Series();
+            priSeries.setName("Priority");
+
+            this.pri = priSeries.getData();
+
+
+
+        }
+
+        /** setup before display */
+        public void commit() {
+            for (Concept c : concept)
+                pri.add(new XYChart.Data(
+                        c.getTerm().toString(),
+                        c.getBudget().getPriority()));
+            runLater(() -> {
+                bc.getData().add(priSeries);
+                getChildren().add(bc);
+                setCacheHint(CacheHint.SPEED);
+                setCache(true);
+            });
+        }
+
+        void onAdd(Concept c) {
+            //getChildren().add( new ConceptActivationIcon(c) );
+        }
+
+        public void add(Concept c) {
+            if (concept.add(c)) {
+                onAdd(c);
+            }
+        }
+
+    }
+
+
+    public class PremisePane extends TextFlow {
+
+        public PremisePane(Premise p) {
+            super(
+                    new Label(p.getClass().getSimpleName()),
+                    new AutoLabel(p.getTask(),nar)
+            );
+
+            if (p.getBelief()!=null)
+                getChildren().add(
+                        new AutoLabel( p.getBelief(),nar )
+                );
+
+            /*setScaleX(0.5);
+            setScaleY(0.5);*/
+
+            setTextAlignment(TextAlignment.LEFT);
+
+            setCenterShape(false);
+
+
+            autosize();
+            //TODO deferred Tooltip with details
+
+            setCacheHint(CacheHint.SPEED);
+            setCache(true);
+        }
+
+    }
+
     private Node getNode(Object channel, Object signal) {
         if (channel.equals("eventConceptActivated")) {
-            return new ConceptActivationIcon((Concept)signal);
+            boolean newn;
+            if (activationSet==null) {
+                activationSet = new ActivationSet();
+                newn = true;
+            }
+            else newn = false;
+
+            activationSet.add((Concept)signal);
+
+            if (!newn) return null;
+            else
+                return activationSet;
         }
         else if (channel.equals("eventCycleStart")) {
             return new CycleActivationBar(nar.time());
         }
         else if (channel.equals("eventCycleEnd")) {
+            if (activationSet!=null) {
+                activationSet.commit();
+                activationSet = null; //force a new one
+            }
             return null;
             //
         }
@@ -170,8 +294,12 @@ public class LogPane extends BorderPane implements Runnable {
             //
         } else if (channel.equals("eventInput")) {
             return new AutoLabel((Task)signal, nar);
+        } else if (signal instanceof Premise) {
+            return new PremisePane((Premise)signal);
         } else {
-            return new Label(channel.toString() + ": " + signal.toString());
+            return new Label(
+                    //channel.toString() + ": " +
+                    signal.toString());
         }
     }
 

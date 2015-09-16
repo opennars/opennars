@@ -4,7 +4,6 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.meta.RuleMatch;
 import nars.nal.Deriver;
 import nars.process.TaskProcess;
 import nars.task.Task;
@@ -28,8 +27,7 @@ public class STMEventInference  {
     int stmSize;
     //public static STMEventInference I=null;
 
-    /** use a separate matching context in case this is invoked by a Deriver process so as not to interrupt it */
-    static final ThreadLocal<RuleMatch> matchers = Deriver.newThreadLocalRuleMatches();
+
 
 
     public STMEventInference(NAR nar, Deriver deriver) {
@@ -55,9 +53,9 @@ public class STMEventInference  {
         return newEvent.getCause() != null;
     }
 
-    public int getStmSize() {
-        return stmSize;
-    }
+//    public int getStmSize() {
+//        return stmSize;
+//    }
 
 
     public boolean inductionOnSucceedingEvents(TaskProcess nal, boolean anticipation) {

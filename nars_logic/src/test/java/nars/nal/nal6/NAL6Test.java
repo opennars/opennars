@@ -3,7 +3,6 @@ package nars.nal.nal6;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
-import nars.nal.JavaNALTest;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,7 @@ import java.util.function.Supplier;
  * Created by me on 8/19/15.
  */
 @RunWith(Parameterized.class)
-public class NAL6Test extends JavaNALTest {
+public class NAL6Test extends AbstractNALTest {
 
 
     final int cycles = 40;

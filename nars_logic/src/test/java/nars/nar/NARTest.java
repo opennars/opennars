@@ -45,9 +45,9 @@ public class NARTest {
     }
 
     @Test
-    public void testPassiveAndReusableMemory() {
+    public void testMemoryTransplant() {
         Memory m = new LocalMemory();
-        Default nar = new Default(m, 1000, 1, 5);
+        Default nar = new Default(m, 1000, 1, 5, 5);
         //DefaultAlann nar = new DefaultAlann(m, 32);
 
         //TextOutput.out(nar);
@@ -63,7 +63,7 @@ public class NARTest {
 
         //a new nar with the same memory is allowed to
         //take control of it after the first stops
-        Default nar2 = new Default(m, 1000, 1, 3);
+        Default nar2 = new Default(m, 1000, 1, 1, 3);
 
         assertTrue(m.time() > 1);
 

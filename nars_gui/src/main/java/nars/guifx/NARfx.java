@@ -5,21 +5,27 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import nars.Audio;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
+import nars.sonification.ConceptSonification;
 import nars.task.Task;
 import org.jewelsea.willow.browser.WebBrowser;
 
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static javafx.application.Platform.runLater;
 
 
 /**
@@ -274,6 +280,9 @@ public class NARfx  {
                 ni.addIcon(() -> {
                     return new InputPane(nar);
                 });
+                /*ni.addIcon(()-> {
+                   return new ConceptSonificationPanel(nar);
+                });*/
                 //ni.addView(additional components);
             }
 
@@ -473,4 +482,38 @@ public class NARfx  {
         }
     }
 
+    private static class ConceptSonificationPanel extends BorderPane {
+
+        private final Label info;
+        final static int maxVoices = 4;
+        private ConceptSonification son;
+
+        public ConceptSonificationPanel(NAR nar) {
+            super();
+
+            info = new Label();
+            info.setWrapText(true);
+            setCenter(info);
+
+            try {
+                son = new ConceptSonification(nar, new Audio(maxVoices)) {
+
+                    @Override
+                    public void onFrame() {
+                        super.onFrame();
+                        String pp = playing.keySet().toString();
+                        runLater(() -> {
+                            info.setText(pp);
+                            //info.setText(this.playing.toString());
+                        });
+
+                    }
+                };
+            } catch (Exception e) {
+                e.printStackTrace();
+                info.setText(e.toString());
+                son = null;
+            }
+        }
+    }
 }
