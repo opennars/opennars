@@ -218,8 +218,8 @@ public class Default extends NAR {
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
         this.internalExperience = InternalExperience.InternalExperienceMode.None; //much too early, this is nonsensical without working NAL
 
-        setTaskLinkBagSize(16);
-        setTermLinkBagSize(32);
+        setTaskLinkBagSize(8);
+        setTermLinkBagSize(16);
 
 
         m.duration.set(5);
@@ -424,7 +424,7 @@ public class Default extends NAR {
     }
 
     protected SimpleDeriver getDeriver() {
-        return new SimpleDeriver(SimpleDeriver.standard);
+        return SimpleDeriver.standardDeriver;
     }
 
     protected boolean process(Task t) {

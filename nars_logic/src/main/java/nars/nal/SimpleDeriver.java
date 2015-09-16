@@ -49,8 +49,11 @@ public class SimpleDeriver extends Deriver  {
         }
     }
 
+    public static final SimpleDeriver standardDeriver;
+
     static {
         loadRules();
+        standardDeriver = new SimpleDeriver(SimpleDeriver.standard);
     }
 
     /**
