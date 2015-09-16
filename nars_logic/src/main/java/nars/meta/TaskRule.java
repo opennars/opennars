@@ -348,26 +348,6 @@ public class TaskRule extends Rule<Premise, Task> {
         return this;
     }
 
-    public void run(RuleMatch m) {
-
-        //try {
-        m.start(this);
-
-        for (final PreCondition p : preconditions) {
-            if (!p.test(m))
-                return;
-        }
-
-        //if preconditions are met:
-        for (final PostCondition p : postconditions)
-            m.apply(p);
-        /*}
-        catch (Exception e) {
-            System.err.println(this);
-            //System.err.println("  " + e);
-            e.printStackTrace();
-        }*/
-    }
 
 
 //    //TEMPORARY for testing, to make sure the postcondition equality guarantees rule equality

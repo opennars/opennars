@@ -9,9 +9,8 @@ import nars.premise.Premise;
 import nars.task.Task;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -24,49 +23,17 @@ import java.util.function.Function;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL extends AbstractPremise implements Function<Consumer<Premise>,Collection<Task>> {
+public abstract class NAL extends AbstractPremise  {
 
     /** derivation queue (this might also work as a Set) */
     protected Collection<Task> derived = null;
 
     public NAL(final NAR n) {
         super(n);
-
     }
 
 
-    abstract protected void derive(Consumer<Premise> processor);
-
-
-
-    @Override public final Collection<Task> apply(Consumer<Premise> processor) {
-
-        beforeDerive();
-
-        derive(processor);
-
-        if (derived == null)
-            derived = Collections.EMPTY_LIST;
-
-        return derived = afterDerive(derived);
-    }
-
-
-
-    public final Collection<Task> getCached() {
-        return derived;
-    }
-
-    /** implement if necessary in subclasses */
-    protected void beforeDerive() {
-
-    }
-
-    /** implement if necessary in subclasses */
-    protected Collection<Task> afterDerive(Collection<Task> c) {
-        return c;
-    }
-
+    abstract public Stream<Task> derive(Function<Premise,Stream<Task>> processor);
 
 
 
@@ -84,11 +51,14 @@ public abstract class NAL extends AbstractPremise implements Function<Consumer<P
 //        }
 //    }
 
-    public void input(NAR nar, Consumer<Premise> premiseProcessor) {
-        apply(premiseProcessor).forEach(nar::input);
-    }
-    public void input(NAR nar, Consumer<Premise> premiseProcessor, Function<Task,Task> postfilter) {
-        apply(premiseProcessor).stream().map(postfilter).forEach(nar::input);
-    }
+//    public void input(NAR nar, Consumer<Premise> premiseProcessor) {
+//        apply(premiseProcessor).forEach(nar::input);
+//    }
+//    public void input(NAR nar, Consumer<Premise> premiseProcessor, Function<Task,Task> postfilter) {
+//        apply(premiseProcessor).stream().map(postfilter).forEach(nar::input);
+//    }
+//    public Collection<Task> getDerived(Function<Premise,Stream<Task>> premiseProcessor) {
+//        return apply(premiseProcessor);
+//    }
 
 }

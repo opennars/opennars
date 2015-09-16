@@ -107,12 +107,11 @@ public class LocalRules {
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        Task revised = nal.derive(nal.newTask(newBelief.getTerm())
-                        .punctuation(newBelief.getPunctuation())
-                        .truth(truth)
-                        .budget(budget)
-                        .parent(newBelief)
-                );
+        Task revised = nal.validDerivation(nal.newTask(newBelief.getTerm())
+                .punctuation(newBelief.getPunctuation())
+                .truth(truth)
+                .budget(budget)
+                .parent(newBelief));
 
         if (revised != null)
             nal.memory().logic.BELIEF_REVISION.hit();
@@ -137,7 +136,7 @@ public class LocalRules {
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
 
-        Task<T> revised = nal.derive( nal.newTask(newBelief.getTerm())
+        Task<T> revised = nal.input( nal.newTask(newBelief.getTerm())
                         .punctuation(newBelief.getPunctuation())
                         .truth(truth)
                         .budget(budget)
@@ -146,7 +145,7 @@ public class LocalRules {
                                 //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
                                 //Arrays.toString(oldBelief.getEvidentialSet())
                         )
-                    ).normalized(); //.normalized();
+                    ); //.normalized();
 
         if (revised != null) {
             nal.memory().logic.BELIEF_REVISION.hit();

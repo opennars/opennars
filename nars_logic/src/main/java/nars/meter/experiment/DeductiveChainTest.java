@@ -85,11 +85,9 @@ public class DeductiveChainTest extends TestNAR {
             }
         };
 
-        n.run(5000);
+        n.run(128);
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);
-
-        final int printEvery = 6000;
 
 //        while (true) {
 //

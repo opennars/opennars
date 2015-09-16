@@ -40,20 +40,19 @@ import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.filter.LimitDerivationPriority;
 import nars.term.Atom;
 import nars.term.Term;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.On;
-import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
@@ -263,7 +262,7 @@ public class Default extends NAR {
             c.capacity.set(maxConcepts);
             c.inputsMaxPerCycle.set(conceptsFirePerCycle);
             c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
-            c.termLinksPerConcept.setValue(termLinksPerCycle);
+
         }
 
         if (maxNALLevel >= 7) {
@@ -453,17 +452,18 @@ public class Default extends NAR {
          */
         public final AtomicInteger conceptsFiredPerCycle;
 
-        public final MutableInt termLinksPerConcept = new MutableInt();
+        //public final MutableInt termLinksPerConcept = new MutableInt();
 
         /**
          * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
          */
         public final AtomicInteger inputsMaxPerCycle;
         private final SimpleDeriver deriver;
-        private final Consumer<ConceptProcess> conceptProcessor;
-        final Function<Task, Task> derivationPostProcess = d -> {
-            return LimitDerivationPriority.limitDerivation(d);
-        };
+        private final Function<ConceptProcess,Stream<Task>> premiseProcessor;
+
+//        final Function<Task, Task> derivationPostProcess = d -> {
+//            return LimitDerivationPriority.limitDerivation(d);
+//        };
 
 
         /** samples an active concept */
@@ -504,10 +504,14 @@ public class Default extends NAR {
 
             this.deriver = deriver;
 
-            this.conceptProcessor = (t) -> {
+            this.premiseProcessor = (premise) -> {
+                return Task.normalize(
+                        premise.derive(deriver).collect(Collectors.toList()),
+                        premise.getMeanSummary()
+                ).stream();
 
                 //OPTION 1: re-input to input buffers
-                t.input(nar, deriver, derivationPostProcess);
+                //t.input(nar, deriver, derivationPostProcess);
 
                 //OPTION 2: immediate process
                 /*t.apply(deriver).forEach(r -> {
@@ -566,7 +570,7 @@ public class Default extends NAR {
 
             //final float tasklinkForgetDurations = nar.memory().taskLinkForgetDurations.floatValue();
 
-            final int termLinkSelections = termLinksPerConcept.getValue();
+            //final int termLinkSelections = termLinksPerConcept.getValue();
 
 //            Concept[] buffer = new Concept[conceptsToFire];
 //            int n = active.forgetNext(conceptForgetDurations, buffer, time());
@@ -574,6 +578,7 @@ public class Default extends NAR {
 
             final long now = nar.time();
 
+            //active.forgetNext(conceptForgetDurations, nar.memory(), 1)
             Concept[] buffer = new Concept[] { active.forgetNext(conceptForgetDurations, nar.memory()) };
 
             for (final Concept c : buffer) {
@@ -590,9 +595,10 @@ public class Default extends NAR {
                     conceptForgetDurations,
                     conceptProcessor, now );*/
 
-            ConceptProcess.nextPremiseSquare(nar, c,
+            nar.input( ConceptProcess.nextPremiseSquare(nar, c,
                     conceptForgetDurations,
-                    conceptProcessor, 6,6,now );
+                    premiseProcessor,
+                    6,6,now ) );
         }
 
 

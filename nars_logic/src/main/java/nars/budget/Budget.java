@@ -784,4 +784,14 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     public boolean isDeleted() {
         return Float.isNaN(getPriority());
     }
+
+    public static float summarySum(Iterable<? extends Budgeted> dd) {
+        float f = 0;
+
+        for (final Budgeted x : dd) {
+            f += x.getBudget().summary();
+        }
+        return f;
+    }
+
 }

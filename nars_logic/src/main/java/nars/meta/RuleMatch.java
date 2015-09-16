@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 
 /** rule matching context, re-recyclable if thread local */
@@ -78,7 +79,7 @@ public class RuleMatch extends FindSubst {
         return this;
     }
 
-    public boolean apply(final PostCondition p) {
+    public Task apply(final PostCondition p) {
         final Task task = premise.getTask();
         final Task belief = premise.getBelief();
 
@@ -116,7 +117,7 @@ public class RuleMatch extends FindSubst {
 //            }
 //        }
         if (!single && !p.truth.allowOverlap && premise.isCyclic()) {
-            return false;
+            return null;
         }
 
 
@@ -142,29 +143,29 @@ public class RuleMatch extends FindSubst {
                 /*if (Global.DEBUG) {
                     System.err.println("truth rule missing: " + this);
                 }*/
-                return false; //not specified!!
+                return null; //not specified!!
             }
         }
 
         //test and apply late preconditions
         for (final PreCondition c : p.beforeConclusions) {
             if (!c.test(this))
-                return false;
+                return null;
         }
 
         Term derive;
 
-        if ((derive = resolve(p.term)) == null) return false;
+        if ((derive = resolve(p.term)) == null) return null;
 
         for (final PreCondition c : p.afterConclusions) {
 
             if (!c.test(this))
-                return false;
+                return null;
 
-            if ((derive = resolve(derive)) == null) return false;
+            if ((derive = resolve(derive)) == null) return null;
         }
 
-        if (!(derive instanceof Compound)) return false;
+        if (!(derive instanceof Compound)) return null;
 
 
 //        //check if this is redundant
@@ -200,9 +201,13 @@ public class RuleMatch extends FindSubst {
 
 
 
+
+        //TODO prevent this from happening
         if (Variable.hasPatternVariable(derive)) {
-            //throw new RuntimeException("reactor leak: " + derive);
-            return false;
+            String leakMsg = "reactor leak: " + derive;
+            //throw new RuntimeException(leakMsg);
+            System.err.println(leakMsg);
+            return null;
         }
 
         TaskSeed t = premise.newTask((Compound)derive); //, task, belief, allowOverlap);
@@ -235,18 +240,15 @@ public class RuleMatch extends FindSubst {
 
 
             if (!single) {
-                premise.derive(t.parent(task,belief));
+                t.parent(task,belief);
             } else {
-                premise.derive(t.parent(task));
+                t.parent(task);
             }
 
-
-
-            return true;
-
+            return t; //premise.derive(t);
         }
 
-        return false;
+        return null;
     }
 
     final Function<Term,Term> resolver = k ->
@@ -267,21 +269,52 @@ public class RuleMatch extends FindSubst {
     /** provides the cached result if it exists, otherwise computes it and adds to cache */
     public final Term resolve(final Term t) {
         //cached:
-        Term r = resolutions.computeIfAbsent(t, resolver);
-
-
-        return r;
+        return resolutions.computeIfAbsent(t, resolver);
 
         //uncached:
         //return resolver.apply(t);
     }
 
 
-    public void run(final List<TaskRule> u) {
+    public Stream<Task> run(final List<TaskRule> u) {
+//        final int size = u.size();
+//        for (int i = 0; i < size; i++)
+//            run(u.get(i));
 
-        final int size = u.size();
-        for (int i = 0; i < size; i++)
-            u.get(i).run(this);
+        if (u == null)
+            return Stream.empty();
+        return run(u.stream());
+    }
+
+    public Stream<Task> run(final Stream<TaskRule> trs) {
+//        Stream.Builder<Task> stream = Stream.builder();
+//        for (TaskRule u : trs)
+//            run(u, stream);
+
+        return trs.map(r -> run(r)).flatMap(p ->
+                Stream.of(p)).map(p -> apply(p)).filter(t->t!=null);
+    }
+
+    final private static PostCondition[] abortDerivation = new PostCondition[0];
+
+    public PostCondition[] run(TaskRule rule) {
+
+        start(rule);
+
+        for (final PreCondition p : rule.preconditions) {
+            if (!p.test(this))
+                return abortDerivation;
+        }
+        return rule.postconditions;
+    }
+
+    public void run(TaskRule rule, Stream.Builder<Task> stream) {
+        //if preconditions are met:
+        for (final PostCondition p : rule.postconditions) {
+            Task t = apply(p);
+            if (t!=null)
+                stream.accept(t);
+        }
 
     }
 

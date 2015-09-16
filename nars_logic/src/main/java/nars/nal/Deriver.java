@@ -6,14 +6,16 @@ import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.meta.pre.PairMatchingProduct;
 import nars.premise.Premise;
+import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Created by patrick.hammer on 30.07.2015.
  */
-abstract public class Deriver implements Consumer<Premise> {
+abstract public class Deriver implements Function<Premise,Stream<Task>> {
 
     public final DerivationRules rules;
 
@@ -30,7 +32,7 @@ abstract public class Deriver implements Consumer<Premise> {
     }
 
 
-    abstract public void forEachRule(final RuleMatch match);
+    abstract public Stream<Task> forEachRule(final RuleMatch match);
 
 
     public static final ThreadLocal<RuleMatch> newThreadLocalRuleMatches() {
@@ -43,23 +45,10 @@ abstract public class Deriver implements Consumer<Premise> {
     static final ThreadLocal<RuleMatch> matchers = newThreadLocalRuleMatches();
 
     @Override
-    public void accept(Premise f) {
-
-        ///final Task task, final Sentence belief, Term beliefterm,
-        //tLink.getTask(), belief, bLink.getTerm(),
-
+    public final Stream<Task> apply(final Premise f) {
         RuleMatch m = matchers.get();
         m.start(f);
-
-        //final Task task = f.getTask();
-
-        //if (task.isJudgment() || task.isGoal()) {
-
-            forEachRule(m);
-
-            //TODO also allow backward inference by traversing
-        //}
-
+        return forEachRule(m);
     }
 
 

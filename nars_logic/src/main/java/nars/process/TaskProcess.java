@@ -18,7 +18,8 @@ import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static nars.budget.BudgetFunctions.divide;
 
@@ -81,38 +82,6 @@ public class TaskProcess extends NAL {
 
 
 
-    @Override final public void derive(Consumer<Premise> unused) {
-
-
-        final Task task = getTask();
-
-        /** deleted in the time between this was created, and run() */
-        if (task.isDeleted()) {
-            throw new RuntimeException(this + " deleted before creation");
-            //return;
-        }
-
-        final Memory memory = this.nar.memory();
-        memory.eventTaskProcess.emit(this);
-        memory.logic.TASK_PROCESS.hit();
-
-        final Concept c = nar.conceptualize(task, task.getBudget());
-
-        if (c==null) {
-            memory.remove(task, "Unable to conceptualize");
-            return;
-        }
-
-
-
-        if (processConcept(c)) {
-
-            link(c, task);
-
-            memory.emotion.busy(task, this);
-        }
-        
-    }
 
     /** when a task is processed, a tasklink
      *  can be created at the concept of its term
@@ -411,9 +380,42 @@ public class TaskProcess extends NAL {
         if (d == null)
             return null;
 
-        d.input(m, null);
+        d.derive(null);
 
         return d;
+    }
+
+    @Override
+    public Stream<Task> derive(Function<Premise, Stream<Task>> processor) {
+
+
+        final Task task = getTask();
+
+        /** deleted in the time between this was created, and run() */
+        if (task.isDeleted()) {
+            throw new RuntimeException(this + " deleted before creation");
+            //return;
+        }
+
+        final Memory memory = this.nar.memory();
+        memory.eventTaskProcess.emit(this);
+        memory.logic.TASK_PROCESS.hit();
+
+        final Concept c = nar.conceptualize(task, task.getBudget());
+
+        if (c==null) {
+            memory.remove(task, "Unable to conceptualize");
+            return null;
+        }
+
+        if (processConcept(c)) {
+
+            link(c, task);
+
+            memory.emotion.busy(task, this);
+        }
+
+        return null;
     }
 
 

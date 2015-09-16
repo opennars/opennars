@@ -74,10 +74,9 @@ abstract public class RuleTest {
                     return n;
                 }
 
-                @Override
-                public void accept(Task derivedTask) {
-                    derivations.add(derivedTask);
-                }
+
+
+
             });
             sd.forEachRule(rm);
         }

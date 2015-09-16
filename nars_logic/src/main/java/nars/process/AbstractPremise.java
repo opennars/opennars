@@ -2,7 +2,6 @@ package nars.process;
 
 import nars.NAR;
 import nars.premise.Premise;
-import nars.task.Task;
 
 /**
  * Base class for premises
@@ -19,8 +18,4 @@ abstract public class AbstractPremise implements Premise {
         return nar;
     }
 
-    @Override
-    public void accept(Task derivedTask) {
-        nar().input(derivedTask);
-    }
 }

@@ -4,12 +4,14 @@ import nars.Global;
 import nars.Op;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
+import nars.task.Task;
 import nars.term.Term;
 import nars.util.db.TemporaryCache;
 import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 /** separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations */
 public class SimpleDeriver extends Deriver  {
@@ -111,13 +113,13 @@ public class SimpleDeriver extends Deriver  {
         });
     }
 
-    public void forEachRule(final RuleMatch match) {
-        //forEachRuleExhaustive(match);
-        forEachRuleByType(match);
+    public Stream<Task> forEachRule(final RuleMatch match) {
+        return forEachRuleExhaustive(match);
+        //forEachRuleByType(match);
     }
 
-    public void forEachRuleExhaustive(final RuleMatch match) {
-        match.run(rules);
+    public Stream<Task> forEachRuleExhaustive(final RuleMatch match) {
+        return match.run(rules);
     }
 
     public void forEachRuleByType(final RuleMatch match) {

@@ -47,6 +47,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.LongPredicate;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 
 /**
@@ -1367,6 +1368,10 @@ abstract public class NAR {
     public NAR onConceptForget(final Consumer<Concept> c) {
         regs.add(this.memory.eventConceptForget.on(c));
         return this;
+    }
+
+    public final void input(final Stream<Task> taskStream) {
+        taskStream.forEach(this::input);
     }
 
 //    public NAR onAfterFrame(final Runnable r) {

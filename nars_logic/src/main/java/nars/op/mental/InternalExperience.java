@@ -249,13 +249,11 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
             dur *= INTERNAL_EXPERIENCE_DURABILITY_MUL;
         }
 
-        return nal.derive(
-                nal.newTask(ret).judgment()
+        return nal.validDerivation(nal.newTask(ret).judgment()
                         .parent(full ? null : task, nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)
-                        .reason("Remembered Action (Internal Experience)")
-        );
+                        .reason("Remembered Action (Internal Experience)"));
     }
 
 
@@ -310,17 +308,14 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
                     nal);
     }
 
-    protected static Task beliefReasonDerive(Task parent, Compound new_term, Premise p) {
-
+    protected static void beliefReasonDerive(Task parent, Compound new_term, Premise p) {
 
         //TODO should this be a mew stamp or attached to parent.. originally it was a fresh new stamp from memory
 
-        return p.derive(p.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+        p.input(p.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(Global.DEFAULT_GOAL_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL,
                                 Global.DEFAULT_GOAL_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                        .parent(parent).occurrNow()
-
-        );
+                        .parent(parent).occurrNow());
 
     }
 

@@ -5,8 +5,10 @@ import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.premise.Premise;
+import nars.task.Task;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Created by me on 8/5/15.
@@ -31,12 +33,8 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
 
     @Override
-    protected void derive(Consumer<Premise> p) {
-
-        //final Memory memory = nar().memory();
-
-        p.accept(this);
-
+    public final Stream<Task> derive(final Function<Premise,Stream<Task>> p) {
+        return p.apply(this);
     }
 
 //    /**

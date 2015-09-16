@@ -16,11 +16,10 @@ import nars.premise.Premise;
 import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import static nars.nal.nal1.LocalRules.trySolution;
 
@@ -295,7 +294,7 @@ public class DefaultConcept extends AtomConcept {
         if (Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
 
-            ArrayList<Compound> qu = new ArrayList(3);
+            List<Compound> qu = Global.newArrayList(3);
 
             final Compound term = task.getTerm();
 
@@ -319,16 +318,14 @@ public class DefaultConcept extends AtomConcept {
 
             if (qu.isEmpty()) return;
 
-            for (Compound q : qu) {
-                TaskSeed t = p.newTask(q)
-                        .question()
-                        .parent(task)
-                        .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
-                        .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
+            p.input(
+                qu.stream().map(q -> p.newTask(q)
+                    .question()
+                    .parent(task)
+                    .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
+                    .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1)
+            ));
 
-
-                p.derive(t.term(q));
-            }
         }
     }
 

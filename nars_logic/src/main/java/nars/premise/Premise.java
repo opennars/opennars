@@ -17,6 +17,7 @@ import nars.truth.DefaultTruth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 /**
  * Defines the conditions used in an instance of a derivation
@@ -171,27 +172,11 @@ public interface Premise {
     }
 
 
-    /**
-     * queues a derivation during a reasoning process.
-     * this is in order to combine duplicates at the end before inputting to memory
-     */
-    void accept(Task derivedTask);
 
 
-    /**
-     * for producing a non-cyclic derivation; returns null if the premise is cyclic
-     */
-    default public <C extends Compound> TaskSeed newDoublePremise(Task asym, Task sym) {
-        return newDoublePremise(asym, sym, false);
-    }
 
 
-    default public <C extends Compound> TaskSeed newDoublePremise(Task parentTask, Task parentBelief, boolean allowOverlap) {
-        TaskSeed x = new TaskSeed(memory());
-        x.parent(parentTask, parentBelief);
-        x.updateCyclic();
-        return x;
-    }
+
 
 //    default public <C extends Compound> TaskSeed newTask(C content, Task task, Task belief, boolean allowOverlap) {
 //        content = Sentence.termOrNull(content);
@@ -356,7 +341,15 @@ public interface Premise {
             }
         }
 
-        return task.normalized();
+        //taskCreated.setTemporalInducting(false);
+
+
+        Task t = task.normalized();
+        if (t!=null) {
+            memory.eventDerived.emit(task);
+            memory.logic.TASK_DERIVED.hit();
+        }
+        return t;
     }
 
 
@@ -445,31 +438,8 @@ public interface Premise {
 //    }
 
 
-    /**
-     * iived task comes from the logic rules.
-     *
-     * @param allowOverlap
-     * @param task         the derived task
-     */
-    default public Task derive(final Task task) {
-
-        final Memory memory = memory();
-
-        if (null == validDerivation(task)) {
-            return null;
-        }
-
-        //taskCreated.setTemporalInducting(false);
 
 
-        accept(task);
-
-        memory.eventDerived.emit(task);
-
-        memory.logic.TASK_DERIVED.hit();
-
-        return task;
-    }
 
     default Concept concept(Term x) {
         return nar().concept(x);
@@ -489,4 +459,15 @@ public interface Premise {
         return false;
     }
 
+    default Task input(Task t) {
+        if (((t = validDerivation(t))!=null)) {
+            nar().input(t);
+            return t;
+        }
+        return null;
+    }
+
+    default void input(Stream<Task> t) {
+        t.forEach(this::input);
+    }
 }

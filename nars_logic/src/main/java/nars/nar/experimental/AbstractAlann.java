@@ -21,7 +21,6 @@ import nars.nal.Deriver;
 import nars.nal.SimpleDeriver;
 import nars.op.app.Commander;
 import nars.process.ConceptProcess;
-import nars.process.ConceptTaskLinkProcess;
 import nars.process.ConceptTaskTermLinkProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
@@ -247,31 +246,32 @@ public abstract class AbstractAlann extends NAR {
 
         public ConceptProcess nextPremise(long now) {
 
-            final Concept concept = this.concept;
+//            final Concept concept = this.concept;
+//
+//
+//
+//            concept.getBudget().forget(now, context.getForgetCycles(), 0);
+//
+//
+//
+//            TaskLink tl = concept.getTaskLinks().forgetNext();
+//            if ((tl == null) || (tl.getTask().isDeleted()))
+//                return null;
+//
+//            /*if (runner.nextFloat() < 0.1) {
+//                return new ALANNConceptTaskLinkProcess(concept, tl);
+//            }
+//            else*/ {
+//                TermLink tm = concept.getTermLinks().forgetNext();
+//                if ((tm != null) && (tl.type != TermLink.TRANSFORM)) {
+//                    return new Derivelet.ALANNConceptTaskTermLinkProcess(nar(), concept, tl, tm);
+//                }
+//                else {
+//                    return new Derivelet.ALANNConceptTaskLinkProcess(nar(), concept, tl);
+//                }
+//            }
 
-
-
-            concept.getBudget().forget(now, context.getForgetCycles(), 0);
-
-
-
-            TaskLink tl = concept.getTaskLinks().forgetNext();
-            if ((tl == null) || (tl.getTask().isDeleted()))
-                return null;
-
-            /*if (runner.nextFloat() < 0.1) {
-                return new ALANNConceptTaskLinkProcess(concept, tl);
-            }
-            else*/ {
-                TermLink tm = concept.getTermLinks().forgetNext();
-                if ((tm != null) && (tl.type != TermLink.TRANSFORM)) {
-                    return new Derivelet.ALANNConceptTaskTermLinkProcess(nar(), concept, tl, tm);
-                }
-                else {
-                    return new Derivelet.ALANNConceptTaskLinkProcess(nar(), concept, tl);
-                }
-            }
-
+            return null;
         }
 
         protected void inputDerivations(final Set<Task> derived) {
@@ -351,7 +351,7 @@ public abstract class AbstractAlann extends NAR {
 
             final ConceptProcess p = nextPremise(now);
             if (p!=null) {
-                p.input(context.nar, deriver);
+                //p.input(context.nar, deriver);
             }
             else {
                 //no premise
@@ -387,16 +387,6 @@ public abstract class AbstractAlann extends NAR {
             }*/
         }
 
-        private class ALANNConceptTaskLinkProcess extends ConceptTaskLinkProcess {
-            public ALANNConceptTaskLinkProcess(NAR nar, Concept concept, TaskLink tl) {
-                super(nar, concept, tl);
-            }
 
-
-            /*@Override
-            protected synchronized void derive() {
-                super.derive();
-            }*/
-        }
     }
 }

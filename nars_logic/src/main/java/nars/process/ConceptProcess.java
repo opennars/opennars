@@ -5,7 +5,6 @@
 package nars.process;
 
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
@@ -14,9 +13,9 @@ import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
-import java.util.Collection;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
@@ -53,6 +52,8 @@ abstract public class ConceptProcess extends NAL  {
 
         this.taskLink = taskLink;
         this.concept = concept;
+
+        nar.memory.eventConceptProcess.emit(this);
     }
 
     @Override
@@ -63,28 +64,24 @@ abstract public class ConceptProcess extends NAL  {
     }
 
 
-    @Override
-    protected void beforeDerive() {
-        nar.memory.eventConceptProcess.emit(this);
-    }
 
-    protected void beforeFinish(final long now) {
+//    protected void beforeFinish(final long now) {
+//
+//        Memory m = nar.memory();
+//        m.logic.TASKLINK_FIRE.hit();
+//        m.emotion.busy(getTask(), this);
+//
+//    }
 
-        Memory m = nar.memory();
-        m.logic.TASKLINK_FIRE.hit();
-        m.emotion.busy(getTask(), this);
-
-    }
-
-    @Override
-    final protected Collection<Task> afterDerive(Collection<Task> c) {
-
-        final long now = nar.time();
-
-        beforeFinish(now);
-
-        return c;
-    }
+//    @Override
+//    final protected Collection<Task> afterDerive(Collection<Task> c) {
+//
+//        final long now = nar.time();
+//
+//        beforeFinish(now);
+//
+//        return c;
+//    }
 
 
 
@@ -113,7 +110,7 @@ abstract public class ConceptProcess extends NAL  {
 
 
     /** iteratively supplies a matrix of premises from the next N tasklinks and M termlinks */
-    public static void nextPremiseSquare(NAR nar, final Concept concept, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, int maxTaskLinks, int maxTermLinks, long now) {
+    public static Stream<Task> nextPremiseSquare(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc, int maxTaskLinks, int maxTermLinks, long now) {
 
         Set<TaskLink> tasks = Global.newHashSet(maxTaskLinks);
         //TODO replace with one batch selector call
@@ -121,7 +118,7 @@ abstract public class ConceptProcess extends NAL  {
             TaskLink tl = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
             if (tl!=null) tasks.add(tl);
         }
-        if (tasks.isEmpty()) return;
+        if (tasks.isEmpty()) return Stream.empty();
 
         Set<TermLink> terms = Global.newHashSet(maxTaskLinks);
         float termLinkForgetDurations = concept.getMemory().termLinkForgetDurations.floatValue();
@@ -131,44 +128,72 @@ abstract public class ConceptProcess extends NAL  {
             TermLink tl = concept.getTermLinks().forgetNext(termLinkForgetDurations, nar.memory());
             if (tl!=null) terms.add(tl);
         }
+        if (terms.isEmpty()) return Stream.empty();
 
-        if (terms.isEmpty()) return;
+
+        Stream.Builder<Stream<Task>> streams = Stream.builder();
 
         for (final TaskLink a : tasks)
-            for (final TermLink b : terms)
-                tryPremise(nar, concept, proc, now, a, b);
+            for (final TermLink b : terms) {
+                Stream<Task> substream
+                        = derive(nar, concept, proc, now, a, b);
+                if (substream!=null) {
+                    streams.accept(substream);
+                }
+            }
 
+
+        return streams.build().flatMap(s -> s);
     }
 
     /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
-    public static void nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Consumer<ConceptProcess> proc, long now) {
+    public static Stream<Task> nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc, long now) {
 
         TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
-        if (taskLink == null) return;
+        if (taskLink == null) return Stream.empty();
 
         TermLink termLink = concept.getTermLinks().forgetNext(nar.memory().termLinkForgetDurations, nar.memory());
-        if (termLink == null) return;
+        if (termLink == null) return Stream.empty();
 
 
-        tryPremise(nar, concept, proc, now, taskLink, termLink);
-
+        return derive(nar, concept, proc, now, taskLink, termLink);
     }
 
-    public static void tryPremise(NAR nar, Concept concept, Consumer<ConceptProcess> proc, long now, TaskLink taskLink, TermLink termLink) {
-        if (!Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm())) {
+    public static Stream<Task> derive(NAR nar, Concept concept, Function<ConceptProcess,Stream<Task>> proc, long now, TaskLink taskLink, TermLink termLink) {
+        if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
+            return Stream.empty();
 
-            ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
+        ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
 
-            final Concept beliefConcept = nar.concept(termLink.target);
-            if (beliefConcept != null) {
-                //belief can be null:
-                Task belief = beliefConcept.getBeliefs().top(taskLink.getTask(), now);
-                cp.setBelief(belief);
-            }
-
-            proc.accept(cp);
-
+        final Concept beliefConcept = nar.concept(termLink.target);
+        if (beliefConcept != null) {
+            //belief can be null:
+            Task belief = beliefConcept.getBeliefs().top(taskLink.getTask(), now);
+            cp.setBelief(belief);
         }
+
+        return proc.apply(cp);
+    }
+
+    /** gets the average summary of one or both task/belief task's */
+    public float getMeanSummary() {
+        float total = 0;
+        int n = 0;
+        Task pt = getTask();
+        if (pt!=null) {
+            total += pt.getBudget().summary();
+            n++;
+        }
+        Task pb = getBelief();
+        if (pb!=null) {
+            total += pb.getBudget().summary();
+            n++;
+        }
+
+        //shouldnt happen:
+        if (n == 0) throw new RuntimeException("missing both parent task and parent belief");
+
+        return total/n;
     }
 
 //    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {

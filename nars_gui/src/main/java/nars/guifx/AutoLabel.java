@@ -100,8 +100,9 @@ public class AutoLabel extends Label implements ChangeListener {
         StringBuilder sb = new StringBuilder();
         sb.append(prefix);
 
-        //sb.append(task.getTerm());
-        task.toString(sb, nar.memory(), true, false, false, true);
+        task.toString(sb, nar.memory(), true, false, false, false);
+
+        //setTooltip(new Tooltip().on);
 
         setText(sb.toString());
 

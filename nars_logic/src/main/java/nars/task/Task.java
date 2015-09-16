@@ -23,6 +23,7 @@ package nars.task;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
@@ -308,13 +309,16 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             stringLength += 1 + 6 + 1 + 6 + 1 + 6 + 1  + 1;
         }
 
-        String finalLog = getLogLast();
+        String finalLog;
         if (showLog) {
+            finalLog = getLogLast();
             if (finalLog!=null)
                 stringLength += finalLog.length()+1;
             else
                 showLog = false;
         }
+        else
+            finalLog = null;
 
 
         if (buffer == null)
@@ -600,4 +604,30 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     boolean isDeleted();
 
 
+    /** normalize a collection of tasks to each other
+     * so that the aggregate budget sums to a provided
+     * normalization amount.
+     * @param dd
+     * @return the input collection, unmodified (elements
+     *  may be adjusted individually)
+     */
+    static Collection<Task> normalize(final Collection<Task> dd, final float targetSumPriority) {
+        if (dd.isEmpty()) return dd;
+
+        dd.forEach(x -> {
+            if (x == null) {
+                //TODO filter nulls before processing here
+                throw new RuntimeException("null item in stream");
+            }
+        });
+
+        final float total = Budget.summarySum(dd);
+        final float factor = Math.min(
+                    targetSumPriority/total,
+                    1.0f //limit to only diminish
+                );
+
+        dd.forEach(t -> t.getBudget().mulPriority(factor));
+        return dd;
+    }
 }

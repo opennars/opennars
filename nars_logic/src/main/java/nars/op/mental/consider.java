@@ -20,11 +20,12 @@ package nars.op.mental;
 import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.Deriver;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.process.ConceptTaskLinkProcess;
+import nars.process.ConceptTaskTermLinkProcess;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -57,8 +58,13 @@ public class consider extends SynchOperator implements Mental {
         Concept concept = nar.conceptualize(term, budgetMentalConcept(operation));
 
         TaskLink taskLink = concept.getTaskLinks().peekNext();
-        if (taskLink!=null) {
-            new ConceptTaskLinkProcess(nar, concept, taskLink).input(nar, deriver);
+        TermLink termLink = concept.getTermLinks().peekNext();
+        if ((taskLink!=null) && (termLink!=null)) {
+
+            nar.input(
+                new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink).derive(deriver)
+            );
+
         }
         
         return null;
