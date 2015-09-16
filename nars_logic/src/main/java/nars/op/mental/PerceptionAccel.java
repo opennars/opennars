@@ -243,14 +243,13 @@ public class PerceptionAccel extends OnTopics {
             //Stamper st = nal.newStamp(task.getSentence(), nal.time(), evBase.toArray());
 
             //lets make the new event the parent task, and derive it
-            Task task1 = nal.newTask(C).judgment().truth(truth)
+            nal.input( nal.newTask(C).judgment().truth(truth)
                     .budget(UtilityFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
                     .parent(task, newEvent)
                     .occurrNow()
                     .setEvidence(Stamp.toSetArray(evBase.toArray()))
-                    .setTemporalInducting(!longest_result_derived_already);
-            Task T = nal.validDerivation(task1);
-
+                    .setTemporalInducting(!longest_result_derived_already)
+            );
 
         }
     }

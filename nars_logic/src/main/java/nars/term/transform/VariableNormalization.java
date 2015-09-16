@@ -82,14 +82,6 @@ public class VariableNormalization implements VariableTransform {
 
         this.result = result1;
 
-        if (renamed) {
-            int h = this.result.hashCode();
-            this.result.rehash();
-            if (this.result.hashCode()!=h)
-                System.out.println(this.result.hashCode() + " <- " + h);
-
-        }
-
         if (rename != null)
             rename.clear(); //assists GC
     }

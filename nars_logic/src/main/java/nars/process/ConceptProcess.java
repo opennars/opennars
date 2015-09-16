@@ -120,7 +120,7 @@ abstract public class ConceptProcess extends NAL  {
         }
         if (tasks.isEmpty()) return Stream.empty();
 
-        Set<TermLink> terms = Global.newHashSet(maxTaskLinks);
+        Set<TermLink> terms = Global.newHashSet(maxTermLinks);
         float termLinkForgetDurations = concept.getMemory().termLinkForgetDurations.floatValue();
 
         //TODO replace with one batch selector call
@@ -135,10 +135,13 @@ abstract public class ConceptProcess extends NAL  {
 
         for (final TaskLink a : tasks)
             for (final TermLink b : terms) {
-                Stream<Task> substream
-                        = derive(nar, concept, proc, now, a, b);
-                if (substream!=null) {
-                    streams.accept(substream);
+
+                ConceptProcess p = premise(nar, concept, now, a, b);
+
+                if (p!=null) {
+                    final Stream<Task> substream = proc.apply(p);
+                    if (substream!=null)
+                        streams.accept(substream);
                 }
             }
 
@@ -156,14 +159,15 @@ abstract public class ConceptProcess extends NAL  {
         if (termLink == null) return Stream.empty();
 
 
-        return derive(nar, concept, proc, now, taskLink, termLink);
+        return proc.apply(premise(nar, concept, now, taskLink, termLink));
+
     }
 
-    public static Stream<Task> derive(NAR nar, Concept concept, Function<ConceptProcess,Stream<Task>> proc, long now, TaskLink taskLink, TermLink termLink) {
+    public static ConceptProcess premise(NAR nar, Concept concept, long now, TaskLink taskLink, TermLink termLink) {
         if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
-            return Stream.empty();
+            return null;
 
-        ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
+        final ConceptProcess cp = new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
 
         final Concept beliefConcept = nar.concept(termLink.target);
         if (beliefConcept != null) {
@@ -172,7 +176,7 @@ abstract public class ConceptProcess extends NAL  {
             cp.setBelief(belief);
         }
 
-        return proc.apply(cp);
+        return cp;
     }
 
     /** gets the average summary of one or both task/belief task's */

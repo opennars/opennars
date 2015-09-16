@@ -36,12 +36,12 @@ public class SimpleNARBudgetDynamics {
 
 
         int preCycles = 0;
-        int cycles = 256;
+        int cycles = 2048;
 
 
-        float pri = 0.5f;
-        float dur = 0.8f;
-        float qua = 0.8f;
+        float pri = 0.25f;
+        float dur = 0.25f;
+        float qua = 0.25f;
 
 
         Default d = new Default(); //Equalized(1024, 1, 3);
@@ -101,7 +101,7 @@ public class SimpleNARBudgetDynamics {
 
                 })
                 .meter( (metrics, nar) -> {
-                    metrics.set("# concepts", nar.numConcepts(true, false));
+                    metrics.set("# concepts", nar.concepts().size());
                 })
                 .meter( (metrics, nar) -> {
 

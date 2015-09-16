@@ -302,10 +302,10 @@
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If after M, P usually happens, and M happens, it means P is expected to happen
 
-    M, (M ==> P), shift_occurrence_forward("==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    M, (P ==> M), shift_occurrence_backward("==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
-    M, (S <=> M), shift_occurrence_backward("<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
-    M, (M <=> S), shift_occurrence_forward("==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
+    M, (M ==> P), shift_occurrence_forward(M,"==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    M, (P ==> M), shift_occurrence_backward(P,"==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
+    M, (S <=> M), shift_occurrence_backward(M,"<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
+    M, (M <=> S), shift_occurrence_forward(S,"==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 
 //// conditional composition: ////////////////////////////////////////////////////////////////////////////////////
 //They are let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
@@ -413,6 +413,7 @@
 //NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
 
+
     C, ((&&,C,A_1..n) ==> B) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
     C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
@@ -428,7 +429,7 @@
 //Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
-    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+//    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                        ((&/,S,I) </> P), (Truth:Comparison),
                                                                                                        (&/,S,I,P), (Truth:Intersection)

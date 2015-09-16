@@ -28,7 +28,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
-import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -85,39 +84,39 @@ public class LocalRules {
     }
 
 
-    /**
-     * Belief revision
-     * <p>
-     * called from Concept.reviseTable and match
-     *
-     * @param newBelief       The new belief in task
-     * @param oldBelief       The previous belief with the same content
-     * @param feedbackToLinks Whether to send feedback to the links
-
-     */
-    public static Task revision(final Task newBelief, final Task oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        //Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
-        //if (stamp == null) return null;
-
-        if (Stamp.overlapping(newBelief, oldBelief))
-            return null;
-
-        Truth newBeliefTruth = newBelief.getTruth();
-        Truth oldBeliefTruth = oldBelief.getTruth();
-        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
-        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
-
-        Task revised = nal.validDerivation(nal.newTask(newBelief.getTerm())
-                .punctuation(newBelief.getPunctuation())
-                .truth(truth)
-                .budget(budget)
-                .parent(newBelief));
-
-        if (revised != null)
-            nal.memory().logic.BELIEF_REVISION.hit();
-
-        return revised;
-    }
+//    /**
+//     * Belief revision
+//     * <p>
+//     * called from Concept.reviseTable and match
+//     *
+//     * @param newBelief       The new belief in task
+//     * @param oldBelief       The previous belief with the same content
+//     * @param feedbackToLinks Whether to send feedback to the links
+//
+//     */
+//    public static Task revision(final Task newBelief, final Task oldBelief, final boolean feedbackToLinks, final NAL nal) {
+//        //Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
+//        //if (stamp == null) return null;
+//
+//        if (Stamp.overlapping(newBelief, oldBelief))
+//            return null;
+//
+//        Truth newBeliefTruth = newBelief.getTruth();
+//        Truth oldBeliefTruth = oldBelief.getTruth();
+//        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+//        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
+//
+//        Task revised = nal.validDerivation(nal.newTask(newBelief.getTerm())
+//                .punctuation(newBelief.getPunctuation())
+//                .truth(truth)
+//                .budget(budget)
+//                .parent(newBelief));
+//
+//        if (revised != null)
+//            nal.memory().logic.BELIEF_REVISION.hit();
+//
+//        return revised;
+//    }
 
 
     public static <T extends Compound> Task<T> tryRevision(final Task<T> newBelief, final Task<T> oldBelief, final boolean feedbackToLinks, final Premise nal) {
@@ -145,7 +144,7 @@ public class LocalRules {
                                 //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
                                 //Arrays.toString(oldBelief.getEvidentialSet())
                         )
-                    ); //.normalized();
+                    );
 
         if (revised != null) {
             nal.memory().logic.BELIEF_REVISION.hit();

@@ -34,8 +34,6 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.premise.HashTableNovelPremiseGenerator;
-import nars.premise.PremiseGenerator;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
@@ -380,7 +378,7 @@ public class Default extends NAR {
         else {
             return new DefaultConcept(t, b,
                     taskLinks, termLinks,
-                    newPremiseGenerator(), newConceptBeliefGoalRanking(),
+                    newConceptBeliefGoalRanking(),
                     m
             );
         }
@@ -392,13 +390,7 @@ public class Default extends NAR {
         return core.update(term.getTerm(), b, true, 1f, core.active);
     }
 
-    /**
-     * construct a new premise generator for a concept
-     */
-    public PremiseGenerator newPremiseGenerator() {
-        int novelCycles = 1;
-        return new HashTableNovelPremiseGenerator(memory().termLinkMaxMatched, novelCycles);
-    }
+
 
     public Bag<Term, Concept> newConceptBag() {
         CurveBag<Term, Concept> b = new CurveBag(rng, 1);
@@ -489,6 +481,8 @@ public class Default extends NAR {
 
         private final AtomicDouble conceptForget;
 
+        final int tasklinks = 2;
+        final int termlinks = 5;
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
@@ -505,9 +499,13 @@ public class Default extends NAR {
             this.deriver = deriver;
 
             this.premiseProcessor = (premise) -> {
+
+                //used to estimate the fraction this batch should be scaled but this is not accurate
+                //final int numPremises = termlinks*tasklinks;
+
                 return Task.normalize(
                         premise.derive(deriver).collect(Collectors.toList()),
-                        premise.getMeanSummary()
+                        premise.getMeanSummary() /*/numPremises*/
                 ).stream();
 
                 //OPTION 1: re-input to input buffers
@@ -598,7 +596,7 @@ public class Default extends NAR {
             nar.input( ConceptProcess.nextPremiseSquare(nar, c,
                     conceptForgetDurations,
                     premiseProcessor,
-                    6,6,now ) );
+                    termlinks, tasklinks, now ) );
         }
 
 

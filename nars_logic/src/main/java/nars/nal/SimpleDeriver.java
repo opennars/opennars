@@ -114,15 +114,15 @@ public class SimpleDeriver extends Deriver  {
     }
 
     public Stream<Task> forEachRule(final RuleMatch match) {
-        return forEachRuleExhaustive(match);
-        //forEachRuleByType(match);
+        //return forEachRuleExhaustive(match);
+        return forEachRuleByType(match);
     }
 
     public Stream<Task> forEachRuleExhaustive(final RuleMatch match) {
         return match.run(rules);
     }
 
-    public void forEachRuleByType(final RuleMatch match) {
+    public Stream<Task> forEachRuleByType(final RuleMatch match) {
 
         //final Term taskTerm = match.premise.getTask().getTerm();
 
@@ -133,34 +133,36 @@ public class SimpleDeriver extends Deriver  {
 
         //final Task belief = match.premise.getBelief();
 
+        Stream.Builder<Stream<Task>> sb = Stream.builder();
+
         if (taskSpecific!=null) {
 
 
             // <T>,<B>
             List<TaskRule> u = taskSpecific.get(beliefTerm.op());
             if (u != null)
-                match.run(u);
+                sb.accept( match.run(u) );
 
 
             // <T>,%
             List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
             if (taskSpecificBeliefAny != null)
-                match.run(taskSpecificBeliefAny);
+                sb.accept( match.run(taskSpecificBeliefAny) );
         }
 
 
         // %,<B>
         List<TaskRule> beliefSpecific = beliefTypeMap.get(beliefTerm.op());
         if (beliefSpecific!=null)
-            match.run(beliefSpecific);
+            sb.accept( match.run( beliefSpecific) );
 
 
         // %,%
         List<TaskRule> bAny = beliefTypeMap.get(Op.VAR_PATTERN);
         if (bAny!=null)
-            match.run(bAny);
+            sb.accept( match.run(bAny) );
 
-
+        return sb.build().flatMap(s->s);
     }
 
 

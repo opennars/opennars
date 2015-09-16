@@ -48,31 +48,32 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
             if (maxMatchVolume < v) maxMatchVolume = v;
 
             if (m instanceof Variable) {
-                final Variable vv = (Variable) m;
-                numIndep += vv.varIndep();
-                numDep += vv.varDep();
-                numQuery += vv.varQuery();
-            }
-
-        /* collapse a substitution map to each key's ultimate destination
-         *  in the case of values that are equal to other keys */
-            if (numSubs >= 2) {
-                final Term o = e.getValue(); //what the original mapping of this entry's key
-
-                Term k = o, prev = o;
-                int hops = 1;
-                while ((k = subs.getOrDefault(k, k)) != prev) {
-                    prev = k;
-                    if (hops++ == numSubs) {
-                        //cycle detected
-                        throw new RuntimeException("Cyclical substitution map: " + subs);
-                    }
-                }
-                if (!k.equals(o)) {
-                    //replace with the actual final mapping
-                    e.setValue(k);
+                switch (m.op()) {
+                    case VAR_DEPENDENT: numDep++; break;
+                    case VAR_INDEPENDENT: numIndep++; break;
+                    case VAR_QUERY: numQuery++; break;
                 }
             }
+
+//        /* collapse a substitution map to each key's ultimate destination
+//         *  in the case of values that are equal to other keys */
+//            if (numSubs >= 2) {
+//                final Term o = e.getValue(); //what the original mapping of this entry's key
+//
+//                Term k = o, prev = o;
+//                int hops = 1;
+//                while ((k = subs.getOrDefault(k, k)) != prev) {
+//                    prev = k;
+//                    if (hops++ == numSubs) {
+//                        //cycle detected
+//                        throw new RuntimeException("Cyclical substitution map: " + subs);
+//                    }
+//                }
+//                if (!k.equals(o)) {
+//                    //replace with the actual final mapping
+//                    e.setValue(k);
+//                }
+//            }
 
         }
 
@@ -97,18 +98,18 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
         int subsApplicable = numSubs;
 
-        if (!superterm.hasVarDep()) {
+        if (numDep > 0 && !superterm.hasVarDep()) {
             subsApplicable -= numDep;
             if (subsApplicable <= 0)
                 return true;
         }
 
-        if (!superterm.hasVarIndep())
+        if (numIndep > 0 && !superterm.hasVarIndep())
             subsApplicable -= numIndep;
             if (subsApplicable <= 0)
                 return true;
 
-        if (!superterm.hasVarQuery())
+        if (numQuery > 0 && !superterm.hasVarQuery())
             subsApplicable -= numQuery;
             if (subsApplicable <= 0)
                 return true;
@@ -137,6 +138,7 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
         final int minVolumeOfMatch = minMatchVolume;
 
+
         for (int i = 0; i < subterms; i++) {
             final Term t1 = in[i];
 
@@ -151,7 +153,6 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1)) {
-
                     if (out == in) out = copyOf(in, subterms);
                     out[i] = t2; //t2.clone();
                 }

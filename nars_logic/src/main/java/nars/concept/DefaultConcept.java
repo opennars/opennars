@@ -13,7 +13,6 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
-import nars.premise.PremiseGenerator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -68,12 +67,9 @@ public class DefaultConcept extends AtomConcept {
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, @Deprecated PremiseGenerator ps, BeliefTable.RankBuilder rb, final Memory memory) {
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, final Memory memory) {
         super(term, b, termLinks, taskLinks, memory);
 
-        //TODO move PremiseGenerator into ConceptProcess , and only in one subclass of them
-        if (ps!=null)
-            ps.setConcept(this);
 
         this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue(), rb.get(this, true));
         this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue(), rb.get(this, false));
@@ -205,7 +201,6 @@ public class DefaultConcept extends AtomConcept {
 
             return true;
         } else {
-            getMemory().remove(belief, "Ineffective Belief");
             return false;
         }
 
@@ -227,7 +222,6 @@ public class DefaultConcept extends AtomConcept {
         final Task newSolution = getGoals().add(goal, this, nal);
 
         if (newSolution==null) {
-            getMemory().remove(goal, "Ineffective Goal");
             return false;
         }
         else {

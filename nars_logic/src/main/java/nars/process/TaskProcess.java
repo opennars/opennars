@@ -171,7 +171,7 @@ public class TaskProcess extends NAL {
 
         termLinkBuilder.set(t, false, c.getMemory());
 
-        Concept otherConcept = nar.concept(termLinkBuilder.getTerm());
+        Concept otherConcept = nar.conceptualize(termLinkBuilder.getTerm(), t);
 
         if (otherConcept == null) {
             return false;

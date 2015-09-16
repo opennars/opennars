@@ -46,7 +46,7 @@ public class CommandTest {
         assertTrue(invoked.get());
 
         //no concepts created because this command bypassed inference
-        assertEquals(0, n.numConcepts(true,true));
+        assertEquals(0, n.concepts().size());
 
     }
 }

@@ -209,12 +209,12 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 //                false);
 //    }
 
-    public Task experienceFromTask(NAL nal, Task task, boolean full) {
-        if (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
-            return experienceFromTaskInternal(nal, task, full);
-        }
-        return null;
-    }
+//    public Task experienceFromTask(NAL nal, Task task, boolean full) {
+//        if (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+//            return experienceFromTaskInternal(nal, task, full);
+//        }
+//        return null;
+//    }
 
     protected Task experienceFromTaskInternal(NAL nal, Task task, boolean full) {
 
@@ -249,7 +249,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
             dur *= INTERNAL_EXPERIENCE_DURABILITY_MUL;
         }
 
-        return nal.validDerivation(nal.newTask(ret).judgment()
+        return nal.input(nal.newTask(ret).judgment()
                         .parent(full ? null : task, nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)

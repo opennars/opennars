@@ -10,7 +10,6 @@ import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
 
@@ -202,13 +201,7 @@ public class RuleMatch extends FindSubst {
 
 
 
-        //TODO prevent this from happening
-        if (Variable.hasPatternVariable(derive)) {
-            String leakMsg = "reactor leak: " + derive;
-            //throw new RuntimeException(leakMsg);
-            System.err.println(leakMsg);
-            return null;
-        }
+
 
         TaskSeed t = premise.newTask((Compound)derive); //, task, belief, allowOverlap);
         if (t != null) {
@@ -245,7 +238,7 @@ public class RuleMatch extends FindSubst {
                 t.parent(task);
             }
 
-            return t; //premise.derive(t);
+            return premise.validDerivation(t);
         }
 
         return null;
@@ -268,8 +261,41 @@ public class RuleMatch extends FindSubst {
 
     /** provides the cached result if it exists, otherwise computes it and adds to cache */
     public final Term resolve(final Term t) {
+
+        if (rule.numPatternVariables() > map1.size()) {
+            //System.err.println("predicted reactor leak");
+            return null;
+        }
+
         //cached:
-        return resolutions.computeIfAbsent(t, resolver);
+        Term derive = resolutions.computeIfAbsent(t, resolver);
+
+
+
+//        //TODO prevent this from happening
+//        if (Variable.hasPatternVariable(derive)) {
+//            String leakMsg = "reactor leak: " + derive;
+//            //throw new RuntimeException(leakMsg);
+//            System.err.println(leakMsg);
+//
+//            System.out.println(premise + "   -|-   ");
+//
+//            map1.entrySet().forEach(x -> System.out.println("  map1: " + x ));
+//            map2.entrySet().forEach(x -> System.out.println("  map2: " + x ));
+//            resolutions.entrySet().forEach(x -> System.out.println("  reso: " + x ));
+//
+//            resolver.apply(t);
+//            return null;
+//        }
+//        else {
+//            if (rule.numPatternVariables() > map1.size()) {
+//                System.err.println("predicted reactor leak FAIL: " + derive);
+//                System.err.println("  " + map1);
+//                System.err.println("  " + rule);
+//            }
+//        }
+
+        return derive;
 
         //uncached:
         //return resolver.apply(t);
@@ -277,20 +303,10 @@ public class RuleMatch extends FindSubst {
 
 
     public Stream<Task> run(final List<TaskRule> u) {
-//        final int size = u.size();
-//        for (int i = 0; i < size; i++)
-//            run(u.get(i));
-
-        if (u == null)
-            return Stream.empty();
         return run(u.stream());
     }
 
     public Stream<Task> run(final Stream<TaskRule> trs) {
-//        Stream.Builder<Task> stream = Stream.builder();
-//        for (TaskRule u : trs)
-//            run(u, stream);
-
         return trs.map(r -> run(r)).flatMap(p ->
                 Stream.of(p)).map(p -> apply(p)).filter(t->t!=null);
     }

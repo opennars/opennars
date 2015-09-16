@@ -32,6 +32,7 @@ public class TaskRule extends Rule<Premise, Task> {
 
     public PostCondition[] postconditions;
     public PairMatchingProduct pattern;
+    private int numPatternVar;
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
@@ -125,6 +126,24 @@ public class TaskRule extends Rule<Premise, Task> {
         if (toString().contains("substitute"))
             return false;
         return true;
+    }
+
+    /** how many unique pattern variables are present */
+    public int numPatternVariables() {
+        return numPatternVar;
+    }
+
+    @Override
+    protected void init(Term... term) {
+        super.init(term);
+
+
+        final Set<Term> patternVars = new HashSet();
+        recurseTerms((v,p) -> {
+            if (v.op() == Op.VAR_PATTERN)
+                patternVars.add(v);
+        });
+        this.numPatternVar = patternVars.size();
     }
 
     static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {

@@ -93,8 +93,6 @@ public class FindSubst {
 
             final Term t = map2.get(term2);
 
-
-
             if (t != null) {
                 //RECURSE, ie: return next(term1, t);
                 return next(term1, t, power-1);

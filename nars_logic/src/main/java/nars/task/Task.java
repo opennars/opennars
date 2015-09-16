@@ -611,19 +611,12 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
      * @return the input collection, unmodified (elements
      *  may be adjusted individually)
      */
-    static Collection<Task> normalize(final Collection<Task> dd, final float targetSumPriority) {
+    static Collection<Task> normalize(final Collection<Task> dd, final float targetSum) {
         if (dd.isEmpty()) return dd;
-
-        dd.forEach(x -> {
-            if (x == null) {
-                //TODO filter nulls before processing here
-                throw new RuntimeException("null item in stream");
-            }
-        });
 
         final float total = Budget.summarySum(dd);
         final float factor = Math.min(
-                    targetSumPriority/total,
+                    targetSum/total,
                     1.0f //limit to only diminish
                 );
 

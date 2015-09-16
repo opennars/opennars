@@ -54,7 +54,8 @@ public class MatchTaskBeliefPattern extends PreCondition {
 
     final protected boolean subst(final RuleMatch m, final PairMatchingProduct t) {
         //TODO parameterize the power by budget
-        return m.next(pattern, t, Global.UNIFICATION_POWER);
+        boolean b = m.next(pattern, t, Global.UNIFICATION_POWER);
+        return b;
     }
 
     @Override

@@ -464,16 +464,6 @@ abstract public class NAR {
     transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
 
-    @Deprecated
-    public int numConcepts(boolean active, boolean inactive) {
-        int total = 0;
-        if (active && !inactive) return -1; //numActiveConcepts();
-        else if (!active && inactive) return -1; //return memory().concepts.size() - ();
-        else if (active && inactive)
-            return memory().concepts.size();
-        else
-            return 0;
-    }
 
 
     public List<Task> input(final List<Task> t) {
@@ -1194,7 +1184,10 @@ abstract public class NAR {
         //validation here is to avoid checking a term if we know it is already normalized
         final boolean needsValidation;
 
-        needsValidation = (termed instanceof Term);
+        needsValidation = true;
+        //needsValidation = (termed instanceof Term);
+
+
 //        if (termed instanceof Term) {
 //            needsValidation = true;
 //        }
@@ -1218,12 +1211,16 @@ abstract public class NAR {
         Term term = termed.getTerm();
 
         if (needsValidation) {
-            if (!validConceptTerm(term))
-                return null;
+            if (!validConceptTerm(term)) {
+                throw new RuntimeException("invalid term attempts to conceptualize: " + term);
+                //return null;
+            }
         }
 
-        if ((term = term.normalized()) == null)
-            return null;
+        if ((term = term.normalized()) == null) {
+            throw new RuntimeException("unnormalized term attempts to conceptualize: " + term);
+            //return null;
+        }
 
         final Concept c = doConceptualize(term, budget);
         if (c == null) {
@@ -1231,7 +1228,6 @@ abstract public class NAR {
         }
         memory.eventConceptActivated.emit(c);
         return c;
-
     }
 
     abstract protected Concept doConceptualize(Term term, Budget budget);

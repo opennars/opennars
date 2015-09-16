@@ -49,11 +49,11 @@ public class DeductiveChainTest extends TestNAR {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int length = 3;
+        int length = 4;
 
         Global.DEBUG = true;
 
-        Default da = new Default().nal(6);
+        Default da = new Default().nal(3);
         //DefaultAlann da = new DefaultAlann(32);
         //da.nal(3);
 
@@ -85,7 +85,7 @@ public class DeductiveChainTest extends TestNAR {
             }
         };
 
-        n.run(128);
+        n.run(length*200);
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);
 

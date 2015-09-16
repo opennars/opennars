@@ -159,7 +159,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                         }   // else: activated belief*/
 
                     if (t!=existing)
-                        memory.remove(t, "Duplicated");
+                        memory.remove(t, "Ineffectual"); //"has no effect" on belief/desire, etc
 
                     return null;
 

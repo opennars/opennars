@@ -59,7 +59,6 @@ public class PairMatchingProduct extends ProductN {
 
     public final boolean substitutesMayExistParanoid(final PairMatchingProduct pattern) {
         return true;
-
     }
 
     public final boolean substitutesMayExistFast(final PairMatchingProduct pattern) {

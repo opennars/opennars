@@ -187,7 +187,6 @@ public abstract class AbstractAlann extends NAR {
         else {
             c = new DefaultConcept(t, b,
                     taskLinks, termLinks,
-                    null,
                     newConceptBeliefGoalRanking(),
                     memory
             );

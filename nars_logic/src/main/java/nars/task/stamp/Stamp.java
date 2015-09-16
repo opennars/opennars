@@ -263,7 +263,7 @@ public interface Stamp extends Cloneable, Serializable {
 //    }
 
     default boolean isEternal() {
-        return getOccurrenceTime() == ETERNAL;
+        return getOccurrenceTime() <= TIMELESS; /* includes ETERNAL */
     }
 
 

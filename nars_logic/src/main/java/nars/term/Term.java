@@ -177,10 +177,17 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     /** returns the effective term as substituted by the set of subs */
     default Term substituted(final Map<Term, Term> subs) {
 
+        //TODO hypothesis: if # of variables of the specified type
+        //exceeds entries in subs, then match is probably
+        //impossible
+
         if (this instanceof Compound) {
             return ((Compound) this).applySubstitute(subs);
         }
-        else if (this instanceof Variable) {
+        else if (op()==Op.VAR_PATTERN) { //this instanceof Variable) {
+            /*if (this.op()!=Op.VAR_PATTERN) {
+                throw new RuntimeException("variable is not pattern");
+            }*/
             return subs.get(this);
         }
 
