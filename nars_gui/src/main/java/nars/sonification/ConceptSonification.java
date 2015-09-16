@@ -24,9 +24,10 @@ public class ConceptSonification extends FrameReaction {
 
     List<SonarSample> samples = Global.newArrayList();
 
-    private final Audio sound;
+    public final Audio sound;
     //TODO use bag
     public Map<Concept, SoundProducer> playing;
+    private int polyphony;
 
     class PlayingMap extends LinkedHashMap<Concept, SoundProducer> {
         private final int maxSize;
@@ -50,16 +51,18 @@ public class ConceptSonification extends FrameReaction {
     //Global.newHashMap();
 
     float audiblePriorityThreshold = 0.0f;
-    static int maxVoices = 7;
 
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
         super(nar);
 
+        this.polyphony = sound.maxChannels;
+
         playing = Collections.synchronizedMap(
-                new PlayingMap(sound.maxChannels)
+                new PlayingMap(polyphony)
         );
 
         this.sound = sound;
+
 
         //Events.ConceptProcessed.class,
             /*Premise f = (Premise)args[0];
@@ -79,8 +82,8 @@ public class ConceptSonification extends FrameReaction {
     }
 
     public static void main(String[] args) throws IOException, LineUnavailableException {
-        Default d = new Default(2000, 2, 3, 4);
-        Audio a = new Audio(maxVoices);
+        Default d = new Default(2000, 3, 3, 4);
+        Audio a = new Audio(8);
 
         new ConceptSonification(d, a);
 
@@ -92,10 +95,10 @@ public class ConceptSonification extends FrameReaction {
             }
         } ).start();
 
-        d.input("$0.1$ <a-->b>.", "$0.5$ <b-->c>.",
-                "$0.3$ <c-->d>.", "$0.1$ <d-->e>."
+        d.input("$0.3$ <a-->b>.", "$0.5$ <b-->c>.",
+                "$0.3$ <c-->d>.", "$0.3$ <d-->e>."
         );
-        d.loop(50);
+        d.loop(20);
 
 
     }
@@ -190,19 +193,37 @@ public class ConceptSonification extends FrameReaction {
         return c.getPriority() > audiblePriorityThreshold;
     }
 
+    final static double twoTo12 = Math.pow((2),1/12.);
+
     /** return if it should continue */
     private boolean update(Concept c, SoundProducer g) {
 
         if (audible(c)) {
             //TODO autmatic gain control
-            float vol = 0.1f + 0.9f * c.getPriority();
+            float vol = 0.1f + 0.9f * c.getBudget().summary();
             //System.out.println(c + " at " + vol);
-            ((SoundProducer.Amplifiable) g).setAmplitude(vol/maxVoices);
+            ((SoundProducer.Amplifiable) g).setAmplitude(vol /
+                    ((polyphony)/2.0f)
+            );
 
             if (g instanceof Granulize) {
                 Granulize gg = ((Granulize) g);
                 gg.setStretchFactor( 0.5f + c.getDurability() );// + 4f * (1f - c.getQuality()));
-                gg.pitchFactor.set( 0.5f + 0.5f * c.getQuality() );
+
+
+                float pitch =
+                //        0.5f + 0.5f * c.getQuality();
+
+                        //higher term volume = higher pitch
+                        //F = {[(2)^1/12]^n} * 220 Hz
+                        0.15f * (float)Math.pow(twoTo12,
+                            //Math.floor(
+                                /*Math.sqrt*/(
+                                    3 * c.getTerm().volume()
+                            //    )
+                        ));
+
+                gg.pitchFactor.set( pitch );
             }
             return true;
         }

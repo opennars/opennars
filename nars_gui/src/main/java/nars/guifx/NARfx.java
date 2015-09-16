@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.layout.BorderPane;
@@ -280,9 +281,9 @@ public class NARfx  {
                 ni.addIcon(() -> {
                     return new InputPane(nar);
                 });
-                /*ni.addIcon(()-> {
+                ni.addIcon(()-> {
                    return new ConceptSonificationPanel(nar);
-                });*/
+                });
                 //ni.addView(additional components);
             }
 
@@ -486,14 +487,39 @@ public class NARfx  {
 
         private final Label info;
         final static int maxVoices = 4;
+        private final NAR nar;
         private ConceptSonification son;
 
         public ConceptSonificationPanel(NAR nar) {
             super();
 
+            this.nar = nar;
             info = new Label();
             info.setWrapText(true);
             setCenter(info);
+
+            CheckBox b = new CheckBox("Sonify");
+            setBottom(b);
+            b.selectedProperty().addListener(c -> {
+                if (b.isSelected()) {
+                    start();
+                }
+                else {
+                    stop();
+                }
+            });
+        }
+        protected void stop() {
+            info.setText("Stopping");
+            if (son!=null) {
+                son.off();
+                son.sound.shutDown();
+                son = null;
+            }
+            info.setText("Silent");
+        }
+
+        protected void start() {
 
             try {
                 son = new ConceptSonification(nar, new Audio(maxVoices)) {
@@ -501,9 +527,9 @@ public class NARfx  {
                     @Override
                     public void onFrame() {
                         super.onFrame();
-                        String pp = playing.keySet().toString();
+                        //String pp = playing.keySet().toString();
                         runLater(() -> {
-                            info.setText(pp);
+                            info.setText("Sonifying..");
                             //info.setText(this.playing.toString());
                         });
 
@@ -514,6 +540,7 @@ public class NARfx  {
                 info.setText(e.toString());
                 son = null;
             }
+
         }
     }
 }

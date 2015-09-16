@@ -1,14 +1,9 @@
 package nars.guifx;
 
-import javafx.geometry.Side;
 import javafx.scene.Parent;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.NAR;
 import nars.event.FrameReaction;
@@ -26,11 +21,13 @@ import static nars.guifx.NARfx.scrolled;
 public class NARide extends BorderPane {
 
 
-    private final TabPane taskBar = new TabPane();
+    //private final TabPane taskBar = new TabPane();
 
     public final TabPane content = new TabPane();
 
     public final NARControlFX controlPane;
+    private final ScrollPane spp;
+    private final PluginPanel pp;
 
 
     public void addIcon(FXIconPaneBuilder n) {
@@ -94,43 +91,45 @@ public class NARide extends BorderPane {
 //        vb.autosize();
 
 
+        spp = scrolled(pp = new PluginPanel(n));
 
-        taskBar.setSide(Side.LEFT);
-        taskBar.getTabs().addAll(
+//        //taskBar.setSide(Side.LEFT);
+//        taskBar.getTabs().addAll(
+//
+//                new TabX("Plugins",
+//                        spp).closeable(false),
+//
+//                new TabX("Tasks",
+//                        new TreePane(n)).closeable(false),
+//
+//                /*new TabX.TabButton("+",
+//                        scrolled(new NARReactionPane()))
+//                        .button("I/O", (e) -> {
+//                        })
+//                        .button("Graph", (e) -> {
+//                        })
+//                        .button("About", (e) -> {
+//                        })
+//                ,*/
+//
+//
+//                new TabX("Concepts",
+//                        new VBox()).closeable(false),
+//
+//
+////                new TabX("Stats",
+////                    new VBox()).closeable(false),
+//
+//                new TabX("InterNAR",
+//                        new VBox()).closeable(false)
+//
+//
+//        );
 
-                new TabX("Plugins",
-                        scrolled(new PluginPanel(n))).closeable(false),
+        //taskBar.setRotateGraphic(true);
 
-                new TabX("Tasks",
-                        new TreePane(n)).closeable(false),
-
-                /*new TabX.TabButton("+",
-                        scrolled(new NARReactionPane()))
-                        .button("I/O", (e) -> {
-                        })
-                        .button("Graph", (e) -> {
-                        })
-                        .button("About", (e) -> {
-                        })
-                ,*/
-
-
-                new TabX("Concepts",
-                        new VBox()).closeable(false),
-
-
-//                new TabX("Stats",
-//                    new VBox()).closeable(false),
-
-                new TabX("InterNAR",
-                        new VBox()).closeable(false)
-
-
-        );
-
-        taskBar.setRotateGraphic(true);
-
-        f.setCenter(taskBar);
+        //f.setCenter(taskBar);
+        f.setCenter(spp);
 
         f.setTop(controlPane);
 
