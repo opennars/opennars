@@ -21,7 +21,6 @@
 
 package nars.nal.nal4;
 
-import com.google.common.collect.Iterables;
 import nars.Op;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -71,9 +70,9 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
     static Product make(final Collection<Term> t) {
         return make(t.toArray(new Term[t.size()]));
     }
-    static Product makeFromIterable(final Iterable<Term> t) {
-        return make(Iterables.toArray(t, Term.class));
-    }
+//    static Product makeFromIterable(final Iterable<Term> t) {
+//        return make(Iterables.toArray(t, Term.class));
+//    }
 
     static Product only(final Term the) {
         return new Product1(the);
@@ -105,7 +104,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return Product.make( Atom.the(argAtoms) );
     }
 
-    Term[] cloneTermsReplacing(final Term from, final Term to);
+//    Term[] cloneTermsReplacing(final Term from, final Term to);
 
     Term[] cloneTerms();
 

@@ -209,12 +209,12 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
     }
 
 
-    /**
-     * produces a cloned instance with the replaced args + additional terms in a new argument product
-     */
-    public Operation cloneWithArguments(Term[] args, Term... additional) {
-        return (Operation) cloneReplacingSubterm(0, Product.make(args, additional));
-    }
+//    /**
+//     * produces a cloned instance with the replaced args + additional terms in a new argument product
+//     */
+//    public Operation cloneWithArguments(Term[] args, Term... additional) {
+//        return (Operation) cloneReplacingSubterm(0, Product.make(args, additional));
+//    }
 
     /**
      * returns a reference to the raw arguments as contained by the Product subject of this operation

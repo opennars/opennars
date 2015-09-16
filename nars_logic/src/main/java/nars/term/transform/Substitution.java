@@ -161,10 +161,9 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
                 //additional constraint here?
 
-                Term t3 = ((Compound) t1).applySubstitute(this);
-                if ((t3 != null) && (!t3.equals(in[i]))) {
+                Term t3 = apply((C) t1);
+                if ((t3 != null) && (!t3.equals(t1 /* in[i]*/))) {
                     //modification
-
                     if (out == in) out = copyOf(in, subterms);
                     out[i] = t3;
                 }
@@ -173,7 +172,6 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
         if (out == in) //nothing changed
             return t;
-
 
         Term s = t.clone(out);
 

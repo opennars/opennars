@@ -22,7 +22,6 @@ package nars.term;
 
 import com.google.common.collect.Iterators;
 import nars.Global;
-import nars.Memory;
 import nars.Op;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
@@ -1083,43 +1082,43 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         }
     }
 
-    /**
-     * Try to replace a component in a compound at a given index by another one
-     *
-     * @param index   The location of replacement
-     * @param subterm The new component
-     * @return The new compound
-     */
-    public Term cloneReplacingSubterm(final int index, final Term subterm) {
-
-        final boolean e = (subterm != null) && (op() == subterm.op());
-
-        //if the subterm is alredy equivalent, just return this instance because it will be equivalent
-        if (subterm != null && (e) && (term[index].equals(subterm)))
-            return this;
-
-        List<Term> list = asTermList();//Deep();
-
-        list.remove(index);
-
-        if (subterm != null) {
-            if (!e) {
-                list.add(index, subterm);
-            } else {
-                //splice in subterm's subterms at index
-                for (final Term t : term) {
-                    list.add(t);
-                }
-
-                /*Term[] tt = ((Compound) subterm).term;
-                for (int i = 0; i < tt.length; i++) {
-                    list.add(index + i, tt[i]);
-                }*/
-            }
-        }
-
-        return Memory.term(this, list);
-    }
+//    /**
+//     * Try to replace a component in a compound at a given index by another one
+//     *
+//     * @param index   The location of replacement
+//     * @param subterm The new component
+//     * @return The new compound
+//     */
+//    public Term cloneReplacingSubterm(final int index, final Term subterm) {
+//
+//        final boolean e = (subterm != null) && (op() == subterm.op());
+//
+//        //if the subterm is alredy equivalent, just return this instance because it will be equivalent
+//        if (subterm != null && (e) && (term[index].equals(subterm)))
+//            return this;
+//
+//        List<Term> list = asTermList();//Deep();
+//
+//        list.remove(index);
+//
+//        if (subterm != null) {
+//            if (!e) {
+//                list.add(index, subterm);
+//            } else {
+//                //splice in subterm's subterms at index
+//                for (final Term t : term) {
+//                    list.add(t);
+//                }
+//
+//                /*Term[] tt = ((Compound) subterm).term;
+//                for (int i = 0; i < tt.length; i++) {
+//                    list.add(index + i, tt[i]);
+//                }*/
+//            }
+//        }
+//
+//        return Memory.term(this, list);
+//    }
 
 
     /**
@@ -1209,14 +1208,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
 
     /**
-     * NOT TESTED YET
-     */
-    public boolean containsAnyTermsOf(final Collection<Term> c) {
-        return Terms.containsAny(this, c);
-    }
-
-
-    /**
      * Recursively apply a substitute to the current CompoundTerm
      * May return null if the term can not be created
      *
@@ -1230,11 +1221,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
             return this;
         }
 
-        return applySubstitute(new Substitution(subs));
-    }
-
-    public Term applySubstitute(final Substitution S) {
-        return S.apply(this);
+        return new Substitution(subs).apply(this);
     }
 
 
@@ -1259,33 +1246,33 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
     }
 
 
-    /**
-     * compare subterms where any variables matched are not compared
-     */
-    public boolean equalsVariablesAsWildcards(final Compound c) {
-        if (!(op() == c.op())) return false;
-        if (length() != c.length()) return false;
-        for (int i = 0; i < length(); i++) {
-            Term a = term[i];
-            Term b = c.term[i];
-            if ((a instanceof Variable) /*&& (a.hasVarDep())*/ ||
-                    ((b instanceof Variable) /*&& (b.hasVarDep())*/))
-                continue;
-            if (!a.equals(b)) return false;
-        }
-        return true;
-    }
+//    /**
+//     * compare subterms where any variables matched are not compared
+//     */
+//    public boolean equalsVariablesAsWildcards(final Compound c) {
+//        if (!(op() == c.op())) return false;
+//        if (length() != c.length()) return false;
+//        for (int i = 0; i < length(); i++) {
+//            Term a = term[i];
+//            Term b = c.term[i];
+//            if ((a instanceof Variable) /*&& (a.hasVarDep())*/ ||
+//                    ((b instanceof Variable) /*&& (b.hasVarDep())*/))
+//                continue;
+//            if (!a.equals(b)) return false;
+//        }
+//        return true;
+//    }
 
-    public Term[] cloneTermsReplacing(final Term from, final Term to) {
-        Term[] y = new Term[length()];
-        int i = 0;
-        for (Term x : term) {
-            if (x.equals(from))
-                x = to;
-            y[i++] = x;
-        }
-        return y;
-    }
+//    public Term[] cloneTermsReplacing(final Term from, final Term to) {
+//        Term[] y = new Term[length()];
+//        int i = 0;
+//        for (Term x : term) {
+//            if (x.equals(from))
+//                x = to;
+//            y[i++] = x;
+//        }
+//        return y;
+//    }
 
     public Term[] cloneTermsReplacing(int index, final Term replaced) {
         Term[] y = cloneTerms();

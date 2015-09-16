@@ -4,7 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.event.CycleReaction;
 import nars.io.JSONOutput;
-import nars.io.in.TextInput;
 import nars.io.out.TextOutput;
 import nars.meter.condition.TaskCondition;
 import nars.nal.nal7.Tense;
@@ -14,7 +13,6 @@ import nars.task.stamp.Stamp;
 import nars.util.event.Topic;
 import nars.util.meter.event.HitMeter;
 
-import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.*;
@@ -402,100 +400,98 @@ public class TestNAR  {
     }
 
 
-    /** returns null if there is no error, or a non-null String containing report if error */
-    @Deprecated public String evaluate() {
-        //TODO use report(..)
+//    /** returns null if there is no error, or a non-null String containing report if error */
+//    @Deprecated public String evaluate() {
+//        //TODO use report(..)
+//
+//        int conditions = requires.size();
+//        int failures = getError()!=null ? 1 : 0;
+//
+//        for (TaskCondition tc : requires) {
+//            if (!tc.isTrue()) {
+//                failures++;
+//            }
+//        }
+//
+//        int successes = conditions - failures;
+//
+//
+//        if (error!=null || failures > 0) {
+//            String result = "";
+//
+//            if (error!=null) {
+//                result += error.toString() + " ";
+//            }
+//
+//            if (failures > 0) {
+//                result += successes + "/ " + conditions + " conditions passed";
+//            }
+//
+//            return result;
+//        }
+//
+//        return null;
+//
+//    }
 
-        int conditions = requires.size();
-        int failures = getError()!=null ? 1 : 0;
+//    public void report(PrintStream out, boolean showFail, boolean showSuccess, boolean showExplanations) {
+//
+//        boolean output = false;
+//
+//        if (showFail || showSuccess) {
+//
+//            for (TaskCondition tc : requires) {
+//
+//                if (!tc.isTrue()) {
+//                    if (showFail) {
+//                        out.println(tc.getFalseReason());
+//                        output = true;
+//                    }
+//                } else {
+//                    if (showSuccess) {
+//                        out.println(tc.getTrueReasons());
+//                        output = true;
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        if (error!=null) {
+//            error.printStackTrace();
+//            output = true;
+//        }
+//
+//        if (showExplanations) {
+//            for (ExplainableTask x : explanations ) {
+//                x.printMeaning(out);
+//                output = true;
+//            }
+//        }
+//
+//        if (output)
+//            out.println();
+//    }
+//
+//
+//    public void inputTest(String script) {
+//
+//        if (script == null)
+//            throw new RuntimeException("null input");
+//
+//        nar.input( new TestInput(script) );
+//
+//    }
 
-        for (TaskCondition tc : requires) {
-            if (!tc.isTrue()) {
-                failures++;
-            }
-        }
-
-        int successes = conditions - failures;
-
-
-        if (error!=null || failures > 0) {
-            String result = "";
-
-            if (error!=null) {
-                result += error.toString() + " ";
-            }
-
-            if (failures > 0) {
-                result += successes + "/ " + conditions + " conditions passed";
-            }
-
-            return result;
-        }
-
-        return null;
-
-    }
-
-    public void report(PrintStream out, boolean showFail, boolean showSuccess, boolean showExplanations) {
-
-        boolean output = false;
-
-
-
-        if (showFail || showSuccess) {
-
-            for (TaskCondition tc : requires) {
-
-                if (!tc.isTrue()) {
-                    if (showFail) {
-                        out.println(tc.getFalseReason());
-                        output = true;
-                    }
-                } else {
-                    if (showSuccess) {
-                        out.println(tc.getTrueReasons());
-                        output = true;
-                    }
-                }
-            }
-
-        }
-
-        if (error!=null) {
-            error.printStackTrace();
-            output = true;
-        }
-
-        if (showExplanations) {
-            for (ExplainableTask x : explanations ) {
-                x.printMeaning(out);
-                output = true;
-            }
-        }
-
-        if (output)
-            out.println();
-    }
-
-
-    public void inputTest(String script) {
-
-        if (script == null)
-            throw new RuntimeException("null input");
-
-        nar.input( new TestInput(script) );
-
-    }
-
-    class TestInput extends TextInput {
-        public TestInput(String script) {
-            super(nar, script);
-        }
-
-        @Override
-        public void accept(Task task) {
-            super.accept(task);
-            inputs.add(task);
-        }
-    }
+//    class TestInput extends TextInput {
+//        public TestInput(String script) {
+//            super(nar, script);
+//        }
+//
+//        @Override
+//        public void accept(Task task) {
+//            super.accept(task);
+//            inputs.add(task);
+//        }
+//    }
 }

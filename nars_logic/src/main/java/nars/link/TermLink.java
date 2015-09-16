@@ -125,7 +125,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 
     @Override
     public final int hashCode() {
-        return getTerm().hashCode();
+        return target.hashCode();
     }
 
 
@@ -158,7 +158,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 //
 //        return sb
 //            .append(getTerm().toString()).toString();
-        return getTerm().toString();
+        return target.toString();
     }
 
 
@@ -184,7 +184,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 
     @Override
     public Term getTerm() {
-        return target.getTerm();
+        return target;
     }
 
     @Override public void delete() {

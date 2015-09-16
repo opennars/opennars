@@ -95,7 +95,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             } else if (ti instanceof Compound) {
                 final Compound cti = (Compound)ti;
 
-                boolean t1ProductOrImage = (ti instanceof Product) || (ti instanceof Image);
+                boolean t1Grow = growLevel1(ti);
 
                 final short tiSize = (short)cti.term.length;
                 for (short j = 0; j < tiSize; ) {
@@ -103,11 +103,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                     if (!(tj instanceof Variable)) {
                         TermLinkTemplate a;
-                        if (t1ProductOrImage) {
+                        if (t1Grow) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, 0, i, j);
+                                a = new TermLinkTemplate(concept, type, tj, 0, i, j);
                             } else {
-                                a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, i, j);
+                                a = new TermLinkTemplate(concept, type, tj, i, j);
                             }
                         } else {
                             a = new TermLinkTemplate(concept, type, tj, i, j);
@@ -115,7 +115,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         addTemplate(a);
                     }
 
-                    if ((tj instanceof Product) || (tj instanceof Image)) {
+                    if (growLevel2(tj)) {
                         Compound ctj = (Compound)tj;
 
                         final short tjSize = (short) ctj.term.length;
@@ -125,9 +125,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                             if (!(tk instanceof Variable)) {
                                 TermLinkTemplate b;
                                 if (type == TermLink.COMPOUND_CONDITION) {
-                                    b = new TermLinkTemplate(concept, TermLink.TRANSFORM, tk, 0, i, j, k);
+                                    b = new TermLinkTemplate(concept, type, tk, 0, i, j, k);
                                 } else {
-                                    b = new TermLinkTemplate(concept, TermLink.TRANSFORM, tk, i, j, k);
+                                    b = new TermLinkTemplate(concept, type, tk, i, j, k);
                                 }
                                 addTemplate(b);
                             }
@@ -142,6 +142,23 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
             i++; //increment at end in case it's the last iteration we want to use max n-1, not n
         }
+    }
+
+    final static boolean growLevel1(final Term t) {
+        return growProductOrImage(t);
+        //return growLevel2(t);
+    }
+
+    /** original termlink growth policy */
+    static boolean growProductOrImage(Term t) {
+        return (t instanceof Product) || (t instanceof Image);
+    }
+
+
+    final static boolean growLevel2(final Term t) {
+        return (growProductOrImage(t));
+        //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
+        //return (t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional) || (t instanceof Junction);
     }
 
 

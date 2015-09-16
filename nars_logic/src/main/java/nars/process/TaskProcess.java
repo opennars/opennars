@@ -31,6 +31,11 @@ public class TaskProcess extends NAL {
 
     public final Task task;
 
+    /** configuration */
+    boolean activateTermLinkTemplates = true;
+    boolean activateTermLinkTemplateTargetsFromTask = true;
+    boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
+
     public TaskProcess(NAR nar, Task task) {
         super(nar);
 
@@ -143,15 +148,15 @@ public class TaskProcess extends NAL {
                 for (int i = 0; i < numTemplates; i++) {
 
                     final TermLinkTemplate t = tl.get(i);
-                    if (t.type == TermLink.TRANSFORM)
-                        continue;
+                    /*if (t.type == TermLink.TRANSFORM)
+                        continue;*/
 
                     //only apply this loop to non-transform termlink templates
                     t.accumulate(subPriority, dur, qua);
 
                     if (updateTLinks) {
                         if (t.getPriority() >= termLinkThresh) {
-                            if (link(t, c, nar))
+                            if (link(t, c))
                                 activity = true;
                         }
                     }
@@ -165,14 +170,13 @@ public class TaskProcess extends NAL {
     }
 
 
-    public boolean link(TermLinkTemplate t, Concept c, NAR nar) {
+    public boolean link(TermLinkTemplate t, Concept c) {
 
         TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
 
         termLinkBuilder.set(t, false, c.getMemory());
 
-        Concept otherConcept = nar.conceptualize(termLinkBuilder.getTerm(), t);
-
+        Concept otherConcept = getTermLinkTemplateTarget(t);
         if (otherConcept == null) {
             return false;
         }
@@ -187,7 +191,8 @@ public class TaskProcess extends NAL {
         final Budget termlinkBudget = termLinkBuilder.getBudget();
 
         //if (otherConcept.getTerm() instanceof Compound) {
-        linkTerms(otherConcept, termlinkBudget, false);
+
+        linkTerms(otherConcept, termlinkBudget, immediateTermLinkPropagation);
         //}
         /*} else {
 
@@ -201,6 +206,18 @@ public class TaskProcess extends NAL {
 
     }
 
+    Concept getTermLinkTemplateTarget(TermLinkTemplate t) {
+        if (activateTermLinkTemplates)
+            return nar.conceptualize(t.getTerm(), t);
+        else
+            return nar.concept(t.getTerm());
+    }
+    Concept getTermLinkTemplateTarget(TermLinkTemplate t, Budget taskBudget) {
+        if (activateTermLinkTemplateTargetsFromTask)
+            return nar.conceptualize(t.getTerm(), taskBudget);
+        else
+            return nar.concept(t.getTerm());
+    }
 
     /**
      * Link to a new task from all relevant concepts for continued processing in
@@ -255,8 +272,7 @@ public class TaskProcess extends NAL {
             if (componentTerm.equals(getTerm())) // avoid circular transform
                 continue;
 
-            Concept componentConcept = nar.conceptualize(linkTemplate, subBudget);
-
+            Concept componentConcept = getTermLinkTemplateTarget(linkTemplate, subBudget);
             if (componentConcept != null) {
 
                 //share merge term instances

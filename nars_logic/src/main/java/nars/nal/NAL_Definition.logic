@@ -429,7 +429,7 @@
 //Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
 
-//    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
+    P, S, measure_time(S,P,I), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- ((&/,S,I) =/> P), (Truth:Induction),
                                                                                                        (P =\> (&/,S,I)), (Truth:Abduction),
                                                                                                        ((&/,S,I) </> P), (Truth:Comparison),
                                                                                                        (&/,S,I,P), (Truth:Intersection)

@@ -73,14 +73,16 @@ public class PairMatchingProduct extends ProductN {
             return false;
         }
 
-        if (volume() < pattern.volume())
-            return false;
+//        if (volume() < pattern.volume())
+//            return false;
 
         if (volA < pattern.volA)
             return false;
 
         if (volB < pattern.volB)
             return false;
+
+        //compare the task and belief individually to filter out more:
 
         final Term c = term[0];
         if (c.impossibleToMatch(pattern.structureA)) return false;

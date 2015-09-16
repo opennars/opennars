@@ -6,10 +6,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
-import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.task.Task;
@@ -134,45 +131,45 @@ public abstract class TermFunction<O> extends SynchOperator {
 
 
 
-    protected ArrayList<Task> result2(Operation operation, Term y, Term[] x0, Term lastTerm) {
-        //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
-        //which wont happen on temporal induction with dependent variable for good rule,
-        //because in general the two dependent variables of event1 and event2
-        //can not be assumed to be related, but here we have to assume
-        //it if we don't want to use the "resultof"-relation.
-
-
-        Compound actual = Implication.make(
-                operation.cloneWithArguments(x0, var),
-                Similarity.make(var, y),
-                TemporalRules.ORDER_FORWARD);
-
-        if (actual == null) return null;
-
-        Compound actual_dep_part = lastTerm!=null ? Similarity.make(lastTerm, y) : null;
-
-
-        float confidence = operation.getTask().getConfidence();
-        //TODO add a delay discount/projection for executions that happen further away from creation time
-
-        return Lists.newArrayList(
-
-                TaskSeed.make(nar.memory, actual).judgment()
-                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                        .truth(getResultFrequency(), getResultConfidence())
-                        .parent(operation.getTask())
-                        .tense(getResultTense()),
-
-                actual_dep_part != null ?
-                        TaskSeed.make(nar.memory, actual_dep_part).judgment()
-                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                                .truth(1f, confidence)
-                                .present()
-                                .parent(operation.getTask()) : null
-
-        );
-
-    }
+//    protected ArrayList<Task> result2(Operation operation, Term y, Term[] x0, Term lastTerm) {
+//        //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
+//        //which wont happen on temporal induction with dependent variable for good rule,
+//        //because in general the two dependent variables of event1 and event2
+//        //can not be assumed to be related, but here we have to assume
+//        //it if we don't want to use the "resultof"-relation.
+//
+//
+//        Compound actual = Implication.make(
+//                operation.cloneWithArguments(x0, var),
+//                Similarity.make(var, y),
+//                TemporalRules.ORDER_FORWARD);
+//
+//        if (actual == null) return null;
+//
+//        Compound actual_dep_part = lastTerm!=null ? Similarity.make(lastTerm, y) : null;
+//
+//
+//        float confidence = operation.getTask().getConfidence();
+//        //TODO add a delay discount/projection for executions that happen further away from creation time
+//
+//        return Lists.newArrayList(
+//
+//                TaskSeed.make(nar.memory, actual).judgment()
+//                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+//                        .truth(getResultFrequency(), getResultConfidence())
+//                        .parent(operation.getTask())
+//                        .tense(getResultTense()),
+//
+//                actual_dep_part != null ?
+//                        TaskSeed.make(nar.memory, actual_dep_part).judgment()
+//                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+//                                .truth(1f, confidence)
+//                                .present()
+//                                .parent(operation.getTask()) : null
+//
+//        );
+//
+//    }
 
     @Override
     protected void noticeExecuted(Operation operation) {
