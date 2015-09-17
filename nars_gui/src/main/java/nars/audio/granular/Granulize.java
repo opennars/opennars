@@ -3,6 +3,9 @@ package nars.audio.granular;
 import nars.audio.SoundProducer;
 import nars.audio.sample.SonarSample;
 import nars.util.data.MutableDouble;
+import nars.util.data.random.XorShift1024StarRandom;
+
+import java.util.Random;
 
 public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 
@@ -37,9 +40,17 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
     }
 
 	public Granulize(float[] buffer, float sampleRate, float grainSizeSecs, float windowSizeFactor) {
+
 		this.sourceBuffer = buffer;
+
 		this.granulator = new Granulator(buffer, sampleRate, grainSizeSecs, windowSizeFactor);
+
 		play();
+	}
+
+	public Granulize at(int pos) {
+		this.playOffset = pos;
+		return this;
 	}
 
 	public void process(float[] output, int readRate) {
@@ -106,8 +117,10 @@ public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
         return amplitude.floatValue();
     }
 
+	final Random rng = new XorShift1024StarRandom(1);
+
     public void play() {
-		playOffset = 0;
+		playOffset = rng.nextInt();
 		playTime = now;
 		isPlaying = true;
 	}

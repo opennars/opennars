@@ -24,6 +24,7 @@ public class ConceptSonification extends FrameReaction {
 
     List<SonarSample> samples = Global.newArrayList();
 
+
     public final Audio sound;
     //TODO use bag
     public Map<Concept, SoundProducer> playing;
@@ -41,8 +42,8 @@ public class ConceptSonification extends FrameReaction {
         protected boolean removeEldestEntry(Map.Entry<Concept, SoundProducer> eldest) {
             if (size() > maxSize) {
                 //Concept c = eldest.getKey();
-                SoundProducer s = eldest.getValue();
-                s.stop();
+                //SoundProducer s = eldest.getValue();
+                //s.stop();
                 return true;
             }
             return false;
@@ -82,8 +83,8 @@ public class ConceptSonification extends FrameReaction {
     }
 
     public static void main(String[] args) throws IOException, LineUnavailableException {
-        Default d = new Default(2000, 3, 3, 4);
-        Audio a = new Audio(8);
+        Default d = new Default(1000, 2, 1, 2);
+        Audio a = new Audio(32);
 
         new ConceptSonification(d, a);
 
@@ -95,10 +96,12 @@ public class ConceptSonification extends FrameReaction {
             }
         } ).start();
 
-        d.input("$0.3$ <a-->b>.", "$0.5$ <b-->c>.",
-                "$0.3$ <c-->d>.", "$0.3$ <d-->e>."
+        //d.stdout();
+
+        d.input("$0.6$ <a-->b>.", "$0.5$ <b-->c>.",
+                "$0.6$ <c-->d>.", "$0.6$ <d-->e>."
         );
-        d.loop(20);
+        d.loop(500);
 
 
     }
@@ -148,7 +151,13 @@ public class ConceptSonification extends FrameReaction {
      */
     final SonarSample getSample(final Concept c) {
         final List<SonarSample> samples = this.samples;
-        return samples.get(Math.abs(c.getTerm().hashCode() % samples.size()));
+        int s = samples.size();
+        if (s == 1)
+            return samples.get(0);
+        else if (s == 2)
+            throw new RuntimeException("no samples to granulize");
+        else
+            return samples.get(Math.abs(c.getTerm().hashCode() % s));
     }
 
     public void update(final Concept c) {
@@ -166,9 +175,6 @@ public class ConceptSonification extends FrameReaction {
             return sp;
         });
 
-
-
-
         if (g != null)
             update(c, g);
 
@@ -181,7 +187,13 @@ public class ConceptSonification extends FrameReaction {
         SonarSample sp = getSample(c);
 
         Granulize g = new Granulize(sp,
-                /* grain size = system duration? */ 0.8f);
+                /* grain size */
+                0.3f * (1 + c.getTerm().volume()/2f),
+                1.0f
+            ).at(
+                //terms get positoined according to their hash
+                c.getTerm().hashCode()
+            );
         return g;
 
         //g = new SineWave(Video.hashFloat(c.hashCode()));
@@ -200,28 +212,31 @@ public class ConceptSonification extends FrameReaction {
 
         if (audible(c)) {
             //TODO autmatic gain control
-            float vol = 0.1f + 0.9f * c.getBudget().summary();
+            float vol = 0.9f * c.getBudget().getPriority();
             //System.out.println(c + " at " + vol);
             ((SoundProducer.Amplifiable) g).setAmplitude(vol /
-                    ((polyphony)/2.0f)
+                    ((polyphony)/8.0f)
             );
 
             if (g instanceof Granulize) {
                 Granulize gg = ((Granulize) g);
-                gg.setStretchFactor( 0.5f + c.getDurability() );// + 4f * (1f - c.getQuality()));
+                gg.setStretchFactor(
+                        0.85f + c.getDurability()/3f );// + 4f * (1f - c.getQuality()));
 
 
-                float pitch =
+                float pitch = 1f;
                 //        0.5f + 0.5f * c.getQuality();
 
+                /*
                         //higher term volume = higher pitch
                         //F = {[(2)^1/12]^n} * 220 Hz
-                        0.15f * (float)Math.pow(twoTo12,
+                        0.35f * (float)Math.pow(twoTo12,
                             //Math.floor(
-                                /*Math.sqrt*/(
+                                //Math.sqrt(
                                     3 * c.getTerm().volume()
                             //    )
                         ));
+                    */
 
                 gg.pitchFactor.set( pitch );
             }
@@ -242,8 +257,8 @@ public class ConceptSonification extends FrameReaction {
             if (!cont) {
                 ie.remove();
                 SoundProducer x = playing.remove(c);
-                if (x != null)
-                    x.stop();
+                /*if (x != null)
+                    x.stop();*/
             }
         }
     }

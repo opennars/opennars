@@ -20,6 +20,8 @@ import javafx.scene.text.TextFlow;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.guifx.treemap.Item;
+import nars.guifx.treemap.Treemap;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.util.data.list.CircularArrayList;
@@ -170,8 +172,42 @@ public class LogPane extends BorderPane implements Runnable {
         }
     }
 
-    ActivationSet activationSet = null;
+    ActivationTreeMap activationSet = null;
     Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
+
+    public static class ActivationTreeMap extends Treemap {
+
+        private final Item.DefaultItem r;
+        @Deprecated Set<Concept> concept = new HashSet();
+
+        public ActivationTreeMap(Object firstChild, float firstChildSize) {
+            super(Item.get("", 0f, firstChild, firstChildSize));
+
+            r = (Item.DefaultItem) root;
+        }
+
+        public ActivationTreeMap(Concept signal) {
+            this(signal, signal.getPriority());
+        }
+
+
+        /** setup before display */
+        public void commit() {
+            for (Concept c : concept)
+                r.add(c, c.getPriority());
+            runLater(() -> {
+                update();
+                setCacheHint(CacheHint.SPEED);
+                setCache(true);
+            });
+        }
+
+        public void add(Concept c) {
+            concept.add(c);
+        }
+
+
+    }
 
     public static class ActivationSet extends FlowPane {
         private final ObservableList pri;
@@ -267,12 +303,19 @@ public class LogPane extends BorderPane implements Runnable {
         if (channel.equals("eventConceptActivated")) {
             boolean newn;
             if (activationSet==null) {
-                activationSet = new ActivationSet();
+                activationSet =
+                        //new ActivationSet();
+                        new ActivationTreeMap((Concept)signal);
+
+                //activationSet.prefWidth(getWidth());
+                activationSet.width.set(400);
+                activationSet.height.set(100);
                 newn = true;
             }
-            else newn = false;
-
-            activationSet.add((Concept)signal);
+            else {
+                activationSet.add((Concept) signal);
+                newn = false;
+            }
 
             if (!newn) return null;
             else
