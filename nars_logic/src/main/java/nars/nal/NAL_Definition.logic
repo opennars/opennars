@@ -47,13 +47,19 @@
     ([S] <-> [P]), S |- (S <-> P), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), P |- (S <-> P), (Truth:Identity, Desire:Identity)
 
-//Structure Transformations
+//Set introductions
 
     (S <-> P), S, not_set(S), not_set(P) |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
     (S <-> P), P, not_set(S), not_set(P) |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
 
     (S <-> P), S, not_set(S), not_set(P) |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
     (S <-> P), P, not_set(S), not_set(P) |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
+
+    (S <-> P), S, not_set(S), not_set(P) |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
+    (S <-> P), P, not_set(S), not_set(P) |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
+
+    (S <-> P), S, not_set(S), not_set(P) |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
+    (S <-> P), P, not_set(S), not_set(P) |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
 
 //Nothing is more specific than a instance, so its similar
 
