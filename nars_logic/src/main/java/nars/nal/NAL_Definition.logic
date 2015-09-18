@@ -20,6 +20,15 @@
 
 //TODO Equivalence Theorems
 
+//Set Definition Inheritance to Similarity
+
+    ({S} --> {P}), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
+    ({S} --> {P}), P |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
+    ([S] --> [P]), S |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
+    ([S] --> [P]), P |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
+
+//Set Definition Similarity to Inheritance
+
     ({S} <-> {P}), S |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
     ({S} <-> {P}), P |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), S |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
@@ -29,6 +38,8 @@
     ({S} <-> {P}), P |- ({P} --> {S}), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), S |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), P |- ([P] --> [S]), (Truth:Identity, Desire:Identity)
+
+//Set Definition Unwrap
 
     ({S} <-> {P}), S |- (S <-> P), (Truth:Identity, Desire:Identity)
     ({S} <-> {P}), P |- (S <-> P), (Truth:Identity, Desire:Identity)
