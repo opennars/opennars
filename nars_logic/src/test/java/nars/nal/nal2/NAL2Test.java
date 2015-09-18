@@ -112,27 +112,31 @@ public class NAL2Test extends AbstractNALTest {
         tester.run();
     }
 
+    /* Handled by parser, this copula is just syntactic sugar
     @Test
     public void instanceToInheritance() throws InvalidInputException {
         test()
         .believe("<Tweety {-- bird>")//Tweety is a bird.");
         .mustBelieve(cycles,"<{Tweety} --> bird>",1.0f,0.9f)//Tweety is a bird.");
         .run();
-    }
+    }*/
 
+    /* Handled by parser, this copula is just syntactic sugar
     @Test
     public void propertyToInheritance() throws InvalidInputException {
         test().believe("<raven --] black>")//Ravens are black.");
         .mustBelieve(cycles,"<raven --> [black]>",1.0f,0.9f)//Ravens are black.");
         .run();
-    }
+    }*/
 
+    /* Handled by parser, this copula is just syntactic sugar
     @Test
     public void instancePropertyToInheritance() throws InvalidInputException {
         test().believe("<Tweety {-] yellow>") //Tweety is yellow.");
         .mustBelieve(cycles,"<{Tweety} --> [yellow]>",1.0f,0.9f)//Tweety is yellow.");
         .run();
     }
+*/
 
     @Test
     public void setDefinition() throws InvalidInputException {
