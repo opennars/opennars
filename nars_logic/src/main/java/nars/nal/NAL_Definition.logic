@@ -18,7 +18,15 @@
     (&&,A_1..n), A_i |- A_i, (Truth:Deduction, Desire:Strong)
 //TODO: also (&&,A_1,A_2), A_1 |- A_1, (Truth:Deduction, Desire:Strong) currently doesnt work, review
 
-//TODO Equivalence Theorems
+//Similarity to Inheritance
+
+    (S <-> P), S |- (S --> P), (Truth:AnalyticDeduction)
+    (S <-> P), P |- (S --> P), (Truth:AnalyticDeduction)
+
+//Inheritance to Similarity
+
+    (S --> P), S |- (S <-> P), (Truth:AnalyticAbduction)
+    (S --> P), P |- (S <-> P), (Truth:AnalyticAbduction)
 
 //Set Definition Similarity to Inheritance
 
@@ -46,16 +54,6 @@
 
     (S <-> P), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
     (S <-> P), P |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
-
-//Similarity to Inheritance
-
-    (S <-> P), S |- (S --> P), (Truth:AnalyticDeduction)
-    (S <-> P), P |- (S --> P), (Truth:AnalyticDeduction)
-
-//Inheritance to Similarity
-
-    (S --> P), S |- (S <-> P), (Truth:AnalyticAbduction)
-    (S --> P), P |- (S <-> P), (Truth:AnalyticAbduction)
 
 //Nothing is more specific than a instance, so its similar
 
