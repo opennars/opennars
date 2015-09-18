@@ -59,6 +59,11 @@
     (S <-> P), S |- (S --> P), (Truth:AnalyticDeduction)
     (S <-> P), P |- (S --> P), (Truth:AnalyticDeduction)
 
+//Inheritance to Similarity
+
+    (S --> P), S |- (S <-> P), (Truth:AnalyticAbduction)
+    (S --> P), P |- (S <-> P), (Truth:AnalyticAbduction)
+
 //Nothing is more specific than a instance, so its similar
 
     (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)

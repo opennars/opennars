@@ -21,7 +21,12 @@ public enum TruthFunction {
     },
     AnalyticDeduction() {
         @Override public Truth get(final Truth T, final Truth B) {
-            return TruthFunctions.intersection(T, new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE));
+            return TruthFunctions.intersection(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
+        }
+    },
+    AnalyticAbduction() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return TruthFunctions.abduction(T, new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
     Deduction(true) {
