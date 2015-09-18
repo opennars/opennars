@@ -46,6 +46,19 @@
     ([S] <-> [P]), S |- (S <-> P), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), P |- (S <-> P), (Truth:Identity, Desire:Identity)
 
+//Structure Transformations
+
+    (S <-> P), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
+    (S <-> P), P |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
+
+    (S <-> P), S |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
+    (S <-> P), P |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
+
+//Similarity to Inheritance
+
+    (S <-> P), S |- (S --> P), (Truth:AnalyticDeduction)
+    (S <-> P), P |- (S --> P), (Truth:AnalyticDeduction)
+
 //Nothing is more specific than a instance, so its similar
 
     (S --> {P}), S |- (S <-> {P}), (Truth:Identity, Desire:Identity)
