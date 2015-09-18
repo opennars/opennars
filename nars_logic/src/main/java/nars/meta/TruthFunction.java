@@ -19,14 +19,19 @@ public enum TruthFunction {
             return TruthFunctions.revision(T, B);
         }
     },
-    AnalyticDeduction() {
+    StructuralIntersection() {
         @Override public Truth get(final Truth T, final Truth B) {
             return TruthFunctions.intersection(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
-    AnalyticAbduction() {
+    StructuralDeduction() {
         @Override public Truth get(final Truth T, final Truth B) {
-            return TruthFunctions.abduction(T, new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE));
+            return TruthFunctions.deduction(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
+        }
+    },
+    StructuralAbduction() {
+        @Override public Truth get(final Truth T, final Truth B) {
+            return TruthFunctions.abduction(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
     Deduction(true) {

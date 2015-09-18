@@ -20,13 +20,13 @@
 
 //Similarity to Inheritance
 
-    (S <-> P), S |- (S --> P), (Truth:AnalyticDeduction)
-    (S <-> P), P |- (S --> P), (Truth:AnalyticDeduction)
+    (S <-> P), S |- (S --> P), (Truth:StructuralIntersection)
+    (S <-> P), P |- (S --> P), (Truth:StructuralIntersection)
 
 //Inheritance to Similarity
 
-    (S --> P), S |- (S <-> P), (Truth:AnalyticAbduction)
-    (S --> P), P |- (S <-> P), (Truth:AnalyticAbduction)
+    (S --> P), S |- (S <-> P), (Truth:StructuralAbduction)
+    (S --> P), P |- (S <-> P), (Truth:StructuralAbduction)
 
 //Set Definition Similarity to Inheritance
 
@@ -189,11 +189,11 @@
 
 //NAL3 single premise inference:
 
-    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:AnalyticDeduction)
-    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:AnalyticDeduction)
+    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:StructuralDeduction)
+    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:StructuralDeduction)
 
-    ((~, B, G) --> S), S |- (B --> S), (Truth:AnalyticDeduction)
-    (R --> (-, B, S)), R |- (R --> B), (Truth:AnalyticDeduction)
+    ((~, B, G) --> S), S |- (B --> S), (Truth:StructuralDeduction)
+    (R --> (-, B, S)), R |- (R --> B), (Truth:StructuralDeduction)
 
 ////// NAL4 - Transformations between products and images: ////////////////////////////////////////////////////////////////////////////////////
 //Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
