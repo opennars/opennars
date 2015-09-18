@@ -15,7 +15,7 @@
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
 
 //TODO Implication Theorems (needs to be carefully evaluated what is needed here)
-    (&&,A_1..n), A_i |- A_i, (Truth:Deduction, Desire:Strong)
+    (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
 //TODO: also (&&,A_1,A_2), A_1 |- A_1, (Truth:Deduction, Desire:Strong) currently doesnt work, review
 
 //Similarity to Inheritance
