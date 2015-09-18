@@ -270,7 +270,6 @@ public class Default extends NAR {
         if (maxNALLevel >= 7) {
 
             //scope: control
-            m.the(new PerceptionAccel(this, () -> core.next()));
             m.the(new STMEventInference(this, core.deriver ) );
 
             if (maxNALLevel >= 8) {
