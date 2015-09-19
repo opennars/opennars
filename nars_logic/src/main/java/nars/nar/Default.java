@@ -19,7 +19,7 @@ import nars.nal.SimpleDeriver;
 import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
-import nars.op.app.STMEventInference;
+import nars.op.app.STMTemporalLinkage;
 import nars.op.data.Flat;
 import nars.op.data.json;
 import nars.op.data.similaritree;
@@ -270,7 +270,7 @@ public class Default extends NAR {
         if (maxNALLevel >= 7) {
 
             //scope: control
-            m.the(new STMEventInference(this, core.deriver ) );
+            m.the(new STMTemporalLinkage(this, core.deriver ) );
 
             if (maxNALLevel >= 8) {
 

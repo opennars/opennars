@@ -105,7 +105,7 @@
 ////
 ////
 ////        if (maxNALLevel >= 7) {
-////            n.on(STMEventInference.class);
+////            n.on(STMTemporalLinkage.class);
 ////
 ////
 ////            if (maxNALLevel >= 8) {

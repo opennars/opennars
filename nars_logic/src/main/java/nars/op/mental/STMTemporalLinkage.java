@@ -20,17 +20,17 @@ import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 /**
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
  */
-public class STMEventInference  {
+public class STMTemporalLinkage {
 
     public final Deque<Task> stm;
     private final Deriver deriver;
     int stmSize;
-    //public static STMEventInference I=null;
+    //public static STMTemporalLinkage I=null;
 
 
 
 
-    public STMEventInference(NAR nar, Deriver deriver) {
+    public STMTemporalLinkage(NAR nar, Deriver deriver) {
 
         this.deriver = deriver;
         this.stmSize = 1;
