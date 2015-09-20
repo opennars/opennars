@@ -425,6 +425,12 @@
     (P ==> ($1 --> M)), (S --> M), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
     (P ==> (M --> $1)), (M --> S), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
 
+    (($1 --> M) <=> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    ((M --> $1) <=> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
+
+    (P <=> ($1 --> M)), (S --> M), substitute($1,S) |- P, (Truth:Deduction, Order:ForAllSame)
+    (P <=> (M --> $1)), (M --> S), substitute($1,S) |- P, (Truth:Deduction, Order:ForAllSame)
+
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination
 

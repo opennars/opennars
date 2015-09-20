@@ -170,8 +170,8 @@ public class NAL5Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<<robin --> bird> ==> <robin --> animal>>"); //.en("If robin is a type of bird then robin is a type of animal.");
         tester.believe("<<robin --> [flying]> ==> <robin --> animal>>",0.9f,0.9f); //.en("If robin can fly then robin is a type of animal.");
-        tester.mustBelieve(100," <(&&,<robin --> [flying]>,<robin --> bird>) ==> <robin --> animal>>",1.00f,0.81f); //.en("If robin can fly and is a type of bird then robin is a type of animal.");
-        tester.mustBelieve(100," <(||,<robin --> [flying]>,<robin --> bird>) ==> <robin --> animal>>",0.90f,0.81f); //.en("If robin can fly or is a type of bird then robin is a type of animal.");
+        tester.mustBelieve(100," <(&&,<robin --> bird>, <robin --> [flying]>) ==> <robin --> animal>>",1.00f,0.81f); //.en("If robin can fly and is a type of bird then robin is a type of animal.");
+        tester.mustBelieve(100," <(||,<robin --> bird>, <robin --> [flying]>) ==> <robin --> animal>>",0.90f,0.81f); //.en("If robin can fly or is a type of bird then robin is a type of animal.");
         tester.run();
     }
 
@@ -220,8 +220,8 @@ public class NAL5Test extends AbstractNALTest {
     public void compound_decomposition_one_premises() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("(&&,<robin --> swimmer>,<robin --> [flying]>)",0.9f,0.9f); //.en("Robin can fly and swim.");
-        tester.mustBelieve(100,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
-        tester.mustBelieve(100,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
+        tester.mustBelieve(500,"<robin --> swimmer>",0.9f,0.73f); //.en("Robin can swim.");
+        tester.mustBelieve(500,"<robin --> [flying]>",0.9f,0.73f); //.en("Robin can fly.");
         tester.run();
     }
 
@@ -230,7 +230,7 @@ public class NAL5Test extends AbstractNALTest {
     public void negation() throws InvalidInputException {
 
         TestNAR tester = test();
-        tester.believe("(--,<robin --> [flying]>)",0.1f); //.en("It is unlikely that robin cannot fly.");
+        tester.believe("(--,<robin --> [flying]>)",0.1f,0.9f); //.en("It is unlikely that robin cannot fly.");
         tester.mustBelieve(100,"<robin --> [flying]>",0.90f,0.90f); //.en("Robin can fly.");
         tester.run();
     }
@@ -328,7 +328,7 @@ public class NAL5Test extends AbstractNALTest {
 
 
 
-    @Test public void deriveFromConjunctionComponents() {
+    @Test public void deriveFromConjunctionComponents() { //this one will work after truthfunctions which allow evidental base overlap are allowed
         TestNAR tester = test();
         tester.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
 
