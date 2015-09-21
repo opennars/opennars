@@ -63,13 +63,13 @@
 
 //Nothing is more specific than a instance, so its similar
 
-    (S --> {P}),  S  |-   (S <-> {P}), (Truth:Identity, Desire:Identity)
+    (S --> {P}),  S  |- (S <-> {P}), (Truth:Identity, Desire:Identity)
     (S --> {P}), {P} |- (S <-> {P}), (Truth:Identity, Desire:Identity)
 
 //nothing is more general than a property, so its similar
 
     ([S] --> P), [S] |- ([S] <-> P), (Truth:Identity, Desire:Identity)
-    ([S] --> P),  P  |-   ([S] <-> P), (Truth:Identity, Desire:Identity)
+    ([S] --> P),  P  |- ([S] <-> P), (Truth:Identity, Desire:Identity)
 
 ////// Truth-value functions: see TruthFunctions.java
 
@@ -299,23 +299,23 @@
 //// implication-based composition ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
 
-    (P ==> M), (S ==> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) ==> M), (Truth:Intersection),
-                                                                    ((P && S) ==> M), (Truth:Union)
-    (P =|> M), (S =|> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =|> M), (Truth:Intersection),
-                                                                    ((P &| S) =|> M), (Truth:Union)
-    (P =/> M), (S =/> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =/> M), (Truth:Intersection),
-                                                                    ((P &| S) =/> M), (Truth:Union)
-    (P =\> M), (S =\> M), not_equal(S,P), no_common_subterm(S,P) |- ((P || S) =\> M), (Truth:Intersection),
-                                                                    ((P &| S) =\> M), (Truth:Union)
+    (P ==> M), (S ==> M), not_equal(S,P) |- ((P || S) ==> M), (Truth:Intersection),
+                                            ((P && S) ==> M), (Truth:Union)
+    (P =|> M), (S =|> M), not_equal(S,P) |- ((P || S) =|> M), (Truth:Intersection),
+                                            ((P &| S) =|> M), (Truth:Union)
+    (P =/> M), (S =/> M), not_equal(S,P) |- ((P || S) =/> M), (Truth:Intersection),
+                                            ((P &| S) =/> M), (Truth:Union)
+    (P =\> M), (S =\> M), not_equal(S,P) |- ((P || S) =\> M), (Truth:Intersection),
+                                            ((P &| S) =\> M), (Truth:Union)
 
-    (M ==> P), (M ==> S), not_equal(S,P), no_common_subterm(S,P) |- (M ==> (P && S)), (Truth:Intersection),
-                                                                    (M ==> (P || S)), (Truth:Union)
-    (M =/> P), (M =/> S), not_equal(S,P), no_common_subterm(S,P) |- (M =/> (P &| S)), (Truth:Intersection),
-                                                                    (M =/> (P || S)), (Truth:Union)
-    (M =|> P), (M =|> S), not_equal(S,P), no_common_subterm(S,P) |- (M =|> (P &| S)), (Truth:Intersection),
-                                                                    (M =|> (P || S)), (Truth:Union)
-    (M =\> P), (M =\> S), not_equal(S,P), no_common_subterm(S,P) |- (M =\> (P &| S)), (Truth:Intersection),
-                                                                    (M =\> (P || S)), (Truth:Union)
+    (M ==> P), (M ==> S), not_equal(S,P) |- (M ==> (P && S)), (Truth:Intersection),
+                                            (M ==> (P || S)), (Truth:Union)
+    (M =/> P), (M =/> S), not_equal(S,P) |- (M =/> (P &| S)), (Truth:Intersection),
+                                            (M =/> (P || S)), (Truth:Union)
+    (M =|> P), (M =|> S), not_equal(S,P) |- (M =|> (P &| S)), (Truth:Intersection),
+                                            (M =|> (P || S)), (Truth:Union)
+    (M =\> P), (M =\> S), not_equal(S,P) |- (M =\> (P &| S)), (Truth:Intersection),
+                                            (M =\> (P || S)), (Truth:Union)
 
 //// implication-based decomposition ////////////////////////////////////////////////////////////////////////////////////
 //Same as for inheritance again
