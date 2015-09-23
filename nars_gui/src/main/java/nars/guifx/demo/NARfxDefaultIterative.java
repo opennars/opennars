@@ -26,12 +26,12 @@ public class NARfxDefaultIterative {
         Global.DEBUG = true;
 
         NARfx.newWindow(new Default(), (i) -> {
-            try {
+            /*try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {
                 i.nar.memory().eventError.emit(e);
                 //e.printStackTrace();
-            }
+            }*/
         });
 
     }
