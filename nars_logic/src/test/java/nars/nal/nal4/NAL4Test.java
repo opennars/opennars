@@ -19,7 +19,7 @@ public class NAL4Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.fullTest;
+        return AbstractNALTest.core6;
 //        return Arrays.asList(new Supplier[][]{
 //                {() -> new Default()},
 //                //{new DefaultDeep()},
@@ -38,7 +38,7 @@ public class NAL4Test extends AbstractNALTest {
     @Test
     public void structural_transformation() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<(*,acid,base) --> reaction>",1.0f,0.9f); //en("An acid and a base can have a reaction.");
+        tester.believe("<(acid,base) --> reaction>",1.0f,0.9f); //en("An acid and a base can have a reaction.");
         tester.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f); //en("Acid can react with base.");
         tester.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f); //en("A base is something that has a reaction with an acid.");
         tester.run();
@@ -49,7 +49,6 @@ public class NAL4Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<acid --> (/,reaction,_,base)>",1.0f,0.9f); //en("Acid can react with base.");
         tester.mustBelieve(100, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("Acid can react with base.");
-        tester.mustBelieve(100, "<base --> (/,reaction,acid,_)>", 1.0f, 0.9f); //en("A base is something that has a reaction with an acid.");
         tester.run();
     }
 
@@ -57,8 +56,7 @@ public class NAL4Test extends AbstractNALTest {
     public void structural_transformation3() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<base --> (/,reaction,acid,_)>",1.0f,0.9f); //en("A base is something that has a reaction with an acid.");
-        tester.mustBelieve(100, "<acid --> (/,reaction,_,base)>", 1.0f, 0.9f); //en("Acid can react with base.");
-        tester.mustBelieve(100, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("An acid and a base can have a reaction.");
+        tester.mustBelieve(100, "<(acid,base) --> reaction>", 1.0f, 0.9f); //en("Acid can react with base.");
         tester.run();
     }
 
@@ -76,16 +74,14 @@ public class NAL4Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<(\\,neutralization,_,base) --> acid>",1.0f,0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(100, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Neutralization is a relation between an acid and a base.");
-        tester.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f); //en("Something that can be neutralized by an acid is a base.");
         tester.run();
     }
 
     @Test
     public void structural_transformation6() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<(\\,neutralization,acid,_) --> base>",1.0f,0.9f); //en("Something that can be neutralized by an acid is a base.");
-        tester.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>", 1.0f, 0.9f); //en("Something that can neutralize a base is an acid.");
-        tester.mustBelieve(100, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Neutralization is a relation between an acid and a base.");
+        tester.believe("<(\\,neutralization,acid,_) --> base>",1.0f,0.9f); //en("Something that can neutralize a base is an acid.");
+        tester.mustBelieve(100, "<neutralization --> (acid,base)>", 1.0f, 0.9f); //en("Something that can be neutralized by an acid is a base.");
         tester.run();
     }
 

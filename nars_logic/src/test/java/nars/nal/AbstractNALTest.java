@@ -50,7 +50,7 @@ abstract public class AbstractNALTest  {
             //() -> new DefaultAlann(48)
     );
 
-    public static final List<Supplier<NAR>> fullTest =Lists.newArrayList(
+    public static final List<Supplier<NAR>> fullDeclarativeTest =Lists.newArrayList(
             //() -> new Default().nal(1),
             //() -> new Default().nal(2),
             () -> new Default().nal(6),
