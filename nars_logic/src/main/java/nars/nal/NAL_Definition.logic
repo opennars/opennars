@@ -413,8 +413,8 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (&&,(#N --> S), A_1..n), (M --> S), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
-    (&&,(S --> #N), A_1..n), (S --> M), substitute(#N,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
+    (&&,(#X --> S), A_1..n), (M --> S), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
+    (&&,(S --> #X), A_1..n), (S --> M), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
