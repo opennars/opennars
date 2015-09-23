@@ -180,12 +180,12 @@
     ({A_1..n} --> C), ({B_1..m} --> C) |- ({A_1..n,B_1..m} --> C), (Truth:Deduction)
     ([A_1..n] --> C), ([B_1..m] --> C) |- ([A_1..n,B_1..m] --> C), (Truth:Deduction)
 
-//Set split:
+//Set element takeout:
 
-    (C --> {A_1..n,B_1..m}), C |- (C --> {A_1..n}), (Truth:Deduction)
-    (C --> [A_1..n,B_1..m]), C |- (C --> [A_1..n]), (Truth:Deduction)
-    ({A_1..n,B_1..m} --> C), C |- ({A_1..n} --> C), (Truth:Deduction)
-    ([A_1..n,B_1..m] --> C), C |- ([A_1..n] --> C), (Truth:Deduction)
+    (C --> {A_1..n}), C |- (C --> {A_i}), (Truth:StructuralDeduction)
+    (C --> [A_1..n]), C |- (C --> [A_i]), (Truth:StructuralDeduction)
+    ({A_1..n} --> C), C |- ({A_i} --> C), (Truth:StructuralDeduction)
+    ([A_1..n] --> C), C |- ([A_i] --> C), (Truth:StructuralDeduction)
 
 //NAL3 single premise inference:
 
