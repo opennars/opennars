@@ -19,7 +19,7 @@ public class NAL4Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.core6;
+        return AbstractNALTest.fullTest;
 //        return Arrays.asList(new Supplier[][]{
 //                {() -> new Default()},
 //                //{new DefaultDeep()},
@@ -65,7 +65,7 @@ public class NAL4Test extends AbstractNALTest {
     @Test
     public void structural_transformation4() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<neutralization --> (*,acid,base)>",1.0f,0.9f); //en("Neutralization is a relation between an acid and a base. ");
+        tester.believe("<neutralization --> (acid,base)>",1.0f,0.9f); //en("Neutralization is a relation between an acid and a base. ");
         tester.mustBelieve(100, "<(\\,neutralization,_,base) --> acid>.", 1.0f, 0.9f); //en("Something that can neutralize a base is an acid.");
         tester.mustBelieve(100, "<(\\,neutralization,acid,_) --> base>", 1.0f, 0.9f); //en("Something that can be neutralized by an acid is a base.");
         tester.run();

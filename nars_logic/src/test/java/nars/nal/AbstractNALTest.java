@@ -3,6 +3,7 @@ package nars.nal;
 import com.google.common.collect.Lists;
 import nars.NAR;
 import nars.meter.TestNAR;
+import nars.nar.Default;
 import nars.nar.SingleStepNAR;
 import org.junit.Ignore;
 
@@ -49,6 +50,13 @@ abstract public class AbstractNALTest  {
             //() -> new DefaultAlann(48)
     );
 
+    public static final List<Supplier<NAR>> fullTest =Lists.newArrayList(
+            //() -> new Default().nal(1),
+            //() -> new Default().nal(2),
+            () -> new Default().nal(6),
+            () -> new SingleStepNAR().nal(6)
+            //() -> new DefaultAlann(48)
+    );
 
     //final ThreadLocal<NAR> nars;
     //private final Supplier<NAR> nar;

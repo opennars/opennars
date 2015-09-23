@@ -530,7 +530,10 @@ public class Default extends NAR {
                 if (t.isInput())
                     percepts.add(t);
                 else {
-                    newTasks.add(t);
+                    if(t.getParentTask()!=null && t.getParentTask().getTerm().equals(t.getTerm())) {}
+                    else {
+                        newTasks.add(t);
+                    }
                 }
             });
         }
