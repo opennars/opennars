@@ -419,28 +419,28 @@
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (($1 --> M) ==> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $1) ==> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    (($X --> M) ==> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    ((M --> $X) ==> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
 
-    (P ==> ($1 --> M)), (S --> M), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
-    (P ==> (M --> $1)), (M --> S), substitute($1,S) |- P, (Truth:Abduction, Order:ForAllSame)
+    (P ==> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
+    (P ==> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
 
-    (($1 --> M) <=> C), (S --> M), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $1) <=> C), (M --> S), substitute($1,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    (($X --> M) <=> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    ((M --> $X) <=> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
 
-    (P <=> ($1 --> M)), (S --> M), substitute($1,S) |- P, (Truth:Deduction, Order:ForAllSame)
-    (P <=> (M --> $1)), (M --> S), substitute($1,S) |- P, (Truth:Deduction, Order:ForAllSame)
+    (P <=> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
+    (P <=> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
 //second level variable elimination
 
-    (A --> K), (&&,(#1 --> L),(($2 --> K) ==> (&&,A_1..n))), substitute($2,A) |- (&&,(#1 --> L),A_1..n), (Truth:Deduction)
-    (A --> K), (($1 --> L) ==> (&&,(#2 --> K),A_1..n)), substitute(#2,A) |- (($1 --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
+    (A --> K), (&&,(#X --> L),(($Y --> K) ==> (&&,A_1..n))), substitute($Y,A) |- (&&,(#X --> L),A_1..n), (Truth:Deduction)
+    (A --> K), (($X --> L) ==> (&&,(#Y --> K),A_1..n)), substitute(#Y,A) |- (($X --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
 
 //second level variable introduction
 
-    (A --> L), ((A --> S) ==> R) |- ((&&,(#1 --> L),(#1 --> S)) ==> R), (Truth:Intersection)
-    (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#1) |- ((&&,(#1 --> L),(#1 --> S),A_1..n) ==> R), (Truth:Intersection)
+    (A --> L), ((A --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Intersection)
+    (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#X) |- ((&&,(#X --> L),(#X --> S),A_1..n) ==> R), (Truth:Intersection)
 
 //NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
@@ -450,13 +450,13 @@
     C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-    (S --> M), ((&&,($1 --> M),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (S --> M), ((&&,($1 --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    (S --> M), ((&&,C,I) ==> ($1 --> M)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    (S --> M), ((&&,($X --> M),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    (S --> M), ((&&,($X --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    (S --> M), ((&&,C,I) ==> ($X --> M)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-    (M --> S), ((&&,(M --> $1),A_1..n) ==> B), substitute($1,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (M --> S), ((&&,(M --> $1),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($1,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    (M --> S), ((&&,C,I) ==> (M --> $1)), shift_occurrence_backward(I,"==>"), substitute($1,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    (M --> S), ((&&,(M --> $X),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
+    (M --> S), ((&&,(M --> $X),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    (M --> S), ((&&,C,I) ==> (M --> $X)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 //Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
