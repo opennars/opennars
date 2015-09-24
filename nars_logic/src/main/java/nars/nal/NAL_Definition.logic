@@ -163,13 +163,13 @@
 
     (S --> M), ((|,S,A_1..n) --> M) |- ((|,A_1..n) --> M), (Truth:DecomposePositiveNegativeNegative)
     (S --> M), ((&,S,A_1..n) --> M) |- ((&,A_1..n) --> M), (Truth:DecomposeNegativePositivePositive)
-    (S --> M), ((~,S,P) --> M) |- (P --> M), (Truth:DecomposePositiveNegativePositive)
-    (S --> M), ((~,P,S) --> M) |- (P --> M), (Truth:DecomposeNegativeNegativeNegative)
+    (S --> M), ((S ~ P) --> M) |- (P --> M), (Truth:DecomposePositiveNegativePositive)
+    (S --> M), ((P ~ S) --> M) |- (P --> M), (Truth:DecomposeNegativeNegativeNegative)
 
     (M --> S), (M --> (&,S,A_1..n)) |- (M --> (&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
     (M --> S), (M --> (|,S,A_1..n)) |- (M --> (|,A_1..n)), (Truth:DecomposeNegativePositivePositive)
-    (M --> S), (M --> (-,S,P)) |- (M --> P), (Truth:DecomposePositiveNegativePositive)
-    (M --> S), (M --> (-,P,S)) |- (M --> P), (Truth:DecomposeNegativeNegativeNegative)
+    (M --> S), (M --> (S | P)) |- (M --> P), (Truth:DecomposePositiveNegativePositive)
+    (M --> S), (M --> (P - S)) |- (M --> P), (Truth:DecomposeNegativeNegativeNegative)
 
 //Set comprehension:
 
@@ -190,8 +190,8 @@
     ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:StructuralDeduction)
     (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:StructuralDeduction)
 
-    ((~, B, G) --> S), S |- (B --> S), (Truth:StructuralDeduction)
-    (R --> (-, B, S)), R |- (R --> B), (Truth:StructuralDeduction)
+    ((B ~ G) --> S), S |- (B --> S), (Truth:StructuralDeduction)
+    (R --> (B - S)), R |- (R --> B), (Truth:StructuralDeduction)
 
 ////// NAL4 - Transformations between products and images: ////////////////////////////////////////////////////////////////////////////////////
 //Relations and transforming them into different representations so that arguments and the relation itself can become the subject or predicate
