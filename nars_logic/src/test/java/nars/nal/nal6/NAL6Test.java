@@ -105,10 +105,10 @@ public class NAL6Test extends AbstractNALTest {
     @Test
     public void variable_unification6() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <(*, $x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
+        tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
         tester.believe("<(&&,<$y --> [chirping]>,<$y --> [withWings]>) ==> <$y --> bird>>"); //en("If something can chirp and has wings, then it is a bird.");
-        tester.mustBelieve(cycles,"<(&&,<$1 --> flyer>,<(*,$1,worms) --> food>) ==> <$1 --> [withWings]>>",1.00f,0.45f); //en("If something can fly and eats worms, then I guess it has wings.");
-        tester.mustBelieve(cycles,"<<$1 --> [withWings]> ==> (&&,<$1 --> flyer>,<(*,$1,worms) --> food>)>",1.00f,0.45f); //en("I guess if something has wings, then it can fly and eats worms.");
+        tester.mustBelieve(cycles,"<(&&,<$1 --> flyer>,<($1,worms) --> food>) ==> <$1 --> [withWings]>>",1.00f,0.45f); //en("If something can fly and eats worms, then I guess it has wings.");
+        tester.mustBelieve(cycles,"<<$1 --> [withWings]> ==> (&&,<$1 --> flyer>,<($1,worms) --> food>)>",1.00f,0.45f); //en("I guess if something has wings, then it can fly and eats worms.");
         tester.run();
     }
 
@@ -116,7 +116,7 @@ public class NAL6Test extends AbstractNALTest {
     @Test
     public void variable_unification7() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<(&&,<$x --> flyer>,<(*,$x,worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly and eats worms, then it is a bird.");
+        tester.believe("<(&&,<$x --> flyer>,<($x,worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly and eats worms, then it is a bird.");
         tester.believe("<<$y --> flyer> ==> <$y --> [withWings]>>"); //en("If something can fly, then it has wings.");
         tester.mustBelieve(cycles,"<(&&,<$1 --> [withWings]>,<worms --> (/,food,$1,_)>) ==> <$1 --> bird>>",1.00f,0.45f); //en("If something has wings and eats worms, then I guess it is a bird.");
         tester.run();
@@ -176,9 +176,9 @@ public class NAL6Test extends AbstractNALTest {
     @Test
     public void variable_elimination6() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <(*, $x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
+        tester.believe("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>"); //en("If something can fly, chirp, and eats worms, then it is a bird.");
         tester.believe("<{Tweety} --> flyer>"); //en("Tweety can fly.");
-        tester.mustBelieve(cycles,"<(&&,<{Tweety} --> [chirping]>,<(*,{Tweety},worms) --> food>) ==> <{Tweety} --> bird>>",1.00f,0.81f); //en("If Tweety can chirp and eats worms, then it is a bird.");
+        tester.mustBelieve(cycles,"<(&&,<{Tweety} --> [chirping]>,<({Tweety},worms) --> food>) ==> <{Tweety} --> bird>>",1.00f,0.81f); //en("If Tweety can chirp and eats worms, then it is a bird.");
         tester.run();
     }
 
@@ -218,7 +218,7 @@ public class NAL6Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("(&&,<#x --> (/,open,#y,_)>,<#x --> lock>,<#y --> key>)"); //en("There is a key that can open some lock.");
         tester.believe("<{lock1} --> lock>"); //en("Lock-1 is a lock.");
-        tester.mustBelieve(cycles,"(&&,<#1 --> key>,<(*,#1,{lock1}) --> open>)",1.00f,0.43f); //en("I guess there is a key that can open Lock-1.");
+        tester.mustBelieve(cycles,"(&&,<#1 --> key>,<(#1,{lock1}) --> open>)",1.00f,0.43f); //en("I guess there is a key that can open Lock-1.");
         tester.run();
     }
 
