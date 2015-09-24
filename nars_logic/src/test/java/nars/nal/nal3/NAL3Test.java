@@ -54,7 +54,7 @@ public class NAL3Test extends AbstractNALTest {
         tester.run();
     }
 
-  /*  @Test //works, just control related issue (DecomposeNegativeNegativeNegative)
+    @Test //works, just control related issue (DecomposeNegativeNegativeNegative)
     public void compound_decomposition_two_premises2() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<robin --> swimmer>",0.0f,0.9f); //.en("Robin is not a type of swimmer.");
@@ -67,19 +67,37 @@ public class NAL3Test extends AbstractNALTest {
     public void minimal_set_operations() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
-        tester.believe("<planetX --> {Saturn}>", 1.0f, 0.7f); //.en("PlanetX is probably Pluto or Saturn.");
-        tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Venus,Saturn}>", 0.9f ,0.73f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.believe("<planetX --> {Saturn}>", 1.0f, 0.7f); //.en("PlanetX is probably Saturn.");
+        tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Venus,Saturn}>", 1.0f ,0.63f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
         tester.run();
-    }*/
+    }
 
-    /*@Test
+    @Test
     public void minimal_set_operations_2() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<planetX --> [Mars,Pluto,Venus]>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
-        tester.believe("<planetX --> [Saturn]>", 1.0f, 0.7f); //.en("PlanetX is probably Pluto or Saturn.");
-        tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Venus,Saturn}>", 0.9f ,0.73f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.believe("<planetX --> [Mars,Pluto,Venus]>",0.9f,0.9f);
+        tester.believe("<planetX --> [Saturn]>", 1.0f, 0.7f);
+        tester.mustBelieve(cycles, "<planetX --> [Mars,Pluto,Venus,Saturn]>", 0.9f ,0.63f);
         tester.run();
-    }*/
+    }
+
+    @Test
+    public void minimal_set_operations_3() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<[Mars,Pluto,Venus] --> planetX>",0.9f,0.9f);
+        tester.believe("<[Saturn] --> planetX>", 1.0f, 0.7f);
+        tester.mustBelieve(cycles, "<[Mars,Pluto,Venus,Saturn] --> planetX>", 1.0f ,0.63f);
+        tester.run();
+    }
+
+    @Test
+    public void minimal_set_operations_4() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<{Mars,Pluto,Venus} --> planetX>",0.9f,0.9f);
+        tester.believe("<{Saturn} --> planetX>", 1.0f, 0.7f);
+        tester.mustBelieve(cycles, "<{Mars,Pluto,Venus,Saturn} --> planetX>", 0.9f ,0.63f);
+        tester.run();
+    }
 
 
     /*@Test
