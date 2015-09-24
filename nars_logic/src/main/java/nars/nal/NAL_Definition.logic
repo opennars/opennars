@@ -168,7 +168,7 @@
 
     (M --> S), (M --> (&,S,A_1..n)) |- (M --> (&,A_1..n)), (Truth:DecomposePositiveNegativeNegative)
     (M --> S), (M --> (|,S,A_1..n)) |- (M --> (|,A_1..n)), (Truth:DecomposeNegativePositivePositive)
-    (M --> S), (M --> (S | P)) |- (M --> P), (Truth:DecomposePositiveNegativePositive)
+    (M --> S), (M --> (S - P)) |- (M --> P), (Truth:DecomposePositiveNegativePositive)
     (M --> S), (M --> (P - S)) |- (M --> P), (Truth:DecomposeNegativeNegativeNegative)
 
 //Set comprehension:
