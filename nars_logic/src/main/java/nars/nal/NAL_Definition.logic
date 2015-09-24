@@ -175,8 +175,8 @@
 
     (C --> {A_1..n}), (C --> {B_1..m}) |- (C --> {A_1..n,B_1..m}), (Truth:Union)
     (C --> [A_1..n]), (C --> [B_1..m]) |- (C --> [A_1..n,B_1..m]), (Truth:Intersection)
-    ({A_1..n} --> C), ({B} --> C) |- ({A_1..n,B} --> C), (Truth:Intersection)
-    ([A_1..n] --> C), ([B] --> C) |- ([A_1..n,B] --> C), (Truth:Union)
+    ({A_1..n} --> C), ({B_1..m} --> C) |- ({A_1..n,B_1..m} --> C), (Truth:Intersection)
+    ([A_1..n] --> C), ([B_1..m] --> C) |- ([A_1..n,B_1..m] --> C), (Truth:Union)
 
 //Set element takeout:
 
