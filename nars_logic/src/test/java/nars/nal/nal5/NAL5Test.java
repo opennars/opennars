@@ -326,8 +326,8 @@ public class NAL5Test extends AbstractNALTest {
         tester.run();
     }
 
-
-
+    //this is a multistep example, I will add a special test file for those with Default configuration
+    //it's not the right place here but the example is relevant
     @Test public void deriveFromConjunctionComponents() { //this one will work after truthfunctions which allow evidental base overlap are allowed
         TestNAR tester = test();
         tester.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
