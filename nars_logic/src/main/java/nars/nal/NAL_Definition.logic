@@ -183,8 +183,8 @@
     (A --> C), (B --> C), set_ext(A), intersection(A,B,R) |- (R --> C), (Truth:Union)
     (A --> C), (B --> C), set_int(A), intersection(A,B,R) |- (R --> C), (Truth:Intersection)
 
-    (C --> A), (C --> B), intersection(A,B,R) |- (C --> R), (Truth:Difference)
-    (A --> C), (B --> C), intersection(A,B,R) |- (R --> C), (Truth:Difference)
+    (C --> A), (C --> B), difference(A,B,R) |- (C --> R), (Truth:Difference)
+    (A --> C), (B --> C), difference(A,B,R) |- (R --> C), (Truth:Difference)
 
 //Set element takeout:
 
