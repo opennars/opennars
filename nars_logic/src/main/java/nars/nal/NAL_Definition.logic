@@ -465,7 +465,7 @@
                                                                                                        (&/,S,I,P), (Truth:Intersection)
 
     P, S, concurrent(P,S), not_implication_or_equivalence(P), not_implication_or_equivalence(S) |- (S =|> P), (Truth:Induction),
-                                                                         (P =|> S), (Truth:Induction),
-                                                                         (S <|> P), (Truth:Comparison),
-                                                                         (&|,S,P), (Truth:Intersection)
+                                                                                                   (P =|> S), (Truth:Induction),
+                                                                                                   (S <|> P), (Truth:Comparison),
+                                                                                                   (&|,S,P), (Truth:Intersection)
 
