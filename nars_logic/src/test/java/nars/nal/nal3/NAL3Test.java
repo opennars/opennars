@@ -54,7 +54,7 @@ public class NAL3Test extends AbstractNALTest {
         tester.run();
     }
 
-    @Test //works, just control related issue (DecomposeNegativeNegativeNegative)
+  /*  @Test //works, just control related issue (DecomposeNegativeNegativeNegative)
     public void compound_decomposition_two_premises2() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<robin --> swimmer>",0.0f,0.9f); //.en("Robin is not a type of swimmer.");
@@ -64,6 +64,25 @@ public class NAL3Test extends AbstractNALTest {
     }
 
     @Test
+    public void minimal_set_operations() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
+        tester.believe("<planetX --> {Saturn}>", 1.0f, 0.7f); //.en("PlanetX is probably Pluto or Saturn.");
+        tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Venus,Saturn}>", 0.9f ,0.73f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.run();
+    }*/
+
+    /*@Test
+    public void minimal_set_operations_2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<planetX --> [Mars,Pluto,Venus]>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
+        tester.believe("<planetX --> [Saturn]>", 1.0f, 0.7f); //.en("PlanetX is probably Pluto or Saturn.");
+        tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Venus,Saturn}>", 0.9f ,0.73f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.run();
+    }*/
+
+
+    /*@Test
     public void set_operations() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<planetX --> {Mars,Pluto,Venus}>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
@@ -111,7 +130,7 @@ public class NAL3Test extends AbstractNALTest {
         tester.mustBelieve(cycles, "<{Mars,Pluto,Saturn,Venus} --> planetX>", 0.91f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
         tester.mustBelieve(cycles, "<{Mars,Venus} --> planetX>", 0.63f ,0.81f); //.en("PlanetX is either Mars or Venus.");
         tester.run();
-    }
+    }*/
 
     @Test
     public void composition_on_both_sides_of_a_statement() throws InvalidInputException {

@@ -175,10 +175,10 @@
 
 //Set comprehension:
 
-    (C --> {A_1..n}), (C --> {B}) |- (C --> {A_1..n,B}), (Truth:Intersection)
+    (C --> {A_1..n}), (C --> {B}) |- (C --> {A_1..n,B}), (Truth:Union)
     (C --> [A_1..n]), (C --> [B]) |- (C --> [A_1..n,B]), (Truth:Intersection)
     ({A_1..n} --> C), ({B} --> C) |- ({A_1..n,B} --> C), (Truth:Intersection)
-    ([A_1..n] --> C), ([B] --> C) |- ([A_1..n,B] --> C), (Truth:Intersection)
+    ([A_1..n] --> C), ([B] --> C) |- ([A_1..n,B] --> C), (Truth:Union)
 
 //Set element takeout:
 
