@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTest {
 
-    public static final int cycles = 50;
+    public static final int cycles = 500;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
@@ -62,7 +62,7 @@ public class NAL3Test extends AbstractNALTest {
         tester.mustBelieve(cycles, "<robin --> mammal>", 0.0f ,0.81f); //.en("Robin is not a type of mammal.");
         tester.run();
     }
-
+/*
     @Test
     public void minimal_set_operations() throws InvalidInputException {
         TestNAR tester = test();
@@ -98,9 +98,9 @@ public class NAL3Test extends AbstractNALTest {
         tester.mustBelieve(cycles, "<{Mars,Pluto,Venus,Saturn} --> planetX>", 0.9f ,0.63f);
         tester.run();
     }
+*/
 
-
-    /*@Test
+    @Test
     public void set_operations() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<planetX --> {Mars,Pluto,Venus}>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
@@ -148,7 +148,7 @@ public class NAL3Test extends AbstractNALTest {
         tester.mustBelieve(cycles, "<{Mars,Pluto,Saturn,Venus} --> planetX>", 0.91f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
         tester.mustBelieve(cycles, "<{Mars,Venus} --> planetX>", 0.63f ,0.81f); //.en("PlanetX is either Mars or Venus.");
         tester.run();
-    }*/
+    }
 
     @Test
     public void composition_on_both_sides_of_a_statement() throws InvalidInputException {
