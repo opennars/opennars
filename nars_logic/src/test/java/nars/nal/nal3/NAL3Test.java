@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL3Test extends AbstractNALTest {
 
-    public static final int cycles = 500;
+    public static final int cycles = 50;
 
     public NAL3Test(Supplier<NAR> b) { super(b); }
 
@@ -62,7 +62,7 @@ public class NAL3Test extends AbstractNALTest {
         tester.mustBelieve(cycles, "<robin --> mammal>", 0.0f ,0.81f); //.en("Robin is not a type of mammal.");
         tester.run();
     }
-/*
+
     @Test
     public void minimal_set_operations() throws InvalidInputException {
         TestNAR tester = test();
@@ -98,13 +98,13 @@ public class NAL3Test extends AbstractNALTest {
         tester.mustBelieve(cycles, "<{Mars,Pluto,Venus,Saturn} --> planetX>", 0.9f ,0.63f);
         tester.run();
     }
-*/
+
 
     @Test
     public void set_operations() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<planetX --> {Mars,Pluto,Venus}>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
-        tester.believe("<planetX --> {Pluto,Saturn}>", 1.0f, 0.7f); //.en("PlanetX is probably Pluto or Saturn.");
+        tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
+        tester.believe("<planetX --> {Pluto,Saturn}>", 0.7f,0.9f); //.en("PlanetX is probably Pluto or Saturn.");
         tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Saturn,Venus}>", 0.97f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
         tester.mustBelieve(cycles, "<planetX --> {Pluto}>", 0.63f ,0.81f); //.en("PlanetX is probably Pluto.");
         tester.run();
@@ -113,10 +113,10 @@ public class NAL3Test extends AbstractNALTest {
     @Test
     public void set_operations2() throws InvalidInputException {
         TestNAR tester = test();
-        tester.believe("<planetX --> {Mars,Pluto,Venus}>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
+        tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> {Pluto,Saturn}>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
         tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Saturn,Venus}>", 0.91f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
-        tester.mustBelieve(cycles, "<planetX --> {Mars,Venus}>", 0.63f ,0.81f); //.en("PlanetX is either Mars or Venus.");
+        tester.mustBelieve(cycles, "<planetX --> {Mars,Venus}>", 0.81f ,0.81f); //.en("PlanetX is either Mars or Venus.");
         tester.run();
     }
 
@@ -125,8 +125,8 @@ public class NAL3Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<planetX --> [marsy,earthly,venusy]>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> [earthly,saturny]>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
-        tester.mustBelieve(cycles, "<planetX --> [marsy,earthly,saturny,venusy]>", 0.91f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
-        tester.mustBelieve(cycles, "<planetX --> [marsy,venusy]>", 0.63f ,0.81f); //.en("PlanetX is either Mars or Venus.");
+        tester.mustBelieve(cycles, "<planetX --> [marsy,earthly,saturny,venusy]>", 0.1f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.mustBelieve(cycles, "<planetX --> [marsy,venusy]>", 0.90f ,0.81f); //.en("PlanetX is either Mars or Venus.");
         tester.run();
     }
 
@@ -135,8 +135,8 @@ public class NAL3Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<[marsy,earthly,venusy] --> planetX>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<[earthly,saturny] --> planetX>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
-        tester.mustBelieve(cycles, "<[marsy,earthly,saturny,venusy] --> planetX>", 0.91f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
-        tester.mustBelieve(cycles, "<[marsy,venusy] --> planetX>", 0.63f ,0.81f); //.en("PlanetX is either Mars or Venus.");
+        tester.mustBelieve(cycles, "<[marsy,earthly,saturny,venusy] --> planetX>", 1.0f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.mustBelieve(cycles, "<[marsy,venusy] --> planetX>", 0.90f ,0.81f); //.en("PlanetX is either Mars or Venus.");
         tester.run();
     }
 
@@ -145,8 +145,8 @@ public class NAL3Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("<{Mars,Pluto,Venus} --> planetX>",1.0f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<{Pluto,Saturn} --> planetX>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");
-        tester.mustBelieve(cycles, "<{Mars,Pluto,Saturn,Venus} --> planetX>", 0.91f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
-        tester.mustBelieve(cycles, "<{Mars,Venus} --> planetX>", 0.63f ,0.81f); //.en("PlanetX is either Mars or Venus.");
+        tester.mustBelieve(cycles, "<{Mars,Pluto,Saturn,Venus} --> planetX>", 0.1f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.mustBelieve(cycles, "<{Mars,Venus} --> planetX>", 0.90f ,0.81f); //.en("PlanetX is either Mars or Venus.");
         tester.run();
     }
 
