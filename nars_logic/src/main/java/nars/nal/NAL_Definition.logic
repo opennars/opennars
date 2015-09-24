@@ -173,15 +173,15 @@
 
 //Set comprehension:
 
-    (C --> A), (C --> B), set_ext(A), set_ext(B), union(A,B,R) |- (C --> R), (Truth:Union)
-    (C --> A), (C --> B), set_int(A), set_int(B), union(A,B,R) |- (C --> R), (Truth:Intersection)
-    (A --> C), (B --> C), set_ext(A), set_ext(B), union(A,B,R) |- (R --> C), (Truth:Intersection)
-    (A --> C), (B --> C), set_int(A), set_int(B), union(A,B,R) |- (R --> C), (Truth:Union)
+    (C --> A), (C --> B), set_ext(A), union(A,B,R) |- (C --> R), (Truth:Union)
+    (C --> A), (C --> B), set_int(A), union(A,B,R) |- (C --> R), (Truth:Intersection)
+    (A --> C), (B --> C), set_ext(A), union(A,B,R) |- (R --> C), (Truth:Intersection)
+    (A --> C), (B --> C), set_int(A), union(A,B,R) |- (R --> C), (Truth:Union)
 
-    (C --> A), (C --> B), set_ext(A), set_ext(B), intersection(A,B,R) |- (C --> R), (Truth:Intersection)
-    (C --> A), (C --> B), set_int(A), set_int(B), intersection(A,B,R) |- (C --> R), (Truth:Union)
-    (A --> C), (B --> C), set_ext(A), set_ext(B), intersection(A,B,R) |- (R --> C), (Truth:Union)
-    (A --> C), (B --> C), set_int(A), set_int(B), intersection(A,B,R) |- (R --> C), (Truth:Intersection)
+    (C --> A), (C --> B), set_ext(A), intersection(A,B,R) |- (C --> R), (Truth:Intersection)
+    (C --> A), (C --> B), set_int(A), intersection(A,B,R) |- (C --> R), (Truth:Union)
+    (A --> C), (B --> C), set_ext(A), intersection(A,B,R) |- (R --> C), (Truth:Union)
+    (A --> C), (B --> C), set_int(A), intersection(A,B,R) |- (R --> C), (Truth:Intersection)
 
     (C --> A), (C --> B), intersection(A,B,R) |- (C --> R), (Truth:Difference)
     (A --> C), (B --> C), intersection(A,B,R) |- (R --> C), (Truth:Difference)
