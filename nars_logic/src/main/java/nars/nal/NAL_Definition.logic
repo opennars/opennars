@@ -90,26 +90,26 @@
 
 // "If not smoking lets you be healthy, being not healthy may be the result of smoking"
 
-    ( --S ==> P), P   |- ( --P ==> S), (Truth:Contraposition)
+    ( --S ==> P),   P |- ( --P ==> S), (Truth:Contraposition)
     ( --S ==> P), --S |- ( --P ==> S), (Truth:Contraposition)
-    ( --S =|> P), P   |- ( --P =|> S), (Truth:Contraposition)
+    ( --S =|> P),   P |- ( --P =|> S), (Truth:Contraposition)
     ( --S =|> P), --S |- ( --P =|> S), (Truth:Contraposition)
-    ( --S =/> P), P   |- ( --P =\> S), (Truth:Contraposition)
+    ( --S =/> P),   P |- ( --P =\> S), (Truth:Contraposition)
     ( --S =/> P), --S |- ( --P =\> S), (Truth:Contraposition)
-    ( --S =\> P), P   |- ( --P =/> S), (Truth:Contraposition)
+    ( --S =\> P),   P |- ( --P =/> S), (Truth:Contraposition)
     ( --S =\> P), --S |- ( --P =/> S), (Truth:Contraposition)
 
 //A belief b <f,c> is equal to --b <1-f,c>, which is the negation rule:
 
-  (A --> B), A, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation)
-  (A --> B), B, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation)
-  --(A --> B), A, task(negative) |- (A --> B), (Truth:Negation, Desire:Negation)
-  --(A --> B), B, task(negative) |- (A --> B), (Truth:Negation, Desire:Negation)
+    (A --> B), A, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation)
+    (A --> B), B, task(negative) |- --(A --> B), (Truth:Negation, Desire:Negation)
+  --(A --> B), A, task(negative) |-   (A --> B), (Truth:Negation, Desire:Negation)
+  --(A --> B), B, task(negative) |-   (A --> B), (Truth:Negation, Desire:Negation)
 
-  (A <-> B), A, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation)
-  (A <-> B), B, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation)
-  --(A <-> B), A, task(negative) |- (A <-> B), (Truth:Negation, Desire:Negation)
-  --(A <-> B), B, task(negative) |- (A <-> B), (Truth:Negation, Desire:Negation)
+    (A <-> B), A, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation)
+    (A <-> B), B, task(negative) |- --(A <-> B), (Truth:Negation, Desire:Negation)
+  --(A <-> B), A, task(negative) |-   (A <-> B), (Truth:Negation, Desire:Negation)
+  --(A <-> B), B, task(negative) |-   (A <-> B), (Truth:Negation, Desire:Negation)
 
 //// inheritance-based syllogism ////////////////////////////////////////////////////////////////////////////////////
 //       (A --> B) ------- (B --> C)
@@ -334,10 +334,10 @@
 //// conditional syllogism ////////////////////////////////////////////////////////////////////////////////////
 //If after M, P usually happens, and M happens, it means P is expected to happen
 
-    M, (M ==> P), shift_occurrence_forward(M,"==>") |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    M, (M ==> P), shift_occurrence_forward(M,"==>")  |- P, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     M, (P ==> M), shift_occurrence_backward(P,"==>") |- P, (Truth:Abduction, Desire:Deduction, Order:ForAllSame)
     M, (S <=> M), shift_occurrence_backward(M,"<=>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
-    M, (M <=> S), shift_occurrence_forward(S,"==>") |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
+    M, (M <=> S), shift_occurrence_forward(S,"==>")  |- S, (Truth:Analogy, Desire:Strong, Order:ForAllSame)
 
 //// conditional composition: ////////////////////////////////////////////////////////////////////////////////////
 //They are let out for AGI purpose, don't let the system generate conjunctions or useless <=> and ==> statements
@@ -453,15 +453,15 @@
 
 
     C, ((&&,C,A_1..n) ==> B) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>") |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (S --> M), ((&&,($X --> M),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (S --> M), ((&&,($X --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    (S --> M), ((&&,($X --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     (S --> M), ((&&,C,I) ==> ($X --> M)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
     (M --> S), ((&&,(M --> $X),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (M --> S), ((&&,(M --> $X),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S) |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
+    (M --> S), ((&&,(M --> $X),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     (M --> S), ((&&,C,I) ==> (M --> $X)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
 //Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
