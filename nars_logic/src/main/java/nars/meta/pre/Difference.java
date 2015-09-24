@@ -21,7 +21,7 @@ public class Difference extends PreCondition3 {
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
 
-        if(a==null || b==null || c==null || !((a instanceof SetExt) && (b instanceof SetExt)) || !((a instanceof SetInt) && (b instanceof SetInt))) {
+        if(a==null || b==null || c==null || (!((a instanceof SetExt) && (b instanceof SetExt)) && !((a instanceof SetInt) && (b instanceof SetInt)))) {
             return false;
         }
 
@@ -45,10 +45,16 @@ public class Difference extends PreCondition3 {
 
         if(a instanceof SetExt) {
             Compound res = SetExt.make(terms);
+            if(res==null) {
+                return false;
+            }
             m.map1.put(c, res);
         }
         if(a instanceof SetInt) {
             Compound res = SetInt.make(terms);
+            if(res==null) {
+                return false;
+            }
             m.map1.put(c, res);
         }
 

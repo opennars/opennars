@@ -262,10 +262,11 @@ public class RuleMatch extends FindSubst {
     /** provides the cached result if it exists, otherwise computes it and adds to cache */
     public final Term resolve(final Term t) {
 
-        if (rule.numPatternVariables() > map1.size()) {
+       //There are after-preconditions which bind a pattern variable
+      /*  if (rule.numPatternVariables() > map1.size()) {
             //System.err.println("predicted reactor leak");
             return null;
-        }
+        }*/
 
         //cached:
         Term derive = resolutions.computeIfAbsent(t, resolver);

@@ -184,7 +184,7 @@
     (A --> C), (B --> C), set_int(A), intersection(A,B,R) |- (R --> C), (Truth:Intersection)
 
     (C --> A), (C --> B), difference(A,B,R) |- (C --> R), (Truth:Difference)
-    (A --> C), (B --> C), difference(A,B,R) |- (R --> C), (Truth:Difference)
+try:    (A --> C), (B --> C), difference(A,B,R) |- (R --> C), (Truth:Difference)
 
 //Set element takeout:
 

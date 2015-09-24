@@ -3,6 +3,7 @@ package nars.meta.pre;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.term.Term;
+import nars.term.Variable;
 
 /**
  * Created by me on 8/15/15.
@@ -24,6 +25,9 @@ abstract public class PreCondition3 extends PreCondition {
         Term a = m.resolve(arg1);
         Term b = m.resolve(arg2);
         Term c = m.resolve(arg3);
+        if(arg3 instanceof Variable && ((Variable)arg3).hasVarPat()) { //wut why is this even necessary?
+            c=arg3;
+        }
         if (c!=null)
             return test(m, a, b, c);
         return false;

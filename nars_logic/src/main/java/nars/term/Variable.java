@@ -215,6 +215,8 @@ public class Variable extends Atom {
     }
 
 
+    public final boolean hasVarPat() { return op == Op.VAR_PATTERN;    }
+
     @Override public final boolean hasVarDep() { return op == Op.VAR_DEPENDENT;    }
     @Override public final int varDep() {
         return op == Op.VAR_DEPENDENT ? 1 : 0;
