@@ -279,6 +279,12 @@ public class TaskRule extends Rule<Premise, Task> {
                 case "not_equal":
                     next = new NotEqual(arg1, arg2);
                     break;
+                case "set_ext":
+                    next = new ExtSet(arg1);
+                    break;
+                case "set_int":
+                    next = new IntSet(arg1);
+                    break;
                 case "not_set":
                     next = new NotSet(arg1);
                     break;
@@ -313,6 +319,18 @@ public class TaskRule extends Rule<Premise, Task> {
 
                 case "substitute":
                     afterConcs.add(new Substitute(arg1, arg2));
+                    break;
+
+                case "intersection":
+                    afterConcs.add(new Intersection(arg1, arg2, args[2]));
+                    break;
+
+                case "union":
+                    afterConcs.add(new Union(arg1, arg2, args[2]));
+                    break;
+
+                case "difference":
+                    afterConcs.add(new Difference(arg1, arg2, args[2]));
                     break;
 
                 case "not_implication_or_equivalence":
