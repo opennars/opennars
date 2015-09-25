@@ -419,7 +419,7 @@ public class TaskRule extends Rule<Premise, Task> {
         w.accept(clone(C, B, T));
 
         //      %T, %C, [pre], task_is_question() |- %B, [post]
-        w.accept(clone(T, C, B));
+        w.accept(clone(C, T, B));
 
     }
 
