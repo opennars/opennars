@@ -103,7 +103,7 @@ public class LanternaTerminal extends Application {
             //popup.setOpacity(0.5);
 //            popup.setAutoFix(true);
 
-            ChangeListener cc = ((a,b,c) -> {
+            ChangeListener cc = ((a, b, c) -> {
                 popup.hide();
                 popup.show(this, 0, 0);
             });

@@ -18,27 +18,27 @@
     </properties>
 
     <build>
-        <resources>
+        <!--<resources>-->
 
-            <resource>
-                <directory>${basedir}/src/main/java/</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                    <include>**/public/*</include>
-                    <include>**/client/*.java</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
+            <!--<resource>-->
+                <!--<directory>${basedir}/src/main/java/</directory>-->
+                <!--<includes>-->
+                    <!--<include>**/*.xml</include>-->
+                    <!--<include>**/public/*</include>-->
+                    <!--<include>**/client/*.java</include>-->
+                <!--</includes>-->
+                <!--<filtering>false</filtering>-->
+            <!--</resource>-->
+        <!--</resources>-->
     </build>
 
     <dependencies>
 
 
-        <dependency>
-            <groupId>opennars</groupId>
-            <artifactId>nars_util</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>opennars</groupId>-->
+            <!--<artifactId>nars_util</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>opennars</groupId>

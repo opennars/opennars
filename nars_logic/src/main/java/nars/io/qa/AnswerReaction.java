@@ -22,13 +22,14 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
     
     private final Task question;
     private final NAR nar;
-    private final On reg;
+    private On reg;
 
 
     /** reacts to all questions */
     public AnswerReaction(NAR n) {
         this(n, (Task)null);
     }
+
 
     public AnswerReaction(NAR n, String questionTask) throws InvalidInputException {
         this(n, n.ask(questionTask));
@@ -44,6 +45,12 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
         reportAnyExistingSolutions();
     }
 
+    public synchronized void off() {
+        if (reg!=null) {
+            reg.off();
+            reg = null;
+        }
+    }
 
     protected void reportAnyExistingSolutions() {
         if (question != null) {

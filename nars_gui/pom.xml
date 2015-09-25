@@ -11,7 +11,7 @@
     </parent>
 
 
-    <name>OpenNARS GUI (Swing)</name>
+    <name>OpenNARS GUI (JavaFX)</name>
     <url>https://github.com/opennars/opennars</url>
 
 
@@ -156,7 +156,7 @@
         <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jfxtras-window</artifactId>
-            <version>8.0-r3</version>
+            <version>8.0-r4</version>
         </dependency>
         <dependency>
             <groupId>com.github.dejv78.commons.jfx</groupId>
