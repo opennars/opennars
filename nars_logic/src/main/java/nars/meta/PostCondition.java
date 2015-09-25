@@ -1,6 +1,8 @@
 package nars.meta;
 
 import nars.Global;
+import nars.Symbols;
+import nars.meta.pre.TaskPunctuation;
 import nars.nal.nal1.Inheritance;
 import nars.term.Atom;
 import nars.term.Term;
@@ -70,6 +72,7 @@ public class PostCondition implements Serializable //since there can be multiple
         contraposition = Atom.the("Contraposition"),
         identity = Atom.the("Identity");
 
+    public char custom_punctuation = '0';
 
     public PostCondition(Term term,
                          PreCondition[] beforeConclusions,
@@ -103,6 +106,22 @@ public class PostCondition implements Serializable //since there can be multiple
 
             switch (type.toString()) {
 
+                case "Conclusion":
+                    if(which.equals("Question")) {
+                        custom_punctuation = Symbols.QUESTION;
+                    }
+                    //for completeness
+                    if(which.equals("Goal")) {
+                        custom_punctuation = Symbols.GOAL;
+                    }
+                    if(which.equals("Judgement")) {
+                        custom_punctuation = Symbols.JUDGMENT;
+                    }
+                    if(which.equals("Quest")) {
+                        custom_punctuation = Symbols.QUEST;
+                    }
+
+                    break;
                 case "Truth":
                     TruthFunction tm = TruthFunction.get(which);
                     if (tm != null) {

@@ -215,8 +215,13 @@ public class RuleMatch extends FindSubst {
             }
 
 
+            char punct=p.custom_punctuation;
+            if(punct == '0') {
+                punct=task.getPunctuation();
+            }
+
             t
-                .punctuation(task.getPunctuation())
+                .punctuation(punct)
                 .truth(truth)
                 .budget(budget);
 
