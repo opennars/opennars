@@ -485,4 +485,8 @@
 
 //here now are the backward inference rules which should really only work on backward inference:
 
-([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Conclusion:Judgement)
+([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
+({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
+
+([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
+({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)

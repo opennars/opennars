@@ -167,7 +167,7 @@ public class NAL2Test extends AbstractNALTest {
     public void setDefinition4() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<[bright] <-> [smart]>");//Bright thing is similar to smart thing.");
-        tester.mustBelieve(cycles,"<bright <-> smart>",1.0f,0.9f);//Bright is similar to smart.");
+        tester.mustBelieve(cycles, "<bright <-> smart>", 1.0f, 0.9f);//Bright is similar to smart.");
         tester.mustBelieve(cycles,"<[bright] --> [smart]>",1.0f,0.9f);//Bright thing is a type of smart thing.");
         tester.run();
     }
@@ -187,6 +187,15 @@ public class NAL2Test extends AbstractNALTest {
         tester.believe("<bright <-> smart>", 0.9f, 0.9f);//Bright is similar to smart.");
         tester.ask("<[bright] --> [smart]>");//Is bright thing a type of smart thing?");
         tester.mustBelieve(cycles, "<[bright] --> [smart]>", 0.9f,0.9f);//Bright thing is a type of smart thing.");
+        tester.run();
+    }
+
+    @Test
+    public void structureTransformation3() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<bright <-> smart>", 0.9f, 0.9f);//Bright is similar to smart.");
+        tester.ask("<{bright} --> {smart}>");//Is bright thing a type of smart thing?");
+        tester.mustBelieve(cycles, "<{bright} --> {smart}>", 0.9f,0.9f);//Bright thing is a type of smart thing.");
         tester.run();
     }
 

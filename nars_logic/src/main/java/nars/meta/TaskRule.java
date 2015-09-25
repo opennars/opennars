@@ -78,6 +78,7 @@ public class TaskRule extends Rule<Premise, Task> {
         reservedMetaInfoCategories.add(Atom.the("Order"));
         reservedMetaInfoCategories.add(Atom.the("Info"));
         reservedMetaInfoCategories.add(Atom.the("Event"));
+        reservedMetaInfoCategories.add(Atom.the("Punctuation"));
     }
 
     /**
