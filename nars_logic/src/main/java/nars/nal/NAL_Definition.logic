@@ -226,7 +226,7 @@
 //If after S M happens, and after M P happens, so P happens after S
 
     (M ==> P), (S ==> M), not_equal(S,P) |- (S ==> P), (Truth:Deduction, Order:ForAllSame)
-    
+
 //"Please note that the temporal order in the conclusion of a weak rule is
 //not necessarily the same as the order in the premises, given the hypothetical
 //nature of such a rule."
@@ -485,4 +485,4 @@
 
 //here now are the backward inference rules which should really only work on backward inference:
 
-(A <-> B), ([A] <-> [B]), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Conclusion:Judgement)
+([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Conclusion:Judgement)
