@@ -415,7 +415,7 @@ public class TaskRule extends Rule<Premise, Task> {
         Term B = this.getBelief();
         Term C = this.getResult();
 
-        //      C, B, [pre], task_is_question() |- T , [post]
+        //      C, B, [pre], task_is_question() |- T, [post]
         w.accept(clone(C, B, T));
 
         //      C, T, [pre], task_is_question() |- B, [post]
