@@ -157,6 +157,11 @@ public enum TruthFunction {
         @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
             return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
+    },
+    BeliefIdentity() {
+        @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
+            return new DefaultTruth(B.getFrequency(), B.getConfidence());
+        }
     }
     ;
 

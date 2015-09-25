@@ -477,3 +477,12 @@
                                                                                                    (S <|> P), (Truth:Comparison),
                                                                                                    (&|,S,P), (Truth:Intersection)
 
+//backward inference is mostly handled by the rule transformation:
+
+//    T, B |- C, [post] ->
+//          C, B, task("?") |- T, [post]
+//          C, T, task("?") |- B, [post]
+
+//here now are the backward inference rules which should really only work on backward inference:
+
+(A <-> B), ([A] <-> [B]), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Conclusion:Judgement)
