@@ -409,16 +409,16 @@ public class TaskRule extends Rule<Premise, Task> {
      */
     public void forEachQuestionReversal(Consumer<TaskRule> w) {
 
-        // %T, %B, [pre] |- %C, [post] ||--
+        // T, B, [pre] |- C, [post] ||--
 
         Term T = this.getTask();
         Term B = this.getBelief();
         Term C = this.getResult();
 
-        //      %C, %B, [pre], task_is_question() |- %T , [post]
+        //      C, B, [pre], task_is_question() |- T , [post]
         w.accept(clone(C, B, T));
 
-        //      %T, %C, [pre], task_is_question() |- %B, [post]
+        //      C, T, [pre], task_is_question() |- B, [post]
         w.accept(clone(C, T, B));
 
     }
