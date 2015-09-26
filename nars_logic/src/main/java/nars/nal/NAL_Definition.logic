@@ -471,52 +471,56 @@
 
 //here now are the backward inference rules which should really only work on backward inference:
 
-//NAL1:
+    (A --> S), (B --> S), task("?") |- (A --> B), (Punctuation:Question),
+                                       (B --> A), (Punctuation:Question)
 
+////NAL2:
+//    ({?X} --> S), (B --> S), task("?") |-
 
+//and the backward inference driven forward inference:
 
 //NAL2:
 
-([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
-({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
+    ([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
+    ({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
 
-([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
-({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
+    ([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
+    ({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
 
 //NAL3:
 
-//composition on both sides of a statement:
-((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+////composition on both sides of a statement:
+    ((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
-((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
-//composition on one side of a statement:
-(W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-(W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgementy)
-((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+////composition on one side of a statement:
+    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgementy)
+    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
-(W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
-((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
+    (W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
+    ((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
 
 //NAL4:
 
-//composition on both sides of a statement:
-((B,P) --> ?X) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((B,P) --> (A,P)) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+////composition on both sides of a statement:
+    ((B,P) --> ?X) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((B,P) --> (A,P)) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
-((\,N,A,_) --> ?X), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((\,N,A,_) --> (\,R,A,_)), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((\,N,A,_) --> ?X), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((\,N,A,_) --> (\,R,A,_)), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
-((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
 //NAL5:
 
---A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgement)
-A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgement)
+    --A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgement)
+    A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgement)
 
 //compound composition one premise
 

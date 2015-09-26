@@ -120,7 +120,7 @@ public class RuleMatch extends FindSubst {
 //
 //            }
 //        }
-        if (!single && !p.truth.allowOverlap && premise.isCyclic()) {
+        if (!single && (p.truth!=null && !p.truth.allowOverlap) && premise.isCyclic()) {
             return null;
         }
 

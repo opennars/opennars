@@ -171,7 +171,7 @@ public class PostCondition implements Serializable //since there can be multiple
         this.afterConclusions = afterConclusions;
 
         if (beliefTruth == null) {
-            System.err.println("missing truth function: " + this);
+            //System.err.println("missing truth function: " + this);
         }
         /*if (goalTruth == null) {
             System.err.println("missing desire function: " + this);
