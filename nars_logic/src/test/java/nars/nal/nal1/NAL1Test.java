@@ -179,6 +179,7 @@ public class NAL1Test extends AbstractNALTest {
 
     }
 
+      /*   This example will be added to NALMultistepTest.java
     @Test
     public void multistep3() {
         new DeductiveChainTest(nar(), 3, 900).run();
@@ -207,6 +208,6 @@ public class NAL1Test extends AbstractNALTest {
 
         test.run();
     }
-
+    */
 
 }

@@ -471,6 +471,10 @@
 
 //here now are the backward inference rules which should really only work on backward inference:
 
+//NAL1:
+
+
+
 //NAL2:
 
 ([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
