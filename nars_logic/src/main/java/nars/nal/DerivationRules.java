@@ -236,21 +236,18 @@ public class DerivationRules extends ArrayList<TaskRule> {
                                     .pattern.structure()
                                     )
                     );*/
-                    if (rNorm.isReversible()) {
+                    //add reverse questions
+                    rUnnorm.forEachQuestionReversal(q -> {
 
-                        //add reverse questions
-                        rUnnorm.forEachQuestionReversal(q -> {
+                        q = q.normalizeRule();
 
-                            q = q.normalizeRule();
+                        //normalize may be returned null if the rearranging produced an invalid result
+                        //so do not add null
 
-                            //normalize may be returned null if the rearranging produced an invalid result
-                            //so do not add null
-
-                            if (q != null && ur.add(q)) {
-                                //System.out.println("  " + q);
-                            }
-                        });
-                    }
+                        if (q != null && ur.add(q)) {
+                            //System.out.println("  " + q);
+                        }
+                    });
                 }
 
                 /*String s2 = rUnnorm.toString();
