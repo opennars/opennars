@@ -326,6 +326,7 @@ public class NAL5Test extends AbstractNALTest {
         tester.run();
     }
 
+    /* will be moved to NAL multistep test file!!
     //this is a multistep example, I will add a special test file for those with Default configuration
     //it's not the right place here but the example is relevant
     @Test public void deriveFromConjunctionComponents() { //this one will work after truthfunctions which allow evidental base overlap are allowed
@@ -338,7 +339,7 @@ public class NAL5Test extends AbstractNALTest {
 
         tester.mustBelieve(70, "<a <-> b>", 1.0f, 0.66f);
         tester.run();
-    }
+    }*/
 
 
 }

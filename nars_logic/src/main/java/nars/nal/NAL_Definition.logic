@@ -512,3 +512,12 @@
 
 ((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 ((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+
+//NAL5:
+
+--A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgement)
+A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgement)
+
+//compound composition one premise
+
+(||,B,A_1..n), B |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)

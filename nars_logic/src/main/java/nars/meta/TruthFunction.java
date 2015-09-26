@@ -173,6 +173,11 @@ public enum TruthFunction {
             Truth res =  TruthFunctions.deduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
             return new DefaultTruth(1.0f-res.getFrequency(), res.getConfidence());
         }
+    },
+    BeliefNegation() {
+        @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
+            return TruthFunctions.negation(B);
+        }
     }
     ;
 
