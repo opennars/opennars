@@ -5,7 +5,7 @@
 package nars.nal.nal6;
 
 import nars.NAR;
-import nars.io.qa.AnswerReaction;
+import nars.event.AnswerReaction;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
 import nars.nar.Default;

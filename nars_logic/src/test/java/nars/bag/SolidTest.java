@@ -2,7 +2,7 @@
 //
 //import nars.Global;
 //import nars.io.in.LibraryInput;
-//import nars.io.qa.AnswerReaction;
+//import nars.event.AnswerReaction;
 //import nars.meter.TestNAR;
 //import nars.nar.experimental.Solid;
 //import nars.task.Sentence;

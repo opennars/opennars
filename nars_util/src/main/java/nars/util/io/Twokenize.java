@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.util.language;
+package nars.util.io;
 
 
 import java.io.BufferedReader;

@@ -1,4 +1,4 @@
-package nars.util.language;
+package nars.util.io;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

@@ -2,7 +2,7 @@ package nars.meter.experiment;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.qa.AnswerReaction;
+import nars.event.AnswerReaction;
 import nars.meter.TestNAR;
 import nars.nal.nal1.Inheritance;
 import nars.nar.Default;

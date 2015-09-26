@@ -1,4 +1,4 @@
-package nars.io.signal;
+package nars.util.numeric;
 
 import nars.Global;
 import nars.NAR;

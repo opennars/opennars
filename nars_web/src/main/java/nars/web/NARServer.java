@@ -10,9 +10,9 @@ import io.undertow.websockets.core.*;
 import io.undertow.websockets.extensions.PerMessageDeflateHandshake;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
 import nars.NAR;
-import nars.nar.experimental.DefaultAlann;
+import nars.nar.Default;
 import nars.util.event.Topic;
-import nars.util.language.JSON;
+import nars.util.io.JSON;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,70 +30,11 @@ public class NARServer extends PathHandler {
 
     private final Undertow server;
 
-    long updatePeriodMS = 100;
+    long updatePeriodMS = 500;
     private Thread narThread;
 
-//    class NARSWebSocketServer extends WebSocketServer  {
-//
-//        public NARSWebSocketServer(InetSocketAddress addr) throws UnknownHostException {
-//            super(addr);
-//        }
-//
-//        @Override
-//        public void onOpen(final WebSocket conn, ClientHandshake handshake) {
-//            //this.sendToAll("new connection: " + handshake.getResourceDescriptor());
-//
-//            WebSocketImpl.DEBUG = WebSocket.DEBUG = WEBSOCKET_DEBUG;
-//
-//            if (WEBSOCKET_DEBUG) System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
-//
-//            final NARConnection n = new NARConnection(new Default().build(), cycleIntervalMS) {
-//                @Override public void println(String output) {
-//                    conn.send(output);
-//                }
-//            };
-//            socketSession.put(conn, n);
-//
-//        }
-//
-//        @Override
-//        public void onClose(WebSocket conn, int code, String rule, boolean remote) {
-//            if (WEBSOCKET_DEBUG) System.out.println(conn + " disconnected");
-//
-//            NARConnection n = socketSession.get(conn);
-//            if (n!=null) {
-//                n.stop();
-//                socketSession.remove(conn);
-//            }
-//        }
-//
-//        @Override
-//        public void onMessage(WebSocket conn, String message) {
-//
-//            NARConnection n = socketSession.get(conn);
-//            if (n!=null) {
-//                n.read(message);
-//            }
-//        }
-//
-//
-//        @Override
-//        public void onError(WebSocket conn, Exception ex) {
-//            ex.printStackTrace();
-//            if (conn != null) {
-//                // some errors like port binding failed may not be assignable to a specific websocket
-//            }
-//        }
-//
-//    }
-
-    //final NARSWebSocketServer websockets;
-    //private final Map<WebSocket, NARConnection> socketSession = new HashMap();
 
     public class WebSocketCore extends AbstractReceiveListener implements WebSocketCallback<Void>, WebSocketConnectionCallback {
-
-        //public static final Logger log = LoggerFactory.getLogger(WebSocketCore.class);
-
 
 
         public WebSocketCore() {
@@ -220,6 +161,8 @@ public class NARServer extends PathHandler {
 
         //websockets = new NARSWebSocketServer(new InetSocketAddress(webSocketsPort));
         //websockets.start();
+
+        //TODO use resource path
         String clientPath = "./nars_web/src/main/web";
         File c = new File(clientPath);
         System.out.println(c.getAbsolutePath());
@@ -233,7 +176,7 @@ public class NARServer extends PathHandler {
 
         server = Undertow.builder()
                 .addHttpListener(httpPort, "localhost")
-                .setIoThreads(8)
+                .setIoThreads(2)
                 .setHandler(this)
                 .build();
 
@@ -267,10 +210,8 @@ public class NARServer extends PathHandler {
     public static void main(String[] args) throws Exception {
 
 
-        DefaultAlann nar = new DefaultAlann(32);
+        NAR nar = new Default();
         //d.memory.setClock(new RealtimeMSClock(false));
-
-
 
 
 

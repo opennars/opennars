@@ -30,8 +30,8 @@ import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.util.language.Twokenize;
-import nars.util.language.Twokenize.Span;
+import nars.util.io.Twokenize;
+import nars.util.io.Twokenize.Span;
 
 import java.util.*;
 import java.util.stream.Collectors;

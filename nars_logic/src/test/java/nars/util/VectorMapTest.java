@@ -2,9 +2,9 @@ package nars.util;
 
 import nars.NAR;
 import nars.event.CycleReaction;
-import nars.io.signal.UniformVector;
-import nars.io.signal.VectorMap;
 import nars.nar.Default;
+import nars.util.numeric.UniformVector;
+import nars.util.numeric.VectorMap;
 import nars.util.signal.Autoencoder;
 import org.junit.Test;
 

@@ -1,7 +1,6 @@
 package nars.concept;
 
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.nar.experimental.Equalized;
 import org.junit.Test;
 
@@ -14,7 +13,8 @@ public class ActivationTest {
     public void testDerivedBudgets() {
         NAR n= new Equalized(10, 1, 3);
 
-        TextOutput.out(n);
+        //TODO System.err.println("TextOutput.out impl in progress");
+        n.stdout();
 
 
         n.input("$0.1$ <a --> b>.");
