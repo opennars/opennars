@@ -95,10 +95,28 @@ public class NAL4Test extends AbstractNALTest {
     }
 
     @Test
+    public void composition_on_both_sides_of_a_statement_2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<bird --> animal>",1.0f,0.9f); //en("Bird is a type of animal.");
+        tester.ask("<(bird,plant) --> (*,animal,plant)>");
+        tester.mustBelieve(100, "<(*,bird,plant) --> (*,animal,plant)>", 1.0f, 0.81f); //en("The relation between bird and plant is a type of relation between animal and plant.");
+        tester.run();
+    }
+
+    @Test
     public void composition_on_both_sides_of_a_statement2() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<neutralization --> reaction>",1.0f,0.9f); //en("Neutralization is a type of reaction.");
         tester.ask("<(\\,neutralization,acid,_) --> ?x>"); //en("What can be neutralized by acid?");
+        tester.mustBelieve(100, "<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>", 1.0f, 0.81f); //en("What can be neutralized by acid can react with acid.");
+        tester.run();
+    }
+
+    @Test
+    public void composition_on_both_sides_of_a_statement2_2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<neutralization --> reaction>",1.0f,0.9f); //en("Neutralization is a type of reaction.");
+        tester.ask("<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>");
         tester.mustBelieve(100, "<(\\,neutralization,acid,_) --> (\\,reaction,acid,_)>", 1.0f, 0.81f); //en("What can be neutralized by acid can react with acid.");
         tester.run();
     }
