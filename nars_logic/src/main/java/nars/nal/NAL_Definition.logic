@@ -63,16 +63,16 @@
 //If S can stand for P, P can to a certain low degree also represent the class S
 //If after S usually P happens, then it might be a good guess that usually before P happens, S happens.
 
-    (S --> P), S |- (P --> S), (Truth:Conversion, Derive:AllowBackward)
-    (S --> P), P |- (P --> S), (Truth:Conversion, Derive:AllowBackward)
-    (S ==> P), S |- (P ==> S), (Truth:Conversion, Derive:AllowBackward)
-    (S ==> P), P |- (P ==> S), (Truth:Conversion, Derive:AllowBackward)
-    (S =|> P), S |- (P =|> S), (Truth:Conversion, Derive:AllowBackward)
-    (S =|> P), P |- (P =|> S), (Truth:Conversion, Derive:AllowBackward)
-    (S =/> P), S |- (P =\> S), (Truth:Conversion, Derive:AllowBackward)
-    (S =/> P), P |- (P =\> S), (Truth:Conversion, Derive:AllowBackward)
-    (S =\> P), S |- (P =/> S), (Truth:Conversion, Derive:AllowBackward)
-    (S =\> P), P |- (P =/> S), (Truth:Conversion, Derive:AllowBackward)
+    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgement)
+    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgement)
+    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgement)
+    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgement)
+    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgement)
+    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgement)
+    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgement)
+    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgement)
+    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgement)
+    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgement)
 
 // "If not smoking lets you be healthy, being not healthy may be the result of smoking"
 
