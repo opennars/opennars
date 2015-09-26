@@ -418,7 +418,7 @@ public class TaskRule extends Rule<Premise, Task> {
             return;
         }*/
 
-        if(s.contains("ForwardOnly")) { //explicitely stated in the rules now
+        if(!s.contains("AllowBackward")) { //explicitely stated in the rules now
             return;
         }
 
