@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.io.qa;
+package nars.event;
 
 import com.gs.collections.api.tuple.Twin;
 import nars.NAR;

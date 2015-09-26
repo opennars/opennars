@@ -3,7 +3,7 @@ package nars.nar;
 import nars.LocalMemory;
 import nars.Memory;
 import nars.narsese.InvalidInputException;
-import nars.util.language.JSON;
+import nars.util.io.JSON;
 import org.infinispan.marshall.core.JBossMarshaller;
 import org.junit.Test;
 

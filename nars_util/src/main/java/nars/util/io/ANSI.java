@@ -1,4 +1,4 @@
-package nars.io;
+package nars.util.io;
 
 /**
  * Created by me on 9/12/15.

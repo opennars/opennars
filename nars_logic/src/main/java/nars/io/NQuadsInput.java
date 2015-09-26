@@ -1,5 +1,6 @@
 package nars.io;
 
+import nars.Global;
 import nars.NAR;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -14,7 +15,6 @@ import nars.term.Term;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -75,11 +75,10 @@ abstract public class NQuadsInput {
      */
     public void input(File f) throws Exception {
 
-        List<String> items = new ArrayList(4);
+        List<String> items = Global.newArrayList(4);
 
         new Scanner(f).useDelimiter("\n").forEachRemaining(s -> {
             Matcher m = nQuads.matcher(s);
-            int count = 0;
             items.clear();
             while(m.find()) {
                 String t = s.substring(m.start(), m.end());

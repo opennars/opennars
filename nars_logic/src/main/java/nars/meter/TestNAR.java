@@ -4,7 +4,6 @@ import nars.Global;
 import nars.NAR;
 import nars.event.CycleReaction;
 import nars.io.JSONOutput;
-import nars.io.out.TextOutput;
 import nars.meter.condition.TaskCondition;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
@@ -386,7 +385,7 @@ public class TestNAR  {
         error = null;
 
         if (showOutput)
-            TextOutput.out(nar);
+            nar.stdout();
 
 
         //try {

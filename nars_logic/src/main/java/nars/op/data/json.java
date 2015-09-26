@@ -6,7 +6,7 @@ import nars.nal.nal8.operator.TermFunction;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.util.language.JSON;
+import nars.util.io.JSON;
 
 import java.util.ArrayList;
 import java.util.List;

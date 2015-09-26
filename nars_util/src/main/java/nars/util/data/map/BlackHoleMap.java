@@ -1,4 +1,4 @@
-package nars.util;
+package nars.util.data.map;
 
 import java.util.HashMap;
 
