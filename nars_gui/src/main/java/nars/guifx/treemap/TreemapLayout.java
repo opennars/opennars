@@ -1,5 +1,6 @@
 package nars.guifx.treemap;
 
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import nars.guifx.util.paint.ColorGroup;
@@ -72,7 +73,7 @@ class TreemapLayout extends Parent {
         anchorPane.getChildren().clear();
         squarify(new ArrayDeque<>(children), new ArrayDeque<TreemapDtoElement>(), minimumSide());
         for (TreemapDtoElement child : children) {
-            Parent treeElementItem = elementFactory.createElement(child, colorGroup);
+            Node treeElementItem = elementFactory.createElement(child, colorGroup);
             anchorPane.getChildren().add(treeElementItem);
             if (child.getTop() > this.height) {
                 throw new IllegalStateException("Top is bigger than height");

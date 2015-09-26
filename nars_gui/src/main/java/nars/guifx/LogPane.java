@@ -1,18 +1,11 @@
 package nars.guifx;
 
-import javafx.collections.ObservableList;
-import javafx.geometry.Side;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -21,9 +14,10 @@ import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.treemap.Item;
-import nars.guifx.treemap.Treemap;
+import nars.guifx.treemap.TreemapChart;
 import nars.premise.Premise;
 import nars.task.Task;
+import nars.task.stamp.Stamp;
 import nars.util.data.list.CircularArrayList;
 import nars.util.event.Topic;
 
@@ -44,13 +38,13 @@ public class LogPane extends BorderPane implements Runnable {
     //private final Output incoming;
     private final NAR nar;
     final int maxLines = 64;
-    CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
+    final CircularArrayList<Node> toShow = new CircularArrayList<>(maxLines);
     List<Node> pending;
 
     NSliderSet filter = new NSliderSet();
 
     ScrollPane scrollParent = null;
-
+    private Node prev; //last node added
 
 
     /* to be run in javafx thread */
@@ -84,7 +78,7 @@ public class LogPane extends BorderPane implements Runnable {
         super();
 
         this.nar = nar;
-        content = new VBox();
+        content = new VBox(1);
 
 
         for (Object o : enabled)
@@ -153,7 +147,7 @@ public class LogPane extends BorderPane implements Runnable {
     protected void output(Object channel, Object signal) {
         boolean trace=false;
 
-        double f = filter.value(channel);
+        //double f = filter.value(channel);
 
         //temporary until filter working
         if (!trace && channel.equals("eventDerive") ||
@@ -162,20 +156,21 @@ public class LogPane extends BorderPane implements Runnable {
             return;
 
         Node n = getNode(channel, signal);
-        if (n!=null) {
+        if (n != null) {
+            synchronized (toShow) {
+                if (pending == null)
+                    pending = Global.newArrayList();
 
-            if (pending==null)
-                pending = Global.newArrayList();
-
-            pending.add(n);
-
+                pending.add(n);
+                prev = n;
+            }
         }
     }
 
     ActivationTreeMap activationSet = null;
-    Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
+    //Pane cycleSet = null; //either displays one cycle header, or a range of cycles, including '...' waiting for next output while they queue
 
-    public static class ActivationTreeMap extends Treemap {
+    public static class ActivationTreeMap extends TreemapChart {
 
         private final Item.DefaultItem r;
         @Deprecated Set<Concept> concept = new HashSet();
@@ -197,8 +192,8 @@ public class LogPane extends BorderPane implements Runnable {
                 r.add(c, c.getPriority());
             runLater(() -> {
                 update();
-                setCacheHint(CacheHint.SPEED);
-                setCache(true);
+                /*setCacheHint(CacheHint.SPEED);
+                setCache(true);*/
             });
         }
 
@@ -209,64 +204,64 @@ public class LogPane extends BorderPane implements Runnable {
 
     }
 
-    public static class ActivationSet extends FlowPane {
-        private final ObservableList pri;
-        private final BarChart<String, Number> bc;
-        private final XYChart.Series priSeries;
-        Set<Concept> concept = new HashSet();
-
-        public ActivationSet() {
-            super();
-
-            final CategoryAxis xAxis = new CategoryAxis();
-
-
-            final NumberAxis yAxis = new NumberAxis();
-            //yAxis.setForceZeroInRange(true);
-            yAxis.setLabel("Activation: Current Priority");
-            yAxis.setAutoRanging(true);
-
-            bc = new BarChart<>(xAxis,yAxis);
-
-            bc.setLegendVisible(false);
-            bc.setAnimated(false);
-            bc.setTitleSide(Side.LEFT);
-
-
-            priSeries = new XYChart.Series();
-            priSeries.setName("Priority");
-
-            this.pri = priSeries.getData();
-
-
-
-        }
-
-        /** setup before display */
-        public void commit() {
-            for (Concept c : concept)
-                pri.add(new XYChart.Data(
-                        c.getTerm().toString(),
-                        c.getBudget().getPriority()));
-            runLater(() -> {
-                bc.getData().add(priSeries);
-                getChildren().add(bc);
-                setCacheHint(CacheHint.SPEED);
-                setCache(true);
-            });
-        }
-
-        void onAdd(Concept c) {
-            //getChildren().add( new ConceptActivationIcon(c) );
-        }
-
-        public void add(Concept c) {
-            if (concept.add(c)) {
-                onAdd(c);
-            }
-        }
-
-    }
+//    public static class ActivationSet extends FlowPane {
+//        private final ObservableList pri;
+//        private final BarChart<String, Number> bc;
+//        private final XYChart.Series priSeries;
+//        Set<Concept> concept = new HashSet();
+//
+//        public ActivationSet() {
+//            super();
+//
+//            final CategoryAxis xAxis = new CategoryAxis();
+//
+//
+//            final NumberAxis yAxis = new NumberAxis();
+//            //yAxis.setForceZeroInRange(true);
+//            yAxis.setLabel("Activation: Current Priority");
+//            yAxis.setAutoRanging(true);
+//
+//            bc = new BarChart<>(xAxis,yAxis);
+//
+//            bc.setLegendVisible(false);
+//            bc.setAnimated(false);
+//            bc.setTitleSide(Side.LEFT);
+//
+//
+//            priSeries = new XYChart.Series();
+//            priSeries.setName("Priority");
+//
+//            this.pri = priSeries.getData();
+//
+//
+//
+//        }
+//
+//        /** setup before display */
+//        public void commit() {
+//            for (Concept c : concept)
+//                pri.add(new XYChart.Data(
+//                        c.getTerm().toString(),
+//                        c.getBudget().getPriority()));
+//            runLater(() -> {
+//                bc.getData().add(priSeries);
+//                getChildren().add(bc);
+//                setCacheHint(CacheHint.SPEED);
+//                setCache(true);
+//            });
+//        }
+//
+//        void onAdd(Concept c) {
+//            //getChildren().add( new ConceptActivationIcon(c) );
+//        }
+//
+//        public void add(Concept c) {
+//            if (concept.add(c)) {
+//                onAdd(c);
+//            }
+//        }
+//
+//    }
 
 
     public class PremisePane extends TextFlow {
@@ -322,7 +317,13 @@ public class LogPane extends BorderPane implements Runnable {
                 return activationSet;
         }
         else if (channel.equals("eventCycleStart")) {
-            return new CycleActivationBar(nar.time());
+            if (prev!=null && (prev instanceof CycleActivationBar)) {
+                ((CycleActivationBar)prev).setTo(nar.time());
+                return null;
+            }
+            else {
+                return new CycleActivationBar(nar.time());
+            }
         }
         else if (channel.equals("eventCycleEnd")) {
             if (activationSet!=null) {
@@ -336,10 +337,14 @@ public class LogPane extends BorderPane implements Runnable {
             return null;
             //
         } else if (channel.equals("eventInput")) {
-            return new AutoLabel((Task)signal, nar);
+            return new AutoLabel((Task) signal, nar);
+
         } else if (signal instanceof Premise) {
-            return new PremisePane((Premise)signal);
-        } else {
+            //return new PremisePane((Premise)signal);
+            return null;
+        }
+
+        else {
             return new Label(
                     //channel.toString() + ": " +
                     signal.toString());
@@ -355,10 +360,28 @@ public class LogPane extends BorderPane implements Runnable {
         }
     }
 
+    /** displays a specific (from) or a range (from..to) of cycle time values */
     static class CycleActivationBar extends Label {
-        public CycleActivationBar(long time) {
-            super(Long.toString(time));
+        private final long from;
+        private long to = Stamp.TIMELESS;
+
+        public CycleActivationBar(long from) {
+            super(Long.toString(from));
+            this.from = from;
             setCache(true);
+        }
+
+        public void setTo(long to) {
+            this.to = to;
+            runLater(this::update);
+        }
+
+        protected void update() {
+            if (to == Stamp.TIMELESS)
+                setText(Long.toString(from));
+            else {
+                setText(Long.toString(from) + " .. " + Long.toString(to) );
+            }
         }
     }
 

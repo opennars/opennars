@@ -11,19 +11,19 @@ import java.util.SortedSet;
 /**
  * @author Tadas Subonis <tadas.subonis@gmail.com>
  */
-public class Treemap extends Parent {
+public class TreemapChart extends Parent {
 
 
     //private final ColorBucket colorBucket = ColorBucket.createBucket();
     public final Item root;
 
     public DoubleProperty width = new SimpleDoubleProperty(640.0);
-    public DoubleProperty height = new SimpleDoubleProperty(480.0);
+    public DoubleProperty height = new SimpleDoubleProperty(280.0);
 
     private TreemapElementFactory elementFactory = new TreemapElementFactory();
     private final TreemapLayout treemapLayouter;
 
-    public Treemap(Item root) {
+    public TreemapChart(Item root) {
         this.root = root;
         final SortedSet<Item> items = root.getItems();
         treemapLayouter = elementFactory.createTreemapLayout(width.doubleValue(), height.doubleValue(), items);
@@ -36,10 +36,12 @@ public class Treemap extends Parent {
         width.addListener(changeListener);
         height.addListener(changeListener);
         this.getChildren().add(treemapLayouter);
+
     }
 
     public void update() {
         treemapLayouter.update(width.doubleValue(), height.doubleValue(), root.getItems());
+        autosize();
     }
 
     public DoubleProperty getWidth() {
