@@ -11,13 +11,6 @@
 
 //   A, A |- A, (Truth:Revision) (Commented out because it is already handled by belief management in java)
 
-//TODO Similarity Theorems (needs to be carefully evaluated what is needed here)
-//Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
-
-//TODO Implication Theorems (needs to be carefully evaluated what is needed here)
-    (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
-//TODO: also (&&,A_1,A_2), A_1 |- A_1, (Truth:Deduction, Desire:Strong) currently doesnt work, review
-
 //Similarity to Inheritance
 
     (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgement)
@@ -335,6 +328,10 @@
 //   P, S, no_common_subterm(S,P) |- (S <=> P), (Truth:Comparison)
 //   P, S, no_common_subterm(S,P) |- (P && S), (Truth:Intersection)
 //   P, S, no_common_subterm(S,P) |- (P || S), (Truth:Union)
+
+//// conjunction decompose
+
+    (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
