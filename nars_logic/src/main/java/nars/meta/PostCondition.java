@@ -148,6 +148,10 @@ public class PostCondition implements Serializable //since there can be multiple
                     //ignore, because this only affects at TaskRule constructoin
                     break;
 
+                case "Derive":
+                    //ignore, because this only affects at TaskRule constructoin
+                    break;
+
                 default:
                     System.err.println("Unhandled postcondition: " + type + ":" + which);
                     //mods.add(m);

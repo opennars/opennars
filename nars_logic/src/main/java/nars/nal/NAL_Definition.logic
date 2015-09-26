@@ -15,7 +15,7 @@
 //Constructor already: --(--T), T. |- T, (Truth:Identity, Desire:Identity)
 
 //TODO Implication Theorems (needs to be carefully evaluated what is needed here)
-    (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
+    (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong, Derive:ForwardOnly)
 //TODO: also (&&,A_1,A_2), A_1 |- A_1, (Truth:Deduction, Desire:Strong) currently doesnt work, review
 
 //Similarity to Inheritance
@@ -405,34 +405,34 @@
 //// dependent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (&&,(#X --> S), A_1..n), (M --> S), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
-    (&&,(S --> #X), A_1..n), (S --> M), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame)
+    (&&,(#X --> S), A_1..n), (M --> S), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame, Derive:ForwardOnly)
+    (&&,(S --> #X), A_1..n), (S --> M), substitute(#X,M) |- (&&,A_1..n), (Truth:AnonymousAnalogy, Order:ForAllSame, Derive:ForwardOnly)
 
 //// independent variable elimination ////////////////////////////////////////////////////////////////////////////////////
 //Decomposition with elimination of a variable
 
-    (($X --> M) ==> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $X) ==> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    (($X --> M) ==> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
+    ((M --> $X) ==> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
 
-    (P ==> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
-    (P ==> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
+    (P ==> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame, Derive:ForwardOnly)
+    (P ==> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame, Derive:ForwardOnly)
 
-    (($X --> M) <=> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
-    ((M --> $X) <=> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
+    (($X --> M) <=> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
+    ((M --> $X) <=> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
 
-    (P <=> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
-    (P <=> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame)
+    (P <=> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
+    (P <=> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
 
 //// second level variable handling rules ////////////////////////////////////////////////////////////////////////////////////
-//second level variable elimination
+//second level variable elimination (let's complete rest of NAL6 first)
 
-//    (A --> K), (&&,(#X --> L),(($Y --> K) ==> (&&,A_1..n))), substitute($Y,A) |- (&&,(#X --> L),A_1..n), (Truth:Deduction)
-//    (A --> K), (($X --> L) ==> (&&,(#Y --> K),A_1..n)), substitute(#Y,A) |- (($X --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy)
+//    (A --> K), (&&,(#X --> L),(($Y --> K) ==> (&&,A_1..n))), substitute($Y,A) |- (&&,(#X --> L),A_1..n), (Truth:Deduction, Derive:ForwardOnly)
+//    (A --> K), (($X --> L) ==> (&&,(#Y --> K),A_1..n)), substitute(#Y,A) |- (($X --> L) ==> (&&,A_1..n)), (Truth:AnonymousAnalogy, Derive:ForwardOnly)
 
 //second level variable introduction
 
-//    (A --> L), ((A --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Intersection)
-//    (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#X) |- ((&&,(#X --> L),(#X --> S),A_1..n) ==> R), (Truth:Intersection)
+//    (A --> L), ((A --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Intersection, Derive:ForwardOnly)
+//    (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#X) |- ((&&,(#X --> L),(#X --> S),A_1..n) ==> R), (Truth:Intersection, Derive:ForwardOnly)
 
 ////NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
 //Reasoning about temporal statements. those are using the ==> relation because relation in time is a relation of the truth between statements.
@@ -442,13 +442,13 @@
     C, <(&/,C,I) ==> B>, shift_occurrence_forward(I,"==>")  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
     B, <(&/,C,I) ==> B>, shift_occurrence_backward(I,"==>") |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
 
-    (S --> M), ((&&,($X --> M),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (S --> M), ((&&,($X --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    (S --> M), ((&&,C,I) ==> ($X --> M)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    (S --> M), ((&&,($X --> M),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
+    (S --> M), ((&&,($X --> M),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Derive:ForwardOnly)
+    (S --> M), ((&&,C,I) ==> ($X --> M)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame, Derive:ForwardOnly)
 
-    (M --> S), ((&&,(M --> $X),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame)
-    (M --> S), ((&&,(M --> $X),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame)
-    (M --> S), ((&&,C,I) ==> (M --> $X)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame)
+    (M --> S), ((&&,(M --> $X),A_1..n) ==> B), substitute($X,S) |- ((&&,A_1..n) ==> B), (Truth:Deduction, Order:ForAllSame, Derive:ForwardOnly)
+    (M --> S), ((&&,(M --> $X),I) ==> B), shift_occurrence_forward(I,"==>"), substitute($X,S)  |- B, (Truth:Deduction, Desire:Induction, Order:ForAllSame, Derive:ForwardOnly)
+    (M --> S), ((&&,C,I) ==> (M --> $X)), shift_occurrence_backward(I,"==>"), substitute($X,S) |- C, (Truth:Abduction, Desire:Induction, Order:ForAllSame, Derive:ForwardOnly)
 
 ////Temporal induction: ////////////////////////////////////////////////////////////////////////////////////
 //When P and then S happened according to an observation, by induction (weak) it may be that alyways after P, usually S happens.
@@ -477,47 +477,47 @@
 
 //NAL2:
 
-([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
-({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
+([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgement, Derive:ForwardOnly)
+({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgement, Derive:ForwardOnly)
 
-([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
-({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
+([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgement, Derive:ForwardOnly)
+({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgement, Derive:ForwardOnly)
 
 //NAL3:
 
 //composition on both sides of a statement:
-((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
 
-((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
 
 //composition on one side of a statement:
-(W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-(W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+(W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+(W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
 
-(W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
-((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
+(W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgement, Derive:ForwardOnly)
+((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgement, Derive:ForwardOnly)
 
 //NAL4:
 
 //composition on both sides of a statement:
-((B,P) --> ?X) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((B,P) --> (A,P)) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((B,P) --> ?X) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+((B,P) --> (A,P)) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
 
-((\,N,A,_) --> ?X), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((\,N,A,_) --> (\,R,A,_)), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((\,N,A,_) --> ?X), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+((\,N,A,_) --> (\,R,A,_)), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
 
-((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
+((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
 
 //NAL5:
 
---A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgement)
-A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgement)
+--A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgement, Derive:ForwardOnly)
+A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgement, Derive:ForwardOnly)
 
 //compound composition one premise
 
-(||,B,A_1..n), B |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+(||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgement, Derive:ForwardOnly)
