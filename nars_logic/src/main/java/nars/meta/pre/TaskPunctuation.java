@@ -1,5 +1,6 @@
 package nars.meta.pre;
 
+import nars.Symbols;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.nal.nal8.Operation;
@@ -34,6 +35,8 @@ public class TaskPunctuation extends PreCondition {
 
     @Override
     public boolean test(final RuleMatch r) {
+        if(punc == Symbols.QUESTION)
+            r.rule.allowQuestionTask = true;
         return r.premise.getTask().getPunctuation() == punc;
     }
 
