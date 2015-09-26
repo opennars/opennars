@@ -107,17 +107,17 @@ public class PostCondition implements Serializable //since there can be multiple
             switch (type.toString()) {
 
                 case "Punctuation":
-                    if(which.equals("Question")) {
+                    if(which.toString().equals("Question")) {
                         custom_punctuation = Symbols.QUESTION;
                     }
                     //for completeness
-                    if(which.equals("Goal")) {
+                    if(which.toString().equals("Goal")) {
                         custom_punctuation = Symbols.GOAL;
                     }
-                    if(which.equals("Judgement")) {
+                    if(which.toString().equals("Judgement")) {
                         custom_punctuation = Symbols.JUDGMENT;
                     }
-                    if(which.equals("Quest")) {
+                    if(which.toString().equals("Quest")) {
                         custom_punctuation = Symbols.QUEST;
                     }
 

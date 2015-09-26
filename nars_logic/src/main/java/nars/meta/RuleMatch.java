@@ -2,6 +2,7 @@ package nars.meta;
 
 import nars.Global;
 import nars.Op;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
@@ -12,6 +13,7 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
+import objenome.solver.evolve.grammar.Symbol;
 
 import java.util.List;
 import java.util.Map;
@@ -122,12 +124,18 @@ public class RuleMatch extends FindSubst {
 
         final Truth T = task.getTruth();
         final Truth B = belief == null ? null : belief.getTruth();
+
+        char punct=p.custom_punctuation;
+        if(punct == '0') {
+            punct=task.getPunctuation();
+        }
+
         final Truth truth;
         {
 
-            if (task.isJudgment()) {
+            if (punct == Symbols.JUDGMENT) {
                 truth = p.truth.get(T, B);
-            } else if (task.isGoal()) {
+            } else if (punct == Symbols.GOAL) {
                 if (p.desire != null)
                     truth = p.desire.get(T, B);
                 else
@@ -212,12 +220,6 @@ public class RuleMatch extends FindSubst {
             }
             else {
                 budget = BudgetFunctions.compoundBackward(derive, premise);
-            }
-
-
-            char punct=p.custom_punctuation;
-            if(punct == '0') {
-                punct=task.getPunctuation();
             }
 
             t

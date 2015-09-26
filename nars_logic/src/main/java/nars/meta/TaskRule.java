@@ -410,6 +410,14 @@ public class TaskRule extends Rule<Premise, Task> {
      */
     public void forEachQuestionReversal(Consumer<TaskRule> w) {
 
+        String s = w.toString();
+        if(s.contains("task(\"?") || s.contains("task(\"@")) { //these are backward inference already
+            return;
+        }
+        if(s.contains("substitute(")) { //these can't be reversed
+            return;
+        }
+
         // T, B, [pre] |- C, [post] ||--
 
         Term T = this.getTask();
