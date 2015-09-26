@@ -47,20 +47,6 @@
     ([S] <-> [P]), [S] |- (S <-> P), (Truth:Identity, Desire:Identity)
     ([S] <-> [P]), [P] |- (S <-> P), (Truth:Identity, Desire:Identity)
 
-//Set introductions
-
-//    (S <-> P), S, not_set(S), not_set(P) |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
-//    (S <-> P), P, not_set(S), not_set(P) |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
-
-//    (S <-> P), S, not_set(S), not_set(P) |- ({S} <-> {P}), (Truth:Identity, Desire:Identity)
-//    (S <-> P), P, not_set(S), not_set(P) |- ([S] <-> [P]), (Truth:Identity, Desire:Identity)
-
-//    (S <-> P), S, not_set(S), not_set(P) |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
-//    (S <-> P), P, not_set(S), not_set(P) |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
-
-//    (S <-> P), S, not_set(S), not_set(P) |- ({S} --> {P}), (Truth:Identity, Desire:Identity)
-//    (S <-> P), P, not_set(S), not_set(P) |- ([S] --> [P]), (Truth:Identity, Desire:Identity)
-
 //Nothing is more specific than a instance, so its similar
 
     (S --> {P}),  S  |- (S <-> {P}), (Truth:Identity, Desire:Identity)
@@ -493,7 +479,16 @@
 
 //composition on both sides of a statement:
 ((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+
+((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
 //composition on one side of a statement:
 (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+(W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
 
+(W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
+((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgement)

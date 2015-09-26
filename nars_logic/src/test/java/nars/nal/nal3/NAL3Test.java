@@ -64,43 +64,6 @@ public class NAL3Test extends AbstractNALTest {
     }
 
     @Test
-    public void minimal_set_operations() throws InvalidInputException {
-        TestNAR tester = test();
-        tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
-        tester.believe("<planetX --> {Saturn}>", 1.0f, 0.7f); //.en("PlanetX is probably Saturn.");
-        tester.mustBelieve(cycles, "<planetX --> {Mars,Pluto,Venus,Saturn}>", 1.0f ,0.63f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
-        tester.run();
-    }
-
-    @Test
-    public void minimal_set_operations_2() throws InvalidInputException {
-        TestNAR tester = test();
-        tester.believe("<planetX --> [Mars,Pluto,Venus]>",0.9f,0.9f);
-        tester.believe("<planetX --> [Saturn]>", 1.0f, 0.7f);
-        tester.mustBelieve(cycles, "<planetX --> [Mars,Pluto,Venus,Saturn]>", 0.9f ,0.63f);
-        tester.run();
-    }
-
-    @Test
-    public void minimal_set_operations_3() throws InvalidInputException {
-        TestNAR tester = test();
-        tester.believe("<[Mars,Pluto,Venus] --> planetX>",0.9f,0.9f);
-        tester.believe("<[Saturn] --> planetX>", 1.0f, 0.7f);
-        tester.mustBelieve(cycles, "<[Mars,Pluto,Venus,Saturn] --> planetX>", 1.0f ,0.63f);
-        tester.run();
-    }
-
-    @Test
-    public void minimal_set_operations_4() throws InvalidInputException {
-        TestNAR tester = test();
-        tester.believe("<{Mars,Pluto,Venus} --> planetX>",0.9f,0.9f);
-        tester.believe("<{Saturn} --> planetX>", 1.0f, 0.7f);
-        tester.mustBelieve(cycles, "<{Mars,Pluto,Venus,Saturn} --> planetX>", 0.9f ,0.63f);
-        tester.run();
-    }
-
-
-    @Test
     public void set_operations() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
@@ -160,6 +123,15 @@ public class NAL3Test extends AbstractNALTest {
     }
 
     @Test
+    public void composition_on_both_sides_of_a_statement_2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<bird --> animal>",0.9f,0.9f); //.en("Bird is a type of animal.");
+        tester.ask("<(|,bird,swimmer) --> (|,animal,swimmer)>"); //.en("Is a swimming bird a type of swimming animal?");
+        tester.mustBelieve(cycles, "<(|,bird,swimmer) --> (|,animal,swimmer)>", 0.90f ,0.73f); //.en("A swimming bird is probably a type of swimming animal.");
+        tester.run();
+    }
+
+    @Test
     public void composition_on_both_sides_of_a_statement2() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<bird --> animal>",0.9f,0.9f); //.en("Bird is a type of animal.");
@@ -169,7 +141,16 @@ public class NAL3Test extends AbstractNALTest {
     }
 
     @Test
-    public void compound_composition_one_premise() throws InvalidInputException {
+    public void composition_on_both_sides_of_a_statement2_2() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<bird --> animal>",0.9f,0.9f); //.en("Bird is a type of animal.");
+        tester.ask("<(~,swimmer,animal) --> (~,swimmer,bird)>"); //.en("Is a nonanimal swimmer a type of a nonbird swimmer?");
+        tester.mustBelieve(cycles, "<(~,swimmer,animal) --> (~,swimmer,bird)>", 0.90f ,0.73f); //.en("A nonanimal swimmer is probably a type of nonbird swimmer.");
+        tester.run();
+    }
+
+    @Test
+     public void compound_composition_one_premise() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<swan --> bird>",0.9f,0.9f); //.en("Swan is a type of bird.");
         tester.ask("<swan --> (|,bird,swimmer)>"); //.en("Is a swan a type of bird or swimmer?");
