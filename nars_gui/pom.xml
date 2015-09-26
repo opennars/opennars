@@ -192,6 +192,16 @@
             <version>1.4.4</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.boofcv</groupId>
+            <artifactId>visualize</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.boofcv</groupId>
+            <artifactId>WebcamCapture</artifactId>
+        </dependency>
+
     </dependencies>
 
 

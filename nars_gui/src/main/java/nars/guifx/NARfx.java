@@ -24,6 +24,7 @@ import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.sonification.ConceptSonification;
 import nars.task.Task;
+import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
 import java.util.Map;
@@ -293,6 +294,9 @@ public class NARfx  {
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new NARGraph1(nar));
             ni.addTool("Fractal Workspace", () -> new RunSpacegraph.DemoSpacegraph());
+
+            ni.addTool("Webcam", () -> new WebcamFX());
+
 
             ni.addTool("Terminal (bash)", () -> new LocalTerminal());
             ni.addTool("Status", () -> new StatusPane(nar));
