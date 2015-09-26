@@ -27,6 +27,7 @@ public class TaskRule extends Rule<Premise, Task> {
     //match first rule pattern with task
 
 
+    public boolean allowQuestionTask=false;
     public PreCondition[] preconditions;
     //private final Term[] preconditions; //the terms to match
 
@@ -429,10 +430,14 @@ public class TaskRule extends Rule<Premise, Task> {
         Term C = this.getResult();
 
         //      C, B, [pre], task_is_question() |- T, [post]
-        w.accept(clone(C, B, T));
+        TaskRule clone1 = clone(C, B, T);
+        clone1.allowQuestionTask = true;
+        w.accept(clone1);
 
         //      C, T, [pre], task_is_question() |- B, [post]
-        w.accept(clone(C, T, B));
+        TaskRule clone2 = clone(C, T, B);
+        clone1.allowQuestionTask = true;
+        w.accept(clone2);
 
     }
 

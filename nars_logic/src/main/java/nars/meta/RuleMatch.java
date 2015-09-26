@@ -88,6 +88,9 @@ public class RuleMatch extends FindSubst {
         if (task == null)
             throw new RuntimeException("null task");
 
+        if(task.isQuestion() && !rule.allowQuestionTask) {
+            return null;
+        }
 
         //stamp cyclic filter
         final boolean single = (belief == null);
