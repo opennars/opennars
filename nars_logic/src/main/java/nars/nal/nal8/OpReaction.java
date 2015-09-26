@@ -106,8 +106,6 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
      * Required method for every operate, specifying the corresponding
      * operation
      *
-     * @param args   Arguments of the operation, both input (constant) and output (variable)
-     * @param memory
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
@@ -183,7 +181,7 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
                 budget(operation.getTask().getBudget()).
-                present().
+                present(memory).
                 parent(opTask).
                 cause(operation).
                 reason("Executed")

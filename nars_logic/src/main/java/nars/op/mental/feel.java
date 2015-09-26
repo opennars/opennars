@@ -57,7 +57,7 @@ public abstract class feel extends SynchOperator implements Mental {
         return Lists.newArrayList(TaskSeed.make(memory, content)
                         .judgment().truth(new DefaultTruth(value, 0.999f))
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                        .occurrNow()
+                        .occurrNow(nar)
         );
 
 

@@ -598,7 +598,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     void discountConfidence();
 
 
-    void setBestSolution(Memory memory, Task belief);
+    void setBestSolution(Task belief, Memory memory);
 
 
     boolean isDeleted();

@@ -104,7 +104,7 @@ public class Abbreviation implements Consumer<Task> {
 
                 nar.input(TaskSeed.make(nar, Similarity.make(termAbbreviating, atomic))
                                 .judgment().truth(1, abbreviationConfidence)
-                                .parent(task).occurrNow()
+                                .parent(task).occurrNow(nar)
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
                                         Global.DEFAULT_JUDGMENT_DURABILITY)
                 );

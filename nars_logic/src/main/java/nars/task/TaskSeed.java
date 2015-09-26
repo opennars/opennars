@@ -22,10 +22,8 @@ import nars.truth.Truth;
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class TaskSeed extends DefaultTask<Compound> implements Stamp {
+@Deprecated public class TaskSeed extends DefaultTask<Compound>  {
 
-
-    transient private final Memory memory;
 
     public static <C extends Compound> TaskSeed make(NAR nar, C t) {
         return make(nar.memory(), t);
@@ -55,7 +53,6 @@ public class TaskSeed extends DefaultTask<Compound> implements Stamp {
 
         budgetDirect(Float.NaN, Float.NaN, Float.NaN);
 
-        this.memory = memory;
         setDuration(memory.duration());
         setOccurrenceTime(TIMELESS);
     }
@@ -182,26 +179,26 @@ public class TaskSeed extends DefaultTask<Compound> implements Stamp {
         return this;
     }
 
-    public TaskSeed tense(Tense t) {
+    public TaskSeed tense(Tense t, Memory memory) {
         this.occurr(Stamp.getOccurrenceTime(memory.time(), t, memory));
         return this;
     }
 
     //TODO make these return the task, as the final call in the chain
-    public TaskSeed eternal() {
+    /*public TaskSeed eternal() {
         return tense(Tense.Eternal);
+    }*/
+
+    public TaskSeed present(Memory memory) {
+        return tense(Tense.Present, memory);
     }
 
-    public TaskSeed present() {
-        return tense(Tense.Present);
+    public TaskSeed past(Memory memory) {
+        return tense(Tense.Past, memory);
     }
 
-    public TaskSeed past() {
-        return tense(Tense.Past);
-    }
-
-    public TaskSeed future() {
-        return tense(Tense.Future);
+    public TaskSeed future(Memory memory) {
+        return tense(Tense.Future, memory);
     }
 
 
@@ -323,8 +320,8 @@ public class TaskSeed extends DefaultTask<Compound> implements Stamp {
         return this;
     }
 
-    public TaskSeed solution(Task solutionBelief) {
-        setBestSolution(memory, solutionBelief);
+    public TaskSeed solution(Task solutionBelief, Memory memory) {
+        setBestSolution(solutionBelief, memory);
         return this;
     }
 
@@ -378,7 +375,11 @@ public class TaskSeed extends DefaultTask<Compound> implements Stamp {
         return this;
     }
 
-    public TaskSeed occurrNow() {
+    public final TaskSeed occurrNow(final NAR nar) {
+        return occurrNow(nar.memory);
+    }
+
+    public TaskSeed occurrNow(final Memory memory) {
         setOccurrenceTime(memory.time());
         return this;
     }
@@ -391,4 +392,11 @@ public class TaskSeed extends DefaultTask<Compound> implements Stamp {
 //        this.occDelta = occurenceTime;
 //        return this;
 //    }
+
+
+    @Override
+    @Deprecated public TaskSeed setEternal() {
+        super.setEternal();
+        return this;
+    }
 }

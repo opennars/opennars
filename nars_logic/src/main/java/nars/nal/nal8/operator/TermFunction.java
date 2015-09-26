@@ -87,7 +87,7 @@ public abstract class TermFunction<O> extends SynchOperator {
                         truth(getResultFrequency(), getResultConfidence()).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
-                        tense(getResultTense())
+                        tense(getResultTense(), nar.memory)
             );
 
             /*float equal = equals(lastTerm, y);
@@ -210,7 +210,7 @@ public abstract class TermFunction<O> extends SynchOperator {
             //this will get the original input operation term, not after it has been inlined.
             Compound inputTerm = operation.getTask().getTerm();
 
-            Task b = TaskSeed.make(memory, inputTerm).judgment().eternal().truth((Truth) y);
+            Task b = TaskSeed.make(memory, inputTerm).judgment().truth((Truth) y).setEternal();
 
             nar.input(b);
 

@@ -233,7 +233,7 @@ public class LocalRules {
         }
 
 
-        question.setBestSolution(memory, belief);
+        question.setBestSolution(belief, memory);
 
         memory.logic.SOLUTION_BEST.set(newQ);
 

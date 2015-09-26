@@ -396,6 +396,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
+    public DefaultTask<T> setEternal() {
+        setOccurrenceTime(Stamp.ETERNAL);
+        return this;
+    }
+
+
     @Override
     public final Sentence setDuration(int d) {
         this.duration = d;
@@ -524,7 +530,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * @param judg The solution to be remembered
      */
     @Override
-    public void setBestSolution(final Memory memory, final Task judg) {
+    public void setBestSolution(final Task judg, final Memory memory) {
         InternalExperience.experienceFromBelief(memory, this, judg);
         bestSolution = reference(judg);
     }

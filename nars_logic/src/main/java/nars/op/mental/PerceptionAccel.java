@@ -246,7 +246,7 @@ public class PerceptionAccel extends OnTopics {
             nal.input( nal.newTask(C).judgment().truth(truth)
                     .budget(UtilityFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
                     .parent(task, newEvent)
-                    .occurrNow()
+                    .occurrNow(nal.memory())
                     .setEvidence(Stamp.toSetArray(evBase.toArray()))
                     .setTemporalInducting(!longest_result_derived_already)
             );

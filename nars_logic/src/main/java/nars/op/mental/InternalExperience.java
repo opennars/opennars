@@ -315,7 +315,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         p.input(p.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(Global.DEFAULT_GOAL_PRIORITY * INTERNAL_EXPERIENCE_PRIORITY_MUL,
                                 Global.DEFAULT_GOAL_DURABILITY * INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                        .parent(parent).occurrNow());
+                        .parent(parent).occurrNow(p.memory()));
 
     }
 

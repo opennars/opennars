@@ -16,13 +16,13 @@ public class TaskSeedTest {
 
         String s = "<a --> b>.";
 
-        assertTrue(TaskSeed.make(n.memory, n.term(s)).eternal().isEternal());
+        assertTrue(TaskSeed.make(n.memory, n.term(s)).setEternal().isEternal());
 
         assertTrue("default is timeless", TaskSeed.make(n.memory, n.term(s)).isTimeless());
 
-        assertTrue("tense=eternal is eternal", TaskSeed.make(n.memory, n.term(s)).eternal().isEternal());
+        assertTrue("tense=eternal is eternal", TaskSeed.make(n.memory, n.term(s)).setEternal().isEternal());
 
-        assertTrue("present is non-eternal", !TaskSeed.make(n.memory, n.term(s)).present().isEternal());
+        assertTrue("present is non-eternal", !TaskSeed.make(n.memory, n.term(s)).present(n.memory).isEternal());
 
     }
 
@@ -33,9 +33,9 @@ public class TaskSeedTest {
         String s = "<a --> b>.";
 
         //the final occurr() or tense() is the value applied
-        assertTrue(!TaskSeed.make(n.memory, n.term(s)).eternal().occurr(100).isEternal());
-        assertTrue(!TaskSeed.make(n.memory, n.term(s)).eternal().present().isEternal());
-        assertTrue(TaskSeed.make(n.memory, n.term(s)).occurr(100).eternal().isEternal());
+        assertTrue(!TaskSeed.make(n.memory, n.term(s)).setEternal().occurr(100).isEternal());
+        assertTrue(!TaskSeed.make(n.memory, n.term(s)).setEternal().present(n.memory).isEternal());
+        assertTrue(TaskSeed.make(n.memory, n.term(s)).occurr(100).setEternal().isEternal());
     }
 
 
