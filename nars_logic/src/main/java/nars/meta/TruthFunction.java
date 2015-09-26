@@ -21,7 +21,7 @@ public enum TruthFunction {
     },
     StructuralIntersection() {
         @Override public Truth get(final Truth T, final Truth B) {
-            return TruthFunctions.intersection(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
+            return TruthFunctions.intersection(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
     StructuralDeduction() {
@@ -31,7 +31,7 @@ public enum TruthFunction {
     },
     StructuralAbduction() {
         @Override public Truth get(final Truth T, final Truth B) {
-            return TruthFunctions.abduction(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
+            return TruthFunctions.abduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
     Deduction(true) {

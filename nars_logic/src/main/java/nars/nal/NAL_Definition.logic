@@ -20,13 +20,13 @@
 
 //Similarity to Inheritance
 
-    (S <-> P), S |- (S --> P), (Truth:StructuralIntersection, Derive:AllowBackward)
-    (S <-> P), P |- (S --> P), (Truth:StructuralIntersection, Derive:AllowBackward)
+    (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgement)
+    (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgement)
 
 //Inheritance to Similarity
 
-    (S --> P), S |- (S <-> P), (Truth:StructuralAbduction, Derive:AllowBackward)
-    (S --> P), P |- (S <-> P), (Truth:StructuralAbduction, Derive:AllowBackward)
+    (S <-> P), (S --> P), task("?") |- (S <-> P), (Truth:StructuralAbduction, Punctuation:Judgement)
+    (S <-> P), (S --> P), task("?") |- (S <-> P), (Truth:StructuralAbduction, Punctuation:Judgement)
 
 //Set Definition Similarity to Inheritance
 
