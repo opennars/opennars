@@ -163,9 +163,9 @@ public enum TruthFunction {
             return new DefaultTruth(B.getFrequency(), B.getConfidence());
         }
     },
-    BeliefComposition() {
+    BeliefStructuralDeduction() {
         @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
-            return new DefaultTruth(B.getFrequency(), B.getConfidence() * B.getConfidence() * B.getConfidence());
+            return TruthFunctions.deduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     }
     ;
