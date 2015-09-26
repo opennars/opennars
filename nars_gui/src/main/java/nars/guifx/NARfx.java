@@ -8,6 +8,7 @@ import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -17,6 +18,8 @@ import nars.Audio;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.guifx.demo.RunSpacegraph;
+import nars.guifx.graph2.NARGraph1;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.sonification.ConceptSonification;
@@ -287,7 +290,10 @@ public class NARfx  {
                 //ni.addView(additional components);
             }
 
-            /** tool registration */
+            ni.addTool("Task Tree", () -> new TreePane(nar));
+            ni.addTool("Concept Network", () -> new NARGraph1(nar));
+            ni.addTool("Fractal Workspace", () -> new RunSpacegraph.DemoSpacegraph());
+
             ni.addTool("Terminal (bash)", () -> new LocalTerminal());
             ni.addTool("Status", () -> new StatusPane(nar));
             ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
@@ -499,7 +505,9 @@ public class NARfx  {
             setCenter(info);
 
             CheckBox b = new CheckBox("Sonify");
-            setBottom(b);
+            ToggleButton r = new ToggleButton("Record (to file)...");
+            setLeft(b);
+            setRight(r);
             b.selectedProperty().addListener(c -> {
                 if (b.isSelected()) {
                     start();
