@@ -140,19 +140,23 @@ public class InfiniPeer extends DefaultCacheManager {
     }
 
 
-    public static InfiniPeer file(String diskPath, int maxEntries) {
-        return file("_", diskPath, maxEntries);
-    }
-
-
     /** for local only mode on the same host, saved to disk */
-    public static InfiniPeer file(String userID, String diskPath, int maxEntries) {
+    public static InfiniPeer file(String diskPath, int maxEntries) {
 
         ConfigurationBuilder config = new ConfigurationBuilder();
+        config.versioning().disable();
         config.persistence()
+
+        //single file store:
+
                 .addSingleFileStore()
                 .location(diskPath)
                 .maxEntries(maxEntries);
+
+        config.unsafe();
+
+
+
         /*
 
         GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder()
@@ -258,7 +262,11 @@ public class InfiniPeer extends DefaultCacheManager {
     }
 
     public static InfiniPeer tmp() {
-        return file("_", System.getProperty("java.io.tmpdir") + "/" + "opennars", 128);
+        return file(getTempDir() + "/" + "opennars", 128*1024);
+    }
+
+    public static String getTempDir() {
+        return System.getProperty("java.io.tmpdir");
     }
 
 //    public static void main(String args[]) throws Exception {

@@ -5,6 +5,7 @@ import nars.bag.Bag;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
+import nars.meter.TestNAR;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
@@ -158,7 +159,7 @@ public class TermLinkTest {
         assertTrue(6 <= ainhb.size());
         assertTrue(ainhb.contains("a"));
         assertTrue(ainhb.contains("b"));
-        //assertTrue("not necessary to include the term's own name in comopnent links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
+        //assertTrue("not necessary to include the term's own name in component links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
 
         Set<String> atl = getTermLinks(n.concept("a").getTermLinks());
         //System.out.println(ainhb);
@@ -266,4 +267,28 @@ public class TermLinkTest {
 
     }
 
+
+    @Test
+    public void testIndVarConnectivity() {
+
+        String c = "<<$x --> bird> ==> <$x --> animal>>.";
+
+        NAR n = new Default().nal(6);
+        n.input(c);
+        n.frame(1);
+
+        TermLinkGraph g = new TermLinkGraph(n);
+        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
+
+    }
+
+    @Test
+    public void testIndVarConnectivity2() {
+
+        new TestNAR(new Default().nal(6))
+                .believe("<<$x --> bird> ==> <$x --> animal>>")
+                .believe("<robin --> bird>")
+                .mustBelieve(2, "<robin --> animal>", 0.81f)
+                .run();
+    }
 }

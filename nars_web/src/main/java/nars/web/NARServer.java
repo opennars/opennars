@@ -9,8 +9,13 @@ import io.undertow.websockets.WebSocketConnectionCallback;
 import io.undertow.websockets.core.*;
 import io.undertow.websockets.extensions.PerMessageDeflateHandshake;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
+import nars.Memory;
 import nars.NAR;
+import nars.bag.impl.InfiniCacheBag;
+import nars.clock.RealtimeMSClock;
 import nars.nar.Default;
+import nars.util.data.random.XorShift1024StarRandom;
+import nars.util.db.InfiniPeer;
 import nars.util.event.Topic;
 import nars.util.io.JSON;
 
@@ -210,9 +215,16 @@ public class NARServer extends PathHandler {
     public static void main(String[] args) throws Exception {
 
 
-        NAR nar = new Default();
-        //d.memory.setClock(new RealtimeMSClock(false));
-
+        NAR nar = new Default(
+                new Memory(  new RealtimeMSClock(false),
+                        new XorShift1024StarRandom(1),
+                        new InfiniCacheBag(
+                                InfiniPeer.tmp().getCache()
+                                //InfiniPeer.file(path, MAX_INSTANCES).the(id)
+                        )),
+                1024,
+                1,2,3
+        );
 
 
         int httpPort;
