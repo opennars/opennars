@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by me on 9/26/15.
  */
-public class IndependentVariableIntroduction {
+public class IndependentVariableIntroductionTest {
 
     final String somethingIsBird = "bird:$x";
     final String somethingIsAnimal = "animal:$x";

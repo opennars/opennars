@@ -237,7 +237,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
                                     )
                     );*/
                     //add reverse questions
-                    rUnnorm.forEachQuestionReversal(q -> {
+                    rNorm.forEachQuestionReversal(q -> {
 
                         q = q.normalizeRule();
 

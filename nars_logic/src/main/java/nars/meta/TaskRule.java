@@ -113,19 +113,19 @@ public class TaskRule extends Rule<Premise, Task> {
                 Terms.levelValid(getResult(), nalLevel);
     }
 
-    public boolean isReversible() {
-        //TEST
-        if (toString().contains("shift_occurrence"))
-            return false;
-        if (toString().contains("substitute"))
-            return false;
-        return true;
-    }
-
-    /** how many unique pattern variables are present */
-    public int numPatternVariables() {
-        return numPatternVar;
-    }
+//    public boolean isReversible() {
+//        //TEST
+//        if (toString().contains("shift_occurrence"))
+//            return false;
+//        if (toString().contains("substitute"))
+//            return false;
+//        return true;
+//    }
+//
+//    /** how many unique pattern variables are present */
+//    public int numPatternVariables() {
+//        return numPatternVar;
+//    }
 
     @Override
     protected void init(Term... term) {
@@ -169,6 +169,7 @@ public class TaskRule extends Rule<Premise, Task> {
 
     @Override
     public TaskRule normalizeDestructively() {
+
 
         this.transform(uppercaseAtomsToPatternVariables);
 
