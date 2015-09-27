@@ -42,62 +42,16 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
     public final Task targetTask;
 
 
-//
-//
-//    /** allows re-use of the Recording object since it would otherwise be instantiated frequently */
-//    public static class RecordingList extends CircularArrayList<Recording> {
-//
-//        public RecordingList(int capacity) {
-//            super(capacity);
-//        }
-//
-//
-//        public void add(final TermLink t, final long time) {
-//            add(new Recording(t, time));
-//        }
-//
-//    }
-
-
-
-
-    /**
-     * The type of tlink, one of the above
-     */
-    @Deprecated public final short type;
-
-    /**
-     * The index of the component in the component list of the compound, may have up to 4 levels
-     */
-    @Deprecated public final short[] index;
-
-
-    protected TaskLink(Task t, Budget v, short[] index, short type) {
+    protected TaskLink(Task t, Budget v) {
         super(v);
 
         if (t == null)
             throw new RuntimeException(this + " null task");
 
         this.targetTask = t;
-        this.index = index;
-        this.type = type;
     }
 
-    public TaskLink(final Task t, final Budget v) {
-        this(t, v, null, TermLink.SELF);
-    }
 
-    /**
-     * Constructor
-     * <p>
-     *
-     * @param t        The target Task
-     * @param template The TermLink template
-     * @param v        The budget
-     */
-    public TaskLink(final Task t, final TermLinkTemplate template, final Budget v) {
-        this(t, v, template.index, template.type);
-    }
 
 
     @Override

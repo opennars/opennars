@@ -19,8 +19,8 @@ public class CyclesInterval extends Atom implements AbstractInterval {
 
     final static CyclesInterval zero = new CyclesInterval(0, 0);
 
-    long cyc;
-    int duration;
+    final long cyc;
+    final int duration;
 
     @Override final public boolean hasVar(Op type) {
         return false;
@@ -64,40 +64,55 @@ public class CyclesInterval extends Atom implements AbstractInterval {
     }
 
     @Override
-    public long cycles(Memory m) {
+    public final long cycles(Memory m) {
         return cyc;
     }
 
 
-
-    public int structure() { return 0;     }
+    public final int structure() { return 0;     }
 
 
     @Override
-    public Op op() {
+    public final Op op() {
         return Op.INTERVAL;
     }
 
     @Override
-    public Term clone() {
-        return new CyclesInterval(cyc, duration);
+    public final Term clone() {
+        return this; /*new CyclesInterval(cyc, duration); */
     }
 
     @Override
-    public boolean hasVar() {
+    public final boolean hasVar() {
         return false;
     }
 
     @Override
-    public int vars() {
+    public final int vars() {
         return 0;
     }
 
     @Override
-    public void append(Appendable output, boolean pretty) throws IOException {
+    public final void append(Appendable output, boolean pretty) throws IOException {
         output.append('/').append(Long.toString(cyc)).append('/');
     }
 
+
+    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
+    public StringBuilder toStringBuilder(final boolean pretty) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            append(sb, pretty);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb;
+    }
+
+    @Override
+    public String toString() {
+        return toStringBuilder(false).toString();
+    }
 
     /** filter any zero CyclesIntervals from the list and return a new one */
     public static Term[] removeZeros(final Term[] relterms) {

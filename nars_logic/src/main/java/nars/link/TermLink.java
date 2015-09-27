@@ -39,40 +39,30 @@ import nars.term.Termed;
  */
 public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Term>, Termed {
 
-
-
-    /** At C, point to C; TaskLink only */
-    public static final short SELF = 0;
-
-    /** At (&&, A, C), point to C */
-    public static final short COMPONENT = 1;
-    /** At C, point to (&&, A, C) */
-    public static final short COMPOUND = 2;
-
-    /** At <C --> A>, point to C */
-    public static final short COMPONENT_STATEMENT = 3;
-    /** At C, point to <C --> A> */
-    public static final short COMPOUND_STATEMENT = 4;
-
-    /** At <(&&, C, B) ==> A>, point to C */
-    public static final short COMPONENT_CONDITION = 5;
-    /** At C, point to <(&&, C, B) ==> A> */
-    public static final short COMPOUND_CONDITION = 6;
-
-    /** At C, point to <(*, C, B) --> A>; TaskLink only */
-    public static final short TRANSFORM = 8;
-    
+//    /** At C, point to C; TaskLink only */
+//    public static final short SELF = 0;
+//
+//    /** At (&&, A, C), point to C */
+//    public static final short COMPONENT = 1;
+//    /** At C, point to (&&, A, C) */
+//    public static final short COMPOUND = 2;
+//
+//    /** At <C --> A>, point to C */
+//    public static final short COMPONENT_STATEMENT = 3;
+//    /** At C, point to <C --> A> */
+//    public static final short COMPOUND_STATEMENT = 4;
+//
+//    /** At <(&&, C, B) ==> A>, point to C */
+//    public static final short COMPONENT_CONDITION = 5;
+//    /** At C, point to <(&&, C, B) ==> A> */
+//    public static final short COMPOUND_CONDITION = 6;
+//
+//    /** At C, point to <(*, C, B) --> A>; TaskLink only */
+//    public static final short TRANSFORM = 8;
+//
     
     /** The linked Term */
     public final Term target;
-
-
-    /** The index of the component in the component list of the compound, may have up to 4 levels */
-    public final short[] index;
-    public final short type;
-
-
-
 
 
     /**
@@ -80,28 +70,13 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
      * <p>
      * called in Concept.buildTermLinks only
      * @param
-     * @param template TermLink template previously prepared
+     * @param t target term
      * @param v Budget value of the tlink
      */
-    public TermLink(final Term t, final TermLinkTemplate template, final Budget v, final int hash) {
-        super(v);
-
-
-        this.target = t;
-
-        this.type = template.getType(t); /* whether this points to subterm */
-
-        this.index = template.index;
-    }
     public TermLink(final Term t, final Budget v) {
         super(v);
 
-
         this.target = t;
-
-        this.type = -1;
-
-        this.index = null;
     }
 
 
@@ -110,17 +85,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
         return this;
     }
 
-    public boolean toSelfOrTransform() {
-        return ((type == SELF) || (type == TRANSFORM));
-    }
-    public boolean toSuperTerm() {
-        if (toSelfOrTransform()) return false;
-        return type % 2 == 1;
-    }
-    public boolean toSubTerm() {
-        if (toSelfOrTransform()) return false;
-        return type % 2 == 0;
-    }
+
 
 
     @Override

@@ -8,12 +8,10 @@ import nars.task.Task;
 /** adjusts budget of items in a Bag. ex: merge */
 public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
-    TermLinkTemplate template;
     private Task task;
     public final Memory memory;
     private float forgetCycles;
     private long now;
-
 
     public TaskLinkBuilder(Memory m) {
         super();
@@ -35,40 +33,26 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     }
 
     @Override
-    public long time() {
+    public final long time() {
         return now;
     }
 
     @Override
-    public float getForgetCycles() {
+    public final float getForgetCycles() {
         return forgetCycles;
     }
 
-    public Task getTask() {
+    public final Task getTask() {
         return task;
     }
 
-    public void setTemplate(TermLinkTemplate template) {
-        this.template = template;
-    }
-
-
-
     @Override
-    public TaskLink newItem() {
-        final Task t = getTask();
-        if (template == null)
-            return new TaskLink(t, getBudget());
-        else
-            return new TaskLink(t, template, getBudget());
+    public final TaskLink newItem() {
+         return new TaskLink(getTask(), getBudget());
     }
-
 
     @Override
     public String toString() {
-        if (template==null)
-            return task.toString();
-        else
-            return template + " " + task;
+        return task.toString();
     }
 }

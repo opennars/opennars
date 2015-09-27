@@ -134,7 +134,7 @@ public abstract class AbstractAlann extends NAR {
 
         return ((MapCacheBag<Term,Concept>)(memory.getConcepts())).data.compute(term, (k, existing) -> {
             if (existing!=null) {
-                existing.getBudget().accumulate(budget, activationFactor);
+                existing.getBudget().mergePlus(budget, activationFactor);
                 return existing;
             }
             else {

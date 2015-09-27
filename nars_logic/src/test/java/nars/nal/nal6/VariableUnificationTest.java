@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 import static org.jgroups.util.Util.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
@@ -48,13 +49,13 @@ public class VariableUnificationTest extends AbstractNALTest {
     
     @Test public void testDepQueryVariableDistinct() {
 
-        TestNAR tester = test();
+        NAR tester = nar();
 
          /*
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable
         */
-        new AnswerReaction(tester.nar) {
+        new AnswerReaction(tester) {
 
             @Override
             public void onSolution(Task belief) {
@@ -65,16 +66,16 @@ public class VariableUnificationTest extends AbstractNALTest {
 
 
         //tester.nar.stdout();
-        assertTrue("test impl unfinished: ", false);
         //tester.requires.add(new OutputContainsCondition(tester.nar, "=/> <a --> 4>>.", 5));
 
 
-        tester.nar.input(
+        tester.input(
                 "<a --> 3>. :\\: \n" +
                         "<a --> 4>. :/: \n" +
                         "<(&/,<a --> 3>,?what) =/> <a --> #wat>>?");
 
         tester.run(32);
+        assertNotNull(tester.concept("<(&/, <a --> 3>, /10/) =/> <a --> 4>>"));
 
     }
     

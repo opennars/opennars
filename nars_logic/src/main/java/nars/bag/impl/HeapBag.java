@@ -67,11 +67,11 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     class HeapMap extends CollectorMap<K, E> {
 
         public HeapMap(int capacity) {
-            super(new CuckooMap(rng, capacity + 1));
+            super(new CuckooMap(rng, capacity + 1), CurveBag.DEFAULT_MERGE_METHOD);
         }
 
         public HeapMap(Map<K, E> map) {
-            super(map);
+            super(map, CurveBag.DEFAULT_MERGE_METHOD);
         }
 
         @Override

@@ -48,7 +48,7 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
         result
                 .forget(time(), getForgetCycles(), 0)
-                .accumulate(nextActivation, getActivationFactor());
+                .mergePlus(nextActivation, getActivationFactor());
 
         /** even if budget is unchanged, we need to set the last forget time */
         v.getBudget().setLastForgetTime(result.getLastForgetTime());

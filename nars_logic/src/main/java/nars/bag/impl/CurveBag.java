@@ -2,9 +2,11 @@ package nars.bag.impl;
 
 import com.google.common.collect.Sets;
 import com.gs.collections.api.block.function.primitive.FloatToFloatFunction;
+import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagSelector;
+import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.util.CollectorMap;
 import nars.util.data.Util;
@@ -30,6 +32,8 @@ import java.util.function.ToIntFunction;
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
 public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
+
+    public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.max;
 
     /**
      * mapping from key to item
@@ -83,7 +87,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     public class CurveMap extends CollectorMap<K, V> {
 
         public CurveMap(Map<K, V> map) {
-            super(map);
+            super(map, DEFAULT_MERGE_METHOD);
         }
 
 
@@ -503,7 +507,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     /**
      * Take out the first or last E in a level from the itemTable
      *
-     * @param level The current level
      * @return The first Item
      */
     protected final V removeItem(final int index) {

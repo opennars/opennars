@@ -1,6 +1,7 @@
 package nars.util;
 
-import nars.Global;
+import com.gs.collections.api.block.procedure.Procedure2;
+import nars.budget.Budget;
 import nars.budget.Itemized;
 
 import java.io.Serializable;
@@ -13,11 +14,12 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
 
 
     public final Map<K, V> map;
+    private final Procedure2<Budget, Budget> merge;
 
 
-
-    public CollectorMap(Map<K, V> map) {
+    public CollectorMap(Map<K, V> map, Procedure2<Budget,Budget> merge) {
         this.map = map;
+        this.merge = merge;
     }
 
     /** implementation for adding the value to another collecton (called internally)  */
@@ -36,8 +38,11 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
         final K key = value.name();
         final V valPrev = putKey(key, value);
 
-        if (!value.getBudget().mergeIfChanges(valPrev.getBudget(), Global.BUDGET_EPSILON))
-            return;
+
+        merge.value(value.getBudget(), valPrev.getBudget());
+
+        /*if (!value.getBudget().mergeIfChanges(valPrev.getBudget(), Global.BUDGET_EPSILON))
+            return;*/
 
         //TODO check before and after removal index and if the same just replace
         {

@@ -104,40 +104,41 @@ public class BeliefTableTest extends TestCase {
 
     }
 
-    @Test
-    public void testTruthOscillationLongTerm() {
-
-        NAR n = newNAR(16, (c, b) -> {
-            return new BeliefTable.BeliefConfidenceAndCurrentTime(c);
-        });
-        n.memory().duration.set(1);
-
-        int period = 2;
-
-        BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>");
-
-        boolean state = true;
-
-        //for (int i = 0; i < 16; i++) {
-        for (int i = 0; i < 255; i++) {
-
-            if (i % (period) == 0) {
-                b.believe(state ? 1f : 0f, 0.9f, Tense.Present);
-                state = !state;
-            }
-            else {
-                //nothing
-            }
-
-            n.frame();
-
-            /*if (i % 10 == 0) {
-                b.printWave();
-                b.printEnergy();
-                b.print();
-            }*/
-        }
-
-
-    }
+//    @Ignore
+//    @Test
+//    public void testTruthOscillationLongTerm() {
+//
+//        NAR n = newNAR(16, (c, b) -> {
+//            return new BeliefTable.BeliefConfidenceAndCurrentTime(c);
+//        });
+//        n.memory().duration.set(1);
+//
+//        int period = 2;
+//
+//        BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>");
+//
+//        boolean state = true;
+//
+//        //for (int i = 0; i < 16; i++) {
+//        for (int i = 0; i < 255; i++) {
+//
+//            if (i % (period) == 0) {
+//                b.believe(state ? 1f : 0f, 0.9f, Tense.Present);
+//                state = !state;
+//            }
+//            else {
+//                //nothing
+//            }
+//
+//            n.frame();
+//
+//            /*if (i % 10 == 0) {
+//                b.printWave();
+//                b.printEnergy();
+//                b.print();
+//            }*/
+//        }
+//
+//
+//    }
 }

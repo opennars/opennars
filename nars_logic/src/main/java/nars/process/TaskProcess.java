@@ -4,6 +4,7 @@
  */
 package nars.process;
 
+import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -28,6 +29,8 @@ import static nars.budget.BudgetFunctions.divide;
  * involving one concept only
  */
 public class TaskProcess extends NAL {
+
+    private static final Procedure2<Budget,Budget> DEFAULT_TERMLINK_MERGE = Budget.plus;
 
     public final Task task;
 
@@ -113,7 +116,7 @@ public class TaskProcess extends NAL {
 
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
         List<TermLinkTemplate> tl = termLinkBuilder.templates();
-        int recipients = termLinkBuilder.getNonTransforms();
+        int recipients = termLinkBuilder.templates().size();
         if (recipients == 0) {
             //termBudgetBalance += subBudget;
             //subBudget = 0;
@@ -137,12 +140,12 @@ public class TaskProcess extends NAL {
             subPriority = b.getPriority() / recipients;
             dur = b.getDurability();
             qua = b.getQuality();
+            Budget bb = new Budget(subPriority, dur, qua);
 
             if (subPriority >= Global.BUDGET_EPSILON) {
 
                 final NAR nar = this.nar;
-
-                int numTemplates = tl.size();
+                final int numTemplates = tl.size();
                 final float termLinkThresh = nar.memory().termLinkThreshold.floatValue();
 
                 for (int i = 0; i < numTemplates; i++) {
@@ -152,7 +155,7 @@ public class TaskProcess extends NAL {
                         continue;*/
 
                     //only apply this loop to non-transform termlink templates
-                    t.accumulate(subPriority, dur, qua);
+                    DEFAULT_TERMLINK_MERGE.value(t, bb);
 
                     if (updateTLinks) {
                         if (t.getPriority() >= termLinkThresh) {
@@ -233,8 +236,8 @@ public class TaskProcess extends NAL {
         final TaskLinkBuilder taskLinkBuilder = c.getTaskLinkBuilder();
 
         final List<TermLinkTemplate> templates = termLinkBuilder.templates();
-        final int numTemplates = termLinkBuilder.getNonTransforms();
-        if (templates == null || numTemplates == 0) {
+        final int numTemplates = termLinkBuilder.size();
+        if (numTemplates == 0) {
             //distribute budget to incoming termlinks?
             return false;
         }
@@ -251,7 +254,7 @@ public class TaskProcess extends NAL {
                 (subPri < nar.memory().taskLinkThreshold.floatValue() ))
             return false;
 
-        taskLinkBuilder.setTemplate(null);
+
         taskLinkBuilder.setTask(task);
 
 
@@ -277,8 +280,6 @@ public class TaskProcess extends NAL {
 
                 //share merge term instances
                 linkTemplate.setTargetInstance(componentConcept.getTerm());
-
-                taskLinkBuilder.setTemplate(linkTemplate);
 
                 /** activate the peer task tlink */
                 activateTaskLink(componentConcept, taskLinkBuilder);

@@ -271,7 +271,7 @@ public class LocalRules {
             nal.nar().input(belief);
         }
         else {
-            belief.getBudget().accumulate(budget);
+            belief.getBudget().mergePlus(budget);
 
             if (Global.DEBUG_TASK_LOG_SOLUTION)
                 belief.logUnrepeated("Solution" /*Global.DEBUG ? "Solution " + question : */);

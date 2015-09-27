@@ -27,7 +27,7 @@ public class AtomConcept extends AbstractConcept {
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
      */
-    protected final TermLinkBuilder termLinkBuilder;
+    protected transient final TermLinkBuilder termLinkBuilder;
     protected transient final TaskLinkBuilder taskLinkBuilder;
 
     public AtomConcept(Term atom, Budget budget, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks, Memory memory) {

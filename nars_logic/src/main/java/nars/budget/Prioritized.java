@@ -1,7 +1,5 @@
 package nars.budget;
 
-import static nars.nal.UtilityFunctions.max;
-
 /**
  * Essentially the methods involved with the priority component of a Budget
  */
@@ -11,9 +9,9 @@ public interface Prioritized {
 
     void setPriority(float p);
 
-    void addPriority(float v);
+    //void addPriority(float v);
 
-    void merge(Prioritized that);
+    //void merge(Prioritized that);
 
     long setLastForgetTime(long currentTime);
 
@@ -21,7 +19,4 @@ public interface Prioritized {
 
     void mulPriority(float factor);
 
-    default void maxPriority(final float otherPriority) {
-        setPriority(max(getPriority(), otherPriority)); //max durab
-    }
 }

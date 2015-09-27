@@ -9,7 +9,11 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.term.*;
+import nars.nal.nal7.AbstractInterval;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Termed;
+import nars.term.Variable;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -22,7 +26,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     final List<TermLinkTemplate> template;
 
-    transient int nonTransforms;
     transient TermLinkTemplate currentTemplate;
     transient boolean incoming;
     private int hash;
@@ -44,7 +47,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
             template = Global.newArrayList(complexity + 1);
-            nonTransforms = 0;
 
             prepareComponentLinks((Compound)host);
         }
@@ -56,27 +58,25 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     }
 
-    final void prepareComponentLinks(Compound ct) {
-        short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
-        prepareComponentLinks(type, ct);
-    }
-
     /**
      * Collect TermLink templates into a list, go down one level except in
      * special cases
      * <p>
      *
-     * @param type The type of TermLink to be built
      * @param t The CompoundTerm for which to build links
      */
-    void prepareComponentLinks(final short type, final Compound t) {
+    void prepareComponentLinks(final Compound t) {
+
 
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
 
 
-        for (short i = 0; i < t.term.length; ) {
+        for (int i = 0; i < t.term.length; i++) {
             Term ti = t.term[i].normalized();
+            if (!growComponent(ti)) {
+                continue;
+            }
 
             if (ti == null) {
                 throw new RuntimeException("prepareComponentLinks: " + t.term[i] + " normalized to null in superterm " + t);
@@ -85,67 +85,55 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             }
 
             if (!(ti instanceof Variable)) {
-                addTemplate(new TermLinkTemplate(concept, type, ti, i));
+                addTemplate(new TermLinkTemplate(concept, ti));
             }
 
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
-                prepareComponentLinks(TermLink.COMPOUND_CONDITION, (Compound) ti);
+                prepareComponentLinks((Compound) ti);
 
             } else if (ti instanceof Compound) {
                 final Compound cti = (Compound)ti;
 
                 boolean t1Grow = growLevel1(ti);
 
-                final short tiSize = (short)cti.term.length;
-                for (short j = 0; j < tiSize; ) {
+                for (int j = 0; j < cti.term.length; j++) {
                     Term tj = cti.term[j].normalized();
 
                     if (!(tj instanceof Variable)) {
-                        TermLinkTemplate a;
                         if (t1Grow) {
-                            if (type == TermLink.COMPOUND_CONDITION) {
-                                a = new TermLinkTemplate(concept, type, tj, 0, i, j);
-                            } else {
-                                a = new TermLinkTemplate(concept, type, tj, i, j);
-                            }
-                        } else {
-                            a = new TermLinkTemplate(concept, type, tj, i, j);
+                            addTemplate(new TermLinkTemplate(concept, tj));
                         }
-                        addTemplate(a);
                     }
 
                     if (growLevel2(tj)) {
                         Compound ctj = (Compound)tj;
 
-                        final short tjSize = (short) ctj.term.length;
-                        for (short k = 0; k < tjSize; ) {
+                        for (int k = 0; k < ctj.term.length; k++) {
                             final Term tk = ctj.term[k].normalized();
 
                             if (!(tk instanceof Variable)) {
-                                TermLinkTemplate b;
-                                if (type == TermLink.COMPOUND_CONDITION) {
-                                    b = new TermLinkTemplate(concept, type, tk, 0, i, j, k);
-                                } else {
-                                    b = new TermLinkTemplate(concept, type, tk, i, j, k);
-                                }
-                                addTemplate(b);
+                                addTemplate(new TermLinkTemplate(concept, tk));
                             }
 
-                            k++; //increment at end in case it's the last iteration we want to use max n-1, not n
+
                         }
                     }
 
-                    j++; //increment at end in case it's the last iteration we want to use max n-1, not n
                 }
             }
 
-            i++; //increment at end in case it's the last iteration we want to use max n-1, not n
+
         }
     }
 
+    /** determines whether to grow a 1st-level termlink to a subterm */
+    protected static boolean growComponent(Term t) {
+        return !(t instanceof AbstractInterval);
+    }
+
     final static boolean growLevel1(final Term t) {
-        return growProductOrImage(t);
+        return growComponent(t) && growProductOrImage(t);
         //return growLevel2(t);
     }
 
@@ -156,7 +144,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     final static boolean growLevel2(final Term t) {
-        return (growProductOrImage(t));
+        return growComponent(t) && growProductOrImage(t);
         //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
         //return (t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional) || (t instanceof Junction);
     }
@@ -171,9 +159,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     public void addTemplate(TermLinkTemplate tl) {
         template.add(tl);
-
-        if (tl.type!= TermLink.TRANSFORM)
-            nonTransforms++;
     }
 
 
@@ -241,7 +226,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public final TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTerm(), currentTemplate, getBudget(), hash);
+        return new TermLink(getTerm(),  getBudget());
     }
 
 //    public final TermLink out(TermLinkTemplate tlt) {
@@ -257,15 +242,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     public void delete() {
         template.clear();
-        nonTransforms = 0;
         currentTemplate = null;
     }
-
-    /** count of how many templates are non-transforms */
-    public final int getNonTransforms() {
-        return nonTransforms;
-    }
-
 
 
     @Override
@@ -277,6 +255,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public final TermLinkKey name() {
         return this;
+    }
+
+    public int size() {
+        return templates().size();
     }
 
     //    public TermLink get(boolean createIfMissing) {
