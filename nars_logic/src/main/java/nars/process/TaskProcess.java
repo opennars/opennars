@@ -134,8 +134,9 @@ public class TaskProcess extends NAL {
             //half of each subBudget is spent on this concept and the other concept's termlink
             //subBudget = b.getPriority() * (1f / (2 * recipients));
 
+
             //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-            float subPriority = b.getPriority() / recipients;
+            float subPriority = b.getPriority() / (1+recipients);
             dur = b.getDurability();
             qua = b.getQuality();
             Budget bb = new Budget(subPriority, dur, qua);
@@ -149,11 +150,17 @@ public class TaskProcess extends NAL {
                 for (int i = 0; i < numTemplates; i++) {
 
                     final TermLinkTemplate t = tl.get(i);
+
                     /*if (t.type == TermLink.TRANSFORM)
                         continue;*/
 
                     //only apply this loop to non-transform termlink templates
                     DEFAULT_TERMLINK_MERGE.value(t, bb);
+
+                    if ((t.getTarget().equals( getTerm() ))) {
+                        continue;
+                    }
+
 
                     if (updateTLinks) {
                         if (t.getPriority() >= termLinkThresh) {
@@ -178,9 +185,6 @@ public class TaskProcess extends NAL {
         termLinkBuilder.set(t, false, c.getMemory());
 
         Concept otherConcept = getTermLinkTemplateTarget(t);
-        if (otherConcept == null) {
-            return false;
-        }
 
 
         //activate this termlink to peer
