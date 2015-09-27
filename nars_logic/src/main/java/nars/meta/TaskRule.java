@@ -37,6 +37,8 @@ public class TaskRule extends Rule<Premise, Task> {
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
+    boolean allowBackward = false;
+
     public Product getPremises() {
         return (Product) term(0);
     }
@@ -70,17 +72,7 @@ public class TaskRule extends Rule<Premise, Task> {
 
 
 
-    public static final Set<Atom> reservedMetaInfoCategories = new HashSet(6);
 
-    static {
-        reservedMetaInfoCategories.add(Atom.the("Truth"));
-        reservedMetaInfoCategories.add(Atom.the("Stamp"));
-        reservedMetaInfoCategories.add(Atom.the("Desire"));
-        reservedMetaInfoCategories.add(Atom.the("Order"));
-        reservedMetaInfoCategories.add(Atom.the("Info"));
-        reservedMetaInfoCategories.add(Atom.the("Event"));
-        reservedMetaInfoCategories.add(Atom.the("Punctuation"));
-    }
 
     /**
      * non-null;
@@ -165,7 +157,7 @@ public class TaskRule extends Rule<Premise, Task> {
 
             //do not alter postconditions
             if ((containingCompound instanceof Inheritance)
-                    && reservedMetaInfoCategories.contains(
+                    && PostCondition.reservedMetaInfoCategories.contains(
                     ((Inheritance) containingCompound).getPredicate()))
                 return v;
 
@@ -375,10 +367,16 @@ public class TaskRule extends Rule<Premise, Task> {
             if (i >= postcons.length)
                 throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
 
-            postconditions[k++] = new PostCondition(t,
-                    beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
-                    afterConcs.toArray(new PreCondition[afterConcs.size()]),
-                    ((Product) postcons[i++]).terms());
+            try {
+                postconditions[k++] = new PostCondition(this, t,
+                        beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
+                        afterConcs.toArray(new PreCondition[afterConcs.size()]),
+                        ((Product) postcons[i++]).terms());
+            }
+            catch (Exception e) {
+                System.err.println(this);
+                System.err.println("\t" + e);
+            }
         }
 
         ensureValid();
@@ -387,9 +385,12 @@ public class TaskRule extends Rule<Premise, Task> {
         return this;
     }
 
+    public void setAllowBackward(boolean allowBackward) {
+        this.allowBackward = allowBackward;
+    }
 
 
-//    //TEMPORARY for testing, to make sure the postcondition equality guarantees rule equality
+    //    //TEMPORARY for testing, to make sure the postcondition equality guarantees rule equality
 //    boolean deepEquals(Object obj) {
 //        /*
 //        the precondition uniqueness is guaranted because they exist as the terms of the rule meta-term which equality is already tested for
@@ -411,7 +412,7 @@ public class TaskRule extends Rule<Premise, Task> {
      */
     public void forEachQuestionReversal(Consumer<TaskRule> w) {
 
-        String s = w.toString();
+        //String s = w.toString();
         /*if(s.contains("task(\"?") || s.contains("task(\"@")) { //these are backward inference already
             return;
         }
@@ -419,7 +420,7 @@ public class TaskRule extends Rule<Premise, Task> {
             return;
         }*/
 
-        if(!s.contains("AllowBackward")) { //explicitely stated in the rules now
+        if(!allowBackward) { //explicitely stated in the rules now
             return;
         }
 

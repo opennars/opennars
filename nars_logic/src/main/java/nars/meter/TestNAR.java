@@ -10,6 +10,7 @@ import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.util.event.Topic;
+import nars.util.graph.TermLinkGraph;
 import nars.util.meter.event.HitMeter;
 
 import java.io.Serializable;
@@ -77,6 +78,18 @@ public class TestNAR  {
         Global.DEBUG = true;
         nar.stdout();
         return this;
+    }
+
+    /** asserts that (a snapshot of) the termlink graph is fully connected */
+    public TestNAR assertTermLinkGraphConnectivity() {
+        TermLinkGraph g = new TermLinkGraph(nar);
+        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
+        return this;
+    }
+
+    /** returns a new TestNAR continuing with the current nar */
+    public TestNAR next() {
+        return new TestNAR(nar);
     }
 
     class EarlyExit extends CycleReaction {
@@ -376,11 +389,11 @@ public class TestNAR  {
         return this;
     }
 
-    public NAR run(long extraCycles) {
+    public TestNAR run(long extraCycles) {
         return runUntil(time() + extraCycles);
     }
 
-    public NAR runUntil(long finalCycle) {
+    public TestNAR runUntil(long finalCycle) {
 
         error = null;
 
@@ -395,7 +408,7 @@ public class TestNAR  {
             error = e;
         }*/
 
-        return nar;
+        return this;
     }
 
 

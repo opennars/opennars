@@ -2,14 +2,15 @@ package nars.meta;
 
 import nars.Global;
 import nars.Symbols;
-import nars.meta.pre.TaskPunctuation;
 import nars.nal.nal1.Inheritance;
 import nars.term.Atom;
 import nars.term.Term;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Describes a derivation postcondition
@@ -66,18 +67,41 @@ public class PostCondition implements Serializable //since there can be multiple
 //        });
 //    }
 
+    public static final Set<Atom> reservedMetaInfoCategories = new HashSet(6);
+
+    static {
+        reservedMetaInfoCategories.add(Atom.the("Truth"));
+        reservedMetaInfoCategories.add(Atom.the("Stamp"));
+        reservedMetaInfoCategories.add(Atom.the("Desire"));
+        reservedMetaInfoCategories.add(Atom.the("Order"));
+        reservedMetaInfoCategories.add(Atom.the("Derive"));
+        reservedMetaInfoCategories.add(Atom.the("Info"));
+        reservedMetaInfoCategories.add(Atom.the("Event"));
+        reservedMetaInfoCategories.add(Atom.the("Punctuation"));
+    }
+
     final static Atom
         negation = Atom.the("Negation"),
         conversion = Atom.the("Conversion"),
         contraposition = Atom.the("Contraposition"),
-        identity = Atom.the("Identity");
+        identity = Atom.the("Identity"),
+        allowBackward = Atom.the("AllowBackward");
 
     public char custom_punctuation = '0';
 
-    public PostCondition(Term term,
+    /**
+     *
+     * @param rule rule which contains and is constructing this postcondition
+     * @param term
+     * @param beforeConclusions
+     * @param afterConclusions
+     * @param modifiers
+     * @throws RuntimeException
+     */
+    public PostCondition(TaskRule rule, Term term,
                          PreCondition[] beforeConclusions,
                          PreCondition[] afterConclusions,
-                         Term... modifiers) {
+                         Term... modifiers) throws RuntimeException {
 
         this.term = term;
 
@@ -87,14 +111,13 @@ public class PostCondition implements Serializable //since there can be multiple
 
         for (final Term m : modifiers) {
             if (!(m instanceof Inheritance)) {
-                System.err.println("Unknown postcondition format: " + m);
-                continue;
+                throw new RuntimeException("Unknown postcondition format: " + m);
             }
 
             final Inheritance<Term,Atom> i = (Inheritance) m;
 
             if (!(i.getPredicate() instanceof Atom)) {
-                System.err.println("Unknown postcondition format (predicate must be atom): " + m);
+                throw new RuntimeException("Unknown postcondition format (predicate must be atom): " + m);
             }
 
             final Atom type = i.getPredicate();
@@ -144,18 +167,17 @@ public class PostCondition implements Serializable //since there can be multiple
                     }
                     break;
 
-                case "Order":
-                    //ignore, because this only affects at TaskRule constructoin
+                case "Derive":
+                    if (which.equals(allowBackward));
+                        rule.setAllowBackward(true);
                     break;
 
-                case "Derive":
-                    //ignore, because this only affects at TaskRule constructoin
+                case "Order":
+                    //ignore, because this only affects at TaskRule construction
                     break;
 
                 default:
-                    System.err.println("Unhandled postcondition: " + type + ":" + which);
-                    //mods.add(m);
-                    break;
+                    throw new RuntimeException("Unhandled postcondition: " + type + ":" + which);
             }
 
 

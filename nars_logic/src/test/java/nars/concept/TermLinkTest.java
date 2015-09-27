@@ -5,7 +5,6 @@ import nars.bag.Bag;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
-import nars.meter.TestNAR;
 import nars.nar.Default;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
@@ -268,27 +267,4 @@ public class TermLinkTest {
     }
 
 
-    @Test
-    public void testIndVarConnectivity() {
-
-        String c = "<<$x --> bird> ==> <$x --> animal>>.";
-
-        NAR n = new Default().nal(6);
-        n.input(c);
-        n.frame(1);
-
-        TermLinkGraph g = new TermLinkGraph(n);
-        assertTrue("termlinks form a fully connected graph:\n" + g.toString(), g.isConnected());
-
-    }
-
-    @Test
-    public void testIndVarConnectivity2() {
-
-        new TestNAR(new Default().nal(6))
-                .believe("<<$x --> bird> ==> <$x --> animal>>")
-                .believe("<robin --> bird>")
-                .mustBelieve(2, "<robin --> animal>", 0.81f)
-                .run();
-    }
 }
