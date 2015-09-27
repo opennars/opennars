@@ -261,6 +261,7 @@ public class InfiniPeer extends DefaultCacheManager {
         return clusterLocal("");
     }
 
+
     public static InfiniPeer tmp() {
         return file(getTempDir() + "/" + "opennars", 128*1024);
     }

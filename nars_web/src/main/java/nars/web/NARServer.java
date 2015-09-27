@@ -219,13 +219,14 @@ public class NARServer extends PathHandler {
                 new Memory(  new RealtimeMSClock(false),
                         new XorShift1024StarRandom(1),
                         new InfiniCacheBag(
-                                InfiniPeer.tmp().getCache()
-                                //InfiniPeer.file(path, MAX_INSTANCES).the(id)
+                                InfiniPeer.tmp().the("default")
                         )),
                 1024,
                 1,2,3
         );
 
+
+        nar.memory.concepts.forEach(c->System.out.println(c));
 
         int httpPort;
 

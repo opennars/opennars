@@ -25,11 +25,13 @@ public enum DesireFunction {
     },
     Weak() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.desireWeak(T, B);
         }
     },
     Induction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.desireInd(T,B);
         }
     },
@@ -40,7 +42,7 @@ public enum DesireFunction {
         }
     },
     Identity() {
-        @Override public Truth get(final Truth T, final Truth B) {
+        @Override public Truth get(final Truth T, /* N/A: */ final Truth B) {
             return new DefaultTruth(T.getFrequency(), T.getConfidence());
         }
     }

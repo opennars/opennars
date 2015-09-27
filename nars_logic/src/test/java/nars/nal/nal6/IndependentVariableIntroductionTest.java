@@ -21,10 +21,13 @@ public class IndependentVariableIntroductionTest {
         testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "bird:robin", "animal:robin");
     }
     @Test public void testB1() {
-        testIntroduction(somethingIsBird, Op.EQUIVALENCE, somethingIsAnimal, "animal:robin", "bird:robin");
+        //??
+        //testIntroduction(somethingIsBird, Op.EQUIVALENCE, somethingIsAnimal, "bird:robin", "robin:bird");
     }
-    @Test public void testB2() {
-        testIntroduction(somethingIsBird, Op.EQUIVALENCE, somethingIsAnimal, "bird:robin", "animal:robin");
+    @Test public void testC() {
+        //<<$x --> bird> ==> <$x --> animal>>, <tiger --> animal>
+
+        testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "animal:tiger", "animal:robinxx");
     }
 
 
@@ -35,7 +38,7 @@ public class IndependentVariableIntroductionTest {
         new TestNAR(new Default().nal(6))
                 .believe("<" + subj + " " + relation + " " + pred + ">")
                 .believe(belief)
-                .mustBelieve(2, concl, 0.81f)
+                .mustBelieve(8, concl, 0.81f)
                 .run();
                 //.next()
                 //.run(1).assertTermLinkGraphConnectivity();

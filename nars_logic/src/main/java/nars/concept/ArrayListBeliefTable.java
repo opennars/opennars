@@ -13,7 +13,12 @@ import static nars.nal.nal1.LocalRules.tryRevision;
  */
 public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTable {
 
-    private final Ranker rank;
+    private Ranker rank;
+
+    public ArrayListBeliefTable() {
+        super();
+        rank = null;
+    }
 
     public ArrayListBeliefTable(int cap, Ranker rank) {
         super(cap);

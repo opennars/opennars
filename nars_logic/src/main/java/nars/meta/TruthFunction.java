@@ -60,6 +60,7 @@ public enum TruthFunction {
     },
     Conversion() {
         @Override public Truth get(final Truth T, /*nullable*/ final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.conversion(B);
         }
     },
