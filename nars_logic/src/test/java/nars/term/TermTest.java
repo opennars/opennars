@@ -455,7 +455,6 @@ public class TermTest {
         NAR n = new Default();
 
         testTermComplexityMass(n, "x", 1, 1);
-        testTermComplexityMass(n, "+1", 1, 1);
 
         testTermComplexityMass(n, "#x", 0, 1, 0, 1, 0);
         testTermComplexityMass(n, "$x", 0, 1, 1, 0, 0);

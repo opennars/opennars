@@ -302,38 +302,39 @@ abstract public class NAR {
         return believe(priority, defaultJudgmentDurability, term, when, freq, conf);
     }
 
-    public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+    public NAR believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         return believe((Compound) term(termString), tense, freq, conf);
     }
 
-    public Task believe(Compound term, float freq, float conf) throws InvalidInputException {
+    public NAR believe(Compound term, float freq, float conf) throws InvalidInputException {
         return believe(term, Tense.Eternal, freq, conf);
     }
 
-    public Task believe(Compound term, Tense tense, float freq, float conf) throws InvalidInputException {
+    public NAR believe(Compound term, Tense tense, float freq, float conf) throws InvalidInputException {
         return believe(defaultJudgmentPriority, defaultJudgmentDurability, term, tense, freq, conf);
     }
 
-    public Task believe(String termString, float freq, float conf) throws InvalidInputException {
+    public NAR believe(String termString, float freq, float conf) throws InvalidInputException {
         return believe((Compound) term(termString), freq, conf);
     }
 
-    public Task believe(String termString, float conf) throws InvalidInputException {
+    public NAR believe(String termString, float conf) throws InvalidInputException {
         return believe(termString, 1.0f, conf);
     }
 
 
-    public Task believe(String termString) throws InvalidInputException {
+    public NAR believe(String termString) throws InvalidInputException {
 
         return believe(termString, 1.0f, defaultJudgmentConfidence);
     }
 
-    public Task believe(Compound term) throws InvalidInputException {
+    public NAR believe(Compound term) throws InvalidInputException {
         return believe(term, 1.0f, defaultJudgmentConfidence);
     }
 
-    public Task believe(float pri, float dur, Compound beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
+    public NAR believe(float pri, float dur, Compound beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+        believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
+        return this;
     }
 
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
@@ -1173,7 +1174,6 @@ abstract public class NAR {
      * A displaced Concept resulting from insert is forgotten (but may be stored
      * in optional subconcept memory
      *
-     * @param term indicating the concept
      * @return an existing Concept, or a new one, or null
      */
     public Concept conceptualize(Termed termed, final Budget budget) {

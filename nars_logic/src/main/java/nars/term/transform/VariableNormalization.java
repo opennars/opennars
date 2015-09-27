@@ -55,7 +55,7 @@ public class VariableNormalization implements VariableTransform {
 
     /** for use with compounds that have exactly one variable */
     public static final VariableTransform singleVariableNormalization =
-            (containing, current, depth) -> Variable.the(current.op, 1);
+            (containing, current, depth) -> Variable.the(current.op(), 1);
 
     VariableMap rename = null;
 
@@ -108,7 +108,7 @@ public class VariableNormalization implements VariableTransform {
         final VariableMap finalRename = rename;
         Variable vv = rename.computeIfAbsent(v, _vname -> {
             //type + id
-            Variable rvv = newVariable(v.op, finalRename.size() + 1);
+            Variable rvv = newVariable(v.op(), finalRename.size() + 1);
             if (!renamed) //test for any rename to know if we need to rehash
                 renamed |= !Byted.equals(rvv, v);
             return rvv;

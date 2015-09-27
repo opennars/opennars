@@ -20,7 +20,7 @@ public interface Byted {
         if (A.hashCode() != B.hashCode())
             return false;
 
-        return isEqualContentAndMergeIfTrue(A,a,B,b);
+        return isEqualContentAndMergeIfTrue(a,B,b);
     }
 
     static int compare(final Byted A, final Byted B) {
@@ -56,7 +56,7 @@ public interface Byted {
     }
 
     /** separate method so that the base equals() method can be more easily inlined */
-    static boolean isEqualContentAndMergeIfTrue(final Byted A, final byte[] a, final Byted B, final byte[] b) {
+    static boolean isEqualContentAndMergeIfTrue(final byte[] a, final Byted B, final byte[] b) {
 
         final int aLen = a.length;
         if (b.length != aLen)

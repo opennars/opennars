@@ -5,7 +5,6 @@ import nars.NAR;
 import nars.event.CycleReaction;
 import nars.io.JSONOutput;
 import nars.meter.condition.TaskCondition;
-import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -282,13 +281,6 @@ public class TestNAR  {
         return this;
     }
 
-    public Task believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
-        //Override believe to input beliefs that have occurrenceTime set on input
-        // "lazy timing" appropriate for test cases that can have delays
-        Task t = nar.believe(pri, dur, nar.term(beliefTerm), tense, freq, conf);
-
-        return explainable(t);
-    }
 
     public TestNAR believe(String... termString) throws InvalidInputException {
         for (String s : termString)
@@ -298,10 +290,6 @@ public class TestNAR  {
 
 
 
-    public Task believe(String termString, float conf) throws InvalidInputException {
-        return explainable(nar.believe(termString, conf));
-    }
-
 
     public TestNAR believe(String termString, float freq, float conf) throws InvalidInputException {
         nar.believe(termString, freq, conf);
@@ -309,9 +297,6 @@ public class TestNAR  {
     }
 
 
-    public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        return explainable(nar.believe(termString, tense, freq, conf));
-    }
 
     public static class Report implements Serializable {
 

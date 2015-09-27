@@ -117,7 +117,7 @@ public class FindSubst {
         final Variable term2Var;
         if (term2 instanceof Variable) {
             term2Var = (Variable) term2;
-            op2 = term2Var.op;
+            op2 = term2Var.op();
         } else
             term2Var = null;
 
@@ -125,7 +125,7 @@ public class FindSubst {
             putCommon(term1Var, term2Var);
         } else {
 
-            if ((term2Var != null) && !queryVarMatch(term1Var.op, op2))
+            if ((term2Var != null) && !queryVarMatch(term1Var.op(), op2))
                 return false;
 
             put1To2(term2, term1Var);

@@ -73,12 +73,20 @@ import nars.truth.Truth;
      * if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here
      */
     @Deprecated
-    public TaskSeed truth(Truth tv) {
+    public TaskSeed truth(final Truth tv) {
+
+        if (tv == null) {
+            if (isJudgmentOrGoal()) throw new RuntimeException("null truth value for judgment/goal");
+        }
+        else {
+            if (!isJudgmentOrGoal()) throw new RuntimeException("non-null truth value for non-judgment/non-goal");
+        }
+
         this.truth = tv;
         return this;
     }
 
-    public TaskSeed budget(float p, float d, float q) {
+    public final TaskSeed budget(final float p, final float d, final float q) {
         budgetDirect(p, d, q);
         return this;
     }
@@ -87,7 +95,7 @@ import nars.truth.Truth;
      * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
      */
     @Deprecated
-    public TaskSeed budget(Budget bv) {
+    public TaskSeed budget(final Budget bv) {
         return budget(bv.getPriority(), bv.getDurability(), bv.getQuality());
     }
 

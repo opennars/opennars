@@ -26,6 +26,24 @@ public class CyclesInterval extends Atom implements AbstractInterval {
         return false;
     }
 
+    @Override
+    public void rehash() {
+        //nothing
+    }
+
+    @Override
+    public final int hashCode() {
+        throw new RuntimeException("N/A");
+    }
+    @Override
+    public final int complexity() {
+        throw new RuntimeException("N/A");
+    }
+    @Override
+    public final int volume() {
+        throw new RuntimeException("N/A");
+    }
+
     public static CyclesInterval make(long numCycles) {
         return new CyclesInterval(numCycles);
     }
@@ -44,7 +62,7 @@ public class CyclesInterval extends Atom implements AbstractInterval {
     }
 
     protected CyclesInterval(long numCycles, int duration) {
-        super(interval(numCycles, bytesPrecision));
+        super((byte[]) null); //interval(numCycles, bytesPrecision));
 
         this.cyc = numCycles;
         this.duration = duration;

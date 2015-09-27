@@ -1,7 +1,7 @@
 package nars.io;
 
-import nars.LocalMemory;
 import nars.Memory;
+import nars.nar.Default;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,10 +19,12 @@ public class MemorySerializationTest extends AbstractSerializationTest<Memory,Me
     @Parameterized.Parameters(name = "{0}")
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
+                { new Default().memory },
 
-                //various memory setups
-                { new LocalMemory() }
-
+                { new Default()
+                .believe("b:a")
+                .believe("c:b.")
+                .run(4).memory }
         });
     }
 

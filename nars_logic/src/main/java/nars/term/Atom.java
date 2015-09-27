@@ -8,7 +8,10 @@ import nars.util.data.Util;
 import nars.util.utf8.Byted;
 import nars.util.utf8.Utf8;
 
+import java.io.Externalizable;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.nio.CharBuffer;
 import java.util.Map;
 import java.util.function.Function;
@@ -16,7 +19,7 @@ import java.util.function.Function;
 /**
  * Created by me on 4/25/15.
  */
-public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
+public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizable {
 
     private static final Map<String,Atom> atoms = Global.newHashMap(4096);
     public static final Function<String, Atom> AtomInterner = Atom::new;
@@ -122,6 +125,9 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 
     }
 
+    public Atom() {
+        this((byte[])null);
+    }
 
 
 //    /**
@@ -167,6 +173,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
         return x;
     }
     public final static Atom the(Number o) {
+        if (o instanceof Short) return the(o.intValue());
         if (o instanceof Integer) return the(o.intValue());
         return the(o.toString(), true);
     }
@@ -367,10 +374,20 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
         return data;
     }
 
+    final public byte byt(int n) {
+        return data[n];
+    }
+
+    final byte byt0() {
+        return data[0];
+    }
+
     @Override
     public void setBytes(final byte[] id) {
-        this.data = id;
-        rehash();
+        if (id!=this.data) {
+            this.data = id;
+            rehash();
+        }
     }
 
     @Override public final boolean impossibleToMatch(int possibleSubtermStructure) {
@@ -425,6 +442,23 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/ {
 
     public static Negation notThe(String untrue) {
         return (Negation) Negation.make(Atom.the(untrue));
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        byte[] name = bytes();
+        out.writeShort(name.length);
+        out.write(bytes());
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int nameLen = in.readShort();
+        byte[] name = new byte[nameLen];
+
+        in.read(name);
+
+        setBytes(name);
     }
 
 
