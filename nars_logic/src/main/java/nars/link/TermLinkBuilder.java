@@ -134,7 +134,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     final static boolean growLevel1(final Term t) {
-        return growComponent(t) && growProductOrImage(t);
+        return growComponent(t) /*&&
+                ( growProductOrImage(t) || (t instanceof SetTensional)) */;
     }
 
     /** original termlink growth policy */
@@ -144,7 +145,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     final static boolean growLevel2(final Term t) {
-        return growComponent(t) && growProductOrImage(t);
+        return false;
+        //return growComponent(t) && growProductOrImage(t);
         //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
         //return (t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional) || (t instanceof Junction);
     }
