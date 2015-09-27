@@ -15,16 +15,14 @@ import java.io.IOException;
  */
 public class CyclesInterval extends Atom implements AbstractInterval {
 
-    final static int bytesPrecision = 4;
+    //final static int bytesPrecision = 4;
 
     final static CyclesInterval zero = new CyclesInterval(0, 0);
 
     final long cyc;
     final int duration;
 
-    @Override final public boolean hasVar(Op type) {
-        return false;
-    }
+
 
     @Override
     public void rehash() {
@@ -69,10 +67,10 @@ public class CyclesInterval extends Atom implements AbstractInterval {
     }
 
 
-    public static CyclesInterval intervalLog(long mag) {
-        long time = Math.round( Interval.time(mag, 5 /* memory.duration()*/) );
-        return new CyclesInterval(time, 0);
-    }
+//    public static CyclesInterval intervalLog(long mag) {
+//        long time = Math.round( LogInterval.time(mag, 5 /* memory.duration()*/) );
+//        return new CyclesInterval(time, 0);
+//    }
 
     public static byte[] interval(long numCycles, int bytesPrecision) {
         /*switch (bytesPrecision) {
@@ -95,10 +93,10 @@ public class CyclesInterval extends Atom implements AbstractInterval {
         return Op.INTERVAL;
     }
 
-    @Override
-    public final Term clone() {
-        return this; /*new CyclesInterval(cyc, duration); */
-    }
+//    @Override
+//    public final Term clone() {
+//        return this; /*new CyclesInterval(cyc, duration); */
+//    }
 
     @Override
     public final boolean hasVar() {

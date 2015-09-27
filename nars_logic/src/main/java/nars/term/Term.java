@@ -121,6 +121,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 //        return (varDep() > n) || (varIndep() > n) || (varQuery() > n);
 //    }
 
+//    default boolean hasVarPattern() { return varPattern()!=0; }
 
     default boolean hasVarIndep() {
         return varIndep()!=0;

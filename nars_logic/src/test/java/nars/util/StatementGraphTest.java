@@ -26,16 +26,17 @@ public class StatementGraphTest {
         };
 
         n.input("<a --> b>. :|:");
+        n.frame();
         n.input("<b --> c>. :|:");
         n.frame();
         n.input("<x <-> y>. :|:");
+        n.frame();
         n.input("<d --> b>. :|:");
         n.frame();
-        n.frame();
-        n.frame();
+
 
         String g = m.graph.toString();
-        assertEquals("([a, b, c, x, y, d], [<a --> b>=(a,b), <b --> c>=(b,c), <b --> a>=(b,a), <x <-> y>=(x,y), <d --> b>=(d,b)])",
+        assertEquals("([a, b, c, x, y, d], [<a --> b>=(a,b), <b --> c>=(b,c), <x <-> y>=(x,y), <d --> b>=(d,b)])",
                 g);
 
     }

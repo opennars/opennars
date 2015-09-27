@@ -1,7 +1,7 @@
 package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.nal.nal7.Interval.AtomicDuration;
+import nars.nal.nal7.AtomicDuration;
 import objenome.Container;
 
 import java.io.Serializable;

@@ -101,7 +101,7 @@ public class FindSubst {
             put2To1(term1, (Variable) term2);
             return true;
 
-        } else if ((op1 == op2) && (term1 instanceof Compound) && (term1.hasVar(type) || term2.hasVar(type))) {
+        } else if ((op1 == op2) && (term1 instanceof Compound) && (recurseInto(term1, term2))) {
             return recurseAndPermute((Compound) term1, (Compound) term2, power);
         }
 
@@ -109,6 +109,15 @@ public class FindSubst {
 
 
         //throw new RuntimeException("substitution escape");
+    }
+
+    /** decide whether to recurse into according to variable types */
+    final boolean recurseInto(final Term compound1, final Term compound2) {
+        final Op typ = this.type;
+
+        if (typ == Op.VAR_PATTERN) return true;
+
+        return compound1.hasVar(typ) || compound2.hasVar(typ);
     }
 
     protected boolean nextTerm1Var(final Variable term1Var, final Term term2) {

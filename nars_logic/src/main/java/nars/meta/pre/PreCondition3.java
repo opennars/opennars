@@ -25,7 +25,7 @@ abstract public class PreCondition3 extends PreCondition {
         Term a = m.resolve(arg1);
         Term b = m.resolve(arg2);
         Term c = m.resolve(arg3);
-        if(arg3 instanceof Variable && ((Variable)arg3).hasVarPat()) { //wut why is this even necessary?
+        if(arg3 instanceof Variable && ((Variable)arg3).hasVarPattern()) { //wut why is this even necessary?
             c=arg3;
         }
         if (c!=null)

@@ -166,7 +166,7 @@ public class Variable extends Atom {
         t.recurseTerms((t1, superterm) -> {
             if (!has[0]) {
                 if (t1 instanceof Variable)
-                    if ((((Variable) t1).op() == Op.VAR_PATTERN))
+                    if (( (/*Variable*/ t1) .op() == Op.VAR_PATTERN))
                         has[0] = true;
             }
         });
@@ -208,19 +208,6 @@ public class Variable extends Atom {
         return 0;
     }
 
-    /**
-     * Clone a Variable
-     * If this is unscoped, the result will be unscoped also.
-     * If this is scoped, it will have the same scope.
-     *
-     * @return The cloned Variable
-     */
-    @Override
-    public Variable clone() {
-        throw new RuntimeException("n/a");
-        //return new Variable(bytes());
-        //return this;
-    }
 
     /**
      * The syntactic complexity of a variable is 0, because it does not refer to
@@ -281,18 +268,18 @@ public class Variable extends Atom {
         return 1;
     }
 
-    public final boolean hasVarPat() { return op() == Op.VAR_PATTERN;    }
+    public final boolean hasVarPattern() { return op() == Op.VAR_PATTERN;    }
 
     @Override public final boolean hasVarDep() { return op() == Op.VAR_DEPENDENT;    }
 
     @Override public final int varDep() {
-        return op() == Op.VAR_DEPENDENT ? 1 : 0;
+        return hasVarDep() ? 1 : 0;
     }
     
     @Override public final boolean hasVarIndep() { return op() == Op.VAR_INDEPENDENT;    }
     
     @Override public final int varIndep() {
-        return op() == Op.VAR_INDEPENDENT ? 1 : 0;
+        return hasVarIndep()  ? 1 : 0;
     }
 
     //    /** returns the part of the variable name beyond the intial type indicator character */
@@ -314,6 +301,6 @@ public class Variable extends Atom {
 //    }
 
     @Override public final int varQuery() {
-        return op() == Op.VAR_QUERY ? 1 : 0;
+        return hasVarQuery() ? 1 : 0;
     }
 }

@@ -8,7 +8,6 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nar.Default;
@@ -263,16 +262,7 @@ public class NarseseParserTest {
         taskParses("break({t001},SELF)! %1.00;0.95%");
     }
 
-    @Test
-    public void testInterval() throws InvalidInputException {
 
-        Term x = term(Symbols.INTERVAL_PREFIX_OLD + "2");
-        assertNotNull(x);
-        assertEquals(CyclesInterval.class, x.getClass());
-        //Interval i = (Interval) x;
-        //assertEquals(1, i.magnitude);
-
-    }
 
     @Test
     public void testCompoundTermOpenerCloserStatements() {

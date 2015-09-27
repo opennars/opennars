@@ -486,7 +486,7 @@ public class NarseseParser extends BaseParser<Object>  {
 //                        sequence( NALOperator.COMPOUND_TERM_OPENER.symbol,
 //                        ),
 
-                        IntervalLog(),
+                        //IntervalLog(),
                         Interval(),
 
 
@@ -510,7 +510,7 @@ public class NarseseParser extends BaseParser<Object>  {
                 push(new Operator((Term)pop())));
     }
 
-    final static String invalidAtomCharacters = " ,.!?" + INTERVAL_PREFIX_OLD + "<>-=*|&()<>[]{}%#$@\'\"\t\n";
+    //final static String invalidAtomCharacters = " ,.!?" + INTERVAL_PREFIX_OLD + "<>-=*|&()<>[]{}%#$@\'\"\t\n";
 
     /**
      * an atomic term, returns a String because the result may be used as a Variable name
@@ -559,7 +559,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
     public static boolean isValidAtomChar(final char c) {
         //TODO replace these with Symbols. constants
-        switch(c) {
+        switch((byte)c) {
             case ' ':
             case Symbols.ARGUMENT_SEPARATOR:
             case Symbols.JUDGMENT:
@@ -568,13 +568,16 @@ public class NarseseParser extends BaseParser<Object>  {
             case Symbols.QUEST:
             case '\"':
             case '^':
-            case Symbols.INTERVAL_PREFIX_OLD:
             case '<':
             case '>':
-            case '-':
+
             case '~':
             case '=':
+
+            case '+':
+            case '-':
             case '*':
+
             case '|':
             case '&':
             case '(':
@@ -676,12 +679,12 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
 
-    @Deprecated Rule IntervalLog() {
-        return sequence(INTERVAL_PREFIX_OLD, sequence(oneOrMore(digit()), push(match()),
-                //push(Interval.interval(-1 + Texts.i((String) pop())))
-                push(CyclesInterval.intervalLog(-1 + Texts.i((String) pop())))
-        ));
-    }
+//    @Deprecated Rule IntervalLog() {
+//        return sequence(INTERVAL_PREFIX_OLD, sequence(oneOrMore(digit()), push(match()),
+//                //push(Interval.interval(-1 + Texts.i((String) pop())))
+//                push(CyclesInterval.intervalLog(-1 + Texts.i((String) pop())))
+//        ));
+//    }
 
     Rule Interval() {
         return sequence(INTERVAL_PREFIX, sequence(oneOrMore(digit()), push(match()),

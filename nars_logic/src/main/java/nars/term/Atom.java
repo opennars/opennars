@@ -1,6 +1,5 @@
 package nars.term;
 
-import nars.Global;
 import nars.Op;
 import nars.nal.nal1.Negation;
 import nars.term.transform.TermVisitor;
@@ -13,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.nio.CharBuffer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -21,7 +21,7 @@ import java.util.function.Function;
  */
 public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizable {
 
-    private static final Map<String,Atom> atoms = Global.newHashMap(4096);
+    private static final Map<String,Atom> atoms = new HashMap();
     public static final Function<String, Atom> AtomInterner = Atom::new;
 
     public static final Term Null = new Atom(new byte[0]) {
@@ -179,9 +179,25 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     /** gets the atomic term given a name */
-    public final static Atom the(String o) {
-        return new Atom(o);
+    public final static Atom the(final String name) {
+        int olen = name.length();
+        switch (olen) {
+            case 0:
+                throw new RuntimeException("empty atom name: " + name);
+
+            //re-use short term names
+            case 1:
+            case 2:
+                return theCached(name);
+
+            default:
+                if (olen > Short.MAX_VALUE/2)
+                    throw new RuntimeException("atom name too long");
+
+                return new Atom(name);
+        }
     }
+
     public final static Atom the(byte c) {
         return new Atom(new byte[] { c });
     }
@@ -214,14 +230,14 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
      * Atoms are singular, so it is useless to clone them
      */
     @Override
-    public Term clone() {
+    public final Term clone() {
         return this;
     }
 
 
 
     @Override
-    public Term cloneDeep() {
+    public final Term cloneDeep() {
         return clone();
     }
 
@@ -304,6 +320,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     @Override public boolean hasVarIndep() {
         return false;
     }
+
 
 
     @Override public boolean hasVarDep() {
@@ -406,7 +423,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     @Override
-    public final boolean equalsOrContainsTermRecursively(Term target) {
+    public final boolean equalsOrContainsTermRecursively(final Term target) {
         return equals(target);
     }
 

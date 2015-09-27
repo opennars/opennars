@@ -87,7 +87,6 @@ abstract public class Symbols {
     public static final char IMAGE_PLACE_HOLDER = '_';
     
     /* prefix of special Term name */
-    @Deprecated public static final char INTERVAL_PREFIX_OLD = '+'; //TODO switch to: ????
     public static final char INTERVAL_PREFIX = '/'; //TODO switch to: ????
     public static final char TERM_PREFIX = 'T';
     public static final char QUOTE = '\"';

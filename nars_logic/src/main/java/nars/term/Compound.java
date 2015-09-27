@@ -1121,13 +1121,13 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 //    }
 
 
-    /**
-     * Check whether the compound contains all term of another term, or
-     * that term as a whole
-     *
-     * @param t The other term
-     * @return Whether the term are all in the compound
-     */
+//    /**
+//     * Check whether the compound contains all term of another term, or
+//     * that term as a whole
+//     *
+//     * @param t The other term
+//     * @return Whether the term are all in the compound
+//     */
 //    public boolean containsAllTermsOf_(final Term t) {
 //        if (t instanceof CompoundTerm) {
 //        //if (operate() == t.operate()) {
@@ -1197,11 +1197,8 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
             case VAR_QUERY:
                 return hasVarQuery();
             case VAR_PATTERN:
-                /* if this is the case, its always the case because
-                   then its the meta-matcher which asks
-                   who only operators with PATTERN variables
-                 */
-                return true;
+                //return Variable.hasPatternVariable(this);
+                throw new RuntimeException("determining this would require exhaustive check because " + this + " does not cache # of pattern variables");
         }
         throw new RuntimeException("Invalid variable type: " + type);
     }
