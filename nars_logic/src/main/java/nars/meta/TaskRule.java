@@ -473,8 +473,7 @@ public class TaskRule extends Rule<Premise, Task> {
         } else if (arg1.equals(taskPattern) && arg2.equals(beliefPattern)) {
             return 1;
         } else {
-            //throw new RuntimeException("after(%X,%Y) needs to match both taks and belief patterns, in one of 2 orderings");
-            return 0;
+            throw new RuntimeException("after(%X,%Y) needs to match both taks and belief patterns, in one of 2 orderings");
         }
 
     }
@@ -482,14 +481,11 @@ public class TaskRule extends Rule<Premise, Task> {
 
     public After after(Term arg1, Term arg2) {
         int order = getTaskOrder(arg1, arg2);
-        if (order == 0) return null;
         return new After(order == 1);
     }
 
     public Concurrent concurrent(Term arg1, Term arg2) {
         int order = getTaskOrder(arg1, arg2);
-        if (order == 0)
-            return null;
         return new Concurrent();
     }
 

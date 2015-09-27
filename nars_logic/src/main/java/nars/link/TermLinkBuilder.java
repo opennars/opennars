@@ -42,20 +42,16 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         Term host = c.getTerm();
         if (host instanceof Compound) {
 
-
             int complexity = host.complexity();
 
-
-            template = Global.newArrayList(complexity + 1);
+            template = Global.newArrayList(/* initial size estimate */complexity + 1);
 
             prepareComponentLinks((Compound)host);
+
         }
         else {
             template = Collections.emptyList();
         }
-
-
-
     }
 
     /**
@@ -67,10 +63,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
      */
     void prepareComponentLinks(final Compound t) {
 
+        /** add self link for structural transform: */
+        addTemplate(new TermLinkTemplate(concept, t));
+
 
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
-
 
         for (int i = 0; i < t.term.length; i++) {
             Term ti = t.term[i].normalized();
@@ -129,12 +127,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     /** determines whether to grow a 1st-level termlink to a subterm */
     protected static boolean growComponent(Term t) {
-        return !(t instanceof AbstractInterval);
+        if /*Global.DEBUG ... */ (t instanceof AbstractInterval) {
+            throw new RuntimeException("interval terms should not exist at this point");
+        }
+        return true;
     }
 
     final static boolean growLevel1(final Term t) {
         return growComponent(t) && growProductOrImage(t);
-        //return growLevel2(t);
     }
 
     /** original termlink growth policy */

@@ -27,7 +27,7 @@ public class IndependentVariableIntroductionTest {
     @Test public void testC() {
         //<<$x --> bird> ==> <$x --> animal>>, <tiger --> animal>
 
-        testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "animal:tiger", "animal:robinxx");
+        testIntroduction(somethingIsBird, Op.IMPLICATION, somethingIsAnimal, "animal:tiger", "bird:tiger");
     }
 
 

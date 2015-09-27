@@ -21,6 +21,13 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
         super(nar, concept, taskLink);
 
         this.termLink = termLink;
+
+        final Concept beliefConcept = nar.concept(termLink.target);
+        if (beliefConcept != null) {
+            //belief can be null:
+            Task belief = beliefConcept.getBeliefs().top(taskLink.getTask(), nar.time());
+            setBelief(belief);
+        }
     }
 
     /**
@@ -34,6 +41,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     @Override
     public final Stream<Task> derive(final Function<Premise,Stream<Task>> p) {
+        nar.memory.eventConceptProcess.emit(this);
         return p.apply(this);
     }
 

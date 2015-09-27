@@ -31,17 +31,17 @@ public class DefaultConcept extends AtomConcept {
     private final BeliefTable goals;
 
 
-    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
-
-        @Override
-        public boolean areEqual(Task a, Task b) {
-            return (a.equals(b));
-        }
-
-        //N/A
-        @Override public int compare(Task task, Task t1) {  return 0;        }
-        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
-    };
+//    final static public Equality<Task> taskEquivalence = new Equality<Task>() {
+//
+//        @Override
+//        public boolean areEqual(Task a, Task b) {
+//            return (a.equals(b));
+//        }
+//
+//        //N/A
+//        @Override public int compare(Task task, Task t1) {  return 0;        }
+//        @Override public int hashCodeOf(Task task) { return task.hashCode(); }
+//    };
 
 
 
@@ -169,7 +169,6 @@ public class DefaultConcept extends AtomConcept {
     /**
      * To accept a new judgment as belief, and check for revisions and solutions
      *
-     * @param judg      The judgment to be accepted
      * @param belief The task to be processed
      * @return Whether to continue the processing of the task
      */
@@ -211,7 +210,6 @@ public class DefaultConcept extends AtomConcept {
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
      *
-     * @param judg    The judgment to be accepted
      * @param goal The task to be processed
      * @return Whether to continue the processing of the task
      */

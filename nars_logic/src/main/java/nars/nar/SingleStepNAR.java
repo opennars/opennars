@@ -587,7 +587,7 @@ public class SingleStepNAR extends NAR {
             nar.input( ConceptProcess.nextPremiseSquare(nar, c,
                     conceptForgetDurations,
                     premiseProcessor,
-                    termlinks, tasklinks, now ) );
+                    termlinks, tasklinks ) );
         }
 
 

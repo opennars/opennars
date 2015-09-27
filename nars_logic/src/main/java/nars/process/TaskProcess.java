@@ -117,15 +117,13 @@ public class TaskProcess extends NAL {
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
         List<TermLinkTemplate> tl = termLinkBuilder.templates();
         int recipients = termLinkBuilder.templates().size();
-        if (recipients == 0) {
-            //termBudgetBalance += subBudget;
-            //subBudget = 0;
-            //return false;
-        }
+//        if (recipients == 0) {
+//            //termBudgetBalance += subBudget;
+//            //subBudget = 0;
+//        }
 
-        //accumulate incoming task budget to the tasklinks
         boolean activity = false;
-        float subPriority;
+
         if (tl!=null && (b != null) && (recipients > 0)) {
 
             float dur, qua;
@@ -137,7 +135,7 @@ public class TaskProcess extends NAL {
             //subBudget = b.getPriority() * (1f / (2 * recipients));
 
             //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-            subPriority = b.getPriority() / recipients;
+            float subPriority = b.getPriority() / recipients;
             dur = b.getDurability();
             qua = b.getQuality();
             Budget bb = new Budget(subPriority, dur, qua);
@@ -271,15 +269,16 @@ public class TaskProcess extends NAL {
 
             //if (!(task.isStructural() && (linkTemplate.getType() == TermLink.TRANSFORM))) { // avoid circular transform
 
-            final Term componentTerm = linkTemplate.getTarget();
-            if (componentTerm.equals(getTerm())) // avoid circular transform
-                continue;
+//            final Term componentTerm = linkTemplate.getTarget();
+//            if (componentTerm.equals(getTerm())) // avoid circular transform
+//                continue;
 
             Concept componentConcept = getTermLinkTemplateTarget(linkTemplate, subBudget);
             if (componentConcept != null) {
 
                 //share merge term instances
                 linkTemplate.setTargetInstance(componentConcept.getTerm());
+
 
                 /** activate the peer task tlink */
                 activateTaskLink(componentConcept, taskLinkBuilder);
