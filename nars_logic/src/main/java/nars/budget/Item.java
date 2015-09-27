@@ -105,6 +105,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
         return name().hashCode();
     }
 
+    /** equality and hash entirely determined by name(), not budget data. use budgetEquals() for that comparison */
     @Override
     public boolean equals(final Object obj) {
         if (obj == this) return true;

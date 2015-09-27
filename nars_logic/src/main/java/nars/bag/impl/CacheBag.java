@@ -1,9 +1,11 @@
 package nars.bag.impl;
 
+import com.google.common.base.Objects;
 import nars.budget.Itemized;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.function.Consumer;
 
 
@@ -27,6 +29,36 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
     default void delete() {
 
     }
+
+    /** performs an exhaustive element comparison of two bags */
+    public static <K,V extends Itemized<K>> boolean equals(CacheBag<K,V> a, CacheBag<K,V> b) {
+        if (a == b) return true;
+        if (a.getClass()!=b.getClass()) return false;
+
+        Iterator<V> iterator1 = a.iterator();
+        Iterator<V> iterator2 = b.iterator();
+
+        while(true) {
+            if(iterator1.hasNext()) {
+                if(!iterator2.hasNext()) {
+                    return false;
+                }
+
+                V o1 = iterator1.next();
+                V o2 = iterator2.next();
+                if (Objects.equal(o1, o2) && o1.getBudget().equalsBudget(o2.getBudget())) {
+                    continue;
+                }
+
+                return false;
+            }
+
+            return !iterator2.hasNext();
+        }
+
+        //return Iterables.elementsEqual(a, b);
+    }
+
 
     default double[] getPriorityHistogram(int bins) {
         return getPriorityHistogram(new double[bins]);

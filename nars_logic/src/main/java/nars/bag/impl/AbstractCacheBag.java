@@ -20,5 +20,15 @@ abstract public class AbstractCacheBag<K, V extends Itemized<K>> implements Cach
         return onRemoval;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CacheBag)
+            return CacheBag.equals(this, ((CacheBag)obj));
+        return false;
+    }
 
+    @Override
+    public int hashCode() {
+        throw new RuntimeException("not impl yet");
+    }
 }

@@ -77,17 +77,19 @@ abstract public class AbstractSerializationTest<S,T> {
 
     public <I> void assertEqualSerialization(Function<T,I> marshaller, Function<I,T> unmarshaller)  {
 
-        final T y = parse(input);
+        final T original = parse(input);
 
-        assertNotNull(y);
+        assertNotNull(input + " not parseable", original);
 
-        I serialized = marshaller.apply(y);
+        I serialized = marshaller.apply(original);
         assertNotNull(serialized);
 
-        T deserialized = post( unmarshaller.apply(serialized) );
-        assertNotNull(deserialized);
+        T deserializedCopy = post( unmarshaller.apply(serialized) );
+        assertNotNull(deserializedCopy);
+        assertTrue("different instances", original != deserializedCopy);
 
-        testEquality(y, deserialized);
+
+        testEquality(original, deserializedCopy);
     }
 
     /** abstract method for post-processing the deserialized value */

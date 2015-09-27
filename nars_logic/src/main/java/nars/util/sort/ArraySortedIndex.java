@@ -6,39 +6,54 @@ import nars.util.data.sorted.SortedIndex;
 import org.apache.commons.collections.iterators.ReverseListIterator;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> implements Serializable {
 
-    int capacity = Integer.MAX_VALUE;
+    int capacity;
 
-    public final List<E> list;
+    final List<E> list;
 
-    final static private Comparator<Itemized> priorityComparator = (a, b) -> Float.compare(b.getPriority(), a.getPriority());
+//    final static private Comparator<Itemized> priorityComparator = (a, b) -> Float.compare(b.getPriority(), a.getPriority());
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (!(obj instanceof ArraySortedIndex)) return false;
+        ArraySortedIndex o = (ArraySortedIndex) obj;
+        return list.equals(o.list) && capacity == o.capacity;
+    }
 
     @Override
     public List<E> getList() {
         return list;
     }
 
-    public static <E> List<E> bestList(int capacity) {
-        return //new ArrayList(capacity);
+//    public static <E> List<E> bestList(int capacity) {
+//        return //new ArrayList(capacity);
+//
+//                Global.newArrayList(capacity); // : new FastSortedTable();
+//    }
 
-                Global.newArrayList(capacity); // : new FastSortedTable();
+    public ArraySortedIndex() {
+        this(0);
     }
 
     public ArraySortedIndex(int capacity) {
-        this(capacity, 
-                Global.THREADS == 1 ? bestList(capacity) :
+        this(capacity, Global.newArrayList(capacity));
+        /*
+                Global.THREADS == 1 ?  :
                         Collections.synchronizedList(bestList(capacity))
-        );
+        );*/
     }
     
     public ArraySortedIndex(int capacity, List<E> list) {
         super();
-        setCapacity(capacity);
         this.list = list;
+        setCapacity(capacity);
     }
 
     @Override
@@ -57,7 +72,16 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public void setCapacity(int capacity) {
+    public void setCapacity(final int capacity) {
+
+        if (list!=null) {
+            int n = list.size();
+            //remove elements from end
+            for ( ; n - capacity > 0; n--) {
+                list.remove(n-1);
+            }
+        }
+
         this.capacity = capacity;
     }
 

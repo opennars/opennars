@@ -29,17 +29,17 @@ abstract public class SortedIndex<T> implements Collection<T>, Serializable {
 
     abstract public List<T> getList();
     
-    public void reportPriority() {
-        for (T t : this) {
-            String s;
-            /*if (t instanceof Item)
-                s = Float.toString(((Item)t).getPriority());
-            else*/
-                s = t.toString();
-            System.out.print(s + ',');
-        }
-        System.out.println();
-    }
+//    public void reportPriority() {
+//        for (T t : this) {
+//            String s;
+//            /*if (t instanceof Item)
+//                s = Float.toString(((Item)t).getPriority());
+//            else*/
+//                s = t.toString();
+//            System.out.print(s + ',');
+//        }
+//        System.out.println();
+//    }
 
 
     abstract public boolean isSorted();

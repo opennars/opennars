@@ -540,19 +540,24 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 //        return Float.NaN;
 //    }
 
-    public boolean equalsByPrecision(final Budget that) {
-        return equalsByPrecision(that, BUDGET_EPSILON);
+    public final boolean equalsByPrecision(final Budget t) {
+        return equalsByPrecision(t, BUDGET_EPSILON);
     }
 
-    public boolean equalsByPrecision(final Budget t, final float epsilon) {
-        return (isEqual(getPriority(), t.getPriority(), epsilon) &&
+    public final boolean equalsByPrecision(final Budget t, final float epsilon) {
+        return  isEqual(getPriority(), t.getPriority(), epsilon) &&
                 isEqual(getDurability(), t.getDurability(), epsilon) &&
-                isEqual(getQuality(), t.getQuality(), epsilon));
+                isEqual(getQuality(), t.getQuality(), epsilon);
+    }
+
+    public final boolean equalsBudget(final Budget t) {
+        return equalsByPrecision(t) && (getLastForgetTime() == t.getLastForgetTime());
     }
 
     public boolean equals(final Object that) {
-        if (that instanceof Budget)
-            return equalsByPrecision((Budget) that);
+        if (that instanceof Budget) {
+            return equalsBudget((Budget) that);
+        }
         return false;
     }
 
@@ -772,5 +777,6 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     public boolean isDeleted() {
         return Float.isNaN(getPriority());
     }
+
 
 }

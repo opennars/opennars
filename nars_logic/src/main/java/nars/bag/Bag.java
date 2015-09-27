@@ -3,14 +3,13 @@ package nars.bag;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Memory;
-import nars.bag.impl.CacheBag;
+import nars.bag.impl.AbstractCacheBag;
 import nars.bag.tx.BagForgetting;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -24,7 +23,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Itemized<K>>  implements CacheBag<K,V>, Consumer<V>, Supplier<V>, Serializable {
+public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V> implements Consumer<V>, Supplier<V>  {
 
     transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
@@ -79,8 +78,6 @@ public abstract class Bag<K, V extends Itemized<K>>  implements CacheBag<K,V>, C
     abstract public Set<K> keySet();
 
     abstract public int capacity();
-
-
 
 
 
@@ -146,7 +143,8 @@ public abstract class Bag<K, V extends Itemized<K>>  implements CacheBag<K,V>, C
         return pop();
     }
 
-//    /**
+
+    //    /**
 //     * if the next item is true via the predicate, then it is TAKEn out of the bag; otherwise the item remains unaffected
 //     */
 //    public final V remove(final Predicate<V> iff) {
