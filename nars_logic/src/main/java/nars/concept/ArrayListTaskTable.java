@@ -46,7 +46,7 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable {
 
 
     @Override
-    public Task add(Task t, Equality<Task> equality, Concept c) {
+    public Task add(Task t, Equality<Task> equality) {
 
         if (getFirstEquivalent(t, equality) != null) {
             return t;

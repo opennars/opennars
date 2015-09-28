@@ -1,13 +1,8 @@
 package nars.concept;
 
 import nars.Memory;
-import nars.NAR;
 import nars.premise.Premise;
-import nars.process.ConceptProcess;
 import nars.task.Task;
-
-import static nars.nal.nal1.LocalRules.revisibleTermsAlreadyEqual;
-import static nars.nal.nal1.LocalRules.tryRevision;
 
 /**
  * Stores beliefs ranked in a sorted ArrayList, with strongest beliefs at lowest indexes (first iterated)
@@ -127,101 +122,21 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //        if (closest == null) return null;
 //        return closest.projectTask(t.getOccurrenceTime(), now);
 //    }
+
     @Override
-    public Task add(Task input, Ranker ranking, Concept c, Premise nal) {
-
-        Task revised = input;
-
-        final Memory memory = c.getMemory();
-
-
-        long now = memory.time();
-
-        if (isEmpty()) {
-            add(input);
-            return input;
-        } else {
-
-            if (ranking == null) {
-                //just return thie top item if no ranker is provided
-                return top();
-            }
-
-
-            Task existing = top(input, now);
-
-
-            if (existing != null) {
-
-                //equal instance, or equal truth and stamp:
-                if ((existing == input) || input.equivalentTo(existing, false, false, true, true, false)) {
-
-                        /*if (!t.isInput() && t.isJudgment()) {
-                            existing.decPriority(0);    // duplicated task
-                        }   // else: activated belief*/
-
-                    if (input != existing)
-                        memory.remove(input, "Ineffectual"); //"has no effect" on belief/desire, etc
-
-                    return null;
-
-                } else if (revisibleTermsAlreadyEqual(input, existing)) {
-
-
-                    if (nal != null) {
-                        revised = tryRevision(input, existing, false, nal);
-                        if (revised != null) {
-                            if (nal instanceof ConceptProcess) {
-                                ((ConceptProcess) nal).setBelief(revised);
-                            }
-                        }
-                        if (revised == null) revised = input; /* set to original value */
-                    }
-
-                }
-
-            }
-
-            add(input, ranking, memory);
-
-            if (!input.equals(revised)) {
-                addRevised(revised, ranking, nal.nar());
-            }
-
-
-            return revised;
-        }
-
-
-//        if (size()!=preSize)
-//            c.onTableUpdated(goalOrJudgment.getPunctuation(), preSize);
-//
-//        if (removed != null) {
-//            if (removed == goalOrJudgment) return false;
-//
-//            m.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
-//
-//            if (preSize != table.size()) {
-//                m.emit(eventAdd, this, goalOrJudgment.sentence);
-//            }
-//        }
-
-        //the new task was not added, so remove it
-
-
-    }
-
-    private void addRevised(Task revised, Ranker r, NAR nar) {
+    public Task addRevised(Task revised, Ranker rank, Premise nal) {
         /** insert into array table */
-        add(revised, r, nar.memory);
+        add(revised, rank, nal.memory());
 
         /** input derived task */
-        nar.input(revised);
+        nal.nar().input(revised);
         //ALTERNATELY: TaskProcess.run(nar, revised);
 
+        return revised;
     }
 
-    private boolean add(Task input, Ranker r, Memory memory) {
+    @Override
+    public boolean add(Task input, Ranker r, Memory memory) {
         float rankInput = r.rank(input);    // for the new isBelief
 
 
@@ -255,6 +170,8 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         }
         return false;
     }
+
+
 
 //TODO provide a projected belief
 //

@@ -97,12 +97,23 @@ public class AtomConcept extends AbstractConcept {
         }
 
         @Override
-        public Task add(Task q, Equality<Task> e, Concept c) {
+        public Task add(Task q, Equality<Task> e) {
             return null;
         }
 
+
         @Override
-        public Task add(Task input, Ranker r, Concept c, Premise nal) {
+        public boolean add(Task input, Ranker r, Memory memory) {
+            return false;
+        }
+
+        @Override
+        public boolean add(Task t) {
+            return false;
+        }
+
+        @Override
+        public Task addRevised(Task input, Ranker rank, Premise nal) {
             return null;
         }
 

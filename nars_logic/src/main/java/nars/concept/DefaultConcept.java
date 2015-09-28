@@ -13,6 +13,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
+import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -20,7 +21,7 @@ import nars.term.Term;
 
 import java.util.List;
 
-import static nars.nal.nal1.LocalRules.trySolution;
+import static nars.nal.nal1.LocalRules.*;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -166,6 +167,108 @@ public class DefaultConcept extends AtomConcept {
 
 
 
+    /** attempt to insert a task.
+     *
+     * @param c the concept in which this occurrs
+     * @param nal
+     * @return:
+     *      the input value that was inserted, if it was added to the table
+     *      a previous stored task if this was a duplicate (table unchanged)
+     *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
+     *      null if it was discarded
+     *
+     */
+
+
+    Task add(BeliefTable table, Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
+
+        Task revised = input;
+
+        final Memory memory = c.getMemory();
+
+
+        long now = memory.time();
+
+        if (table.isEmpty()) {
+            table.add(input);
+            return input;
+        } else {
+
+            if (ranking == null) {
+                //just return thie top item if no ranker is provided
+                return table.top();
+            }
+
+
+            Task existing = table.top(input, now);
+
+
+            if (existing != null) {
+
+                //equal instance, or equal truth and stamp:
+                if ((existing == input) || input.equivalentTo(existing, false, false, true, true, false)) {
+
+                        /*if (!t.isInput() && t.isJudgment()) {
+                            existing.decPriority(0);    // duplicated task
+                        }   // else: activated belief*/
+
+                    if (input != existing)
+                        memory.remove(input, "Ineffectual"); //"has no effect" on belief/desire, etc
+
+                    return null;
+
+                } else if (revisibleTermsAlreadyEqual(input, existing)) {
+
+
+                    if (nal != null) {
+                        revised = tryRevision(input, existing, false, nal);
+                        if (revised != null) {
+                            if (nal instanceof ConceptProcess) {
+                                ((ConceptProcess) nal).setBelief(revised);
+                            }
+                        }
+                        if (revised == null) revised = input; /* set to original value */
+                    }
+
+                }
+
+            }
+
+            table.add(input, ranking, nal.memory());
+
+            if (!input.equals(revised)) {
+                table.addRevised(revised, ranking, nal);
+            }
+
+
+            return revised;
+        }
+
+
+//        if (size()!=preSize)
+//            c.onTableUpdated(goalOrJudgment.getPunctuation(), preSize);
+//
+//        if (removed != null) {
+//            if (removed == goalOrJudgment) return false;
+//
+//            m.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
+//
+//            if (preSize != table.size()) {
+//                m.emit(eventAdd, this, goalOrJudgment.sentence);
+//            }
+//        }
+
+        //the new task was not added, so remove it
+
+
+    }
+
+
+    private static Task add(TaskTable table, Task input, Equality<Task> eq, Concept c, Premise nal) {
+        return table.add(input, eq);
+    }
+
+
     /**
      * To accept a new judgment as belief, and check for revisions and solutions
      *
@@ -179,8 +282,7 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
-        final Task newSolution = getBeliefs().add(belief, this, nal);
-
+        final Task newSolution = add(getBeliefs(), belief, getBeliefs().getRank(), this, nal);
 
         //TODO only apply solutions to questions if either beliefs or question have changed
         if (newSolution != null && !newSolution.isDeleted()) {
@@ -223,9 +325,9 @@ public class DefaultConcept extends AtomConcept {
      */
     public boolean processGoal(final Premise nal, Task goal) {
 
-        float successBefore = getSuccess();
+        final float successBefore = getSuccess();
 
-        final Task newSolution = getGoals().add(goal, this, nal);
+        final Task newSolution = add(getGoals(), goal, getGoals().getRank(), this, nal);
 
         if (newSolution==null) {
             return false;
@@ -356,7 +458,7 @@ public class DefaultConcept extends AtomConcept {
         if (!isConstant()) {
             //boolean newQuestion = table.isEmpty();
 
-            Task match = table.add(q, questionEquivalence, this);
+            Task match = add(table, q, questionEquivalence, this, nal);
             if (match == q) {
                 final int presize = getQuestions().size() + getQuests().size();
                 onTableUpdated(q.getPunctuation(), presize);

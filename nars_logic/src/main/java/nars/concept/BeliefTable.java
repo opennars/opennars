@@ -1,5 +1,6 @@
 package nars.concept;
 
+import nars.Memory;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
 import nars.task.Task;
@@ -30,22 +31,12 @@ public interface BeliefTable extends TaskTable {
         return or(confidence, originality);
     };
 
-    /** attempt to insert a task.
-     *
-     * @param c the concept in which this occurrs
-     * @param nal
-     * @return:
-     *      the input value that was inserted, if it was added to the table
-     *      a previous stored task if this was a duplicate (table unchanged)
-     *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
-     *      null if it was discarded
-     *
-     */
-    Task add(Task input, Ranker r, Concept c, Premise nal);
+    boolean add(Task input, BeliefTable.Ranker r, Memory memory);
 
-    default Task add(Task input, Concept c, Premise nal) {
-        return add(input, getRank(), c, nal);
-    }
+    /** add a task to the table */
+    boolean add(Task t);
+
+    Task addRevised(Task input, BeliefTable.Ranker rank, Premise nal);
 
     /** the default rank used when adding and other operations where rank is unspecified */
     Ranker getRank();

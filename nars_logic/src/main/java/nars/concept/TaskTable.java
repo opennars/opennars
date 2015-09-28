@@ -29,12 +29,14 @@ public interface TaskTable extends Iterable<Task> {
      *      a previous stored task if this was a duplicate
      *
      */
-    Task add(Task q, Equality<Task> e, Concept c);
 
-    /**
-     *
-     * @return null if no duplicate was discovered, or the first Task that matched if one was
-     */
+
+    Task add(Task t, Equality<Task> equality);
+
+        /**
+         *
+         * @return null if no duplicate was discovered, or the first Task that matched if one was
+         */
     default Task getFirstEquivalent(final Task t, final Equality<Task> e) {
         for (final Task a : this) {
             if (e.areEqual(a, t))
@@ -64,5 +66,6 @@ public interface TaskTable extends Iterable<Task> {
             if (--maxPerConcept == 0) break;
         }
     }
+
 
 }
