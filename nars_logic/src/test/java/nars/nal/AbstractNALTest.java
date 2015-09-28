@@ -17,37 +17,22 @@ import java.util.function.Supplier;
 abstract public class AbstractNALTest  {
 
     public static final List<Supplier<NAR>> core1 =Lists.newArrayList(
-        //() -> new Default().nal(1),
-        //() -> new Default().nal(2),
-      //  () -> new Default().nal(6), //set to maximum now also because now its as follows, the testcases are tested whether the rules match at all
-            () -> new SingleStepNAR().nal(6) //and secondly they are tried with full control mechanism on with all rules,
-        //() -> new DefaultAlann(48) //it doesn't make sense to test with a subset of the rules here since the system has to run with all at the end
-    );                               //however I see its appealing to try rules according to NAL layers, so we should let this optiopn
-                                     //open so that such suppliers can be tried even that we won't need them for now - Patrick
-
-                                    //TODO: Once single step testcases all work, control related ones can be added to the testcases again
-                                    //but its too early for that
-
+        () -> new Default().nal(1)
+    );
     public static final List<Supplier<NAR>> core2 =Lists.newArrayList(
-            //() -> new Default().nal(1),
-            //() -> new Default().nal(2),
-            //() -> new Default().nal(6),
-            () -> new SingleStepNAR().nal(6)
-            //() -> new DefaultAlann(48)
+            () -> new Default().nal(2)
     );
     public static final List<Supplier<NAR>> core3 =Lists.newArrayList(
-            //() -> new Default().nal(1),
-            //() -> new Default().nal(2),
-           // () -> new Default().nal(6),
-            () -> new SingleStepNAR().nal(6)
-            //() -> new DefaultAlann(48)
+            () -> new Default().nal(3)
     );
     public static final List<Supplier<NAR>> core6 =Lists.newArrayList(
-            //() -> new Default().nal(1),
-            //() -> new Default().nal(2),
-            //() -> new Default().nal(6),
             () -> new SingleStepNAR().nal(6)
-            //() -> new DefaultAlann(48)
+    );
+    public static final List<Supplier<NAR>> core =Lists.newArrayList(
+            () -> new Default().nal(9)
+    );
+    public static final List<Supplier<NAR>> singleStep =Lists.newArrayList(
+            () -> new SingleStepNAR().nal(9)
     );
 
   /*  public static final List<Supplier<NAR>> fullDeclarativeTest =Lists.newArrayList(

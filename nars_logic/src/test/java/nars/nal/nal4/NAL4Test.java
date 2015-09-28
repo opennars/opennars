@@ -19,7 +19,7 @@ public class NAL4Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.core6;
+        return AbstractNALTest.singleStep;
 //        return Arrays.asList(new Supplier[][]{
 //                {() -> new Default()},
 //                //{new DefaultDeep()},
