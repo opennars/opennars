@@ -27,12 +27,12 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
+import nars.process.Unification;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variables;
 import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
@@ -73,7 +73,10 @@ public class LocalRules {
     /**
      * avoids term comparison if the two inputs are already known to have equal terms
      */
-    public static boolean revisibleTermsAlreadyEqual(final Sentence newBelief, final Sentence oldBelief) {
+    public static boolean revisible(final Sentence newBelief, final Sentence oldBelief) {
+
+        //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
+
         if (newBelief.isRevisible()) {
             if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
                 return true;
@@ -193,7 +196,7 @@ public class LocalRules {
 
             Term u[] = new Term[]{content, question.getTerm()};
 
-            boolean unified = Variables.unify(Op.VAR_INDEPENDENT, u, nal.getRandom());
+            boolean unified = Unification.unify(Op.VAR_INDEPENDENT, u, nal.getRandom());
 
             if (unified) {
 

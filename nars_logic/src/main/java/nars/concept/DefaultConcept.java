@@ -217,7 +217,7 @@ public class DefaultConcept extends AtomConcept {
 
                     return null;
 
-                } else if (revisibleTermsAlreadyEqual(input, existing)) {
+                } else if (revisible(input, existing)) {
 
 
                     if (nal != null) {

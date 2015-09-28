@@ -150,11 +150,14 @@ public class FindSubst {
 
         final Compound cTerm1 = term1;
         final Compound cTerm2 = term2;
+
+        /** must have same # subterms */
         final int c1Len = cTerm1.length();
         if (c1Len != cTerm2.length()) {
             return false;
         }
 
+        /** if they are images, they must have same relationIndex */
         //TODO simplify comparison with Image base class
         if (cTerm1 instanceof Image) {
             if (((Image) cTerm1).relationIndex != ((Image) cTerm2).relationIndex)
@@ -165,11 +168,11 @@ public class FindSubst {
 
             switch (c1Len) {
                 case 2:
-                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2, power/2);
+                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2, power);
                 case 3:
-                    return permute3(cTerm1.term, cTerm2, power/3);
+                    return permute3(cTerm1.term, cTerm2, power);
                 default:
-                    return permuteN(cTerm1, cTerm2, power/c1Len);
+                    return permuteN(cTerm1, cTerm2, power);
             }
         }
 

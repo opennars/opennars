@@ -23,11 +23,20 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
         this.termLink = termLink;
 
         final Concept beliefConcept = nar.concept(termLink.target);
+
+        final Task task = taskLink.getTask();
+
+
         if (beliefConcept != null) {
             //belief can be null:
-            Task belief = beliefConcept.getBeliefs().top(taskLink.getTask(), nar.time());
+            final Task belief = beliefConcept.getBeliefs().top(task, nar.time());
             setBelief(belief);
+
+            if (belief!=null)
+                Unification.match(task, belief, this);
         }
+
+
     }
 
     /**

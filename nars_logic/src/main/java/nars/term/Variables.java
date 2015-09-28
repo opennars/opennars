@@ -1,14 +1,8 @@
 package nars.term;
 
-import nars.Global;
-import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Junction;
-import nars.term.transform.FindSubst;
-
-import java.util.Map;
-import java.util.Random;
 
 /**
  * Static utility class for static methods related to Variables
@@ -29,61 +23,7 @@ public class Variables {
 //    }
 
 
-    /**
-     * To unify two terms
-     *
-     * @param varType The varType of variable that can be substituted
-     * @param t    The first and second term as an array, which will have been modified upon returning true
-     * @return Whether the unification is possible.  't' will refer to the unified terms
-     */
-    public static boolean unify(final Op varType, final Term[] t, final Random random) {
-        final Map<Term, Term> map[] = new Map[2]; //begins empty: null,null
-
-        final boolean hasSubs = new FindSubst(varType, map[0], map[1], random).next(t[0], t[1], Global.UNIFICATION_POWER);
-        if (hasSubs) {
-            final Term a = applySubstituteAndRenameVariables(((Compound) t[0]), map[0]);
-            if (a == null) return false;
-
-            final Term b = applySubstituteAndRenameVariables(((Compound) t[1]), map[1]);
-            if (b == null) return false;
-
-
-            if(t[0] instanceof Variable && t[0].hasVarQuery() && (a.hasVarIndep() || a.hasVarDep()) ) {
-                return false;
-            }
-            if(t[1] instanceof Variable && t[1].hasVarQuery() && (b.hasVarIndep() || b.hasVarDep()) ) {
-                return false;
-            }
-
-            //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
-            t[0] = a;
-            t[1] = b;
-            return true;
-        }
-        return false;
-    }
-
-
-    /**
-     * appliesSubstitute and renameVariables, resulting in a cloned object,
-     * will not change this instance
-     */
-    private static Term applySubstituteAndRenameVariables(final Compound t, final Map<Term, Term> subs) {
-        if ((subs == null) || (subs.isEmpty())) {
-            //no change needed
-            return t;
-        }
-
-        Term r = t.applySubstitute(subs);
-
-        if (r == null) return null;
-
-        if (r.equals(t)) return t;
-
-        return r;
-    }
-
-//    /**
+    //    /**
 //     * Check whether a string represent a name of a term that contains a query
 //     * variable
 //     *

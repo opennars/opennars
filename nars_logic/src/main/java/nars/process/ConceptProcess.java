@@ -132,35 +132,39 @@ abstract public class ConceptProcess extends NAL  {
 
         Stream.Builder<Stream<Task>> streams = Stream.builder();
 
-        for (final TaskLink a : tasks)
+        for (final TaskLink a : tasks) {
             for (final TermLink b : terms) {
-
-                ConceptProcess p = premise(nar, concept, a, b);
-
-                if (p!=null) {
-                    final Stream<Task> substream = proc.apply(p);
-                    if (substream!=null)
-                        streams.accept(substream);
-                }
+                fireConcept(nar, concept, proc, streams, a, b);
             }
-
+        }
 
         return streams.build().flatMap(s -> s);
     }
 
-    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
-    public static Stream<Task> nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc) {
+    private static ConceptProcess fireConcept(NAR nar, Concept concept, Function<ConceptProcess, Stream<Task>> proc, Stream.Builder<Stream<Task>> streams, TaskLink a, TermLink b) {
+        ConceptProcess p = premise(nar, concept, a, b);
 
-        TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
-        if (taskLink == null) return Stream.empty();
-
-        TermLink termLink = concept.getTermLinks().forgetNext(nar.memory().termLinkForgetDurations, nar.memory());
-        if (termLink == null) return Stream.empty();
-
-
-        return proc.apply(premise(nar, concept, taskLink, termLink));
-
+        if (p!=null) {
+            final Stream<Task> substream = proc.apply(p);
+            if (substream!=null)
+                streams.accept(substream);
+        }
+        return p;
     }
+
+//    /** supplies at most 1 premise containing the pair of next tasklink and termlink into a premise */
+//    public static Stream<Task> nextPremise(NAR nar, final Concept concept, float taskLinkForgetDurations, Function<ConceptProcess,Stream<Task>> proc) {
+//
+//        TaskLink taskLink = concept.getTaskLinks().forgetNext(taskLinkForgetDurations, nar.memory());
+//        if (taskLink == null) return Stream.empty();
+//
+//        TermLink termLink = concept.getTermLinks().forgetNext(nar.memory().termLinkForgetDurations, nar.memory());
+//        if (termLink == null) return Stream.empty();
+//
+//
+//        return proc.apply(premise(nar, concept, taskLink, termLink));
+//
+//    }
 
     public static ConceptProcess premise(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink) {
         if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
