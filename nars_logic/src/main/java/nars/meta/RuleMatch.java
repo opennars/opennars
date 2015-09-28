@@ -174,13 +174,7 @@ public class RuleMatch extends FindSubst {
         }
 
         if (!(derive instanceof Compound)) return null;
-        if (punct == task.getPunctuation() && derive.equals(task.getTerm())) {
-            //this revision-like consequence is an artifact of rule term pattern simplifications which can distort a rule into producing derivatives of the input task (and belief?) with unsubstantiatedly different truth values
-            //ideally this type of rule would be detected sooner and eliminated
-            //for now this hack will at least prevent the results
-            System.err.println(rule + " has a possibly BAD rule / postcondition");
-            return null;
-        }
+
 
 
 //        //check if this is redundant
