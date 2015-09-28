@@ -37,6 +37,9 @@ public class TaskPunctuation extends PreCondition {
     public boolean test(final RuleMatch r) {
         if(punc == Symbols.QUESTION)
             r.rule.allowQuestionTask = true;
+        if(r.premise.getTask().getPunctuation() == Symbols.QUEST && punc == Symbols.QUESTION) { //Quests and questions handled similarly
+            return true;                                                                        //in rule file it is specified as task("?") but it's for both
+        }
         return r.premise.getTask().getPunctuation() == punc;
     }
 
