@@ -145,7 +145,7 @@ public class NAL1Test extends AbstractNALTest {
     }
 
 
-    /* This is question to answer matching, not a NAL testcase itself, this will be tested in a extra file
+    // question to answer matching
     @Test
     public void whQuestion() throws InvalidInputException {
 //        System.out.println("\n\n\n START ------------");
@@ -157,7 +157,7 @@ public class NAL1Test extends AbstractNALTest {
                 .mustOutput(150, "<bird --> swimmer>. %1.00;0.80%")
                 .run();
     }
-    */
+
 
 
     @Test
