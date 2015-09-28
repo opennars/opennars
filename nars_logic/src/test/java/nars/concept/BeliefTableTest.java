@@ -54,7 +54,7 @@ public class BeliefTableTest extends TestCase {
 
         assertEquals("revised", 3, b.size());
 
-        n.frame(100);
+        n.frame(2);
 
         assertEquals("no additional revisions", 3, b.size());
 
