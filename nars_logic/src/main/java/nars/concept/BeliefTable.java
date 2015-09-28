@@ -38,6 +38,7 @@ public interface BeliefTable extends TaskTable {
      *      the input value that was inserted, if it was added to the table
      *      a previous stored task if this was a duplicate (table unchanged)
      *      a new belief created from older ones which serves as a revision of what was input, if it was added to the table
+     *      null if it was discarded
      *
      */
     Task add(Task input, Ranker r, Concept c, Premise nal);

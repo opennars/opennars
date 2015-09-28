@@ -27,7 +27,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     }
 
     @Override
-    public Ranker getRank() {
+    public final Ranker getRank() {
         return rank;
     }
 
@@ -35,7 +35,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //    public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {
 //        throw new RuntimeException("not supposed to be called");
 //    }
-
 
 
     @Override
@@ -77,18 +76,16 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         return b;
     }
 
-    /**
-     * Select a belief to interact with the given task in logic
-     * <p>
-     * get the first qualified one
-     * <p>
-     * only called in RuleTables.rule
-     *
-     * @param now  the current time, or Stamp.TIMELESS to disable projection
-     * @param task The selected task
-     * @return The selected isBelief
-     */
-//    @Override
+//    /**
+//     * Select a belief to interact with the given task in logic
+//     * <p/>
+//     * get the first qualified one
+//     * <p/>
+//     * only called in RuleTables.rule
+//     *
+//     * @return The selected isBelief
+//     */
+////    @Override
 //    public Task match(final Task task, long now) {
 //        if (isEmpty()) return null;
 //
@@ -130,7 +127,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //        if (closest == null) return null;
 //        return closest.projectTask(t.getOccurrenceTime(), now);
 //    }
-
     @Override
     public Task add(Task input, Ranker ranking, Concept c, Premise nal) {
 
@@ -164,7 +160,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                             existing.decPriority(0);    // duplicated task
                         }   // else: activated belief*/
 
-                    if (input!=existing)
+                    if (input != existing)
                         memory.remove(input, "Ineffectual"); //"has no effect" on belief/desire, etc
 
                     return null;
@@ -172,28 +168,28 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
                 } else if (revisibleTermsAlreadyEqual(input, existing)) {
 
 
-                    if (nal!=null) {
+                    if (nal != null) {
                         revised = tryRevision(input, existing, false, nal);
                         if (revised != null) {
                             if (nal instanceof ConceptProcess) {
                                 ((ConceptProcess) nal).setBelief(revised);
                             }
-
                         }
+                        if (revised == null) revised = input; /* set to original value */
                     }
 
                 }
 
             }
 
-
             add(input, ranking, memory);
 
-            if (revised!=null && !input.equals(revised)) {
+            if (!input.equals(revised)) {
                 addRevised(revised, ranking, nal.nar());
             }
 
 
+            return revised;
         }
 
 
@@ -212,7 +208,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
         //the new task was not added, so remove it
 
-        return revised;
+
     }
 
     private void addRevised(Task revised, Ranker r, NAR nar) {

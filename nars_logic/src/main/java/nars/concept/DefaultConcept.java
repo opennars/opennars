@@ -174,11 +174,16 @@ public class DefaultConcept extends AtomConcept {
      */
     public boolean processBelief(final Premise nal, Task belief) {
 
+        if (belief.isDeleted())
+            System.err.println("new solution deleted");
+
         float successBefore = getSuccess();
 
         final Task newSolution = getBeliefs().add(belief, this, nal);
 
-        if (newSolution != null) {
+
+        //TODO only apply solutions to questions if either beliefs or question have changed
+        if (newSolution != null && !newSolution.isDeleted()) {
 
 //            String reason = "Unbelievable or Duplicate";
 //            //String reason = input.equals(belief) ? "Duplicate" : "Unbelievable";
@@ -187,12 +192,15 @@ public class DefaultConcept extends AtomConcept {
             /*if (task.aboveThreshold())*/
             //if (nal != null) {
             if (hasQuestions()) {
-                final Task b = belief;
                 //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
-                getQuestions().forEach( t -> trySolution(b, t, nal) );
+                getQuestions().forEach( t -> trySolution(belief, t, nal) );
             }
             //}
 
+
+            /** update happiness meter on solution
+             *  TODO revise
+             * */
             float successAfter = getSuccess();
             float delta = successAfter - successBefore;
             if (delta!=0)

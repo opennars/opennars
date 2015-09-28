@@ -44,7 +44,7 @@ import java.util.Arrays;
  * Directly process a task by a oldBelief, with only two Terms in both. In
  * matching, the new task is compared with an existing direct Task in that
  * Concept, to carry out:
- * <p>
+ * <p/>
  * revision: between judgments or goals on non-overlapping evidence;
  * satisfy: between a Sentence and a Question/Goal;
  * merge: between items of the same type and stamp;
@@ -134,16 +134,16 @@ public class LocalRules {
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
 
-        Task<T> revised = nal.input( nal.newTask(newBelief.getTerm())
-                        .punctuation(newBelief.getPunctuation())
-                        .truth(truth)
-                        .budget(budget)
-                        .parent(newBelief, oldBelief)
-                        .reason("Revision"
-                                //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
-                                //Arrays.toString(oldBelief.getEvidentialSet())
-                        )
-                    );
+        Task<T> revised = nal.input(nal.newTask(newBelief.getTerm())
+                .punctuation(newBelief.getPunctuation())
+                .truth(truth)
+                .budget(budget)
+                .parent(newBelief, oldBelief)
+                .reason("Revision"
+                        //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
+                        //Arrays.toString(oldBelief.getEvidentialSet())
+                )
+        );
 
         if (revised != null) {
             nal.memory().logic.BELIEF_REVISION.hit();
@@ -169,7 +169,8 @@ public class LocalRules {
     public static Task trySolution(Task belief, final Truth projectedTruth, final Task question, final Premise nal) {
 
         if (belief == null) return null;
-
+        if (belief.isDeleted())
+            throw new RuntimeException(belief + " deleted");
 
         final Task inputBelief = belief;
 
@@ -223,7 +224,7 @@ public class LocalRules {
             float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
             if (oldQ >= newQ) {
                 //if (question.isGoal()) {
-                    //memory.emotion.happy(oldQ, question, nal);
+                //memory.emotion.happy(oldQ, question, nal);
                 //}
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");
@@ -237,7 +238,7 @@ public class LocalRules {
         memory.logic.SOLUTION_BEST.set(newQ);
 
         //if (question.isGoal()) {
-            memory.emotion.happy(newQ, question, nal);
+        memory.emotion.happy(newQ, question, nal);
         //}
 
         Budget budget = TemporalRules.solutionEval(question, belief, question, nal);
@@ -256,7 +257,10 @@ public class LocalRules {
 
         //.reason(currentTask.getHistory())
 
-        if (!belief.equals(inputBelief)) {
+
+
+
+        //if (belief != inputBelief) { //!belief.equals(inputBelief)) {
             //it was either unified and/or projected:
             /*belief = nal.addNewTask(nal.newTask(belief.getTerm(), belief.getPunctuation())
                             .truth(belief.getTruth())
@@ -267,23 +271,28 @@ public class LocalRules {
                             .solution(belief),
                     "Adjusted Solution",
                     true, false, false);*/
+
+            memory.eventDerived.emit(belief);
             nal.nar().input(belief);
-        }
-        else {
-            belief.getBudget().mergePlus(budget);
+
+            /** decrease question's budget for transfer to solutions */
+            question.getBudget().decPriority(budget.getPriority());
+        //} else {
+            //
+
+            //belief.getBudget().mergePlus(budget);
 
 //            if (Global.DEBUG_TASK_LOG_SOLUTION)
 //                belief.logUnrepeated("Solution" /*Global.DEBUG ? "Solution " + question : */);
-        }
+        //}
 
-        question.getBudget().decPriority(budget.getPriority());
 
         //Solution Activated
 //        if (question.isQuestOrQuestion()) {
 //            //if (questionTask.isInput()) { //only show input tasks as solutions
 
-            memory.eventAnswer.emit(Tuples.twin(question, belief));
-            memory.eventDerived.emit(belief);
+
+        memory.eventAnswer.emit(Tuples.twin(question, belief));
 
 //        } else {
 //            memory.eventAnswer.emit(Tuples.twin(belief, question));

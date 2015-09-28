@@ -62,7 +62,7 @@ public class QueryVariableTest extends AbstractNALTest {
                 assertFalse(d + " should not have been derived", Util.isEqual(d.getConfidence(), 0.81f, 0.01f));
         } );
         n.memory.eventAnswer.on( p -> {
-            System.out.println("q: " + p.getOne() + " a: " + p.getTwo());
+            //System.out.println("q: " + p.getOne() + " a: " + p.getTwo());
             answers[0]++;
         });
 
