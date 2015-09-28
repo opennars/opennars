@@ -133,6 +133,7 @@ public class Memory extends Param implements Serializable {
     public transient final Topic<Task> eventInput = new DefaultTopic<>();
     public transient final Topic<Object> eventError = new DefaultTopic<>();
     public transient final Topic<Task> eventDerived = new DefaultTopic();
+
     public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic();
 
 

@@ -36,12 +36,18 @@ public class QueryVariableTest extends AbstractNALTest {
 
 
     @Test public void testQueryVariableAnswer() {
+        testQueryVariableAnswer("<a --> b>", "<a --> b>");
+    }
+    @Test public void testQueryVariableAnswerUnified() {
+        testQueryVariableAnswer("<a --> b>", "<?x --> b>");
+    }
+
+    void testQueryVariableAnswer(String belief, String question) {
         //$0.25;0.23;0.50$ <?1 <-> a>? {?: 1;2}
         //$0.63;0.34;0.50$ <?1 --> a>? {?: 1;2}
 
         Global.DEBUG = true;
 
-        final String term = "<a --> b>";
 
         Set<Task> derivations = new HashSet();
 
@@ -52,21 +58,20 @@ public class QueryVariableTest extends AbstractNALTest {
         n.memory.eventDerived.on( d-> {
             if (d.getTerm().hasVarQuery())
                 derivations.add(d);
-            if (d.isJudgment() && d.getTerm().toString().equals(term))
+            if (d.isJudgment() && d.getTerm().toString().equals(belief))
                 assertFalse(d + " should not have been derived", Util.isEqual(d.getConfidence(), 0.81f, 0.01f));
         } );
         n.memory.eventAnswer.on( p -> {
-            System.out.println("answer: " + p.getOne() + " " + p.getTwo());
+            System.out.println("q: " + p.getOne() + " a: " + p.getTwo());
             answers[0]++;
         });
 
-        n.believe(term);
-        n.ask("<?x --> b>");
+        n.believe(belief);
+        n.ask(question);
 
 
         n.frame(16);
 
-        assertEquals(derivations.toString() + " should contain only 3 items that have query variables", 3, derivations.size() );
 
         assertEquals("Answer/Solution reported?", 1, answers[0]);
 

@@ -64,7 +64,6 @@ final public class Global {
     public static boolean DEBUG_INVALID_SENTENCES = true;
     public static boolean DEBUG_NONETERNAL_QUESTIONS = false;
     public static boolean DEBUG_TASK_LOG = true; //false disables task history completely
-    public static boolean DEBUG_TASK_LOG_SOLUTION = true;
     public static boolean PRINT_DUPLICATE_DERIVATIONS = false;
     public static boolean EXIT_ON_EXCEPTION = true;
 

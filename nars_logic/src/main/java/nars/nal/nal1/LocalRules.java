@@ -21,7 +21,6 @@
 package nars.nal.nal1;
 
 import com.gs.collections.impl.tuple.Tuples;
-import nars.Global;
 import nars.Memory;
 import nars.Op;
 import nars.budget.Budget;
@@ -257,7 +256,7 @@ public class LocalRules {
 
         //.reason(currentTask.getHistory())
 
-        if (belief!=inputBelief) {
+        if (!belief.equals(inputBelief)) {
             //it was either unified and/or projected:
             /*belief = nal.addNewTask(nal.newTask(belief.getTerm(), belief.getPunctuation())
                             .truth(belief.getTruth())
@@ -273,8 +272,8 @@ public class LocalRules {
         else {
             belief.getBudget().mergePlus(budget);
 
-            if (Global.DEBUG_TASK_LOG_SOLUTION)
-                belief.logUnrepeated("Solution" /*Global.DEBUG ? "Solution " + question : */);
+//            if (Global.DEBUG_TASK_LOG_SOLUTION)
+//                belief.logUnrepeated("Solution" /*Global.DEBUG ? "Solution " + question : */);
         }
 
         question.getBudget().decPriority(budget.getPriority());
@@ -283,7 +282,7 @@ public class LocalRules {
 //        if (question.isQuestOrQuestion()) {
 //            //if (questionTask.isInput()) { //only show input tasks as solutions
 
-            memory.eventAnswer.emit(Tuples.twin(belief, question));
+            memory.eventAnswer.emit(Tuples.twin(question, belief));
             memory.eventDerived.emit(belief);
 
 //        } else {

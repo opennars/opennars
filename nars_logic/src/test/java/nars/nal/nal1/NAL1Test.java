@@ -154,6 +154,7 @@ public class NAL1Test extends AbstractNALTest {
 
         test().believe("<bird --> swimmer>", 1.0f, 0.8f)
                 .ask("<?x --> swimmer>") //.en("What is a type of swimmer?")
+
                 .mustOutput(150, "<bird --> swimmer>. %1.00;0.80%")
                 .run();
     }
