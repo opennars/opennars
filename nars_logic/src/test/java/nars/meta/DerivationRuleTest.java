@@ -86,13 +86,13 @@ public class DerivationRuleTest extends TestCase {
 
 
 
-        TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion, Info:SeldomUseful)>");
+        TaskRule y = p.term("<(S --> P), --S |- (P --> S), (Truth:Conversion)>");
         y = y.normalizeRule();
         Terms.printRecursive(y);
 
-        assertEquals("((<%1 --> %2>, (--,%1)), (<%2 --> %1>, (<Conversion --> Truth>, <SeldomUseful --> Info>)))", y.toString());
-        assertEquals(13, y.complexity());
-        assertEquals(18, y.volume());
+        assertEquals("((<%1 --> %2>, (--,%1)), (<%2 --> %1>, (<Conversion --> Truth>)))", y.toString());
+        assertEquals(10, y.complexity());
+        assertEquals(15, y.volume());
 
 
     }

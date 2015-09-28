@@ -2,6 +2,7 @@ package nars.meta;
 
 import nars.Global;
 import nars.Op;
+import nars.Symbols;
 import nars.meta.pre.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
@@ -13,9 +14,7 @@ import nars.term.*;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -33,7 +32,7 @@ public class TaskRule extends Rule<Premise, Task> {
 
     public PostCondition[] postconditions;
     public PairMatchingProduct pattern;
-    private int numPatternVar;
+
     //it has certain pre-conditions, all given as predicates after the two input premises
 
 
@@ -52,7 +51,15 @@ public class TaskRule extends Rule<Premise, Task> {
     }
 
 
+    public boolean validTaskPunctuation(final char p) {
+        if ((p == Symbols.QUESTION) && !allowQuestionTask)
+            return false;
+        return true;
+    }
+
     protected void ensureValid() {
+        if (postconditions.length == 0)
+            throw new RuntimeException(this + " has no postconditions");
         if (!Variable.hasPatternVariable(getTask()))
             throw new RuntimeException("rule's task term pattern has no pattern variable");
         if (!Variable.hasPatternVariable(getBelief()))
@@ -132,12 +139,12 @@ public class TaskRule extends Rule<Premise, Task> {
         super.init(term);
 
 
-        final Set<Term> patternVars = new HashSet();
-        recurseTerms((v,p) -> {
-            if (v.op() == Op.VAR_PATTERN)
-                patternVars.add(v);
-        });
-        this.numPatternVar = patternVars.size();
+//        final Set<Term> patternVars = new HashSet();
+//        recurseTerms((v,p) -> {
+//            if (v.op() == Op.VAR_PATTERN)
+//                patternVars.add(v);
+//        });
+//        this.numPatternVar = patternVars.size();
     }
 
 
@@ -370,22 +377,18 @@ public class TaskRule extends Rule<Premise, Task> {
                 throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
 
 
-            try {
-                postConditionsList.add( new PostCondition(this, t,
-                        beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
-                        afterConcs.toArray(new PreCondition[afterConcs.size()]),
-                        ((Product) postcons[i++]).terms()) );
-            }
-            catch (Exception e) {
-                System.err.println(this);
-                System.err.println("\t" + e);
-            }
+            PostCondition pc = PostCondition.make(this, t,
+                    beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
+                    afterConcs.toArray(new PreCondition[afterConcs.size()]),
+                    ((Product) postcons[i++]).terms());
+            if (pc!=null)
+                postConditionsList.add( pc );
+
         }
 
         this.postconditions = postConditionsList.toArray( new PostCondition[postConditionsList.size() ] );
 
         ensureValid();
-
 
         return this;
     }

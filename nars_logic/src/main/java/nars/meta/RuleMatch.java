@@ -74,17 +74,21 @@ public class RuleMatch extends FindSubst {
         return this;
     }
 
-    public Task apply(final PostCondition p) {
+    public Task apply(final PostCondition outcome) {
+
         final Task task = premise.getTask();
-        final Task belief = premise.getBelief();
-
-
         if (task == null)
             throw new RuntimeException("null task");
 
-        if(task.isQuestion() && !rule.allowQuestionTask) {
+
+
+        if (!rule.validTaskPunctuation(task.getPunctuation())) {
             return null;
         }
+
+
+        final Task belief = premise.getBelief();
+
 
         //stamp cyclic filter
         final boolean single = (belief == null);
@@ -114,58 +118,71 @@ public class RuleMatch extends FindSubst {
 //
 //            }
 //        }
-        if (!single && (p.truth!=null && !p.truth.allowOverlap) && premise.isCyclic()) {
+
+
+
+        /** eliminate cyclic double-premise results
+         *  TODO move this earlier to precondition check, or change to altogether new policy
+         */
+        if (!single && cyclic(outcome, premise)) {
             return null;
         }
 
 
-        final Truth T = task.getTruth();
-        final Truth B = belief == null ? null : belief.getTruth();
 
-        char punct = p.custom_punctuation;
-        if(punct == '0') {
+        /** calculate derived task punctuation */
+        char punct = outcome.puncOverride;
+        if (punct == 0) {
+            /** ues the default policy determined by parent task */
             punct = task.getPunctuation();
         }
 
+        /** calculate derived task truth value */
+        final Truth T = task.getTruth();
+        final Truth B = belief == null ? null : belief.getTruth();
         final Truth truth;
         {
 
-            if (punct == Symbols.JUDGMENT) {
-                truth = p.truth.get(T, B);
+            switch (punct) {
+                case Symbols.JUDGMENT:
+                    truth = outcome.truth.get(T, B);
 
-                if (truth == null) {
-                    return null;
-                }
+                    if (truth == null) {
+                        return null;
+                    }
+                    break;
+                case Symbols.GOAL:
+                    if (outcome.desire != null)
+                        truth = outcome.desire.get(T, B);
+                    else {
+                        truth = null;
+                        System.err.println(outcome + " has null desire function");
+                    }
 
-            } else if (punct == Symbols.GOAL) {
-                if (p.desire != null)
-                    truth = p.desire.get(T, B);
-                else {
+                    if (truth == null) {
+                        return null; //truth = null;
+                    }
+                    break;
+
+                default:
+                case Symbols.QUEST:
+                case Symbols.QUESTION:
                     truth = null;
-                    System.err.println(p + " has null desire function");
-                }
-
-                if (truth == null) {
-                    return null; //truth = null;
-                }
-            } else {
-                //question or quest, truth should be null
-                truth = null;
+                    break;
             }
-
         }
 
         //test and apply late preconditions
-        for (final PreCondition c : p.beforeConclusions) {
+        for (final PreCondition c : outcome.beforeConclusions) {
             if (!c.test(this))
                 return null;
         }
 
         Term derive;
 
-        if ((derive = resolve(p.term)) == null) return null;
+        if ((derive = resolve(outcome.term)) == null) return null;
 
-        for (final PreCondition c : p.afterConclusions) {
+        for (final PreCondition c : outcome.afterConclusions) {
 
             if (!c.test(this))
                 return null;
@@ -175,6 +192,13 @@ public class RuleMatch extends FindSubst {
 
         if (!(derive instanceof Compound)) return null;
 
+//        if (punct == task.getPunctuation() && derive.equals(task.getTerm())) {
+//            //this revision-like consequence is an artifact of rule term pattern simplifications which can distort a rule into producing derivatives of the input task (and belief?) with unsubstantiatedly different truth values
+//            //ideally this type of rule would be detected sooner and eliminated
+//            //for now this hack will at least prevent the results
+//            throw new RuntimeException(rule + " has a possibly BAD rule / postcondition");
+//            //return null;
+//        }
 
 
 //        //check if this is redundant
@@ -253,20 +277,24 @@ public class RuleMatch extends FindSubst {
         return null;
     }
 
+    protected static boolean cyclic(PostCondition outcome, Premise premise) {
+        return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
+    }
+
     final Function<Term,Term> resolver = k ->
         k!=null ? k.substituted(map1) : null;
 
-    public Term resolveTest(final Term t) {
-        Term r = resolver.apply(t);
-
-        /* temporary */
-        Term existing = resolutions.put(t, r);
-        if ((existing!=null) && (!existing.equals(r))) {
-            throw new RuntimeException("inconsistent resolution: " + r + "!= existing" + existing + "... in " + this);
-        }
-
-        return r;
-    }
+//    public Term resolveTest(final Term t) {
+//        Term r = resolver.apply(t);
+//
+//        /* temporary */
+//        Term existing = resolutions.put(t, r);
+//        if ((existing!=null) && (!existing.equals(r))) {
+//            throw new RuntimeException("inconsistent resolution: " + r + "!= existing" + existing + "... in " + this);
+//        }
+//
+//        return r;
+//    }
 
     /** provides the cached result if it exists, otherwise computes it and adds to cache */
     public final Term resolve(final Term t) {

@@ -14,4 +14,6 @@ abstract public class Rule<X,Y> extends ProductN {
     }
 
 
+    public abstract boolean validTaskPunctuation(char punctuation);
+
 }

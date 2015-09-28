@@ -256,8 +256,8 @@ public class DerivationRules extends ArrayList<TaskRule> {
                     System.err.println("rUnnorm modified");*/
 
             } catch (Exception ex) {
-                System.err.println("Ignoring invalid input rule:  " + s);
-                ex.printStackTrace();//ex.printStackTrace();
+                System.err.println("invalid TaskRule:  " + s + " (" + ex + ")");
+                //ex.printStackTrace();//ex.printStackTrace();
             }
         });
 

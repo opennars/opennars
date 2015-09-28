@@ -1,15 +1,14 @@
 package nars.meta;
 
-import nars.Global;
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.term.Atom;
+import nars.term.Compound;
 import nars.term.Term;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -21,7 +20,14 @@ public class PostCondition implements Serializable //since there can be multiple
 
     public static final float HALF = 0.5f;
 
-
+    public PostCondition(Term term, Term[] modifiers, PreCondition[] beforeConclusions, PreCondition[] afterConclusions, TruthFunction truth, DesireFunction desire) {
+        this.term = term;
+        this.modifiers = modifiers;
+        this.beforeConclusions = beforeConclusions;
+        this.afterConclusions = afterConclusions;
+        this.truth = truth;
+        this.desire = desire;
+    }
 
     public final Term term;
     public final Term[] modifiers;
@@ -36,36 +42,6 @@ public class PostCondition implements Serializable //since there can be multiple
     public final DesireFunction desire;
     public boolean negate = false;
 
-    /* high-speed adaptive RETE-like precondition filtering:
-
-            sort all unique preconditions by a hueristic value:
-
-                # of applications (across all appearances in rules) divided by an estimated computational cost,
-                since some preconditions are less expensive to test than others.
-                this value represents the discriminatory power to computational cost ratio
-                of the precondition, and the higher the value, the earlier this condition
-                should be tested to eliminate the most possibilities as soon as possible.
-
-            the remaining preconditions to test in each iteration only need to be those
-            which will discriminate the remaining eligible rules, and eliminating
-            these sooner will require less necessary precondition tests.
-
-            if no tests remain, the process terminates without any derivation.  this
-            is the ideal result becaues a brute-force approach (as originally implemented here)
-            requires the slower traversal of all rules, regardless.
-
-     */
-
-//    public static int totalPostconditionsRequested = 0;
-//    public static final Map<Pair<Term,Term[]>, PostCondition> postconditions = Global.newHashMap();
-//
-//    /** this allows all unique postconditions to be stored and re-used by multiple rules */
-//    public static PostCondition get(Term term, Term... modifiers) {
-//        totalPostconditionsRequested++;
-//        return postconditions.computeIfAbsent(Tuples.pair(term, modifiers), t -> {
-//            return new PostCondition(t.getOne(), t.getTwo());
-//        });
-//    }
 
     public static final Set<Atom> reservedMetaInfoCategories = new HashSet(6);
 
@@ -87,7 +63,9 @@ public class PostCondition implements Serializable //since there can be multiple
         identity = Atom.the("Identity"),
         allowBackward = Atom.the("AllowBackward");
 
-    public char custom_punctuation = '0';
+    /** if puncOverride == 0 (unspecified), then the default punctuation rule determines the
+     *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
+    transient public char puncOverride = (char)0;
 
     /**
      *
@@ -98,16 +76,18 @@ public class PostCondition implements Serializable //since there can be multiple
      * @param modifiers
      * @throws RuntimeException
      */
-    public PostCondition(TaskRule rule, Term term,
+    public static PostCondition make(TaskRule rule, Term term,
                          PreCondition[] beforeConclusions,
                          PreCondition[] afterConclusions,
                          Term... modifiers) throws RuntimeException {
 
-        this.term = term;
 
-        @Deprecated List<Term> mods = Global.newArrayList();
-        TruthFunction beliefTruth = null;
+
+        TruthFunction judgmentTruth = null;
         DesireFunction goalTruth = null;
+
+        boolean negate = false;
+        char puncOverride = 0;
 
         for (final Term m : modifiers) {
             if (!(m instanceof Inheritance)) {
@@ -131,26 +111,26 @@ public class PostCondition implements Serializable //since there can be multiple
 
                 case "Punctuation":
                     if(which.toString().equals("Question")) {
-                        custom_punctuation = Symbols.QUESTION;
+                        puncOverride = Symbols.QUESTION;
                     }
                     //for completeness
                     if(which.toString().equals("Goal")) {
-                        custom_punctuation = Symbols.GOAL;
+                        puncOverride = Symbols.GOAL;
                     }
                     if(which.toString().equals("Judgement")) {
-                        custom_punctuation = Symbols.JUDGMENT;
+                        puncOverride = Symbols.JUDGMENT;
                     }
                     if(which.toString().equals("Quest")) {
-                        custom_punctuation = Symbols.QUEST;
+                        puncOverride = Symbols.QUEST;
                     }
 
                     break;
                 case "Truth":
                     TruthFunction tm = TruthFunction.get(which);
                     if (tm != null) {
-                        if (beliefTruth != null) //only allow one
-                            throw new RuntimeException("beliefTruth " + beliefTruth + " already specified; attempting to set to " + tm);
-                        beliefTruth = tm;
+                        if (judgmentTruth != null) //only allow one
+                            throw new RuntimeException("beliefTruth " + judgmentTruth + " already specified; attempting to set to " + tm);
+                        judgmentTruth = tm;
                     } else {
                         throw new RuntimeException("unknown TruthFunction " + which);
                     }
@@ -185,22 +165,31 @@ public class PostCondition implements Serializable //since there can be multiple
 
 
 
-        this.truth = beliefTruth;
-        this.desire = goalTruth;
+        PostCondition pc = new PostCondition(term, modifiers, beforeConclusions, afterConclusions, judgmentTruth, goalTruth);
+        pc.negate = negate;
+        pc.puncOverride = puncOverride;
+        if (pc.valid(rule))
+            return pc;
+        return null;
 
-        this.modifiers = mods.toArray(new Term[mods.size()]);
-        this.beforeConclusions = beforeConclusions;
-        this.afterConclusions = afterConclusions;
 
-        if (beliefTruth == null) {
-            //System.err.println("missing truth function: " + this);
-        }
-        /*if (goalTruth == null) {
-            System.err.println("missing desire function: " + this);
-        }*/
     }
 
+    boolean valid(final TaskRule rule) {
+        final Term term = this.term;
 
+        if (!modifiesPunctuation() && term instanceof Compound) {
+            if (rule.getTaskTermPattern().equals(term) ||
+                (rule.getBeliefTermPattern().equals(term)))
+                return false;
+        }
+
+        return true;
+    }
+
+    public boolean modifiesPunctuation() {
+        return puncOverride > 0;
+    }
 
 
 //    @Override
