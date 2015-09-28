@@ -13,7 +13,6 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
 import nars.truth.Truth;
-import objenome.solver.evolve.grammar.Symbol;
 
 import java.util.List;
 import java.util.Map;
@@ -40,12 +39,7 @@ public class RuleMatch extends FindSubst {
         return taskBelief.toString() + ":<" + super.toString() + ">:" + resolutions;
     }
 
-    /**
-     * @param type
-     * @param map0
-     * @param map1
-     * @param random
-     */
+
     public RuleMatch(Random random) {
         super(Op.VAR_PATTERN,
                 Global.newHashMap(8),
@@ -128,9 +122,9 @@ public class RuleMatch extends FindSubst {
         final Truth T = task.getTruth();
         final Truth B = belief == null ? null : belief.getTruth();
 
-        char punct=p.custom_punctuation;
+        char punct = p.custom_punctuation;
         if(punct == '0') {
-            punct=task.getPunctuation();
+            punct = task.getPunctuation();
         }
 
         final Truth truth;
@@ -138,23 +132,27 @@ public class RuleMatch extends FindSubst {
 
             if (punct == Symbols.JUDGMENT) {
                 truth = p.truth.get(T, B);
+
+                if (truth == null) {
+                    return null;
+                }
+
             } else if (punct == Symbols.GOAL) {
                 if (p.desire != null)
                     truth = p.desire.get(T, B);
-                else
+                else {
                     truth = null;
+                    System.err.println(p + " has null desire function");
+                }
+
+                if (truth == null) {
+                    return null; //truth = null;
+                }
             } else {
+                //question or quest, truth should be null
                 truth = null;
             }
 
-            if (truth == null && task.isJudgmentOrGoal()) {
-                //if this happens it could have been known before any substitution/matching happened
-                //set a precondition when a rule precludes certain punctuations */
-                /*if (Global.DEBUG) {
-                    System.err.println("truth rule missing: " + this);
-                }*/
-                return null; //not specified!!
-            }
         }
 
         //test and apply late preconditions
@@ -176,6 +174,13 @@ public class RuleMatch extends FindSubst {
         }
 
         if (!(derive instanceof Compound)) return null;
+        if (punct == task.getPunctuation() && derive.equals(task.getTerm())) {
+            //this revision-like consequence is an artifact of rule term pattern simplifications which can distort a rule into producing derivatives of the input task (and belief?) with unsubstantiatedly different truth values
+            //ideally this type of rule would be detected sooner and eliminated
+            //for now this hack will at least prevent the results
+            System.err.println(rule + " has a possibly BAD rule / postcondition");
+            return null;
+        }
 
 
 //        //check if this is redundant
@@ -213,7 +218,6 @@ public class RuleMatch extends FindSubst {
 
 
 
-
         TaskSeed t = premise.newTask((Compound)derive); //, task, belief, allowOverlap);
         if (t != null) {
 
@@ -224,6 +228,7 @@ public class RuleMatch extends FindSubst {
             else {
                 budget = BudgetFunctions.compoundBackward(derive, premise);
             }
+
 
             t
                 .punctuation(punct)

@@ -16,21 +16,29 @@ public enum TruthFunction {
 
     Revision() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.revision(T, B);
         }
     },
     StructuralIntersection() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (T!=null)
+                throw new RuntimeException("belief should be null");
+            if (B == null) return null;
             return TruthFunctions.intersection(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
     StructuralDeduction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            //if (B == null) return null;
             return TruthFunctions.deduction(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
     StructuralAbduction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (T!=null)
+                throw new RuntimeException("belief should be null");
+            if (B == null) return null;
             return TruthFunctions.abduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
@@ -59,16 +67,24 @@ public enum TruthFunction {
         }
     },
     Conversion() {
-        @Override public Truth get(final Truth T, /*nullable*/ final Truth B) {
+        @Override public Truth get(final Truth T, final Truth B) {
+            if (T!=null)
+                throw new RuntimeException("belief should be null");
             if (B == null) return null;
             return TruthFunctions.conversion(B);
         }
     },
     Negation() {
-        @Override public Truth get(final Truth T, final Truth B) { return TruthFunctions.negation(T); }
+        @Override public Truth get(final Truth T, final Truth B) {
+            if (B!=null)
+                throw new RuntimeException("belief should be null");
+            return TruthFunctions.negation(T);
+        }
     },
     Contraposition() {
         @Override public Truth get(final Truth T, /* nullable */ final Truth B) {
+            if (B!=null)
+                throw new RuntimeException("belief should be null");
             return TruthFunctions.contraposition(T);
         }
     },
@@ -110,11 +126,13 @@ public enum TruthFunction {
     },
     ReduceDisjunction() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.reduceDisjunction(T, B);
         }
     },
     ReduceConjunctionNeg() {
         @Override public Truth get(final Truth T, final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.reduceConjunctionNeg(T, B);
         }
     },
@@ -161,22 +179,26 @@ public enum TruthFunction {
     },
     BeliefIdentity() {
         @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
+            if (B == null) return null;
             return new DefaultTruth(B.getFrequency(), B.getConfidence());
         }
     },
     BeliefStructuralDeduction() {
         @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.deduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
     BeliefStructuralDifference() {
         @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
+            if (B == null) return null;
             Truth res =  TruthFunctions.deduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
             return new DefaultTruth(1.0f-res.getFrequency(), res.getConfidence());
         }
     },
     BeliefNegation() {
         @Override public Truth get(final Truth T, /* nullable*/ final Truth B) {
+            if (B == null) return null;
             return TruthFunctions.negation(B);
         }
     }

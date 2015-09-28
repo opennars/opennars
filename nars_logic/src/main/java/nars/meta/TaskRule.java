@@ -140,6 +140,8 @@ public class TaskRule extends Rule<Premise, Task> {
         this.numPatternVar = patternVars.size();
     }
 
+
+
     static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
 
 
@@ -213,8 +215,6 @@ public class TaskRule extends Rule<Premise, Task> {
         Term[] precon = ((Product) term(0)).terms();
         Term[] postcons = ((Product) term(1)).terms();
 
-        postconditions = new PostCondition[postcons.length / 2]; //term_1 meta_1 ,..., term_2 meta_2 ...
-
         //extract preconditions
         List<PreCondition> early = Global.newArrayList(precon.length);
 
@@ -223,10 +223,9 @@ public class TaskRule extends Rule<Premise, Task> {
         List<PreCondition> afterConcs = Global.newArrayList(0);
 
 
-        Term taskTermPattern = precon[0];
+        Term taskTermPattern = getTaskTermPattern();
+        Term beliefTermPattern = getBeliefTermPattern();
 
-
-        Term beliefTermPattern = precon[1];
         if (beliefTermPattern.has(Op.ATOM)) {
             throw new RuntimeException("belief term must be a pattern");
         }
@@ -362,17 +361,20 @@ public class TaskRule extends Rule<Premise, Task> {
         this.preconditions = early.toArray(new PreCondition[early.size()]);
 
 
+        List<PostCondition> postConditionsList = Global.newArrayList(postcons.length);
+
         int k = 0;
         for (int i = 0; i < postcons.length; ) {
             Term t = postcons[i++];
             if (i >= postcons.length)
                 throw new RuntimeException("invalid rule: missing meta term for postcondition involving " + t);
 
+
             try {
-                postconditions[k++] = new PostCondition(this, t,
+                postConditionsList.add( new PostCondition(this, t,
                         beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
                         afterConcs.toArray(new PreCondition[afterConcs.size()]),
-                        ((Product) postcons[i++]).terms());
+                        ((Product) postcons[i++]).terms()) );
             }
             catch (Exception e) {
                 System.err.println(this);
@@ -380,10 +382,19 @@ public class TaskRule extends Rule<Premise, Task> {
             }
         }
 
+        this.postconditions = postConditionsList.toArray( new PostCondition[postConditionsList.size() ] );
+
         ensureValid();
 
 
         return this;
+    }
+
+    public Term getTaskTermPattern() {
+        return ((Product) term(0)).terms()[0];
+    }
+    public Term getBeliefTermPattern() {
+        return ((Product) term(0)).terms()[1];
     }
 
     public void setAllowBackward(boolean allowBackward) {

@@ -243,10 +243,10 @@ public class TestNAR  {
         long now = time();
         return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
     }
-    public TestNAR mustBelievePast(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax, int maxPastWindow) throws InvalidInputException {
-        long now = time();
-        return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
-    }
+//    public TestNAR mustBelievePast(long withinCycles, String term, float freqMin, float freqMax, float confMin, float confMax, int maxPastWindow) throws InvalidInputException {
+//        long now = time();
+//        return mustOutput(now, now + withinCycles, term, '.', freqMin, freqMax, confMin, confMax);
+//    }
 //    public ExplainableTask mustBelieve(long cycleStart, long cycleStop, String term, float freq, float confidence) throws InvalidInputException {
 //        long now = time();
 //        return mustOutput(now + cycleStart, now + cycleStop, term, '.', freq, freq, confidence, confidence);

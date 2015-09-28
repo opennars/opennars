@@ -137,6 +137,8 @@ public class DerivationRules extends ArrayList<TaskRule> {
     static void addAndPermuteTenses(Collection<String> rules /* results collection */,
                                     String ruleString) {
 
+
+
         if(ruleString.contains("Order:ForAllSame")) {
 
             final String[] equs =
@@ -220,9 +222,17 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
                 final TaskRule rUnnorm = parser.taskRule(s);
 
+                //detect if simplifications resulted in a pattern of equal task and belief patterns
+                if (rUnnorm.getTaskTermPattern().equals(rUnnorm.getBeliefTermPattern())) {
+                    return;
+                }
+
+
                 final TaskRule rNorm = rUnnorm.normalizeRule();
                 if (rNorm == null)
                     throw new RuntimeException("invalid rule, detected after normalization: " + s);
+
+
 
 
                 boolean added = ur.add(rNorm);
