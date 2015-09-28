@@ -33,7 +33,8 @@ import java.util.Arrays;
  */
 public class Implication<A extends Term, B extends Term> extends Statement<A,B> {
 
-    private final int temporalOrder;
+    //TODO use enum like Conjunction
+    protected final int temporalOrder;
 
 
     protected Implication(final A subject, final B predicate, final int order) {

@@ -19,7 +19,7 @@ import static nars.Symbols.COMPOUND_TERM_OPENER;
  */
 public class Sequence extends Conjunction implements Intermval {
 
-    private final long[] intervals;
+    protected final long[] intervals;
 
     /**
      * creates a normal sequence containing no intervals

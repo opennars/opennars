@@ -36,10 +36,14 @@ import java.util.List;
 /**
  * Conjunction of statements
  */
-public class Conjunction extends Junction {
+public class Conjunction extends Junction<Term> {
 
 
-    public final int temporalOrder;
+    protected Op op;
+
+    public Conjunction() {
+        super();
+    }
 
     /**
      * Constructor with partial values, called by make
@@ -58,7 +62,18 @@ public class Conjunction extends Junction {
             throw new RuntimeException("should be creating a Sequence instance not Conjunction");
         }
 
-        temporalOrder = order;
+
+        switch (order) {
+            case TemporalRules.ORDER_FORWARD:
+                this.op = Op.SEQUENCE;
+                break;
+            case TemporalRules.ORDER_CONCURRENT:
+                this.op = Op.PARALLEL;
+                break;
+            default:
+                this.op = Op.CONJUNCTION;
+                break;
+        }
 
         if (Global.DEBUG) {
             if (isCommutative()) {
@@ -71,10 +86,20 @@ public class Conjunction extends Junction {
 
     }
 
+    @Override
+    public final int getTemporalOrder() {
+        switch(op) {
+            case SEQUENCE: return TemporalRules.ORDER_FORWARD;
+            case PARALLEL: return TemporalRules.ORDER_CONCURRENT;
+            case CONJUNCTION: return TemporalRules.ORDER_NONE;
+            default:
+                throw new RuntimeException("invalid op for Conjunction: " + this);
+        }
+    }
 
     @Override
     public Term clone(Term[] t) {
-        return make(t, temporalOrder);
+        return make(t, getTemporalOrder());
     }
 
     /**
@@ -84,7 +109,7 @@ public class Conjunction extends Junction {
      */
     @Override
     public Conjunction clone() {
-        return new Conjunction(term, temporalOrder);
+        return new Conjunction(term, getTemporalOrder());
     }
 
 
@@ -154,14 +179,7 @@ public class Conjunction extends Junction {
      */
     @Override
     public Op op() {
-        switch (temporalOrder) {
-            case TemporalRules.ORDER_FORWARD:
-                throw new RuntimeException("use Sequence subclass of Conjunction");    //return NALOperator.SEQUENCE;
-            case TemporalRules.ORDER_CONCURRENT:
-                return Op.PARALLEL;
-            default:
-                return Op.CONJUNCTION;
-        }
+        return op;
     }
 
     /**
@@ -171,7 +189,7 @@ public class Conjunction extends Junction {
      */
     @Override
     public boolean isCommutative() {
-        return temporalOrder != TemporalRules.ORDER_FORWARD;
+        return op!=Op.SEQUENCE;
     }
 
     /**
@@ -291,10 +309,6 @@ public class Conjunction extends Junction {
 
 
 
-    @Override
-    public int getTemporalOrder() {
-        return temporalOrder;
-    }
 
     @Override
     public Term first() {

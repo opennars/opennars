@@ -1,9 +1,12 @@
 package nars.io;
 
 import nars.narsese.NarseseParser;
+import nars.util.io.JSON;
 import org.infinispan.commons.marshall.JavaSerializationMarshaller;
 import org.infinispan.commons.marshall.Marshaller;
-import org.infinispan.marshall.core.JBossMarshaller;
+import org.infinispan.commons.marshall.jboss.AbstractJBossMarshaller;
+import org.infinispan.commons.marshall.jboss.DefaultContextClassResolver;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.function.Function;
@@ -28,13 +31,8 @@ abstract public class AbstractSerializationTest<S,T> {
 
     abstract T parse(S input);
 
-    final static Marshaller jbossMarshaller = new JBossMarshaller() {
-
-        @Override
-        public String toString() {
-            return "JBossMarshaller";
-        }
-    };
+    /** adapted from GenericJBossMarshaller which was final: */
+    final static Marshaller jbossMarshaller = new MyAbstractJBossMarshaller();
     final static Marshaller javaSerializationMarshaller = new JavaSerializationMarshaller() {
         @Override
         public String toString() {
@@ -42,21 +40,25 @@ abstract public class AbstractSerializationTest<S,T> {
         }
     };
 
-    @Test public void assertEqualsJBossMarshaller() throws Exception {
+    @Test public void assertEqualsJBossMarshaller() {
         assertEqualsMarshaller(jbossMarshaller);
     }
-    @Test public void assertEqualsJavaSerializationMarshaller() throws Exception {
+    @Test public void assertEqualsJavaSerializationMarshaller() {
         assertEqualsMarshaller(javaSerializationMarshaller);
     }
 
-    public void assertEqualsMarshaller(Marshaller m) throws Exception {
+
+    public void assertEqualsMarshaller(Marshaller m) {
+
+        final Class<? extends Object>[] classs = new Class[1];
 
         assertEqualSerialization((T y) -> {
+            classs[0] = y.getClass();
             try {
                 assertTrue(m.isMarshallable(y));
                 byte[] b = m.objectToByteBuffer(y);
-                assertTrue(b.length > 1);
-                System.out.println(m + ": " + y + " (" + y.getClass() + ") to " + b.length + " bytes");
+                int len = b.length;
+                log(m.toString(), y, len);
                 return b;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -69,11 +71,55 @@ abstract public class AbstractSerializationTest<S,T> {
                 return (T)m.objectFromByteBuffer(s);
             } catch (Exception e) {
                 e.printStackTrace();
-                assertTrue(e.toString(), false);
+                assertTrue(new String(s) + " " + e.toString(), false);
                 return null;
             }
         });
     }
+
+    private void log(String m, T y, int len) {
+        assertTrue(len > 1);
+        System.out.print("\n" + m + ": " + y + " (" + y.getClass() + ") to " + len + " bytes");
+    }
+
+    @Ignore /* not working yet */ @Test
+    public void assertEqualJSONMarshaller()  {
+        final Class<? extends Object>[] classs = new Class[1];
+
+        assertEqualSerialization((T y) -> {
+
+            classs[0] = y.getClass();
+
+            String s = null;
+
+            try {
+                /*serializer  = JSON.omDeep.getSerializerProvider().findValueSerializer(y.getClass());
+                if (serializer == null) {
+                    throw new RuntimeException("no serializer exists for " + classs[0]);
+                }*/
+
+                assertTrue(y.getClass() + " serializable?", JSON.omDeep.canSerialize(y.getClass()));
+                s = JSON.omDeep.writeValueAsString(y);
+                log("JSON: " + s, y, s.length());
+                return s;
+            } catch (Exception e) {
+                e.printStackTrace();
+                assertTrue("Unable to serialize: " + y +  " " + e, false);
+                return null;
+            }
+
+        }, (String s) -> {
+            try {
+                return (T)JSON.omDeep.readerFor(classs[0]).readValue(s);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Unable to deserialize: " + s);
+                assertTrue(s + "\n\t" + e.toString(), false);
+                return null;
+            }
+        });
+    }
+
 
     public <I> void assertEqualSerialization(Function<T,I> marshaller, Function<I,T> unmarshaller)  {
 
@@ -97,4 +143,18 @@ abstract public class AbstractSerializationTest<S,T> {
         return deserialized;
     }
 
+    static class MyAbstractJBossMarshaller extends AbstractJBossMarshaller {
+
+        public MyAbstractJBossMarshaller() {
+            super();
+            baseCfg.setClassResolver(
+                    new DefaultContextClassResolver(this.getClass().getClassLoader()));
+        }
+
+
+        @Override
+        public String toString() {
+            return "JBossMarshaller";
+        }
+    }
 }

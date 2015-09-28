@@ -20,13 +20,13 @@
  */
 package nars.term;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.TemporalRules;
 import nars.term.transform.*;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -42,46 +42,191 @@ import static nars.Symbols.*;
 /**
  * a compound term
  */
+
 public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPair {
 
 
-    /**
-     * list of (direct) term
-     */
-    public final T[] term;
+    final private static int PRIME1 = 31;
 
     /**
      * syntactic complexity of the compound, the sum of those of its term
      * plus 1
      * TODO make final again
      */
+    final private static int PRIME2 = 92821;
+
+    /**
+     * list of (direct) term
+     */
+    public T[] term;
 
     /**
      * bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm
      */
     protected transient int structureHash;
-    transient int contentHash;
-
 
     /**
      * Whether contains a variable
      */
     transient private byte hasVarQueries, hasVarIndeps, hasVarDeps;
-    transient private int varTotal, volume, complexity;
+    transient private int contentHash, varTotal, volume, complexity;
 
-    transient private int containedTemporalRelations = -1;
 
 
     /**
      * subclasses should be sure to call init() in their constructors; it is not done here
      * to allow subclass constructors to set data before calling init()
      */
-    public Compound(final T... components) {
+    public Compound(@JsonProperty("term") final T... components) {
         super();
 
 
         this.complexity = -1;
         this.term = components;
+    }
+
+    protected void setTerm(T[] term) {
+        init(term);
+    }
+
+    public static void appendSeparator(final Appendable p, final boolean pretty) throws IOException {
+        p.append(ARGUMENT_SEPARATOR);
+        if (pretty) p.append(' ');
+    }
+
+    /**
+     * build a component list from terms
+     *
+     * @return the component list
+     */
+    public static Term[] termArray(final Term... t) {
+        return t;
+    }
+
+    public static List<Term> termList(final Term... t) {
+        return Arrays.asList((Term[]) t);
+    }
+
+    public static void writeCompound1(final Op op, final Term singleTerm, Appendable writer, boolean pretty) throws IOException {
+        writer.append(COMPOUND_TERM_OPENER);
+        writer.append(op.str);
+        writer.append(ARGUMENT_SEPARATOR);
+        singleTerm.append(writer, pretty);
+        writer.append(COMPOUND_TERM_CLOSER);
+    }
+
+    public static byte[] newCompound1Key(final Op op, final Term singleTerm) {
+
+        final byte[] opBytes = op.bytes;
+
+        if (opBytes.length > 1)
+            throw new RuntimeException("Compound1 operators must have a 1 char representation; invalid: " + op);
+
+        final byte[] termBytes = singleTerm.bytes();
+
+        return ByteBuf.create(opBytes.length + termBytes.length)
+                //.add((byte)COMPOUND_TERM_OPENER.ch)
+                .add(opBytes)
+                        //.add((byte) ARGUMENT_SEPARATOR)
+                .add(termBytes)
+                        //.add((byte) COMPOUND_TERM_CLOSER.ch)
+                .toBytes();
+    }
+
+    /**
+     * Shallow clone an array list of terms
+     *
+     * @param original The original component list
+     * @return an identical and separate copy of the list
+     */
+    public static Term[] cloneTermsAppend(final Term[] original, final Term... additional) {
+        if (original == null) {
+            return null;
+        }
+
+        int L = original.length + additional.length;
+        if (L == 0)
+            return original;
+
+        //TODO apply preventUnnecessaryDeepCopy to more cases
+
+        final Term[] arr = new Term[L];
+
+        final int l = original.length;
+        System.arraycopy(original, 0, arr, 0, l);
+        System.arraycopy(additional, 0, arr, l, additional.length);
+
+//        int j = 0;
+//        Term[] srcArray = original;
+//        for (int i = 0; i < L; i++) {
+//            if (i == original.length) {
+//                srcArray = additional;
+//                j = 0;
+//            }
+//
+//            arr[i] = srcArray[j++];
+//        }
+
+        return arr;
+
+    }
+
+    /**
+     * from: http://stackoverflow.com/a/19333201
+     */
+    public static <T> void shuffle(final T[] array, final Random random) {
+        int count = array.length;
+        for (int i = count; i > 1; i--) {
+            int a = i - 1;
+            int b = random.nextInt(i);
+            final T t = array[b];
+            array[b] = array[a];
+            array[a] = t;
+        }
+    }
+
+    public static Term unwrap(Term x, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
+        if (x instanceof Compound) {
+            Compound c = (Compound) x;
+            if (c.length() == 1) {
+                if ((unwrapLen1SetInt && (c instanceof SetInt)) ||
+                        (unwrapLen1SetExt && (c instanceof SetExt)) ||
+                        (unwrapLen1Product && (c instanceof Product))
+                        ) {
+                    return c.term(0);
+                }
+            }
+        }
+
+        return x;
+    }
+
+    public static Compound<?> transformIndependentToDependentVariables(final Compound c) {
+        if (!c.hasVarIndep())
+            return c;
+
+        return (Compound) c.cloneTransforming(new TransformIndependentToDependentVariables());
+    }
+
+    private static Term[] resultOfCloneTermsExcept(boolean requireModification, Term[] l, int remain) {
+        final boolean removed = (remain != l.length);
+
+
+        if (!removed) {
+            //no removals
+            if (requireModification)
+                return null;
+            return l;
+        } else {
+            //trim the array
+            return Arrays.copyOf(l, remain);
+        }
+    }
+
+    public static Set<Term> termSet(Term... t) {
+        Set<Term> l = Global.newHashSet(t.length);
+        for (Term x : t) l.add(x);
+        return l;
     }
 
     public boolean impossibleSubTermVolume(final int otherTermVolume) {
@@ -99,10 +244,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         // it means there is some component of the other term which is not found
         return ((possibleSubtermStructure | existingStructure) != existingStructure);
     }
-
-
-    final private static int PRIME1 = 31;
-    final private static int PRIME2 = 92821;
 
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
@@ -158,7 +299,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     }
 
-
     protected int getStructureBase() {
         final int opOrdinal = op().ordinal();
         if (opOrdinal < 31)
@@ -175,7 +315,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         init(term);
     }
 
-
     /**
      * allows implementations to include a 32 bit identifier within the struturehash
      * which will be used to exclude inequalities. by default, it returns 0 which
@@ -187,12 +326,10 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return 0;
     }
 
-
     @Override
     public final int structure() {
         return structureHash;
     }
-
 
     @Override
     public byte[] bytes() {
@@ -255,14 +392,22 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     }
 
+
+//    @Deprecated public static <T> void shuffleOLD(final T[] ar, final Random rnd) {
+//        if (ar.length < 2) return;
+//
+//
+//        for (int i = ar.length - 1; i > 0; i--) {
+//            final int index = rnd.nextInt(i + 1);
+//            final T a = ar[index];
+//            ar[index] = ar[i];
+//            ar[i] = a;
+//        }
+//    }
+
     @Override
     public String toString() {
         return toString(true);
-    }
-
-    public static void appendSeparator(final Appendable p, final boolean pretty) throws IOException {
-        p.append(ARGUMENT_SEPARATOR);
-        if (pretty) p.append(' ');
     }
 
     public boolean appendOperator(Appendable p) throws IOException {
@@ -278,114 +423,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return true;
     }
 
-
-    /**
-     * build a component list from terms
-     *
-     * @return the component list
-     */
-    public static Term[] termArray(final Term... t) {
-        return t;
-    }
-
-
-    public static List<Term> termList(final Term... t) {
-        return Arrays.asList((Term[]) t);
-    }
-
-
-    public static void writeCompound1(final Op op, final Term singleTerm, Appendable writer, boolean pretty) throws IOException {
-        writer.append(COMPOUND_TERM_OPENER);
-        writer.append(op.str);
-        writer.append(ARGUMENT_SEPARATOR);
-        singleTerm.append(writer, pretty);
-        writer.append(COMPOUND_TERM_CLOSER);
-    }
-
-    public static byte[] newCompound1Key(final Op op, final Term singleTerm) {
-
-        final byte[] opBytes = op.bytes;
-
-        if (opBytes.length > 1)
-            throw new RuntimeException("Compound1 operators must have a 1 char representation; invalid: " + op);
-
-        final byte[] termBytes = singleTerm.bytes();
-
-        return ByteBuf.create(opBytes.length + termBytes.length)
-                //.add((byte)COMPOUND_TERM_OPENER.ch)
-                .add(opBytes)
-                        //.add((byte) ARGUMENT_SEPARATOR)
-                .add(termBytes)
-                        //.add((byte) COMPOUND_TERM_CLOSER.ch)
-                .toBytes();
-    }
-
-
-    /**
-     * Shallow clone an array list of terms
-     *
-     * @param original The original component list
-     * @return an identical and separate copy of the list
-     */
-    public static Term[] cloneTermsAppend(final Term[] original, final Term... additional) {
-        if (original == null) {
-            return null;
-        }
-
-        int L = original.length + additional.length;
-        if (L == 0)
-            return original;
-
-        //TODO apply preventUnnecessaryDeepCopy to more cases
-
-        final Term[] arr = new Term[L];
-
-        final int l = original.length;
-        System.arraycopy(original, 0, arr, 0, l);
-        System.arraycopy(additional, 0, arr, l, additional.length);
-
-//        int j = 0;
-//        Term[] srcArray = original;
-//        for (int i = 0; i < L; i++) {
-//            if (i == original.length) {
-//                srcArray = additional;
-//                j = 0;
-//            }
-//
-//            arr[i] = srcArray[j++];
-//        }
-
-        return arr;
-
-    }
-
-    /**
-     * from: http://stackoverflow.com/a/19333201
-     */
-    public static <T> void shuffle(final T[] array, final Random random) {
-        int count = array.length;
-        for (int i = count; i > 1; i--) {
-            int a = i - 1;
-            int b = random.nextInt(i);
-            final T t = array[b];
-            array[b] = array[a];
-            array[a] = t;
-        }
-    }
-
-
-//    @Deprecated public static <T> void shuffleOLD(final T[] ar, final Random rnd) {
-//        if (ar.length < 2) return;
-//
-//
-//        for (int i = ar.length - 1; i > 0; i--) {
-//            final int index = rnd.nextInt(i + 1);
-//            final T a = ar[index];
-//            ar[index] = ar[i];
-//            ar[i] = a;
-//        }
-//    }
-
     public T term(int i) {
         return term[i];
     }
@@ -394,47 +431,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         Term x = term[i];
         return Compound.unwrap(x, unwrapLen1SetExt, unwrapLen1SetInt, unwrapLen1Product);
     }
-
-    public static Term unwrap(Term x, boolean unwrapLen1SetExt, boolean unwrapLen1SetInt, boolean unwrapLen1Product) {
-        if (x instanceof Compound) {
-            Compound c = (Compound) x;
-            if (c.length() == 1) {
-                if ((unwrapLen1SetInt && (c instanceof SetInt)) ||
-                        (unwrapLen1SetExt && (c instanceof SetExt)) ||
-                        (unwrapLen1Product && (c instanceof Product))
-                        ) {
-                    return c.term(0);
-                }
-            }
-        }
-
-        return x;
-    }
-
-    @Override
-    public StringBuilder toStringBuilder(boolean pretty) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            append(sb, pretty);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb;
-    }
-
-    /**
-     * Abstract method to get the operate of the compound
-     */
-    @Override
-    public abstract Op op();
-
-    /**
-     * Abstract clone method
-     *
-     * @return A clone of the compound term
-     */
-    @Override
-    public abstract Term clone();
 
 //    @Override
 //    public int compareTo(final Object that) {
@@ -484,11 +480,46 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 //        return super.compareTo(c);
 //    }
 
+    @Override
+    public StringBuilder toStringBuilder(boolean pretty) {
+        StringBuilder sb = new StringBuilder();
+        try {
+            append(sb, pretty);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sb;
+    }
+
+    /**
+     * Abstract method to get the operate of the compound
+     */
+    @Override
+    public abstract Op op();
+
+    /**
+     * Abstract clone method
+     *
+     * @return A clone of the compound term
+     */
+    @Override
+    public abstract Term clone();
 
     @Override
     final public int hashCode() {
         return contentHash;
     }
+
+//    public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+//        if (hasVar()) {
+//            v.visit(this, parent);
+//            //if (this instanceof Compound) {
+//            for (Term t : term) {
+//                t.recurseSubtermsContainingVariables(v, this);
+//            }
+//            //}
+//        }
+//    }
 
     @Override
     public boolean equals(final Object that) {
@@ -511,6 +542,22 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return true;
     }
 
+
+    /* UNTESTED
+    public Compound clone(VariableTransform t) {
+        if (!hasVar())
+            throw new RuntimeException("this VariableTransform clone should not have been necessary");
+
+        Compound result = cloneVariablesDeep();
+        if (result == null)
+            throw new RuntimeException("unable to clone: " + this);
+
+        result.transformVariableTermsDeep(t);
+
+        result.invalidate();
+
+        return result;
+    } */
 
     @Override
     public int compareTo(final Object o) {
@@ -550,17 +597,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         //}
     }
 
-//    public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
-//        if (hasVar()) {
-//            v.visit(this, parent);
-//            //if (this instanceof Compound) {
-//            for (Term t : term) {
-//                t.recurseSubtermsContainingVariables(v, this);
-//            }
-//            //}
-//        }
-//    }
-
     /**
      * extracts a subterm provided by the address tuple
      * returns null if specified subterm does not exist
@@ -574,24 +610,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         }
         return (X) ptr;
     }
-
-
-    /* UNTESTED
-    public Compound clone(VariableTransform t) {
-        if (!hasVar())
-            throw new RuntimeException("this VariableTransform clone should not have been necessary");
-
-        Compound result = cloneVariablesDeep();
-        if (result == null)
-            throw new RuntimeException("unable to clone: " + this);
-
-        result.transformVariableTermsDeep(t);
-
-        result.invalidate();
-
-        return result;
-    } */
-
 
     @Override
     final public <T extends Term> T normalized() {
@@ -645,58 +663,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return ((Compound) c);
     }
 
-
-    public static Compound<?> transformIndependentToDependentVariables(final Compound c) {
-        if (!c.hasVarIndep())
-            return c;
-
-        return (Compound) c.cloneTransforming(new TransformIndependentToDependentVariables());
-    }
-
-    public <X extends Compound> X cloneTransforming(final CompoundTransform t) {
-        if (t.testSuperTerm(this)) {
-            Term[] cls = cloneTermsTransforming(t, 0);
-            if (cls == null) return null;
-            return (X) clone(cls);
-        }
-        return (X) this;
-    }
-
-
-    /**
-     * override in subclasses to avoid unnecessary reinit
-     */
-    /*public CompoundTerm _clone(final Term[] replaced) {
-        if (Terms.equals(term, replaced)) {
-            return this;
-        }
-        return clone(replaced);
-    }*/
-    @Override
-    public int containedTemporalRelations() {
-        if (containedTemporalRelations == -1) {
-
-            /*if ((this instanceof Equivalence) || (this instanceof Implication))*/
-            {
-                int temporalOrder = this.getTemporalOrder();
-                switch (temporalOrder) {
-                    case TemporalRules.ORDER_FORWARD:
-                    case TemporalRules.ORDER_CONCURRENT:
-                    case TemporalRules.ORDER_BACKWARD:
-                        containedTemporalRelations = 1;
-                        break;
-                    default:
-                        containedTemporalRelations = 0;
-                        break;
-                }
-            }
-
-            for (final Term t : term)
-                containedTemporalRelations += t.containedTemporalRelations();
-        }
-        return this.containedTemporalRelations;
-    }
-
 //    @Override
 //    public boolean equals(final Object that) {
 //        if (!(that instanceof CompoundTerm))
@@ -729,6 +695,52 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     /* ----- utilities for other fields ----- */
 
+    public <X extends Compound> X cloneTransforming(final CompoundTransform t) {
+        if (t.testSuperTerm(this)) {
+            Term[] cls = cloneTermsTransforming(t, 0);
+            if (cls == null) return null;
+            return (X) clone(cls);
+        }
+        return (X) this;
+    }
+
+    /**
+     * override in subclasses to avoid unnecessary reinit
+     */
+    /*public CompoundTerm _clone(final Term[] replaced) {
+        if (Terms.equals(term, replaced)) {
+            return this;
+        }
+        return clone(replaced);
+    }*/
+
+//    @Override
+//    public int containedTemporalRelations() {
+//        if (containedTemporalRelations == -1) {
+//
+//            /*if ((this instanceof Equivalence) || (this instanceof Implication))*/
+//            {
+//                int temporalOrder = this.getTemporalOrder();
+//                switch (temporalOrder) {
+//                    case TemporalRules.ORDER_FORWARD:
+//                    case TemporalRules.ORDER_CONCURRENT:
+//                    case TemporalRules.ORDER_BACKWARD:
+//                        containedTemporalRelations = 1;
+//                        break;
+//                    default:
+//                        containedTemporalRelations = 0;
+//                        break;
+//                }
+//            }
+//
+//            for (final Term t : term)
+//                containedTemporalRelations += t.containedTemporalRelations();
+//        }
+//        return this.containedTemporalRelations;
+//    }
+
+    /* ----- extend Collection methods to component list ----- */
+
     /**
      * report the term's syntactic complexity
      *
@@ -738,7 +750,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
     public int complexity() {
         return complexity;
     }
-
 
     /**
      * Check if the order of the term matters
@@ -754,8 +765,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return false;
     }
 
-    /* ----- extend Collection methods to component list ----- */
-
     /**
      * get the number of term
      *
@@ -765,7 +774,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
     public int length() {
         return term.length;
     }
-
 
     /**
      * Gives a set of all (unique) contained term, recursively
@@ -794,7 +802,6 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
     public Term[] cloneTerms() {
         return copyOf(term, term.length);
     }
-
 
     /**
      * Cloned array of Terms, except for one or more Terms.
@@ -852,34 +859,12 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         return resultOfCloneTermsExcept(requireModification, l, remain);
     }
 
-    private static Term[] resultOfCloneTermsExcept(boolean requireModification, Term[] l, int remain) {
-        final boolean removed = (remain != l.length);
-
-
-        if (!removed) {
-            //no removals
-            if (requireModification)
-                return null;
-            return l;
-        } else {
-            //trim the array
-            return Arrays.copyOf(l, remain);
-        }
-    }
-
-
     /**
      * creates a new ArrayList for terms
      */
     public List<Term> asTermList() {
         List<Term> l = Global.newArrayList(length());
         addTermsTo(l);
-        return l;
-    }
-
-    public static Set<Term> termSet(Term... t) {
-        Set<Term> l = Global.newHashSet(t.length);
-        for (Term x : t) l.add(x);
         return l;
     }
 

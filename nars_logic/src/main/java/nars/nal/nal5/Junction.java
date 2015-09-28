@@ -8,6 +8,10 @@ import nars.term.Term;
  */
 abstract public class Junction<T extends Term> extends Compound<T> {
 
+    public Junction() {
+        super();
+    }
+
     public Junction(final T[] arg) {
         super(arg);
     }

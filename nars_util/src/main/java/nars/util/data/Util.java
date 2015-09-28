@@ -341,8 +341,8 @@ public class Util {
         return i;
     }
 
-    public static long ELFHash(final byte[] str, final long seed)
-    {
+    public static long ELFHash(final byte[] str, final long seed)     {
+
         long hash = seed;
         long x    = 0;
 

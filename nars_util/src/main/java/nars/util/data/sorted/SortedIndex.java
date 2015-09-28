@@ -43,4 +43,6 @@ abstract public class SortedIndex<T> implements Collection<T>, Serializable {
 
 
     abstract public boolean isSorted();
+
+    public abstract int capacity();
 }

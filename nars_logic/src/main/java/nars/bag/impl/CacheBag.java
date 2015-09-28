@@ -1,12 +1,12 @@
 package nars.bag.impl;
 
-import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import nars.budget.Itemized;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 
 public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Serializable {
@@ -23,42 +23,54 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
 
     int size();
 
-    void setOnRemoval(Consumer<V> onRemoval);
-    Consumer<V> getOnRemoval();
+//    void setOnRemoval(Consumer<V> onRemoval);
+//    Consumer<V> getOnRemoval();
 
     default void delete() {
 
     }
 
-    /** performs an exhaustive element comparison of two bags */
+    /**  by value set */
     public static <K,V extends Itemized<K>> boolean equals(CacheBag<K,V> a, CacheBag<K,V> b) {
-        if (a == b) return true;
-        if (a.getClass()!=b.getClass()) return false;
+        if (a.size()!=b.size()) return false;
+        HashSet<V> aa = Sets.newHashSet(a);
+        HashSet<V> bb = Sets.newHashSet(b);
 
-        Iterator<V> iterator1 = a.iterator();
-        Iterator<V> iterator2 = b.iterator();
-
-        while(true) {
-            if(iterator1.hasNext()) {
-                if(!iterator2.hasNext()) {
-                    return false;
-                }
-
-                V o1 = iterator1.next();
-                V o2 = iterator2.next();
-                if (Objects.equal(o1, o2) && o1.getBudget().equalsBudget(o2.getBudget())) {
-                    continue;
-                }
-
-                return false;
-            }
-
-            return !iterator2.hasNext();
-        }
-
-        //return Iterables.elementsEqual(a, b);
+        //TODO test for budget equality, which must be done separately
+        return aa.equals(bb);
     }
 
+//
+//    /** performs an exhaustive element comparison of two bags */
+//    public static <K,V extends Itemized<K>> boolean equalsInSequence(CacheBag<K,V> a, CacheBag<K,V> b) {
+//        if (a == b) return true;
+//        if (a.getClass()!=b.getClass())
+//            return false;
+//
+//        Iterator<V> iterator1 = a.iterator();
+//        Iterator<V> iterator2 = b.iterator();
+//
+//        while(true) {
+//            if(iterator1.hasNext()) {
+//                if(!iterator2.hasNext()) {
+//                    return false;
+//                }
+//
+//                V o1 = iterator1.next();
+//                V o2 = iterator2.next();
+//                if (Objects.equal(o1, o2) && o1.getBudget().equalsBudget(o2.getBudget())) {
+//                    continue;
+//                }
+//
+//                return false;
+//            }
+//
+//            return !iterator2.hasNext();
+//        }
+//
+//        //return Iterables.elementsEqual(a, b);
+//    }
+//
 
     default double[] getPriorityHistogram(int bins) {
         return getPriorityHistogram(new double[bins]);
@@ -97,4 +109,6 @@ public interface CacheBag<K, V extends Itemized<K>> extends Iterable<V>, Seriali
         return ((float)b)/bins;
     }
 
+    @Override
+    Iterator<V> iterator();
 }

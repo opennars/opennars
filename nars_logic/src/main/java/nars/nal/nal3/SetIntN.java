@@ -32,6 +32,7 @@ import java.io.IOException;
  */
 public class SetIntN extends AbstractSetN implements SetInt {
 
+
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term

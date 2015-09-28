@@ -13,11 +13,13 @@ import java.util.List;
 
 public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> implements Serializable {
 
-    int capacity;
+    protected int capacity;
 
     final List<E> list;
 
 //    final static private Comparator<Itemized> priorityComparator = (a, b) -> Float.compare(b.getPriority(), a.getPriority());
+
+
 
 
     @Override
@@ -38,9 +40,9 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 //                Global.newArrayList(capacity); // : new FastSortedTable();
 //    }
 
-    public ArraySortedIndex() {
+    /*public ArraySortedIndex() {
         this(0);
-    }
+    }*/
 
     public ArraySortedIndex(int capacity) {
         this(capacity, Global.newArrayList(capacity));
@@ -85,9 +87,6 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
         this.capacity = capacity;
     }
 
-    public int getCapacity() {
-        return capacity;
-    }
 
     public final int positionOf(final E o) {
         int low = 0;
@@ -217,11 +216,11 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
 
 
-    public int capacity() {
+    public final int capacity() {
         return capacity;
     }
 
-    public int available() {
+    public final int available() {
         return capacity() - size();
     }
 
@@ -231,7 +230,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
     }
 
     @Override
-    public Iterator<E> descendingIterator() {
+    public final Iterator<E> descendingIterator() {
         return new ReverseListIterator(list);
     }
 

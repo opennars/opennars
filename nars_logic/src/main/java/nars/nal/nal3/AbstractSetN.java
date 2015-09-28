@@ -10,6 +10,7 @@ import nars.term.Terms;
  */
 abstract public class AbstractSetN extends Compound implements SetTensional {
 
+
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term

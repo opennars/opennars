@@ -13,6 +13,9 @@ import nars.util.data.Util;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -33,46 +36,37 @@ import java.util.function.ToIntFunction;
  */
 public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
-    public static final Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.max;
-
+    public final static Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.max;
+    public final static BagCurve power4BagCurve = new Power4BagCurve();
+    public final static BagCurve power6BagCurve = new Power6BagCurve();
     /**
      * mapping from key to item
      */
-    public final CurveMap index;
-
+    public final CurveMap<K,V> index;
     /**
      * array of lists of items, for items on different level
      */
     public final SortedIndex<V> items;
-
-    /**
-     * defined in different bags
-     */
-    int capacity;
+    public final ToIntFunction<CurveBag> sampler;
 
 
-    public transient final ToIntFunction<CurveBag> sampler;
-
-
-    public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {
-        //if (capacity < 50)            
-        return new ArraySortedIndex(capacity);
-        //else
-        //    return new FractalSortedItemList<E>();
+    public CurveBag() {
+        this(null, 0, CurveBag.power6BagCurve);
     }
 
     public CurveBag(Random rng, int capacity) {
         this(rng, capacity, CurveBag.power6BagCurve);
     }
 
-
     public CurveBag(Random rng, int capacity, BagCurve curve, SortedIndex<V> ind) {
         this(capacity, new RandomSampler(rng, curve), ind);
     }
 
+
+
     public CurveBag(Random rng, int capacity, BagCurve curve) {
         this(capacity, new RandomSampler(rng, curve), defaultIndex(capacity));
-                
+
                                 /*if (capacity < 128)*/
                 //items = new ArraySortedItemList<>(capacity);
                 /*else  {
@@ -82,99 +76,36 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     }
 
+    public CurveBag(int capacity, ToIntFunction<CurveBag> sampler, SortedIndex<V> items) {
+        super();
+
+        this.sampler = sampler;
+        this.items = items;
+        items.clear();
+        items.setCapacity(capacity);
 
 
-    public class CurveMap extends CollectorMap<K, V> {
-
-        public CurveMap(Map<K, V> map) {
-            super(map, DEFAULT_MERGE_METHOD);
-        }
-
-
-
-        @Override
-        protected V removeItem(final V removed) {
-
-            if (items.remove(removed)) {
-                return removed;
-            }
-
-            return null;
-        }
-
-        @Override
-        protected V addItem(final V i) {
-
-            return items.insert(i);
-        }
+        index = newIndex(capacity);
     }
 
-    public boolean isSorted() {
-        return items.isSorted();
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(capacity());
+        super.writeExternal(out);
     }
 
-    public static class RandomSampler implements ToIntFunction<CurveBag> {
 
-        private final BagCurve curve;
-        private final Random rng;
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        setCapacity( in.readInt() );
+        super.readExternal(in);
+    }
 
-        public RandomSampler(Random rng, BagCurve curve) {
-            this.curve = curve;
-            this.rng = rng;
-        }
-
-        /** maps y in 0..1.0 to an index in 0..size */
-        static final int index(float y, final int size) {
-
-            //y = 1f - y; //reverse for the ordering of the bag
-
-            if (y <= 0) return 0;
-
-            int i= Util.floorInt(y * size);
-
-            if (i >= size) return size-1;
-            if (i < 0) return 0;
-
-            i = (size-1)-i; //invert order = select highest pri most frequently
-
-            return i;
-
-            /*if (result == size) {
-                //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
-                return (size - 1);
-            }*/
-
-            //return result;
-
-        }
-
-
-        @Override
-        public int applyAsInt(final CurveBag b) {
-            final int s = b.size();
-            if (s == 1) return 0;
-
-            float x = rng.nextFloat();
-
-            //TODO cache these curvepoints when min/max dont change
-            final float min = b.getPriorityMin();
-            final float max = b.getPriorityMax();
-            final boolean normalizing = (min!=max);
-            if (normalizing) {
-                //rescale to dynamic range
-                x = min + (x * (max-min));
-            }
-
-            float y = curve.valueOf(x);
-
-            if (normalizing) {
-                final float yMin = curve.valueOf(min);
-                final float yMax = curve.valueOf(max);
-                y = (y - yMin) / (yMax - yMin);
-            }
-
-            return index(y, s);
-        }
+    public static <E extends Itemized> SortedIndex<E> defaultIndex(int capacity) {
+        //if (capacity < 50)
+        return new ArraySortedIndex(capacity);
+        //else
+        //    return new FractalSortedItemList<E>();
     }
 
 //FOR linear scanner, if re-implemented
@@ -188,28 +119,17 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 //     */
 //    final float scanningRate = -1.0f;
 
-
-    public CurveBag(int capacity, ToIntFunction<CurveBag> sampler, SortedIndex<V> items) {
-        super();
-        this.capacity = capacity;
-        this.sampler = sampler;
-
-
-        items.clear();
-        items.setCapacity(capacity);
-        this.items = items;
-
-
-        index = newIndex(capacity);
-
+    public boolean isSorted() {
+        return items.isSorted();
     }
 
     protected CurveMap newIndex(int capacity) {
         return new CurveMap(
                 //new HashMap(capacity)
-                Global.newHashMap(capacity)
+                Global.newHashMap(capacity),
                 //new UnifiedMap(capacity)
                 //new CuckooMap(capacity)
+                items
         );
     }
 
@@ -276,7 +196,6 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     @Override
     public void setCapacity(int capacity) {
-        this.capacity = capacity;
         items.setCapacity(capacity);
     }
 
@@ -444,7 +363,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
     public V put(final V i) {
 
 
-        final CurveMap index = this.index;
+        final CurveMap<K,V> index = this.index;
 
         final V overflow = index.putKey(i.name(), i);
 
@@ -496,7 +415,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      * all comparisons like this should use this same condition
      * */
     final boolean full() {
-        return (size() >= capacity);
+        return (size() >= capacity());
     }
 
 
@@ -526,7 +445,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
     @Override
     final public int capacity() {
-        return capacity;
+        return items.capacity();
     }
 
     @Override
@@ -549,122 +468,17 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         return items.iterator();
     }
 
-    /**
-     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).
-     * x=0 represents low priority (bottom of bag), x=1.0 represents high priority
-     *
-     * @param x input mappig value
-     * @return
-     */
-
-    @FunctionalInterface
-    public interface BagCurve extends FloatToFloatFunction {
-        //public float valueOf(float x);
-    }
-
-
-    public static class CubicBagCurve implements BagCurve {
-
-        @Override
-        public final float valueOf(final float x) {
-            //1.0 - ((1.0-x)^2)
-            // a function which has domain and range between 0..1.0 but
-            //   will result in values above 0.5 more often than not.  see the curve:        
-            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            float nx = 1.0f - x;
-            return 1.0f - (nx * nx * nx);
-        }
-
-        @Override
-        public String toString() {
-            return "CubicBagCurve";
-        }
-    }
-
-
-    public static class Power4BagCurve implements BagCurve {
-
-        @Override
-        public final float valueOf(final float x) {
-            float nx = 1-x;
-            float nnx = nx * nx;
-            return 1 - (nnx * nnx);
-        }
-
-        @Override
-        public String toString() {
-            return "Power4BagCurve";
-        }
-    }
-    public final static BagCurve power4BagCurve = new Power4BagCurve();
-
-    public static class Power6BagCurve implements BagCurve {
-
-        @Override
-        public final float valueOf(final float x) {
-            /** x=0, y=0 ... x=1, y=1 */
-            float nx = 1-x;
-            float nnx = nx * nx;
-            return 1-(nnx * nnx * nnx);
-        }
-
-        @Override
-        public String toString() {
-            return "Power6BagCurve";
-        }
-    }
-
-    public final static BagCurve power6BagCurve = new Power6BagCurve();
-
-
-    /**
-     * Approximates priority -> probability fairness with an exponential curve
-     */
-    @Deprecated
-    public static class FairPriorityProbabilityCurve implements BagCurve {
-
-        @Override
-        public final float valueOf(final float x) {
-            return (float) (1f - Math.exp(-5f * x));
-        }
-
-        @Override
-        public String toString() {
-            return "FairPriorityProbabilityCurve";
-        }
-
-    }
-
-
-    public static class QuadraticBagCurve implements BagCurve {
-
-        @Override
-        public final float valueOf(final float x) {
-            //1.0 - ((1.0-x)^2)
-            // a function which has domain and range between 0..1.0 but
-            //   will result in values above 0.5 more often than not.  see the curve:        
-            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            float nx = 1f - x;
-            return 1f - (nx * nx);
-        }
-
-        @Override
-        public String toString() {
-            return "QuadraticBagCurve";
-        }
-
-    }
-
     @Override
     public void forEach(final Consumer<? super V> action) {
 
         final List<V> l = items.getList();
-        for (int i = 0; i < l.size(); i++){
+
+        //start at end
+        for (int i = l.size()-1; i >= 0; i--){
             action.accept(l.get(i));
         }
 
     }
-
 
     /** default implementation; more optimal implementations will avoid instancing an iterator */
     public void forEach(final int max, final Consumer<V> action) {
@@ -775,10 +589,201 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
         if (isEmpty()) return 0;
         return items.getFirst().getPriority();
     }
+
     @Override
     public float getPriorityMin() {
         if (isEmpty()) return 0;
         return items.getLast().getPriority();
+    }
+
+    /**
+     * Defines the focus curve.  x is a proportion between 0 and 1 (inclusive).
+     * x=0 represents low priority (bottom of bag), x=1.0 represents high priority
+     *
+     * @return
+     */
+
+    @FunctionalInterface
+    public interface BagCurve extends FloatToFloatFunction {
+        //public float valueOf(float x);
+    }
+
+    public static class CurveMap<K, V extends Itemized<K>> extends CollectorMap<K, V> {
+
+        final SortedIndex<V> items;
+
+        public CurveMap(Map<K, V> map, SortedIndex<V> items) {
+            super(map, DEFAULT_MERGE_METHOD);
+            this.items = items;
+        }
+
+
+
+        @Override
+        protected V removeItem(final V removed) {
+
+            if (items.remove(removed)) {
+                return removed;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected V addItem(final V i) {
+
+            return items.insert(i);
+        }
+    }
+
+    public static class RandomSampler implements ToIntFunction<CurveBag> {
+
+        public final BagCurve curve;
+        public final Random rng;
+
+        public RandomSampler(Random rng, BagCurve curve) {
+            this.curve = curve;
+            this.rng = rng;
+        }
+
+        /** maps y in 0..1.0 to an index in 0..size */
+        static final int index(float y, final int size) {
+
+            //y = 1f - y; //reverse for the ordering of the bag
+
+            if (y <= 0) return 0;
+
+            int i= Util.floorInt(y * size);
+
+            if (i >= size) return size-1;
+            if (i < 0) return 0;
+
+            i = (size-1)-i; //invert order = select highest pri most frequently
+
+            return i;
+
+            /*if (result == size) {
+                //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
+                return (size - 1);
+            }*/
+
+            //return result;
+
+        }
+
+
+        @Override
+        public int applyAsInt(final CurveBag b) {
+            final int s = b.size();
+            if (s == 1) return 0;
+
+            float x = rng.nextFloat();
+
+            //TODO cache these curvepoints when min/max dont change
+            final float min = b.getPriorityMin();
+            final float max = b.getPriorityMax();
+            final boolean normalizing = (min!=max);
+            if (normalizing) {
+                //rescale to dynamic range
+                x = min + (x * (max-min));
+            }
+
+            float y = curve.valueOf(x);
+
+            if (normalizing) {
+                final float yMin = curve.valueOf(min);
+                final float yMax = curve.valueOf(max);
+                y = (y - yMin) / (yMax - yMin);
+            }
+
+            return index(y, s);
+        }
+    }
+
+    public static class CubicBagCurve implements BagCurve {
+
+        @Override
+        public final float valueOf(final float x) {
+            //1.0 - ((1.0-x)^2)
+            // a function which has domain and range between 0..1.0 but
+            //   will result in values above 0.5 more often than not.  see the curve:
+            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
+            float nx = 1.0f - x;
+            return 1.0f - (nx * nx * nx);
+        }
+
+        @Override
+        public String toString() {
+            return "CubicBagCurve";
+        }
+    }
+
+    public static class Power4BagCurve implements BagCurve {
+
+        @Override
+        public final float valueOf(final float x) {
+            float nx = 1-x;
+            float nnx = nx * nx;
+            return 1 - (nnx * nnx);
+        }
+
+        @Override
+        public String toString() {
+            return "Power4BagCurve";
+        }
+    }
+
+    public static class Power6BagCurve implements BagCurve {
+
+        @Override
+        public final float valueOf(final float x) {
+            /** x=0, y=0 ... x=1, y=1 */
+            float nx = 1-x;
+            float nnx = nx * nx;
+            return 1-(nnx * nnx * nnx);
+        }
+
+        @Override
+        public String toString() {
+            return "Power6BagCurve";
+        }
+    }
+
+    /**
+     * Approximates priority -> probability fairness with an exponential curve
+     */
+    @Deprecated
+    public static class FairPriorityProbabilityCurve implements BagCurve {
+
+        @Override
+        public final float valueOf(final float x) {
+            return (float) (1f - Math.exp(-5f * x));
+        }
+
+        @Override
+        public String toString() {
+            return "FairPriorityProbabilityCurve";
+        }
+
+    }
+
+    public static class QuadraticBagCurve implements BagCurve {
+
+        @Override
+        public final float valueOf(final float x) {
+            //1.0 - ((1.0-x)^2)
+            // a function which has domain and range between 0..1.0 but
+            //   will result in values above 0.5 more often than not.  see the curve:
+            //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-
+            float nx = 1f - x;
+            return 1f - (nx * nx);
+        }
+
+        @Override
+        public String toString() {
+            return "QuadraticBagCurve";
+        }
+
     }
 
     //    @Override

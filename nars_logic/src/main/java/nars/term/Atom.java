@@ -16,15 +16,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Created by me on 4/25/15.
- */
-public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizable {
+
+//@JsonDeserialize(using= FromStringDeserializer)
+public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizable{
 
     private static final Map<String,Atom> atoms = new HashMap();
     public static final Function<String, Atom> AtomInterner = Atom::new;
 
-    public static final Term Null = new Atom(new byte[0]) {
+    final static byte[] NullName = new byte[0];
+
+    public static final Term Null = new Atom(NullName) {
         @Override
         public String toString() {
             return "NULL";
@@ -41,8 +42,9 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         }
     };
 
-    private byte[] data;
-    private int hash;
+    protected byte[] data;
+
+    transient int hash;
 
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
@@ -126,7 +128,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     public Atom() {
-        this((byte[])null);
+        this(NullName);
     }
 
 
@@ -364,10 +366,6 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return 1;
     }
 
-
-
-    @Override
-    public final int containedTemporalRelations() {        return 0;     }
 
     @Override
     public final int length() {

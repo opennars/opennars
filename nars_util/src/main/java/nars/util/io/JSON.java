@@ -2,10 +2,12 @@ package nars.util.io;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ByteArraySerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import java.io.IOException;
@@ -16,7 +18,7 @@ import java.util.Map;
  */
 public class JSON {
 
-    static final ObjectMapper om = new ObjectMapper()
+    public static final ObjectMapper om = new ObjectMapper()
 
             .enableDefaultTyping()
 
@@ -25,16 +27,51 @@ public class JSON {
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()));
+
     static final ObjectWriter omPretty = om.copy().writerWithDefaultPrettyPrinter();
 
     public static final ObjectMapper omDeep = new ObjectMapper()
-            .enableDefaultTyping()
-            .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
+
+            .enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS, "_")
+
+            .setVisibility(PropertyAccessor.CREATOR, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            //.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
+
+            /*.enable(SerializationFeature.WRAP_ROOT_VALUE)
+            .enable(DeserializationFeature.UNWRAP_ROOT_VALUE)*/
+
+            //.enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
             .enable(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID)
             .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-            .disable(SerializationFeature.WRITE_NULL_MAP_VALUES)
-            .disable(MapperFeature.USE_STATIC_TYPING)
-            .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()));
+            .enable(SerializationFeature.WRITE_NULL_MAP_VALUES)
+            //.enable(MapperFeature.USE_STATIC_TYPING)
+            .enable(MapperFeature.AUTO_DETECT_FIELDS)
+            .enable(MapperFeature.AUTO_DETECT_CREATORS)
+            .enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER)
+            .enable(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS)
+            .enable(MapperFeature.INFER_PROPERTY_MUTATORS)
+            .disable(MapperFeature.AUTO_DETECT_GETTERS)
+            .disable(MapperFeature.AUTO_DETECT_IS_GETTERS)
+            .disable(MapperFeature.USE_GETTERS_AS_SETTERS)
+
+            //.enable(MapperFeature.USE_STD_BEAN_NAMING)
+
+
+            .enable(JsonGenerator.Feature.ESCAPE_NON_ASCII)
+            //.enable(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)
+            .enable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS)
+            //.enable(SerializationFeature.WRITE_ENUMS_USING_INDEX)
+            .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
+            .enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
+            .enable(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER)
+
+
+            //.disable(MapperFeature.USE_ANNOTATIONS)
+            .registerModule(new SimpleModule().addSerializer(new ByteArraySerializer()))
+            .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()))
+            //.findAndRegisterModules()
+    ;
 
 //
     public static JsonNode toJSON(String json) throws IOException {

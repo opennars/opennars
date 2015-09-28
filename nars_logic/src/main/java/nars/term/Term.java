@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
+
 public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 
@@ -52,7 +53,6 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
 
 //    void recurseSubtermsContainingVariables(final TermVisitor v, Term parent);
 
-    int containedTemporalRelations();
 
 
     default void recurseTerms(final TermVisitor v) {

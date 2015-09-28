@@ -10,8 +10,6 @@ import java.io.Serializable;
 public enum Op implements Serializable {
 
 
-
-
     //TODO include min/max arity for each operate, if applicable
 
     /** an atomic term (includes interval and variables); this value is set if not a compound term */

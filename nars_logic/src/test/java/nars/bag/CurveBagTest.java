@@ -342,10 +342,11 @@ public class CurveBagTest extends AbstractBagTest {
         ArraySortedIndex<NullItem> as = new ArraySortedIndex<NullItem>(capacity);
         CurveBag<CharSequence, NullItem> c = new CurveBag<CharSequence, NullItem>(rng, capacity, curve, as) {
 
-            protected CurveMap newIndex(int capacity) {
-                return new CurveMap(
+            protected CurveMap<CharSequence, NullItem> newIndex(int capacity) {
+                return new CurveMap<CharSequence, NullItem>(
                         //new HashMap(capacity)
-                        Global.newHashMap(capacity)
+                        Global.newHashMap(capacity),
+                        items
                 ) {
                     @Override
                     public NullItem put(NullItem value) {

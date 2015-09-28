@@ -12,10 +12,8 @@ import java.util.Set;
 /** adapter to a Map for coordinating changes in a Map with another Collection */
 public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializable {
 
-
     public final Map<K, V> map;
-    private final Procedure2<Budget, Budget> merge;
-
+    public final Procedure2<Budget, Budget> merge;
 
     public CollectorMap(Map<K, V> map, Procedure2<Budget,Budget> merge) {
         this.map = map;

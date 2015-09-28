@@ -81,11 +81,11 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends AbstractCacheBag<K,
     public void onRemoval(RemovalNotification<K, V> rn) {
         RemovalCause cause = rn.getCause();
 
-        if (cause==RemovalCause.SIZE || cause==RemovalCause.COLLECTED) {
-            V v = rn.getValue();
-            if (v!=null)
-                getOnRemoval().accept(v);
-        }
+//        if (cause==RemovalCause.SIZE || cause==RemovalCause.COLLECTED) {
+//            V v = rn.getValue();
+//            /*if (v!=null)
+//                getOnRemoval().accept(v);*/
+//        }
     }
 
 

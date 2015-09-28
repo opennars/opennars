@@ -23,15 +23,7 @@ package nars.term;
 import nars.Global;
 import nars.Op;
 import nars.Symbols;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal2.Instance;
-import nars.nal.nal2.InstanceProperty;
-import nars.nal.nal2.Property;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Image;
-import nars.nal.nal5.Equivalence;
-import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -50,7 +42,6 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * Constructor with partial values, called by make
      * Subclass constructors should call init after any initialization
      *
-     * @param arg The component list of the term
      */
     protected Statement(final A subj, final B pred) {
         super(subj, pred);

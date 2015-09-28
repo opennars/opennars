@@ -30,7 +30,6 @@ import nars.util.data.Util;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import static java.lang.Math.abs;
 import static nars.Global.BUDGET_EPSILON;
@@ -563,8 +562,10 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
     @Override
     public int hashCode() {
+        throw new RuntimeException("N/A");
         //this will be relatively slow if used in a hash collection
-        return Objects.hash(getPriority(), getDurability(), getQuality());
+        //TODO if hashes are needed, it should use a similar hashing method as Truth values does
+        //return Objects.hash(getPriority(), getDurability(), getQuality());
     }
 
     /**

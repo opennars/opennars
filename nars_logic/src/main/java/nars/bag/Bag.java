@@ -25,7 +25,19 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V> implements Consumer<V>, Supplier<V>  {
 
+    transient protected final Budget temp = new Budget();
     transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
+
+    Procedure2<Budget,Budget> mergeFunction = Budget.max;
+
+    public final static <V> boolean bufferIncludes(V[] buffer, V item) {
+        for (final V x : buffer) {
+            if (x == null)
+                break;
+            if (x == item) return true;
+        }
+        return false;
+    }
 
     /** returns the bag to an empty state */
     public abstract void clear();
@@ -52,9 +64,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
      */
     abstract public V put(V newItem);
 
-
-    Procedure2<Budget,Budget> mergeFunction = Budget.max;
-
     /** set the merging function to 'average' */
     public void mergeAverage() {  mergeFunction = Budget.average;    }
 
@@ -79,8 +88,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
 
     abstract public int capacity();
 
-
-
     /**
      * Choose an Item according to distribution policy and take it out of the Bag
      * TODO rename removeNext()
@@ -95,12 +102,9 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
      */
     public abstract int size();
 
-
-
     public Iterable<V> values() {
         return this;
     }
-
 
     public float getPriorityMean() {
         final int s = size();
@@ -108,12 +112,16 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
         return getPrioritySum() / s;
     }
 
+//    /** not used currently in Bag classes, but from CacheBag interface */
+//    @Override public Consumer<V> getOnRemoval() {  return null;    }
+//    /** not used currently in Bag classes, but from CacheBag interface */
+//    @Override public void setOnRemoval(Consumer<V> onRemoval) { }
+
     /**
      * iterates all items in (approximately) descending priority
      */
     @Override
     abstract public Iterator<V> iterator();
-
 
     /**
      * Check if an item is in the bag.  both its key and its value must match the parameter
@@ -125,22 +133,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
         V exist = get(it.name());
         if (exist == null) return false;
         return exist.equals(it);
-    }
-
-    /** not used currently in Bag classes, but from CacheBag interface */
-    @Override public Consumer<V> getOnRemoval() {  return null;    }
-    /** not used currently in Bag classes, but from CacheBag interface */
-    @Override public void setOnRemoval(Consumer<V> onRemoval) { }
-
-    /** implements the Consumer<V> interface; invokes a put() */
-    @Override public void accept(V v) {
-        put(v);
-    }
-
-
-    /** implements the Supplier<V> interface; invokes a remove() */
-    @Override public V get() {
-        return pop();
     }
 
 
@@ -158,15 +150,19 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
 //        return null;
 //    }
 
+    /** implements the Consumer<V> interface; invokes a put() */
+    @Override public void accept(V v) {
+        put(v);
+    }
+
+    /** implements the Supplier<V> interface; invokes a remove() */
+    @Override public V get() {
+        return pop();
+    }
 
     public boolean isEmpty() {
         return size() == 0;
     }
-
-
-    protected final Budget temp = new Budget();
-
-
 
     /**
      * calls overflow() on an overflown object
@@ -218,7 +214,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
         return item;
     }
 
-
     /** faster than using the BagTransaction version when creation of instances is not necessary */
     public V peekNext(final BagSelector<K, V> selector) {
 
@@ -256,7 +251,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
         return item;
     }
 
-
     public void printAll() {
         printAll(System.out);
     }
@@ -280,18 +274,18 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
         return total[0];
     }
 
-    public double getStdDev(StandardDeviation target) {
-        target.clear();
-        this.forEach( x -> target.increment( x.getPriority() ) );
-        return target.getResult();
-    }
-
 
 
 
 //    final public int forgetNext(float forgetCycles, final V[] batch, final long now) {
 //        return forgetNext(forgetCycles, batch, 0, batch.length, now, batch.length/2 /* default to max 1.5x */);
 //    }
+
+    public double getStdDev(StandardDeviation target) {
+        target.clear();
+        this.forEach( x -> target.increment( x.getPriority() ) );
+        return target.getResult();
+    }
 
     /** collects a batch of values and returns them after applying forgetting to each
      *  returns number of items collected.
@@ -374,16 +368,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
 
         return fill;
     }
-
-    public final static <V> boolean bufferIncludes(V[] buffer, V item) {
-        for (final V x : buffer) {
-            if (x == null)
-                break;
-            if (x == item) return true;
-        }
-        return false;
-    }
-
 
     /**
      * accuracy determines the percentage of items which will be processNext().

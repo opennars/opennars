@@ -135,20 +135,20 @@ public class TemporalRules {
         return ORDER_INVALID;
     }
 
-    /**
-     * whether temporal induction can generate a task by avoiding producing wrong terms; only one temporal operate is allowed
-     */
-    public final static boolean tooMuchTemporalStatements(final Term t, int maxTemporalRelations) {
-        return (t == null) || (t.containedTemporalRelations() > maxTemporalRelations);
-    }
-
-    //is input or by the system triggered operation
-    public static boolean isInputOrTriggeredOperation(final Task newEvent) {
-        if (newEvent.isInput()) return true;
-        if (containsMentalOperator(newEvent)) return true;
-        if (newEvent.getCause() != null) return true;
-        return false;
-    }
+//    /**
+//     * whether temporal induction can generate a task by avoiding producing wrong terms; only one temporal operate is allowed
+//     */
+//    public final static boolean tooMuchTemporalStatements(final Term t, int maxTemporalRelations) {
+//        return (t == null) || (t.containedTemporalRelations() > maxTemporalRelations);
+//    }
+//
+//    //is input or by the system triggered operation
+//    public static boolean isInputOrTriggeredOperation(final Task newEvent) {
+//        if (newEvent.isInput()) return true;
+//        if (containsMentalOperator(newEvent)) return true;
+//        if (newEvent.getCause() != null) return true;
+//        return false;
+//    }
 
 
     public static boolean containsMentalOperator(final Task t) {

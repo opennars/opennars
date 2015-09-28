@@ -27,6 +27,10 @@ public class TermSerializationTest extends AbstractSerializationTest<String,Term
                 //TODO add all term types here
 
                 { "x" },
+                { "[x]" },
+                { "[x,y]" },
+                { "{x}" },
+                { "{x,y}" },
                 { "#A" },
                 { "$A" },
                 { "%A" },
@@ -38,6 +42,7 @@ public class TermSerializationTest extends AbstractSerializationTest<String,Term
                 { "(&&, x, y)" },
                 { "<a --> (b, c)>" },
                 { "<(\\,neutralization,_,base) --> acid>." },
+                { "<abc --> (/,x,_)>." },
 
                 { "(&/, x, /3, y)" },
 
@@ -64,7 +69,8 @@ public class TermSerializationTest extends AbstractSerializationTest<String,Term
     public void testEquality(Term a, Term b) {
 
         assertTrue(b.hashCode()!=0);
-        Assert.assertEquals(a.toString(), b.toString());
+        Assert.assertEquals(a.volume(), b.volume());
         Assert.assertEquals(a, b);
+        Assert.assertEquals(a.toString(), b.toString());
     }
 }

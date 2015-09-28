@@ -3,6 +3,7 @@ package objenome.solution.dependency;
 import objenome.AbstractContainer;
 import objenome.solution.dependency.ClassBuilder.DependencyKey;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Collection;
  *
  * @author sergio.oliveira.jr@gmail.com
  */
-public interface Builder {
+public interface Builder extends Serializable {
 
     public static Class[] the(final Class<?> c) {
         return new Class[] { c };
