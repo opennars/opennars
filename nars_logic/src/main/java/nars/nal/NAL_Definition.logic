@@ -174,9 +174,11 @@
 
 //NAL3 single premise inference:
 
-    ((|,A_0,A_1..n) --> M), M |- (A_i --> M), (Truth:StructuralDeduction)
     ((|,A_0,A_1..n) --> M), M |- (A_0 --> M), (Truth:StructuralDeduction)
-    (M --> (&,A_1..n)), M |- (M --> A_i), (Truth:StructuralDeduction)
+    ((|,A_0,A_1..n) --> M), M |- (A_i --> M), (Truth:StructuralDeduction)
+
+    (M --> (&,A_0,A_1..n)), M |- (M --> A_0), (Truth:StructuralDeduction)
+    (M --> (&,A_0,A_1..n)), M |- (M --> A_i), (Truth:StructuralDeduction)
 
     ((B ~ G) --> S), S |- (B --> S), (Truth:StructuralDeduction)
     (R --> (B - S)), R |- (R --> B), (Truth:StructuralDeduction)
