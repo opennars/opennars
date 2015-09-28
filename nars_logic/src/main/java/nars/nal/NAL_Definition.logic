@@ -332,8 +332,8 @@
 //// conjunction decompose
 
 //only allow with 2 elements at least:
-    (&&,B,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
-    (&&,B,A_1..n), B   |- B,   (Truth:StructuralDeduction, Desire:Strong)
+    (&&,A_0,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
+    (&&,A_0,A_1..n), A_0 |- A_0, (Truth:StructuralDeduction, Desire:Strong)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
