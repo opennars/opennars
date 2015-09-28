@@ -174,11 +174,8 @@
 
 //NAL3 single premise inference:
 
-    ((|,A_0,A_1..n) --> M), M |- (A_0 --> M), (Truth:StructuralDeduction)
-    ((|,A_0,A_1..n) --> M), M |- (A_i --> M), (Truth:StructuralDeduction)
-
-    (M --> (&,A_0,A_1..n)), M |- (M --> A_0), (Truth:StructuralDeduction)
-    (M --> (&,A_0,A_1..n)), M |- (M --> A_i), (Truth:StructuralDeduction)
+    ((|,A_1..n) --> M), M |- (A_i --> M), (Truth:StructuralDeduction)
+    (M --> (&,A_i,A_1..n)), M |- (M --> A_i), (Truth:StructuralDeduction)
 
     ((B ~ G) --> S), S |- (B --> S), (Truth:StructuralDeduction)
     (R --> (B - S)), R |- (R --> B), (Truth:StructuralDeduction)
@@ -334,9 +331,7 @@
 
 //// conjunction decompose
 
-//only allow with 2 elements at least:
-    (&&,A_0,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
-    (&&,A_0,A_1..n), A_0 |- A_0, (Truth:StructuralDeduction, Desire:Strong)
+    (&&,A_1..n), A_i |- A_i, (Truth:StructuralDeduction, Desire:Strong)
 
 //// propositional decomposition ////////////////////////////////////////////////////////////////////////////////////
 //If S is the case, and (&&,S,A_1..n) is not the case, it can't be that (&&,A_1..n) is the case
