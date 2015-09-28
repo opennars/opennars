@@ -21,6 +21,7 @@
 package nars.io.in;
 
 import nars.NAR;
+import nars.narsese.NarseseParser;
 import nars.task.Task;
 
 import java.util.Collection;
@@ -37,7 +38,7 @@ public class TextInput extends TaskQueue {
     }
 
     protected int process(final NAR nar, final String input) {
-        final int n = nar.narsese.tasks(process(input),
+        final int n = NarseseParser.the().tasks(process(input),
                 (Collection<Task>)this, nar.memory);
 
         if (n == 0) {

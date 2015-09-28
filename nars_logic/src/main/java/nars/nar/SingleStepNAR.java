@@ -52,8 +52,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
-import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 
 /**
@@ -196,7 +194,6 @@ public class SingleStepNAR extends NAR {
      */
     int termLinkBagSize;
 
-    InternalExperience.InternalExperienceMode internalExperience;
 
     /**
      * Default DEFAULTS
@@ -212,12 +209,6 @@ public class SingleStepNAR extends NAR {
     public SingleStepNAR(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(m);
 
-        //termLinkMaxMatched.set(5);
-
-
-        //Build Parameters
-        this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
-        this.internalExperience = InternalExperience.InternalExperienceMode.None; //much too early, this is nonsensical without working NAL
 
         setTaskLinkBagSize(8);
         setTermLinkBagSize(16);
@@ -267,12 +258,12 @@ public class SingleStepNAR extends NAR {
 
         }
 
-        if (maxNALLevel >= 7) {
+        if (nal() >= 7) {
 
             //scope: control
             m.the(new STMTemporalLinkage(this, core.deriver ) );
 
-            if (maxNALLevel >= 8) {
+            if (nal() >= 8) {
 
                 for (OpReaction o : defaultOperators)
                     on(o);
@@ -281,13 +272,13 @@ public class SingleStepNAR extends NAR {
 
                 //n.on(Anticipate.class);      // expect an event
 
-                if (internalExperience == Minimal) {
-                    new InternalExperience(this);
-                    new Abbreviation(this);
-                } else if (internalExperience == Full) {
-                    on(FullInternalExperience.class);
-                    on(Counting.class);
-                }
+//                if (internalExperience == Minimal) {
+//                    new InternalExperience(this);
+//                    new Abbreviation(this);
+//                } else if (internalExperience == Full) {
+//                    on(FullInternalExperience.class);
+//                    on(Counting.class);
+//                }
             }
         }
         //n.on(new RuntimeNARSettings());
@@ -309,13 +300,7 @@ public class SingleStepNAR extends NAR {
 //        };
 //    }
 
-    public SingleStepNAR nal(int maxNALlevel) {
-        this.maxNALLevel = maxNALlevel;
-        if (maxNALlevel < 8) {
-            this.internalExperience = InternalExperience.InternalExperienceMode.None;
-        }
-        return this;
-    }
+
 
     public Concept newConcept(final Term t, final Budget b) {
 
@@ -416,12 +401,7 @@ public class SingleStepNAR extends NAR {
         return this;
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + '[' + maxNALLevel +
-                ((internalExperience == InternalExperience.InternalExperienceMode.None) || (internalExperience == null) ? "" : "+")
-                + ']';
-    }
+
 
     protected SimpleDeriver getDeriver() {
         return SimpleDeriver.standardDeriver;

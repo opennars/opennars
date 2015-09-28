@@ -44,16 +44,15 @@ import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.On;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
-import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 
 
 /**
@@ -196,7 +195,7 @@ public class Default extends NAR {
      */
     int termLinkBagSize;
 
-    InternalExperience.InternalExperienceMode internalExperience;
+
 
     /**
      * Default DEFAULTS
@@ -216,8 +215,7 @@ public class Default extends NAR {
 
 
         //Build Parameters
-        this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
-        this.internalExperience = InternalExperience.InternalExperienceMode.None; //much too early, this is nonsensical without working NAL
+//        this.internalExperience = InternalExperience.InternalExperienceMode.None; //much too early, this is nonsensical without working NAL
 
         setTaskLinkBagSize(8);
         setTermLinkBagSize(16);
@@ -267,12 +265,12 @@ public class Default extends NAR {
 
         }
 
-        if (maxNALLevel >= 7) {
+        if (nal() >= 7) {
 
             //scope: control
             m.the(new STMTemporalLinkage(this, core.deriver ) );
 
-            if (maxNALLevel >= 8) {
+            if (nal() >= 8) {
 
                 for (OpReaction o : defaultOperators)
                     on(o);
@@ -281,13 +279,17 @@ public class Default extends NAR {
 
                 //n.on(Anticipate.class);      // expect an event
 
-                if (internalExperience == Minimal) {
-                    new InternalExperience(this);
-                    new Abbreviation(this);
-                } else if (internalExperience == Full) {
-                    on(FullInternalExperience.class);
-                    on(Counting.class);
-                }
+                new FullInternalExperience(this);
+                new Abbreviation(this);
+                on(Counting.class);
+
+//                /*if (internalExperience == Minimal) {
+//                    new InternalExperience(this);
+//                    new Abbreviation(this);
+//                } else if (internalExperience == Full)*/ {
+//                    on(FullInternalExperience.class);
+//                    on(Counting.class);
+//                }
             }
         }
         //n.on(new RuntimeNARSettings());
@@ -310,10 +312,7 @@ public class Default extends NAR {
 //    }
 
     public Default nal(int maxNALlevel) {
-        this.maxNALLevel = maxNALlevel;
-        if (maxNALlevel < 8) {
-            this.internalExperience = InternalExperience.InternalExperienceMode.None;
-        }
+        memory.nal(maxNALlevel);
         return this;
     }
 
@@ -418,9 +417,7 @@ public class Default extends NAR {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + '[' + maxNALLevel +
-                ((internalExperience == InternalExperience.InternalExperienceMode.None) || (internalExperience == null) ? "" : "+")
-                + ']';
+        return getClass().getSimpleName() + '[' + nal() + + ']';
     }
 
     protected SimpleDeriver getDeriver() {
@@ -435,9 +432,9 @@ public class Default extends NAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static class DefaultCycle extends CycleReaction  /*extends SequentialCycle*/ {
+    public static class DefaultCycle extends CycleReaction implements Serializable, Function<ConceptProcess,Stream<Task>> {
 
-        final Deque<Task> percepts = new ArrayDeque();
+        public final Deque<Task> percepts = new ArrayDeque();
 
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
@@ -450,8 +447,7 @@ public class Default extends NAR {
          * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
          */
         public final AtomicInteger inputsMaxPerCycle;
-        private final SimpleDeriver deriver;
-        private final Function<ConceptProcess,Stream<Task>> premiseProcessor;
+        public final SimpleDeriver deriver;
         public int conceptsFired;
 
 //        final Function<Task, Task> derivationPostProcess = d -> {
@@ -467,23 +463,23 @@ public class Default extends NAR {
         /**
          * New tasks with novel composed terms, for delayed and selective processing
          */
-        private final ItemAccumulator<Task> newTasks;
+        public final ItemAccumulator<Task> newTasks;
 
         /** concepts active in this cycle */
-        private final Bag<Term, Concept> active;
+        public final Bag<Term, Concept> active;
 
-        private final On onInput;
+        public final On onInput;
 
-        private final NAR nar;
+        @Deprecated transient public final NAR nar;
 
         public final MutableInteger capacity = new MutableInteger();
 
-        private final ConceptBagActivator ca;
+        public final ConceptBagActivator ca;
 
-        private final AtomicDouble conceptForget;
+        public final AtomicDouble conceptForget;
 
-        int tasklinks = 2;
-        int termlinks = 3;
+        @Deprecated int tasklinks = 2; //TODO use MutableInteger for this
+        @Deprecated int termlinks = 3; //TODO use MutableInteger for this
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
@@ -499,25 +495,6 @@ public class Default extends NAR {
 
             this.deriver = deriver;
 
-            this.premiseProcessor = (premise) -> {
-
-                //used to estimate the fraction this batch should be scaled but this is not accurate
-                //final int numPremises = termlinks*tasklinks;
-
-                return Task.normalize(
-                        premise.derive(deriver).collect(Collectors.toList()),
-                        premise.getMeanSummary() /*/numPremises*/
-                ).stream();
-
-                //OPTION 1: re-input to input buffers
-                //t.input(nar, deriver, derivationPostProcess);
-
-                //OPTION 2: immediate process
-                /*t.apply(deriver).forEach(r -> {
-                    run(r);
-                });*/
-
-            };
 
             this.conceptForget = nar.memory().conceptForgetDurations;
 
@@ -526,16 +503,9 @@ public class Default extends NAR {
             this.conceptsFiredPerCycle = new AtomicInteger(1);
             this.active = concepts;
 
-            onInput = nar.memory().eventInput.on(t-> {
-                if (t.isInput())
-                    percepts.add(t);
-                else {
-                    if(t.getParentTask()!=null && t.getParentTask().getTerm().equals(t.getTerm())) {}
-                    else {
-                        newTasks.add(t);
-                    }
-                }
-            });
+
+
+            onInput = nar.memory().eventInput.on(new InputConsumer(newTasks, percepts));
         }
 
             public void reset() {
@@ -601,7 +571,7 @@ public class Default extends NAR {
 
             nar.input( ConceptProcess.nextPremiseSquare(nar, c,
                     conceptForgetDurations,
-                    premiseProcessor,
+                    this,
                     termlinks, tasklinks ) );
         }
 
@@ -658,6 +628,51 @@ public class Default extends NAR {
         public Iterable<?> concepts() {
             return active;
         }
+
+        @Override
+        public Stream<Task> apply(ConceptProcess premise) {
+
+            //used to estimate the fraction this batch should be scaled but this is not accurate
+            //final int numPremises = termlinks*tasklinks;
+
+            return Task.normalize(
+                    premise.derive(deriver).collect(Collectors.toList()),
+                    premise.getMeanSummary() /*/numPremises*/
+            ).stream();
+
+            //OPTION 1: re-input to input buffers
+            //t.input(nar, deriver, derivationPostProcess);
+
+            //OPTION 2: immediate process
+                /*t.apply(deriver).forEach(r -> {
+                    run(r);
+                });*/
+
+        }
+
+
+        //try to implement some other way, this is here because of serializability
+        @Deprecated static class InputConsumer implements Consumer<Task>, Serializable {
+            public final ItemAccumulator<Task> newTasks;
+            public final Deque<Task> percepts;
+
+            public InputConsumer(ItemAccumulator<Task> newTasks, Deque<Task> percepts) {
+                this.newTasks = newTasks;
+                this.percepts = percepts;
+            }
+
+            @Override
+            public void accept(Task t) {
+                if (t.isInput())
+                    percepts.add(t);
+                else {
+                    if (t.getParentTask() != null && t.getParentTask().getTerm().equals(t.getTerm())) {
+                    } else {
+                        newTasks.add(t);
+                    }
+                }
+            }
+        }
     }
 
 //    @Deprecated
@@ -709,7 +724,7 @@ public class Default extends NAR {
 //        }
 //    }
 
-    private class ConceptBagActivator extends ConceptActivator {
+    public static class ConceptBagActivator extends ConceptActivator implements Serializable {
 
 
         public ConceptBagActivator(NAR n) {
@@ -718,13 +733,13 @@ public class Default extends NAR {
 
         @Override
         @Deprecated public Concept newConcept(Term t, Budget b, @Deprecated Memory m) {
-            return Default.this.newConcept(t, b);
+            return ((Default)nar).newConcept(t, b);
         }
 
         @Override public Concept newItem() {
             //default behavior overriden; a new item will be maanually inserted into the bag under certain conditons to be determined by this class
-            Concept c = Default.this.newConcept(getKey(),getBudget());
-            memory().put(c);
+            Concept c = ((Default)nar).newConcept(getKey(),getBudget());
+            nar.memory().put(c);
 
             return c;
         }

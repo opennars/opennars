@@ -2,6 +2,7 @@ package nars.nar;
 
 import nars.LocalMemory;
 import nars.Memory;
+import nars.NAR;
 import nars.narsese.InvalidInputException;
 import nars.util.io.JSON;
 import org.infinispan.marshall.core.JBossMarshaller;
@@ -125,6 +126,19 @@ public class NARTest {
                 .run(cyclesAfterQuestion);
 
         assertTrue(b.get());
+
+    }
+
+    @Test public void testFork() throws Exception {
+        NAR a = new Default();
+        a.input("b:a.");
+        a.input("c:b.");
+        a.frame(8);
+
+        NAR b = a.fork();
+
+        assertEquals(a, b);
+
 
     }
 

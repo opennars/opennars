@@ -75,7 +75,7 @@ import java.util.Set;
  */
 public class Memory extends Param implements Serializable {
 
-    private Atom self;
+    protected Atom self;
 
     public final Random random;
 
@@ -124,10 +124,10 @@ public class Memory extends Param implements Serializable {
     public final CacheBag<Term, Concept> concepts;
 
 
-    private int level;
+    protected int level;
 
-    private long currentStampSerial = 1;
-    private boolean inCycle = false;
+    protected long currentStampSerial = 1;
+    //protected  boolean inCycle = false;
 
 
     public transient final Topic<Task> eventInput = new DefaultTopic<>();
@@ -139,8 +139,6 @@ public class Memory extends Param implements Serializable {
     /**
      * Create a new memory
      *
-     * @param narParam reasoner paramerters
-     * @param policy logic parameters
      */
     public Memory(Clock clock, Random rng, CacheBag<Term,Concept> concepts) {
 
@@ -287,7 +285,11 @@ public class Memory extends Param implements Serializable {
         return level;
     }
 
-    public boolean nal(int isEqualToOrGreater) {
+    public void nal(int newLevel) {
+        this.level = newLevel;
+    }
+
+    public boolean nalAtleast(int isEqualToOrGreater) {
         return nal() >= isEqualToOrGreater;
     }
 
@@ -392,7 +394,6 @@ public class Memory extends Param implements Serializable {
      * Get the current activation level of a concept.
      *
      * @param t The Term naming a concept
-     *          @param v the value returned in case of a non-existing concept
      * @return the priority value of the concept
      */
     public float conceptPriority(final Term t, float valueForMissing) {
@@ -581,7 +582,7 @@ public class Memory extends Param implements Serializable {
 
         for ( ; num > 0; num--) {
 
-            inCycle = true;
+            //inCycle = true;
 
             clock.preCycle();
 
@@ -589,7 +590,7 @@ public class Memory extends Param implements Serializable {
 
             eventCycleEnd.emit(this);
 
-            inCycle = false;
+            //inCycle = false;
 
             //deletePendingConcepts();
 
@@ -659,15 +660,15 @@ public class Memory extends Param implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[@" + time() + ",C=" + size() + "]";
+        return getClass().getSimpleName() + ":" + nal() + "[@" + time() + ",C=" + size() + "]";
     }
 
-    public int size() {
+    public final int size() {
         return concepts.size();
     }
 
     /** identifies the type of memory as a string */
-    public String toTypeString() {
+    String toTypeString() {
         return getClass().getSimpleName();
     }
 

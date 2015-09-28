@@ -340,14 +340,14 @@ public class RuleMatch extends FindSubst {
         return rule.postconditions;
     }
 
-    public void run(TaskRule rule, Stream.Builder<Task> stream) {
-        //if preconditions are met:
-        for (final PostCondition p : rule.postconditions) {
-            Task t = apply(p);
-            if (t!=null)
-                stream.accept(t);
-        }
-
-    }
+//    public void run(TaskRule rule, Stream.Builder<Task> stream) {
+//        //if preconditions are met:
+//        for (final PostCondition p : rule.postconditions) {
+//            Task t = apply(p);
+//            if (t!=null)
+//                stream.accept(t);
+//        }
+//
+//    }
 
 }

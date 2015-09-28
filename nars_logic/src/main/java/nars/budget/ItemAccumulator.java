@@ -6,7 +6,11 @@ import nars.Memory;
 import nars.task.Task;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -17,7 +21,7 @@ import java.util.function.Consumer;
  * TODO reimplement merging functions (currently uses default Plus method)
  *
  * */
-public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
+public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, Serializable {
 
 
     public final Map<I,I> items =
@@ -46,7 +50,7 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I> {
      * first budget = target where the data is accumulated
      * second budget = incoming budget
      * */
-    private final Procedure2<Budget, Budget> merge;
+    public final Procedure2<Budget, Budget> merge;
 
     //final BiFunction<I,I,I> updater;
 

@@ -1,7 +1,5 @@
 package nars;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
@@ -34,6 +32,7 @@ import nars.truth.Truth;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import nars.util.event.Topic;
+import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,32 +51,21 @@ import java.util.stream.Stream;
 
 /**
  * Non-Axiomatic Reasoner
- * <p>
+ * <p/>
  * Instances of this represent a reasoner connected to a Memory, and set of Input and Output channels.
- * <p>
+ * <p/>
  * All state is contained within Memory.  A NAR is responsible for managing I/O channels and executing
  * memory operations.  It executesa series sof cycles in two possible modes:
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-abstract public class NAR {
+abstract public class NAR implements Serializable {
 
 
     /**
      * The information about the version and date of the project.
      */
     public static final String VERSION = "Open-NARS v1.7.0";
-
-    float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
-
-    float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
-    float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
-    float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
-    float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
-    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
-    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
-
-
     /**
      * The project web sites.
      */
@@ -86,31 +74,13 @@ abstract public class NAR {
                     "      NARS website:  http://sites.google.com/site/narswang/ \n" +
                     "    Github website:  http://github.com/opennars/ \n" +
                     "               IRC:  http://webchat.freenode.net/?channels=nars \n";
-
-    public final NarseseParser narsese;
-
-    /**
-     * The memory of the reasoner
-     */
-    public Memory memory;
-
-    /**
-     * The name of the reasoner
-     */
-    protected String name;
-
-
-    /**
-     * Flag for running continuously
-     */
-    private boolean running = false;
-
-    private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
-    /**
-     * memory activity enabled
-     */
-    private boolean enabled = true;
-
+    static final float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
+    static final float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
+    static final float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
+    static final float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
+    static final float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
+    static final float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
+    static final float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
     final static Consumer<Object> onError = e -> {
         if (e instanceof Throwable) {
             Throwable ex = (Throwable) e;
@@ -129,12 +99,33 @@ abstract public class NAR {
 
 
     /**
-     * normal way to construct a NAR, using a particular Build instance
+     * The memory of the reasoner
+     * TODO dont expose as public
      */
-    public NAR(NARSeed b) {
-        this(b.newMemory());
-        //b.init(this);
-    }
+    public Memory memory;
+    /**
+     * The name of the reasoner
+     */
+    protected String name;
+    /**
+     * Flag for running continuously
+     */
+    protected boolean running = false;
+    /**
+     * memory activity enabled
+     */
+    protected boolean enabled = true;
+
+    //TODO move to Memory parameter
+    private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR frame
+
+    //TODO use this to store all handler registrations, and decide if transient or not
+    transient private List<Object> regs = new ArrayList();
+
+
+    transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
+    transient ExecutorService laterTasks = null;
+
 
     public NAR(final Memory m) {
         super();
@@ -144,15 +135,11 @@ abstract public class NAR {
         //m.the("memory", m);
         m.the("clock", m.clock);
 
-        this.narsese = NarseseParser.the();
-
     }
-
 
     public final Memory memory() {
         return memory;
     }
-
 
     public NAR input(ImmediateOperator o) {
         input(o.newTask());
@@ -190,7 +177,6 @@ abstract public class NAR {
         return input(new FileInput(this, input));
     }
 
-
     /**
      * inputs a task, only if the parsed text is valid; returns null if invalid
      */
@@ -209,7 +195,7 @@ abstract public class NAR {
      * parses and forms a Task from a string but doesnt input it
      */
     public Task task(String taskText) {
-        return narsese.task(taskText, memory);
+        return NarseseParser.the().task(taskText, memory);
     }
 
     public <T extends Compound> TaskSeed task(T t) {
@@ -218,7 +204,7 @@ abstract public class NAR {
 
     public List<Task> tasks(final String parse) {
         List<Task> result = Global.newArrayList(1);
-        narsese.tasks(parse, result, memory);
+        NarseseParser.the().tasks(parse, result, memory);
         return result;
     }
 
@@ -233,19 +219,18 @@ abstract public class NAR {
     }
 
     public <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
-        return narsese.term(t);
+        return NarseseParser.the().term(t);
     }
 
     public Concept concept(final Term term) {
         return memory.concept(term);
     }
 
-
     /**
      * gets a concept if it exists, or returns null if it does not
      */
     public Concept concept(final String conceptTerm) throws InvalidInputException {
-        return concept((Term) narsese.term(conceptTerm));
+        return concept((Term) NarseseParser.the().term(conceptTerm));
     }
 
     public Task goal(final String goalTerm, final float freq, final float conf) {
@@ -254,7 +239,7 @@ abstract public class NAR {
 
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
-        return ask((Compound) narsese.compound(termString));
+        return ask((Compound) NarseseParser.the().compound(termString));
     }
 
     public Task ask(Compound c) throws InvalidInputException {
@@ -263,18 +248,20 @@ abstract public class NAR {
     }
 
     public Task quest(String questString) throws InvalidInputException {
-        return ask(narsese.term(questString), Symbols.QUEST);
-    }
-    public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
-        return goal(pri, dur, (Compound)narsese.compound(goalTerm), freq, conf);
+        return ask(NarseseParser.the().term(questString), Symbols.QUEST);
     }
 
+    public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
+        return goal(pri, dur, (Compound) NarseseParser.the().compound(goalTerm), freq, conf);
+    }
 
     public Task goal(Compound goalTerm, float freq, float conf) throws InvalidInputException {
         return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, freq, conf);
     }
 
-    /** TODO add parameter for Tense control. until then, default is Now */
+    /**
+     * TODO add parameter for Tense control. until then, default is Now
+     */
     public Task goal(float pri, float dur, Compound goalTerm, float freq, float conf) throws InvalidInputException {
 
         final Truth tv;
@@ -322,7 +309,6 @@ abstract public class NAR {
         return believe(termString, 1.0f, conf);
     }
 
-
     public NAR believe(String termString) throws InvalidInputException {
 
         return believe(termString, 1.0f, defaultJudgmentConfidence);
@@ -336,6 +322,42 @@ abstract public class NAR {
         believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
         return this;
     }
+
+
+//    public static class InputBuffer {
+//
+//        private final Seq<Task> stream;
+//
+//        public InputBuffer(Memory m) {
+//            this.stream = m.eventInput.stream();
+//
+//            stream.forEach(t -> {
+//            });
+//        }
+//    }
+
+//
+//        if (process(t)) {
+//
+//
+//            emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
+//
+//
+//            //NOTE: if duplicate outputs happen, the budget wil have changed
+//            //but they wont be displayed.  to display them,
+//            //we need to buffer unique TaskAdd ("OUT") tasks until the end
+//            //of the cycle
+//
+//
+//            m.logic.TASK_ADD_NEW.hit();
+//            return true;
+//        }
+//        else {
+//            m.removed(t, "Ignored");
+//        }
+//
+//        return false;
+//    }
 
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         return believe(pri, dur, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
@@ -378,16 +400,14 @@ abstract public class NAR {
 
     }
 
-
     protected boolean process(Task t) {
         throw new RuntimeException("this should be overridden in subclasses of NAR");
     }
 
-
     /**
      * exposes the memory to an input, derived, or immediate task.
      * the memory then delegates it to its controller
-     * <p>
+     * <p/>
      * return true if the task was processed
      * if the task was a command, it will return false even if executed
      */
@@ -419,39 +439,10 @@ abstract public class NAR {
     }
 
 
-//    public static class InputBuffer {
-//
-//        private final Seq<Task> stream;
-//
-//        public InputBuffer(Memory m) {
-//            this.stream = m.eventInput.stream();
-//
-//            stream.forEach(t -> {
-//            });
-//        }
-//    }
-
-//
-//        if (process(t)) {
-//
-//
-//            emit(t.isInput() ? Events.IN.class : Events.OUT.class, t);
-//
-//
-//            //NOTE: if duplicate outputs happen, the budget wil have changed
-//            //but they wont be displayed.  to display them,
-//            //we need to buffer unique TaskAdd ("OUT") tasks until the end
-//            //of the cycle
-//
-//
-//            m.logic.TASK_ADD_NEW.hit();
-//            return true;
-//        }
-//        else {
-//            m.removed(t, "Ignored");
-//        }
-//
-//        return false;
+//    /** input a task via direct TaskProcessing
+//     * @return the TaskProcess, after it has executed (synchronously) */
+//    public Premise inputDirect(final Task t) {
+//        return TaskProcess.queue(this, t);
 //    }
 
     /**
@@ -460,12 +451,6 @@ abstract public class NAR {
     public final CacheBag<Term, Concept> concepts() {
         return memory().getConcepts();
     }
-
-    transient ExecutorService laterTasks = null;
-    transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
-
-
-
 
     public List<Task> input(final List<Task> t) {
         t.forEach(x -> input(x));
@@ -477,13 +462,6 @@ abstract public class NAR {
             input(x);
         return t;
     }
-
-
-//    /** input a task via direct TaskProcessing
-//     * @return the TaskProcess, after it has executed (synchronously) */
-//    public Premise inputDirect(final Task t) {
-//        return TaskProcess.queue(this, t);
-//    }
 
     /**
      * attach event handler to one or more event (classes)
@@ -508,27 +486,8 @@ abstract public class NAR {
         //}
     }
 
-
     public EventEmitter.Registrations on(Reaction<Term, Operation> o, Term... c) {
         return memory.exe.on(o, c);
-    }
-
-    public EventEmitter.Registrations on(OpReaction o) {
-        Term a = o.getTerm();
-        EventEmitter.Registrations reg = on(o, a);
-        o.setEnabled(this, true);
-        return reg;
-    }
-
-
-    @Deprecated
-    public int getCyclesPerFrame() {
-        return cyclesPerFrame;
-    }
-
-    @Deprecated
-    public void setCyclesPerFrame(int cyclesPerFrame) {
-        this.cyclesPerFrame = cyclesPerFrame;
     }
 
 //    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */
@@ -563,6 +522,23 @@ abstract public class NAR {
 //    public List<OperatorRegistration> getPlugins() {
 //        return Collections.unmodifiableList(plugins);
 //    }
+
+    public EventEmitter.Registrations on(OpReaction o) {
+        Term a = o.getTerm();
+        EventEmitter.Registrations reg = on(o, a);
+        o.setEnabled(this, true);
+        return reg;
+    }
+
+    @Deprecated
+    public final int getCyclesPerFrame() {
+        return memory.cyclesPerFrame.intValue();
+    }
+
+    @Deprecated
+    public final void setCyclesPerFrame(int cyclesPerFrame) {
+        memory.cyclesPerFrame.set(cyclesPerFrame);
+    }
 
     /**
      * Adds an input channel for input from an external sense / sensor.
@@ -602,25 +578,6 @@ abstract public class NAR {
         start(minCyclePeriodMS, getCyclesPerFrame());
     }
 
-    public EventEmitter event() {
-        return memory.event;
-    }
-
-    /**
-     * Exits an iteration loop if running
-     */
-    public void stop() {
-        running = false;
-        //enabled = false;
-    }
-
-    /**
-     * steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of
-     */
-    public void frame() {
-        frame(1);
-    }
-
 //    /**
 //     * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
 //     *
@@ -651,6 +608,62 @@ abstract public class NAR {
 //
 //        return this;
 //    }
+
+    public EventEmitter event() {
+        return memory.event;
+    }
+
+    /**
+     * Exits an iteration loop if running
+     */
+    public void stop() {
+        running = false;
+        //enabled = false;
+    }
+
+//    /**
+//     * Execute a fixed number of cycles, then finish any remaining walking steps.
+//     */
+//    @Deprecated public NAR runWhileNewInputOLD(long extraCycles) {
+//        //TODO see if this entire method can be implemented as run(0, cycles);
+//
+//        if (extraCycles <= 0) return this;
+//
+//        running = true;
+//        enabled = true;
+//
+//        //clear existing input
+//
+//        long cycleStart = time();
+//
+//        do {
+//            frame(1);
+//        }
+//        while (/*(!memory.perception.isEmpty()) && */ running && enabled);
+//
+//        long cyclesCompleted = time() - cycleStart;
+//
+//        //queue additional cycles,
+//        extraCycles -= cyclesCompleted;
+//        if (extraCycles > 0)
+//            memory.think(extraCycles);
+//
+//        //finish all remaining cycles
+//        while (!memory.isInputting() && running && enabled) {
+//            frame(1);
+//        }
+//
+//        running = false;
+//
+//        return this;
+//    }
+
+    /**
+     * steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of
+     */
+    public void frame() {
+        frame(1);
+    }
 
     /**
      * Runs multiple frames, unless already running (then it return -1).
@@ -705,20 +718,19 @@ abstract public class NAR {
                 String chan = k.toString();
                 if (!chan.equals(previous[0])) {
                     out
-                        //.append(ANSI.COLOR_CONFIG)
-                        .append(chan)
-                        //.append(ANSI.COLOR_RESET )
-                        .append(": ");
+                            //.append(ANSI.COLOR_CONFIG)
+                            .append(chan)
+                            //.append(ANSI.COLOR_RESET )
+                            .append(": ");
                     previous[0] = chan;
-                }
-                else {
+                } else {
                     //indent
                     for (int i = 0; i < chan.length() + 2; i++)
                         out.append(' ');
                 }
 
                 out
-                    .append(v.toString());
+                        .append(v.toString());
 
                 if (v instanceof Concept) {
                     Concept c = (Concept) v;
@@ -735,43 +747,6 @@ abstract public class NAR {
 
         return this;
     }
-
-//    /**
-//     * Execute a fixed number of cycles, then finish any remaining walking steps.
-//     */
-//    @Deprecated public NAR runWhileNewInputOLD(long extraCycles) {
-//        //TODO see if this entire method can be implemented as run(0, cycles);
-//
-//        if (extraCycles <= 0) return this;
-//
-//        running = true;
-//        enabled = true;
-//
-//        //clear existing input
-//
-//        long cycleStart = time();
-//
-//        do {
-//            frame(1);
-//        }
-//        while (/*(!memory.perception.isEmpty()) && */ running && enabled);
-//
-//        long cyclesCompleted = time() - cycleStart;
-//
-//        //queue additional cycles,
-//        extraCycles -= cyclesCompleted;
-//        if (extraCycles > 0)
-//            memory.think(extraCycles);
-//
-//        //finish all remaining cycles
-//        while (!memory.isInputting() && running && enabled) {
-//            frame(1);
-//        }
-//
-//        running = false;
-//
-//        return this;
-//    }
 
     /**
      * Run until stopped, at full speed
@@ -832,9 +807,8 @@ abstract public class NAR {
         return this;
     }
 
-    protected int maxNALLevel;
     public int nal() {
-        return maxNALLevel;
+        return memory.nal();
     }
 
     public void emit(final Class c) {
@@ -844,7 +818,6 @@ abstract public class NAR {
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
-
 
     /**
      * enable/disable all I/O and memory processing. CycleStart and CycleStop
@@ -858,7 +831,6 @@ abstract public class NAR {
     public boolean isEnabled() {
         return enabled;
     }
-
 
     /**
      * adds a task to the queue of task which will be executed in batch
@@ -889,7 +861,6 @@ abstract public class NAR {
         memory.eventError.emit(ex);
 
     }
-
 
     /**
      * queues a task to (hopefully) be executed at an unknown time in the future,
@@ -922,18 +893,12 @@ abstract public class NAR {
         return running;
     }
 
-
     /**
      * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the
      */
     public Atom atom(final String s) {
         return Atom.the(s);
     }
-
-
-    private final Multimap<Set<Class>, Reaction> reactions = HashMultimap.create();
-    private List<Object> regs = new ArrayList();
-
 
     public Iterator<Concept> iterator() {
         return memory().getConcepts().iterator();
@@ -1076,7 +1041,6 @@ abstract public class NAR {
     }
 
 
-
     public NAR input(String... ss) {
         for (String s : ss) this.input(s);
         return this;
@@ -1164,13 +1128,13 @@ abstract public class NAR {
 
     /**
      * Get the Concept associated to a Term, or create it.
-     * <p>
+     * <p/>
      * Existing concept: apply tasklink activation (remove from bag, adjust
      * budget, reinsert) New concept: set initial activation, insert Subconcept:
      * extract from cache, apply activation, insert
-     * <p>
+     * <p/>
      * If failed to insert as a result of null bag, returns null
-     * <p>
+     * <p/>
      * A displaced Concept resulting from insert is forgotten (but may be stored
      * in optional subconcept memory
      *
@@ -1376,6 +1340,14 @@ abstract public class NAR {
 //        });
 //    }
 
+    protected void manage(NARReaction r, boolean b) {
+//        if (!b) {
+//            reactions.remove(Sets.newHashSet(r.getEvents()), r);
+//        } else {
+//            reactions.put(Sets.newHashSet(r.getEvents()), r);
+//        }
+    }
+
     abstract private class StreamNARReaction extends NARReaction {
 
         public StreamNARReaction(Class... signal) {
@@ -1387,14 +1359,6 @@ abstract public class NAR {
             super.setActive(b);
             manage(this, b);
         }
-    }
-
-    protected void manage(NARReaction r, boolean b) {
-//        if (!b) {
-//            reactions.remove(Sets.newHashSet(r.getEvents()), r);
-//        } else {
-//            reactions.put(Sets.newHashSet(r.getEvents()), r);
-//        }
     }
 
     private class ConsumedStreamNARReaction<X> extends StreamNARReaction {
@@ -1445,5 +1409,28 @@ abstract public class NAR {
 //            System.out.flush();
 //        //}
 //    }
+
+    public byte[] toBytes() throws IOException, InterruptedException {
+        return new GenericJBossMarshaller().objectToByteBuffer(this);
+    }
+
+    public static <N extends NAR> N fromBytes(byte[] b) throws IOException, ClassNotFoundException {
+        return (N) new GenericJBossMarshaller().objectFromByteBuffer(b);
+    }
+
+    public NAR fork() throws Exception {
+        //TODO find more efficient way than this brute serialization/deserialization
+        final byte[] bb = toBytes();
+        NAR x = fromBytes(bb);
+        return x;
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        //TODO compare any other stateful values from NAR class in addition to Memory
+        return memory().equals(((NAR) obj).memory());
+    }
+
 
 }

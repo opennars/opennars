@@ -9,13 +9,14 @@ import nars.premise.Premise;
 import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
 
+import java.io.Serializable;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
  * Created by patrick.hammer on 30.07.2015.
  */
-abstract public class Deriver implements Function<Premise,Stream<Task>> {
+abstract public class Deriver implements Function<Premise,Stream<Task>>, Serializable {
 
     public final DerivationRules rules;
 
@@ -37,7 +38,7 @@ abstract public class Deriver implements Function<Premise,Stream<Task>> {
 
     /** thread-specific pool of RuleMatchers
         this pool is local to this deriver */
-    final ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
+    final transient ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
         //TODO use the memory's RNG for complete deterministic reproducibility
         return new RuleMatch(new XorShift1024StarRandom(1));
     });

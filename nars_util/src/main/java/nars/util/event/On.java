@@ -1,16 +1,17 @@
 package nars.util.event;
 
+import java.io.Serializable;
 import java.util.function.Consumer;
 
 /**
  * Created by me on 9/15/15.
  */
-public final class On<V> {
+public final class On<V> implements Serializable {
 
-    final Consumer<V> reaction;
-    final Topic topic;
+    public final Consumer<V> reaction;
+    public final Topic<V> topic;
 
-    On(Topic t, Consumer<V> o) {
+    On(Topic<V> t, Consumer<V> o) {
         this.reaction = o;
         this.topic = t;
     }

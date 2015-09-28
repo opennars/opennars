@@ -2,6 +2,7 @@ package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.nal.nal7.AtomicDuration;
+import nars.util.data.MutableInteger;
 import objenome.Container;
 
 import java.io.Serializable;
@@ -11,6 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * NAR Parameters which can be changed during runtime.
  */
 public abstract class Param extends Container implements Serializable {
+
+
+    public final MutableInteger cyclesPerFrame = new MutableInteger(1);
 
 
     public Param() {    }

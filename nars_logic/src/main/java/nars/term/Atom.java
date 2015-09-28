@@ -21,7 +21,7 @@ import java.util.function.Function;
 public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizable{
 
     private static final Map<String,Atom> atoms = new HashMap();
-    public static final Function<String, Atom> AtomInterner = Atom::new;
+    private static final Function<String, Atom> AtomInterner = Atom::new;
 
     final static byte[] NullName = new byte[0];
 

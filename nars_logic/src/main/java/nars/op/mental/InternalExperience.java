@@ -320,9 +320,9 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
     }
 
 
-    public enum InternalExperienceMode {
+    /*public enum InternalExperienceMode {
         None, Minimal, Full
-    }
+    }*/
 
 
     //TODO

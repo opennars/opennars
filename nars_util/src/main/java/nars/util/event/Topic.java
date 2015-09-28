@@ -1,6 +1,7 @@
 
 package nars.util.event;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -9,7 +10,7 @@ import java.util.function.Consumer;
 /**
  * notifies subscribers when a value is emitted
  */
-abstract public interface Topic<V>  {
+abstract public interface Topic<V> extends Serializable {
 
     abstract void delete();
 
