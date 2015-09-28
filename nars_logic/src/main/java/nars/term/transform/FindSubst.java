@@ -165,11 +165,11 @@ public class FindSubst {
 
             switch (c1Len) {
                 case 2:
-                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2, power);
+                    return permute2(cTerm1.term(0), cTerm1.term(1), cTerm2, power/2);
                 case 3:
-                    return permute3(cTerm1.term, cTerm2, power);
+                    return permute3(cTerm1.term, cTerm2, power/3);
                 default:
-                    return permuteN(cTerm1, cTerm2, power);
+                    return permuteN(cTerm1, cTerm2, power/c1Len);
             }
         }
 
@@ -305,10 +305,15 @@ public class FindSubst {
      * a branch for comparing a particular permutation, called from the main next()
      */
     final protected boolean matchAll(final Compound x, final Term[] t, int power) {
-        final Term X[] = x.term;
+
         final int tlen = t.length;
+        final int subPower = power/tlen;
+        if (subPower == 0) return false;
+
+        final Term X[] = x.term;
+
         for (int i = 0; i < tlen; i++) {
-            final boolean r = next(t[i], X[i], power-1);
+            final boolean r = next(t[i], X[i], subPower);
             if (!r) {
                 return false;
             }

@@ -275,10 +275,10 @@ public class DefaultConcept extends AtomConcept {
      * @param belief The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processBelief(final Premise nal, Task belief) {
+    public boolean processBelief(final Premise nal, final Task belief) {
 
         if (belief.isDeleted())
-            System.err.println("new solution deleted");
+            throw new RuntimeException("new solution deleted");
 
         float successBefore = getSuccess();
 

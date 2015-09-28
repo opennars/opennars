@@ -57,7 +57,7 @@ import java.util.stream.Stream;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
- * <p>
+ * <p/>
  * WARNING this Seed is not immutable yet because it extends Param,
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
@@ -196,7 +196,6 @@ public class Default extends NAR {
     int termLinkBagSize;
 
 
-
     /**
      * Default DEFAULTS
      */
@@ -235,7 +234,7 @@ public class Default extends NAR {
         m.conceptQuestionsMax.set(4);
         m.activeConceptThreshold.set(0.0);
         m.questionFromGoalThreshold.set(0.35);
-        m.taskProcessThreshold.set(Global.BUDGET_EPSILON*2);
+        m.taskProcessThreshold.set(Global.BUDGET_EPSILON * 2);
         m.termLinkThreshold.set(0); //Global.BUDGET_EPSILON);
         m.taskLinkThreshold.set(0); //Global.BUDGET_EPSILON);
         m.executionThreshold.set(0.5);
@@ -268,7 +267,7 @@ public class Default extends NAR {
         if (nal() >= 7) {
 
             //scope: control
-            m.the(new STMTemporalLinkage(this, core.deriver ) );
+            m.the(new STMTemporalLinkage(this, core.deriver));
 
             if (nal() >= 8) {
 
@@ -346,7 +345,6 @@ public class Default extends NAR {
                         memory);
 
 
-
             if (Global.TASKLINK_FORGETTING_EXTRA_DEPTH > 0)
                 c.getTaskLinks().forgetNext(
                         memory.taskLinkForgetDurations,
@@ -358,6 +356,7 @@ public class Default extends NAR {
 
         }
     }
+
     /**
      * rank function used for concept belief and goal tables
      */
@@ -373,8 +372,7 @@ public class Default extends NAR {
         if (t instanceof Atom) {
             return new AtomConcept(t, b, termLinks, taskLinks, m
             );
-        }
-        else {
+        } else {
             return new DefaultConcept(t, b,
                     taskLinks, termLinks,
                     newConceptBeliefGoalRanking(),
@@ -388,7 +386,6 @@ public class Default extends NAR {
     protected final Concept doConceptualize(Term term, Budget b) {
         return core.update(term.getTerm(), b, true, 1f, core.active);
     }
-
 
 
     public Bag<Term, Concept> newConceptBag() {
@@ -417,7 +414,7 @@ public class Default extends NAR {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + '[' + nal() + + ']';
+        return getClass().getSimpleName() + '[' + nal() + +']';
     }
 
     protected SimpleDeriver getDeriver() {
@@ -432,7 +429,7 @@ public class Default extends NAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static class DefaultCycle extends CycleReaction implements Serializable, Function<ConceptProcess,Stream<Task>> {
+    public static class DefaultCycle extends CycleReaction implements Serializable, Function<ConceptProcess, Stream<Task>> {
 
         public final Deque<Task> percepts = new ArrayDeque();
 
@@ -455,7 +452,9 @@ public class Default extends NAR {
 //        };
 
 
-        /** samples an active concept */
+        /**
+         * samples an active concept
+         */
         public Concept next() {
             return active.peekNext();
         }
@@ -465,12 +464,15 @@ public class Default extends NAR {
          */
         public final ItemAccumulator<Task> newTasks;
 
-        /** concepts active in this cycle */
+        /**
+         * concepts active in this cycle
+         */
         public final Bag<Term, Concept> active;
 
         public final On onInput;
 
-        @Deprecated transient public final NAR nar;
+        @Deprecated
+        transient public final NAR nar;
 
         public final MutableInteger capacity = new MutableInteger();
 
@@ -478,8 +480,10 @@ public class Default extends NAR {
 
         public final AtomicDouble conceptForget;
 
-        @Deprecated int tasklinks = 2; //TODO use MutableInteger for this
-        @Deprecated int termlinks = 3; //TODO use MutableInteger for this
+        @Deprecated
+        int tasklinks = 2; //TODO use MutableInteger for this
+        @Deprecated
+        int termlinks = 3; //TODO use MutableInteger for this
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
@@ -504,17 +508,16 @@ public class Default extends NAR {
             this.active = concepts;
 
 
-
             onInput = nar.memory().eventInput.on(new InputConsumer(newTasks, percepts));
         }
 
-            public void reset() {
+        public void reset() {
 
-                percepts.clear();
+            percepts.clear();
 
-                newTasks.clear();
+            newTasks.clear();
 
-            }
+        }
 
         /**
          * An atomic working cycle of the system:
@@ -523,7 +526,8 @@ public class Default extends NAR {
          * 2) optionally process novel task(s)
          * 2) optionally fire a concept
          **/
-        @Override public void onCycle() {
+        @Override
+        public void onCycle() {
             enhanceAttention();
             runInputTasks(inputsMaxPerCycle.get());
             runNewTasks(/*inputsMaxPerCycle.get()*/);
@@ -562,17 +566,16 @@ public class Default extends NAR {
         }
 
 
-
         private void fireConcept(float conceptForgetDurations, long now, Concept c) {
 
             /*ConceptProcess.nextPremise(nar, c,
                     conceptForgetDurations,
                     conceptProcessor, now );*/
 
-            nar.input( ConceptProcess.nextPremiseSquare(nar, c,
+            nar.input(ConceptProcess.nextPremiseSquare(nar, c,
                     conceptForgetDurations,
                     this,
-                    termlinks, tasklinks ) );
+                    termlinks, tasklinks));
         }
 
 
@@ -607,7 +610,7 @@ public class Default extends NAR {
         protected void runInputTasks(int max) {
 
             int m = Math.min(percepts.size(),
-                        max);
+                    max);
 
             for (int n = m; n > 0; n--) {
                 run(percepts.removeFirst());
@@ -618,7 +621,9 @@ public class Default extends NAR {
             return TaskProcess.run(nar, task) != null;
         }
 
-        public final long time() { return nar.time(); }
+        public final long time() {
+            return nar.time();
+        }
 
         public Concept update(Term term, Budget b, boolean b1, float v, Bag<Term, Concept> active) {
             active.setCapacity(capacity.intValue());
@@ -652,7 +657,8 @@ public class Default extends NAR {
 
 
         //try to implement some other way, this is here because of serializability
-        @Deprecated static class InputConsumer implements Consumer<Task>, Serializable {
+        @Deprecated
+        static class InputConsumer implements Consumer<Task>, Serializable {
             public final ItemAccumulator<Task> newTasks;
             public final Deque<Task> percepts;
 
@@ -732,13 +738,15 @@ public class Default extends NAR {
         }
 
         @Override
-        @Deprecated public Concept newConcept(Term t, Budget b, @Deprecated Memory m) {
-            return ((Default)nar).newConcept(t, b);
+        @Deprecated
+        public Concept newConcept(Term t, Budget b, @Deprecated Memory m) {
+            return ((Default) nar).newConcept(t, b);
         }
 
-        @Override public Concept newItem() {
+        @Override
+        public Concept newItem() {
             //default behavior overriden; a new item will be maanually inserted into the bag under certain conditons to be determined by this class
-            Concept c = ((Default)nar).newConcept(getKey(),getBudget());
+            Concept c = ((Default) nar).newConcept(getKey(), getBudget());
             nar.memory().put(c);
 
             return c;
