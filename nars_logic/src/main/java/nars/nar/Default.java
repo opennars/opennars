@@ -202,7 +202,7 @@ public class Default extends NAR {
      * Default DEFAULTS
      */
     public Default() {
-        this(1024, 1, 3, 3);
+        this(768, 1, 2, 2);
     }
 
     public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {

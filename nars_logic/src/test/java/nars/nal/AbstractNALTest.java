@@ -33,7 +33,7 @@ abstract public class AbstractNALTest  {
     public static final List<Supplier<NAR>> core =Lists.newArrayList(
             () -> new Default().nal(9)
     );
-    public static final List<Supplier<NAR>> singleStep = core; /*Lists.newArrayList(
+    @Deprecated public static final List<Supplier<NAR>> singleStep = core6; /*Lists.newArrayList(
             () -> new SingleStepNAR().nal(9)
     );*/
 

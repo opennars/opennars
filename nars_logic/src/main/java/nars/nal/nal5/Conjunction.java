@@ -227,7 +227,7 @@ public class Conjunction extends Junction<Term> {
 
 
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            return Sequence.makeForward(argList);
+            return Sequence.makeSequence(argList);
 
         } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
             throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(argList));
@@ -275,10 +275,10 @@ public class Conjunction extends Junction<Term> {
 
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            return Sequence.makeForward(term1, term2);
+            return Sequence.makeSequence(term1, term2);
         } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
             //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
-            return Sequence.makeForward(term2, term1);
+            return Sequence.makeSequence(term2, term1);
             //return null;
         } else {
             if (term1 instanceof Conjunction) {

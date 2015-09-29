@@ -99,7 +99,7 @@ public class NALObjectsTest extends TestCase {
         //System.out.println();
         //System.out.println(ms.getBuffer().toString());
 
-        String expect = "<{16} --> (/, ^TestClass_multiply, obj, 2, 3, _)>.";
+        String expect = "<{6} --> (/, ^TestClass_multiply, obj, 2, 3, _)>.";
         assertTrue(ns.getBuffer().toString().contains(expect));
         assertTrue(ms.getBuffer().toString().contains(expect));
     }
@@ -133,7 +133,7 @@ public class NALObjectsTest extends TestCase {
         assertNotNull(term);
         Object p = t.object(term);
 
-        System.out.println(t.objects);
+        //System.out.println(t.objects);
 
         if (o!=null)
             assertEquals(p, o);

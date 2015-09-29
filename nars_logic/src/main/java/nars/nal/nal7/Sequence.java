@@ -9,7 +9,6 @@ import nars.term.Term;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 
 import static java.lang.System.arraycopy;
 import static nars.Symbols.COMPOUND_TERM_OPENER;
@@ -21,12 +20,6 @@ public class Sequence extends Conjunction implements Intermval {
 
     protected final long[] intervals;
 
-    /**
-     * creates a normal sequence containing no intervals
-     */
-    Sequence(Term[] subterms) {
-        this(subterms, new long[subterms.length + 1]);
-    }
 
     Sequence(Term[] subterms, long[] intervals) {
         super(subterms, TemporalRules.ORDER_FORWARD);
@@ -34,33 +27,44 @@ public class Sequence extends Conjunction implements Intermval {
         if (intervals.length != 1 + subterms.length)
             throw new RuntimeException("invalid intervals length: " + intervals.length + " should equal " + (subterms.length + 1));
 
+
+        final int s = size();
+
+        //public Sequence cloneRemovingSuffixInterval() {
+        //operate on a clone in case this will be created from a subrange of another array etc */
+        if (intervals[s]!=0) {
+            intervals = Arrays.copyOf(intervals, s+1);
+            intervals[s] = 0;
+        }
+
         this.intervals = intervals;
+
 
         init(subterms);
     }
 
     @Override
-    public nars.nal.nal7.Sequence clone() {
-        return new nars.nal.nal7.Sequence(term, intervals);
+    public Sequence clone() {
+        return new Sequence(term, intervals);
     }
 
     @Override
-    public Term clone(final Term[] t) {
-        return clone(t, intervals);
-    }
-
-    public Sequence clone(Term[] t, long[] ii) {
+    public Sequence clone(final Term[] t) {
+//        return clone(t, intervals);
+//    }
+//
+//    public Sequence clone(Term[] t, long[] ii) {
         //for now, require that cloning require same # of terms because intervals will be copied as-is
-        int tlen = t.length;
+//        int tlen = t.length;
+//
+//        if (ii.length != tlen +1) {
+//            /*throw new RuntimeException("invalid parameters for Sequence clone: " +
+//                    Arrays.toString(t) + " (len=" + t.length + ") and intervals " +
+//                    Arrays.toString(ii) + " (len=" + ii.length + ")");*/
+//            return null;
+//        }
 
-        if (ii.length != tlen +1) {
-            /*throw new RuntimeException("invalid parameters for Sequence clone: " +
-                    Arrays.toString(t) + " (len=" + t.length + ") and intervals " +
-                    Arrays.toString(ii) + " (len=" + ii.length + ")");*/
-            return null;
-        }
-
-        return new nars.nal.nal7.Sequence(t, ii);
+        return makeSequence(t);
     }
 
     @Override
@@ -84,12 +88,16 @@ public class Sequence extends Conjunction implements Intermval {
      * @param a
      * @return
      */
-    public static nars.nal.nal7.Sequence makeForward(final Term[] a) {
-        //1. count how many intervals so we know how to resize the final arrays
-        int intervalsPresent = AbstractInterval.intervalCount(a);
+    public static Sequence makeSequence(final Term[] a) {
 
-        if (intervalsPresent == 0) return new nars.nal.nal7.Sequence(a);
+        //count how many intervals so we know how to resize the final arrays
+        final int intervalsPresent = AbstractInterval.intervalCount(a);
 
+        if (intervalsPresent == 0)
+            return new Sequence(a, new long[a.length+1] /* empty */);
+
+
+        //if intervals are present:
         Term[] b = new Term[a.length - intervalsPresent];
         long[] i = new long[b.length + 1];
 
@@ -102,17 +110,17 @@ public class Sequence extends Conjunction implements Intermval {
             }
         }
 
-        return new nars.nal.nal7.Sequence(b, i);
+        return new Sequence(b, i);
     }
 
 
-    public static nars.nal.nal7.Sequence makeForward(final Collection<Term> a) {
-        //TODO make more efficient version of this that doesnt involve array copy
-        return makeForward(a.toArray(new Term[a.size()]));
-    }
+//    public static Sequence makeSequence(final Collection<Term> a) {
+//        //TODO make more efficient version of this that doesnt involve array copy
+//        return makeSequence(a.toArray(new Term[a.size()]));
+//    }
 
 
-    public static Term makeForward(Term term1, Term term2) {
+    public static Term makeSequence(Term term1, Term term2) {
         final Term[] components;
 
         if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
@@ -141,7 +149,7 @@ public class Sequence extends Conjunction implements Intermval {
             components = new Term[]{term1, term2};
         }
 
-        return makeForward(components);
+        return makeSequence(components);
     }
 
     @Override
@@ -207,11 +215,11 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
 
-    public Sequence cloneRemovingSuffixInterval() {
-        final int s = size();
-        long[] ni = Arrays.copyOf(intervals(), s+1);
-        ni[s] = 0;
-        return clone(term, ni);
-    }
+//    public Sequence cloneRemovingSuffixInterval() {
+//        final int s = size();
+//        long[] ni = Arrays.copyOf(intervals(), s+1);
+//        ni[s] = 0;
+//        return clone(term, ni);
+//    }
 
 }

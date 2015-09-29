@@ -11,7 +11,6 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Item;
-import nars.nal.nal7.Sequence;
 import nars.nal.nal8.Operation;
 import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
@@ -119,11 +118,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         this.truth = truth;
         this.punctuation = punctuation;
 
-        if (term instanceof Sequence) {
+        /*if (term instanceof Sequence) {
             this.term = (T) ((Sequence) term).cloneRemovingSuffixInterval();
-        } else {
+        } else {*/
             this.term = term;
-        }
+        //}
 
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;

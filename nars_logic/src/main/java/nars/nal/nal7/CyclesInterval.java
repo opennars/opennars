@@ -29,7 +29,7 @@ public class CyclesInterval extends Atom implements AbstractInterval {
         //nothing
     }
 
-    /*@Override
+    @Override
     public final int hashCode() {
         throw new RuntimeException("N/A");
     }
@@ -42,7 +42,7 @@ public class CyclesInterval extends Atom implements AbstractInterval {
     public final int volume() {
         throw new RuntimeException("N/A");
     }
-    */
+
 
     public static CyclesInterval make(long numCycles) {
         return new CyclesInterval(numCycles);
