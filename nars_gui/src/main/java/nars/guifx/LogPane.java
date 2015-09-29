@@ -294,10 +294,12 @@ public class LogPane extends BorderPane implements Runnable {
 
     }
 
+    boolean activationTreeMap = false;
+
     private Node getNode(Object channel, Object signal) {
         if (channel.equals("eventConceptActivated")) {
-            boolean newn;
-            if (activationSet==null) {
+            boolean newn = false;
+            if (activationSet==null && activationTreeMap) {
                 activationSet =
                         //new ActivationSet();
                         new ActivationTreeMap((Concept)signal);
@@ -307,7 +309,7 @@ public class LogPane extends BorderPane implements Runnable {
                 activationSet.height.set(100);
                 newn = true;
             }
-            else {
+            else if (activationSet!=null) {
                 activationSet.add((Concept) signal);
                 newn = false;
             }

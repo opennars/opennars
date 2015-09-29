@@ -1310,7 +1310,7 @@ abstract public class NAR implements Serializable {
         return this;
     }
 
-    public NAR spawnThread(long periodMS, Consumer<Thread> t) {
+    public synchronized NAR spawnThread(long periodMS, Consumer<Thread> t) {
         ensureNotRunning();
 
         t.accept(new Thread(() -> {
@@ -1346,6 +1346,11 @@ abstract public class NAR implements Serializable {
 //        } else {
 //            reactions.put(Sets.newHashSet(r.getEvents()), r);
 //        }
+    }
+
+    /** starts the new running thread immediately */
+    public void spawnThread(int msDelay) {
+        spawnThread(msDelay, Thread::start);
     }
 
     abstract private class StreamNARReaction extends NARReaction {

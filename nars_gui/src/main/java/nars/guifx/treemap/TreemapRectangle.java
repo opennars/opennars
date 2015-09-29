@@ -1,12 +1,10 @@
 package nars.guifx.treemap;
 
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
-import static javafx.application.Platform.runLater;
+import javafx.scene.text.Text;
 
 /**
  * @author Tadas Subonis <tadas.subonis@gmail.com>
@@ -21,8 +19,6 @@ class TreemapRectangle extends Parent {
     public TreemapRectangle(final TreemapDtoElement child, Color color) {
         super();
 
-
-
         rectangle.setHeight(child.getHeight());
         rectangle.setWidth(child.getWidth());
 
@@ -31,10 +27,11 @@ class TreemapRectangle extends Parent {
         rectangleColor = color;
         rectangle.setFill(rectangleColor);
 
-        runLater(() -> {
-            this.getChildren().setAll(rectangle, new Label(child.getLabel()));
-            Tooltip.install(rectangle, new NodeTooltip(child));
-        });
+        this.getChildren().setAll(rectangle, new Text(child.getLabel()));
+
+        /*runLater(() -> {
+            //Tooltip.install(rectangle, new NodeTooltip(child));
+        });*/
 
     }
 
