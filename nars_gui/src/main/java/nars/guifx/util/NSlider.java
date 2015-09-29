@@ -7,13 +7,15 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import nars.guifx.NARfx;
 
 /**
  * versatile light-weight slider component for javafx
@@ -40,16 +42,27 @@ public class NSlider extends StackPane {
     final StringProperty label;
 
     public NSlider(String label, double w, double h) {
+        this(label, w, h, BarSlider);
+    }
+
+    public NSlider(String label, double w, double h, NSliderVis vis) {
         super();
+
+        this.vis = vis;
 
         this.canvas = new Canvas(w, h);
 
-        Label overlay = new Label();
+        Text overlay = new Text();
         {
             this.label = overlay.textProperty();
+            overlay.setSmooth(false);
+            overlay.setFill(Color.WHITE);
             overlay.setMouseTransparent(true);
-            overlay.setBlendMode(BlendMode.DIFFERENCE);
+            //overlay.setBlendMode(BlendMode.EXCLUSION);
+            //overlay.setManaged(false);
         }
+
+
         this.label.set(label);
 
         if (h <= 0) {
@@ -151,29 +164,86 @@ public class NSlider extends StackPane {
         return (v - min) / (max - min);
     }
 
-    protected void redraw() {
-        double W = canvas.getWidth();
-        double H = canvas.getHeight();
+    public interface NSliderVis {
 
-        double p = p();
+        /**
+         *
+         * @param p proportional position, between 0 and 1.0
+         * @param canvas target canvas
+         * @param w parent width
+         * @param h parent height
+         * @param g re-usable graphics context
+         */
+        void redraw(double p, Canvas canvas, double w, double h, GraphicsContext g);
+
+    }
+
+    public NSliderVis vis;
+
+    public static final NSliderVis BarSlider = (p, canvas1, W, H, g1) -> {
+
         double barSize = W * p;
 
         double margin = 4;
         double mh = margin/2.0;
 
 
+        g1.setFill(Color.BLACK);
+        g1.fillRect(0, 0, W, H);
+
+        g1.setLineWidth(mh*2);
+        g1.setStroke(Color.GRAY);
+        g1.strokeRect(0, 0, W, H);
+
+        g1.setLineWidth(0);
+        double hp = 0.5 + 0.5 * p;
+        g1.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g1.fillRect(mh, mh, barSize - mh*2, H - mh*2);
+    };
+
+    public static final NSliderVis NotchSlider = (p, canvas, W, H, g) -> {
+
+        double barSize = W * p;
+
+        double margin = 4;
+        double mh = margin/2.0;
+
         g.setFill(Color.BLACK);
-        //g.fillRect(W-barSize, 0, W-barSize, H);
         g.fillRect(0, 0, W, H);
 
-        g.setLineWidth(mh*2);
-        g.setStroke(Color.GRAY);
-        g.strokeRect(0, 0, W, H);
+        double notchRadius = W * 0.1;
 
         g.setLineWidth(0);
         double hp = 0.5 + 0.5 * p;
-        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, hp, 1f));
-        g.fillRect(mh, mh, barSize - mh*2, H - mh*2);
+        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+        g.fillRect(mh + barSize - notchRadius, mh, notchRadius, H - mh*2);
+    };
+
+    public static final NSliderVis CircleKnob = (p, canvas, W, H, g) -> {
+
+        g.setFill(Color.BLACK);
+        g.fillRect(0, 0, W, H);
+
+        double circumferenceActive = 0.95; //how much of the circumference of the interior circle is active as a dial track
+
+        double theta = p * circumferenceActive * (2 * Math.PI);
+        double margin = W/8;
+        double x = W/2 + (W/2-margin) * Math.cos(theta);
+        double y = H/2 + (H/2-margin) * Math.sin(theta);
+        double t = 4;
+        g.setFill(Color.WHITE);
+        g.fillOval(x-t, y-t, t*2,t*2);
+
+        /*g.fillArc(  0,0,W,H,
+                    270 - 15,theta, ArcType.ROUND);*/
+
+
+    };
+
+    protected void redraw() {
+        double W = canvas.getWidth();
+        double H = canvas.getHeight();
+        vis.redraw(p(), canvas, W, H, g);
     }
 
     public NSlider set(double v, double min, double max) {
@@ -207,4 +277,21 @@ public class NSlider extends StackPane {
 //            }
 //        });
 //    }
+
+
+    public static void main(String[] args) {
+        NARfx.run((a, b)-> {
+
+            FlowPane p = new FlowPane(16,16);
+
+            p.getChildren().setAll(
+                    new NSlider("Bar", 128, 45, NSlider.BarSlider),
+                    new NSlider("Notch", 64, 25, NSlider.NotchSlider),
+                    new NSlider("Circle", 128, 128, NSlider.CircleKnob)
+            );
+
+            b.setScene(new Scene(p, 800, 800));
+            b.show();
+        });
+    }
 }

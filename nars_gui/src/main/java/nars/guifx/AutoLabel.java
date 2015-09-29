@@ -60,14 +60,14 @@ public class AutoLabel extends Label implements ChangeListener {
             return;
 
         float pri = task.getBudget().getPriorityIfNaNThenZero();
-        if (Precision.equals(lastPri, pri, 0.025)) {
+        if (Precision.equals(lastPri, pri, 0.07)) {
             return;
         }
         lastPri = pri;
 
         summary.run();
 
-        double sc = 0.5 + 1.0 * pri;
+        //double sc = 0.5 + 1.0 * pri;
         //setScaleX(sc);
         //setScaleY(sc);
         //setFont(NARfx.mono((pri*12+12)));

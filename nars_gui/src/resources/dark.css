@@ -251,8 +251,13 @@
 .title-bar .title-label {
     -fx-padding: 0 10 0 10;
     -fx-alignment: center;
-    -fx-font-size: 150%;
-    -fx-font-weight: bolder;
+    -fx-font-size: 150% !important;
+    -fx-font-weight: bolder !important;
+}
+
+.h1 {
+    -fx-font-size: 150% !important;
+    -fx-font-weight: bolder !important;
 }
 
 /*.content-area {

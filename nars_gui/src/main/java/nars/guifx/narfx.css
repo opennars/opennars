@@ -63,19 +63,23 @@
 }
 
 .plugin_button {
-    -fx-padding: 8px;
-    -fx-background-color: rgb(10,10,10) !important;
+    -fx-padding: 4px;
+    -fx-background-color: rgb(45,45,45) !important;
     -fx-control-inner-background:  transparent !important;
-    /*-fx-border-width: 8px 1px 8px 1px;
-    -fx-border-color: black;*/
-    -fx-border-insets: 8px 1px 8px 1px;
+    -fx-border-width: 0px 0px 0px 12px;
+    -fx-border-color: gray;
+    -fx-border-insets: 4px 4px 4px 0px;
 }
 .plugin_button:hover {
-    -fx-background-color: rgb(50,50,50) !important;
+    -fx-border-color: lightgray;
+    /*-fx-scale-x: 1.25;
+    -fx-scale-y: 1.25;*/
 }
 .plugin_button:armed {
-    -fx-background-color: green !important;
+    -fx-background-color: rgb(65,65,65) !important;
+    -fx-border-color: blue !important;
 }
 .plugin_button:selected {
-    -fx-background-color: rgb(30,30,30) !important;
+    -fx-background-color: rgb(55,55,55) !important;
+    -fx-border-color: green;
 }

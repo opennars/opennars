@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import nars.Global;
 import nars.NAR;
 
@@ -22,16 +23,18 @@ public class PluginPanel extends VBox {
 
     private final NAR nar;
 
-
+    double itemSpacing = 8.0;
 
     public PluginPanel(NAR nar) {
         super();
+
+        setSpacing(itemSpacing);
+
         this.nar = nar;
 
+
         nar.onEachFrame((n) -> {
-            runLater(() -> {
-                update();
-            });
+            update();
         });
         update();
 
@@ -46,9 +49,11 @@ public class PluginPanel extends VBox {
         nar.memory().getSingletons().forEach((k,v)-> {
             toAdd.add(node(k,v));
         });
-        getChildren().setAll(toAdd);
 
-        layout();
+        runLater( () -> {
+            getChildren().setAll(toAdd);
+            layout();
+        });
 
 //        menu.add(new JLabel(" + "));
 //
@@ -92,6 +97,11 @@ public class PluginPanel extends VBox {
             p.getStyleClass().add("plugin_button");
             p.setGraphic(icon(K,v));
             p.setMaxWidth(Double.MAX_VALUE);
+            p.setMaxHeight(Double.MAX_VALUE);
+            //p.maxHeight(100);
+            //p.prefHeight(100);
+            p.minHeight(128);
+            p.minWidth(128);
             return p;
         });
     }
@@ -101,23 +111,20 @@ public class PluginPanel extends VBox {
             return ((FXIconPaneBuilder)v).newIconPane();
         }
         BorderPane bp = new BorderPane();
-        ToggleButton label;
-        bp.setTop(label = new ToggleButton(k));
-        label.setOnAction(e -> {
-            System.out.println(label + " " + label.isSelected());
-            if (label.isSelected()) {
-                Label content = new Label(v.toString());
-                content.setWrapText(true);
-                bp.setCenter(content);
-                content.setCache(true);
-            }
-            else {
-                bp.setCenter(null);
-            }
 
-        });
+        Label label = new Label(k);
+        Label content = new Label(v.toString());
 
+        content.setWrapText(true);
+        content.setTextAlignment(TextAlignment.LEFT);
+
+        label.getStyleClass().add("h1");
+
+        content.setCache(true);
         label.setCache(true);
+
+        bp.setTop(label);
+        bp.setBottom(content);
 
         return bp;
     }

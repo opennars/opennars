@@ -74,7 +74,7 @@ public class TabX extends Tab {
 
         final boolean s = !closed && isSelected();
 
-        logger.severe(getText() + " visible=" + s);
+        //logger.severe(getText() + " visible=" + s);
 
         update(s);
 
