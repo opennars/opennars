@@ -1,6 +1,6 @@
 package org.clockwise.task;
 
-public class IntervalTask extends Task {
+class IntervalTask extends Task {
 
     private final long interval;
     private final long initialDelay;
@@ -15,7 +15,7 @@ public class IntervalTask extends Task {
      * @param initialDelay
      *            initial delay before first execution of the task
      */
-    public IntervalTask(Runnable runnable, long interval, long initialDelay) {
+    private IntervalTask(Runnable runnable, long interval, long initialDelay) {
         super(runnable);
         this.interval = interval;
         this.initialDelay = initialDelay;

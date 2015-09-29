@@ -64,7 +64,7 @@ public class DeductiveChainTest extends TestNAR {
                 da;
         //);
 
-        da.stdout();
+        //da.stdout();
 
         DeductiveChainTest test = new DeductiveChainTest(n, length, 100000);
 

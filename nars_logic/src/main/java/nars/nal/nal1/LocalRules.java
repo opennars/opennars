@@ -164,18 +164,17 @@ public class LocalRules {
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
-     * @param belief       The proposed answer
-     * @param questionTask The task to be processed
-     * @param memory       Reference to the memory
+     * @param question     The question to be processed
+     * @param proposedBelief       The proposed answer
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(Task belief, final Truth projectedTruth, final Task question, final Premise nal) {
+    public static Task trySolution(final Task proposedBelief, final Truth projectedTruth, final Task question, final Premise nal) {
+
+        Task belief = proposedBelief;
 
         if (belief == null) return null;
         if (belief.isDeleted())
             throw new RuntimeException(belief + " deleted");
-
-        final Task inputBelief = belief;
 
         Memory memory = nal.memory();
         Term content = belief.getTerm();

@@ -194,10 +194,10 @@ public class DefaultConcept extends AtomConcept {
             return input;
         } else {
 
-            if (ranking == null) {
-                //just return thie top item if no ranker is provided
-                return table.top();
-            }
+//            if (ranking == null) {
+//                //just return thie top item if no ranker is provided
+//                return table.top();
+//            }
 
 
             Task existing = table.top(input, now);
@@ -205,18 +205,21 @@ public class DefaultConcept extends AtomConcept {
 
             if (existing != null) {
 
-                //equal instance, or equal truth and stamp:
-                if ((existing == input) || input.equivalentTo(existing, false, false, true, true, false)) {
+                if (existing == input) {
+                    //the same task instance existed here already
+                    return null;
+                }
+                else if ( input.equivalentTo(existing, false, false, true, true, false)) {
+                    //equal but different instances; discard the new one
 
-                        /*if (!t.isInput() && t.isJudgment()) {
-                            existing.decPriority(0);    // duplicated task
-                        }   // else: activated belief*/
+                    /*if (!t.isInput() && t.isJudgment()) {
+                        existing.decPriority(0);    // duplicated task
+                    }   // else: activated belief*/
 
-                    if (input != existing)
-                        memory.remove(input, "Ineffectual"); //"has no effect" on belief/desire, etc
+
+                    memory.remove(input, "Ineffectual"); //"has no effect" on belief/desire, etc
 
                     return null;
-
                 } else if (revisible(input, existing)) {
 
 

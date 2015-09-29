@@ -29,7 +29,7 @@ public class TestNAR  {
     boolean showFail = true;
     boolean showSuccess = false;
     boolean showExplanations = false;
-    boolean showOutput = false;
+    final boolean showOutput = false;
 
     boolean resetOnStop = true; //should help GC if successively run
 

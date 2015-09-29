@@ -41,7 +41,7 @@ public class BeliefTableTest extends TestCase {
 
         NAR n = newNAR(6);
 
-        n.stdout();
+        //n.stdout();
 
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>")
                 .believe(1.0f, 0.9f)

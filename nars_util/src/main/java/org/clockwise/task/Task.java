@@ -15,7 +15,7 @@ public class Task {
      * @param runnable
      *            the underlying task to execute.
      */
-    public Task(Runnable runnable) {
+    Task(Runnable runnable) {
         this.runnable = runnable;
     }
 

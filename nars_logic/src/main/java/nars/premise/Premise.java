@@ -8,6 +8,7 @@ import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
 import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
@@ -345,6 +346,12 @@ public interface Premise {
 
 
         Task t = task.normalized();
+
+        if (!FilterDuplicateExistingBelief.isUniqueBelief(this, t)) {
+            memory().remove(t);
+            return null;
+        }
+
         if (t!=null) {
             memory.eventDerived.emit(task);
             memory.logic.TASK_DERIVED.hit();

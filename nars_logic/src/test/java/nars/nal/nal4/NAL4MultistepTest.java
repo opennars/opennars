@@ -1,5 +1,6 @@
 package nars.nal.nal4;
 
+import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
@@ -19,7 +20,7 @@ public class NAL4MultistepTest extends AbstractNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.core8;
+        return AbstractNALTest.core4;
 //        return Arrays.asList(new Supplier[][]{
 //                {() -> new Default()},
 //                //{new DefaultDeep()},
@@ -38,13 +39,20 @@ public class NAL4MultistepTest extends AbstractNALTest {
     //this test only works because the confidence matches, but the related task has insufficient budget
     @Test
     public void nal4_everyday_reasonoing() throws InvalidInputException {
+        int time = 250;
+
+        Global.DEBUG = true;
+
         TestNAR tester = test();
         tester.believe("<{sky} --> [blue]>",1.0f,0.9f); //en("the sky is blue");
         tester.believe("<{tom} --> cat>",1.0f,0.9f); //en("tom is a cat");
-        tester.believe("<(*,{tom},{sky}) --> likes>",1.0f,0.9f); //en("tom likes the sky");
-        tester.runUntil(1000);
-        test().ask("<(*,cat,[blue]) --> likes>"); //cats like blue?
-        tester.mustBelieve(1500, "<(*,cat,[blue]) --> likes>", 1.0f, 0.42f); //en("A base is something that has a reaction with an acid.");
+        tester.believe("<({tom},{sky}) --> likes>",1.0f,0.9f); //en("tom likes the sky");
+        //tester.runUntil(1000);
+
+        tester.mustBelieve(time, "<(cat,[blue]) --> likes>", 1.0f, 0.42f); //en("A base is something that has a reaction with an acid.");
+
+        test().ask("<(cat,[blue]) --> likes>"); //cats like blue?
+
         tester.run();
     }
 

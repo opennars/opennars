@@ -12,7 +12,7 @@ import java.util.concurrent.RejectedExecutionException;
  * @see TaskTimeoutException
  */
 @SuppressWarnings("serial")
-public class TaskRejectedException extends RejectedExecutionException {
+class TaskRejectedException extends RejectedExecutionException {
     /**
      * Create a new {@code TaskRejectedException} with the specified detail
      * message and no root cause.

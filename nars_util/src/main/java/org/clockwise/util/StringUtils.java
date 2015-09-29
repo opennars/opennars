@@ -50,7 +50,7 @@ public class StringUtils {
      * @return {@code true} if the CharSequence is not null and has length
      * @see #hasText(String)
      */
-    public static boolean hasLength(CharSequence str) {
+    private static boolean hasLength(CharSequence str) {
         return (str != null && str.length() > 0);
     }
 
@@ -64,7 +64,7 @@ public class StringUtils {
      * @return {@code true} if the String is not null and has length
      * @see #hasLength(CharSequence)
      */
-    public static boolean hasLength(String str) {
+    private static boolean hasLength(String str) {
         return hasLength((CharSequence) str);
     }
 
@@ -88,7 +88,7 @@ public class StringUtils {
      *         is greater than 0, and it does not contain whitespace only
      * @see Character#isWhitespace
      */
-    public static boolean hasText(CharSequence str) {
+    private static boolean hasText(CharSequence str) {
         if (!hasLength(str)) {
             return false;
         }
@@ -112,7 +112,7 @@ public class StringUtils {
      *         greater than 0, and it does not contain whitespace only
      * @see #hasText(CharSequence)
      */
-    public static boolean hasText(String str) {
+    private static boolean hasText(String str) {
         return hasText((CharSequence) str);
     }
 
@@ -125,7 +125,7 @@ public class StringUtils {
      *         least 1 whitespace character
      * @see Character#isWhitespace
      */
-    public static boolean containsWhitespace(CharSequence str) {
+    private static boolean containsWhitespace(CharSequence str) {
         if (!hasLength(str)) {
             return false;
         }
@@ -205,7 +205,7 @@ public class StringUtils {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
-    public static String trimLeadingWhitespace(String str) {
+    private static String trimLeadingWhitespace(String str) {
         if (!hasLength(str)) {
             return str;
         }
@@ -245,7 +245,7 @@ public class StringUtils {
      *            the leading character to be trimmed
      * @return the trimmed String
      */
-    public static String trimLeadingCharacter(String str, char leadingCharacter) {
+    private static String trimLeadingCharacter(String str, char leadingCharacter) {
         if (!hasLength(str)) {
             return str;
         }
@@ -425,7 +425,7 @@ public class StringUtils {
      *            'z's and new lines.
      * @return the resulting String
      */
-    public static String deleteAny(String inString, String charsToDelete) {
+    private static String deleteAny(String inString, String charsToDelete) {
         if (!hasLength(inString) || !hasLength(charsToDelete)) {
             return inString;
         }
@@ -450,7 +450,7 @@ public class StringUtils {
      * @return the quoted String (e.g. "'myString'"), or {@code null} if the
      *         input was {@code null}
      */
-    public static String quote(String str) {
+    private static String quote(String str) {
         return (str != null ? "'" + str + "'" : null);
     }
 
@@ -487,7 +487,7 @@ public class StringUtils {
      * @param separator
      *            the separator
      */
-    public static String unqualify(String qualifiedName, char separator) {
+    private static String unqualify(String qualifiedName, char separator) {
         return qualifiedName.substring(qualifiedName.lastIndexOf(separator) + 1);
     }
 
@@ -627,7 +627,7 @@ public class StringUtils {
      *            the original path
      * @return the normalized path
      */
-    public static String cleanPath(String path) {
+    private static String cleanPath(String path) {
         if (path == null) {
             return null;
         }
@@ -651,7 +651,7 @@ public class StringUtils {
             pathToUse = pathToUse.substring(1);
         }
         String[] pathArray = delimitedListToStringArray(pathToUse, FOLDER_SEPARATOR);
-        List<String> pathElements = new LinkedList<String>();
+        List<String> pathElements = new LinkedList<>();
         int tops = 0;
         for (int i = pathArray.length - 1; i >= 0; i--) {
             String element = pathArray[i];
@@ -778,7 +778,7 @@ public class StringUtils {
      * @return the String array ({@code null} if the passed-in Collection was
      *         {@code null})
      */
-    public static String[] toStringArray(Collection<String> collection) {
+    private static String[] toStringArray(Collection<String> collection) {
         if (collection == null) {
             return null;
         }
@@ -815,7 +815,7 @@ public class StringUtils {
      *         delimiter); or {@code null} if the delimiter wasn't found in the
      *         given input String
      */
-    public static String[] split(String toSplit, String delimiter) {
+    private static String[] split(String toSplit, String delimiter) {
         if (!hasLength(toSplit) || !hasLength(delimiter)) {
             return null;
         }
@@ -868,7 +868,7 @@ public class StringUtils {
      * @return a {@code Properties} instance representing the array contents, or
      *         {@code null} if the array to process was {@code null} or empty
      */
-    public static Properties splitArrayElementsIntoProperties(String[] array, String delimiter, String charsToDelete) {
+    private static Properties splitArrayElementsIntoProperties(String[] array, String delimiter, String charsToDelete) {
         if (array == null || array.length == 0) {
             return null;
         }
@@ -934,13 +934,13 @@ public class StringUtils {
      * @see String#trim()
      * @see #delimitedListToStringArray
      */
-    public static String[] tokenizeToStringArray(String str, String delimiters, boolean trimTokens,
-            boolean ignoreEmptyTokens) {
+    private static String[] tokenizeToStringArray(String str, String delimiters, boolean trimTokens,
+                                                  boolean ignoreEmptyTokens) {
         if (str == null) {
             return null;
         }
         StringTokenizer st = new StringTokenizer(str, delimiters);
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
             if (trimTokens) {
@@ -993,14 +993,14 @@ public class StringUtils {
      * @return an array of the tokens in the list
      * @see #tokenizeToStringArray
      */
-    public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
+    private static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
         if (str == null) {
             return new String[0];
         }
         if (delimiter == null) {
             return new String[] { str };
         }
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if ("".equals(delimiter)) {
             for (int i = 0; i < str.length(); i++) {
                 result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
@@ -1040,11 +1040,9 @@ public class StringUtils {
      * @return a Set of String entries in the list
      */
     public static Set<String> commaDelimitedListToSet(String str) {
-        Set<String> set = new TreeSet<String>();
+        Set<String> set = new TreeSet<>();
         String[] tokens = commaDelimitedListToStringArray(str);
-        for (String token : tokens) {
-            set.add(token);
-        }
+        Collections.addAll(set, tokens);
         return set;
     }
 
@@ -1062,7 +1060,7 @@ public class StringUtils {
      *            the String to end each element with
      * @return the delimited String
      */
-    public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
+    private static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
         if (coll.isEmpty()) {
             return "";
         }
@@ -1087,7 +1085,7 @@ public class StringUtils {
      *            the delimiter to use (probably a ",")
      * @return the delimited String
      */
-    public static String collectionToDelimitedString(Collection<?> coll, String delim) {
+    private static String collectionToDelimitedString(Collection<?> coll, String delim) {
         return collectionToDelimitedString(coll, delim, "", "");
     }
 
@@ -1113,7 +1111,7 @@ public class StringUtils {
      *            the delimiter to use (probably a ",")
      * @return the delimited String
      */
-    public static String arrayToDelimitedString(Object[] arr, String delim) {
+    private static String arrayToDelimitedString(Object[] arr, String delim) {
         if (arr == null || arr.length ==0) {
             return "";
         }

@@ -41,7 +41,7 @@ public class PeriodicTrigger implements Trigger {
      * apply not only to the period but also to any 'initialDelay' value, if
      * configured on this Trigger later via {@link #setInitialDelay(long)}.
      */
-    public PeriodicTrigger(long period, TimeUnit timeUnit) {
+    private PeriodicTrigger(long period, TimeUnit timeUnit) {
         //Assert.isTrue(period >= 0, "period must not be negative");
         this.timeUnit = (timeUnit != null ? timeUnit : TimeUnit.MILLISECONDS);
         this.period = this.timeUnit.toMillis(period);

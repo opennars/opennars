@@ -15,7 +15,6 @@ import java.util.concurrent.*;
  * @since 3.0
  * @see #setPoolSize
  * @see #setRemoveOnCancelPolicy
- * @see #setThreadFactory
  * @see #setErrorHandler
  */
 @SuppressWarnings("serial")
@@ -71,8 +70,8 @@ public class ThreadPoolTaskScheduler implements AsyncTaskExecutor, SchedulingTas
 
     // @UsesJava7
     // @Override
-    protected ExecutorService initializeExecutor(ThreadFactory threadFactory,
-            RejectedExecutionHandler rejectedExecutionHandler) {
+    ExecutorService initializeExecutor(ThreadFactory threadFactory,
+                                       RejectedExecutionHandler rejectedExecutionHandler) {
         this.scheduledExecutor = createExecutor(this.poolSize, threadFactory, rejectedExecutionHandler);
         if (this.removeOnCancelPolicy) {
             if (setRemoveOnCancelPolicyAvailable && this.scheduledExecutor instanceof ScheduledThreadPoolExecutor) {
@@ -98,11 +97,10 @@ public class ThreadPoolTaskScheduler implements AsyncTaskExecutor, SchedulingTas
      * @param rejectedExecutionHandler
      *            the RejectedExecutionHandler to use
      * @return a new ScheduledExecutorService instance
-     * @see #afterPropertiesSet()
      * @see java.util.concurrent.ScheduledThreadPoolExecutor
      */
-    protected ScheduledExecutorService createExecutor(int poolSize, ThreadFactory threadFactory,
-            RejectedExecutionHandler rejectedExecutionHandler) {
+    private ScheduledExecutorService createExecutor(int poolSize, ThreadFactory threadFactory,
+                                                    RejectedExecutionHandler rejectedExecutionHandler) {
         return new ScheduledThreadPoolExecutor(poolSize, threadFactory, rejectedExecutionHandler);
     }
 
@@ -113,7 +111,7 @@ public class ThreadPoolTaskScheduler implements AsyncTaskExecutor, SchedulingTas
      * @throws IllegalStateException
      *             if the ThreadPoolTaskScheduler hasn't been initialized yet
      */
-    public ScheduledExecutorService getScheduledExecutor() throws IllegalStateException {
+    private ScheduledExecutorService getScheduledExecutor() throws IllegalStateException {
         // Assert.state(this.scheduledExecutor != null,
         // "ThreadPoolTaskScheduler not initialized");
         return this.scheduledExecutor;
@@ -129,7 +127,7 @@ public class ThreadPoolTaskScheduler implements AsyncTaskExecutor, SchedulingTas
      *             ScheduledThreadPoolExecutor
      * @see #getScheduledExecutor()
      */
-    public ScheduledThreadPoolExecutor getScheduledThreadPoolExecutor() throws IllegalStateException {
+    private ScheduledThreadPoolExecutor getScheduledThreadPoolExecutor() throws IllegalStateException {
         // Assert.state(this.scheduledExecutor instanceof
         // ScheduledThreadPoolExecutor,
         // "No ScheduledThreadPoolExecutor available");
@@ -217,7 +215,7 @@ public class ThreadPoolTaskScheduler implements AsyncTaskExecutor, SchedulingTas
         try {
             Callable<T> taskToUse = task;
             if (this.errorHandler != null) {
-                taskToUse = new DelegatingErrorHandlingCallable<T>(task, this.errorHandler);
+                taskToUse = new DelegatingErrorHandlingCallable<>(task, this.errorHandler);
             }
             return executor.submit(taskToUse);
         } catch (RejectedExecutionException ex) {

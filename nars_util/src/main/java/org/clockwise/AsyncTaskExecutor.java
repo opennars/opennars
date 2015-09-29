@@ -26,7 +26,7 @@ import java.util.concurrent.Future;
  * @see java.util.concurrent.Callable
  * @see java.util.concurrent.Executors
  */
-public interface AsyncTaskExecutor extends TaskExecutor {
+interface AsyncTaskExecutor extends TaskExecutor {
     /** Constant that indicates immediate execution */
     long TIMEOUT_IMMEDIATE = 0;
     /** Constant that indicates no time limit */

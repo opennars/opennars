@@ -25,10 +25,12 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
+import nars.task.stamp.Stamp;
 import nars.truth.Truth;
 import nars.util.data.Util;
 import org.apache.commons.math3.util.FastMath;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 import static java.lang.Math.abs;
@@ -71,7 +73,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     /**
      * time at which this budget was last forgotten, for calculating accurate memory decay rates
      */
-    long lastForgetTime = -1;
+    long lastForgetTime = Stamp.TIMELESS;
 
     public Budget(char punctuation, Truth qualityFromTruth) {
         this(punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_PRIORITY :
@@ -663,7 +665,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final long period;
 
-        if (this.lastForgetTime == -1) {
+        if (this.lastForgetTime == Stamp.TIMELESS) {
             period = 0;
         }
         else {
@@ -696,9 +698,12 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return this;
     }
 
-    final public Budget set(final Budget source) {
-        if (source == null)
-            return zero();
+    /** if source is null, it deletes the budget */
+    final public Budget set(@Nullable final Budget source) {
+        if (source == null) {
+            deleteBudget();
+            return this;
+        }
 
         if (source.isDeleted()) {
             throw new RuntimeException("source budget invalid");
@@ -772,7 +777,12 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     public void delete() {
+        deleteBudget();
+    }
+
+    public final void deleteBudget() {
         budgetDirect(Float.NaN, Float.NaN, Float.NaN);
+        this.lastForgetTime = Stamp.TIMELESS;
     }
 
     public boolean isDeleted() {

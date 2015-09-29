@@ -17,7 +17,7 @@ public class NARfxDefaultIRealtime {
 
     public static void main(String[] arg) {
 
-        int cycleDivisor = 4; //determines how many visual frames to compute each NAR frame
+        int cycleDivisor = 4; //determines how many visual frames to compute for each NAR frame
 
         Global.DEBUG = true;
 

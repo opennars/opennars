@@ -24,7 +24,14 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         if (solution || !task.isJudgment())
             return VALID;
 
-        Compound taskTerm = task.getTerm();
+        return isUniqueBelief(nal, task) ? VALID : DUPLICATE;
+    }
+
+    public static boolean isUniqueBelief(Premise nal, Task t) {
+        return isUniqueBelief(nal, t.getTerm(), t.getTruth(), t.getOccurrenceTime(), t.getEvidence());
+    }
+
+    public static boolean isUniqueBelief(Premise nal, Compound taskTerm, Truth taskTruth, long taskOccurrrence, long[] taskEvidence) {
 
 
         //equality:
@@ -36,7 +43,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         final Concept c = nal.concept(taskTerm);
         if ((c == null) || //concept doesnt even exist so this is not a duplciate of anything
                 (!c.hasBeliefs())) //no beliefs exist at this concept
-            return VALID;
+            return true;
 
         for (Task t : c.getBeliefs()) {
 
@@ -45,21 +52,21 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
             if (
 
                     //different truth value
-                    (!tt.equals(task.getTruth()))
+                    (!tt.equals(taskTruth))
                             ||
 
                     //differnt occurence time
-                    (t.getOccurrenceTime()!=task.getOccurrenceTime())
+                    (t.getOccurrenceTime()!=taskOccurrrence)
                             ||
 
                     //differnt evidence
-                    (!Arrays.equals(t.getEvidence(), task.getEvidence()))
+                    (!Arrays.equals(t.getEvidence(), taskEvidence))
 
                 )
-                return VALID;
+                return true;
         }
 
-        return DUPLICATE;
+        return false;
     }
 
 }

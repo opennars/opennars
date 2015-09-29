@@ -4,7 +4,7 @@ package org.clockwise;
  * Context object encapsulating last execution times and last completion time of
  * a given task.
  */
-public interface TriggerContext {
+interface TriggerContext {
 
     /**
      * Return the last <i>scheduled</i> execution time of the task, or

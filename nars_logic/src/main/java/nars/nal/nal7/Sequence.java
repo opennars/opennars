@@ -28,7 +28,7 @@ public class Sequence extends Conjunction implements Intermval {
             throw new RuntimeException("invalid intervals length: " + intervals.length + " should equal " + (subterms.length + 1));
 
 
-        final int s = size();
+        final int s = subterms.length;
 
         //public Sequence cloneRemovingSuffixInterval() {
         //operate on a clone in case this will be created from a subrange of another array etc */

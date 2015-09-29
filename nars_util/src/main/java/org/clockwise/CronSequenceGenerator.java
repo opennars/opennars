@@ -4,7 +4,7 @@ import org.clockwise.util.StringUtils;
 
 import java.util.*;
 
-public class CronSequenceGenerator {
+class CronSequenceGenerator {
 
     private final BitSet seconds = new BitSet(60);
     private final BitSet minutes = new BitSet(60);
@@ -82,7 +82,7 @@ public class CronSequenceGenerator {
     }
 
     private void doNext(Calendar calendar, int dot) {
-        List<Integer> resets = new ArrayList<Integer>();
+        List<Integer> resets = new ArrayList<>();
         int second = calendar.get(Calendar.SECOND);
         List<Integer> emptyList = Collections.emptyList();
         int updateSecond = findNext(this.seconds, second, calendar, Calendar.SECOND, Calendar.MINUTE, emptyList);

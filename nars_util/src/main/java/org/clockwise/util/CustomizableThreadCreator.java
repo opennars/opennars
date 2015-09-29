@@ -27,7 +27,7 @@ public class CustomizableThreadCreator implements Serializable {
     /**
      * Create a new CustomizableThreadCreator with default thread name prefix.
      */
-    public CustomizableThreadCreator() {
+    protected CustomizableThreadCreator() {
         this.threadNamePrefix = getDefaultThreadNamePrefix();
     }
 
@@ -37,7 +37,7 @@ public class CustomizableThreadCreator implements Serializable {
      * @param threadNamePrefix
      *            the prefix to use for the names of newly created threads
      */
-    public CustomizableThreadCreator(String threadNamePrefix) {
+    protected CustomizableThreadCreator(String threadNamePrefix) {
         this.threadNamePrefix = (threadNamePrefix != null ? threadNamePrefix : getDefaultThreadNamePrefix());
     }
 
@@ -53,7 +53,7 @@ public class CustomizableThreadCreator implements Serializable {
      * Return the thread name prefix to use for the names of newly created
      * threads.
      */
-    public String getThreadNamePrefix() {
+    private String getThreadNamePrefix() {
         return this.threadNamePrefix;
     }
 
@@ -69,7 +69,7 @@ public class CustomizableThreadCreator implements Serializable {
     /**
      * Return the priority of the threads that this factory creates.
      */
-    public int getThreadPriority() {
+    private int getThreadPriority() {
         return this.threadPriority;
     }
 
@@ -93,7 +93,7 @@ public class CustomizableThreadCreator implements Serializable {
     /**
      * Return whether this factory should create daemon threads.
      */
-    public boolean isDaemon() {
+    private boolean isDaemon() {
         return this.daemon;
     }
 
@@ -119,7 +119,7 @@ public class CustomizableThreadCreator implements Serializable {
      * Return the thread group that threads should be created in (or
      * {@code null} for the default group).
      */
-    public ThreadGroup getThreadGroup() {
+    private ThreadGroup getThreadGroup() {
         return this.threadGroup;
     }
 
@@ -133,7 +133,7 @@ public class CustomizableThreadCreator implements Serializable {
      *            the Runnable to execute
      * @see #nextThreadName()
      */
-    public Thread createThread(Runnable runnable) {
+    protected Thread createThread(final Runnable runnable) {
         Thread thread = new Thread(getThreadGroup(), runnable, nextThreadName());
         thread.setPriority(getThreadPriority());
         thread.setDaemon(isDaemon());
@@ -148,7 +148,7 @@ public class CustomizableThreadCreator implements Serializable {
      * 
      * @see #getThreadNamePrefix()
      */
-    protected String nextThreadName() {
+    private String nextThreadName() {
         return getThreadNamePrefix() + this.threadCount.incrementAndGet();
     }
 
@@ -157,7 +157,7 @@ public class CustomizableThreadCreator implements Serializable {
      * 
      * @return the default thread name prefix (never {@code null})
      */
-    protected String getDefaultThreadNamePrefix() {
-        return ClassUtils.getShortName(getClass()) + "-";
+    private String getDefaultThreadNamePrefix() {
+        return getClass().getSimpleName() + "-";
     }
 }

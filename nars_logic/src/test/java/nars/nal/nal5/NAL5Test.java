@@ -11,8 +11,6 @@ import org.junit.runners.Parameterized;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-import static nars.nal.nal7.Tense.Eternal;
-
 @RunWith(Parameterized.class)
 public class NAL5Test extends AbstractNALTest {
 
@@ -20,7 +18,7 @@ public class NAL5Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.singleStep;
+        return AbstractNALTest.core5;
     }
 
     @Test

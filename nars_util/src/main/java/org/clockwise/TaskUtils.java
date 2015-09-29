@@ -21,13 +21,13 @@ public abstract class TaskUtils {
      * further handling. This will suppress the error so that subsequent
      * executions of the task will not be prevented.
      */
-    public static final ErrorHandler LOG_AND_SUPPRESS_ERROR_HANDLER = new LoggingErrorHandler();
+    private static final ErrorHandler LOG_AND_SUPPRESS_ERROR_HANDLER = new LoggingErrorHandler();
     /**
      * An ErrorHandler strategy that will log at error level and then re-throw
      * the Exception. Note: this will typically prevent subsequent execution of
      * a scheduled task.
      */
-    public static final ErrorHandler LOG_AND_PROPAGATE_ERROR_HANDLER = new PropagatingErrorHandler();
+    private static final ErrorHandler LOG_AND_PROPAGATE_ERROR_HANDLER = new PropagatingErrorHandler();
 
     /**
      * Decorate the task for error handling. If the provided
@@ -78,10 +78,10 @@ public abstract class TaskUtils {
      * level and then propagates it.
      */
     private static class PropagatingErrorHandler extends LoggingErrorHandler {
-        @Override
-        public void handleError(Throwable t) {
-            super.handleError(t);
-            // ReflectionUtils.rethrowRuntimeException(t);
-        }
+//        @Override
+//        public void handleError(Throwable t) {
+//            super.handleError(t);
+//            // ReflectionUtils.rethrowRuntimeException(t);
+//        }
     }
 }

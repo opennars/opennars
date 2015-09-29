@@ -3,7 +3,6 @@ package nars.nal.nal1;
 import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
-import nars.meter.experiment.DeductiveChainTest;
 import nars.nal.AbstractNALTest;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
@@ -22,7 +21,7 @@ public class NAL1Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{index}:{0}")
     public static Iterable<Supplier<NAR>> configurations() {
-        return AbstractNALTest.singleStep;
+        return AbstractNALTest.core2;
     }
 //
 //                new Supplier[]{
@@ -129,8 +128,7 @@ public class NAL1Test extends AbstractNALTest {
 
         long time = /*tester.nal() <= 2 ? 15 :*/ 32;
         TestNAR test = test();
-        test.debug()
-                .believe("<bird --> swimmer>")
+        test.believe("<bird --> swimmer>")
             .ask("<swimmer --> bird>") //.en("Is swimmer a type of bird?");
             .mustOutput(time, "<swimmer --> bird>. %1.00;0.47%")
             .run();
@@ -174,43 +172,6 @@ public class NAL1Test extends AbstractNALTest {
     }
 
 
-    @Test
-    public void multistep2() {
-        DeductiveChainTest dc = new DeductiveChainTest(nar(), 2, 600);
-        dc.nar.stdout();
-        dc.run();
 
-    }
-
-      /*   This example will be added to NALMultistepTest.java
-    @Test
-    public void multistep3() {
-        new DeductiveChainTest(nar(), 3, 900).run();
-    }
-
-
-    @Test
-    public void multistep() throws InvalidInputException {
-        long time = 150;
-
-        //TextOutput.out(n);
-
-        TestNAR test = test();
-
-        //we know also 73% is the theoretical maximum it can reach
-        if (test.nar.nal() <= 2)
-            test.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
-        else
-            //originally checked for 0.25% exact confidence
-            test.mustBelieve(time, "<a --> d>", 1f, 1f, 0.25f, 0.99f);
-
-        test.believe("<a --> b>", 1.0f, 0.9f);
-        test.believe("<b --> c>", 1.0f, 0.9f);
-        test.believe("<c --> d>", 1.0f, 0.9f);
-
-
-        test.run();
-    }
-    */
 
 }

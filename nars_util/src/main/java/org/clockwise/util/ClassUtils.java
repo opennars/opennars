@@ -44,7 +44,7 @@ public class ClassUtils {
      * @return the method, or {@code null} if not found
      * @see Class#getMethod
      */
-    public static Method getMethodIfAvailable(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+    private static Method getMethodIfAvailable(Class<?> clazz, String methodName, Class<?>... paramTypes) {
         // Assert.notNull(clazz, "Class must not be null");
         // Assert.notNull(methodName, "Method name must not be null");
         if (paramTypes != null) {
@@ -54,7 +54,7 @@ public class ClassUtils {
                 return null;
             }
         } else {
-            Set<Method> candidates = new HashSet<Method>(1);
+            Set<Method> candidates = new HashSet<>(1);
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
                 if (methodName.equals(method.getName())) {
@@ -68,8 +68,8 @@ public class ClassUtils {
         }
     }
 
-    public static String getShortName(Class<? extends CustomizableThreadCreator> class1) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    public static String getShortName(Class<? extends CustomizableThreadCreator> class1) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 }

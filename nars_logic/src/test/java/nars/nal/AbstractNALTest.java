@@ -13,29 +13,36 @@ import java.util.function.Supplier;
  * Created by me on 2/10/15.
  */
 @Ignore
-abstract public class AbstractNALTest  {
+abstract public class AbstractNALTest {
 
-    public static final List<Supplier<NAR>> core1 =Lists.newArrayList(
-        () -> new Default().nal(1)
-    );
-    public static final List<Supplier<NAR>> core2 =Lists.newArrayList(
+    public static final List<Supplier<NAR>> core1 = Lists.newArrayList(
             () -> new Default().nal(2)
     );
-    public static final List<Supplier<NAR>> core3 =Lists.newArrayList(
+    public static final List<Supplier<NAR>> core2 = Lists.newArrayList(
+            /** for some reason, NAL2 tests require nal(3) level */
             () -> new Default().nal(3)
     );
-    public static final List<Supplier<NAR>> core6 =Lists.newArrayList(
+    public static final List<Supplier<NAR>> core3 = Lists.newArrayList(
+            () -> new Default().nal(3)
+    );
+    public static final List<Supplier<NAR>> core4 = Lists.newArrayList(
+            () -> new Default().nal(4)
+    );
+    public static final List<Supplier<NAR>> core5 = Lists.newArrayList(
+            () -> new Default().nal(5)
+    );
+    public static final List<Supplier<NAR>> core6 = Lists.newArrayList(
             () -> new Default().nal(6)
     );
-    public static final List<Supplier<NAR>> core8 =Lists.newArrayList(
+    public static final List<Supplier<NAR>> core8 = Lists.newArrayList(
             () -> new Default().nal(8)
     );
-    public static final List<Supplier<NAR>> core =Lists.newArrayList(
-            () -> new Default().nal(9)
-    );
-    @Deprecated public static final List<Supplier<NAR>> singleStep = core6; /*Lists.newArrayList(
-            () -> new SingleStepNAR().nal(9)
-    );*/
+//    public static final List<Supplier<NAR>> core =Lists.newArrayList(
+//            () -> new Default().nal(9)
+//    );
+//    @Deprecated public static final List<Supplier<NAR>> singleStep = core6; /*Lists.newArrayList(
+//            () -> new SingleStepNAR().nal(9)
+//    );*/
 
   /*  public static final List<Supplier<NAR>> fullDeclarativeTest =Lists.newArrayList(
             //() -> new Default().nal(1),

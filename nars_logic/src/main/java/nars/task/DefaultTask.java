@@ -12,7 +12,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Item;
 import nars.nal.nal8.Operation;
-import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.TermMetadata;
@@ -522,20 +521,20 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * @param judg The solution to be remembered
      */
     @Override
-    public void setBestSolution(final Task judg, final Memory memory) {
-        InternalExperience.experienceFromBelief(memory, this, judg);
+    public final void setBestSolution(final Task judg, final Memory memory) {
         bestSolution = reference(judg);
+        //InternalExperience.experienceFromBelief(memory, this, judg);
     }
 
     /**
      * flag to indicate whether this Event Task participates in tempporal induction
      */
-    public Task setTemporalInducting(boolean b) {
+    public final Task setTemporalInducting(boolean b) {
         this.temporallyInductable = b;
         return this;
     }
 
-    public boolean isTemporalInductable() {
+    public final boolean isTemporalInductable() {
         return temporallyInductable;
     }
 

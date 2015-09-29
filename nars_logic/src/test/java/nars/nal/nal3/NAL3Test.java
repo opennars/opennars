@@ -21,7 +21,7 @@ public class NAL3Test extends AbstractNALTest {
 
     @Parameterized.Parameters(name= "{index}:{0}")
     public static Collection configurations() {
-        return AbstractNALTest.singleStep;
+        return AbstractNALTest.core3;
     }
 
 

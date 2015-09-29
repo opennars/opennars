@@ -2,7 +2,7 @@ package org.clockwise.task;
 
 import org.clockwise.CronTrigger;
 
-public class CronTask extends TriggerTask {
+class CronTask extends TriggerTask {
 
     private final String expression;
 
@@ -26,7 +26,7 @@ public class CronTask extends TriggerTask {
      * @param cronTrigger
      *            the cron trigger defining when the task should be executed
      */
-    public CronTask(Runnable runnable, CronTrigger cronTrigger) {
+    private CronTask(Runnable runnable, CronTrigger cronTrigger) {
         super(runnable, cronTrigger);
         this.expression = cronTrigger.getExpression();
     }

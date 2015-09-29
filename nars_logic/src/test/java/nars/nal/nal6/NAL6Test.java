@@ -24,7 +24,7 @@ public class NAL6Test extends AbstractNALTest {
 
         @Parameterized.Parameters(name= "{0}")
         public static Collection configurations() {
-            return AbstractNALTest.singleStep;
+            return AbstractNALTest.core6;
            // return AbstractNALTest.fullDeclarativeTest;
 
 //            return Arrays.asList(new Supplier[][]{

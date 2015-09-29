@@ -38,7 +38,7 @@ public class IndependentVariableIntroductionTest {
         new TestNAR(new Default().nal(6))
                 .believe("<" + subj + " " + relation + " " + pred + ">")
                 .believe(belief)
-                .mustBelieve(8, concl, 0.81f)
+                .mustBelieve(16, concl, 0.81f)
                 .run();
                 //.next()
                 //.run(1).assertTermLinkGraphConnectivity();

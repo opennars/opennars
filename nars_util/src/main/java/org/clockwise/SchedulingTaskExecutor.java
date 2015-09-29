@@ -24,7 +24,7 @@ package org.clockwise;
  * @see org.audit4j.schedule.springframework.core.task.TaskExecutor
  * @see org.springframework.scheduling.commonj.WorkManagerTaskExecutor
  */
-public interface SchedulingTaskExecutor extends AsyncTaskExecutor {
+interface SchedulingTaskExecutor extends AsyncTaskExecutor {
     /**
      * Does this {@code TaskExecutor} prefer short-lived tasks over long-lived
      * tasks?

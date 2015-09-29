@@ -178,19 +178,19 @@ public class RuleMatch extends FindSubst {
                 return null;
         }
 
-        Term derive;
+        Term derivedTerm;
 
-        if ((derive = resolve(outcome.term)) == null) return null;
+        if ((derivedTerm = resolve(outcome.term)) == null) return null;
 
         for (final PreCondition c : outcome.afterConclusions) {
 
             if (!c.test(this))
                 return null;
 
-            if ((derive = resolve(derive)) == null) return null;
+            if ((derivedTerm = resolve(derivedTerm)) == null) return null;
         }
 
-        if (!(derive instanceof Compound)) return null;
+        if (!(derivedTerm instanceof Compound)) return null;
 
 //        if (punct == task.getPunctuation() && derive.equals(task.getTerm())) {
 //            //this revision-like consequence is an artifact of rule term pattern simplifications which can distort a rule into producing derivatives of the input task (and belief?) with unsubstantiatedly different truth values
@@ -233,20 +233,16 @@ public class RuleMatch extends FindSubst {
         //CALCULATE OCCURENCE TIME HERE AND SET DERIVED TASK OCCURENCE TIME ACCORDINGLY!
 
 
-
-
-
-        TaskSeed t = premise.newTask((Compound)derive); //, task, belief, allowOverlap);
+        TaskSeed t = premise.newTask((Compound)derivedTerm); //, task, belief, allowOverlap);
         if (t != null) {
 
             final Budget budget;
             if (truth!=null) {
-                budget = BudgetFunctions.compoundForward(truth, derive, premise);
+                budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
             }
             else {
-                budget = BudgetFunctions.compoundBackward(derive, premise);
+                budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
             }
-
 
             t
                 .punctuation(punct)
@@ -259,19 +255,18 @@ public class RuleMatch extends FindSubst {
 
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
-            if (Global.DEBUG)  {
-                t.log(rule.toString());
-                //t.log(premise + "," + rule);
+            t.parent(task, single ? null : belief);
+
+            final Task derived = premise.validDerivation(t);
+            if (derived!=null) {
+                if (Global.DEBUG) {
+                    derived.log(rule.toString());
+                    //t.log(premise + "," + rule);
+                }
+
+                return derived;
             }
 
-
-            if (!single) {
-                t.parent(task,belief);
-            } else {
-                t.parent(task);
-            }
-
-            return premise.validDerivation(t);
         }
 
         return null;

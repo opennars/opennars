@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * The Class Schedulers.
@@ -42,7 +44,7 @@ public class Schedulers {
         /** The managed. */
         DEFAULT,
         /** The single threaded. */
-        THREADED;
+        THREADED
     }
 
     /**
@@ -70,12 +72,7 @@ public class Schedulers {
         instance.increaseNoOfSchedullers();
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         CustomizableThreadFactory factory = new CustomizableThreadFactory();
-        scheduler.initializeExecutor(factory, new RejectedExecutionHandler() {
-            @Override
-            public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-                System.out.println("asdsa");
-            }
-        });
+        scheduler.initializeExecutor(factory, (r, executor) -> System.err.println(scheduler + " rejected: " + r));
         scheduler.setPoolSize(poolSize);
         instance.setCurrentScheduler(scheduler);
         return instance;
@@ -244,7 +241,7 @@ public class Schedulers {
      * 
      * @return the current scheduler
      */
-    public TaskScheduler getCurrentScheduler() {
+    private TaskScheduler getCurrentScheduler() {
         return currentScheduler;
     }
 
@@ -254,7 +251,7 @@ public class Schedulers {
      * @param currentScheduler
      *            the new current scheduler
      */
-    public void setCurrentScheduler(TaskScheduler currentScheduler) {
+    private void setCurrentScheduler(TaskScheduler currentScheduler) {
         this.currentScheduler = currentScheduler;
     }
     
@@ -266,10 +263,10 @@ public class Schedulers {
     public static class TaskRegistrar {
         
         /** The trigger tasks. */
-        List<TriggerTask> triggerTasks = new CopyOnWriteArrayList<>();
+        final List<TriggerTask> triggerTasks = new CopyOnWriteArrayList<>();
         
         /** The running ids. */
-        List<String> runningIds = new ArrayList<>();
+        final List<String> runningIds = new ArrayList<>();
         
         /** The reg instance. */
         private static TaskRegistrar regInstance;

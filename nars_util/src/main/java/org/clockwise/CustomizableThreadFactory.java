@@ -18,7 +18,7 @@ import java.util.concurrent.ThreadFactory;
  * @see #setThreadPriority
  */
 @SuppressWarnings("serial")
-public class CustomizableThreadFactory extends CustomizableThreadCreator implements ThreadFactory {
+class CustomizableThreadFactory extends CustomizableThreadCreator implements ThreadFactory {
     /**
      * Create a new CustomizableThreadFactory with default thread name prefix.
      */
@@ -37,7 +37,7 @@ public class CustomizableThreadFactory extends CustomizableThreadCreator impleme
     }
 
     @Override
-    public Thread newThread(Runnable runnable) {
+    public final Thread newThread(Runnable runnable) {
         return createThread(runnable);
     }
 }
