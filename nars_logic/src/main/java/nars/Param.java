@@ -120,10 +120,6 @@ public abstract class Param extends Container implements Serializable {
 
 
 
-    /** Maximum TermLinks checked for novelty for each TermTaskLinkPremise generated */
-    public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
-
-
     /** Maximum number of beliefs kept in a Concept */
     public final AtomicInteger conceptBeliefsMax = new AtomicInteger();
     

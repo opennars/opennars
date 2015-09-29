@@ -269,6 +269,13 @@
             <scope>test</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.github.drapostolos</groupId>
+            <artifactId>type-parser</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+
     </dependencies>
 
 

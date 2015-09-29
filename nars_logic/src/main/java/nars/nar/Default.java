@@ -202,14 +202,14 @@ public class Default extends NAR {
      * Default DEFAULTS
      */
     public Default() {
-        this(768, 1, 2, 3);
+        this(1024, 1, 3, 3);
     }
 
-    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-        this(new LocalMemory(new CycleClock()), maxConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
+    public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+        this(new LocalMemory(new CycleClock()), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
     }
 
-    public Default(Memory m, int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+    public Default(Memory m, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(m);
 
         //termLinkMaxMatched.set(5);
@@ -257,12 +257,12 @@ public class Default extends NAR {
             );
             m.the("core", c);
 
-            c.conceptsFired = conceptsFirePerCycle;
-            c.termlinks = termLinksPerCycle; //TODO make mutable int
-            c.tasklinks = taskLinksPerCycle; //TODO make mutable int
-            c.capacity.set(maxConcepts);
+            c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
+            c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
             c.inputsMaxPerCycle.set(conceptsFirePerCycle);
             c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
+
+            c.capacity.set(activeConcepts);
 
         }
 
@@ -439,14 +439,17 @@ public class Default extends NAR {
          */
         public final AtomicInteger conceptsFiredPerCycle;
 
-        //public final MutableInt termLinksPerConcept = new MutableInt();
 
         /**
          * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
          */
         public final AtomicInteger inputsMaxPerCycle;
+
         public final SimpleDeriver deriver;
-        public int conceptsFired;
+
+
+        public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
+        public final MutableInteger termlinksSelectedPerFiredConcept = new MutableInteger(1);
 
 //        final Function<Task, Task> derivationPostProcess = d -> {
 //            return LimitDerivationPriority.limitDerivation(d);
@@ -481,10 +484,10 @@ public class Default extends NAR {
 
         public final AtomicDouble conceptForget;
 
-        @Deprecated
-        int tasklinks = 2; //TODO use MutableInteger for this
-        @Deprecated
-        int termlinks = 3; //TODO use MutableInteger for this
+//        @Deprecated
+//        int tasklinks = 2; //TODO use MutableInteger for this
+//        @Deprecated
+//        int termlinks = 3; //TODO use MutableInteger for this
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
@@ -576,7 +579,7 @@ public class Default extends NAR {
             nar.input(ConceptProcess.nextPremiseSquare(nar, c,
                     conceptForgetDurations,
                     this,
-                    termlinks, tasklinks));
+                    termlinksSelectedPerFiredConcept.intValue(), tasklinksSelectedPerFiredConcept.intValue()));
         }
 
 

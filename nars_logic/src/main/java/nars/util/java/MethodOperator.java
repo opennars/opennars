@@ -1,5 +1,6 @@
 package nars.util.java;
 
+import com.github.drapostolos.typeparser.TypeParser;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Atom;
@@ -7,6 +8,7 @@ import nars.term.Term;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -15,17 +17,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MethodOperator extends TermFunction {
 
+    static final TypeParser parser = TypeParser.newBuilder().build();
+
     private final Method method;
+    private final Parameter[] params;
+
     private final Termizer termizer;
     private final static Object[] empty = new Object[0];
     private final AtomicBoolean enable;
-    boolean feedback = false;
+    boolean feedback = true;
 
     public static final Atom ERROR = Atom.the("ERR");
 
     public MethodOperator(AtomicBoolean enable, Termizer termizer, Method m) {
         super(m.getDeclaringClass().getSimpleName() + "_" + m.getName());
+
+
         this.method = m;
+        this.params = method.getParameters();
+
         this.termizer = termizer;
         this.enable = enable;
     }
@@ -67,8 +77,17 @@ public class MethodOperator extends TermFunction {
         }
         else {
             args = new Object[pc];
+
+
+
             for (int i = 0; i < args.length; i++) {
-                args[i] = termizer.object(x[i + paramOffset]);
+                Object a = termizer.object(x[i + paramOffset]);
+                Class<?> pt = params[i].getType();
+                if (!pt.isAssignableFrom(a.getClass())) {
+                    a = parser.parseType(a.toString(), pt);
+                }
+
+                args[i] = a;
             }
         }
 
