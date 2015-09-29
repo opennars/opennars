@@ -38,7 +38,10 @@ public class BeliefAnalysis extends EnergyAnalysis {
     }
 
     public BeliefTable beliefs() {
-        return concept().getBeliefs();
+        Concept c = concept();
+        if (c == null)
+            return BeliefTable.EMPTY;
+        return c.getBeliefs();
     }
 
     public TruthWave wave() {

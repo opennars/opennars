@@ -30,9 +30,9 @@ public class ExplainableTask extends DefaultTask {
         );
     }
 
-    @Deprecated public ExplainableTask(Task t) {
-        super(t, t.getBudget(), t.getParentTask(), t.getParentBelief());
-        this.task = t;
+    @Deprecated public ExplainableTask(Task<? extends Compound> s) {
+        super(s.getTerm(), s.getPunctuation(), s.getTruth(), s.getPriority(), s.getDuration(), s.getQuality());
+        this.task = s;
     }
 
     public ExplainableTask en(String englishMeaning) {

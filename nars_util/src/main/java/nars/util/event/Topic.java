@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 /**
  * notifies subscribers when a value is emitted
  */
-abstract public interface Topic<V> extends Serializable {
+abstract public interface Topic<V extends Serializable> extends Serializable {
 
     abstract void delete();
 
@@ -58,7 +58,7 @@ abstract public interface Topic<V> extends Serializable {
     On on(Consumer<V> o);
     void off(On<V> reaction);
 
-    public static <V> OnTopics onAll(final Consumer<V> o, final Topic<V>... w) {
+    public static <V extends Serializable> OnTopics onAll(final Consumer<V> o, final Topic<V>... w) {
         OnTopics r = new OnTopics(w.length);
     
         for (final Topic<V> c : w)

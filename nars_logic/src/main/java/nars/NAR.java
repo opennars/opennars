@@ -15,12 +15,10 @@ import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.ImmediateOperator;
-import nars.nal.nal8.OpReaction;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.OperatorReaction;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
-import nars.process.CycleProcess;
 import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -29,6 +27,7 @@ import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.util.data.Util;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import nars.util.event.Topic;
@@ -39,13 +38,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
-import java.util.function.LongPredicate;
-import java.util.function.Predicate;
+import java.util.concurrent.*;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 
@@ -81,7 +75,7 @@ abstract public class NAR implements Serializable {
     static final float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
     static final float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
     static final float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
-    final static Consumer<Object> onError = e -> {
+    final static Consumer<Serializable> onError = e -> {
         if (e instanceof Throwable) {
             Throwable ex = (Throwable) e;
 
@@ -116,15 +110,18 @@ abstract public class NAR implements Serializable {
      */
     protected boolean enabled = true;
 
-    //TODO move to Memory parameter
-    private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR frame
 
     //TODO use this to store all handler registrations, and decide if transient or not
     transient private List<Object> regs = new ArrayList();
 
 
     transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
-    transient ExecutorService laterTasks = null;
+
+    transient final ExecutorService asyncs =
+                        Executors.newCachedThreadPool();
+                        //Executors.newFixedThreadPool(1);
+
+    private int concurrency = 1;
 
 
     public NAR(final Memory m) {
@@ -132,6 +129,8 @@ abstract public class NAR implements Serializable {
 
         setMemory(m);
 
+
+        /** register some components in the dependency context, Container (which Memory subclasses from) */
         //m.the("memory", m);
         m.the("clock", m.clock);
 
@@ -141,10 +140,6 @@ abstract public class NAR implements Serializable {
         return memory;
     }
 
-    public NAR input(ImmediateOperator o) {
-        input(o.newTask());
-        return this;
-    }
 
     /**
      * Reset the system with an empty memory and reset clock.  Event handlers
@@ -152,12 +147,11 @@ abstract public class NAR implements Serializable {
      * reactivated, a signal for them to empty their state (if necessary).
      */
     public synchronized NAR reset() {
+        runNextTasks();
+
         nextTasks.clear();
 
-        if (laterTasks != null) {
-            laterTasks.shutdown();
-            laterTasks = null;
-        }
+        asyncs.shutdown();
 
         memory.clear();
 
@@ -262,11 +256,11 @@ abstract public class NAR implements Serializable {
     /**
      * TODO add parameter for Tense control. until then, default is Now
      */
-    public Task goal(float pri, float dur, Compound goalTerm, float freq, float conf) throws InvalidInputException {
+    public <T extends Compound> Task<T> goal(float pri, float dur, T goalTerm, float freq, float conf) throws InvalidInputException {
 
         final Truth tv;
 
-        Task t = new DefaultTask(
+        Task<T> t = new DefaultTask<>(
                 goalTerm,
                 Symbols.GOAL,
                 tv = new DefaultTruth(freq, conf),
@@ -479,14 +473,14 @@ abstract public class NAR implements Serializable {
         }
     }
 
-    public void on(Class<? extends OpReaction> c) {
-        //for (Class<? extends OpReaction> c : x) {
-        OpReaction v = memory().the(c);
+    public void on(Class<? extends OperatorReaction> c) {
+        //for (Class<? extends OperatorReaction> c : x) {
+        OperatorReaction v = memory().the(c);
         on(v);
         //}
     }
 
-    public EventEmitter.Registrations on(Reaction<Term, Operation> o, Term... c) {
+    public EventEmitter.Registrations on(Reaction<Term, Task<Operation>> o, Term... c) {
         return memory.exe.on(o, c);
     }
 
@@ -523,14 +517,14 @@ abstract public class NAR implements Serializable {
 //        return Collections.unmodifiableList(plugins);
 //    }
 
-    public EventEmitter.Registrations on(OpReaction o) {
-        Term a = o.getTerm();
+    public EventEmitter.Registrations on(OperatorReaction o) {
+        Term a = o.getOperatorTerm();
         EventEmitter.Registrations reg = on(o, a);
         o.setEnabled(this, true);
         return reg;
     }
 
-    @Deprecated
+
     public final int getCyclesPerFrame() {
         return memory.cyclesPerFrame.intValue();
     }
@@ -554,29 +548,29 @@ abstract public class NAR implements Serializable {
         return i;
     }
 
-    @Deprecated
-    public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
-        throw new RuntimeException("WARNING: this threading model is not safe and deprecated");
-
-//        if (isRunning()) stop();
-//        this.minFramePeriodMS = minCyclePeriodMS;
-//        this.cyclesPerFrame = cyclesPerFrame;
-//        running = true;
-//        if (thread == null) {
-//            thread = new Thread(this, this.toString() + "_reasoner");
-//            thread.start();
-//        }
-    }
-
-    /**
-     * Repeatedly execute NARS working cycle in a new thread with Iterative timing.
-     *
-     * @param minCyclePeriodMS minimum cycle period (milliseconds).
-     */
-    @Deprecated
-    public void start(final long minCyclePeriodMS) {
-        start(minCyclePeriodMS, getCyclesPerFrame());
-    }
+//    @Deprecated
+//    public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
+//        throw new RuntimeException("WARNING: this threading model is not safe and deprecated");
+//
+////        if (isRunning()) stop();
+////        this.minFramePeriodMS = minCyclePeriodMS;
+////        this.cyclesPerFrame = cyclesPerFrame;
+////        running = true;
+////        if (thread == null) {
+////            thread = new Thread(this, this.toString() + "_reasoner");
+////            thread.start();
+////        }
+//    }
+//
+//    /**
+//     * Repeatedly execute NARS working cycle in a new thread with Iterative timing.
+//     *
+//     * @param minCyclePeriodMS minimum cycle period (milliseconds).
+//     */
+//    @Deprecated
+//    public void start(final long minCyclePeriodMS) {
+//        start(minCyclePeriodMS, getCyclesPerFrame());
+//    }
 
 //    /**
 //     * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
@@ -676,7 +670,7 @@ abstract public class NAR implements Serializable {
 
         running = true;
 
-        final int cpf = cyclesPerFrame;
+        final int cpf = getCyclesPerFrame();
         for (int f = 0; (f < frames) && running; f++) {
 
             if (!isEnabled())
@@ -689,9 +683,10 @@ abstract public class NAR implements Serializable {
 
             memory.cycle(cpf);
 
+            memory.eventFrameEnd.emit(this);
+
             runNextTasks();
 
-            memory.eventFrameEnd.emit(this);
 
         }
 
@@ -834,15 +829,22 @@ abstract public class NAR implements Serializable {
 
     /**
      * adds a task to the queue of task which will be executed in batch
-     * at the end of the current cycle.
+     * after the end of the current frame before the next frame.
+     */
+    final public void beforeNextFrame(final Runnable t) {
+        nextTasks.addLast(t);
+    }
+
+    /*
      * checks if the queue already contains the pending
      * Runnable instance to ensure duplicates don't
      * don't accumulate
      */
-    final public void taskNext(final Runnable t) {
+    final public void beforeNextFrameUnlessDuplicate(final Runnable t) {
         if (!nextTasks.contains(t))
             nextTasks.addLast(t);
     }
+
 
     /**
      * runs all the tasks in the 'Next' queue
@@ -851,7 +853,7 @@ abstract public class NAR implements Serializable {
         int originalSize = nextTasks.size();
         if (originalSize == 0) return;
 
-        CycleProcess.run(nextTasks, originalSize);
+        Util.run(nextTasks, originalSize, concurrency);
     }
 
     /**
@@ -866,13 +868,23 @@ abstract public class NAR implements Serializable {
      * queues a task to (hopefully) be executed at an unknown time in the future,
      * in its own thread in a thread pool
      */
-    public void taskLater(Runnable t) {
-        if (laterTasks == null) {
-            laterTasks = Executors.newFixedThreadPool(1);
+    public boolean runAsync(Runnable t) {
+        try {
+            asyncs.execute(t);
+            return true;
         }
+        catch (RejectedExecutionException e) {
+            return false;
+        }
+    }
+    public boolean runAsync(Consumer<NAR> t) {
+        return runAsync( /* Runnable */ () -> { t.accept(NAR.this); } );
+    }
 
-        //laterTasks.submit(t);
-        laterTasks.execute(t);
+    public <X> Future<X> runAsync(Function<NAR,X> t) {
+        return asyncs.submit( /* (Callable) */() -> {
+            return t.apply(NAR.this);
+        });
     }
 
     @Override

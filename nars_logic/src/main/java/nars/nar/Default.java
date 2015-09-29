@@ -19,9 +19,8 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.nal.SimpleDeriver;
-import nars.nal.nal8.OpReaction;
+import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.operator.NullOperator;
-import nars.nal.nal8.operator.eval;
 import nars.op.app.STMTemporalLinkage;
 import nars.op.data.Flat;
 import nars.op.data.json;
@@ -67,7 +66,7 @@ import java.util.stream.Stream;
  */
 public class Default extends NAR {
 
-    public static final OpReaction[] exampleOperators = new OpReaction[]{
+    public static final OperatorReaction[] exampleOperators = new OperatorReaction[]{
             //new Wait(),
             new NullOperator("break"),
             new NullOperator("drop"),
@@ -83,13 +82,13 @@ public class Default extends NAR {
     //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
     public final Random rng = new XorShift1024StarRandom(1);
 
-    public final OpReaction[] defaultOperators = new OpReaction[]{
+    public final OperatorReaction[] defaultOperators = new OperatorReaction[]{
 
             //system control
-            echo.the,
+            new echo(),
             //PauseInput.the,
             new reset(),
-            new eval(),
+            //new eval(),
             //new Wait(),
 
             new believe(),  // accept a statement with a default truth-value
@@ -274,9 +273,9 @@ public class Default extends NAR {
 
             if (nal() >= 8) {
 
-                for (OpReaction o : defaultOperators)
+                for (OperatorReaction o : defaultOperators)
                     on(o);
-                /*for (OpReaction o : exampleOperators)
+                /*for (OperatorReaction o : exampleOperators)
                     on(o);*/
 
                 //n.on(Anticipate.class);      // expect an event
@@ -386,7 +385,7 @@ public class Default extends NAR {
 
     @Override
     protected final Concept doConceptualize(Term term, Budget b) {
-        return core.update(term.getTerm(), b, true, 1f, core.active);
+        return core.update(term, b, true, 1f, core.active);
     }
 
 

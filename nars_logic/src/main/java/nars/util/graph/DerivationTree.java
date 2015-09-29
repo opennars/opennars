@@ -47,9 +47,10 @@ public class DerivationTree extends DirectedMultigraph<Task, String> {
 
         Operation cause = t.getCause();
         if (cause != null) {
-            Task causeTask = cause.getTask();
+            //TODO?
+            /*Task causeTask = cause.getTask();
             if (!causeTask.equals(t) && add(causeTask, maxLevels - 1))
-                addEdge(causeTask, t, edge("Cause", causeTask, t));
+                addEdge(causeTask, t, edge("Cause", causeTask, t));*/
         }
 
 //            if (includeTermLinks) {

@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 /**
  * Created by me on 9/15/15.
  */
-public final class On<V> implements Serializable {
+public final class On<V extends Serializable> implements Serializable {
 
     public final Consumer<V> reaction;
     public final Topic<V> topic;

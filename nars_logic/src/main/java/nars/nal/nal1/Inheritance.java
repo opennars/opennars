@@ -83,7 +83,7 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
 
         if (predicate instanceof Operator) {
             if ((subject instanceof SetExt1) && ((((SetExt1)subject).the()) instanceof Product))
-                return Operation.op( (SetExt1)subject, (Operator)predicate );
+                return new Operation((Operator)predicate, (SetExt1)subject);
         }
 
         return new Inheritance(subject, predicate);

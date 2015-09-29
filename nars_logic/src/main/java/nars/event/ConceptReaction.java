@@ -26,7 +26,7 @@ abstract public class ConceptReaction extends OnTopics {
         );
 
         this.nar = n;
-        nar.taskLater(this::init);
+        nar.beforeNextFrame(this::init);
 
     }
 

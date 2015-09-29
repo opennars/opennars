@@ -37,36 +37,35 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * An individual operate that can be execute by the system, which can be either
- * inside NARS or outside it, in another system or device.
- * <p>
- * This is the only file to modify when registering a new operate into NARS.
- * <p>
+ * An operator implementation identified by a term
+ * which would need to appear in the predicate of an Operation in order for
+ * this to be executed.
+ *
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-abstract public class OpReaction implements Function<Operation,List<Task>>, Reaction<Term,Operation>, Serializable {
+abstract public class OperatorReaction implements Function<Task<Operation>,List<Task>>, Reaction<Term,Task<Operation>>, Serializable {
 
 
-    public final Term term;
+    public final Term operatorTerm;
 
     transient protected NAR nar;
 
 
     @Override
     public String toString() {
-        return "^" + term.toString();
+        return "^" + operatorTerm.toString();
     }
 
-    public OpReaction(Term term) {
+    public OperatorReaction(Term term) {
         if (term == null) {
             term = Atom.the(getClass().getSimpleName());
         }
-        this.term = term;
+        this.operatorTerm = term;
     }
 
-    public OpReaction(String name) {
-        this.term = Atom.the(name);
+    public OperatorReaction(String operatorName) {
+        this.operatorTerm = Atom.the(operatorName);
     }
 
     public boolean setEnabled(NAR n, boolean enabled) {
@@ -80,9 +79,9 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
     /**
      * use the class name as the operator name
      */
-    public OpReaction() {
+    public OperatorReaction() {
         String className = getClass().getSimpleName();
-        this.term = Atom.the(className);
+        this.operatorTerm = Atom.the(className);
     }
 
 
@@ -96,8 +95,9 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
 
 
     @Override
-    public void event(Term event, Operation o) {
-        if (o.getTask().isCommand() || decider().test(o)) {
+    public final void event(final Term event, final Task<Operation> o) {
+
+        if (o.isCommand() || decider().test(o)) {
             execute(o);
         }
     }
@@ -109,13 +109,39 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    @Deprecated /* just use the apply method */
-    protected abstract boolean execute(Operation input);
+    /**
+     * The standard way to carry out an operation, which invokes the execute
+     * method defined for the operate, and handles feedback tasks as input
+     *
+     * @param op     The operate to be executed
+     * @return true if successful, false if an error occurred
+     */
+    public boolean execute(final Task<Operation> op) {
+        if (async()) {
+            return nar.runAsync(() -> executeSynch(op));
+        }
+        else
+            return executeSynch(op);
+    }
 
+    final boolean executeSynch(Task<Operation> op) {
+        try {
+            executed(op, apply(op));
+        } catch (Exception e) {
+            nar().memory.eventError.emit(e);
+            return false;
+        }
 
+        return true;
+    }
 
-    public final Term getTerm() {
-        return term;
+    /** determines the execution strategy. currently there are only two: synch and async, and if
+     * we want to add more we can use a lambda Consumer<Runnable> or something
+     */
+    public boolean async() { return false; }
+
+    public final Term getOperatorTerm() {
+        return operatorTerm;
     }
 
 
@@ -138,27 +164,34 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
     /**
      * called after execution completed
      */
-    protected void executed(Operation op, List<Task> feedback) {
+    protected void executed(Task<Operation> op, List<Task> feedback) {
 
         final NAR n = nar();
 
         //Display a message in the output stream to indicate the reportExecution of an operation
-        n.memory.eventExecute.emit(new ExecutionResult(op, feedback, n.memory()));
 
 
-        if (!op.getTask().isCommand()) {
+        n.memory.eventExecute.emit(
+            new ExecutionResult(op, feedback, n.memory())
+        );
+
+
+        if (!op.isCommand()) {
             noticeExecuted(op);
         }
 
         //feedback tasks as input
         //should we allow immediate tasks to create feedback?
         if (feedback != null) {
-            for (final Task t : feedback) {
+
+            final Operation t = op.getTerm();
+
+            for (final Task f : feedback) {
                 if (t == null) continue;
-                t.setCause(op);
+                f.setCause(t);
                 //t.log("Feedback");
 
-                n.input(t);
+                n.input(f);
             }
         }
 
@@ -168,25 +201,21 @@ abstract public class OpReaction implements Function<Operation,List<Task>>, Reac
     /**
      * internal notice of the execution
      */
-    protected void noticeExecuted(final Operation operation) {
-        final Task opTask = operation.getTask();
-        //if (opTask == null) return;
-
+    protected void noticeExecuted(final Task<Operation> operation) {
 
         final Memory memory = nar().memory();
 
-        memory.logic.TASK_EXECUTED.hit();
-
-        nar().input(TaskSeed.make(memory, operation).
+        nar().input(TaskSeed.make(memory, operation.getTerm()).
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
-                budget(operation.getTask().getBudget()).
+                budget(operation.getBudget()).
                 present(memory).
-                parent(opTask).
-                cause(operation).
+                parent(operation).
+                cause(operation.getTerm()).
                 reason("Executed")
-            );
+        );
 
+        memory.logic.TASK_EXECUTED.hit();
     }
 
 }

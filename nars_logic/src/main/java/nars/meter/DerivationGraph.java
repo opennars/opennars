@@ -16,7 +16,7 @@
 //import nars.link.TermLink;
 //import nars.nal.nal7.AbstractInterval;
 //import nars.nal.nal7.Tense;
-//import nars.nal.nal8.OpReaction;
+//import nars.nal.nal8.OperatorReaction;
 //import nars.narsese.NarseseParser;
 //import nars.premise.Premise;
 //import nars.process.ConceptProcess;
@@ -423,7 +423,7 @@
 //            //atomic term
 //            return genericLiteral(t, unique);
 //        }
-//        else if (t instanceof OpReaction) {
+//        else if (t instanceof OperatorReaction) {
 //            return t.toString();
 //        }
 //        else if (t instanceof Variable) {

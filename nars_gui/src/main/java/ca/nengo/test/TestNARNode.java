@@ -21,7 +21,7 @@
 //import nars.nal.nal1.Inheritance;
 //import nars.nal.nal3.SetExt;
 //import nars.nal.nal8.Operation;
-//import nars.nal.nal8.operator.SynchOperator;
+//import nars.nal.nal8.operator.SyncOperator;
 //import nars.nal.nal8.operator.TermFunction;
 //import nars.nar.Default;
 //import nars.task.Task;
@@ -104,7 +104,7 @@
 //        protected void initOperators() {
 //
 //            //access to world objects
-//            nar.on(new SynchOperator("object") {
+//            nar.on(new SyncOperator("object") {
 //                @Override public List<Task> apply(Operation operation) {
 //                    return null;
 //                }
@@ -187,7 +187,7 @@
 //
 //            });
 //
-//            nar.on(new SynchOperator("move") {
+//            nar.on(new SyncOperator("move") {
 //
 //
 //                @Override public List<Task> apply(Operation operation) {
@@ -219,7 +219,7 @@
 //                    return null;
 //                }
 //            });
-//            nar.on(new SynchOperator("turn") {
+//            nar.on(new SyncOperator("turn") {
 //
 //                @Override public List<Task> apply(Operation operation) {
 //                    double dA = Math.PI / 4; //radians

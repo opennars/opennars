@@ -22,7 +22,7 @@ import nars.Memory;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.term.Atom;
@@ -34,7 +34,7 @@ import java.util.ArrayList;
 /**
  * Feeling common operations
  */
-public abstract class feel extends SynchOperator implements Mental {
+public abstract class feel extends SyncOperator implements Mental {
     private final Term feelingTerm = Atom.the("feel");
 
 

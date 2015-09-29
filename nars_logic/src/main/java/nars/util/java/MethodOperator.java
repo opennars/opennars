@@ -1,6 +1,8 @@
 package nars.util.java;
 
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
+import nars.term.Atom;
 import nars.term.Term;
 
 import java.lang.reflect.Method;
@@ -19,6 +21,8 @@ public class MethodOperator extends TermFunction {
     private final AtomicBoolean enable;
     boolean feedback = false;
 
+    public static final Atom ERROR = Atom.the("ERR");
+
     public MethodOperator(AtomicBoolean enable, Termizer termizer, Method m) {
         super(m.getDeclaringClass().getSimpleName() + "_" + m.getName());
         this.method = m;
@@ -28,7 +32,9 @@ public class MethodOperator extends TermFunction {
 
 
     @Override
-    public Object function(Term... x) {
+    public Object function(Operation o) {
+        Term[] x = o.args();
+
         //System.out.println("method: " + method + " w/ " + x);
 
         if (!enable.get())
@@ -73,10 +79,19 @@ public class MethodOperator extends TermFunction {
             Object result = method.invoke(instance, args);
             if (feedback)
                 return termizer.term(result);
+        } catch (IllegalArgumentException e) {
+
+            System.err.println(e + ": " + Arrays.toString(args) + " for " + method);
+
+            //create a task to never desire this
+            nar.goal(o, 0.0f, 0.9f);
+
+            //return ERROR atom as feedback
+            return ERROR;
+
         } catch (Exception e) {
             System.err.println(method + " <- " + instance + " (" + instance.getClass() + " =?= " + method.getDeclaringClass() + "\n\t<<< " + Arrays.toString(args));
             nar.memory.eventError.emit(e);
-            e.printStackTrace();
             return termizer.term(e);
         }
 

@@ -22,7 +22,7 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
@@ -33,22 +33,23 @@ import java.util.List;
 /**
  * Operator that creates a question with a given statement
  */
-public class wonder extends SynchOperator implements Mental {
+public class wonder extends SyncOperator implements Mental {
 
     /**
      * To create a question with a given statement
      * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Operation operation) {
+    public List<Task> apply(Task<Operation> t) {
+        final Operation operation = t.getTerm();
         Term content = operation.arg(0);
+
 
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
 
         return Lists.newArrayList(
-                operation.newSubTask(nar.memory, (Compound)content, Symbols.QUESTION, null, Stamp.ETERNAL, budget)
+                operation.newSubTask(t, nar.memory, (Compound)content, Symbols.QUESTION, null, Stamp.ETERNAL, budget)
         );
     }
         

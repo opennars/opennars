@@ -24,7 +24,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.truth.DefaultTruth;
@@ -35,25 +35,25 @@ import java.util.List;
 /**
  * Operator that give a CompoundTerm a new name
  */
-public class name extends SynchOperator implements Mental {
+public class name extends SyncOperator implements Mental {
 
 
     /**
      * To create a judgment with a given statement
      * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Operation operation) {
+    public List<Task> apply(Task<Operation> t) {
+        Operation operation = t.getTerm();
         Term compound = operation.arg(0);
         Term atomic = operation.arg(1);
         Similarity content = Similarity.make(compound, atomic);
 
         final Truth truth;
-        final Memory memory = operation.getMemory();
+        final Memory memory = nar.memory;
 
-        return Lists.newArrayList( operation.newSubTask(memory,
+        return Lists.newArrayList( operation.newSubTask(t, memory,
                 content, Symbols.JUDGMENT, truth = new DefaultTruth(1, 0.9999f),
                 memory.time(),
                 new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );

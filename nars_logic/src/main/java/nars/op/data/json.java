@@ -2,6 +2,7 @@ package nars.op.data;
 
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -20,8 +21,8 @@ public class json {
     public static class jsonto extends TermFunction {
 
         @Override
-        public Object function(Term... x) {
-            String j = Atom.unquote(x[0]);
+        public Object function(Operation o) {
+            String j = Atom.unquote(o.arg(0));
             Map<String, Object> jj = JSON.toMap(j);
             if (jj==null) return null;
 
@@ -55,8 +56,8 @@ public class json {
     public static class jsonfrom extends TermFunction {
 
         @Override
-        public Object function(Term... x) {
-            return Atom.quote(JSON.stringFrom(x[0]));
+        public Object function(Operation o) {
+            return Atom.quote(JSON.stringFrom(o.arg(0)));
         }
 
     }

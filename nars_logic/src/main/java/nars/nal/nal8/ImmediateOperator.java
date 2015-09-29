@@ -12,17 +12,17 @@ import java.util.function.Consumer;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
-abstract public class ImmediateOperator extends NullOperator implements Consumer<Operation> {
+abstract public class ImmediateOperator extends NullOperator implements Consumer<Task<Operation>> {
 
     public final Operator op;
 
     public ImmediateOperator() {
         super();
-        op = Operator.the(getTerm());
+        op = Operator.the(getOperatorTerm());
     }
 
     public Operation newOperation(Object...args) {
-        return newOperation(Product.arrayToStringAtomProduct(args));
+        return newOperation(Product.termizedProduct(args));
     }
 //    public Operation newOperation(Term...args) {
 //        return newOperation(Product.make(args));
@@ -32,16 +32,25 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
     }
 
     /** create a new task that wraps this operation */
-    public Task<Operation> newTask(Object... args) {
-        return new DefaultTask(newOperation(args), Symbols.COMMAND,
+    public Task<Operation> newTask(Operation o) {
+        return new DefaultTask(newOperation(o.args()), Symbols.COMMAND,
                 null, 0, 0, 0).normalized();
     }
 
     @Override
-    public List<Task> apply(Operation o) {
+    public List<Task> apply(Task<Operation> o) {
         accept(o);
         return null;
     }
+
+    public static Task<Operation> command(Class<? extends ImmediateOperator> opClass, Object... args) {
+        return Task.command(operation(opClass, args));
+    }
+
+    public static Operation operation(Class<? extends ImmediateOperator> opClass, Object... args) {
+        return new Operation( opClass.getSimpleName(), args);
+    }
+
 
     //    //TODO make Task an interface so this is lightweight
 //    public static class ImmediateTask extends DefaultTask<Compound> {

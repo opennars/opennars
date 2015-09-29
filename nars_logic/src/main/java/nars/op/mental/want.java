@@ -23,7 +23,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -35,27 +35,28 @@ import java.util.List;
 /**
  * Operator that creates a goal with a given statement
  */
-public class want extends SynchOperator implements Mental {
+public class want extends SyncOperator implements Mental {
 
 
     /**
      * To create a goal with a given statement
+     *
      * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Operation operation) {
+    public List<Task> apply(Task<Operation> t) {
+        final Operation operation = t.getTerm();
 
         Term content = operation.arg(0);
-        
+
         Truth truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
 
         Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
 
-        final Memory m = operation.getMemory();
+        final Memory m = nar.memory();
         return Lists.newArrayList(
-                operation.newSubTask(m, (Compound)content, Symbols.GOAL, truth, m.time(), budget)
+                operation.newSubTask(t, m, (Compound) content, Symbols.GOAL, truth, m.time(), budget)
         );
     }
 

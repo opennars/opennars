@@ -29,7 +29,7 @@ import java.util.List;
  *  A class used as a template for Operator definition.
  *  Can also be extended for purely procedural operators.
  */
-public class NullOperator extends SynchOperator {
+public class NullOperator extends SyncOperator {
 
     public NullOperator(String name) {
         super(name);
@@ -41,7 +41,7 @@ public class NullOperator extends SynchOperator {
     }
 
     @Override
-    public List<Task> apply(Operation o) {
+    public List<Task> apply(Task<Operation> o) {
         return null;
     }
 }

@@ -1,7 +1,5 @@
 package nars.concept;
 
-import infinispan.com.google.common.collect.Iterators;
-import javolution.util.function.Equality;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
@@ -11,7 +9,6 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -69,79 +66,24 @@ public class AtomConcept extends AbstractConcept {
     }
 
 
-    static final BeliefTable emptyTable = new BeliefTable() {
-
-        @Override
-        final public Iterator<Task> iterator() {
-            return Iterators.emptyIterator();
-        }
-
-        @Override
-        public void setCapacity(int newCapacity) {
-
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
-        public void clear() {
-
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return true;
-        }
-
-        @Override
-        public Task add(Task q, Equality<Task> e) {
-            return null;
-        }
-
-
-        @Override
-        public boolean add(Task input, Ranker r, Memory memory) {
-            return false;
-        }
-
-        @Override
-        public boolean add(Task t) {
-            return false;
-        }
-
-        @Override
-        public Task addRevised(Task input, Ranker rank, Premise nal) {
-            return null;
-        }
-
-
-        @Override
-        public Task top(boolean eternal, boolean temporal) {
-            return null;
-        }
-    };
-
     @Override
     public BeliefTable getBeliefs() {
-        return emptyTable;
+        return BeliefTable.EMPTY;
     }
 
     @Override
     public BeliefTable getGoals() {
-        return emptyTable;
+        return BeliefTable.EMPTY;
     }
 
     @Override
     public TaskTable getQuestions() {
-        return emptyTable;
+        return BeliefTable.EMPTY;
     }
 
     @Override
     public TaskTable getQuests() {
-        return emptyTable;
+        return BeliefTable.EMPTY;
     }
 
     @Override

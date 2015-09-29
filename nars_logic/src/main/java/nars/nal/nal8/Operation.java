@@ -30,12 +30,10 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.operator.eval;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Variable;
 import nars.truth.Truth;
 import nars.util.utf8.ByteBuf;
 
@@ -47,28 +45,27 @@ import static nars.Symbols.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation with an operator.
+ *
+ * TODO generalize it so that Prduct<A> is moved to the generic part, allowing non-products
+ * to form Operations
  */
-public class Operation extends Inheritance<SetExt1<? extends Product>, Operator> {
-
-    /**
-     * the invoking task.
-     * this is set automatically prior to execution
-     */
-    transient private Task<Operation> task;
-    transient private Memory memory = null;
+public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, Operator> {
 
 
-    //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
 
-    protected Operation(Operator operator, SetExt1<Product> args) {
+    public Operation(String operatorName, Object... args) {
+        this(Operator.the(operatorName), Product.termizedProduct(args));
+    }
+
+    public Operation(Operator operator, SetExt1<Product<A>> args) {
         super(args, operator);
     }
 
     /**
      * Constructor with partial values, called by make
      */
-    protected Operation(Operator operator, Product argProduct) {
-        this(operator, new SetExt1(argProduct));
+    public Operation(Operator operator, Product<A> argProduct) {
+        this(operator, new SetExt1<>(argProduct));
     }
 
 
@@ -84,7 +81,6 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
 
     public Operation clone(Product args) {
         Operation x = new Operation(getPredicate(), args);
-        x.setTask(getTask());
         return x;
     }
 
@@ -95,7 +91,7 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
      *
      * @return A compound generated or null
      */
-    public static Operation op(Product arg, final Operator oper) {
+    public static <A extends Term> Operation<A> op(Product<A> arg, final Operator oper) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
@@ -118,11 +114,7 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
 
         SetExt1<Product> subject = new SetExt1(arg);
 
-        return op(subject, oper);
-    }
-
-    public static Operation op(SetExt1<Product> arg, final Operator oper) {
-        return new Operation(oper, arg);
+        return new Operation(oper, subject);
     }
 
 
@@ -133,80 +125,68 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
         return getPredicate().the();
     }
 
-
-    /**
-     * stores the currently executed task, which can be accessed by Operator execution
-     */
-    public void setTask(final Task<Operation> task) {
-        this.task = task;
-    }
-
-    public Task<Operation> getTask() {
-        return task;
-    }
-
-    public Product<?> arg() {
+    public final Product<A> arg() {
         return getSubject().the();
     }
 
-    public Term arg(int i) {
+    public final A arg(int i) {
         return arg().term(i);
     }
 
 
-    public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
-        return newSubTask(m, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
+    public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
+        return newSubTask(parent, m, content, punctuation, truth, occ, budget.getPriority(), budget.getDurability(), budget.getQuality());
     }
 
-    public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
+    public static Task newSubTask(Task parent, Memory m, Compound content, char punctuation, Truth truth, long occ, float p, float d, float q) {
         return TaskSeed.make(m, content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(p, d, q)
-                .parent(getTask())
+                .parent(parent)
                 .occurr(occ);
     }
 
 
-    public Term[] arg(Memory memory) {
-        return arg(memory, false);
-    }
-
-    public Term[] arg(Memory memory, boolean evaluate) {
-        return arg(memory, evaluate, true);
-    }
-
-    public Term[] arg(Memory memory, boolean evaluate, boolean removeSelf) {
-        final Term[] rawArgs = args();
-        int numInputs = rawArgs.length;
-
-        if (removeSelf) {
-            if (numInputs > 0) {
-                if (rawArgs[numInputs - 1].equals(memory.self()))
-                    numInputs--;
-            }
-        }
-
-        if (numInputs > 0) {
-            if (rawArgs[numInputs - 1] instanceof Variable)
-                numInputs--;
-        }
-
-
-        Term[] x;
-
-        if (evaluate) {
-
-            x = new Term[numInputs];
-            for (int i = 0; i < numInputs; i++) {
-                x[i] = eval.eval(rawArgs[i], memory);
-            }
-        } else {
-            x = Arrays.copyOfRange(rawArgs, 0, numInputs);
-        }
-
-        return x;
-    }
+//    public Term[] arg(Memory memory) {
+//        return arg(memory, false);
+//    }
+//
+//    public Term[] arg(Memory memory, boolean evaluate) {
+//        return arg(memory, evaluate, true);
+//    }
+//
+//    public Term[] arg(Memory memory, boolean evaluate, boolean removeSelf) {
+//        final Term[] rawArgs = args();
+//        int numInputs = rawArgs.length;
+//
+//        if (removeSelf) {
+//            if (numInputs > 0) {
+//                if (rawArgs[numInputs - 1].equals(memory.self()))
+//                    numInputs--;
+//            }
+//        }
+//
+//        if (numInputs > 0) {
+//            if (rawArgs[numInputs - 1] instanceof Variable)
+//                numInputs--;
+//        }
+//
+//
+//        Term[] x;
+//
+//        if (evaluate) {
+//
+//            x = new Term[numInputs];
+//            for (int i = 0; i < numInputs; i++) {
+//                x[i] = eval.eval(rawArgs[i], memory);
+//            }
+//        } else {
+//            x = Arrays.copyOfRange(rawArgs, 0, numInputs);
+//        }
+//
+//        return x;
+//    }
 
 
 //    /**
@@ -221,46 +201,28 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
      * avoid using this because it may involve creation of unnecessary array
      * if Product1.terms() is called
      */
-    public Term[] args() {
+    public A[] args() {
         return arg().terms();
     }
 
-    public Concept getConcept() {
-        final Memory m = getMemory();
+    public Concept getConcept(Memory m) {
         if (m == null) return null;
         return m.concept(getTerm());
     }
 
-    public Truth getConceptDesire() {
-        Concept c = getConcept();
+    public Truth getConceptDesire(Memory m) {
+        Concept c = getConcept(m);
         if (c == null) return null;
         return c.getDesire();
     }
 
-    public float getConceptExpectation() {
-        Truth tv = getConceptDesire();
+    public float getConceptExpectation(Memory m) {
+        Truth tv = getConceptDesire(m);
         if (tv == null) return 0;
         return tv.getExpectation();
     }
 
 
-    public Truth getTaskDesire() {
-        return getTask().getDesire();
-    }
-
-    public float getTaskExpectation() {
-        Truth tv = getTaskDesire();
-        if (tv == null) return 0;
-        return tv.getExpectation();
-    }
-
-    /**
-     * deletes the concept of this operation, preventing it from
-     * being executed again (unless invoked again by input).
-     */
-    public void stop() {
-        getMemory().delete(getTerm());
-    }
 
 //    /**
 //     * if any of the arguments are 'eval' operations, replace its result
@@ -399,26 +361,6 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
         //return null;
     }
 
-    /**
-     * null until the operation is executed, and null again afterward
-     */
-    public Memory getMemory() {
-        return memory;
-    }
-
-    public boolean isExecuting() {
-        return getMemory() != null;
-    }
-
-    public boolean setMemory(Memory memory) {
-        //detect if a different memory tries to steal this operation
-        if (this.memory != null)
-             if (this.memory != memory)
-                 return false;
-
-        this.memory = memory;
-        return true;
-    }
 
     public String argString() {
         return Arrays.toString(args());
@@ -427,7 +369,7 @@ public class Operation extends Inheritance<SetExt1<? extends Product>, Operator>
     /**
      * creates a result term in the conventional format
      */
-    public static Inheritance result(Operator op, Product x, Term y) {
+    public static Inheritance result(Term op, Product x, Term y) {
         return Inheritance.make(
                 SetExt.make(y),
                 ImageExt.make(x, op, (short) (x.length() - 1) /* position of the variable */)

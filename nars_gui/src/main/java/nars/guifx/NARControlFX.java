@@ -30,114 +30,9 @@ public class NARControlFX extends HBox {
 
 
     final NAR nar;
-    private final NARThreadControlPane threadControl;
+
     public final Menu tool;
 
-
-    public static class NARThreadControlPane extends FlowPane implements Runnable {
-
-        final static Text play = GlyphsDude.createIcon(FontAwesomeIcon.PLAY, GlyphIcon.DEFAULT_FONT_SIZE);
-        final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
-        final Label clock = new Label("0");
-        private final NAR nar;
-        private final OnTopics regs;
-        boolean wasRunning = false;
-        final AtomicBoolean pendingClockUpdate = new AtomicBoolean(false);
-        ////TODO: public final SimpleBooleanProperty pendingClockUpdate
-
-        private final long defaultNARPeriodMS = 75;
-
-        public void run() {
-            if (pendingClockUpdate.getAndSet(true) == false) {
-
-                runLater(() -> {
-                    pendingClockUpdate.set(false);
-                    boolean running = nar.isRunning();
-                    if (running != wasRunning) {
-                        //bp.setGraphic(running ? stop : play);
-                        wasRunning = running;
-                    }
-
-                    clock.setText("" + nar.time());
-                });
-            }
-        }
-
-        public NARThreadControlPane(NAR n) {
-            super(Orientation.HORIZONTAL, 1, 0);
-
-            getStyleClass().add("thread_control");
-
-            setAlignment(Pos.CENTER_RIGHT);
-            setColumnHalignment(HPos.RIGHT);
-
-            this.nar = n;
-
-            //nar.on(this, Events.FrameEnd.class, Events.ResetStart.class);
-            this.regs = new OnTopics().add(
-                    n.memory.eventFrameEnd.on(nn -> {
-                        //System.out.println("frame: " + nn.time());
-                        run();
-                    }),
-                    n.memory.eventReset.on(nn -> {
-                        run();
-                    })
-            );
-
-            Button runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
-            Button stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
-            NSlider speedSlider = new NSlider(100, 25.0);
-
-            runButton.setTooltip(new Tooltip("Toggle run/stop"));
-
-
-            runButton.setOnAction(e -> {
-
-                if (!n.isRunning()) {
-                    synchronized (n) {
-                        //TODO make sure only one thread is running, maybe with singleThreadExecutor
-
-                        stepButton.setDisable(true);
-                        speedSlider.setOpacity(1.0);
-
-                        new Thread(() -> {
-                            n.loop(defaultNARPeriodMS);
-                        }).start();
-                    }
-                } else {
-                    n.stop();
-
-                    if (!n.isRunning()) {
-                        stepButton.setDisable(false);
-                        speedSlider.setOpacity(0.5);
-                    }
-                }
-
-            });
-
-
-            stepButton.setTooltip(new Tooltip("Step"));
-            stepButton.setOnAction(e -> {
-                if (n.isRunning())
-                    n.frame();
-            });
-
-
-//        Slider speedSlider = new Slider(0, 1, 0);
-//        speedSlider.setOrientation(Orientation.VERTICAL);
-//        speedSlider.setTooltip(new Tooltip("Speed"));
-//        speedSlider.setMinorTickCount(10);
-//        speedSlider.setShowTickMarks(true);
-//        getChildren().add(speedSlider);
-
-
-            getChildren().setAll( runButton, speedSlider, stepButton, clock);
-
-
-            autosize();
-        }
-
-    }
 
     public NARControlFX(NAR n) {
         super();
@@ -174,7 +69,7 @@ public class NARControlFX extends HBox {
         }
 
 
-        getChildren().add(threadControl = new NARThreadControlPane(nar));
+        //getChildren().add(threadControl = new CycleClockPane(nar));
 
 //        if (memoryButtons) {
 //            Button b0 = JFX.newIconButton(FontAwesomeIcon.FOLDER);
@@ -263,7 +158,127 @@ public class NARControlFX extends HBox {
 //            }
 //        };
 
-        threadControl.run();
+        //threadControl.run();
+
+    }
+
+
+    public static class RTClockPane extends CycleClockPane {
+        public RTClockPane(NAR nar) {
+            super(nar);
+
+            getChildren().addAll(
+                    new NSlider("Target CPU Usage", 128, 48),
+                    new NSlider("Focus Depth", 48, 48, NSlider.CircleKnob),
+                    new NSlider("Focus Breadth", 48, 48, NSlider.CircleKnob),
+                    new NSlider("Urgency", 48, 48, NSlider.CircleKnob),
+                    new FlowPane(new Button("GC"))
+            );
+        }
+    }
+
+
+    public static class CycleClockPane extends FlowPane implements Runnable {
+
+        final static Text play = GlyphsDude.createIcon(FontAwesomeIcon.PLAY, GlyphIcon.DEFAULT_FONT_SIZE);
+        final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
+        final Label clock = new Label("0");
+        private final NAR nar;
+        private final OnTopics regs;
+        boolean wasRunning = false;
+        final AtomicBoolean pendingClockUpdate = new AtomicBoolean(false);
+        ////TODO: public final SimpleBooleanProperty pendingClockUpdate
+
+        private final long defaultNARPeriodMS = 75;
+
+        public void run() {
+            if (pendingClockUpdate.getAndSet(true) == false) {
+
+                runLater(() -> {
+                    pendingClockUpdate.set(false);
+                    boolean running = nar.isRunning();
+                    if (running != wasRunning) {
+                        //bp.setGraphic(running ? stop : play);
+                        wasRunning = running;
+                    }
+
+                    clock.setText("" + nar.time());
+                });
+            }
+        }
+
+        public CycleClockPane(NAR n) {
+            super(Orientation.HORIZONTAL, 1, 0);
+
+            getStyleClass().add("thread_control");
+
+            setAlignment(Pos.CENTER_RIGHT);
+            setColumnHalignment(HPos.RIGHT);
+
+            this.nar = n;
+
+            this.regs = new OnTopics().add(
+                    n.memory.eventFrameEnd.on(nn -> {
+                        //System.out.println("frame: " + nn.time());
+                        run();
+                    }),
+                    n.memory.eventReset.on(nn -> {
+                        run();
+                    })
+            );
+
+            Button runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
+            Button stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
+            NSlider speedSlider = new NSlider(100, 25.0);
+
+            runButton.setTooltip(new Tooltip("Toggle run/stop"));
+
+
+            runButton.setOnAction(e -> {
+
+                if (!n.isRunning()) {
+                    synchronized (n) {
+                        //TODO make sure only one thread is running, maybe with singleThreadExecutor
+
+                        stepButton.setDisable(true);
+                        speedSlider.setOpacity(1.0);
+
+                        new Thread(() -> {
+                            n.loop(defaultNARPeriodMS);
+                        }).start();
+                    }
+                } else {
+                    n.stop();
+
+                    if (!n.isRunning()) {
+                        stepButton.setDisable(false);
+                        speedSlider.setOpacity(0.5);
+                    }
+                }
+
+            });
+
+
+            stepButton.setTooltip(new Tooltip("Step"));
+            stepButton.setOnAction(e -> {
+                if (n.isRunning())
+                    n.frame();
+            });
+
+
+//        Slider speedSlider = new Slider(0, 1, 0);
+//        speedSlider.setOrientation(Orientation.VERTICAL);
+//        speedSlider.setTooltip(new Tooltip("Speed"));
+//        speedSlider.setMinorTickCount(10);
+//        speedSlider.setShowTickMarks(true);
+//        getChildren().add(speedSlider);
+
+
+            getChildren().setAll(runButton, speedSlider, stepButton, clock);
+
+
+            autosize();
+        }
 
     }
 

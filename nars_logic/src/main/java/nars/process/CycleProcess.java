@@ -1,7 +1,5 @@
 package nars.process;
 
-import javolution.context.ConcurrentContext;
-import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.concept.Concept;
@@ -9,7 +7,6 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 
-import java.util.Deque;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -99,42 +96,6 @@ public interface CycleProcess<M> extends Iterable<Concept>, Consumer<Memory> { /
 
     /** set the priority of a concept. returns false if the concept is no longer active after the change */
     boolean reprioritize(Term term, float newPriority);
-    
-    /** Generic utility method for running a list of tasks in current thread */
-    static void run(final Deque<Runnable> tasks) {
-        run(tasks, tasks.size());
-    }
-
-    /** Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish) */
-    static void run(final Deque<Runnable> tasks, int maxTasksToRun) {
-
-        final int concurrency = Math.min(Global.THREADS, maxTasksToRun);
-
-            ConcurrentContext ctx = null;
-            if (concurrency > 1)  {
-                //execute in parallel, multithreaded
-                ctx = ConcurrentContext.enter();
-
-                ctx.setConcurrency(concurrency);
-            }
-
-            try {
-                while (!tasks.isEmpty() && maxTasksToRun-- > 0) {
-                    Runnable tt = tasks.removeFirst();
-                    if (ctx!=null)
-                        ctx.execute(tt);
-                    else
-                        tt.run();
-                }
-
-            } finally {
-                // Waits for all concurrent executions to complete.
-                // Re-exports any exception raised during concurrent executions.
-                if (ctx!=null)
-                    ctx.exit();
-            }
-
-    }
 
 
     Concept remove(Concept c);

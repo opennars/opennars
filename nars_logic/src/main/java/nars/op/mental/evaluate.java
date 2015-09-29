@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Symbols;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -31,28 +31,27 @@ import java.util.List;
 /**
  * Operator that creates a quest with a given statement
  */
-public class evaluate extends SynchOperator implements Mental {
+public class evaluate extends SyncOperator implements Mental {
 
     /**
      * To create a quest with a given statement
-     * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
+     * Arguments, a Statement followed by an optional tense
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Operation op) {
+    public List<Task> apply(Task<Operation> op) {
 
 
-        Compound content = Sentence.termOrNull(op.arg(0));
+        Compound content = Sentence.termOrNull(op.getTerm().arg(0));
         if (content == null)
             return null;
 
         //Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamper(op, nar.memory, Tense.Present));
 
-        return Lists.newArrayList( op.newSubTask(
-                op.getMemory(),
+        return Lists.newArrayList( op.getTerm().newSubTask(op,
+                nar.memory(),
                 content, Symbols.QUEST, null,
-                op.getMemory().time(),
+                nar.time(),
                 Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1
         ) );
 

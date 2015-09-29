@@ -18,6 +18,7 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -28,7 +29,7 @@ import static nars.budget.BudgetFunctions.divide;
  * "Direct" processing of a new task, in constant time Local processing,
  * involving one concept only
  */
-public class TaskProcess extends NAL {
+public class TaskProcess extends NAL implements Serializable {
 
     private static final Procedure2<Budget,Budget> DEFAULT_TERMLINK_MERGE = Budget.plus;
 

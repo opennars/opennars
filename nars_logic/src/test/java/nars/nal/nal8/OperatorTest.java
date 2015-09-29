@@ -3,12 +3,11 @@ package nars.nal.nal8;
 import nars.NAR;
 import nars.Op;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
-import nars.util.event.Reaction;
 import org.junit.Test;
 
 import java.util.List;
@@ -53,14 +52,9 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
-        n.on(new Reaction<Term,Operation>() {
-
-            @Override
-            public void event(Term event, Operation args) {
-                //System.out.println("executed: " + Arrays.toString(args));
-                executed.set(true);
-            }
-
+        n.on((event, args) -> {
+            //System.out.println("executed: " + Arrays.toString(args));
+            executed.set(true);
         }, Atom.the("exe"));
 
         n.input("exe(a,b,c)!");
@@ -76,9 +70,9 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
-        n.on(new SynchOperator("exe") {
+        n.on(new SyncOperator("exe") {
             @Override
-            public List<Task> apply(Operation operation) {
+            public List<Task> apply(Task<Operation> operation) {
                 executed.set(true);
                 return null;
             }
@@ -96,8 +90,8 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
-        n.on(new SynchOperator((Term)n.term("<a --> b>")) {
-            public List<Task> apply(Operation operation) {
+        n.on(new SyncOperator((Term)n.term("<a --> b>")) {
+            public List<Task> apply(Task<Operation> operation) {
                 executed.set(true);
                 return null;
             }

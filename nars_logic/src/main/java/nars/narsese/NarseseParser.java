@@ -27,6 +27,7 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.op.io.echo;
@@ -173,8 +174,12 @@ public class NarseseParser extends BaseParser<Object>  {
     }
 
     public Rule LineCommentEchoed() {
-        return sequence( zeroOrMore(noneOf("\n")),
-                push(echo.echo(match()) ));
+        return sequence(
+
+
+                zeroOrMore(noneOf("\n")),
+
+                push( ImmediateOperator.command(echo.class, match()) ) );
     }
 
 //    public Rule PauseInput() {

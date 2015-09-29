@@ -32,7 +32,7 @@ public class NSliderSet<K> extends FlowPane {
     }
 
     public NSlider newControl(K k) {
-        NSlider s = new NSlider(k.toString(), 80, 25);
+        NSlider s = new NSlider(k.toString(), 80, 25, NSlider.NotchSlider);
         runLater(() -> {
             getChildren().add(s);
             setNeedsLayout(true);

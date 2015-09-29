@@ -1,6 +1,5 @@
 package nars.op.io;
 
-import nars.NAR;
 import nars.nal.nal8.ImmediateOperator;
 import nars.nal.nal8.Operation;
 import nars.task.Task;
@@ -10,16 +9,11 @@ import nars.task.Task;
  */
 public class reset extends ImmediateOperator {
 
-    private NAR nar = null;
-
     public reset() {
         super();
-
-        //this.nar = n;
-
     }
 
-    public Task reset() { return newTask(); }
+    public Task reset() { return newTask(newOperation()); }
 
     @Override
     public String toString() {
@@ -27,8 +21,8 @@ public class reset extends ImmediateOperator {
     }
 
     @Override
-    public void accept(Operation o) {
-        o.getMemory().clear();
+    public void accept(Task<Operation> o) {
+        nar.memory().clear();
         //nar.reset()
     }
 }

@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Op;
 import nars.meta.TaskRule;
 import nars.narsese.NarseseParser;
+import org.infinispan.util.concurrent.ConcurrentHashSet;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -22,6 +23,8 @@ import java.util.Set;
 public class DerivationRules extends ArrayList<TaskRule> {
 
     @Deprecated static final int maxVarArgsToMatch = 5;
+
+    static final NarseseParser parser = NarseseParser.the();
 
 
 
@@ -193,18 +196,18 @@ public class DerivationRules extends ArrayList<TaskRule> {
 
 
 
-        final Set<String> expanded = Global.newHashSet(1); //new ConcurrentSkipListSet<>();
+        final Set<String> expanded = new ConcurrentHashSet(); //Global.newHashSet(1); //new ConcurrentSkipListSet<>();
 
-        final NarseseParser parser = NarseseParser.the();
 
-        rawRules.stream().forEach(rule -> {
+
+        rawRules.parallelStream().forEach(rule -> {
 
             final String p = preprocess(rule);
 
 
             //there might be now be A_1..maxVarArgsToMatch in it, if this is the case we have to add up to maxVarArgsToMatch ur
             if (p.contains("A_1..n") || p.contains("A_1..A_i.substitute(_)..A_n")) {
-                addUnrolledVarArgs(parser, expanded, p, maxVarArgsToMatch);
+                addUnrolledVarArgs(expanded, p, maxVarArgsToMatch);
             } else {
                 addAndPermuteTenses(expanded, p);
             }
@@ -265,10 +268,8 @@ public class DerivationRules extends ArrayList<TaskRule> {
     }
 
 
-    private static void addUnrolledVarArgs(NarseseParser parser,
-                                           Set<String> expanded,
+    private static void addUnrolledVarArgs(Set<String> expanded,
                                            String p,
-
                                            @Deprecated int maxVarArgs
                                            //TODO replace this with a var arg matcher, to reduce # of rules that would need to be created
     )

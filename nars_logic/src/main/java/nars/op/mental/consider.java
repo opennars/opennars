@@ -17,14 +17,13 @@
 
 package nars.op.mental;
 
-import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.Deriver;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.process.ConceptTaskTermLinkProcess;
 import nars.task.Task;
 import nars.term.Term;
@@ -34,28 +33,22 @@ import java.util.ArrayList;
 /**
  * Operator that activates a concept
  */
-public class consider extends SynchOperator implements Mental {
+public class consider extends SyncOperator implements Mental {
 
     public static Operator consider = Operator.the("consider");
-
-    public static Budget budgetMentalConcept(final Operation o) {
-        return o.getTask().getBudget();
-    }
 
     final Deriver deriver = null; //new SimpleDeriver();
 
     /**
      * To activate a concept as if a question has been asked about it
-     *
-     * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
+     * Arguments, a Statement followed by an optional tense
      * @return Immediate results as Tasks
      */
     @Override
-    public ArrayList<Task> apply(Operation operation) {
-        Term term = operation.arg(0);
+    public ArrayList<Task> apply(Task<Operation> operation) {
+        Term term = operation.getTerm().arg(0);
         
-        Concept concept = nar.conceptualize(term, budgetMentalConcept(operation));
+        Concept concept = nar.conceptualize(term, operation.getBudget());
 
         TaskLink taskLink = concept.getTaskLinks().peekNext();
         TermLink termLink = concept.getTermLinks().peekNext();

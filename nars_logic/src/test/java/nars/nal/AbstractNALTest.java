@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nar.Default;
-import nars.nar.SingleStepNAR;
 import org.junit.Ignore;
 
 import java.util.List;
@@ -34,9 +33,9 @@ abstract public class AbstractNALTest  {
     public static final List<Supplier<NAR>> core =Lists.newArrayList(
             () -> new Default().nal(9)
     );
-    public static final List<Supplier<NAR>> singleStep =Lists.newArrayList(
+    public static final List<Supplier<NAR>> singleStep = core; /*Lists.newArrayList(
             () -> new SingleStepNAR().nal(9)
-    );
+    );*/
 
   /*  public static final List<Supplier<NAR>> fullDeclarativeTest =Lists.newArrayList(
             //() -> new Default().nal(1),
@@ -57,7 +56,6 @@ abstract public class AbstractNALTest  {
     protected AbstractNALTest(Supplier<NAR> nar) {
         //this.nar = nar;
         this.the = nar.get();
-        //this.nars = ThreadLocal.withInitial( nar );
     }
 
 

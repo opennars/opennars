@@ -27,10 +27,7 @@ import java.util.List;
  * N input Global and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
-public abstract class TermFunction<O> extends SynchOperator {
-
-    static final Variable var=new Variable("$y");
-
+public abstract class TermFunction<O> extends SyncOperator {
 
     protected TermFunction() {
         super();
@@ -56,7 +53,7 @@ public abstract class TermFunction<O> extends SynchOperator {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    abstract public O function(Term... x);
+    abstract public O function(Operation x);
 
 
     protected ArrayList<Task> result(Operation operation, Term y, Term[] x0, Term lastTerm) {
@@ -75,10 +72,10 @@ public abstract class TermFunction<O> extends SynchOperator {
         //      <2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%
         //transform to image for perception variable introduction rule (is more efficient representation
 
-        Product originalArgs =  operation.getTask().getTerm().arg();
+        Product originalArgs =  operation.arg();
         //final int numArgs = x0.length;
 
-        Inheritance inh = Operation.result(operation.getPredicate(), originalArgs, y);
+        Inheritance inh = Operation.result(operation.getOperator(), originalArgs, y);
 
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
@@ -172,31 +169,34 @@ public abstract class TermFunction<O> extends SynchOperator {
 //    }
 
     @Override
-    protected void noticeExecuted(Operation operation) {
+    protected void noticeExecuted(Task<Operation> operation) {
         //no notice
     }
 
     @Override
-    public List<Task> apply(final Operation operation) {
+    public List<Task> apply(final Task<Operation> opTask) {
 
-        final Memory memory = operation.getMemory();
+        Operation operation = opTask.getTerm();
 
-        Term[] rawArgs = operation.args();
 
-        int numInputs = rawArgs.length;
-        if (rawArgs[numInputs - 1].equals(memory.self()))
+        Term[] x = operation.args();
+
+        final Memory memory = nar.memory();
+
+        int numInputs = x.length;
+        if (x[numInputs - 1].equals(memory.self()))
             numInputs--;
 
         Term lastTerm = null;
-        if (rawArgs[numInputs - 1] instanceof Variable) {
-            lastTerm = rawArgs[numInputs-1];
+        if (x[numInputs - 1] instanceof Variable) {
+            lastTerm = x[numInputs-1];
             numInputs--;
         }
 
         //Term[] x0 = operation.getArgumentTerms(false, memory);
-        Term[] x = operation.arg(memory);
 
-        Object y = function(x);
+
+        Object y = function(operation);
 
         if (y == null) {
             return null;
@@ -208,7 +208,7 @@ public abstract class TermFunction<O> extends SynchOperator {
         }
         if (y instanceof Truth) {
             //this will get the original input operation term, not after it has been inlined.
-            Compound inputTerm = operation.getTask().getTerm();
+            Compound inputTerm = operation;
 
             Task b = TaskSeed.make(memory, inputTerm).judgment().truth((Truth) y).setEternal();
 

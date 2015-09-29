@@ -74,7 +74,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
 //        return make(Iterables.toArray(t, Term.class));
 //    }
 
-    static Product only(final Term the) {
+    static <T extends Term> Product1<T> only(final T the) {
         return new Product1(the);
     }
 
@@ -106,11 +106,11 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
 
 //    Term[] cloneTermsReplacing(final Term from, final Term to);
 
-    Term[] cloneTerms();
+    T[] cloneTerms();
 
-    Term term(int i);
+    T term(int i);
 
-    Term[] terms();
+    T[] terms();
 
 
     default Object first() {
@@ -119,11 +119,25 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
 
 
     /** apply Atom.quoteI */
-    static Product arrayToStringAtomProduct(final Object[] args) {
+    static Product termizedProduct(final Object... args) {
         if (args.length == 0) return Product.empty;
-        Term[] x = new Term[args.length];
-        for (int i = 0; i < args.length; i++)
-            x[i] = Atom.quote(args[i].toString() );
+        Term[] x = termized(args);
         return Product.make(x);
+    }
+
+    static Term[] termized(Object... args) {
+        Term[] x = new Term[args.length];
+        for (int i = 0; i < args.length; i++) {
+            final Term y;
+            final Term xx = x[i];
+            if (!(args[i] instanceof Term)) {
+                y = Atom.quote(args[i].toString());
+            }
+            else {
+                y = xx;
+            }
+            x[i] = y;
+        }
+        return x;
     }
 }

@@ -2,7 +2,7 @@ package nars.op.meta;
 
 import nars.link.TermLink;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 import nars.util.graph.TermLinkGraph;
@@ -14,12 +14,12 @@ import java.util.Set;
 /**
  * Created by me on 5/18/15.
  */
-public class connectivity extends SynchOperator {
+public class connectivity extends SyncOperator {
 
     @Override
-    public List<Task> apply(Operation o) {
+    public List<Task> apply(Task<Operation> o) {
 
-        TermLinkGraph g = new TermLinkGraph(o.getMemory());
+        TermLinkGraph g = new TermLinkGraph(nar.memory());
 
 
         ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
@@ -30,7 +30,7 @@ public class connectivity extends SynchOperator {
             set++;
         }
 
-        o.stop();
+        //o.stop();
         return null;
     }
 }

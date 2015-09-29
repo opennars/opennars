@@ -28,6 +28,7 @@ import nars.budget.Itemized;
 import nars.nal.nal8.Operation;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
+import nars.term.Term;
 import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.Truthed;
@@ -622,5 +623,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
         dd.forEach(t -> t.getBudget().mulPriority(factor));
         return dd;
+    }
+
+    static <X extends Term> Task<Operation<X>> command(Operation<X> op) {
+        return new DefaultTask<>(op, Symbols.COMMAND, null, 0, 0, 0);
     }
 }

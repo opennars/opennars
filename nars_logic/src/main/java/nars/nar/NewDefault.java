@@ -110,9 +110,9 @@
 ////
 ////            if (maxNALLevel >= 8) {
 ////
-////                for (OpReaction o : defaultOperators)
+////                for (OperatorReaction o : defaultOperators)
 ////                    n.on(o);
-////                for (OpReaction o : exampleOperators)
+////                for (OperatorReaction o : exampleOperators)
 ////                    n.on(o);
 ////
 ////

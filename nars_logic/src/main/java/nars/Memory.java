@@ -100,9 +100,14 @@ public class Memory extends Param implements Serializable {
 
     transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
+
+    /** used for reporting or informing outside. consists of additional notes
+        or data which could annotate a log or summary of system activity   */
+    transient public final Topic<Serializable> eventSpeak = new DefaultTopic<>();
+
     transient public final Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
 
-    transient public final EventEmitter<Term,Operation> exe;
+    transient public final EventEmitter<Term,Task<Operation>> exe;
 
 
     transient public final EmotionMeter emotion;
@@ -131,7 +136,7 @@ public class Memory extends Param implements Serializable {
 
 
     public transient final Topic<Task> eventInput = new DefaultTopic<>();
-    public transient final Topic<Object> eventError = new DefaultTopic<>();
+    public transient final Topic<Serializable> eventError = new DefaultTopic<>();
     public transient final Topic<Task> eventDerived = new DefaultTopic();
 
     public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic();
@@ -326,19 +331,15 @@ public class Memory extends Param implements Serializable {
      */
     public int execute(final Task goal) {
         Term term = goal.getTerm();
+
         if (term instanceof Operation) {
-            Operation o = (Operation)term;
-            o.setTask(goal);
-            if (!o.setMemory(this)) {
-                throw new RuntimeException("operation " + o + " already executing from different memory");
-            }
-            int n = exe.emit(o.getOperator(), o);
-            o.setMemory(null /* signals finished */);
-            return n;
+            final Operation o = (Operation)term;
+            return exe.emit(o.getOperator(), goal);
         }
         /*else {
             System.err.println("Unexecutable: " + goal);
         }*/
+
         return 0;
     }
 
@@ -579,23 +580,24 @@ public class Memory extends Param implements Serializable {
         return concepts;
     }
 
-    public synchronized void cycle(int num) {
+    public final void cycle(int num) {
+
+        final Clock clock = this.clock;
+        final Topic<Memory> start = eventCycleStart;
+        final Topic<Memory> end = eventCycleEnd;
 
         for ( ; num > 0; num--) {
 
-            //inCycle = true;
+            synchronized (clock) {
 
-            clock.preCycle();
+                clock.preCycle();
 
-            eventCycleStart.emit(this);
+                start.emit(this);
 
-            eventCycleEnd.emit(this);
+                end.emit(this);
 
-            //inCycle = false;
+            }
 
-            //deletePendingConcepts();
-
-            //randomUpdate();
         }
 
     }

@@ -3,26 +3,29 @@ package nars.nal.nal8;
 import nars.Memory;
 import nars.task.Task;
 
+import java.io.Serializable;
+
 /**
  * Created by me on 5/16/15.
  */
-public class ExecutionResult {
-    public final Operation operation;
-    public final Object feedback;
-    private final Memory memory;
+public class ExecutionResult implements Serializable {
 
-    public ExecutionResult(Operation op, Object feedback, Memory memory) {
+    public final Task<Operation> operation;
+    public final Object feedback;
+    transient private final Memory memory;
+
+    public ExecutionResult(Task<Operation> op, Object feedback, Memory memory) {
         this.operation = op;
         this.feedback = feedback;
         this.memory = memory;
     }
 
     public Task getTask() {
-        return operation.getTask();
+        return operation;
     }
 
     public Operation getOperation() {
-        return operation;
+        return operation.getTerm();
     }
 
     @Override

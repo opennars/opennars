@@ -17,7 +17,7 @@ public class BeliefTableTest extends TestCase {
 
 
     public NAR newNAR(int maxBeliefs) {
-        Default d = new Default() {
+        Default d = new Default();// {
 
             /*
             @Override
@@ -29,7 +29,7 @@ public class BeliefTableTest extends TestCase {
             }
             */
 
-        };
+        //}
         d.memory().conceptBeliefsMax.set(maxBeliefs);
         return d;
     }

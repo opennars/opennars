@@ -9,9 +9,10 @@ import javafx.scene.text.TextAlignment;
 import nars.Global;
 import nars.NAR;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import static javafx.application.Platform.runLater;
 
@@ -22,15 +23,17 @@ import static javafx.application.Platform.runLater;
 public class PluginPanel extends VBox {
 
     private final NAR nar;
+    private final NARide ide;
 
     double itemSpacing = 8.0;
 
-    public PluginPanel(NAR nar) {
+    public PluginPanel(NARide ide) {
         super();
 
         setSpacing(itemSpacing);
 
-        this.nar = nar;
+        this.ide = ide;
+        this.nar = ide.nar;
 
 
         nar.onEachFrame((n) -> {
@@ -89,10 +92,13 @@ public class PluginPanel extends VBox {
 //
     }
 
-    Map<String,Node> nodes = new HashMap();
+    Map<String,Node> nodes = new ConcurrentHashMap<>();
 
     private Node node(String k, Object v) {
         return nodes.computeIfAbsent(k, (K) -> {
+
+
+
             ToggleButton p = new ToggleButton();
             p.getStyleClass().add("plugin_button");
             p.setGraphic(icon(K,v));
@@ -107,26 +113,37 @@ public class PluginPanel extends VBox {
     }
 
     private Node icon(String k, Object v) {
+
         if (v instanceof FXIconPaneBuilder) {
+            // instance implements its own node builder
             return ((FXIconPaneBuilder)v).newIconPane();
         }
-        BorderPane bp = new BorderPane();
 
-        Label label = new Label(k);
-        Label content = new Label(v.toString());
+        Supplier<Node> override = ide.iconNodeBuilders.get(v.getClass());
+        if (override!=null) {
+            //create via the type-dependent override
+            return override.get();
+        }
+        else  {
+            //create the default:
+            BorderPane bp = new BorderPane();
 
-        content.setWrapText(true);
-        content.setTextAlignment(TextAlignment.LEFT);
+            Label label = new Label(k);
+            Label content = new Label(v.toString());
 
-        label.getStyleClass().add("h1");
+            content.setWrapText(true);
+            content.setTextAlignment(TextAlignment.LEFT);
 
-        content.setCache(true);
-        label.setCache(true);
+            label.getStyleClass().add("h1");
 
-        bp.setTop(label);
-        bp.setBottom(content);
+            content.setCache(true);
+            label.setCache(true);
 
-        return bp;
+            bp.setTop(label);
+            bp.setBottom(content);
+
+            return bp;
+        }
     }
 
 

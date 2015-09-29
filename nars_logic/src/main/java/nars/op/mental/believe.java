@@ -25,7 +25,7 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
@@ -38,31 +38,29 @@ import java.util.ArrayList;
  * Operator that creates a judgment with a given statement
  * Causes the system to belief things it has no evidence for
  */
-public class believe extends SynchOperator implements Mental {
+public class believe extends SyncOperator implements Mental {
 
     /**
      * To create a judgment with a given statement
-     * @param args Arguments, a Statement followed by an optional tense
-     * @param memory
-     *
      */
     @Override
-    public ArrayList<Task> apply(Operation op) {
+    public ArrayList<Task> apply(Task<Operation> op) {
 
         //TODO convert to TaskSeed
 
-        Compound content = Sentence.termOrNull(op.arg(0));
+        Compound content = Sentence.termOrNull(op.getTerm().arg(0));
         if (content == null)
             return null;
 
         Truth truth;
-        return Lists.newArrayList( op.newSubTask(
-                op.getMemory(),
+
+        //TODO clean this up, it's non-standard
+        return Lists.newArrayList(op.getTerm().newSubTask(
+                op,
+                nar.memory(),
                 content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),
-                op.getMemory().time(),
-                new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
-
-
+                nar.time(),
+                new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)));
     }
 
 //    @Override

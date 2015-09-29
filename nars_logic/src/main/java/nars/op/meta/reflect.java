@@ -7,6 +7,7 @@ package nars.op.meta;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -26,11 +27,9 @@ public class reflect extends TermFunction {
 
     
     @Override
-    public Term function(Term[] x) {
-        
+    public Term function(Operation x) {
 
-        Term content = x[0];
-
+        Term content = x.arg(0);
 
         return getMetaTerm(content);
     }

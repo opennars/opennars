@@ -16,13 +16,11 @@ package nars.util.data;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
+import javolution.context.ConcurrentContext;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  *
@@ -550,5 +548,41 @@ public class Util {
         return
                 (count[0] <= count[cl-1]) &&
                         (count[cl/2] <= count[cl-1]);
+    }
+
+    /** Generic utility method for running a list of tasks in current thread */
+    public static void run(final Deque<Runnable> tasks) {
+        run(tasks, tasks.size(), 1);
+    }
+
+    /** Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish) */
+    public static void run(final Deque<Runnable> tasks, int maxTasksToRun, int threads) {
+
+        final int concurrency = Math.min(threads, maxTasksToRun);
+
+            ConcurrentContext ctx = null;
+            if (concurrency > 1)  {
+                //execute in parallel, multithreaded
+                ctx = ConcurrentContext.enter();
+
+                ctx.setConcurrency(concurrency);
+            }
+
+            try {
+                while (!tasks.isEmpty() && maxTasksToRun-- > 0) {
+                    Runnable tt = tasks.removeFirst();
+                    if (ctx!=null)
+                        ctx.execute(tt);
+                    else
+                        tt.run();
+                }
+
+            } finally {
+                // Waits for all concurrent executions to complete.
+                // Re-exports any exception raised during concurrent executions.
+                if (ctx!=null)
+                    ctx.exit();
+            }
+
     }
 }

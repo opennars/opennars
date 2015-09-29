@@ -19,7 +19,7 @@ package nars.op.mental;
 
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Operator that activates a concept
  */
-public class doubt extends SynchOperator implements Mental {
+public class doubt extends SyncOperator implements Mental {
 
 
 
@@ -40,9 +40,9 @@ public class doubt extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Operation operation) {
-        Term term = operation.arg();
-        Concept concept = nar.conceptualize(term, consider.budgetMentalConcept(operation));
+    public List<Task> apply(Task<Operation> operation) {
+        Term term = operation.getTerm().arg();
+        Concept concept = nar.conceptualize(term, operation.getBudget());
         concept.discountBeliefConfidence();
         return null;
     }

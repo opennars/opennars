@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.Text;
 import nars.guifx.NARfx;
 
@@ -227,15 +228,30 @@ public class NSlider extends StackPane {
         double circumferenceActive = 0.95; //how much of the circumference of the interior circle is active as a dial track
 
         double theta = p * circumferenceActive * (2 * Math.PI);
-        double margin = W/8;
-        double x = W/2 + (W/2-margin) * Math.cos(theta);
-        double y = H/2 + (H/2-margin) * Math.sin(theta);
-        double t = 4;
-        g.setFill(Color.WHITE);
-        g.fillOval(x-t, y-t, t*2,t*2);
 
-        /*g.fillArc(  0,0,W,H,
-                    270 - 15,theta, ArcType.ROUND);*/
+        double margin = W/10; //margin proportional to viewing area
+
+//        double x = W/2 + (W/2-margin) * Math.cos(theta);
+//        double y = H/2 + (H/2-margin) * Math.sin(theta);
+//        double t = 4;
+        /*g.setFill(Color.WHITE);
+        g.fillOval(x-t, y-t, t*2,t*2);*/
+
+        double ew = W - margin * 2;
+        double eh = H - margin * 2;
+
+        g.setFill(Color.GRAY);
+        g.fillOval(margin*2, margin*2, ew-margin*2, eh-margin*2);
+
+        double hp = 0.5 + 0.5 * p;
+        g.setFill(Color.ORANGE.deriveColor(70 * (p - 0.5), hp, 0.65f, 1f));
+
+
+        final double atheta = theta * 180.0/Math.PI; //radian to degree
+        final double knobArc = 30;
+        g.fillArc( margin,margin, ew, eh,
+                    atheta - knobArc/2, knobArc, ArcType.ROUND);
+
 
 
     };
@@ -286,7 +302,8 @@ public class NSlider extends StackPane {
 
             p.getChildren().setAll(
                     new NSlider("Bar", 128, 45, NSlider.BarSlider),
-                    new NSlider("Notch", 64, 25, NSlider.NotchSlider),
+                    new NSlider("Notch", 128, 45, NSlider.NotchSlider),
+                    new NSlider("Notch--", 64, 25, NSlider.NotchSlider),
                     new NSlider("Circle", 128, 128, NSlider.CircleKnob)
             );
 

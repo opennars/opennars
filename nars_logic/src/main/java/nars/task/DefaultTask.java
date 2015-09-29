@@ -100,6 +100,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         );
     }
 
+
     protected void setTerm(T t) {
         //if (Global.DEBUG) {
         if (Sentence.invalidSentenceTerm(t)) {
@@ -129,22 +130,14 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         this.bestSolution = solution;
     }
 
-    public DefaultTask(Sentence<T> s, Budget budget, Task parentTask, Task parentBelief) {
-        this(s.getTerm(), s.getPunctuation(), s.getTruth(), budget, parentTask, parentBelief, null);
-    }
+
 
     protected void setPunctuation(char punctuation) {
         this.punctuation = punctuation;
     }
 
+    /** includes: evidentialset, occurrencetime, truth, term, punctuation */
     private final int getHash() {
-        //stamp (evidentialset, occurrencetime), truth, term, punctuation
-
-
-        if (getTerm().hashCode()==0) {
-            getTerm().rehash();
-            //throw new RuntimeException("term " + getTerm() + " with invalid hash");
-        }
 
         int hashStamp = Util.hash(Arrays.hashCode(getEvidence()), (int) this.getOccurrenceTime());
 
@@ -622,19 +615,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /**
      * the causing Operation, or null if not applicable.
      */
-    public Operation getCause() {
+    public final Operation getCause() {
         return cause;
     }
 
     @Override
-    public Task setCause(final Operation op) {
-        if (op != null) {
-            if (this!=op.getTask())
-                return this; //dont set the cause to itself
-        }
-
+    public final Task setCause(final Operation op) {
         this.cause = op;
-
         return this;
     }
 

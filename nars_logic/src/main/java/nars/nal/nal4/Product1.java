@@ -23,12 +23,12 @@ public class Product1<T extends Term> extends Compound1<T>  implements Product<T
     }
 
     @Override
-    public Term[] terms() {
-        return new Term[]{the()};
+    public T[] terms() {
+        return (T[])new Term[]{the()};
     }
 
     @Override
-    public Term clone() {
+    public Product1<T> clone() {
         return Product.only(the());
     }
 

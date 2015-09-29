@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.Product1;
 import nars.nal.nal4.ProductN;
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.Expression;
@@ -89,7 +90,8 @@ public class scheme extends TermFunction {
     };
 
     @Override
-    public Term function(Term[] x) {
+    public Term function(Operation o) {
+        Term[] x = o.args();
         Term code = x[0];
 
         if (code instanceof Product1) {

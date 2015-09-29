@@ -1,12 +1,13 @@
 package nars.util.event;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /** single-thread synchronous (in-thread) event emitter with direct array access
  * */
-public class DefaultTopic<V> extends CopyOnWriteArrayList<Consumer<V>> implements Topic<V> {
+public class DefaultTopic<V extends Serializable> extends CopyOnWriteArrayList<Consumer<V>> implements Topic<V> {
 
     @Override
     public List<Consumer<V>> all() {

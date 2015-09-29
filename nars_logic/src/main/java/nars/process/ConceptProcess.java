@@ -13,6 +13,7 @@ import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Terms;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
  *     TermLinks
  *
  * */
-abstract public class ConceptProcess extends NAL  {
+abstract public class ConceptProcess extends NAL implements Serializable {
 
 
 

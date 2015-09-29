@@ -26,10 +26,10 @@ public class CommandTest {
         n.on(new NullOperator("c") {
 
             @Override
-            public List<Task> apply(Operation o) {
+            public List<Task> apply(Task<Operation> o) {
                 invoked.set(true);
-                assertEquals(1, o.args().length);
-                assertEquals("x", o.arg(0).toString());
+                assertEquals(1, o.getTerm().args().length);
+                assertEquals("x", o.getTerm().arg(0).toString());
                 return null;
             }
         });

@@ -33,7 +33,7 @@ public class Pair implements IPair {
      * The first element of the pair. *
      */
     @Override
-    public Object first() {
+    public Object _car() {
         return first;
     }
 
@@ -47,7 +47,7 @@ public class Pair implements IPair {
      * The other element of the pair. *
      */
     @Override
-    public Object rest() {
+    public Object _cdr() {
         return rest;
     }
 
@@ -69,7 +69,7 @@ public class Pair implements IPair {
      * Like Common Lisp first; car of a Pair, or null for anything else. *
      */
     public static Object firstOfPairOrNull(Object x) {
-        return (x instanceof IPair) ? ((IPair) x).first() : null;
+        return (x instanceof IPair) ? ((IPair) x)._car() : null;
     }
 
     /**
@@ -138,7 +138,7 @@ public class Pair implements IPair {
      * Like Common Lisp rest; car of a Pair, or null for anything else. *
      */
     public static Object restOfPairOrNull(Object x) {
-        return (x instanceof IPair) ? ((IPair) x).rest() : null;
+        return (x instanceof IPair) ? ((IPair) x)._cdr() : null;
     }
 
     /**
@@ -146,9 +146,9 @@ public class Pair implements IPair {
      */
     public static void stringifyPair(IPair p, boolean quoted, StringBuffer buf) {
         String special = null;
-        if ((p.rest() instanceof IPair) && restOfPairOrNull(p.rest()) == null)
-            special = (p.first() == "quote") ? "'" : (p.first() == "quasiquote") ? "`"
-                    : (p.first() == "unquote") ? "," : (p.first() == "unquote-splicing") ? ",@"
+        if ((p._cdr() instanceof IPair) && restOfPairOrNull(p._cdr()) == null)
+            special = (p._car() == "quote") ? "'" : (p._car() == "quasiquote") ? "`"
+                    : (p._car() == "unquote") ? "," : (p._car() == "unquote-splicing") ? ",@"
                     : null;
 
         if (special != null) {
@@ -156,14 +156,14 @@ public class Pair implements IPair {
             Pair.stringify(second(p), quoted, buf);
         } else {
             buf.append('(');
-            Pair.stringify(p.first(), quoted, buf);
-            Object tail = p.rest();
+            Pair.stringify(p._car(), quoted, buf);
+            Object tail = p._cdr();
             while (tail instanceof IPair) {
                 buf.append(' ');
 
                 IPair tp = (IPair) tail;
-                Pair.stringify(tp.first(), quoted, buf);
-                tail = tp.rest();
+                Pair.stringify(tp._car(), quoted, buf);
+                tail = tp._cdr();
             }
             if (tail != null) {
                 buf.append(" . ");
@@ -195,8 +195,8 @@ public class Pair implements IPair {
         List l = new ArrayList();
         Pair c = this;
         do {
-            l.add(c.first());
-            Object next = c.rest();
+            l.add(c._car());
+            Object next = c._cdr();
 
             if (next instanceof Pair)
                 c = (Pair)next;

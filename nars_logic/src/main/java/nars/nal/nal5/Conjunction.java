@@ -311,7 +311,7 @@ public class Conjunction extends Junction<Term> {
 
 
     @Override
-    public Term first() {
+    public Term _car() {
         return term[0];
     }
 

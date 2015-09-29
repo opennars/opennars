@@ -3,6 +3,7 @@ package nars.op.data;
 import nars.nal.nal3.SetTensional;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Compound;
 import nars.term.Term;
@@ -22,11 +23,12 @@ import java.util.List;
 abstract public class Flat extends TermFunction {
 
     @Override
-    public Term function(Term[] x) {
+    public Term function(Operation op) {
         List<Term> l = new ArrayList();
-        collect(x, l);
+        collect(op.args(), l);
         return result(l);
     }
+
     public static List<Term> collect(Term[] x, List<Term> l) {
         for (Term a : x) {
             if ((a instanceof Product) || (a instanceof SetTensional) || (a instanceof Conjunction)) {

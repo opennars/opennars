@@ -22,7 +22,7 @@ import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Operator that activates a concept
  */
-public class remind extends SynchOperator implements Mental {
+public class remind extends SyncOperator implements Mental {
 
     public static Operator remind = Operator.the("remind");
 
@@ -43,8 +43,8 @@ public class remind extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    public List<Task> apply(Operation operation) {
-        Term term = operation.arg(0);
+    public List<Task> apply(Task<Operation> operation) {
+        Term term = operation.getTerm().arg(0);
 
         remind(term, nar);
 

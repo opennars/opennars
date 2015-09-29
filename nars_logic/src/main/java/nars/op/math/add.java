@@ -17,6 +17,7 @@
 package nars.op.math;
 
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.op.mental.Mental;
 import nars.term.Term;
@@ -27,7 +28,8 @@ import nars.term.Term;
 public class add extends TermFunction<Integer> implements Mental {
 
     @Override
-    public Integer function(Term... x) {
+    public Integer function(Operation o) {
+        Term[] x = o.args();
         if (x.length < 2) {
             throw new RuntimeException("Requires 2 arguments");
         }

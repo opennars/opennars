@@ -44,8 +44,8 @@ public class js extends TermFunction implements Mental {
             }
         }
 
-        @Override public Object function(Term[] args) {
-
+        @Override public Object function(Operation o) {
+            Term[] args = o.args();
             Bindings bindings = newBindings(args);
             bindings.put("_o", fnCompiled);
             String input = "_o.apply(this,arg)";
@@ -68,15 +68,15 @@ public class js extends TermFunction implements Mental {
     public class jsop extends NullOperator {
 
         @Override
-        public List<Task> apply(Operation op) {
-            Term[] x = op.args();
+        public List<Task> apply(Task<Operation> op) {
+            Term[] x = op.getTerm().args();
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             //nar.input( echo.newTask("JS Operator Bind: " + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode);
             nar.on(d);
 
-            op.stop();
+            //op.stop();
 
             return null;
         }
@@ -187,7 +187,8 @@ public class js extends TermFunction implements Mental {
         }
     }
 
-    @Override public Object function(Term[] args) {
+    @Override public Object function(Operation o) {
+        Term[] args = o.args();
         if (args.length < 1) {
             return null;
         }

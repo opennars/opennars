@@ -65,13 +65,6 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
     @Override
     float getPriority();
 
-    default boolean isDesired(float threshold) {
-        Truth desire=this.getDesire();
-        if(desire==null) {
-            return false;
-        }
-        return desire.getExpectation() > threshold;
-    }
 
     default void discountBeliefConfidence() {
         if (hasBeliefs()) {

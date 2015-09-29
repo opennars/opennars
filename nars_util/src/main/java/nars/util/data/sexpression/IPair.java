@@ -7,17 +7,17 @@ package nars.util.data.sexpression;
 public interface IPair extends IPaired {
 
     /** @return the value which was actually set, or null if nothing changed */
-    public Object setFirst(Object first);
+    Object setFirst(Object first);
 
     /** @return the value which was actually set, or null if nothing changed */
-    public Object setRest(Object rest);
+    Object setRest(Object rest);
 
 
     /**
      * Like Common Lisp first; car of a Pair, or null for anything else. *
      */
-    public static Object first(Object x) {
-        return (x instanceof IPair) ? ((IPair) x).first() : null;
+    static Object first(Object x) {
+        return (x instanceof IPair) ? ((IPair) x)._car() : null;
     }
 
 

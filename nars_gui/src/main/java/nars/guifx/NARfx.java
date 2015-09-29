@@ -282,9 +282,9 @@ public class NARfx  {
 
             {
                 ni.addView(new TerminalPane(nar));
-                ni.addIcon(() -> {
+                /*ni.addIcon(() -> {
                     return new InputPane(nar);
-                });
+                });*/
                 ni.addIcon(()-> {
                    return new ConceptSonificationPanel(nar);
                 });

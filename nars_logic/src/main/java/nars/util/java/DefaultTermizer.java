@@ -27,28 +27,30 @@ public class DefaultTermizer implements Termizer {
         if (t == NULL) return null;
 
         Object x = objects.inverse().get(t);
-        if (x == null) {
-            //compute it
-            if (t instanceof Atom) {
-                String s = t.toStringCompact();
-                try {
-                    return Integer.parseInt(s);
-                } catch (Exception e) {
-                }
-
-                x = s;
-            } else {
-                //TODO handle Products as lists/array, etc
-                x = null;
-            }
-
-            objects.put(x, t);
-        }
+//        if (x == null) {
+//            //compute it
+//            if (t instanceof Atom) {
+//                String s = t.toStringCompact();
+//                try {
+//                    return Integer.parseInt(s);
+//                } catch (Exception e) {
+//                }
+//
+//                x = s;
+//            } else {
+//                //TODO handle Products as lists/array, etc
+//                x = null;
+//            }
+//
+//            objects.put(x, t);
+//        }
+        if (x == null)
+            return t; /** return the term intance itself */
         return x;
     }
 
 
-    Term constructTerm(Object o) {
+    Term obj2term(Object o) {
 
         if (o == null)
             return NULL;
@@ -82,7 +84,9 @@ public class DefaultTermizer implements Termizer {
                 return cterm;
             }
             return Atom.the("primitive");
-        } else if (o instanceof int[]) {
+        }
+
+        if (o instanceof int[]) {
             final List<Term> arg = Arrays.stream((int[]) o)
                     .mapToObj(e -> Atom.the(e)).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
@@ -159,25 +163,26 @@ public class DefaultTermizer implements Termizer {
         //        String cname = o.getClass().toString().substring(6) /* "class " */;
 //        int slice = cname.length();
 //
-        Term oo = objects.get(o);
-        if (oo == null) {
+        Runnable[] post = new Runnable[1];
 
+        Term result = objects.computeIfAbsent(o, O -> {
 
-            Term oterm = constructTerm(o);
+            Term oterm = obj2term(o);
 
-            Term clas = classes.get(o.getClass());
-            if (clas == null) {
-                clas = constructTerm(o.getClass());
-            }
+            Term clas = classes.computeIfAbsent(o.getClass(), this::obj2term);
 
-            onInstanceOfClass(o, oterm, clas);
+            final Term finalClas = clas;
+            post[0] = () ->  onInstanceOfClass(o, oterm, finalClas);
 
-            oo = oterm;
+            return oterm;
+        });
 
-            objects.put(o, oo);
-        }
+        if (result!=null)
+            if (post[0]!=null)
+                post[0].run();
 
-        return oo;
+        return result;
+
 
         //TODO decide to use toString or System object id
         //String instanceName = o.toString();

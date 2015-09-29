@@ -1,7 +1,7 @@
 package nars.op.mental;
 
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.nal8.operator.SyncOperator;
 import nars.task.Task;
 
 import java.util.List;
@@ -10,10 +10,10 @@ import java.util.List;
  * Counting and Cardinality
  * TODO extends AbstractPlugin
  */
-public class Counting extends SynchOperator {
+public class Counting extends SyncOperator {
 
     @Override
-    public List<Task> apply(Operation operation) {
+    public List<Task> apply(Task<Operation> operation) {
         //TODO upgrade code below to new api
         return null;
     }

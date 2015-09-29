@@ -73,6 +73,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
 
 
+
     /**
      * subclasses should be sure to call init() in their constructors; it is not done here
      * to allow subclass constructors to set data before calling init()
@@ -804,7 +805,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
     /**
      * (shallow) Clone the component list
      */
-    public Term[] cloneTerms() {
+    public T[] cloneTerms() {
         return copyOf(term, term.length);
     }
 
@@ -1328,7 +1329,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
     }
 
     @Override
-    public Object first() {
+    public Object _car() {
         return term[0];
     }
 
@@ -1336,7 +1337,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
      * cdr or 'rest' function for s-expression interface when arity > 1
      */
     @Override
-    public Object rest() {
+    public Object _cdr() {
         final int len = length();
         if (len == 1) throw new RuntimeException("Pair fault");
         if (len == 2) return term[1];

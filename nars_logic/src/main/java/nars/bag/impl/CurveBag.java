@@ -420,6 +420,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
 
     final protected V removeLowest() {
+        if (isEmpty()) return null;
         return removeItem(size()-1);
     }
 
@@ -428,7 +429,7 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      *
      * @return The first Item
      */
-    protected final V removeItem(final int index) {
+    final V removeItem(final int index) {
 
         final V ii = items.get(index);
         /*if (ii == null)

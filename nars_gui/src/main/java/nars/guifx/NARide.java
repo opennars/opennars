@@ -1,15 +1,20 @@
 package nars.guifx;
 
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import nars.Global;
 import nars.NAR;
+import nars.clock.CycleClock;
+import nars.clock.RealtimeMSClock;
 import nars.event.FrameReaction;
 import nars.guifx.util.SizeAwareWindow;
 import nars.guifx.util.TabX;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static javafx.application.Platform.runLater;
@@ -28,6 +33,8 @@ public class NARide extends BorderPane {
     public final NARControlFX controlPane;
     private final ScrollPane spp;
     private final PluginPanel pp;
+
+    public final Map<Object,Supplier<Node>> iconNodeBuilders = Global.newHashMap();
 
 
     public void addIcon(FXIconPaneBuilder n) {
@@ -62,6 +69,9 @@ public class NARide extends BorderPane {
         super();
         this.nar = n;
 
+        icon(CycleClock.class, () -> new NARControlFX.CycleClockPane(nar) );
+        icon(RealtimeMSClock.class, () -> new NARControlFX.RTClockPane(nar) );
+
 //        runLater(() -> {
 //                    TabPaneDetacher tabDetacher = new TabPaneDetacher();
 //                    tabDetacher.makeTabsDetachable(content);
@@ -91,7 +101,7 @@ public class NARide extends BorderPane {
 //        vb.autosize();
 
 
-        spp = scrolled(pp = new PluginPanel(n));
+        spp = scrolled(pp = new PluginPanel(this));
 
 //        //taskBar.setSide(Side.LEFT);
 //        taskBar.getTabs().addAll(
@@ -152,6 +162,11 @@ public class NARide extends BorderPane {
 
         //autosize();
 
+    }
+
+    public NARide icon(Class c, Supplier<Node> iconBuilder) {
+        iconNodeBuilders.put(c, iconBuilder);
+        return this;
     }
 
     public Stage newWindow() {

@@ -1,6 +1,7 @@
 package nars.op.data;
 
 import nars.io.Texts;
+import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Term;
 
@@ -11,8 +12,8 @@ import nars.term.Term;
 public class similaritree extends TermFunction<Float> {
 
     @Override
-    public Float function(Term... x) {
-
+    public Float function(Operation o) {
+        final Term[] x = o.args();
         if (x.length!=2) return Float.NaN;
 
         String a = x[0].toString();

@@ -11,6 +11,7 @@ import javafx.util.Callback;
 import nars.NAR;
 import nars.event.FrameReaction;
 import nars.guifx.util.NSlider;
+import nars.nal.nal8.ImmediateOperator;
 import nars.op.io.echo;
 import nars.task.Task;
 import org.infinispan.commons.util.concurrent.ConcurrentWeakKeyHashMap;
@@ -29,7 +30,7 @@ import static javafx.application.Platform.runLater;
  */
 public class TreePane extends BorderPane {
 
-    public static final Task root = echo.echo("root");
+    public static final Task root = ImmediateOperator.command(echo.class, TreePane.class.getSimpleName());
     private final TaskTreeItem rootNode;
     private final TreeView<Task> tree;
     private final FrameReaction onFrame;

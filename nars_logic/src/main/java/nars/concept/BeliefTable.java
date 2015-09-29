@@ -1,5 +1,7 @@
 package nars.concept;
 
+import infinispan.com.google.common.collect.Iterators;
+import javolution.util.function.Equality;
 import nars.Memory;
 import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
@@ -11,6 +13,7 @@ import nars.truth.Truthed;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -29,6 +32,61 @@ public interface BeliefTable extends TaskTable {
         final float confidence = belief.getTruth().getConfidence();
         final float originality = belief.getOriginality();
         return or(confidence, originality);
+    };
+
+    BeliefTable EMPTY = new BeliefTable() {
+
+        @Override
+        final public Iterator<Task> iterator() {
+            return Iterators.emptyIterator();
+        }
+
+        @Override
+        public void setCapacity(int newCapacity) {
+
+        }
+
+        @Override
+        public int size() {
+            return 0;
+        }
+
+        @Override
+        public void clear() {
+
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        public Task add(Task q, Equality<Task> e) {
+            return null;
+        }
+
+
+        @Override
+        public boolean add(Task input, Ranker r, Memory memory) {
+            return false;
+        }
+
+        @Override
+        public boolean add(Task t) {
+            return false;
+        }
+
+        @Override
+        public Task addRevised(Task input, Ranker rank, Premise nal) {
+            return null;
+        }
+
+
+        @Override
+        public Task top(boolean eternal, boolean temporal) {
+            return null;
+        }
     };
 
     boolean add(Task input, BeliefTable.Ranker r, Memory memory);
@@ -262,6 +320,7 @@ public interface BeliefTable extends TaskTable {
     }
 
 
+    /** TODO experimental and untested */
     class BeliefConfidenceAndCurrentTime implements Ranker {
 
         private final Concept concept;
