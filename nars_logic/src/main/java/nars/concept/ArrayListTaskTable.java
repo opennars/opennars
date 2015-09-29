@@ -4,6 +4,11 @@ import javolution.util.function.Equality;
 import nars.task.Task;
 import nars.util.data.list.FasterList;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
 /** implements a Task table suitable for Questions and Quests using an ArrayList.
  *  we use an ArrayList and not an ArrayDeque (which is seemingly ideal for the
  *  FIFO behavior) because we can iterate entries by numeric index avoiding
@@ -11,7 +16,7 @@ import nars.util.data.list.FasterList;
  *
  *
  */
-public class ArrayListTaskTable extends FasterList<Task> implements TaskTable {
+public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, Externalizable {
 
     protected int cap;
 
@@ -22,6 +27,24 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable {
     public ArrayListTaskTable(int cap) {
         super(cap);
         setCapacity(cap);
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(cap);
+        out.writeInt(size());
+        for (int i = 0; i < size(); i++) {
+            out.writeObject(get(i));
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        setCapacity(in.readInt());
+        int n = in.readInt();
+        for (int i = 0; i < n; i++) {
+            this.add((Task)in.readObject());
+        }
     }
 
     @Override

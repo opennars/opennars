@@ -5,8 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import nars.NAR;
-import nars.guifx.space.TabXLazy;
 import nars.guifx.space.WebMap;
+import nars.guifx.util.TabXLazy;
 import nars.guifx.wikipedia.NARWikiBrowser;
 import nars.io.in.LibraryInput;
 

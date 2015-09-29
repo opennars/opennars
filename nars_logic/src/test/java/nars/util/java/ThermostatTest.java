@@ -2,8 +2,7 @@ package nars.util.java;
 
 import nars.Global;
 import nars.NAR;
-import nars.concept.BeliefTable;
-import nars.nar.experimental.Equalized;
+import nars.nar.Default;
 
 import java.util.Random;
 
@@ -68,12 +67,7 @@ public class ThermostatTest  {
         Global.DEBUG = true;
         Global.EXIT_ON_EXCEPTION = true;
 
-        NAR n = new Equalized(1024, 2, 8) {
-            public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
-                return (c, b) ->
-                     new BeliefTable.BeliefConfidenceAndCurrentTime(c);
-            }
-        };
+        NAR n = new Default();
         //NAR n = new NAR(new Default().setInternalExperience(null));
 
         NALObjects nobj = new NALObjects(n);

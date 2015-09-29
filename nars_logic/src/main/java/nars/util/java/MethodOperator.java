@@ -67,12 +67,15 @@ public class MethodOperator extends TermFunction {
         }
 
         try {
+
+            //Object result = Invoker.invoke(instance, method.getName(), args); /** from Boon library */
+
             Object result = method.invoke(instance, args);
             if (feedback)
                 return termizer.term(result);
         } catch (Exception e) {
-            System.err.println(method + " <- " + instance);
-            System.err.println(Arrays.toString(args));
+            System.err.println(method + " <- " + instance + " (" + instance.getClass() + " =?= " + method.getDeclaringClass() + "\n\t<<< " + Arrays.toString(args));
+            nar.memory.eventError.emit(e);
             e.printStackTrace();
             return termizer.term(e);
         }

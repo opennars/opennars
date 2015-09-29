@@ -10,7 +10,6 @@ import nars.bag.impl.MapCacheBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.concept.AtomConcept;
-import nars.concept.BeliefTable;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
 import nars.link.TLink;
@@ -187,7 +186,6 @@ public abstract class AbstractAlann extends NAR {
         else {
             c = new DefaultConcept(t, b,
                     taskLinks, termLinks,
-                    newConceptBeliefGoalRanking(),
                     memory
             );
         }
@@ -196,9 +194,6 @@ public abstract class AbstractAlann extends NAR {
         return c;
     }
 
-    private BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
-        return null;
-    }
 
 
     public Concept newConcept(final Term t, final Budget b, final Memory m) {

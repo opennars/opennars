@@ -507,7 +507,12 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     @Override
     final public int hashCode() {
-        return contentHash;
+        int ch = this.contentHash;
+        if (ch == 0) {
+            rehash();
+            ch = this.contentHash;
+        }
+        return ch;
     }
 
 //    public final void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {

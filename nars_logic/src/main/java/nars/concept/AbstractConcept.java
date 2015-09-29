@@ -16,8 +16,8 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
     protected final Term term;
 
     final long creationTime;
-    private Map<Object, Object> meta = null;
-    private boolean constant = false;
+    Map<Object, Object> meta = null;
+    boolean constant = false;
 
     @Deprecated protected transient final Memory memory;
 

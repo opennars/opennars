@@ -1,10 +1,12 @@
 package nars.util.java;
 
+import com.google.common.collect.Lists;
 import junit.framework.TestCase;
 import nars.NAR;
 import nars.meter.EventCount;
 import nars.nar.Default;
 import nars.term.Atom;
+import nars.term.Term;
 import org.junit.Test;
 
 import java.io.PrintWriter;
@@ -18,11 +20,18 @@ public class NALObjectsTest extends TestCase {
 
     public static class TestClass {
 
+        public int count = 0;
+        public int val = -1;
+
+
         public double the() {
-            return Math.random();
+            double v = (64 * Math.random());
+            this.val = (int)v;
+            return v;
         }
 
         public void noParamMethodReturningVoid() {
+            count++;
             //System.out.println("base call");
             //return Math.random();
         }
@@ -75,6 +84,8 @@ public class NALObjectsTest extends TestCase {
         n.trace(new PrintWriter(ns = new StringWriter()));
         m.trace(new PrintWriter(ms = new StringWriter()));
 
+        n.stdout();
+
         n.input("TestClass_multiply(" + instance + ", 2, 3, #x)!");
 
         n.frame(16);
@@ -88,9 +99,48 @@ public class NALObjectsTest extends TestCase {
         //System.out.println();
         //System.out.println(ms.getBuffer().toString());
 
-        String expect = "IN: <\"6.0\" --> (/, ^TestClass_multiply, obj, \"2.0\", \"3.0\", _)>. :|: %1.00;";
+        String expect = "<{6} --> (/, ^TestClass_multiply, obj, 2, 3, _)>.";
         assertTrue(ns.getBuffer().toString().contains(expect));
         assertTrue(ms.getBuffer().toString().contains(expect));
     }
 
+    @Test public void testTermizerPrimitives() {
+
+        testTermizer(null);
+
+        testTermizer(0);
+        testTermizer(3.14159);
+
+        testTermizer('a');
+
+        testTermizer("a b c"); //should result in quoted
+    }
+
+    @Test public void testTermizerBoxed() {
+        testTermizer(new Integer(1));
+        testTermizer(new Float(3.14159));
+    }
+    @Test public void testTermizerCollections() {
+        testTermizer(Lists.newArrayList("x", "y"));
+    }
+    @Test public void testTermizerArray() {
+        testTermizer(new String[] { "x", "y" } );
+    }
+
+    private void testTermizer(Object o) {
+        DefaultTermizer t = new DefaultTermizer();
+        Term term = t.term(o);
+        assertNotNull(term);
+        Object p = t.object(term);
+
+        System.out.println(t.objects);
+
+        if (o!=null)
+            assertEquals(p, o);
+        else
+            assertNull(p==null ? "('null' value)" : p.getClass().toString(),
+                       p);
+
+
+    }
 }

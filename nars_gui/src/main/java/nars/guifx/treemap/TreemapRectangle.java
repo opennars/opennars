@@ -6,6 +6,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * @author Tadas Subonis <tadas.subonis@gmail.com>
  */
@@ -19,15 +21,20 @@ class TreemapRectangle extends Parent {
     public TreemapRectangle(final TreemapDtoElement child, Color color) {
         super();
 
+
+
         rectangle.setHeight(child.getHeight());
         rectangle.setWidth(child.getWidth());
+
         /*(rectangle.addEventHandler(MouseEvent.MOUSE_ENTERED, new HoverOnEventHandler());
         rectangle.addEventHandler(MouseEvent.MOUSE_EXITED, new HoverOffEventHandler());*/
         rectangleColor = color;
         rectangle.setFill(rectangleColor);
-        this.getChildren().setAll(rectangle, new Label(child.getLabel()));
 
-        Tooltip.install(this, new NodeTooltip(child));
+        runLater(() -> {
+            this.getChildren().setAll(rectangle, new Label(child.getLabel()));
+            Tooltip.install(rectangle, new NodeTooltip(child));
+        });
 
     }
 

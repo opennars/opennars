@@ -60,6 +60,7 @@ public class DefaultConcept extends AtomConcept {
     };
 
 
+
     /**
      * Constructor, called in Memory.getConcept only
      *  @param term      A term corresponding to the concept
@@ -68,12 +69,11 @@ public class DefaultConcept extends AtomConcept {
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, BeliefTable.RankBuilder rb, final Memory memory) {
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(term, b, termLinks, taskLinks, memory);
 
-
-        this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue(), rb.get(this, true));
-        this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue(), rb.get(this, false));
+        this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue());
+        this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue());
 
         final int maxQuestions = memory.conceptQuestionsMax.intValue();
         this.questions = new ArrayListTaskTable(maxQuestions);
@@ -282,7 +282,7 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
-        final Task newSolution = add(getBeliefs(), belief, getBeliefs().getRank(), this, nal);
+        final Task newSolution = add(getBeliefs(), belief, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
 
         //TODO only apply solutions to questions if either beliefs or question have changed
         if (newSolution != null && !newSolution.isDeleted()) {
@@ -327,7 +327,7 @@ public class DefaultConcept extends AtomConcept {
 
         final float successBefore = getSuccess();
 
-        final Task newSolution = add(getGoals(), goal, getGoals().getRank(), this, nal);
+        final Task newSolution = add(getGoals(), goal, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
 
         if (newSolution==null) {
             return false;

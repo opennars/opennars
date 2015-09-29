@@ -95,8 +95,10 @@ public class TaskProcess extends NAL {
      *  can be created at the concept of its term
      */
     public boolean link(Concept c, Task t) {
+
         if (linkTask(c, t))
             return linkTerms(c, t.getBudget(), true);  // recursively insert TermLink
+
         return false;
     }
 
@@ -234,6 +236,8 @@ public class TaskProcess extends NAL {
      */
     protected boolean linkTask(final Concept c, final Task task) {
 
+        if (task.isDeleted()) return false;
+
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
         final TaskLinkBuilder taskLinkBuilder = c.getTaskLinkBuilder();
 
@@ -321,8 +325,6 @@ public class TaskProcess extends NAL {
 
         final Task task = getTask();
 
-
-
         //share the same Term instance for fast comparison and reduced memory usage (via GC)
         task.setTermShared((Compound) c.getTerm());
 
@@ -342,29 +344,31 @@ public class TaskProcess extends NAL {
 
                 if (!c.processGoal(this, task))
                     return false;
-                logicMeter.GOAL_PROCESS.hit();
 
+                logicMeter.GOAL_PROCESS.hit();
                 break;
 
             case Symbols.QUESTION:
 
-                c.processQuest(this, task);
-                logicMeter.QUESTION_PROCESS.hit();
+                if (c.processQuestion(this, task)==null)
+                    return false;
 
+                logicMeter.QUESTION_PROCESS.hit();
                 break;
 
             case Symbols.QUEST:
 
-                c.processQuestion(this, task);
-                logicMeter.QUESTION_PROCESS.hit();
+                if (c.processQuest(this, task)==null)
+                    return false;
 
+                logicMeter.QUESTION_PROCESS.hit();
                 break;
 
-            default: throw new RuntimeException("Invalid sentence type: " + task);
+            default:
+                throw new RuntimeException("Invalid sentence type: " + task);
         }
 
         return true;
-
     }
 
 

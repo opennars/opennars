@@ -1,5 +1,7 @@
 package nars.util.java;
 
+import com.gs.collections.impl.bimap.mutable.HashBiMap;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.term.Atom;
 import nars.term.Term;
@@ -16,13 +18,15 @@ public class DefaultTermizer implements Termizer {
     final Map<Package, Atom> packages = new HashMap();
     final Map<Class, Term> classes = new HashMap();
 
-    final Map<Object, Term> objects = new HashMap();
-    final Map<Term, Object> termed = new HashMap();
+    final HashBiMap<Object, Term> objects = new HashBiMap<>();
+
 
 
     @Override
     public Object object(final Term t) {
-        Object x = termed.get(t);
+        if (t == NULL) return null;
+
+        Object x = objects.inverse().get(t);
         if (x == null) {
             //compute it
             if (t instanceof Atom) {
@@ -38,24 +42,27 @@ public class DefaultTermizer implements Termizer {
                 x = null;
             }
 
-            termed.put(t, x);
+            objects.put(x, t);
         }
         return x;
     }
 
 
-    Term _term(Object o) {
-        if (o == null) return NULL;
-        if (o instanceof String) {
+    Term constructTerm(Object o) {
+
+        if (o == null)
+            return NULL;
+
+        if (o instanceof String)
             return Atom.the((String) o, true);
-        }
-        if (o instanceof Boolean) {
-            boolean b = (Boolean) o;
-            if (b) return TRUE;
-            else return FALSE;
-        } else if (o instanceof Number) {
+
+        if (o instanceof Boolean)
+            return ((Boolean) o) ? TRUE : FALSE;
+
+        if (o instanceof Number)
             return Atom.the((Number) o);
-        } else if (o instanceof Class) {
+
+        if (o instanceof Class) {
             Class oc = (Class) o;
             String cname = oc.getSimpleName();
             if (cname.isEmpty()) cname = oc.getName();
@@ -76,7 +83,8 @@ public class DefaultTermizer implements Termizer {
             }
             return Atom.the("primitive");
         } else if (o instanceof int[]) {
-            final List<Term> arg = Arrays.stream((int[]) o).boxed().map(e -> term(e)).collect(Collectors.toList());
+            final List<Term> arg = Arrays.stream((int[]) o)
+                    .mapToObj(e -> Atom.the(e)).collect(Collectors.toList());
             if (arg.isEmpty()) return EMPTY;
             return Product.make(
                     arg
@@ -96,6 +104,14 @@ public class DefaultTermizer implements Termizer {
         /*} else if (o instanceof Stream) {
             return Atom.quote(o.toString().substring(17));
         }*/
+        } else if (o instanceof Set) {
+            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> term(e)).collect(Collectors.toList());
+            if (arg.isEmpty()) return EMPTY;
+            return SetExt.make(arg);
+        } else if (o instanceof Map) {
+            Collection<Term> arg = (Collection<Term>) ((Collection) o).stream().map(e -> term(e)).collect(Collectors.toList());
+            if (arg.isEmpty()) return EMPTY;
+            return SetExt.make(arg);
         }
 
         Term i = Atom.the(instanceString(o));
@@ -147,14 +163,14 @@ public class DefaultTermizer implements Termizer {
         if (oo == null) {
 
 
-            Term oterm = _term(o);
+            Term oterm = constructTerm(o);
 
             Term clas = classes.get(o.getClass());
             if (clas == null) {
-                clas = _term(o.getClass());
+                clas = constructTerm(o.getClass());
             }
 
-            onInstanceOfClass(oterm, clas);
+            onInstanceOfClass(o, oterm, clas);
 
             oo = oterm;
 
@@ -190,7 +206,11 @@ public class DefaultTermizer implements Termizer {
 
     }
 
-    protected void onInstanceOfClass(Term oterm, Term clas) {
+    protected void onInstanceOfClass(Object o, Term oterm, Term clas) {
 
+    }
+
+    public int numInstances() {
+        return objects.size();
     }
 }

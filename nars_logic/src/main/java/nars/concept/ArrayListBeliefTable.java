@@ -9,22 +9,16 @@ import nars.task.Task;
  */
 public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTable {
 
-    private Ranker rank;
 
     public ArrayListBeliefTable() {
         super();
-        rank = null;
     }
 
-    public ArrayListBeliefTable(int cap, Ranker rank) {
+    public ArrayListBeliefTable(int cap) {
         super(cap);
-        this.rank = rank;
     }
 
-    @Override
-    public final Ranker getRank() {
-        return rank;
-    }
+
 
 //    @Override
 //    public Task top(boolean hasQueryVar, long now, long occTime, Truth truth) {

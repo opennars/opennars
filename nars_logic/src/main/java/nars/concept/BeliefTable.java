@@ -38,8 +38,6 @@ public interface BeliefTable extends TaskTable {
 
     Task addRevised(Task input, BeliefTable.Ranker rank, Premise nal);
 
-    /** the default rank used when adding and other operations where rank is unspecified */
-    Ranker getRank();
 
 //    /**
 //     * projects to a new task at a given time
@@ -242,10 +240,7 @@ public interface BeliefTable extends TaskTable {
 
     }
 
-    @FunctionalInterface
-    interface RankBuilder {
-        Ranker get(Concept c, boolean /*true*/ beliefOrGoal /*false*/);
-    }
+
 
     /** allowed to return null. must evaluate all items in case the final one is the
      *  only item that does not have disqualifying rank (MIN_VALUE)
@@ -265,16 +260,6 @@ public interface BeliefTable extends TaskTable {
 
         return b;
     }
-
-    default Task topRanked() {
-        return top(getRank());
-    }
-
-
-
-
-
-
 
 
     class BeliefConfidenceAndCurrentTime implements Ranker {

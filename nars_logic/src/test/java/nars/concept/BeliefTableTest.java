@@ -15,11 +15,8 @@ import org.junit.Test;
 public class BeliefTableTest extends TestCase {
 
 
-    public NAR newNAR(int maxBeliefs) {
-        return newNAR(maxBeliefs, null);
-    }
 
-    public NAR newNAR(int maxBeliefs, BeliefTable.RankBuilder rb) {
+    public NAR newNAR(int maxBeliefs) {
         Default d = new Default() {
 
             /*

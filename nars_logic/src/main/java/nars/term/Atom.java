@@ -175,9 +175,36 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return x;
     }
     public final static Atom the(Number o) {
+
+        if (o instanceof Byte) return the(o.intValue());
         if (o instanceof Short) return the(o.intValue());
         if (o instanceof Integer) return the(o.intValue());
+
+        if (o instanceof Long) return the(o.toString());
+
+        if ((o instanceof Float) || (o instanceof Double)) return the(o.floatValue());
+
         return the(o.toString(), true);
+    }
+
+    /** gets the atomic term of an integer */
+    public final static Atom the(final int i) {
+        //fast lookup for single digits
+        if ((i >= 0) && (i <= 9)) {
+            Atom a = digits[i];
+            if (a == null)
+                a = digits[i] = the(Integer.toString(i));
+            return a;
+        }
+        return the(Integer.toString(i), false);
+    }
+
+    public final static Atom the(final float v) {
+        if (Util.isEqual( (float)Math.floor(v), v, Float.MIN_VALUE*2 )) {
+            //close enough to be an int, so it doesnt need to be quoted
+            return the((int)v);
+        }
+        return the(Float.toString(v));
     }
 
     /** gets the atomic term given a name */
@@ -214,17 +241,6 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
 
     final static Atom[] digits = new Atom[10];
 
-    /** gets the atomic term of an integer */
-    public final static Atom the(final int i) {
-        //fast lookup for single digits
-        if ((i >= 0) && (i <= 9)) {
-            Atom a = digits[i];
-            if (a == null)
-                a = digits[i] = the(Integer.toString(i));
-            return a;
-        }
-        return the(Integer.toString(i), true);
-    }
 
 
 

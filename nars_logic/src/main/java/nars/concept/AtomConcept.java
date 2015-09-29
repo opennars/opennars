@@ -117,10 +117,6 @@ public class AtomConcept extends AbstractConcept {
             return null;
         }
 
-        @Override
-        public Ranker getRank() {
-            return null;
-        }
 
         @Override
         public Task top(boolean eternal, boolean temporal) {

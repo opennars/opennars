@@ -71,7 +71,10 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
     }
 
     @Override
-    protected void onInstanceOfClass(Term oterm, Term clas) {
+    protected void onInstanceOfClass(Object instance, Term oterm, Term clas) {
+        /** only point to type if non-numeric? */
+        //if (!Primitives.isWrapperType(instance.getClass()))
+
         nar.believe(Instance.make(oterm, clas));
     }
 

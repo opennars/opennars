@@ -10,7 +10,10 @@ import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.clock.CycleClock;
-import nars.concept.*;
+import nars.concept.AtomConcept;
+import nars.concept.Concept;
+import nars.concept.ConceptActivator;
+import nars.concept.DefaultConcept;
 import nars.event.CycleReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -344,15 +347,7 @@ public class SingleStepNAR extends NAR {
 
         }
     }
-    /**
-     * rank function used for concept belief and goal tables
-     */
-    public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
-        return (c, b) ->
-                BeliefTable.BeliefConfidenceOrOriginality;
-        //new BeliefTable.BeliefConfidenceAndCurrentTime(c);
 
-    }
 
     public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
 
@@ -363,7 +358,6 @@ public class SingleStepNAR extends NAR {
         else {
             return new DefaultConcept(t, b,
                     taskLinks, termLinks,
-                    newConceptBeliefGoalRanking(),
                     m
             );
         }
