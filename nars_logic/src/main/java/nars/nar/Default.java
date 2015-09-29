@@ -234,7 +234,7 @@ public class Default extends NAR {
 
         m.conceptBeliefsMax.set(11);
         m.conceptGoalsMax.set(5);
-        m.conceptQuestionsMax.set(4);
+        m.conceptQuestionsMax.set(1);
         m.activeConceptThreshold.set(0.0);
         m.questionFromGoalThreshold.set(0.35);
         m.taskProcessThreshold.set(Global.BUDGET_EPSILON * 2);
