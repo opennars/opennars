@@ -41,6 +41,9 @@ public class TaskRule extends Rule<Premise, Task> {
 
     boolean allowBackward = false;
 
+    /** maximum of the minimum NAL levels involved in the postconditions of this rule */
+    public int minNAL = 0;
+
     public Product getPremises() {
         return (Product) term(0);
     }

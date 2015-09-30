@@ -122,48 +122,48 @@ public class SimpleDeriver extends Deriver  {
     }
 
     public Stream<Task> forEachRuleExhaustive(final RuleMatch match) {
-        return match.run(rules);
+        return match.run(rules, match.premise.nal());
     }
 
     public Stream<Task> forEachRuleByType(final RuleMatch match) {
 
-        //final Term taskTerm = match.premise.getTask().getTerm();
 
         final Term taskTerm = match.taskBelief.term(0);
-        final Term beliefTerm = match.taskBelief.term(1); //belief!=null ? belief.getTerm() : null;
+        final Term beliefTerm = match.taskBelief.term(1);
 
-        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.op());
-
-        //final Task belief = match.premise.getBelief();
 
         Stream.Builder<Stream<Task>> sb = Stream.builder();
 
+        final int n = match.premise.nal();
+
+
+        EnumMap<Op, List<TaskRule>> taskSpecific = taskTypeMap.get(taskTerm.op());
         if (taskSpecific!=null) {
 
 
             // <T>,<B>
             List<TaskRule> u = taskSpecific.get(beliefTerm.op());
             if (u != null)
-                sb.accept( match.run(u) );
+                sb.accept( match.run(u, n) );
 
 
             // <T>,%
             List<TaskRule> taskSpecificBeliefAny = taskSpecific.get(Op.VAR_PATTERN);
             if (taskSpecificBeliefAny != null)
-                sb.accept( match.run(taskSpecificBeliefAny) );
+                sb.accept( match.run(taskSpecificBeliefAny, n) );
         }
 
 
         // %,<B>
         List<TaskRule> beliefSpecific = beliefTypeMap.get(beliefTerm.op());
         if (beliefSpecific!=null)
-            sb.accept( match.run( beliefSpecific) );
+            sb.accept( match.run( beliefSpecific, n) );
 
 
         // %,%
         List<TaskRule> bAny = beliefTypeMap.get(Op.VAR_PATTERN);
         if (bAny!=null)
-            sb.accept( match.run(bAny) );
+            sb.accept( match.run(bAny, n) );
 
         return sb.build().flatMap(s->s);
     }

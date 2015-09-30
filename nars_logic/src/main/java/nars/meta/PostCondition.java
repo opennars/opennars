@@ -27,6 +27,7 @@ public class PostCondition implements Serializable //since there can be multiple
         this.afterConclusions = afterConclusions;
         this.truth = truth;
         this.desire = desire;
+        this.minNAL = term.op().minLevel;
     }
 
     public final Term term;
@@ -42,6 +43,9 @@ public class PostCondition implements Serializable //since there can be multiple
     public final DesireFunction desire;
     public boolean negate = false;
 
+
+    /** minimum NAL level necessary to involve this postcondition */
+    public final int minNAL;
 
     public static final Set<Atom> reservedMetaInfoCategories = new HashSet(6);
 
@@ -162,8 +166,12 @@ public class PostCondition implements Serializable //since there can be multiple
         PostCondition pc = new PostCondition(term, modifiers, beforeConclusions, afterConclusions, judgmentTruth, goalTruth);
         pc.negate = negate;
         pc.puncOverride = puncOverride;
-        if (pc.valid(rule))
+        if (pc.valid(rule)) {
             return pc;
+        }
+
+
+
         return null;
 
 
@@ -177,6 +185,8 @@ public class PostCondition implements Serializable //since there can be multiple
                 (rule.getBeliefTermPattern().equals(term)))
                 return false;
         }
+
+        rule.minNAL = Math.max(rule.minNAL, minNAL);
 
         return true;
     }

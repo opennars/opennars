@@ -3,7 +3,6 @@ package nars.term;
 import nars.Global;
 import nars.Memory;
 import nars.Op;
-import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -20,14 +19,12 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.task.Sentence;
 import nars.util.data.sorted.SortedList;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
-import java.util.function.Predicate;
 
 /**
  * Static utility class for static methods related to Terms
@@ -480,21 +477,22 @@ public class Terms {
 //        return false;
 //    }
 
-    public static final Predicate<? super TaskRule> levelValid(int nalLevel) {
-        return (t) -> Terms.levelValid(t, nalLevel);
+//    public static final Predicate<? super TaskRule> levelValid(int nalLevel) {
+//        return (t) -> Terms.levelValid(t, nalLevel);
+//    }
+
+
+    public static boolean levelValid(Termed t, int nal) {
+        return t.getTerm().levelValid(nal);
     }
 
-    public static boolean levelValid(Term t, int nal) {
-        return t.levelValid(nal);
-    }
-
-    public static boolean levelValid(Sentence sentence, int nal) {
-        if (nal >= 8) return true;
-
-        Term t = sentence.getTerm();
-        if (!sentence.isEternal() && nal < 7) return false;
-        return levelValid(t, nal);
-    }
+//    public static boolean levelValid(Sentence sentence, int nal) {
+//        if (nal >= 8) return true;
+//
+//        Term t = sentence.getTerm();
+//        if (!sentence.isEternal() && (nal < 7)) return false;
+//        return levelValid(t, nal);
+//    }
 
 //    /**
 //     * Make a Statement from given components, called by the rules

@@ -92,7 +92,7 @@ final public class Global {
 
 
     /** minimum difference necessary to indicate a significant modification in budget float number components */
-    public static float BUDGET_EPSILON = 0.01f;
+    public static float BUDGET_EPSILON = 0.001f;
 
 
 //    /* ---------- default input values ---------- */
@@ -104,7 +104,7 @@ final public class Global {
     /** Default priority of input judgment */
     public static float DEFAULT_JUDGMENT_PRIORITY = 0.5f;
     /** Default durability of input judgment */
-    public static float DEFAULT_JUDGMENT_DURABILITY = 0.5f; //was 0.8 in 1.5.5; 0.5 after
+    public static float DEFAULT_JUDGMENT_DURABILITY = 0.8f; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
     public static final float DEFAULT_QUESTION_PRIORITY = 0.5f;
     /** Default durability of input question */

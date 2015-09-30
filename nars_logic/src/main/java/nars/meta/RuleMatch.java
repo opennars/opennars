@@ -238,21 +238,39 @@ public class RuleMatch extends FindSubst {
         if (deriving != null) {
 
 
-
-            deriving
-                .punctuation(punct)
-                .truth(truth)
-                .budget(budget);
-
-            if (occurence_shift!=Stamp.TIMELESS) //!t.isEternal()) {
-                deriving.occurr(/*t.getOccurrenceTime()*/  occurence_shift);
-
-
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
-            deriving.parent(task, single ? null : belief);
+            final long now = premise.time();
+            final long occ;
 
-            final Task derived = premise.validate(deriving);
+            if (occurence_shift!=Stamp.TIMELESS) {//!t.isEternal()) {
+
+
+                //verify some conditions which should not produce a temporal task
+//                /*if (Global.DEBUG) */        {
+//
+//                    if ((single && task.isEternal()) ||
+//                            (!single && (task.isEternal() && belief.isEternal())
+//                            )) {
+//                        throw new RuntimeException("derived temporal task from eternal parents: " + task);
+//                    }
+//                }
+
+
+                occ = now + occurence_shift;
+            }
+            else {
+                occ = Stamp.ETERNAL;
+            }
+
+            final Task derived = premise.validate( deriving
+                .punctuation(punct)
+                .truth(truth)
+                .budget(budget)
+                .time(now, occ)
+                .parent(task, single ? null : belief)
+            );
+
             if (derived!=null) {
                 if (Global.DEBUG) {
                     derived.log(rule.toString());
@@ -375,13 +393,16 @@ public class RuleMatch extends FindSubst {
     }
 
 
-    public Stream<Task> run(final List<TaskRule> u) {
-        return run(u.stream());
+    public Stream<Task> run(final List<TaskRule> u, final int nal) {
+        return run(u.stream(), nal);
     }
 
-    public Stream<Task> run(final Stream<TaskRule> trs) {
-        return trs.map(r -> run(r)).flatMap(p ->
-                Stream.of(p)).map(p -> apply(p)).filter(t->t!=null);
+    public Stream<Task> run(final Stream<TaskRule> rules, final int nal) {
+        return rules.
+                    map(r -> run(r)).flatMap(p -> Stream.of(p)).
+                    filter( r -> r.minNAL <= nal ).
+                    map(p -> apply(p)).
+                    filter(t->t!=null);
     }
 
     final private static PostCondition[] abortDerivation = new PostCondition[0];
