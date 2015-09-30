@@ -120,10 +120,11 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
     @Override
     public Task addRevised(Task revised, Ranker rank, Premise nal) {
         /** insert into array table */
-        add(revised, rank, nal.memory());
+        if (add(revised, rank, nal.memory())) {
 
-        /** input derived task */
-        nal.nar().input(revised);
+            /** input derived task */
+            nal.nar().input(revised);
+        }
         //ALTERNATELY: TaskProcess.run(nar, revised);
 
         return revised;
@@ -153,7 +154,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             if (i == siz) {
                 //reached the end of the list and there is no room to add at the end
                 memory.remove(input, "Unbelievable/Undesirable");
-                return true;
             } else {
                 Task removed = remove(siz - 1);
                 memory.remove(removed, "Forgotten");

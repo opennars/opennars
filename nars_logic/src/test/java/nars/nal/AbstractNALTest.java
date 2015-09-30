@@ -16,14 +16,14 @@ import java.util.function.Supplier;
 abstract public class AbstractNALTest {
 
     public static final List<Supplier<NAR>> core1 = Lists.newArrayList(
-            () -> new Default().nal(2)
+            () -> new Default().nal(1)
     );
     public static final List<Supplier<NAR>> core2 = Lists.newArrayList(
             /** for some reason, NAL2 tests require nal(3) level */
             () -> new Default().nal(3)
     );
     public static final List<Supplier<NAR>> core3 = Lists.newArrayList(
-            () -> new Default().nal(4)
+            () -> new Default().nal(3)
     );
     public static final List<Supplier<NAR>> core4 = Lists.newArrayList(
             () -> new Default().nal(4)

@@ -38,14 +38,10 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     int capacity;
     private final Random rng;
-    /**
-     * current sum of occupied level
-     */
-    private float mass;
-
 
     private final CurveBag.BagCurve curve;
 
+    //TODO make these proportional to capacity
     //sort iterations
     final int sortPrecision = 16;
     //# of max moves per iteration before ending it
@@ -87,7 +83,6 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         @Override
         protected E removeItem(final E removed) {
             if (items.remove(removed)) {
-                mass -= removed.getPriority();
                 return removed;
             }
             return null;
@@ -227,18 +222,13 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         index = new HeapMap(capacity);
 
-        this.mass = 0;
     }
 
 
     @Override
     public final void clear() {
-        /*synchronized (nameTable)*/
-        {
-            items.clear();
-            index.clear();
-            mass = 0;
-        }
+        items.clear();
+        index.clear();
     }
 
     /**
@@ -414,20 +404,20 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
             //insert
             index.put(i);
 
-            mass += i.getPriority();
+
 
             return oldItem;
         } else if (contains) {
             //TODO check this mass calculation
             /*E existingToReplace = */
             index.put(i);
-            mass += i.getPriority();
+
             return null;
         } else /* if (!contains) */ {
             E shouldNotExist = index.put(i);
             if (shouldNotExist != null)
                 throw new RuntimeException("already expected no existing key/item but it was actually there");
-            mass += i.getPriority();
+
             return null;
         }
 

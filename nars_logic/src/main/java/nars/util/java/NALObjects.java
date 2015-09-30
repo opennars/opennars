@@ -120,6 +120,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         nar.goal(
                 Operation.op(Product.make(instancePlusArgs), op),
+                Tense.Present,
                 1f, 0.9f);
 
 

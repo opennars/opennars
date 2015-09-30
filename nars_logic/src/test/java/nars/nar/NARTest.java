@@ -87,7 +87,7 @@ public class NARTest {
                 .onEachCycle( n -> cycCount.incrementAndGet() )
                 .trace(sw)
                 .run(frames)
-                .forEachConceptTask(true, true, true, true, 1, System.out::println );
+                .forEachConceptTask(true, true, true, true, false, 1, System.out::println );
 
         //System.out.println(sw.getBuffer());
         assertTrue(sw.toString().length() > 16);

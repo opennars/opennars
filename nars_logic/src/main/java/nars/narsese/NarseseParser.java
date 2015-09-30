@@ -35,10 +35,7 @@ import nars.task.DefaultTask;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
@@ -389,9 +386,6 @@ public class NarseseParser extends BaseParser<Object>  {
         return sequence(anyOf(".?!@;"), punc.set(matchedChar()));
     }
 
-    static Term the(Term predicate, Op op, Term subject) {
-        return Memory.term(op, subject, predicate);
-    }
 
     Rule NonOperationTerm() {
         return Term(false, false);
@@ -944,7 +938,7 @@ public class NarseseParser extends BaseParser<Object>  {
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return Memory.term(op, va);
+            return Terms.term(op, va);
         }
     }
 

@@ -12,7 +12,6 @@ import nars.task.filter.FilterDuplicateExistingBelief;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Terms;
 import nars.truth.DefaultTruth;
 
 import java.util.ArrayList;
@@ -296,9 +295,8 @@ public interface Premise {
      * at the end of the processing they can be reviewed and filtered
      * then they need to be added to memory with inputTask(t)
      * <p>
-     * if solution is false, it means it is a derivation
      */
-    default Task validDerivation(Task task) {
+    default Task validate(Task task) {
 
         final Memory memory = nar().memory();
 
@@ -316,31 +314,26 @@ public interface Premise {
             return null;
         }
 
-        if (!Terms.levelValid(task.getTerm(), nal())) {
-            //TODO throw exception because we dont want this to happen
-            memory.remove(task, "Insufficient NAL level");
-            return null;
-        }
 
-        if (nal(7)) {
-            //adjust occurence time
-            final Task parent = task.getParentTask();
-            if (task.isTimeless()) {
-                final long o;
-                if (parent != null && !parent.isEternal())
-                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
-                else
-                    o = Stamp.ETERNAL; //default ETERNAL
-
-                task.setOccurrenceTime(o);
-            }
-        } else {
-            if (task.isTimeless()) {
-                task.setEternal();
-            } else if (!task.isEternal()) {
-                throw new RuntimeException("non-eternal Task derived in non-temporal mode");
-            }
-        }
+//        if (nal(7)) {
+//            //adjust occurence time
+//            final Task parent = task.getParentTask();
+//            if (task.isTimeless()) {
+//                final long o;
+//                if (parent != null && !parent.isEternal())
+//                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
+//                else
+//                    o = Stamp.ETERNAL; //default ETERNAL
+//
+//                task.setOccurrenceTime(o);
+//            }
+//        } else {
+//            if (task.isTimeless()) {
+//                task.setEternal();
+//            } else if (!task.isEternal()) {
+//                throw new RuntimeException("non-eternal Task derived in non-temporal mode");
+//            }
+//        }
 
         //taskCreated.setTemporalInducting(false);
 
@@ -473,7 +466,7 @@ public interface Premise {
     }
 
     default Task input(Task t) {
-        if (((t = validDerivation(t))!=null)) {
+        if (((t = validate(t))!=null)) {
             nar().input(t);
             return t;
         }

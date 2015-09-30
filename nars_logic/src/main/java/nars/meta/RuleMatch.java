@@ -252,7 +252,7 @@ public class RuleMatch extends FindSubst {
 
             deriving.parent(task, single ? null : belief);
 
-            final Task derived = premise.validDerivation(deriving);
+            final Task derived = premise.validate(deriving);
             if (derived!=null) {
                 if (Global.DEBUG) {
                     derived.log(rule.toString());

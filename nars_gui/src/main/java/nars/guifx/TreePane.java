@@ -144,14 +144,16 @@ public class TreePane extends BorderPane {
     }
 
 
+
     protected void update() {
 
         if (!ready.compareAndSet(true, false))
             return;
 
         synchronized (pendingTasks) {
+            final Set<Task> pendingTasks = this.pendingTasks;
             pendingTasks.clear();
-            nar.forEachTask(true, t -> {
+            nar.forEachConceptTask(true, true, true, true, false, 2, t -> {
                 if (visible(t))
                     pendingTasks.add(t);
                 else
@@ -178,10 +180,8 @@ public class TreePane extends BorderPane {
                     }
                 }
 
-                //new task
-                for (Task p : pendingTasks) {
-                    getItem(p);
-                }
+                //all which remain, update
+                pendingTasks.forEach(this::getItem);
             }
 
             tasks.entrySet().forEach(

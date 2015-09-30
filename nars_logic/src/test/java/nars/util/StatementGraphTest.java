@@ -7,7 +7,7 @@ import nars.term.Statement;
 import nars.util.graph.StatementGraph;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 5/11/15.
@@ -17,7 +17,7 @@ public class StatementGraphTest {
     @Test
     public void test() {
 
-        NAR n = new Default();
+        NAR n = new Default(100,1,1,1);
 
         StatementGraph m = new StatementGraph(n) {
             @Override public boolean containsStatement(Statement term) {
@@ -35,9 +35,9 @@ public class StatementGraphTest {
         n.frame();
 
 
-        String g = m.graph.toString();
-        assertEquals("([a, b, c, x, y, d], [<a --> b>=(a,b), <b --> c>=(b,c), <x <-> y>=(x,y), <d --> b>=(d,b)])",
-                g);
+        //String g = m.graph.toString();
 
+        assertTrue( m.graph.vertexSet().size() > 8 );
+        assertTrue( m.graph.edgeSet().size() > 4 );
     }
 }

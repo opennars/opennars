@@ -1,6 +1,7 @@
 package nars.util.java;
 
 import com.github.drapostolos.typeparser.TypeParser;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Atom;
@@ -103,7 +104,7 @@ public class MethodOperator extends TermFunction {
             System.err.println(e + ": " + Arrays.toString(args) + " for " + method);
 
             //create a task to never desire this
-            nar.goal(o, 0.0f, 0.9f);
+            nar.goal(o, Tense.Present, 0.0f, 0.9f);
 
             //return ERROR atom as feedback
             return ERROR;

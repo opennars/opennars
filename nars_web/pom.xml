@@ -35,10 +35,10 @@
     <dependencies>
 
 
-        <!--<dependency>-->
-            <!--<groupId>opennars</groupId>-->
-            <!--<artifactId>nars_util</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>opennars</groupId>
+            <artifactId>nars_util</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>opennars</groupId>

@@ -183,12 +183,12 @@ public enum Op implements Serializable {
             w.append(ch);
     }
 
-    public boolean has8BitRepresentation() {
+    public final boolean has8BitRepresentation() {
         return byt!=0;
     }
 
 
-    public static int bitStructure(final Op... o) {
+    public final static int bitStructure(final Op... o) {
         int bits = 0;
         for (Op n : o) {
             bits |= (1 << n.ordinal());
@@ -196,23 +196,15 @@ public enum Op implements Serializable {
         return bits;
     }
 
-    public boolean levelValid(final int nal) {
+    public final boolean levelValid(final int nal) {
         final int l = minLevel;
-
-        //if a minimum level is specified for the term..
-        if (l > ANY) {
-            //if nal is below the required minimum level
-            if (nal < l)
-                return false;
-        }
-
-        return true;
+        return (l == ANY) || (nal >= l);
     }
 
     /** specifier for any NAL level */
     public final static int ANY = 0;
 
-    public boolean isVar() {
+    public final boolean isVar() {
         return type == Op.OpType.Variable;
     }
 

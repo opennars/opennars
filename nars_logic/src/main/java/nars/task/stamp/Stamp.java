@@ -30,7 +30,8 @@ import nars.task.Sentence;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static nars.nal.nal7.TemporalRules.*;
+import static nars.nal.nal7.TemporalRules.ORDER_BACKWARD;
+import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
 
 /** TODO divide this into a Stamp and Timed interfaces,
  *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
@@ -70,6 +71,10 @@ public interface Stamp extends Cloneable, Serializable {
             c[j++] = a[i1++];
         }
         return c;
+    }
+
+    static long getOccurrenceTime(final Tense tense, Memory m) {
+        return getOccurrenceTime(m.time(), tense, m.duration());
     }
 
     static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {

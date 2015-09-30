@@ -27,22 +27,6 @@ import nars.clock.Clock;
 import nars.concept.Concept;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
-import nars.nal.nal1.Inheritance;
-import nars.nal.nal1.Negation;
-import nars.nal.nal2.Instance;
-import nars.nal.nal2.InstanceProperty;
-import nars.nal.nal2.Property;
-import nars.nal.nal2.Similarity;
-import nars.nal.nal3.*;
-import nars.nal.nal4.Image;
-import nars.nal.nal4.ImageExt;
-import nars.nal.nal4.ImageInt;
-import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunction;
-import nars.nal.nal5.Disjunction;
-import nars.nal.nal5.Equivalence;
-import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.ExecutionResult;
 import nars.nal.nal8.Operation;
 import nars.premise.Premise;
@@ -58,7 +42,6 @@ import nars.util.event.Topic;
 import nars.util.meter.ResourceMeter;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
@@ -66,11 +49,11 @@ import java.util.Set;
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
  * memory * clock * reasoner state * etc.
- *
+ * <p>
  * Excluding input/output channels which are managed by a NAR.
- *
+ * <p>
  * A memory is controlled by zero or one NAR's at a given time.
- *
+ * <p>
  * Memory is serializable so it can be persisted and transported.
  */
 public class Memory extends Param implements Serializable {
@@ -79,35 +62,40 @@ public class Memory extends Param implements Serializable {
 
     public final Random random;
 
-    @Deprecated transient public final EventEmitter<Class,Object[]> event;
+    @Deprecated
+    transient public final EventEmitter<Class, Object[]> event;
 
-    transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic();
-    transient public final Topic<ConceptProcess> eventConceptProcess = new DefaultTopic();
+    transient public final Topic<Task<?>> eventTaskRemoved = new DefaultTopic<>();
+    transient public final Topic<ConceptProcess> eventConceptProcess = new DefaultTopic<>();
 
-    transient public final Topic<Memory> eventReset = new DefaultTopic();
+    transient public final Topic<Memory> eventReset = new DefaultTopic<>();
 
-    transient public final Topic<Concept> eventConceptActivated = new DefaultTopic();
-    transient public final Topic<Concept> eventConceptForget = new DefaultTopic();
+    transient public final Topic<Concept> eventConceptActivated = new DefaultTopic<>();
+    transient public final Topic<Concept> eventConceptForget = new DefaultTopic<>();
 
-    //transient public final Topic<NAR> eventFrameStart = new DefaultTopic();
-    transient public final Topic<NAR> eventFrameEnd = new DefaultTopic();
+    //transient public final Topic<NAR> eventFrameStart = new DefaultTopic<>();
+    transient public final Topic<NAR> eventFrameEnd = new DefaultTopic<>();
 
     transient public final Topic<Memory>
             /** fired at the beginning of each memory cycle */
-            eventCycleStart = new DefaultTopic(),
-            /** fired at the end of each memory cycle */
-            /* @Deprecated  */ eventCycleEnd = new DefaultTopic(); //eventCycleStart; //new DefaultObserved();
+            eventCycleStart = new DefaultTopic<>(),
+    /**
+     * fired at the end of each memory cycle
+     */
+            /* @Deprecated  */ eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
 
     transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
 
 
-    /** used for reporting or informing outside. consists of additional notes
-        or data which could annotate a log or summary of system activity   */
+    /**
+     * used for reporting or informing outside. consists of additional notes
+     * or data which could annotate a log or summary of system activity
+     */
     transient public final Topic<Serializable> eventSpeak = new DefaultTopic<>();
 
     transient public final Topic<ExecutionResult> eventExecute = new DefaultTopic<>();
 
-    transient public final EventEmitter<Term,Task<Operation>> exe;
+    transient public final EventEmitter<Term, Task<Operation>> exe;
 
 
     transient public final EmotionMeter emotion;
@@ -123,30 +111,28 @@ public class Memory extends Param implements Serializable {
     //transient final ConceptBuilder conceptBuilder;
 
 
-
     public final Clock clock;
 
     public final CacheBag<Term, Concept> concepts;
 
 
-    protected int level;
+    int level;
 
-    protected long currentStampSerial = 1;
+    long currentStampSerial = 1;
     //protected  boolean inCycle = false;
 
 
     public transient final Topic<Task> eventInput = new DefaultTopic<>();
     public transient final Topic<Serializable> eventError = new DefaultTopic<>();
-    public transient final Topic<Task> eventDerived = new DefaultTopic();
+    public transient final Topic<Task> eventDerived = new DefaultTopic<>();
 
-    public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic();
+    public transient final Topic<Twin<Task>> eventAnswer = new DefaultTopic<>();
 
 
     /**
      * Create a new memory
-     *
      */
-    public Memory(Clock clock, Random rng, CacheBag<Term,Concept> concepts) {
+    public Memory(Clock clock, Random rng, CacheBag<Term, Concept> concepts) {
 
         this.random = rng;
 
@@ -171,133 +157,18 @@ public class Memory extends Param implements Serializable {
         this.resource = null; //new ResourceMeter();
         this.logic = new LogicMeter(this);
         this.emotion = new EmotionMeter(this);
-        emotion.commit();
-
 
     }
 
 
-
-    /**
-     * Try to make a compound term from a template and a list of term
-     *
-     * @param compound The template
-     * @param components The term
-     * @return A compound term or null
-     */
-    public static Term term(final Compound compound, final Term[] components) {
-        if (compound instanceof ImageExt) {
-            return new ImageExt(components, ((Image) compound).relationIndex);
-        } else if (compound instanceof ImageInt) {
-            return new ImageInt(components, ((Image) compound).relationIndex);
-        } else {
-            return term(compound.op(), components);
-        }
-    }
-
-    public static Term term(final Compound compound, Collection<Term> components) {
-        Term[] c = components.toArray(new Term[components.size()]);
-        return term(compound, c);
-    }
-
-    private static boolean ensureTermLength(int num, Term[] a) {
-        return (a.length==num);
-        /*if (a.length!=num)
-            throw new CompoundTerm.InvalidTermConstruction("Expected " + num + " args to create Term from " + Arrays.toString(a));*/
-    }
-
-    /**
-     * Try to make a compound term from an operate and a list of term
-     * <p>
-     * Called from StringParser
-     *
-     * @param op Term operate
-     * @return A term or null
-     */
-    public static Term term(final Op op, final Term... a) {
-
-
-        switch (op) {
-
-
-            case SET_EXT_OPENER:
-                return SetExt.make(a);
-            case SET_INT_OPENER:
-                return SetInt.make(a);
-            case INTERSECTION_EXT:
-                return IntersectionExt.make(a);
-            case INTERSECTION_INT:
-                return IntersectionInt.make(a);
-            case DIFFERENCE_EXT:
-                return DifferenceExt.make(a);
-            case DIFFERENCE_INT:
-                return DifferenceInt.make(a);
-            case PRODUCT:
-                return Product.make(a);
-            case IMAGE_EXT:
-                return ImageExt.make(a);
-            case IMAGE_INT:
-                return ImageInt.make(a);
-            case NEGATION:
-                return Negation.make(a);
-            case DISJUNCTION:
-                return Disjunction.make(a);
-            case CONJUNCTION:
-                return Conjunction.make(a);
-            case SEQUENCE:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
-            case PARALLEL:
-                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
-
-            //STATEMENTS --------------------------
-            case PROPERTY:
-                if (ensureTermLength(2, a)) return Property.make(a[0], a[1]); break;
-            case INSTANCE:
-                if (ensureTermLength(2, a)) return Instance.make(a[0], a[1]); break;
-            case INSTANCE_PROPERTY:
-                if (ensureTermLength(2, a)) return InstanceProperty.make(a[0], a[1]); break;
-
-            case INHERITANCE:
-                if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
-
-            case SIMILARITY:
-                if (ensureTermLength(2, a)) return Similarity.makeTerm(a[0], a[1]); break;
-
-            case IMPLICATION:
-                if (ensureTermLength(2, a)) return Implication.makeTerm(a[0], a[1]); break;
-            case IMPLICATION_AFTER:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
-            case IMPLICATION_BEFORE:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD); break;
-            case IMPLICATION_WHEN:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
-
-            case EQUIVALENCE:
-                if (ensureTermLength(2, a)) return Equivalence.makeTerm(a[0], a[1]); break;
-            case EQUIVALENCE_WHEN:
-                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
-            case EQUIVALENCE_AFTER:
-                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
-
-            default:
-                throw new RuntimeException("Unknown op: " + op + " (" + op.name() + ')');
-        }
-
-        return null;
-    }
-
-
-    public int nal() {
+    public final int nal() {
         return level;
     }
 
-    public void nal(int newLevel) {
+    public final void nal(int newLevel) {
         this.level = newLevel;
     }
 
-    public boolean nalAtleast(int isEqualToOrGreater) {
-        return nal() >= isEqualToOrGreater;
-    }
 
 //    public Concept concept(final String t) {
 //        return concept(Atom.the(t));
@@ -315,8 +186,7 @@ public class Memory extends Param implements Serializable {
 //    }
 
 
-
-    public Atom self() {
+    public final Atom self() {
         return self;
     }
 
@@ -327,13 +197,14 @@ public class Memory extends Param implements Serializable {
     /**
      * Entry point for all potentially executable tasks.
      * Enters a task and determine if there is a decision to execute.
+     *
      * @return number of invoked handlers
      */
-    public int execute(final Task goal) {
+    public final int execute(final Task goal) {
         Term term = goal.getTerm();
 
         if (term instanceof Operation) {
-            final Operation o = (Operation)term;
+            final Operation o = (Operation) term;
             return exe.emit(o.getOperator(), goal);
         }
         /*else {
@@ -351,9 +222,8 @@ public class Memory extends Param implements Serializable {
     }
 
 
-
+    @Override
     public synchronized void clear() {
-
 
 
         eventReset.emit(this);
@@ -372,20 +242,16 @@ public class Memory extends Param implements Serializable {
         emotion.clear();
 
 
-
     }
-
-
-
 
 
     /**
      * Get an existing (active OR forgotten) Concept identified
      * by the provided Term
      */
-    public Concept concept(Term t) {
+    public final Concept concept(Term t) {
         if (!t.isNormalized()) {
-            t = ((Compound)t).normalized();
+            t = ((Compound) t).normalized();
             if (t == null) return null;
         }
         return concepts.get(t);
@@ -398,9 +264,9 @@ public class Memory extends Param implements Serializable {
      * @param t The Term naming a concept
      * @return the priority value of the concept
      */
-    public float conceptPriority(final Term t, float valueForMissing) {
+    public final float conceptPriority(final Term t, float valueIfMissing) {
         final Concept c = concept(t);
-        return (c == null) ? valueForMissing : c.getPriority();
+        return (c == null) ? valueIfMissing : c.getPriority();
     }
 
 
@@ -410,7 +276,7 @@ public class Memory extends Param implements Serializable {
 //    }
 
 
-    public int duration() {
+    public final int duration() {
         return this.duration.get();
     }
 
@@ -421,7 +287,9 @@ public class Memory extends Param implements Serializable {
 
     /* ---------- new task entries ---------- */
 
-    /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
+    /**
+     * called anytime a task has been removed, deleted, discarded, ignored, etc.
+     */
     public final void remove(final Task task, final String removalReason) {
 
         if (task.isDeleted()) {
@@ -439,22 +307,26 @@ public class Memory extends Param implements Serializable {
         task.delete();
     }
 
-    /** sends an event signal to listeners subscribed to channel 'c' */
+    /**
+     * sends an event signal to listeners subscribed to channel 'c'
+     */
     final public void emit(final Class c, final Object... signal) {
         event.emit(c, signal);
     }
 
-    /** sends an event signal to listeners subscribed to channel 'c' */
+    /**
+     * sends an event signal to listeners subscribed to channel 'c'
+     */
     final public void emit(final Class c) {
         event.emit(c);
     }
 
 
-
-
-
-    /** produces a new stamp serial #, used to uniquely identify inputs */
-    public long newStampSerial() {
+    /**
+     * produces a new stamp serial #, used to uniquely identify inputs
+     */
+    public final long newStampSerial() {
+        //TODO does this need to be AtomicLong ?
         return currentStampSerial++;
     }
 
@@ -463,7 +335,6 @@ public class Memory extends Param implements Serializable {
 //        if (inputPausedUntil == -1) return true;
 //        return time() >= inputPausedUntil;
 //    }
-
 
 
 //    /**
@@ -479,11 +350,13 @@ public class Memory extends Param implements Serializable {
 //        return getCycleProcess().nextConcept(pred, v);
 //    }
 
-    public Clock getClock() {
+    public final Clock getClock() {
         return clock;
     }
 
-    /** TODO return value */
+    /**
+     * TODO return value
+     */
     public void delete(Term term) {
         Concept c = concept(term);
         if (c == null) return;
@@ -515,9 +388,10 @@ public class Memory extends Param implements Serializable {
 //        }
 //    }
 
-    /** actually delete procedure for a concept; removes from indexes
+    /**
+     * actually delete procedure for a concept; removes from indexes
      * TODO return value
-     * */
+     */
     protected void delete(Concept c) {
 
 //        Concept removedFromActive = getCycleProcess().remove(c);
@@ -542,7 +416,7 @@ public class Memory extends Param implements Serializable {
     public final boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Memory)) return false;
-        return Memory.equals(this, (Memory)obj);
+        return Memory.equals(this, (Memory) obj);
     }
 
     public static boolean equals(final Memory a, final Memory b) {
@@ -555,8 +429,8 @@ public class Memory extends Param implements Serializable {
         a.concepts.forEach(ac -> aTerm.add(ac.getTerm()));
         b.concepts.forEach(bc -> bTerm.add(bc.getTerm()));
         if (!aTerm.equals(bTerm)) {
-            System.out.println(aTerm.size() + " " + aTerm);
-            System.out.println(bTerm.size() + " " + bTerm);
+            /*System.out.println(aTerm.size() + " " + aTerm);
+            System.out.println(bTerm.size() + " " + bTerm);*/
             return false;
         }
 
@@ -585,9 +459,9 @@ public class Memory extends Param implements Serializable {
         final Topic<Memory> start = eventCycleStart;
         final Topic<Memory> end = eventCycleEnd;
 
-        for ( ; num > 0; num--) {
+        synchronized (clock) {
 
-            synchronized (clock) {
+            for (; num > 0; num--) {
 
                 clock.preCycle();
 
@@ -600,7 +474,6 @@ public class Memory extends Param implements Serializable {
         }
 
     }
-
 
 
 //    /** called when a Concept's lifecycle has changed */
@@ -662,14 +535,16 @@ public class Memory extends Param implements Serializable {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ":" + nal() + "[@" + time() + ",C=" + size() + "]";
+        return getClass().getSimpleName() + ':' + nal() + "[@" + time() + ",C=" + size() + ']';
     }
 
     public final int size() {
         return concepts.size();
     }
 
-    /** identifies the type of memory as a string */
+    /**
+     * identifies the type of memory as a string
+     */
     String toTypeString() {
         return getClass().getSimpleName();
     }

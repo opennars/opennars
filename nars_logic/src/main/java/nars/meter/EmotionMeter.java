@@ -46,6 +46,8 @@ public class EmotionMeter extends CycleReaction implements Serializable {
         super(memory);
 
         this.memory = memory;
+
+        commit();
     }
 
     @Override

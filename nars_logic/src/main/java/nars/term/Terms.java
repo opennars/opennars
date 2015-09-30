@@ -2,14 +2,24 @@ package nars.term;
 
 import nars.Global;
 import nars.Memory;
+import nars.Op;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
+import nars.nal.nal2.Instance;
+import nars.nal.nal2.InstanceProperty;
+import nars.nal.nal2.Property;
 import nars.nal.nal2.Similarity;
+import nars.nal.nal3.*;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.ImageInt;
 import nars.nal.nal4.Product;
+import nars.nal.nal5.Conjunction;
+import nars.nal.nal5.Disjunction;
+import nars.nal.nal5.Equivalence;
+import nars.nal.nal5.Implication;
+import nars.nal.nal7.TemporalRules;
 import nars.task.Sentence;
 import nars.util.data.sorted.SortedList;
 
@@ -208,7 +218,7 @@ public class Terms {
         }
         if (list != null) {
             if (list.length > 1) {
-                return Memory.term(t1, list);
+                return term(t1, list);
             } else if (list.length == 1) {
                 return list[0];
             }
@@ -664,5 +674,112 @@ public class Terms {
             for (Term z : ((Compound<?>)x))
                 printRecursive(z, level+1);
         }
+    }
+
+    /**
+     * Try to make a compound term from a template and a list of term
+     *
+     * @param compound The template
+     * @param components The term
+     * @return A compound term or null
+     */
+    public static Term term(final Compound compound, final Term[] components) {
+        if (compound instanceof ImageExt) {
+            return new ImageExt(components, ((Image) compound).relationIndex);
+        } else if (compound instanceof ImageInt) {
+            return new ImageInt(components, ((Image) compound).relationIndex);
+        } else {
+            return term(compound.op(), components);
+        }
+    }
+
+    public static Term term(final Compound compound, Collection<Term> components) {
+        Term[] c = components.toArray(new Term[components.size()]);
+        return term(compound, c);
+    }
+
+    private static boolean ensureTermLength(int num, Term[] a) {
+        return (a.length==num);
+        /*if (a.length!=num)
+            throw new CompoundTerm.InvalidTermConstruction("Expected " + num + " args to create Term from " + Arrays.toString(a));*/
+    }
+
+    /**
+     * Try to make a compound term from an operate and a list of term
+     * <p>
+     * Called from StringParser
+     *
+     * @param op Term operate
+     * @return A term or null
+     */
+    public static Term term(final Op op, final Term... a) {
+
+        switch (op) {
+
+
+            case SET_EXT_OPENER:
+                return SetExt.make(a);
+            case SET_INT_OPENER:
+                return SetInt.make(a);
+            case INTERSECTION_EXT:
+                return IntersectionExt.make(a);
+            case INTERSECTION_INT:
+                return IntersectionInt.make(a);
+            case DIFFERENCE_EXT:
+                return DifferenceExt.make(a);
+            case DIFFERENCE_INT:
+                return DifferenceInt.make(a);
+            case PRODUCT:
+                return Product.make(a);
+            case IMAGE_EXT:
+                return ImageExt.make(a);
+            case IMAGE_INT:
+                return ImageInt.make(a);
+            case NEGATION:
+                return Negation.make(a);
+            case DISJUNCTION:
+                return Disjunction.make(a);
+            case CONJUNCTION:
+                return Conjunction.make(a);
+            case SEQUENCE:
+                return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
+            case PARALLEL:
+                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
+
+            //STATEMENTS --------------------------
+            case PROPERTY:
+                if (ensureTermLength(2, a)) return Property.make(a[0], a[1]); break;
+            case INSTANCE:
+                if (ensureTermLength(2, a)) return Instance.make(a[0], a[1]); break;
+            case INSTANCE_PROPERTY:
+                if (ensureTermLength(2, a)) return InstanceProperty.make(a[0], a[1]); break;
+
+            case INHERITANCE:
+                if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
+
+            case SIMILARITY:
+                if (ensureTermLength(2, a)) return Similarity.makeTerm(a[0], a[1]); break;
+
+            case IMPLICATION:
+                if (ensureTermLength(2, a)) return Implication.makeTerm(a[0], a[1]); break;
+            case IMPLICATION_AFTER:
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
+            case IMPLICATION_BEFORE:
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD); break;
+            case IMPLICATION_WHEN:
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
+
+            case EQUIVALENCE:
+                if (ensureTermLength(2, a)) return Equivalence.makeTerm(a[0], a[1]); break;
+            case EQUIVALENCE_WHEN:
+                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
+            case EQUIVALENCE_AFTER:
+                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
+
+            default:
+                throw new RuntimeException("Unknown op: " + op + " (" + op.name() + ')');
+        }
+
+        return null;
     }
 }

@@ -401,9 +401,6 @@ public class Default extends NAR {
         return SimpleDeriver.standardDeriver;
     }
 
-    protected boolean process(Task t) {
-        return true;
-    }
 
     /**
      * The original deterministic memory cycle implementation that is currently used as a standard

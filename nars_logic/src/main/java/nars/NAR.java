@@ -1,6 +1,5 @@
 package nars;
 
-import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -10,7 +9,6 @@ import nars.event.NARReaction;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
-import nars.link.TaskLink;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMeter;
 import nars.nal.nal7.AbstractInterval;
@@ -20,9 +18,7 @@ import nars.nal.nal8.OperatorReaction;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.task.DefaultTask;
-import nars.task.Sentence;
 import nars.task.Task;
-import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.DefaultTruth;
@@ -35,9 +31,11 @@ import org.infinispan.commons.marshall.jboss.GenericJBossMarshaller;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -68,13 +66,15 @@ abstract public class NAR implements Serializable {
                     "      NARS website:  http://sites.google.com/site/narswang/ \n" +
                     "    Github website:  http://github.com/opennars/ \n" +
                     "               IRC:  http://webchat.freenode.net/?channels=nars \n";
-    static final float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
-    static final float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
-    static final float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
-    static final float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
-    static final float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
-    static final float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
-    static final float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
+
+    float defaultJudgmentConfidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
+    float defaultJudgmentPriority = Global.DEFAULT_JUDGMENT_PRIORITY;
+    float defaultJudgmentDurability = Global.DEFAULT_JUDGMENT_DURABILITY;
+    float defaultGoalPriority = Global.DEFAULT_GOAL_PRIORITY;
+    float defaultGoalDurability = Global.DEFAULT_GOAL_DURABILITY;
+    float defaultQuestionPriority = Global.DEFAULT_QUESTION_PRIORITY;
+    float defaultQuestionDurability = Global.DEFAULT_QUESTION_DURABILITY;
+
     final static Consumer<Serializable> onError = e -> {
         if (e instanceof Throwable) {
             Throwable ex = (Throwable) e;
@@ -112,12 +112,12 @@ abstract public class NAR implements Serializable {
 
 
     //TODO use this to store all handler registrations, and decide if transient or not
-    transient private List<Object> regs = new ArrayList();
+    final transient private List<Object> regs = new ArrayList();
 
 
     transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
-    transient final ExecutorService asyncs =
+    static final ExecutorService asyncs =
                         Executors.newCachedThreadPool();
                         //Executors.newFixedThreadPool(1);
 
@@ -192,9 +192,6 @@ abstract public class NAR implements Serializable {
         return NarseseParser.the().task(taskText, memory);
     }
 
-    public <T extends Compound> TaskSeed task(T t) {
-        return TaskSeed.make(memory, t);
-    }
 
     public List<Task> tasks(final String parse) {
         List<Task> result = Global.newArrayList(1);
@@ -227,9 +224,6 @@ abstract public class NAR implements Serializable {
         return concept((Term) NarseseParser.the().term(conceptTerm));
     }
 
-    public Task goal(final String goalTerm, final float freq, final float conf) {
-        return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, freq, conf);
-    }
 
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
@@ -245,77 +239,52 @@ abstract public class NAR implements Serializable {
         return ask(NarseseParser.the().term(questString), Symbols.QUEST);
     }
 
-    public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
-        return goal(pri, dur, (Compound) NarseseParser.the().compound(goalTerm), freq, conf);
+
+    public Task goal(Compound goalTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+        return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, time(tense), freq, conf);
     }
 
-    public Task goal(Compound goalTerm, float freq, float conf) throws InvalidInputException {
-        return goal(defaultGoalPriority, defaultGoalDurability, goalTerm, freq, conf);
-    }
 
-    /**
-     * TODO add parameter for Tense control. until then, default is Now
-     */
-    public <T extends Compound> Task<T> goal(float pri, float dur, T goalTerm, float freq, float conf) throws InvalidInputException {
 
-        final Truth tv;
-
-        Task<T> t = new DefaultTask<>(
-                goalTerm,
-                Symbols.GOAL,
-                tv = new DefaultTruth(freq, conf),
-                pri,
-                dur, BudgetFunctions.truthToQuality(tv)
-        );
-        t.setOccurrenceTime(time());
-
-        t.setCreationTime(time());
-
-        input(t);
-        return t;
-    }
-
-    public Task believe(float priority, String termString, long when, float freq, float conf) throws InvalidInputException {
-        return believe(priority, defaultJudgmentDurability, termString, when, freq, conf);
-    }
+//    public Task believe(float priority, String termString, long when, float freq, float conf) throws InvalidInputException {
+//        return believe(priority, termString, when, freq, conf);
+//    }
 
     public Task believe(float priority, Compound term, long when, float freq, float conf) throws InvalidInputException {
         return believe(priority, defaultJudgmentDurability, term, when, freq, conf);
     }
 
-    public NAR believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe((Compound) term(termString), tense, freq, conf);
-    }
 
     public NAR believe(Compound term, float freq, float conf) throws InvalidInputException {
         return believe(term, Tense.Eternal, freq, conf);
     }
 
     public NAR believe(Compound term, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe(defaultJudgmentPriority, defaultJudgmentDurability, term, tense, freq, conf);
+        believe(defaultJudgmentPriority, term, time(tense), freq, conf);
+        return this;
+    }
+
+    final long time(Tense tense) {
+        return Stamp.getOccurrenceTime(tense, memory);
     }
 
     public NAR believe(String termString, float freq, float conf) throws InvalidInputException {
         return believe((Compound) term(termString), freq, conf);
     }
 
-    public NAR believe(String termString, float conf) throws InvalidInputException {
-        return believe(termString, 1.0f, conf);
-    }
 
     public NAR believe(String termString) throws InvalidInputException {
-
-        return believe(termString, 1.0f, defaultJudgmentConfidence);
+        return believe((Compound) term(termString));
     }
 
     public NAR believe(Compound term) throws InvalidInputException {
         return believe(term, 1.0f, defaultJudgmentConfidence);
     }
 
-    public NAR believe(float pri, float dur, Compound beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
-        believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
-        return this;
-    }
+//    public NAR believe(Compound beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+//        believe(NAR.defaultJudgmentPriority, NAR.defaultJudgmentDurability, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
+//        return this;
+//    }
 
 
 //    public static class InputBuffer {
@@ -353,16 +322,27 @@ abstract public class NAR implements Serializable {
 //        return false;
 //    }
 
-    public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
-        return believe(pri, dur, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
+//    public Task believe(float pri, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+//        return believe(pri, NAR.defaultJudgmentDurability, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
+//    }
+
+    public <C extends Compound> Task<C> believe(float pri, float dur, C term, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+        return input(pri, dur, term, Symbols.JUDGMENT, occurrenceTime, freq, conf);
     }
 
-    public <C extends Compound> Task<C> believe(float pri, float dur, C belief, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+    /**
+     * TODO add parameter for Tense control. until then, default is Now
+     */
+    public <T extends Compound> Task<T> goal(float pri, float dur, T goal, long occurrence, float freq, float conf) throws InvalidInputException {
+        return input(pri, dur, goal, Symbols.GOAL, occurrence, freq, conf);
+    }
+
+    final public <C extends Compound> Task<C> input(float pri, float dur, C belief, char punc, long occurrenceTime, float freq, float conf) throws InvalidInputException {
 
         final Truth tv;
 
         Task<C> t = new DefaultTask<>(belief,
-                Symbols.JUDGMENT,
+                punc,
                 tv = new DefaultTruth(freq, conf),
                 pri, dur, BudgetFunctions.truthToQuality(tv));
         t.setCreationTime(time());
@@ -395,7 +375,7 @@ abstract public class NAR implements Serializable {
     }
 
     protected boolean process(Task t) {
-        throw new RuntimeException("this should be overridden in subclasses of NAR");
+        return true;
     }
 
     /**
@@ -958,44 +938,7 @@ abstract public class NAR implements Serializable {
     }
 
 
-    /**
-     * get all tasks in the system by iterating all newTasks, novelTasks; does not change or remove any
-     * Concept TaskLinks
-     */
-    public void getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks, Set<Task> target) {
 
-
-        if (includeTaskLinks) {
-            forEachConcept(c -> {
-                Bag<Sentence, TaskLink> tl = c.getTaskLinks();
-                if (tl != null)
-                    tl.forEach(t -> target.add(t.targetTask));
-            });
-        }
-
-        /*
-        if (includeNewTasks) {
-            t.addAll(newTasks);
-        }
-
-        if (includeNovelTasks) {
-            for (Task n : novelTasks) {
-                t.add(n);
-            }
-        }
-        */
-
-    }
-
-
-    public void forEachTask(boolean includeTaskLinks, Consumer<Task> each) {
-        forEachConcept(c -> {
-            if (c.getTaskLinks() != null)
-                c.getTaskLinks().forEach(tl -> {
-                    each.accept(tl.getTask());
-                });
-        });
-    }
 
 
     public NAR answer(String question, Consumer<Task> recvSolution) {
@@ -1042,10 +985,10 @@ abstract public class NAR implements Serializable {
         return this;
     }
 
-    public NAR fork(Consumer<NAR> clone) {
-        ensureNotRunning();
-        return this; //TODO
-    }
+//    public NAR fork(Consumer<NAR> clone) {
+//        ensureNotRunning();
+//        return this; //TODO
+//    }
 
 
     public NAR input(String... ss) {
@@ -1070,15 +1013,19 @@ abstract public class NAR implements Serializable {
         return at(t -> t == time, () -> input(tt));
     }
 
-    public NAR forEachConceptTask(boolean b, boolean q, boolean g, boolean _q,
-                                  int maxPerConcept,
+    public NAR forEachConceptTask(boolean includeConceptBeliefs, boolean includeConceptQuestions, boolean includeConceptGoals, boolean includeConceptQuests,
+                                  boolean includeTaskLinks, int maxPerConcept,
                                   Consumer<Task> recip) {
         forEachConcept(c -> {
-            if (b && c.hasBeliefs()) c.getBeliefs().top(maxPerConcept, recip);
-            if (q && c.hasQuestions()) c.getQuestions().top(maxPerConcept, recip);
-            if (g && c.hasBeliefs()) c.getGoals().top(maxPerConcept, recip);
-            if (_q && c.hasQuests()) c.getQuests().top(maxPerConcept, recip);
+            if (includeConceptBeliefs && c.hasBeliefs()) c.getBeliefs().top(maxPerConcept, recip);
+            if (includeConceptQuestions && c.hasQuestions()) c.getQuestions().top(maxPerConcept, recip);
+            if (includeConceptGoals && c.hasBeliefs()) c.getGoals().top(maxPerConcept, recip);
+            if (includeConceptQuests && c.hasQuests()) c.getQuests().top(maxPerConcept, recip);
+
+            if (includeTaskLinks && c.getTaskLinks() != null)
+                c.getTaskLinks().forEach(maxPerConcept, tl -> recip.accept(tl.getTask()));
         });
+
         return this;
     }
 
@@ -1301,21 +1248,21 @@ abstract public class NAR implements Serializable {
 //        };
 //        return this;
 //    }
-
-    public NAR output(ObjectOutputStream o, Class... signal) throws Exception {
-
-        NARReaction r = new StreamNARReaction(signal) {
-
-            @Override
-            public void event(Class event, Object... args) {
-                if (args instanceof Serializable) {
-                    //..
-                }
-            }
-        };
-
-        return this;
-    }
+//
+//    public NAR output(ObjectOutputStream o, Class... signal) {
+//
+//        NARReaction r = new StreamNARReaction(signal) {
+//
+//            @Override
+//            public void event(Class event, Object... args) {
+//                if (args instanceof Serializable) {
+//                    //..
+//                }
+//            }
+//        };
+//
+//        return this;
+//    }
 
     public synchronized NAR spawnThread(long periodMS, Consumer<Thread> t) {
         ensureNotRunning();
@@ -1347,18 +1294,18 @@ abstract public class NAR implements Serializable {
 //        });
 //    }
 
-    protected void manage(NARReaction r, boolean b) {
-//        if (!b) {
-//            reactions.remove(Sets.newHashSet(r.getEvents()), r);
-//        } else {
-//            reactions.put(Sets.newHashSet(r.getEvents()), r);
-//        }
-    }
-
-    /** starts the new running thread immediately */
-    public void spawnThread(int msDelay) {
-        spawnThread(msDelay, Thread::start);
-    }
+//    protected void manage(NARReaction r, boolean b) {
+////        if (!b) {
+////            reactions.remove(Sets.newHashSet(r.getEvents()), r);
+////        } else {
+////            reactions.put(Sets.newHashSet(r.getEvents()), r);
+////        }
+//    }
+//
+//    /** starts the new running thread immediately */
+//    public void spawnThread(int msDelay) {
+//        spawnThread(msDelay, Thread::start);
+//    }
 
     abstract private class StreamNARReaction extends NARReaction {
 
@@ -1366,11 +1313,11 @@ abstract public class NAR implements Serializable {
             super((NAR) NAR.this, signal);
         }
 
-        @Override
-        public void setActive(boolean b) {
-            super.setActive(b);
-            manage(this, b);
-        }
+//        @Override
+//        public void setActive(boolean b) {
+//            super.setActive(b);
+//            //manage(this, b);
+//        }
     }
 
     private class ConsumedStreamNARReaction<X> extends StreamNARReaction {
