@@ -71,18 +71,18 @@ public final class BudgetFunctions extends UtilityFunctions {
 
         final float difT = truth.getExpDifAbs(tTruth);
 
-        task.getBudget().decPriority(1f - difT);
+        task.getBudget().andPriority(1f - difT);
         task.getBudget().andDurability(1f - difT);
 
         boolean feedbackToLinks = (p instanceof ConceptProcess);
         if (feedbackToLinks) {
             Premise fc = p;
             TaskLink tLink = ((ConceptProcess)fc).getTaskLink();
-            tLink.decPriority(1f - difT);
+            tLink.andPriority(1f - difT);
             tLink.andDurability(1f - difT);
             TermLink bLink = fc.getTermLink();
             final float difB = truth.getExpDifAbs(bTruth);
-            bLink.decPriority(1f - difB);
+            bLink.andPriority(1f - difB);
             bLink.andDurability(1f - difB);
         }
 
@@ -117,32 +117,32 @@ public final class BudgetFunctions extends UtilityFunctions {
         return new Budget(priority, durability, quality);
     }
 
-    /**
-     * Update a belief
-     *
-     * @param task The task containing new belief
-     * @param bTruth Truth value of the previous belief
-     * @return Budget value of the updating task
-     */
-    static Budget update(final Task task, final Truth bTruth) {
-        final Truth tTruth = task.getTruth();
-        final float dif = tTruth.getExpDifAbs(bTruth);
-        final float priority = or(dif, task.getPriority());
-        final float durability = aveAri(dif, task.getDurability());
-        final float quality = truthToQuality(bTruth);
-        return new Budget(priority, durability, quality);
-    }
+//    /**
+//     * Update a belief
+//     *
+//     * @param task The task containing new belief
+//     * @param bTruth Truth value of the previous belief
+//     * @return Budget value of the updating task
+//     */
+//    static Budget update(final Task task, final Truth bTruth) {
+//        final Truth tTruth = task.getTruth();
+//        final float dif = tTruth.getExpDifAbs(bTruth);
+//        final float priority = or(dif, task.getPriority());
+//        final float durability = aveAri(dif, task.getDurability());
+//        final float quality = truthToQuality(bTruth);
+//        return new Budget(priority, durability, quality);
+//    }
 
     /* ----------------------- Links ----------------------- */
     /**
      * Distribute the budget of a task among the links to it
      *
      * @param b The original budget
-     * @param n Number of links
+     * @param factor to scale dur and qua
      * @return Budget value for each tlink
      */
-    public static Budget divide(final Budget b, final float divisor) {
-        final float newPriority = b.getPriority() / divisor;
+    public static Budget clonePriorityMultiplied(final Budget b, final float factor) {
+        final float newPriority = b.getPriority() * factor;
         return new Budget(newPriority, b.getDurability(), b.getQuality());
     }
 
@@ -343,9 +343,11 @@ public final class BudgetFunctions extends UtilityFunctions {
     }
 
     public static Budget compoundForward(Budget target, final Truth truth, final Term content, final Premise nal) {
-        final int complexity = (content == null) ? 1 : content.complexity();
+        final int complexity = content.complexity();
         return budgetInference(target, truthToQuality(truth), complexity, nal);
     }
+
+
 
     /**
      * Backward logic with CompoundTerm conclusion, stronger case
@@ -354,7 +356,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundBackward(final Term content, final Premise nal) {
-        return budgetInference(1, content.complexity(), nal);
+        return budgetInference(1f, content.complexity(), nal);
     }
 
     /**
@@ -368,9 +370,10 @@ public final class BudgetFunctions extends UtilityFunctions {
         return budgetInference(w2c(1), content.complexity(), nal);
     }
 
-    private static Budget budgetInference(final float qual, final int complexity, final Premise nal) {
+    static Budget budgetInference(final float qual, final int complexity, final Premise nal) {
         return budgetInference(new Budget(), qual, complexity, nal );
     }
+
     /**
      * Common processing for all logic step
      *
@@ -379,25 +382,41 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    private static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
+    static Budget budgetInference(Budget target, final float qual, final int complexity, final Premise nal) {
+        final float complexityFactor = complexity > 1 ?
 
-        final TaskLink nalTL =
-                nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;
+                // sqrt factor (experimental)
+                // (float) (1f / Math.sqrt(Math.max(1, complexity))) //experimental, reduces dur and qua by sqrt of complexity (more slowly)
 
-        final Budget t = (nalTL !=null) ? nalTL :  nal.getTask().getBudget();
+                // linear factor (original)
+                (1f / Math.max(1, complexity))
+
+                : 1f;
+
+        return budgetInference(target, qual, complexityFactor, nal);
+    }
+
+    static Budget budgetInference(Budget target, final float qual, final float complexityFactor, final Premise nal) {
+
+        final TaskLink taskLink =
+            nal instanceof ConceptProcess ? ((ConceptProcess)nal).getTaskLink() : null;
+
+        final Budget t =
+            (taskLink !=null) ? taskLink :  nal.getTask().getBudget();
+
 
         float priority = t.getPriority();
-        float durability = t.getDurability() / complexity;
-        final float quality = qual / complexity;
+        float durability = t.getDurability() * complexityFactor;
+        final float quality = qual * complexityFactor;
 
-        final TermLink bLink = nal.getTermLink();
-        if (bLink!=null) {
-            priority = or(priority, bLink.getPriority());
-            durability = and(durability, bLink.getDurability());
-            final float targetActivation = nal.conceptPriority(bLink.getTerm(), -1);
-            if (targetActivation > 0) {
-                bLink.orPriority(or(quality, targetActivation));
-                bLink.orDurability(quality);
+        final TermLink termLink = nal.getTermLink();
+        if (termLink!=null) {
+            priority = or(priority, termLink.getPriority());
+            durability = and(durability, termLink.getDurability()); //originaly was 'AND'
+            final float targetActivation = nal.conceptPriority(termLink.getTerm(), -1);
+            if (targetActivation >= 0) {
+                termLink.orPriority(or(quality, targetActivation));
+                termLink.orDurability(quality);
             }
         }
 
@@ -412,13 +431,13 @@ public final class BudgetFunctions extends UtilityFunctions {
             float priority = t.getPriority();
             float durability = t.getDurability() / complexity;
             float quality = qual / complexity;
-            TermLink bLink = memory.currentBeliefLink;
-            if (bLink != null) {
-                priority = or(priority, bLink.getPriority());
-                durability = and(durability, bLink.getDurability());
-                float targetActivation = memory.getConceptActivation(bLink.getTarget());
-                bLink.incPriority(or(quality, targetActivation));
-                bLink.incDurability(quality);
+            TermLink termLink = memory.currentBeliefLink;
+            if (termLink != null) {
+                priority = or(priority, termLink.getPriority());
+                durability = and(durability, termLink.getDurability());
+                float targetActivation = memory.getConceptActivation(termLink.getTarget());
+                termLink.incPriority(or(quality, targetActivation));
+                termLink.incDurability(quality);
             }
             return new BudgetValue(priority, durability, quality);
          */

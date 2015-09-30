@@ -12,11 +12,13 @@ import java.util.Map;
 /**
  * Created by me on 8/1/15.
  */
-public enum DesireFunction {
+public enum DesireFunction implements TruthOrDesireFunction {
 
     Negation() {
-        @Override public Truth get(final Truth T, final Truth B) { return TruthFunctions.negation(T); }
+        @Override public Truth get(final Truth T, final Truth B) {
+            return TruthFunctions.negation(T); }
     },
+
     Strong() {
         @Override public Truth get(final Truth T, final Truth B) {
             if (B == null) return null;
@@ -48,12 +50,7 @@ public enum DesireFunction {
     }
 
     ;
-    /**
-     * @param T taskTruth
-     * @param B beliefTruth (possibly null)
-     * @return
-     */
-    abstract public Truth get(Truth T, Truth B);
+
 
 
     static final Map<Term, DesireFunction> atomToTruthModifier = Global.newHashMap(DesireFunction.values().length);

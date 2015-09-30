@@ -110,20 +110,14 @@ public class PostCondition implements Serializable //since there can be multiple
             switch (type.toString()) {
 
                 case "Punctuation":
-                    if(which.toString().equals("Question")) {
-                        puncOverride = Symbols.QUESTION;
+                    switch (which.toString()) {
+                        case "Question": puncOverride = Symbols.QUESTION; break;
+                        case "Goal": puncOverride = Symbols.GOAL; break;
+                        case "Judgment": puncOverride = Symbols.JUDGMENT; break;
+                        case "Quest": puncOverride = Symbols.QUEST; break;
+                        default:
+                            throw new RuntimeException("unknown punctuation: " + which);
                     }
-                    //for completeness
-                    if(which.toString().equals("Goal")) {
-                        puncOverride = Symbols.GOAL;
-                    }
-                    if(which.toString().equals("Judgement")) {
-                        puncOverride = Symbols.JUDGMENT;
-                    }
-                    if(which.toString().equals("Quest")) {
-                        puncOverride = Symbols.QUEST;
-                    }
-
                     break;
                 case "Truth":
                     TruthFunction tm = TruthFunction.get(which);
@@ -187,7 +181,7 @@ public class PostCondition implements Serializable //since there can be multiple
         return true;
     }
 
-    public boolean modifiesPunctuation() {
+    public final boolean modifiesPunctuation() {
         return puncOverride > 0;
     }
 

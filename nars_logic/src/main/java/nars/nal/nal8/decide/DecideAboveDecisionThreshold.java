@@ -51,7 +51,7 @@ abstract public class DecideAboveDecisionThreshold extends DecideAllGoals {
     @Override
     public boolean test(final Task<Operation> task) {
         if (super.test(task)) {
-            return desire(task) > memory.executionThreshold.floatValue();
+            return desire(task) > memory.executionExpectationThreshold.floatValue();
         }
         return false;
     }

@@ -97,8 +97,8 @@ public class AtomConcept extends AbstractConcept {
     }
 
     @Override
-    public Task processQuestion(Premise nal, Task task) {
-        return null;
+    public boolean processQuestion(Premise nal, Task task) {
+        return false;
     }
 
     /**

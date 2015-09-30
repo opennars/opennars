@@ -218,12 +218,12 @@ import nars.truth.Truth;
     public TaskSeed budget(float p, float d) {
         final float q;
         Truth t = getTruth();
-        if ((getPunctuation() != Symbols.QUESTION) && (getPunctuation() != Symbols.QUEST)) {
+        if (!isQuestOrQuestion()) {
             if (t == null)
                 throw new RuntimeException("Truth needs to be defined prior to budget to calculate truthToQuality");
             q = BudgetFunctions.truthToQuality(t);
         } else
-            q = Float.NaN;
+            throw new RuntimeException("incorrect punctuation");
 
         return budget(p, d, q);
     }

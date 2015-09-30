@@ -5,11 +5,11 @@
 package nars.process;
 
 import com.gs.collections.api.block.procedure.Procedure2;
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.link.*;
 import nars.meter.LogicMeter;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static nars.budget.BudgetFunctions.divide;
+import static nars.budget.BudgetFunctions.clonePriorityMultiplied;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,
@@ -31,11 +31,13 @@ import static nars.budget.BudgetFunctions.divide;
  */
 public class TaskProcess extends NAL implements Serializable {
 
-    private static final Procedure2<Budget,Budget> DEFAULT_TERMLINK_ACCUMULATION_MERGE = Budget.plus;
+    private static final Procedure2<Budget, Budget> DEFAULT_TERMLINK_ACCUMULATION_MERGE = Budget.plus;
 
     public final Task task;
 
-    /** configuration */
+    /**
+     * configuration
+     */
     boolean activateTermLinkTemplates = true;
     boolean activateTermLinkTemplateTargetsFromTask = true;
     boolean immediateTermLinkPropagation = false; /* false = buffered until next concept fire */
@@ -55,22 +57,25 @@ public class TaskProcess extends NAL implements Serializable {
         return null;
     }
 
-    @Override public Task getTask() {
+    @Override
+    public Task getTask() {
         return task;
     }
 
-    @Override public final Term getTerm() {
+    @Override
+    public final Term getTerm() {
         return getTask().getTerm();
     }
 
-    @Override public TermLink getTermLink() {
+    @Override
+    public TermLink getTermLink() {
         return null;
     }
 
-    @Override public Concept getConcept() {
+    @Override
+    public Concept getConcept() {
         return nar.concept(getTerm());
     }
-
 
 
     @Override
@@ -89,11 +94,9 @@ public class TaskProcess extends NAL implements Serializable {
     }
 
 
-
-
-
-    /** when a task is processed, a tasklink
-     *  can be created at the concept of its term
+    /**
+     * when a task is processed, a tasklink
+     * can be created at the concept of its term
      */
     public boolean link(Concept c, Task t) {
 
@@ -108,76 +111,67 @@ public class TaskProcess extends NAL implements Serializable {
      * Recursively build TermLinks between a compound and its components
      * <p>
      * called only from Memory.continuedProcess
+     * activates termlinked concepts with fractions of the taskbudget
+
      *
-     * @param b   The BudgetValue of the task
+     * @param b            The BudgetValue of the task
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
     public boolean linkTerms(final Concept c, final Budget b, boolean updateTLinks) {
 
-        //activate the concept with the taskbudget
+        if ((b == null) || (b.isDeleted())) return false;
 
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
-        List<TermLinkTemplate> tl = termLinkBuilder.templates();
+
+        final List<TermLinkTemplate> tl = termLinkBuilder.templates();
+        if (tl == null) return false;
+
         int recipients = termLinkBuilder.templates().size();
-//        if (recipients == 0) {
-//            //termBudgetBalance += subBudget;
-//            //subBudget = 0;
-//        }
+        if (recipients == 0) return false;
+
+
+
+
+        //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
+        final float factor = 1f / (recipients);
+        Budget subBudget = BudgetFunctions.clonePriorityMultiplied(b, factor);
+
+        if (subBudget.summaryLessThan(nar.memory().termLinkThreshold.floatValue()))
+            return false;
+
+        final NAR nar = this.nar;
+        final int numTemplates = tl.size();
+        final float termLinkThresh = nar.memory().termLinkThreshold.floatValue();
 
         boolean activity = false;
 
-        if (tl!=null && (b != null) && (recipients > 0)) {
+        for (int i = 0; i < numTemplates; i++) {
 
-            float dur, qua;
-            //TODO make this parameterizable
+            final TermLinkTemplate t = tl.get(i);
 
-            //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
+                /*if (t.type == TermLink.TRANSFORM)
+                    continue;*/
 
-            //half of each subBudget is spent on this concept and the other concept's termlink
-            //subBudget = b.getPriority() * (1f / (2 * recipients));
+            //only apply this loop to non-transform termlink templates
+            DEFAULT_TERMLINK_ACCUMULATION_MERGE.value(t, subBudget);
 
-
-            //subPriority = b.getPriority() / (float) Math.sqrt(recipients);
-            float subPriority = b.getPriority() / (1+recipients);
-            dur = b.getDurability();
-            qua = b.getQuality();
-            Budget bb = new Budget(subPriority, dur, qua);
-
-            if (subPriority >= Global.BUDGET_EPSILON) {
-
-                final NAR nar = this.nar;
-                final int numTemplates = tl.size();
-                final float termLinkThresh = nar.memory().termLinkThreshold.floatValue();
-
-                for (int i = 0; i < numTemplates; i++) {
-
-                    final TermLinkTemplate t = tl.get(i);
-
-                    /*if (t.type == TermLink.TRANSFORM)
-                        continue;*/
-
-                    //only apply this loop to non-transform termlink templates
-                    DEFAULT_TERMLINK_ACCUMULATION_MERGE.value(t, bb);
-
-                    if ((t.getTarget().equals( getTerm() ))) {
-                        continue;
-                    }
+            if ((t.getTarget().equals(getTerm()))) {
+                continue;
+            }
 
 
-                    if (updateTLinks) {
-                        if (t.getPriority() >= termLinkThresh) {
-                            if (link(t, c))
-                                activity = true;
-                        }
-                    }
-
+            if (updateTLinks) {
+                if (t.summaryGreaterOrEqual(termLinkThresh)) {
+                    if (link(t, c))
+                        activity = true;
                 }
             }
+
         }
 
-
         return activity;
+
     }
 
 
@@ -220,6 +214,7 @@ public class TaskProcess extends NAL implements Serializable {
         else
             return nar.concept(t.getTerm());
     }
+
     Concept getTermLinkTemplateTarget(TermLinkTemplate t, Budget taskBudget) {
         if (activateTermLinkTemplateTargetsFromTask)
             return nar.conceptualize(t.getTerm(), taskBudget);
@@ -237,8 +232,6 @@ public class TaskProcess extends NAL implements Serializable {
      */
     protected boolean linkTask(final Concept c, final Task task) {
 
-        if (task.isDeleted()) return false;
-
         final TermLinkBuilder termLinkBuilder = c.getTermLinkBuilder();
         final TaskLinkBuilder taskLinkBuilder = c.getTaskLinkBuilder();
 
@@ -249,23 +242,13 @@ public class TaskProcess extends NAL implements Serializable {
             return false;
         }
 
-        //TODO parameter to use linear division, conserving total budget
-        //float linkSubBudgetDivisor = (float)Math.sqrt(termLinkTemplates.size());
-        //float linkSubBudgetDivisor = (float) Math.sqrt(numTemplates);
-        float linkSubBudgetDivisor = numTemplates;
-
-        final Budget taskBudget = task.getBudget();
-
-        float subPri = taskBudget.getPriority()/ linkSubBudgetDivisor;
-        if ((subPri < Global.BUDGET_EPSILON) ||
-                (subPri < nar.memory().taskLinkThreshold.floatValue() ))
-            return false;
-
 
         taskLinkBuilder.setTask(task);
 
+        final Budget subBudget = clonePriorityMultiplied(task.getBudget(), 1f / numTemplates);
+        if (subBudget.summaryLessThan(nar.memory().taskLinkThreshold.floatValue()))
+            return false;
 
-        final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
 
         taskLinkBuilder.setBudget(subBudget);
 
@@ -351,7 +334,7 @@ public class TaskProcess extends NAL implements Serializable {
 
             case Symbols.QUESTION:
 
-                if (c.processQuestion(this, task)==null)
+                if (!c.processQuestion(this, task))
                     return false;
 
                 logicMeter.QUESTION_PROCESS.hit();
@@ -359,7 +342,7 @@ public class TaskProcess extends NAL implements Serializable {
 
             case Symbols.QUEST:
 
-                if (c.processQuest(this, task)==null)
+                if (!c.processQuest(this, task))
                     return false;
 
                 logicMeter.QUESTION_PROCESS.hit();
@@ -387,19 +370,21 @@ public class TaskProcess extends NAL implements Serializable {
 
         final Budget taskBudget = task.getBudget();
 
-        if (inputPriorityFactor!=1f) {
-            taskBudget.mulPriority( inputPriorityFactor );
+        if (inputPriorityFactor != 1f) {
+            taskBudget.mulPriority(inputPriorityFactor);
         }
 
         if (!taskBudget.summaryGreaterOrEqual(nar.memory().taskProcessThreshold)) {
-            nar.memory().remove(task, "Insufficient budget");
+            nar.memory().remove(task, "Insufficient Budget to TaskProcess");
             return null;
         }
 
         return new TaskProcess(nar, task);
     }
 
-    /** create and execute a direct process immediately */
+    /**
+     * create and execute a direct process immediately
+     */
     public static Premise run(final NAR m, final Task task) {
         TaskProcess d = get(m, task);
         if (d == null)
@@ -428,16 +413,18 @@ public class TaskProcess extends NAL implements Serializable {
 
         final Concept c = nar.conceptualize(task, task.getBudget());
 
-        if (c==null) {
+        if (c == null) {
             memory.remove(task, "Unable to conceptualize");
             return null;
         }
 
+        memory.emotion.busy(task, this);
+
         if (processConcept(c)) {
 
-            link(c, task);
-
-            memory.emotion.busy(task, this);
+            if (!task.isDeleted()) {
+                link(c, task);
+            }
         }
 
         return null;

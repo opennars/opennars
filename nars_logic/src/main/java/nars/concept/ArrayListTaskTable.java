@@ -1,6 +1,9 @@
 package nars.concept;
 
+import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
+import nars.Memory;
+import nars.budget.Budget;
 import nars.task.Task;
 import nars.util.data.list.FasterList;
 
@@ -69,18 +72,25 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, E
 
 
     @Override
-    public Task add(Task t, Equality<Task> equality) {
+    public Task add(Task t, Equality<Task> equality, Procedure2<Budget,Budget> duplicateMerge, Memory m) {
 
-        if (getFirstEquivalent(t, equality) != null) {
-            return t;
+        Task existing = getFirstEquivalent(t, equality);
+        if (existing != null) {
+
+            if (existing!=t) {
+                duplicateMerge.value(existing.getBudget(), t.getBudget());
+                m.remove(t, "PreExisting TaskTable Duplicate");
+            }
+
+            return existing;
         }
 
         //Memory m = c.getMemory();
         final int siz = size();
         if (siz + 1 > cap) {
             // FIFO, remove oldest question (last)
-            /*Task removed = */
-            remove(siz - 1);
+            Task removed = remove(siz - 1);
+            m.remove(removed, "TaskTable FIFO Out");
             //m.emit(Events.ConceptQuestionRemove.class, c, removed /*, t*/);
         }
 

@@ -1005,19 +1005,14 @@ abstract public class NAR implements Serializable {
         return answer(qt, recvSolution);
     }
 
-    public NAR answer(Task question, Consumer<Task> recvSolution) {
+    /** inputs the question and observes answer events for a solution */
+    public NAR answer(Task question, Consumer<Task> c) {
         new AnswerReaction(this, question) {
 
             @Override
             public void onSolution(Task belief) {
-                recvSolution.accept(belief);
+                c.accept(belief);
             }
-
-//            @Override
-//            public void setActive(boolean b) {
-//                super.setActive(b);
-//                manage(reg, b);
-//            }
 
         };
         return this;

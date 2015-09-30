@@ -1,9 +1,9 @@
 package nars.concept;
 
+import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.link.TaskLink;
@@ -51,7 +51,7 @@ public class DefaultConcept extends AtomConcept {
 
         @Override
         public boolean areEqual(Task a, Task b) {
-            return (a.equalParents(b));
+            return (a.equals(b));
         }
 
         //N/A
@@ -59,6 +59,8 @@ public class DefaultConcept extends AtomConcept {
         @Override public int hashCodeOf(Task task) { return task.hashCode(); }
     };
 
+    /** how incoming budget is merged into its existing duplicate quest/question */
+    final static Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
 
 
     /**
@@ -107,25 +109,25 @@ public class DefaultConcept extends AtomConcept {
 
 
 
-    /** updates the concept-has-questions index if the concept transitions from having no questions to having, or from having to not having */
-    public void onTableUpdated(char punctuation, int originalSize) {
-
-        switch (punctuation) {
-            /*case Symbols.GOAL:
-                break;*/
-            case Symbols.QUEST:
-            case Symbols.QUESTION:
-                if (getQuestions().isEmpty() && getQuests().isEmpty()) {
-                    //if (originalSize > 0) //became empty
-                        //getMemory().updateConceptQuestions(this);
-                } else {
-                    //if (originalSize == 0) //became non-empty
-                        //getMemory().updateConceptQuestions(this);
-
-                }
-                break;
-        }
-    }
+//    /** updates the concept-has-questions index if the concept transitions from having no questions to having, or from having to not having */
+//    public void onTableUpdated(char punctuation, int originalSize) {
+//
+//        switch (punctuation) {
+//            /*case Symbols.GOAL:
+//                break;*/
+//            case Symbols.QUEST:
+//            case Symbols.QUESTION:
+//                if (getQuestions().isEmpty() && getQuests().isEmpty()) {
+//                    //if (originalSize > 0) //became empty
+//                        //getMemory().updateConceptQuestions(this);
+//                } else {
+//                    //if (originalSize == 0) //became non-empty
+//                        //getMemory().updateConceptQuestions(this);
+//
+//                }
+//                break;
+//        }
+//    }
 
     /* ---------- direct processing of tasks ---------- */
 
@@ -267,8 +269,8 @@ public class DefaultConcept extends AtomConcept {
     }
 
 
-    private static Task add(TaskTable table, Task input, Equality<Task> eq, Concept c, Premise nal) {
-        return table.add(input, eq);
+    static Task add(TaskTable table, Task input, Equality<Task> eq, Procedure2<Budget,Budget> duplicateMerge, Premise nal) {
+        return table.add(input, eq, duplicateMerge, nal.memory());
     }
 
 
@@ -298,7 +300,7 @@ public class DefaultConcept extends AtomConcept {
             //if (nal != null) {
             if (hasQuestions()) {
                 //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
-                getQuestions().forEach( t -> trySolution(belief, t, nal) );
+                getQuestions().forEach( t -> trySolution(t, belief, nal) );
             }
             //}
 
@@ -439,9 +441,9 @@ public class DefaultConcept extends AtomConcept {
      * To answer a quest or q by existing beliefs
      *
      * @param q The task to be processed
-     * @return the matching task if it was not a new task to be added
+     * @return true if the quest/question table changed
      */
-    public Task processQuestion(final Premise nal, Task q) {
+    public boolean processQuestion(final Premise nal, Task q) {
 
 
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
@@ -458,25 +460,39 @@ public class DefaultConcept extends AtomConcept {
         /** execute the question, for any attached operators that will handle it */
         //getMemory().execute(q);
 
+
+        boolean tableAffected = false;
+
         if (!isConstant()) {
             //boolean newQuestion = table.isEmpty();
 
-            Task match = add(table, q, questionEquivalence, this, nal);
+            Task match = add(table, q, questionEquivalence, duplicateQuestionMerge, nal);
             if (match == q) {
-                final int presize = getQuestions().size() + getQuests().size();
-                onTableUpdated(q.getPunctuation(), presize);
+                //final int presize = getQuestions().size() + getQuests().size();
+                //onTableUpdated(q.getPunctuation(), presize);
+                tableAffected = true;
             }
-            q = match; //try solution with the original question
+            else {
+                q = match; //try solution with the original question
+            }
         }
+
+        //TODO if the table was not affected, does the following still need to happen:
 
         final long now = getMemory().time();
+
+        Task sol;
         if (q.isQuest()) {
-            trySolution(getGoals().top(q, now), q, nal);
+            sol = getGoals().top(q, now);
         } else {
-            trySolution(getBeliefs().top(q, now), q, nal);
+            sol = getBeliefs().top(q, now);
         }
 
-        return q;
+        if (sol!=null) {
+            Task solUpdated = trySolution(q, sol, nal);
+        }
+
+        return true;
     }
 
 

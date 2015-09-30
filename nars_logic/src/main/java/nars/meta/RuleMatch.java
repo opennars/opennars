@@ -6,12 +6,17 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
+import nars.nal.nal1.Inheritance;
 import nars.premise.Premise;
 import nars.task.Task;
+import nars.task.TaskGhost;
 import nars.task.TaskSeed;
+import nars.task.stamp.Stamp;
+import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.transform.FindSubst;
+import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.List;
@@ -24,7 +29,10 @@ import java.util.stream.Stream;
 /** rule matching context, re-recyclable if thread local */
 public class RuleMatch extends FindSubst {
 
+    /** if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset */
     public long occurence_shift;
+
+
     public TaskRule rule;
 
     final Map<Term,Term> resolutions = Global.newHashMap();
@@ -68,7 +76,7 @@ public class RuleMatch extends FindSubst {
         super.clear();
 
         resolutions.clear();
-        occurence_shift = 0;
+        occurence_shift = Stamp.TIMELESS;
 
         this.rule = rule;
         return this;
@@ -93,40 +101,6 @@ public class RuleMatch extends FindSubst {
         //stamp cyclic filter
         final boolean single = (belief == null);
 
-//        {
-//
-//            boolean allowOverlap = false; //to be refined
-//            if (!allowOverlap) {
-//
-//                //determine cyclicity before creating task
-//                boolean cyclic;
-//                boolean allowed = true;
-//                if (single) {
-//                    cyclic = (task.isCyclic());
-//                    //it will be cyclic but only make the task if it's parent is not also cyclic
-//                    allowed = cyclic && (!task.isParentCyclic());
-//                } else {
-//                    cyclic = Stamp.overlapping(task, belief);
-//                    allowed = cyclic && (!task.isParentCyclic() && !belief.isParentCyclic());
-//                }
-//
-//                if (allowed) {
-//                    //System.err.println( ": " + premise + " cyclic");
-//                    return false;
-//                }
-//
-//
-//            }
-//        }
-
-
-
-        /** eliminate cyclic double-premise results
-         *  TODO move this earlier to precondition check, or change to altogether new policy
-         */
-        if (!single && cyclic(outcome, premise)) {
-            return null;
-        }
 
 
 
@@ -137,39 +111,44 @@ public class RuleMatch extends FindSubst {
             punct = task.getPunctuation();
         }
 
+
         /** calculate derived task truth value */
         final Truth T = task.getTruth();
         final Truth B = belief == null ? null : belief.getTruth();
         final Truth truth;
-        {
+        if (punct == '.' || punct == '!') {
 
-            switch (punct) {
-                case Symbols.JUDGMENT:
-                    truth = outcome.truth.get(T, B);
+            truth = getTruth(outcome, punct, T,B);
 
-                    if (truth == null) {
-                        return null;
+            if (truth == null)
+                return null; //no truth value function was applicable but it was necessary, abort
+        }
+        else {
+            truth = null;
+        }
+
+        /** eliminate cyclic double-premise results
+         *  TODO move this earlier to precondition check, or change to altogether new policy
+         */
+        if (!single && cyclic(outcome, premise)) {
+            if (Global.DEBUG) {
+                Term termm = resolve(outcome.term);
+                if (termm!=null) {
+
+                    //HACK wrap the non-compound in a compound to form a task
+                    if (!(termm instanceof Compound)) {
+                        termm = Inheritance.make(termm, Atom.the("NON_COMPOUND"));
                     }
-                    break;
-                case Symbols.GOAL:
-                    if (outcome.desire != null)
-                        truth = outcome.desire.get(T, B);
-                    else {
-                        truth = null;
-                        System.err.println(outcome + " has null desire function");
-                    }
 
-                    if (truth == null) {
-                        return null; //truth = null;
-                    }
-                    break;
+                    premise.memory().remove(
+                            new TaskGhost((Compound) termm, punct, truth, Budget.zero, occurence_shift, premise),
+                            //.log(premise) ...
+                            "Cyclic"
+                    );
+                }
 
-                default:
-                case Symbols.QUEST:
-                case Symbols.QUESTION:
-                    truth = null;
-                    break;
             }
+            return null;
         }
 
         //test and apply late preconditions
@@ -233,31 +212,47 @@ public class RuleMatch extends FindSubst {
         //CALCULATE OCCURENCE TIME HERE AND SET DERIVED TASK OCCURENCE TIME ACCORDINGLY!
 
 
-        TaskSeed t = premise.newTask((Compound)derivedTerm); //, task, belief, allowOverlap);
-        if (t != null) {
 
-            final Budget budget;
-            if (truth!=null) {
-                budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
-            }
-            else {
-                budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
-            }
+        final Budget budget;
+        if (truth!=null) {
+            budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
+        }
+        else {
+            budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
+        }
 
-            t
+        if (budget.summaryLessThan(premise.memory().derivationThreshold.floatValue())) {
+            if (Global.DEBUG) {
+                premise.memory().remove(
+                        new TaskGhost((Compound)derivedTerm, punct, truth, budget, occurence_shift, premise),
+                          //.log(premise) ...
+                        "Insufficient Derivation Budget"
+                );
+            }
+            return null;
+        }
+
+
+
+        TaskSeed deriving = premise.newTask((Compound)derivedTerm); //, task, belief, allowOverlap);
+        if (deriving != null) {
+
+
+
+            deriving
                 .punctuation(punct)
                 .truth(truth)
                 .budget(budget);
 
-            if (!t.isEternal()) {
-                t.occurr(t.getOccurrenceTime() + occurence_shift);
-            }
+            if (occurence_shift!=Stamp.TIMELESS) //!t.isEternal()) {
+                deriving.occurr(/*t.getOccurrenceTime()*/  occurence_shift);
+
 
             //TODO ANTICIPATE IF IN FUTURE AND Event:Anticipate is given
 
-            t.parent(task, single ? null : belief);
+            deriving.parent(task, single ? null : belief);
 
-            final Task derived = premise.validDerivation(t);
+            final Task derived = premise.validDerivation(deriving);
             if (derived!=null) {
                 if (Global.DEBUG) {
                     derived.log(rule.toString());
@@ -270,6 +265,51 @@ public class RuleMatch extends FindSubst {
         }
 
         return null;
+    }
+
+    static Truth getTruth(final PostCondition outcome, final char punc, final Truth T,final Truth B) {
+
+
+        final TruthOrDesireFunction f = getTruthFunction(punc, outcome);
+        if (f == null) return null;
+
+        final Truth truth = f.get(T, B);
+
+        final float minConf = DefaultTruth.DEFAULT_TRUTH_EPSILON;
+        return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
+    }
+
+    static TruthOrDesireFunction getTruthFunction(char punc, PostCondition outcome) {
+
+        switch (punc) {
+
+            case Symbols.JUDGMENT:
+                return outcome.truth;
+
+            case Symbols.GOAL:
+                if (outcome.desire == null) {
+                    //System.err.println(outcome + " has null desire function");
+                    return null; //no desire function specified for this rule
+                }
+                else {
+                    return outcome.desire;
+                }
+
+            /*case Symbols.QUEST:
+            case Symbols.QUESTION:
+            */
+
+            default:
+                return null;
+        }
+
+    }
+
+    static boolean validJudgmentOrGoalTruth(Truth truth, float minConf) {
+        if ((truth == null) || (truth.getConfidence() < minConf)) {
+            return false;
+        }
+        return true;
     }
 
     protected static boolean cyclic(PostCondition outcome, Premise premise) {
@@ -355,6 +395,12 @@ public class RuleMatch extends FindSubst {
                 return abortDerivation;
         }
         return rule.postconditions;
+    }
+
+    public void occurenceAdd(final long cyclesDelta) {
+        if (occurence_shift == Stamp.TIMELESS)
+            occurence_shift = 0;
+        occurence_shift += cyclesDelta;
     }
 
 //    public void run(TaskRule rule, Stream.Builder<Task> stream) {

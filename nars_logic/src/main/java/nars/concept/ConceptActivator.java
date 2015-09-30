@@ -1,6 +1,5 @@
 package nars.concept;
 
-import nars.Memory;
 import nars.NAR;
 import nars.Param;
 import nars.bag.Bag;
@@ -81,60 +80,60 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
         return null;
     }
 
-
-    public Concept forgottenOrNewConcept() {
-        final Memory memory = nar.memory;
-        boolean belowThreshold = getBudget().getPriority() < memory.newConceptThreshold.floatValue();
-
-        //try remembering from subconscious if activation is sufficient
-        Concept concept = index().get(getKey());
-        if (concept != null) {
-
-            if (!belowThreshold) {
-                //reactivate
-                return concept;
-            } else {
-                //exists in subconcepts, but is below threshold to activate
-                return null;
-            }
-        }
-
-        //create new concept, with the applied budget
-        if (createIfMissing) {
-
-            //create it regardless, even if this returns null because it wasnt active enough
-
-            concept = newConcept(/*(Budget)*/getKey(), getBudget(), memory);
-
-            if (concept == null)
-                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this);
-            else {
-                //memory.emit(Events.ConceptNew.class, this);
-                if (memory.logic != null)
-                    memory.logic.CONCEPT_NEW.hit();
-            }
-
-            if (!belowThreshold)
-                return concept;
-        }
-
-        return null;
-    }
-
-
-    protected final boolean remember(Concept c) {
-
-            if (isActivatable(c)) {
-
-                on(c);
-
-                nar.memory.logic.CONCEPT_REMEMBER.hit();
-
-                return true;
-            }
-
-        return false;
-    }
+//
+//    public Concept forgottenOrNewConcept() {
+//        final Memory memory = nar.memory;
+//        boolean belowThreshold = getBudget().summaryLessThan(memory.newConceptThreshold.floatValue();
+//
+//        //try remembering from subconscious if activation is sufficient
+//        Concept concept = index().get(getKey());
+//        if (concept != null) {
+//
+//            if (!belowThreshold) {
+//                //reactivate
+//                return concept;
+//            } else {
+//                //exists in subconcepts, but is below threshold to activate
+//                return null;
+//            }
+//        }
+//
+//        //create new concept, with the applied budget
+//        if (createIfMissing) {
+//
+//            //create it regardless, even if this returns null because it wasnt active enough
+//
+//            concept = newConcept(/*(Budget)*/getKey(), getBudget(), memory);
+//
+//            if (concept == null)
+//                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this);
+//            else {
+//                //memory.emit(Events.ConceptNew.class, this);
+//                if (memory.logic != null)
+//                    memory.logic.CONCEPT_NEW.hit();
+//            }
+//
+//            if (!belowThreshold)
+//                return concept;
+//        }
+//
+//        return null;
+//    }
+//
+//
+//    protected final boolean remember(Concept c) {
+//
+//            if (isActivatable(c)) {
+//
+//                on(c);
+//
+//                nar.memory.logic.CONCEPT_REMEMBER.hit();
+//
+//                return true;
+//            }
+//
+//        return false;
+//    }
 
 
 

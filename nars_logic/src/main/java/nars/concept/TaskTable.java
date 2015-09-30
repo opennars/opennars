@@ -1,6 +1,9 @@
 package nars.concept;
 
+import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
+import nars.Memory;
+import nars.budget.Budget;
 import nars.task.Task;
 import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
@@ -23,15 +26,14 @@ public interface TaskTable extends Iterable<Task> {
 
     /** attempt to insert a task.
      *
-     * @param c the concept in which this occurrs
      * @return:
-     *      the input value, 'q' if it it was added to the table
-     *      a previous stored task if this was a duplicate
+     *      the input task itself, it it was added to the table
+     *      an existing equivalent task if this was a duplicate
      *
      */
 
 
-    Task add(Task t, Equality<Task> equality);
+    Task add(Task t, Equality<Task> equality, Procedure2<Budget,Budget> duplicateMerge, Memory m);
 
         /**
          *

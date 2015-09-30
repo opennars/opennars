@@ -20,7 +20,7 @@ public class Concurrent extends PreCondition {
 
     @Override
     public boolean test(RuleMatch m) {
-        if (!m.premise.isEvent())
+        if (!m.premise.isTaskAndBeliefEvent())
             return false;
 
         final Task task = m.premise.getTask();

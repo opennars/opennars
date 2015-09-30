@@ -37,8 +37,6 @@ import nars.truth.ProjectedTruth;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 
-import java.util.Arrays;
-
 
 /**
  * Directly process a task by a oldBelief, with only two Terms in both. In
@@ -155,35 +153,33 @@ public class LocalRules {
         return revised;
     }
 
-    public static Task trySolution(Task belief, final Task questionTask, final Premise nal) {
-        if (belief == null) return null;
-
-        return trySolution(belief, belief.getTruth(), questionTask, nal);
+    public static Task trySolution(final Task question, Task solution, final Premise nal) {
+        return trySolution(question, solution, solution.getTruth(), nal);
     }
 
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
-     * @param question     The question to be processed
      * @param proposedBelief       The proposed answer
+     * @param question     The question to be processed
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(final Task proposedBelief, final Truth projectedTruth, final Task question, final Premise nal) {
+    public static Task trySolution(final Task question, final Task solution, final Truth projectedTruth, final Premise nal) {
 
-        Task belief = proposedBelief;
 
-        if (belief == null) return null;
-        if (belief.isDeleted())
-            throw new RuntimeException(belief + " deleted");
-
-        Memory memory = nal.memory();
-        Term content = belief.getTerm();
-
-        if (!TemporalRules.matchingOrder(question, belief)) {
+        if (!TemporalRules.matchingOrder(question, solution)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return null;
+
         }
+        if ((solution == null) || (solution.isDeleted()))
+            throw new RuntimeException("proposedBelief " + solution + " deleted or null");
+
+        Task sol = solution;
+
+        final Memory memory = nal.memory();
+
 
 
         final long now = memory.time();
@@ -191,60 +187,55 @@ public class LocalRules {
         /** temporary for comparing the result before unification and after */
         //float newQ0 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
 
-        if (content.hasVarIndep() && !content.equals(question.getTerm())) {
+        final Term solTerm = sol.getTerm();
+        if (solTerm.hasVarIndep() && !solTerm.equals(question.getTerm())) {
 
-            Term u[] = new Term[]{content, question.getTerm()};
+            Term u[] = new Term[]{ question.getTerm(), solTerm };
 
-            boolean unified = Unification.unify(Op.VAR_INDEPENDENT, u, nal.getRandom());
+            if ( Unification.unify(Op.VAR_INDEPENDENT, u, nal.getRandom()) ) {
 
-            if (unified) {
-
-                content = u[0];
-
-                belief = belief.clone((Compound) content, projectedTruth, false);
-                if (belief == null) {
-                    throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
-                }
+                sol = sol.clone((Compound)u[1], projectedTruth, false);
 
                 //float newQ1 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
                 //System.err.println(" before unf: " + newQ0 + " , after " + newQ1);
                 //System.err.println();
             }
         } else {
-            belief = belief.clone(projectedTruth, false);
+            sol = sol.clone(projectedTruth, false);
         }
 
-        float newQ = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
+        if (sol == null)
+            throw new RuntimeException("Unification invalid: " + solution + " unified and projected to " + sol);
+
+
+
+        float newQ = TemporalRules.solutionQuality(question, sol, projectedTruth, now);
 //        if (newQ == 0) {
 //            memory.emotion.happy(0, questionTask, nal);
 //            return null;
 //        }
 
 
-        Sentence oldBest = question.getBestSolution();
-        if (oldBest != null) {
-            float oldQ = TemporalRules.solutionQuality(question, oldBest, now);
-            if (oldQ >= newQ) {
-                //if (question.isGoal()) {
-                //memory.emotion.happy(oldQ, question, nal);
-                //}
-                //System.out.println("Unsolved: Solution of lesser quality");
-                //memory.emit(Unsolved.class, task, belief, "Lower quality");
-                return null;
-            }
+
+        final Task oldBest = question.getBestSolution();
+        final float oldQ = (oldBest != null) ? TemporalRules.solutionQuality(question, oldBest, now) : 0;
+
+
+        if (oldQ >= newQ) {
+            //old solution was better:
+            return oldBest;
         }
 
+        //else, new solution is btter
+        memory.emotion.happy(newQ - oldQ, question, nal);
 
-        question.setBestSolution(belief, memory);
+        question.setBestSolution(sol, memory);
 
         memory.logic.SOLUTION_BEST.set(newQ);
 
-        //if (question.isGoal()) {
-        memory.emotion.happy(newQ, question, nal);
-        //}
 
-        Budget budget = TemporalRules.solutionEval(question, belief, question, nal);
-
+        //TODO solutionEval calculates the same solutionQuality as here, avoid this unnecessary redundancy
+        Budget budget = TemporalRules.solutionEval(question, sol, question, nal);
 
         /*memory.output(task);
 
@@ -274,11 +265,23 @@ public class LocalRules {
                     "Adjusted Solution",
                     true, false, false);*/
 
-            memory.eventDerived.emit(belief);
-            nal.nar().input(belief);
 
-            /** decrease question's budget for transfer to solutions */
-            question.getBudget().decPriority(budget.getPriority());
+
+
+        /** decrease question's budget for transfer to solutions */
+        question.getBudget().andPriority(budget.getPriority());
+
+        if (!sol.equals(solution)) {
+            memory.eventDerived.emit(sol);
+            //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
+        }
+        memory.eventAnswer.emit(Tuples.twin(question, sol));
+
+        return sol;
+
+
+
+
         //} else {
             //
 
@@ -294,13 +297,11 @@ public class LocalRules {
 //            //if (questionTask.isInput()) { //only show input tasks as solutions
 
 
-        memory.eventAnswer.emit(Tuples.twin(question, belief));
 
 //        } else {
 //            memory.eventAnswer.emit(Tuples.twin(belief, question));
 //        }
 
-        return belief;
     }
 
 

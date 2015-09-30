@@ -21,6 +21,7 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  *
@@ -28,7 +29,6 @@ import java.util.*;
  *
  */
 public class Util {
-
 
 
     /**
@@ -55,11 +55,12 @@ public class Util {
     }
 
 
-
-    /** Fetch the Unsafe.  Use With Caution. */
+    /**
+     * Fetch the Unsafe.  Use With Caution.
+     */
     public static Unsafe getUnsafe() {
         // Not on bootclasspath
-        if( Util.class.getClassLoader() == null )
+        if (Util.class.getClassLoader() == null)
             return Unsafe.getUnsafe();
         try {
             final Field fld = Unsafe.class.getDeclaredField("theUnsafe");
@@ -88,9 +89,11 @@ public class Util {
     public final static int hash(int a, int b, int c) {
         return PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c;
     }
+
     public final static int hash(int a, int b, int c, int d) {
         return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d;
     }
+
     public final static int hash(int a, int b, int c, int d, int e) {
         return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d) + e;
     }
@@ -344,24 +347,22 @@ public class Util {
     }
 
     public static int ELFHashNonZero(final byte[] str, final long seed) {
-        int i = (int)ELFHash(str, seed);
+        int i = (int) ELFHash(str, seed);
         if (i == 0) i = 1;
         return i;
     }
 
-    public static long ELFHash(final byte[] str, final long seed)     {
+    public static long ELFHash(final byte[] str, final long seed) {
 
         long hash = seed;
-        long x    = 0;
+        long x = 0;
 
         final int len = str.length;
 
-        for(int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             hash = (hash << 4) + str[i];
 
-            if((x = hash & 0xF0000000L) != 0)
-            {
+            if ((x = hash & 0xF0000000L) != 0) {
                 hash ^= (x >> 24);
             }
             hash &= ~x;
@@ -371,184 +372,173 @@ public class Util {
     }
 
 
+    public static long BKDRHash(String str) {
+        long seed = 131; // 31 131 1313 13131 131313 etc..
+        long hash = 0;
 
-        public static long BKDRHash(String str)
-        {
-            long seed = 131; // 31 131 1313 13131 131313 etc..
-            long hash = 0;
-
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = (hash * seed) + str.charAt(i);
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash = (hash * seed) + str.charAt(i);
         }
+
+        return hash;
+    }
    /* End Of BKDR Hash Function */
 
 
-        public static long SDBMHash(String str)
-        {
-            long hash = 0;
+    public static long SDBMHash(String str) {
+        long hash = 0;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = str.charAt(i) + (hash << 6) + (hash << 16) - hash;
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash = str.charAt(i) + (hash << 6) + (hash << 16) - hash;
         }
+
+        return hash;
+    }
    /* End Of SDBM Hash Function */
 
 
-        public static long DJBHash(String str)
-        {
-            long hash = 5381;
+    public static long DJBHash(String str) {
+        long hash = 5381;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = ((hash << 5) + hash) + str.charAt(i);
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash = ((hash << 5) + hash) + str.charAt(i);
         }
+
+        return hash;
+    }
    /* End Of DJB Hash Function */
 
 
-        public static long DEKHash(String str)
-        {
-            long hash = str.length();
+    public static long DEKHash(String str) {
+        long hash = str.length();
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = ((hash << 5) ^ (hash >> 27)) ^ str.charAt(i);
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash = ((hash << 5) ^ (hash >> 27)) ^ str.charAt(i);
         }
+
+        return hash;
+    }
    /* End Of DEK Hash Function */
 
 
-        public static long BPHash(String str)
-        {
-            long hash = 0;
+    public static long BPHash(String str) {
+        long hash = 0;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = hash << 7 ^ str.charAt(i);
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash = hash << 7 ^ str.charAt(i);
         }
+
+        return hash;
+    }
    /* End Of BP Hash Function */
 
 
-        public static long FNVHash(String str)
-        {
-            long fnv_prime = 0x811C9DC5;
-            long hash = 0;
+    public static long FNVHash(String str) {
+        long fnv_prime = 0x811C9DC5;
+        long hash = 0;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash *= fnv_prime;
-                hash ^= str.charAt(i);
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash *= fnv_prime;
+            hash ^= str.charAt(i);
         }
+
+        return hash;
+    }
    /* End Of FNV Hash Function */
 
 
-        public static long APHash(String str)
-        {
-            long hash = 0xAAAAAAAA;
+    public static long APHash(String str) {
+        long hash = 0xAAAAAAAA;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                if ((i & 1) == 0)
-                {
-                    hash ^= ((hash << 7) ^ str.charAt(i) * (hash >> 3));
-                }
-                else
-                {
-                    hash ^= (~((hash << 11) + str.charAt(i) ^ (hash >> 5)));
-                }
+        for (int i = 0; i < str.length(); i++) {
+            if ((i & 1) == 0) {
+                hash ^= ((hash << 7) ^ str.charAt(i) * (hash >> 3));
+            } else {
+                hash ^= (~((hash << 11) + str.charAt(i) ^ (hash >> 5)));
             }
-
-            return hash;
         }
+
+        return hash;
+    }
    /* End Of AP Hash Function */
 
 //    }
 
 
-    /** returns the next index */
+    /**
+     * returns the next index
+     */
     public static int long2Bytes(long l, final byte[] target, final int offset) {
-        for (int i = offset+7; i >= offset; i--) {
-            target[i] = (byte)(l & 0xFF);
+        for (int i = offset + 7; i >= offset; i--) {
+            target[i] = (byte) (l & 0xFF);
             l >>= 8;
         }
-        return offset+8;
+        return offset + 8;
     }
 
-    /** returns the next index */
+    /**
+     * returns the next index
+     */
     public static int int2Bytes(int l, final byte[] target, final int offset) {
-        for (int i = offset+3; i >= offset; i--) {
-            target[i] = (byte)(l & 0xFF);
+        for (int i = offset + 3; i >= offset; i--) {
+            target[i] = (byte) (l & 0xFF);
             l >>= 8;
         }
-        return offset+4;
+        return offset + 4;
     }
 
-    /** http://www.java-gaming.org/index.php?topic=24194.0 */
+    /**
+     * http://www.java-gaming.org/index.php?topic=24194.0
+     */
     public static int floorInt(final float x) {
         return (int) (x + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
-    private static final int    BIG_ENOUGH_INT   = 16 * 1024;
+
+    private static final int BIG_ENOUGH_INT = 16 * 1024;
     private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT;
     private static final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5;
 
 
-
-    /** linear interpolate between target & current, factor is between 0 and 1.0 */
+    /**
+     * linear interpolate between target & current, factor is between 0 and 1.0
+     */
     public static float lerp(final float target, final float current, final float factor) {
         return target * factor + current * (1f - factor);
     }
 
-    /** maximum, simpler and faster than Math.max without its additional tests */
+    /**
+     * maximum, simpler and faster than Math.max without its additional tests
+     */
     public final static float max(final float a, final float b) {
         return (a > b) ? a : b;
     }
 
     public final static float mean(final float a, final float b) {
-        return (a+b)*0.5f;
+        return (a + b) * 0.5f;
     }
 
-    /** tests equivalence (according to epsilon precision) */
-    public static boolean isEqual(final float a, final float b, final float epsilon) {
-        return Math.abs(a-b) < epsilon;
-    }
 
     public static short f2s(float conf) {
-        return (short)(conf * Short.MAX_VALUE);
+        return (short) (conf * Short.MAX_VALUE);
     }
 
     public static byte f2b(float conf) {
-        return (byte)(conf * Byte.MAX_VALUE);
+        return (byte) (conf * Byte.MAX_VALUE);
     }
 
-    /** removal rates are approximately monotonically increasing function;
+    /**
+     * removal rates are approximately monotonically increasing function;
      * tests first, mid and last for this  ordering
      * first items are highest, so it is actually descending order
      * TODO improve accuracy
-     * */
+     */
     public static boolean isSemiMonotonicallyDec(double[] count) {
 
 
         int cl = count.length;
         return
-                (count[0] >= count[cl-1]) &&
-                (count[cl/2] >= count[cl-1]);
+                (count[0] >= count[cl - 1]) &&
+                        (count[cl / 2] >= count[cl - 1]);
     }
 
     /* TODO improve accuracy */
@@ -556,47 +546,47 @@ public class Util {
 
         int cl = count.length;
         return
-                (count[0] <= count[cl-1]) &&
-                        (count[cl/2] <= count[cl-1]);
+                (count[0] <= count[cl - 1]) &&
+                        (count[cl / 2] <= count[cl - 1]);
     }
 
-    /** Generic utility method for running a list of tasks in current thread */
+    /**
+     * Generic utility method for running a list of tasks in current thread
+     */
     public static void run(final Deque<Runnable> tasks) {
-        run(tasks, tasks.size(), 1);
+        run(tasks, tasks.size(), r -> r.run());
     }
 
-    /** Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish) */
+    public static void run(final Deque<Runnable> tasks, int maxTasksToRun, Consumer<Runnable> runner) {
+        while (!tasks.isEmpty() && maxTasksToRun-- > 0) {
+            runner.accept( tasks.removeFirst() );
+        }
+    }
+
+    /**
+     * Generic utility method for running a list of tasks in current thread (concurrency == 1) or in multiple threads (> 1, in which case it will block until they finish)
+     */
     public static void run(final Deque<Runnable> tasks, int maxTasksToRun, int threads) {
 
         final int concurrency = Math.min(threads, maxTasksToRun);
 
-            ConcurrentContext ctx = null;
-            if (concurrency > 1)  {
-                //execute in parallel, multithreaded
-                ctx = ConcurrentContext.enter();
+        final ConcurrentContext ctx = ConcurrentContext.enter();
+        ctx.setConcurrency(concurrency);
 
-                ctx.setConcurrency(concurrency);
-            }
-
-            try {
-                while (!tasks.isEmpty() && maxTasksToRun-- > 0) {
-                    Runnable tt = tasks.removeFirst();
-                    if (ctx!=null)
-                        ctx.execute(tt);
-                    else
-                        tt.run();
-                }
-
-            } finally {
-                // Waits for all concurrent executions to complete.
-                // Re-exports any exception raised during concurrent executions.
-                if (ctx!=null)
-                    ctx.exit();
-            }
+        try {
+            run(tasks, maxTasksToRun, r -> ctx.execute(r));
+        } finally {
+            // Waits for all concurrent executions to complete.
+            // Re-exports any exception raised during concurrent executions.
+            if (ctx != null)
+                ctx.exit();
+        }
 
     }
 
-    /** clamps a value to 0..1 range */
+    /**
+     * clamps a value to 0..1 range
+     */
     public static float clamp(final float p) {
         if (p > 1f)
             return 1f;
@@ -605,12 +595,37 @@ public class Util {
         return p;
     }
 
-    /** discretizes values to nearest finite resolution real number determined by epsilon spacing */
-    public static float normalize(float value, float epsilon) {
+    /**
+     * discretizes values to nearest finite resolution real number determined by epsilon spacing
+     */
+    public static float round(float value, float epsilon) {
         return clamp(Math.round(value / epsilon) * epsilon);
     }
 
     public static int hash(final float f, final int discretness) {
-        return (int)(f * discretness);
+        return (int) (f * discretness);
     }
+
+    public static boolean equals(double a, double b) {
+        return equal(a, b, Double.MIN_VALUE * 2);
+    }
+
+    public static boolean equals(float a, float b) {
+        return equal(a, b, Float.MIN_VALUE * 2);
+    }
+
+    /**
+     * tests equivalence (according to epsilon precision)
+     */
+    public static boolean equal(final float a, final float b, final float epsilon) {
+        return Math.abs(a - b) < epsilon;
+    }
+
+    /**
+     * tests equivalence (according to epsilon precision)
+     */
+    public static boolean equal(final double a, final double b, final double epsilon) {
+        return Math.abs(a - b) < epsilon;
+    }
+
 }

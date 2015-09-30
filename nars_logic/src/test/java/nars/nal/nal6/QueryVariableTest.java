@@ -59,7 +59,7 @@ public class QueryVariableTest extends AbstractNALTest {
             if (d.getTerm().hasVarQuery())
                 derivations.add(d);
             if (d.isJudgment() && d.getTerm().toString().equals(belief))
-                assertFalse(d + " should not have been derived", Util.isEqual(d.getConfidence(), 0.81f, 0.01f));
+                assertFalse(d + " should not have been derived", Util.equal(d.getConfidence(), 0.81f, 0.01f));
         } );
         n.memory.eventAnswer.on( p -> {
             //System.out.println("q: " + p.getOne() + " a: " + p.getTwo());

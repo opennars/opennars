@@ -220,9 +220,9 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     boolean processGoal(Premise nal, Task task);
 
-    Task processQuestion(Premise nal, Task task);
+    boolean processQuestion(Premise nal, Task task);
 
-    default Task processQuest(Premise nal, Task task) {
+    default boolean processQuest(Premise nal, Task task) {
         return processQuestion(nal, task);
     }
 

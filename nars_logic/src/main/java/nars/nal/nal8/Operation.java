@@ -380,4 +380,8 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
         );
     }
 
+    public static Operation op(Operator opTerm, Term... arg) {
+        return Operation.op(Product.make(arg), opTerm);
+    }
+
 }

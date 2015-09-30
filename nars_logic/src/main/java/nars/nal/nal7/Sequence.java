@@ -215,6 +215,7 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
 
+
 //    public Sequence cloneRemovingSuffixInterval() {
 //        final int s = size();
 //        long[] ni = Arrays.copyOf(intervals(), s+1);

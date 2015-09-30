@@ -1,6 +1,5 @@
 package nars.nal.nal4;
 
-import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
@@ -41,7 +40,7 @@ public class NAL4MultistepTest extends AbstractNALTest {
     public void nal4_everyday_reasonoing() throws InvalidInputException {
         int time = 250;
 
-        Global.DEBUG = true;
+        //Global.DEBUG = true;
 
         TestNAR tester = test();
         tester.believe("<{sky} --> [blue]>",1.0f,0.9f); //en("the sky is blue");

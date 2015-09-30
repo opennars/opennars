@@ -54,7 +54,7 @@ public class BudgetMergeTest {
 
         //new value is the average
         assertEquals(1, a.size());
-        assertEquals(0.2f, a.removeHighest().getPriority(), 0.001);
+        assertEquals(0.25f, a.removeHighest().getPriority(), 0.001);
 
     }
 

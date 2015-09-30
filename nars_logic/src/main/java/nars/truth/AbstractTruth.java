@@ -49,7 +49,7 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
 
     public final boolean equalsConfidence(final Truth t) {
         final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();
-        return Util.isEqual(getConfidence(), t.getConfidence(), e);
+        return Util.equal(getConfidence(), t.getConfidence(), e);
     }
 
     public abstract boolean equalsFrequency(Truth t);

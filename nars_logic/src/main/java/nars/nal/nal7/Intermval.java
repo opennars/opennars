@@ -17,7 +17,7 @@ public interface Intermval extends TermMetadata {
     long[] intervals();
 
 
-    /** total amount of time contained from begining to end */
+    /** number of cycles that this sequence spans from start to end (= sum of intermval values) */
     default long intervalLength() {
         long l = 0;
         for (final long x : intervals())

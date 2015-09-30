@@ -55,6 +55,16 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     public static final Procedure2<Budget,Budget> max = (Procedure2<Budget, Budget>) Budget::mergeMax;
 
 
+
+    //common instance for a 'deleted budget'.  TODO use a wrapper class to make it unmodifiable
+    public static Budget deleted = new Budget();
+    static {  deleted.delete(); }
+
+    //common instance for a 'zero budget'.  TODO use a wrapper class to make it unmodifiable
+    public static Budget zero = new Budget();
+    static {  zero.zero();    }
+
+
     /**
      * The relative share of time resource to be allocated
      */
@@ -215,10 +225,15 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
     public static float summarySum(Iterable<? extends Budgeted> dd) {
         float f = 0;
-
-        for (final Budgeted x : dd) {
+        for (final Budgeted x : dd)
             f += x.getBudget().summary();
-        }
+        return f;
+    }
+
+    public static float prioritySum(Iterable<? extends Budgeted> dd) {
+        float f = 0;
+        for (final Budgeted x : dd)
+            f += x.getPriority();
         return f;
     }
 
@@ -268,7 +283,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final float currentNextPrioritySum = (currentPriority + nextPriority);
 
-        /* current proportion */ final float cp = (Util.isEqual(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
+        /* current proportion */ final float cp = (Util.equal(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
                 0.5f : /* both are zero so they have equal infleunce */
                 (currentPriority / currentNextPrioritySum);
         /* next proportion */ final float np = 1f - cp;
@@ -293,7 +308,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         final float prisum = (currentPriority + otherPriority);
 
         /* current proportion */
-        final float cp = (Util.isEqual(prisum, 0, BUDGET_EPSILON)) ?
+        final float cp = (Util.equal(prisum, 0, BUDGET_EPSILON)) ?
                 0.5f : /* both are zero so they have equal infleunce */
                 (currentPriority / prisum);
 
@@ -377,14 +392,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         setPriority(and(getPriority(), v));
     }
 
-    /**
-     * Decrease priority value by a percentage of the remaining range
-     *
-     * @param v The decreasing percent
-     */
-    public void decPriority(final float v) {
-        setPriority(and(priority, v));
-    }
+
 
     /**
      * Get durability value
@@ -409,7 +417,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v The increasing percent
      */
-    public void orDurability(final float v) {
+    public final void orDurability(final float v) {
         setDurability(or(durability, v));
     }
 
@@ -418,7 +426,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      *
      * @param v The decreasing percent
      */
-    public void andDurability(final float v) {
+    public final void andDurability(final float v) {
         setDurability(and(durability, v));
     }
 
@@ -568,9 +576,9 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     public final boolean equalsByPrecision(final Budget t, final float epsilon) {
-        return  isEqual(getPriority(), t.getPriority(), epsilon) &&
-                isEqual(getDurability(), t.getDurability(), epsilon) &&
-                isEqual(getQuality(), t.getQuality(), epsilon);
+        return  equal(getPriority(), t.getPriority(), epsilon) &&
+                equal(getDurability(), t.getDurability(), epsilon) &&
+                equal(getQuality(), t.getQuality(), epsilon);
     }
 
     public final boolean equalsBudget(final Budget t) {
@@ -810,6 +818,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     public boolean isDeleted() {
         return Float.isNaN(getPriority());
     }
+
 
 
 }

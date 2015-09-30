@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 @RunWith(Parameterized.class)
 public class NAL1MultistepTest extends AbstractNALTest {
 
-
     public NAL1MultistepTest(Supplier<NAR> b) {
         super(b);
     }
@@ -24,27 +23,21 @@ public class NAL1MultistepTest extends AbstractNALTest {
         return AbstractNALTest.core1;
     }
 
-    @Test
-    public void multistep2() {
-        DeductiveChainTest dc = new DeductiveChainTest(nar(), 2, 600);
-        //dc.nar.stdout();
-        dc.run();
+
+
+    @Test public void multistep2() {
+        new DeductiveChainTest(nar(), 2, 1000).run();
     }
 
-    @Test
-    public void multistep3() {
-        new DeductiveChainTest(nar(), 3, 3000).run();
+    @Test public void multistep3() {
+        new DeductiveChainTest(nar(), 3, 2000).run();
     }
 
-    @Test
-    public void multistep4() {
-        new DeductiveChainTest(nar(), 4, 4000).run();
+    @Test public void multistep4() {
+        new DeductiveChainTest(nar(), 4, 3000).run();
     }
 
-    @Test
-    public void multistep1() {
-        new DeductiveChainTest(nar(), 1, 200).run();
-    }
+
 
 
     @Test

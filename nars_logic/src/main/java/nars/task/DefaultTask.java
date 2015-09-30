@@ -79,10 +79,11 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     public DefaultTask(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Task parentBelief, final Task solution) {
         this(term, punctuation, truth,
-                bv != null ? bv.getPriority() : 0,
-                bv != null ? bv.getDurability() : 0,
-                bv != null ? bv.getQuality() : 0,
-                parentTask, parentBelief, solution);
+                bv.getPriority(),
+                bv.getDurability(),
+                bv.getQuality(),
+                parentTask, parentBelief,
+                solution);
     }
 
     public DefaultTask(T term, final char punc, final Truth truth, final float p, final float d, final float q) {
@@ -112,17 +113,9 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
     public DefaultTask(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Task> parentBelief, final Reference<Task> solution) {
         super(p, d, q);
-        //super(term, punctuation, truth, p, d, q);
-
         this.truth = truth;
         this.punctuation = punctuation;
-
-        /*if (term instanceof Sequence) {
-            this.term = (T) ((Sequence) term).cloneRemovingSuffixInterval();
-        } else {*/
-            this.term = term;
-        //}
-
+        this.term = term;
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
         this.bestSolution = solution;
@@ -512,7 +505,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * @return The stored Sentence or null
      */
     @Override
-    public Sentence getBestSolution() {
+    public Task getBestSolution() {
         return dereference(bestSolution);
     }
 
@@ -639,7 +632,6 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException {
         serialize(jgen, provider);
     }
-
 
 
 }

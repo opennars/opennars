@@ -401,7 +401,7 @@ public class CurveBagTest extends AbstractBagTest {
         assertEquals(1, c.size());
 
         //but the merge should have decreased the priority from 1.0
-        assertEquals(0.75f, c.iterator().next().getPriority(), 0.001);
+        assertEquals(0.833f, c.iterator().next().getPriority(), 0.001);
 
 
         //finally, remove everything

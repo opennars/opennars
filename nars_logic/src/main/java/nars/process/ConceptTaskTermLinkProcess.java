@@ -29,11 +29,12 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
         if (beliefConcept != null) {
             //belief can be null:
-            final Task belief = beliefConcept.getBeliefs().top(task, nar.time());
-            setBelief(belief);
+            Task belief = beliefConcept.getBeliefs().top(task, nar.time());
 
             if (belief!=null)
-                Unification.match(task, belief, this);
+                belief = Unification.match(task, belief, this);
+
+            setBelief(belief);
         }
 
 

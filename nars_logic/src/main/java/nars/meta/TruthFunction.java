@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by me on 8/1/15.
  */
-public enum TruthFunction {
+public enum TruthFunction implements TruthOrDesireFunction {
 
     Revision() {
         @Override public Truth get(final Truth T, final Truth B) {
@@ -75,9 +75,8 @@ public enum TruthFunction {
         }
     },
     Negation() {
-        @Override public Truth get(final Truth T, final Truth B) {
-            if (B!=null)
-                throw new RuntimeException("belief should be null");
+        @Override public Truth get(final Truth T, /* nullable */ final Truth B) {
+            if (B!=null)  return null; //only apply when B is null
             return TruthFunctions.negation(T);
         }
     },

@@ -11,10 +11,10 @@ import java.util.function.Function;
 import static java.util.Arrays.copyOf;
 
 /** holds a substitution and any metadata that can eliminate matches as early as possible */
-public class Substitution<C extends Compound> implements Function<C,Term> {
+public class Substitution implements Function<Compound,Term> {
+
     final Map<Term, Term> subs;
 
-    public int minMatchVolume/*, maxMatchVolume*/;
     final int numSubs;
 
     final int numDep, numIndep, numQuery;
@@ -36,16 +36,10 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
 
         int numDep = 0, numIndep = 0, numQuery = 0;
 
-        int minMatchVolume = Integer.MAX_VALUE,
-            maxMatchVolume = Integer.MIN_VALUE;
 
         for (final Map.Entry<Term,Term> e : subs.entrySet()) {
 
             final Term m = e.getKey();
-
-            final int v = m.volume();
-            if (minMatchVolume > v) minMatchVolume = v;
-            if (maxMatchVolume < v) maxMatchVolume = v;
 
             if (m instanceof Variable) {
                 switch (m.op()) {
@@ -81,20 +75,11 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
         this.numIndep = numIndep;
         this.numQuery = numQuery;
 
-        this.minMatchVolume = minMatchVolume;
-        //this.maxMatchVolume = maxMatchVolume;
     }
 
 
     /** if eliminates all conditions with regard to a specific compound */
     public final boolean impossible(final Term superterm) {
-
-        if (superterm instanceof Compound) {
-            if (superterm.impossibleSubTermOrEqualityVolume(minMatchVolume)) {
-                //none of the subs could possibly fit inside or be equal to the superterm
-                return true;
-            }
-        }
 
         int subsApplicable = numSubs;
 
@@ -104,15 +89,17 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
                 return true;
         }
 
-        if (numIndep > 0 && !superterm.hasVarIndep())
+        if (numIndep > 0 && !superterm.hasVarIndep()) {
             subsApplicable -= numIndep;
             if (subsApplicable <= 0)
                 return true;
+        }
 
-        if (numQuery > 0 && !superterm.hasVarQuery())
+        if (numQuery > 0 && !superterm.hasVarQuery()) {
             subsApplicable -= numQuery;
             if (subsApplicable <= 0)
                 return true;
+        }
 
 
         //there exist variables that can match, and the term can theoretically equal or contain it
@@ -121,68 +108,75 @@ public class Substitution<C extends Compound> implements Function<C,Term> {
     }
 
 
+    /** gets the substitute */
     final public Term get(final Term t) {
         return subs.get(t);
     }
 
     @Override
-    public Term apply(final C t) {
-        if (impossible(t))
-            return t;
+    public Term apply(final Compound c) {
+        if (impossible(c))
+            return c;
+
+        final Term[] before = c.term;
+
+        /** subterms */
+        Term[] sub = before;
+
+        final int len = before.length;
 
 
-        final Term[] in = t.term;
-        Term[] out = in;
-
-        final int subterms = in.length;
-
-        final int minVolumeOfMatch = minMatchVolume;
+        for (int i = 0; i < len; i++) {
+            //t holds the
+            final Term t = sub[i];
 
 
-        for (int i = 0; i < subterms; i++) {
-            final Term t1 = in[i];
+            // s holds a replacement substitution for t (i-th subterm of c)
+            Term s;
 
-            if (t1.volume() < minVolumeOfMatch) {
-                //too small to be any of the keys or hold them in a subterm
-                continue;
-            }
-
-            Term t2;
-            if ((t2 = get(t1))!=null) {
-
+            //attempt 1: apply known substitution
+            if ((s = get(t))!=null) {
 
                 //prevents infinite recursion
-                if (!t2.containsTerm(t1)) {
-                    if (out == in) out = copyOf(in, subterms);
-                    out[i] = t2; //t2.clone();
-                }
+                if (s.containsTerm(t))
+                    s = null;
 
-            } else if (t1 instanceof Compound) {
+            }
 
-                //additional constraint here?
+            //attempt 2: if substitution still not found, recurse if subterm is compound term
+            if (s == null && (t instanceof Compound)) { //additional constraint here?
+                s = apply((Compound)t);
 
-                Term t3 = apply((C) t1);
-                if ((t3 != null) && (!t3.equals(t1 /* in[i]*/))) {
-                    //modification
-                    if (out == in) out = copyOf(in, subterms);
-                    out[i] = t3;
-                }
+                //if the same thing was provided, ignore
+                if (t.equals(s))
+                    s = null;
+            }
+
+            //if substitute found
+            if (s!=null) {
+
+                //ensure using a modified result Term[]
+                if (sub == before) sub = copyOf(before, len);
+
+                //replace the value at the current index
+                sub[i] = s; //s.clone();
+
             }
         }
 
-        if (out == in) //nothing changed
-            return t;
+        if (sub == before) {
+            //a new Term[] was not created, meaning nothing changed. return the input term
+            return c;
+        }
 
-        Term s = t.clone(out);
 
-        return s;
+        return c.clone(sub);
     }
 
     @Override
     public String toString() {
         return "Substitution{" +
                 "subs=" + subs +
-                ", minMatchVolume=" + minMatchVolume +
                 ", numSubs=" + numSubs +
                 ", numDep=" + numDep +
                 ", numIndep=" + numIndep +

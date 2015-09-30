@@ -113,8 +113,11 @@ public class UtilityFunctions extends Util {
     
     //may be more efficient than the for-loop version above, for 3 params
     public final static float aveGeo(final float a, final float b, final float c) {
-        if ((a == 0)||(b==0)||(c==0)) return 0; //early result avoiding pow()
-        return (float)pow(a*b*c, 1.0/3.0);
+        //final float m = Global.BUDGET_EPSILON
+
+        final float base = a*b*c;
+        //if ((a < m)||(b < m)||(c < m)) return 0; //early result avoiding pow()
+        return (float)pow(base, 1.0/3.0);
     }
 
     public final static boolean aveGeoNotLessThan(final float min, final float a, final float b, final float c) {

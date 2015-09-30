@@ -175,17 +175,17 @@ abstract public class ConceptProcess extends NAL implements Serializable {
     }
 
     /** gets the average summary of one or both task/belief task's */
-    public float getMeanSummary() {
+    public float getMeanPriority() {
         float total = 0;
         int n = 0;
         Task pt = getTask();
         if (pt!=null) {
-            total += pt.getBudget().summary();
+            total += pt.getPriority();
             n++;
         }
         Task pb = getBelief();
         if (pb!=null) {
-            total += pb.getBudget().summary();
+            total += pb.getPriority();
             n++;
         }
 

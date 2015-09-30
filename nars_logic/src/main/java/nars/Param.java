@@ -55,10 +55,7 @@ public abstract class Param extends Container implements Serializable {
 //    /** scaling factor for priority of input tasks */
 //    public AtomicDouble inputActivationFactor = new AtomicDouble(1.0);
 
-    /** minimum expectation necessary to create a concept
-     *  original value: 0.66
-     * */
-    public AtomicDouble conceptCreationExpectation = new AtomicDouble();
+
 
 
 
@@ -85,8 +82,11 @@ public abstract class Param extends Container implements Serializable {
      *   in a performance gain.      */
 
 
-    /** budget summary necessary to Conceptualize */
-    public final AtomicDouble newConceptThreshold = new AtomicDouble(0);
+//    /** budget summary necessary to Conceptualize. this will compare the summary of the task during the TaskProcess */
+//    public final AtomicDouble newConceptThreshold = new AtomicDouble(0);
+
+    /** budget summary necessary to create a derived task. this will compare the summary of the raw original derivation */
+    public final AtomicDouble derivationThreshold = new AtomicDouble(0);
 
     /**
      * Minimum required priority for a concept
@@ -115,7 +115,7 @@ public abstract class Param extends Container implements Serializable {
 
     /** Minimum expectation for a desire value.
      *  the range of "now" is [-DURATION, DURATION]; */
-    public final AtomicDouble executionThreshold = new AtomicDouble();
+    public final AtomicDouble executionExpectationThreshold = new AtomicDouble();
 
 
 

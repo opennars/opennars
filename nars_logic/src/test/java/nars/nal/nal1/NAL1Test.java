@@ -5,11 +5,16 @@ import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
 import nars.narsese.InvalidInputException;
+import nars.task.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class NAL1Test extends AbstractNALTest {
@@ -134,29 +139,43 @@ public class NAL1Test extends AbstractNALTest {
             .run();
     }
 
+
     @Test
-    public void yesnoQuestion() throws InvalidInputException {
-        test().believe("<bird --> swimmer>")
-                .ask("<bird --> swimmer>")
-                .mustOutput(25, "<bird --> swimmer>. %1.00;0.90%")
-                .run();
+    public void whQuestionUnifyQueryVar() throws InvalidInputException {
+        testQuestionAnswer(16, "<bird --> swimmer>", "<?x --> swimmer>", "<bird --> swimmer>");
     }
 
-
-    // question to answer matching
     @Test
-    public void whQuestion() throws InvalidInputException {
-//        System.out.println("\n\n\n START ------------");
-//        TextOutput.out(n);
-//        NARTrace.out(n);
-
-        test().believe("<bird --> swimmer>", 1.0f, 0.8f)
-                .ask("<?x --> swimmer>") //.en("What is a type of swimmer?")
-
-                .mustOutput(150, "<bird --> swimmer>. %1.00;0.80%")
-                .run();
+    public void yesNoQuestion() throws InvalidInputException {
+        testQuestionAnswer(16, "<bird --> swimmer>", "<bird --> swimmer>", "<bird --> swimmer>");
     }
 
+    /** question to answer matching */
+    public void testQuestionAnswer(int cycles, String belief, String question, String expectedSolution) {
+        AtomicBoolean solved = new AtomicBoolean(false);
+
+        NAR nar = nar();
+
+        //TODO abstract the %1.0;0.8% hardcoded here
+
+        Task expectedTask = nar.task(expectedSolution + ". %1.00;0.80%");
+
+        //nar.stdout();
+
+        nar.believe(belief, 1.0f, 0.8f)
+           .answer(question, a -> { //.en("What is a type of swimmer?")
+
+                //test for a few task conditions, everything except for evidence
+                if (a.getPunctuation() == expectedTask.getPunctuation())
+                    if (a.getTerm().equals(expectedTask.getTerm())) {
+                        if (Objects.equals(a.getTruth(), expectedTask.getTruth()))
+                            solved.set(true);
+                }
+
+            }).frame(cycles);
+
+        assertTrue(solved.get());
+    }
 
 
     @Test

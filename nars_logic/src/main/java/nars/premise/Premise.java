@@ -452,8 +452,14 @@ public interface Premise {
         return nar().concept(x);
     }
 
-    default boolean isEvent() {
-        return (!getTask().isEternal() && (getBelief() != null && !getBelief().isEternal()));
+    default boolean isTaskAndBeliefEvent() {
+        if (getBelief() == null) return false;
+
+        return (!getTask().isEternal() && (!getBelief().isEternal()));
+    }
+
+    default boolean isTaskEvent() {
+        return !getTask().isEternal();
     }
 
     //TODO cache this value

@@ -184,12 +184,12 @@ public interface Truth extends MetaTruth<Float> {
     }
 
     
-    default Term toWordTerm(float t) {
+    default Term toWordTerm(float trueExpectationThreshold) {
         float e = getExpectation();
-        if (e > t) {
+        if (e > trueExpectationThreshold) {
             return Truth_TRUE;
         }
-        if (e < 1 - t) {
+        if (e < 1 - trueExpectationThreshold) {
             return Truth_FALSE;
         }
         return Truth_UNSURE;

@@ -32,17 +32,21 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
 
 
     public AnswerReaction(NAR n, String questionTask) throws InvalidInputException {
-        this(n, n.ask(questionTask));
+        this(n, n.task(questionTask));
     }
 
     /** reacts to a specific question */
     public AnswerReaction(NAR n, Task question) {
 
-        reg = n.memory.eventAnswer.on(this);
-
         this.nar = n;
         this.question = question;
-        reportAnyExistingSolutions();
+
+        reg = n.memory.eventAnswer.on(this);
+
+        if (question!=null) {
+            reportAnyExistingSolutions();
+            n.input(question);
+        }
     }
 
     public synchronized void off() {
@@ -52,18 +56,21 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
         }
     }
 
-    protected void reportAnyExistingSolutions() {
-        if (question != null) {
-            Concept c = nar.memory.concept(question.getTerm());
-            if (c == null) return;
+    protected boolean reportAnyExistingSolutions() {
+        Concept c = nar.memory.concept(question.getTerm());
+        if (c == null) return false;
 
-            onSolution(c.getBeliefs().top());
+        Task top = c.getBeliefs().top();
+        if (top!=null) {
+            onSolution(top);
             /*
             for (Task s : c.getBeliefs())
                 onSolution(s);
                 */
-        }
 
+            return true;
+        }
+        return false;
     }
 
     @Override

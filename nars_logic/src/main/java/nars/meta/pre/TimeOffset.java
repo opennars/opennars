@@ -1,7 +1,10 @@
 package nars.meta.pre;
 
+import com.gs.collections.api.block.procedure.Procedure2;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.meta.RuleMatch;
-import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.Sequence;
+import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
 import nars.term.Atom;
 import nars.term.Term;
@@ -11,51 +14,83 @@ import nars.term.Term;
  */
 public class TimeOffset extends PreCondition1 {
 
-    private final boolean positive;
-    int direction;
+    final boolean positive;
+    final int direction;
 
     public TimeOffset(Term arg1, Term operator, boolean positive) {
         super(arg1);
 
-        if (operator.equals(forwardImpl))
-            direction = +1;
-        else if (operator.equals(backImpl))
-            direction = -1;
-        else
-            direction = 0;
+        if ((
+            this.direction = relationDirection
+                    .getIfAbsent(operator, Integer.MIN_VALUE)
+        ) == Integer.MIN_VALUE)
+            throw new RuntimeException("unrecognized TimeOffset parameter: " + operator);
 
         this.positive = positive;
+    }
 
+    @Override public boolean test(final RuleMatch m) {
+        //require the task to be an event
+        if (!m.premise.isTaskEvent())
+            return false;
+
+        return super.test(m);
     }
 
     @Override
-    public boolean test(RuleMatch m, Term arg1) {
+    public boolean test(RuleMatch m, Term arg) {
 
-        if (arg1 == null) return false;
+        if (arg == null) return false;
+        if (arg.getTemporalOrder() != TemporalRules.ORDER_NONE) {
+            System.err.println("ordered term: " + arg);
+        }
 
         long s = positive ? +1 : -1;
-        m.occurence_shift += s * timeOffsetForward(arg1, m.premise);
-        //m.occurence_shift += s * timeOffsetForward(arg2, m.premise);
+        m.occurenceAdd( s * timeOffsetForward(arg, m.premise) );
+
         return true;
     }
 
-    final static Atom forwardImpl = Atom.the("\"==/>\"");
-    final static Atom backImpl = Atom.the("\"==\\>\"");
+
+    static final ObjectIntHashMap<Atom> relationDirection = new ObjectIntHashMap<>(16);
+    static {
+        Procedure2<String,Integer> r = (k, v) -> relationDirection.put(Atom.the("\"" + k + "\""), v);
+
+        r.value("=/>", +1);
+        r.value("=\\>", -1);
+        r.value("=|>", 0);
+        r.value("==>", 0);
+
+        r.value("<|>", 0);
+        r.value("</>", +1);
+        r.value("<=>", 0);
+    }
 
 
     long timeOffsetForward(final Term arg, final Premise nal) {
 
-        if (arg instanceof AbstractInterval) {
-            return ((AbstractInterval) arg).cycles(nal.memory());
+        //NOTE intervals should not appear this point;
+        // add here a general purpose 'interval span' method
+        // that any term will report its total interval.
+        // a sequence will return the sum of its intermvals, for example
+        //
+//        if (arg instanceof AbstractInterval) {
+//            return ((AbstractInterval) arg).cycles(nal.memory());
+//        }
+        if (direction == 0) return 0;
+
+        int dur = nal.duration();
+
+        long cycles;
+        if (arg instanceof Sequence) {
+            cycles = dur/2 + ((Sequence)arg).intervalLength();
         }
-        else /*if (arg instanceof Atom)*/ {
-            int dir = direction;
-            if (dir!=0) {
-                int d = nal.duration();
-                return d * dir; /* -1, 0, or +1 */
-            }
-            return 0;
+        else  {
+            //default: assume duration or half-duration # of cycles for the term
+            cycles = dur/2;
         }
+
+        return direction * cycles;
     }
 
     @Override

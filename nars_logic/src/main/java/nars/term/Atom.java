@@ -200,7 +200,7 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     public final static Atom the(final float v) {
-        if (Util.isEqual( (float)Math.floor(v), v, Float.MIN_VALUE*2 )) {
+        if (Util.equal( (float)Math.floor(v), v, Float.MIN_VALUE*2 )) {
             //close enough to be an int, so it doesnt need to be quoted
             return the((int)v);
         }

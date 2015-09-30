@@ -91,13 +91,13 @@ final public class Global {
 
 
 
-    /** minimum difference necessary to cause a modifciation in budget components */
-    public static float BUDGET_EPSILON = 0.0001f;
+    /** minimum difference necessary to indicate a significant modification in budget float number components */
+    public static float BUDGET_EPSILON = 0.01f;
 
 
-    /* ---------- default input values ---------- */
-    /** Default expectation for confirmation. */
-    public static final float DEFAULT_CONFIRMATION_EXPECTATION = 0.8f;
+//    /* ---------- default input values ---------- */
+//    /** Default expectation for confirmation. */
+//    public static final float DEFAULT_CONFIRMATION_EXPECTATION = 0.8f;
 
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = 0.9f;
@@ -122,19 +122,12 @@ final public class Global {
      /** Default durability of input question */
      public static final float DEFAULT_QUEST_DURABILITY = 0.9f;
  
-    
-    /* ---------- space management ---------- */
-    /** lowest priority which can be considered for forgetting
-     * if 0, then any budget value is subject to forgetting  */
-    //public static float MIN_FORGETTABLE_PRIORITY = BUDGET_EPSILON;
 
     
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
     public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 8;
-
-
 
 
     /**
@@ -144,20 +137,14 @@ final public class Global {
     public static float DISCOUNT_RATE = 0.5f;    
 
 
-    
-    //RUNTIME PERFORMANCE (should not affect logic): ----------------------------------
-
-          
-
-
 
 
     public static float MAX_CONFIDENCE = 0.99f - DefaultTruth.DEFAULT_TRUTH_EPSILON;
 
-    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - 0.01f /*DEFAULT_TRUTH_EPSILON*/;
+    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE; /*DEFAULT_TRUTH_EPSILON*/;
 
-    //temporary parameter for setting #threads to use, globally
-    @Deprecated public static final int THREADS = 1;
+
+    @Deprecated public static final int THREADS = 1; //temporary parameter for setting #threads to use, globally
 
 
 
@@ -190,11 +177,9 @@ final public class Global {
      * in which case the forgetting will have been applied some amount of time past
      * when it would have completed its forget descent.
      */
-    @Deprecated public static float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.0f;
-
-    //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
-    @Deprecated public static float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.0f;
-    @Deprecated public static float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.0f;
+    @Deprecated public static float CONCEPT_FORGETTING_EXTRA_DEPTH = 0.15f;
+    @Deprecated public static float TERMLINK_FORGETTING_EXTRA_DEPTH = 0.075f;
+    @Deprecated public static float TASKLINK_FORGETTING_EXTRA_DEPTH = 0.075f;
 
 
 
@@ -214,14 +199,6 @@ final public class Global {
 //    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
 //
 
-
-
-    public static boolean equals(double a, double b) {
-        return Math.abs(a - b) <= Double.MIN_VALUE*2;
-    }
-    public static boolean equals(float a, float b) {
-        return Math.abs(a - b) <= Float.MIN_VALUE*2;
-    }
 
     public static <K,V> Map<K, V> newHashMap() {
         return newHashMap(0);

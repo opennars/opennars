@@ -42,6 +42,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.util.attention.BagForgettingEnhancer;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.event.On;
@@ -186,7 +187,6 @@ public class Default extends NAR {
          */
     };
     public final DefaultCycle core;
-    public int cyclesPerFrame = 1;
 
     /**
      * Size of TaskLinkBag
@@ -212,50 +212,49 @@ public class Default extends NAR {
     public Default(Memory m, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
         super(m);
 
-        //termLinkMaxMatched.set(5);
 
-
-        //Build Parameters
-//        this.internalExperience = InternalExperience.InternalExperienceMode.None; //much too early, this is nonsensical without working NAL
-
-        setTaskLinkBagSize(8);
-        setTermLinkBagSize(16);
-
-
-        m.duration.set(5);
-        m.shortTermMemoryHistory.set(5);
-        m.conceptActivationFactor.set(1.0);
-        m.conceptFireThreshold.set(0.0);
-
-        m.conceptForgetDurations.set(1.0);
-        m.taskLinkForgetDurations.set(2.0);
-        m.termLinkForgetDurations.set(3.0);
-
-        m.conceptBeliefsMax.set(11);
-        m.conceptGoalsMax.set(5);
-        m.conceptQuestionsMax.set(1);
-        m.activeConceptThreshold.set(0.0);
-        m.questionFromGoalThreshold.set(0.35);
-        m.taskProcessThreshold.set(Global.BUDGET_EPSILON * 2);
-        m.termLinkThreshold.set(0); //Global.BUDGET_EPSILON);
-        m.taskLinkThreshold.set(0); //Global.BUDGET_EPSILON);
-        m.executionThreshold.set(0.5);
-
-        //m.reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        m.conceptCreationExpectation.set(0);//.66);
-
-        setCyclesPerFrame(cyclesPerFrame);
-
-        //core loop
         {
-            DefaultCycle c = this.core = new DefaultCycle(
+            //parameter defaults
+
+            setTaskLinkBagSize(16);
+            setTermLinkBagSize(24);
+
+
+            m.duration.set(5);
+
+            m.conceptBeliefsMax.set(12);
+            m.conceptGoalsMax.set(7);
+            m.conceptQuestionsMax.set(3);
+
+            m.conceptForgetDurations.set(1.0);
+            m.taskLinkForgetDurations.set(2.0);
+            m.termLinkForgetDurations.set(3.0);
+
+            m.conceptActivationFactor.set(1.0);
+            m.conceptFireThreshold.set(0.0);
+            m.derivationThreshold.set(Global.BUDGET_EPSILON);
+            m.activeConceptThreshold.set(0.0);
+            m.taskProcessThreshold.set(Global.BUDGET_EPSILON);
+            m.termLinkThreshold.set(Global.BUDGET_EPSILON);
+            m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
+
+            m.questionFromGoalThreshold.set(0.35);
+
+            m.executionExpectationThreshold.set(0.5);
+
+            m.shortTermMemoryHistory.set(5);
+        }
+
+        {
+            //initialize the core
+            DefaultCycle c = new DefaultCycle(
                     m.the("defaultCore", this),
                     m.the("logic", getDeriver()),
                     new ConceptBagActivator(this),
                     m.the("inputBuffer", new ItemAccumulator(Budget.plus)),
                     newConceptBag()
             );
-            m.the("core", c);
+            m.the("core", this.core = c);
 
             c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
             c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
@@ -264,14 +263,22 @@ public class Default extends NAR {
 
             c.capacity.set(activeConcepts);
 
+            {
+                m.the("core_enhancer", new BagForgettingEnhancer(memory, c.active));
+            }
         }
+
+
 
         if (nal() >= 7) {
 
-            //scope: control
+            //NAL7 plugins
+
             m.the(new STMTemporalLinkage(this, core.deriver));
 
             if (nal() >= 8) {
+
+                //NAL8 plugins
 
                 for (OperatorReaction o : defaultOperators)
                     on(o);
@@ -293,6 +300,7 @@ public class Default extends NAR {
 //                }
             }
         }
+
         //n.on(new RuntimeNARSettings());
 
     }
@@ -321,45 +329,16 @@ public class Default extends NAR {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-        taskLinks.mergeMax();
+        taskLinks.mergePlus();
 
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-        termLinks.mergeMax();
+        termLinks.mergePlus();
 
         return newConcept(t, b, taskLinks, termLinks, memory());
     }
 
-    public class ConceptAttentionEnhancer {
-
-        /**
-         * called by concept before it fires to update any pending changes
-         */
-        public void updateLinks(Concept c) {
-
-
-            final Memory memory = memory();
-
-            if (Global.TERMLINK_FORGETTING_EXTRA_DEPTH > 0)
-                c.getTermLinks().forgetNext(
-                        memory.termLinkForgetDurations,
-                        Global.TERMLINK_FORGETTING_EXTRA_DEPTH,
-                        memory);
-
-
-            if (Global.TASKLINK_FORGETTING_EXTRA_DEPTH > 0)
-                c.getTaskLinks().forgetNext(
-                        memory.taskLinkForgetDurations,
-                        Global.TASKLINK_FORGETTING_EXTRA_DEPTH,
-                        memory);
-
-
-            //linkTerms(null, true);
-
-        }
-    }
-
-//    /**
+    //    /**
 //     * rank function used for concept belief and goal tables
 //     */
 //    public BeliefTable.RankBuilder newConceptBeliefGoalRanking() {
@@ -391,7 +370,7 @@ public class Default extends NAR {
 
     public Bag<Term, Concept> newConceptBag() {
         CurveBag<Term, Concept> b = new CurveBag(rng, 1);
-        b.mergeMax();
+        b.mergePlus();
         return b;
     }
 
@@ -532,7 +511,6 @@ public class Default extends NAR {
          **/
         @Override
         public void onCycle() {
-            enhanceAttention();
             runInputTasks(inputsMaxPerCycle.get());
             runNewTasks(/*inputsMaxPerCycle.get()*/);
             fireConcepts(conceptsFiredPerCycle.get());
@@ -583,13 +561,6 @@ public class Default extends NAR {
         }
 
 
-        //TODO move this to separate enhance plugin
-        protected void enhanceAttention() {
-            active.forgetNext(
-                    conceptForget,
-                    Global.CONCEPT_FORGETTING_EXTRA_DEPTH,
-                    nar.memory());
-        }
 
         protected void runNewTasks() {
             runNewTasks(newTasks.size()); //all
@@ -605,6 +576,7 @@ public class Default extends NAR {
             for (int n = newTasks.size() - 1; n >= 0; n--) {
                 Task highest = newTasks.removeHighest();
                 if (highest == null) break;
+                if (highest.isDeleted()) continue;
 
                 run(highest);
             }
@@ -646,7 +618,7 @@ public class Default extends NAR {
 
             return Task.normalize(
                     premise.derive(deriver).collect(Collectors.toList()),
-                    premise.getMeanSummary() /*/numPremises*/
+                    premise.getMeanPriority() /*/numPremises*/
             ).stream();
 
             //OPTION 1: re-input to input buffers

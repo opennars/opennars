@@ -13,13 +13,13 @@
 
 //Similarity to Inheritance
 
-    (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgement)
-    (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgement)
+    (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgment)
+    (S --> P), (S <-> P), task("?") |- (S --> P), (Truth:StructuralIntersection, Punctuation:Judgment)
 
 //Inheritance to Similarity
 
-    (S <-> P), (S --> P), task("?") |- (S <-> P), (Truth:StructuralAbduction, Punctuation:Judgement)
-    (S <-> P), (S --> P), task("?") |- (S <-> P), (Truth:StructuralAbduction, Punctuation:Judgement)
+    (S <-> P), (S --> P), task("?") |- (S <-> P), (Truth:StructuralAbduction, Punctuation:Judgment)
+    (S <-> P), (S --> P), task("?") |- (S <-> P), (Truth:StructuralAbduction, Punctuation:Judgment)
 
 //Set Definition Similarity to Inheritance
 
@@ -56,16 +56,16 @@
 //If S can stand for P, P can to a certain low degree also represent the class S
 //If after S usually P happens, then it might be a good guess that usually before P happens, S happens.
 
-    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgement)
-    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgement)
-    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgement)
-    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgement)
-    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgement)
-    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgement)
-    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgement)
-    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgement)
-    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgement)
-    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgement)
+    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
+    (P --> S), (S --> P), task("?") |- (P --> S), (Truth:Conversion, Punctuation:Judgment)
+    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgment)
+    (P ==> S), (S ==> P), task("?") |- (P ==> S), (Truth:Conversion, Punctuation:Judgment)
+    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgment)
+    (P =|> S), (S =|> P), task("?") |- (P =|> S), (Truth:Conversion, Punctuation:Judgment)
+    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgment)
+    (P =\> S), (S =/> P), task("?") |- (P =\> S), (Truth:Conversion, Punctuation:Judgment)
+    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgment)
+    (P =/> S), (S =\> P), task("?") |- (P =/> S), (Truth:Conversion, Punctuation:Judgment)
 
 // "If not smoking lets you be healthy, being not healthy may be the result of smoking"
 
@@ -478,47 +478,47 @@
 
 //NAL2:
 
-    ([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
-    ({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
+    ([A] <-> [B]), (A <-> B), task("?") |- ([A] <-> [B]), (Truth:BeliefIdentity, Punctuation:Judgment)
+    ({A} <-> {B}), (A <-> B), task("?") |- ({A} <-> {B}), (Truth:BeliefIdentity, Punctuation:Judgment)
 
-    ([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgement)
-    ({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgement)
+    ([A] --> [B]), (A <-> B), task("?") |- ([A] --> [B]), (Truth:BeliefIdentity, Punctuation:Judgment)
+    ({A} --> {B}), (A <-> B), task("?") |- ({A} --> {B}), (Truth:BeliefIdentity, Punctuation:Judgment)
 
 //NAL3:
 
 ////composition on both sides of a statement:
-    ((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    ((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((&,B,A_1..n) --> (&,A,A_1..n)), (B --> A), task("?") |- ((&,B,A_1..n) --> (&,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((|,B,A_1..n) --> (|,A,A_1..n)), (B --> A), task("?") |- ((|,B,A_1..n) --> (|,A,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
-    ((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((-,S,A) --> (-,S,B)), (B --> A), task("?") |- ((-,S,A) --> (-,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((~,S,A) --> (~,S,B)), (B --> A), task("?") |- ((~,S,A) --> (~,S,B)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
 ////composition on one side of a statement:
-    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    (W --> (|,B,A_1..n)), (W --> B), task("?") |- (W --> (|,B,A_1..n)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((&,B,A_1..n) --> W), (B --> W), task("?") |- ((&,B,A_1..n) --> W), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
-    (W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
-    ((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgement)
+    (W --> (-,S,B)), (W --> B), task("?") |- (W --> (-,S,B)), (Truth:BeliefStructuralDifference, Punctuation:Judgment)
+    ((~,S,B) --> W), (B --> W), task("?") |- ((~,S,B) --> W), (Truth:BeliefStructuralDifference, Punctuation:Judgment)
 
 //NAL4:
 
 ////composition on both sides of a statement:
-    ((B,P) --> ?X) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    ((B,P) --> (A,P)) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((B,P) --> ?X) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((B,P) --> (A,P)) ,(B --> A), task("?") |- ((B,P) --> (A,P)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
-    ((\,N,A,_) --> ?X), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    ((\,N,A,_) --> (\,R,A,_)), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((\,N,A,_) --> ?X), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((\,N,A,_) --> (\,R,A,_)), (N --> R), task("?") |- ((\,N,A,_) --> (\,R,A,_)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
-    ((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
-    ((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+    ((/,N,_,B) --> ?X), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    ((/,N,_,B) --> (/,N,_,S)), (S --> B), task("?") |- ((/,N,_,B) --> (/,N,_,S)), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
 
 //NAL5:
 
-    --A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgement)
-    A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgement)
+    --A, A, task("?") |- --A, (Truth:BeliefNegation, Punctuation:Judgment)
+    A, --A, task("?") |-   A, (Truth:BeliefNegation, Punctuation:Judgment)
 
 //compound composition one premise
 
-(||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgement)
+(||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)

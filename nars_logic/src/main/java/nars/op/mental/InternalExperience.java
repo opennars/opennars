@@ -1,9 +1,11 @@
 package nars.op.mental;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.event.NARReaction;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
@@ -19,6 +21,7 @@ import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.Truth;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -59,6 +62,11 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
     @Deprecated
     public static boolean enabled = true;
 
+
+    /** minimum expectation necessary to create a concept
+     *  original value: 0.66
+     * */
+    public AtomicDouble conceptCreationExpectation = new AtomicDouble(0.66);
 
     public boolean isAllowNewStrategy() {
         return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
@@ -121,9 +129,9 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
             final Task task = tp.getTask();
 
             //old strategy always, new strategy only for QUESTION and QUEST:
-            final char punc = task.getPunctuation();
+            ///final char punc = task.getPunctuation();
 
-            if (OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (punc == Symbols.QUESTION || punc == Symbols.QUEST))) {
+            if (OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && task.isQuestOrQuestion())) {
                 experienceFromTaskInternal(tp, task, isFull());
             }
             //we also need Mr task process to be able to have the task process, this is a hack..
@@ -132,11 +140,11 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 
     }
 
-    public static Operation toTerm(final Sentence s, final NAL mem) {
-        return toTerm(s, mem, enableWantBelieve);
+    public static Operation toTerm(final Sentence s, final NAL mem, float conceptCreationExpectation) {
+        return toTerm(s, mem, conceptCreationExpectation, enableWantBelieve);
     }
 
-    public static Operation toTerm(final Sentence s, final NAL nal, boolean enableWantBelieve) {
+    public static Operation toTerm(final Sentence s, final NAL nal, float conceptCreationExpectation, boolean enableWantBelieve) {
         Operator opTerm;
         switch (s.getPunctuation()) {
             case Symbols.JUDGMENT:
@@ -159,17 +167,17 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
                 return null;
         }
 
-        Term[] arg = new Term[1 + (s.getTruth() == null ? 1 : 2)];
+        final Truth tr = s.getTruth();
+        Term[] arg = new Term[1 + (tr == null ? 1 : 2)];
         arg[0] = s.getTerm();
         int k = 1;
 
-        if (s.getTruth() != null) {
-            final float t = nal.nar.memory().conceptCreationExpectation.floatValue();
-            arg[k++] = s.getTruth().toWordTerm(t);
+        if (tr != null) {
+            arg[k++] = tr.toWordTerm(conceptCreationExpectation);
         }
         arg[k] = nal.self();
 
-        Operation operation = Operation.op(Product.make(arg), opTerm);
+        Operation operation = Operation.op(opTerm, arg);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
@@ -221,12 +229,13 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
         //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
         {
-            char punc = task.getPunctuation();
-            if (punc == Symbols.QUESTION || punc == Symbols.QUEST) {
-                if (task.getBudget().summary() < MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+            //char punc = task.getPunctuation();
+            final Budget b = task.getBudget();
+            if (task.isQuestOrQuestion()) {
+                if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE)) {
                     return null;
                 }
-            } else if (task.getBudget().summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
+            } else if (b.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
                 return null;
             }
         }
@@ -237,7 +246,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
             return null;
         }
 
-        Operation ret = toTerm(task, nal);
+        Operation ret = toTerm(task, nal, conceptCreationExpectation.floatValue());
         if (ret == null) {
             return null;
         }

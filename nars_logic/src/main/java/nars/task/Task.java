@@ -234,16 +234,6 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return budget.aboveThreshold(additionalPriority);
     }*/
 
-    default boolean equalParents(final Task t) {
-        Task p = getParentTask();
-        Task tp = t.getParentTask();
-        if (p == null) {
-            return (tp == null);
-        } else {
-            return p.equals(tp);
-        }
-    }
-
 
 
 
@@ -257,7 +247,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 //    }
 
 
-    Sentence getBestSolution();
+    Task getBestSolution();
 
     Reference<Task> getBestSolutionRef();
 
@@ -608,21 +598,21 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     /** normalize a collection of tasks to each other
      * so that the aggregate budget sums to a provided
      * normalization amount.
-     * @param dd
-     * @return the input collection, unmodified (elements
-     *  may be adjusted individually)
+     * @param derived
+     * @param premisePriority the total value that the derivation group should reach, effectively a final scalar factor determined by premise parent and possibly existing belief tasks
+     * @return the input collection, unmodified (elements may be adjusted individually)
      */
-    static Collection<Task> normalize(final Collection<Task> dd, final float targetSum) {
-        if (dd.isEmpty()) return dd;
+    static Collection<Task> normalize(final Collection<Task> derived, final float premisePriority) {
+        if (derived.isEmpty()) return derived;
 
-        final float total = Budget.summarySum(dd);
+        final float totalDerivedPriority = Budget.prioritySum(derived);
         final float factor = Math.min(
-                    targetSum/total,
+                    premisePriority/totalDerivedPriority,
                     1.0f //limit to only diminish
                 );
 
-        dd.forEach(t -> t.getBudget().mulPriority(factor));
-        return dd;
+        derived.forEach(t -> t.getBudget().mulPriority(factor));
+        return derived;
     }
 
     static <X extends Term> Task<Operation<X>> command(Operation<X> op) {

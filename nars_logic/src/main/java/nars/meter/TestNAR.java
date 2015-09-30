@@ -15,6 +15,7 @@ import nars.util.meter.event.HitMeter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.jgroups.util.Util.assertTrue;
 
@@ -149,6 +150,22 @@ public class TestNAR  {
     public TestNAR mustOutput(long withinCycles, String task) throws InvalidInputException {
         if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved };
         return mustEmit(outputEvents, withinCycles, task);
+    }
+
+    public TestNAR onAnswer(String solution, AtomicBoolean solved /* for detecting outside of this */) throws InvalidInputException {
+
+        solved.set(false);
+
+        final Task expectedSolution = nar.task(solution);
+
+        nar.memory.eventAnswer.on(qa -> {
+             if (!solved.get() && qa.getTwo().equals(expectedSolution)) {
+                 solved.set(true);
+             }
+        });
+
+        return this;
+
     }
 
 //    public TestNAR mustOutput(Topic<Task> c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, int ocRelative) throws InvalidInputException {

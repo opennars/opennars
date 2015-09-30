@@ -10,7 +10,10 @@ import nars.nal.nal4.Product;
 import nars.nal.nal4.ProductN;
 import nars.premise.Premise;
 import nars.task.Task;
-import nars.term.*;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
@@ -111,14 +114,14 @@ public class TaskRule extends Rule<Premise, Task> {
     }
 
 
-    /**
-     * test applicability of this rule with a specific maximum NAL level
-     */
-    public boolean levelValid(final int nalLevel) {
-        return Terms.levelValid(getTask(), nalLevel) &&
-                Terms.levelValid(getBelief(), nalLevel) &&
-                Terms.levelValid(getResult(), nalLevel);
-    }
+//    /**
+//     * test applicability of this rule with a specific maximum NAL level
+//     */
+//    public boolean levelValid(final int nalLevel) {
+//        return Terms.levelValid(getTask(), nalLevel) &&
+//                Terms.levelValid(getBelief(), nalLevel) &&
+//                Terms.levelValid(getResult(), nalLevel);
+//    }
 
 //    public boolean isReversible() {
 //        //TEST
@@ -192,7 +195,7 @@ public class TaskRule extends Rule<Premise, Task> {
         TaskRule tr = (TaskRule) new VariableNormalization(this, false) {
 
             @Override
-            public boolean testSuperTerm(Compound t) {
+            public final boolean testSuperTerm(Compound t) {
                 //descend all, because VAR_PATTERN is not yet always considered a variable
                 return true;
             }
@@ -250,10 +253,10 @@ public class TaskRule extends Rule<Premise, Task> {
 
         //additional modifiers: either early or beforeConcs, classify them here
         for (int i = 2; i < precon.length; i++) {
-            if (!(precon[i] instanceof Inheritance)) {
-                System.err.println("unknown precondition type: " + precon[i] + " in rule: " + this);
-                continue;
-            }
+//            if (!(precon[i] instanceof Inheritance)) {
+//                System.err.println("unknown precondition type: " + precon[i] + " in rule: " + this);
+//                continue;
+//            }
 
             Inheritance predicate = (Inheritance) precon[i];
             Term predicate_name = predicate.getPredicate();
@@ -265,16 +268,16 @@ public class TaskRule extends Rule<Premise, Task> {
             final Term[] args;
             final Term arg1, arg2;
 
-            if (predicate.getSubject() instanceof SetExt) {
+            //if (predicate.getSubject() instanceof SetExt) {
                 //decode precondition predicate arguments
-                args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
-                arg1 = args[0];
-                arg2 = (args.length > 1) ? args[1] : null;
-            } else {
-                throw new RuntimeException("invalid arguments");
+            args = ((Product) (((SetExt) predicate.getSubject()).term(0))).terms();
+            arg1 = args[0];
+            arg2 = (args.length > 1) ? args[1] : null;
+            /*} else {
+                throw new RuntimeException("invalid arguments");*/
                 /*args = null;
                 arg1 = arg2 = null;*/
-            }
+            //}
 
             switch (predicateNameStr) {
                 case "not_equal":
@@ -314,8 +317,10 @@ public class TaskRule extends Rule<Premise, Task> {
                     next = new TimeOffset(arg1, arg2, false);
                     break;
                 case "measure_time":
-                    if (args.length>2)
+                    if (args.length==3)
                         next = new MeasureTime(arg1, arg2, args[2]);
+                    else
+                        throw new RuntimeException("measure_time requires 3 components");
                     break;
 
                 case "substitute":
@@ -357,6 +362,8 @@ public class TaskRule extends Rule<Premise, Task> {
                     }
                     break;
 
+                default:
+                    throw new RuntimeException("unhandled postcondition: " + predicateNameStr + " in " + this + "");
 
             }
 
