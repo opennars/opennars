@@ -9,7 +9,6 @@ import static nars.Symbols.JUDGMENT;
 
 public abstract class AbstractTruth<T> implements MetaTruth<T> {
 
-
     /**
      * The confidence factor of the truth value
      */
@@ -24,9 +23,6 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
     public float getConfidence() {
         return confidence;
     }
-
-
-
 
 
 //    @Override
@@ -46,17 +42,17 @@ public abstract class AbstractTruth<T> implements MetaTruth<T> {
         if (that == this) return true;
         if (that instanceof Truth) {
             final Truth t = ((Truth) that);
-
-            final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();
-
-            if (!equalsValue(t))
-                return false;
-            return Util.isEqual(getConfidence(), t.getConfidence(), e);
+            return equalsConfidence(t) && equalsFrequency(t);
         }
         return false;
     }
 
-    protected abstract boolean equalsValue(Truth t);
+    public final boolean equalsConfidence(final Truth t) {
+        final float e = DefaultTruth.DEFAULT_TRUTH_EPSILON;//getEpsilon();
+        return Util.isEqual(getConfidence(), t.getConfidence(), e);
+    }
+
+    public abstract boolean equalsFrequency(Truth t);
 
 
     public static float getDefaultConfidence(char punctuation) {

@@ -9,14 +9,14 @@ import java.io.IOException;
 /**
  * Created by me on 5/20/15.
  */
-public class ProductN extends Compound implements Product {
+public class ProductN<T extends Term> extends Compound<T> implements Product<T> {
 
 
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    public ProductN(final Term... arg) {
+    public ProductN(final T... arg) {
         super(arg);
 
         init(arg);
@@ -48,7 +48,7 @@ public class ProductN extends Compound implements Product {
 
 
     @Override
-    public final Term[] terms() {
+    public final T[] terms() {
         return term;
     }
 

@@ -52,13 +52,13 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
      * @param index The index of the place-holder in the new Image -- optional parameter
      * @return A compound generated or a term it reduced to
      */
-    static Term make(final Compound image, final Term component, final int index) {
+    static Term make(final Compound<Term> image, final Term component, final int index) {
         Term[] argument = image.cloneTerms();
         argument[index] = component;
         return make(argument);
     }
 
-    static Product make(final Term[] pre, final Term... suf) {
+    static Product<Term> make(final Term[] pre, final Term... suf) {
         final int pLen = pre.length;
         final int sLen = suf.length;
         Term[] x = new Term[pLen + suf.length];
@@ -67,24 +67,24 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return make(x);
     }
 
-    static Product make(final Collection<Term> t) {
-        return make(t.toArray(new Term[t.size()]));
+    static <T extends Term> Product<T> make(final Collection<T> t) {
+        return make(t.toArray((T[]) new Term[t.size()]));
     }
 //    static Product makeFromIterable(final Iterable<Term> t) {
 //        return make(Iterables.toArray(t, Term.class));
 //    }
 
     static <T extends Term> Product1<T> only(final T the) {
-        return new Product1(the);
+        return new Product1<>(the);
     }
 
     /** 2 term constructor */
-    static Product make(final Term a, final Term b) {
-        return new ProductN(a, b);
+    static <T extends Term> Product<T> make(final T a, final T b) {
+        return new ProductN<>(a, b);
     }
 
     /** creates from a sublist of a list */
-    static Product make(final List<Term> l, int from, int to) {
+    static Product<Term> make(final List<Term> l, int from, int to) {
         Term[] x = new Term[to - from];
 
         for (int j = 0, i = from; i < to; i++)
@@ -93,14 +93,14 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return make(x);
     }
 
-    static Product make(final Term... arg) {
+    static <T extends Term> Product<T> make(final T... arg) {
         if (arg.length == 1)
             return only(arg[0]);
 
-        return new ProductN(arg);
+        return new ProductN<>(arg);
     }
 
-    static Product make(final String... argAtoms) {
+    static Product<Term> make(final String... argAtoms) {
         return Product.make( Atom.the(argAtoms) );
     }
 

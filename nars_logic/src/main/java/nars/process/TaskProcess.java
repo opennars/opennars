@@ -31,7 +31,7 @@ import static nars.budget.BudgetFunctions.divide;
  */
 public class TaskProcess extends NAL implements Serializable {
 
-    private static final Procedure2<Budget,Budget> DEFAULT_TERMLINK_MERGE = Budget.plus;
+    private static final Procedure2<Budget,Budget> DEFAULT_TERMLINK_ACCUMULATION_MERGE = Budget.plus;
 
     public final Task task;
 
@@ -158,7 +158,7 @@ public class TaskProcess extends NAL implements Serializable {
                         continue;*/
 
                     //only apply this loop to non-transform termlink templates
-                    DEFAULT_TERMLINK_MERGE.value(t, bb);
+                    DEFAULT_TERMLINK_ACCUMULATION_MERGE.value(t, bb);
 
                     if ((t.getTarget().equals( getTerm() ))) {
                         continue;

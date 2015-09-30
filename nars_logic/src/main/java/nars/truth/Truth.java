@@ -27,6 +27,7 @@ import nars.task.Sentence;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.util.data.Util;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /** scalar (1D) truth value "frequency", stored as a floating point value */
@@ -113,18 +114,22 @@ public interface Truth extends MetaTruth<Float> {
      */
     static int hash(final Truth t) {
         final int discreteness = (int)(1.0f / DefaultTruth.DEFAULT_TRUTH_EPSILON);
-        return (31 + hash(t.getFrequency(), discreteness))
-                * 91 + hash(t.getConfidence(), discreteness);
-//
+
+        //assuming discreteness is below 2^15:
+        final int freqHash = Util.hash(t.getFrequency(), discreteness);
+        final int confHash = Util.hash(t.getConfidence(), discreteness);
+
+        final int hash = freqHash | (confHash << 16) ;
+
+        return hash * Util.PRIME2;
+//        return (1 + ) * Util.PRIME2 +
+//                     Util.hash(t.getConfidence(), discreteness);
+
 //        return Float.floatToRawIntBits(t.getFrequency()) +
 //         31 * Float.floatToRawIntBits(t.getConfidence());
     }
 
-    static int hash(float f, int discretness) {
-        return (int)(f * discretness);
-    }
-
-//    @Override
+    //    @Override
 //    default public Truth clone() {
 //        return new DefaultTruth(getFrequency(), getConfidence(), getAnalytic());
 //    }

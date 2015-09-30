@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 public class Twenglish {
 
-    public final ArrayList<String> vocabulary = new ArrayList<>();
+    //public final ArrayList<String> vocabulary = new ArrayList<>();
     
     /** substitutions */
     public final Map<String,String> sub = new HashMap();

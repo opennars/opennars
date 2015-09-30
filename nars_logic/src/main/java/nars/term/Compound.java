@@ -28,6 +28,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.term.transform.*;
+import nars.util.data.Util;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -45,15 +46,6 @@ import static nars.Symbols.*;
 
 public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPair {
 
-
-    final private static int PRIME1 = 31;
-
-    /**
-     * syntactic complexity of the compound, the sum of those of its term
-     * plus 1
-     * TODO make final again
-     */
-    final private static int PRIME2 = 92821;
 
     /**
      * list of (direct) term
@@ -258,7 +250,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         int subt = getStructureBase();
 
 
-        int contentHash = (PRIME2 * subt) + structure2();
+        int contentHash = (Util.PRIME2 * subt) + structure2();
         ;
 
         int p = 0;
@@ -271,7 +263,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
                 throw new RuntimeException("null subterm");*/
 
             //first to trigger subterm update if necessary
-            contentHash = (PRIME1 * contentHash) + (t.hashCode() + p);
+            contentHash = (Util.PRIME1 * contentHash) + (t.hashCode() + p);
 
             compl += t.complexity();
             vol += t.volume();

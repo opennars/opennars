@@ -36,7 +36,7 @@ import java.util.function.ToIntFunction;
  */
 public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
-    public final static Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.max;
+    public final static Procedure2<Budget, Budget> DEFAULT_MERGE_METHOD = Budget.average;
     public final static BagCurve power4BagCurve = new Power4BagCurve();
     public final static BagCurve power6BagCurve = new Power6BagCurve();
     /**

@@ -6,10 +6,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import nars.NAR;
 import nars.guifx.space.WebMap;
+import nars.guifx.util.CodeInput;
 import nars.guifx.util.TabXLazy;
 import nars.guifx.wikipedia.NARWikiBrowser;
 import nars.io.in.LibraryInput;
+import nars.io.nlp.Twenglish;
+import nars.nal.nal4.Product;
+import nars.term.Compound;
+import nars.term.Term;
 
+import java.util.Collection;
 import java.util.Map;
 
 import static javafx.application.Platform.runLater;
@@ -43,7 +49,10 @@ public class InputPane extends TabPane {
         getTabs().add(new TabXLazy("Space", () -> new WebMap()) /*"Space", "Navigate a 2D map to input (map region-as-shape analysis, and lists of features and their locations)")*/);
 
 
-        getTabs().add(new ComingSoonTab("Natural", "Natural language input in any of the major languages, using optional strategies (ex: CoreNLP)"));
+        getTabs().add(new TabXLazy("Natural", () ->
+            //"Natural language input in any of the major languages, using optional strategies (ex: CoreNLP)"
+            new NaturalLanguagePane(n)
+        ));
         {
             /*getTabs().add(new Tab("En"));
             getTabs().add(new Tab("Es"));
@@ -121,6 +130,29 @@ public class InputPane extends TabPane {
             }
             source.setText(sb.toString());
 
+        }
+    }
+
+    static class NaturalLanguagePane extends CodeInput {
+
+        private final NAR nar;
+
+        public NaturalLanguagePane(NAR n) {
+            super();
+            this.nar = n;
+        }
+
+        /** return false to indicate input was not accepted, leaving it as-is.
+         * otherwise, return true that it was accepted and the buffer will be cleared. */
+        public boolean onInput(String s) {
+            Collection<Term> tokens = Twenglish.tokenize(s);
+
+            if (tokens == null)
+                return false;
+
+            nar.believe((Compound)Product.make( tokens ));
+
+            return true;
         }
     }
 }

@@ -21,7 +21,7 @@ public class NAL1MultistepTest extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{index}:{0}")
     public static Iterable<Supplier<NAR>> configurations() {
-        return AbstractNALTest.core2;
+        return AbstractNALTest.core1;
     }
 
     @Test
@@ -33,8 +33,14 @@ public class NAL1MultistepTest extends AbstractNALTest {
 
     @Test
     public void multistep3() {
-        new DeductiveChainTest(nar(), 3, 900).run();
+        new DeductiveChainTest(nar(), 3, 3000).run();
     }
+
+    @Test
+    public void multistep4() {
+        new DeductiveChainTest(nar(), 4, 4000).run();
+    }
+
     @Test
     public void multistep1() {
         new DeductiveChainTest(nar(), 1, 200).run();

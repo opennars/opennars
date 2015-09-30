@@ -252,7 +252,7 @@ public class Default extends NAR {
                     m.the("defaultCore", this),
                     m.the("logic", getDeriver()),
                     new ConceptBagActivator(this),
-                    m.the("inputBuffer", new ItemAccumulator(Budget.max)),
+                    m.the("inputBuffer", new ItemAccumulator(Budget.plus)),
                     newConceptBag()
             );
             m.the("core", c);
@@ -321,11 +321,11 @@ public class Default extends NAR {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-        taskLinks.mergePlus();
+        taskLinks.mergeMax();
 
         Bag<TermLinkKey, TermLink> termLinks =
                 new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-        termLinks.mergePlus();
+        termLinks.mergeMax();
 
         return newConcept(t, b, taskLinks, termLinks, memory());
     }
@@ -391,7 +391,7 @@ public class Default extends NAR {
 
     public Bag<Term, Concept> newConceptBag() {
         CurveBag<Term, Concept> b = new CurveBag(rng, 1);
-        b.mergePlus();
+        b.mergeMax();
         return b;
     }
 

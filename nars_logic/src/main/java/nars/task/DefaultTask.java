@@ -130,20 +130,22 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
 
 
 
-    protected void setPunctuation(char punctuation) {
+    protected final void setPunctuation(char punctuation) {
         this.punctuation = punctuation;
     }
 
     /** includes: evidentialset, occurrencetime, truth, term, punctuation */
-    private final int getHash() {
+    private final int rehash() {
 
-        int hashStamp = Util.hash(Arrays.hashCode(getEvidence()), (int) this.getOccurrenceTime());
+        final int h = Util.hash(
+                Arrays.hashCode(getEvidence()),
+                (int)getOccurrenceTime(),
+                getTerm().hashCode(),
+                getPunctuation(),
+                (getTruth() != null) ? getTruth().hashCode() : 0
+        );
 
-        final int truthHash = (getTruth() != null) ? getTruth().hashCode() : 0;
-
-        int h = (Util.hash(hashStamp, getTerm().hashCode(), truthHash) * 31) + getPunctuation();
-
-        if (h == 0) h = 1; //reserve 0 for non-hashed
+        if (h == 0) return 1; //reserve 0 for non-hashed
 
         return h;
     }
@@ -299,7 +301,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         //if (this.cause != null) t.setCause(cause);
         //if (this.reason != null) t.log(reason);
 
-        this.hash = getHash();
+        this.hash = rehash();
 
         return this;
     }
@@ -404,7 +406,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         int hash = this.hash;
         if (hash == 0) {
             //throw new RuntimeException(this + " not normalized");
-            hash = this.hash = getHash();
+            hash = this.hash = rehash();
         }
         return hash;
     }

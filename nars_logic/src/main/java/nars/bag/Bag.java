@@ -28,7 +28,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
     transient protected final Budget temp = new Budget();
     transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
-    Procedure2<Budget,Budget> mergeFunction = Budget.max;
+    Procedure2<Budget,Budget> mergeFunction;
 
     public final static <V> boolean bufferIncludes(V[] buffer, V item) {
         for (final V x : buffer) {

@@ -30,12 +30,20 @@ import java.util.*;
 public class Util {
 
 
+
+    /**
+     * syntactic complexity of the compound, the sum of those of its term
+     * plus 1
+     * TODO make final again
+     */
+
+
     protected Util() {
     }
 
-    final static int PRIME3 = 524287;
-    final static int PRIME2 = 92821;
-    final static int PRIME1 = 31;
+    public final static int PRIME3 = 524287;
+    public final static int PRIME2 = 92821;
+    public final static int PRIME1 = 31;
 
     /**
      * It is basically the same as a lookup table with 2048 entries and linear interpolation between the entries, but all this with IEEE floating point tricks.
@@ -74,11 +82,17 @@ public class Util {
     }
 
     public final static int hash(final int a, final int b) {
-        return PRIME2 * (PRIME1 + a) + b;
+        return PRIME2 * (PRIME2 + a) + b;
     }
 
     public final static int hash(int a, int b, int c) {
-        return PRIME3 * (31 * (PRIME2 + a) + b) + c;
+        return PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c;
+    }
+    public final static int hash(int a, int b, int c, int d) {
+        return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d;
+    }
+    public final static int hash(int a, int b, int c, int d, int e) {
+        return PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 * (PRIME2 + a) + b) + c) + d) + e;
     }
 
     public final static int hash(Object a, Object b) {
@@ -90,11 +104,7 @@ public class Util {
     }
 
     public final static int hash(Object a, Object b, Object c, Object d) {
-        return 31 * (PRIME3 * (31 * (PRIME2 + a.hashCode()) + b.hashCode()) + c.hashCode()) + d.hashCode();
-    }
-
-    public final static int hash(int a, int b, Object c, Object d) {
-        return 31 * (PRIME3 * (31 * (PRIME2 + a) + d.hashCode()) + a) + c.hashCode();
+        return hash(a.hashCode(), b.hashCode(), c.hashCode(), d.hashCode());
     }
 
     public static void assertNotNull(final Object test, final String varName) {
@@ -584,5 +594,23 @@ public class Util {
                     ctx.exit();
             }
 
+    }
+
+    /** clamps a value to 0..1 range */
+    public static float clamp(final float p) {
+        if (p > 1f)
+            return 1f;
+        else if (p < 0f)
+            return 0f;
+        return p;
+    }
+
+    /** discretizes values to nearest finite resolution real number determined by epsilon spacing */
+    public static float normalize(float value, float epsilon) {
+        return clamp(Math.round(value / epsilon) * epsilon);
+    }
+
+    public static int hash(final float f, final int discretness) {
+        return (int)(f * discretness);
     }
 }

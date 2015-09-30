@@ -47,7 +47,10 @@ import static nars.nal.UtilityFunctions.*;
  */
 public class Budget implements Cloneable, Prioritized, Serializable {
 
-    public static final Procedure2<Budget,Budget> average = (Procedure2<Budget, Budget>) Budget::mergeAverage;
+    public static final Procedure2<Budget,Budget> average =
+            //(Procedure2<Budget, Budget>) Budget::mergeAverage;
+            (Procedure2<Budget, Budget>) Budget::mergeAverageLERP;
+
     public static final Procedure2<Budget,Budget> plus = (Procedure2<Budget, Budget>) Budget::mergePlus;
     public static final Procedure2<Budget,Budget> max = (Procedure2<Budget, Budget>) Budget::mergeMax;
 
@@ -137,14 +140,6 @@ public class Budget implements Cloneable, Prioritized, Serializable {
             if (!copyLastForgetTime)
                 setLastForgetTime(-1);
         }
-    }
-
-    protected static float clamp(final float p) {
-        if (p > 1f)
-            return 1f;
-        else if (p < 0f)
-            return 0f;
-        return p;
     }
 
     /*
@@ -267,22 +262,48 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
         final float dp = addPriority * factor;
 
-        final float p = getPriority();
+        final float currentPriority = getPriority();
 
-        final float nextPriority = FastMath.min(1,p + dp);
+        final float nextPriority = FastMath.min(1,currentPriority + dp);
 
-        //insignificant change
-        if (Util.isEqual(p, nextPriority, Global.BUDGET_EPSILON))
-            return this;
+        final float currentNextPrioritySum = (currentPriority + nextPriority);
 
-        //LERP components
-        final float s = (p / nextPriority);
-        final float t = 1f - s;
+        /* current proportion */ final float cp = (Util.isEqual(currentNextPrioritySum, 0, BUDGET_EPSILON)) ?
+                0.5f : /* both are zero so they have equal infleunce */
+                (currentPriority / currentNextPrioritySum);
+        /* next proportion */ final float np = 1f - cp;
 
         return set(
                 nextPriority,
-                (s * getDurability()) + (t * otherDurability),
-                (s * getQuality()) + (t * otherQuality)
+                (cp * getDurability()) + (np * otherDurability),
+                (cp * getQuality()) + (np * otherQuality)
+        );
+    }
+
+    /**
+     * merges another budget into this one, averaging each component
+     */
+    public void mergeAverageLERP(final Budget that) {
+        if (this == that) return;
+
+        final float currentPriority = getPriority();
+
+        final float otherPriority = that.getPriority();
+
+        final float prisum = (currentPriority + otherPriority);
+
+        /* current proportion */
+        final float cp = (Util.isEqual(prisum, 0, BUDGET_EPSILON)) ?
+                0.5f : /* both are zero so they have equal infleunce */
+                (currentPriority / prisum);
+
+        /* next proportion */
+        final float np = 1f - cp;
+
+        set(
+                cp * getPriority() + np * that.getPriority(),
+                cp * getDurability() + np * that.getDurability(),
+                cp * getQuality() + np * that.getQuality()
         );
     }
 
@@ -328,7 +349,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      */
     @Override
     public final void setPriority(final float p) {
-        this.priority = clamp(p);
+        this.priority = Util.clamp(p);
     }
 
     /**
@@ -380,7 +401,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * @param d The new durability
      */
     public final void setDurability(final float d) {
-        this.durability = clamp(d);
+        this.durability = Util.clamp(d);
     }
 
     /**
@@ -430,7 +451,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * @param q The new quality
      */
     public final void setQuality(final float q) {
-        this.quality = clamp(q);
+        this.quality = Util.clamp(q);
     }
 
 //    public float summary(float additionalPriority) {
@@ -478,6 +499,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
                 mean(getQuality(), that.getQuality())
         );
     }
+
 
 //    /**
 //     * applies a merge only if the changes would be significant

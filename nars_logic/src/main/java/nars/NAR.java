@@ -529,7 +529,7 @@ abstract public class NAR implements Serializable {
         return memory.cyclesPerFrame.intValue();
     }
 
-    @Deprecated
+
     public final void setCyclesPerFrame(int cyclesPerFrame) {
         memory.cyclesPerFrame.set(cyclesPerFrame);
     }

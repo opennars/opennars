@@ -75,7 +75,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Operation clone() {
+    public Operation<A> clone() {
         return clone(arg());
     }
 
@@ -112,9 +112,7 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
             return null;
         }*/
 
-        SetExt1<Product> subject = new SetExt1(arg);
-
-        return new Operation(oper, subject);
+        return new Operation(oper, new SetExt1(arg));
     }
 
 

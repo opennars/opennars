@@ -150,9 +150,8 @@ public class LogPane extends BorderPane implements Runnable {
         //double f = filter.value(channel);
 
         //temporary until filter working
-        if (!trace && channel.equals("eventDerive") ||
-                channel.equals("eventTaskRemoved")
-                )
+        if (!trace && ((channel.equals("eventDerived") ||
+                channel.equals("eventTaskRemoved"))))
             return;
 
         Node n = getNode(channel, signal);
@@ -349,6 +348,7 @@ public class LogPane extends BorderPane implements Runnable {
         else {
             return new Label(
                     //channel.toString() + ": " +
+                    channel + ": " +
                     signal.toString());
         }
     }
