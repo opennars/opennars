@@ -806,8 +806,9 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return this;
     }
 
-    public void delete() {
+    public boolean delete() {
         deleteBudget();
+        return true;
     }
 
     public final void deleteBudget() {

@@ -7,12 +7,13 @@ import java.util.Collection;
 
 public class SingletonBuilder implements Builder {
 
-    public Object instance;
+    public final Object instance;
 
-    public Class<?> type;
+    public final Class<?> type;
 
     public SingletonBuilder() {
-
+        instance = null;
+        type = null;
     }
 
     public SingletonBuilder(final Object instance) {

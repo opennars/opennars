@@ -5,19 +5,20 @@ import nars.util.data.list.FasterList;
 import java.util.Collections;
 
 /**
- * Created by me on 9/13/15.
+ * essentially holds a list of registrations but forms an activity context
+ * from the dynamics of its event reactivity
  */
-public class OnTopics<T extends Topic> extends FasterList<On> {
+public class Active<T extends Topic> extends FasterList<On> {
 
-    OnTopics(int length) {
+    Active(int length) {
         super(length);
     }
 
-    OnTopics() {
+    Active() {
         this(1);
     }
 
-    public OnTopics(On... r) {
+    public Active(On... r) {
         super(r.length);
         Collections.addAll(this, r);
     }
@@ -42,7 +43,7 @@ public class OnTopics<T extends Topic> extends FasterList<On> {
         clear();
     }
 
-    public OnTopics add(On... elements) {
+    public Active add(On... elements) {
         Collections.addAll(this, elements);
         return this;
     }

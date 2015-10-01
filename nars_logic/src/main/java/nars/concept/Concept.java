@@ -204,8 +204,6 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     long getCreationTime();
 
-    @Override
-    void delete();
 
 //    /** debugging utility */
 //    default public void ensureNotDeleted() {

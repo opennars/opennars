@@ -443,8 +443,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
     /**
      * signaling that the Task has ended or discarded
+     * @return if it was already deleted, will immediately return false.
      */
-    void delete();
+    boolean delete();
 
     Task setTemporalInducting(boolean b);
 

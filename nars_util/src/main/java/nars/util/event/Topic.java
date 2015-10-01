@@ -19,10 +19,10 @@ abstract public interface Topic<V extends Serializable> extends Serializable {
 
 
     /** registers to all public Topic fields in an object */
-    public static OnTopics all(final Object obj, BiConsumer<String /* fieldName*/,Object /* value */> f) {
+    public static Active all(final Object obj, BiConsumer<String /* fieldName*/,Object /* value */> f) {
 
 
-        OnTopics s = new OnTopics();
+        Active s = new Active();
 
         /** TODO cache the fields because reflection may be slow */
         for (Field field : obj.getClass().getFields()) {
@@ -58,8 +58,8 @@ abstract public interface Topic<V extends Serializable> extends Serializable {
     On on(Consumer<V> o);
     void off(On<V> reaction);
 
-    public static <V extends Serializable> OnTopics onAll(final Consumer<V> o, final Topic<V>... w) {
-        OnTopics r = new OnTopics(w.length);
+    public static <V extends Serializable> Active onAll(final Consumer<V> o, final Topic<V>... w) {
+        Active r = new Active(w.length);
     
         for (final Topic<V> c : w)
             r.add( c.on(o) );

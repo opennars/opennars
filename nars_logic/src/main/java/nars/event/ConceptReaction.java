@@ -3,11 +3,11 @@ package nars.event;
 
 import nars.NAR;
 import nars.concept.Concept;
+import nars.util.event.Active;
 import nars.util.event.On;
-import nars.util.event.OnTopics;
 
 /** watches for concept lifecycle (creation and forget) events */
-abstract public class ConceptReaction extends OnTopics {
+abstract public class ConceptReaction extends Active {
 
     public final NAR nar;
 

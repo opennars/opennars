@@ -127,13 +127,10 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 //    }
 
     /** called by memory, dont call self or otherwise */
-    @Override public void delete() {
+    @Override public synchronized boolean delete() {
         /*if (getMemory().inCycle())
             throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
         */
-
-        zero();
-
         super.delete();
 
         if (getMeta() != null) {
@@ -141,6 +138,7 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
             setMeta(null);
         }
 
+        return true;
     }
 
 

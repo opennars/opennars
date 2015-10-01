@@ -8,13 +8,11 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
-import nars.budget.ItemAccumulator;
 import nars.clock.CycleClock;
 import nars.concept.AtomConcept;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
 import nars.concept.DefaultConcept;
-import nars.event.CycleReaction;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -45,7 +43,7 @@ import nars.term.Term;
 import nars.util.attention.BagForgettingEnhancer;
 import nars.util.data.MutableInteger;
 import nars.util.data.random.XorShift1024StarRandom;
-import nars.util.event.On;
+import nars.util.event.Active;
 
 import java.io.Serializable;
 import java.util.ArrayDeque;
@@ -54,18 +52,156 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 /**
  * Default set of NAR parameters which have been classically used for development.
- * <p/>
+ * <p>
  * WARNING this Seed is not immutable yet because it extends Param,
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
  */
 public class Default extends NAR {
+
+    public final DefaultCycle core;
+    public final FIFOTaskPerception input;
+
+    /**
+     * Size of TaskLinkBag
+     */
+    int taskLinkBagSize;
+    /**
+     * Size of TermLinkBag
+     */
+    int termLinkBagSize;
+
+
+    /**
+     * Default DEFAULTS
+     */
+    public Default() {
+        this(1024, 1, 2, 3);
+    }
+
+    public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+        this(new LocalMemory(new CycleClock()), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
+    }
+
+    public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+        super(memory);
+
+        initDefaults(memory);
+
+        the("input", input = initInput());
+
+        the("core", core = initCore(memory, activeConcepts,
+                conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle
+        ));
+
+        the("memory_sharpen", new BagForgettingEnhancer(memory, core.active));
+
+
+        //initTime();
+
+        //n.on(new RuntimeNARSettings());
+
+    }
+
+    public void initTime() {
+        if (nal() >= 7) {
+
+            //NAL7 plugins
+
+            memory.the(new STMTemporalLinkage(this, core.deriver));
+
+            if (nal() >= 8) {
+
+                //NAL8 plugins
+
+                for (OperatorReaction o : defaultOperators)
+                    on(o);
+                /*for (OperatorReaction o : exampleOperators)
+                    on(o);*/
+
+                //n.on(Anticipate.class);      // expect an event
+
+                new FullInternalExperience(this);
+                new Abbreviation(this);
+                on(Counting.class);
+
+//                /*if (internalExperience == Minimal) {
+//                    new InternalExperience(this);
+//                    new Abbreviation(this);
+//                } else if (internalExperience == Full)*/ {
+//                    on(FullInternalExperience.class);
+//                    on(Counting.class);
+//                }
+            }
+        }
+    }
+
+    public FIFOTaskPerception initInput() {
+        FIFOTaskPerception input = new FIFOTaskPerception(this,
+                task -> true /* allow everything */,
+                task -> TaskProcess.run(Default.this, task)
+        );
+        //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
+        return input;
+    }
+
+    public DefaultCycle initCore(Memory m, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
+
+        DefaultCycle c = new DefaultCycle(
+                m.the("defaultCore", this),
+                m.the("logic", getDeriver()),
+                new ConceptBagActivator(this),
+                newConceptBag()
+        );
+
+        c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
+        c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
+        c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
+
+        c.capacity.set(activeConcepts);
+
+        return c;
+    }
+
+    public void initDefaults(Memory m) {
+        //parameter defaults
+
+        setTaskLinkBagSize(16);
+        setTermLinkBagSize(24);
+
+
+        m.duration.set(5);
+
+        m.conceptBeliefsMax.set(12);
+        m.conceptGoalsMax.set(7);
+        m.conceptQuestionsMax.set(3);
+
+        m.conceptForgetDurations.set(1.0);
+        m.taskLinkForgetDurations.set(2.0);
+        m.termLinkForgetDurations.set(3.0);
+
+        m.conceptActivationFactor.set(1.0);
+        m.conceptFireThreshold.set(0.0);
+        m.derivationThreshold.set(Global.BUDGET_EPSILON);
+        m.activeConceptThreshold.set(0.0);
+        m.taskProcessThreshold.set(Global.BUDGET_EPSILON);
+        m.termLinkThreshold.set(Global.BUDGET_EPSILON);
+        m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
+
+        m.questionFromGoalThreshold.set(0.35);
+
+        m.executionExpectationThreshold.set(0.5);
+
+        m.shortTermMemoryHistory.set(5);
+    }
+
 
     public static final OperatorReaction[] exampleOperators = new OperatorReaction[]{
             //new Wait(),
@@ -186,124 +322,6 @@ public class Default extends NAR {
          * -???              // rememberAction the history of the system? excutions of operatons?
          */
     };
-    public final DefaultCycle core;
-
-    /**
-     * Size of TaskLinkBag
-     */
-    int taskLinkBagSize;
-    /**
-     * Size of TermLinkBag
-     */
-    int termLinkBagSize;
-
-
-    /**
-     * Default DEFAULTS
-     */
-    public Default() {
-        this(1024, 1, 2, 3);
-    }
-
-    public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-        this(new LocalMemory(new CycleClock()), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
-    }
-
-    public Default(Memory m, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-        super(m);
-
-
-        {
-            //parameter defaults
-
-            setTaskLinkBagSize(16);
-            setTermLinkBagSize(24);
-
-
-            m.duration.set(5);
-
-            m.conceptBeliefsMax.set(12);
-            m.conceptGoalsMax.set(7);
-            m.conceptQuestionsMax.set(3);
-
-            m.conceptForgetDurations.set(1.0);
-            m.taskLinkForgetDurations.set(2.0);
-            m.termLinkForgetDurations.set(3.0);
-
-            m.conceptActivationFactor.set(1.0);
-            m.conceptFireThreshold.set(0.0);
-            m.derivationThreshold.set(Global.BUDGET_EPSILON);
-            m.activeConceptThreshold.set(0.0);
-            m.taskProcessThreshold.set(Global.BUDGET_EPSILON);
-            m.termLinkThreshold.set(Global.BUDGET_EPSILON);
-            m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
-
-            m.questionFromGoalThreshold.set(0.35);
-
-            m.executionExpectationThreshold.set(0.5);
-
-            m.shortTermMemoryHistory.set(5);
-        }
-
-        {
-            //initialize the core
-            DefaultCycle c = new DefaultCycle(
-                    m.the("defaultCore", this),
-                    m.the("logic", getDeriver()),
-                    new ConceptBagActivator(this),
-                    m.the("inputBuffer", new ItemAccumulator(Budget.plus)),
-                    newConceptBag()
-            );
-            m.the("core", this.core = c);
-
-            c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
-            c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
-            c.inputsMaxPerCycle.set(conceptsFirePerCycle);
-            c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
-
-            c.capacity.set(activeConcepts);
-
-            {
-                m.the("core_enhancer", new BagForgettingEnhancer(memory, c.active));
-            }
-        }
-
-
-
-        if (nal() >= 7) {
-
-            //NAL7 plugins
-
-            m.the(new STMTemporalLinkage(this, core.deriver));
-
-            if (nal() >= 8) {
-
-                //NAL8 plugins
-
-                for (OperatorReaction o : defaultOperators)
-                    on(o);
-                /*for (OperatorReaction o : exampleOperators)
-                    on(o);*/
-
-                //n.on(Anticipate.class);      // expect an event
-
-                new FullInternalExperience(this);
-                new Abbreviation(this);
-                on(Counting.class);
-
-//                /*if (internalExperience == Minimal) {
-//                    new InternalExperience(this);
-//                    new Abbreviation(this);
-//                } else if (internalExperience == Full)*/ {
-//                    on(FullInternalExperience.class);
-//                    on(Counting.class);
-//                }
-            }
-        }
-
-        //n.on(new RuntimeNARSettings());
-
-    }
 
 
 //    static String readFile(String path, Charset encoding)
@@ -406,20 +424,14 @@ public class Default extends NAR {
      * The original deterministic memory cycle implementation that is currently used as a standard
      * for development and testing.
      */
-    public static class DefaultCycle extends CycleReaction implements Serializable, Function<ConceptProcess, Stream<Task>> {
+    public static class DefaultCycle extends Active implements Serializable, Function<ConceptProcess, Stream<Task>> {
 
-        public final Deque<Task> percepts = new ArrayDeque();
 
         /**
          * How many concepts to fire each cycle; measures degree of parallelism in each cycle
          */
         public final AtomicInteger conceptsFiredPerCycle;
 
-
-        /**
-         * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
-         */
-        public final AtomicInteger inputsMaxPerCycle;
 
         public final SimpleDeriver deriver;
 
@@ -439,17 +451,12 @@ public class Default extends NAR {
             return active.peekNext();
         }
 
-        /**
-         * New tasks with novel composed terms, for delayed and selective processing
-         */
-        public final ItemAccumulator<Task> newTasks;
 
         /**
          * concepts active in this cycle
          */
         public final Bag<Term, Concept> active;
 
-        public final On onInput;
 
         @Deprecated
         transient public final NAR nar;
@@ -467,58 +474,39 @@ public class Default extends NAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-        public DefaultCycle(NAR nar, SimpleDeriver deriver, ConceptBagActivator ca, ItemAccumulator<Task> newTasks, Bag<Term, Concept> concepts) {
-            super(nar);
-
-            nar.memory.eventReset.on((m) -> {
-                reset();
-            });
+        public DefaultCycle(NAR nar, SimpleDeriver deriver, ConceptBagActivator ca, Bag<Term, Concept> concepts) {
+            super();
 
             this.nar = nar;
             this.ca = ca;
 
             this.deriver = deriver;
 
-
             this.conceptForget = nar.memory().conceptForgetDurations;
 
-            this.newTasks = newTasks;
-            this.inputsMaxPerCycle = new AtomicInteger(1);
             this.conceptsFiredPerCycle = new AtomicInteger(1);
             this.active = concepts;
 
-
-            onInput = nar.memory().eventInput.on(new InputConsumer(newTasks, percepts));
+            add(
+                    nar.memory.eventCycleStart.on((m) -> {
+                        fireConcepts(conceptsFiredPerCycle.get());
+                    }),
+                    nar.memory.eventReset.on((m) -> {
+                        reset();
+                    })
+            );
         }
 
         public void reset() {
 
-            percepts.clear();
-
-            newTasks.clear();
 
         }
 
-        /**
-         * An atomic working cycle of the system:
-         * 0) optionally process inputs
-         * 1) optionally process new task(s)
-         * 2) optionally process novel task(s)
-         * 2) optionally fire a concept
-         **/
-        @Override
-        public void onCycle() {
-            runInputTasks(inputsMaxPerCycle.get());
-            runNewTasks(/*inputsMaxPerCycle.get()*/);
-            fireConcepts(conceptsFiredPerCycle.get());
-        }
-
-        protected void fireConcepts(int max) {
+        protected void fireConcepts(int conceptsToFire) {
 
             active.setCapacity(capacity.intValue());
 
             //1 concept if (memory.newTasks.isEmpty())*/
-            final int conceptsToFire = newTasks.isEmpty() ? max : 0;
             if (conceptsToFire == 0) return;
 
             final float conceptForgetDurations = nar.memory().conceptForgetDurations.floatValue();
@@ -558,42 +546,6 @@ public class Default extends NAR {
         }
 
 
-
-        protected void runNewTasks() {
-            runNewTasks(newTasks.size()); //all
-        }
-
-        protected void runNewTasks(int max) {
-
-            int numNewTasks = Math.min(max, newTasks.size());
-            if (numNewTasks == 0) return;
-
-            //queueNewTasks();
-
-            for (int n = newTasks.size() - 1; n >= 0; n--) {
-                Task highest = newTasks.removeHighest();
-                if (highest == null) break;
-                if (highest.isDeleted()) continue;
-
-                run(highest);
-            }
-            //commitNewTasks();
-        }
-
-        protected void runInputTasks(int max) {
-
-            int m = Math.min(percepts.size(),
-                    max);
-
-            for (int n = m; n > 0; n--) {
-                run(percepts.removeFirst());
-            }
-        }
-
-        protected boolean run(Task task) {
-            return TaskProcess.run(nar, task) != null;
-        }
-
         public final long time() {
             return nar.time();
         }
@@ -630,28 +582,7 @@ public class Default extends NAR {
 
 
         //try to implement some other way, this is here because of serializability
-        @Deprecated
-        static class InputConsumer implements Consumer<Task>, Serializable {
-            public final ItemAccumulator<Task> newTasks;
-            public final Deque<Task> percepts;
 
-            public InputConsumer(ItemAccumulator<Task> newTasks, Deque<Task> percepts) {
-                this.newTasks = newTasks;
-                this.percepts = percepts;
-            }
-
-            @Override
-            public void accept(Task t) {
-                if (t.isInput())
-                    percepts.add(t);
-                else {
-                    if (t.getParentTask() != null && t.getParentTask().getTerm().equals(t.getTerm())) {
-                    } else {
-                        newTasks.add(t);
-                    }
-                }
-            }
-        }
     }
 
 //    @Deprecated
@@ -738,5 +669,119 @@ public class Default extends NAR {
 //        public Concept update(Bag<Term,Concept> bag) {
 //            return bag.update(this);
 //        }
+    }
+
+    /**
+     * accumulates a buffer of iasks which can be delivered at a specific rate.
+     * <p>
+     * consists of 2 buffers which are sampled in some policy each cycle
+     * <p>
+     * "input" - a dequeue in which input tasks are appended
+     * in the order they are received
+     * <p>
+     * "newTasks" - a priority buffer, emptied in batches,
+     * in which derived tasks and other feedback accumulate
+     * <p>
+     * Sub-interfaces
+     * <p>
+     * Storage
+     * <p>
+     * Delivery (procedure for cyclical input policy
+     */
+    static class FIFOTaskPerception extends Active implements Consumer<Task> {
+
+
+        /**
+         * determines if content can enter
+         */
+        private final Predicate<Task> filter;
+
+        /**
+         * where to send output
+         */
+        private final Consumer<Task> receiver;
+
+        /* ?? public interface Storage { void put(Task t); }*/
+
+        //public final ItemAccumulator<Task> newTasks;
+
+        public final Deque<Task> buffer = new ArrayDeque();
+
+
+        /**
+         * max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle)
+         */
+        public final AtomicInteger inputsMaxPerCycle = new AtomicInteger(1);
+
+
+        public FIFOTaskPerception(NAR nar, Predicate<Task> filter, Consumer<Task> receiver) {
+            super();
+
+            this.filter = filter;
+            this.receiver = receiver;
+
+            final Memory m = nar.memory();
+            add(
+                m.eventInput.on(this),
+                m.eventDerived.on(this),
+                m.eventCycleStart.on((M) -> send()),
+                m.eventReset.on((M) -> buffer.clear() )
+            );
+
+        }
+
+        @Override
+        public void accept(Task task) {
+            if (filter == null || filter.test(task))
+                buffer.add(task);
+        }
+
+
+        //        @Override
+//        public void accept(Task t) {
+//            if (t.isInput())
+//                percepts.add(t);
+//            else {
+////                if (t.getParentTask() != null && t.getParentTask().getTerm().equals(t.getTerm())) {
+////                } else {
+//                    newTasks.add(t);
+//                }
+//            }
+//        }
+
+        /** sends the next batch of tasks to the receiver */
+        public void send() {
+
+            int n = Math.min(buffer.size(), inputsMaxPerCycle.get());
+
+            for (; n > 0; n--) {
+                final Task t = buffer.removeFirst();
+                receiver.accept(t);
+            }
+
+        }
+
+//        protected void runNewTasks() {
+//            runNewTasks(newTasks.size()); //all
+//        }
+//
+//        protected void runNewTasks(int max) {
+//
+//            int numNewTasks = Math.min(max, newTasks.size());
+//            if (numNewTasks == 0) return;
+//
+//            //queueNewTasks();
+//
+//            for (int n = newTasks.size() - 1; n >= 0; n--) {
+//                Task highest = newTasks.removeHighest();
+//                if (highest == null) break;
+//                if (highest.isDeleted()) continue;
+//
+//                run(highest);
+//            }
+//            //commitNewTasks();
+//        }
+
+
     }
 }

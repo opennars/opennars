@@ -5,12 +5,12 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.term.Term;
-import nars.util.event.OnTopics;
+import nars.util.event.Active;
 
 /**
  iteratively processes a concept bag and the bags of fired concepts to improve the accuracy of budget dynamics
  */
-public class BagForgettingEnhancer extends OnTopics {
+public class BagForgettingEnhancer extends Active {
 
 
     public BagForgettingEnhancer(Memory memory, Bag<Term, Concept> bag) {

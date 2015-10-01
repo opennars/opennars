@@ -1,6 +1,7 @@
 package nars.nal.nal3;
 
 
+import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
@@ -75,6 +76,7 @@ public class NAL3Test extends AbstractNALTest {
 
     @Test
     public void set_operations2() throws InvalidInputException {
+        Global.DEBUG = true;
         TestNAR tester = test();
         tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
         tester.believe("<planetX --> {Pluto,Saturn}>", 0.1f, 0.9f); //.en("PlanetX is probably neither Pluto nor Saturn.");

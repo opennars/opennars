@@ -86,8 +86,6 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
     }
 
 
-
-
     @Override
     public final int hashCode() {
         return target.hashCode();
@@ -148,12 +146,12 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 //    }
 
     @Override
-    public Term getTerm() {
+    public final Term getTerm() {
         return target;
     }
 
-    @Override public void delete() {
-        
+    @Override public boolean delete() {
+        return true;
     }
 
 

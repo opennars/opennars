@@ -17,6 +17,8 @@ public class Union extends PreCondition3 {
         super(arg1, arg2, arg3);
     }
 
+
+
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
 

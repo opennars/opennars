@@ -592,7 +592,10 @@ public class DefaultConcept extends AtomConcept {
 
 
     /** called by memory, dont call directly */
-    @Override public void delete() {
+    @Override public synchronized boolean delete() {
+
+        if (isDeleted())
+            return false;
 
         super.delete();
 
@@ -608,6 +611,8 @@ public class DefaultConcept extends AtomConcept {
 
         if (getTermLinkBuilder() != null)
             getTermLinkBuilder().delete();
+
+        return true;
     }
 
 }

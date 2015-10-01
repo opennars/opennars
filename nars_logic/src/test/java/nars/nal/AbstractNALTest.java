@@ -23,7 +23,7 @@ abstract public class AbstractNALTest {
             () -> new Default().nal(3)
     );
     public static final List<Supplier<NAR>> core3 = Lists.newArrayList(
-            () -> new Default().nal(3)
+            () -> new Default().nal(4)
     );
     public static final List<Supplier<NAR>> core4 = Lists.newArrayList(
             () -> new Default().nal(4)

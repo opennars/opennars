@@ -54,7 +54,7 @@ public class Equalized extends Default {
 ////         *  2) optionally fire a concept
 ////         **/
 ////        @Override
-////        public void onCycle() {
+////        public void send() {
 ////
 ////            final int conceptsToFire = conceptsFiredPerCycle.get();
 ////

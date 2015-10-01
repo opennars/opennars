@@ -389,8 +389,8 @@ public class RuleMatch extends FindSubst {
 //        }
 
         //cached:
-        Term derive = resolutions.computeIfAbsent(t, resolver);
-        return derive;
+        return resolutions.computeIfAbsent(t, resolver);
+
 
         //uncached:
         //return resolver.apply(t);

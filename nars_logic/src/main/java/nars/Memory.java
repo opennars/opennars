@@ -292,19 +292,19 @@ public class Memory extends Param {
      */
     public final void remove(final Task task, final String removalReason) {
 
-        if (task.isDeleted()) {
-            throw new RuntimeException(task + " already deleted");
-        }
-
         task.log(removalReason);
 
-        if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
-            task.log(Premise.getStack());
+        if (task.delete()) {
 
-        //System.err.println("REMOVED: " + task.getExplanation());
+            if (Global.DEBUG_DERIVATION_STACKTRACES && Global.DEBUG_TASK_LOG)
+                task.log(Premise.getStack());
 
-        eventTaskRemoved.emit(task);
-        task.delete();
+            //System.err.println("REMOVED: " + task.getExplanation());
+
+            eventTaskRemoved.emit(task);
+
+        }
+
     }
 
     /**

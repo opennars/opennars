@@ -414,6 +414,11 @@ abstract public class NAR implements Serializable, Level {
     }
 
 
+    /** register a singleton */
+    final public <X> X the(Object key, X value) {
+        return memory.the(key, value);
+    }
+
 //    /** input a task via direct TaskProcessing
 //     * @return the TaskProcess, after it has executed (synchronously) */
 //    public Premise inputDirect(final Task t) {
