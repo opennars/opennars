@@ -75,6 +75,12 @@ public class FindSubst {
             return true;
         }
 
+        if(op1.isVar() && op2.isVar() && op1==op2) {
+            return nextTerm1Var(
+                    (Variable) term1,
+                    term2);
+        }
+
         if (op1 == type) {
 
             final Term t = map1.get(term1);
@@ -127,15 +133,30 @@ public class FindSubst {
         if (term2 instanceof Variable) {
             term2Var = (Variable) term2;
             op2 = term2Var.op();
+
+            //variables can and need sometimes to change name in order to unify
+            if(term1Var.op() == term2Var.op()) {  //and if its same op, its indeed variable renaming
+                putCommon(term2Var, term1Var);
+                return true;
+            }
+            if(type == Op.VAR_PATTERN && term1Var.op() == Op.VAR_PATTERN) {
+                put1To2(term2,term1Var);  //if its VAR_PATTERN unification, VAR_PATTERNS can can be matched with variables of any kind
+                return true;
+            }
+
         } else
             term2Var = null;
 
+
+
         if ((term2Var != null) && (op2 == type)) {
             putCommon(term1Var, term2Var);
+            return true;
         } else {
 
-            if ((term2Var != null) && !queryVarMatch(term1Var.op(), op2))
+            if ((term2Var != null) && !queryVarMatch(term1Var.op(), op2)) { //i highly doubt this is conceptionally correct, but this I will check another time
                 return false;
+            }
 
             put1To2(term2, term1Var);
         }

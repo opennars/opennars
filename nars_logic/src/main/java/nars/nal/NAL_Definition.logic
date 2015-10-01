@@ -471,9 +471,6 @@
     (A --> S), (B --> S), task("?") |- (A --> B), (Punctuation:Question),
                                        (B --> A), (Punctuation:Question)
 
-////NAL2:
-//    ({?X} --> S), (B --> S), task("?") |-
-
 //and the backward inference driven forward inference:
 
 //NAL2:
@@ -521,4 +518,4 @@
 
 //compound composition one premise
 
-(||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
+    (||,B,A_1..n), B, task("?") |- (||,B,A_1..n), (Truth:BeliefStructuralDeduction, Punctuation:Judgment)
