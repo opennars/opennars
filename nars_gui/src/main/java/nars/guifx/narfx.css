@@ -83,3 +83,18 @@
     -fx-background-color: rgb(55,55,55) !important;
     -fx-border-color: green;
 }
+
+.windget {
+
+    -fx-border-width: 8px 8px 8px 8px;
+    -fx-border-color: transparent;
+
+    -fx-background-color: rgb(75,75,75) !important;
+}
+.windget:hover {
+    -fx-background-color: rgb(100,100,100) !important;
+}
+
+.windgetContent {
+    -fx-background-color: rgb(25,25,25) !important;
+}

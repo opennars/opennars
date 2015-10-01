@@ -4,33 +4,18 @@ import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import nars.Audio;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
-import nars.guifx.demo.RunSpacegraph;
-import nars.guifx.graph2.NARGraph1;
-import nars.guifx.remote.VncClientApp;
-import nars.guifx.terminal.LocalTerminal;
-import nars.sonification.ConceptSonification;
 import nars.task.Task;
-import nars.video.WebcamFX;
-import org.jewelsea.willow.browser.WebBrowser;
 
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static javafx.application.Platform.runLater;
 
 
 /**
@@ -45,14 +30,14 @@ public class NARfx  {
     /** NAR instances -> GUI windows */
     public static Map<NAR, Stage> window = Global.newHashMap();
 
-    public static final javafx.scene.control.ScrollPane scrolled(Node n) {
+    public static final ScrollPane scrolled(Node n) {
         return scrolled(n, true, true);
     }
 
-    public static final javafx.scene.control.ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
-        javafx.scene.control.ScrollPane s = new javafx.scene.control.ScrollPane();
-        s.setHbarPolicy(stretchwide ? javafx.scene.control.ScrollPane.ScrollBarPolicy.AS_NEEDED : javafx.scene.control.ScrollPane.ScrollBarPolicy.NEVER);
-        s.setVbarPolicy(stretchwide ? javafx.scene.control.ScrollPane.ScrollBarPolicy.AS_NEEDED : javafx.scene.control.ScrollPane.ScrollBarPolicy.NEVER);
+    public static final ScrollPane scrolled(Node n, boolean stretchwide, boolean stretchhigh) {
+        ScrollPane s = new ScrollPane();
+        s.setHbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
+        s.setVbarPolicy(stretchwide ? ScrollPane.ScrollBarPolicy.AS_NEEDED : ScrollPane.ScrollBarPolicy.NEVER);
 
         s.setContent(n);
 
@@ -269,103 +254,7 @@ public class NARfx  {
     }
 
     public static void newWindow(NAR nar) {
-        newWindow(nar, (Consumer)null);
-    }
-
-    public static void newWindow(NAR nar, Consumer<NARide> ide) {
-
-        //SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
-
-        run((a,b) -> {
-
-            NARide ni = new NARide(nar);
-
-            {
-                ni.addView(new TerminalPane(nar));
-                /*ni.addIcon(() -> {
-                    return new InputPane(nar);
-                });*/
-                ni.addIcon(()-> {
-                   return new ConceptSonificationPanel(nar);
-                });
-                //ni.addView(additional components);
-            }
-
-            ni.addTool("Task Tree", () -> new TreePane(nar));
-            ni.addTool("Concept Network", () -> new NARGraph1(nar));
-            ni.addTool("Fractal Workspace", () -> new RunSpacegraph.DemoSpacegraph());
-
-            ni.addTool("Webcam", () -> new WebcamFX());
-
-
-            ni.addTool("Terminal (bash)", () -> new LocalTerminal());
-            ni.addTool("Status", () -> new StatusPane(nar));
-            ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
-            ni.addTool("Web Browser", () -> new WebBrowser());
-
-            ni.addTool("HTTP Server", () -> new Pane());
-
-            ni.addTool(new Menu("Interface..."));
-            ni.addTool(new Menu("Cognition..."));
-            ni.addTool(new Menu("Sensor..."));
-
-
-            //Button summaryPane = new Button(":D");
-
-//            Scene scene = new SizeAwareWindow((d) -> {
-//                double w = d[0];
-//                double h = d[1];
-//                if ((w < 200) && (h < 200)) {
-//                    /*
-//                    new LinePlot(
-//                        "Concepts",
-//                        () -> (nar.memory.getConcepts().size()),
-//                        300
-//                     */
-//                    return () -> summaryPane;
-//                }/* else if (w < 200) {
-//                    return Column;
-//                } else if (h < 200) {
-//                    return Row;
-//                }*/
-//                return () -> ni;
-//            });
-            Scene scene = new Scene(ni, 900, 700,
-                    false, SceneAntialiasing.DISABLED);
-
-            scene.getStylesheets().setAll(NARfx.css, "dark.css" );
-            b.setScene(scene);
-
-
-            b.setScene(scene);
-
-            b.show();
-
-            if (ide!=null)
-                ide.accept(ni);
-
-            b.setOnCloseRequest((e) -> {
-                System.exit(0);
-            });
-        });
-//        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
-//
-//        ni.resize(500,500);
-//
-//        Stage s = new Stage();
-//        s.setScene(wn);
-//        //s.sizeToScene();
-//
-//
-//
-//        s.show();
-//
-//        Stage removed = window.put(nar, s);
-//
-//        if (removed!=null)
-//            removed.close();
-//
-//        return ni;
+        NARide.show(nar, (Consumer)null);
     }
 
     public static void newWindow(NAR nar, Concept c) {
@@ -451,7 +340,7 @@ public class NARfx  {
     /* https://macdevign.wordpress.com/2014/03/27/running-javafx-application-instance-in-the-main-method-of-a-class/ */
     public static void run(AppLaunch appLaunch, String... sArArgs) {
         DummyApplication.appLaunch = appLaunch;
-        DummyApplication.launch(DummyApplication.class, sArArgs);
+        Application.launch(DummyApplication.class, sArArgs);
     }
 
     // This must be public in order to instantiate successfully
@@ -483,7 +372,7 @@ public class NARfx  {
     }
 
     @FunctionalInterface
-    public static interface AppLaunch {
+    public interface AppLaunch {
         void start(Application app, Stage stage) throws Exception;
         // Remove default keyword if you need to run in Java7 and below
         default void init(Application app) throws Exception {
@@ -493,66 +382,4 @@ public class NARfx  {
         }
     }
 
-    private static class ConceptSonificationPanel extends BorderPane {
-
-        private final Label info;
-        final static int maxVoices = 4;
-        private final NAR nar;
-        private ConceptSonification son;
-
-        public ConceptSonificationPanel(NAR nar) {
-            super();
-
-            this.nar = nar;
-            info = new Label();
-            info.setWrapText(true);
-            setCenter(info);
-
-            CheckBox b = new CheckBox("Sonify");
-            ToggleButton r = new ToggleButton("Record (to file)...");
-            setLeft(b);
-            setRight(r);
-            b.selectedProperty().addListener(c -> {
-                if (b.isSelected()) {
-                    start();
-                }
-                else {
-                    stop();
-                }
-            });
-        }
-        protected void stop() {
-            info.setText("Stopping");
-            if (son!=null) {
-                son.off();
-                son.sound.shutDown();
-                son = null;
-            }
-            info.setText("Silent");
-        }
-
-        protected void start() {
-
-            try {
-                son = new ConceptSonification(nar, new Audio(maxVoices)) {
-
-                    @Override
-                    public void onFrame() {
-                        super.onFrame();
-                        //String pp = playing.keySet().toString();
-                        runLater(() -> {
-                            info.setText("Sonifying..");
-                            //info.setText(this.playing.toString());
-                        });
-
-                    }
-                };
-            } catch (Exception e) {
-                e.printStackTrace();
-                info.setText(e.toString());
-                son = null;
-            }
-
-        }
-    }
 }

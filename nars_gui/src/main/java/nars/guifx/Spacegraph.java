@@ -15,12 +15,11 @@ import javafx.scene.SubScene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import nars.guifx.util.ZoomFX;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * Created by me on 8/2/15.
@@ -29,6 +28,12 @@ public class Spacegraph extends ZoomFX {
 
     static final String spacegraphCSS = Spacegraph.class.getResource("spacegraph.css").toExternalForm();
     private final GridCanvas grid = null;
+
+    public void addNodes(Function<Node,Node> wrap, Node... n) {
+        for (Node a : n) {
+            addNodes( wrap.apply(a) );
+        }
+    }
 
     public void addNodes(Node... n) {
         verts.getChildren().addAll(n);

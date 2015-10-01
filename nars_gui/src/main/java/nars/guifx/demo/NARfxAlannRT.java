@@ -1,6 +1,6 @@
 package nars.guifx.demo;
 
-import nars.guifx.NARfx;
+import nars.guifx.NARide;
 import nars.nar.experimental.DefaultAlann;
 
 import java.io.File;
@@ -26,7 +26,7 @@ public class NARfxAlannRT {
         DefaultAlann d = new DefaultAlann(16);
         //d.memory().setClock(new RealtimeMSClock(false));
 
-        NARfx.newWindow(d, (i) -> {
+        NARide.show(d, (i) -> {
             try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {

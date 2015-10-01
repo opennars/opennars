@@ -1,7 +1,7 @@
 package nars.guifx.demo;
 
 import nars.Global;
-import nars.guifx.NARfx;
+import nars.guifx.NARide;
 import nars.nar.Default;
 
 /**
@@ -13,7 +13,7 @@ public class NARfxDefaultIterative {
 
         Global.DEBUG = true;
 
-        NARfx.newWindow(new Default(), (i) -> {
+        NARide.show(new Default(), (i) -> {
             /*try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {

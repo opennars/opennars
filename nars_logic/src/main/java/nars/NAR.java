@@ -598,7 +598,7 @@ abstract public class NAR implements Serializable, Level {
      */
     public void stop() {
         running = false;
-        //enabled = false;
+        enabled = false;
     }
 
 //    /**
@@ -655,6 +655,7 @@ abstract public class NAR implements Serializable, Level {
         final boolean wasRunning = running;
 
         running = true;
+        enabled = true;
 
         final int cpf = getCyclesPerFrame();
         for (int f = 0; (f < frames) && running; f++) {
@@ -742,6 +743,7 @@ abstract public class NAR implements Serializable, Level {
     final public void loop(long minFramePeriodMS) {
         //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
+        enabled = true;
         running = true;
 
         while (running) {

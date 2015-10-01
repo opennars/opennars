@@ -5,7 +5,7 @@ import nars.LocalMemory;
 import nars.Memory;
 import nars.NAR;
 import nars.clock.RealtimeMSClock;
-import nars.guifx.NARfx;
+import nars.guifx.NARide;
 import nars.nar.Default;
 import org.clockwise.PeriodicTrigger;
 import org.clockwise.Schedulers;
@@ -31,7 +31,7 @@ public class NARfxDefaultIRealtime {
         Schedulers time = Schedulers.newDefault();
         time.schedule(() -> nar.frame(), new PeriodicTrigger(cycleDivisor * 1000/60));
 
-        NARfx.newWindow(nar, (i) -> {
+        NARide.show(nar, (i) -> {
             /*try {
                 i.nar.input(new File("/tmp/h.nal"));
             } catch (Throwable e) {

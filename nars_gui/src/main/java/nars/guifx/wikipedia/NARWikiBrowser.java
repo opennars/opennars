@@ -1,6 +1,7 @@
 package nars.guifx.wikipedia;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
@@ -32,6 +33,7 @@ import nars.guifx.JFX;
  */
 public class NARWikiBrowser extends WikiBrowser {
 
+    final StringProperty tags;
     final TextArea tagEdit = new TextArea();
     final BorderPane tagPane = new BorderPane();
 
@@ -42,12 +44,21 @@ public class NARWikiBrowser extends WikiBrowser {
         tagEdit.setWrapText(true);
         tagEdit.setPromptText("(empty)");
         tagPane.setCenter(tagEdit);
+        tagPane.setVisible(false);
+
+        tags = tagEdit.textProperty();
 
         Button inputButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
 
         tagPane.setRight(inputButton);
 
         setBottom(tagPane);
+
+        tags.addListener(c -> {
+            tagPane.setVisible(!(tags.get().isEmpty()));
+        });
+
+
     }
 
 

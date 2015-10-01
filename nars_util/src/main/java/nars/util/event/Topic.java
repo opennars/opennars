@@ -1,6 +1,8 @@
 
 package nars.util.event;
 
+import nars.util.data.id.Named;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -10,16 +12,15 @@ import java.util.function.Consumer;
 /**
  * notifies subscribers when a value is emitted
  */
-abstract public interface Topic<V extends Serializable> extends Serializable {
+public interface Topic<V extends Serializable> extends Serializable, Named<String> {
 
-    abstract void delete();
+    void delete();
 
-    abstract public List<Consumer<V>> all();
-
+    List<Consumer<V>> all();
 
 
     /** registers to all public Topic fields in an object */
-    public static Active all(final Object obj, BiConsumer<String /* fieldName*/,Object /* value */> f) {
+    static Active all(final Object obj, BiConsumer<String /* fieldName*/, Object /* value */> f) {
 
 
         Active s = new Active();
@@ -58,7 +59,7 @@ abstract public interface Topic<V extends Serializable> extends Serializable {
     On on(Consumer<V> o);
     void off(On<V> reaction);
 
-    public static <V extends Serializable> Active onAll(final Consumer<V> o, final Topic<V>... w) {
+    static <V extends Serializable> Active onAll(final Consumer<V> o, final Topic<V>... w) {
         Active r = new Active(w.length);
     
         for (final Topic<V> c : w)

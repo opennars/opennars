@@ -3,12 +3,13 @@ package nars.guifx;
 import de.jensd.fx.glyphs.GlyphIcon;
 import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.geometry.HPos;
-import javafx.geometry.Orientation;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import nars.NAR;
 import nars.guifx.util.NSlider;
@@ -168,17 +169,18 @@ public class NARControlFX extends HBox {
             super(nar);
 
             getChildren().addAll(
-                    new NSlider("Target CPU Usage", 128, 48),
-                    new NSlider("Focus Depth", 48, 48, NSlider.CircleKnob),
-                    new NSlider("Focus Breadth", 48, 48, NSlider.CircleKnob),
-                    new NSlider("Urgency", 48, 48, NSlider.CircleKnob),
-                    new FlowPane(new Button("GC"))
+                new FlowPane(
+                    new NSlider("Power", 48, 48, NSlider.BarSlider, 0.5),
+                    new NSlider("Duration", 48, 48, NSlider.CircleKnob, 0.75),
+                    new NSlider("Focus", 48, 48, NSlider.CircleKnob, 0.6),
+                    new Button("Relax")
+                )
             );
         }
     }
 
 
-    public static class CycleClockPane extends FlowPane implements Runnable {
+    public static class CycleClockPane extends VBox implements Runnable {
 
         final static Text play = GlyphsDude.createIcon(FontAwesomeIcon.PLAY, GlyphIcon.DEFAULT_FONT_SIZE);
         final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
@@ -208,12 +210,12 @@ public class NARControlFX extends HBox {
         }
 
         public CycleClockPane(NAR n) {
-            super(Orientation.HORIZONTAL, 1, 0);
+            super();
 
             getStyleClass().add("thread_control");
 
-            setAlignment(Pos.CENTER_RIGHT);
-            setColumnHalignment(HPos.RIGHT);
+            setAlignment(Pos.CENTER_LEFT);
+            //setColumnHalignment(HPos.RIGHT);
 
             this.nar = n;
 
@@ -229,7 +231,8 @@ public class NARControlFX extends HBox {
 
             Button runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
             Button stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
-            NSlider speedSlider = new NSlider(100, 25.0);
+            StringProperty cpuLabel = new SimpleStringProperty("CPU");
+            NSlider cpuSlider = new NSlider(cpuLabel, 100, 30.0, NSlider.BarSlider, 0.5);
 
             runButton.setTooltip(new Tooltip("Toggle run/stop"));
 
@@ -240,19 +243,25 @@ public class NARControlFX extends HBox {
                     synchronized (n) {
                         //TODO make sure only one thread is running, maybe with singleThreadExecutor
 
+                        double startingSpeed = 0.5;
+
                         stepButton.setDisable(true);
-                        speedSlider.setOpacity(1.0);
+                        cpuSlider.value(startingSpeed);
+                        cpuSlider.setOpacity(1.0);
 
                         new Thread(() -> {
                             n.loop(defaultNARPeriodMS);
                         }).start();
+                        cpuLabel.setValue("ON " + cpuSlider.v());
                     }
                 } else {
-                    n.stop();
 
-                    if (!n.isRunning()) {
+                    if (n.isRunning()) {
+                        n.stop();
+
                         stepButton.setDisable(false);
-                        speedSlider.setOpacity(0.5);
+                        cpuSlider.setOpacity(0.25);
+                        cpuLabel.setValue("OFF");
                     }
                 }
 
@@ -261,21 +270,24 @@ public class NARControlFX extends HBox {
 
             stepButton.setTooltip(new Tooltip("Step"));
             stepButton.setOnAction(e -> {
-                if (n.isRunning())
+                if (!n.isRunning())
                     n.frame();
             });
+            stepButton.setDisable(true);
 
 
-//        Slider speedSlider = new Slider(0, 1, 0);
-//        speedSlider.setOrientation(Orientation.VERTICAL);
-//        speedSlider.setTooltip(new Tooltip("Speed"));
-//        speedSlider.setMinorTickCount(10);
-//        speedSlider.setShowTickMarks(true);
-//        getChildren().add(speedSlider);
+//        Slider cpuSlider = new Slider(0, 1, 0);
+//        cpuSlider.setOrientation(Orientation.VERTICAL);
+//        cpuSlider.setTooltip(new Tooltip("Speed"));
+//        cpuSlider.setMinorTickCount(10);
+//        cpuSlider.setShowTickMarks(true);
+//        getChildren().add(cpuSlider);
 
 
-            getChildren().setAll(runButton, speedSlider, stepButton, clock);
-
+            getChildren().addAll(
+                    new FlowPane(runButton, cpuSlider, stepButton),
+                    clock
+            );
 
             autosize();
         }

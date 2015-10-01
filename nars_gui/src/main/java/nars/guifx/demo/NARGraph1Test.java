@@ -2,7 +2,7 @@ package nars.guifx.demo;
 
 import nars.Global;
 import nars.NAR;
-import nars.guifx.NARfx;
+import nars.guifx.NARide;
 import nars.guifx.graph2.HyperassociativeMapLayout;
 import nars.guifx.graph2.NARGraph1;
 import nars.guifx.graph2.NARGrapher;
@@ -28,7 +28,7 @@ public class NARGraph1Test {
 
         n.frame(5);
 
-        NARfx.newWindow(n, ide -> {
+        NARide.show(n, ide -> {
             NARGraph1 g = new NARGraph1(n);
             //g.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 

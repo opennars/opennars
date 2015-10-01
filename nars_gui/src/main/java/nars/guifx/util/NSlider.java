@@ -3,6 +3,8 @@ package nars.guifx.util;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -47,16 +49,22 @@ public class NSlider extends StackPane {
         this(label, w, h, BarSlider, initialVector);
     }
 
-
     public NSlider(String label, double w, double h, Vis vis, double... initialVector) {
+        this(new SimpleStringProperty(label), w, h, vis, initialVector);
+    }
+
+    public NSlider(StringProperty label, double w, double h, Vis vis, double... initialVector) {
         this(w, h, vis, initialVector);
         addLabel(label);
     }
 
-    private void addLabel(String t) {
+    private void addLabel(StringProperty t) {
         //final StringProperty label;
 
-        Text text = new Text(t);
+        Text text = new Text(t.getValue());
+
+
+        text.textProperty().bind(t);
 
         //label = text.textProperty();
         //final SimpleDoubleProperty fontScale = new SimpleDoubleProperty(0.05);
@@ -150,6 +158,7 @@ public class NSlider extends StackPane {
         for (int i = 0; i < v.length; i++) {
             value(i, v[i]);
         }
+        redraw();
         return this;
     }
 
@@ -166,6 +175,21 @@ public class NSlider extends StackPane {
         if (v != dimensions)
             throw new RuntimeException("invalid dimensions");
     }
+
+    public double v(int index) {
+        return value[index].doubleValue();
+    }
+
+    /* convenience methods: v_ */
+
+    public double v()  {  return v(0);     }
+    public double v0() {  return v(0);    }
+    public double v1() {  return v(1);    }
+    public double v2() {  return v(2);    }
+
+    public double vx() {  return v(0);    }
+    public double vy() {  return v(1);    }
+    public double vz() {  return v(2);    }
 
     public interface Control {
         void start(NSlider n);
@@ -288,7 +312,7 @@ public class NSlider extends StackPane {
         double angleStart = 0;
         double circumferenceActive = 0.5; //how much of the circumference of the interior circle is active as a dial track
 
-        final double theta = angleStart + p * circumferenceActive * (2 * Math.PI);
+        final double theta = angleStart + (1-p) * circumferenceActive * (2 * Math.PI);
 
 
 //        double x = W/2 + (W/2-margin) * Math.cos(theta);

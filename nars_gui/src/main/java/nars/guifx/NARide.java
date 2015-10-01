@@ -2,6 +2,8 @@ package nars.guifx;
 
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -11,10 +13,26 @@ import nars.NAR;
 import nars.clock.CycleClock;
 import nars.clock.RealtimeMSClock;
 import nars.event.FrameReaction;
+import nars.guifx.graph2.NARGraph1;
+import nars.guifx.remote.VncClientApp;
+import nars.guifx.terminal.LocalTerminal;
+import nars.guifx.util.CodeInput;
 import nars.guifx.util.SizeAwareWindow;
 import nars.guifx.util.TabX;
+import nars.guifx.util.Windget;
+import nars.guifx.wikipedia.NARWikiBrowser;
+import nars.nar.Default;
+import nars.video.WebcamFX;
+import org.jewelsea.willow.browser.WebBrowser;
+import za.co.knonchalant.builder.POJONode;
+import za.co.knonchalant.builder.TaggedParameters;
+import za.co.knonchalant.sample.pojo.SampleClass;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static javafx.application.Platform.runLater;
@@ -36,6 +54,170 @@ public class NARide extends BorderPane {
 
     public final Map<Object,Supplier<Node>> iconNodeBuilders = Global.newHashMap();
 
+    public static void show(NAR nar, Consumer<NARide> ide) {
+
+        //SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
+
+        NARfx.run((a, b) -> {
+
+            NARide ni = new NARide(nar);
+
+            {
+                ni.addView(new NARSpace(nar));
+                ni.addView(new TerminalPane(nar));
+                /*ni.addIcon(() -> {
+                    return new InputPane(nar);
+                });*/
+                ni.addIcon(()-> {
+                   return new ConceptSonificationPanel(nar);
+                });
+                //ni.addView(additional components);
+            }
+
+            ni.addTool("Task Tree", () -> new TreePane(nar));
+            ni.addTool("Concept Network", () -> new NARGraph1(nar));
+            ni.addTool("Fractal Workspace", () -> new NARSpace(nar));
+
+            ni.addTool("Webcam", () -> new WebcamFX());
+
+
+            ni.addTool("Terminal (bash)", () -> new LocalTerminal());
+            ni.addTool("Status", () -> new StatusPane(nar));
+            ni.addTool("VNC/RDP Remote", () -> (VncClientApp.newView()));
+            ni.addTool("Web Browser", () -> new WebBrowser());
+
+            ni.addTool("HTTP Server", () -> new Pane());
+
+            ni.addTool(new Menu("Interface..."));
+            ni.addTool(new Menu("Cognition..."));
+            ni.addTool(new Menu("Sensor..."));
+
+
+            //Button summaryPane = new Button(":D");
+
+//            Scene scene = new SizeAwareWindow((d) -> {
+//                double w = d[0];
+//                double h = d[1];
+//                if ((w < 200) && (h < 200)) {
+//                    /*
+//                    new LinePlot(
+//                        "Concepts",
+//                        () -> (nar.memory.getConcepts().size()),
+//                        300
+//                     */
+//                    return () -> summaryPane;
+//                }/* else if (w < 200) {
+//                    return Column;
+//                } else if (h < 200) {
+//                    return Row;
+//                }*/
+//                return () -> ni;
+//            });
+            Scene scene = new Scene(ni, 900, 700,
+                    false, SceneAntialiasing.DISABLED);
+
+            scene.getStylesheets().setAll(NARfx.css, "dark.css" );
+            b.setScene(scene);
+
+
+            b.setScene(scene);
+
+            b.show();
+
+            if (ide!=null)
+                ide.accept(ni);
+
+            b.setOnCloseRequest((e) -> {
+                System.exit(0);
+            });
+        });
+//        SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
+//
+//        ni.resize(500,500);
+//
+//        Stage s = new Stage();
+//        s.setScene(wn);
+//        //s.sizeToScene();
+//
+//
+//
+//        s.show();
+//
+//        Stage removed = window.put(nar, s);
+//
+//        if (removed!=null)
+//            removed.close();
+//
+//        return ni;
+    }
+
+
+    public static class NARSpace extends Spacegraph {
+
+        private final NAR nar;
+
+        public NARSpace(NAR n) {
+            super();
+
+            this.nar = n;
+
+            //BrowserWindow.createAndAddWindow(space, "http://www.google.com");
+
+
+            Windget cc = new Windget("Edit", new CodeInput("ABC"), 300, 200).move(-10,-10);
+            /*cc.addOverlay(new Windget.RectPort(cc, true, 0, 1, 20, 20));
+            cc.addOverlay(new Windget.RectPort(cc, true, 0, 0, 20, 20));
+            cc.addOverlay(new Windget.RectPort(cc, true, 1, 0, 20, 20));
+            cc.addOverlay(new Windget.RectPort(cc, true, 1, 1, 20, 20));*/
+
+
+            //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
+
+
+            TaggedParameters taggedParameters = new TaggedParameters();
+            List<String> range = new ArrayList<>();
+            range.add("Ay");
+            range.add("Bee");
+            range.add("See");
+            taggedParameters.addTag("range", range);
+            Pane jps = POJONode.build(new SampleClass(), taggedParameters);
+
+//        Button button = new Button("Read in");
+//        button.setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent actionEvent) {
+//                //SampleClass sample = POJONode.read(mainPane, SampleClass.class);
+//                //System.out.println(sample.getTextString());
+//            }
+//        });
+
+            jps.setStyle("-fx-font-size: 75%");
+            Windget wd = new Windget("WTF",
+                    jps,
+                    //new Button("XYZ"),
+                    400, 400);
+            //wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
+
+
+            final Default b = new Default();
+            TerminalPane np = new TerminalPane(b);
+
+            Windget nd = new Windget("NAR",
+                    np, 200, 200
+            ).move(-200,300);
+
+            Function<Node, Node> wrap = (x) -> {
+                return x;
+            };
+            addNodes(wrap, cc, wd, nd);
+
+            addNodes(
+                new Windget("Web",
+                    new NARWikiBrowser("Software"), 200, 200
+                ).move(-200,300)
+            );
+        }
+    }
 
     public void addIcon(FXIconPaneBuilder n) {
         nar.memory().the(n);
@@ -69,6 +251,7 @@ public class NARide extends BorderPane {
         super();
         this.nar = n;
 
+        //default node builders
         icon(CycleClock.class, () -> new NARControlFX.CycleClockPane(nar) );
         icon(RealtimeMSClock.class, () -> new NARControlFX.RTClockPane(nar) );
 
@@ -169,7 +352,7 @@ public class NARide extends BorderPane {
         return this;
     }
 
-    public Stage newWindow() {
+    public Stage show() {
 
         return NARfx.newWindow(nar.toString(), this);
 
@@ -211,7 +394,7 @@ public class NARide extends BorderPane {
 //        }
 //    }
 
-    public static SizeAwareWindow newWindow(NAR n, Parent main) {
+    public static SizeAwareWindow show(NAR n, Parent main) {
 
 
         BorderPane summary;

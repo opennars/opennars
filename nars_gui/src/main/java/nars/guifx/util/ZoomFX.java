@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
@@ -22,9 +22,10 @@ import org.apache.commons.math3.linear.ArrayRealVector;
  * @author dejv78 (dejv78.github.io)
  * @since 1.0.0
  */
-public class ZoomFX extends AnchorPane {
+public class ZoomFX extends StackPane {
 
     @Deprecated private static final double SCROLLING_DIVISOR = 200.0d;
+
     private static final double SCROLL_MIN = 0.0;
     private static final double SCROLL_MAX = 1.0;
     private static final double SCROLL_UNIT_INC = 0.1;
@@ -41,7 +42,6 @@ public class ZoomFX extends AnchorPane {
     public final Group content = new Group();
     private final Rectangle clip = new Rectangle();
 
-    private final ObservableBounds pivotLogicalExtent = new ObservableBounds();
 
     private ArrayRealVector panStart = null;
 
@@ -52,8 +52,6 @@ public class ZoomFX extends AnchorPane {
 
     public ZoomFX() {
         super();
-
-
 
 
         //setupScrollbar(hscroll, Orientation.HORIZONTAL, SCROLL_MIN, SCROLL_MAX, SCROLL_UNIT_INC);
@@ -96,7 +94,7 @@ public class ZoomFX extends AnchorPane {
     private void start() {
         synchronized (content) {
             if (positionAnimation == null) {
-                positionAnimation = new Animate(50, a -> {
+                positionAnimation = new Animate(0, a -> {
                     zoomFactor.update();
                     panX.update();
                     panY.update();

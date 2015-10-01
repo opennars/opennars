@@ -4,9 +4,10 @@ import java.io.Serializable;
 import java.util.function.Consumer;
 
 /**
- * Created by me on 9/15/15.
+ * Represents the active state of a topic stream
  */
 public final class On<V extends Serializable> implements Serializable {
+
 
     public final Consumer<V> reaction;
     public final Topic<V> topic;
@@ -18,5 +19,12 @@ public final class On<V extends Serializable> implements Serializable {
 
     final public void off() {
         topic.off(this);
+    }
+
+    @Override
+    public String toString() {
+        return "On{" +
+                topic.name() +
+                '}';
     }
 }

@@ -1,13 +1,55 @@
 package nars.util.event;
 
+import org.infinispan.commons.util.WeakValueHashMap;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /** single-thread synchronous (in-thread) event emitter with direct array access
  * */
 public class DefaultTopic<V extends Serializable> extends CopyOnWriteArrayList<Consumer<V>> implements Topic<V> {
+
+
+    //TODO extract this to Topics and a graph metamodel of the events
+
+    static WeakValueHashMap<String, Topic<?>> topics = new WeakValueHashMap<>();
+
+    public static void register(Topic<?> t) {
+        topics.put(t.name(), t);
+    }
+    public static void unregister(Topic<?> t) {
+        topics.remove(t.name());
+    }
+
+    static AtomicInteger topicSerial = new AtomicInteger();
+    static int nextTopicID() {
+        return topicSerial.incrementAndGet();
+    }
+
+    final String id;
+
+    @Override
+    public String name() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    public DefaultTopic() {
+        this(Integer.toString(nextTopicID(), 36));
+    }
+
+    DefaultTopic(String id) {
+        super();
+        this.id = id;
+        register(this);
+    }
 
     @Override
     public List<Consumer<V>> all() {
@@ -42,6 +84,7 @@ public class DefaultTopic<V extends Serializable> extends CopyOnWriteArrayList<C
 
     @Override
     public void delete() {
+        unregister(this);
         clear();
     }
 
