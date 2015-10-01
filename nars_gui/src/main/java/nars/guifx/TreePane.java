@@ -1,7 +1,6 @@
 package nars.guifx;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -79,13 +78,12 @@ public class TreePane extends BorderPane {
         {
             NSlider ns;
             setBottom( new FlowPane(
-                    new Label("Pri(Min)"),
-                    ns = new NSlider(80, 20)
+                    ns = new NSlider("Min Task Priority", 80, 20)
             ));
 
-            ns.value.set(0);
+            ns.value(0); //show everytihng
 
-            (this.minPriority = ns.value).addListener((v) -> {
+            (this.minPriority = ns.value[0]).addListener((v) -> {
                 update();
             });
 

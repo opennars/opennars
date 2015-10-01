@@ -19,15 +19,15 @@ public class NSliderSet<K> extends FlowPane {
         super();
     }
 
-    public final double value(K k) {
+    public final double normalized(K k, int dimension) {
         NSlider s = data.computeIfAbsent(k, this::newControl);
         if (s == null) return Double.NaN;
-        return s.value.doubleValue();
+        return s.normalized()[dimension];
     }
 
-    public final NSlider value(K k, double newValue) {
+    public final NSlider value(K k, double... newValue) {
         NSlider s = data.computeIfAbsent(k, this::newControl);
-        s.value.set(newValue);
+        s.value(newValue);
         return s;
     }
 

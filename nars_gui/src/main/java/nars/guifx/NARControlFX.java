@@ -109,9 +109,9 @@ public class NARControlFX extends HBox {
         //setFillHeight(true);
 
 
-        NSlider fontSlider = new NSlider(25f, 25f);
+        NSlider fontSlider = new NSlider(25f, 25f, 0.5);
         getChildren().add(0, fontSlider);
-        fontSlider.value.addListener((a, b, c) -> {
+        fontSlider.value[0].addListener((a, b, c) -> {
             runLater(() -> {
                 double pointSize = 6 + 12 * c.doubleValue();
                 getScene().getRoot().setStyle("-fx-font-size: " + pointSize + "pt;");
