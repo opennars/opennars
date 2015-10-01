@@ -21,10 +21,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.util.data.sorted.SortedList;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Static utility class for static methods related to Terms
@@ -605,6 +602,15 @@ public class Terms {
         return n;
         */
     }
+
+    public static <T extends Term> T[] toSortedSetArray(final Collection<T>... c) {
+        TreeSet<T> t = new TreeSet<>();
+        for (Collection<T> it : c) {
+            t.addAll(it);
+        }
+        return t.toArray((T[]) new Term[t.size()]);
+    }
+
 
     /** tests if any subterms are in common, effectively a bidirectional Terms.contains(Term[], Term) */
     public static boolean shareAnyTerms(Term[] a, Term[] b) {

@@ -36,8 +36,7 @@ public abstract class NAL extends AbstractPremise  {
     abstract public Stream<Task> derive(Function<Premise,Stream<Task>> processor);
 
 
-
-//    @Override public void accept(Task derivedTask) {
+    //    @Override public void accept(Task derivedTask) {
 //        if (derived == null)
 //            derived = Global.newArrayList();
 //                    //Global.newHashSet(1);

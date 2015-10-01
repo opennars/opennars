@@ -8,8 +8,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.ProductN;
-import nars.premise.Premise;
-import nars.task.Task;
+import nars.process.Level;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -17,14 +16,16 @@ import nars.term.Variable;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
  * A rule which produces a Task
  * contains: preconditions, predicates, postconditions, post-evaluations and metainfo
  */
-public class TaskRule extends Rule<Premise, Task> {
+public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
     //match first rule pattern with task
 
@@ -43,6 +44,7 @@ public class TaskRule extends Rule<Premise, Task> {
 
     /** maximum of the minimum NAL levels involved in the postconditions of this rule */
     public int minNAL = 0;
+    private int numPatternVar;
 
     public Product getPremises() {
         return (Product) term(0);
@@ -135,22 +137,22 @@ public class TaskRule extends Rule<Premise, Task> {
 //        return true;
 //    }
 //
-//    /** how many unique pattern variables are present */
-//    public int numPatternVariables() {
-//        return numPatternVar;
-//    }
+    /** how many unique pattern variables are present */
+    public int numPatternVariables() {
+        return numPatternVar;
+    }
 
     @Override
     protected void init(Term... term) {
         super.init(term);
 
 
-//        final Set<Term> patternVars = new HashSet();
-//        recurseTerms((v,p) -> {
-//            if (v.op() == Op.VAR_PATTERN)
-//                patternVars.add(v);
-//        });
-//        this.numPatternVar = patternVars.size();
+        final Set<Term> patternVars = new HashSet();
+        recurseTerms((v,p) -> {
+            if (v.op() == Op.VAR_PATTERN)
+                patternVars.add(v);
+        });
+        this.numPatternVar = patternVars.size();
     }
 
 
@@ -513,6 +515,7 @@ public class TaskRule extends Rule<Premise, Task> {
         return new Concurrent();
     }
 
+    final public int nal() { return minNAL; }
 }
 
 

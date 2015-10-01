@@ -5,7 +5,6 @@ import nars.nal.nal5.Conjunction;
 import nars.nar.Default;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
 import org.junit.Test;
 
@@ -52,7 +51,7 @@ public class SequenceTest {
         NAR nar = new Default();
         Term x = nar.term("(&/, a)");
         assertNotNull(x);
-        assertEquals(Atom.class, x.getClass());
+        assertEquals(Sequence.class, x.getClass());
     }
 
     @Test public void testSequenceToString() {

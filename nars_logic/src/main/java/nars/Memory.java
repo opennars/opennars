@@ -56,7 +56,7 @@ import java.util.Set;
  * <p>
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory extends Param implements Serializable {
+public class Memory extends Param {
 
     protected Atom self;
 

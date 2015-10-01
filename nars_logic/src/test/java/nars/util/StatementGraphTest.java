@@ -37,7 +37,7 @@ public class StatementGraphTest {
 
         //String g = m.graph.toString();
 
-        assertTrue( m.graph.vertexSet().size() > 8 );
+        assertTrue( m.graph.vertexSet().size() > 4 );
         assertTrue( m.graph.edgeSet().size() > 4 );
     }
 }

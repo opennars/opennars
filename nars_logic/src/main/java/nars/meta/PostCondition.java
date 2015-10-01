@@ -2,6 +2,7 @@ package nars.meta;
 
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
+import nars.process.Level;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
@@ -15,7 +16,7 @@ import java.util.Set;
  * Describes a derivation postcondition
  * Immutable
  */
-public class PostCondition implements Serializable //since there can be multiple tasks derived per rule
+public class PostCondition implements Serializable, Level //since there can be multiple tasks derived per rule
 {
 
     public static final float HALF = 0.5f;
@@ -70,6 +71,8 @@ public class PostCondition implements Serializable //since there can be multiple
     /** if puncOverride == 0 (unspecified), then the default punctuation rule determines the
      *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
     transient public char puncOverride = (char)0;
+
+    final public int nal() { return minNAL; }
 
     /**
      *

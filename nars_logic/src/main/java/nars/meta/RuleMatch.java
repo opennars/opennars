@@ -8,6 +8,7 @@ import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
 import nars.nal.nal1.Inheritance;
 import nars.premise.Premise;
+import nars.process.Level;
 import nars.task.Task;
 import nars.task.TaskGhost;
 import nars.task.TaskSeed;
@@ -15,6 +16,7 @@ import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
@@ -23,21 +25,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
-/** rule matching context, re-recyclable if thread local */
+/**
+ * rule matching context, re-recyclable if thread local
+ */
 public class RuleMatch extends FindSubst {
 
-    /** if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset */
+    /**
+     * if no occurrence is stipulated, this value will be Stamp.STAMP_TIMELESS as initialized in reset
+     */
     public long occurence_shift;
 
 
     public TaskRule rule;
 
-    final Map<Term,Term> resolutions = Global.newHashMap();
+    final Map<Term, Term> resolutions = Global.newHashMap();
     public Premise premise;
-
 
 
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
@@ -55,7 +61,9 @@ public class RuleMatch extends FindSubst {
                 random);
     }
 
-    /** set the next premise */
+    /**
+     * set the next premise
+     */
     public void start(Premise p) {
         this.premise = p;
         taskBelief.set(p.getTask(), p.getTermLink().getTerm());
@@ -89,7 +97,6 @@ public class RuleMatch extends FindSubst {
             throw new RuntimeException("null task");
 
 
-
         if (!rule.validTaskPunctuation(task.getPunctuation())) {
             return null;
         }
@@ -100,8 +107,6 @@ public class RuleMatch extends FindSubst {
 
         //stamp cyclic filter
         final boolean single = (belief == null);
-
-
 
 
         /** calculate derived task punctuation */
@@ -118,12 +123,11 @@ public class RuleMatch extends FindSubst {
         final Truth truth;
         if (punct == '.' || punct == '!') {
 
-            truth = getTruth(outcome, punct, T,B);
+            truth = getTruth(outcome, punct, T, B);
 
             if (truth == null)
                 return null; //no truth value function was applicable but it was necessary, abort
-        }
-        else {
+        } else {
             truth = null;
         }
 
@@ -133,7 +137,7 @@ public class RuleMatch extends FindSubst {
         if (!single && cyclic(outcome, premise)) {
             if (Global.DEBUG) {
                 Term termm = resolve(outcome.term);
-                if (termm!=null) {
+                if (termm != null) {
 
                     //HACK wrap the non-compound in a compound to form a task
                     if (!(termm instanceof Compound)) {
@@ -159,17 +163,47 @@ public class RuleMatch extends FindSubst {
 
         Term derivedTerm;
 
-        if ((derivedTerm = resolve(outcome.term)) == null) return null;
+        if (null == (derivedTerm = resolve(outcome.term)))
+            return null;
 
         for (final PreCondition c : outcome.afterConclusions) {
 
             if (!c.test(this))
                 return null;
 
-            if ((derivedTerm = resolve(derivedTerm)) == null) return null;
+            derivedTerm = resolve(derivedTerm);
+            //if ((derivedTerm = resolve(derivedTerm)) == null) return null;
         }
 
-        if (!(derivedTerm instanceof Compound)) return null;
+
+        if (!(derivedTerm instanceof Compound))
+            return null;
+
+
+        //test for reactor leak
+        // TODO prevent this from happening
+        if (Variable.hasPatternVariable(derivedTerm)) {
+//            String leakMsg = "reactor leak: " + derive;
+//            //throw new RuntimeException(leakMsg);
+//            System.err.println(leakMsg);
+//
+//            System.out.println(premise + "   -|-   ");
+//
+//            map1.entrySet().forEach(x -> System.out.println("  map1: " + x ));
+//            map2.entrySet().forEach(x -> System.out.println("  map2: " + x ));
+//            resolutions.entrySet().forEach(x -> System.out.println("  reso: " + x ));
+//
+//            resolver.apply(t);
+            return null;
+        }
+//        else {
+//            if (rule.numPatternVariables() > map1.size()) {
+//                System.err.println("predicted reactor leak FAIL: " + derive);
+//                System.err.println("  " + map1);
+//                System.err.println("  " + rule);
+//            }
+//        }
+
 
 //        if (punct == task.getPunctuation() && derive.equals(task.getTerm())) {
 //            //this revision-like consequence is an artifact of rule term pattern simplifications which can distort a rule into producing derivatives of the input task (and belief?) with unsubstantiatedly different truth values
@@ -203,7 +237,6 @@ public class RuleMatch extends FindSubst {
         //}
 
 
-
         //TODO also allow substituted evaluation on output side (used by 2 rules I think)
 
         //TODO on occurenceDerive, for example consider ((&/,<a --> b>,+8) =/> (c --> k)), (a --> b) |- (c --> k)
@@ -212,20 +245,18 @@ public class RuleMatch extends FindSubst {
         //CALCULATE OCCURENCE TIME HERE AND SET DERIVED TASK OCCURENCE TIME ACCORDINGLY!
 
 
-
         final Budget budget;
-        if (truth!=null) {
+        if (truth != null) {
             budget = BudgetFunctions.compoundForward(truth, derivedTerm, premise);
-        }
-        else {
+        } else {
             budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
         }
 
         if (budget.summaryLessThan(premise.memory().derivationThreshold.floatValue())) {
             if (Global.DEBUG) {
                 premise.memory().remove(
-                        new TaskGhost((Compound)derivedTerm, punct, truth, budget, occurence_shift, premise),
-                          //.log(premise) ...
+                        new TaskGhost((Compound) derivedTerm, punct, truth, budget, occurence_shift, premise),
+                        //.log(premise) ...
                         "Insufficient Derivation Budget"
                 );
             }
@@ -233,8 +264,7 @@ public class RuleMatch extends FindSubst {
         }
 
 
-
-        TaskSeed deriving = premise.newTask((Compound)derivedTerm); //, task, belief, allowOverlap);
+        TaskSeed deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
         if (deriving != null) {
 
 
@@ -243,7 +273,7 @@ public class RuleMatch extends FindSubst {
             final long now = premise.time();
             final long occ;
 
-            if (occurence_shift!=Stamp.TIMELESS) {//!t.isEternal()) {
+            if (occurence_shift != Stamp.TIMELESS) {//!t.isEternal()) {
 
 
                 //verify some conditions which should not produce a temporal task
@@ -258,20 +288,19 @@ public class RuleMatch extends FindSubst {
 
 
                 occ = now + occurence_shift;
-            }
-            else {
+            } else {
                 occ = Stamp.ETERNAL;
             }
 
-            final Task derived = premise.validate( deriving
-                .punctuation(punct)
-                .truth(truth)
-                .budget(budget)
-                .time(now, occ)
-                .parent(task, single ? null : belief)
+            final Task derived = premise.validate(deriving
+                    .punctuation(punct)
+                    .truth(truth)
+                    .budget(budget)
+                    .time(now, occ)
+                    .parent(task, single ? null : belief)
             );
 
-            if (derived!=null) {
+            if (derived != null) {
                 if (Global.DEBUG) {
                     derived.log(rule.toString());
                     //t.log(premise + "," + rule);
@@ -285,7 +314,7 @@ public class RuleMatch extends FindSubst {
         return null;
     }
 
-    static Truth getTruth(final PostCondition outcome, final char punc, final Truth T,final Truth B) {
+    static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
 
 
         final TruthOrDesireFunction f = getTruthFunction(punc, outcome);
@@ -308,8 +337,7 @@ public class RuleMatch extends FindSubst {
                 if (outcome.desire == null) {
                     //System.err.println(outcome + " has null desire function");
                     return null; //no desire function specified for this rule
-                }
-                else {
+                } else {
                     return outcome.desire;
                 }
 
@@ -334,8 +362,8 @@ public class RuleMatch extends FindSubst {
         return (outcome.truth != null && !outcome.truth.allowOverlap) && premise.isCyclic();
     }
 
-    final Function<Term,Term> resolver = k ->
-        k!=null ? k.substituted(map1) : null;
+    final Function<Term, Term> resolver = k ->
+            k != null ? k.substituted(map1) : null;
 
 //    public Term resolveTest(final Term t) {
 //        Term r = resolver.apply(t);
@@ -349,43 +377,19 @@ public class RuleMatch extends FindSubst {
 //        return r;
 //    }
 
-    /** provides the cached result if it exists, otherwise computes it and adds to cache */
+    /**
+     * provides the cached result if it exists, otherwise computes it and adds to cache
+     */
     public final Term resolve(final Term t) {
 
-       //There are after-preconditions which bind a pattern variable
-      /*  if (rule.numPatternVariables() > map1.size()) {
-            //System.err.println("predicted reactor leak");
-            return null;
-        }*/
+//       //There are after-preconditions which bind a pattern variable
+//        if (rule.numPatternVariables() > map1.size()) {
+//            System.err.println("predicted reactor leak");
+//            //return null;
+//        }
 
         //cached:
         Term derive = resolutions.computeIfAbsent(t, resolver);
-
-
-
-//        //TODO prevent this from happening
-//        if (Variable.hasPatternVariable(derive)) {
-//            String leakMsg = "reactor leak: " + derive;
-//            //throw new RuntimeException(leakMsg);
-//            System.err.println(leakMsg);
-//
-//            System.out.println(premise + "   -|-   ");
-//
-//            map1.entrySet().forEach(x -> System.out.println("  map1: " + x ));
-//            map2.entrySet().forEach(x -> System.out.println("  map2: " + x ));
-//            resolutions.entrySet().forEach(x -> System.out.println("  reso: " + x ));
-//
-//            resolver.apply(t);
-//            return null;
-//        }
-//        else {
-//            if (rule.numPatternVariables() > map1.size()) {
-//                System.err.println("predicted reactor leak FAIL: " + derive);
-//                System.err.println("  " + map1);
-//                System.err.println("  " + rule);
-//            }
-//        }
-
         return derive;
 
         //uncached:
@@ -393,16 +397,21 @@ public class RuleMatch extends FindSubst {
     }
 
 
-    public Stream<Task> run(final List<TaskRule> u, final int nal) {
-        return run(u.stream(), nal);
+    public Stream<Task> run(final List<TaskRule> u, final int maxNAL) {
+        return run(u.stream(), maxNAL);
     }
 
-    public Stream<Task> run(final Stream<TaskRule> rules, final int nal) {
+    public Stream<Task> run(final Stream<TaskRule> rules, final int maxNAL) {
+
+        Predicate<Level> pcFilter = Level.maxFilter(maxNAL);
+
         return rules.
-                    map(r -> run(r)).flatMap(p -> Stream.of(p)).
-                    filter( r -> r.minNAL <= nal ).
-                    map(p -> apply(p)).
-                    filter(t->t!=null);
+                filter( /* filter the entire rule */ pcFilter).
+                map(r -> run(r)).
+                flatMap(p -> Stream.of(p)).
+                filter( /* filter each rule postcondition */ pcFilter).
+                map(p -> apply(p)).
+                filter(t -> t != null);
     }
 
     final private static PostCondition[] abortDerivation = new PostCondition[0];

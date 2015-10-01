@@ -6,8 +6,7 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
 import nars.term.Compound;
 import nars.term.Term;
-
-import java.util.ArrayList;
+import nars.term.Terms;
 
 /**
  * Created by me on 8/15/15.
@@ -21,36 +20,34 @@ public class Union extends PreCondition3 {
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
 
-        if(a==null || b==null || c==null || (!((a instanceof SetExt) && (b instanceof SetExt)) && !((a instanceof SetInt) && (b instanceof SetInt)))) {
+        if( (c == null) || !(a instanceof SetTensional) || !(b instanceof SetTensional) || (a.op()!=b.op()) )
             return false;
-        }
 
         //ok both are extensional sets or intensional sets, build difference
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        ArrayList<Term> terms = new ArrayList<Term>();
-        for(Term t: A.terms()) { //set difference
-            terms.add(t);
+//        ArrayList<Term> terms = new ArrayList<Term>();
+//        for(Term t: A.terms()) { //set difference
+//            terms.add(t);
+//        }
+//        for(Term t2 : B.terms()) {
+//            terms.add(t2);
+//        }
+        Term[] terms = Terms.toSortedSetArray(A,B);
+
+        final Compound res;
+        if(a instanceof SetExt) {
+            res = SetExt.make(terms);
         }
-        for(Term t2 : B.terms()) {
-            terms.add(t2);
+        else {
+            res = SetInt.make(terms);
         }
 
-        if(a instanceof SetExt) {
-            Compound res = SetExt.make(terms);
-            if(res==null) {
-                return false;
-            }
-            m.map1.put(c, res);
-        }
-        if(a instanceof SetInt) {
-            Compound res = SetInt.make(terms);
-            if(res==null) {
-                return false;
-            }
-            m.map1.put(c, res);
-        }
+        if(res==null)
+            return false;
+
+        m.map1.put(c, res);
 
         return true;
     }

@@ -6,6 +6,7 @@ import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
+import nars.process.Level;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.filter.FilterDuplicateExistingBelief;
@@ -22,7 +23,7 @@ import java.util.stream.Stream;
 /**
  * Defines the conditions used in an instance of a derivation
  */
-public interface Premise {
+public interface Premise extends Level {
 
     Concept getConcept();
 

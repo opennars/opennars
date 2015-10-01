@@ -221,15 +221,17 @@ public class Conjunction extends Junction<Term> {
         if (len == 0) {
             return null;
         }                         // special case: single component
+
+        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
+            //allow sequences of len 1
+            return Sequence.makeSequence(argList);
+        }
+
         if (len == 1) {
             return argList[0];
         }
 
-
-        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
-            return Sequence.makeSequence(argList);
-
-        } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
+        if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
             throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(argList));
             //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
             //return null;

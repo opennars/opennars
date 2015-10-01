@@ -17,6 +17,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.OperatorReaction;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
+import nars.process.Level;
 import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -51,7 +52,7 @@ import java.util.stream.Stream;
  * * step mode - controlled by an outside system, such as during debugging or testing
  * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-abstract public class NAR implements Serializable {
+abstract public class NAR implements Serializable, Level {
 
 
     /**

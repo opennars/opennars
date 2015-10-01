@@ -7,7 +7,7 @@ import nars.term.Term;
 /**
  * Abstract MetaNAL Rule
  */
-abstract public class Rule<X,Y> extends ProductN {
+abstract public class Rule extends ProductN {
 
     public Rule(Product premises, Term result) {
         super(premises, result);
