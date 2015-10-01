@@ -448,6 +448,7 @@ public class NSlider extends StackPane {
 
             //System.out.println(dx + " " + dy + " " + value.get());
 
+            e.consume();
         }
 
         double p(double dx) {

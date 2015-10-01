@@ -44,7 +44,7 @@ public class NARWikiBrowser extends WikiBrowser {
         tagEdit.setWrapText(true);
         tagEdit.setPromptText("(empty)");
         tagPane.setCenter(tagEdit);
-        tagPane.setVisible(false);
+
 
         tags = tagEdit.textProperty();
 
@@ -52,10 +52,17 @@ public class NARWikiBrowser extends WikiBrowser {
 
         tagPane.setRight(inputButton);
 
-        setBottom(tagPane);
+
 
         tags.addListener(c -> {
-            tagPane.setVisible(!(tags.get().isEmpty()));
+
+            if (tags.get().isEmpty()) {
+                setBottom(null);
+            }
+            else {
+                setBottom(tagPane);
+            }
+
         });
 
 
