@@ -411,7 +411,7 @@
     (($X --> M) ==> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
     ((M --> $X) ==> C), (M --> S), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)
 
-try:    (P ==> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
+    (P ==> ($X --> M)), (S --> M), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
     (P ==> (M --> $X)), (M --> S), substitute($X,S) |- P, (Truth:Abduction, Order:ForAllSame)
 
     (($X --> M) <=> C), (S --> M), substitute($X,S) |- C, (Truth:Deduction, Order:ForAllSame)

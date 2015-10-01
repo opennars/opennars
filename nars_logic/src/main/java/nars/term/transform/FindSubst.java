@@ -83,7 +83,7 @@ public class FindSubst {
 
         if (op1 == type) {
 
-            final Term t = map1.get(term1); //what is it doing here? it shouldnt recurse into a substitution...
+            final Term t = map1.get(term1);
 
             if (t != null) {
                 //RECURSE, ie: return next(t, term2);
