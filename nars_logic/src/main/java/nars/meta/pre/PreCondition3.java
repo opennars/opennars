@@ -29,15 +29,6 @@ abstract public class PreCondition3 extends PreCondition {
         Term b = m.resolve(arg2);
         if (b == null) return false;
         Term c = m.resolve(arg3);
-
-        //Set predicates use the last variable as an output argument, similar as some Prolog predicates do.
-        //I agree that this is not beautiful, but it works
-        if(this instanceof Union || this instanceof Intersection || this instanceof Intersection) {
-            if (arg3 instanceof Variable && ((Variable) arg3).hasVarPattern()) { //wut why is this even necessary?
-                c = arg3;
-            }
-        }
-
         if (c == null) return false;
 
         return test(m, a, b, c);
