@@ -30,10 +30,6 @@ public class TimeOffset extends PreCondition1 {
     }
 
     @Override public boolean test(final RuleMatch m) {
-        //require the task to be an event
-        if (!m.premise.isTaskEvent())
-            return false;
-
         return super.test(m);
     }
 
@@ -41,12 +37,13 @@ public class TimeOffset extends PreCondition1 {
     public boolean test(RuleMatch m, Term arg) {
 
         if (arg == null) return false;
-        if (arg.getTemporalOrder() != TemporalRules.ORDER_NONE) {
-            System.err.println("ordered term: " + arg);
+        if (arg.getTemporalOrder() != TemporalRules.ORDER_NONE) { //this is the expected case, namely that there is a order
+        } else {
+            return true; //and this means its no-order so dont shift
         }
 
         long s = positive ? +1 : -1;
-        m.occurenceAdd( s * timeOffsetForward(arg, m.premise) );
+        m.occurenceAdd( s * timeOffsetForward(arg, m.premise) ); //shift since it has an order..
 
         return true;
     }

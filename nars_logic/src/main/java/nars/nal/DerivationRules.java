@@ -106,7 +106,9 @@ public class DerivationRules extends ArrayList<TaskRule> {
         }
 
         if (current_rule.length()> 0) {
-            unparsed_rules.add(current_rule.toString());
+            if(!single_rule_test || (single_rule_test && current_rule.toString().contains("try:"))) {
+                unparsed_rules.add(current_rule.toString());
+            }
         }
 
         return unparsed_rules;

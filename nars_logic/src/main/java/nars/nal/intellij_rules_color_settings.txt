@@ -1,0 +1,4 @@
+Settings -> Editor -> Colors & Fonts -> Custom ->
+select scheme Default -> Save As Rules
+-> Keyword1 brightness 0
+-> Keyword2..4 brightness 100
