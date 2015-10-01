@@ -1,17 +1,19 @@
 package nars.nar;
 
-/**
- * Default set of NAR parameters which have been classically used for development.
- * <p>
- * WARNING this Seed is not immutable yet because it extends Param,
- * which is supposed to be per-instance/mutable. So do not attempt
- * to create multiple NAR with the same Default seed model
- */
+import nars.process.TaskProcess;
+
 public class SingleStepNAR extends Default {
 
     public SingleStepNAR() {
         super();
     }
 
-
+    @Override
+    public FIFOTaskPerception initInput() {
+        FIFOTaskPerception input = new FIFOTaskPerception(this,
+                task -> task.isInput() /* allow only input tasks*/,
+                task -> TaskProcess.run(SingleStepNAR.this, task)
+        );
+        return input;
+    }
 }
