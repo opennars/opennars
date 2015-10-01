@@ -6,6 +6,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
+import nars.meta.pre.Substitute;
 import nars.nal.nal1.Inheritance;
 import nars.premise.Premise;
 import nars.process.Level;
@@ -20,6 +21,7 @@ import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import org.infinispan.commons.hash.Hash;
 
 import java.util.List;
 import java.util.Map;
@@ -166,20 +168,32 @@ public class RuleMatch extends FindSubst {
         if (null == (derivedTerm = resolve(outcome.term)))
             return null;
 
+        //for now we assume 1
+        Map<Term,Term> Outp = null;
+
         for (final PreCondition c : outcome.afterConclusions) {
+
+            if(c instanceof Substitute) {
+                ((Substitute) c).Inp = map2;
+            }
 
             if (!c.test(this))
                 return null;
+
+            if(c instanceof Substitute) {
+                Outp = ((Substitute) c).Outp;
+            }
 
             derivedTerm = resolve(derivedTerm);
             //if ((derivedTerm = resolve(derivedTerm)) == null) return null;
         }
 
+        if(Outp!=null) {
+            derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
+        }
 
         if (!(derivedTerm instanceof Compound))
             return null;
-
-
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {
@@ -293,11 +307,11 @@ public class RuleMatch extends FindSubst {
             }
 
             final Task derived = premise.validate(deriving
-                    .punctuation(punct)
-                    .truth(truth)
-                    .budget(budget)
-                    .time(now, occ)
-                    .parent(task, single ? null : belief)
+                            .punctuation(punct)
+                            .truth(truth)
+                            .budget(budget)
+                            .time(now, occ)
+                            .parent(task, single ? null : belief)
             );
 
             if (derived != null) {
