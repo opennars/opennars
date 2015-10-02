@@ -1,11 +1,9 @@
 package nars.guifx.graph2;
 
 import javafx.scene.Group;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
+import nars.link.TLink;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 
 /**
  * Created by me on 9/5/15.
@@ -22,7 +20,12 @@ public class TermEdge extends Group /*implements ChangeListener*/ {
     //private AtomicBoolean changed = new AtomicBoolean(true);
     public double len;
     public boolean visible = false;
-    public Object data;
+
+    //TODO use a Half inner class for this
+    public TermLink termLinkAB = null;
+    public TermLink termLinkBA = null;
+    public TaskLink taskLinkAB = null;
+    public TaskLink taskLinkBA = null;
 
     public TermEdge(TermNode aSrc, TermNode bSrc) {
         super();
@@ -126,4 +129,34 @@ public class TermEdge extends Group /*implements ChangeListener*/ {
         return aSrc;
     }
 
+
+    final public float termLinkFrom(TermNode src) {
+        TermLink tl = (src == aSrc) ? termLinkAB : termLinkBA;
+        if (tl == null) return 0;
+        return tl.getPriority();
+    }
+    final public float taskLinkFrom(TermNode src) {
+        TaskLink tl = (src == aSrc) ? taskLinkAB : taskLinkBA;
+        if (tl == null) return 0;
+        return tl.getPriority();
+    }
+
+    final public void linkFrom(TermNode src, TLink link) {
+
+        if (link instanceof TermLink) {
+            TermLink tl = (TermLink)link;
+            if (src == aSrc)
+                termLinkAB = tl;
+            else
+                termLinkBA = tl;
+        }
+        else {
+            TaskLink tl = (TaskLink)link;
+            if (src == aSrc)
+                taskLinkAB = tl;
+            else
+                taskLinkBA = tl;
+        }
+
+    }
 }

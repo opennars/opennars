@@ -1,9 +1,5 @@
 package nars.guifx.graph2;
 
-import javafx.scene.paint.Color;
-import nars.link.TaskLink;
-import nars.link.TermLink;
-
 /**
  * Created by me on 9/5/15.
  */

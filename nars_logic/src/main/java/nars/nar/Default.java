@@ -543,7 +543,7 @@ public class Default extends NAR implements ConceptBuilder {
             return ca.update(term.getTerm(), b, true, time(), 1f, active);
         }
 
-        public Iterable<?> concepts() {
+        public Bag<Term,Concept> concepts() {
             return active;
         }
 

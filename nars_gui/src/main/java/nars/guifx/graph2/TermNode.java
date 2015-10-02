@@ -38,13 +38,13 @@ public class TermNode extends Group {
     private final Polygon base;
     Concept c = null;
 
-    private double priorityDisplayed = -1;
+    /** priority normalized to visual context */
+    public double priNorm = 0;
 
-    /**
-     * granularity for discretizing displayed scales to reduces # of updates
-     */
-    final static double priorityDisplayedResolution = 100;
 
+
+    DoubleSummaryReusableStatistics termLinkStat = new DoubleSummaryReusableStatistics();
+    DoubleSummaryReusableStatistics taskLinkStat = new DoubleSummaryReusableStatistics();
 
     double minSize = 16;
     double maxSize = 64;
@@ -58,7 +58,7 @@ public class TermNode extends Group {
 
     private boolean hover = false;
     private Color stroke;
-    public Concept concept;
+
     private static TermEdge[] empty = new TermEdge[0];
 
 
@@ -138,7 +138,9 @@ public class TermNode extends Group {
         base.setCacheHint(CacheHint.SCALE_AND_ROTATE);
         base.setCache(true);
 
-        titleBar.setCacheHint(CacheHint.SCALE_AND_ROTATE);
+        titleBar.setSmooth(false);
+
+        //titleBar.setCacheHint(CacheHint.SCALE_AND_ROTATE);
         titleBar.setCache(true);
 
 
@@ -163,30 +165,37 @@ public class TermNode extends Group {
      */
     public void update() {
 
-        double vertexScaling = NARGraph1.visModel.getVertexScale(c);
 
-        if ((int) (priorityDisplayedResolution * priorityDisplayed) !=
-                (int) (priorityDisplayedResolution * vertexScaling)) {
+//        double vertexScale = NARGraph1.visModel.getVertexScale(c);
 
-            double scale = minSize + (maxSize - minSize) * vertexScaling;
+        /*if ((int) (priorityDisplayedResolution * priorityDisplayed) !=
+                (int) (priorityDisplayedResolution * vertexScale))*/ {
+
+
+//            System.out.println("update " + Thread.currentThread() + " " + vertexScale + " " + getParent() + " " + isVisible() + " " + localToScreen(0,0));
+
+            double scale = minSize + (maxSize - minSize) * priNorm;
             this.scaled = scale;
+
 
             setScaleX(scale);
             setScaleY(scale);
 
             float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
-            base.setFill(NARGraph1.visModel.getVertexColor(vertexScaling, conf));
+            base.setFill(NARGraph1.visModel.getVertexColor(priNorm, conf));
 
-            //setOpacity(0.75f + 0.25f * vertexScaling);
+            //setOpacity(0.75f + 0.25f * vertexScale);
 
-            this.priorityDisplayed = vertexScaling;
-            //System.out.println(scale + " " + vertexScaling + " " + (int)(priorityDisplayedResolution * vertexScaling));
+            //System.out.println(scale + " " + vertexScale + " " + (int)(priorityDisplayedResolution * vertexScale));
+
+
         }
+
 
     }
 
 
-    public void getPosition(final double[] v) {
+    public final void getPosition(final double[] v) {
         v[0] = tx;
         v[1] = ty;
     }
@@ -227,11 +236,11 @@ public class TermNode extends Group {
         return false;
     }
 
-    public double width() {
+    public final double width() {
         return scaled; //getScaleX();
     }
 
-    public double height() {
+    public final double height() {
         return scaled; //getScaleY();
     }
 
@@ -245,15 +254,15 @@ public class TermNode extends Group {
         return sceneCoord.getY();
     }
 
-    public double x() {
+    public final double x() {
         return tx;
     }
 
-    public double y() {
+    public final double y() {
         return ty;
     }
 
-    public TermEdge putEdge(Term b, TermEdge e) {
+    public final TermEdge putEdge(Term b, TermEdge e) {
         TermEdge r = edge.put(b, e);
         if (e != r)
             edges = null;
@@ -262,7 +271,17 @@ public class TermNode extends Group {
 
     public TermEdge[] updateEdges() {
         final int s = edge.size();
-        return edges = edge.values().toArray(new TermEdge[s]);
+        //if (s == 0) return edges = empty;
+
+        //return edges = edge.values().toArray(new TermEdge[s]);
+
+        TermEdge[] e;
+        if (edges == null || edges.length == s)
+            e = new TermEdge[s];
+        else
+            e = edges; //re-use existing array
+
+        return edges = edge.values().toArray(e);
     }
 
     /**
@@ -285,5 +304,6 @@ public class TermNode extends Group {
 
         return edges;
     }
+
 
 }

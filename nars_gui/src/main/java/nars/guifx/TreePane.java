@@ -54,6 +54,19 @@ public class TreePane extends BorderPane {
 
         newLabel = u -> new AutoLabel(u, nar);
 
+
+
+
+        NSlider ns = new NSlider("Min Task Priority", 80, 20, 0); //show everytihng initially
+
+
+        (this.minPriority = ns.value[0]).addListener((v) -> {
+            update();
+        });
+
+
+
+
         rootNode = new TaskTreeItem(root);
         tree = new TreeView<Task>(rootNode);
         tree.setCellFactory(new Callback<TreeView<Task>, TreeCell<Task>>() {
@@ -75,19 +88,10 @@ public class TreePane extends BorderPane {
                 update();
             }
         };
-        {
-            NSlider ns;
-            setBottom( new FlowPane(
-                    ns = new NSlider("Min Task Priority", 80, 20)
-            ));
 
-            ns.value(0); //show everytihng
 
-            (this.minPriority = ns.value[0]).addListener((v) -> {
-                update();
-            });
 
-        }
+            setBottom( new FlowPane(ns));
 
         autosize();
     }

@@ -40,7 +40,7 @@ public class ColorArray {
     public Color get(double p) {
         if ((p < 0) || (p > 1))
             throw new RuntimeException("Out of bounds color range: " + p);
-        return c[ (int)Math.round(p*(c.length-1)) ];
+        return c[ (int) /*FastMath.round*/(p*(c.length-1)) ];
     }
 
     public Color get(double p, double opacity) {

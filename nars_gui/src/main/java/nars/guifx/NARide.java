@@ -64,7 +64,7 @@ public class NARide extends BorderPane {
 
             {
                 ni.addView(new NARSpace(nar));
-                ni.addView(new TerminalPane(nar));
+                ni.addView(new IOPane(nar));
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
                 });*/
@@ -74,6 +74,7 @@ public class NARide extends BorderPane {
                 //ni.addView(additional components);
             }
 
+            ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
             ni.addTool("Concept Network", () -> new NARGraph1(nar));
             ni.addTool("Fractal Workspace", () -> new NARSpace(nar));
@@ -200,7 +201,7 @@ public class NARide extends BorderPane {
 
 
             final Default b = new Default();
-            TerminalPane np = new TerminalPane(b);
+            IOPane np = new IOPane(b);
 
             Windget nd = new Windget("NAR",
                     np, 200, 200

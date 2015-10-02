@@ -9,12 +9,12 @@ import nars.NAR;
 /**
  * Created by me on 8/2/15.
  */
-public class TerminalPane extends BorderPane implements FXIconPaneBuilder {
+public class IOPane extends BorderPane implements FXIconPaneBuilder {
 
 
     private final NAR nar;
 
-    public TerminalPane(NAR nar) {
+    public IOPane(NAR nar) {
         super();
 
 

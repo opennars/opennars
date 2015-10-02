@@ -16,9 +16,9 @@ public class QuadPolyEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
 
     @Override
     public void accept(TermEdge termEdge) {
-        Polygon p = (Polygon)termEdge.data;
+        Polygon p = null; //(Polygon)termEdge.data;
         if (p == null) {
-            termEdge.data = p = new Polygon();
+            //termEdge.data = p = new Polygon();
 
             /*for (int i = 0; i < 4 * 2; i++)
                 p.getPoints().addAll(0d);*/

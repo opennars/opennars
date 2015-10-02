@@ -2,8 +2,6 @@ package nars.guifx.util;
 
 
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 /**
  * autosizing and other functions

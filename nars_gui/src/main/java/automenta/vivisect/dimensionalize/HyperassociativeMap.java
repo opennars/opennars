@@ -15,6 +15,7 @@
 package automenta.vivisect.dimensionalize;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
+import nars.util.data.list.FasterList;
 import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
@@ -91,7 +92,8 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
     private double repulsiveWeakness = DEFAULT_REPULSIVE_WEAKNESS;
 
     transient final ObjectDoubleHashMap<N> reusableNeighborData = new ObjectDoubleHashMap();
-    transient final List<N> vertices = new ArrayList();
+
+    transient final FasterList<N> vertices = new FasterList();
     //boolean normalizeRepulsion = true;
 
 
@@ -130,9 +132,16 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
     /** commit computed coordinates to the objects */
     public void apply() {
-        for (Entry<N, ArrayRealVector> x : coordinates.entrySet()) {
-            apply(x.getKey(), x.getValue().getDataRef());
+        Iterator<Entry<N, ArrayRealVector>> e = coordinates.entrySet().iterator();
+        while (e.hasNext()) {
+            Entry<N, ArrayRealVector> x = e.next();
+            ArrayRealVector v = x.getValue();
+            if (v!=null)
+                apply(x.getKey(), v.getDataRef());
+            else
+                e.remove();
         }
+
     }
 
     abstract public void apply(N node, double[] coord);
@@ -295,8 +304,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
             // divide each coordinate of the sum of all the points by the number of
             // nodes in order to calculate the average point, or center of all the
             // points
-            int numVertices = vertices.size();
-            center.mapDivideToSelf(numVertices);
+            center.mapDivideToSelf(vertices.size());
 
             recenterNodes(center);
         }
@@ -335,11 +343,17 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
     }
     
     private void recenterNodes(final ArrayRealVector center) {
-        for (final N node : vertices) {
+
+        FasterList<N> vertices = this.vertices;
+        Map<N, ArrayRealVector> c = this.coordinates;
+
+        vertices.forEach((Consumer<N>) node -> {
+//        for (int i = 0; i < vertices.size(); i++) {
+//            N node = vertices.get(i);
             ArrayRealVector v = coordinates.get(node);
             if (v!=null)
                 sub(v, center);
-        }
+        });
     }
 
 
@@ -456,9 +470,6 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
     /** vertices is passed as a list because the Set iterator from JGraphT is slow */
     public ArrayRealVector align(final N nodeToAlign, ObjectDoubleHashMap<N> neighbors, Collection<N> vertices) {
-        
-        
-
 
         double nodeSpeed = getSpeedFactor(nodeToAlign);
 
@@ -474,6 +485,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
         double radius = getRadius(nodeToAlign);
         double targetDistance = radius + equilibriumDistance;
+        final double learningRate = this.learningRate;
 
         final ArrayRealVector tmpAttractVector = newVector();
 
@@ -494,7 +506,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
                 
                 newDistance = -targetDistance * atanh((-deltaDist) / distToNeighbor);
                 
-                if (Math.abs(newDistance) > (Math.abs(-deltaDist))) {
+                if (Math.abs(newDistance) > (Math.abs(deltaDist))) {
                     newDistance = -targetDistance * (-deltaDist);
                 }
                 
@@ -515,13 +527,22 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         ArrayRealVector nodePos = newVector();
 
         // calculate repulsion with all non-neighbors
-        for (final N node : vertices) {
-            if (node == nodeToAlign) continue;
-            if (neighbors.containsKey(node)) continue;
+
+        final DistanceMetric distanceFunction = this.distanceFunction;
+        final double minDistance = this.minDistance;
+        final double repulsiveWeakness = this.repulsiveWeakness;
+
+        vertices.forEach((Consumer<N>)node -> {
+        //for (final N node : vertices) {
+            if ((node == nodeToAlign)
+              || (neighbors.containsKey(node)))
+                return;
 
             double oldDistance = distanceFunction.subtractIfLessThan(getThePosition(node, nodePos), position, repelVector, maxEffectiveDistance);
+
             if (oldDistance == Double.POSITIVE_INFINITY)
-                continue; //too far to matter
+                return; //too far to matter
+
             if (oldDistance < minDistance)
                 oldDistance = minDistance; //continue;
                 //throw new RuntimeException("invalid oldDistance");
@@ -535,7 +556,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
 
             add(delta, repelVector, newDistance/oldDistance);
-        }
+        });
 
 
         /*if (normalizeRepulsion)
@@ -552,11 +573,9 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         if (moveDistance > targetDistance * acceptableMaxDistanceFactor) {
             final double newLearningRate = ((targetDistance * acceptableMaxDistanceFactor) / moveDistance);
             if (newLearningRate < learningRate) {
-                learningRate = newLearningRate;
-                //LOGGER.debug("learning rate: " + learningRate);
+                this.learningRate = newLearningRate;
             } else {
-                learningRate *= LEARNING_RATE_INCREASE_FACTOR/vertices.size();
-                //LOGGER.debug("learning rate: " + learningRate);
+                this.learningRate *= LEARNING_RATE_INCREASE_FACTOR/vertices.size();
             }
             
             moveDistance = DEFAULT_TOTAL_MOVEMENT;
@@ -638,18 +657,24 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         ArrayRealVector pointSum = newVector();
          //new HashMap();
 
+        Map<N, ArrayRealVector> c = this.coordinates;
+        FasterList<N> vertices = this.vertices;
+
         vertices.clear();
         vertices.addAll(getVertices());
 
         pre(vertices);
 
-        for (int i = 0; i < vertices.size(); i++) {
-            N node = vertices.get(i);
+
+        vertices.forEach((Consumer<N>) node -> {
+//
+//                    for (int i = 0; i < vertices.size(); i++) {
+//            N node = vertices.get(i);
 
             final ArrayRealVector newPosition = align(node, reusableNeighborData, vertices);
 
             add(pointSum, newPosition);
-        }
+        });
         
         if ((learningRate * LEARNING_RATE_PROCESSING_ADJUSTMENT) < DEFAULT_LEARNING_RATE) {
             if (getAverageMovement() < (equilibriumDistance * acceptableMaxDistanceFactor * acceptableDistanceAdjustment)) {

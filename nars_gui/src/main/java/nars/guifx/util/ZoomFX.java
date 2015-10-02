@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
@@ -22,7 +22,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
  * @author dejv78 (dejv78.github.io)
  * @since 1.0.0
  */
-public class ZoomFX extends StackPane {
+public class ZoomFX extends AnchorPane {
 
     @Deprecated private static final double SCROLLING_DIVISOR = 200.0d;
 
@@ -46,8 +46,8 @@ public class ZoomFX extends StackPane {
     private ArrayRealVector panStart = null;
 
 
-    final Scale scale = new Scale();
-    final Translate translate = new Translate();
+    public final Scale scale = new Scale();
+    public final Translate translate = new Translate();
     Animate positionAnimation;
 
     public ZoomFX() {

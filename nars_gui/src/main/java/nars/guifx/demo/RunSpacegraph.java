@@ -8,8 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import nars.guifx.IOPane;
 import nars.guifx.Spacegraph;
-import nars.guifx.TerminalPane;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
 import nars.nar.Default;
@@ -86,7 +86,7 @@ public class RunSpacegraph extends Application {
 
 
 
-            TerminalPane np = new TerminalPane(new Default());
+            IOPane np = new IOPane(new Default());
 
             Windget nd = new Windget("NAR",
                     np, 200, 200

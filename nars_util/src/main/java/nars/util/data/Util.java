@@ -505,7 +505,9 @@ public class Util {
     public static float lerp(final float target, final float current, final float factor) {
         return target * factor + current * (1f - factor);
     }
-
+    public static double lerp(final double target, final double current, double factor) {
+        return target * factor + current * (1f - factor);
+    }
     /**
      * maximum, simpler and faster than Math.max without its additional tests
      */
