@@ -21,6 +21,7 @@ import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import org.infinispan.commons.hash.Hash;
 
 import java.util.HashMap;
 import java.util.List;
@@ -81,7 +82,7 @@ public class RuleMatch extends FindSubst {
     /**
      * clear and re-use with a new rule
      */
-    public final RuleMatch start(TaskRule rule) {
+    public RuleMatch start(TaskRule rule) {
 
         super.clear();
 
@@ -92,7 +93,7 @@ public class RuleMatch extends FindSubst {
         return this;
     }
 
-    public final Task apply(final PostCondition outcome) {
+    public Task apply(final PostCondition outcome) {
 
         final Task task = premise.getTask();
         if (task == null)
@@ -174,6 +175,7 @@ public class RuleMatch extends FindSubst {
         for (final PreCondition c : outcome.afterConclusions) {
 
             if(c instanceof Substitute) {
+                //here we are interested how to transform the second to the first
                 ((Substitute) c).Inp = map2;
             }
 
@@ -183,20 +185,11 @@ public class RuleMatch extends FindSubst {
             if(c instanceof Substitute) {
                 Outp = ((Substitute) c).Outp;
             }
-
-            derivedTerm = resolve(derivedTerm);
-            //if ((derivedTerm = resolve(derivedTerm)) == null) return null;
-
-            if(c instanceof Substitute) { //TODO
-                HashMap<Term,Term> ret = ((Substitute)c).GetRegularSubs();
-                derivedTerm = ((Compound) derivedTerm).applySubstitute(ret);
-            }
-
         }
 
+        derivedTerm = resolve(derivedTerm);
 
-
-        if ((Outp!=null) && (derivedTerm!=null)) {
+        if(Outp!=null && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
             derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
         }
 
@@ -426,8 +419,6 @@ public class RuleMatch extends FindSubst {
     public Stream<Task> run(final Stream<TaskRule> rules, final int maxNAL) {
 
         Predicate<Level> pcFilter = Level.maxFilter(maxNAL);
-
-        //reset();
 
         return rules.
                 filter( /* filter the entire rule */ pcFilter).

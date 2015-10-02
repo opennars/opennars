@@ -105,16 +105,16 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                     }
 
                     if (growLevel2(tj)) {
-                        Compound ctj = (Compound)tj;
+                        Term ctj = (Term)tj;
 
-                        for (int k = 0; k < ctj.term.length; k++) {
-                            final Term tk = ctj.term[k].normalized();
+                        if(ctj instanceof Compound) {
+                            for (int k = 0; k < ((Compound) ctj).term.length; k++) {
+                                final Term tk = ((Compound) ctj).term[k].normalized();
 
-                            if (!(tk instanceof Variable)) {
-                                addTemplate(new TermLinkTemplate(concept, tk));
+                                if (!(tk instanceof Variable)) {
+                                    addTemplate(new TermLinkTemplate(concept, tk));
+                                }
                             }
-
-
                         }
                     }
 
@@ -145,7 +145,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     final static boolean growLevel2(final Term t) {
-        return false;
+        return growComponent(t); //growComponent(t); leads to failures, why?
         //return growComponent(t) && growProductOrImage(t);
         //if ((t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional)) {
         //return (t instanceof Product) || (t instanceof Image) || (t instanceof SetTensional) || (t instanceof Junction);

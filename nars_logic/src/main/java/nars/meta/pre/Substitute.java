@@ -30,8 +30,12 @@ public class Substitute extends PreCondition2 {
         //(relevant for variable elimination rules)
         if (b!=null) {
 
-            //m.map1.put(this.arg1, b);
-            Outp.put(Inp.get(this.arg1),b);
+           // m.map2.put(this.arg1, b); //map2!
+            Term eventual_substituted_by_match = Inp.get(this.arg1);
+            if(eventual_substituted_by_match == null) {
+                eventual_substituted_by_match = this.arg1;
+            }
+            Outp.put(eventual_substituted_by_match,b);
             Inp = new HashMap<Term,Term>();
             return true;
         }
