@@ -5,17 +5,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import nars.Global;
 import nars.NAR;
-import nars.concept.Concept;
 import nars.guifx.NARfx;
 import nars.guifx.Spacegraph;
 import nars.guifx.demo.Animate;
-import nars.guifx.util.ColorMatrix;
 import nars.term.Term;
 import nars.util.data.list.FasterList;
 import nars.util.data.random.XORShiftRandom;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
@@ -23,26 +22,26 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class NARGraph<V, E> extends Spacegraph {
+public class NARGraph<V> extends Spacegraph {
 
     final Map<Term, TermNode> terms = new LinkedHashMap();
 
 
-    private Consumer<NARGraph> updater;
-    private EdgeRenderer<E> edgeRenderer;
+    protected Consumer<NARGraph> source;
+
+    public final AtomicReference<EdgeRenderer<TermEdge>> edgeRenderer = new AtomicReference<>();
 
 
-    IterativeLayout<TermNode, TermEdge> layout = null;
+    public final AtomicReference<IterativeLayout<TermNode, TermEdge>> layout = new AtomicReference<>();
 
     public final AtomicBoolean conceptsChanged = new AtomicBoolean(true);
-    final Consumer<Concept> ifConceptsChanged = c -> {
-        this.conceptsChanged.set(true);
-    };
+
+
 
     private Animate animator;
 
 
-    public NAR nar;
+    public final NAR nar;
 
 
     static final Random rng = new XORShiftRandom();
@@ -53,65 +52,7 @@ public class NARGraph<V, E> extends Spacegraph {
 
     final static Font nodeFont = NARfx.mono(0.5);
 
-    public static VisModel visModel = new VisModel() {
-
-        ColorMatrix colors = new ColorMatrix(24,24,
-            (priority,conf) -> {
-                return Color.hsb(250.0 + 75.0 * (conf),
-                        0.10f + 0.85f * priority,
-                        0.10f + 0.5f * priority);
-            }
-        );
-
-        public Color getVertexColor(double priority, float conf) {
-            // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
-
-            if (!Double.isFinite(conf)) {
-                conf = 0;
-            }
-
-            return colors.get(priority, conf);
-        }
-
-        public double getVertexScaleByPri(Concept c) {
-            return c.getPriority();
-            //return (c != null ? c.getPriority() : 0);
-        }
-
-        public double getVertexScaleByConf(Concept c) {
-            if (c.hasBeliefs()) {
-                double conf = c.getBeliefs().getConfidenceMax(0, 1);
-                if (Double.isFinite(conf)) return conf;
-            }
-            return 0;
-        }
-
-        @Override
-        public double getVertexScale(Concept c) {
-
-            /*return (c != null ? getVertexScaleByConf(c) : 0) * 0.75f + 0.25f;*/
-            return getVertexScaleByPri(c);
-        }
-
-        public Color getEdgeColor(double termMean, double taskMean) {
-//            // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
-//
-//            return Color.hsb(25.0 + 180.0 * (1.0 + (termMean - taskMean)),
-//                    0.95f,
-//                    Math.min(0.75f + 0.25f * (termMean + taskMean) / 2f, 1f)
-//                    //,0.5 * (termMean + taskMean)
-//            );
-//
-////            return new Color(
-////                    0.5f + 0.5f * termMean,
-////                    0,
-////                    0.5f + 0.5f * taskMean,
-////                    0.5f + 0.5f * (termMean + taskMean)/2f
-////            );
-            return null;
-        }
-
-    };
+    public final AtomicReference<VisModel> vis = new AtomicReference<>();
 
 
     /**
@@ -147,21 +88,23 @@ public class NARGraph<V, E> extends Spacegraph {
         return terms.get(t);
     }
 
-    public final Consumer<NARGraph> getUpdater() {
-        return updater;
+
+
+    /** sets the input source that this will display from, next */
+    public final void input(Consumer<NARGraph> source) {
+        this.source = source;
     }
 
-    public final void setUpdater(Consumer<NARGraph> u) {
-        this.updater = u;
-    }
 
-
+    /** synchronizes an active graph with the scenegraph nodes */
     public void commit(final Collection<Term> active /* should probably be a set for fast .contains() */,
                        final TermNode[] x,
                        final TermEdge[] y) {
 
 
+
         runLater(() -> {
+
 
             if (x != null) {
                 for (final TermNode tn : x)
@@ -186,13 +129,16 @@ public class NARGraph<V, E> extends Spacegraph {
                 if (!active.contains(r)) {
                     TermNode c = terms.remove(r.term);
 
-                    //if (c != null) {
-                        //c.setVisible(false);
-                        toDetach.add(c);
-                        if (c.edge!=null && c.edge.size() > 0)
-                            Collections.addAll(toDetachEdge, c.getEdges());
-                    //}
+
+                    c.setVisible(false);
+                    toDetach.add(c);
+                    Map<Term, TermEdge> edges = c.edge;
+                    if (edges != null && edges.size() > 0) {
+                        //iterate the map, because the array snapshot may differ until its next update
+                        toDetachEdge.addAll(edges.values());
+                    }
                 }
+
             });
 
             removeNodes((Collection) toDetach);
@@ -206,28 +152,40 @@ public class NARGraph<V, E> extends Spacegraph {
         });
     }
 
-    public final void updateGraph() {
+    public final void updateGraph(NAR n) {
 
+        System.out.println("update " + Thread.currentThread());
 
-        if (!isVisible()) {
+        if (!isVisible())
             return;
+
+        /** update */
+        if (source != null)
+            source.accept(this);
+        else {
+            System.err.println(this + "disconnected"); //no updater
         }
 
-        termList.forEach((Consumer<? super TermNode>)
-                TermNode::update);
+        /** apply vis properties */
+        termList.forEach(vis.get());
 
-        Consumer<NARGraph> u = getUpdater();
-        if (u != null)
-            u.accept(this);
-        /*else
-            System.err.println(this + " has no updater");*/
+
+        /** apply layout */
+        IterativeLayout<TermNode, TermEdge> l;
+        if ((l = layout.get()) != null) {
+            l.run(this, 1);
+        } else {
+            System.err.println(this + " has no layout");
+        }
+
+
     }
 
 
-    @FunctionalInterface
-    public interface PreallocatedResultFunction<X, Y> {
-        public void apply(X x, Y setResultHereAndReturnIt);
-    }
+//    @FunctionalInterface
+//    public interface PreallocatedResultFunction<X, Y> {
+//        public void apply(X x, Y setResultHereAndReturnIt);
+//    }
 
     @FunctionalInterface
     public interface PairConsumer<A, B> {
@@ -235,22 +193,8 @@ public class NARGraph<V, E> extends Spacegraph {
     }
 
 
-    protected final void layoutNodes() {
-        IterativeLayout<TermNode, TermEdge> l;
-        if ((l = getLayout()) != null) {
-            l.run(this, 1);
-        } else {
-            System.err.println(this + " has no layout");
-        }
-    }
 
-    private final IterativeLayout<TermNode, TermEdge> getLayout() {
-        return layout;
-    }
 
-    public void setLayout(IterativeLayout<TermNode, TermEdge> layout) {
-        this.layout = layout;
-    }
 
 //    protected void updateNodes() {
 //        if (termList != null)
@@ -271,13 +215,6 @@ public class NARGraph<V, E> extends Spacegraph {
         public void reset(NARGraph g);
     }
 
-    public EdgeRenderer<E> getEdgeRenderer() {
-        return edgeRenderer;
-    }
-
-    public void setEdgeRenderer(EdgeRenderer<E> r) {
-        this.edgeRenderer = r;
-    }
 
 
     /**
@@ -285,10 +222,9 @@ public class NARGraph<V, E> extends Spacegraph {
      */
     protected void rerender() {
 
-//        System.out.println("rerender " + Thread.currentThread());
 
 
-        EdgeRenderer<TermEdge> er = (EdgeRenderer<TermEdge>) getEdgeRenderer();
+        EdgeRenderer<TermEdge> er = edgeRenderer.get();
         er.reset(this);
 
 
@@ -331,9 +267,11 @@ public class NARGraph<V, E> extends Spacegraph {
                 //.stdoutTrace()
 //                .input("<a --> b>. %1.00;0.7%", //$0.9;0.75;0.2$
 //                        "<b --> c>. %1.00;0.7%")
-                .onConceptActive(ifConceptsChanged)
-                .onConceptForget(ifConceptsChanged)
-                .onEachNthFrame(this::updateGraph, 1);
+                .onConceptActive( (c) -> conceptsChanged.set(true) )
+                .onEachFrame(this::updateGraph)
+
+                //.onEachNthFrame(this::updateGraph, 1);
+
                 /*.forEachCycle(() -> {
                     double[] dd = new double[4];
                     nar.memory.getControl().conceptPriorityHistogram(dd);
@@ -347,7 +285,7 @@ public class NARGraph<V, E> extends Spacegraph {
                             nar.memory.getActivePrioritySum(false, false, true)  );
 
                 })*/
-
+        ;
 
         visibleProperty().addListener(v -> {
             checkVisibility();
@@ -372,7 +310,6 @@ public class NARGraph<V, E> extends Spacegraph {
 
                 this.animator = new Animate(layoutPeriodMS, a -> {
                     if (!termList.isEmpty()) {
-                        layoutNodes();
                         rerender();
                     }
                 });

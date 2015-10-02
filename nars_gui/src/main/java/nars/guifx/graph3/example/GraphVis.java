@@ -10,7 +10,7 @@ public class GraphVis {
 
     List<String> parameters = new ArrayList<>();
 
-    String wtf = "what the fuck";
+    String wtf = "dsfsdfsdf";
 
     int num = 14159;
 

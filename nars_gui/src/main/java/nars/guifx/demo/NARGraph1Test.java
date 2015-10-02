@@ -39,7 +39,7 @@ public class NARGraph1Test {
     public static void main(String[] args) throws IOException {
 
 
-        NAR n = new Default(256, 2,3,4);
+        NAR n = new Default(256, 1,2,2);
 
         NARide.show(n, ide -> {
 

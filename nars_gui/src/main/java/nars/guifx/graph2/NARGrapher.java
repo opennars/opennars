@@ -42,7 +42,7 @@ public class NARGrapher implements Consumer<NARGraph> {
 
         conPri.clear();
 
-        if (graph.conceptsChanged.getAndSet(false)) {
+        if (graph.conceptsChanged.compareAndSet(true, false)) {
             active.clear();
 
             ((Default)nar).core.concepts().forEach(maxNodes.get(), c -> {
@@ -81,8 +81,8 @@ public class NARGrapher implements Consumer<NARGraph> {
 
 
 
-        if (x!=null || y!=null)
-            graph.commit(active, x, y);
+
+        graph.commit(active, x, y);
 
     }
 
@@ -163,11 +163,14 @@ public class NARGrapher implements Consumer<NARGraph> {
     }
 
 
-    public final TermNode getTermNode(final NARGraph graph, final Term t/*, boolean createIfMissing*/) {
+    public final TermNode getTermNode(final NARGraph<?> graph, final Term t/*, boolean createIfMissing*/) {
         TermNode tn = graph.getTermNode(t);
+        Consumer<TermNode> gv = graph.vis.get();
         if (tn == null) {
             tn = termToAdd.computeIfAbsent(t, (k) -> {
-                return new TermNode(graph.nar, k);
+                TermNode nn = new TermNode(graph.nar, k);
+                gv.accept(nn); //initialize appearance
+                return nn;
             });
         }
 

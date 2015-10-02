@@ -35,7 +35,7 @@ public class TermNode extends Group {
 
     protected final Term term;
     private final Text titleBar;
-    private final Polygon base;
+    public final Polygon base;
     Concept c = null;
 
     /** priority normalized to visual context */
@@ -117,7 +117,7 @@ public class TermNode extends Group {
         getChildren().setAll(base, titleBar);//, titleBar);
 
 
-        update();
+        //update();
 
         base.setLayoutX(-0.5f);
         base.setLayoutY(-0.5f);
@@ -160,38 +160,42 @@ public class TermNode extends Group {
         move(NARGraph.rng.nextDouble() * bx, NARGraph.rng.nextDouble() * by);
     }
 
-    /**
-     * NAR update thread
-     */
-    public void update() {
+//    /**
+//     * NAR update thread
+//     */
+//    public void update() {
+//
+//
+////        double vertexScale = NARGraph1.visModel.getVertexScale(c);
+//
+//        /*if ((int) (priorityDisplayedResolution * priorityDisplayed) !=
+//                (int) (priorityDisplayedResolution * vertexScale))*/ {
+//
+//
+////            System.out.println("update " + Thread.currentThread() + " " + vertexScale + " " + getParent() + " " + isVisible() + " " + localToScreen(0,0));
+//
+//            double scale = minSize + (maxSize - minSize) * priNorm;
+//            scale(scale);
+//
+//
+//        }
+//
+//
+//    }
+
+    public void scale(double scale) {
+        this.scaled = scale;
 
 
-//        double vertexScale = NARGraph1.visModel.getVertexScale(c);
+        setScaleX(scale);
+        setScaleY(scale);
 
-        /*if ((int) (priorityDisplayedResolution * priorityDisplayed) !=
-                (int) (priorityDisplayedResolution * vertexScale))*/ {
+        float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
+            /*base.setFill(NARGraph.vis.get().getVertexColor(priNorm, conf));*/
 
+        //setOpacity(0.75f + 0.25f * vertexScale);
 
-//            System.out.println("update " + Thread.currentThread() + " " + vertexScale + " " + getParent() + " " + isVisible() + " " + localToScreen(0,0));
-
-            double scale = minSize + (maxSize - minSize) * priNorm;
-            this.scaled = scale;
-
-
-            setScaleX(scale);
-            setScaleY(scale);
-
-            float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
-            base.setFill(NARGraph.visModel.getVertexColor(priNorm, conf));
-
-            //setOpacity(0.75f + 0.25f * vertexScale);
-
-            //System.out.println(scale + " " + vertexScale + " " + (int)(priorityDisplayedResolution * vertexScale));
-
-
-        }
-
-
+        //System.out.println(scale + " " + vertexScale + " " + (int)(priorityDisplayedResolution * vertexScale));
     }
 
 

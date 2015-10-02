@@ -1,17 +1,16 @@
 package nars.guifx.graph2;
 
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import nars.concept.Concept;
+import java.util.function.Consumer;
 
-/**
- * Created by me on 9/5/15.
- */
-public interface VisModel {
+/** graph node visualization */
+@FunctionalInterface
+public interface VisModel extends Consumer<TermNode> {
 
-    Color getEdgeColor(double termPrio, double taskMean);
+//    void apply(TermNode t);
 
-    Paint getVertexColor(double priority, float conf);
-
-    double getVertexScale(Concept c);
+//    Color getEdgeColor(double termPrio, double taskMean);
+//
+//    Paint getVertexColor(double priority, float conf);
+//
+//    double getVertexScale(Concept c);
 }
