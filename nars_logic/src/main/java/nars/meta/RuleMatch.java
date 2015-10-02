@@ -189,7 +189,7 @@ public class RuleMatch extends FindSubst {
 
         derivedTerm = resolve(derivedTerm);
 
-        if(Outp!=null) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
+        if(Outp!=null && (derivedTerm instanceof Compound)) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
             derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
         }
 
