@@ -185,13 +185,9 @@ public class RuleMatch extends FindSubst {
             if(c instanceof Substitute) {
                 Outp = ((Substitute) c).Outp;
             }
-
-            if(!(derivedTerm instanceof Compound)) {
-                return null;
-            }
-
-            derivedTerm = resolve(derivedTerm);
         }
+
+        derivedTerm = resolve(derivedTerm);
 
         if(Outp!=null) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
             derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
