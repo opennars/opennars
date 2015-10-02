@@ -65,7 +65,7 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     @Override
     public double getSpeedFactor(TermNode termNode) {
         //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
-        return scaleFactor * 2f;
+        return scaleFactor * 1.5f;
     }
 
     @Override
@@ -81,13 +81,13 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
 
         //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
 
-        setEquilibriumDistance(0.03f); //termRadius * 1.5f);
+        setEquilibriumDistance(0.04f); //termRadius * 1.5f);
 
         return termList;
     }
 
     @Override
-    protected void edges(final TermNode nodeToQuery, Consumer<TermNode> updateFunc, boolean ins, boolean outs) {
+    protected void edges(final TermNode nodeToQuery, Consumer<TermNode> updateFunc) {
 //                    for (final TermEdge e : edges.row(nodeToQuery.term).values()) {
 //                        updateFunc.accept(e.otherNode(nodeToQuery));
 //                    }

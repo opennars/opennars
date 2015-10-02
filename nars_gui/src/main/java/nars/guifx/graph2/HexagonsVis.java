@@ -1,7 +1,10 @@
 package nars.guifx.graph2;
 
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import nars.guifx.NARfx;
 import nars.guifx.util.ColorMatrix;
+import nars.term.Term;
 
 /**
  * Created by me on 10/2/15.
@@ -16,8 +19,19 @@ public class HexagonsVis implements VisModel {
             }
     );
 
+    final static Font nodeFont = NARfx.mono(0.25);
+
     double minSize = 16;
     double maxSize = 64;
+
+
+
+
+    @Override
+    public TermNode newNode(Term term) {
+        TermNode t = new TermNode(term);
+        return t;
+    }
 
     @Override
     public void accept(TermNode t) {
@@ -27,7 +41,7 @@ public class HexagonsVis implements VisModel {
         t.base.setFill(colors.get(p, q));
 
 
-        t.scale(minSize + (maxSize - minSize) * t.priNorm); //where is this generated
+        t.scale(minSize + (maxSize - minSize) * t.priNorm);
     }
 
 

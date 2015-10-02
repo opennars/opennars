@@ -2,10 +2,8 @@ package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import nars.Global;
 import nars.NAR;
-import nars.guifx.NARfx;
 import nars.guifx.Spacegraph;
 import nars.guifx.demo.Animate;
 import nars.term.Term;
@@ -27,7 +25,7 @@ public class NARGraph<V> extends Spacegraph {
     final Map<Term, TermNode> terms = new LinkedHashMap();
 
 
-    protected Consumer<NARGraph> source;
+    protected Consumer<NARGraph> contact;
 
     public final AtomicReference<EdgeRenderer<TermEdge>> edgeRenderer = new AtomicReference<>();
 
@@ -49,8 +47,6 @@ public class NARGraph<V> extends Spacegraph {
 
     int layoutPeriodMS = 30 /* slightly less than 2 * 17, approx sooner than 30fps */;
 
-
-    final static Font nodeFont = NARfx.mono(0.5);
 
     public final AtomicReference<VisModel> vis = new AtomicReference<>();
 
@@ -90,9 +86,8 @@ public class NARGraph<V> extends Spacegraph {
 
 
 
-    /** sets the input source that this will display from, next */
-    public final void input(Consumer<NARGraph> source) {
-        this.source = source;
+    public final void input(Consumer<NARGraph> grapher) {
+        this.contact = grapher;
     }
 
 
@@ -154,14 +149,14 @@ public class NARGraph<V> extends Spacegraph {
 
     public final void updateGraph(NAR n) {
 
-        System.out.println("update " + Thread.currentThread());
+
 
         if (!isVisible())
             return;
 
         /** update */
-        if (source != null)
-            source.accept(this);
+        if (contact != null)
+            contact.accept(this);
         else {
             System.err.println(this + "disconnected"); //no updater
         }
@@ -170,13 +165,6 @@ public class NARGraph<V> extends Spacegraph {
         termList.forEach(vis.get());
 
 
-        /** apply layout */
-        IterativeLayout<TermNode, TermEdge> l;
-        if ((l = layout.get()) != null) {
-            l.run(this, 1);
-        } else {
-            System.err.println(this + " has no layout");
-        }
 
 
     }
@@ -223,9 +211,16 @@ public class NARGraph<V> extends Spacegraph {
     protected void rerender() {
 
 
+        /** apply layout */
+        IterativeLayout<TermNode, TermEdge> l;
+        if ((l = layout.get()) != null) {
+            l.run(this, 1);
+        } else {
+            System.err.println(this + " has no layout");
+        }
 
-        EdgeRenderer<TermEdge> er = edgeRenderer.get();
-        er.reset(this);
+
+        edgeRenderer.get().reset(this);
 
 
         Collections.addAll(removable, edges.getChildren());
@@ -240,6 +235,7 @@ public class NARGraph<V> extends Spacegraph {
 //        });
 //
 //
+            final EdgeRenderer<TermEdge> er = edgeRenderer.get();
 //
 //        termList.forEach((Consumer<TermNode>)n -> {
 //        for (int i = 0, termListSize = termList.size(); i < termListSize; i++) {
@@ -248,9 +244,10 @@ public class NARGraph<V> extends Spacegraph {
                 er.accept(e);
         });
 
-        removable.forEach(x -> {
-            edges.getChildren().remove(x);
-        });
+//        removable.forEach(x -> {
+//            edges.getChildren().remove(x);
+//        });
+        edges.getChildren().removeAll(removable);
 
         removable.clear();
 

@@ -11,7 +11,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextBoundsType;
-import nars.NAR;
 import nars.concept.Concept;
 import nars.guifx.JFX;
 import nars.guifx.NARfx;
@@ -34,7 +33,7 @@ public class TermNode extends Group {
     TermEdge[] edges = null;
 
     protected final Term term;
-    private final Text titleBar;
+    private final Text label;
     public final Polygon base;
     Concept c = null;
 
@@ -62,27 +61,28 @@ public class TermNode extends Group {
     private static TermEdge[] empty = new TermEdge[0];
 
 
-    public TermNode(NAR nar, Term t) {
+    public TermNode(Term t) {
         super();
 
-        this.titleBar = new Text(t.toStringCompact());
+        this.label = new Text(t.toStringCompact());
         base = JFX.newPoly(6, 2.0);
 
 
         this.term = t;
-        this.c = nar.concept(t);
+        //this.c = nar.concept(t);
 
         randomPosition(150, 150);
 
-        titleBar.setFill(Color.WHITE);
-        titleBar.setBoundsType(TextBoundsType.VISUAL);
+        label.setFill(Color.WHITE);
+        label.setBoundsType(TextBoundsType.VISUAL);
 
-        titleBar.setPickOnBounds(false);
-        titleBar.setMouseTransparent(true);
-        titleBar.setFont(NARGraph.nodeFont);
-        titleBar.setTextAlignment(TextAlignment.CENTER);
-        titleBar.setSmooth(false);
-        titleBar.setManaged(false);
+        label.setPickOnBounds(false);
+        label.setMouseTransparent(true);
+        label.setFont(HexagonsVis.nodeFont);
+        label.setTextAlignment(TextAlignment.CENTER);
+        label.setSmooth(false);
+        //titleBar.setManaged(false);
+        label.setBoundsType(TextBoundsType.VISUAL);
 
         base.setStrokeType(StrokeType.INSIDE);
 
@@ -90,7 +90,9 @@ public class TermNode extends Group {
             //System.out.println("click " + e.getClickCount());
             if (e.getClickCount() == 2) {
                 if (c != null)
-                    NARfx.newWindow(nar, c);
+                    NARfx.run((a,b) -> {
+                        //...
+                    });
             }
         });
 
@@ -114,7 +116,7 @@ public class TermNode extends Group {
         setPickOnBounds(false);
 
 
-        getChildren().setAll(base, titleBar);//, titleBar);
+        getChildren().setAll(base, label);//, titleBar);
 
 
         //update();
@@ -122,36 +124,17 @@ public class TermNode extends Group {
         base.setLayoutX(-0.5f);
         base.setLayoutY(-0.5f);
 
-        /*titleBar.setScaleX(0.25f);
-        titleBar.setScaleY(0.25f);*/
-        titleBar.setLayoutX(-getLayoutBounds().getWidth() / (2) + 0.25);
-        //titleBar.setY(-getLayoutBounds().getHeight()/2);
-//            System.out.println(titleBar);
-//            System.out.println(titleBar.getLayoutBounds());
-//            System.out.println(titleBar.getLocalToParentTransform());
-//            System.out.println(titleBar.getLocalToSceneTransform());
-//            System.out.println(titleBar.getBoundsInLocal());
 
+        label.setLayoutX(-getLayoutBounds().getWidth() / (2) + 0.25);
 
-        //setCache(true);
-        //setCacheHint(CacheHint.SPEED);
         base.setCacheHint(CacheHint.SCALE_AND_ROTATE);
         base.setCache(true);
 
-        titleBar.setSmooth(false);
 
-        //titleBar.setCacheHint(CacheHint.SCALE_AND_ROTATE);
-        titleBar.setCache(true);
+        label.setCache(true);
 
 
-        //setCacheShape(true);
 
-        /*double s = 1.0 / titleBar.getBoundsInLocal().getWidth();
-
-        titleBar.setScaleX(s);
-        titleBar.setScaleY(s);*/
-
-        //getChildren().add(new Rectangle(1,1))
 
     }
 

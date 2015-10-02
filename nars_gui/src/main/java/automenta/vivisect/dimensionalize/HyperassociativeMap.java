@@ -381,7 +381,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
 
     protected abstract void
-        edges(N nodeToQuery, Consumer<N> updateFunc, boolean ins, boolean outs);
+        edges(N nodeToQuery, Consumer<N> updateFunc);
 
     void getNeighbors(final N nodeToQuery, ObjectDoubleHashMap<N> neighbors) {
         if (neighbors == null)
@@ -390,7 +390,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
             neighbors.clear();
 
         final ObjectDoubleHashMap<N> finalNeighbors = neighbors;
-        edges(nodeToQuery, otherNode -> updateNeighbors(nodeToQuery, finalNeighbors, otherNode, 1f), true, true);
+        edges(nodeToQuery, otherNode -> updateNeighbors(nodeToQuery, finalNeighbors, otherNode, 1f));
 //
 //  for (Object neighborEdge : outs(nodeToQuery, )) {
 //            updateNeighbors(nodeToQuery, neighbors, (E) neighborEdge);

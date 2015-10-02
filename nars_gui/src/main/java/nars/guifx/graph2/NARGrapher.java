@@ -165,13 +165,11 @@ public class NARGrapher implements Consumer<NARGraph> {
 
     public final TermNode getTermNode(final NARGraph<?> graph, final Term t/*, boolean createIfMissing*/) {
         TermNode tn = graph.getTermNode(t);
-        Consumer<TermNode> gv = graph.vis.get();
         if (tn == null) {
-            tn = termToAdd.computeIfAbsent(t, (k) -> {
-                TermNode nn = new TermNode(graph.nar, k);
-                gv.accept(nn); //initialize appearance
-                return nn;
-            });
+            final VisModel gv = graph.vis.get();
+            tn = termToAdd.computeIfAbsent(t,
+                k -> gv.newNode(k)
+            );
         }
 
         return tn;
