@@ -283,7 +283,7 @@ public class NAL6Test extends AbstractNALTest {
     }
 
 
-    /* This is not worked out yet
+   //  This is not worked out yet
 
     @Test
     public void second_level_variable_unification() throws InvalidInputException {
@@ -302,7 +302,7 @@ public class NAL6Test extends AbstractNALTest {
         tester.believe("<{key1} --> key>",1.00f,0.90f); //en("key1 is a key");
         tester.mustBelieve(cycles,"<<$1 --> lock> ==> <$1 --> (/,open,{key1},_)>>",1.00f,0.43f); //en("maybe all locks are opened by key1");
         tester.run();
-    }*/
+    }
 
 
     @Test
