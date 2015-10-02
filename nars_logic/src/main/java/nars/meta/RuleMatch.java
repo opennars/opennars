@@ -175,6 +175,7 @@ public class RuleMatch extends FindSubst {
         for (final PreCondition c : outcome.afterConclusions) {
 
             if(c instanceof Substitute) {
+                //here we are interested how to transform the second to the first
                 ((Substitute) c).Inp = map2;
             }
 
@@ -185,19 +186,14 @@ public class RuleMatch extends FindSubst {
                 Outp = ((Substitute) c).Outp;
             }
 
-            derivedTerm = resolve(derivedTerm);
-            //if ((derivedTerm = resolve(derivedTerm)) == null) return null;
-
-            if(c instanceof Substitute) { //TODO
-                HashMap<Term,Term> ret = ((Substitute)c).GetRegularSubs();
-                derivedTerm = ((Compound) derivedTerm).applySubstitute(ret);
+            if(!(derivedTerm instanceof Compound)) {
+                return null;
             }
 
+            derivedTerm = resolve(derivedTerm);
         }
 
-
-
-        if(Outp!=null) {
+        if(Outp!=null) { //Outp is the result of substitute (remember that this has to be in a seperate dictionary so this is how it should be now)
             derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
         }
 
