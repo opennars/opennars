@@ -21,7 +21,7 @@ abstract public class BagActivator<K,V extends Itemized<K>> implements BagTransa
 
 
     public final void setBudget(Budget budget) {
-        nextActivation.set(budget);
+        nextActivation.budget(budget);
     }
 
     public final Budget getBudget() {

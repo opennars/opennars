@@ -497,12 +497,12 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
         else  {
             //allow selector to modify it, then if it returns non-null, reinsert
-            temp.set( b.getBudget() );
+            temp.budget( b.getBudget() );
 
             final Budget c = selector.updateItem(b, temp);
 
             if ((c!=null) && (!c.equalsByPrecision(b))) {
-                b.getBudget().set(c);
+                b.getBudget().budget(c);
                 return putReplacing(b, selector);
             }
             else

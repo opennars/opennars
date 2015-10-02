@@ -19,7 +19,7 @@ public class CanvasEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
 //    );
     ColorMatrix colors = new ColorMatrix(24,24,
         (pri,termTaskBalance) -> {
-            return Color.hsb(30 + 120.0 * termTaskBalance, 0.5, 0.25 + 0.75 * pri);
+            return Color.hsb(30 + 120.0 * termTaskBalance, 0.75, 0.35 + 0.5 * pri);
         }
     );
 

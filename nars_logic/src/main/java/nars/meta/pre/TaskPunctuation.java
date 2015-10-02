@@ -1,9 +1,9 @@
 package nars.meta.pre;
 
+import nars.$;
 import nars.Symbols;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
-import nars.nal.nal8.Operation;
 import nars.term.Term;
 
 /**
@@ -18,7 +18,7 @@ public class TaskPunctuation extends PreCondition {
     public static final TaskPunctuation TaskJudgment = new TaskPunctuation('.');
 
     public static final TaskPunctuation TaskQuestion = new TaskPunctuation('?');
-    public static final Term TaskQuestionTerm = Operation.op("task", "\"?\"");
+    public static final Term TaskQuestionTerm = $.opr("task", "\"?\"");
 
     public static final TaskPunctuation TaskGoal = new TaskPunctuation('!');
 

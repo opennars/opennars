@@ -38,7 +38,16 @@ public interface BagSelector<K, V extends Itemized<K>> {
     default void overflow(V overflow) {
         //System.err.println(this + " unhandled overflow: " + overflow);
         //new Exception().printStackTrace();
-        overflow.delete();
+
+
+        //HACK
+//        if (overflow instanceof Task) {
+//            Task t = ((Task)overflow);
+//            if (t.isDeleted())
+//                this.
+//        }
+
+        //overflow.delete();
     }
 
     class AnyItemSelector implements BagSelector {

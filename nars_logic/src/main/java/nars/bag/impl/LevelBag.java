@@ -442,10 +442,10 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
         //allow selector to modify it, then if it returns non-null, reinsert
 
-        Budget c = selector.updateItem(b, temp.set( b.getBudget() ));
+        Budget c = selector.updateItem(b, temp.budget( b.getBudget() ));
         if ((c!=null && !c.equalsByPrecision(b.getBudget()))) {
 
-            b.getBudget().set(c);
+            b.getBudget().budget(c);
             relevel(bx, b);
         }
 

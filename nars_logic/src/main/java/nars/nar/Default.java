@@ -32,7 +32,6 @@ import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
 import nars.process.ConceptProcess;
-import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
@@ -143,7 +142,7 @@ public class Default extends NAR implements ConceptBuilder {
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
             task -> true /* allow everything */,
-            task -> TaskProcess.run(Default.this, task)
+                task -> exec(task)
         );
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
@@ -187,9 +186,14 @@ public class Default extends NAR implements ConceptBuilder {
 
         m.conceptActivationFactor.set(1.0);
         m.conceptFireThreshold.set(0.0);
-        m.derivationThreshold.set(Global.BUDGET_EPSILON);
+
+        m.derivationThreshold.set(0);
+
         m.activeConceptThreshold.set(0.0);
-        m.taskProcessThreshold.set(Global.BUDGET_EPSILON);
+
+        m.taskProcessThreshold.set(0); //warning: if this is not zero, it could remove un-TaskProcess-able tasks even if they are stored by a Concept
+
+        //budget propagation thresholds
         m.termLinkThreshold.set(Global.BUDGET_EPSILON);
         m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
 
@@ -683,9 +687,15 @@ public class Default extends NAR implements ConceptBuilder {
         }
 
         @Override
-        public void accept(Task task) {
-            if (filter == null || filter.test(task))
-                buffer.add(task);
+        public void accept(Task t) {
+            if (filter == null || filter.test(t)) {
+
+//                if (t.isDeleted()) {
+//                    throw new RuntimeException("task deleted");
+//                }
+
+                buffer.add(t);
+            }
         }
 
 
@@ -704,11 +714,23 @@ public class Default extends NAR implements ConceptBuilder {
         /** sends the next batch of tasks to the receiver */
         public void send() {
 
-            int n = Math.min(buffer.size(), inputsMaxPerCycle.get());
 
-            for (; n > 0; n--) {
+            int s = buffer.size();
+            int n = Math.min(s, inputsMaxPerCycle.get()); //counts down successful sends
+            int r = n; //actual cycles counted
+
+
+            //n will be equal to or greater than r
+            for (; n > 0 && r > 0; r--) {
                 final Task t = buffer.removeFirst();
+
+                if (t.isDeleted()) {
+                    //the task became deleted while this was in the buffer. no need to repeat Memory.removed
+                    continue;
+                }
+
                 receiver.accept(t);
+                n--;
             }
 
         }

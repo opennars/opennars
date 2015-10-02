@@ -420,7 +420,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             }
         }
 
-        return target.set(priority, durability, quality);
+        return target.budget(priority, durability, quality);
 
 
         /* ORIGINAL: https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/inference/BudgetFunctions.java

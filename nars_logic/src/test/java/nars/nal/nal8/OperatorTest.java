@@ -1,5 +1,6 @@
 package nars.nal.nal8;
 
+import nars.$;
 import nars.NAR;
 import nars.Op;
 import nars.nal.nal4.Product;
@@ -38,7 +39,7 @@ public class OperatorTest {
 //    }
 
     @Test public void testOperationIsInheritance() {
-        Operation o = Operation.op(Product.make("x"), Operator.the("x"));
+        Operation o = $.opr(Product.make("x"), Operator.the("x"));
         assertEquals(Op.INHERITANCE, o.op());
     }
 

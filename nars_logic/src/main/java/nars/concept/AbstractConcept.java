@@ -127,17 +127,17 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 //    }
 
     /** called by memory, dont call self or otherwise */
-    @Override public synchronized boolean delete() {
+    @Override public boolean delete() {
         /*if (getMemory().inCycle())
             throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
         */
-        super.delete();
+        if (!super.delete())
+            return false;
 
         if (getMeta() != null) {
             getMeta().clear();
             setMeta(null);
         }
-
         return true;
     }
 

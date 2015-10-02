@@ -187,9 +187,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externa
 
         //allow selector to modify it, then if it returns non-null, reinsert
 
-        final Budget c = selector.updateItem(b, temp.set( b.getBudget() ));
+        final Budget c = selector.updateItem(b, temp.budget( b.getBudget() ));
         if ((c!=null) && (!c.equalsByPrecision(b.getBudget()))) {
-            b.getBudget().set(c);
+            b.getBudget().budget(c);
             updatePercentile(b.getPriority());
         }
 

@@ -124,10 +124,13 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
             /** input derived task */
             nal.nar().input(revised);
-        }
-        //ALTERNATELY: TaskProcess.run(nar, revised);
 
-        return revised;
+            //ALTERNATELY: TaskProcess.run(nar, revised);
+
+            return revised;
+        }
+
+        return null;
     }
 
     @Override

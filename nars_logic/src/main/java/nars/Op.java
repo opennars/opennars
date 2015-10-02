@@ -6,22 +6,32 @@ import nars.util.utf8.Utf8;
 import java.io.IOException;
 import java.io.Serializable;
 
-/** NAL symbol table */
+/**
+ * NAL symbol table
+ */
 public enum Op implements Serializable {
 
 
     //TODO include min/max arity for each operate, if applicable
 
-    /** an atomic term (includes interval and variables); this value is set if not a compound term */
+    /**
+     * an atomic term (includes interval and variables); this value is set if not a compound term
+     */
     ATOM(".", Op.ANY, OpType.Other),
-
+    //        public final Atom get(String i) {
+//            return Atom.the(i);
+//        }}
+//
     VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, Op.ANY, OpType.Variable),
+
     VAR_DEPENDENT(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
-    VAR_QUERY(Symbols.VAR_QUERY,Op.ANY, OpType.Variable),
+    VAR_QUERY(Symbols.VAR_QUERY, Op.ANY, OpType.Variable),
 
     OPERATOR("^", 8),
 
-    NEGATION("--", 5, 1),
+    NEGATION("--", 5, 1) {
+
+    },
 
     /* Relations */
     INHERITANCE("-->", 1, OpType.Relation, 2),
@@ -52,7 +62,6 @@ public enum Op implements Serializable {
     SET_EXT_OPENER("{", 3), //OPENER also functions as the symbol for the entire compound
 
 
-
     IMPLICATION("==>", 5, OpType.Relation, 8),
 
     /* Temporal Relations */
@@ -63,8 +72,6 @@ public enum Op implements Serializable {
     EQUIVALENCE("<=>", 5, OpType.Relation, 12),
     EQUIVALENCE_AFTER("</>", 7, OpType.Relation, 13),
     EQUIVALENCE_WHEN("<|>", 7, OpType.Relation, 14),
-
-
 
 
     // keep all items which are invlved in the lower 32 bit structuralHash above this line
@@ -84,36 +91,48 @@ public enum Op implements Serializable {
     INSTANCE_PROPERTY("{-]", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing
 
 
-
     VAR_PATTERN(Symbols.VAR_PATTERN, Op.ANY, OpType.Variable);
 
 
     //-----------------------------------------------------
 
 
-
-    /** symbol representation of this getOperator */
+    /**
+     * symbol representation of this getOperator
+     */
     public final String str;
 
-    /** character representation of this getOperator if symbol has length 1; else ch = 0 */
+    /**
+     * character representation of this getOperator if symbol has length 1; else ch = 0
+     */
     public final char ch;
 
     public final OpType type;
 
 
-    /** opener? */
+    /**
+     * opener?
+     */
     public final boolean opener;
 
-    /** closer? */
+    /**
+     * closer?
+     */
     public final boolean closer;
 
-    /** minimum NAL level required to use this operate, or 0 for N/A */
+    /**
+     * minimum NAL level required to use this operate, or 0 for N/A
+     */
     public final int minLevel;
 
-    /** should be null unless a 1-character representation is not possible. */
+    /**
+     * should be null unless a 1-character representation is not possible.
+     */
     public final byte[] bytes;
 
-    /** 1-character representation, or 0 if a multibyte must be used */
+    /**
+     * 1-character representation, or 0 if a multibyte must be used
+     */
     public final byte byt;
 
 
@@ -149,13 +168,12 @@ public enum Op implements Serializable {
         if (hasCompact) {
             int p = bb[0];
             if (p < 31) //do not assign if it's an ordinary non-control char
-                this.byt = (byte)(p);
+                this.byt = (byte) (p);
             else
-                this.byt = (byte)0;
-        }
-        else {
+                this.byt = (byte) 0;
+        } else {
             //multiple ibytes, use the provided array
-            this.byt = (byte)0;
+            this.byt = (byte) 0;
         }
 
         this.minLevel = minLevel;
@@ -168,14 +186,20 @@ public enum Op implements Serializable {
     }
 
     @Override
-    public String toString() { return str; }
+    public String toString() {
+        return str;
+    }
 
-    /** alias */
+    /**
+     * alias
+     */
     public static final Op SET_EXT = Op.SET_EXT_OPENER;
     public static final Op SET_INT = Op.SET_INT_OPENER;
 
 
-    /** writes this operator to a Writer in (human-readable) expanded UTF16 mode */
+    /**
+     * writes this operator to a Writer in (human-readable) expanded UTF16 mode
+     */
     public final void expand(final Appendable w) throws IOException {
         if (this.ch == 0)
             w.append(str);
@@ -184,7 +208,7 @@ public enum Op implements Serializable {
     }
 
     public final boolean has8BitRepresentation() {
-        return byt!=0;
+        return byt != 0;
     }
 
 
@@ -201,7 +225,9 @@ public enum Op implements Serializable {
         return (l == ANY) || (nal >= l);
     }
 
-    /** specifier for any NAL level */
+    /**
+     * specifier for any NAL level
+     */
     public final static int ANY = 0;
 
     public final boolean isVar() {
@@ -213,4 +239,6 @@ public enum Op implements Serializable {
         Variable,
         Other
     }
+
+
 }

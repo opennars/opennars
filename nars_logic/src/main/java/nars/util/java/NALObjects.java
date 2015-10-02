@@ -6,6 +6,7 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
+import nars.$;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
@@ -130,7 +131,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
 
         nar.goal(
-                Operation.op(Product.make(instancePlusArgs), op),
+                $.opr(Product.make(instancePlusArgs), op),
                 Tense.Present,
                 1f, 0.9f);
 

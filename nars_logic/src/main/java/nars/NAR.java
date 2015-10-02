@@ -18,6 +18,7 @@ import nars.nal.nal8.OperatorReaction;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.process.Level;
+import nars.process.TaskProcess;
 import nars.task.DefaultTask;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
@@ -1294,6 +1295,28 @@ abstract public class NAR implements Serializable, Level {
 
     public final void input(final Stream<Task> taskStream) {
         taskStream.forEach(this::input);
+    }
+
+    /** execute a Task as a TaskProcess (synchronous) */
+    public TaskProcess exec(Task task) {
+
+        final Budget taskBudget = task.getBudget();
+
+//        if (inputPriorityFactor != 1f) {
+//            taskBudget.mulPriority(inputPriorityFactor);
+//        }
+
+        if (!taskBudget.summaryGreaterOrEqual(memory().taskProcessThreshold)) {
+            memory().remove(task, "Insufficient Budget to TaskProcess");
+            return null;
+        }
+
+        TaskProcess d = new TaskProcess(this, task);
+
+        d.derive(null);
+
+        return d;
+
     }
 
 //    public NAR onAfterFrame(final Runnable r) {

@@ -1,10 +1,7 @@
 package nars.op.mental;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.budget.Budget;
 import nars.event.NARReaction;
 import nars.nal.nal4.Product;
@@ -177,7 +174,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         }
         arg[k] = nal.self();
 
-        Operation operation = Operation.op(opTerm, arg);
+        Operation operation = $.opr(opTerm, arg);
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
@@ -302,7 +299,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
 
             if (valid) {
                 beliefReasonDerive(task,
-                        Operation.op(Product.only(imp.getPredicate()), anticipate),
+                        $.opr(Product.only(imp.getPredicate()), anticipate),
                         nal);
             }
         }
@@ -313,7 +310,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
         //also get a chance to reveal its effects to the system this way
 
             beliefReasonDerive(task,
-                    Operation.op(Product.only(belief.getTerm()), op),
+                    $.opr(Product.only(belief.getTerm()), op),
                     nal);
     }
 

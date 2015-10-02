@@ -6,6 +6,7 @@ package nars.process;
 
 import nars.Global;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -189,8 +190,12 @@ abstract public class ConceptProcess extends NAL implements Serializable {
             n++;
         }
 
-        //shouldnt happen:
-        if (n == 0) throw new RuntimeException("missing both parent task and parent belief");
+
+        if (Global.DEBUG) {
+            Budget.requireNotDeleted(total);
+            if (n == 0)
+                throw new RuntimeException("missing both parent task and parent belief");
+        }
 
         return total/n;
     }

@@ -188,7 +188,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
 
             Budget ib = item.getBudget();
 
-            Budget result = selector.updateItem(item, temp.set(ib));
+            Budget result = selector.updateItem(item, temp.budget(ib));
 
             if ((result == null) || (result.isDeleted()) || (result.equalsByPrecision(ib)))
                 return item;
@@ -200,7 +200,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
                 remove(item.name());
 
                 //apply changed budget after removed and before re-insert
-                ib.set(result);
+                ib.budget(result);
             }
         }
 
@@ -215,30 +215,47 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
         return item;
     }
 
+
     /** faster than using the BagTransaction version when creation of instances is not necessary */
     public V peekNext(final BagSelector<K, V> selector) {
 
-        V item = peekNext();
+        V item;
+        do {
+            item = peekNext();
 
-        if (item == null)
-            return null;
+            if (item == null) {
+                //nothing available or bag empty
+                return null;
+            }
+
+            //avoid deleted tasks, and remove them from bag
+            if (item.getBudget().isDeleted()) {
+                //discovered a deleted item
+                remove(item.name());
+                selector.overflow(item);
+                item = null;
+            }
+
+        } while (item==null);
+
 
         Budget ib = item.getBudget();
 
-        Budget result = selector.updateItem(item, temp.set(ib));
+        Budget result = selector.updateItem(item, temp.budget(ib));
 
-        if ((result == null) || (result.isDeleted()) || (result.equalsByPrecision(ib)))
+        if ((result == null) || (result.isDeleted())  /*||(result.equalsByPrecision(ib)*/) {
+            //no change
             return item;
-        else {
-            //it has changed
-
-            //this PUT(TAKE( sequence can be optimized in particular impl
-            //the default is a non-optimal failsafe
-            remove(item.name());
-
-            //apply changed budget after removed and before re-insert
-            ib.set(result);
         }
+
+
+        //this PUT(TAKE( sequence can be optimized in particular impl
+        //the default is a non-optimal failsafe
+        remove(item.name());
+
+        //apply changed budget after removed and before re-insert
+        ib.budget(result);
+
 
 
         // put the (new or merged) item into itemTable

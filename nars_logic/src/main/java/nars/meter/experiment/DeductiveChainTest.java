@@ -2,11 +2,10 @@ package nars.meter.experiment;
 
 import nars.Global;
 import nars.NAR;
-import nars.event.AnswerReaction;
 import nars.meter.TestNAR;
 import nars.nal.nal1.Inheritance;
 import nars.nar.Default;
-import nars.task.Task;
+import nars.narsese.InvalidInputException;
 import nars.term.Atom;
 
 /**
@@ -49,43 +48,56 @@ public class DeductiveChainTest extends TestNAR {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int length = 6;
+        Global.DEBUG = false;
 
-        Global.DEBUG = true;
+        for (int length = 3; length < 10; length++) {
+            test(new Default().nal(2), length);
+        }
+    }
 
-        Default da = new Default().nal(2);
-        //DefaultAlann da = new DefaultAlann(32);
-        //da.nal(3);
+    static void test(NAR n, int chainLen) {
 
-        NAR n = //new TestNAR(
-                //new Equalized(1000, 8, 3) //.level(1)
-                //new NewDefault().level(2)
-                //new ParallelAlann(4,2)
-                da;
-        //);
 
-        //da.stdout();
-
-        DeductiveChainTest test = new DeductiveChainTest(n, length, 100000);
+        DeductiveChainTest test = new DeductiveChainTest(n, chainLen, 100000) {
+            @Override
+            public TestNAR mustBelieve(long withinCycles, String term, float confidence, float x, float y, float z) throws InvalidInputException {
+                return this;
+            }
+        };
 
         System.out.println("derivation chain test: " + test.q + "?");
 
         final long start = System.currentTimeMillis();
 
-        new AnswerReaction(n) {
+//        new AnswerReaction(n) {
+//
+//            @Override
+//            public void onSolution(Task belief) {
+//                if (belief.getTerm().equals(test.q)) {
+//                    System.out.println(belief + " " + timestamp(start) + " " +
+//                            n.concepts().size() + " concepts");
+//                    System.out.println(belief.getExplanation());
+//                    System.out.println();
+//                }
+//            }
+//        };
 
-            @Override
-            public void onSolution(Task belief) {
-                if (belief.getTerm().equals(test.q)) {
-                    System.out.println(belief + " " + timestamp(start) + " " +
-                            n.concepts().size() + " concepts");
-                    System.out.println(belief.getExplanation());
-                    System.out.println();
-                }
-            }
-        };
 
-        n.run(length*200);
+        n.frame(50000);
+
+        int nc = ((Default)n).core.concepts().size();
+        String ts = timestamp(start);
+        long time = n.time();
+
+        //n.stdout();
+        n.frame(55); //to print the ending
+
+        //while (true) {
+
+
+        System.out.println("@" + time + " (" + ts + "ms) " +
+                nc + " concepts");      //       }
+
 
         //TextOutput.out(n).setOutputPriorityMin(0.85f);
 

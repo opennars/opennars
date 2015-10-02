@@ -86,37 +86,6 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
 
 
     /**
-     * Try to make a new compound from two components. Called by the logic
-     * rules.
-     *
-     * @return A compound generated or null
-     */
-    public static <A extends Term> Operation<A> op(Product<A> arg, final Operator oper) {
-
-//        if (Variables.containVar(arg)) {
-//            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
-//        }
-
-//        if (self == null) {
-//            self = oper.getMemory().getSelf();
-//        }
-
-//        if((arg.length == 0) || ( !arg[arg.length-1].equals(null)) ) {
-//            Term[] arg2=new Term[arg.length+1];
-//            System.arraycopy(arg, 0, arg2, 0, arg.length);
-//            arg2[arg.length] = null;
-//            arg=arg2;
-//        }
-
-        /*if (invalidStatement(subject, oper)) {
-            return null;
-        }*/
-
-        return new Operation(oper, new SetExt1(arg));
-    }
-
-
-    /**
      * gets the term wrapped by the Operator predicate
      */
     public Term getOperator() {
@@ -372,16 +341,6 @@ public class Operation<A extends Term> extends Inheritance<SetExt1<Product<A>>, 
                 SetExt.make(y),
                 ImageExt.make(x, op, (short) (x.length() - 1) /* position of the variable */)
         );
-    }
-
-    public static Operation op(String operator, String... args) {
-        return Operation.op(Product.make(args),
-                Operator.the(operator)
-        );
-    }
-
-    public static Operation op(Operator opTerm, Term... arg) {
-        return Operation.op(Product.make(arg), opTerm);
     }
 
 }

@@ -21,7 +21,6 @@ import nars.nal.SimpleDeriver;
 import nars.op.app.Commander;
 import nars.process.ConceptProcess;
 import nars.process.ConceptTaskTermLinkProcess;
-import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Atom;
@@ -94,7 +93,7 @@ public abstract class AbstractAlann extends NAR {
     protected void processNewTasks() {
         final int size = newTasks.size();
         if (size!=0) {
-            newTasks.forEach(t -> TaskProcess.run(AbstractAlann.this, t));
+            newTasks.forEach(t -> exec(t));
             newTasks.clear();
         }
     }
@@ -138,7 +137,7 @@ public abstract class AbstractAlann extends NAR {
             }
             else {
                 Concept c = newConcept(term, memory);
-                c.getBudget().set(budget).mulPriority(activationFactor);
+                c.getBudget().budget(budget).mulPriority(activationFactor);
                 return c;
             }
         });
@@ -292,7 +291,7 @@ public abstract class AbstractAlann extends NAR {
                         //nar().memory().eventDerived.emit(t);
 
                         //System.err.println("direct input: " + t);
-                        TaskProcess.run(nar(), t);
+                        nar().exec(t);
                     }
 
                 });

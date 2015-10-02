@@ -13,10 +13,7 @@ import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
-import nars.Global;
-import nars.Memory;
-import nars.Op;
-import nars.Symbols;
+import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
 import nars.meta.RangeTerm;
@@ -72,7 +69,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
     static final ThreadLocal<NarseseParser> parsers = ThreadLocal.withInitial(() -> Grappa.createParser(NarseseParser.class) );
 
-    public static NarseseParser the() {
+    public static final NarseseParser the() {
         return parsers.get();
     }
 
@@ -933,7 +930,7 @@ public class NarseseParser extends BaseParser<Object>  {
             /*if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self);*/ //SELF in final argument
 
-            Operation o = Operation.op(  Product.make(vectorterms, 1, vectorterms.size()), new Operator(vectorterms.get(0)) );
+            Operation o = $.opr(  Product.make(vectorterms, 1, vectorterms.size()), new Operator(vectorterms.get(0)) );
             return o;
         }
         else {

@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.guifx.IOPane;
 import nars.guifx.NARide;
 import nars.guifx.graph2.CanvasEdgeRenderer;
-import nars.guifx.graph2.CircleLayout;
+import nars.guifx.graph2.HyperassociativeMapLayout;
 import nars.guifx.graph2.NARGraph1;
 import nars.guifx.graph2.NARGrapher;
 import nars.guifx.util.TabX;
@@ -22,6 +22,8 @@ public class NARGraph1Test {
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.5f;
 
 
+        n.memory.conceptForgetDurations.set(5);
+
         //n.input(new File("/tmp/h.nal"));
         n.input("<a-->b>.");
         n.input("<b-->c>.");
@@ -37,8 +39,8 @@ public class NARGraph1Test {
         g.setEdgeRenderer(new CanvasEdgeRenderer());
         //g.setEdgeRenderer(new QuadPolyEdgeRenderer());
 
-        g.setLayout(new CircleLayout<>());
-        //g.setLayout(new HyperassociativeMapLayout());
+        //g.setLayout(new CircleLayout<>());
+        g.setLayout(new HyperassociativeMapLayout());
         //g.setLayout(new TimelineLayout());
 
         return g;
@@ -47,7 +49,7 @@ public class NARGraph1Test {
     public static void main(String[] args) throws IOException {
 
 
-        NAR n = new Default();
+        NAR n = new Default(256, 2,3,4);
 
         NARide.show(n, ide -> {
 

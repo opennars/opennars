@@ -275,6 +275,9 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
             p++;
         }
 
+        ensureFeasibleVolume(vol);
+
+
         this.structureHash = subt;
 
         if (contentHash == 0) contentHash = 1; //nonzero to indicate hash calculated
@@ -284,9 +287,15 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
         this.hasVarIndeps = (byte) indeps;
         this.hasVarQueries = (byte) queries;
         this.varTotal = (short) (deps + indeps + queries);
-        this.complexity = (short) compl;
 
-        if ((this.volume = (short) vol) > Global.COMPOUND_VOLUME_MAX) {
+        this.complexity = (short) compl;
+        this.volume = (short) vol;
+
+
+    }
+
+    private void ensureFeasibleVolume(int vol) {
+        if (vol > Global.COMPOUND_VOLUME_MAX) {
             throw new RuntimeException("volume limit exceeded for new Compound[" + op() + "] " + Arrays.toString(term));
         }
 

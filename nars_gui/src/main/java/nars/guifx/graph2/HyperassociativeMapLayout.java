@@ -10,7 +10,6 @@ import java.util.function.Consumer;
  * Created by me on 9/6/15.
  */
 public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, TermEdge> {
-    float termRadius = 1;
     double scaleFactor = 1;
     private List termList;
 
@@ -59,8 +58,8 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     @Override
     public double getRadius(TermNode termNode) {
 
-        //return termNode.width() / 4f;
-        return 0;
+        return termNode.priNorm * 0.025;
+
     }
 
     @Override
@@ -82,7 +81,7 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
 
         //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
 
-        setEquilibriumDistance(0.1f); //termRadius * 1.5f);
+        setEquilibriumDistance(0.05f); //termRadius * 1.5f);
 
         return termList;
     }

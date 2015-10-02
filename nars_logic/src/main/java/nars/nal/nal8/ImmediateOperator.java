@@ -1,6 +1,7 @@
 package nars.nal.nal8;
 
 
+import nars.$;
 import nars.Symbols;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.NullOperator;
@@ -28,7 +29,7 @@ abstract public class ImmediateOperator extends NullOperator implements Consumer
 //        return newOperation(Product.make(args));
 //    }
     public Operation newOperation(Product args) {
-        return Operation.op(args, op);
+        return $.opr(args, op);
     }
 
     /** create a new task that wraps this operation */

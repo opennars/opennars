@@ -5,7 +5,6 @@ import nars.bag.impl.TrieCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -41,7 +40,7 @@ public class Terminal extends Default {
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
                 taskFilter,
-                task -> TaskProcess.run(Terminal.this, task)
+                task -> exec(task)
         );
         return input;
     }

@@ -2,7 +2,6 @@ package nars.concept;
 
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
-import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.NullBag;
@@ -10,17 +9,11 @@ import nars.budget.Budget;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
-import nars.nal.nal5.Equivalence;
-import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.term.Compound;
 import nars.term.Term;
-
-import java.util.List;
 
 import static nars.nal.nal1.LocalRules.*;
 
@@ -186,7 +179,7 @@ public class DefaultConcept extends AtomConcept {
      */
 
 
-    Task add(BeliefTable table, Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
+    Task add(BeliefTable table, final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
 
         Task revised = input;
 
@@ -222,6 +215,8 @@ public class DefaultConcept extends AtomConcept {
                         existing.decPriority(0);    // duplicated task
                     }   // else: activated belief*/
 
+                    //activate the existing belief
+                    existing.getBudget().mergePlus( input.getBudget() );
 
                     memory.remove(input, "Ineffectual"); //"has no effect" on belief/desire, etc
 
@@ -243,14 +238,17 @@ public class DefaultConcept extends AtomConcept {
 
             }
 
-            table.add(input, ranking, nal.memory());
+            if (table.add(input, ranking, nal.memory())) {
 
-            if (!input.equals(revised)) {
-                table.addRevised(revised, ranking, nal);
+                if (!input.equals(revised)) {
+                    revised = table.addRevised(revised, ranking, nal);
+                    if (revised != null)
+                        return revised;
+                }
             }
 
 
-            return revised;
+            return null;
         }
 
 
@@ -286,8 +284,6 @@ public class DefaultConcept extends AtomConcept {
      */
     public boolean processBelief(final Premise nal, final Task belief) {
 
-        if (belief.isDeleted())
-            throw new RuntimeException("new solution deleted");
 
         float successBefore = getSuccess();
 
@@ -347,6 +343,12 @@ public class DefaultConcept extends AtomConcept {
             if (delta!=0)
                 memory.emotion.happy(delta);
 
+            nal.memory().execute(goal);
+
+            return true;
+
+        }
+
             //long then = goal.getOccurrenceTime();
             //int dur = nal.duration();
 
@@ -393,53 +395,48 @@ public class DefaultConcept extends AtomConcept {
 //                //}
 //            }
 
-            nal.memory().execute(goal);
-
-            return true;
-
-        }
 
     }
 
 
-    public static void questionFromGoal(final Task task, final Premise p) {
-        if (Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-            //ok, how can we achieve it? add a question of whether it is fullfilled
-
-            List<Compound> qu = Global.newArrayList(3);
-
-            final Compound term = task.getTerm();
-
-            if (Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-                if (!(term instanceof Equivalence) && !(term instanceof Implication)) {
-
-                    Implication i1 = Implication.make(how, term, TemporalRules.ORDER_CONCURRENT);
-                    if (i1 != null)
-                        qu.add(i1);
-
-                    Implication i2 = Implication.make(how, term, TemporalRules.ORDER_FORWARD);
-                    if (i2 != null)
-                        qu.add(i2);
-
-                }
-            }
-
-            if (Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
-                qu.add(term);
-            }
-
-            if (qu.isEmpty()) return;
-
-            p.input(
-                qu.stream().map(q -> p.newTask(q)
-                    .question()
-                    .parent(task)
-                    .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
-                    .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1)
-            ));
-
-        }
-    }
+//    public static void questionFromGoal(final Task task, final Premise p) {
+//        if (Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+//            //ok, how can we achieve it? add a question of whether it is fullfilled
+//
+//            List<Compound> qu = Global.newArrayList(3);
+//
+//            final Compound term = task.getTerm();
+//
+//            if (Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+//                if (!(term instanceof Equivalence) && !(term instanceof Implication)) {
+//
+//                    Implication i1 = Implication.make(how, term, TemporalRules.ORDER_CONCURRENT);
+//                    if (i1 != null)
+//                        qu.add(i1);
+//
+//                    Implication i2 = Implication.make(how, term, TemporalRules.ORDER_FORWARD);
+//                    if (i2 != null)
+//                        qu.add(i2);
+//
+//                }
+//            }
+//
+//            if (Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
+//                qu.add(term);
+//            }
+//
+//            if (qu.isEmpty()) return;
+//
+//            p.input(
+//                qu.stream().map(q -> p.newTask(q)
+//                    .question()
+//                    .parent(task)
+//                    .occurr(task.getOccurrenceTime()) //set tense of question to goal tense)
+//                    .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1)
+//            ));
+//
+//        }
+//    }
 
 
     /**
@@ -453,16 +450,17 @@ public class DefaultConcept extends AtomConcept {
 
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
 
-        if (Global.DEBUG) {
-            if (q.getTruth() != null) {
-                System.err.println(q + " has non-null truth");
-                System.err.println(q.getExplanation());
-                throw new RuntimeException(q + " has non-null truth");
-            }
-        }
+//        //if (Global.DEBUG) {
+//            if (q.getTruth() != null) {
+//                System.err.println(q + " has non-null truth");
+//                System.err.println(q.getExplanation());
+//                throw new RuntimeException(q + " has non-null truth");
+//            }
+        //}
 
 
         /** execute the question, for any attached operators that will handle it */
+
         //getMemory().execute(q);
 
 
@@ -599,10 +597,8 @@ public class DefaultConcept extends AtomConcept {
     /** called by memory, dont call directly */
     @Override public synchronized boolean delete() {
 
-        if (isDeleted())
+        if (!super.delete())
             return false;
-
-        super.delete();
 
         //dont delete the tasks themselves because they may be referenced from othe concepts.
         beliefs.clear();

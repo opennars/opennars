@@ -25,6 +25,7 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
+import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.truth.Truth;
 import nars.util.data.Util;
@@ -33,7 +34,6 @@ import org.apache.commons.math3.util.FastMath;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
-import static java.lang.Math.abs;
 import static nars.Global.BUDGET_EPSILON;
 import static nars.nal.UtilityFunctions.*;
 
@@ -146,7 +146,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     public Budget(final Budget v, boolean copyLastForgetTime) {
         this();
         if (v != null) {
-            set(v);
+            budget(v);
             if (!copyLastForgetTime)
                 setLastForgetTime(-1);
         }
@@ -237,6 +237,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         return f;
     }
 
+
     /**
      * Cloning method
      * TODO give this a less amgiuous name to avoid conflict with subclasses that have clone methods
@@ -248,7 +249,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
     /** the max priority, durability, and quality of two tasks */
     public final Budget mergeMax(final Budget b) {
-        return set(
+        return budget(
                 Util.max(getPriority(), b.getPriority()),
                 Util.max(getDurability(), b.getDurability()),
                 Util.max(getQuality(), b.getQuality())
@@ -288,7 +289,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
                 (currentPriority / currentNextPrioritySum);
         /* next proportion */ final float np = 1f - cp;
 
-        return set(
+        return budget(
                 nextPriority,
                 (cp * getDurability()) + (np * otherDurability),
                 (cp * getQuality()) + (np * otherQuality)
@@ -315,7 +316,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
         /* next proportion */
         final float np = 1f - cp;
 
-        set(
+        budget(
                 cp * getPriority() + np * that.getPriority(),
                 cp * getDurability() + np * that.getDurability(),
                 cp * getQuality() + np * that.getQuality()
@@ -364,6 +365,9 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      */
     @Override
     public final void setPriority(final float p) {
+        if (isDeleted(p)) {
+            throw new RuntimeException("NaN priority");
+        }
         this.priority = Util.clamp(p);
     }
 
@@ -501,7 +505,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     public void mergeAverage(final Budget that) {
         if (this == that) return;
 
-        set(
+        budget(
                 mean(getPriority(), that.getPriority()),
                 mean(getDurability(), that.getDurability()),
                 mean(getQuality(), that.getQuality())
@@ -722,6 +726,11 @@ public class Budget implements Cloneable, Prioritized, Serializable {
      * fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance
      */
     protected final Budget budgetDirect(final float p, final float d, final float q) {
+
+        if (isDeleted(p)) {
+            throw new RuntimeException("source budget invalid");
+        }
+
         this.priority = p;
         this.durability = d;
         this.quality = q;
@@ -729,24 +738,26 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     /** if source is null, it deletes the budget */
-    final public Budget set(@Nullable final Budget source) {
+    public Budget budget(@Nullable final Budget source) {
         if (source == null) {
-            deleteBudget();
-            return this;
+            zero();
+        }
+        else {
+            budget(
+                    source.getPriority(),
+                    source.getDurability(),
+                    source.getQuality());
+
+            setLastForgetTime(source.getLastForgetTime());
         }
 
-        if (source.isDeleted()) {
-            throw new RuntimeException("source budget invalid");
-        }
-
-        setLastForgetTime(source.getLastForgetTime());
-        return budgetDirect(source.getPriority(), source.getDurability(), source.getQuality());
+        return this;
     }
 
     /**
      * returns this budget, after being modified
      */
-    final protected Budget set(final float p, final float d, final float q) {
+    protected Budget budget(final float p, final float d, final float q) {
         setPriority(p);
         setDurability(d);
         setQuality(q);
@@ -771,21 +782,21 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 //        return amount - received;
 //    }
 
-    /**
-     * modifies the budget if any of the components are signifiantly different
-     * returns whether the budget was changed
-     */
-    protected boolean setIfChanges(final float p, final float d, final float q, float budgetEpsilon) {
-        float dp = abs(getPriority() - p);
-        float dd = abs(getDurability() - d);
-        float dq = abs(getQuality() - q);
-
-        if (dp < budgetEpsilon && dd < budgetEpsilon && dq < budgetEpsilon)
-            return false;
-
-        set(p, d, q);
-        return true;
-    }
+//    /**
+//     * modifies the budget if any of the components are signifiantly different
+//     * returns whether the budget was changed
+//     */
+//    protected boolean setIfChanges(final float p, final float d, final float q, float budgetEpsilon) {
+//        float dp = abs(getPriority() - p);
+//        float dd = abs(getDurability() - d);
+//        float dq = abs(getQuality() - q);
+//
+//        if (dp < budgetEpsilon && dd < budgetEpsilon && dq < budgetEpsilon)
+//            return false;
+//
+//        set(p, d, q);
+//        return true;
+//    }
 
     @Override
     public void mulPriority(final float factor) {
@@ -812,14 +823,34 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
     public final void deleteBudget() {
-        budgetDirect(Float.NaN, Float.NaN, Float.NaN);
-        this.lastForgetTime = Stamp.TIMELESS;
+
+        this.priority = Float.NaN;
+        this.durability = 0; //trying a mix of NaN and 0's
+        this.quality = 0;
+
+
+                //Float.NaN, Float.NaN);
+        //this.lastForgetTime = Stamp.TIMELESS;
     }
 
-    public boolean isDeleted() {
-        return Float.isNaN(getPriority());
+    public static final boolean isDeleted(float pri) {
+        return Float.isNaN(pri);
+    }
+
+    public final boolean isDeleted() {
+        return isDeleted(getPriority());
     }
 
 
+    public static void requireNotDeleted(float pri) {
+        if (isDeleted(pri)) {
+            throw new RuntimeException("NaN priority");
+        }
+
+    }
+
+    public static void requireNotDeleted(Task q) {
+        requireNotDeleted(q.getPriority());
+    }
 
 }

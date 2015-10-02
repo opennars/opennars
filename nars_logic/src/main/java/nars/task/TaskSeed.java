@@ -15,6 +15,8 @@ import nars.term.Compound;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
+import javax.annotation.Nullable;
+
 /**
  * task with additional fluent api utility methods for creating new tasks following a fluent builder pattern
  * warning: does not correctly support parent stamps, use .stamp() to specify one
@@ -51,7 +53,7 @@ import nars.truth.Truth;
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         super(null, (char) 0, null, 0, 0, 0);
 
-        budgetDirect(Float.NaN, Float.NaN, Float.NaN);
+        budget(0, Float.NaN, Float.NaN);
 
         setDuration(memory.duration());
         setOccurrenceTime(TIMELESS);
@@ -86,27 +88,28 @@ import nars.truth.Truth;
         return this;
     }
 
-    public final TaskSeed budget(final float p, final float d, final float q) {
-        budgetDirect(p, d, q);
-        return this;
-    }
 
-    /**
-     * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
-     */
-    @Deprecated
-    public TaskSeed budget(final Budget bv) {
-        return budget(bv.getPriority(), bv.getDurability(), bv.getQuality());
-    }
+
 
     /**
      * if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here
      */
     public TaskSeed budget(Budget bv, float priMult, float durMult) {
-        return budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
+        budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
+        return this;
     }
 
+    @Override
+    public final TaskSeed budget(float p, float d, float q) {
+        super.budget(p, d, q);
+        return this;
+    }
 
+    @Override
+    public final TaskSeed budget(@Nullable Budget source) {
+        super.budget(source);
+        return this;
+    }
 
     /**
      * uses default budget generation and multiplies it by gain factors
@@ -225,8 +228,11 @@ import nars.truth.Truth;
         } else
             throw new RuntimeException("incorrect punctuation");
 
-        return budget(p, d, q);
+        budget(p, d, q);
+        return this;
     }
+
+
 
     public TaskSeed duration(int duration) {
         this.setDuration(duration);

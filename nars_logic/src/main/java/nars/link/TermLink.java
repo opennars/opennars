@@ -150,11 +150,6 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
         return target;
     }
 
-    @Override public boolean delete() {
-        return true;
-    }
-
-
 
 
 

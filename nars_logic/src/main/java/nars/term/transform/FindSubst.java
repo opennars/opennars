@@ -13,10 +13,13 @@ import java.util.Random;
 
 
 public class FindSubst {
-    private final Op type;
+    public final Op type;
     public final Map<Term, Term> map1;
     public final Map<Term, Term> map2;
     private final Random random;
+
+    /** value is updated before and after a substitution. */
+    int consumed = 0;
 
     public FindSubst(Op type, Random random) {
         this(type, null, null, random);
@@ -54,6 +57,13 @@ public class FindSubst {
             System.out.println();
         System.out.println("     " + this);
     }
+
+//    public boolean next(final Term term1, final Term term2, int power) {
+//        long start = power;
+//
+//
+//        this.consumed = power;
+//    }
 
     /**
      * recursess into the next sublevel of the term
@@ -126,7 +136,7 @@ public class FindSubst {
         return compound1.hasVar(typ) || compound2.hasVar(typ);
     }
 
-    protected boolean nextTerm1Var(final Variable term1Var, final Term term2) {
+    boolean nextTerm1Var(final Variable term1Var, final Term term2) {
         Op op2 = null;
 
         final Variable term2Var;

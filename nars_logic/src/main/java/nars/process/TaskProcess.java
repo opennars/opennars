@@ -45,10 +45,6 @@ public class TaskProcess extends NAL implements Serializable {
     public TaskProcess(NAR nar, Task task) {
         super(nar);
 
-        if (task.isDeleted()) {
-            throw new RuntimeException("task is deleted");
-        }
-
         this.task = task;
     }
 
@@ -352,48 +348,9 @@ public class TaskProcess extends NAL implements Serializable {
                 throw new RuntimeException("Invalid sentence type: " + task);
         }
 
-        return true;
+        return !task.isDeleted();
     }
 
-
-//    /** create and execute a direct process immediately */
-//    public static Premise queue(final NAR nar, final Task task) {
-//        return run(nar.memory, task);
-//    }
-
-
-    public static TaskProcess get(final NAR m, final Task task) {
-        return get(m, task, 1f);
-    }
-
-    public static TaskProcess get(final NAR nar, final Task task, float inputPriorityFactor) {
-
-        final Budget taskBudget = task.getBudget();
-
-        if (inputPriorityFactor != 1f) {
-            taskBudget.mulPriority(inputPriorityFactor);
-        }
-
-        if (!taskBudget.summaryGreaterOrEqual(nar.memory().taskProcessThreshold)) {
-            nar.memory().remove(task, "Insufficient Budget to TaskProcess");
-            return null;
-        }
-
-        return new TaskProcess(nar, task);
-    }
-
-    /**
-     * create and execute a direct process immediately
-     */
-    public static Premise run(final NAR m, final Task task) {
-        TaskProcess d = get(m, task);
-        if (d == null)
-            return null;
-
-        d.derive(null);
-
-        return d;
-    }
 
     @Override
     public Stream<Task> derive(Function<Premise, Stream<Task>> processor) {
@@ -401,11 +358,11 @@ public class TaskProcess extends NAL implements Serializable {
 
         final Task task = getTask();
 
-        /** deleted in the time between this was created, and run() */
-        if (task.isDeleted()) {
-            throw new RuntimeException(this + " deleted before creation");
-            //return;
-        }
+//        /** deleted in the time between this was created, and run() */
+//        if (task.isDeleted()) {
+//            throw new RuntimeException(this + " deleted before creation");
+//            //return;
+//        }
 
         final Memory memory = this.nar.memory();
         memory.eventTaskProcess.emit(this);
@@ -422,9 +379,8 @@ public class TaskProcess extends NAL implements Serializable {
 
         if (processConcept(c)) {
 
-            if (!task.isDeleted()) {
-                link(c, task);
-            }
+            link(c, task);
+
         }
 
         return null;

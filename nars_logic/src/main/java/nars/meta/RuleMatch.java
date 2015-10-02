@@ -21,7 +21,6 @@ import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import org.infinispan.commons.hash.Hash;
 
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +81,7 @@ public class RuleMatch extends FindSubst {
     /**
      * clear and re-use with a new rule
      */
-    public RuleMatch start(TaskRule rule) {
+    public final RuleMatch start(TaskRule rule) {
 
         super.clear();
 
@@ -93,7 +92,7 @@ public class RuleMatch extends FindSubst {
         return this;
     }
 
-    public Task apply(final PostCondition outcome) {
+    public final Task apply(final PostCondition outcome) {
 
         final Task task = premise.getTask();
         if (task == null)
@@ -197,7 +196,7 @@ public class RuleMatch extends FindSubst {
 
 
 
-        if(Outp!=null) {
+        if ((Outp!=null) && (derivedTerm!=null)) {
             derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
         }
 
@@ -427,6 +426,8 @@ public class RuleMatch extends FindSubst {
     public Stream<Task> run(final Stream<TaskRule> rules, final int maxNAL) {
 
         Predicate<Level> pcFilter = Level.maxFilter(maxNAL);
+
+        //reset();
 
         return rules.
                 filter( /* filter the entire rule */ pcFilter).

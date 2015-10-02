@@ -445,7 +445,7 @@ public class Memory extends Param {
         return getClock().time();
     }
 
-    public void put(final Concept c) {
+    public final void put(final Concept c) {
         concepts.put(c);
     }
 
