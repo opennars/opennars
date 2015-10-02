@@ -1,10 +1,12 @@
 package nars.term;
 
+import junit.framework.Assert;
 import nars.narsese.NarseseParser;
 import org.junit.Test;
 
 import static org.jgroups.util.Util.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.jgroups.util.Util.assertTrue;
+
 
 /**
  * Created by me on 9/9/15.
@@ -15,7 +17,7 @@ public class CommonVariableTest {
 
     @Test
     public void commonVariableTest1() {
-        assertEquals("%1%2",
+        Assert.assertEquals("%1%2",
                 CommonVariable.make(
                         p.term("%1"),
                         p.term("%2")).toString());

@@ -359,7 +359,7 @@ public class DefaultConcept extends AtomConcept {
 //
 //        }
 
-//            if (goal.getBudget().summaryGreaterOrEqual(memory.questionFromGoalThreshold)) {
+//         if (goal.getBudget().summaryGreaterOrEqual(memory.questionFromGoalThreshold)) {
 //
 //                // check if the Goal is already satisfied
 //                //Task beliefSatisfied = getBeliefs().topRanked();
@@ -389,10 +389,11 @@ public class DefaultConcept extends AtomConcept {
 //                //TODO
 //                //InternalExperience.experienceFromTask(nal, task, false);
 //
-//                nal.memory().execute(goal);
 //
 //                //}
 //            }
+
+            nal.memory().execute(goal);
 
             return true;
 

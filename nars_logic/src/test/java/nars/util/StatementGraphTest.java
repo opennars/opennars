@@ -34,6 +34,8 @@ public class StatementGraphTest {
         n.input("<d --> b>. :|:");
         n.frame();
 
+        n.frame(4);
+
 
         //String g = m.graph.toString();
 

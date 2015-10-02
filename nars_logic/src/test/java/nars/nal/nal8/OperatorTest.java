@@ -18,13 +18,7 @@ import static org.jgroups.util.Util.assertEquals;
 
 public class OperatorTest {
 
-    //create a completely empty NAR, no default operators
-    NAR n = new Default() {
-        /*@Override
-        public Operator[] defaultOperators(NAR n) {
-            return new Operator[] { };
-        }*/
-    };
+
 
 //
 //    public void testIO(String input, String output) {
@@ -52,6 +46,7 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
+        NAR n = new Default();
         n.on((event, args) -> {
             //System.out.println("executed: " + Arrays.toString(args));
             executed.set(true);
@@ -70,6 +65,7 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
+        NAR n = new Default();
         n.on(new SyncOperator("exe") {
             @Override
             public List<Task> apply(Task<Operation> operation) {
@@ -78,9 +74,10 @@ public class OperatorTest {
             }
         });
 
+        n.stdout();
         n.input("exe(a,b,c)!");
 
-        n.frame(1);
+        n.frame(2);
 
         assertTrue(executed.get());
 
@@ -90,6 +87,7 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
+        NAR n = new Default();
         n.on(new SyncOperator((Term)n.term("<a --> b>")) {
             public List<Task> apply(Task<Operation> operation) {
                 executed.set(true);
