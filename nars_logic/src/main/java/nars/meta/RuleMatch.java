@@ -21,9 +21,7 @@ import nars.term.Variable;
 import nars.term.transform.FindSubst;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import org.infinispan.commons.hash.Hash;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
