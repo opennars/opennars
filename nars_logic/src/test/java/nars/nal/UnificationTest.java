@@ -124,4 +124,27 @@ public class UnificationTest extends AbstractNALTest {
 
     }
 
+    @Test
+    public void unification_multiple_variable_elimination4() throws Exception { //its not clear anymore how to build atomic terms so we will just get them out with hands crossed...
+
+        String T1="<#x --> lock>";
+        String T2="<{lock1} --> lock>";
+        TestNAR tester = test();
+        tester.believe(T1); //.en("If robin is a type of bird then robin can fly.");
+        tester.believe(T2); //.en("Robin is a type of bird.");
+        tester.run(10);
+
+        Concept ret = tester.nar.concept(T1);
+        Concept ret2 = tester.nar.concept(T2);
+
+        //these we wanted, but we had to do the crap above since I forgot how to construct terms by strings..
+        Term Term1 = ret.getTerm();
+        Term Term2 = ret2.getTerm();
+
+        FindSubst wu = new FindSubst(Op.VAR_DEPENDENT, new HashMap<Term,Term>(), new HashMap<Term,Term>(), new Random());
+        boolean unifies = wu.next(Term1,Term2,1024);
+        if(!unifies)
+            throw new Exception("Unification is doing nonsense");
+
+    }
 }

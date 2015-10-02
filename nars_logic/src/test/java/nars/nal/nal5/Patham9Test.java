@@ -33,36 +33,6 @@ public class Patham9Test extends AbstractNALTest {
         return AbstractNALTest.core6;
     }
 
-    public void ProperlyLinkedTest(String premise1, String premise2) {
-        TestNAR tester = test();
-        tester.believe(premise1); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(premise2); //.en("Robin is a type of bird.");
-        tester.run(10);
-
-        Concept ret = tester.nar.concept(premise1);
-        boolean passed = false;
-        for(TermLink entry : ret.getTermLinks()) {
-            Term w = entry.getTerm();
-            if(w.toString().equals(premise2)) {
-                passed = true;
-            }
-        }
-
-        Concept ret2 = tester.nar.concept(premise2);
-        boolean passed2 = false;
-        for(TermLink entry : ret2.getTermLinks()) {
-            Term w = entry.getTerm();
-            if(w.toString().equals(premise1)) {
-                passed2 = true;
-            }
-        }
-
-        if(passed && passed2) { //dummy to pass the test:
-            tester.believe("<a --> b>");
-        }
-        tester.mustBelieve(10,"<a --> b>",0.9f);
-    }
-
 /*
     //don't touch this file - patham9
     @Test
@@ -127,12 +97,13 @@ public class Patham9Test extends AbstractNALTest {
         tester.run();
     }*/
 
-    @Test
+    /*@Test
     public void variable_elimination() throws InvalidInputException {
         TestNAR tester = test();
         tester.believe("<<$x --> bird> ==> <$x --> animal>>"); //en("If something is a bird, then it is an animal.");
         tester.believe("<robin --> bird>"); //en("A robin is a bird.");
         tester.mustBelieve(1000,"<robin --> animal>",1.00f,0.81f); //en("A robin is an animal.");
         tester.run();
-    }
+    }*/
+
 }
