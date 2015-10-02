@@ -1,6 +1,7 @@
 package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 import nars.Global;
 import nars.NAR;
@@ -12,7 +13,6 @@ import nars.util.data.random.XORShiftRandom;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
@@ -27,12 +27,12 @@ public class NARGraph<V> extends Spacegraph {
 
     protected Consumer<NARGraph> contact;
 
-    public final AtomicReference<EdgeRenderer<TermEdge>> edgeRenderer = new AtomicReference<>();
+    public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
 
 
-    public final AtomicReference<IterativeLayout<TermNode, TermEdge>> layout = new AtomicReference<>();
+    public final SimpleObjectProperty<IterativeLayout<TermNode, TermEdge>> layout = new SimpleObjectProperty<>();
 
-    public final AtomicBoolean conceptsChanged = new AtomicBoolean(true);
+    final AtomicBoolean conceptsChanged = new AtomicBoolean(true);
 
 
 
@@ -48,7 +48,7 @@ public class NARGraph<V> extends Spacegraph {
     int layoutPeriodMS = 30 /* slightly less than 2 * 17, approx sooner than 30fps */;
 
 
-    public final AtomicReference<VisModel> vis = new AtomicReference<>();
+    public final SimpleObjectProperty<VisModel> vis = new SimpleObjectProperty<>();
 
 
     /**

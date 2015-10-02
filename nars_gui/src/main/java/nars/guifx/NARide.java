@@ -13,7 +13,7 @@ import nars.NAR;
 import nars.clock.CycleClock;
 import nars.clock.RealtimeMSClock;
 import nars.event.FrameReaction;
-import nars.guifx.graph2.*;
+import nars.guifx.graph2.DefaultNARGraph;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.SizeAwareWindow;
@@ -368,23 +368,4 @@ public class NARide extends BorderPane {
     }
 
 
-    /** provides defalut settings for a NARGraph view */
-    public static class DefaultNARGraph extends NARGraph {
-        public DefaultNARGraph(NAR nar) {
-            super(nar);
-
-            input(new NARGrapher(16));
-
-            vis.set( new HexagonsVis() );
-
-
-            edgeRenderer.set(new CanvasEdgeRenderer());
-            //g.setEdgeRenderer(new QuadPolyEdgeRenderer());
-
-            //g.setLayout(new CircleLayout<>());
-            layout.set(new HyperassociativeMapLayout());
-            //g.setLayout(new TimelineLayout());
-
-        }
-    }
 }

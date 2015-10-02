@@ -21,8 +21,8 @@ public class HexagonsVis implements VisModel {
 
     final static Font nodeFont = NARfx.mono(0.25);
 
-    double minSize = 16;
-    double maxSize = 64;
+    protected double minSize = 16;
+    protected double maxSize = 64;
 
 
 
@@ -35,8 +35,17 @@ public class HexagonsVis implements VisModel {
 
     @Override
     public void accept(TermNode t) {
-        float p = t.c.getPriority();
-        float q = t.c.getQuality();
+        float p, q;
+        if (t == null) {
+            p = 0.5f;
+            q = 0.5f;
+        }
+
+        else {
+            p = t.c.getPriority();
+            q = t.c.getQuality();
+        }
+
 
         t.base.setFill(colors.get(p, q));
 

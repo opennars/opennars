@@ -14,22 +14,32 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     private List termList;
 
     public HyperassociativeMapLayout() {
-        super(2);
+        this(2);
+    }
+
+    public HyperassociativeMapLayout(int dim) {
+        super(dim);
     }
 
     @Override
     public void run(NARGraph graph, int i) {
-        resetLearning();
-        setLearningRate(0.4f);
-        setRepulsiveWeakness(10.0);
-        setAttractionStrength(10.0);
-        setMaxRepulsionDistance(10);
+
+        init();
 
         this.termList = graph.termList;
 
         align(i);
 
         apply();
+    }
+
+    protected void init() {
+        resetLearning();
+        setLearningRate(0.4f);
+        setRepulsiveWeakness(10.0);
+        setAttractionStrength(10.0);
+        setMaxRepulsionDistance(10);
+        setEquilibriumDistance(0.04f);
     }
 
     @Override
@@ -79,9 +89,6 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
         scaleFactor = 150 + 70 * Math.sqrt(1 + termList.size());
         setScale(scaleFactor);
 
-        //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
-
-        setEquilibriumDistance(0.04f); //termRadius * 1.5f);
 
         return termList;
     }

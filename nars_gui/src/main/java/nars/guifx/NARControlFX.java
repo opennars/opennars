@@ -49,12 +49,32 @@ public class NARControlFX extends HBox {
 
         //b.getChildren().add(new Separator(Orientation.HORIZONTAL));
 
+        NSlider fontSlider = new NSlider(25f, 25f, 0.5);
+        {
+            //getChildren().add(0, fontSlider);
+            fontSlider.value[0].addListener((a, b, c) -> {
+                runLater(() -> {
+                    double pointSize = 6 + 12 * c.doubleValue();
+                    getScene().getRoot().setStyle("-fx-font-size: " + pointSize + "pt;");
+                    //+ 100*(0.5 + c.doubleValue()) + "%");
+                });
+            });
+            fontSlider.setOnMouseClicked((e) -> {
+                if (e.getClickCount() == 2) {
+                    //double click
+                    System.out.println("double click fontSlider");
+                }
+            });
 
+        }
         {
             Button iconButton = JFX.newIconButton(FontAwesomeIcon.GEAR);
             iconButton.setMouseTransparent(true);
+
+
             Menu main = new Menu("", iconButton);
             main.getStyleClass().add("nar_main_menu");
+            main.getItems().add(new MenuItem("", fontSlider));
             main.getItems().add(new MenuItem("New..."));
             main.getItems().add(new MenuItem("Save..."));
             main.getItems().add(new MenuItem("Fork..."));
@@ -109,22 +129,6 @@ public class NARControlFX extends HBox {
 //        setMaxWidth(Double.MAX_VALUE);
         //setFillHeight(true);
 
-
-        NSlider fontSlider = new NSlider(25f, 25f, 0.5);
-        getChildren().add(0, fontSlider);
-        fontSlider.value[0].addListener((a, b, c) -> {
-            runLater(() -> {
-                double pointSize = 6 + 12 * c.doubleValue();
-                getScene().getRoot().setStyle("-fx-font-size: " + pointSize + "pt;");
-                //+ 100*(0.5 + c.doubleValue()) + "%");
-            });
-        });
-        fontSlider.setOnMouseClicked((e) -> {
-            if (e.getClickCount() == 2) {
-                //double click
-                System.out.println("double click fontSlider");
-            }
-        });
 
 
 //        this.busyBackgroundColor = new NARWindow.FXReaction(n, this, Events.FrameEnd.class) {

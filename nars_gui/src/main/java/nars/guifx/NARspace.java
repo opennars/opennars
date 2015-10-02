@@ -1,18 +1,12 @@
 package nars.guifx;
 
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import nars.NAR;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
 import nars.guifx.wikipedia.NARWikiBrowser;
 import nars.nar.Default;
-import za.co.knonchalant.builder.POJONode;
-import za.co.knonchalant.builder.TaggedParameters;
-import za.co.knonchalant.sample.pojo.SampleClass;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -40,30 +34,6 @@ public class NARspace extends Spacegraph {
         //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
 
 
-        TaggedParameters taggedParameters = new TaggedParameters();
-        List<String> range = new ArrayList<>();
-        range.add("Ay");
-        range.add("Bee");
-        range.add("See");
-        taggedParameters.addTag("range", range);
-        Pane jps = POJONode.build(new SampleClass(), taggedParameters);
-
-//        Button button = new Button("Read in");
-//        button.setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent actionEvent) {
-//                //SampleClass sample = POJONode.read(mainPane, SampleClass.class);
-//                //System.out.println(sample.getTextString());
-//            }
-//        });
-
-        jps.setStyle("-fx-font-size: 75%");
-        Windget wd = new Windget("WTF",
-                jps,
-                //new Button("XYZ"),
-                400, 400);
-        //wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
-
 
         final Default b = new Default();
         IOPane np = new IOPane(b);
@@ -75,7 +45,7 @@ public class NARspace extends Spacegraph {
         Function<Node, Node> wrap = (x) -> {
             return x;
         };
-        addNodes(wrap, cc, wd, nd);
+        addNodes(wrap, cc, nd);
 
         addNodes(
                 new Windget("Web",

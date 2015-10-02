@@ -6,19 +6,12 @@ import javafx.collections.ObservableList;
 import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import nars.guifx.IOPane;
 import nars.guifx.Spacegraph;
 import nars.guifx.util.CodeInput;
 import nars.guifx.util.Windget;
 import nars.nar.Default;
-import za.co.knonchalant.builder.POJONode;
-import za.co.knonchalant.builder.TaggedParameters;
-import za.co.knonchalant.sample.pojo.SampleClass;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class RunSpacegraph extends Application {
@@ -53,13 +46,13 @@ public class RunSpacegraph extends Application {
             //Region jps = new FXForm(new NAR(new Default()));  // create the FXForm node for your bean
 
 
-            TaggedParameters taggedParameters = new TaggedParameters();
-            List<String> range = new ArrayList<>();
-            range.add("Ay");
-            range.add("Bee");
-            range.add("See");
-            taggedParameters.addTag("range", range);
-            Pane jps = POJONode.build(new SampleClass(), taggedParameters);
+//            TaggedParameters taggedParameters = new TaggedParameters();
+//            List<String> range = new ArrayList<>();
+//            range.add("Ay");
+//            range.add("Bee");
+//            range.add("See");
+//            taggedParameters.addTag("range", range);
+//            Pane jps = POJONode.build(new SampleClass(), taggedParameters);
 
 //        Button button = new Button("Read in");
 //        button.setOnAction(new EventHandler<ActionEvent>() {
@@ -69,18 +62,17 @@ public class RunSpacegraph extends Application {
 //                //System.out.println(sample.getTextString());
 //            }
 //        });
-
-            jps.setStyle("-fx-font-size: 75%");
-            Windget wd = new Windget("WTF",
-                    jps,
-                    //new Button("XYZ"),
-                    400, 400);
-            wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
+//
+//            jps.setStyle("-fx-font-size: 75%");
+//            Windget wd = new Windget("WTF",
+//                    jps,
+//                    //new Button("XYZ"),
+//                    400, 400);
+//            wd.addOverlay(new Windget.RectPort(wc, true, 0, +1, 10, 10));
 
             addNodes(
                     wc,
-                    cc,
-                    wd
+                    cc
             );
 
 

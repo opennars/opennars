@@ -342,20 +342,21 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         }
     }
     
-    private void recenterNodes(final ArrayRealVector center) {
+    protected void recenterNodes(final ArrayRealVector center) {
 
         FasterList<N> vertices = this.vertices;
-        Map<N, ArrayRealVector> c = this.coordinates;
+        Map<N, ArrayRealVector> coordinates = this.coordinates;
 
         vertices.forEach((Consumer<N>) node -> {
-//        for (int i = 0; i < vertices.size(); i++) {
-//            N node = vertices.get(i);
-            ArrayRealVector v = coordinates.get(node);
-            if (v!=null)
-                sub(v, center);
+            recenterNode(node,
+                    coordinates.get(node), center);
         });
     }
 
+    protected void recenterNode(N node, ArrayRealVector v, ArrayRealVector center) {
+        if (v!=null)
+            sub(v, center);
+    }
 
 
     /** added to equilibrium distance to get target alignment distance */

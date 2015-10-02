@@ -2,6 +2,7 @@ package za.co.knonchalant.builder;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,13 +17,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
+import nars.Global;
 import za.co.knonchalant.builder.converters.IValueFieldConverter;
 import za.co.knonchalant.builder.exception.ComponentException;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -185,6 +191,63 @@ public class POJONode {
         }
     }
 
+
+    /**
+     * Build up a GUI from the given POJO, as read-only or not, using the provided Layout direction
+     * and additional information provided by parameters.
+     *
+     * @param object   POJO to read
+     * @param readOnly true if e.g., labels should be produced instead of text fields.
+     * @param layout   horizontal or vertical layout
+     * @param params   additional parameters
+     * @return the GUI
+     */
+    public static Collection<Node> methodNodes(Object object, TaggedParameters params) {
+        Method[] declaredMethods = object.getClass().getMethods();
+
+        List<Node> nodes = Global.newArrayList();
+
+        for (Method method : declaredMethods) {
+            if (method.getAnnotation(Ignore.class) != null) {
+                continue;
+            }
+
+            HBox methodBox = produceMethodNode(object, /* readOnly*/ false, params, method);
+
+            nodes.add(methodBox);
+        }
+        return nodes;
+    }
+
+    public static Collection<Node> propertyNodes(Object object, TaggedParameters params) {
+        Field[] fields = object.getClass().getFields();
+
+        List<Node> nodes = Global.newArrayList();
+
+        for (Field f : fields) {
+            if (f.getAnnotation(Ignore.class) != null) {
+                continue;
+            }
+
+            if (!Property.class.isAssignableFrom(f.getType()))
+                continue;
+
+            int mod = f.getModifiers();
+            if (!(Modifier.isPublic(mod)
+                    && Modifier.isFinal(mod))) {
+                //restrict to only: public final
+                continue;
+            }
+
+
+            HBox methodBox = newFieldNode(object, /* readOnly*/ false, params, f);
+
+            nodes.add(methodBox);
+        }
+        return nodes;
+    }
+
+
     /**
      * Find the first node matching the given styleclass
      *
@@ -226,16 +289,6 @@ public class POJONode {
         return build(object, false);
     }
 
-    /**
-     * Build up a GUI from the given POJO, using additional values from the parameters
-     *
-     * @param object     POJO to read
-     * @param parameters additional parameters
-     * @return the GUI
-     */
-    public static Pane build(Object object, TaggedParameters parameters) {
-        return build(object, false, Layout.VERTICAL, parameters);
-    }
 
     /**
      * Build up a GUI from the given POJO, optionally read-only.
@@ -255,9 +308,9 @@ public class POJONode {
      * @param layout horizontal or vertical layout
      * @return the GUI
      */
-    public static Pane build(Object object, Layout layout) {
-        return build(object, false, layout, null);
-    }
+//    public static Pane build(Object object, Layout layout) {
+//        return build(object, false, layout, null);
+//    }
 
     /**
      * Build up a GUI from the given POJO, as read-only or not, using the provided Layout direction.
@@ -271,18 +324,18 @@ public class POJONode {
         return build(object, readOnly, layout, null);
     }
 
-    /**
-     * Build up a GUI from the given POJO, using the provided Layout direction
-     * and additional information provided by parameters.
-     *
-     * @param object           POJO to read
-     * @param layout           horizontal or vertical layout
-     * @param taggedParameters additional parameters
-     * @return the GUI
-     */
-    public static Node build(Object object, Layout layout, TaggedParameters taggedParameters) {
-        return build(object, false, layout, taggedParameters);
-    }
+//    /**
+//     * Build up a GUI from the given POJO, using the provided Layout direction
+//     * and additional information provided by parameters.
+//     *
+//     * @param object           POJO to read
+//     * @param layout           horizontal or vertical layout
+//     * @param taggedParameters additional parameters
+//     * @return the GUI
+//     */
+//    public static Node build(Object object, Layout layout, TaggedParameters taggedParameters) {
+//        return build(object, false, layout, taggedParameters);
+//    }
 
     /**
      * Build up a GUI from the given POJO, as read-only or not, using the provided Layout direction
@@ -303,7 +356,7 @@ public class POJONode {
                 continue;
             }
 
-            HBox methodBox = produceFieldNode(object, readOnly, params, method);
+            HBox methodBox = produceMethodNode(object, readOnly, params, method);
 
             pane.getChildren().add(methodBox);
         }
@@ -320,7 +373,7 @@ public class POJONode {
      * @param window   the window that this GUI will be in.
      * @return the GUI for this field
      */
-    private static HBox produceFieldNode(Object object, boolean readOnly, TaggedParameters params, Method method) {
+    private static HBox produceMethodNode(Object object, boolean readOnly, TaggedParameters params, Method method) {
         HBox methodBox = new HBox();
         methodBox.setSpacing(10);
 
@@ -335,7 +388,21 @@ public class POJONode {
         }
         return methodBox;
     }
+    private static HBox newFieldNode(Object object, boolean readOnly, TaggedParameters params, Field field) {
+        HBox methodBox = new HBox();
 
+        {
+            String name = getName(field);
+            Label label = new Label(name);
+            label.getStyleClass().addAll("built-label");
+            //label.setPrefWidth(200);
+            /*Node valueNode = getValueField(object, method, readOnly || getSetter(method) == null, name, params);*/
+            Node valueNode = new Text(field.getType().toString());
+
+            methodBox.getChildren().addAll(label, valueNode);
+        }
+        return methodBox;
+    }
     /**
      * Check if the method is a valid getter method - that is, does it begin with get and take no parameters.
      *
@@ -488,7 +555,18 @@ public class POJONode {
             return nameAnnotation.value();
         }
 
-        return method.getName().replaceFirst(GETTER_PREFIX, "");
+        return method.getName().replaceFirst(GETTER_PREFIX,
+                    "");
+    }
+
+    private static String getName(Field field) {
+        Name nameAnnotation = field.getAnnotation(Name.class);
+
+        if (nameAnnotation != null) {
+            return nameAnnotation.value();
+        }
+
+        return field.getName().replaceFirst(GETTER_PREFIX, "");
     }
 
     /**
