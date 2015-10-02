@@ -28,7 +28,7 @@ abstract public class RuleTest {
 
         NAR n = new Default() {
             @Override
-            protected SimpleDeriver getDeriver() {
+            protected SimpleDeriver newDeriver() {
                 return sd;
             }
         };

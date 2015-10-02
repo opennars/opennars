@@ -1,12 +1,14 @@
 package nars.concept;
 
-import nars.Memory;
-import nars.budget.Budget;
 import nars.term.Term;
 
+import java.util.function.Function;
 
-@FunctionalInterface public interface ConceptBuilder {
 
-    Concept newConcept(Term t, Budget b, Memory m);
+@FunctionalInterface public interface ConceptBuilder extends Function<Term, Concept> {
+
+
+    ///** builds a concept. the budget will be set by the callee overwritten
+//    Concept newConcept(Term t, Budget b, Memory m);
 
 }

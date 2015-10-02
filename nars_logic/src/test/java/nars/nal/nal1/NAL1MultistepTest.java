@@ -20,7 +20,7 @@ public class NAL1MultistepTest extends AbstractNALTest {
 
     @Parameterized.Parameters(name = "{index}:{0}")
     public static Iterable<Supplier<NAR>> configurations() {
-        return AbstractNALTest.core2;
+        return AbstractNALTest.nars(1, true);
     }
 
 

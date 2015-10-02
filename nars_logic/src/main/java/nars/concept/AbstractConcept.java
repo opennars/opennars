@@ -23,8 +23,8 @@ public abstract class AbstractConcept extends Item<Term> implements Concept {
 
     @Deprecated final static Variable how = new Variable("?how");
 
-    public AbstractConcept(final Term term, Budget budget, final Memory memory) {
-        super(budget);
+    public AbstractConcept(final Term term, final Memory memory) {
+        super(Budget.zero);
         this.memory = memory;
         this.term = term;
         this.creationTime = memory.time();

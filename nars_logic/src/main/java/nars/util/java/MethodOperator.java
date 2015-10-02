@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MethodOperator extends TermFunction {
 
+
     static final TypeParser parser = TypeParser.newBuilder().build();
 
     private final Method method;
@@ -31,7 +32,7 @@ public class MethodOperator extends TermFunction {
     public static final Atom ERROR = Atom.the("ERR");
 
     public MethodOperator(AtomicBoolean enable, Termizer termizer, Method m) {
-        super(m.getDeclaringClass().getSimpleName() + "_" + m.getName());
+        super(m.toGenericString());
 
 
         this.method = m;
@@ -63,7 +64,7 @@ public class MethodOperator extends TermFunction {
         }
 
         if (x.length < requires)
-            throw new RuntimeException("invalid argument count: needs " + requires);
+            throw new RuntimeException("invalid argument count: needs " + requires + " but has " + Arrays.toString(x));
 
         final Object instance;
         if (paramOffset == 0)

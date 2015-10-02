@@ -9,10 +9,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.clock.CycleClock;
-import nars.concept.AtomConcept;
-import nars.concept.Concept;
-import nars.concept.ConceptActivator;
-import nars.concept.DefaultConcept;
+import nars.concept.*;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
@@ -64,7 +61,7 @@ import java.util.stream.Stream;
  * which is supposed to be per-instance/mutable. So do not attempt
  * to create multiple NAR with the same Default seed model
  */
-public class Default extends NAR {
+public class Default extends NAR implements ConceptBuilder {
 
     public final DefaultCycle core;
     public final FIFOTaskPerception input;
@@ -145,8 +142,8 @@ public class Default extends NAR {
 
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
-                task -> true /* allow everything */,
-                task -> TaskProcess.run(Default.this, task)
+            task -> true /* allow everything */,
+            task -> TaskProcess.run(Default.this, task)
         );
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
@@ -154,13 +151,14 @@ public class Default extends NAR {
 
     public DefaultCycle initCore(Memory m, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
 
-        DefaultCycle c = new DefaultCycle(
-                m.the("defaultCore", this),
-                m.the("logic", getDeriver()),
-                new ConceptBagActivator(this),
-                newConceptBag()
+        DefaultCycle c = new DefaultCycle(this,
+                newDeriver(),
+                newConceptBag(activeConcepts),
+                new ConceptActivator(this, this)
         );
 
+        //TODO move these to a PremiseGenerator which supplies
+        // batches of Premises
         c.termlinksSelectedPerFiredConcept.set(termLinksPerCycle);
         c.tasklinksSelectedPerFiredConcept.set(taskLinksPerCycle);
         c.conceptsFiredPerCycle.set(conceptsFirePerCycle);
@@ -343,17 +341,22 @@ public class Default extends NAR {
         return this;
     }
 
-    public Concept newConcept(final Term t, final Budget b) {
+    public Concept apply(final Term t) {
 
         Bag<Sentence, TaskLink> taskLinks =
-                new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-        taskLinks.mergePlus();
+                new CurveBag<>(rng, getConceptTaskLinks()).mergePlus();
 
         Bag<TermLinkKey, TermLink> termLinks =
-                new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
-        termLinks.mergePlus();
+                new CurveBag<>(rng, getConceptTermLinks()).mergePlus();
 
-        return newConcept(t, b, taskLinks, termLinks, memory());
+        Memory m1 = memory();
+
+        if (t instanceof Atom) {
+            return new AtomConcept(t, m1, termLinks, taskLinks);
+        } else {
+            return new DefaultConcept(t, m1, taskLinks, termLinks);
+        }
+
     }
 
     //    /**
@@ -366,30 +369,14 @@ public class Default extends NAR {
 //
 //    }
 
-    public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
-
-        if (t instanceof Atom) {
-            return new AtomConcept(t, b, termLinks, taskLinks, m
-            );
-        } else {
-            return new DefaultConcept(t, b,
-                    taskLinks, termLinks,
-                    m
-            );
-        }
-
-    }
-
     @Override
     protected final Concept doConceptualize(Term term, Budget b) {
         return core.update(term, b, true, 1f, core.active);
     }
 
 
-    public Bag<Term, Concept> newConceptBag() {
-        CurveBag<Term, Concept> b = new CurveBag(rng, 1);
-        b.mergePlus();
-        return b;
+    public Bag<Term, Concept> newConceptBag(int initialCapacity) {
+        return new CurveBag<>(rng, initialCapacity).mergePlus();
     }
 
     public int getConceptTaskLinks() {
@@ -415,7 +402,7 @@ public class Default extends NAR {
         return getClass().getSimpleName() + '[' + nal() + +']';
     }
 
-    protected SimpleDeriver getDeriver() {
+    protected SimpleDeriver newDeriver() {
         return SimpleDeriver.standardDeriver;
     }
 
@@ -463,7 +450,7 @@ public class Default extends NAR {
 
         public final MutableInteger capacity = new MutableInteger();
 
-        public final ConceptBagActivator ca;
+        public final ConceptActivator ca;
 
         public final AtomicDouble conceptForget;
 
@@ -474,7 +461,7 @@ public class Default extends NAR {
 
         /* ---------- Short-term workspace for a single cycle ------- */
 
-        public DefaultCycle(NAR nar, SimpleDeriver deriver, ConceptBagActivator ca, Bag<Term, Concept> concepts) {
+        public DefaultCycle(NAR nar, SimpleDeriver deriver, Bag<Term, Concept> concepts, ConceptActivator ca) {
             super();
 
             this.nar = nar;
@@ -486,6 +473,7 @@ public class Default extends NAR {
 
             this.conceptsFiredPerCycle = new AtomicInteger(1);
             this.active = concepts;
+
 
             add(
                     nar.memory.eventCycleStart.on((m) -> {
@@ -634,42 +622,6 @@ public class Default extends NAR {
 //        }
 //    }
 
-    public static class ConceptBagActivator extends ConceptActivator implements Serializable {
-
-
-        public ConceptBagActivator(NAR n) {
-            super(n);
-        }
-
-        @Override
-        @Deprecated
-        public Concept newConcept(Term t, Budget b, @Deprecated Memory m) {
-            return ((Default) nar).newConcept(t, b);
-        }
-
-        @Override
-        public Concept newItem() {
-            //default behavior overriden; a new item will be maanually inserted into the bag under certain conditons to be determined by this class
-            Concept c = ((Default) nar).newConcept(getKey(), getBudget());
-            nar.memory().put(c);
-
-            return c;
-        }
-
-        @Override
-        protected void on(Concept c) {
-
-        }
-
-        @Override
-        protected void off(Concept c) {
-
-        }
-
-//        public Concept update(Bag<Term,Concept> bag) {
-//            return bag.update(this);
-//        }
-    }
 
     /**
      * accumulates a buffer of iasks which can be delivered at a specific rate.
@@ -688,7 +640,7 @@ public class Default extends NAR {
      * <p>
      * Delivery (procedure for cyclical input policy
      */
-    static class FIFOTaskPerception extends Active implements Consumer<Task> {
+    public static class FIFOTaskPerception extends Active implements Consumer<Task> {
 
 
         /**

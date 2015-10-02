@@ -7,7 +7,6 @@ package nars.io.in;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.NARSeed;
 import nars.narsese.NarseseParser;
 import nars.task.Task;
 
@@ -158,22 +157,22 @@ public class LibraryInput extends TextInput {
         return t;
     }
 
-    public static Collection getParams(String directories, NARSeed... builds) {
-        return getParams(new String[] { directories }, builds);
-    }
-
-    //@Parameterized.Parameters(name="{1} {0}")
-    public static Collection getParams(String[] directories, NARSeed... builds) {
-        Collection<String> t = getPaths(directories);
-
-        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
-        for (String script : t) {
-            for (NARSeed b : builds) {
-                params.add(new Object[] { b, script });
-            }
-        }
-        return params;
-    }
+//    public static Collection getParams(String directories, NARSeed... builds) {
+//        return getParams(new String[] { directories }, builds);
+//    }
+//
+//    //@Parameterized.Parameters(name="{1} {0}")
+//    public static Collection getParams(String[] directories, NARSeed... builds) {
+//        Collection<String> t = getPaths(directories);
+//
+//        Collection<Object[]> params = new ArrayList(t.size() * builds.length);
+//        for (String script : t) {
+//            for (NARSeed b : builds) {
+//                params.add(new Object[] { b, script });
+//            }
+//        }
+//        return params;
+//    }
 
     public static Map<String, String> getAllExamples() {
         return getUnitTests(directories);

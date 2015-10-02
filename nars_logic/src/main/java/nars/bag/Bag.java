@@ -25,6 +25,7 @@ import java.util.function.Supplier;
  */
 public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V> implements Consumer<V>, Supplier<V>  {
 
+
     transient protected final Budget temp = new Budget();
     transient final BagForgetting<K, V> forgetNext = new BagForgetting<>();
 
@@ -65,12 +66,12 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
     abstract public V put(V newItem);
 
     /** set the merging function to 'average' */
-    public void mergeAverage() {  mergeFunction = Budget.average;    }
+    public Bag mergeAverage() {  mergeFunction = Budget.average; return this;   }
 
     /** set the merging function to 'plus' */
-    public void mergePlus() {  mergeFunction = Budget.plus;    }
+    public Bag mergePlus() {  mergeFunction = Budget.plus;  return this;  }
 
-    public void mergeMax() {  mergeFunction = Budget.max;    }
+    public Bag mergeMax() {  mergeFunction = Budget.max; return this;   }
 
     final protected void merge(final Budget newBudget, final Budget oldBudget) {
         mergeFunction.value(newBudget, oldBudget);
@@ -490,6 +491,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
     }
 
     abstract public void setCapacity(int c);
+
 
 //    /**
 //     * for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible

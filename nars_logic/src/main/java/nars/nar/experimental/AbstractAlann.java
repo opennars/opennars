@@ -137,8 +137,8 @@ public abstract class AbstractAlann extends NAR {
                 return existing;
             }
             else {
-                Concept c = newConcept(term, budget, memory);
-                c.getBudget().mulPriority(activationFactor);
+                Concept c = newConcept(term, memory);
+                c.getBudget().set(budget).mulPriority(activationFactor);
                 return c;
             }
         });
@@ -173,30 +173,30 @@ public abstract class AbstractAlann extends NAR {
 //    public PremiseProcessor getPremiseProcessor(final Param p) {
 //        return param.getPremiseProcessor(p);
 //    }
+//
+//    public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks) {
+//
+//        final Concept c;
+//        if (t instanceof Atom) {
+//            c = new AtomConcept(t,
+//                    termLinks, taskLinks,
+//                    memory
+//            );
+//        }
+//        else {
+//            c = new DefaultConcept(t,
+//                    taskLinks, termLinks,
+//                    memory
+//            );
+//        }
+//
+//
+//        return c;
+//    }
 
-    public Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks) {
-
-        final Concept c;
-        if (t instanceof Atom) {
-            c = new AtomConcept(t, b,
-                    termLinks, taskLinks,
-                    memory
-            );
-        }
-        else {
-            c = new DefaultConcept(t, b,
-                    taskLinks, termLinks,
-                    memory
-            );
-        }
 
 
-        return c;
-    }
-
-
-
-    public Concept newConcept(final Term t, final Budget b, final Memory m) {
+    public Concept newConcept(final Term t, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks =
                 new CurveBag<>(rng, /*sentenceNodes,*/ getConceptTaskLinks());
@@ -206,8 +206,20 @@ public abstract class AbstractAlann extends NAR {
                 new CurveBag<>(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
         termLinks.mergePlus();
 
-        return newConcept(t, b, taskLinks, termLinks);
+        final Concept c;
+        if (t instanceof Atom) {
+            c = new AtomConcept(t,
+                    memory, termLinks, taskLinks
+            );
+        } else {
+            c = new DefaultConcept(t,
+                    memory, taskLinks, termLinks
+            );
+        }
+
+        return c;
     }
+
 
     private int getConceptTaskLinks() {
         return -1;

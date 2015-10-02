@@ -557,6 +557,10 @@ public class Terms {
 //        return t;
 //    }
 
+    public static Term[] toSortedSetArray(final Collection<Term> a, final Collection<Term> b) {
+        return toSortedSetArray(a, b);
+    }
+
     public static Term[] toSortedSetArray(final Term... arg) {
         switch (arg.length) {
             case 0: return EmptyTermArray;

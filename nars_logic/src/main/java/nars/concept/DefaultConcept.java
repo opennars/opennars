@@ -5,6 +5,7 @@ import javolution.util.function.Equality;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
+import nars.bag.NullBag;
 import nars.budget.Budget;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -62,17 +63,20 @@ public class DefaultConcept extends AtomConcept {
     /** how incoming budget is merged into its existing duplicate quest/question */
     final static Procedure2<Budget, Budget> duplicateQuestionMerge = Budget.plus;
 
+    public DefaultConcept(final Term term, final Memory memory) {
+        this(term, memory, new NullBag(), new NullBag());
+    }
 
     /**
      * Constructor, called in Memory.getConcept only
-     *  @param term      A term corresponding to the concept
      * @param b
+     * @param term      A term corresponding to the concept
+     * @param memory    A reference to the memory
      * @param taskLinks
      * @param termLinks
-     * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
-        super(term, b, termLinks, taskLinks, memory);
+    public DefaultConcept(final Term term, final Memory memory, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks) {
+        super(term, memory, termLinks, taskLinks);
 
         this.beliefs = new ArrayListBeliefTable(memory.conceptBeliefsMax.intValue());
         this.goals = new ArrayListBeliefTable(memory.conceptGoalsMax.intValue());
@@ -355,40 +359,40 @@ public class DefaultConcept extends AtomConcept {
 //
 //        }
 
-            if (goal.getBudget().summaryGreaterOrEqual(memory.questionFromGoalThreshold)) {
-
-                // check if the Goal is already satisfied
-                //Task beliefSatisfied = getBeliefs().topRanked();
-
-            /*float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
-            if (beliefSatisfied != null) {
-
-                Truth projectedTruth = beliefSatisfied.projection(goal.getOccurrenceTime(), dur);
-                //Sentence projectedBelief = belief.projectionSentence(goal.getOccurrenceTime(), dur);
-
-                boolean solved = null!=trySolution(beliefSatisfied, projectedTruth, goal, nal); // check if the Goal is already satisfied (manipulate budget)
-                if (solved) {
-                    AntiSatisfaction = goal.getTruth().getExpDifAbs(beliefSatisfied.getTruth());
-                }
-            }
-
-            float Satisfaction = 1.0f - AntiSatisfaction;
-            Truth T = BasicTruth.clone(goal.getTruth());
-
-            T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
-
-            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
-*/
-
-                questionFromGoal(goal, nal);
-
-                //TODO
-                //InternalExperience.experienceFromTask(nal, task, false);
-
-                nal.memory().execute(goal);
-
-                //}
-            }
+//            if (goal.getBudget().summaryGreaterOrEqual(memory.questionFromGoalThreshold)) {
+//
+//                // check if the Goal is already satisfied
+//                //Task beliefSatisfied = getBeliefs().topRanked();
+//
+//            /*float AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+//            if (beliefSatisfied != null) {
+//
+//                Truth projectedTruth = beliefSatisfied.projection(goal.getOccurrenceTime(), dur);
+//                //Sentence projectedBelief = belief.projectionSentence(goal.getOccurrenceTime(), dur);
+//
+//                boolean solved = null!=trySolution(beliefSatisfied, projectedTruth, goal, nal); // check if the Goal is already satisfied (manipulate budget)
+//                if (solved) {
+//                    AntiSatisfaction = goal.getTruth().getExpDifAbs(beliefSatisfied.getTruth());
+//                }
+//            }
+//
+//            float Satisfaction = 1.0f - AntiSatisfaction;
+//            Truth T = BasicTruth.clone(goal.getTruth());
+//
+//            T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
+//
+//            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
+//*/
+//
+//                questionFromGoal(goal, nal);
+//
+//                //TODO
+//                //InternalExperience.experienceFromTask(nal, task, false);
+//
+//                nal.memory().execute(goal);
+//
+//                //}
+//            }
 
             return true;
 

@@ -8,31 +8,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 @RunWith(Parameterized.class)
 public class NAL4MultistepTest extends AbstractNALTest {
 
 
-    public NAL4MultistepTest(Supplier<NAR> b) { super(b);  }
+    public NAL4MultistepTest(Supplier<NAR> b) {
+        super(b);
+    }
 
-    @Parameterized.Parameters(name= "{0}")
-    public static Collection configurations() {
-        return AbstractNALTest.core4;
-//        return Arrays.asList(new Supplier[][]{
-//                {() -> new Default()},
-//                //{new DefaultDeep()},
-//                //{new NewDefault()},
-//                //{new NewDefault().setInternalExperience(null)},
-//                //{new Default().setInternalExperience(null) },
-//                {() -> new Default().nal(5)},
-//                //{new Classic().setInternalExperience(null) },
-//
-//                //{new Solid(1, 128, 1, 1, 1, 2).level(5)}
-//
-//
-//        });
+    @Parameterized.Parameters(name = "{index}:{0}")
+    public static Iterable<Supplier<NAR>> configurations() {
+        return AbstractNALTest.nars(4, true);
     }
 
     //this test only works because the confidence matches, but the related task has insufficient budget

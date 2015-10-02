@@ -64,18 +64,26 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         this.nar = n;
     }
 
+    public static <N extends NAR> N wrap(N n) throws Exception {
+        final NALObjects nalObjects = new NALObjects(n);
+        return nalObjects.build("this", n);
+    }
 
     @Override
-    protected void onClassInPackage(Term classs, Atom packagge) {
-        nar.believe(Inheritance.make(classs, packagge));
+    protected Term termClassInPackage(Term classs, Term packagge) {
+        Inheritance t = Instance.make(classs, packagge);
+        nar.believe(t);
+        return t;
     }
+
+
 
     @Override
     protected void onInstanceOfClass(Object instance, Term oterm, Term clas) {
         /** only point to type if non-numeric? */
         //if (!Primitives.isWrapperType(instance.getClass()))
 
-        nar.believe(Instance.make(oterm, clas));
+        //nar.believe(Instance.make(oterm, clas));
     }
 
     @Override
@@ -90,17 +98,20 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
      *  and input them to the NAL in narsese.
      */
     @Override
-    public Object invoke(Object object, Method overridden, Method forwarder,
-                         Object[] args) throws Throwable {
+    public Object invoke(Object object, Method overridden, Method forwarder, Object[] args) throws Throwable {
 
         Object result = forwarder.invoke(object, args);
+
+        return invoked(object, overridden, args, result);
+    }
+
+    public Object invoked(Object object, Method overridden, Object[] args, Object result) {
         if (methodExclusions.contains(overridden.getName()))
             return result;
 
         if (!lock.compareAndSet(false,true)) {
             return result;
         }
-
 
 
         final Term instance = term(object);
@@ -144,9 +155,6 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
         return result;
     }
 
-
-
-
 //    //TODO use a generic Consumer<Task> for recipient/recipients of these
 //    public final NAR nar;
 //
@@ -164,24 +172,63 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 //    }
 //
 
+    /** the id will be the atom term label for existing instance */
+    public <T> T build(String id, T instance) throws Exception {
+
+        return build(id, (Class<? extends T>)instance.getClass(), instance);
+
+    }
+
+
+    class DelegateHandler<X> implements MethodHandler {
+
+        private final X obj;
+
+        public DelegateHandler(X n) {
+            this.obj = n;
+        }
+
+        @Override
+        public Object invoke(Object o, Method method, Method method1, Object[] objects) throws Throwable {
+
+            Object result = method.invoke(obj, objects);
+
+            return invoked(obj, method, objects, result);
+        }
+    }
+
+    public <T> T build(String id, Class<? extends T> classs) throws Exception {
+        return build(id, classs, null);
+    }
+
     /** the id will be the atom term label for the created instance */
-    public <T> T build(String id, Class<T> classs) throws Exception {
+    public <T> T build(String id, Class<? extends T> classs, /* nullable */ T delegate) throws Exception {
 
 
         ProxyFactory factory = proxyCache.getIfAbsentPut(classs, () -> new ProxyFactory());
         factory.setSuperclass(classs);
 
 
+
         Class clazz = factory.createClass();
 
-        Object instance = clazz.newInstance();
-        ((ProxyObject) instance).setHandler(this);
+        T instance = (T) clazz.newInstance();
+
+
+        ((ProxyObject) instance).setHandler(
+                delegate == null ?
+                this :
+                new DelegateHandler<>(delegate)
+        );
+
+
 
         instances.put(instance, Atom.the(id));
         objects.put(instance, Atom.the(id));
 
         //add operators for public methods
-        for (Method m :  classs.getMethods()) {
+
+        for (Method m :  instance.getClass().getMethods()) {
             if (!methodExclusions.contains(m.toString()) && Modifier.isPublic(m.getModifiers())) {
                 MethodOperator op = methodOps.computeIfAbsent(m, _m -> {
                     MethodOperator mo = new MethodOperator(goalInvoke, this, m);
@@ -191,7 +238,8 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
             }
         }
 
-        return (T) instance;
+
+        return instance;
     }
 
     public void setGoalInvoke(boolean b) {

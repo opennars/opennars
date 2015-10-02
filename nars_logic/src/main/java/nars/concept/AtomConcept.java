@@ -2,7 +2,7 @@ package nars.concept;
 
 import nars.Memory;
 import nars.bag.Bag;
-import nars.budget.Budget;
+import nars.bag.NullBag;
 import nars.link.*;
 import nars.premise.Premise;
 import nars.task.Sentence;
@@ -27,8 +27,13 @@ public class AtomConcept extends AbstractConcept {
     protected transient final TermLinkBuilder termLinkBuilder;
     protected transient final TaskLinkBuilder taskLinkBuilder;
 
-    public AtomConcept(Term atom, Budget budget, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks, Memory memory) {
-        super(atom, budget, memory);
+    /** creates with no termlink and tasklink ability */
+    public AtomConcept(Term atom, Memory memory) {
+        this(atom, memory, new NullBag(), new NullBag());
+    }
+
+    public AtomConcept(Term atom, Memory memory, final Bag<TermLinkKey, TermLink> termLinks, final Bag<Sentence, TaskLink> taskLinks) {
+        super(atom, memory);
         this.termLinks = termLinks;
         this.taskLinks = taskLinks;
         this.taskLinkBuilder = new TaskLinkBuilder(memory);

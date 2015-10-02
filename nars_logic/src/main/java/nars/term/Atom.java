@@ -157,10 +157,9 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
     }
 
     public final static Atom the(final String name, boolean quoteIfNecessary) {
-        if (quoteIfNecessary) {
-            if (quoteNecessary(name))
-                return quote(name);
-        }
+        if (quoteIfNecessary && quoteNecessary(name))
+            return quote(name);
+
         return the(name);
     }
 
@@ -189,14 +188,19 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
 
     /** gets the atomic term of an integer */
     public final static Atom the(final int i) {
+        return the(i, 10);
+    }
+
+    /** gets the atomic term of an integer, with specific radix (up to 36) */
+    public final static Atom the(final int i, int radix) {
         //fast lookup for single digits
         if ((i >= 0) && (i <= 9)) {
             Atom a = digits[i];
             if (a == null)
-                a = digits[i] = the(Integer.toString(i));
+                a = digits[i] = the(Integer.toString(i, radix));
             return a;
         }
-        return the(Integer.toString(i), false);
+        return the(Integer.toString(i, radix));
     }
 
     public final static Atom the(final float v) {

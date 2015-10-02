@@ -350,8 +350,11 @@ public class TestNAR  {
 
     }
 
-
     public TestNAR run() {
+        return run(true);
+    }
+
+    public TestNAR run(boolean printReport) {
         long finalCycle = 0;
         for (TaskCondition oc : requires) {
             if (oc.cycleEnd > finalCycle)
@@ -368,23 +371,24 @@ public class TestNAR  {
         //assertTrue("No cycles elapsed", tester.nar.memory().time/*SinceLastCycle*/() > 0);
 
 
-        Report report = new Report(this);
+        if (printReport) {
+            Report report = new Report(this);
 
-        report.setError(getError());
+            report.setError(getError());
 
-        requires.forEach(report::add);
+            requires.forEach(report::add);
 
-        String s = JSONOutput.stringFromFieldsPretty(report);
-        if (!report.isSuccess()) {
+            String s = JSONOutput.stringFromFieldsPretty(report);
+            if (!report.isSuccess()) {
 
-            System.err.append(trace.getBuffer());
+                System.err.append(trace.getBuffer());
 
-            assertTrue(s, false);
+                assertTrue(s, false);
 
-        }
-        else {
-            //print report
-            System.out.println(s);
+            } else {
+                //print report
+                System.out.println(s);
+            }
         }
 
 

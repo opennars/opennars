@@ -11,7 +11,7 @@ import nars.term.Term;
 /**
  * Created by me on 3/15/15.
  */
-abstract public class ConceptActivator extends BagActivator<Term, Concept> implements ConceptBuilder {
+public class ConceptActivator extends BagActivator<Term, Concept> implements ConceptBuilder {
 
     //static final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
 
@@ -22,9 +22,11 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
     private float activationFactor;
 
     public final NAR nar;
+    private final ConceptBuilder builder;
 
-    public ConceptActivator(NAR nar) {
+    public ConceptActivator(NAR nar, ConceptBuilder builder) {
         this.nar = nar;
+        this.builder = builder;
     }
 
     /** gets a concept from Memory, even if forgotten */
@@ -50,6 +52,19 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
     }
 
 
+    @Override
+    public final Concept newItem() {
+        Concept c = builder.apply(getKey());
+        nar.memory().put(c);
+        return c;
+    }
+
+    @Override
+    public final Concept apply(Term t) {
+        return builder.apply(t);
+    }
+
+
     public Concept update(Term term, Budget b, boolean createIfMissing, long now, float activationFactor, Bag<Term,Concept> bag) {
 
         setKey(term);
@@ -70,15 +85,6 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
         return nar.concepts();
     }
 
-    /** returns non-null if the Concept is available for entry into active
-     *  Concept bag. attempts to retrieve an existing concept from the index
-     *  first  otherwise it may attempt to create a new concept and at least
-     *  insert it into the index for potential later activation.
-     */
-    @Override public Concept newItem() {
-        //default behavior overriden; a new item will be maanually inserted into the bag under certain conditons to be determined by this class
-        return null;
-    }
 
 //
 //    public Concept forgottenOrNewConcept() {
@@ -138,10 +144,10 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
 
 
     /** called when a Concept enters attention. its state should be set active prior to call */
-    abstract protected void on(Concept c);
+    @Deprecated void on(Concept c) { }
 
     /** called when a Concept leaves attention. its state should be set forgotten prior to call */
-    abstract protected void off(Concept c);
+    @Deprecated void off(Concept c) { }
 
 
     @Override
@@ -199,9 +205,9 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> imple
 //    }
 
 
-
-    protected boolean isActivatable(Concept c) {
-        //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);
-        return c.getBudget().getPriority() > nar.memory.activeConceptThreshold.floatValue();
-    }
+//
+//    protected boolean isActivatable(Concept c) {
+//        //return budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold);
+//        return c.getBudget().getPriority() > nar.memory.activeConceptThreshold.floatValue();
+//    }
 }

@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import nars.NAR;
 import nars.meter.EventCount;
 import nars.nar.Default;
-import nars.term.Atom;
 import nars.term.Term;
 import org.junit.Test;
 
@@ -75,10 +74,13 @@ public class NALObjectsTest extends TestCase {
         NAR m = new Default();
 
         String instance = "obj";
-        TestClass nc = new NALObjects(n).build(instance, TestClass.class);
-        TestClass mc = new NALObjects(m).build(instance, TestClass.class);
+        NALObjects no = new NALObjects(n);
+        TestClass nc = no.build(instance, TestClass.class);
 
-        assertNotNull( n.memory.exe.all(Atom.the("TestClass_multiply")) );
+
+
+
+
 
         StringWriter ns, ms;
         n.trace(new PrintWriter(ns = new StringWriter()));
@@ -86,12 +88,17 @@ public class NALObjectsTest extends TestCase {
 
         n.stdout();
 
-        n.input("TestClass_multiply(" + instance + ", 2, 3, #x)!");
+        nc.multiply(2,3);
 
         n.frame(16);
 
+        assertNotNull( n.memory.concept(
+                no.termClassInPackage(TestClass.class))
+        );
 
-        mc.multiply(2,3);
+
+        n.input("TestClass_multiply(" + instance + ", 2, 3, #x)!");
+
 
         m.frame(32);
 

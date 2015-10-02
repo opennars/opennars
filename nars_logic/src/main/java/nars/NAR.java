@@ -1396,7 +1396,7 @@ abstract public class NAR implements Serializable, Level {
     @Override
     public boolean equals(Object obj) {
         //TODO compare any other stateful values from NAR class in addition to Memory
-        return memory().equals(((NAR) obj).memory());
+        return this==obj;
     }
 
 

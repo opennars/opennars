@@ -15,8 +15,9 @@ import java.util.stream.Collectors;
 public class DefaultTermizer implements Termizer {
 
 
-    final Map<Package, Atom> packages = new HashMap();
+    final Map<Package, Term> packages = new HashMap();
     final Map<Class, Term> classes = new HashMap();
+
 
     final HashBiMap<Object, Term> objects = new HashBiMap<>();
 
@@ -66,19 +67,17 @@ public class DefaultTermizer implements Termizer {
 
         if (o instanceof Class) {
             Class oc = (Class) o;
-            String cname = oc.getSimpleName();
-            if (cname.isEmpty()) cname = oc.getName();
 
             Package p = oc.getPackage();
             if (p != null) {
 
-                Term cterm = Atom.quote(cname);
+                Term cterm = termClassInPackage(oc);
 
-                Atom pkg = packages.get(p);
+                Term pkg = packages.get(p);
                 if (pkg == null) {
-                    pkg = Atom.quote(p.getName());
+                    pkg = termPackage(p);
                     packages.put(p, pkg);
-                    onClassInPackage(cterm, pkg);
+                    termClassInPackage(cterm, pkg);
                 }
 
                 return cterm;
@@ -118,9 +117,7 @@ public class DefaultTermizer implements Termizer {
             return SetExt.make(arg);
         }
 
-        Term i = Atom.the(instanceString(o));
-
-        return i;
+        return termInstanceInClassInPackage(o);
 
 
 //        //ensure package is term'ed
@@ -146,15 +143,35 @@ public class DefaultTermizer implements Termizer {
 
     }
 
-
-    public static String instanceString(Object o) {
-        //return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());
-        return o.toString();
+    public static Term termClass(Class c) {
+        return Atom.the(c.getSimpleName());
     }
 
-    protected void onClassInPackage(Term classs, Atom packagge) {
+    public static Term termClassInPackage(Class c) {
+        return Product.make(
+            termClass(c),
+            termPackage(c.getPackage())
+        );
+    }
+
+    public static Term termPackage(Package p) {
+        return Atom.the(p.getName());
+    }
 
 
+    public static Term termInstanceInClassInPackage(Object o) {
+        //return o.getClass().getName() + '@' + Integer.toHexString(o.hashCode());
+        //return o.getClass() + "_" + System.identityHashCode(o)
+        return Product.make(
+                    termPackage(o.getClass().getPackage()),
+                    termClassInPackage(o.getClass()),
+                    Atom.the(System.identityHashCode(o), 36)
+                );
+    }
+
+    protected Term termClassInPackage(Term classs, @Deprecated Term packagge) {
+        //TODO ??
+        return null;
     }
 
     public Term term(final Object o) {
