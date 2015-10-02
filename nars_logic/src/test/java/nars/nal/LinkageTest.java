@@ -1,25 +1,20 @@
 package nars.nal;
 
 import nars.NAR;
-import nars.Op;
-import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.link.TermLink;
-import nars.link.TermLinkKey;
 import nars.meter.TestNAR;
-import nars.nal.AbstractNALTest;
-import nars.narsese.InvalidInputException;
-import nars.term.Atom;
 import nars.term.Term;
-import nars.term.transform.FindSubst;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.List;
 import java.util.function.Supplier;
+
+import static org.junit.Assert.assertTrue;
 
 //don't touch this file - patham9
 
@@ -61,12 +56,13 @@ public class LinkageTest extends AbstractNALTest {
             }
         }
 
-        if(passed && passed2) { //dummy to pass the test:
-            tester.believe("<a --> b>");
-        } else {
-            throw new Exception("failed");
-        }
-        tester.mustBelieve(10,"<a --> b>",0.9f);
+        assertTrue(passed && passed2);
+//        if(passed && passed2) { //dummy to pass the test:
+//            tester.believe("<a --> b>");
+//        } else {
+//            throw new Exception("failed");
+//        }
+//        tester.mustBelieve(10,"<a --> b>",0.9f);
     }
 
 
@@ -77,6 +73,8 @@ public class LinkageTest extends AbstractNALTest {
         tester.believe(premise2); //.en("Robin is a type of bird.");
         tester.run(10);
 
+        List<String> fails = new ArrayList();
+
         Concept ret = tester.nar.concept(premise1);
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
@@ -85,6 +83,7 @@ public class LinkageTest extends AbstractNALTest {
                     passed = true;
                     break;
                 }
+
                 Term w = entry.getTerm();
                 Concept Wc = tester.nar.concept(w);
                 if(Wc != null) {
@@ -119,12 +118,14 @@ public class LinkageTest extends AbstractNALTest {
             }
         }
 
-        if(passed && passed2) { //dummy to pass the test:
-            tester.believe("<a --> b>");
-        } else {
-            throw new Exception("failed");
-        }
-        tester.mustBelieve(10,"<a --> b>",0.9f);
+        assertTrue(passed && passed2);
+
+//        if(passed && passed2) { //dummy to pass the test:
+//            tester.believe("<a --> b>");
+//        } else {
+//
+//        }
+//        tester.mustBelieve(10,"<a --> b>",0.9f);
     }
 
 

@@ -17,7 +17,7 @@ public class CircleLayout<N extends TermNode, E extends TermEdge> implements Ite
                     //PreallocatedResultFunction<N,double[]> getPosition,
                     ToDoubleFunction<N> radiusFraction,
                     ToDoubleFunction<N> angle,
-                    NARGraph1.PairConsumer<N, double[]> setPosition) {
+                    NARGraph.PairConsumer<N, double[]> setPosition) {
 
 
         double d[] = new double[2];
@@ -38,7 +38,7 @@ public class CircleLayout<N extends TermNode, E extends TermEdge> implements Ite
     }
 
     @Override
-    public void run(NARGraph1 graph, int iterations) {
+    public void run(NARGraph graph, int iterations) {
         final List termList = graph.termList;
 
         double[] i = new double[1];

@@ -23,12 +23,12 @@ import static javafx.application.Platform.runLater;
 /**
  * Created by me on 8/6/15.
  */
-public class NARGraph1<V, E> extends Spacegraph {
+public class NARGraph<V, E> extends Spacegraph {
 
     final Map<Term, TermNode> terms = new LinkedHashMap();
 
 
-    private Consumer<NARGraph1> updater;
+    private Consumer<NARGraph> updater;
     private EdgeRenderer<E> edgeRenderer;
 
 
@@ -147,11 +147,11 @@ public class NARGraph1<V, E> extends Spacegraph {
         return terms.get(t);
     }
 
-    public final Consumer<NARGraph1> getUpdater() {
+    public final Consumer<NARGraph> getUpdater() {
         return updater;
     }
 
-    public final void setUpdater(Consumer<NARGraph1> u) {
+    public final void setUpdater(Consumer<NARGraph> u) {
         this.updater = u;
     }
 
@@ -189,7 +189,7 @@ public class NARGraph1<V, E> extends Spacegraph {
                     //if (c != null) {
                         //c.setVisible(false);
                         toDetach.add(c);
-                        if (c.edge.size() > 0)
+                        if (c.edge!=null && c.edge.size() > 0)
                             Collections.addAll(toDetachEdge, c.getEdges());
                     //}
                 }
@@ -216,7 +216,7 @@ public class NARGraph1<V, E> extends Spacegraph {
         termList.forEach((Consumer<? super TermNode>)
                 TermNode::update);
 
-        Consumer<NARGraph1> u = getUpdater();
+        Consumer<NARGraph> u = getUpdater();
         if (u != null)
             u.accept(this);
         /*else
@@ -268,7 +268,7 @@ public class NARGraph1<V, E> extends Spacegraph {
         /**
          * called before any update begins
          */
-        public void reset(NARGraph1 g);
+        public void reset(NARGraph g);
     }
 
     public EdgeRenderer<E> getEdgeRenderer() {
@@ -322,7 +322,7 @@ public class NARGraph1<V, E> extends Spacegraph {
     }
 
 
-    public NARGraph1(NAR n) {
+    public NARGraph(NAR n) {
         super();
 
 

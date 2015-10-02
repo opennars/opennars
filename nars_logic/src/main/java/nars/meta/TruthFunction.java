@@ -16,14 +16,12 @@ public enum TruthFunction implements TruthOrDesireFunction {
 
     Revision() {
         @Override public Truth get(final Truth T, final Truth B) {
-            if (B == null) return null;
+            //if (B == null) return null;
             return TruthFunctions.revision(T, B);
         }
     },
     StructuralIntersection() {
         @Override public Truth get(final Truth T, final Truth B) {
-            if (T!=null)
-                throw new RuntimeException("belief should be null");
             if (B == null) return null;
             return TruthFunctions.intersection(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
@@ -36,8 +34,6 @@ public enum TruthFunction implements TruthOrDesireFunction {
     },
     StructuralAbduction() {
         @Override public Truth get(final Truth T, final Truth B) {
-            if (T!=null)
-                throw new RuntimeException("belief should be null");
             if (B == null) return null;
             return TruthFunctions.abduction(B, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
@@ -68,22 +64,18 @@ public enum TruthFunction implements TruthOrDesireFunction {
     },
     Conversion() {
         @Override public Truth get(final Truth T, final Truth B) {
-            if (T!=null)
-                throw new RuntimeException("belief should be null");
             if (B == null) return null;
             return TruthFunctions.conversion(B);
         }
     },
     Negation() {
         @Override public Truth get(final Truth T, /* nullable */ final Truth B) {
-            if (B!=null)  return null; //only apply when B is null
+            //if (B!=null)  return null; //only apply when B is null
             return TruthFunctions.negation(T);
         }
     },
     Contraposition() {
         @Override public Truth get(final Truth T, /* nullable */ final Truth B) {
-            if (B!=null)
-                throw new RuntimeException("belief should be null");
             return TruthFunctions.contraposition(T);
         }
     },

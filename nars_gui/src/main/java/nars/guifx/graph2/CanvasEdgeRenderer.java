@@ -10,7 +10,7 @@ import nars.util.data.Util;
 /**
  * Created by me on 9/6/15.
  */
-public class CanvasEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
+public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
 
 //    ColorArray colors = new ColorArray(
 //            32,
@@ -33,8 +33,8 @@ public class CanvasEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
     public double maxPri = 1;
     public double minPri = 0;
 
-    double minWidth = 3;
-    double maxWidth = 15;
+    double minWidth = 2;
+    double maxWidth = 10;
 
     @Override
     public void accept(TermEdge i) {
@@ -43,7 +43,11 @@ public class CanvasEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
         TermNode bSrc = i.bSrc;
 
         if (!aSrc.isVisible() || !bSrc.isVisible()) {
+            i.visible = false;
             return;
+        }
+        else {
+            i.visible = true;
         }
 
 
@@ -101,7 +105,8 @@ public class CanvasEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
     }
 
     @Override
-    public void reset(NARGraph1 g) {
+    public void reset(NARGraph g) {
+
 
         if (floorCanvas == null) {
             floorCanvas = new ResizableCanvas(g);
@@ -110,6 +115,9 @@ public class CanvasEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
                     //add(floorCanvas); //over
 
             this.gfx = floorCanvas.getGraphicsContext2D();
+        }
+        else {
+
         }
 
         double w = g.getWidth();

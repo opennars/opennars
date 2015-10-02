@@ -13,7 +13,10 @@ import nars.NAR;
 import nars.clock.CycleClock;
 import nars.clock.RealtimeMSClock;
 import nars.event.FrameReaction;
-import nars.guifx.graph2.NARGraph1;
+import nars.guifx.graph2.CanvasEdgeRenderer;
+import nars.guifx.graph2.HyperassociativeMapLayout;
+import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.NARGrapher;
 import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.CodeInput;
@@ -63,7 +66,7 @@ public class NARide extends BorderPane {
             NARide ni = new NARide(nar);
 
             {
-                ni.addView(new NARSpace(nar));
+                ni.addView(new DemoNARSpace(nar));
                 ni.addView(new IOPane(nar));
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
@@ -76,8 +79,8 @@ public class NARide extends BorderPane {
 
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
-            ni.addTool("Concept Network", () -> new NARGraph1(nar));
-            ni.addTool("Fractal Workspace", () -> new NARSpace(nar));
+            ni.addTool("Concept Network", () -> new DefaultNARGraph(nar));
+            ni.addTool("Fractal Workspace", () -> new DemoNARSpace(nar));
 
             ni.addTool("Webcam", () -> new WebcamFX());
 
@@ -153,11 +156,11 @@ public class NARide extends BorderPane {
     }
 
 
-    public static class NARSpace extends Spacegraph {
+    public static class DemoNARSpace extends Spacegraph {
 
         private final NAR nar;
 
-        public NARSpace(NAR n) {
+        public DemoNARSpace(NAR n) {
             super();
 
             this.nar = n;
@@ -445,4 +448,22 @@ public class NARide extends BorderPane {
     }
 
 
+    /** provides defalut settings for a NARGraph view */
+    public static class DefaultNARGraph extends NARGraph {
+        public DefaultNARGraph(NAR nar) {
+            super(nar);
+
+            setUpdater(new NARGrapher(32));
+
+
+            setEdgeRenderer(new CanvasEdgeRenderer());
+            //g.setEdgeRenderer(new QuadPolyEdgeRenderer());
+
+
+            //g.setLayout(new CircleLayout<>());
+            setLayout(new HyperassociativeMapLayout());
+            //g.setLayout(new TimelineLayout());
+
+        }
+    }
 }

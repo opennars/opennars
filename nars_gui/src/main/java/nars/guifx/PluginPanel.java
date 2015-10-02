@@ -53,10 +53,13 @@ public class PluginPanel extends VBox {
             toAdd.add(node(k,v));
         });
 
-        runLater( () -> {
-            getChildren().setAll(toAdd);
-            layout();
-        });
+        //TODO use faster comparison method
+        if (!getChildren().equals(toAdd)) {
+            runLater(() -> {
+                getChildren().setAll(toAdd);
+                layout();
+            });
+        }
 
 //        menu.add(new JLabel(" + "));
 //

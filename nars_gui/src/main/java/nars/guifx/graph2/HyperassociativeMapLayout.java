@@ -18,7 +18,7 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     }
 
     @Override
-    public void run(NARGraph1 graph, int i) {
+    public void run(NARGraph graph, int i) {
         resetLearning();
         setLearningRate(0.4f);
         setRepulsiveWeakness(10.0);
@@ -81,7 +81,7 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
 
         //termRadius = (float) (1.0f / Math.sqrt(terms.size() + 1));
 
-        setEquilibriumDistance(0.05f); //termRadius * 1.5f);
+        setEquilibriumDistance(0.03f); //termRadius * 1.5f);
 
         return termList;
     }

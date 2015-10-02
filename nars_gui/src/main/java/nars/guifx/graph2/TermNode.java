@@ -46,7 +46,7 @@ public class TermNode extends Group {
     DoubleSummaryReusableStatistics termLinkStat = new DoubleSummaryReusableStatistics();
     DoubleSummaryReusableStatistics taskLinkStat = new DoubleSummaryReusableStatistics();
 
-    double minSize = 16;
+    double minSize = 24;
     double maxSize = 64;
 
     /**
@@ -79,7 +79,7 @@ public class TermNode extends Group {
 
         titleBar.setPickOnBounds(false);
         titleBar.setMouseTransparent(true);
-        titleBar.setFont(NARGraph1.nodeFont);
+        titleBar.setFont(NARGraph.nodeFont);
         titleBar.setTextAlignment(TextAlignment.CENTER);
         titleBar.setSmooth(false);
         titleBar.setManaged(false);
@@ -157,7 +157,7 @@ public class TermNode extends Group {
 
 
     public void randomPosition(double bx, double by) {
-        move(NARGraph1.rng.nextDouble() * bx, NARGraph1.rng.nextDouble() * by);
+        move(NARGraph.rng.nextDouble() * bx, NARGraph.rng.nextDouble() * by);
     }
 
     /**
@@ -182,7 +182,7 @@ public class TermNode extends Group {
             setScaleY(scale);
 
             float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
-            base.setFill(NARGraph1.visModel.getVertexColor(priNorm, conf));
+            base.setFill(NARGraph.visModel.getVertexColor(priNorm, conf));
 
             //setOpacity(0.75f + 0.25f * vertexScale);
 
@@ -284,15 +284,15 @@ public class TermNode extends Group {
         return edges = edge.values().toArray(e);
     }
 
-    /**
-     * untested
-     */
-    public void removeEdge(TermEdge e) {
-        if (edge.remove(e.bSrc) != e) {
-            throw new RuntimeException("wtf");
-        }
-        edges = null;
-    }
+//    /**
+//     * untested
+//     */
+//    public void removeEdge(TermEdge e) {
+//        if (edge.remove(e.bSrc) != e) {
+//            throw new RuntimeException("wtf");
+//        }
+//        edges = null;
+//    }
 
     public TermEdge[] getEdges() {
         if (edges == null) {

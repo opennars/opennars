@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 /**
  * Created by me on 9/6/15.
  */
-public class NARGrapher implements Consumer<NARGraph1> {
+public class NARGrapher implements Consumer<NARGraph> {
 
     final Set<TermNode> active = Global.newHashSet(1);
 
@@ -34,7 +34,7 @@ public class NARGrapher implements Consumer<NARGraph1> {
     }
 
     @Override
-    public void accept(NARGraph1 graph) {
+    public void accept(NARGraph graph) {
 
         final NAR nar = graph.nar;
 
@@ -86,7 +86,7 @@ public class NARGrapher implements Consumer<NARGraph1> {
 
     }
 
-    public void refresh(NARGraph1 graph, TermNode tn, Concept cc/*, long now*/) {
+    public void refresh(NARGraph graph, TermNode tn, Concept cc/*, long now*/) {
 
         //final Term source = c.getTerm();
 
@@ -128,7 +128,7 @@ public class NARGrapher implements Consumer<NARGraph1> {
 
     }
 
-    public void updateConceptEdges(NARGraph1 graph, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
+    public void updateConceptEdges(NARGraph graph, TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
 
 
         Term t = link.getTerm();
@@ -143,9 +143,9 @@ public class NARGrapher implements Consumer<NARGraph1> {
         }
     }
 
-    public TermEdge getConceptEdge(NARGraph1 graph, TermNode s, TermNode t) {
+    public TermEdge getConceptEdge(NARGraph graph, TermNode s, TermNode t) {
         //re-order
-        if (!NARGraph1.order(s.term, t.term)) {
+        if (!NARGraph.order(s.term, t.term)) {
             TermNode x = s;
             s = t;
             t = x;
@@ -163,7 +163,7 @@ public class NARGrapher implements Consumer<NARGraph1> {
     }
 
 
-    public final TermNode getTermNode(final NARGraph1 graph, final Term t/*, boolean createIfMissing*/) {
+    public final TermNode getTermNode(final NARGraph graph, final Term t/*, boolean createIfMissing*/) {
         TermNode tn = graph.getTermNode(t);
         if (tn == null) {
             tn = termToAdd.computeIfAbsent(t, (k) -> {

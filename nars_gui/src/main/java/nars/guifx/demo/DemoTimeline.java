@@ -6,7 +6,7 @@ import nars.Global;
 import nars.NAR;
 import nars.guifx.AutoLabel;
 import nars.guifx.NARfx;
-import nars.guifx.graph2.NARGraph1;
+import nars.guifx.graph2.NARGraph;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
@@ -77,7 +77,7 @@ public class DemoTimeline  {
         }
     }
 
-    public static class TaskTimelinePane extends NARGraph1 {
+    public static class TaskTimelinePane extends NARGraph {
 
         private final TaskTimeline<TaskEventButton> time;
         private final NAR nar;

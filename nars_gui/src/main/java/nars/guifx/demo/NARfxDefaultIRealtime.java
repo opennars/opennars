@@ -25,6 +25,7 @@ public class NARfxDefaultIRealtime {
         Memory mem = new LocalMemory(new RealtimeMSClock(true));
         NAR nar = new Default(mem, 1024, 2, 3, 4);
 
+        nar.memory.duration.set(125);
         nar.setCyclesPerFrame(cyclesPerFrame);
         //nar.spawnThread(1000/60);
 

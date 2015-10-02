@@ -8,9 +8,9 @@ import org.apache.commons.math3.util.FastMath;
 /**
  * Created by me on 9/6/15.
  */
-public class QuadPolyEdgeRenderer implements NARGraph1.EdgeRenderer<TermEdge> {
+public class QuadPolyEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
     @Override
-    public void reset(NARGraph1 g) {
+    public void reset(NARGraph g) {
 
     }
 
