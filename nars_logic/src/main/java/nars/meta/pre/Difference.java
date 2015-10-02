@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by me on 8/15/15.
  */
-public class Difference extends PreCondition3 {
+public class Difference extends PreCondition3Output {
 
     public Difference(Term arg1, Term arg2, Term arg3) {
         super(arg1, arg2, arg3);

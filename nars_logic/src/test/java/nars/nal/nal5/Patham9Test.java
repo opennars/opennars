@@ -115,4 +115,23 @@ public class Patham9Test extends AbstractNALTest {
         tester.mustBelieve(1000, "<tiger --> bird>", 1.00f,0.45f); //en("I guess that a tiger is a bird.");
         tester.run();
     }
+/*
+    @Test
+    public void set_operations() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<planetX --> {Mars,Pluto,Venus}>",0.9f,0.9f); //.en("PlanetX is Mars, Pluto, or Venus.");
+        tester.believe("<planetX --> {Pluto,Saturn}>", 0.7f,0.9f); //.en("PlanetX is probably Pluto or Saturn.");
+        tester.mustBelieve(500, "<planetX --> {Mars,Pluto,Saturn,Venus}>", 0.97f ,0.81f); //.en("PlanetX is Mars, Pluto, Saturn, or Venus.");
+        tester.mustBelieve(500, "<planetX --> {Pluto}>", 0.63f ,0.81f); //.en("PlanetX is probably Pluto.");
+        tester.run();
+    }*/
+
+    /*@Test
+    public void variable_elimination() throws InvalidInputException {
+        TestNAR tester = test();
+        tester.believe("<<$x --> bird> ==> <$x --> animal>>"); //en("If something is a bird, then it is an animal.");
+        tester.believe("<robin --> bird>"); //en("A robin is a bird.");
+        tester.mustBelieve(1000,"<robin --> animal>",1.00f,0.81f); //en("A robin is an animal.");
+        tester.run();
+    }*/
 }

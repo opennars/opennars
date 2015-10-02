@@ -23,6 +23,7 @@ import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import org.infinispan.commons.hash.Hash;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -186,7 +187,15 @@ public class RuleMatch extends FindSubst {
 
             derivedTerm = resolve(derivedTerm);
             //if ((derivedTerm = resolve(derivedTerm)) == null) return null;
+
+            if(c instanceof Substitute) { //TODO
+                HashMap<Term,Term> ret = ((Substitute)c).GetRegularSubs();
+                derivedTerm = ((Compound) derivedTerm).applySubstitute(ret);
+            }
+
         }
+
+
 
         if(Outp!=null) {
             derivedTerm = ((Compound) derivedTerm).applySubstitute(Outp);
