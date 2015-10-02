@@ -107,15 +107,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                     if (growLevel2(tj)) {
                         Term ctj = (Term)tj;
 
-                        if(ctj instanceof Compound)
-                        for (int k = 0; k < ((Compound)ctj).term.length; k++) {
-                            final Term tk = ((Compound)ctj).term[k].normalized();
+                        if(ctj instanceof Compound) {
+                            for (int k = 0; k < ((Compound) ctj).term.length; k++) {
+                                final Term tk = ((Compound) ctj).term[k].normalized();
 
-                            if (!(tk instanceof Variable)) {
-                                addTemplate(new TermLinkTemplate(concept, tk));
+                                if (!(tk instanceof Variable)) {
+                                    addTemplate(new TermLinkTemplate(concept, tk));
+                                }
                             }
-
-
                         }
                     }
 
