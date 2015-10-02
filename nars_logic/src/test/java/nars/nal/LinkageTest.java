@@ -233,52 +233,67 @@ public class LinkageTest extends AbstractNALTest {
 
     @Test
     public void Indirect_Linkage_NAL6_multiple_variable_elimination4() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("(&&,<#x --> (/,open,#y,_)>,<#x --> lock>,<#y --> key>)","<{lock1} --> lock>");
+        ProperlyLinkedIndirectlyTest("(&&,<#x --> (/,open,#y,_)>,<#x --> lock>,<#y --> key>)", "<{lock1} --> lock>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_abduction_with_variable_elimination_abduction() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", "<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>");
+        ProperlyLinkedIndirectlyTest("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", "<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_second_variable_introduction_induction() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", "<lock1 --> lock>");
+        ProperlyLinkedIndirectlyTest("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>", "<lock1 --> lock>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_multiple_variable_elimination() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("<(&&,<$x --> key>,<$y --> lock>) ==> <$y --> (/,open,$x,_)>>", "<{lock1} --> lock>");
+        ProperlyLinkedIndirectlyTest("<(&&,<$x --> key>,<$y --> lock>) ==> <$y --> (/,open,$x,_)>>", "<{lock1} --> lock>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_second_level_variable_unification2() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>", "<{key1} --> key>");
+        ProperlyLinkedIndirectlyTest("<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>", "<{key1} --> key>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_variable_elimination_deduction() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("<lock1 --> lock>", "<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>");
+        ProperlyLinkedIndirectlyTest("<lock1 --> lock>", "<(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_variable_unification7() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("<(&&,<$x --> flyer>,<($x,worms) --> food>) ==> <$x --> bird>>", "<<$y --> flyer> ==> <$y --> [withWings]>>");
+        ProperlyLinkedIndirectlyTest("<(&&,<$x --> flyer>,<($x,worms) --> food>) ==> <$x --> bird>>", "<<$y --> flyer> ==> <$y --> [withWings]>>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_variable_unification6() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>", "<(&&,<$y --> [chirping]>,<$y --> [withWings]>) ==> <$y --> bird>>");
+        ProperlyLinkedIndirectlyTest("<(&&,<$x --> flyer>,<$x --> [chirping]>, <($x, worms) --> food>) ==> <$x --> bird>>", "<(&&,<$y --> [chirping]>,<$y --> [withWings]>) ==> <$y --> bird>>");
     }
 
     @Test
     public void Indirect_Linkage_NAL6_second_level_variable_unification() throws Exception {
-        ProperlyLinkedIndirectlyLayer2Test("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", "<{key1} --> key>");
+        ProperlyLinkedIndirectlyTest("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", "<{key1} --> key>");
     }
 
     @Test
     public void Indirect_Linkage_Basic() throws Exception {
         ProperlyLinkedIndirectlyTest("<a --> b>", "<b --> c>");
+    }
+
+    @Test
+    public void Indirect_Linkage_Layer2_Basic() throws Exception {
+        ProperlyLinkedIndirectlyTest("<a --> <b --> <k --> x>>>", "<k --> x>");
+    }
+
+    @Test
+    public void Indirect_Linkage_Layer2_Basic_WithVar() throws Exception {
+        ProperlyLinkedIndirectlyTest("<#1 --> <b --> <k --> x>>>", "<k --> x>");
+    }
+
+    @Test
+    public void Indirect_Linkage_Layer2_Basic_WithVar2() throws Exception {
+        ProperlyLinkedIndirectlyTest("<a --> <b --> <#1 --> x>>>", "<k --> x>");
     }
 
 
