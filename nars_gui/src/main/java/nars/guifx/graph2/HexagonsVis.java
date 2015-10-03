@@ -3,21 +3,12 @@ package nars.guifx.graph2;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import nars.guifx.NARfx;
-import nars.guifx.util.ColorMatrix;
 import nars.term.Term;
 
 /**
  * Created by me on 10/2/15.
  */
 public class HexagonsVis implements VisModel {
-
-    static final ColorMatrix colors = new ColorMatrix(24, 24,
-            (priority, conf) -> {
-                return Color.hsb(250.0 + 75.0 * (conf),
-                        0.10f + 0.85f * priority,
-                        0.10f + 0.5f * priority);
-            }
-    );
 
     final static Font nodeFont = NARfx.mono(0.25);
 
@@ -37,17 +28,17 @@ public class HexagonsVis implements VisModel {
     public void accept(TermNode t) {
         float p, q;
         if (t == null) {
-            p = 0.5f;
-            q = 0.5f;
+            return;
         }
-
         else {
             p = t.c.getPriority();
             q = t.c.getQuality();
         }
 
 
-        t.base.setFill(colors.get(p, q));
+        Color cc = NARfx.colors.get(p, q);
+
+        t.base.setFill(cc);
 
 
         t.scale(minSize + (maxSize - minSize) * t.priNorm);

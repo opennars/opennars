@@ -23,8 +23,12 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, E
 
     protected int cap;
 
+
+    /** warning this will create a 0-capacity table,
+     * rejecting all attempts at inputs.  either use the
+     * other constructor or change capacity after construction. */
     public ArrayListTaskTable() {
-        super();
+        this(0);
     }
 
     public ArrayListTaskTable(int cap) {

@@ -10,12 +10,11 @@ import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
 import nars.premise.Premise;
-import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 
-import static nars.nal.nal1.LocalRules.*;
+import static nars.nal.nal1.LocalRules.trySolution;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -179,96 +178,6 @@ public class DefaultConcept extends AtomConcept {
      */
 
 
-    Task add(BeliefTable table, final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
-
-        Task revised = input;
-
-        final Memory memory = c.getMemory();
-
-
-        long now = memory.time();
-
-        if (table.isEmpty()) {
-            table.add(input);
-            return input;
-        } else {
-
-//            if (ranking == null) {
-//                //just return thie top item if no ranker is provided
-//                return table.top();
-//            }
-
-
-            Task existing = table.top(input, now);
-
-
-            if (existing != null) {
-
-                if (existing == input) {
-                    //the same task instance existed here already
-                    return null;
-                }
-                else if ( input.equivalentTo(existing, false, false, true, true, false)) {
-                    //equal but different instances; discard the new one
-
-                    /*if (!t.isInput() && t.isJudgment()) {
-                        existing.decPriority(0);    // duplicated task
-                    }   // else: activated belief*/
-
-                    //activate the existing belief
-                    existing.getBudget().mergePlus( input.getBudget() );
-
-                    memory.remove(input, "Ineffectual"); //"has no effect" on belief/desire, etc
-
-                    return null;
-                } else if (revisible(input, existing)) {
-
-
-                    if (nal != null) {
-                        revised = tryRevision(input, existing, false, nal);
-                        if (revised != null) {
-                            if (nal instanceof ConceptProcess) {
-                                ((ConceptProcess) nal).setBelief(revised);
-                            }
-                        }
-                        if (revised == null) revised = input; /* set to original value */
-                    }
-
-                }
-
-            }
-
-            if (table.add(input, ranking, nal.memory())) {
-
-                if (!input.equals(revised)) {
-                    revised = table.addRevised(revised, ranking, nal);
-                    if (revised != null)
-                        return revised;
-                }
-            }
-
-
-            return null;
-        }
-
-
-//        if (size()!=preSize)
-//            c.onTableUpdated(goalOrJudgment.getPunctuation(), preSize);
-//
-//        if (removed != null) {
-//            if (removed == goalOrJudgment) return false;
-//
-//            m.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
-//
-//            if (preSize != table.size()) {
-//                m.emit(eventAdd, this, goalOrJudgment.sentence);
-//            }
-//        }
-
-        //the new task was not added, so remove it
-
-
-    }
 
 
     static Task add(TaskTable table, Task input, Equality<Task> eq, Procedure2<Budget,Budget> duplicateMerge, Premise nal) {
@@ -287,37 +196,27 @@ public class DefaultConcept extends AtomConcept {
 
         float successBefore = getSuccess();
 
-        final Task newSolution = add(getBeliefs(), belief, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
+        final Task strongest = getBeliefs().add( belief, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
 
-        //TODO only apply solutions to questions if either beliefs or question have changed
-        if (newSolution != null && !newSolution.isDeleted()) {
-
-//            String reason = "Unbelievable or Duplicate";
-//            //String reason = input.equals(belief) ? "Duplicate" : "Unbelievable";
-//                // + "compared to: " + belief
-//            getMemory().removed(input, reason);
-            /*if (task.aboveThreshold())*/
-            //if (nal != null) {
-            if (hasQuestions()) {
-                //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
-                getQuestions().forEach( t -> trySolution(t, belief, nal) );
-            }
-            //}
-
-
-            /** update happiness meter on solution
-             *  TODO revise
-             * */
-            float successAfter = getSuccess();
-            float delta = successAfter - successBefore;
-            if (delta!=0)
-                memory.emotion.happy(delta);
-
-            return true;
-        } else {
+        if (strongest == null || strongest.isDeleted()) {
             return false;
         }
 
+
+        if (hasQuestions()) {
+            //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
+            getQuestions().forEach( question -> trySolution(question, belief, nal) );
+        }
+        //}
+
+
+        /** update happiness meter on solution  TODO revise */
+        float successAfter = getSuccess();
+        float delta = successAfter - successBefore;
+        if (delta!=0)
+            memory.emotion.happy(delta);
+
+        return true;
     }
 
 
@@ -332,7 +231,7 @@ public class DefaultConcept extends AtomConcept {
 
         final float successBefore = getSuccess();
 
-        final Task newSolution = add(getGoals(), goal, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
+        final Task newSolution = getGoals().add( goal, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
 
         if (newSolution==null) {
             return false;

@@ -14,7 +14,36 @@ import org.junit.Test;
  */
 public class BeliefTableTest extends TestCase {
 
-
+//
+//    @Test public void testArrayListBeliefTable1() {
+//        NAR n = new Terminal();
+//
+//        ArrayListBeliefTable t = new ArrayListBeliefTable(4);
+//
+//        Task pos = n.inputTask("<a --> b>. %1.00;0.90%");
+//        Task neg = n.inputTask("<a --> b>. %0.00;0.90%");
+//
+//        BeliefTable.Ranker ranker = BeliefTable.BeliefConfidenceOrOriginality;
+//
+//        assertTrue( t.add(pos, ranker, n.memory) );
+//        assertEquals(1, t.size());
+//
+//        //after the 2nd belief, a revision is created
+//        //and inserted with the 2 input beliefs
+//        //to produce two beliefs.
+//        assertTrue( t.tryAdd(neg, ranker, n.memory) );
+//        assertEquals(3, t.size());
+//
+//        //sicne they are equal and opposite, the
+//        //revised belief will be the average of them
+//        //but with a higher confidence.
+//
+//        //assertTrue(p && n);
+//        //assertTrue();
+//
+//        System.out.println(t);
+//
+//    }
 
     public NAR newNAR(int maxBeliefs) {
         Default d = new Default();// {
@@ -41,17 +70,20 @@ public class BeliefTableTest extends TestCase {
 
         NAR n = newNAR(6);
 
-        //n.stdout();
+
+        //arbitrary time delays in which to observe that certain behavior does not happen
+        int delay1 = 32;
+        int delay2 = delay1;
 
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>")
                 .believe(1.0f, 0.9f)
-                .believe(0.0f, 0.9f).run(2);
+                .believe(0.0f, 0.9f).run(delay1);
 
         b.print();
 
         assertEquals("revised", 3, b.size());
 
-        n.frame(2);
+        n.frame(delay2);
 
         assertEquals("no additional revisions", 3, b.size());
 

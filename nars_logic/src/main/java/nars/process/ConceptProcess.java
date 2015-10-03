@@ -172,6 +172,9 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         if (Terms.equalSubTermsInRespectToImageAndProduct(taskLink.getTerm(), termLink.getTerm()))
             return null;
 
+        if (taskLink.isTaskDeleted())
+            return null;
+
         return new ConceptTaskTermLinkProcess(nar, concept, taskLink, termLink);
     }
 

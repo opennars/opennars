@@ -2,7 +2,11 @@ package nars.concept;
 
 import nars.Memory;
 import nars.premise.Premise;
+import nars.process.ConceptProcess;
 import nars.task.Task;
+
+import static nars.nal.nal1.LocalRules.getRevision;
+import static nars.nal.nal1.LocalRules.revisible;
 
 /**
  * Stores beliefs ranked in a sorted ArrayList, with strongest beliefs at lowest indexes (first iterated)
@@ -10,8 +14,11 @@ import nars.task.Task;
 public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTable {
 
 
+    /** warning this will create a 0-capacity table,
+     * rejecting all attempts at inputs.  either use the
+     * other constructor or change capacity after construction. */
     public ArrayListBeliefTable() {
-        super();
+        this(0);
     }
 
     public ArrayListBeliefTable(int cap) {
@@ -117,24 +124,114 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //        return closest.projectTask(t.getOccurrenceTime(), now);
 //    }
 
-    @Override
-    public Task addRevised(Task revised, Ranker rank, Premise nal) {
-        /** insert into array table */
-        if (add(revised, rank, nal.memory())) {
 
-            /** input derived task */
-            nal.nar().input(revised);
+    /**
+     * merges an input task with this belief table.
+     * ordinarily this should never return null.
+     * it will return the best matching old or new (input or
+     * revised here) belief corresponding to the input.
+     *
+     * the input will either be added or not depending
+     * on its relation to the table's contents.
+     *
+     * @param input
+     * @param ranking
+     * @param c
+     * @param nal
+     * @return
+     */
+    public Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
 
-            //ALTERNATELY: TaskProcess.run(nar, revised);
+        /**
+         * involves 3 potentially unique tasks:
+         * input, strongest, revised (created here and returned)
+         */
 
-            return revised;
+        Task revised = null, strongest = null;
+
+        final Memory memory = c.getMemory();
+
+
+        long now = memory.time();
+
+        if (isEmpty()) {
+            add(input);
+            return input;
         }
 
-        return null;
+
+        boolean added = tryAdd(input, ranking, nal.memory());
+
+
+//            if (ranking == null) {
+//                //just return thie top item if no ranker is provided
+//                return table.top();
+//            }
+
+
+        strongest = top(input, now);
+
+
+        if (strongest != null) {
+
+            if (strongest == input) {
+
+                //the same task instance existed here already
+                //bounce
+                return input;
+
+            } else if (input.equivalentTo(strongest, false, false, true, true, false)) {
+                //equal but different instances; discard the new one
+
+                /*if (!t.isInput() && t.isJudgment()) {
+                    strongest.decPriority(0);    // duplicated task
+                }   // else: activated belief*/
+
+
+                //activate the strongest belief?
+                //strongest.getBudget().mergePlus( input.getBudget() );
+
+                memory.remove(input, "Duplicate Existed"); //"has no effect" on belief/desire, etc
+
+                return strongest;
+            }
+
+            if (revisible(input, strongest)) {
+
+
+                if (nal != null) {
+                    revised = getRevision(input, strongest, false, nal);
+                    if (revised != null && !input.equals(revised)) {
+
+                        if (nal instanceof ConceptProcess) {
+                            ((ConceptProcess) nal).setBelief(revised);
+                        }
+
+                        /*boolean addedRevised =
+                            tryAdd(revised, ranking, nal.memory());*/
+
+                        //input the new task to memory here?
+                        nal.memory().eventDerived.emit(revised);
+                        //nal.nar().input(revised);
+
+                        return revised;
+                    }
+                }
+
+            }
+
+        }
+
+        /** choose between strongest and input (may be the same) */
+        return (strongest!=null) ? strongest : input;
     }
 
-    @Override
-    public boolean add(Task input, Ranker r, Memory memory) {
+
+
+    /** do not call from outside generally, will
+     * be called internally. */
+    @Override public final boolean tryAdd(Task input, Ranker r, Memory memory) {
+
         float rankInput = r.rank(input);    // for the new isBelief
 
 

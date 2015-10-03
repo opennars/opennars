@@ -76,7 +76,7 @@ public class WordCloud extends DefaultNARGraph {
         public double getSpeedFactor(TermNode termNode) {
 
                 //return 120 + 120 / termNode.width(); //heavier is slower, forcing smaller ones to move faster around it
-                return scaleFactor*2.0;
+                return scaleFactor*5.0;
 
         }
 
@@ -89,22 +89,46 @@ public class WordCloud extends DefaultNARGraph {
         protected void init() {
             resetLearning();
             setLearningRate(0.5f);
-            setRepulsiveWeakness(6.0);
-            setAttractionStrength(6.0);
+            setRepulsiveWeakness(12.0);
+            setAttractionStrength(12.0);
             setMaxRepulsionDistance(50);
             setEquilibriumDistance(0.0f);
         }
 
         @Override
         protected void recenterNode(TermNode node, ArrayRealVector v, ArrayRealVector center) {
-            super.recenterNode(node, v, center);
+            /*if (v!=null)
+                sub(v, center);*/
+
             double[] vv = v.getDataRef();
 
-            float xTarget = 0;
-            float yTarget = 0;
+            //int volume = node.c.getTerm().volume();
+            double xTarget, yTarget, speedX, speedY;
 
-            float speedX = 0.05f;
-            float speedY = 0.001f;
+//            //vertical line
+//            {
+//                xTarget = 0;
+//                yTarget = 0;
+//
+//                speedX = 0.05f;
+//                speedY = 0.01f;
+//            }
+
+            //radiating circle
+            {
+                final Term term = node.c.getTerm();
+                double theta = (term.hashCode() % 64) / 64.0 * (3.14159 * 2);
+                int complexity = term.volume();
+
+                double r = 100 * complexity + 200;
+
+                xTarget = r * Math.cos( theta);
+                yTarget = r * Math.sin( theta);
+
+                speedX = 0.05f;
+                speedY = 0.05f;
+            }
+
 
             vv[0] = Util.lerp(xTarget, vv[0], speedX);
             vv[1] = Util.lerp(yTarget, vv[1], speedY);

@@ -29,6 +29,8 @@ import static nars.nal.nal7.TemporalRules.solutionQualityMatchingOrder;
  */
 public interface BeliefTable extends TaskTable {
 
+    /** main method */
+    Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal);
 
     Ranker BeliefConfidenceOrOriginality = (belief, bestToBeat) -> {
         final float confidence = belief.getTruth().getConfidence();
@@ -70,7 +72,12 @@ public interface BeliefTable extends TaskTable {
         }
 
         @Override
-        public boolean add(Task input, Ranker r, Memory memory) {
+        public Task add(Task input, Ranker ranking, Concept c, Premise nal) {
+            return null;
+        }
+
+        @Override
+        public boolean tryAdd(Task input, Ranker r, Memory memory) {
             return false;
         }
 
@@ -79,10 +86,7 @@ public interface BeliefTable extends TaskTable {
             return false;
         }
 
-        @Override
-        public Task addRevised(Task input, Ranker rank, Premise nal) {
-            return null;
-        }
+
 
 
         @Override
@@ -91,12 +95,12 @@ public interface BeliefTable extends TaskTable {
         }
     };
 
-    boolean add(Task input, BeliefTable.Ranker r, Memory memory);
+    boolean tryAdd(Task input, BeliefTable.Ranker r, Memory memory);
 
     /** add a task to the table */
     boolean add(Task t);
 
-    Task addRevised(Task input, BeliefTable.Ranker rank, Premise nal);
+
 
 
 //    /**
@@ -196,6 +200,8 @@ public interface BeliefTable extends TaskTable {
 
         @Override
         public final float rank(final Task t, final float bestToBeat) {
+            if (t.equals(query)) return Float.NaN; //dont compare to self
+
             //TODO use bestToBeat to avoid extra work
             return solutionQualityMatchingOrder(query, t, now, hasQueryVar);
         }

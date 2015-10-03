@@ -7,11 +7,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
 import nars.concept.Concept;
+import nars.guifx.util.ColorMatrix;
 import nars.task.Task;
 
 import java.util.Map;
@@ -25,6 +27,16 @@ import java.util.function.Consumer;
 public class NARfx  {
 
     public static final String css = NARfx.class.getResource("narfx.css").toExternalForm();
+
+    public static final ColorMatrix colors = new ColorMatrix(24, 24,
+            (priority, conf) -> {
+//                if (priority > 1) priority = 1f;
+//                if (priority < 0) priority = 0;
+                return Color.hsb(150.0 + 75.0 * (conf),
+                        0.10f + 0.85f * priority,
+                        0.10f + 0.5f * priority);
+            }
+    );
 
 
     /** NAR instances -> GUI windows */

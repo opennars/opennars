@@ -251,6 +251,8 @@ public interface Stamp extends Cloneable, Serializable {
 //    }
 
     default float getOriginality() {
+        if (getEvidence()==null)
+            throw new RuntimeException(this + " has null evidence");
         return 1.0f / (getEvidence().length + 1);
     }
 //

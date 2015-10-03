@@ -131,7 +131,16 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
     }
 
 
+    public boolean isTaskDeleted() {
+        //delete the tasklink for a task which has been deleted.
+        //the task will be useless anyway, and this signals
+        //to any bag holding it to discard it
 
+        if (getTask().isDeleted()) {
+            delete();
+            return true;
+        }
 
-
+        return false;
+    }
 }

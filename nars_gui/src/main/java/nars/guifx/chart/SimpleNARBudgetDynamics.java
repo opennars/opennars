@@ -44,21 +44,22 @@ public class SimpleNARBudgetDynamics {
         float qua = 0.25f;
 
 
-        Default d = new Default(); //Equalized(1024, 1, 3);
+        Default d = new Default(1000, 1, 3, 4); //Equalized(1024, 1, 3);
         //Default d = new NewDefault().setInternalExperience(null);
         //NARSeed d = new ParallelAlann(500, 2);
 
         //NARSeed d = new DefaultAlann(64);
 
 
+        d.memory.conceptForgetDurations.set(3);
         //d.getParam().conceptForgetDurations.set(1);
         //d.getParam().termLinkForgetDurations.set(1);
         //d.getParam().taskLinkForgetDurations.set(1);
         //d.getParam().duration.set(10);
         //Solid d = new Solid(1,256, 1, 1, 1, 3);
-        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.9f;
-        Global.TASKLINK_FORGETTING_EXTRA_DEPTH = 0.9f;
-        Global.TERMLINK_FORGETTING_EXTRA_DEPTH = 0.9f;
+        Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.2f;
+        Global.TASKLINK_FORGETTING_EXTRA_DEPTH = 0.2f;
+        Global.TERMLINK_FORGETTING_EXTRA_DEPTH = 0.2f;
         //d.conceptActivationFactor.set(0.5f);
         //d.setCyclesPerFrame(1);
         //d.duration.set(5);

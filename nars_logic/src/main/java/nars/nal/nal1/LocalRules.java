@@ -69,7 +69,9 @@ public class LocalRules {
 //    }
 
     /**
-     * avoids term comparison if the two inputs are already known to have equal terms
+     * WARNING: this assumes terms are already
+     * known to be equal.
+     *
      */
     public static boolean revisible(final Sentence newBelief, final Sentence oldBelief) {
 
@@ -119,36 +121,41 @@ public class LocalRules {
 //    }
 
 
-    public static <T extends Compound> Task<T> tryRevision(final Task<T> newBelief, final Task<T> oldBelief, final boolean feedbackToLinks, final Premise nal) {
-        //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
-        //if (stamp == null) return null;
+    /** creates a revision task (but does not input it)
+     *  if failed, returns null
+     * */
+//    public static <T extends Compound> Task<T> getRevision(final Task<T> newBelief, final Task<T> oldBelief, final boolean feedbackToLinks, final Premise nal) {
+        public static Task getRevision(final Task newBelief, final Task oldBelief, final boolean feedbackToLinks, final Premise nal) {
 
-        if (newBelief.equals(oldBelief))
-            return null;
-
-        if (Stamp.overlapping(newBelief, oldBelief))
+        if (newBelief.equals(oldBelief) || Stamp.overlapping(newBelief, oldBelief))
             return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
-        ProjectedTruth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
+
+        long now = nal.time();
+
+
+        ProjectedTruth oldBeliefTruth = oldBelief.projection(now, newBelief.getOccurrenceTime());
+
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
 
-        Task<T> revised = nal.input(nal.newTask(newBelief.getTerm())
+        //Task<T> revised = nal.input(
+        Task revised = nal.newTask(newBelief.getTerm())
                 .punctuation(newBelief.getPunctuation())
                 .truth(truth)
                 .budget(budget)
                 .parent(newBelief, oldBelief)
-                .reason("Revision"
-                        //+Arrays.toString(newBelief.getEvidentialSet()) + ":" +
-                        //Arrays.toString(oldBelief.getEvidentialSet())
-                )
-        );
+                .reason("Revision")
+                .time( now,  oldBeliefTruth.getTargetTime() )
+                .normalized()
+        ;
 
-        if (revised != null) {
-            nal.memory().logic.BELIEF_REVISION.hit();
-        }
+        //if (revised != null) {
+        nal.memory().logic.BELIEF_REVISION.hit();
+        //}
 
         return revised;
     }

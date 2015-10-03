@@ -45,8 +45,6 @@ public class TermNode extends Group {
     DoubleSummaryReusableStatistics termLinkStat = new DoubleSummaryReusableStatistics();
     DoubleSummaryReusableStatistics taskLinkStat = new DoubleSummaryReusableStatistics();
 
-    double minSize = 24;
-    double maxSize = 64;
 
     /**
      * cached from last set
@@ -82,7 +80,7 @@ public class TermNode extends Group {
         label.setTextAlignment(TextAlignment.CENTER);
         label.setSmooth(false);
         //titleBar.setManaged(false);
-        label.setBoundsType(TextBoundsType.VISUAL);
+        //label.setBoundsType(TextBoundsType.VISUAL);
 
         base.setStrokeType(StrokeType.INSIDE);
 
@@ -130,7 +128,7 @@ public class TermNode extends Group {
         base.setCacheHint(CacheHint.SCALE_AND_ROTATE);
         base.setCache(true);
 
-
+        label.setCacheHint(CacheHint.DEFAULT);
         label.setCache(true);
 
 
