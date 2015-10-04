@@ -53,6 +53,7 @@ public interface Topic<V extends Serializable> extends Serializable, Named<Strin
 
 
 
+    /** TODO rename to 'out' to match Streams api */
     void emit(V arg);
 
     On on(Consumer<V> o);
@@ -67,6 +68,7 @@ public interface Topic<V extends Serializable> extends Serializable, Named<Strin
         return r;
     }
 
+    int size();
 
 
 //

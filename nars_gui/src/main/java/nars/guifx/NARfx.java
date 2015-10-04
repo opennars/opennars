@@ -266,7 +266,7 @@ public class NARfx  {
     }
 
     public static void newWindow(NAR nar) {
-        NARide.show(nar, (Consumer)null);
+        NARide.show(nar.loop(), (Consumer)null);
     }
 
     public static void newWindow(NAR nar, Concept c) {

@@ -42,24 +42,26 @@ public class PluginPanel extends VBox {
         update();
 
 
-        
     }
 
 
     protected void update() {
 
         final List<Node> toAdd = Global.newArrayList();
-        nar.memory().getSingletons().forEach((k,v)-> {
-            toAdd.add(node(k,v));
+        nar.memory().getSingletons().forEach((k, v) -> {
+            toAdd.add(node(k, v));
         });
 
         //TODO use faster comparison method
-        if (!getChildren().equals(toAdd)) {
-            runLater(() -> {
+
+
+        runLater(() -> {
+            if (!getChildren().equals(toAdd)) {
                 getChildren().setAll(toAdd);
                 layout();
-            });
-        }
+            }
+        });
+
 
 //        menu.add(new JLabel(" + "));
 //
@@ -95,16 +97,15 @@ public class PluginPanel extends VBox {
 //
     }
 
-    Map<String,Node> nodes = new ConcurrentHashMap<>();
+    Map<String, Node> nodes = new ConcurrentHashMap<>();
 
     private Node node(String k, Object v) {
         return nodes.computeIfAbsent(k, (K) -> {
 
 
-
             ToggleButton p = new ToggleButton();
             p.getStyleClass().add("plugin_button");
-            p.setGraphic(icon(K,v));
+            p.setGraphic(icon(K, v));
             p.setMaxWidth(Double.MAX_VALUE);
             p.setMaxHeight(Double.MAX_VALUE);
             //p.maxHeight(100);
@@ -119,15 +120,14 @@ public class PluginPanel extends VBox {
 
         if (v instanceof FXIconPaneBuilder) {
             // instance implements its own node builder
-            return ((FXIconPaneBuilder)v).newIconPane();
+            return ((FXIconPaneBuilder) v).newIconPane();
         }
 
         Supplier<Node> override = ide.iconNodeBuilders.get(v.getClass());
-        if (override!=null) {
+        if (override != null) {
             //create via the type-dependent override
             return override.get();
-        }
-        else  {
+        } else {
             //create the default:
             BorderPane bp = new BorderPane();
 
@@ -255,6 +255,6 @@ public class PluginPanel extends VBox {
 //    }
 //
 //
-    
-    
+
+
 }

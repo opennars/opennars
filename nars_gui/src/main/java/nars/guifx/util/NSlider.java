@@ -21,15 +21,17 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import nars.guifx.NARfx;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * versatile light-weight slider component for javafx
  */
 public class NSlider extends StackPane {
 
 
-    public final DoubleProperty[] value;
-    public final DoubleProperty min = new SimpleDoubleProperty(0);
-    public final DoubleProperty max = new SimpleDoubleProperty(1);
+    public final SimpleDoubleProperty[] value;
+    public final SimpleDoubleProperty min = new SimpleDoubleProperty(0);
+    public final SimpleDoubleProperty max = new SimpleDoubleProperty(1);
 
     private transient final GraphicsContext g;
 
@@ -109,7 +111,7 @@ public class NSlider extends StackPane {
         if ((this.dimensions = vector.length) == 0)
             throw new RuntimeException("zero-length vector");
 
-        this.value = new DoubleProperty[dimensions];
+        this.value = new SimpleDoubleProperty[dimensions];
         for (int i = 0; i < dimensions; i++) {
             (value[i] = new SimpleDoubleProperty())
                     .addListener(redrawOnDoubleChange);
@@ -164,6 +166,13 @@ public class NSlider extends StackPane {
 
     public NSlider value(int dimension, double v) {
         value[dimension].set(v);
+        return this;
+    }
+
+    public NSlider valueLater(double... v) {
+        runLater(() -> {
+            value(v);
+        });
         return this;
     }
 

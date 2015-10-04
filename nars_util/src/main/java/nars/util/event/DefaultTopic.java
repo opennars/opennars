@@ -72,6 +72,7 @@ public class DefaultTopic<V extends Serializable> extends ArraySharingList<Consu
         return d;
     }
 
+
     @Override
     public final void off(On<V> o) {
         if (!remove(o.reaction))

@@ -1,4 +1,4 @@
-package nars.op.app;
+package nars.op.mental;
 
 import nars.Global;
 import nars.Memory;

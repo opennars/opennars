@@ -30,7 +30,7 @@ public class EmotionMeter extends CycleReaction implements Serializable {
     /** happy = total happiness accumulated in this cycle */
     private float happy;
 
-    private final float happinessFade = 0.95f;
+    //private final float happinessFade = 0.95f;
 
     public float lasthappy = -1;
     public float lastbusy = -1;
@@ -135,8 +135,8 @@ public class EmotionMeter extends CycleReaction implements Serializable {
 
         happyMeter.set(happy);
 
-        if (happy > 0)
-            happy *= happinessFade;
+        /*if (happy > 0)
+            happy *= happinessFade;*/
     }
 
     /** @return -1 if no significant change, 0 if decreased, 1 if increased */

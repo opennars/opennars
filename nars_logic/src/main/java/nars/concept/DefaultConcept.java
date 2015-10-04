@@ -191,7 +191,9 @@ public class DefaultConcept extends AtomConcept {
      * @param belief The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processBelief(final Premise nal, final Task belief) {
+    public boolean processBelief(final Premise nal) {
+
+        final Task belief = nal.getTask();
 
         float successBefore = getSuccess();
 
@@ -226,8 +228,9 @@ public class DefaultConcept extends AtomConcept {
      * @param goal The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processGoal(final Premise nal, Task goal) {
+    public boolean processGoal(final Premise nal) {
 
+        final Task goal = nal.getTask();
         final float successBefore = getSuccess();
 
         final Task newSolution = getGoals().add( goal, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
@@ -343,9 +346,9 @@ public class DefaultConcept extends AtomConcept {
      * @param q The task to be processed
      * @return true if the quest/question table changed
      */
-    public boolean processQuestion(final Premise nal, Task q) {
+    public boolean processQuestion(final Premise nal) {
 
-
+        Task q = nal.getTask();
         TaskTable table = q.isQuestion() ? getQuestions() : getQuests();
 
 //        //if (Global.DEBUG) {

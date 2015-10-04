@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import nars.Global;
 import nars.NAR;
-import nars.clock.CycleClock;
+import nars.clock.FrameClock;
 import nars.clock.RealtimeMSClock;
 import nars.event.FrameReaction;
 import nars.guifx.graph2.DefaultNARGraph;
@@ -18,6 +18,7 @@ import nars.guifx.remote.VncClientApp;
 import nars.guifx.terminal.LocalTerminal;
 import nars.guifx.util.SizeAwareWindow;
 import nars.guifx.util.TabX;
+import nars.util.NARLoop;
 import nars.video.WebcamFX;
 import org.jewelsea.willow.browser.WebBrowser;
 
@@ -40,20 +41,20 @@ public class NARide extends BorderPane {
 
     public final NARControlFX controlPane;
     private final ScrollPane spp;
-    private final PluginPanel pp;
+    public final PluginPanel pp;
 
     public final Map<Object,Supplier<Node>> iconNodeBuilders = Global.newHashMap();
 
-    public static void show(NAR nar, Consumer<NARide> ide) {
+    public static void show(NARLoop loop, Consumer<NARide> ide) {
 
         //SizeAwareWindow wn = NARide.newWindow(nar, ni = new NARide(nar));
 
         NARfx.run((a, b) -> {
 
-            NARide ni = new NARide(nar);
+            NAR nar = loop.nar;
+            NARide ni = new NARide(loop);
 
             {
-                ni.addView(new NARspace(nar));
                 ni.addView(new IOPane(nar));
                 /*ni.addIcon(() -> {
                     return new InputPane(nar);
@@ -66,7 +67,7 @@ public class NARide extends BorderPane {
 
             ni.addTool("I/O", () -> new IOPane(nar));
             ni.addTool("Task Tree", () -> new TreePane(nar));
-            ni.addTool("Concept Network", () -> new DefaultNARGraph(nar));
+            ni.addTool("Concept Network", () -> new DefaultNARGraph(nar,64));
             ni.addTool("Fractal Workspace", () -> new NARspace(nar));
 
             ni.addTool("Webcam", () -> new WebcamFX());
@@ -145,6 +146,7 @@ public class NARide extends BorderPane {
 
     public void addIcon(FXIconPaneBuilder n) {
         nar.memory().the(n);
+        pp.update();
     }
 
     public void addView(Pane n) {
@@ -153,6 +155,7 @@ public class NARide extends BorderPane {
         content.getTabs().add(new TabX(
             n.getClass().getSimpleName(),
             n));
+        pp.update();
     }
 
     public void addTool(String name, Supplier<Pane> builder) {
@@ -171,13 +174,15 @@ public class NARide extends BorderPane {
     public final NAR nar;
 
 
-    public NARide(NAR n) {
+    public NARide(NARLoop l) {
         super();
-        this.nar = n;
+
+        this.nar = l.nar;
 
         //default node builders
-        icon(CycleClock.class, () -> new NARControlFX.CycleClockPane(nar) );
+        icon(FrameClock.class, () -> new NARControlFX.CycleClockPane(nar) );
         icon(RealtimeMSClock.class, () -> new NARControlFX.RTClockPane(nar) );
+        icon(NARLoop.class, () -> new NARControlFX.LoopPane(l) );
 
 //        runLater(() -> {
 //                    TabPaneDetacher tabDetacher = new TabPaneDetacher();

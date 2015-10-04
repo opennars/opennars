@@ -60,7 +60,7 @@ abstract public class ConceptProcess extends NAL implements Serializable {
     @Override
     public String toString() {
         return new StringBuilder().append(getClass().getSimpleName())
-                .append("[").append(concept.toString()).append(':').append(taskLink).append(']')
+                .append('[').append(concept.toString()).append(':').append(taskLink).append(']')
                 .toString();
     }
 

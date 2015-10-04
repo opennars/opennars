@@ -9,7 +9,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
-import nars.clock.CycleClock;
+import nars.clock.FrameClock;
 import nars.concept.*;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -17,7 +17,6 @@ import nars.link.TermLinkKey;
 import nars.nal.SimpleDeriver;
 import nars.nal.nal8.OperatorReaction;
 import nars.nal.nal8.operator.NullOperator;
-import nars.op.app.STMTemporalLinkage;
 import nars.op.data.Flat;
 import nars.op.data.json;
 import nars.op.data.similaritree;
@@ -84,7 +83,7 @@ public class Default extends NAR implements ConceptBuilder {
     }
 
     public Default(int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
-        this(new LocalMemory(new CycleClock()), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
+        this(new LocalMemory(new FrameClock()), activeConcepts, conceptsFirePerCycle, termLinksPerCycle, taskLinksPerCycle);
     }
 
     public Default(Memory memory, int activeConcepts, int conceptsFirePerCycle, int termLinksPerCycle, int taskLinksPerCycle) {
@@ -481,7 +480,7 @@ public class Default extends NAR implements ConceptBuilder {
 
 
             add(
-                    nar.memory.eventCycleStart.on((m) -> {
+                    nar.memory.eventCycleEnd.on((m) -> {
                         fireConcepts(conceptsFiredPerCycle.get());
                     }),
                     nar.memory.eventReset.on((m) -> {
@@ -690,7 +689,7 @@ public class Default extends NAR implements ConceptBuilder {
             add(
                 m.eventInput.on(this),
                 m.eventDerived.on(this),
-                m.eventCycleStart.on((M) -> send()),
+                m.eventFrameStart.on((M) -> send()),
                 m.eventReset.on((M) -> buffer.clear() )
             );
 

@@ -133,8 +133,7 @@ public class NARGrapher implements Consumer<NARGraph> {
 
         Term t = link.getTerm();
         TermNode target = getTermNode(graph,t);
-        if (target == null)
-            return;
+        if ((target == null) || (s == target)) return;
 
         TermEdge ee = getConceptEdge(graph, s, target);
         if (ee!=null) {

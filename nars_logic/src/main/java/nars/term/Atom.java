@@ -1,5 +1,6 @@
 package nars.term;
 
+import nars.Global;
 import nars.Op;
 import nars.nal.nal1.Negation;
 import nars.narsese.NarseseParser;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.nio.CharBuffer;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -21,7 +21,7 @@ import java.util.function.Function;
 //@JsonDeserialize(using= FromStringDeserializer)
 public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizable{
 
-    private static final Map<String,Atom> atoms = new HashMap();
+    private static final Map<String,Atom> atoms = Global.newHashMap();
     private static final Function<String, Atom> AtomInterner = Atom::new;
 
     final static byte[] NullName = new byte[0];

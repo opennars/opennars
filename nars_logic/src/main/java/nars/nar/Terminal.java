@@ -25,7 +25,7 @@ public class Terminal extends Default {
 
     public Terminal() {
         super(new LocalMemory(
-                        new RealtimeMSClock(true),
+                        new RealtimeMSClock(),
                         new TrieCacheBag()
                 ),
                 0,0,0,0);

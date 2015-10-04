@@ -40,7 +40,7 @@ public class NARGraph1Test {
 
         n.frame(5);
 
-        NARGraph g = new DefaultNARGraph(n);
+        NARGraph g = new DefaultNARGraph(n,32);
 
         GenericControlPane c = new GenericControlPane(g);
         g.getChildren().add(c);
@@ -53,7 +53,7 @@ public class NARGraph1Test {
 
         NAR n = new Default(256, 1,2,2);
 
-        NARide.show(n, ide -> {
+        NARide.show(n.loop(), ide -> {
 
             ide.content.getTabs().setAll(new TabX("Graph", newGraph(n)));
             ide.addView(new IOPane(n));

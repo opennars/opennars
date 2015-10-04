@@ -313,7 +313,7 @@ public class TaskProcess extends NAL implements Serializable {
 
             case Symbols.JUDGMENT:
 
-                if (!c.processBelief(this, task))
+                if (!c.processBelief(this))
                     return false;
 
                 logicMeter.JUDGMENT_PROCESS.hit();
@@ -321,7 +321,7 @@ public class TaskProcess extends NAL implements Serializable {
 
             case Symbols.GOAL:
 
-                if (!c.processGoal(this, task))
+                if (!c.processGoal(this))
                     return false;
 
                 logicMeter.GOAL_PROCESS.hit();
@@ -329,7 +329,7 @@ public class TaskProcess extends NAL implements Serializable {
 
             case Symbols.QUESTION:
 
-                if (!c.processQuestion(this, task))
+                if (!c.processQuestion(this))
                     return false;
 
                 logicMeter.QUESTION_PROCESS.hit();
@@ -337,7 +337,7 @@ public class TaskProcess extends NAL implements Serializable {
 
             case Symbols.QUEST:
 
-                if (!c.processQuest(this, task))
+                if (!c.processQuest(this))
                     return false;
 
                 logicMeter.QUESTION_PROCESS.hit();

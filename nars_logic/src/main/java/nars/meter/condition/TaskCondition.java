@@ -6,7 +6,6 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.io.JSONOutput;
-import nars.io.Texts;
 import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
@@ -18,7 +17,6 @@ import nars.truth.Truth;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -352,41 +350,41 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     }
 
 
-    public String getFalseReason() {
-        String x = "Unmatched; ";
-
-        if (similar!=null) {
-            x += "Similar:\n";
-            for (Map.Entry<Double,Task> et : similar.entrySet()) {
-                Task tt = et.getValue();
-                x += Texts.n4(et.getKey().floatValue()) + ' ' + tt.toString() + ' ' + tt.getLog() + '\n';
-            }
-        }
-        else {
-            x += "No similar: " + term;
-        }
-        return x;
-    }
+//    public String getFalseReason() {
+//        String x = "Unmatched; ";
+//
+//        if (similar!=null) {
+//            x += "Similar:\n";
+//            for (Map.Entry<Double,Task> et : similar.entrySet()) {
+//                Task tt = et.getValue();
+//                x += Texts.n4(et.getKey().floatValue()) + ' ' + tt.toString() + ' ' + tt.getLog() + '\n';
+//            }
+//        }
+//        else {
+//            x += "No similar: " + term;
+//        }
+//        return x;
+//    }
 
     public Truth getTruthMean() {
         return new DefaultTruth(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
     }
 
 
-    public List<Task> getTrueReasons() {
-        return valid;
-        //if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
-        /*return Lists.newArrayList("match at: " +
-
-                Iterables.transform(trueAt, new Function<Task, String>() {
-                    @Override
-                    public String apply(Task task) {
-                        return task.toString() + " @ " + task.sentence.getCreationTime();
-                    }
-                }));
-                */
-        //return exact;
-    }
+//    public List<Task> getTrueReasons() {
+//        return valid;
+//        //if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
+//        /*return Lists.newArrayList("match at: " +
+//
+//                Iterables.transform(trueAt, new Function<Task, String>() {
+//                    @Override
+//                    public String apply(Task task) {
+//                        return task.toString() + " @ " + task.sentence.getCreationTime();
+//                    }
+//                }));
+//                */
+//        //return exact;
+//    }
 
 //    @Override
 //    public String toString() {

@@ -9,22 +9,9 @@ import java.io.Serializable;
  */
 abstract public class RealtimeClock implements Clock {
 
-    private final boolean updatePerCycle;
     long t, t0 = -1;
     private long start;
 
-    public RealtimeClock() {
-        this(true);
-    }
-
-    /** update every cycle if necessary, but getting the System clock
-     * is not a negligble performance cost. if many cycles are iterated per
-     * frame, this could become significant
-     *
-     */
-    public RealtimeClock(boolean updatePerCycle) {
-        this.updatePerCycle = updatePerCycle;
-    }
 
     @Override
     public void clear() {
@@ -32,17 +19,11 @@ abstract public class RealtimeClock implements Clock {
         start = t;
     }
 
-    @Override
-    public void preCycle() {
-        if (updatePerCycle)
-            update();
-    }
 
 
     @Override
     public void preFrame(Memory memory) {
-        if (!updatePerCycle)
-            update();
+        update();
 
 
         if (memory.resource!=null) {
@@ -96,7 +77,7 @@ abstract public class RealtimeClock implements Clock {
     }
 
     @Override
-    public long timeSinceLastCycle() {
+    public long elapsed() {
         return t0 - t;
     }
 

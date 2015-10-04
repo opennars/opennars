@@ -32,10 +32,6 @@ public class MidiClock extends JPanel implements Clock {
         return 0;
     }
 
-    @Override
-    public void preCycle() {
-
-    }
 
     @Override
     public void preFrame(Memory m) {
@@ -43,7 +39,7 @@ public class MidiClock extends JPanel implements Clock {
     }
 
     @Override
-    public long timeSinceLastCycle() {
+    public long elapsed() {
         return 0;
     }
 

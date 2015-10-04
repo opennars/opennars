@@ -6,8 +6,8 @@ import nars.NAR;
 /** provides defalut settings for a NARGraph view */
 public class DefaultNARGraph extends NARGraph {
 
-    public DefaultNARGraph(NAR nar) {
-        this(nar, new HexagonsVis(), new HyperassociativeMapLayout(), new NARGrapher(16));
+    public DefaultNARGraph(NAR nar, int capacity) {
+        this(nar, new HexagonsVis(), new HyperassociativeMapLayout(), new NARGrapher(capacity));
     }
 
     public DefaultNARGraph(NAR nar, VisModel v, IterativeLayout l, NARGrapher grapher) {

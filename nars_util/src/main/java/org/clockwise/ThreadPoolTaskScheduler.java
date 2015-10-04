@@ -23,7 +23,7 @@ public class ThreadPoolTaskScheduler implements AsyncTaskExecutor, SchedulingTas
     // available on JDK 7+
     private static final boolean setRemoveOnCancelPolicyAvailable = ClassUtils.hasMethod(
             ScheduledThreadPoolExecutor.class, "setRemoveOnCancelPolicy", boolean.class);
-    private volatile int poolSize = 1;
+    private volatile int poolSize;
     private volatile boolean removeOnCancelPolicy = false;
     private volatile ScheduledExecutorService scheduledExecutor;
     private volatile ErrorHandler errorHandler;

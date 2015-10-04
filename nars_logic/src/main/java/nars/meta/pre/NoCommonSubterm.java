@@ -15,7 +15,7 @@ public class NoCommonSubterm extends PreCondition2 {
         super(arg1, arg2);
     }
 
-    public boolean addSubtermsRecursivelyUntilFirstMatch(Term t, Set<Term> map, Set<Term> Z) {
+    public static boolean addSubtermsRecursivelyUntilFirstMatch(Term t, Set<Term> map, Set<Term> Z) {
         if(Z != null && Z.contains(t)) { //by this we can stop early
             return false;
         }
@@ -35,7 +35,7 @@ public class NoCommonSubterm extends PreCondition2 {
         return true;
     }
 
-    public boolean Share_Any_Subterm(final Term a, final Term b) {
+    public static boolean Share_Any_Subterm(final Term a, final Term b) {
         Set<Term> A = Global.newHashSet(a.volume()*2);
         //Set<Term> B = Global.newHashSet(a.volume()*2);
         addSubtermsRecursivelyUntilFirstMatch(a, A, null);

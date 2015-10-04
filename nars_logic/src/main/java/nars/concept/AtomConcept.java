@@ -6,7 +6,6 @@ import nars.bag.NullBag;
 import nars.link.*;
 import nars.premise.Premise;
 import nars.task.Sentence;
-import nars.task.Task;
 import nars.term.Term;
 
 import java.util.List;
@@ -91,19 +90,23 @@ public class AtomConcept extends AbstractConcept {
         return BeliefTable.EMPTY;
     }
 
-    @Override
-    public boolean processBelief(Premise nal, Task task) {
-        return false;
-    }
+    static final String shouldntProcess = "should not have attempted to process task here";
 
     @Override
-    public boolean processGoal(Premise nal, Task task) {
-        return false;
+    public boolean processBelief(Premise nal) {
+        throw new RuntimeException(shouldntProcess);
     }
-
     @Override
-    public boolean processQuestion(Premise nal, Task task) {
-        return false;
+    public boolean processGoal(Premise nal) {
+        throw new RuntimeException(shouldntProcess);
+    }
+    @Override
+    public boolean processQuestion(Premise nal) {
+        throw new RuntimeException(shouldntProcess);
+    }
+    @Override
+    public final boolean processQuest(Premise nal) {
+        return processQuestion(nal);
     }
 
     /**
@@ -118,11 +121,11 @@ public class AtomConcept extends AbstractConcept {
      * @param termLink The termLink to be inserted
      * @return the termlink which was selected or updated
      */
-    public TermLink activateTermLink(final TermLinkBuilder termLink) {
+    public final TermLink activateTermLink(final TermLinkBuilder termLink) {
         return getTermLinks().update(termLink);
     }
 
-    public List<TermLinkTemplate> getTermLinkTemplates() {
+    public final List<TermLinkTemplate> getTermLinkTemplates() {
         return getTermLinkBuilder().templates();
     }
 

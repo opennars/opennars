@@ -217,7 +217,7 @@ public class NARServer extends PathHandler {
 
 
         NAR nar = new Default(
-                new Memory(  new RealtimeMSClock(false),
+                new Memory(  new RealtimeMSClock(),
                         new XorShift1024StarRandom(1),
                         new InfiniCacheBag(
                                 InfiniPeer.tmp().the("default")

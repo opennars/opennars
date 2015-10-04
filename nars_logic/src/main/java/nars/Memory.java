@@ -74,14 +74,12 @@ public class Memory extends Param {
     transient public final Topic<Concept> eventConceptForget = new DefaultTopic<>();
 
     //transient public final Topic<NAR> eventFrameStart = new DefaultTopic<>();
-    transient public final Topic<NAR> eventFrameEnd = new DefaultTopic<>();
+    transient public final Topic<NAR> eventFrameStart = new DefaultTopic<>();
 
-    transient public final Topic<Memory>
-            /** fired at the beginning of each memory cycle */
-            eventCycleStart = new DefaultTopic<>(),
     /**
      * fired at the end of each memory cycle
      */
+    transient public final Topic<Memory>
             /* @Deprecated  */ eventCycleEnd = new DefaultTopic<>(); //eventCycleStart; //new DefaultObserved();
 
     transient public final Topic<TaskProcess> eventTaskProcess = new DefaultTopic<>();
@@ -456,18 +454,12 @@ public class Memory extends Param {
     public final void cycle(int num) {
 
         final Clock clock = this.clock;
-        final Topic<Memory> start = eventCycleStart;
         final Topic<Memory> end = eventCycleEnd;
-
-        clock.preFrame(this);
 
         //synchronized (clock) {
 
             for (; num > 0; num--) {
 
-                clock.preCycle();
-
-                start.emit(this);
 
                 end.emit(this);
 

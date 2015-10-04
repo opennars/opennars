@@ -218,7 +218,7 @@ public abstract class Compound<T extends Term> implements Term, Iterable<T>, IPa
 
     public static Set<Term> termSet(Term... t) {
         Set<Term> l = Global.newHashSet(t.length);
-        for (Term x : t) l.add(x);
+        Collections.addAll(l, t);
         return l;
     }
 

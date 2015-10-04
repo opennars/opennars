@@ -6,7 +6,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.impl.MapCacheBag;
 import nars.budget.Budget;
-import nars.clock.CycleClock;
+import nars.clock.FrameClock;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.term.Term;
@@ -49,7 +49,7 @@ public class DefaultAlann extends AbstractAlann implements Supplier<Concept> {
     }
 
     public DefaultAlann(MapCacheBag<Term, Concept> concepts, int numDerivelets) {
-        this(new LocalMemory(new CycleClock(), concepts), numDerivelets);
+        this(new LocalMemory(new FrameClock(), concepts), numDerivelets);
     }
 
     public DefaultAlann(Memory m, int numDerivelets) {

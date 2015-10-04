@@ -86,7 +86,7 @@ public class Graph1 extends SpacenetApp {
         {
             //oxygenSphere.getChildren().add(new Button(""));
 
-            NARide w = new NARide(new Default());
+            NARide w = new NARide(new Default().loop());
             w.setScaleX(0.05f);
             w.setScaleY(0.03f);
             w.setScaleZ(0.1f);

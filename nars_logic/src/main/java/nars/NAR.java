@@ -110,7 +110,7 @@ abstract public class NAR implements Serializable, Level {
     /**
      * Flag for running continuously
      */
-    protected AtomicBoolean running = new AtomicBoolean();
+    public AtomicBoolean running = new AtomicBoolean();
 
 
 
@@ -120,8 +120,8 @@ abstract public class NAR implements Serializable, Level {
 
     transient private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
-    static final ExecutorService asyncs =
-                        Executors.newCachedThreadPool();
+    static final ThreadPoolExecutor asyncs =
+            (ThreadPoolExecutor) Executors.newCachedThreadPool();
                         //Executors.newFixedThreadPool(1);
 
     private int concurrency = 1;
@@ -688,23 +688,29 @@ abstract public class NAR implements Serializable, Level {
 
         final Memory memory = this.memory;
 
+        Topic<NAR> frameStart = memory.eventFrameStart;
+
+
         final int cpf = getCyclesPerFrame();
         for (int f = 0; f < frames; f++) {
 
-            if (memory.resource != null)
-                memory.resource.FRAME_DURATION.start();
+            frameStart.emit(this);
+            memory.clock.preFrame(memory);
 
             memory.cycle(cpf);
 
-            memory.eventFrameEnd.emit(this);
-
             runNextTasks();
-
-
         }
 
         running.compareAndSet(true, false);
 
+
+        //TODO rewrite ResourceMeter to use event handler
+        /*
+        final ResourceMeter resourceMeter = memory.resource;
+        if (resourceMeter != null)
+            resourceMeter.FRAME_DURATION.start();
+        */
     }
 
     /* Print all statically known events (discovered via reflection)
@@ -756,55 +762,27 @@ abstract public class NAR implements Serializable, Level {
         return this;
     }
 
+
+//    /** creates a new loop which begins paused */
+    final public NARLoop loop() {
+        return loop(-1);
+    }
+
     final public NARLoop loop(final float initialFPS) {
         final float millisecPerFrame = 1000f / initialFPS;
-        return loop(millisecPerFrame);
+        return loop((long)millisecPerFrame);
     }
 
     /**
      * Runs until stopped, at a given delay period between frames (0= no delay). Main loop
-     * @param initialFramePeriod in milliseconds
+     * @param initialFramePeriodMS in milliseconds
      */
-    final public NARLoop loop(long initialFramePeriod) {
-        //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
+    final public NARLoop loop(int initialFramePeriodMS) {
+//        //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
-        while (running.get()) {
-
-            final long start = System.currentTimeMillis();
-
-            frame(1); //in seconds
-
-            final long frameTimeMS = System.currentTimeMillis() - start;
-
-            if (initialFramePeriod > 0) {
-                initialFramePeriod = throttle(initialFramePeriod, frameTimeMS);
-            }
-        }
-
-        return new NARLoop(this).setPeriod(initialFramePeriod);
+        return new NARLoop(this, initialFramePeriodMS);
     }
 
-    protected long throttle(long minFramePeriodMS, long frameTimeMS) {
-        double remainingTime = (minFramePeriodMS - frameTimeMS) / 1.0E3;
-        if (remainingTime > 0) {
-            onLoopLag(minFramePeriodMS);
-        } else if (remainingTime < 0) {
-
-            System.err.println(Thread.currentThread() + " loop lag: " + remainingTime + "ms too slow");
-
-            //minFramePeriodMS++;
-            //; incresing frame period to " + minFramePeriodMS + "ms");
-        }
-        return minFramePeriodMS;
-    }
-
-    private final void onLoopLag(final long minFramePeriodMS) {
-        try {
-            Thread.sleep(minFramePeriodMS);
-        } catch (InterruptedException ee) {
-            System.err.println(ee);
-        }
-    }
 
     /** sets current maximum allowed NAL level (1..8) */
     public NAR nal(int level) {
@@ -844,7 +822,7 @@ abstract public class NAR implements Serializable, Level {
      * runs all the tasks in the 'Next' queue
      */
     protected final void runNextTasks() {
-        int originalSize = nextTasks.size();
+        final int originalSize = nextTasks.size();
         if (originalSize == 0) return;
 
         Util.run(nextTasks, originalSize, concurrency);
@@ -862,20 +840,29 @@ abstract public class NAR implements Serializable, Level {
      * queues a task to (hopefully) be executed at an unknown time in the future,
      * in its own thread in a thread pool
      */
-    public boolean runAsync(Runnable t) {
+    public final boolean execAsync(Runnable t) {
+        return execAsync(t, null);
+    }
+    public boolean execAsync(Runnable t, Consumer<RejectedExecutionException> onError) {
         try {
+            memory.eventSpeak.emit("execAsync " + t.toString());
+            memory.eventSpeak.emit("pool: " + asyncs.getActiveCount() + " running, " + asyncs.getTaskCount() + " pending");
+
             asyncs.execute(t);
+
             return true;
         }
         catch (RejectedExecutionException e) {
+            if (onError!=null)
+                onError.accept(e);
             return false;
         }
     }
-    public boolean runAsync(Consumer<NAR> t) {
-        return runAsync( /* Runnable */ () -> { t.accept(NAR.this); } );
+    public boolean execAsync(Consumer<NAR> t) {
+        return execAsync( /* Runnable */ () -> { t.accept(NAR.this); } );
     }
 
-    public <X> Future<X> runAsync(Function<NAR,X> t) {
+    public <X> Future<X> execAsync(Function<NAR,X> t) {
         return asyncs.submit( /* (Callable) */() -> {
             return t.apply(NAR.this);
         });
@@ -1177,7 +1164,7 @@ abstract public class NAR implements Serializable, Level {
     }
 
     public final NAR onEachFrame(Consumer<NAR> receiver) {
-        regs.add(this.memory.eventFrameEnd.on(receiver));
+        regs.add(this.memory.eventFrameStart.on(receiver));
         return this;
     }
 

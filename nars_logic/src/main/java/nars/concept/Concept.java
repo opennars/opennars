@@ -126,7 +126,7 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     default String toInstanceString() {
         String id = Integer.toString(System.identityHashCode(this), 16);
-        return this + "::" + id + " " + getBudget().toBudgetString();
+        return this + "::" + id + ' ' + getBudget().toBudgetString();
     }
 
 
@@ -211,15 +211,13 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
 
-    boolean processBelief(Premise nal, Task task);
+    boolean processBelief(Premise nal);
 
-    boolean processGoal(Premise nal, Task task);
+    boolean processGoal(Premise nal);
 
-    boolean processQuestion(Premise nal, Task task);
+    boolean processQuestion(Premise nal);
 
-    default boolean processQuest(Premise nal, Task task) {
-        return processQuestion(nal, task);
-    }
+    boolean processQuest(Premise nal);
 
 
 

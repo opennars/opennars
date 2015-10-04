@@ -3,7 +3,7 @@ package nars;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.clock.Clock;
-import nars.clock.CycleClock;
+import nars.clock.FrameClock;
 import nars.concept.Concept;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
@@ -24,7 +24,7 @@ public class LocalMemory extends Memory {
     }
 
     public LocalMemory() {
-        this(new CycleClock());
+        this(new FrameClock());
     }
 
     public byte[] toBytes() throws IOException, InterruptedException {

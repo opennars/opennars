@@ -114,8 +114,10 @@ public class LogPane extends BorderPane implements Runnable {
                             toShow.removeFirst();
                     }
 
-                    for (int i = start; i < ps; i++)
-                        toShow.add(p.get(i));
+                    for (int i = start; i < ps; i++) {
+                        Node v = p.get(i);
+                        toShow.add(v);
+                    }
                 //}
 
                 //if (queueUpdate)
@@ -317,7 +319,7 @@ public class LogPane extends BorderPane implements Runnable {
             else
                 return activationSet;
         }
-        else if (channel.equals("eventCycleStart")) {
+        else if (channel.equals("eventCycleEnd")) {
             if (prev!=null && (prev instanceof CycleActivationBar)) {
                 ((CycleActivationBar)prev).setTo(nar.time());
                 return null;
@@ -325,16 +327,14 @@ public class LogPane extends BorderPane implements Runnable {
             else {
                 return new CycleActivationBar(nar.time());
             }
-        }
-        else if (channel.equals("eventCycleEnd")) {
-            if (activationSet!=null) {
-                activationSet.commit();
-                activationSet = null; //force a new one
-            }
-            return null;
+//            if (activationSet!=null) {
+//                activationSet.commit();
+//                activationSet = null; //force a new one
+//            }
+            //return null;
             //
         }
-        else if (channel.equals("eventFrameEnd")) {
+        else if (channel.equals("eventFrameStart")) {
             return null;
             //
         } else if (channel.equals("eventInput")) {

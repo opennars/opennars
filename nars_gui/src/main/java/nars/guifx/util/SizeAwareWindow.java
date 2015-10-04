@@ -200,7 +200,7 @@ public class SizeAwareWindow extends Scene {
     };
 
     private static Supplier<Parent> Default = () -> {
-        return new NARide(new Default(1000, 1, 1, 3));
+        return new NARide(new Default(1000, 1, 1, 3).loop());
     };
 
     private static Supplier<Parent> Row = () -> {

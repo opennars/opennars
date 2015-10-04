@@ -19,7 +19,7 @@ public class After extends PreCondition {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + taskBeforeBelief + "]";
+        return getClass().getSimpleName() + '[' + taskBeforeBelief + ']';
     }
 
     @Override

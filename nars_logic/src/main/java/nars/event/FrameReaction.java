@@ -15,7 +15,7 @@ abstract public class FrameReaction implements Consumer<NAR> {
         this(nar.memory);
     }
     public FrameReaction(Memory m) {
-        reg = m.eventFrameEnd.on(this);
+        reg = m.eventFrameStart.on(this);
     }
 
     public void off() {

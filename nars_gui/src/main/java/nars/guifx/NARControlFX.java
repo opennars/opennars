@@ -1,21 +1,16 @@
 package nars.guifx;
 
-import de.jensd.fx.glyphs.GlyphIcon;
-import de.jensd.fx.glyphs.GlyphsDude;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import nars.NAR;
 import nars.guifx.util.NSlider;
+import nars.util.NARLoop;
 import nars.util.event.Active;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static javafx.application.Platform.runLater;
 
@@ -130,7 +125,6 @@ public class NARControlFX extends HBox {
         //setFillHeight(true);
 
 
-
 //        this.busyBackgroundColor = new NARWindow.FXReaction(n, this, Events.FrameEnd.class) {
 //
 //            @Override
@@ -173,43 +167,178 @@ public class NARControlFX extends HBox {
             super(nar);
 
             getChildren().addAll(
-                new FlowPane(
-                    new NSlider("Power", 48, 48, NSlider.BarSlider, 0.5),
-                    new NSlider("Duration", 48, 48, NSlider.CircleKnob, 0.75),
-                    new NSlider("Focus", 48, 48, NSlider.CircleKnob, 0.6),
-                    new Button("Relax")
-                )
+                    new FlowPane(
+                            new NSlider("Power", 48, 48, NSlider.BarSlider, 0.5),
+                            new NSlider("Duration", 48, 48, NSlider.CircleKnob, 0.75),
+                            new NSlider("Focus", 48, 48, NSlider.CircleKnob, 0.6),
+                            new Button("Relax")
+                    )
             );
         }
     }
 
 
-    public static class CycleClockPane extends VBox implements Runnable {
+    public static class LoopPane extends VBox {
 
-        final static Text play = GlyphsDude.createIcon(FontAwesomeIcon.PLAY, GlyphIcon.DEFAULT_FONT_SIZE);
-        final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
-        final Label clock = new Label("0");
-        private final NAR nar;
-        private final Active regs;
-        boolean wasRunning = false;
-        final AtomicBoolean pendingClockUpdate = new AtomicBoolean(false);
-        ////TODO: public final SimpleBooleanProperty pendingClockUpdate
+        final Label label = new Label();
+//        final static Text play = GlyphsDude.createIcon(FontAwesomeIcon.PLAY, GlyphIcon.DEFAULT_FONT_SIZE);
+//        final static Text stop = GlyphsDude.createIcon(FontAwesomeIcon.STOP, GlyphIcon.DEFAULT_FONT_SIZE);
+        private final NARLoop loop;
+        private final Button runButton;
+        private final Button stepButton;
+        private final SimpleStringProperty cpuLabel;
 
-        private final long defaultNARPeriodMS = 75;
+        private final NSlider cpuSlider;
 
-        public void run() {
-            if (pendingClockUpdate.getAndSet(true) == false) {
+
+        public LoopPane(NARLoop loop) {
+            super();
+
+            this.loop = loop;
+
+            final NAR n = loop.nar;
+            runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
+            stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
+            cpuLabel = new SimpleStringProperty("CPU");
+
+            cpuSlider = new NSlider(cpuLabel, 100, 30.0, NSlider.BarSlider, -1);
+            //cpuSlider.min.set(0);
+            //cpuSlider.max.set(2000);
+
+
+
+            runButton.setTooltip(new Tooltip("Toggle run/pause"));
+
+
+            runButton.setOnAction(e -> {
+
+                if (loop.getPeriodMS() < 0) {
+                    tryStart();
+                } else {
+                    pause();
+                }
+
+            });
+
+
+            stepButton.setTooltip(new Tooltip("Step"));
+            stepButton.setOnAction(e -> {
+
+                if (!n.running()) {
+                    n.frame();
+                    say("stepped to time " + n.time());
+                } else {
+                    say("already running");
+                }
+            });
+
+            pause();
+
+//        Slider cpuSlider = new Slider(0, 1, 0);
+//        cpuSlider.setOrientation(Orientation.VERTICAL);
+//        cpuSlider.setTooltip(new Tooltip("Speed"));
+//        cpuSlider.setMinorTickCount(10);
+//        cpuSlider.setShowTickMarks(true);
+//        getChildren().add(cpuSlider);
+//
+
+            getChildren().addAll(
+                    new FlowPane(runButton, cpuSlider, stepButton),
+                    new FlowPane(label)
+            );
+
+        }
+
+        private void tryStart() {
+            //TODO make sure only one thread is running, maybe with singleThreadExecutor
+
+
+
+
+            //cpuSlider.value(-1);
+            cpuSlider.setOpacity(1.0);
+
+            cpuLabel.setValue("ON " + cpuSlider.v());
+
+
+            //-2 here is a magic number to indicate that nothing is pending and can be changed now
+            cpuSlider.value[0].addListener((s, p, c) -> {
+
+                updateLoop();
+
+            });
+
+            updateLoop();
+
+            say("ready");
+
+        }
+
+        private void updateLoop() {
+            double v = cpuSlider.value[0].get();
+
+            //slider (0..1.0) -> millisecond fixed period
+            /*int nMS = (int) FastMath.round(
+                    //1000.0 * (1.0 / (0.05 + c.doubleValue()))
+                    2000.0 * v // / (1.0 - v)
+            );*/
+            float logScale = 50f;
+            int nMS = (int)Math.round((1.0 - Math.log(1+v*logScale)/Math.log(1+logScale)) * 1024.0);
+
+            if (loop.setPeriodMS(nMS)) {
+
+                //new delay set:
+
+                final int MS = nMS;
 
                 runLater(() -> {
-                    pendingClockUpdate.set(false);
-                    boolean running = nar.running();
-                    if (running != wasRunning) {
-                        //bp.setGraphic(running ? stop : play);
-                        wasRunning = running;
-                    }
-
-                    clock.setText("" + nar.time());
+                    stepButton.setDisable(true);
+                    say("set period=" + MS + "ms");
                 });
+            }
+        }
+
+        private void pause() {
+            loop.pause();
+
+            runLater(() -> {
+                say("ready");
+
+                stepButton.setDisable(false);
+                cpuSlider.setOpacity(0.25);
+                cpuLabel.setValue("OFF");
+            });
+        }
+
+        protected void say(String text) {
+            label.setText(text);
+        }
+    }
+
+    public static class CycleClockPane extends VBox implements Runnable {
+
+        final Label clock = new Label("?");
+        private final NAR nar;
+        private final Active regs;
+        //final AtomicBoolean pendingClockUpdate = new AtomicBoolean(false);
+        ////TODO: public final SimpleBooleanProperty pendingClockUpdate
+
+
+        public void run() {
+//            if (pendingClockUpdate.compareAndSet(false, true))
+             {
+
+//                runLater(() -> {
+//                    pendingClockUpdate.set(false);
+//                    boolean running = nar.running();
+//                    if (running != wasRunning) {
+//                        //bp.setGraphic(running ? stop : play);
+//                        wasRunning = running;
+//                    }
+//
+//
+//                });
+                clock.setText("" + nar.time());
             }
         }
 
@@ -224,7 +353,7 @@ public class NARControlFX extends HBox {
             this.nar = n;
 
             this.regs = new Active().add(
-                    n.memory.eventFrameEnd.on(nn -> {
+                    n.memory.eventFrameStart.on(nn -> {
                         //System.out.println("frame: " + nn.time());
                         run();
                     }),
@@ -233,65 +362,6 @@ public class NARControlFX extends HBox {
                     })
             );
 
-            Button runButton = JFX.newIconButton(FontAwesomeIcon.PLAY);
-            Button stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
-            StringProperty cpuLabel = new SimpleStringProperty("CPU");
-            NSlider cpuSlider = new NSlider(cpuLabel, 100, 30.0, NSlider.BarSlider, 0.5);
-
-            runButton.setTooltip(new Tooltip("Toggle run/stop"));
-
-
-            runButton.setOnAction(e -> {
-
-                if (!n.running()) {
-                    synchronized (n) {
-                        //TODO make sure only one thread is running, maybe with singleThreadExecutor
-
-                        double startingSpeed = 0.5;
-
-                        stepButton.setDisable(true);
-                        cpuSlider.value(startingSpeed);
-                        cpuSlider.setOpacity(1.0);
-
-                        new Thread(() -> {
-                            n.loop(defaultNARPeriodMS);
-                        }).start();
-                        cpuLabel.setValue("ON " + cpuSlider.v());
-                    }
-                } else {
-
-                    if (n.running()) {
-                        n.stop();
-
-                        stepButton.setDisable(false);
-                        cpuSlider.setOpacity(0.25);
-                        cpuLabel.setValue("OFF");
-                    }
-                }
-
-            });
-
-
-            stepButton.setTooltip(new Tooltip("Step"));
-            stepButton.setOnAction(e -> {
-                if (!n.running())
-                    n.frame();
-            });
-            stepButton.setDisable(true);
-
-
-//        Slider cpuSlider = new Slider(0, 1, 0);
-//        cpuSlider.setOrientation(Orientation.VERTICAL);
-//        cpuSlider.setTooltip(new Tooltip("Speed"));
-//        cpuSlider.setMinorTickCount(10);
-//        cpuSlider.setShowTickMarks(true);
-//        getChildren().add(cpuSlider);
-
-
-            getChildren().addAll(
-                    new FlowPane(runButton, cpuSlider, stepButton),
-                    clock
-            );
 
             autosize();
         }

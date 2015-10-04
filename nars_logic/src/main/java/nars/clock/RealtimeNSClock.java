@@ -3,9 +3,7 @@ package nars.clock;
 /** nanosecond accuracy */
 public class RealtimeNSClock extends RealtimeClock {
 
-    public RealtimeNSClock(boolean updatePerCycle) {
-        super(updatePerCycle);
-    }
+
 
     @Override
     protected long getRealTime() {

@@ -118,7 +118,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
      */
     public final boolean execute(final Task<Operation> op) {
         if (async()) {
-            return nar.runAsync(() -> executeSynch(op));
+            return nar.execAsync(() -> executeSynch(op));
         }
         else
             return executeSynch(op);

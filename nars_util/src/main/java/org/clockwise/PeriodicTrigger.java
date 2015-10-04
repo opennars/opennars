@@ -47,7 +47,12 @@ public class PeriodicTrigger implements Trigger {
     }
 
 
-//TODO move this policy to a subclass
+
+    public final long getPeriod() {
+        return period;
+    }
+
+    //TODO move this policy to a subclass
 //    /**
 //     * Specify whether the periodic interval should be measured between the
 //     * scheduled start times rather than between actual completion times. The

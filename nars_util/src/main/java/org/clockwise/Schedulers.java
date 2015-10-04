@@ -31,7 +31,9 @@ public class Schedulers {
     private static Schedulers instance;
 
     /** The running schedullers. */
-    private final Map<String, ScheduledFuture<?>> runningSchedullers = new ConcurrentHashMap<>();
+    private final Map<String, ScheduledFuture<?>> runningSchedullers
+            //= new ConcurrentWeakKeyHashMap<>();
+            = new ConcurrentHashMap<>();
 
     
     /**
@@ -74,6 +76,9 @@ public class Schedulers {
         CustomizableThreadFactory factory = new CustomizableThreadFactory();
         scheduler.initializeExecutor(factory, (r, executor) -> System.err.println(scheduler + " rejected: " + r));
         scheduler.setPoolSize(poolSize);
+        scheduler.setErrorHandler((e) -> {
+            System.err.println(scheduler + " " + e);
+        });
         instance.setCurrentScheduler(scheduler);
         return instance;
     }
@@ -86,20 +91,36 @@ public class Schedulers {
      * @return the schedulers
      */
     public static Schedulers stop(String schedulerId) {
+
+        System.err.println("stop: " + schedulerId);
+
         createSingleton();
-        if (instance.runningSchedullers.isEmpty()) {
-            throw new IllegalStateException("No schedulers available.");
-        }
+//        if (instance.runningSchedullers.isEmpty()) {
+//            throw new IllegalStateException("No schedulers available.");
+//        }
 
         ScheduledFuture<?> future = instance.runningSchedullers.get(schedulerId);
         if (future == null) {
             throw new IllegalStateException("No schedulers match with given id.");
         }
-        future.cancel(true);
-        instance.decreaseNoOfSchedullers();
-        instance.decreaseNoOfRunningSchedullers();
+
+        stop(future, true);
 
         return instance;
+    }
+
+    /**
+     *
+     * @param future
+     * @param isNew true: complete removal, or false: immediately rescheduling existing task
+     */
+    protected static void stop(ScheduledFuture<?> future, boolean isNew) {
+
+        future.cancel(true);
+        if (isNew) {
+            instance.decreaseNoOfSchedullers();
+            instance.decreaseNoOfRunningSchedullers();
+        }
     }
 
     /**
@@ -124,21 +145,30 @@ public class Schedulers {
     }
 
     /**
-     * Schedule.
+     * Schedule or re-schedule (will be restarted appropriately)
      * 
      * @param task
      *            the task
      * @return the string
      */
     public String schedule(TriggerTask task) {
+
+        System.err.println("start: " + task);
+
         if (getCurrentScheduler() == null) {
             throw new IllegalStateException("New scheduler should be crea");
         }
         ScheduledFuture<?> future = getCurrentScheduler().schedule(task.getRunnable(), task.getTrigger());
         String id = getUUID();
-        runningSchedullers.put(id, future);
-        increaseNoOfRunningSchedullers();
-        setCurrentScheduler(null);
+
+        ScheduledFuture<?> removed = runningSchedullers.put(id, future);
+        if (removed!=null) {
+            Schedulers.stop(removed,false);
+        }
+        else {
+            increaseNoOfRunningSchedullers();
+        }
+        //setCurrentScheduler(null);
         return id;
     }
 
@@ -150,11 +180,13 @@ public class Schedulers {
      * @return the string
      */
     public String schedule(Runnable task, Trigger trigger) {
+        System.out.println("start: " + task + " "+ trigger);
+
         ScheduledFuture<?> future = getCurrentScheduler().schedule(task, trigger);
         String id = getUUID();
         runningSchedullers.put(id, future);
         increaseNoOfRunningSchedullers();
-        setCurrentScheduler(null);
+        //setCurrentScheduler(null);
         return id;
     }
     

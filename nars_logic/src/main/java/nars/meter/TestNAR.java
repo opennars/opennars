@@ -279,22 +279,13 @@ public class TestNAR  {
         return mustOutput(withinCycles, goalTerm, '!', freq, conf);
     }
 
-    public ExplainableTask explain(ExplainableTask t) {
-        explanations.add(t);
-        return t;
-    }
-    @Deprecated public Task explainable(Task x) {
-//        ExplainableTask t = new ExplainableTask(x.normalized());
-//        return explain(t);
-        return x;
-    }
 
     public TestNAR ask(String termString) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
         Task t = nar.ask(termString);
 
-        explainable(t);
+        //explainable(t);
         return this;
     }
 
@@ -328,7 +319,8 @@ public class TestNAR  {
             this.time = n.time();
 
             this.inputs = n.inputs.toArray(new Task[n.inputs.size()]);
-            this.eventMeters = n.eventMeters.values().toArray(new HitMeter[0]);
+            Collection<HitMeter> var = n.eventMeters.values();
+            this.eventMeters = var.toArray(new HitMeter[var.size()]);
         }
 
         public void setError(Exception e) {

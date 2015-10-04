@@ -28,17 +28,13 @@ public class SimulatedClock implements Clock {
 
     @Override
     public void preFrame(Memory m) {
-
-    }
-
-    @Override
-    public final void preCycle() {
         t0 = t;
         t = tNext;
     }
 
+
     @Override
-    public long timeSinceLastCycle() {
+    public long elapsed() {
         return t0 - t;
     }
 

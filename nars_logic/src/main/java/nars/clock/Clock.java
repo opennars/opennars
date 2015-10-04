@@ -15,10 +15,9 @@ public interface Clock extends Serializable {
     /** returns the current time, as measured in units determined by this clock */
     long time();
 
-    /** called at the beginning of a new cycle */
-    void preCycle();
+
 
     void preFrame(Memory m);
 
-    long timeSinceLastCycle();
+    long elapsed();
 }

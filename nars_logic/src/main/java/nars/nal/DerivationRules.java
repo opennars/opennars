@@ -261,7 +261,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
                     System.err.println("rUnnorm modified");*/
 
             } catch (Exception ex) {
-                System.err.println("invalid TaskRule:  " + s + " (" + ex + ")");
+                System.err.println("invalid TaskRule:  " + s + " (" + ex + ')');
                 //ex.printStackTrace();//ex.printStackTrace();
             }
         });
@@ -309,7 +309,7 @@ public class DerivationRules extends ArrayList<TaskRule> {
                     String str2 = "B_1";
                     for (int k = 0; k < maxVarArgs; k++) {
                         str2 += ", B_" + (k+2);
-                        String parsable_unrolled = p.replace("A_1..n", str+" ").replace("B_1..m", str2+" ");
+                        String parsable_unrolled = p.replace("A_1..n", str+ ' ').replace("B_1..m", str2+ ' ');
                         addAndPermuteTenses(expanded, parsable_unrolled);
                     }
                 }

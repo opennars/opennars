@@ -148,8 +148,8 @@ public class IntervalTree<K extends Comparable<? super K>, V> {
 	}
 
 	public void putAll(Map<Interval<K>, V> m) {
-		for(Interval<K> i : m.keySet()){
-			put(i, m.get(i));
+		for(Entry<Interval<K>, V> intervalVEntry : m.entrySet()){
+			put(intervalVEntry.getKey(), intervalVEntry.getValue());
 		}
 	}
 

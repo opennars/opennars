@@ -4,10 +4,6 @@ package nars.clock;
 public class RealtimeMSClock extends RealtimeClock {
 
 
-    /** if not update each cycle, it will update each frame */
-    public RealtimeMSClock(boolean updateEachCycle) {
-        super(updateEachCycle);
-    }
 
     @Override
     protected long getRealTime() {

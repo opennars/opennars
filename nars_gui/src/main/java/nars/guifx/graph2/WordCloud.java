@@ -24,7 +24,7 @@ public class WordCloud extends DefaultNARGraph {
 
         NAR n = new Default(256, 1,2,2);
 
-        NARide.show(n, ide -> {
+        NARide.show(n.loop(), ide -> {
 
             n.input("a:b.");
             n.input("b:c.");

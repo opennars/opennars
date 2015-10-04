@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 /**
  * Created by me on 9/5/15.
  */
-abstract public class DeriveletContext implements Consumer<Memory> {
+abstract public class DeriveletContext implements Consumer<NAR> {
 
     /** random # generator local to this thread */
     public final Random rng;
@@ -26,12 +26,13 @@ abstract public class DeriveletContext implements Consumer<Memory> {
         this.nar = nar;
         this.rng = rng;
         this.conceptSupply = conceptSupply;
-        nar.memory().eventCycleStart.on(this);
+        nar.memory().eventFrameStart.on(this);
     }
 
     @Override
-    public void accept(final Memory memory) {
+    public void accept(final NAR nar) {
         //each cycle
+        Memory memory = nar.memory;
         forgetCycles = memory.duration() * memory.conceptForgetDurations.floatValue();
     }
 
