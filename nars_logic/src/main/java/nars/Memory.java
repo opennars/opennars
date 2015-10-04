@@ -459,7 +459,9 @@ public class Memory extends Param {
         final Topic<Memory> start = eventCycleStart;
         final Topic<Memory> end = eventCycleEnd;
 
-        synchronized (clock) {
+        clock.preFrame(this);
+
+        //synchronized (clock) {
 
             for (; num > 0; num--) {
 
@@ -471,7 +473,7 @@ public class Memory extends Param {
 
             }
 
-        }
+        //}
 
     }
 

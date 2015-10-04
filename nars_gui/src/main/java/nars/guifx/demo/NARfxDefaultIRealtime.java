@@ -7,8 +7,7 @@ import nars.NAR;
 import nars.clock.RealtimeMSClock;
 import nars.guifx.NARide;
 import nars.nar.Default;
-import org.clockwise.PeriodicTrigger;
-import org.clockwise.Schedulers;
+import nars.util.NARLoop;
 
 /**
  * Created by me on 9/7/15.
@@ -17,7 +16,6 @@ public class NARfxDefaultIRealtime {
 
     public static void main(String[] arg) {
 
-        int cycleDivisor = 4; //determines how many visual frames to compute for each NAR frame
         int cyclesPerFrame = 8;
 
         Global.DEBUG = true;
@@ -29,8 +27,9 @@ public class NARfxDefaultIRealtime {
         nar.setCyclesPerFrame(cyclesPerFrame);
         //nar.spawnThread(1000/60);
 
-        Schedulers time = Schedulers.newDefault();
-        time.schedule(() -> nar.frame(), new PeriodicTrigger(cycleDivisor * 1000/60));
+
+        NARLoop n = nar.loop(0.1f);
+
 
         NARide.show(nar, (i) -> {
             /*try {

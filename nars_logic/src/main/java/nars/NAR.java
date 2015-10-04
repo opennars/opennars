@@ -9,8 +9,6 @@ import nars.event.NARReaction;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.TextInput;
-import nars.meter.EmotionMeter;
-import nars.meter.LogicMeter;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -26,6 +24,7 @@ import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.util.NARLoop;
 import nars.util.data.Util;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
@@ -40,7 +39,11 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.function.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.LongPredicate;
 import java.util.stream.Stream;
 
 
@@ -107,11 +110,8 @@ abstract public class NAR implements Serializable, Level {
     /**
      * Flag for running continuously
      */
-    protected boolean running = false;
-    /**
-     * memory activity enabled
-     */
-    protected boolean enabled = true;
+    protected AtomicBoolean running = new AtomicBoolean();
+
 
 
     //TODO use this to store all handler registrations, and decide if transient or not
@@ -477,7 +477,7 @@ abstract public class NAR implements Serializable, Level {
         });
     }
 
-    /** creates an operator from a supplied function, which can be a lambda */
+    /** creates a TermFunction operator from a supplied function, which can be a lambda */
     public TermFunction on(Term operator, Function<Term[], Object> func) {
         TermFunction f = new TermFunction(operator) {
 
@@ -628,8 +628,7 @@ abstract public class NAR implements Serializable, Level {
      * Exits an iteration loop if running
      */
     public void stop() {
-        running = false;
-        enabled = false;
+        running.set( false );
     }
 
 //    /**
@@ -683,21 +682,17 @@ abstract public class NAR implements Serializable, Level {
      */
     public void frame(final int frames) {
 
-        final boolean wasRunning = running;
+        if (!running.compareAndSet(false, true)) {
+            throw new RuntimeException("already running");
+        }
 
-        running = true;
-        enabled = true;
+        final Memory memory = this.memory;
 
         final int cpf = getCyclesPerFrame();
-        for (int f = 0; (f < frames) && running; f++) {
-
-            if (!isEnabled())
-                throw new RuntimeException("NAR disabled");
+        for (int f = 0; f < frames; f++) {
 
             if (memory.resource != null)
                 memory.resource.FRAME_DURATION.start();
-
-            memory.clock.preFrame(memory);
 
             memory.cycle(cpf);
 
@@ -708,7 +703,7 @@ abstract public class NAR implements Serializable, Level {
 
         }
 
-        running = wasRunning;
+        running.compareAndSet(true, false);
 
     }
 
@@ -761,23 +756,19 @@ abstract public class NAR implements Serializable, Level {
         return this;
     }
 
-    /**
-     * Run until stopped, at full speed
-     */
-    public void run() {
-        loop(0);
+    final public NARLoop loop(final float initialFPS) {
+        final float millisecPerFrame = 1000f / initialFPS;
+        return loop(millisecPerFrame);
     }
 
     /**
      * Runs until stopped, at a given delay period between frames (0= no delay). Main loop
+     * @param initialFramePeriod in milliseconds
      */
-    final public void loop(long minFramePeriodMS) {
+    final public NARLoop loop(long initialFramePeriod) {
         //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
-        enabled = true;
-        running = true;
-
-        while (running) {
+        while (running.get()) {
 
             final long start = System.currentTimeMillis();
 
@@ -785,10 +776,12 @@ abstract public class NAR implements Serializable, Level {
 
             final long frameTimeMS = System.currentTimeMillis() - start;
 
-            if (minFramePeriodMS > 0) {
-                minFramePeriodMS = throttle(minFramePeriodMS, frameTimeMS);
+            if (initialFramePeriod > 0) {
+                initialFramePeriod = throttle(initialFramePeriod, frameTimeMS);
             }
         }
+
+        return new NARLoop(this).setPeriod(initialFramePeriod);
     }
 
     protected long throttle(long minFramePeriodMS, long frameTimeMS) {
@@ -805,7 +798,7 @@ abstract public class NAR implements Serializable, Level {
         return minFramePeriodMS;
     }
 
-    private void onLoopLag(long minFramePeriodMS) {
+    private final void onLoopLag(final long minFramePeriodMS) {
         try {
             Thread.sleep(minFramePeriodMS);
         } catch (InterruptedException ee) {
@@ -813,38 +806,20 @@ abstract public class NAR implements Serializable, Level {
         }
     }
 
-    /**
-     * returns the configured NAL level
-     */
+    /** sets current maximum allowed NAL level (1..8) */
     public NAR nal(int level) {
         memory.nal(level);
         return this;
     }
 
+    /**
+     * returns the current level
+     */
     public int nal() {
         return memory.nal();
     }
 
-    public void emit(final Class c) {
-        memory.emit(c);
-    }
 
-    public void emit(final Class c, final Object... o) {
-        memory.emit(c, o);
-    }
-
-    /**
-     * enable/disable all I/O and memory processing. CycleStart and CycleStop
-     * events will continue to be generated, allowing the memory to be used as a
-     * clock tick while disabled.
-     */
-    public void enable(boolean e) {
-        this.enabled = e;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
 
     /**
      * adds a task to the queue of task which will be executed in batch
@@ -854,15 +829,15 @@ abstract public class NAR implements Serializable, Level {
         nextTasks.addLast(t);
     }
 
-    /*
-     * checks if the queue already contains the pending
-     * Runnable instance to ensure duplicates don't
-     * don't accumulate
-     */
-    final public void beforeNextFrameUnlessDuplicate(final Runnable t) {
-        if (!nextTasks.contains(t))
-            nextTasks.addLast(t);
-    }
+//    /*
+//     * checks if the queue already contains the pending
+//     * Runnable instance to ensure duplicates don't
+//     * don't accumulate
+//     */
+//    final public void beforeNextFrameUnlessDuplicate(final Runnable t) {
+//        if (!nextTasks.contains(t))
+//            nextTasks.addLast(t);
+//    }
 
 
     /**
@@ -920,8 +895,8 @@ abstract public class NAR implements Serializable, Level {
         return memory.time();
     }
 
-    public boolean isRunning() {
-        return running;
+    public boolean running() {
+        return running.get();
     }
 
     /**
@@ -962,7 +937,7 @@ abstract public class NAR implements Serializable, Level {
 
         m.the(NAR.class, this);
 
-        if (isRunning())
+        if (running())
             throw new RuntimeException("NAR must be stopped to change memory");
 
         memory = m;
@@ -1000,31 +975,8 @@ abstract public class NAR implements Serializable, Level {
         return this;
     }
 
-    protected final void ensureNotRunning() {
-        if (this.isRunning())
-            throw new RuntimeException("NAR is already running");
-    }
 
-//    public NAR loop(long periodMS) {
-//        ensureNotRunning();
-//
-//        nar.loop(periodMS);
-//
-//        return nar;
-//    }
-
-    /**
-     * blocks until finished
-     */
-    public NAR run(int frames) {
-        ensureNotRunning();
-
-        this.frame(frames);
-
-        return this;
-    }
-
-//    public NAR fork(Consumer<NAR> clone) {
+    //    public NAR fork(Consumer<NAR> clone) {
 //        ensureNotRunning();
 //        return this; //TODO
 //    }
@@ -1089,22 +1041,22 @@ abstract public class NAR implements Serializable, Level {
 //    }
 
     //TODO iterate/query beliefs, etc
-
-    public NAR meterLogic(Consumer<LogicMeter> recip) {
-        recip.accept(this.memory.logic);
-        return this;
-    }
-
-    public NAR meterEmotion(Consumer<EmotionMeter> recip) {
-        recip.accept(this.memory.emotion);
-        return this;
-    }
-
-
-    public NAR resetEvery(long minPeriodOfCycles) {
-        onEachPeriod(minPeriodOfCycles, this::reset);
-        return this;
-    }
+//
+//    public NAR meterLogic(Consumer<LogicMeter> recip) {
+//        recip.accept(this.memory.logic);
+//        return this;
+//    }
+//
+//    public NAR meterEmotion(Consumer<EmotionMeter> recip) {
+//        recip.accept(this.memory.emotion);
+//        return this;
+//    }
+//
+//
+//    public NAR resetEvery(long minPeriodOfCycles) {
+//        onEachPeriod(minPeriodOfCycles, this::reset);
+//        return this;
+//    }
 
     public NAR onEachPeriod(long minPeriodOfCycles, Runnable action) {
         final long start = this.time();
@@ -1194,12 +1146,12 @@ abstract public class NAR implements Serializable, Level {
     }
 
 
-    public NAR resetIf(Predicate<NAR> resetCondition) {
-        onEachFrame((n) -> {
-            if (resetCondition.test(n)) reset();
-        });
-        return this;
-    }
+//    public NAR resetIf(Predicate<NAR> resetCondition) {
+//        onEachFrame((n) -> {
+//            if (resetCondition.test(n)) reset();
+//        });
+//        return this;
+//    }
 
     public NAR stopIf(BooleanSupplier stopCondition) {
         onEachFrame((n) -> {
@@ -1229,12 +1181,12 @@ abstract public class NAR implements Serializable, Level {
         return this;
     }
 
-    public NAR onEachNthFrame(Runnable receiver, int frames) {
-        return onEachFrame((n) -> {
-            if (n.time() % frames == 0)
-                receiver.run();
-        });
-    }
+//    public NAR onEachNthFrame(Runnable receiver, int frames) {
+//        return onEachFrame((n) -> {
+//            if (n.time() % frames == 0)
+//                receiver.run();
+//        });
+//    }
 
 //    public NAR onEachDerived(Consumer<Object[] /* TODO: Task*/> receiver) {
 //        NARReaction r = new ConsumedStreamNARReaction(receiver, Events.OUT.class);
@@ -1303,15 +1255,6 @@ abstract public class NAR implements Serializable, Level {
 //        return this;
 //    }
 
-    public synchronized NAR spawnThread(long periodMS, Consumer<Thread> t) {
-        ensureNotRunning();
-
-        t.accept(new Thread(() -> {
-            loop(periodMS);
-        }));
-
-        return this;
-    }
 
     public NAR onConceptActive(final Consumer<Concept> c) {
         regs.add(this.memory.eventConceptActivated.on(c));

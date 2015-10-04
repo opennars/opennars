@@ -14,6 +14,7 @@ import nars.NAR;
 import nars.bag.impl.InfiniCacheBag;
 import nars.clock.RealtimeMSClock;
 import nars.nar.Default;
+import nars.util.NARLoop;
 import nars.util.data.random.XorShift1024StarRandom;
 import nars.util.db.InfiniPeer;
 import nars.util.event.Topic;
@@ -185,15 +186,15 @@ public class NARServer extends PathHandler {
                 .setHandler(this)
                 .build();
 
-        narThread = new Thread(() -> {
-            nar.loop(updatePeriodMS);
-        });
+
+        NARLoop loop = nar.loop(updatePeriodMS);
+
     }
 
 
     public synchronized void start() {
 
-        if (!nar.isRunning()) {
+        if (!nar.running()) {
             System.out.println("starting");
             narThread.start();
             //TextOutput.out(nar).setShowInput(false);

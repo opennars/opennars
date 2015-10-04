@@ -58,15 +58,10 @@ public class DefaultTopic<V extends Serializable> extends ArraySharingList<Consu
         if (vv == null) return;
 
         for (int i = 0; ; i++) {
-            try {
-                final Consumer c = vv[i];
-                if (c == null)
-                    break; //null terminator hit
-                c.accept(arg);
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
-                System.err.println();
-            }
+            final Consumer c = vv[i];
+            if (c == null)
+                break; //null terminator hit
+            c.accept(arg);
         }
     }
 
@@ -79,15 +74,9 @@ public class DefaultTopic<V extends Serializable> extends ArraySharingList<Consu
 
     @Override
     public final void off(On<V> o) {
-        //if (Global.DEBUG) {
-          //  if (o.topic != this)
-          //      throw new RuntimeException(this + " is not " + o);
-        //}
-
         if (!remove(o.reaction))
             throw new RuntimeException(this + " has not " + o.reaction);
     }
-
 
 
     @Override

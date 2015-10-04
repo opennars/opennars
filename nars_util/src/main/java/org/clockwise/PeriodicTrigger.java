@@ -24,10 +24,9 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0
  */
 public class PeriodicTrigger implements Trigger {
-    private final long period;
+    private long period;
     private final TimeUnit timeUnit;
-    private volatile long initialDelay = 0;
-    private volatile boolean fixedRate = false;
+    //private volatile long initialDelay = 0;
 
     /**
      * Create a trigger with the given period in milliseconds.
@@ -47,39 +46,44 @@ public class PeriodicTrigger implements Trigger {
         this.period = this.timeUnit.toMillis(period);
     }
 
-    /**
-     * Specify the delay for the initial execution. It will be evaluated in
-     * terms of this trigger's {@link TimeUnit}. If no time unit was explicitly
-     * provided upon instantiation, the default is milliseconds.
-     */
-    public void setInitialDelay(long initialDelay) {
-        this.initialDelay = this.timeUnit.toMillis(initialDelay);
+
+//TODO move this policy to a subclass
+//    /**
+//     * Specify whether the periodic interval should be measured between the
+//     * scheduled start times rather than between actual completion times. The
+//     * latter, "fixed delay" behavior, is the default.
+//     */
+//    public void setFixedRate(boolean fixedRate) {
+//        this.fixedRate = fixedRate;
+//    }
+
+    public void setPeriod(long period) {
+        this.period = period;
     }
 
-    /**
-     * Specify whether the periodic interval should be measured between the
-     * scheduled start times rather than between actual completion times. The
-     * latter, "fixed delay" behavior, is the default.
-     */
-    public void setFixedRate(boolean fixedRate) {
-        this.fixedRate = fixedRate;
+    public final void setFPS(final float fps) {
+        setPeriod((long)(1000f/fps));
     }
 
     /**
      * Returns the time after which a task should run again.
      */
     @Override
-    public long nextExecutionTime(TriggerContext triggerContext) {
-        if (triggerContext.lastScheduledExecutionTime() == Long.MIN_VALUE) {
-            return /*new Date*/(System.currentTimeMillis() + this.initialDelay);
-        } else if (this.fixedRate) {
-            return /*new Date*/(triggerContext.lastScheduledExecutionTime() + this.period);
-        }
-        return /*new Date*/(triggerContext.lastCompletionTime() + this.period);
+    public final long nextExecutionTime(TriggerContext triggerContext) {
+        /*if (triggerContext.lastScheduledExecutionTime() == Long.MIN_VALUE) {
+            //initial
+            return System.currentTimeMillis() + this.initialDelay;
+        } else*/
+            return triggerContext.lastScheduledExecutionTime() + this.period;
+
+        //TODO move this policy to a subclass
+        /*} else {
+            return (triggerContext.lastCompletionTime() + this.period);
+        }*/
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
@@ -87,11 +91,14 @@ public class PeriodicTrigger implements Trigger {
             return false;
         }
         PeriodicTrigger other = (PeriodicTrigger) obj;
-        return (this.fixedRate == other.fixedRate && this.initialDelay == other.initialDelay && this.period == other.period);
+        return (this.period == other.period);
+        //this.fixedRate == other.fixedRate && this.initialDelay == other.initialDelay &&
     }
 
     @Override
-    public int hashCode() {
-        return (this.fixedRate ? 17 : 29) + (int) (37 * this.period) + (int) (41 * this.initialDelay);
+    public final int hashCode() {
+        return (int) (37 * this.period);
+        // + (int) (41 * this.initialDelay
+        //(this.fixedRate ? 17 : 29)
     }
 }

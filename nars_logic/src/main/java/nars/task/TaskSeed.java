@@ -296,24 +296,24 @@ import javax.annotation.Nullable;
     }
 
 
-    public boolean updateCyclic() {
-
-        if (getEvidence() != null) {
-
-            boolean cyclic = true;
-
-            //HACK when Stamp and parents are unified the extra conditoins here will not be necessary:
-            if (getParentTask() != null && getParentTask().isInput()) {
-                cyclic = false;
-            } else if (getParentBelief() != null && getParentBelief().isInput()) {
-                cyclic = false;
-            }
-
-            return cyclic;
-        }
-
-        return false;
-    }
+//    public boolean updateCyclic() {
+//
+//        if (getEvidence() != null) {
+//
+//            boolean cyclic = true;
+//
+//            //HACK when Stamp and parents are unified the extra conditoins here will not be necessary:
+//            if (getParentTask() != null && getParentTask().isInput()) {
+//                cyclic = false;
+//            } else if (getParentBelief() != null && getParentBelief().isInput()) {
+//                cyclic = false;
+//            }
+//
+//            return cyclic;
+//        }
+//
+//        return false;
+//    }
 
 
     public TaskSeed parent(final Task parentTask, final Task parentBelief) {

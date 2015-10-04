@@ -516,7 +516,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
             if (getDuration() == 0)
                 setDuration(memory.duration());
 
-            if (getEvidence() == null) {
+            if (getEvidence().length == 0) {
                 setEvidence(memory.newStampSerial());
             }
 
@@ -544,7 +544,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         }
         */
 
-            if (getEvidence()==null)
+            if (getEvidence().length == 0)
                 throw new RuntimeException(this + " from premise " + getParentTask() + "," + getParentBelief()
                         + " yet no evidence provided");
 

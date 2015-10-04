@@ -58,9 +58,17 @@ public class UniqueInputSerialTest {
 
         Default d = new Default();
         d.input("<a --> b>.", "<b --> c>.");
+
+        final long ev[] = {1 , 2};
         d.memory.eventDerived.on(t -> {
-            System.out.println(t);
+            assertArrayEquals("all derived terms should be double premise",
+                    ev, t.getEvidence());
+
+            //System.out.println(t);
         });
-        d.run(128);
+
+        d.frame(64);
+
+
     }
 }

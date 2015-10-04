@@ -202,7 +202,7 @@ public class NARControlFX extends HBox {
 
                 runLater(() -> {
                     pendingClockUpdate.set(false);
-                    boolean running = nar.isRunning();
+                    boolean running = nar.running();
                     if (running != wasRunning) {
                         //bp.setGraphic(running ? stop : play);
                         wasRunning = running;
@@ -243,7 +243,7 @@ public class NARControlFX extends HBox {
 
             runButton.setOnAction(e -> {
 
-                if (!n.isRunning()) {
+                if (!n.running()) {
                     synchronized (n) {
                         //TODO make sure only one thread is running, maybe with singleThreadExecutor
 
@@ -260,7 +260,7 @@ public class NARControlFX extends HBox {
                     }
                 } else {
 
-                    if (n.isRunning()) {
+                    if (n.running()) {
                         n.stop();
 
                         stepButton.setDisable(false);
@@ -274,7 +274,7 @@ public class NARControlFX extends HBox {
 
             stepButton.setTooltip(new Tooltip("Step"));
             stepButton.setOnAction(e -> {
-                if (!n.isRunning())
+                if (!n.running())
                     n.frame();
             });
             stepButton.setDisable(true);

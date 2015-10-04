@@ -178,7 +178,9 @@ public class NARui {
         //enable charting immediately before (to be called after all other chart handlers)
         // and disable immediately after the run
         {
-            nar.run(frames);
+
+            nar.frame(frames);
+
         }
 
         return this;

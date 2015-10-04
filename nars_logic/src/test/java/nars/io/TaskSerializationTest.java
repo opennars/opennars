@@ -71,7 +71,7 @@ public class TaskSerializationTest  extends AbstractSerializationTest<String,Def
 
         //Assert.assertEquals(a.getTerm(), b.getTerm());
         Assert.assertEquals(a.getPunctuation(), b.getPunctuation());
-        Assert.assertEquals(a.getEvidence(), b.getEvidence());
+        Assert.assertArrayEquals(a.getEvidence(), b.getEvidence());
         Assert.assertEquals(a.getOccurrenceTime(), b.getOccurrenceTime());
         Assert.assertEquals(a.hashCode(), b.hashCode());
 

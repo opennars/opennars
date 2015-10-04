@@ -4,7 +4,6 @@ import com.github.fge.grappa.Grappa;
 import com.github.fge.grappa.annotations.Cached;
 import com.github.fge.grappa.buffers.CharSequenceInputBuffer;
 import com.github.fge.grappa.matchers.MatcherType;
-import com.github.fge.grappa.matchers.NothingMatcher;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
@@ -20,7 +19,6 @@ import nars.meta.RangeTerm;
 import nars.meta.TaskRule;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
-import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
@@ -35,6 +33,7 @@ import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
+import nars.util.data.array.LongArrays;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -95,24 +94,24 @@ public class NarseseParser extends BaseParser<Object>  {
         return sequence(
                 STATEMENT_OPENER, s(),
                 push(TaskRule.class),
-                TaskRuleCond(),
-                zeroOrMore( ArgSep(), s(), TaskRuleCond() ),
-                s(), string(TASK_RULE_FWD), s(),
-                push(TaskRule.class),
-                TaskRuleConclusion(),
-                zeroOrMore( ArgSep(), s(), TaskRuleConclusion() ),
+
+                Term(false), //cause
+
+                zeroOrMore( sepArgSep(), Term(true) ),
+                s(), TASK_RULE_FWD, s(),
+
+                push(TaskRule.class), //stack marker
+
+                Term(true), //effect
+
+                zeroOrMore( sepArgSep(), Term(true) ),
                 s(), STATEMENT_CLOSER,
 
                 push(popTaskRule())
         );
     }
 
-    public Rule TaskRuleCond() {
-        return Term(true, false);
-    }
-    public Rule TaskRuleConclusion() {
-        return Term(true, false);
-    }
+
     public TaskRule popTaskRule() {
         //(Term)pop(), (Term)pop()
 
@@ -197,7 +196,7 @@ public class NarseseParser extends BaseParser<Object>  {
                 optional( Budget(budget) ),
 
 
-                Term(true, false),
+                Term(true),
                 term.set((Term) pop()),
 
                 SentencePunctuation(punc),
@@ -253,7 +252,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
         ttt.setOccurrenceTime(tense, memory.duration());
-        ttt.setEvidence(null);
+        ttt.setEvidence(LongArrays.EMPTY_ARRAY);
 
         return ttt;
 
@@ -385,20 +384,20 @@ public class NarseseParser extends BaseParser<Object>  {
 
 
     Rule NonOperationTerm() {
-        return Term(false, false);
+        return Term(false);
     }
 
     public Rule Term() {
-        return Term(true, meta);
+        return Term(true);
     }
 
-    Rule nothing() {
-        return new NothingMatcher();
-    }
+//    Rule nothing() {
+//        return new NothingMatcher();
+//    }
 
 
     @Cached
-    Rule Term(boolean includeOperation, boolean includeMeta) {
+    Rule Term(boolean includeOperation) {
         /*
                  <term> ::= <word>                             // an atomic constant term
                         | <variable>                         // an atomic variable term
@@ -417,7 +416,7 @@ public class NarseseParser extends BaseParser<Object>  {
                         Operator(),
 
                         RangeTerm(),
-                        meta ? TaskRule() : nothing(),
+                        TaskRule(),
 
                         sequence(
                                 includeOperation,
@@ -601,21 +600,21 @@ public class NarseseParser extends BaseParser<Object>  {
      */
     Rule ColonReverseInheritance() {
         return sequence(
-                Atom(), s(), ':', s(), Term(false,false),
+                Atom(), s(), ':', s(), Term(true),
                 push(Inheritance.make((Term)(pop()), Atom.the(pop())))
         );
     }
 
-    /**
-     * MACRO: y`x    becomes    <{x} --> y>
-     */
-    Rule BacktickReverseInstance() {
-        return sequence(
-                Atom(), s(), '`', s(), Term(false,false),
-                push(Instance.make((Term)(pop()), Atom.the(pop())))
-        );
-    }
-
+//    /**
+//     * MACRO: y`x    becomes    <{x} --> y>
+//     */
+//    Rule BacktickReverseInstance() {
+//        return sequence(
+//                Atom(), s(), '`', s(), Term(false),
+//                push(Instance.make((Term)(pop()), Atom.the(pop())))
+//        );
+//    }
+//
 
 //    /** creates a parser that is not associated with a memory; it will not parse any operator terms (which are registered with a Memory instance) */
 //    public static NarseseParser newParser() {
@@ -758,8 +757,11 @@ public class NarseseParser extends BaseParser<Object>  {
         );
     }
 
+    Rule sepArgSep() {
+        return sequence(s(), ARGUMENT_SEPARATOR, s());
+    }
 
-    Rule ArgSep() {
+    Rule sepArg() {
         return sequence(s(), ARGUMENT_SEPARATOR);
 
         /*
@@ -804,7 +806,7 @@ public class NarseseParser extends BaseParser<Object>  {
                         :
 
                         zeroOrMore(sequence(
-                            spaceSeparates ? s() : ArgSep(),
+                                sepArg(),
                             allowInternalOp ? AnyOperatorOrTerm() : Term()
                         )),
 
@@ -900,7 +902,7 @@ public class NarseseParser extends BaseParser<Object>  {
                     if ((!allowInternalOp) && (!p.equals(op)))
                         throw new RuntimeException("Internal operator " + p + " not allowed here; default op=" + op);
 
-                    throw new InvalidInputException("Too many operators involved: " + op + "," + p + " in " + stack + ":" + vectorterms);
+                    throw new InvalidInputException("Too many operators involved: " + op + ',' + p + " in " + stack + ':' + vectorterms);
                 }
 
                 op = (Op)p;
@@ -978,25 +980,14 @@ public class NarseseParser extends BaseParser<Object>  {
      * ondemand
      */
     public void tasks(String input, Consumer<Task> c, final Memory m) {
-
         tasksRaw(input, o -> {
-            Object t = decodeTask(input, m, o);
-            if (t instanceof Task) {
-                c.accept((Task) t);
-            }
-            else if (t instanceof Object[]) {
-                Object[] x = (Object[])t;
-                c.accept(decodeTask(input, m, x));
-            }
-            else {
-                throw new RuntimeException("unparsed: " + o);
-            }
+            c.accept(decodeTask(input, m, o));
         });
     }
 
 
     /** supplies the source array of objects that can construct a Task */
-    public void tasksRaw(String input, Consumer<Object[]> c) {
+    public static void tasksRaw(String input, Consumer<Object[]> c) {
 
         ParsingResult r = the().inputParser.run(input);
 
@@ -1043,7 +1034,7 @@ public class NarseseParser extends BaseParser<Object>  {
         }
         catch (Throwable ge) {
             //ge.printStackTrace();
-            throw new InvalidInputException(ge.toString() + " " + ge.getCause() + ": parsing: " + input);
+            throw new InvalidInputException(ge.toString() + ' ' + ge.getCause() + ": parsing: " + input);
         }
 
         if (r == null)
@@ -1085,7 +1076,7 @@ public class NarseseParser extends BaseParser<Object>  {
     /**
      * parse one term. it is more efficient to use parseTermNormalized if possible
      */
-    public <T extends Term> T termRaw(String input, ParseRunner p) throws InvalidInputException {
+    public static <T extends Term> T termRaw(String input, ParseRunner p) throws InvalidInputException {
 
         ParsingResult r = p.run(input);
 
@@ -1119,7 +1110,7 @@ public class NarseseParser extends BaseParser<Object>  {
 
         //if (!r.isSuccess()) {
             return new InvalidInputException("input: " + input + " (" + r.toString() + ")  " +
-                    (e!=null ? e.toString() + " " + Arrays.toString(e.getStackTrace()) : ""));
+                    (e!=null ? e.toString() + ' ' + Arrays.toString(e.getStackTrace()) : ""));
 
         //}
 //        if (r.parseErrors.isEmpty())

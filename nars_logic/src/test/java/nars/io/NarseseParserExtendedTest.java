@@ -1,5 +1,7 @@
 package nars.io;
 
+import nars.LocalMemory;
+import nars.Memory;
 import nars.Op;
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
@@ -99,23 +101,46 @@ public class NarseseParserExtendedTest  {
 //        assertEquals("{named}", t.getSubject().toString());
 //    }
 
+
+    static void eqTerm(String shorter, String expected) {
+        NarseseParser p = NarseseParser.the();
+
+        Term a = p.term(shorter);
+        assertNotNull(a);
+        assertEquals(expected, a.toString());
+
+        eqTask(shorter, expected);
+    }
+
+    final static Memory m = new LocalMemory();
+
+    static void eqTask(String x, String b) {
+        NarseseParser p = NarseseParser.the();
+
+        Task a = p.task(x + ".", m);
+        assertNotNull(a);
+        assertEquals(b, a.getTerm().toString());
+    }
+
     @Test
     public void testNamespaceTerms2() {
 
-        final String input = "Truth:Something";
-        final String input2 = "Truth : Something";
-        final String expected = "<Something-->Truth>";
 
-        NarseseParser p = NarseseParser.the();
+        eqTerm("a:b", "<b --> a>");
+        eqTerm("a : b", "<b --> a>");
 
-        Inheritance a = p.term(input);
-        assertNotNull(a);
-        assertEquals(expected, a.toStringCompact());
 
-        Inheritance a2 = p.term(input2);
-        assertNotNull(a2);
-        assertEquals(expected, a2.toStringCompact());
+        eqTerm("d:{a,b}:c", "<<c --> {a,b}> --> d>");
 
+        //this one is important that we fix. i think the presence of the -- operator gets confused with negation and the > with end of statement
+        eqTerm("{a,b}:c", "<c --> {a,b}>");
+
+        eqTerm("(a,b):c", "<c --> (a,b)>");
+
+
+        eqTerm("c:{a,b}", "<{a,b} --> c>");
+        eqTerm("a:b:c",   "<<a --> b> --> c>");
+        eqTerm("a :b :c",   "<<a --> b> --> c>");
     }
 
     @Test

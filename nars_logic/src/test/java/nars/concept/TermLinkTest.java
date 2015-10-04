@@ -48,7 +48,7 @@ public class TermLinkTest {
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)", false);
         //System.out.println(cj1.keySet());
 
-        assertEquals(5, cj1.size());
+        assertEquals(7, cj1.size());
         //NOTE: cj1.size() will equal 5 if termlinks are normalized in TermLinkBuilder
     }
 
@@ -57,7 +57,7 @@ public class TermLinkTest {
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>", false);
         //System.out.println(cj1.keySet());
         // [Dba:<#1 --> key>, Dbb:<$1 --> (/,open,#2,_)>, Da:<$1 --> lock>, Db:(&&,<#1 --> key>,<$2 --> (/,open,#1,_)>), Dab:lock]
-        assertEquals(5, cj1.size());
+        assertEquals(7, cj1.size());
 
     }
 
@@ -202,7 +202,7 @@ public class TermLinkTest {
 //        }
 
 
-        assertEquals(5, getTermLinkTemplates(d).size());
+        assertEquals(6, getTermLinkTemplates(d).size());
 
 
         NAR n = new Default();

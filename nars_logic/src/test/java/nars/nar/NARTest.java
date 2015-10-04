@@ -53,7 +53,9 @@ public class NARTest {
 
         //TextOutput.out(nar);
 
-        nar.input("<a-->b>.", "<b-->c>.").run(25);
+        nar.input("<a-->b>.", "<b-->c>.").frame(25);
+
+        nar.input("<a-->b>.", "<b-->c>.");
         nar.stop();
 
         assertTrue(nar.concepts().size() > 5);
@@ -85,8 +87,13 @@ public class NARTest {
                 .input("<a --> b>.", "<b --> c>.")
                 .stopIf( () -> false )
                 .onEachCycle( n -> cycCount.incrementAndGet() )
+                .trace(sw).frame(frames);
+
+        new Default()
+                .input("<a --> b>.", "<b --> c>.")
+                .stopIf(() -> false)
+                .onEachCycle(n -> cycCount.incrementAndGet())
                 .trace(sw)
-                .run(frames)
                 .forEachConceptTask(true, true, true, true, false, 1, System.out::println );
 
         //System.out.println(sw.getBuffer());
@@ -119,11 +126,16 @@ public class NARTest {
         new Default().nal(2)
                 .stdout()
                 .input("<a <-> b>. %1.0;0.5%",
-                       "<b --> a>. %1.0;0.5%")
-                .run(cyclesBeforeQuestion)
+                       "<b --> a>. %1.0;0.5%").frame(cyclesBeforeQuestion);
+
+        NAR nar = new Default().nal(2)
+                .stdout()
+                .input("<a <-> b>. %1.0;0.5%",
+                        "<b --> a>. %1.0;0.5%")
                 .answer(question, t -> b.set(true) )
-                .stopIf( () -> b.get() )
-                .run(cyclesAfterQuestion);
+                .stopIf( () -> b.get() );
+
+        nar.frame(cyclesAfterQuestion);
 
         assertTrue(b.get());
 

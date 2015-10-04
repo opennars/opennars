@@ -85,6 +85,15 @@ public class ParsingResult<V>
         return valueStack;
     }
 
+    @Override
+    public String toString() {
+        return "ParsingResult{" +
+                "matched=" + matched +
+                ", valueStack=" + valueStack +
+                ", inputBuffer=" + inputBuffer +
+                '}';
+    }
+
     /**
      * Get the input buffer used by the parsing run
      *

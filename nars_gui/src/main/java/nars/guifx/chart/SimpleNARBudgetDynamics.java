@@ -86,7 +86,7 @@ public class SimpleNARBudgetDynamics {
                 n.input(t);
             }
 
-            n.run(cycles);
+            n.frame(cycles);
 
             //n.nar.memory.concepts.forEach(System.out::println);
             n.memory.concepts.forEach(c -> c.print(System.out));

@@ -18,6 +18,7 @@ import nars.term.TermMetadata;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 import nars.util.data.Util;
+import nars.util.data.array.LongArrays;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -52,7 +53,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     public Truth truth;
     protected T term;
     transient private int hash;
-    private long[] evidentialSet = null;
+    private long[] evidentialSet = LongArrays.EMPTY_ARRAY;
     long creationTime = Stamp.TIMELESS;
     long occurrenceTime = Stamp.ETERNAL;
     int duration = 0;

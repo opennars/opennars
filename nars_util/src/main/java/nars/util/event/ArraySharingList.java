@@ -2,6 +2,7 @@ package nars.util.event;
 
 import nars.util.data.list.FasterList;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntFunction;
 
 /**
@@ -20,22 +21,24 @@ public class ArraySharingList<C>  {
     protected final FasterList<C> data = new FasterList();
     private final IntFunction<C[]> arrayBuilder;
     private C[] array = null;
+    private AtomicBoolean change = new AtomicBoolean(false);
 
     public ArraySharingList(IntFunction<C[]> arrayBuilder) {
         super();
         this.arrayBuilder = arrayBuilder;
     }
 
-    public boolean add(C x) {
+    public final boolean add(C x) {
         if (data.add(x)) {
-            updateArray();
+            change.set(true);
             return true;
         }
         return false;
     }
-    public boolean remove(C x) {
+
+    public final boolean remove(C x) {
         if (data.remove(x)) {
-            updateArray();
+            change.set(true);
             return true;
         }
         return false;
@@ -47,26 +50,30 @@ public class ArraySharingList<C>  {
 
     /** may be null; ignore its size, it will be at least 1 element larger than the size of the list */
     public C[] nullTerminatedArray() {
+        if (change.compareAndSet(true,false))
+            updateArray();
         return this.array;
     }
 
-    private void updateArray() {
+    private final C[] updateArray() {
 
         //TODO for safe atomicity while the events are populated, buffer additions to a sub-list,
         //and apply them if a flag is set on the next read
 
         final FasterList<C> consumers = this.data;
 
+        C[] a;
         if (!consumers.isEmpty()) {
-            C[] a = this.array;
+            a = this.array;
             if (a == null)
                 a = arrayBuilder.apply(data.size()+1);  //+1 for padding
-            this.array = consumers.toNullTerminatedUnpaddedArray(a);
+            a = consumers.toNullTerminatedUnpaddedArray(a);
         }
         else {
-            this.array = null;
+            a = null;
         }
 
+        return this.array = a;
     }
 
 
