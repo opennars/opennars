@@ -1,6 +1,7 @@
 package nars.task;
 
 import nars.NAR;
+import nars.nal.nal7.Temporal;
 import nars.nar.Default;
 import org.junit.Test;
 
@@ -16,13 +17,13 @@ public class TaskSeedTest {
 
         String s = "<a --> b>.";
 
-        assertTrue(TaskSeed.make(n.memory, n.term(s)).setEternal().isEternal());
+        assertTrue(Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
 
         assertTrue("default is timeless", TaskSeed.make(n.memory, n.term(s)).isTimeless());
 
-        assertTrue("tense=eternal is eternal", TaskSeed.make(n.memory, n.term(s)).setEternal().isEternal());
+        assertTrue("tense=eternal is eternal", Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().getOccurrenceTime()));
 
-        assertTrue("present is non-eternal", !TaskSeed.make(n.memory, n.term(s)).present(n.memory).isEternal());
+        assertTrue("present is non-eternal", !Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).present(n.memory).getOccurrenceTime()));
 
     }
 
@@ -33,9 +34,9 @@ public class TaskSeedTest {
         String s = "<a --> b>.";
 
         //the final occurr() or tense() is the value applied
-        assertTrue(!TaskSeed.make(n.memory, n.term(s)).setEternal().occurr(100).isEternal());
-        assertTrue(!TaskSeed.make(n.memory, n.term(s)).setEternal().present(n.memory).isEternal());
-        assertTrue(TaskSeed.make(n.memory, n.term(s)).occurr(100).setEternal().isEternal());
+        assertTrue(!Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().occurr(100).getOccurrenceTime()));
+        assertTrue(!Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).setEternal().present(n.memory).getOccurrenceTime()));
+        assertTrue(Temporal.isEternal(TaskSeed.make(n.memory, n.term(s)).occurr(100).setEternal().getOccurrenceTime()));
     }
 
 

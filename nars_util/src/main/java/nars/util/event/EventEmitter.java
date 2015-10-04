@@ -210,7 +210,7 @@ abstract public class EventEmitter<K,V>  {
         final public int emit(final K channel, final V arg) {
             ArraySharingList<Reaction<K, V>> r = reactions.get(channel);
             if (r == null) return 0;
-            final Reaction<K, V>[] c = r.nullTerminatedArray();
+            final Reaction<K, V>[] c = r.getCachedNullTerminatedArray();
             if (c == null) return 0;
             int i;
             for (i = 0; ; i++) {

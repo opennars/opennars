@@ -4,6 +4,7 @@
  */
 package nars.task.filter;
 
+import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
 import nars.task.Task;
 
@@ -16,7 +17,7 @@ public class DeriveOnlyDesired implements DerivationFilter {
     @Override
     public String reject(Premise nal, Task task, boolean solution, boolean revised) {
         if (!task.isGoal()) {
-            if (task.isEternal())
+            if (Temporal.isEternal(task.getOccurrenceTime()))
                 return "Not Goal";
         }
         return null;        

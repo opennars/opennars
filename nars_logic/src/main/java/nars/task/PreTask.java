@@ -7,9 +7,9 @@ import nars.term.Compound;
 import nars.truth.Truth;
 
 /** dummy task useful for recording the known components of an aborted derivation */
-public class TaskGhost extends DefaultTask {
+public class PreTask extends DefaultTask {
 
-    public TaskGhost(Compound term, char punctuation, Truth truth, Budget b, long occurr, Premise reason) {
+    public PreTask(Compound term, char punctuation, Truth truth, Budget b, long occurr, Premise reason) {
         super(term, punctuation, truth, b, reason.getTask(), reason.getBelief(), null);
 
         if (occurr!= Stamp.TIMELESS)

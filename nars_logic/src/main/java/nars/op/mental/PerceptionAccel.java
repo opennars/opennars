@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
-import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
+import static nars.nal.nal7.Temporal.ORDER_CONCURRENT;
+import static nars.nal.nal7.Temporal.ORDER_FORWARD;
 
 /**
  * @author tc

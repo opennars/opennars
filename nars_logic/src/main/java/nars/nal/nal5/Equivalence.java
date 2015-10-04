@@ -22,7 +22,7 @@ package nars.nal.nal5;
 
 import nars.Op;
 import nars.nal.nal7.AbstractInterval;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.term.Statement;
 import nars.term.Term;
 
@@ -43,8 +43,8 @@ public class Equivalence extends Statement {
     private Equivalence(Term subject, Term predicate, int order) {
         super(subject, predicate);
 
-        if ((order == TemporalRules.ORDER_BACKWARD) ||
-                (order == TemporalRules.ORDER_INVALID)) {
+        if ((order == Temporal.ORDER_BACKWARD) ||
+                (order == Temporal.ORDER_INVALID)) {
             throw new RuntimeException("Invalid temporal order=" + order + "; args=" + subject + " , " + predicate);
         }
 
@@ -80,7 +80,7 @@ public class Equivalence extends Statement {
         return make(subject, predicate, temporalOrder);        
     }
     public static Term makeTerm(Term subject, Term predicate) {
-        return makeTerm(subject, predicate, TemporalRules.ORDER_NONE);
+        return makeTerm(subject, predicate, Temporal.ORDER_NONE);
     }
 
 
@@ -93,7 +93,7 @@ public class Equivalence extends Statement {
      * @return A compound generated or null
      */
     public static Equivalence make(Term subject, Term predicate) {  // to be extended to check if subject is Conjunction
-        return make(subject, predicate, TemporalRules.ORDER_NONE);
+        return make(subject, predicate, Temporal.ORDER_NONE);
     }
 
     public static Equivalence make(Term subject, Term predicate, int temporalOrder) {  // to be extended to check if subject is Conjunction
@@ -108,19 +108,19 @@ public class Equivalence extends Statement {
             return null;
         }
                 
-        if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
-                || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
+        if ((temporalOrder == Temporal.ORDER_BACKWARD)
+                || ((subject.compareTo(predicate) > 0) && (temporalOrder != Temporal.ORDER_FORWARD))) {
             //swap
             Term interm = subject;
             subject = predicate;
             predicate = interm;
         }
 
-        if (temporalOrder == TemporalRules.ORDER_BACKWARD)
-            temporalOrder = TemporalRules.ORDER_FORWARD;
+        if (temporalOrder == Temporal.ORDER_BACKWARD)
+            temporalOrder = Temporal.ORDER_FORWARD;
 
         //Term[] t;
-        if (temporalOrder==TemporalRules.ORDER_FORWARD) {
+        if (temporalOrder== Temporal.ORDER_FORWARD) {
             //already in final order
         }
         else {
@@ -145,9 +145,9 @@ public class Equivalence extends Statement {
     @Override
     public Op op() {
         switch (temporalOrder) {
-            case TemporalRules.ORDER_FORWARD:
+            case Temporal.ORDER_FORWARD:
                 return Op.EQUIVALENCE_AFTER;
-            case TemporalRules.ORDER_CONCURRENT:
+            case Temporal.ORDER_CONCURRENT:
                 return Op.EQUIVALENCE_WHEN;
         }
         return Op.EQUIVALENCE;
@@ -160,7 +160,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public final boolean isCommutative() {
-        return (temporalOrder != TemporalRules.ORDER_FORWARD);
+        return (temporalOrder != Temporal.ORDER_FORWARD);
     }
 
     @Override

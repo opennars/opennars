@@ -7,6 +7,7 @@ import nars.NAR;
 import nars.guifx.AutoLabel;
 import nars.guifx.NARfx;
 import nars.guifx.graph2.NARGraph;
+import nars.nal.nal7.Temporal;
 import nars.nar.Default;
 import nars.task.Task;
 import nars.util.time.IntervalTree;
@@ -38,7 +39,7 @@ public class DemoTimeline  {
         }
 
         public void addOccurrence(final Task task) {
-            if (!task.isEternal()) {
+            if (!Temporal.isEternal(task.getOccurrenceTime())) {
 
 
                 final long ot = task.getOccurrenceTime();

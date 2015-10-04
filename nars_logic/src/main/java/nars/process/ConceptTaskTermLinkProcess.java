@@ -4,7 +4,6 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
-import nars.premise.Premise;
 import nars.task.Task;
 
 import java.util.function.Function;
@@ -34,7 +33,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
             if (belief!=null)
                 belief = Unification.match(task, belief, this);
 
-            setBelief(belief);
+            updateBelief(belief);
         }
 
 
@@ -49,8 +48,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     }
 
 
-    @Override
-    public final Stream<Task> derive(final Function<Premise,Stream<Task>> p) {
+    public final Stream<Task> derive(final Function<ConceptProcess,Stream<Task>> p) {
         nar.memory.eventConceptProcess.emit(this);
         return p.apply(this);
     }

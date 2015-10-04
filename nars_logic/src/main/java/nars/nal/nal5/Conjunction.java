@@ -23,7 +23,7 @@ package nars.nal.nal5;
 import nars.Global;
 import nars.Op;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
@@ -53,21 +53,21 @@ public class Conjunction extends Junction<Term> {
     protected Conjunction(Term[] arg, final int order) {
         super(flatten(arg, order));
 
-        if ((order == TemporalRules.ORDER_BACKWARD) ||
-                (order == TemporalRules.ORDER_INVALID)) {
+        if ((order == Temporal.ORDER_BACKWARD) ||
+                (order == Temporal.ORDER_INVALID)) {
             throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(this.term));
         }
 
-        if (((order == TemporalRules.ORDER_FORWARD) && (!(this instanceof Sequence)))) {
+        if (((order == Temporal.ORDER_FORWARD) && (!(this instanceof Sequence)))) {
             throw new RuntimeException("should be creating a Sequence instance not Conjunction");
         }
 
 
         switch (order) {
-            case TemporalRules.ORDER_FORWARD:
+            case Temporal.ORDER_FORWARD:
                 this.op = Op.SEQUENCE;
                 break;
-            case TemporalRules.ORDER_CONCURRENT:
+            case Temporal.ORDER_CONCURRENT:
                 this.op = Op.PARALLEL;
                 break;
             default:
@@ -89,9 +89,9 @@ public class Conjunction extends Junction<Term> {
     @Override
     public final int getTemporalOrder() {
         switch(op) {
-            case SEQUENCE: return TemporalRules.ORDER_FORWARD;
-            case PARALLEL: return TemporalRules.ORDER_CONCURRENT;
-            case CONJUNCTION: return TemporalRules.ORDER_NONE;
+            case SEQUENCE: return Temporal.ORDER_FORWARD;
+            case PARALLEL: return Temporal.ORDER_CONCURRENT;
+            case CONJUNCTION: return Temporal.ORDER_NONE;
             default:
                 throw new RuntimeException("invalid op for Conjunction: " + this);
         }
@@ -200,7 +200,7 @@ public class Conjunction extends Junction<Term> {
      */
     final public static Term make(final Term[] argList) {
 
-        return make(argList, TemporalRules.ORDER_NONE);
+        return make(argList, Temporal.ORDER_NONE);
     }
 
     /**
@@ -222,7 +222,7 @@ public class Conjunction extends Junction<Term> {
             return null;
         }                         // special case: single component
 
-        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
+        if (temporalOrder == Temporal.ORDER_FORWARD) {
             //allow sequences of len 1
             return Sequence.makeSequence(argList);
         }
@@ -231,7 +231,7 @@ public class Conjunction extends Junction<Term> {
             return argList[0];
         }
 
-        if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
+        if (temporalOrder == Temporal.ORDER_BACKWARD) {
             throw new RuntimeException("Conjunction does not allow reverse order; args=" + Arrays.toString(argList));
             //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
             //return null;
@@ -271,14 +271,14 @@ public class Conjunction extends Junction<Term> {
      * @return A compound generated or a term it reduced to
      */
     final public static Term make(final Term term1, final Term term2) {
-        return make(term1, term2, TemporalRules.ORDER_NONE);
+        return make(term1, term2, Temporal.ORDER_NONE);
     }
 
 
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {
-        if (temporalOrder == TemporalRules.ORDER_FORWARD) {
+        if (temporalOrder == Temporal.ORDER_FORWARD) {
             return Sequence.makeSequence(term1, term2);
-        } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
+        } else if (temporalOrder == Temporal.ORDER_BACKWARD) {
             //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
             return Sequence.makeSequence(term2, term1);
             //return null;

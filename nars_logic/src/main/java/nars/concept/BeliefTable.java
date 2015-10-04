@@ -5,7 +5,7 @@ import infinispan.com.google.common.collect.Iterators;
 import javolution.util.function.Equality;
 import nars.Memory;
 import nars.budget.Budget;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
 import nars.task.Task;
 import nars.truth.Truth;
@@ -20,8 +20,8 @@ import java.util.Random;
 import java.util.function.Function;
 
 import static nars.nal.UtilityFunctions.or;
-import static nars.nal.nal7.TemporalRules.solutionQuality;
-import static nars.nal.nal7.TemporalRules.solutionQualityMatchingOrder;
+import static nars.nal.nal7.Temporal.solutionQuality;
+import static nars.nal.nal7.Temporal.solutionQualityMatchingOrder;
 
 /**
  * A model storing, ranking, and projecting beliefs or goals (tasks with TruthValue).
@@ -43,6 +43,11 @@ public interface BeliefTable extends TaskTable {
         @Override
         final public Iterator<Task> iterator() {
             return Iterators.emptyIterator();
+        }
+
+        @Override
+        public int getCapacity() {
+            return 0;
         }
 
         @Override
@@ -159,7 +164,7 @@ public interface BeliefTable extends TaskTable {
         final Task top = top();
         if (top == null) return null;
 
-        if (!TemporalRules.matchingOrder(query, top.getTerm())) {
+        if (!Temporal.matchingOrder(query, top.getTerm())) {
             return null;
         }
 
@@ -357,7 +362,7 @@ public interface BeliefTable extends TaskTable {
         public float rank(Task t, float bestToBeat) {
             float r = confidenceScore(t.getTruth().getConfidence());
 
-            if (!t.isEternal()) {
+            if (!Temporal.isEternal(t.getOccurrenceTime())) {
 
                 final long now = concept.getMemory().time();
                 float dur = t.getDuration();

@@ -44,7 +44,7 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         return taskLink;
     }
 
-    @Override public final Concept getConcept() {
+    @Override public Concept getConcept() {
         return concept;
     }
 
@@ -84,6 +84,16 @@ abstract public class ConceptProcess extends NAL implements Serializable {
 //        return c;
 //    }
 
+    @Override public void updateBelief(Task nextBelief) {
+        this.currentBelief = nextBelief;
+
+        if (nextBelief == null)
+        cyclic = false;
+        else {
+            Task t = getTask();
+            cyclic = Stamp.overlapping(t, nextBelief);
+        }
+    }
 
 
     @Override
@@ -91,17 +101,6 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         return currentBelief;
     }
 
-    public void setBelief(Task nextBelief) {
-
-        this.currentBelief = nextBelief;
-
-        if (nextBelief == null)
-            cyclic = false;
-        else {
-            Task t = getTask();
-            cyclic = Stamp.overlapping(t, nextBelief);
-        }
-    }
 
     //TODO cache this value
     @Override
@@ -141,6 +140,10 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         }
 
         return streams.build().flatMap(s -> s);
+    }
+
+    public boolean validateDerivedBudget(Budget budget) {
+        return !budget.summaryLessThan(memory().derivationThreshold.floatValue());
     }
 
     private static ConceptProcess fireConcept(NAR nar, Concept concept, Function<ConceptProcess, Stream<Task>> proc, Stream.Builder<Stream<Task>> streams, TaskLink a, TermLink b) {
@@ -184,12 +187,16 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         int n = 0;
         Task pt = getTask();
         if (pt!=null) {
-            total += pt.getPriority();
+            float p = pt.getPriority();
+            //if (Float.isNaN(p)) p = 0; //NaN should not happen
+            total += p;
             n++;
         }
         Task pb = getBelief();
         if (pb!=null) {
-            total += pb.getPriority();
+            float p = pt.getPriority();
+            //if (Float.isNaN(p)) p = 0; //NaN should not happen
+            total += p;
             n++;
         }
 
@@ -202,6 +209,8 @@ abstract public class ConceptProcess extends NAL implements Serializable {
 
         return total/n;
     }
+
+    public abstract Stream<Task> derive(final Function<ConceptProcess,Stream<Task>> p);
 
 //    public static void forEachPremise(NAR nar, @Nullable final Concept concept, @Nullable TaskLink taskLink, int termLinks, float taskLinkForgetDurations, Consumer<ConceptProcess> proc) {
 //        if (concept == null) return;

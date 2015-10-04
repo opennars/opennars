@@ -7,10 +7,7 @@ import nars.task.Task;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -43,6 +40,9 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 //        }
 //    };
 
+
+
+
     final static Comparator highestFirst = new HighestFirstComparator();
     final static Comparator lowestFirst = new LowestFirstComparator();
 
@@ -70,6 +70,12 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
 
         this.merge = merge;
     }
+
+
+//
+//    public Stream<I> stream() {
+//        return items.keySet().stream();
+//    }
 
     public void clear() {
         items.clear();
@@ -216,6 +222,9 @@ public class ItemAccumulator<I extends Budgeted> implements BiFunction<I,I,I>, S
         return items.toString();
     }
 
+    public Set<I> keySet() {
+        return items.keySet();
+    }
 
 
     static final class HighestFirstComparator implements Comparator<Budgeted> {

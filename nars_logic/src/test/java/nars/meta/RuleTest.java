@@ -6,12 +6,14 @@ import nars.link.TermLink;
 import nars.nal.DerivationRules;
 import nars.nal.SimpleDeriver;
 import nars.nar.Default;
-import nars.premise.Premise;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * for testing specific rules in isolation
@@ -47,7 +49,7 @@ abstract public class RuleTest {
         List<Task> derivations = new ArrayList();
 
         for (TermLink tl : c.getTermLinks().values()) {
-            rm.start(new Premise() {
+            rm.start(new ConceptProcess(null,null,null) {
 
                 @Override
                 public Concept getConcept() {
@@ -65,6 +67,11 @@ abstract public class RuleTest {
                 }
 
                 @Override
+                public Stream<Task> derive(Function<ConceptProcess, Stream<Task>> p) {
+                    return null;
+                }
+
+                @Override
                 public Task getTask() {
                     return b;
                 }
@@ -74,9 +81,10 @@ abstract public class RuleTest {
                     return n;
                 }
 
+                @Override
+                public void updateBelief(Task revised) {
 
-
-
+                }
             });
             sd.forEachRule(rm);
         }

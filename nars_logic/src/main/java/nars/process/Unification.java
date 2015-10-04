@@ -2,7 +2,8 @@ package nars.process;
 
 import nars.Global;
 import nars.Op;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal1.LocalRules;
+import nars.nal.nal7.Temporal;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -11,7 +12,6 @@ import nars.term.transform.FindSubst;
 import java.util.Map;
 import java.util.Random;
 
-import static nars.nal.nal1.LocalRules.trySolution;
 
 /**
  * Created by me on 9/28/15.
@@ -32,10 +32,10 @@ public class Unification {
     public static Task match(final Task question, final Task solution, final NAL nal) {
 
         if (question.isQuestion() || question.isGoal()) {
-            if (TemporalRules.matchingOrder(question, solution)) {
+            if (Temporal.matchingOrder(question, solution)) {
                 Term[] u = new Term[]{question.getTerm(), solution.getTerm()};
                 if (unify(Op.VAR_QUERY, u, nal.getRandom())) {
-                    return trySolution(question, solution, nal);
+                    return LocalRules.trySolution(question, solution, nal);
                 }
             }
         }

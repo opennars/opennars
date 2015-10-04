@@ -4,7 +4,7 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.meta.RuleMatch;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
 import nars.term.Atom;
 import nars.term.Term;
@@ -37,7 +37,7 @@ public class TimeOffset extends PreCondition1 {
     public boolean test(RuleMatch m, Term arg) {
 
         if (arg == null) return false;
-        if (arg.getTemporalOrder() != TemporalRules.ORDER_NONE) { //this is the expected case, namely that there is a order
+        if (arg.getTemporalOrder() != Temporal.ORDER_NONE) { //this is the expected case, namely that there is a order
         } else {
             return true; //and this means its no-order so dont shift
         }

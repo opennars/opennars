@@ -25,7 +25,7 @@ import nars.Memory;
 import nars.Op;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.premise.Premise;
 import nars.process.Unification;
 import nars.task.Sentence;
@@ -78,7 +78,7 @@ public class LocalRules {
         //TODO maybe add DEBUG test: newBelief and oldBelief term must be equal
 
         if (newBelief.isRevisible()) {
-            if (TemporalRules.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
+            if (Temporal.matchingOrder(newBelief.getTemporalOrder(), oldBelief.getTemporalOrder()))
                 return true;
         }
 
@@ -160,9 +160,6 @@ public class LocalRules {
         return revised;
     }
 
-    public static Task trySolution(final Task question, Task solution, final Premise nal) {
-        return trySolution(question, solution, solution.getTruth(), nal);
-    }
 
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
@@ -171,10 +168,10 @@ public class LocalRules {
      * @param question     The question to be processed
      * @return the projected Task, or the original Task
      */
-    public static Task trySolution(final Task question, final Task solution, final Truth projectedTruth, final Premise nal) {
+    public static Task trySolution(final Task question, final Task solution, final Premise nal) {
 
 
-        if (!TemporalRules.matchingOrder(question, solution)) {
+        if (!Temporal.matchingOrder(question, solution)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return null;
@@ -194,6 +191,8 @@ public class LocalRules {
         /** temporary for comparing the result before unification and after */
         //float newQ0 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
 
+        Truth originalTruth = solution.getTruth();
+
         final Term solTerm = sol.getTerm();
         if (solTerm.hasVarIndep() && !solTerm.equals(question.getTerm())) {
 
@@ -201,32 +200,30 @@ public class LocalRules {
 
             if ( Unification.unify(Op.VAR_INDEPENDENT, u, nal.getRandom()) ) {
 
-                sol = sol.clone((Compound)u[1], projectedTruth, false);
+                sol = sol.clone((Compound)u[1], originalTruth);
 
                 //float newQ1 = TemporalRules.solutionQuality(question, belief, projectedTruth, now);
                 //System.err.println(" before unf: " + newQ0 + " , after " + newQ1);
                 //System.err.println();
             }
         } else {
-            sol = sol.clone(projectedTruth, false);
+            sol = sol.clone(originalTruth);
         }
 
         if (sol == null)
             throw new RuntimeException("Unification invalid: " + solution + " unified and projected to " + sol);
 
-
-
-        float newQ = TemporalRules.solutionQuality(question, sol, projectedTruth, now);
+        //use sol.getTruth() in case sol was changed since input to this method:
+        float newQ = Temporal.solutionQuality(question, sol, sol.getTruth(), now);
 //        if (newQ == 0) {
 //            memory.emotion.happy(0, questionTask, nal);
 //            return null;
 //        }
 
-
-
         final Task oldBest = question.getBestSolution();
-        final float oldQ = (oldBest != null) ? TemporalRules.solutionQuality(question, oldBest, now) : 0;
 
+        //get the quality of the old solution if it were applied now (when conditions may differ)
+        final float oldQ = (oldBest != null) ? Temporal.solutionQuality(question, oldBest, now) : 0;
 
         if (oldQ >= newQ) {
             //old solution was better:
@@ -242,8 +239,11 @@ public class LocalRules {
 
 
         //TODO solutionEval calculates the same solutionQuality as here, avoid this unnecessary redundancy
-        Budget budget = TemporalRules.solutionEval(question, sol, question, nal);
+        Budget budget = Temporal.solutionEval(question, sol, nal);
 
+        if (!(question.isQuestion() || question.isQuest())) {
+            System.err.println("err");
+        }
         /*memory.output(task);
 
         //only questions and quests get here because else output is spammed
@@ -278,10 +278,9 @@ public class LocalRules {
         /** decrease question's budget for transfer to solutions */
         question.getBudget().andPriority(budget.getPriority());
 
-        if (!sol.equals(solution)) {
-            memory.eventDerived.emit(sol);
+        //memory.eventDerived.emit(sol);
             //nal.nar().input(sol); //is this necessary? i cant find any reason for reinserting to input onw that it's part of the concept's belief/goal tables
-        }
+        //}
         memory.eventAnswer.emit(Tuples.twin(question, sol));
 
         return sol;

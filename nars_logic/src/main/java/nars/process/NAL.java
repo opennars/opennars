@@ -5,12 +5,9 @@
 package nars.process;
 
 import nars.NAR;
-import nars.premise.Premise;
 import nars.task.Task;
 
 import java.util.Collection;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -33,7 +30,7 @@ public abstract class NAL extends AbstractPremise  {
     }
 
 
-    abstract public Stream<Task> derive(Function<Premise,Stream<Task>> processor);
+    //abstract public Stream<Task> derive(Function<ConceptProcess,Stream<Task>> processor);
 
 
     //    @Override public void accept(Task derivedTask) {

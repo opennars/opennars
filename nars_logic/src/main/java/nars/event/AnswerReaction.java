@@ -22,7 +22,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
     
     private final Task question;
     private final NAR nar;
-    private On reg;
+    private volatile On reg;
 
 
     /** reacts to all questions */
@@ -49,7 +49,7 @@ public abstract class AnswerReaction implements Consumer<Twin<Task>> {
         }
     }
 
-    public synchronized void off() {
+    public void off() {
         if (reg!=null) {
             reg.off();
             reg = null;

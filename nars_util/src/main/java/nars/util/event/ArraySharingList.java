@@ -1,7 +1,11 @@
 package nars.util.event;
 
+import infinispan.com.google.common.collect.Iterators;
 import nars.util.data.list.FasterList;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntFunction;
 
@@ -16,17 +20,19 @@ import java.util.function.IntFunction;
  * iterate it in sequence and stop at the first null (this is the
  * end).
  */
-public class ArraySharingList<C>  {
+public class ArraySharingList<C> implements Iterable<C>, Serializable {
 
     protected final FasterList<C> data = new FasterList();
-    private final IntFunction<C[]> arrayBuilder;
-    private C[] array = null;
-    private AtomicBoolean change = new AtomicBoolean(false);
+    protected final IntFunction<C[]> arrayBuilder;
+    protected C[] array = null;
+    protected AtomicBoolean change = new AtomicBoolean(true);
 
     public ArraySharingList(IntFunction<C[]> arrayBuilder) {
         super();
         this.arrayBuilder = arrayBuilder;
     }
+
+
 
     public final boolean add(C x) {
         if (data.add(x)) {
@@ -34,6 +40,34 @@ public class ArraySharingList<C>  {
             return true;
         }
         return false;
+    }
+
+
+
+    public void add(int index, C element) {
+        data.add(index, element);
+        change.set(true);
+    }
+
+    public boolean addAll(int index, Collection<? extends C> source) {
+        if (data.addAll(index, source)) {
+            change.set(true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return data.toString();
+    }
+
+    public final C remove(int index) {
+        C removed = data.remove(index);
+        if (removed!=null) {
+            change.set(true);
+        }
+        return removed;
     }
 
     public final boolean remove(C x) {
@@ -44,15 +78,32 @@ public class ArraySharingList<C>  {
         return false;
     }
 
+    public boolean isEmpty() {
+        return getCachedNullTerminatedArray()==null;
+    }
+
+    public void clear() {
+        if (isEmpty()) return;
+        data.clear();
+        change.set(true);
+    }
+
     public final int size() {
-        return data.size();
+        C[] a = getCachedNullTerminatedArray();
+        if (a == null) return 0;
+        return a.length-1; //not including the null
     }
 
     /** may be null; ignore its size, it will be at least 1 element larger than the size of the list */
-    public C[] nullTerminatedArray() {
+    final public C[] getCachedNullTerminatedArray() {
         if (change.compareAndSet(true,false))
             updateArray();
         return this.array;
+    }
+
+    /** for thread-safe mode */
+    final synchronized public C[] getCachedNullTerminatedArraySynch() {
+        return getCachedNullTerminatedArray();
     }
 
     private final C[] updateArray() {
@@ -77,8 +128,29 @@ public class ArraySharingList<C>  {
     }
 
 
-    public boolean isEmpty() {
-        return size()!=0;
-    }
 
+    @Override
+    public Iterator<C> iterator() {
+        C[] a = getCachedNullTerminatedArray();
+        if (a == null) return Iterators.emptyIterator();
+
+        return new Iterator<C>() {
+
+            public C next;
+            final C[] array = a;
+
+            int i = 0;
+
+            @Override
+            public final boolean hasNext() {
+                return (next = array[i]) != null;
+            }
+
+            @Override
+            public final C next() {
+                i++;
+                return next;
+            }
+        };
+    }
 }

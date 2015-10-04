@@ -15,6 +15,7 @@ import java.util.function.Consumer;
  * */
 public interface TaskTable extends Iterable<Task> {
 
+    int getCapacity();
     void setCapacity(int newCapacity);
 
     /** number of items in this collection */

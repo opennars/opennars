@@ -18,7 +18,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;
@@ -750,9 +750,9 @@ public class Terms {
             case CONJUNCTION:
                 return Conjunction.make(a);
             case SEQUENCE:
-                return Conjunction.make(a, TemporalRules.ORDER_FORWARD);
+                return Conjunction.make(a, Temporal.ORDER_FORWARD);
             case PARALLEL:
-                return Conjunction.make(a, TemporalRules.ORDER_CONCURRENT);
+                return Conjunction.make(a, Temporal.ORDER_CONCURRENT);
 
             //STATEMENTS --------------------------
             case PROPERTY:
@@ -771,18 +771,18 @@ public class Terms {
             case IMPLICATION:
                 if (ensureTermLength(2, a)) return Implication.makeTerm(a[0], a[1]); break;
             case IMPLICATION_AFTER:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Temporal.ORDER_FORWARD); break;
             case IMPLICATION_BEFORE:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_BACKWARD); break;
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Temporal.ORDER_BACKWARD); break;
             case IMPLICATION_WHEN:
-                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
+                if (ensureTermLength(2, a)) return Implication.make(a[0], a[1], Temporal.ORDER_CONCURRENT); break;
 
             case EQUIVALENCE:
                 if (ensureTermLength(2, a)) return Equivalence.makeTerm(a[0], a[1]); break;
             case EQUIVALENCE_WHEN:
-                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_CONCURRENT); break;
+                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], Temporal.ORDER_CONCURRENT); break;
             case EQUIVALENCE_AFTER:
-                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
+                if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], Temporal.ORDER_FORWARD); break;
 
             default:
                 throw new RuntimeException("Unknown op: " + op + " (" + op.name() + ')');

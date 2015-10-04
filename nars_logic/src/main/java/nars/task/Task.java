@@ -148,20 +148,17 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
     /** clones this Task with a new Term */
     default <X extends Compound> Task<X> clone(final X t) {
-        return clone(t, true);
+        return clone(t, getTruth());
     }
 
-    default <X extends Compound> Task<X> clone(X t, boolean cloneEvenIfTruthEqual) {
-        return clone(t, getTruth(), cloneEvenIfTruthEqual);
-    }
 
 //    default public Task cloneEternal() {
 //        return clone(getTerm(), TruthFunctions.eternalize(getTruth()), Stamp.ETERNAL);
 //    }
 //
-//    default public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
-//        return clone(t, newTruth, true);
-//    }
+    default <X extends Compound> Task<X> clone(X t, Truth newTruth) {
+        return clone(t, newTruth, true);
+    }
 //
 //    default public Task clone(long newOccurrenceTime) {
 //        return clone(getTerm(), getTruth(), newOccurrenceTime);
@@ -220,10 +217,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     }
 
     /** clones this Task with a new truth */
-    default Task<T> clone(Truth newTruth, boolean cloneEvenIfTruthEqual) {
-        if (!cloneEvenIfTruthEqual) {
-            if (getTruth().equals(newTruth)) return this;
-        }
+    default Task<T> clone(Truth newTruth) {
         return clone(getTerm(), newTruth, getOccurrenceTime());
     }
 
@@ -261,12 +255,14 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         return toString(sb, memory, false);
     }
 
+    @Override
     default @Deprecated
     StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean showStamp) {
         final boolean notCommand = getPunctuation()!=Symbols.COMMAND;
         return toString(buffer, memory, true, notCommand, notCommand, true);
     }
 
+    @Override
     default StringBuilder toString(StringBuilder buffer, @Nullable final Memory memory, final boolean term, final boolean showStamp, boolean showBudget, boolean showLog) {
 
 
@@ -295,10 +291,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         if (showStamp)
             stringLength += stampString.length()+1;
 
-        /*if (showBudget)*/ {
-            //"$0.8069;0.0117;0.6643$ "
-            stringLength += 1 + 6 + 1 + 6 + 1 + 6 + 1  + 1;
-        }
+        /*if (showBudget)*/
+        //"$0.8069;0.0117;0.6643$ "
+        stringLength += 1 + 6 + 1 + 6 + 1 + 6 + 1  + 1;
 
         String finalLog;
         if (showLog) {
@@ -445,6 +440,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
      * signaling that the Task has ended or discarded
      * @return if it was already deleted, will immediately return false.
      */
+    @Override
     boolean delete();
 
     Task setTemporalInducting(boolean b);
@@ -604,8 +600,8 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
      * @param premisePriority the total value that the derivation group should reach, effectively a final scalar factor determined by premise parent and possibly existing belief tasks
      * @return the input collection, unmodified (elements may be adjusted individually)
      */
-    static Collection<Task> normalize(final Collection<Task> derived, final float premisePriority) {
-        if (derived.isEmpty()) return derived;
+    static void normalize(final Iterable<Task> derived, final float premisePriority) {
+
 
         final float totalDerivedPriority = Budget.prioritySum(derived);
         final float factor = Math.min(
@@ -613,8 +609,10 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
                     1.0f //limit to only diminish
                 );
 
+        if (Float.isNaN(factor))
+            throw new RuntimeException("NaN");
+
         derived.forEach(t -> t.getBudget().mulPriority(factor));
-        return derived;
     }
 
     static <X extends Term> Task<Operation<X>> command(Operation<X> op) {

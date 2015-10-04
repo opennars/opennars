@@ -22,7 +22,7 @@ public class Sequence extends Conjunction implements Intermval {
 
 
     Sequence(Term[] subterms, long[] intervals) {
-        super(subterms, TemporalRules.ORDER_FORWARD);
+        super(subterms, Temporal.ORDER_FORWARD);
 
         if (intervals.length != 1 + subterms.length)
             throw new RuntimeException("invalid intervals length: " + intervals.length + " should equal " + (subterms.length + 1));
@@ -123,14 +123,14 @@ public class Sequence extends Conjunction implements Intermval {
     public static Term makeSequence(Term term1, Term term2) {
         final Term[] components;
 
-        if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+        if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == Temporal.ORDER_FORWARD)) {
 
             Compound cterm1 = (Compound) term1;
 
             ArrayList<Term> list = new ArrayList<>(cterm1.length());
             cterm1.addTermsTo(list);
 
-            if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+            if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Temporal.ORDER_FORWARD)) {
                 // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
                 ((Compound) term2).addTermsTo(list);
             } else {
@@ -140,7 +140,7 @@ public class Sequence extends Conjunction implements Intermval {
 
             components = list.toArray(new Term[list.size()]);
 
-        } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
+        } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == Temporal.ORDER_FORWARD)) {
             Compound cterm2 = (Compound) term2;
             components = new Term[term2.length() + 1];
             components[0] = term1;

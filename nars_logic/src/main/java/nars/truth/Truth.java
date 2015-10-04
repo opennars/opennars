@@ -23,6 +23,7 @@ package nars.truth;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
+import nars.nal.nal7.Temporal;
 import nars.task.Sentence;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
@@ -211,7 +212,7 @@ public interface Truth extends MetaTruth<Float> {
         float freq = getFrequency();
         float conf = getConfidence();
 
-        if (!s.isEternal() && (targetTime != s.getOccurrenceTime())) {
+        if (!Temporal.isEternal(s.getOccurrenceTime()) && (targetTime != s.getOccurrenceTime())) {
             conf = TruthFunctions.eternalizedConfidence(conf);
             if (targetTime != Stamp.ETERNAL) {
                 long occurrenceTime = s.getOccurrenceTime();

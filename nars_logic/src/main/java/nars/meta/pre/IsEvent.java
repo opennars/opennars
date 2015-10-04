@@ -1,6 +1,7 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
+import nars.nal.nal7.Temporal;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -37,6 +38,6 @@ public class IsEvent extends PreCondition2 {
     }
 
     public static boolean isTemporal(Term a, Task task) {
-        return a.equals(task.getTerm()) && !task.isEternal();
+        return a.equals(task.getTerm()) && !Temporal.isEternal(task.getOccurrenceTime());
     }
 }

@@ -8,6 +8,7 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.budget.Budget;
+import nars.budget.ItemAccumulator;
 import nars.clock.CycleClock;
 import nars.concept.*;
 import nars.link.TaskLink;
@@ -45,11 +46,11 @@ import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -424,7 +425,7 @@ public class Default extends NAR implements ConceptBuilder {
         public final AtomicInteger conceptsFiredPerCycle;
 
 
-        public final SimpleDeriver deriver;
+        public final Function<ConceptProcess,Stream<Task>>  deriver;
 
 
         public final MutableInteger tasklinksSelectedPerFiredConcept = new MutableInteger(1);
@@ -557,10 +558,19 @@ public class Default extends NAR implements ConceptBuilder {
             //used to estimate the fraction this batch should be scaled but this is not accurate
             //final int numPremises = termlinks*tasklinks;
 
-            return Task.normalize(
-                    premise.derive(deriver).collect(Collectors.toList()),
-                    premise.getMeanPriority() /*/numPremises*/
-            ).stream();
+            ItemAccumulator<Task> ia = new ItemAccumulator(Budget.plus);
+
+            premise.derive(deriver).forEach( (Task d) -> {
+                ia.add(d);
+            } );
+
+            Set<Task> batch = ia.keySet();
+
+            //TODO move this to ItemAccumulator
+            Task.normalize( batch,  premise.getMeanPriority() );
+
+            return batch.stream();
+
 
             //OPTION 1: re-input to input buffers
             //t.input(nar, deriver, derivationPostProcess);

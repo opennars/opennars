@@ -40,7 +40,7 @@ import nars.truth.Truth;
  * TODO make deriveCompiledInferenceHelper an optional feature,
  * passed as a lambda or interface
  */
-public class TemporalRules {
+public class Temporal {
 
     public static final int ORDER_NONE = 2;
     public static final int ORDER_FORWARD = 1;
@@ -72,22 +72,22 @@ public class TemporalRules {
     }
 
     public final static int dedExeOrder(final int order1, final int order2) {
-        if ((order1 == order2) || (order2 == TemporalRules.ORDER_NONE)) {
+        if ((order1 == order2) || (order2 == Temporal.ORDER_NONE)) {
             return order1;
-        } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
+        } else if ((order1 == Temporal.ORDER_NONE) || (order1 == Temporal.ORDER_CONCURRENT)) {
             return order2;
-        } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
+        } else if (order2 == Temporal.ORDER_CONCURRENT) {
             return order1;
         }
         return ORDER_INVALID;
     }
 
     public final static int abdIndComOrder(final int order1, final int order2) {
-        if (order2 == TemporalRules.ORDER_NONE) {
+        if (order2 == Temporal.ORDER_NONE) {
             return order1;
-        } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
+        } else if ((order1 == Temporal.ORDER_NONE) || (order1 == Temporal.ORDER_CONCURRENT)) {
             return reverseOrder(order2);
-        } else if ((order2 == TemporalRules.ORDER_CONCURRENT) || (order1 == -order2)) {
+        } else if ((order2 == Temporal.ORDER_CONCURRENT) || (order1 == -order2)) {
             return order1;
         }
         return ORDER_INVALID;
@@ -95,9 +95,9 @@ public class TemporalRules {
 
     public final static int analogyOrder(final int order1, final int order2, final int figure) {
 
-        if ((order2 == TemporalRules.ORDER_NONE) || (order2 == TemporalRules.ORDER_CONCURRENT)) {
+        if ((order2 == Temporal.ORDER_NONE) || (order2 == Temporal.ORDER_CONCURRENT)) {
             return order1;
-        } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
+        } else if ((order1 == Temporal.ORDER_NONE) || (order1 == Temporal.ORDER_CONCURRENT)) {
             return (figure < 20) ? order2 : reverseOrder(order2);
         } else if (order1 == order2) {
             if ((figure == 12) || (figure == 21)) {
@@ -112,11 +112,11 @@ public class TemporalRules {
     }
 
     public static final int resemblanceOrder(final int order1, final int order2, final int figure) {
-        if ((order2 == TemporalRules.ORDER_NONE)) {
+        if ((order2 == Temporal.ORDER_NONE)) {
             return (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
-        } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
+        } else if ((order1 == Temporal.ORDER_NONE) || (order1 == Temporal.ORDER_CONCURRENT)) {
             return (figure % 10 == 1) ? order2 : reverseOrder(order2); // switch when 12 or 22
-        } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
+        } else if (order2 == Temporal.ORDER_CONCURRENT) {
             return (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
         } else if (order1 == order2) {
             return (figure == 21) ? order1 : -order1;
@@ -125,9 +125,9 @@ public class TemporalRules {
     }
 
     public static final int composeOrder(final int order1, final int order2) {
-        if (order2 == TemporalRules.ORDER_NONE) {
+        if (order2 == Temporal.ORDER_NONE) {
             return order1;
-        } else if (order1 == TemporalRules.ORDER_NONE) {
+        } else if (order1 == Temporal.ORDER_NONE) {
             return order2;
         } else if (order1 == order2) {
             return order1;
@@ -182,7 +182,7 @@ public class TemporalRules {
 
         if (temporalStatement != null && temporalStatement instanceof Implication) {
             Implication imp = (Implication) temporalStatement;
-            if (imp.getSubject() instanceof Conjunction && imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+            if (imp.getSubject() instanceof Conjunction && imp.getTemporalOrder() == Temporal.ORDER_FORWARD) {
                 Conjunction conj = (Conjunction) imp.getSubject();
                 if (conj.term[conj.term.length - 1] instanceof AbstractInterval) {
                     AbstractInterval intv = (AbstractInterval) conj.term[conj.term.length - 1];
@@ -709,14 +709,14 @@ public class TemporalRules {
      * Evaluate the quality of a belief as a solution to a problem, then reward
      * the belief and de-prioritize the problem
      *
-     * @param problem  The problem (question or goal) to be solved
+     * @param task  The problem (question or goal) to be solved
      * @param solution The belief as solution
      * @param task     The task to be immediately processed, or null for continued
      *                 process
      * @return The budget for the new task which is the belief activated, if
      * necessary
      */
-    public static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final Premise p) {
+    public static Budget solutionEval(final Task task, final Sentence solution, final Premise p) {
         Budget budget = null;
         boolean feedbackToLinks = false;
         /*if (task == null) {
@@ -724,7 +724,7 @@ public class TemporalRules {
             feedbackToLinks = true;
         }*/
         boolean judgmentTask = task.isJudgment();
-        final float quality = TemporalRules.solutionQuality(problem, solution, p.time());
+        final float quality = Temporal.solutionQuality(task, solution, p.time());
         if (quality <= 0)
             return null;
 
@@ -798,7 +798,7 @@ public class TemporalRules {
     public static boolean after(long a, long b, int duration) {
         if (a == Stamp.ETERNAL || b == Stamp.ETERNAL)
             return false;
-        return order(a, b, duration) == TemporalRules.ORDER_FORWARD;
+        return order(a, b, duration) == Temporal.ORDER_FORWARD;
     }
 
     /** true if B is after A */
@@ -807,5 +807,7 @@ public class TemporalRules {
     }
 
 
-
+    public static boolean isEternal(final long t)  {
+        return t <= Stamp.TIMELESS; /* includes ETERNAL */
+    }
 }

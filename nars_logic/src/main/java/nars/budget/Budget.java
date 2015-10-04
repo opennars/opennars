@@ -369,6 +369,7 @@ public class Budget implements Cloneable, Prioritized, Serializable {
             throw new RuntimeException("NaN priority");
         }
         this.priority = Util.clamp(p);
+
     }
 
     /**

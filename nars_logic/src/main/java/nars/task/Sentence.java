@@ -24,7 +24,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.task.stamp.Stamp;
 import nars.term.Compound;
@@ -279,7 +279,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         final Truth currentTruth = getTruth();
 
 
-        if (!isEternal() && (targetTime != Stamp.ETERNAL)) {
+        if (!Temporal.isEternal(getOccurrenceTime()) && (targetTime != Stamp.ETERNAL)) {
             ProjectedTruth eternalTruth  = TruthFunctions.eternalize(currentTruth);
 
             long occurrenceTime = getOccurrenceTime();
@@ -348,7 +348,7 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
     default int getTemporalOrder() {
         int t = getTerm().getTemporalOrder();
-        if (t == TemporalRules.ORDER_INVALID)
+        if (t == Temporal.ORDER_INVALID)
             throw new RuntimeException(this + " has INVALID temporal order");
         return t;
     }
@@ -467,15 +467,15 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
 
 
     default boolean after(Sentence s, int duration) {
-        return TemporalRules.occurrsAfter(s, this);
+        return Temporal.occurrsAfter(s, this);
     }
 
     default boolean before(final Sentence s, final int duration) {
-        return TemporalRules.occurrsAfter(this, s);
+        return Temporal.occurrsAfter(this, s);
     }
 
     default boolean concurrent(final Sentence s, final int duration) {
-        return TemporalRules.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
+        return Temporal.concurrent(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
     /** WARNING: calling this should not change the value of equivalentInstance, but just the

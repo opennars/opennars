@@ -9,12 +9,12 @@ import nars.budget.Budget;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.nal.nal1.LocalRules;
 import nars.premise.Premise;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
 
-import static nars.nal.nal1.LocalRules.trySolution;
 
 
 public class DefaultConcept extends AtomConcept {
@@ -193,7 +193,6 @@ public class DefaultConcept extends AtomConcept {
      */
     public boolean processBelief(final Premise nal, final Task belief) {
 
-
         float successBefore = getSuccess();
 
         final Task strongest = getBeliefs().add( belief, BeliefTable.BeliefConfidenceOrOriginality, this, nal);
@@ -205,7 +204,7 @@ public class DefaultConcept extends AtomConcept {
 
         if (hasQuestions()) {
             //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
-            getQuestions().forEach( question -> trySolution(question, belief, nal) );
+            getQuestions().forEach( question -> LocalRules.trySolution(question, belief, nal) );
         }
         //}
 
@@ -391,7 +390,7 @@ public class DefaultConcept extends AtomConcept {
         }
 
         if (sol!=null) {
-            Task solUpdated = trySolution(q, sol, nal);
+            Task solUpdated = LocalRules.trySolution(q, sol, nal);
         }
 
         return true;

@@ -22,7 +22,7 @@ package nars.term;
 
 
 import nars.Op;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.term.transform.TermVisitor;
 
 import java.io.IOException;
@@ -98,7 +98,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     boolean hasVar();
 
     default int getTemporalOrder() {
-        return TemporalRules.ORDER_NONE;
+        return Temporal.ORDER_NONE;
     }
 
     boolean hasVar(final Op type);

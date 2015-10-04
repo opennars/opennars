@@ -6,6 +6,7 @@ import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.ItemAccumulator;
 import nars.event.NARReaction;
+import nars.nal.nal7.Temporal;
 import nars.task.Task;
 import nars.util.event.On;
 
@@ -117,7 +118,7 @@ public class Commander extends NARReaction implements Consumer<Memory> {
         if (t.getBudget().isDeleted())
             return false;
 
-        if (!t.isEternal()) {
+        if (!Temporal.isEternal(t.getOccurrenceTime())) {
             long age = Math.abs( now - t.getOccurrenceTime() );
             if (age > maxTemporalBeliefAge)
                 return false;

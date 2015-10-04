@@ -75,9 +75,16 @@ public class BeliefTableTest extends TestCase {
         int delay1 = 32;
         int delay2 = delay1;
 
+        n.stdout();
+
         BeliefAnalysis b = new BeliefAnalysis(n, "<a-->b>")
-                .believe(1.0f, 0.9f)
-                .believe(0.0f, 0.9f).run(delay1);
+                .believe(1.0f, 0.9f).run(1);
+
+        assertEquals(1, b.size());
+
+                b.believe(0.0f, 0.9f).run(1);
+
+        b.run(delay1);
 
         b.print();
 

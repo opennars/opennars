@@ -54,7 +54,7 @@ public class DefaultTopic<V extends Serializable> extends ArraySharingList<Consu
 
     @Override
     final public void emit(final V arg) {
-        final Consumer[] vv = nullTerminatedArray();
+        final Consumer[] vv = getCachedNullTerminatedArray();
         if (vv == null) return;
 
         for (int i = 0; ; i++) {

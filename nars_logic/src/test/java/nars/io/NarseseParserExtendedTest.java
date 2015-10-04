@@ -7,6 +7,7 @@ import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal3.IntersectionExt;
+import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
@@ -34,7 +35,7 @@ public class NarseseParserExtendedTest  {
         tensed(t, false, w);
     }
     void tensed(Task t, boolean eternal, Tense w) {
-        assertEquals(eternal, t.isEternal());
+        assertEquals(eternal, Temporal.isEternal(t.getOccurrenceTime()));
         if (!eternal) {
             switch (w) {
                 case Past: assertTrue(t.getOccurrenceTime() < 0); break;

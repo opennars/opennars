@@ -6,6 +6,7 @@ import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
+import nars.nal.nal7.Temporal;
 import nars.process.Level;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -315,10 +316,6 @@ public interface Premise extends Level {
             return null;
         }
 
-
-
-
-
 //        if (nal(7)) {
 //            //adjust occurence time
 //            final Task parent = task.getParentTask();
@@ -452,12 +449,12 @@ public interface Premise extends Level {
     default boolean isTaskAndBeliefEvent() {
         if (getBelief() == null) return false;
 
-        return (!getTask().isEternal() && (!getBelief().isEternal()));
+        return (!Temporal.isEternal(getTask().getOccurrenceTime()) && (!Temporal.isEternal(getBelief().getOccurrenceTime())));
     }
 
-    default boolean isTaskEvent() {
-        return !getTask().isEternal();
-    }
+//    default boolean isTaskEvent() {
+//        return !Temporal.isEternal(getTask().getOccurrenceTime());
+//    }
 
     //TODO cache this value
     default boolean isCyclic() {
@@ -480,4 +477,10 @@ public interface Premise extends Level {
     default void input(Stream<Task> t) {
         t.forEach(this::input);
     }
+
+    /** may be called during inference to update the premise
+     * with a better belief than what it had previously. */
+    void updateBelief(Task revised);
+
+
 }

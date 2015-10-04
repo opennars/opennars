@@ -13,7 +13,6 @@ import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
 import nars.link.*;
 import nars.meter.LogicMeter;
-import nars.premise.Premise;
 import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
@@ -352,8 +351,8 @@ public class TaskProcess extends NAL implements Serializable {
     }
 
 
-    @Override
-    public Stream<Task> derive(Function<Premise, Stream<Task>> processor) {
+
+    public Stream<Task> derive(Function<TaskProcess, Stream<Task>> processor) {
 
 
         final Task task = getTask();

@@ -9,9 +9,10 @@ import nars.meta.pre.PairMatchingProduct;
 import nars.meta.pre.Substitute;
 import nars.nal.nal1.Inheritance;
 import nars.premise.Premise;
+import nars.process.ConceptProcess;
 import nars.process.Level;
+import nars.task.PreTask;
 import nars.task.Task;
-import nars.task.TaskGhost;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
@@ -44,7 +45,7 @@ public class RuleMatch extends FindSubst {
     public TaskRule rule;
 
     final Map<Term, Term> resolutions = Global.newHashMap();
-    public Premise premise;
+    public ConceptProcess premise;
 
 
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
@@ -65,7 +66,7 @@ public class RuleMatch extends FindSubst {
     /**
      * set the next premise
      */
-    public void start(Premise p) {
+    public void start(ConceptProcess p) {
         this.premise = p;
         taskBelief.set(p.getTask(), p.getTermLink().getTerm());
     }
@@ -106,7 +107,6 @@ public class RuleMatch extends FindSubst {
         final Task belief = premise.getBelief();
 
 
-        //stamp cyclic filter
         final boolean single = (belief == null);
 
 
@@ -135,7 +135,7 @@ public class RuleMatch extends FindSubst {
         /** eliminate cyclic double-premise results
          *  TODO move this earlier to precondition check, or change to altogether new policy
          */
-        if (!single && cyclic(outcome, premise)) {
+        if ( (!single) && (cyclic(outcome, premise))               ) {
             if (Global.DEBUG) {
                 Term termm = resolve(outcome.term);
                 if (termm != null) {
@@ -145,11 +145,7 @@ public class RuleMatch extends FindSubst {
                         termm = Inheritance.make(termm, Atom.the("NON_COMPOUND"));
                     }
 
-                    premise.memory().remove(
-                            new TaskGhost((Compound) termm, punct, truth, Budget.zero, occurence_shift, premise),
-                            //.log(premise) ...
-                            "Cyclic"
-                    );
+                    removedPreTask(new PreTask((Compound) termm, punct, truth, Budget.zero, occurence_shift, premise), "Cyclic");
                 }
 
             }
@@ -264,17 +260,13 @@ public class RuleMatch extends FindSubst {
         } else {
             budget = BudgetFunctions.compoundBackward(derivedTerm, premise);
         }
-
-        if (budget.summaryLessThan(premise.memory().derivationThreshold.floatValue())) {
+        if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG) {
-                premise.memory().remove(
-                        new TaskGhost((Compound) derivedTerm, punct, truth, budget, occurence_shift, premise),
-                        //.log(premise) ...
-                        "Insufficient Derivation Budget"
-                );
+                removedPreTask(new PreTask((Compound)derivedTerm, punct, truth, budget, occurence_shift, premise), "Insufficient Derivation Budget");
             }
             return null;
         }
+
 
 
         TaskSeed deriving = premise.newTask((Compound) derivedTerm); //, task, belief, allowOverlap);
@@ -305,6 +297,10 @@ public class RuleMatch extends FindSubst {
                 occ = Stamp.ETERNAL;
             }
 
+            if (budget.isDeleted()) {
+                System.err.println("why is " + budget + " deleted");;
+            }
+
             final Task derived = premise.validate(deriving
                             .punctuation(punct)
                             .truth(truth)
@@ -325,6 +321,14 @@ public class RuleMatch extends FindSubst {
         }
 
         return null;
+    }
+
+    public void removedPreTask(PreTask task, String removalReason) {
+        premise.memory().remove(
+                task,
+                //.log(premise) ...
+                removalReason
+        );
     }
 
     static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {

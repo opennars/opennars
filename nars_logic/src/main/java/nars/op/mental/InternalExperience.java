@@ -8,7 +8,7 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.premise.Premise;
@@ -277,7 +277,7 @@ public class InternalExperience extends NARReaction implements Consumer<ConceptP
     private void internalizeImplication(Task task, NAL nal, Implication beliefTerm) {
         Term taskTerm = task.getTerm();
         Implication imp = beliefTerm;
-        if (imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+        if (imp.getTemporalOrder() == Temporal.ORDER_FORWARD) {
             //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:
             boolean valid = true;
             if (imp.getSubject() instanceof Conjunction) {

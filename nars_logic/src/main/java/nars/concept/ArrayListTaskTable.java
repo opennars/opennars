@@ -1,11 +1,12 @@
 package nars.concept;
 
+import com.google.common.collect.Iterators;
 import com.gs.collections.api.block.procedure.Procedure2;
 import javolution.util.function.Equality;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.task.Task;
-import nars.util.data.list.FasterList;
+import nars.util.event.ArraySharingList;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -19,9 +20,9 @@ import java.io.ObjectOutput;
  *
  *
  */
-public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, Externalizable {
+public class ArrayListTaskTable extends ArraySharingList<Task> implements TaskTable, Externalizable {
 
-    protected int cap = 0;
+    protected int capacity = 0;
 
 
     /** warning this will create a 0-capacity table,
@@ -31,18 +32,36 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, E
         this(0);
     }
 
-    public ArrayListTaskTable(int cap) {
-        super(cap);
-        setCapacity(cap);
+    public ArrayListTaskTable(int capacity) {
+        super(i -> new Task[i]);
+        setCapacity(capacity);
     }
 
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(cap);
-        out.writeInt(size());
-        for (int i = 0; i < size(); i++) {
-            out.writeObject(get(i));
+        out.writeInt(capacity);
+        int s = size();
+        out.writeInt(s);
+
+        if (s == 0) return;
+
+        Task[] a = getCachedNullTerminatedArray();
+        for (int i = 0; i < s; i++) {
+            out.writeObject(a[i]);
         }
+    }
+
+    @Override
+    public int getCapacity() {
+        return capacity;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof TaskTable)) return false;
+        TaskTable t = (TaskTable)obj;
+        return getCapacity() == t.getCapacity() &&
+                Iterators.elementsEqual(iterator(), t.iterator());
     }
 
     @Override
@@ -56,7 +75,8 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, E
 
     @Override
     public void setCapacity(int newCapacity) {
-        this.cap = newCapacity;
+        this.capacity = newCapacity;
+        data.ensureCapacity(newCapacity);
     }
 
 
@@ -65,9 +85,11 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, E
      */
     @Override
     public Task getFirstEquivalent(final Task t, final Equality<Task> e) {
-        final int n = size();
-        for (int i = 0; i < n; i++) {
-            Task a = get(i);
+        if (isEmpty()) return null;
+
+        final Task[] aa = getCachedNullTerminatedArray();
+        Task a;
+        for (int i = 0; null!=(a = aa[i++]); ) {
             if (e.areEqual(a, t))
                 return a;
         }
@@ -91,7 +113,7 @@ public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, E
 
         //Memory m = c.getMemory();
         final int siz = size();
-        if (siz + 1 > cap) {
+        if (siz + 1 > capacity) {
             // FIFO, remove oldest question (last)
             Task removed = remove(siz - 1);
             m.remove(removed, "TaskTable FIFO Out");

@@ -1,6 +1,7 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
+import nars.nal.nal7.Temporal;
 import nars.task.Task;
 import nars.term.Term;
 
@@ -22,7 +23,7 @@ abstract public class AbstractMeasureTime extends PreCondition3 {
         if (belief == null) {
             return false;
         }
-        if (task.isEternal() || belief.isEternal()) {
+        if (Temporal.isEternal(task.getOccurrenceTime()) || Temporal.isEternal(belief.getOccurrenceTime())) {
             return false;
         }
 

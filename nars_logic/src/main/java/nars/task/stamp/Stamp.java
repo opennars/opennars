@@ -23,15 +23,15 @@ package nars.task.stamp;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.task.Sentence;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
-import static nars.nal.nal7.TemporalRules.ORDER_BACKWARD;
-import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
+import static nars.nal.nal7.Temporal.ORDER_BACKWARD;
+import static nars.nal.nal7.Temporal.ORDER_FORWARD;
 
 /** TODO divide this into a Stamp and Timed interfaces,
  *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
@@ -269,10 +269,6 @@ public interface Stamp extends Cloneable, Serializable {
 //        }
 //    }
 
-    default boolean isEternal() {
-        return getOccurrenceTime() <= TIMELESS; /* includes ETERNAL */
-    }
-
 
     /**
      * Get the occurrenceTime of the truth-value
@@ -315,11 +311,11 @@ public interface Stamp extends Cloneable, Serializable {
 
     default String getTense(final long currentTime, final int duration) {
 
-        if (isEternal()) {
+        if (Temporal.isEternal(getOccurrenceTime())) {
             return "";
         }
 
-        switch (TemporalRules.order(currentTime, getOccurrenceTime(), duration)) {
+        switch (Temporal.order(currentTime, getOccurrenceTime(), duration)) {
             case ORDER_FORWARD:
                 return Symbols.TENSE_FUTURE;
             case ORDER_BACKWARD:
@@ -340,7 +336,7 @@ public interface Stamp extends Cloneable, Serializable {
 
         if (getCreationTime() == Stamp.TIMELESS) {
             buffer.append('?');
-        } else if (!isEternal()) {
+        } else if (!Temporal.isEternal(getOccurrenceTime())) {
             appendOccurrenceTime(buffer);
         } else {
             buffer.append(getCreationTime());

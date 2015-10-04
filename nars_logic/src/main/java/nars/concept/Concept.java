@@ -85,26 +85,23 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     default boolean hasGoals() {
         final BeliefTable s = getGoals();
-        if (s == null) return false;
-        return !s.isEmpty();
+        return (s != null) && !s.isEmpty();
     }
 
     default boolean hasBeliefs() {
         final BeliefTable s = getBeliefs();
-        if (s == null) return false;
-        return !s.isEmpty();
+        return (s != null) && !s.isEmpty();
     }
 
     default boolean hasQuestions() {
         final TaskTable s = getQuestions();
-        if (s == null) return false;
-        return !s.isEmpty();
+        return (s != null) && !s.isEmpty();
     }
 
     default boolean hasQuests() {
         final TaskTable s = getQuests();
         if (s == null) return false;
-        return !s.isEmpty();
+        return (s != null) && !s.isEmpty();
     }
 
     boolean isConstant();

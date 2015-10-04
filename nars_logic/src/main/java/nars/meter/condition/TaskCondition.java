@@ -7,6 +7,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.io.JSONOutput;
 import nars.io.Texts;
+import nars.nal.nal7.Temporal;
 import nars.nal.nal7.Tense;
 import nars.narsese.InvalidInputException;
 import nars.task.Task;
@@ -256,13 +257,13 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
 
         //require right kind of tense
         if (isEternal()) {
-            if (!task.isEternal()) {
+            if (!Temporal.isEternal(task.getOccurrenceTime())) {
                 distance += 1; //temporalityCost;
                 match = false;
             }
         }
         else {
-            if (task.isEternal()) {
+            if (Temporal.isEternal(task.getOccurrenceTime())) {
                 distance += 1;// temporalityCost - 0.01;
                 match = false;
             }

@@ -5,7 +5,7 @@ import com.google.common.collect.MultimapBuilder;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.meta.pre.PairMatchingProduct;
-import nars.premise.Premise;
+import nars.process.ConceptProcess;
 import nars.task.Task;
 import nars.util.data.random.XorShift1024StarRandom;
 
@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 /**
  * Created by patrick.hammer on 30.07.2015.
  */
-abstract public class Deriver implements Function<Premise,Stream<Task>>, Serializable {
+abstract public class Deriver implements Function<ConceptProcess,Stream<Task>>, Serializable {
 
     public final DerivationRules rules;
 
@@ -44,7 +44,7 @@ abstract public class Deriver implements Function<Premise,Stream<Task>>, Seriali
     });
 
     @Override
-    public final Stream<Task> apply(final Premise f) {
+    public final Stream<Task> apply(final ConceptProcess f) {
         RuleMatch m = matchers.get();
         m.start(f);
         return forEachRule(m);

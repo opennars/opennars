@@ -22,7 +22,7 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Temporal;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.task.Sentence;
@@ -152,7 +152,7 @@ public class Twenglish {
 //cont.add(Interval.interval(memory.duration(), memory));
             cont.removeLast(); //remove trailnig interval term
 
-            Compound con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD));
+            Compound con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), Temporal.ORDER_FORWARD));
             if (con!=null) {
                 throw new RuntimeException("API Upgrade not finished here:");
                 /*tt.add(
