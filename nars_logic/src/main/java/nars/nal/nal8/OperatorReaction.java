@@ -65,7 +65,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
     }
 
     public OperatorReaction(String operatorName) {
-        this.operatorTerm = Atom.the(operatorName, true);
+        this.operatorTerm = Atom.the(operatorName);
     }
 
     public boolean setEnabled(NAR n, boolean enabled) {
@@ -116,7 +116,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
      * @param op     The operate to be executed
      * @return true if successful, false if an error occurred
      */
-    public boolean execute(final Task<Operation> op) {
+    public final boolean execute(final Task<Operation> op) {
         if (async()) {
             return nar.runAsync(() -> executeSynch(op));
         }
@@ -126,7 +126,8 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
 
     final boolean executeSynch(Task<Operation> op) {
         try {
-            executed(op, apply(op));
+            List<Task> feedback = apply(op);
+            executed(op, feedback);
         } catch (Exception e) {
             nar().memory.eventError.emit(e);
             return false;
@@ -189,7 +190,7 @@ abstract public class OperatorReaction implements Function<Task<Operation>,List<
             for (final Task f : feedback) {
                 if (t == null) continue;
                 f.setCause(t);
-                //t.log("Feedback");
+                f.log("Feedback");
 
                 n.input(f);
             }

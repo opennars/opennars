@@ -7,7 +7,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.SyncOperator;
 import nars.nar.Default;
 import nars.task.Task;
-import nars.term.Atom;
 import nars.term.Term;
 import org.junit.Test;
 
@@ -48,10 +47,11 @@ public class OperatorTest {
         AtomicBoolean executed = new AtomicBoolean(false);
 
         NAR n = new Default();
-        n.on((event, args) -> {
+        n.on("exe", (Term[] event) -> {
             //System.out.println("executed: " + Arrays.toString(args));
             executed.set(true);
-        }, Atom.the("exe"));
+            return null;
+        });
 
         n.input("exe(a,b,c)!");
 

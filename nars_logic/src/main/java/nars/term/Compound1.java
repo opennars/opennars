@@ -9,7 +9,7 @@ abstract public class Compound1<T extends Term> extends Compound<T> {
         super(the);
     }
 
-    public T the() {
+    public final T the() {
         return term[0];
     }
 

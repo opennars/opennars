@@ -261,15 +261,6 @@ import javax.annotation.Nullable;
 //        return null;
 //
 //    }
-
-    @Override
-    public boolean isInput() {
-        return getParentTask() == null;
-    }
-
-
-
-
 //    @Override
 //    public String toString() {
 //        try {

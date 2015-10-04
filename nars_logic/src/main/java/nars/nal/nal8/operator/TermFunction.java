@@ -33,6 +33,10 @@ public abstract class TermFunction<O> extends SyncOperator {
         super();
     }
 
+    protected TermFunction(Term name) {
+        super(name);
+    }
+
     protected TermFunction(String name) {
         super(name);
     }
@@ -247,10 +251,10 @@ public abstract class TermFunction<O> extends SyncOperator {
 
         //2. try to parse as term
 
-        Term t = nar.term(ys);
+        Term t = Atom.the(ys, true);
+
         if (t != null)
             return result(operation, t, x, lastTerm);
-
 
         throw new RuntimeException(this + " return value invalid: " + y);
     }

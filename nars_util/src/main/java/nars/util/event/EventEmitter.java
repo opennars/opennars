@@ -193,7 +193,14 @@ abstract public class EventEmitter<K,V>  {
 
             @Override
             public void off() {
-                reactions.get(key).remove(reaction);
+                ArraySharingList<Reaction<K, V>> r = reactions.get(key);
+                if (r!=null) {
+                    r.remove(reaction);
+                    if (r.isEmpty())
+                        reactions.remove(key);
+                }
+
+
             }
         }
 
@@ -201,8 +208,10 @@ abstract public class EventEmitter<K,V>  {
 
         @Override
         final public int emit(final K channel, final V arg) {
-            final Reaction<K, V>[] c = reactions.get(channel).nullTerminatedArray();
-            if (c==null) return 0;
+            ArraySharingList<Reaction<K, V>> r = reactions.get(channel);
+            if (r == null) return 0;
+            final Reaction<K, V>[] c = r.nullTerminatedArray();
+            if (c == null) return 0;
             int i;
             for (i = 0; ; i++) {
                 final Reaction<K, V> cc = c[i];

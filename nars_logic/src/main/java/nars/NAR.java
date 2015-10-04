@@ -15,6 +15,7 @@ import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.OperatorReaction;
+import nars.nal.nal8.operator.TermFunction;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.process.Level;
@@ -460,6 +461,36 @@ abstract public class NAR implements Serializable, Level {
         }
     }
 
+    public final TermFunction on(String operator, Function<Term[], Object> func) {
+        return on(Atom.the(operator), func);
+    }
+
+    public final TermFunction on(String operator, Consumer<Term[]> func) {
+        return on(Atom.the(operator), func);
+    }
+
+    public final TermFunction on(Term operator, Consumer<Term[]> func) {
+        //wrap the procedure in a function, suboptimal but ok
+        return on(operator, (tt) -> {
+            func.accept(tt);
+            return null;
+        });
+    }
+
+    /** creates an operator from a supplied function, which can be a lambda */
+    public TermFunction on(Term operator, Function<Term[], Object> func) {
+        TermFunction f = new TermFunction(operator) {
+
+            @Override
+            public final Object function(Operation x) {
+                return func.apply(x.args());
+            }
+        };
+        on(f);
+        return f;
+    }
+
+
     public void on(Class<? extends OperatorReaction> c) {
         //for (Class<? extends OperatorReaction> c : x) {
         OperatorReaction v = memory().the(c);
@@ -467,7 +498,7 @@ abstract public class NAR implements Serializable, Level {
         //}
     }
 
-    public EventEmitter.Registrations on(Reaction<Term, Task<Operation>> o, Term... c) {
+    public final EventEmitter.Registrations on(Reaction<Term, Task<Operation>> o, Term... c) {
         return memory.exe.on(o, c);
     }
 
@@ -505,8 +536,7 @@ abstract public class NAR implements Serializable, Level {
 //    }
 
     public EventEmitter.Registrations on(OperatorReaction o) {
-        Term a = o.getOperatorTerm();
-        EventEmitter.Registrations reg = on(o, a);
+        EventEmitter.Registrations reg = on(o, o.getOperatorTerm());
         o.setEnabled(this, true);
         return reg;
     }

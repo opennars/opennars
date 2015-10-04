@@ -477,7 +477,8 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
      * @return Whether the Task is derived from another task
      */
     default boolean isInput() {
-        return getParentTask() == null;
+        if (getCause()!=null) return false;
+        return getParentTask() == null ;
     }
 
 

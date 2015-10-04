@@ -1,54 +1,30 @@
 package nars.io;
 
 import nars.NAR;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal7.Sequence;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.TermFunction;
 import nars.nar.Default;
+import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  IO utility operators
  */
 public interface IO {
 
-    public static class strsubst extends TermFunction {
 
-        @Override
-        public Object function(Operation x) {
-            return null;
-        }
-    }
+    static void initStringOps(NAR n) {
 
-    public static TermFunction operator(String name, Function<Term[],Object> func) {
-        return new TermFunction(name) {
-
-            @Override
-            public Object function(Operation x) {
-                return func.apply(x.term);
-            }
-        };
-    }
-
-    public static void main(String[] args) {
-        NAR n = new Default();
-        n.on(operator("str_replace", (Term[] X) -> {
-
-            int a = X.length;
-            //if (a < 3)
-            //  throw new RuntimeException(
-            // "ex: strsubst( {$a:3}, (&/, \"hi i \",$a,\" now.\", #result) ");
+        n.on("str_replace", (Term[] X) -> {
 
             //first argument is substitution map
-            SetExt<?> substitutions = (SetExt<?>) X[0];
+            Compound<?> substitutions = (Compound<?>) X[0];
             Sequence strings = (Sequence) X[1];
 
             //convert this set to a Map<Term,Term>
-            Map<Term, Term> substs = substitutions.toInheritanceMap();
+            Map<Term, Term> substs = substitutions.
+                    toKeyValueMap();
 
             StringBuilder sb = new StringBuilder();
             for (Term s : strings.term) {
@@ -65,15 +41,27 @@ public interface IO {
 
             return sb.toString();
 
-        }));
+        });
 
 
+    }
+
+    public static void main(String[] args) {
+
+    }
+
+    default void testStrReplace() {
+        NAR n = new Default();
         n.stdout();
 
-        String cmd = "str_replace( {a:3}, (&/, \"hi i \",a,\" now.\"), #result);";
+        IO.initStringOps(n);
+        String cmd = "str_replace( {(#number,3)}, (&/, it_, is_, #number), #result);";
         n.input(cmd);
 
         n.frame(5);
+
+        //expect:  <{it_is_3} --> (/, str_replace, {(#1, 3)}, (&/, it_, is_, #1), _)>. :|: %1.00;0.99% Feedback
+
     }
 
 }
