@@ -4,42 +4,84 @@ Data transform and streaming operators
 
 ## Streams
 
-Streams are identified by a unique term
+Streams are identified by a unique NAL term
 representing the immutable data necessary
 to resolve it.
 
+### URLs in NAL
 Streams which can be referenced by URL can
 be expressed by:
 
 ```
-protocol:device
-protocol:(device, path1, ..., pathN)
-protocol:((host, port), path1, ..., pathN)
-```
-note: the (host,port) 'device' can be considered path0
-proxy routes could be formed from tuples of these.
-
-ex:
-```
-file:("tmp","file")
-http:(("github.com", 80), "opennars", "opennars")
-ssh:("localhost", 22, ("user", "pass"))
+source(location)
 ```
 
- * Each stream implementation can determine
-the appropriate conversion to its wire format of
-output and input terms terms.
+a device canonically represented as a succession of
+inheritances uniquely describing it. items which
+are logically associated should be grouped appropriately
+with products or sets.
+
+
+```
+file("tmp","file.txt")
+http(("website.org",80):("path0","path1"))
+ssh(("localhost",22):("user","pass"))
+```
+
+
+## Stream pipeline
+
+A composition or pipeline of streams
+is also a stream:
+
+```
+last(middle(first(source)))
+```
+
+Other options:
+
+```
+pipeline(source, (&/, first, middle, last))
+
+pipeline(source, (first, middle, last))
+
+(&/,first,middle,last)(source)
+```
+
+ex: HTTP response interpreted as JSON object
+```
+json(http(
+    ("website.org",80):
+        ("path0","path1"))
+)
+```
+
+ex: .sh file
+ * this would be interpeted as the
+ desire to execute a shell script with sh
+```
+
+ out(
+    exec_sh(file("tmp", "script.sh"))),
+    (&/, "whoami")
+ )
+```
+
+
+
+see: MIME types
 
 
 ### Internet Specifications
  * http://www.w3.org/Addressing/URL/url-spec.txt
  * https://docs.oracle.com/javase/8/docs/api/java/net/URL.html
  * https://en.wikipedia.org/wiki/OSI_model
+ * MIME
 
 
 
 
-## Connection state
+## Connection
 
 #### Connect
 ```
@@ -70,20 +112,42 @@ output and input terms terms.
  possibility.
 
 
+## I/O desire
+
+
+ * Each stream implementation can determine
+the appropriate conversion to its wire format of
+output and input terms terms.
+
+
 ### Input
 ```
-    in(stream, #message )!
+    in(stream, (&/, messages, ...) )!
 ```
 
-example:
+while the input is buffering, it may
+batch messages into groups as part of the
+sequence:
+
+  * sequence - for hierarchical represntation of time)
+
+  * extset or parallel - for indicating the uncertainty of event arrival. ex: if the events occurr faster than temporal resolution could have distinguished their order. indicating parallelizability
+    * can be parallelized
+
+a set of messages can be processed
+in parallel. and also de-duplicated
+as the buffer grows.
+
+ex:
 ```
-    in((host, port, protocol), {message}, ...,  )!
+    in(stream, (&/, "subject", (&/, sentence1, ..., sentenceN ))?
+    in(stream, (&/, {S,E,E}, {T,H,I,S}))?
 ```
 
 ### Output
 
 ```
-    out(stream, message[, callback]  )!
+    out( stream, (&/, message)[, callback]  )!
 ```
 where callback is an optional term to be used as the subject of a feedback belief about goal's success or error state.
 
@@ -103,12 +167,10 @@ number of repeat executions.
 ### Ping Example
 
 ```
-<stream =/> PING> =/> <PONG =/> stream>>.
+<in(stream, (&/, "PING")) =/> out(stream, (&/, PONG))>.
 ```
 
-```
-<<udp:$remote =/> PING> =/> <PONG =/> udp:$remote>>.
-```
+
 
 ### Control
 
@@ -118,11 +180,13 @@ stream(stream, { param1:value1, ..., paramN: valueN } )!
 ```
 
 #### Get parameters
+
+inspection and control of stream properties
+
 ```
 stream(stream, { param1:#x } )?
 ```
 
-* the desire of these operators can inspect and control
 certain implementation details which are not
 directly managed by the reasoner.
 
@@ -148,6 +212,9 @@ Pattern template operators to construct strings in various ways:
 
 ```
  str({PATTERNS...}, (&/,SEQUENCE,...), #RESULT)
+```
+ex:
+```
  str({A:"abc", B:"xyz" }, (&/,"i", A, " am experiencing ", B), #STRING )!
 ```
 
@@ -164,15 +231,6 @@ str("i abc am experiencing xyz", {"abc":#name, "xyz":#it} )!
 
  * can support regex and multiple results (as a product in sequence order)
 
-
-## Signal processing
-
-
-```
- file:("tmp", "sound.wav"):({bits:16, rate:44100}, (&/,0,0,1,0,1,0,1,1...)
-```
-
-binary data can be stored in a separate database
 
 
 ## Signal experiencing
@@ -191,9 +249,8 @@ Autonomic stream goals react to changes in the
 desire state of concepts involving their identifiers,
 without involving any operator.  This might be
 less expensive for reasoning as it unifies
-the stream events with beliefs immediately.
-
-
+the stream events at the term level,
+and not the task level as operations involve.
 
 
 ## Protocol learning
@@ -202,7 +259,7 @@ the stream events with beliefs immediately.
  * learn from observing existing programs (ex: traffic logs)
 
 ## Conversation
-Can be inspired by other cognitive agent specifications like FIPA
+Can be inspired by other cognitive agent specifications (see: FIPA Agent Communication Language)
 
  * send
  * confirm

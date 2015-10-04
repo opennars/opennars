@@ -36,7 +36,7 @@ public interface IO {
 
     public static void main(String[] args) {
         NAR n = new Default();
-        n.on(operator("strsubst", (Term[] X) -> {
+        n.on(operator("str_replace", (Term[] X) -> {
 
             int a = X.length;
             //if (a < 3)
@@ -69,7 +69,10 @@ public interface IO {
 
 
         n.stdout();
-        n.input("strsubst( {$a:3}, (&/, \"hi i \",$a,\" now.\"), #result);");
+
+        String cmd = "str_replace( {a:3}, (&/, \"hi i \",a,\" now.\"), #result);";
+        n.input(cmd);
+
         n.frame(5);
     }
 

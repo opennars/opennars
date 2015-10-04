@@ -5,7 +5,6 @@ import nars.util.data.id.Named;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -16,7 +15,7 @@ public interface Topic<V extends Serializable> extends Serializable, Named<Strin
 
     void delete();
 
-    List<Consumer<V>> all();
+    //List<Consumer<V>> all();
 
 
     /** registers to all public Topic fields in an object */
