@@ -5,7 +5,9 @@ import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.meter.TestNAR;
 import nars.nar.Default;
+import nars.term.Compound;
 import nars.term.Term;
+import nars.util.graph.TermLinkGraph;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -15,6 +17,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static org.jgroups.util.Util.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 //don't touch this file - patham9
@@ -22,11 +26,13 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Parameterized.class)
 public class LinkageTest extends AbstractNALTest {
 
+    private int cycles = 250;
+
     public LinkageTest(Supplier<NAR> b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
-        return AbstractNALTest.core8;
+        return AbstractNALTest.core6;
     }
 
     public void ProperlyLinkedTest(String premise1, String premise2) throws Exception {
@@ -68,11 +74,22 @@ public class LinkageTest extends AbstractNALTest {
 
 
     //interlinked with an intermediate concept, this is needed in order to select one as task and the other as belief
-    public void ProperlyLinkedIndirectlyTest(String premise1, String premise2) throws Exception {
+    public void ProperlyLinkedIndirectlyTest(String spremise1, String spremise2) throws Exception {
+
+
         Default nar = new Default();
+
+        Compound premise1 = nar.term(spremise1);
+        assertNotNull(premise1);
+        assertEquals(spremise1, premise1.toString());
+
+        Compound premise2 = nar.term(spremise2);
+        assertNotNull(premise2);
+        assertEquals(spremise2, premise2.toString());
+
         nar.believe(premise1,1.0f,0.9f); //.en("If robin is a type of bird then robin can fly.");
         nar.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");
-        nar.frame(1000); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
+        nar.frame(cycles); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
 
         List<String> fails = new ArrayList();
 
@@ -118,6 +135,10 @@ public class LinkageTest extends AbstractNALTest {
                 }
             }
         }
+
+        System.err.println(premise1 + " not linked with " + premise2);
+        TermLinkGraph g = new TermLinkGraph(nar);
+        g.print(System.out);
 
         assertTrue(passed && passed2);
 
@@ -303,9 +324,15 @@ public class LinkageTest extends AbstractNALTest {
         tester.believe(s,1.0f,0.9f);
         tester.run(10);
         Concept ret = tester.nar.concept(s);
+
         if(ret == null) {
-            throw new Exception("Failed to create a concept for "+s);
+            tester.nar.forEachConcept(System.out::println);
         }
+
+        assertNotNull("Failed to create a concept for "+s, ret);
+
+
+
     }
 
     @Test

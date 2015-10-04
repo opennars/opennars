@@ -42,7 +42,9 @@ import java.util.Set;
  * (They began here for developmentconvenience)
  *
  */
-final public class Global {
+public class Global {
+
+
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.05f;
 

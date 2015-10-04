@@ -9,6 +9,9 @@ import nars.term.Term;
 import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.DirectedPseudograph;
 
+import java.io.PrintStream;
+import java.util.Set;
+
 /**
  * Generates a graph of a set of Concept's TermLinks. Each TermLink is an edge,
  * and the set of unique Concepts and Terms linked are the vertices.
@@ -38,6 +41,19 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     @Override
     public String toString() {
         return "[" + vertexSet().toString() + ", " + edgeSet().toString() + "]";
+    }
+
+    public void print(PrintStream out) {
+
+        Set<Term> vs = vertexSet();
+        System.out.println("Terms: " + vs.size());
+        for (Term t : vs) {
+            System.out.println(t);
+            outgoingEdgesOf(t).forEach(e ->
+                    System.out.println("\t" + e)
+            );
+        }
+
     }
 
     public static class TermLinkTemplateGraph extends TermLinkGraph {

@@ -221,10 +221,10 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
             case 0:
                 throw new RuntimeException("empty atom name: " + name);
 
-            //re-use short term names
-            case 1:
-            case 2:
-                return theCached(name);
+//            //re-use short term names
+//            case 1:
+//            case 2:
+//                return theCached(name);
 
             default:
                 if (olen > Short.MAX_VALUE/2)
