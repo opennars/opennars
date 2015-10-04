@@ -234,7 +234,7 @@ public class LinkageTest extends AbstractNALTest {
 
     @Test
     public void Indirect_Linkage_NAL6_multiple_variable_elimination4() throws Exception {
-        ProperlyLinkedIndirectlyTest("(&&,<#x --> (/,open,#y,_)>,<#x --> lock>,<#y --> key>)", "<{lock1} --> lock>");
+        ProperlyLinkedIndirectlyTest("(&&,<#1 --> (/,open,#2,_)>,<#1 --> lock>,<#2 --> key>)", "<{lock1} --> lock>");
     }
 
     @Test
@@ -295,6 +295,31 @@ public class LinkageTest extends AbstractNALTest {
     @Test
     public void Indirect_Linkage_Layer2_Basic_WithVar2() throws Exception {
         ProperlyLinkedIndirectlyTest("<a --> <b --> <#1 --> x>>>", "<k --> x>");
+    }
+
+    public void ConceptFormationTest(String s) throws Exception {
+        TestNAR tester = test();
+        tester.believe(s,1.0f,0.9f);
+        tester.wait(10);
+        Concept ret = tester.nar.concept(s);
+        if(ret == null) {
+            throw new Exception("Failed to create a concept for "+s);
+        }
+    }
+
+    @Test
+    public void Basic_Concept_Formation_Test() throws Exception {
+        ConceptFormationTest("<a --> b>");
+    }
+
+    @Test
+    public void Advanced_Concept_Formation_Test() throws Exception {
+        ConceptFormationTest("<#1 --> b>");
+    }
+
+    @Test
+     public void Advanced_Concept_Formation_Test2() throws Exception {
+        ConceptFormationTest("<<$1 --> a> ==> <$1 --> b>>");
     }
 
 
