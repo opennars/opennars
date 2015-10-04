@@ -4,6 +4,7 @@ import nars.NAR;
 import nars.concept.Concept;
 import nars.link.TermLink;
 import nars.meter.TestNAR;
+import nars.nar.Default;
 import nars.term.Term;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,14 +69,14 @@ public class LinkageTest extends AbstractNALTest {
 
     //interlinked with an intermediate concept, this is needed in order to select one as task and the other as belief
     public void ProperlyLinkedIndirectlyTest(String premise1, String premise2) throws Exception {
-        TestNAR tester = test();
-        tester.believe(premise1,1.0f,0.9f); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");
-        tester.run(30); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
+        Default nar = new Default();
+        nar.believe(premise1,1.0f,0.9f); //.en("If robin is a type of bird then robin can fly.");
+        nar.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");
+        nar.frame(1000); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
 
         List<String> fails = new ArrayList();
 
-        Concept ret = tester.nar.concept(premise1);
+        Concept ret = nar.concept(premise1);
         boolean passed = false;
         if(ret!=null && ret.getTermLinks()!=null) {
             for (TermLink entry : ret.getTermLinks()) {
@@ -85,7 +86,7 @@ public class LinkageTest extends AbstractNALTest {
                 }
 
                 Term w = entry.getTerm();
-                Concept Wc = tester.nar.concept(w);
+                Concept Wc = nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
                         if(entry2.getTerm().toString().equals(premise2)) {
@@ -97,7 +98,7 @@ public class LinkageTest extends AbstractNALTest {
             }
         }
 
-        Concept ret2 = tester.nar.concept(premise2);
+        Concept ret2 = nar.concept(premise2);
         boolean passed2 = false;
         if(ret2!=null && ret2.getTermLinks()!=null) {
             for (TermLink entry : ret2.getTermLinks()) {
@@ -106,7 +107,7 @@ public class LinkageTest extends AbstractNALTest {
                     break;
                 }
                 Term w = entry.getTerm();
-                Concept Wc = tester.nar.concept(w);
+                Concept Wc = nar.concept(w);
                 if(Wc != null) {
                     for (TermLink entry2 : Wc.getTermLinks()) {
                         if(entry2.getTerm().toString().equals(premise1)) {
@@ -332,5 +333,9 @@ public class LinkageTest extends AbstractNALTest {
         ConceptFormationTest("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");
     }
 
+    @Test
+    public void Advanced_Concept_Formation_Test4() throws Exception {
+        ConceptFormationTest("(&&,<#1 --> (/,open,#2,_)>,<#1 --> lock>,<#2 --> key>)");
+    }
 
 }
