@@ -300,7 +300,7 @@ public class LinkageTest extends AbstractNALTest {
     public void ConceptFormationTest(String s) throws Exception {
         TestNAR tester = test();
         tester.believe(s,1.0f,0.9f);
-        tester.wait(10);
+        tester.run(10);
         Concept ret = tester.nar.concept(s);
         if(ret == null) {
             throw new Exception("Failed to create a concept for "+s);
@@ -320,6 +320,11 @@ public class LinkageTest extends AbstractNALTest {
     @Test
      public void Advanced_Concept_Formation_Test2() throws Exception {
         ConceptFormationTest("<<$1 --> a> ==> <$1 --> b>>");
+    }
+
+    @Test
+    public void Advanced_Concept_Formation_Test3() throws Exception {
+        ConceptFormationTest("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");
     }
 
 
