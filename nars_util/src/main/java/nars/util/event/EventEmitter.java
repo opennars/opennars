@@ -4,10 +4,7 @@ package nars.util.event;
 import nars.util.data.list.FasterList;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -15,8 +12,6 @@ import java.util.function.Function;
  */
 abstract public class EventEmitter<K,V>  {
 
-
-    abstract public List<Reaction<K,V>> all(K op);
 
     public interface EventRegistration {
         public void off();
@@ -160,7 +155,7 @@ abstract public class EventEmitter<K,V>  {
 //        }
 //    }
 
-    abstract public void forEachReaction(Consumer<Reaction> c);
+ //   abstract public void forEachReaction(Consumer<Reaction> c);
 
 
     /** single-thread synchronous (in-thread) event emitter with direct array access
@@ -168,17 +163,17 @@ abstract public class EventEmitter<K,V>  {
      * */
     public static class DefaultEventEmitter<K,V> extends EventEmitter<K,V> {
 
-        final Map<K,List<Reaction<K,V>>> reactions = new HashMap(64);
+        final Map<K,ArraySharingList<Reaction<K,V>>> reactions = new HashMap(64);
 
-        final Function<K, List<Reaction<K,V>>> getNewChannel = k -> { return newChannelList(); };
+        final Function<K, ArraySharingList<Reaction<K,V>>> getNewChannel = k -> { return newChannelList(); };
 
 
-        @Override
-        public void forEachReaction(Consumer<Reaction> c) {
-            for (List<Reaction<K, V>> reactionList : reactions.values()) {
-                reactionList.forEach(c);
-            }
-        }
+//        @Override
+//        public void forEachReaction(Consumer<Reaction> c) {
+//            for (List<Reaction<K, V>> reactionList : reactions.values()) {
+//                reactionList.forEach(c);
+//            }
+//        }
 
         @Override
         public String toString() {
@@ -186,7 +181,7 @@ abstract public class EventEmitter<K,V>  {
         }
 
 
-        public class DefaultEventRegistration<K,V> implements EventRegistration {
+        public class DefaultEventRegistration implements EventRegistration {
 
             final K key;
             final Reaction<K,V> reaction;
@@ -203,34 +198,34 @@ abstract public class EventEmitter<K,V>  {
         }
 
 
-        @Override
-        public final List<Reaction<K,V>> all(K c) {
-            return reactions.get(c);
-        }
 
         @Override
-        public int emit(final K channel, final V arg) {
-            final List<Reaction<K,V>> c = all(channel);
+        final public int emit(final K channel, final V arg) {
+            final Reaction<K, V>[] c = reactions.get(channel).nullTerminatedArray();
             if (c==null) return 0;
-            final int cSize=c.size();
-            for (int i = 0; i < cSize; i++) {
-                c.get(i).event(channel, arg);
+            int i;
+            for (i = 0; ; i++) {
+                final Reaction<K, V> cc = c[i];
+                if (cc == null) break;
+                cc.event(channel, arg);
             }
-            return cSize;
+            return i;
         }
 
         @Override
         public EventRegistration on(K channel, Reaction<K,V> o) {
             DefaultEventRegistration d = new DefaultEventRegistration(channel, o);
 
-            List<Reaction<K,V>> cl = reactions.computeIfAbsent(channel, getNewChannel);
+            ArraySharingList<Reaction<K,V>> cl = reactions.computeIfAbsent(channel, getNewChannel);
             cl.add(o);
 
             return d;
         }
 
-        protected List<Reaction<K,V>> newChannelList() {
-            return new CopyOnWriteArrayList<Reaction<K,V>>();
+        protected ArraySharingList<Reaction<K,V>> newChannelList() {
+            return new ArraySharingList<Reaction<K,V>>(
+                    r -> new Reaction[r]
+            );
         }
 
         @Override

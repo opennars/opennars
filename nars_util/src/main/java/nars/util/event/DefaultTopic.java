@@ -1,6 +1,5 @@
 package nars.util.event;
 
-import nars.util.data.list.FasterList;
 import org.infinispan.commons.util.WeakValueHashMap;
 
 import java.io.Serializable;
@@ -9,15 +8,15 @@ import java.util.function.Consumer;
 
 /** single-thread synchronous (in-thread) event emitter with direct array access
  * */
-public class DefaultTopic<V extends Serializable> implements Topic<V> {
+public class DefaultTopic<V extends Serializable> extends ArraySharingList<Consumer<V>> implements Topic<V> {
 
 
     //TODO extract this to Topics and a graph metamodel of the events
 
     static WeakValueHashMap<String, Topic<?>> topics = new WeakValueHashMap<>();
 
-    private FasterList<Consumer> consumers = new FasterList();
-    private Consumer[] consumerArray = null;
+
+
 
     public static void register(Topic<?> t) {
         topics.put(t.name(), t);
@@ -48,14 +47,14 @@ public class DefaultTopic<V extends Serializable> implements Topic<V> {
     }
 
     DefaultTopic(String id) {
-        super();
+        super(i -> new Consumer[i]);
         this.id = id;
         register(this);
     }
 
     @Override
     final public void emit(final V arg) {
-        final Consumer[] vv = this.consumerArray;
+        final Consumer[] vv = nullTerminatedArray();
         if (vv == null) return;
 
         for (int i = 0; ; i++) {
@@ -74,32 +73,9 @@ public class DefaultTopic<V extends Serializable> implements Topic<V> {
     @Override
     final public On on(Consumer<V> o) {
         On d = new On(this,o);
-        if (consumers.add(o))
-            updateArray();
+        add(o);
         return d;
     }
-
-    private void updateArray() {
-
-        //TODO for safe atomicity while the events are populated, buffer additions to a sub-list,
-        //and apply them if a flag is set on the next read
-
-        final FasterList<Consumer> consumers = this.consumers;
-
-        if (!consumers.isEmpty()) {
-            Consumer[] a = this.consumerArray;
-            if (a == null)
-                a = new Consumer[consumers.size()+1]; //+1 for padding
-            this.consumerArray = consumers.toNullTerminatedUnpaddedArray(a);
-            if (consumerArray[consumerArray.length-1]!=null)
-                System.err.println("wtf");
-        }
-        else {
-            this.consumerArray = null;
-        }
-
-    }
-
 
     @Override
     public final void off(On<V> o) {
@@ -108,10 +84,8 @@ public class DefaultTopic<V extends Serializable> implements Topic<V> {
           //      throw new RuntimeException(this + " is not " + o);
         //}
 
-        if (!consumers.remove(o.reaction))
+        if (!remove(o.reaction))
             throw new RuntimeException(this + " has not " + o.reaction);
-
-        updateArray();
     }
 
 
@@ -119,7 +93,7 @@ public class DefaultTopic<V extends Serializable> implements Topic<V> {
     @Override
     public void delete() {
         unregister(this);
-        consumers.clear();
+        data.clear();
     }
 
 }
