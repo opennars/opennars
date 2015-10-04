@@ -53,7 +53,7 @@ public class CommonVariable extends Variable {
                     if (diff==0) {
                         throw new RuntimeException("variables equal");
                     }
-                    else if (diff < 0) {
+                    else if (diff > 0) {
                         return CommonVariable.make(type, a[1], b[1]);
                     }
                     else {
@@ -95,7 +95,7 @@ public class CommonVariable extends Variable {
         for (Op o : new Op[] { Op.VAR_PATTERN, Op.VAR_QUERY, Op.VAR_INDEPENDENT, Op.VAR_DEPENDENT }) {
             CommonVariable[][] cm = new CommonVariable[10][];
             for (int i = 0; i < 10; i++) {
-                cm[i] = new CommonVariable[10 - i];
+                cm[i] = new CommonVariable[i+2];
             }
             common.put(o, cm);
         }
@@ -111,7 +111,7 @@ public class CommonVariable extends Variable {
             CommonVariable[] commonCA = common.get(type)[ca];
             CommonVariable cv = commonCA[cb];
             if (cv == null) {
-                commonCA[cb] = cv = make2(type, a, b);
+                commonCA[cb] = cv = make2(type, b, a);
             }
             return cv;
         }

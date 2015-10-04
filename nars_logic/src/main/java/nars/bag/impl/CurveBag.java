@@ -218,7 +218,13 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
      */
     @Override
     public V get(final K key) {
-        return index.get(key);
+        //TODO combine into one Map operation
+        V v = index.get(key);
+        if (v!=null && v.getBudget().isDeleted()) {
+            index.remove(key);
+            return null;
+        }
+        return v;
     }
 
     @Override
@@ -378,9 +384,9 @@ public class CurveBag<K, V extends Itemized<K>> extends Bag<K, V> {
 
             index.addItem(i);
 
-            if (!i.name().equals(overflow.name())) {
+            /*if (!i.name().equals(overflow.name())) {
                 throw new RuntimeException("wtf: notEqual " + i.name() + " and " + overflow.name() );
-            }
+            }*/
 
             /* absorbed */
             return null;

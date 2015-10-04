@@ -204,7 +204,7 @@ public class DefaultConcept extends AtomConcept {
 
         if (hasQuestions()) {
             //TODO move this to a subclass of TaskTable which is customized for questions. then an arraylist impl of TaskTable can iterate by integer index and not this iterator/lambda
-            getQuestions().forEach( question -> LocalRules.trySolution(question, belief, nal) );
+            getQuestions().forEach( question -> LocalRules.trySolution(question, strongest, nal) );
         }
         //}
 

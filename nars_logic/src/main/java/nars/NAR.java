@@ -1127,8 +1127,8 @@ abstract public class NAR implements Serializable, Level {
         }
 
         if ((term = term.normalized()) == null) {
-            throw new RuntimeException("unnormalized term attempts to conceptualize: " + term);
-            //return null;
+            //throw new RuntimeException("unnormalized term attempts to conceptualize: " + term);
+            return null;
         }
 
         final Concept c = doConceptualize(term, budget);
