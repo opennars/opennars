@@ -69,9 +69,9 @@ public class LinkageTest extends AbstractNALTest {
     //interlinked with an intermediate concept, this is needed in order to select one as task and the other as belief
     public void ProperlyLinkedIndirectlyTest(String premise1, String premise2) throws Exception {
         TestNAR tester = test();
-        tester.believe(premise1); //.en("If robin is a type of bird then robin can fly.");
-        tester.believe(premise2); //.en("Robin is a type of bird.");
-        tester.run(10);
+        tester.believe(premise1,1.0f,0.9f); //.en("If robin is a type of bird then robin can fly.");
+        tester.believe(premise2,1.0f,0.9f); //.en("Robin is a type of bird.");
+        tester.run(30); //TODO: why does it take 30 cycles till premise1="<<$1 --> bird> ==> <$1 --> animal>>", premise2="<tiger --> animal>" is conceptualized?
 
         List<String> fails = new ArrayList();
 
@@ -320,6 +320,11 @@ public class LinkageTest extends AbstractNALTest {
     @Test
      public void Advanced_Concept_Formation_Test2() throws Exception {
         ConceptFormationTest("<<$1 --> a> ==> <$1 --> b>>");
+    }
+
+    @Test
+    public void Advanced_Concept_Formation_Test2_2() throws Exception {
+        ConceptFormationTest("<<$1 --> bird> ==> <$1 --> animal>>");
     }
 
     @Test
