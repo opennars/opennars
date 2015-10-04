@@ -1,10 +1,7 @@
 package nars.meta.pre;
 
 import nars.meta.RuleMatch;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
-import nars.term.Compound;
 import nars.term.Term;
 
 import java.util.ArrayList;
@@ -21,9 +18,8 @@ public class Difference extends PreCondition3Output {
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
 
-        if(a==null || b==null || c==null || (!((a instanceof SetExt) && (b instanceof SetExt)) && !((a instanceof SetInt) && (b instanceof SetInt)))) {
+        if (Union.invalid(a,b,c))
             return false;
-        }
 
         //ok both are extensional sets or intensional sets, build difference
         SetTensional A = (SetTensional) a;
@@ -42,22 +38,6 @@ public class Difference extends PreCondition3Output {
                 terms.add(t);
             }
         }
-
-        if(a instanceof SetExt) {
-            Compound res = SetExt.make(terms);
-            if(res==null) {
-                return false;
-            }
-            m.map1.put(c, res);
-        }
-        if(a instanceof SetInt) {
-            Compound res = SetInt.make(terms);
-            if(res==null) {
-                return false;
-            }
-            m.map1.put(c, res);
-        }
-
-        return true;
+        return Union.createSetAndAddToSubstitutes(m, a, c, terms);
     }
 }

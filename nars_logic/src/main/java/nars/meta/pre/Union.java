@@ -6,9 +6,10 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.Terms;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
 
 /**
  * Created by me on 8/15/15.
@@ -22,28 +23,26 @@ public class Union extends PreCondition3Output {
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
 
-        if( (c == null) || !(a instanceof SetTensional) || !(b instanceof SetTensional) || (a.op()!=b.op()) )
-            return false;
+        if (Union.invalid(a,b,c)) return false;
 
         //ok both are extensional sets or intensional sets, build difference
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        ArrayList<Term> terms = new ArrayList<Term>();
-        for(Term t: A.terms()) { //set difference
-            terms.add(t);
-        }
-        for(Term t2 : B.terms()) {
-            terms.add(t2);
-        }
-        //Term[] terms = Terms.toSortedSetArray(A,B);
+        TreeSet<Term> terms = new TreeSet<>();
+        Collections.addAll(terms, A.terms());
+        Collections.addAll(terms, B.terms());
 
+        return createSetAndAddToSubstitutes(m, a, c, terms);
+    }
+
+    public static boolean createSetAndAddToSubstitutes(RuleMatch m, Term a, Term c, Collection<Term> termsArray) {
         final Compound res;
         if(a instanceof SetExt) {
-            res = SetExt.make(terms);
+            res = SetExt.make(termsArray);
         }
         else {
-            res = SetInt.make(terms);
+            res = SetInt.make(termsArray);
         }
 
         if(res==null)
@@ -52,5 +51,10 @@ public class Union extends PreCondition3Output {
         m.map1.put(c, res);
 
         return true;
+    }
+
+    public static boolean invalid(Term a, Term b, Term c) {
+        return c==null ||
+                !((a instanceof SetTensional) && (a.op()==b.op()));
     }
 }

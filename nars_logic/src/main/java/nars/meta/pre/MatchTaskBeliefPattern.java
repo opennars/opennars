@@ -1,7 +1,6 @@
 package nars.meta.pre;
 
 import nars.Global;
-import nars.Op;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.term.Term;
@@ -26,8 +25,8 @@ public class MatchTaskBeliefPattern extends PreCondition {
                 // if nothing else in the rule involves this term
                 // which will be a singular VAR_PATTERN variable
                 // then allow null
-                if (beliefPattern.op() != Op.VAR_PATTERN)
-                    throw new RuntimeException("not what was expected");
+//                if (beliefPattern.op() != Op.VAR_PATTERN)
+//                    throw new RuntimeException("not what was expected");
 
             }
         //}
@@ -54,12 +53,11 @@ public class MatchTaskBeliefPattern extends PreCondition {
 
     final protected boolean subst(final RuleMatch m, final PairMatchingProduct t) {
         //TODO parameterize the power by budget
-        boolean b = m.next(pattern, t, Global.UNIFICATION_POWER);
-        return b;
+        return m.next(pattern, t, Global.UNIFICATION_POWER);
     }
 
     @Override
-    public String toString() {
+    final public String toString() {
         return id;
     }
 

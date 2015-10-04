@@ -1,13 +1,14 @@
 package nars.meta.pre;
 
+import com.gs.collections.api.set.MutableSet;
+import com.gs.collections.impl.factory.Sets;
+import nars.Global;
 import nars.meta.RuleMatch;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal3.SetTensional;
-import nars.term.Compound;
 import nars.term.Term;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Created by me on 8/15/15.
@@ -21,43 +22,26 @@ public class Intersection extends PreCondition3Output {
     @Override
     public boolean test(RuleMatch m, Term a, Term b, Term c) {
 
-        if(a==null || b==null || c==null || (!((a instanceof SetExt) && (b instanceof SetExt)) && !((a instanceof SetInt) && (b instanceof SetInt)))) {
+        if (Union.invalid(a,b,c))
             return false;
-        }
+//        if(a==null || b==null || c==null ||
+//                !((a instanceof SetTensional) && (a.op()==b.op()))
+////                ( !((a instanceof SetExt) && (b instanceof SetExt)) &&
+////                  !((a instanceof SetInt) && (b instanceof SetInt)))
+//                ) {
+//            return false;
+//        }
 
-        //ok both are extensional sets or intensional sets, build difference
+        //ok both are extensional sets or intensional sets, build intersection, not difference
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        ArrayList<Term> terms = new ArrayList<Term>();
-        for(Term t: A.terms()) { //set difference
-            boolean include = false;
-            for(Term t2 : B.terms()) {
-                if(t.equals(t2)) {
-                    include=true;
-                    break;
-                }
-            }
-            if(include) {
-                terms.add(t);
-            }
-        }
+        Set<Term> aa = Global.newHashSet(A.length());
+        Collections.addAll(aa, A.terms());
+        Set<Term> bb = Global.newHashSet(B.length());
+        Collections.addAll(bb, B.terms());
 
-        if(a instanceof SetExt) {
-            Compound res = SetExt.make(terms);
-            if(res==null) {
-                return false;
-            }
-            m.map1.put(c, res);
-        }
-        if(a instanceof SetInt) {
-            Compound res = SetInt.make(terms);
-            if(res==null) {
-                return false;
-            }
-            m.map1.put(c, res);
-        }
-
-        return true;
+        MutableSet<Term> terms = Sets.intersect(bb,aa);
+        return Union.createSetAndAddToSubstitutes(m, a, c, terms);
     }
 }

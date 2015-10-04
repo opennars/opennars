@@ -50,6 +50,10 @@ public class RuleMatch extends FindSubst {
 
     final public PairMatchingProduct taskBelief = new PairMatchingProduct();
 
+    /** used by substitute: */
+    public Map<Term, Term> Inp = Global.newHashMap();
+    public Map<Term, Term> Outp = Global.newHashMap();
+
     @Override
     public String toString() {
         return taskBelief.toString() + ":<" + super.toString() + ">:" + resolutions;
@@ -153,10 +157,10 @@ public class RuleMatch extends FindSubst {
         }
 
         //test and apply late preconditions
-        for (final PreCondition c : outcome.beforeConclusions) {
-            if (!c.test(this))
-                return null;
-        }
+//        for (final PreCondition c : outcome.beforeConclusions) {
+//            if (!c.test(this))
+//                return null;
+//        }
 
         Term derivedTerm;
 
@@ -170,14 +174,14 @@ public class RuleMatch extends FindSubst {
 
             if(c instanceof Substitute) {
                 //here we are interested how to transform the second to the first
-                ((Substitute) c).Inp = map2;
+                Inp = map2;
             }
 
             if (!c.test(this))
                 return null;
 
             if(c instanceof Substitute) {
-                Outp = ((Substitute) c).Outp;
+                Outp = this.Outp;
             }
         }
 
@@ -192,9 +196,11 @@ public class RuleMatch extends FindSubst {
         //test for reactor leak
         // TODO prevent this from happening
         if (Variable.hasPatternVariable(derivedTerm)) {
-//            String leakMsg = "reactor leak: " + derive;
-//            //throw new RuntimeException(leakMsg);
-//            System.err.println(leakMsg);
+            String leakMsg = "reactor leak: " + derivedTerm;
+            //throw new RuntimeException(leakMsg);
+            System.err.println(leakMsg);
+            return null;
+
 //
 //            System.out.println(premise + "   -|-   ");
 //
@@ -203,7 +209,7 @@ public class RuleMatch extends FindSubst {
 //            resolutions.entrySet().forEach(x -> System.out.println("  reso: " + x ));
 //
 //            resolver.apply(t);
-            return null;
+            //return null;
         }
 //        else {
 //            if (rule.numPatternVariables() > map1.size()) {

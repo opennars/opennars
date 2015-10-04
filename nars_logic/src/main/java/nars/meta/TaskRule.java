@@ -233,7 +233,6 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
         //extract preconditions
         List<PreCondition> early = Global.newArrayList(precon.length);
 
-        List<PreCondition> beforeConcs = Global.newArrayList(precon.length);
 
         List<PreCondition> afterConcs = Global.newArrayList(0);
 
@@ -390,7 +389,6 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
 
 
             PostCondition pc = PostCondition.make(this, t,
-                    beforeConcs.toArray(new PreCondition[beforeConcs.size()]),
                     afterConcs.toArray(new PreCondition[afterConcs.size()]),
                     ((Product) postcons[i++]).terms());
             if (pc!=null)

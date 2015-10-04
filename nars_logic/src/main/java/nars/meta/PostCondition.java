@@ -21,10 +21,9 @@ public class PostCondition implements Serializable, Level //since there can be m
 
     public static final float HALF = 0.5f;
 
-    public PostCondition(Term term, Term[] modifiers, PreCondition[] beforeConclusions, PreCondition[] afterConclusions, TruthFunction truth, DesireFunction desire) {
+    public PostCondition(Term term, Term[] modifiers, PreCondition[] afterConclusions, TruthFunction truth, DesireFunction desire) {
         this.term = term;
         this.modifiers = modifiers;
-        this.beforeConclusions = beforeConclusions;
         this.afterConclusions = afterConclusions;
         this.truth = truth;
         this.desire = desire;
@@ -35,7 +34,7 @@ public class PostCondition implements Serializable, Level //since there can be m
     public final Term[] modifiers;
 
     /** steps to apply before initially forming the derived task's term */
-    public final PreCondition[] beforeConclusions;
+    //public final PreCondition[] beforeConclusions;
 
     /** steps to apply after forming the goal. after each of these steps, the term will be re-resolved */
     public final PreCondition[] afterConclusions;
@@ -78,13 +77,11 @@ public class PostCondition implements Serializable, Level //since there can be m
      *
      * @param rule rule which contains and is constructing this postcondition
      * @param term
-     * @param beforeConclusions
      * @param afterConclusions
      * @param modifiers
      * @throws RuntimeException
      */
     public static PostCondition make(TaskRule rule, Term term,
-                         PreCondition[] beforeConclusions,
                          PreCondition[] afterConclusions,
                          Term... modifiers) throws RuntimeException {
 
@@ -166,7 +163,7 @@ public class PostCondition implements Serializable, Level //since there can be m
 
 
 
-        PostCondition pc = new PostCondition(term, modifiers, beforeConclusions, afterConclusions, judgmentTruth, goalTruth);
+        PostCondition pc = new PostCondition(term, modifiers, afterConclusions, judgmentTruth, goalTruth);
         pc.negate = negate;
         pc.puncOverride = puncOverride;
         if (pc.valid(rule)) {
@@ -208,7 +205,6 @@ public class PostCondition implements Serializable, Level //since there can be m
     public String toString() {
         return "PostCondition{" +
                 "term=" + term +
-                ", precon=" + Arrays.toString(beforeConclusions) +
                 ", modifiers=" + Arrays.toString(modifiers) +
                 ", truth=" + truth +
                 ", desire=" + desire +

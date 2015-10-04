@@ -23,7 +23,7 @@ public class PairMatchingProductTest {
             parse.term(a),
             parse.term(b)
         );
-        String expect = "(<x --> #1>, <y --> #1>)";
+        String expect = "(<x --> #1>, <y --> #2>)";
         assertEquals(expect, p.toString());
         Term pn = p.normalized();
         assertEquals(expect, pn.toString());
