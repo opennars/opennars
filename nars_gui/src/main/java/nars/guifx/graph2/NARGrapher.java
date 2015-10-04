@@ -22,7 +22,7 @@ public class NARGrapher implements Consumer<NARGraph> {
 
     final Set<TermNode> active = Global.newHashSet(1);
 
-    final Map<Term, TermNode> termToAdd = new LinkedHashMap();
+    final Map<Term, TermNode> termToAdd = new LinkedHashMap(64);
     //final Table<Term, Term, TermEdge> edges = HashBasedTable.create();
     final Table<Term, Term, TermEdge> edgeToAdd = HashBasedTable.create();
     private final SimpleIntegerProperty maxNodes;
@@ -38,7 +38,7 @@ public class NARGrapher implements Consumer<NARGraph> {
 
         final NAR nar = graph.nar;
 
-        final long now = nar.time();
+        //final long now = nar.time();
 
         conPri.clear();
 

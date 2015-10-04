@@ -288,6 +288,7 @@ public interface BeliefTable extends TaskTable {
 
     }
 
+    @FunctionalInterface
     interface Ranker extends Function<Task,Float>, Serializable {
         /** returns a number producing a score or relevancy number for a given Task
          * @param bestToBeat current best score, which the ranking can use to decide to terminate early

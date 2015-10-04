@@ -33,7 +33,7 @@ public interface TaskTable extends Iterable<Task> {
      */
 
 
-    Task add(Task t, Equality<Task> equality, Procedure2<Budget,Budget> duplicateMerge, Memory m);
+    Task add(Task t, Equality<Task> equality, Procedure2<Budget, Budget> duplicateMerge, Memory m);
 
         /**
          *

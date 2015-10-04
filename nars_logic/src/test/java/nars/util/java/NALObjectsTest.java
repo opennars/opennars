@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertNotEquals;
 
@@ -43,7 +42,6 @@ public class NALObjectsTest extends TestCase {
     @Test
     public void testDynamicProxyObjects() throws Exception {
 
-        AtomicInteger statements = new AtomicInteger(0);
 
         NAR n = new Default();
 

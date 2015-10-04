@@ -140,6 +140,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
      * @param nal
      * @return
      */
+    @Override
     public Task add(final Task input, BeliefTable.Ranker ranking, Concept c, Premise nal) {
 
         /**
@@ -147,7 +148,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
          * input, strongest, revised (created here and returned)
          */
 
-        Task revised = null, strongest = null;
+        Task revised, strongest;
 
         final Memory memory = c.getMemory();
 
@@ -169,18 +170,18 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 //            }
 
 
-        strongest = top(input, now);
+        Task top = top(input, now);
 
 
-        if (strongest != null) {
+        if (top != null) {
 
-            if (strongest == input) {
+            if (top == input) {
 
                 //the same task instance existed here already
                 //bounce
                 return input;
 
-            } else if (input.equivalentTo(strongest, false, false, true, true, false)) {
+            } else if (input.equivalentTo(top, false, false, true, true, false)) {
                 //equal but different instances; discard the new one
 
                 /*if (!t.isInput() && t.isJudgment()) {
@@ -193,29 +194,28 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
 
                 memory.remove(input, "Duplicate Existed"); //"has no effect" on belief/desire, etc
 
-                return strongest;
+                return top;
             }
 
-            if (revisible(input, strongest)) {
+            if (revisible(input, top)) {
 
 
-                if (nal != null) {
-                    revised = getRevision(input, strongest, false, nal);
-                    if (revised != null && !input.equals(revised)) {
 
-                        if (nal instanceof ConceptProcess) {
-                            ((ConceptProcess) nal).setBelief(revised);
-                        }
+                revised = getRevision(input, top, false, nal);
+                if (revised != null && !input.equals(revised)) {
 
-                        /*boolean addedRevised =
-                            tryAdd(revised, ranking, nal.memory());*/
-
-                        //input the new task to memory here?
-                        nal.memory().eventDerived.emit(revised);
-                        //nal.nar().input(revised);
-
-                        return revised;
+                    if (nal instanceof ConceptProcess) {
+                        ((ConceptProcess) nal).setBelief(revised);
                     }
+
+                    /*boolean addedRevised =
+                        tryAdd(revised, ranking, nal.memory());*/
+
+                    //input the new task to memory here?
+                    nal.memory().eventDerived.emit(revised);
+                    //nal.nar().input(revised);
+
+                    return revised;
                 }
 
             }
@@ -223,7 +223,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
         }
 
         /** choose between strongest and input (may be the same) */
-        return (strongest!=null) ? strongest : input;
+        return (top !=null) ? top : input;
     }
 
 

@@ -127,13 +127,13 @@ public class Spacegraph extends ZoomFX {
                 gc.strokeLine(0, Y, w, Y);
             }
             for (; x <= w; x += scale) {
-                final double X;
+                final double sx;
                 if (drawSharpLines)
-                    X = snap(x);
+                    sx = snap(x);
                 else
-                    X = x;
+                    sx = x;
 
-                gc.strokeLine(X, 0, X, h);
+                gc.strokeLine(sx, 0, sx, h);
             }
 
         }
@@ -152,7 +152,7 @@ public class Spacegraph extends ZoomFX {
     }
 
 
-    static final double snap(final double y) {
+    static double snap(final double y) {
         return ((int) y) + .5;
     }
 
@@ -160,9 +160,7 @@ public class Spacegraph extends ZoomFX {
     public final Group verts = new Group();
 
 
-    public void print() {
-        System.out.println(this + " " + verts.getChildren().size() + " verts");
-    }
+
     public Spacegraph() {
         super();
 
@@ -225,7 +223,6 @@ public class Spacegraph extends ZoomFX {
         return s;
     }
     public SubScene newSubScene(double width, double height) {
-        SubScene s = new SubScene(this, width, height);
-        return s;
+        return new SubScene(this, width, height);
     }
 }

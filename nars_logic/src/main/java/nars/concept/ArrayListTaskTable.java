@@ -21,7 +21,7 @@ import java.io.ObjectOutput;
  */
 public class ArrayListTaskTable extends FasterList<Task> implements TaskTable, Externalizable {
 
-    protected int cap;
+    protected int cap = 0;
 
 
     /** warning this will create a 0-capacity table,

@@ -111,7 +111,7 @@
 .label, .toggle-button, .button, .tree-cell {
     /*-fx-text-fill: -fx-text-base-color;
     -fx-fill: -fx-text-base-color;*/
-    -fx-padding: 0.1em;
+    -fx-padding: 0.05em;
     -fx-label-padding: 0em;
 }
 
@@ -338,7 +338,7 @@
 }
 
 .menu {
-    padding: 0.2em;
+    padding: 0.05em;
     background: transparent;
 }
 

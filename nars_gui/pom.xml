@@ -148,10 +148,21 @@
             <version>8.0-r4</version>
         </dependency>
         <dependency>
-            <groupId>com.dooapp.fxform2</groupId>
-            <artifactId>core</artifactId>
-            <version>8.0.11</version> <!-- Note: For JavaFX 8, use 2.2.6 -->
+            <groupId>org.controlsfx</groupId>
+            <artifactId>controlsfx</artifactId>
+            <version>8.40.9</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.fxmisc.livedirs</groupId>-->
+            <!--<artifactId>livedirsfx</artifactId>-->
+            <!--<version>1.0.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>com.dooapp.fxform2</groupId>-->
+            <!--<artifactId>core</artifactId>-->
+            <!--<version>8.0.11</version> &lt;!&ndash; Note: For JavaFX 8, use 2.2.6 &ndash;&gt;-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.jfxtras</groupId>
@@ -201,6 +212,7 @@
             <groupId>org.boofcv</groupId>
             <artifactId>WebcamCapture</artifactId>
         </dependency>
+
 
     </dependencies>
 
