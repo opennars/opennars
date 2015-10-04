@@ -113,7 +113,7 @@ public interface Term extends Cloneable, Comparable, Termed, Serializable {
     int varQuery();
 
 
-    /** total # of variables */
+    /** total # of variables, excluding pattern variables */
     int vars();
 
 //    /** tests if num variables of any type exceed a value */

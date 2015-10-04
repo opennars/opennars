@@ -265,6 +265,7 @@ public class Variable extends Atom {
     @Override public final boolean hasVar() { return true;     }
 
     @Override public final int vars() {
+        if (op() == Op.VAR_PATTERN) return 0;
         return 1;
     }
 

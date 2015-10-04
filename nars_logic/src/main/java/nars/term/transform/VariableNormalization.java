@@ -1,10 +1,14 @@
 package nars.term.transform;
 
+import com.gs.collections.api.tuple.primitive.IntObjectPair;
+import com.gs.collections.impl.tuple.primitive.PrimitiveTuples;
+import nars.Global;
 import nars.Op;
 import nars.term.Compound;
 import nars.term.Variable;
-import nars.util.data.map.FastPutsArrayMap;
 import nars.util.utf8.Byted;
+
+import java.util.Map;
 
 /**
  * Variable normalization
@@ -25,50 +29,49 @@ public class VariableNormalization implements VariableTransform {
 //        }
 //    };
 
-    /**
-     * overridden keyEquals necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap
-     */
-    static final class VariableMap extends FastPutsArrayMap<Variable, Variable> {
-
-
-
-        public VariableMap(int initialCapacity) {
-            super(initialCapacity);
-        }
-
-        @Override
-        public final boolean keyEquals(final Variable a, final Object ob) {
-            if (a == ob) return true;
-            Variable b = ((Variable) ob);
-            return Byted.equals(a, b);
-        }
-
-//        @Override
-//        public Variable put(Variable key, Variable value) {
-//            Variable removed = super.put(key, value);
-//            /*if (size() > 1)
-//                Collections.sort(entries, comp);*/
-//            return removed;
+//    /**
+//     * overridden keyEquals necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap
+//     */
+//    static final class VariableMap extends FastPutsArrayMap<Pair<Variable,Term>, Variable> {
+//
+//
+//
+//        public VariableMap(int initialCapacity) {
+//            super(initialCapacity);
 //        }
-    }
+//
+//        @Override
+//        public final boolean keyEquals(final Variable a, final Object ob) {
+//            if (a == ob) return true;
+//            Variable b = ((Variable) ob);
+//            return Byted.equals(a, b);
+//        }
+//
+////        @Override
+////        public Variable put(Variable key, Variable value) {
+////            Variable removed = super.put(key, value);
+////            /*if (size() > 1)
+////                Collections.sort(entries, comp);*/
+////            return removed;
+////        }
+//    }
 
 
     /** for use with compounds that have exactly one variable */
     public static final VariableTransform singleVariableNormalization =
             (containing, current, depth) -> Variable.the(current.op(), 1);
 
-    VariableMap rename = null;
+    Map<IntObjectPair<Variable>, Variable> rename;
 
     final Compound result;
     boolean renamed = false;
+    int serial = 0;
 
     public VariableNormalization(Compound target, boolean destructively) {
 
 
         CompoundTransform tx = target.vars() == 1 ?
                 singleVariableNormalization : this;
-
-
 
         final Compound result1;
 
@@ -93,9 +96,9 @@ public class VariableNormalization implements VariableTransform {
 //                vname = vname.toString() + v.getScope().name();
 
 
-        VariableMap rename = this.rename;
+        Map<IntObjectPair<Variable>, Variable> rename = this.rename;
 
-        if (rename == null) this.rename = rename = new VariableMap(2); //lazy allocate
+        if (rename == null) this.rename = rename = Global.newHashMap(0); //lazy allocate
 
 //        Variable vv = rename.get(vname);
 //        if (vv == null) {
@@ -105,14 +108,21 @@ public class VariableNormalization implements VariableTransform {
 //            renamed = !vv.name().equals(v.name());
 //        }
 
-        final VariableMap finalRename = rename;
-        Variable vv = rename.computeIfAbsent(v, _vname -> {
+        int context = (v.op() == Op.VAR_DEPENDENT) ? serial : -1;
+        IntObjectPair<Variable> scoping = PrimitiveTuples.pair(context, v);
+
+
+
+        final Map<IntObjectPair<Variable>,Variable> finalRename = rename;
+        Variable vv = rename.computeIfAbsent(scoping, _vname -> {
             //type + id
             Variable rvv = newVariable(v.op(), finalRename.size() + 1);
             if (!renamed) //test for any rename to know if we need to rehash
                 renamed |= !Byted.equals(rvv, v);
             return rvv;
         });
+
+        serial++; //identifies terms by their unique final position
 
         return vv;
     }

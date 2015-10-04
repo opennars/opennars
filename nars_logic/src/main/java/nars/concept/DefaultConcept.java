@@ -492,26 +492,25 @@ public class DefaultConcept extends AtomConcept {
 //    }
 
 
-    /** called by memory, dont call directly */
-    @Override public synchronized boolean delete() {
-
-        if (!super.delete())
-            return false;
-
-        //dont delete the tasks themselves because they may be referenced from othe concepts.
-        beliefs.clear();
-        goals.clear();
-        questions.clear();
-        quests.clear();
-
-
-        getTermLinks().delete();
-        getTaskLinks().delete();
-
-        if (getTermLinkBuilder() != null)
-            getTermLinkBuilder().delete();
-
-        return true;
-    }
+//    @Override public synchronized boolean delete() {
+//
+//        if (!super.delete())
+//            return false;
+//
+//        //dont delete the tasks themselves because they may be referenced from othe concepts.
+//        beliefs.clear();
+//        goals.clear();
+//        questions.clear();
+//        quests.clear();
+//
+//
+//        getTermLinks().delete();
+//        getTaskLinks().delete();
+//
+//        if (getTermLinkBuilder() != null)
+//            getTermLinkBuilder().delete();
+//
+//        return true;
+//    }
 
 }

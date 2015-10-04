@@ -1,5 +1,6 @@
 package nars.term;
 
+import nars.nal.nal4.Product;
 import nars.narsese.NarseseParser;
 import org.junit.Test;
 
@@ -24,5 +25,46 @@ public class VariableTest {
         assertEquals(p.term("<x --> y>").volume(),
                 p.term("<%x --> %y>").volume());
 
+    }
+
+    @Test public void testNumVars() {
+        assertEquals(1, p.term("$x").vars());
+        assertEquals(1, p.term("#x").vars());
+        assertEquals(1, p.term("?x").vars());
+        assertEquals(0, p.term("%x").vars());
+
+        //the pattern variable is not counted toward # vars
+        assertEquals(1, p.term("<$x <-> %y>").vars());
+    }
+
+    @Test
+    public void testIndpVarNorm() {
+        assertEquals(2, p.term("<$x <-> $y>").vars());
+
+        testIndpVarNorm("$x", "$y", "($1, $2)");
+        testIndpVarNorm("$x", "$x", "($1, $1)");
+        testIndpVarNorm("$x", "#x", "($1, #2)");
+        testIndpVarNorm("#x", "#x", "(#1, #2)");
+    }
+
+    @Test
+    public void testIndpVarNormCompound() {
+        //testIndpVarNorm("<$x <-> $y>", "<$x <-> $y>", "(<$1 <-> $2>, <$3 <-> $4>)");
+
+        testIndpVarNorm("$x", "$x", "($1, $1)");
+        testIndpVarNorm("#x", "#x", "(#1, #2)");
+        testIndpVarNorm("<#x <-> #y>", "<#x <-> #y>", "(<#1 <-> #2>, <#3 <-> #4>)");
+        testIndpVarNorm("<$x <-> $y>", "<$x <-> $y>", "(<$1 <-> $2>, <$1 <-> $2>)");
+    }
+    public void testIndpVarNorm(String vara, String varb, String expect) {
+
+
+        Term a = p.term(vara);
+        Term b = p.term(varb);
+        //System.out.println(a + " " + b + " "  + Product.make(a, b).normalized().toString());
+      assertEquals(
+            expect,
+            Product.make(a, b).normalized().toString()
+        );
     }
 }
