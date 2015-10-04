@@ -223,13 +223,13 @@ public class LinkageTest extends AbstractNALTest {
 
     @Test
     public void Linkage_NAL6_variable_elimination2() throws Exception {
-        ProperlyLinkedTest("<<$x --> bird> ==> <$x --> animal>>", "<tiger --> animal>");
+        ProperlyLinkedIndirectlyTest("<<$1 --> bird> ==> <$1 --> animal>>", "<tiger --> animal>");
     }
 
     //here the problem is: they should be interlinked by lock
     @Test
     public void Part_Indirect_Linkage_NAL6_multiple_variable_elimination4() throws Exception {
-        ProperlyLinkedIndirectlyTest("<#x --> lock>","<{lock1} --> lock>");
+        ProperlyLinkedIndirectlyTest("<#1 --> lock>","<{lock1} --> lock>");
     }
 
     @Test

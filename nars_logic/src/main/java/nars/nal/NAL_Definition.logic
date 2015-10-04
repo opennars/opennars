@@ -462,7 +462,7 @@
 
 ////backward inference is mostly handled by the rule transformation:
 
-//    T, B |- C, [post] ->
+//    T, B |- C, [post] =>
 //          C, B, task("?") |- T, [post]
 //          C, T, task("?") |- B, [post]
 
