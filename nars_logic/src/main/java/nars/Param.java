@@ -101,8 +101,8 @@ public abstract class Param extends Container implements Serializable, Level {
      *  into subconcepts. */
     public final AtomicDouble activeConceptThreshold = new AtomicDouble(0);
 
-    /** budget summary necessary to execute a desired Goal */
-    public final AtomicDouble questionFromGoalThreshold = new AtomicDouble(0);
+//    /** budget summary necessary to execute a desired Goal */
+//    public final AtomicDouble questionFromGoalThreshold = new AtomicDouble(0);
 
     /** budget summary necessary to run a TaskProcess for a given Task
      *  this should be equal to zero to allow subconcept seeding. */

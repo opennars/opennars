@@ -142,7 +142,7 @@ public class Default extends NAR implements ConceptBuilder {
     public FIFOTaskPerception initInput() {
         FIFOTaskPerception input = new FIFOTaskPerception(this,
             task -> true /* allow everything */,
-                task -> exec(task)
+            task -> exec(task) /* execute immediately */
         );
         //input.inputsMaxPerCycle.set(conceptsFirePerCycle);;
         return input;
@@ -170,17 +170,17 @@ public class Default extends NAR implements ConceptBuilder {
     public void initDefaults(Memory m) {
         //parameter defaults
 
-        setTaskLinkBagSize(16);
-        setTermLinkBagSize(24);
+        setTaskLinkBagSize(24);
+        setTermLinkBagSize(32);
 
 
         m.duration.set(5);
 
         m.conceptBeliefsMax.set(12);
         m.conceptGoalsMax.set(7);
-        m.conceptQuestionsMax.set(3);
+        m.conceptQuestionsMax.set(5);
 
-        m.conceptForgetDurations.set(1.0);
+        m.conceptForgetDurations.set(2.0);
         m.taskLinkForgetDurations.set(2.0);
         m.termLinkForgetDurations.set(3.0);
 
@@ -196,8 +196,6 @@ public class Default extends NAR implements ConceptBuilder {
         //budget propagation thresholds
         m.termLinkThreshold.set(Global.BUDGET_EPSILON);
         m.taskLinkThreshold.set(Global.BUDGET_EPSILON);
-
-        m.questionFromGoalThreshold.set(0.35);
 
         m.executionExpectationThreshold.set(0.5);
 

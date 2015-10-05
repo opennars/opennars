@@ -48,7 +48,11 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     public void print(PrintStream out) {
 
         Set<Term> vs = vertexSet();
-        out.println(this + " numTerms=" + vs.size() + ", numTermLinks=" + edgeSet().size() );
+
+        out.println(getClass().getSimpleName() + " numTerms=" + vs.size() + ", numTermLinks=" + edgeSet().size() );
+        out.print("\t");
+        out.println(this);
+
         for (Term t : vs) {
             out.print(t + ":  ");
             outgoingEdgesOf(t).forEach(e ->

@@ -28,20 +28,6 @@ public class NAL6Test extends AbstractNALTest {
     public static Collection configurations() {
         return AbstractNALTest.core6;
         // return AbstractNALTest.fullDeclarativeTest;
-
-//            return Arrays.asList(new Supplier[][]{
-//                    {()->new Default()},
-////                    {new DefaultDeep()},
-//                    {()->new Equalized().nal(6) },
-//                    {()->new Equalized() },
-////                    {new Default().setInternalExperience(null) },
-//                    {()->new Default().nal(6)},
-////                    {new Classic().setInternalExperience(null) },
-//
-//                    //{new Solid(1, 128, 1, 1, 1, 2).level(6)}
-//
-//
-//            });
     }
 
 

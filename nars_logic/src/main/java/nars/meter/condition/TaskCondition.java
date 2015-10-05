@@ -60,7 +60,7 @@ public class TaskCondition implements Serializable, Predicate<Task>, Consumer<Ta
     public Tense tense = Tense.Eternal;
 
 
-    protected List<Task> valid;
+    public List<Task> valid;
 
 
     transient int maxSimilars = 16;

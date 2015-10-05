@@ -339,7 +339,7 @@ public class RuleMatch extends FindSubst {
 
 
         final TruthOrDesireFunction f = getTruthFunction(punc, outcome);
-        //if (f == null) return null;
+        if (f == null) return null;
 
         final Truth truth = f.get(T, B);
 

@@ -40,12 +40,12 @@ public class TestNAR  {
 
     /** "must" requirement conditions specification */
     public final List<TaskCondition> requires = new ArrayList();
-    public final List<ExplainableTask> explanations = new ArrayList();
+    //public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
     final transient private boolean exitOnAllSuccess = true;
     public List<Task> inputs = new ArrayList();
     private int temporalTolerance = 0;
-    private float defaultTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
+    protected float truthTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
     private StringWriter trace;
 
 
@@ -73,6 +73,10 @@ public class TestNAR  {
      * */
     public double getCost() {
         return TaskCondition.cost(requires);
+    }
+
+    public void setTruthTolerance(float truthTolerance) {
+        this.truthTolerance = truthTolerance;
     }
 
     public TestNAR debug() {
@@ -179,7 +183,7 @@ public class TestNAR  {
 
     public TestNAR mustEmit(Topic<Task>[] c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
 
-        float h = (freqMin!=-1) ? defaultTolerance / 2.0f : 0;
+        float h = (freqMin!=-1) ? truthTolerance / 2.0f : 0;
 
         if (freqMin == -1) freqMin = freqMax;
 
@@ -381,6 +385,18 @@ public class TestNAR  {
     protected void report(Report report, boolean success) {
 
         String s = JSONOutput.stringFromFieldsPretty(report);
+
+        //explain all validated conditions
+        if (requires!=null) {
+            requires.forEach(c -> {
+                if (c.valid != null)
+                    c.valid.forEach(t -> {
+                        System.out.println(t.getExplanation()
+                    );
+                });
+            });
+        }
+
 
         if (success) {
 
