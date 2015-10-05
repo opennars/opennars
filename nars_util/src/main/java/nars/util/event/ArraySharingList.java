@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 /**
@@ -127,7 +128,20 @@ public class ArraySharingList<C> implements Iterable<C>, Serializable {
         return this.array = a;
     }
 
+    public void forEach(Consumer<? super C> with) {
+        forEach(with, -1);
+    }
 
+    public void forEach(Consumer<? super C> with, int max) {
+        C[] a = getCachedNullTerminatedArray();
+        if (a == null) return;
+        if (max == -1) max = a.length;
+        for (int i = 0; i < max; i++) {
+            C c = a[i];
+            if (c == null) break;
+            with.accept(c);
+        }
+    }
 
     @Override
     public Iterator<C> iterator() {

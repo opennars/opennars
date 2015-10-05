@@ -36,7 +36,7 @@ import java.util.Random;
  *
  * @author Peter Abeles
  */
-public class WebcamObjectTrack<T extends ImageBase> extends JPanel
+public class WebcamShapes<T extends ImageBase> extends JPanel
         implements MouseListener, MouseMotionListener {
 
     TrackerObjectQuad<T> tracker;
@@ -67,8 +67,8 @@ public class WebcamObjectTrack<T extends ImageBase> extends JPanel
      * @param desiredWidth Desired size of the input stream
      * @param desiredHeight Desired height of the input stream
      */
-    public WebcamObjectTrack( TrackerObjectQuad<T> tracker,
-                                        int desiredWidth , int desiredHeight)
+    public WebcamShapes(TrackerObjectQuad<T> tracker,
+                        int desiredWidth , int desiredHeight)
     {
         this.tracker = tracker;
         this.desiredWidth = desiredWidth;
@@ -112,11 +112,17 @@ public class WebcamObjectTrack<T extends ImageBase> extends JPanel
         final int iterations = 80;
         for( Contour c : contours ) {
             // Only the external contours are relevant.
-            List<PointIndex_I32> vertexes = ShapeFittingOps.fitPolygon(c.external, true,
-                    toleranceDist, toleranceAngle, iterations);
 
-            overlay.setColor(new Color(rand.nextInt()));
-            VisualizeShapes.drawPolygon(vertexes, true, overlay);
+//            System.out.println(c);
+//            System.out.println(c.external);
+                List<PointIndex_I32> vertexes = ShapeFittingOps.fitPolygon(
+                        c.external, true,
+                        toleranceDist,
+                        toleranceAngle, iterations);
+
+                overlay.setColor(new Color(rand.nextInt()));
+                VisualizeShapes.drawPolygon(vertexes, true, overlay);
+
         }
 
         //ShowImages.showWindow(displayImage, "Canny Contour");
@@ -266,7 +272,7 @@ public class WebcamObjectTrack<T extends ImageBase> extends JPanel
 //				FactoryTrackerObjectQuad.meanShiftLikelihood(30,5,255, MeanShiftLikelihoodType.HISTOGRAM,colorType);
 
 
-        WebcamObjectTrack app = new WebcamObjectTrack(tracker,640,480);
+        WebcamShapes app = new WebcamShapes(tracker,640,480);
 
         app.process();
     }

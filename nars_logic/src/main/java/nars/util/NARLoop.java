@@ -1,6 +1,7 @@
 package nars.util;
 
 import nars.NAR;
+import nars.util.data.Util;
 
 /** self managed set of processes which run a NAR
  *  as a loop at a certain frequency. */
@@ -144,11 +145,13 @@ public class NARLoop implements Runnable {
 
 
     public void sleep(long sleepTime) {
-        try {
-            Thread.sleep(sleepTime);
-        } catch (InterruptedException e) {
-            //e.printStackTrace();
-        }
+//        try {
+//            Thread.sleep(sleepTime);
+//        } catch (InterruptedException e) {
+//            //e.printStackTrace();
+//        }
+
+        Util.pause(sleepTime);
     }
 
     public final void pause() {

@@ -20,7 +20,7 @@ public class NARfxDefaultIRealtime {
         Global.DEBUG = true;
 
         Memory mem = new LocalMemory(new RealtimeMSClock());
-        NAR nar = new Default(mem, 1024, 2, 3, 4);
+        NAR nar = new Default(mem, 1024, 3, 5, 7);
 
         nar.memory.conceptForgetDurations.set(50);
         nar.memory.duration.set(100);

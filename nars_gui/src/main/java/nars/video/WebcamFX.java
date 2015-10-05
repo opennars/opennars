@@ -7,7 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import nars.guifx.NARfx;
 
 import java.awt.image.BufferedImage;
@@ -15,10 +16,10 @@ import java.awt.image.BufferedImage;
 import static javafx.application.Platform.runLater;
 
 
-public class WebcamFX extends BorderPane implements Runnable {
+public class WebcamFX extends StackPane implements Runnable {
 
-    private ImageView view;
-    private Webcam webcam = null;
+    public ImageView view;
+    public Webcam webcam = null;
 
     boolean running = true;
 
@@ -36,7 +37,7 @@ public class WebcamFX extends BorderPane implements Runnable {
             view.maxWidth(Double.MAX_VALUE);
             view.maxHeight(Double.MAX_VALUE);
 
-            setCenter(view);
+            getChildren().add(view);
             setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
 
@@ -45,7 +46,7 @@ public class WebcamFX extends BorderPane implements Runnable {
             autosize();
         }
         catch (Exception e) {
-            setCenter(new Label(e.toString()));
+            getChildren().add(new Label(e.toString()));
         }
     }
 
@@ -54,7 +55,7 @@ public class WebcamFX extends BorderPane implements Runnable {
         NARfx.run((a, b) -> {
 
 
-            BorderPane bv = new WebcamFX();
+            Pane bv = new WebcamFX();
 
 
             b.setScene(new Scene(bv));
@@ -72,12 +73,15 @@ public class WebcamFX extends BorderPane implements Runnable {
         WritableImage image = null;
         while (running) {
             if (webcam.isOpen() && webcam.isImageNew()) {
-                BufferedImage bimage = webcam.getImage();
+
+                BufferedImage bimage = process(webcam.getImage());
+
+
 
                 //TODO blit the image directly, this is likely not be the most efficient:
                 image = SwingFXUtils.toFXImage(bimage, image);
 
-                final WritableImage finalImage = image;
+                final WritableImage finalImage = process(image);
                 runLater(() -> {
                     view.setImage(finalImage);
                 });
@@ -87,5 +91,15 @@ public class WebcamFX extends BorderPane implements Runnable {
                 Thread.sleep((long)(1000.0/fps));
             } catch (InterruptedException e) {                    }
         }
+    }
+
+    /** after webcam input */
+    protected BufferedImage process(BufferedImage img) {
+        return img;
+    }
+
+    /** before display output */
+    protected WritableImage process(WritableImage finalImage) {
+        return null;
     }
 }

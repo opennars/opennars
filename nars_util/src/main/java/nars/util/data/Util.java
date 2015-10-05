@@ -630,4 +630,24 @@ public class Util {
         return Math.abs(a - b) < epsilon;
     }
 
+    /** from boofcv: */
+    public static void pause(final long milli) {
+        final Thread t = Thread.currentThread();
+        final long start = System.currentTimeMillis();
+
+        while(System.currentTimeMillis() - start < milli) {
+            synchronized(t) {
+                try {
+                    long ignore = milli - (System.currentTimeMillis() - start);
+                    if(ignore > 0L) {
+                        t.wait(ignore);
+                    }
+                } catch (InterruptedException var9) {
+                    ;
+                }
+            }
+        }
+
+    }
+
 }
