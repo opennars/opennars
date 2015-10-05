@@ -352,7 +352,7 @@ public class TaskProcess extends NAL implements Serializable {
 
 
 
-    public Stream<Task> derive(Function<TaskProcess, Stream<Task>> processor) {
+    public Stream<Task> process(Function<TaskProcess, Stream<Task>> processor) {
 
 
         final Task task = getTask();
@@ -383,6 +383,10 @@ public class TaskProcess extends NAL implements Serializable {
         }
 
         return null;
+    }
+
+    public void run() {
+        process(null);
     }
 
 

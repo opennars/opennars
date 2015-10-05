@@ -94,7 +94,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
 
     @Override
     public final boolean equals(final Object obj) {
-        return TermLinkKey.termLinkEquals(this, (TermLinkKey) obj);
+        return TermLinkKey.termLinkEquals(this, (Termed) obj);
 
 //        if (this != obj) {
 //            if (termLinkEquals(obj)) {

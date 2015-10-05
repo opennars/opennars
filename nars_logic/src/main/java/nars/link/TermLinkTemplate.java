@@ -147,7 +147,11 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
     @Override
     public boolean equals(Object obj) {
-        throw new RuntimeException("TermLinkTemplates should not need compared to each other");
+        if (obj instanceof TLink) {
+            return getTerm().equals(((TLink)obj).getTerm());
+        }
+        return false;
+        //throw new RuntimeException("TermLinkTemplates should not need compared to each other");
         //return ((TermLinkTemplate)obj).toString().equals(toString());
     }
 
@@ -187,7 +191,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
 
     @Override
-    public int hashCode() {
-        throw new RuntimeException("unimplemented");
+    public final int hashCode() {
+        return target.hashCode();
     }
 }

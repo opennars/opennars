@@ -2,8 +2,10 @@ package nars.util.graph;
 
 import nars.Memory;
 import nars.NAR;
+import nars.bag.Bag;
 import nars.concept.Concept;
 import nars.link.TermLink;
+import nars.link.TermLinkKey;
 import nars.link.TermLinkTemplate;
 import nars.term.Term;
 import org.jgrapht.alg.ConnectivityInspector;
@@ -46,13 +48,15 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     public void print(PrintStream out) {
 
         Set<Term> vs = vertexSet();
-        System.out.println("Terms: " + vs.size());
+        out.println(this + " numTerms=" + vs.size() + ", numTermLinks=" + edgeSet().size() );
         for (Term t : vs) {
-            System.out.println(t);
+            out.print(t + ":  ");
             outgoingEdgesOf(t).forEach(e ->
-                    System.out.println("\t" + e)
+                out.print("  " + e)
             );
+            out.println();
         }
+        out.println();
 
     }
 
@@ -106,9 +110,15 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     }
 
     protected void addTermLinks(Concept c) {
+        if (c == null)
+            throw new RuntimeException("null concept");
+
         final Term cterm = c.getTerm();
 
-        for (TermLink t : c.getTermLinks().values()) {
+        Bag<TermLinkKey, TermLink> tl = c.getTermLinks();
+        if (tl == null) return;
+
+        for (TermLink t : tl.values()) {
             final Term target = t.getTerm();
             if (!containsVertex(target)) {
                 addVertex(target);
@@ -119,7 +129,8 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     }
 
     static String edge(Term source, Term target) {
-        return "(" + source + "," + target + ")";
+        return "(" + source.toStringCompact()
+                + "," + target.toStringCompact() + ")";
     }
 
     public TermLinkGraph add(Iterable<Concept> concepts, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {

@@ -89,6 +89,7 @@ public class RuleMatch extends FindSubst {
 
         super.clear();
 
+
         resolutions.clear();
         occurence_shift = Stamp.TIMELESS;
 
@@ -99,9 +100,6 @@ public class RuleMatch extends FindSubst {
     public Task apply(final PostCondition outcome) {
 
         final Task task = premise.getTask();
-        if (task == null)
-            throw new RuntimeException("null task");
-
 
         if (!rule.validTaskPunctuation(task.getPunctuation())) {
             return null;
@@ -117,7 +115,7 @@ public class RuleMatch extends FindSubst {
         /** calculate derived task punctuation */
         char punct = outcome.puncOverride;
         if (punct == 0) {
-            /** ues the default policy determined by parent task */
+            /** use the default policy determined by parent task */
             punct = task.getPunctuation();
         }
 
@@ -126,7 +124,7 @@ public class RuleMatch extends FindSubst {
         final Truth T = task.getTruth();
         final Truth B = belief == null ? null : belief.getTruth();
         final Truth truth;
-        if (punct == '.' || punct == '!') {
+        if (punct == Symbols.JUDGMENT || punct == Symbols.GOAL) {
 
             truth = getTruth(outcome, punct, T, B);
 
@@ -341,7 +339,7 @@ public class RuleMatch extends FindSubst {
 
 
         final TruthOrDesireFunction f = getTruthFunction(punc, outcome);
-        if (f == null) return null;
+        //if (f == null) return null;
 
         final Truth truth = f.get(T, B);
 

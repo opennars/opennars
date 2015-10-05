@@ -42,7 +42,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task> {
     public final Task targetTask;
 
 
-    protected TaskLink(Task t, Budget v) {
+    public TaskLink(Task t, Budget v) {
         super(v);
 
         if (t == null)

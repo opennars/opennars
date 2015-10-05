@@ -39,6 +39,11 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
 
     }
 
+    public ConceptTaskTermLinkProcess(NAR nar, Concept concept, TaskLink taskLink, TermLink termLink, Task belief) {
+        this(nar, concept, taskLink, termLink);
+        updateBelief(belief);
+    }
+
     /**
      * @return the current termLink aka BeliefLink
      */

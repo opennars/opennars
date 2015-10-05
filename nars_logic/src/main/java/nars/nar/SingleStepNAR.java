@@ -3,7 +3,7 @@ package nars.nar;
 public class SingleStepNAR extends Default {
 
     public SingleStepNAR() {
-        super();
+        super(1024, 1, 1, 3);
     }
 
     @Override

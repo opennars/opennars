@@ -46,6 +46,7 @@ public class TestNAR  {
     public List<Task> inputs = new ArrayList();
     private int temporalTolerance = 0;
     private float defaultTolerance = Global.TESTS_TRUTH_ERROR_TOLERANCE;
+    private StringWriter trace;
 
 
     public TestNAR(NAR nar) {
@@ -353,7 +354,7 @@ public class TestNAR  {
                 finalCycle = oc.cycleEnd+1;
         }
 
-        StringWriter trace;
+
         nar.trace(trace = new StringWriter());
 
         runUntil(finalCycle);
@@ -370,21 +371,27 @@ public class TestNAR  {
 
             requires.forEach(report::add);
 
-            String s = JSONOutput.stringFromFieldsPretty(report);
-            if (!report.isSuccess()) {
-
-                System.err.append(trace.getBuffer());
-
-                assertTrue(s, false);
-
-            } else {
-                //print report
-                System.out.println(s);
-            }
+            report(report, report.isSuccess());
         }
 
 
         return this;
+    }
+
+    protected void report(Report report, boolean success) {
+
+        String s = JSONOutput.stringFromFieldsPretty(report);
+
+        if (success) {
+
+        }
+        else if (!success) {
+            System.err.append("\n");
+            System.err.append(trace.getBuffer());
+            assertTrue(s, false);
+        }
+
+        System.out.println(s);
     }
 
     public TestNAR run(long extraCycles) {

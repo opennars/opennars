@@ -1273,10 +1273,15 @@ abstract public class NAR implements Serializable, Level {
 
         TaskProcess d = new TaskProcess(this, task);
 
-        d.derive(null);
+        d.process(null);
 
         return d;
 
+    }
+
+    /** convenience method shortcut for concept(t.getTerm()) */
+    public final Concept concept(Termed termed) {
+        return concept(termed.getTerm());
     }
 
 //    public NAR onAfterFrame(final Runnable r) {

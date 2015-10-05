@@ -4,8 +4,6 @@ import nars.Global;
 import nars.Memory;
 import nars.bag.tx.BagActivator;
 import nars.nal.nal1.Negation;
-import nars.nal.nal4.Image;
-import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
@@ -138,10 +136,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 ( growProductOrImage(t) || (t instanceof SetTensional)) */;
     }
 
-    /** original termlink growth policy */
-    static boolean growProductOrImage(Term t) {
-        return (t instanceof Product) || (t instanceof Image);
-    }
+//    /** original termlink growth policy */
+//    static boolean growProductOrImage(Term t) {
+//        return (t instanceof Product) || (t instanceof Image);
+//    }
 
 
     final static boolean growLevel2(final Term t) {
