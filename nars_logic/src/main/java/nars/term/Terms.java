@@ -790,4 +790,67 @@ public class Terms {
 
         return null;
     }
+
+    /**
+     * build a component list from terms
+     *
+     * @return the component list
+     */
+    public static Term[] toArray(final Term... t) {
+        return t;
+    }
+
+    public static List<Term> toList(final Term... t) {
+        return Arrays.asList((Term[]) t);
+    }
+
+    public static Set<Term> toSet(Term... t) {
+        if (t.length == 1)
+            return Collections.singleton(t[0]);
+        Set<Term> l = Global.newHashSet(t.length);
+        Collections.addAll(l, t);
+        return l;
+    }
+
+    public static <T> Set<T> toSortedSet(T... t) {
+
+        final int l = t.length;
+        if (l ==1)
+            return Collections.singleton(t[0]);
+
+        final TreeSet<T> s = new TreeSet();
+        Collections.addAll(s, t);
+        return s;
+    }
+
+    /**
+     * interprets subterms of a compound term to a set of
+     * key,value pairs (Map entries).
+     * ie, it translates this SetExt tp a Map<Term,Term> in the
+     * following pattern:
+     *
+     *      { (a,b) }  becomes Map a=b
+     *      [ (a,b), b:c ] bcomes Map a=b, b=c
+     *      { (a,b), (b,c), d } bcomes Map a=b, b=c, d=null
+     *
+     * @return a potentially incomplete map representation of this compound
+     */
+    public static Map<Term,Term> toKeyValueMap(Subterms<?> t) {
+
+        Map<Term,Term> result = Global.newHashMap();
+
+        t.forEach( a -> {
+            if (a.length() == 2) {
+                if ((a.op() == Op.PRODUCT) || (a.op() == Op.INHERITANCE)) {
+                    Compound ii = (Compound)a;
+                    result.put(ii.term(0), ii.term(1));
+                }
+            }
+            else if (a.length() == 1) {
+                result.put(a, null);
+            }
+        });
+
+        return result;
+    }
 }

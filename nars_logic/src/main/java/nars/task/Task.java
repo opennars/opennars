@@ -618,4 +618,9 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
     static <X extends Term> Task<Operation<X>> command(Operation<X> op) {
         return new DefaultTask<>(op, Symbols.COMMAND, null, 0, 0, 0);
     }
+
+    default public boolean isEternal() {
+        return getOccurrenceTime()==Stamp.ETERNAL;
+    }
+
 }

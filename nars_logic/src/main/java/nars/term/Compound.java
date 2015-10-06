@@ -649,18 +649,6 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     //    }
 
 
-    /**
-     * Check the subterms (first level only) for a target term
-     *
-     * @param t The term to be searched
-     * @return Whether the target is in the current term
-     */
-    @Override
-    public boolean containsTerm(final Term t) {
-        if (impossibleSubterm(t))
-            return false;
-        return Terms.contains(term, t);
-    }
 
     /**
      * Recursively check if a compound contains a term
@@ -1083,6 +1071,17 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     @Override
     public Object setRest(Object rest) {
         throw new RuntimeException(this + " not modifiable");
+    }
+
+    /**
+     * allows implementations to include a 32 bit identifier within the struturehash
+     * which will be used to exclude inequalities. by default, it returns 0 which
+     * will not change the default structureHash structure
+     *
+     * @return
+     */
+    public int structure2() {
+        return 0;
     }
 
 //    public int countOccurrences(final Term t) {

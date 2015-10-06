@@ -84,9 +84,9 @@ public class IntersectionInt extends Intersect {
         }
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set intersection
-            Set<Term> set = ((Compound) term1).asTermSortedSet();
-            
-            set.retainAll(((Compound) term2).asTermSet());
+
+            Set<Term> set = Terms.toSortedSet();
+            set.retainAll(Terms.toSet(term2));
             
             //technically this can be used directly if it can be converted to array
             //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously

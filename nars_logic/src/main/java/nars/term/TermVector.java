@@ -3,7 +3,6 @@ package nars.term;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterators;
 import nars.Global;
-import nars.Op;
 import nars.term.transform.CompoundTransform;
 
 import java.io.Serializable;
@@ -15,12 +14,17 @@ import static java.util.Arrays.copyOf;
 /**
  * Holds a vector or tuple of terms.
  * Useful for storing a fixed number of subterms
+ *
+ * TODO make this class immutable and term field private
+ * provide a MutableTermVector that holds any write/change methods
  */
-public abstract class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Serializable {
+abstract public class TermVector<T extends Term> implements Iterable<T>, Subterms<T>, Serializable {
     /**
      * list of (direct) term
      */
     public T[] term;
+
+
     /**
      * bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm
      */
@@ -50,41 +54,10 @@ public abstract class TermVector<T extends Term> implements Iterable<T>, Subterm
 
     }
 
-    /**
-     * build a component list from terms
-     *
-     * @return the component list
-     */
-    public static Term[] termArray(final Term... t) {
-        return t;
-    }
-
-    public static List<Term> termList(final Term... t) {
-        return Arrays.asList((Term[]) t);
-    }
-
-    public static Set<Term> termSet(Term... t) {
-        Set<Term> l = Global.newHashSet(t.length);
-        Collections.addAll(l, t);
-        return l;
-    }
-
     protected void setTerm(T[] term) {
         init(term);
     }
 
-
-
-    /**
-     * allows implementations to include a 32 bit identifier within the struturehash
-     * which will be used to exclude inequalities. by default, it returns 0 which
-     * will not change the default structureHash structure
-     *
-     * @return
-     */
-    public int structure2() {
-        return 0;
-    }
 
     @Override
     public final int structure() {
@@ -148,7 +121,7 @@ public abstract class TermVector<T extends Term> implements Iterable<T>, Subterm
         final int n = length();
         final Term[] l = new Term[n];
 
-        final Set<Term> toRemoveSet = TermVector.termSet(toRemove);
+        final Set<Term> toRemoveSet = Terms.toSet(toRemove);
 
 
         int remain = 0;
@@ -247,7 +220,6 @@ public abstract class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
 
-
     final public void addTermsTo(final Collection<Term> c) {
         Collections.addAll(c, term);
     }
@@ -279,9 +251,6 @@ public abstract class TermVector<T extends Term> implements Iterable<T>, Subterm
         return y;
     }
 
-    public final int size() {
-        return length();
-    }
 
     public boolean isEmpty() {
         return length() != 0;
@@ -302,61 +271,28 @@ public abstract class TermVector<T extends Term> implements Iterable<T>, Subterm
     }
 
     @Override
+    public void forEach(Consumer<? super T> action, int start, int stop) {
+        for (int i = start; i < stop; i++)
+            action.accept(this.term[i]);
+    }
+
+    @Override
     public final void forEach(final Consumer<? super T> action) {
         for (final T t : this.term)
             action.accept(t);
     }
 
-    /** unordered set */
-    public Set<T> asTermSet() {
-
-        final int l = length();
-        if (l ==1)
-            return Collections.singleton(term[0]);
-
-        final HashSet<T> s = new HashSet(l);
-        Collections.addAll(s, term);
-        return s;
-    }
-
-    public Set<T> asTermSortedSet() {
-        final int l = length();
-        if (l ==1)
-            return Collections.singleton(term[0]);
-
-        final TreeSet<T> s = new TreeSet();
-        Collections.addAll(s, term);
-        return s;
-    }
-
     /**
-     * interprets subterms of a compound term to a set of
-     * key,value pairs (Map entries).
-     * ie, it translates this SetExt tp a Map<Term,Term> in the
-     * following pattern:
+     * Check the subterms (first level only) for a target term
      *
-     *      { (a,b) }  becomes Map a=b
-     *      [ (a,b), b:c ] bcomes Map a=b, b=c
-     *      { (a,b), (b,c), d } bcomes Map a=b, b=c, d=null
-     *
-     * @return a potentially incomplete map representation of this compound
+     * @param t The term to be searched
+     * @return Whether the target is in the current term
      */
-    public Map<Term,Term> toKeyValueMap() {
-
-        Map<Term,Term> result = Global.newHashMap();
-
-        this.forEach( a -> {
-            if (a.length() == 2) {
-                if ((a.op() == Op.PRODUCT) || (a.op() == Op.INHERITANCE)) {
-                    Compound ii = (Compound)a;
-                    result.put(ii.term(0), ii.term(1));
-                }
-            }
-            else if (a.length() == 1) {
-                result.put(a, null);
-            }
-        });
-
-        return result;
+    @Override
+    public boolean containsTerm(final Term t) {
+        if (impossibleSubterm(t))
+            return false;
+        return Terms.contains(term, t);
     }
+
 }

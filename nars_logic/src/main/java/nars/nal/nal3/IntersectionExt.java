@@ -27,7 +27,6 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Terms;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -83,9 +82,9 @@ public class IntersectionExt extends Intersect {
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set intersection
-            Set<Term> set = ((Compound) term1).asTermSortedSet();
-            
-            set.retainAll(((Compound) term2).asTermSet());
+
+            Set<Term> set = Terms.toSortedSet();
+            set.retainAll(Terms.toSet(term2));
             
             //technically this can be used directly if it can be converted to array
             //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously

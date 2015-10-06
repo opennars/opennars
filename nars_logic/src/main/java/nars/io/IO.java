@@ -5,6 +5,7 @@ import nars.nal.nal7.Sequence;
 import nars.nar.Default;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 
 import java.util.Map;
 
@@ -23,8 +24,8 @@ public interface IO {
             Sequence strings = (Sequence) X[1];
 
             //convert this set to a Map<Term,Term>
-            Map<Term, Term> substs = substitutions.
-                    toKeyValueMap();
+            Map<Term, Term> substs = Terms.
+                    toKeyValueMap(substitutions);
 
             StringBuilder sb = new StringBuilder();
             for (Term s : strings.term) {
