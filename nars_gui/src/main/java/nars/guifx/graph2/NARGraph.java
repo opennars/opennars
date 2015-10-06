@@ -222,6 +222,7 @@ public class NARGraph<V> extends Spacegraph {
 
         tn.c = cc;
         //conPri.accept(cc.getPriority());
+        tn.priNorm = cc.getPriority();
 
         final Term t = tn.term;
         final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;

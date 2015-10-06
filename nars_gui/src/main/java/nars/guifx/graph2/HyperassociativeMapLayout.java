@@ -1,9 +1,7 @@
 package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
-import com.google.common.collect.Lists;
 
-import java.util.Collection;
 import java.util.function.Consumer;
 
 /**
@@ -42,9 +40,9 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
         resetLearning();
         setLearningRate(0.4f);
         setRepulsiveWeakness(10.0);
-        setAttractionStrength(10.0);
-        setMaxRepulsionDistance(10);
-        setEquilibriumDistance(0.04f);
+        setAttractionStrength(15.0);
+        setMaxRepulsionDistance(150);
+        setEquilibriumDistance(0.02f);
     }
 
     @Override
@@ -66,7 +64,7 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
 
     @Override
     public boolean normalize() {
-        return true;
+        return false;
     }
 
 
@@ -90,13 +88,13 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     }
 
     @Override
-    protected Collection<TermNode> getVertices() {
+    protected TermNode[] getVertices() {
         scaleFactor = 150 + 70 * Math.sqrt(1 + termList.length);
         setScale(scaleFactor);
 
 
         //TODO avoid copying
-        return Lists.newArrayList(termList);
+        return termList;
     }
 
     @Override

@@ -10,6 +10,8 @@ import org.apache.commons.math3.util.FastMath;
 
 import java.util.function.DoubleSupplier;
 
+import static javafx.application.Platform.runLater;
+
 /**
  * Created by me on 8/10/15.
  */
@@ -62,85 +64,85 @@ public class LinePlot extends Canvas /*implements ChangeListener*/ {
 
 
     public void draw() {
-
-        GraphicsContext g = getGraphicsContext2D();
-
-        final double W = g.getCanvas().getWidth();
-        final double H = g.getCanvas().getHeight();
-
-
-        g.clearRect(0,0, W, H);
-
         while (history.size() > maxHistory)
             history.removeAtIndex(0);
         history.add(  valueFunc.getAsDouble() );
 
+        runLater( () -> {
+            GraphicsContext g = getGraphicsContext2D();
 
-        //super.paint(paintContext);
-
-
-        minValue = Float.POSITIVE_INFINITY;
-        maxValue = Float.NEGATIVE_INFINITY;
-        mean = 0;
-        count = 0;
-        history.forEach(v -> {
-            if (v < minValue) minValue = v;
-            if (v > maxValue) maxValue = v;
-            mean += v;
-            count++;
-        });
-
-        if (count == 0) return;
-
-        if (count > 0) {
-            mean /= count;
-            label = Texts.n4(mean) + " +- " + Texts.n4(maxValue-minValue);
-        }
-        else {
-            label = "empty";
-        }
+            final double W = g.getCanvas().getWidth();
+            final double H = g.getCanvas().getHeight();
 
 
+            g.clearRect(0, 0, W, H);
 
 
-        int nh = history.size();
-        double x = 0;
-        double dx = (W/ nh);
-        final float bh = (float)H;
-        final double mv = minValue;
-        final double Mv = maxValue;
-        //final int ih = (int)bh;
-
-        g.setFill(Color.WHITE);
-
-        if (mv != Mv) {
-            int prevX = -1;
-            final int histSize = history.size();
+            //super.paint(paintContext);
 
 
-            for (int i = 0; i < histSize; i++) {
-                final double v = history.get(i);
+            minValue = Float.POSITIVE_INFINITY;
+            maxValue = Float.NEGATIVE_INFINITY;
+            mean = 0;
+            count = 0;
+            history.forEach(v -> {
+                if (v < minValue) minValue = v;
+                if (v > maxValue) maxValue = v;
+                mean += v;
+                count++;
+            });
 
-                double py = (v - mv) / (Mv - mv); if (py < 0) py = 0; if (py > 1.0) py = 1.0;
+            if (count == 0) return;
 
-                double y = py * bh;
-
-                final int iy = (int) y;
-
-                g.setFill(BlueRed.get(py));
-
-                g.fillRect(prevX+1, (int)(bh / 2f - y / 2), (int) FastMath.ceil(x - prevX), iy);
-
-                prevX = (int)x;
-                x += dx;
+            if (count > 0) {
+                mean /= count;
+                label = Texts.n4(mean) + " +- " + Texts.n4(maxValue - minValue);
+            } else {
+                label = "empty";
             }
-        }
 
-        //g.setFont(NengoStyle.FONT_BOLD);
-        g.setFill(Color.WHITE);
-        g.fillText(name, 10, 10);
-        //g.setFont(NengoStyle.FONT_SMALL);
-        g.fillText(label, 10, 25);
+
+            int nh = history.size();
+            double x = 0;
+            double dx = (W / nh);
+            final float bh = (float) H;
+            final double mv = minValue;
+            final double Mv = maxValue;
+            //final int ih = (int)bh;
+
+            g.setFill(Color.WHITE);
+
+            if (mv != Mv) {
+                int prevX = -1;
+                final int histSize = history.size();
+
+
+                for (int i = 0; i < histSize; i++) {
+                    final double v = history.get(i);
+
+                    double py = (v - mv) / (Mv - mv);
+                    if (py < 0) py = 0;
+                    if (py > 1.0) py = 1.0;
+
+                    double y = py * bh;
+
+                    final int iy = (int) y;
+
+                    g.setFill(BlueRed.get(py));
+
+                    g.fillRect(prevX + 1, (int) (bh / 2f - y / 2), (int) FastMath.ceil(x - prevX), iy);
+
+                    prevX = (int) x;
+                    x += dx;
+                }
+            }
+
+            //g.setFont(NengoStyle.FONT_BOLD);
+            g.setFill(Color.WHITE);
+            g.fillText(name, 10, 10);
+            //g.setFont(NengoStyle.FONT_SMALL);
+            g.fillText(label, 10, 25);
+        });
 
     }
 
