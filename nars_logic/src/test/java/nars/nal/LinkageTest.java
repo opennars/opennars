@@ -369,13 +369,10 @@ public class LinkageTest extends AbstractNALTest {
     @Test
     public void Variable_Normalization_1() throws Exception {
         Default tester = new Default();
-        String nonsense = "<(&&,<#1 --> M>,<#1 --> M>) ==> <#1 --> nonsense>>";
+        String nonsense = "<(&&,<#1 --> M>,<#2 --> M>) ==> <#1 --> nonsense>>";
         tester.believe(nonsense); //.en("If robin is a type of bird then robin can fly.");
         tester.frame(10);
         Concept c = tester.concept(nonsense);
-        if(c.toString().equals("<<#1 --> M> ==> <#2 --> nonsense>>")) {
-            throw new Exception("NAR fundamentally broken");
-        }
         if(c==null) {
             throw new Exception("Normalization went wrong");
         }
