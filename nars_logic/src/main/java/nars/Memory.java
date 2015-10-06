@@ -159,6 +159,7 @@ public class Memory extends Param {
     }
 
 
+    @Override
     public final int nal() {
         return level;
     }
@@ -453,7 +454,7 @@ public class Memory extends Param {
 
     public final void cycle(int num) {
 
-        final Clock clock = this.clock;
+        //final Clock clock = this.clock;
         final Topic<Memory> end = eventCycleEnd;
 
         //synchronized (clock) {

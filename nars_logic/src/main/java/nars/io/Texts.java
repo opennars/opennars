@@ -319,9 +319,9 @@ abstract public class Texts {
 
     final static Format twoDecimal = new DecimalFormat("0.00");
 
-    public static final String n2Slow(final float x) {
-        return twoDecimal.format(x);
-    }
+//    public static final String n2Slow(final float x) {
+//        return twoDecimal.format(x);
+//    }
 
     public static long thousandths(final float d) {
         return (long) ((d * 1000.0f + 0.5f));

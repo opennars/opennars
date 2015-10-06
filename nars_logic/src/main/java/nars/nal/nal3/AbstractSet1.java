@@ -23,6 +23,7 @@ abstract public class AbstractSet1<T extends Term> extends Compound1<T> implemen
         return this.term;
     }
 
+    @Override
     public final boolean isCommutative() {
         return true;
     }

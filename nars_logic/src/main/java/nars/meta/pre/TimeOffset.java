@@ -51,7 +51,7 @@ public class TimeOffset extends PreCondition1 {
 
     static final ObjectIntHashMap<Atom> relationDirection = new ObjectIntHashMap<>(16);
     static {
-        Procedure2<String,Integer> r = (k, v) -> relationDirection.put(Atom.the("\"" + k + "\""), v);
+        Procedure2<String,Integer> r = (k, v) -> relationDirection.put(Atom.the('"' + k + '"'), v);
 
         r.value("=/>", +1);
         r.value("=\\>", -1);
@@ -92,6 +92,6 @@ public class TimeOffset extends PreCondition1 {
 
     @Override
     public String toString() {
-        return (positive ? "Pos" : "Neg") + super.toString() + "[" + direction + "]";
+        return (positive ? "Pos" : "Neg") + super.toString() + '[' + direction + ']';
     }
 }

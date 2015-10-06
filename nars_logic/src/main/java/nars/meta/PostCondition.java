@@ -146,7 +146,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 case "Derive":
-                    if (which.equals(allowBackward));
+                    if (which.equals(allowBackward))
                         rule.setAllowBackward(true);
                     break;
 
@@ -155,7 +155,7 @@ public class PostCondition implements Serializable, Level //since there can be m
                     break;
 
                 default:
-                    throw new RuntimeException("Unhandled postcondition: " + type + ":" + which);
+                    throw new RuntimeException("Unhandled postcondition: " + type + ':' + which);
             }
 
 

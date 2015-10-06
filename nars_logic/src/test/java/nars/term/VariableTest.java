@@ -44,7 +44,7 @@ public class VariableTest {
         testIndpVarNorm("$x", "$y", "($1, $2)");
         testIndpVarNorm("$x", "$x", "($1, $1)");
         testIndpVarNorm("$x", "#x", "($1, #2)");
-        testIndpVarNorm("#x", "#x", "(#1, #2)");
+        testIndpVarNorm("#x", "#x", "(#1, #1)");
     }
 
     @Test
@@ -52,8 +52,8 @@ public class VariableTest {
         //testIndpVarNorm("<$x <-> $y>", "<$x <-> $y>", "(<$1 <-> $2>, <$3 <-> $4>)");
 
         testIndpVarNorm("$x", "$x", "($1, $1)");
-        testIndpVarNorm("#x", "#x", "(#1, #2)");
-        testIndpVarNorm("<#x <-> #y>", "<#x <-> #y>", "(<#1 <-> #2>, <#3 <-> #4>)");
+        testIndpVarNorm("#x", "#x", "(#1, #1)");
+        testIndpVarNorm("<#x <-> #y>", "<#x <-> #y>", "(<#1 <-> #2>, <#1 <-> #2>)");
         testIndpVarNorm("<$x <-> $y>", "<$x <-> $y>", "(<$1 <-> $2>, <$1 <-> $2>)");
     }
     public void testIndpVarNorm(String vara, String varb, String expect) {

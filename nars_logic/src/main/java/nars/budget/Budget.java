@@ -56,11 +56,11 @@ public class Budget implements Cloneable, Prioritized, Serializable {
 
 
     //common instance for a 'deleted budget'.  TODO use a wrapper class to make it unmodifiable
-    public static Budget deleted = new Budget();
+    public static final Budget deleted = new Budget();
     static {  deleted.delete(); }
 
     //common instance for a 'zero budget'.  TODO use a wrapper class to make it unmodifiable
-    public static Budget zero = new Budget();
+    public static final Budget zero = new Budget();
     static {  zero.zero();    }
 
 

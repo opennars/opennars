@@ -2,7 +2,6 @@ package nars.meta.pre;
 
 import nars.meta.RuleMatch;
 import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.term.Term;
 
 /**

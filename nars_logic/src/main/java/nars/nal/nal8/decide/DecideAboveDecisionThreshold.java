@@ -1,7 +1,6 @@
 package nars.nal.nal8.decide;
 
 import nars.Memory;
-import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.task.Task;
 import nars.truth.Truth;
@@ -31,22 +30,22 @@ abstract public class DecideAboveDecisionThreshold extends DecideAllGoals {
         }
     }
 
-    public final static class DecideConceptDesireAboveDecisionThreshold extends DecideAboveDecisionThreshold {
-
-        public DecideConceptDesireAboveDecisionThreshold(Memory m) {
-            super(m);
-        }
-
-        @Override
-        protected final float desire(Task<Operation> task) {
-            Concept c = memory.concept(task.getTerm());
-            Truth t = c.getDesire();
-            if (t == null)
-                throw new RuntimeException("null truth");
-
-            return t.getExpectation();
-        }
-    }
+//    public final static class DecideConceptDesireAboveDecisionThreshold extends DecideAboveDecisionThreshold {
+//
+//        public DecideConceptDesireAboveDecisionThreshold(Memory m) {
+//            super(m);
+//        }
+//
+//        @Override
+//        protected final float desire(Task<Operation> task) {
+//            Concept c = memory.concept(task.getTerm());
+//            Truth t = c.getDesire();
+//            if (t == null)
+//                throw new RuntimeException("null truth");
+//
+//            return t.getExpectation();
+//        }
+//    }
 
     @Override
     public boolean test(final Task<Operation> task) {

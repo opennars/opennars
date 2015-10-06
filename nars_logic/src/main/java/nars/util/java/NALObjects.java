@@ -117,7 +117,6 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
 
         final Term instance = term(object);
         final Term[] argterm = Stream.of(args).map(x -> term(x)).toArray(n -> new Term[n]);
-        Term effect;
 
         //String opName =
         final Operator op = Operator.the(
@@ -136,6 +135,7 @@ public class NALObjects extends DefaultTermizer implements MethodHandler, Termiz
                 1f, 0.9f);
 
 
+        Term effect;
         if (result!=null) {
             effect = term(result);
         }

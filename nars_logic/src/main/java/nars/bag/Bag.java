@@ -41,6 +41,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
     }
 
     /** returns the bag to an empty state */
+    @Override
     public abstract void clear();
 
     /**
@@ -54,6 +55,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
      * @param key
      * @return
      */
+    @Override
     abstract public V remove(K key);
 
     /**
@@ -63,6 +65,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
      * if newItem itself is returned, then it was rejected due to insufficient budget
      * if the newItem already existed, the resulting budget is merged.
      */
+    @Override
     abstract public V put(V newItem);
 
     /** set the merging function to 'average' */
@@ -83,6 +86,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
      * @param key The key of the Item
      * @return The Item with the given key
      */
+    @Override
     abstract public V get(final K key);
 
     abstract public Set<K> keySet();
@@ -101,6 +105,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends AbstractCacheBag<K,V
      *
      * @return The number of items
      */
+    @Override
     public abstract int size();
 
     public Iterable<V> values() {

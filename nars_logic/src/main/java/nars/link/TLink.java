@@ -11,6 +11,7 @@ public interface TLink<T extends Termed> extends Budgeted, Serializable, Termed 
 
     //short getIndex(final int i);
     
+    @Override
     Term getTerm();
     
     @Override

@@ -461,7 +461,7 @@ public class DerivationGraph extends DirectedPseudograph<DerivationGraph.Keyed,O
             s[0] = s[0].replace(tn.toString(), cc); //this is replaceAll but without regex
         });
 
-        s[0] = parseTerm(s[0]).toString();
+        s[0] = parseTerm(s[0]);
 
         return s[0];
 

@@ -60,6 +60,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
      */
+    @Override
     protected void init(final Term... term) {
 
         super.init(term);
@@ -197,6 +198,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     }
 
 
+    @Override
     public final boolean hasVar(final Op type) {
 
         switch (type) {
@@ -265,6 +267,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         }
     }
 
+    @Override
     public boolean impossibleSubTermVolume(final int otherTermVolume) {
         return otherTermVolume >
                 volume()
@@ -273,6 +276,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
                 ;
     }
 
+    @Override
     public boolean impossibleToMatch(final int possibleSubtermStructure) {
         final int existingStructure = structureHash;
 
@@ -281,6 +285,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return ((possibleSubtermStructure | existingStructure) != existingStructure);
     }
 
+    @Override
     public final void rehash() {
         //this may not be necessary
         for (final Term t : term) {
@@ -337,7 +342,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
 
         int nterms = term.length;
         for (int i = 0; i < nterms; i++) {
-            if ((i != 0) || (i == 0 && nterms > 1 && appendedOperator)) {
+            if ((i != 0) || (/*i == 0 &&*/ nterms > 1 && appendedOperator)) {
                 p.append(ARGUMENT_SEPARATOR);
                 if (pretty)
                     p.append(' ');
@@ -548,6 +553,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return 0;
     }
 
+    @Override
     public final void recurseTerms(final TermVisitor v, final Term parent) {
         v.visit(this, parent);
         //if (this instanceof Compound) {
@@ -579,7 +585,8 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
     /**
      * careful: this will modify the term and should not be used unless the instance is new and unreferenced.
      */
-    public <T extends Term> T normalizeDestructively() {
+    @Override
+    public Compound<T> normalizeDestructively() {
         return normalized(true);
     }
 
@@ -664,6 +671,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      * @param target The term to be searched
      * @return Whether the target is in the current term
      */
+    @Override
     public boolean equalsOrContainsTermRecursively(final Term target) {
         if (this.equals(target)) return true;
         return containsTermRecursively(target);
@@ -674,6 +682,7 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
      */
     abstract public Term clone(final Term[] replaced);
 
+    @Override
     public Compound cloneDeep() {
         Term c = clone(cloneTermsDeep());
         if (c == null) return null;

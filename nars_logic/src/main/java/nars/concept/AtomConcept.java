@@ -44,6 +44,7 @@ public class AtomConcept extends AbstractConcept {
     /**
      * Task links for indirect processing
      */
+    @Override
     public Bag<Sentence, TaskLink> getTaskLinks() {
         return taskLinks;
     }
@@ -51,6 +52,7 @@ public class AtomConcept extends AbstractConcept {
     /**
      * Term links between the term and its components and compounds; beliefs
      */
+    @Override
     public Bag<TermLinkKey, TermLink> getTermLinks() {
         return termLinks;
     }
@@ -121,10 +123,12 @@ public class AtomConcept extends AbstractConcept {
      * @param termLink The termLink to be inserted
      * @return the termlink which was selected or updated
      */
+    @Override
     public final TermLink activateTermLink(final TermLinkBuilder termLink) {
         return getTermLinks().update(termLink);
     }
 
+    @Override
     public final List<TermLinkTemplate> getTermLinkTemplates() {
         return getTermLinkBuilder().templates();
     }

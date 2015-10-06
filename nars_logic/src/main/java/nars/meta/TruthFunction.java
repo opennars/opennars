@@ -204,6 +204,7 @@ public enum TruthFunction implements TruthOrDesireFunction {
      * @param B beliefTruth (possibly null)
      * @return
      */
+    @Override
     abstract public Truth get(Truth T, Truth B);
 
 

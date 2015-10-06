@@ -139,7 +139,7 @@ public class Global {
 
 
 
-    public static float MAX_CONFIDENCE = 0.99f - DefaultTruth.DEFAULT_TRUTH_EPSILON;
+    public static final float MAX_CONFIDENCE = 0.99f - DefaultTruth.DEFAULT_TRUTH_EPSILON;
 
     public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE; /*DEFAULT_TRUTH_EPSILON*/;
 

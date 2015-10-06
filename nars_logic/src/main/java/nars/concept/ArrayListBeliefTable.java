@@ -154,8 +154,6 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
          * input, strongest, revised (created here and returned)
          */
 
-        Task revised;
-
         final Memory memory = c.getMemory();
 
 
@@ -209,8 +207,7 @@ public class ArrayListBeliefTable extends ArrayListTaskTable implements BeliefTa
             if (revisible(input, top)) {
 
 
-
-                revised = getRevision(input, top, false, nal);
+                Task revised = getRevision(input, top, false, nal);
                 if (revised != null && !input.equals(revised)) {
 
                     nal.updateBelief(revised);

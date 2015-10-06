@@ -117,7 +117,7 @@ public class Twenglish {
             t.add( spanToTerm(c) );
             last = c;
         }
-        if (t.isEmpty()) return Collections.EMPTY_LIST;
+        if (t.isEmpty()) return Collections.emptyList();
         
         String sentenceType = "fragment";
         if ((last!=null) && (last.pattern.equals("punct"))) {

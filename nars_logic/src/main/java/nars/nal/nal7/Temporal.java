@@ -717,7 +717,6 @@ public class Temporal {
      * necessary
      */
     public static Budget solutionEval(final Task task, final Sentence solution, final Premise p) {
-        Budget budget = null;
         boolean feedbackToLinks = false;
         /*if (task == null) {
             task = nal.getCurrentTask();
@@ -728,6 +727,7 @@ public class Temporal {
         if (quality <= 0)
             return null;
 
+        Budget budget = null;
         if (judgmentTask) {
             task.getBudget().orPriority(quality);
         } else {

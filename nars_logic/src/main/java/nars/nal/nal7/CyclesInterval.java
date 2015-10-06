@@ -87,6 +87,7 @@ public class CyclesInterval extends Atom implements AbstractInterval {
     }
 
 
+    @Override
     public final int structure() { return 0;     }
 
 
@@ -101,22 +102,13 @@ public class CyclesInterval extends Atom implements AbstractInterval {
 //    }
 
     @Override
-    public final boolean hasVar() {
-        return false;
-    }
-
-    @Override
-    public final int vars() {
-        return 0;
-    }
-
-    @Override
     public final void append(Appendable output, boolean pretty) throws IOException {
         output.append('/').append(Long.toString(cyc)).append('/');
     }
 
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
+    @Override
     public StringBuilder toStringBuilder(final boolean pretty) {
         StringBuilder sb = new StringBuilder();
         try {

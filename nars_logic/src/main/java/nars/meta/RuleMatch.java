@@ -260,7 +260,7 @@ public class RuleMatch extends FindSubst {
         }
         if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG) {
-                premise.memory().remove(new PreTask((Compound)derivedTerm, punct, truth, budget, occurence_shift, premise), "Insufficient Derivation Budget");
+                premise.memory().remove(new PreTask(derivedTerm, punct, truth, budget, occurence_shift, premise), "Insufficient Derivation Budget");
             }
             return null;
         }

@@ -42,7 +42,7 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
 
     @Override
     public String toString() {
-        return "[" + vertexSet().toString() + ", " + edgeSet().toString() + "]";
+        return '[' + vertexSet().toString() + ", " + edgeSet().toString() + ']';
     }
 
     public void print(PrintStream out) {
@@ -133,8 +133,8 @@ public class TermLinkGraph extends DirectedPseudograph<Term, String> {
     }
 
     static String edge(Term source, Term target) {
-        return "(" + source.toStringCompact()
-                + "," + target.toStringCompact() + ")";
+        return '(' + source.toStringCompact()
+                + ',' + target.toStringCompact() + ')';
     }
 
     public TermLinkGraph add(Iterable<Concept> concepts, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {

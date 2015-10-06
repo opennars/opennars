@@ -53,6 +53,7 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     }
 
 
+    @Override
     public final Stream<Task> derive(final Function<ConceptProcess,Stream<Task>> p) {
         nar.memory.eventConceptProcess.emit(this);
         return p.apply(this);
@@ -72,8 +73,8 @@ public class ConceptTaskTermLinkProcess extends ConceptProcess {
     @Override
     public String toString() {
         return new StringBuilder().append(getClass().getSimpleName())
-                .append("[").append(getTask()).append(',')
-                .append(getTermLink()).append(",").append(getBelief())
+                .append('[').append(getTask()).append(',')
+                .append(getTermLink()).append(',').append(getBelief())
                 .append(']')
                 .toString();
     }

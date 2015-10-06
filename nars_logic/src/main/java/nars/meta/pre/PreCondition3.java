@@ -3,7 +3,6 @@ package nars.meta.pre;
 import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.term.Term;
-import nars.term.Variable;
 
 /**
  * Created by me on 8/15/15.
@@ -38,6 +37,6 @@ abstract public class PreCondition3 extends PreCondition {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[" + arg1 + "," + arg2 + "," + arg3 + "]";
+        return getClass().getSimpleName() + '[' + arg1 + ',' + arg2 + ',' + arg3 + ']';
     }
 }

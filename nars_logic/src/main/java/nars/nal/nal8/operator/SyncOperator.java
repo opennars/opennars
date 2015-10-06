@@ -24,8 +24,4 @@ abstract public class SyncOperator extends OperatorReaction {
     }
 
 
-    @Override
-    final public boolean async() {
-        return false;
-    }
 }

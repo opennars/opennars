@@ -42,9 +42,11 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
 
     /** volume = total number of terms = complexity + # total variables */
+    @Override
     int volume();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
+    @Override
     int complexity();
 
 
@@ -147,6 +149,7 @@ public interface Term extends TermContainer, Cloneable, Comparable, Termed, Seri
 
 
     /** self+subterm types bitvector */
+    @Override
     int structure();
 
 

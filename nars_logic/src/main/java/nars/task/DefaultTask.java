@@ -144,6 +144,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return h;
     }
 
+    @Override
     public void setTermShared(final T equivalentInstance) {
 
         //intermval generally contains unique information that should not be replaced
@@ -165,6 +166,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return truth;
     }
 
+    @Override
     public void setTruth(Truth t) {
         if (!Objects.equals(this.truth, t)) {
             this.truth = t;
@@ -181,13 +183,16 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
+    @Override
     final public boolean isDouble() {
         return getParentBelief() != null && getParentTask() != null;
     }
+    @Override
     final public boolean isSingle() {
         return getParentBelief()==null && getParentTask()!=null ;
     }
 
+    @Override
     public Task log(List<String> historyToCopy) {
         if (!Global.DEBUG_TASK_LOG)
             return this;
@@ -224,6 +229,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return duration;
     }
 
+    @Override
     public final Sentence<T> setCreationTime(final long creationTime) {
         if ((this.creationTime <= Stamp.TIMELESS) && (this.occurrenceTime > Stamp.TIMELESS)) {
             //use the occurrence time as the delta, now that this has a "finite" creationTime
@@ -246,6 +252,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * call if the task was changed; re-hashes it at the end.
      * if the task was removed then this returns null
      */
+    @Override
     public final Task normalized() {
 
         //dont recompute if hash isnt invalid (==0)
@@ -383,6 +390,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
+    @Override
     public DefaultTask<T> setEternal() {
         setOccurrenceTime(Stamp.ETERNAL);
         return this;
@@ -424,6 +432,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return false;
     }
 
+    @Override
     public final boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
 
         if (this == that) return true;
@@ -487,10 +496,12 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     }
 
 
+    @Override
     public Reference<Task> getParentTaskRef() {
         return parentTask;
     }
 
+    @Override
     public Reference<Task> getParentBeliefRef() {
         return parentBelief;
     }
@@ -525,11 +536,13 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /**
      * flag to indicate whether this Event Task participates in tempporal induction
      */
+    @Override
     public final Task setTemporalInducting(boolean b) {
         this.temporallyInductable = b;
         return this;
     }
 
+    @Override
     public final boolean isTemporalInductable() {
         return temporallyInductable;
     }
@@ -538,6 +551,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      * add to this task's log history
      * useful for debugging but can also be applied to meta-analysis
      */
+    @Override
     public void log(final String reason) {
         if (!Global.DEBUG_TASK_LOG)
             return;
@@ -549,6 +563,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         this.log.add(reason);
     }
 
+    @Override
     public final List<String> getLog() {
         return log;
     }
@@ -581,6 +596,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
      *
      * @return The belief from which the task is derived
      */
+    @Override
     final public Task getParentBelief() {
         return dereference(parentBelief);
     }
@@ -609,6 +625,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
     /**
      * the causing Operation, or null if not applicable.
      */
+    @Override
     public final Operation getCause() {
         return cause;
     }
@@ -619,6 +636,7 @@ public class DefaultTask<T extends Compound> extends Item<Sentence<T>> implement
         return this;
     }
 
+    @Override
     public void discountConfidence() {
         setTruth(getTruth().discountConfidence());
     }

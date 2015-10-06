@@ -32,16 +32,6 @@ public interface Input extends Source<Task> {
     @Override
     Task get();
 
-    /**
-     *
-     * called when a NAR forcibly removes the inputs, allowing
-     * this input to close any connections or free resources
-     */
-    @Override
-    default void stop() {
-
-    }
-
     //    default int inputNext(Memory m, int max) {
 //        Task t;
 //

@@ -25,7 +25,7 @@ public class TaskPunctuation extends PreCondition {
     TaskPunctuation(char p) {
         super();
         this.punc = p;
-        this.id = getClass().getSimpleName() + "[" + punc + "]";
+        this.id = getClass().getSimpleName() + '[' + punc + ']';
     }
 
     @Override

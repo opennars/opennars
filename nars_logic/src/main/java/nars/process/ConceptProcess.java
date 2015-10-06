@@ -194,7 +194,7 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         }
         Task pb = getBelief();
         if (pb!=null) {
-            float p = pt.getPriority();
+            float p = pb.getPriority();
             //if (Float.isNaN(p)) p = 0; //NaN should not happen
             total += p;
             n++;

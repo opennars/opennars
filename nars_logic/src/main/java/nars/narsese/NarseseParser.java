@@ -534,11 +534,13 @@ public class NarseseParser extends BaseParser<Object>  {
             super("'ValidAtomChar'");
         }
 
+        @Override
         public MatcherType getType()
         {
             return MatcherType.TERMINAL;
         }
 
+        @Override
         public <V> boolean match(MatcherContext<V> context) {
             int count = 0;
             int max= context.getInputBuffer().length() - context.getCurrentIndex();

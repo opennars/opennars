@@ -552,9 +552,9 @@ public class Terms {
 //        return t;
 //    }
 
-    public static Term[] toSortedSetArray(final Collection<Term> a, final Collection<Term> b) {
-        return toSortedSetArray(a, b);
-    }
+//    public static Term[] toSortedSetArray(final Collection<Term> a, final Collection<Term> b) {
+//        return toSortedSetArray(a, b);
+//    }
 
     public static Term[] toSortedSetArray(final Term... arg) {
         switch (arg.length) {
@@ -602,13 +602,13 @@ public class Terms {
         */
     }
 
-    public static <T extends Term> T[] toSortedSetArray(final Collection<T>... c) {
-        TreeSet<T> t = new TreeSet<>();
-        for (Collection<T> it : c) {
-            t.addAll(it);
-        }
-        return t.toArray((T[]) new Term[t.size()]);
-    }
+//    public static <T extends Term> T[] toSortedSetArray(final Collection<T>... c) {
+//        TreeSet<T> t = new TreeSet<>();
+//        for (Collection<T> it : c) {
+//            t.addAll(it);
+//        }
+//        return t.toArray((T[]) new Term[t.size()]);
+//    }
 
 
     /** tests if any subterms are in common, effectively a bidirectional Terms.contains(Term[], Term) */
@@ -625,37 +625,37 @@ public class Terms {
         return false;
     }
 
-    /** tests if any subterms are in common, effectively abidirectional Terms.contains(Term[], Term) */
-    public static boolean shareAnySubTerms(Compound a, Compound b) {
-        return shareAnyTerms(a.term, b.term);
-    }
-
-
-    public static int compareSubterms(final Term[] a, final Term[] b) {
-        int al = a.length;
-        int l = Integer.compare(al, b.length);
-        if (l!=0) return l;
-
-        for (int i = 0; i < al; i++) {
-            Term x = a[i];
-            Term y = b[i];
-            int ca = x.compareTo(y);
-            if (ca != 0) return ca;
-        }
-
-        return 0;
-    }
-    public static boolean equalSubterms(final Term[] a, final Term[] b) {
-        int al = a.length;
-        int bl = b.length;
-        if (bl!=al) return false;
-
-        for (int i = 0; i < al; i++) {
-            if (!a[i].equals(b[i])) return false;
-        }
-
-        return true;
-    }
+//    /** tests if any subterms are in common, effectively abidirectional Terms.contains(Term[], Term) */
+//    public static boolean shareAnySubTerms(Compound a, Compound b) {
+//        return shareAnyTerms(a.term, b.term);
+//    }
+//
+//
+//    public static int compareSubterms(final Term[] a, final Term[] b) {
+//        int al = a.length;
+//        int l = Integer.compare(al, b.length);
+//        if (l!=0) return l;
+//
+//        for (int i = 0; i < al; i++) {
+//            Term x = a[i];
+//            Term y = b[i];
+//            int ca = x.compareTo(y);
+//            if (ca != 0) return ca;
+//        }
+//
+//        return 0;
+//    }
+//    public static boolean equalSubterms(final Term[] a, final Term[] b) {
+//        int al = a.length;
+//        int bl = b.length;
+//        if (bl!=al) return false;
+//
+//        for (int i = 0; i < al; i++) {
+//            if (!a[i].equals(b[i])) return false;
+//        }
+//
+//        return true;
+//    }
 
     /** for printing complex terms as a recursive tree */
     public static void printRecursive(Term x) {
@@ -669,8 +669,8 @@ public class Terms {
         System.out.print(x);
         System.out.print(" (");
         System.out.print(x.op() + "[" + x.getClass().getSimpleName() + "] ");
-        System.out.print("c" + x.complexity() + ",v" + x.volume() + " ");
-        System.out.print(Integer.toBinaryString(x.structure()) + ")");
+        System.out.print("c" + x.complexity() + ",v" + x.volume() + ' ');
+        System.out.print(Integer.toBinaryString(x.structure()) + ')');
         System.out.println();
 
         if (x instanceof Compound) {

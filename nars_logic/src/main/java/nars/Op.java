@@ -83,7 +83,7 @@ public enum Op implements Serializable {
     INTERVAL(
             //TODO decide what this value should be, it overrides with IMAGE_EXT
             //but otherwise it's not used
-            String.valueOf(Symbols.INTERVAL_PREFIX) + "/",
+            String.valueOf(Symbols.INTERVAL_PREFIX) + '/',
             Op.ANY),
 
     INSTANCE("{--", 2, OpType.Relation), //should not be given a compact representation because this will not exist internally after parsing

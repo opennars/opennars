@@ -120,6 +120,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
         }
     }
 
+    @Override
     public V getEqual(Interval<K> range) {
         if (left != null && left.overlaps(range)) {
             return left.getEqual(range);
@@ -130,6 +131,7 @@ public class IntervalTreeBranch<K extends Comparable<? super K>, V> implements
         return null;
     }
 
+    @Override
     public V getContain(Interval<K> range) {
         if (left != null && left.overlaps(range)) {
             return left.getContain(range);

@@ -21,7 +21,14 @@ import java.util.List;
  */
 public class js extends TermFunction implements Mental {
 
-    private static ScriptEngine js = null;
+    private static final ThreadLocal<ScriptEngine> js = new ThreadLocal<ScriptEngine>() {
+        @Override
+        protected ScriptEngine initialValue() {
+            ScriptEngineManager factory = new ScriptEngineManager();
+            js.set(factory.getEngineByName("JavaScript"));
+            return js.get();
+        }
+    };
 
     final HashMap global = new HashMap();
 
@@ -34,10 +41,8 @@ public class js extends TermFunction implements Mental {
             super(name);
             this.function = function;
 
-            ensureJSLoaded();
-
             try {
-                this.fnCompiled = js.eval(function);
+                this.fnCompiled = js.get().eval(function);
             }
             catch (Throwable ex) {
                 ex.printStackTrace();
@@ -52,7 +57,7 @@ public class js extends TermFunction implements Mental {
 
             Object result;
             try {
-                result = js.eval(input, bindings);
+                result = js.get().eval(input, bindings);
             } catch (Throwable ex) {
                 ex.printStackTrace();
                 throw new RuntimeException(ex);
@@ -180,22 +185,12 @@ public class js extends TermFunction implements Mental {
         return bindings;
     }
 
-    protected synchronized void ensureJSLoaded() {
-        if (js == null) {
-            ScriptEngineManager factory = new ScriptEngineManager();
-            js = factory.getEngineByName("JavaScript");
-        }
-    }
 
     @Override public Object function(Operation o) {
         Term[] args = o.args();
         if (args.length < 1) {
             return null;
         }
-
-        ensureJSLoaded();
-        
-
 
         // copy over all arguments
         Term[] scriptArguments;
@@ -213,7 +208,7 @@ public class js extends TermFunction implements Mental {
         Object result;
         try {
 
-            result = js.eval(input, bindings);
+            result = js.get().eval(input, bindings);
         } catch (Throwable ex) {
             throw new RuntimeException(ex);
         }

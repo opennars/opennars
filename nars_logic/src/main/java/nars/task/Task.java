@@ -314,7 +314,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
 
 
         if (showBudget) {
-            getBudget().toBudgetStringExternal(buffer).append(" ");
+            getBudget().toBudgetStringExternal(buffer).append(' ');
         }
 
         buffer.append(contentName).append(getPunctuation());
@@ -541,7 +541,7 @@ public interface Task<T extends Compound> extends Sentence<T>, Itemized<Sentence
         */
 
             if (getEvidence().length == 0)
-                throw new RuntimeException(this + " from premise " + getParentTask() + "," + getParentBelief()
+                throw new RuntimeException(this + " from premise " + getParentTask() + ',' + getParentBelief()
                         + " yet no evidence provided");
 
             if (Global.DEBUG) {

@@ -40,7 +40,7 @@ public enum Tense {
 
     public static String tenseRelative(long then, long now) {
         long dt = then - now;
-        if (dt < 0) return "[" + dt + "]";
-        else return "[+" + dt + "]";
+        if (dt < 0) return "[" + dt + ']';
+        else return "[+" + dt + ']';
     }
 }

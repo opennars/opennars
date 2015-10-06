@@ -221,6 +221,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     }
 
 
+    @Override
     public byte[] bytes() {
         final byte[] subjBytes = getSubject().bytes();
         final byte[] predBytes = getPredicate().bytes();

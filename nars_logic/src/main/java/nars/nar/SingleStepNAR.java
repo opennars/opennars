@@ -41,6 +41,7 @@ public class SingleStepNAR extends Default {
         Runtime.getRuntime().addShutdownHook(new Thread(new RuleReport()));
     }
 
+    @Override
     protected SimpleDeriver newDeriver() {
         return new SimpleDeriver(SimpleDeriver.standard) {
 

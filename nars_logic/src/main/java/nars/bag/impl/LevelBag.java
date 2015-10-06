@@ -763,7 +763,7 @@ public class LevelBag<K, E extends Itemized<K>> extends Bag<K, E> {
 
     Iterable<E> getLevel(final int i) {
         if (level[i] == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return level[i];
     }

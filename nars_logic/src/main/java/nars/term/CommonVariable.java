@@ -90,7 +90,7 @@ public class CommonVariable extends Variable {
 
     /** variables x 10 (digits) x (1..10) (digits) cache;
      *  triangular matrix because the pairs is sorted */
-    static EnumMap<Op,CommonVariable[][]> common = new EnumMap(Op.class);
+    static final EnumMap<Op,CommonVariable[][]> common = new EnumMap(Op.class);
     static {
         for (Op o : new Op[] { Op.VAR_PATTERN, Op.VAR_QUERY, Op.VAR_INDEPENDENT, Op.VAR_DEPENDENT }) {
             CommonVariable[][] cm = new CommonVariable[10][];

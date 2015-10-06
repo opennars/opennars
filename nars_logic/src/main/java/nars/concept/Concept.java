@@ -101,7 +101,7 @@ public interface Concept extends Termed, Itemized<Term>, Serializable {
     default boolean hasQuests() {
         final TaskTable s = getQuests();
         if (s == null) return false;
-        return (s != null) && !s.isEmpty();
+        return !s.isEmpty();
     }
 
     boolean isConstant();

@@ -32,6 +32,7 @@ abstract public class AbstractSetN extends Compound implements SetTensional {
         return this.term;
     }
 
+    @Override
     public final boolean isCommutative() {
         return true;
     }

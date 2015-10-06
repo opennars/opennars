@@ -50,11 +50,17 @@ import java.util.*;
 public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Serializable {
 
     char getPunctuation();
+    @Override
     long[] getEvidence();
+    @Override
     long getCreationTime();
+    @Override
     long getOccurrenceTime();
+    @Override
     int getDuration();
+    @Override
     Sentence setCreationTime(long c);
+    @Override
     Sentence setOccurrenceTime(long o);
     //public Sentence setDuration(int d);
 
@@ -483,7 +489,9 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
      */
     void setTermShared(final T equivalentInstance);
 
+    @Override
     T getTerm();
+    @Override
     Truth getTruth();
 
     default boolean isQuestOrQuestion() {
@@ -493,14 +501,14 @@ public interface Sentence<T extends Compound> extends Cloneable, Stamp, Named<Se
         return isJudgment() || isGoal();
     }
 
-    final class ExpectationComparator implements Comparator<Sentence> {
+    final class ExpectationComparator implements Comparator<Sentence>, Serializable {
         final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.getExpectation(), b.getExpectation());
         }
     }
 
-    final class ConfidenceComparator implements Comparator<Sentence> {
+    final class ConfidenceComparator implements Comparator<Sentence>, Serializable {
         final static Comparator the = new ExpectationComparator();
         @Override public int compare(final Sentence b, final Sentence a) {
             return Float.compare(a.getConfidence(), b.getConfidence());

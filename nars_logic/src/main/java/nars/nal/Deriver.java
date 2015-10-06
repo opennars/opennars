@@ -38,7 +38,7 @@ abstract public class Deriver implements Function<ConceptProcess,Stream<Task>>, 
 
     /** thread-specific pool of RuleMatchers
         this pool is local to this deriver */
-    final transient ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
+    static final transient ThreadLocal<RuleMatch> matchers = ThreadLocal.withInitial(() -> {
         //TODO use the memory's RNG for complete deterministic reproducibility
         return new RuleMatch(new XorShift1024StarRandom(1));
     });

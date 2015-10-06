@@ -35,7 +35,7 @@ public class MatchTaskBeliefPattern extends PreCondition {
                         pStructure) + " " + pattern
         );*/
 
-        this.id = getClass().getSimpleName() + "[" + pattern.toStringCompact() + "]";
+        this.id = getClass().getSimpleName() + '[' + pattern.toStringCompact() + ']';
     }
 
     //TODO this caching is not thread-safe yet

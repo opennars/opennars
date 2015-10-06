@@ -61,7 +61,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
     public V put(final V value) {
 
 
-        V removed, removed2;
+        V removed;
 
         /*synchronized (nameTable)*/
         {
@@ -78,7 +78,7 @@ public abstract class CollectorMap<K, V extends Itemized<K>> implements Serializ
             }
 
 
-            removed2 = addItem(value);
+            V removed2 = addItem(value);
 
             if (removed != null && removed2 != null) {
                 throw new RuntimeException("Only one item should have been removed on this insert; both removed: " + removed + ", " + removed2);

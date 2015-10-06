@@ -216,6 +216,7 @@ public class ArraySortedIndex<E extends Itemized> extends SortedIndex<E> impleme
 
 
 
+    @Override
     public final int capacity() {
         return capacity;
     }

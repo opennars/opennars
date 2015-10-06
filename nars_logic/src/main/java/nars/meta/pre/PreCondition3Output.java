@@ -1,6 +1,5 @@
 package nars.meta.pre;
 
-import nars.meta.PreCondition;
 import nars.meta.RuleMatch;
 import nars.term.Term;
 import nars.term.Variable;

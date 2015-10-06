@@ -58,16 +58,16 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return make(argument);
     }
 
-    static Product<Term> make(final Term[] pre, final Term... suf) {
-        final int pLen = pre.length;
-        final int sLen = suf.length;
-        Term[] x = new Term[pLen + suf.length];
-        System.arraycopy(pre, 0, x, 0, pLen);
-        System.arraycopy(suf, 0, x, pLen, sLen);
-        return make(x);
-    }
+//    static Product make(final Term[] pre, final Term... suf) {
+//        final int pLen = pre.length;
+//        final int sLen = suf.length;
+//        Term[] x = new Term[pLen + suf.length];
+//        System.arraycopy(pre, 0, x, 0, pLen);
+//        System.arraycopy(suf, 0, x, pLen, sLen);
+//        return make(x);
+//    }
 
-    static <T extends Term> Product<T> make(final Collection<T> t) {
+    static <T extends Term> Product<? extends T> make(final Collection<T> t) {
         return make(t.toArray((T[]) new Term[t.size()]));
     }
 //    static Product makeFromIterable(final Iterable<Term> t) {
@@ -84,7 +84,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
     }
 
     /** creates from a sublist of a list */
-    static Product<Term> make(final List<Term> l, int from, int to) {
+    static Product make(final List<Term> l, int from, int to) {
         Term[] x = new Term[to - from];
 
         for (int j = 0, i = from; i < to; i++)
@@ -100,7 +100,7 @@ public interface Product<T extends Term> extends Term, Iterable<T> {
         return new ProductN<>(arg);
     }
 
-    static Product<Term> make(final String... argAtoms) {
+    static Product make(final String... argAtoms) {
         return Product.make( Atom.the(argAtoms) );
     }
 

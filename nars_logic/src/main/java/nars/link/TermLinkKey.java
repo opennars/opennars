@@ -6,6 +6,7 @@ import nars.term.Termed;
 
 public interface TermLinkKey extends Termed /* byte[] holds the prefix part */ {
 
+    @Override
     Term getTerm();
 
 
