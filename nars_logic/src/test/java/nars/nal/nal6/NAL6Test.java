@@ -1,5 +1,6 @@
 package nars.nal.nal6;
 
+import nars.Global;
 import nars.NAR;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
@@ -22,6 +23,7 @@ public class NAL6Test extends AbstractNALTest {
 
     public NAL6Test(Supplier<NAR> b) {
         super(b);
+        Global.DEBUG = true;
     }
 
     @Parameterized.Parameters(name = "{0}")

@@ -428,7 +428,7 @@
 
 //second level variable introduction
 
-    (A --> L), ((A --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Intersection)
+    (A --> L), ((A --> S) ==> R) |- ((&&,(#X --> L),(#X --> S)) ==> R), (Truth:Induction)
     (A --> L), ((&&,(A --> S),A_1..n) ==> R), substitute(A,#X) |- ((&&,(#X --> L),(#X --> S),A_1..n) ==> R), (Truth:Intersection)
 
 ////NAL7/8 specific inference ////////////////////////////////////////////////////////////////////////////////////
