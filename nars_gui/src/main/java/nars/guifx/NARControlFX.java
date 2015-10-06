@@ -189,7 +189,7 @@ public class NARControlFX extends HBox {
         private final SimpleStringProperty cpuLabel;
 
         private final NSlider cpuSlider;
-
+        boolean running = false; //will be inverted first time, so false
 
         public LoopPane(NARLoop loop) {
             super();
@@ -201,7 +201,8 @@ public class NARControlFX extends HBox {
             stepButton = JFX.newIconButton(FontAwesomeIcon.STEP_FORWARD);
             cpuLabel = new SimpleStringProperty("CPU");
 
-            cpuSlider = new NSlider(cpuLabel, 100, 30.0, NSlider.BarSlider, -1);
+            cpuSlider = new NSlider(cpuLabel, 100, 30.0, NSlider.BarSlider,
+                    0.5 /* initial value */);
             //cpuSlider.min.set(0);
             //cpuSlider.max.set(2000);
 
@@ -212,13 +213,16 @@ public class NARControlFX extends HBox {
 
             runButton.setOnAction(e -> {
 
-                if (loop.getPeriodMS() < 0) {
-                    tryStart();
+                running = !running;
+
+                if (running) {
+                    updateLoop();
                 } else {
                     pause();
                 }
 
             });
+
 
 
             stepButton.setTooltip(new Tooltip("Step"));
@@ -232,7 +236,7 @@ public class NARControlFX extends HBox {
                 }
             });
 
-            pause();
+
 
 //        Slider cpuSlider = new Slider(0, 1, 0);
 //        cpuSlider.setOrientation(Orientation.VERTICAL);
@@ -241,17 +245,6 @@ public class NARControlFX extends HBox {
 //        cpuSlider.setShowTickMarks(true);
 //        getChildren().add(cpuSlider);
 //
-
-            getChildren().addAll(
-                    new FlowPane(runButton, cpuSlider, stepButton),
-                    new FlowPane(label)
-            );
-
-        }
-
-        private void tryStart() {
-            //TODO make sure only one thread is running, maybe with singleThreadExecutor
-
 
 
 
@@ -268,9 +261,14 @@ public class NARControlFX extends HBox {
 
             });
 
-            updateLoop();
+            pause();
 
             say("ready");
+
+            getChildren().addAll(
+                    new FlowPane(runButton, cpuSlider, stepButton),
+                    new FlowPane(label)
+            );
 
         }
 
@@ -283,7 +281,8 @@ public class NARControlFX extends HBox {
                     2000.0 * v // / (1.0 - v)
             );*/
             float logScale = 50f;
-            int nMS = (int)Math.round((1.0 - Math.log(1+v*logScale)/Math.log(1+logScale)) * 1024.0);
+            int minDelay = 17; //60hz
+            int nMS = (int)Math.round((1.0 - Math.log(1+v*logScale)/Math.log(1+logScale)) * 1024.0) + minDelay;
 
             if (loop.setPeriodMS(nMS)) {
 
@@ -292,6 +291,7 @@ public class NARControlFX extends HBox {
                 final int MS = nMS;
 
                 runLater(() -> {
+                    cpuSlider.setMouseTransparent(false);
                     stepButton.setDisable(true);
                     say("set period=" + MS + "ms");
                 });
@@ -305,6 +305,7 @@ public class NARControlFX extends HBox {
                 say("ready");
 
                 stepButton.setDisable(false);
+                cpuSlider.setMouseTransparent(true);
                 cpuSlider.setOpacity(0.25);
                 cpuLabel.setValue("OFF");
             });

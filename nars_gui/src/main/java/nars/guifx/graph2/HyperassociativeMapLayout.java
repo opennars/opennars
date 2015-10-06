@@ -1,9 +1,9 @@
 package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
+import com.google.common.collect.Lists;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  */
 public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, TermEdge> {
     double scaleFactor = 1;
-    private List termList;
+    private TermNode[] termList;
 
     public HyperassociativeMapLayout() {
         this(2);
@@ -22,11 +22,16 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     }
 
     @Override
+    public void init(TermNode n) {
+        n.move(Math.random()*200,Math.random()*200);
+    }
+
+    @Override
     public void run(NARGraph graph, int i) {
 
         init();
 
-        this.termList = graph.termList;
+        this.termList = graph.displayed;
 
         align(i);
 
@@ -86,11 +91,12 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
 
     @Override
     protected Collection<TermNode> getVertices() {
-        scaleFactor = 150 + 70 * Math.sqrt(1 + termList.size());
+        scaleFactor = 150 + 70 * Math.sqrt(1 + termList.length);
         setScale(scaleFactor);
 
 
-        return termList;
+        //TODO avoid copying
+        return Lists.newArrayList(termList);
     }
 
     @Override
@@ -100,7 +106,7 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
 //                    }
 
         for (final TermEdge e : nodeToQuery.getEdges()) {
-            if (e.visible)
+            if (e!=null && e.visible)
                 updateFunc.accept(e.otherNode(nodeToQuery));
         }
 

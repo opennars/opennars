@@ -152,6 +152,7 @@ public class TestNAR  {
         return this;
     }
 
+
     public TestNAR mustOutput(long withinCycles, String task) throws InvalidInputException {
         if (outputEvents == null) outputEvents = new Topic[] { nar.memory().eventDerived, nar.memory().eventTaskRemoved };
         return mustEmit(outputEvents, withinCycles, task);

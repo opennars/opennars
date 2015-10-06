@@ -1,19 +1,8 @@
 package nars.guifx.graph2;
 
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.scene.CacheHint;
 import javafx.scene.Group;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.StrokeType;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextBoundsType;
 import nars.concept.Concept;
-import nars.guifx.JFX;
-import nars.guifx.NARfx;
 import nars.term.Term;
 
 import java.util.LinkedHashMap;
@@ -22,7 +11,7 @@ import java.util.Map;
 /**
  * Created by me on 9/5/15.
  */
-public class TermNode extends Group {
+abstract public class TermNode extends Group {
 
 
     final public Map<Term, TermEdge> edge = new LinkedHashMap(8);
@@ -33,14 +22,11 @@ public class TermNode extends Group {
     TermEdge[] edges = null;
 
     protected final Term term;
-    private final Text label;
-    public final Polygon base;
-    Concept c = null;
 
     /** priority normalized to visual context */
     public double priNorm = 0;
 
-
+    public Concept c = null;
 
     DoubleSummaryReusableStatistics termLinkStat = new DoubleSummaryReusableStatistics();
     DoubleSummaryReusableStatistics taskLinkStat = new DoubleSummaryReusableStatistics();
@@ -53,8 +39,7 @@ public class TermNode extends Group {
     private double tx;
     private double ty;
 
-    private boolean hover = false;
-    private Color stroke;
+    //private Color stroke;
 
     private static TermEdge[] empty = new TermEdge[0];
 
@@ -62,84 +47,13 @@ public class TermNode extends Group {
     public TermNode(Term t) {
         super();
 
-        this.label = new Text(t.toStringCompact());
-        base = JFX.newPoly(6, 2.0);
-
+        setManaged(false);
 
         this.term = t;
-        //this.c = nar.concept(t);
-
-        randomPosition(150, 150);
-
-        label.setFill(Color.WHITE);
-        label.setBoundsType(TextBoundsType.VISUAL);
-
-        label.setPickOnBounds(false);
-        label.setMouseTransparent(true);
-        label.setFont(HexagonsVis.nodeFont);
-        label.setTextAlignment(TextAlignment.CENTER);
-        label.setSmooth(false);
-        //titleBar.setManaged(false);
-        //label.setBoundsType(TextBoundsType.VISUAL);
-
-        base.setStrokeType(StrokeType.INSIDE);
-
-        base.setOnMouseClicked(e -> {
-            //System.out.println("click " + e.getClickCount());
-            if (e.getClickCount() == 2) {
-                if (c != null)
-                    NARfx.run((a,b) -> {
-                        //...
-                    });
-            }
-        });
-
-        EventHandler<MouseEvent> mouseActivity = e -> {
-            if (!hover) {
-                base.setStroke(Color.ORANGE);
-                base.setStrokeWidth(0.05);
-                hover = true;
-            }
-        };
-        //base.setOnMouseMoved(mouseActivity);
-        base.setOnMouseEntered(mouseActivity);
-        base.setOnMouseExited(e -> {
-            if (hover) {
-                base.setStroke(null);
-                base.setStrokeWidth(0);
-                hover = false;
-            }
-        });
-
-        setPickOnBounds(false);
-
-
-        getChildren().setAll(base, label);//, titleBar);
-
-
-        //update();
-
-        base.setLayoutX(-0.5f);
-        base.setLayoutY(-0.5f);
-
-
-        label.setLayoutX(-getLayoutBounds().getWidth() / (2) + 0.25);
-
-        base.setCacheHint(CacheHint.SCALE_AND_ROTATE);
-        base.setCache(true);
-
-        label.setCacheHint(CacheHint.DEFAULT);
-        label.setCache(true);
-
-
-
 
     }
 
 
-    public void randomPosition(double bx, double by) {
-        move(NARGraph.rng.nextDouble() * bx, NARGraph.rng.nextDouble() * by);
-    }
 
 //    /**
 //     * NAR update thread
@@ -171,7 +85,7 @@ public class TermNode extends Group {
         setScaleX(scale);
         setScaleY(scale);
 
-        float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
+        //float conf = c != null ? c.getBeliefs().getConfidenceMax(0, 1) : 0;
             /*base.setFill(NARGraph.vis.get().getVertexColor(priNorm, conf));*/
 
         //setOpacity(0.75f + 0.25f * vertexScale);
@@ -261,7 +175,7 @@ public class TermNode extends Group {
         //return edges = edge.values().toArray(new TermEdge[s]);
 
         TermEdge[] e;
-        if (edges == null || edges.length == s)
+        if (edges == null || edges.length != s)
             e = new TermEdge[s];
         else
             e = edges; //re-use existing array
@@ -291,4 +205,7 @@ public class TermNode extends Group {
     }
 
 
+    public boolean visible() {
+        return getParent()!=null;
+    }
 }

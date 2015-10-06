@@ -20,7 +20,6 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
 import nars.term.transform.FindSubst;
-import nars.truth.DefaultTruth;
 import nars.truth.Truth;
 
 import java.util.List;
@@ -72,7 +71,10 @@ public class RuleMatch extends FindSubst {
      */
     public void start(ConceptProcess p) {
         this.premise = p;
-        taskBelief.set(p.getTask(), p.getTermLink().getTerm());
+        taskBelief.set(
+                p.getTask().getTerm(),
+                p.getTermLink().getTerm()
+        );
     }
 
 
@@ -343,7 +345,7 @@ public class RuleMatch extends FindSubst {
 
         final Truth truth = f.get(T, B);
 
-        final float minConf = DefaultTruth.DEFAULT_TRUTH_EPSILON;
+        final float minConf = 0; //DefaultTruth.DEFAULT_TRUTH_EPSILON;
         return (validJudgmentOrGoalTruth(truth, minConf)) ? truth : null;
     }
 

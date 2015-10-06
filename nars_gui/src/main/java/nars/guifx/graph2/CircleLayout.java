@@ -3,8 +3,6 @@ package nars.guifx.graph2;
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.function.ToDoubleFunction;
 
 /**
@@ -12,23 +10,27 @@ import java.util.function.ToDoubleFunction;
  */
 public class CircleLayout<N extends TermNode, E extends TermEdge> implements IterativeLayout<N,E> {
 
+    @Override
+    public void init(N n) {
+        //n/a
+    }
 
-    public void run(Collection<N> verts,
+    public void run(TermNode[] verts,
                     //PreallocatedResultFunction<N,double[]> getPosition,
-                    ToDoubleFunction<N> radiusFraction,
-                    ToDoubleFunction<N> angle,
-                    NARGraph.PairConsumer<N, double[]> setPosition) {
+                    ToDoubleFunction<TermNode> radiusFraction,
+                    ToDoubleFunction<TermNode> angle,
+                    NARGraph.PairConsumer<TermNode, double[]> setPosition) {
 
 
         double d[] = new double[2];
 
-        verts.forEach(v -> {
+        for (TermNode v : verts) {
             final double r = radiusFraction.applyAsDouble(v);
             final double a = angle.applyAsDouble(v);
             d[0] = Math.cos(a) * r;
             d[1] = Math.sin(a) * r;
             setPosition.accept(v, d);
-        });
+        }
 
     }
 
@@ -39,11 +41,11 @@ public class CircleLayout<N extends TermNode, E extends TermEdge> implements Ite
 
     @Override
     public void run(NARGraph graph, int iterations) {
-        final List termList = graph.termList;
+        final TermNode[] termList = graph.displayed;
 
         double[] i = new double[1];
-        double numFraction = Math.PI * 2.0 * 1.0 / termList.size();
-        double radiusMin = (termList.size() + 1) * 10;
+        double numFraction = Math.PI * 2.0 * 1.0 / termList.length;
+        double radiusMin = (termList.length + 1) * 10;
         double radiusMax = 3f * radiusMin;
 
         run(termList,

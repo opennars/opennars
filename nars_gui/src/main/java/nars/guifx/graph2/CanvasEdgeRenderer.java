@@ -42,7 +42,7 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
         TermNode aSrc = i.aSrc;
         TermNode bSrc = i.bSrc;
 
-        if (!aSrc.isVisible() || !bSrc.isVisible()) {
+        if (!aSrc.visible() || !bSrc.visible()) {
             i.visible = false;
             return;
         }

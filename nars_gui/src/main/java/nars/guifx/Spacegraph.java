@@ -49,12 +49,12 @@ public class Spacegraph extends ZoomFX {
         verts.getChildren().setAll(n);
     }
 
-    public void addEdges(Node... n) {
-        edges.getChildren().addAll(n);
-    }
-    public void setEdges(Node... n) {
-        edges.getChildren().setAll(n);
-    }
+//    public void addEdges(Node... n) {
+//        edges.getChildren().addAll(n);
+//    }
+//    public void setEdges(Node... n) {
+//        edges.getChildren().setAll(n);
+//    }
 
     public void removeNodes(Node... n) {
         verts.getChildren().removeAll(n);
@@ -62,9 +62,9 @@ public class Spacegraph extends ZoomFX {
     public void removeNodes(Collection<Node> n) {
         verts.getChildren().removeAll(n);
     }
-    public void removeEdges(Collection<Node> n) {
-        edges.getChildren().removeAll(n);
-    }
+//    public void removeEdges(Collection<Node> n) {
+//        edges.getChildren().removeAll(n);
+//    }
 
 
     public ObservableList<Node> getVertices() {
@@ -142,8 +142,6 @@ public class Spacegraph extends ZoomFX {
     }
 
     public static Spacegraph getSpace(final Node n) {
-        //TODO cache this?
-
         Node p = n;
         while ((p = p.getParent())!=null) {
             if (p instanceof Spacegraph) return ((Spacegraph)p);
@@ -156,7 +154,7 @@ public class Spacegraph extends ZoomFX {
         return ((int) y) + .5;
     }
 
-    public final Group edges = new Group();
+    //public final Group edges = new Group();
     public final Group verts = new Group();
 
 
@@ -164,21 +162,22 @@ public class Spacegraph extends ZoomFX {
     public Spacegraph() {
         super();
 
+        setCacheShape(false);
         //getChildren().add(0, grid = new GridCanvas(true));
 
-        verts.maxWidth(Double.MAX_VALUE);
-        verts.maxHeight(Double.MAX_VALUE);
-        edges.maxWidth(Double.MAX_VALUE);
-        edges.maxHeight(Double.MAX_VALUE);
+//        verts.maxWidth(Double.MAX_VALUE);
+//        verts.maxHeight(Double.MAX_VALUE);
+//        edges.maxWidth(Double.MAX_VALUE);
+//        edges.maxHeight(Double.MAX_VALUE);
 
         verts.setPickOnBounds(false);
-        edges.setPickOnBounds(false);
+        //edges.setPickOnBounds(false);
 
         //content().add(layers);
 
 
 
-        content().addAll(edges,verts);
+        content().addAll(/*edges,*/verts);
 
         //verts.setAutoSizeChildren(false);
         //edges.setAutoSizeChildren(false);

@@ -23,4 +23,7 @@ public interface IterativeLayout<V,E> {
     default public void pre(Collection<V> vertices) {
 
     }
+
+    void init(V n);
+
 }

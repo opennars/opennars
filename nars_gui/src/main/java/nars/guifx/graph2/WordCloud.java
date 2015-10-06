@@ -17,7 +17,7 @@ import java.io.IOException;
 public class WordCloud extends DefaultNARGraph {
 
     public WordCloud(NAR nar) {
-        super(nar, new V(), new L(), new NARGrapher(64));
+        super(nar, new V(), new L(), 64);
     }
     public static void main(String[] args) throws IOException {
 
@@ -49,7 +49,7 @@ public class WordCloud extends DefaultNARGraph {
         }
 
         @Override
-        public TermNode newNode(Term term) {
+        public HexTerm2Node newNode(Term term) {
             return super.newNode(term);
         }
 

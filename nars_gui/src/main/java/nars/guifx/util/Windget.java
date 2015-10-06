@@ -133,19 +133,19 @@ public class Windget extends DefaultWindow {
                 }
 
             });
-            setOnMouseDragged(e -> {
-
-                if (dragging == null) {
-
-                    win.getSpace().addEdges(dragging = new TriangleEdge(RectPort.this, e));
-                }
-                else {
-                    dragging.update(e);
-                }
-
-                e.consume();
-
-            });
+//            setOnMouseDragged(e -> {
+//
+//                if (dragging == null) {
+//
+//                    win.getSpace().addEdges(dragging = new TriangleEdge(RectPort.this, e));
+//                }
+//                else {
+//                    dragging.update(e);
+//                }
+//
+//                e.consume();
+//
+//            });
 
             /*setOnMouseDragReleased(e -> {
             });*/

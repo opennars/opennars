@@ -1,11 +1,8 @@
 package nars.meter;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Global;
-import nars.Symbols;
 import nars.concept.Concept;
 import nars.io.Texts;
 import nars.link.TaskLink;
@@ -22,13 +19,10 @@ import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
 import nars.term.transform.TermVisitor;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMaskSubgraph;
 import org.jgrapht.graph.DirectedMultigraph;
 import org.jgrapht.graph.MaskFunctor;
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -52,18 +46,46 @@ import java.util.*;
  */
 public class DerivationGraph extends DirectedMultigraph {
 
-    public static class DerivationPattern {
-        //contain:
+    public static class DerivationPattern implements Comparable<PremiseKey> {
+
+
         //  premise key
-        //  example premises, and NL labels (NLP training)
+        public final PremiseKey key;
+
+
+        //  example premises (incl optional NL labels (NLP training) per task)
+        //public final Set<Premise> examplePremises = new HashSet();
+        //Pair<Premise,Task..
+
+        //  results
+        public final Set<TaskResult> actual = new HashSet();
 
         //  expected results
-        //  results
+        //public final Set<Task> expected = new HashSet();
+
+        public DerivationPattern(PremiseKey key) {
+            this.key = key;
+        }
+
+        @Override
+        public int hashCode() {
+            return key.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return key.equals(o);
+        }
+
+        @Override
+        public int compareTo(PremiseKey p) {
+            return key.compareTo(p);
+        }
 
 
     }
 
-    public final Multimap<PremiseKey, Set<TaskResult>> premiseResult;
+    public final Map<PremiseKey, DerivationPattern> premiseResult;
     Map<Object,Double> edgeWeights = Global.newHashMap();
 
     private final boolean includeDerivedBudget;
@@ -74,15 +96,23 @@ public class DerivationGraph extends DirectedMultigraph {
     static final NarseseParser np = NarseseParser.the();
     static final Map<String, String> parsedTerm = new HashMap(1024);
 
-    public void add(ConceptProcess n, List<Task> derived) {
-        add(n.getConcept(), n.getTaskLink(), n.getTermLink(), n.getBelief(), derived, n.time());
+    public DerivationPattern add(ConceptProcess n, Task... derived) {
+        return add(n.getConcept(), n.getTaskLink(), n.getTermLink(), n.getBelief(), n.time(), derived);
     }
 
-    public void add(Concept c, TaskLink tasklink, TermLink termlink, Task belief, Iterable<Task> result, long now) {
+//    public DerivationPattern addExpected(ConceptProcess n, Task... expected) {
+//        DerivationPattern p = add(n);
+//        Collections.addAll(p.expected, expected);
+//        return p;
+//    }
+
+    public DerivationPattern add(Concept c, TaskLink tasklink, TermLink termlink, Task belief, long now, Task... result) {
 
         ObjectIntHashMap<Term> unique = new ObjectIntHashMap();
 
-        PremiseKey premise = newPremise(c.getTerm(), tasklink, termlink, belief, unique, now);
+        PremiseKey premise = newPremise(tasklink.getTask(),
+                termlink.getTerm(), belief, unique, now);
+
         addVertex(premise);
 
         TermPattern conceptTerm = addTermPattern(c.getTerm(), unique);
@@ -118,7 +148,9 @@ public class DerivationGraph extends DirectedMultigraph {
 
         }
 
-        premiseResult.put(premise, resultSet);
+        DerivationPattern pattern = premiseResult.computeIfAbsent(premise, (p) -> new DerivationPattern(premise));
+        pattern.actual.addAll(resultSet);
+        return pattern;
 
     }
 
@@ -137,7 +169,9 @@ public class DerivationGraph extends DirectedMultigraph {
     public DerivationGraph(boolean includeDerivedBudget, boolean includeDerivedTruth) {
         super((Class)null);
 
-        premiseResult = MultimapBuilder.treeKeys().hashSetValues().build();
+        premiseResult =
+                new TreeMap();
+                //Global.newHashMap();
 
 
         this.includeDerivedBudget = includeDerivedBudget;
@@ -148,9 +182,9 @@ public class DerivationGraph extends DirectedMultigraph {
         return premiseResult.size();
     }
 
-    public void print(String filePath) throws FileNotFoundException {
-        print(new PrintStream(new FileOutputStream(new File(filePath))));
-    }
+//    public void print(String filePath) throws FileNotFoundException {
+//        print(new PrintStream(new FileOutputStream(new File(filePath))));
+//    }
 
     abstract public static class Keyed implements Comparable<Keyed> {
 
@@ -183,29 +217,52 @@ public class DerivationGraph extends DirectedMultigraph {
 
     public static class PremiseKey extends Keyed  {
 
-        private final String conceptKey;
+        //private final String conceptKey;
         private final String taskLinkKey;
         private final String termLinkKey;
         public final String key;
         private final String beliefKey;
+        private final int beliefVolume;
+        private final int taskVolume;
+        private final int termVolume;
 
 
-        public PremiseKey(Term concept, TaskLink tasklink, TermLink termlink, Task belief, ObjectIntHashMap<Term> unique, long now, boolean truth, boolean budget) {
-            this.conceptKey = genericString(concept.getTerm(), unique);
-            this.taskLinkKey = genericString(tasklink.getTask(), unique, now, truth, budget, false);
-            this.beliefKey = belief == null ? "null ; null ; " : genericString(belief, unique, now, truth, budget, false);
-            this.termLinkKey = termlink == null ? "null" : genericString(termlink.getTerm(), unique);
-            this.key = (conceptKey + "; " + taskLinkKey + "; " + termLinkKey + "; " + beliefKey).trim();
+        public PremiseKey(Task tasklink, Term termlink, Task belief, ObjectIntHashMap<Term> unique, long now, boolean truth, boolean budget) {
+            //this.conceptKey = genericString(concept.getTerm(), unique);
+            this.taskLinkKey = genericString(tasklink, unique, now, truth, budget, false);
+            this.termLinkKey = termlink == null ? "_" : genericString(termlink, unique);
+            this.beliefKey = belief == null ? "_" : genericString(belief, unique, now, truth, budget, false);
+
+            this.taskVolume = tasklink.getTerm().volume();
+            this.termVolume = termlink.getTerm().volume();
+            this.beliefVolume = (belief!=null) ? belief.getTerm().volume() : 0;
+
+            this.key = (taskLinkKey + ":" +
+                    termLinkKey + ":" +
+                    beliefKey).trim();
         }
 
         @Override
         public String name() { return key; }
 
-
+        @Override
+        public int compareTo(Keyed o) {
+            if (o instanceof PremiseKey) {
+                PremiseKey pk = (PremiseKey)o;
+                int i = Integer.compare(taskVolume, pk.taskVolume);
+                if (i != 0) return i;
+                int j = Integer.compare(termVolume, pk.termVolume);
+                if (j != 0) return j;
+                int k = Integer.compare(beliefVolume, pk.beliefVolume);
+                if (k != 0) return k;
+                return super.compareTo(o);
+            }
+            return super.compareTo(o);
+        }
     }
 
 
-    public class TaskResult extends Keyed {
+    public static class TaskResult extends Keyed {
 
         public final String key;
 
@@ -251,8 +308,8 @@ public class DerivationGraph extends DirectedMultigraph {
 
     }
 
-    public PremiseKey newPremise(Term concept, TaskLink tasklink, TermLink termlink, Task belief, ObjectIntHashMap<Term> unique, long now) {
-        return new PremiseKey(concept, tasklink, termlink, belief, unique, now, includeDerivedTruth, includeDerivedBudget);
+    public PremiseKey newPremise(Task tasklink, Term termlink, Task belief, ObjectIntHashMap<Term> unique, long now) {
+        return new PremiseKey(tasklink, termlink, belief, unique, now, includeDerivedTruth, includeDerivedBudget);
     }
 
 //    public NARReaction record(NAR n) {
@@ -364,7 +421,7 @@ public class DerivationGraph extends DirectedMultigraph {
     public static String genericLiteral(Term c, ObjectIntHashMap<Term> unique) {
         c.recurseTerms(new TermVisitor() {
             @Override public void visit(Term t, Term superterm) {
-                if (t instanceof Atom) {
+                if ((t instanceof Atom) && (!(t instanceof Variable))) {
                     unique.getIfAbsentPut(t, unique.size());
                 }
             }
@@ -375,7 +432,7 @@ public class DerivationGraph extends DirectedMultigraph {
 
         final String[] s = new String[1];
         if (c instanceof Compound)
-            s[0] = ((Compound)c).toString(false);
+            s[0] = c.toString(false);
         else
             s[0] = c.toString();
 
@@ -391,21 +448,28 @@ public class DerivationGraph extends DirectedMultigraph {
 
     }
 
+    public static String genericString(Task s, long now, boolean includeTruth) {
+        return genericString(s, new ObjectIntHashMap<>(), now, includeTruth);
+    }
+
     public static String genericString(Task s, ObjectIntHashMap<Term> unique, long now, boolean includeTruth) {
         String t = genericString(s.getTerm(), unique);
 
-        t += "; " + Symbols.getPunctuationWord( s.getPunctuation() ) + " ";
+        t += s.getPunctuation();
 
-        t += "; ";
+
         if (includeTruth) {
+            t += " %";
             if (s.getTruth() != null)
                 t += Texts.n2(s.getFrequency()) + ";" + Texts.n2(s.getConfidence());
             else
                 t += "?;?";
+            t += "%";
         }
 
+
         if (!s.isEternal()) {
-            t += "; " + Tense.tenseRelative(s.getOccurrenceTime(), now);
+            t += " " + Tense.tenseRelative(s.getOccurrenceTime(), now);
         }
 
         return t;
@@ -426,7 +490,8 @@ public class DerivationGraph extends DirectedMultigraph {
             return t.toString();
         }
         else if (t instanceof Variable) {
-            return t.toString();
+            //return t.toString();
+            return genericLiteral(t, unique);
         }
         else if (t instanceof Compound) {
             return genericLiteral(t, unique);
@@ -443,57 +508,57 @@ public class DerivationGraph extends DirectedMultigraph {
         return premiseResult.toString();
     }
 
-    public void print(PrintStream p) {
-
-        for (PremiseKey premise : premiseResult.keySet()) {
-            Collection<Set<TaskResult>> resultGroups = premiseResult.get(premise);
-            //int g = 0;
-
-
-            if (resultGroups.isEmpty()) {
-                p.println(premise + ";\t DERIVE; " +  "; null");
-            }
-
-            for (Set<TaskResult> result : resultGroups) {
-
-                if (result.isEmpty()) {
-                    p.println(premise + ";\t DERIVE; " +  "; null");
-                }
-                else {
-                    for (TaskResult task : result) {
-                        p.println(premise + ";\t DERIVE; " +  "; " + task);
-                    }
-                }
-                //g++;
-            }
-        }
-
-        p.println(vertexSet().size() + " " + edgeSet().size());
-
-
-        SummaryStatistics s = new SummaryStatistics();
-        for (Double d : edgeWeights.values())
-            s.addValue(d);
-        //System.out.println("weights: " + s);
-
-        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider() {
-            @Override
-            public String getVertexName(Object vertex) {
-                return super.getVertexName(vertex);
-            }
-        }, new IntegerEdgeNameProvider(), new StringEdgeNameProvider() {
-            @Override
-            public String getEdgeName(Object edge) {
-                return super.getEdgeName(edge) + "\"\n\tweight \"" + getEdgeWeight(edge) ;
-            }
-        });
-        gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
-        try {
-            gme.export(new FileWriter("/tmp/g.gml"), weightAtleast(0.5 * (s.getMean() + s.getGeometricMean())));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void print(PrintStream p) {
+//
+//        for (PremiseKey premise : premiseResult.keySet()) {
+//            Collection<DerivationPattern> resultGroups = premiseResult.get(premise);
+//            //int g = 0;
+//
+//
+//            if (resultGroups.isEmpty()) {
+//                p.println(premise + ";\t DERIVE; " +  "; null");
+//            }
+//
+//            for (Set<TaskResult> result : resultGroups) {
+//
+//                if (result.isEmpty()) {
+//                    p.println(premise + ";\t DERIVE; " +  "; null");
+//                }
+//                else {
+//                    for (TaskResult task : result) {
+//                        p.println(premise + ";\t DERIVE; " +  "; " + task);
+//                    }
+//                }
+//                //g++;
+//            }
+//        }
+//
+//        p.println(vertexSet().size() + " " + edgeSet().size());
+//
+//
+//        SummaryStatistics s = new SummaryStatistics();
+//        for (Double d : edgeWeights.values())
+//            s.addValue(d);
+//        //System.out.println("weights: " + s);
+//
+//        GmlExporter gme = new GmlExporter(new IntegerNameProvider(), new StringNameProvider() {
+//            @Override
+//            public String getVertexName(Object vertex) {
+//                return super.getVertexName(vertex);
+//            }
+//        }, new IntegerEdgeNameProvider(), new StringEdgeNameProvider() {
+//            @Override
+//            public String getEdgeName(Object edge) {
+//                return super.getEdgeName(edge) + "\"\n\tweight \"" + getEdgeWeight(edge) ;
+//            }
+//        });
+//        gme.setPrintLabels(GmlExporter.PRINT_EDGE_VERTEX_LABELS);
+//        try {
+//            gme.export(new FileWriter("/tmp/g.gml"), weightAtleast(0.5 * (s.getMean() + s.getGeometricMean())));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private DirectedMaskSubgraph weightAtleast(double v) {
         MaskFunctor e = new MaskFunctor() {

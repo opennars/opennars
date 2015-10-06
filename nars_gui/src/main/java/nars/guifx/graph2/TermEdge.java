@@ -1,6 +1,5 @@
 package nars.guifx.graph2;
 
-import javafx.scene.Group;
 import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -8,7 +7,7 @@ import nars.link.TermLink;
 /**
  * Created by me on 9/5/15.
  */
-public class TermEdge extends Group /*implements ChangeListener*/ {
+public class TermEdge /*implements ChangeListener*/ {
 
 
     public final TermNode bSrc;
@@ -30,7 +29,7 @@ public class TermEdge extends Group /*implements ChangeListener*/ {
     public TermEdge(TermNode aSrc, TermNode bSrc) {
         super();
 
-        setVisible(true);
+
 
         //setAutoSizeChildren(true);
 

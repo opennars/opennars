@@ -90,7 +90,7 @@ public class DemoTimeline  {
         double d = 150.0; //duration window
 
         public TaskTimelinePane(NAR n) {
-            super(n);
+            super(n,64);
 
             this.nar = n;
 

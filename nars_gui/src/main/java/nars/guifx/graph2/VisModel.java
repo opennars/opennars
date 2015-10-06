@@ -5,9 +5,9 @@ import nars.term.Term;
 import java.util.function.Consumer;
 
 /** graph node visualization */
-public interface VisModel extends Consumer<TermNode> {
+public interface VisModel<T extends TermNode> extends Consumer<T> {
 
-    TermNode newNode(Term t);
+    T newNode(Term t);
 
 
 //    void apply(TermNode t);

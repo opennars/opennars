@@ -16,6 +16,9 @@ import java.util.function.IntFunction;
  * are reusable and null-terminated. so if the size shrinks,
  * it does not need to reallocate or pad the array with nulls.
  *
+ * unless the synchronized methods are used,
+ * udpates may contain inconsistent data.
+ *
  * use C[] nullTerminatedArray() to access this array, don't
  * change it without a good reason (it will be shared), and
  * iterate it in sequence and stop at the first null (this is the

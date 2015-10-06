@@ -7,14 +7,13 @@ import nars.NAR;
 public class DefaultNARGraph extends NARGraph {
 
     public DefaultNARGraph(NAR nar, int capacity) {
-        this(nar, new HexagonsVis(), new HyperassociativeMapLayout(), new NARGrapher(capacity));
+        this(nar, new HexagonsVis(), new HyperassociativeMapLayout(), capacity);
     }
 
-    public DefaultNARGraph(NAR nar, VisModel v, IterativeLayout l, NARGrapher grapher) {
+    public DefaultNARGraph(NAR nar, VisModel v, IterativeLayout l, int size) {
 
-        super(nar);
+        super(nar, size);
 
-        input(grapher);
 
         vis.set( v );
 

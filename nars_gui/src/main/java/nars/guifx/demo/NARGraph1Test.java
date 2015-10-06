@@ -33,17 +33,18 @@ public class NARGraph1Test {
         n.memory.taskLinkForgetDurations.set(2);
 
         //n.input(new File("/tmp/h.nal"));
-        n.input("<a-->b>.");
-        n.input("<b-->c>.");
-        n.input("<a-->(c,b)>. %0.25;0.90%");
+        n.input("<hydochloric --> acid>.");
+        n.input("<#x-->base>. %0.65%");
+        n.input("<neutralization --> (acid,base)>. %0.75;0.90%");
+        n.input("<(&&, <#x --> hydochloric>, eat:#x) --> nice>. %0.75;0.90%");
         //n.input("<(&&,a,b,ca)-->#x>?");
 
-        n.frame(5);
+        //n.frame(5);
 
         NARGraph g = new DefaultNARGraph(n,32);
 
-        GenericControlPane c = new GenericControlPane(g);
-        g.getChildren().add(c);
+//        GenericControlPane c = new GenericControlPane(g);
+//        g.getChildren().add(c);
 
         return g;
     }
@@ -51,7 +52,7 @@ public class NARGraph1Test {
     public static void main(String[] args) throws IOException {
 
 
-        NAR n = new Default(256, 1,2,2);
+        NAR n = new Default(512, 2,3,5);
 
         NARide.show(n.loop(), ide -> {
 
@@ -59,7 +60,7 @@ public class NARGraph1Test {
             ide.addView(new IOPane(n));
 
 
-            n.frame(5);
+            //n.frame(5);
 
         });
 
