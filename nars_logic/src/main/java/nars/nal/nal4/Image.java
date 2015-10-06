@@ -1,5 +1,6 @@
 package nars.nal.nal4;
 
+import com.gs.collections.api.block.function.primitive.ObjectIntToObjectFunction;
 import nars.Symbols;
 import nars.term.Compound;
 import nars.term.Term;
@@ -136,33 +137,71 @@ abstract public class Image extends Compound {
         p.append(COMPOUND_TERM_OPENER);
         p.append(this.op().str);
 
-        p.append(ARGUMENT_SEPARATOR);
-        if (pretty)
-            p.append(' ');
 
-        this.relation().append(p, pretty);
+
+        //this.relation().append(p, pretty);
 
         final int relationIndex = this.relationIndex;
-        for (int i = 0; i < len; i++) {
+        int i;
+        for (i = 0; i < len; i++) {
             Term tt = this.term(i);
 
             p.append(ARGUMENT_SEPARATOR);
-
-            if (pretty)
-                p.append(' ');
+            if (pretty) p.append(' ');
 
             if (i == relationIndex) {
                 p.append(Symbols.IMAGE_PLACE_HOLDER);
-            } else {
-                tt.append(p, pretty);
+                p.append(ARGUMENT_SEPARATOR);
+                if (pretty) p.append(' ');
             }
+
+            tt.append(p, pretty);
         }
+        if (i == relationIndex) {
+            p.append(ARGUMENT_SEPARATOR);
+            if (pretty) p.append(' ');
+            p.append(Symbols.IMAGE_PLACE_HOLDER);
+        }
+
         p.append(COMPOUND_TERM_CLOSER);
 
     }
 
     public Term relation() {
         return term(relationIndex);
+    }
+
+    public static Term makeInt(Term[] argList) {
+        return make(argList, (a, r) -> new ImageInt(a, (short)r));
+    }
+    public static Term makeExt(Term[] argList) {
+        return make(argList, (a, r) -> new ImageExt(a, (short)r));
+    }
+    /**
+     * Try to make a new ImageInt/ImageExt.
+     * @return the Term generated from the arguments
+     * @param argList The list of term
+     */
+    public static Term make(Term[] argList, ObjectIntToObjectFunction<Term[], Term> build) {
+        if (argList.length < 2) {
+            return argList[0];
+        }
+
+        //Term relation = argList[0];
+
+        Term[] argument = new Term[argList.length-1];
+        int index = 0, n = 0;
+        for (int j = 0; j < argList.length; j++) {
+            if (isPlaceHolder(argList[j])) {
+                index = j;
+            } else {
+                argument[n++] =  argList[j];
+            }
+        }
+        if (n!=argument.length)
+            throw new RuntimeException("image must contain 1 relation");
+
+        return build.valueOf(argument, index);
     }
 
 

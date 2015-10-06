@@ -736,9 +736,9 @@ public class Terms {
             case PRODUCT:
                 return Product.make(a);
             case IMAGE_EXT:
-                return ImageExt.make(a);
+                return Image.makeExt(a);
             case IMAGE_INT:
-                return ImageInt.make(a);
+                return Image.makeInt(a);
             case NEGATION:
                 return Negation.make(a);
             case DISJUNCTION:

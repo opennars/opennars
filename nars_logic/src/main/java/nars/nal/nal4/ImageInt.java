@@ -63,31 +63,6 @@ public class ImageInt extends Image {
 
         return new ImageInt(replaced, relationIndex);
     }
-        
-    
-    /**
-     * Try to make a new ImageInt. Called by StringParser.
-     * @return the Term generated from the arguments
-     * @param argList The list of term
-     */
-    public static Term make(final Term[] argList) {
-        if (argList.length < 2) {
-            return argList[0];
-        }
-        Term relation = argList[0];
-        Term[] argument = new Term[argList.length-1];
-        int index = 0, n = 0;
-        for (int j = 1; j < argList.length; j++) {
-            if (isPlaceHolder(argList[j])) {
-                index = j - 1;
-                argument[n] = relation;
-            } else {
-                argument[n] = argList[j];
-            }
-            n++;
-        }
-        return make(argument, (short) index);
-    }
 
     /**
      * Try to make an Image from a Product and a relation. Called by the logic rules.

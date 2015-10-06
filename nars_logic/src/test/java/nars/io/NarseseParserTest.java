@@ -8,6 +8,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.ImageExt;
+import nars.nal.nal4.ImageInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -393,30 +394,30 @@ public class NarseseParserTest {
     }
 
     @Test
-    public void testImageIndex2() {
+    public void testImageExtRel0() { testImageExtRel("<a --> (/, _, y, z)>", 0); }
+    @Test
+    public void testImageIntRel0() { testImageIntRel("<(\\, _, y, z) --> a>", 0); }
 
-        {
+    @Test
+    public void testImageExtRel1() { testImageExtRel("<a --> (/, x, _, z)>", 1); }
+    @Test
+    public void testImageIntRel1() { testImageIntRel("<(\\, x, _, z) --> a>", 1); }
 
-            String img = "<a --> (/, _, b, c)>";
-            Inheritance<Atom,ImageExt> ti = term(img);
-            assertEquals(0, ti.getPredicate().relationIndex );
-            assertEquals(img, ti.toString());
-        }
-        {
-            String img1 = "<b --> (/, a, c, _)>";
-            Inheritance<Atom, ImageExt> ti1 = term(img1);
-            assertEquals(2, ti1.getPredicate().relationIndex);
-            assertEquals(img1, ti1.toString());
-        }
+    @Test
+    public void testImageExtRel2() { testImageExtRel("<a --> (/, x, y, _)>", 2); }
+    @Test
+    public void testImageIntRel2() { testImageIntRel("<(\\, x, y, _) --> a>", 2); }
 
-        {
-            String img1 = "<b --> (/, a, _, c)>";
-            Inheritance<Atom, ImageExt> ti1 = term(img1);
-            assertEquals(1, ti1.getPredicate().relationIndex);
-            assertEquals(img1, ti1.toString());
-        }
+    private void testImageIntRel(String imageTerm, int relationIndexExpected) {
+        Inheritance<ImageInt,Atom> ti = term(imageTerm);
+        assertEquals(relationIndexExpected, ti.getSubject().relationIndex );
+        assertEquals(imageTerm, ti.toString());
+    }
 
-
+    private void testImageExtRel(String imageTerm, int relationIndexExpected) {
+        Inheritance<Atom,ImageExt> ti = term(imageTerm);
+        assertEquals(relationIndexExpected, ti.getPredicate().relationIndex );
+        assertEquals(imageTerm, ti.toString());
     }
 
     private void taskParses(String s) {
