@@ -72,7 +72,6 @@ public class PostCondition implements Serializable, Level //since there can be m
      *  derived task's punctuation.  otherwise, its punctuation will be set to puncOverride's value */
     transient public char puncOverride = (char)0;
 
-    final public int nal() { return minNAL; }
 
     /**
      *
@@ -178,6 +177,11 @@ public class PostCondition implements Serializable, Level //since there can be m
 
     }
 
+    @Override
+    public int nal() {
+        return minNAL;
+    }
+
     boolean valid(final TaskRule rule) {
         final Term term = this.term;
 
@@ -188,9 +192,9 @@ public class PostCondition implements Serializable, Level //since there can be m
         }
 
         //assign the lowest non-zero, because non-zero will try them all anyway
-        if (rule.minNAL == 0)
+        /*if (rule.minNAL == 0)
             rule.minNAL = minNAL;
-        else if (minNAL!=0)
+        else*/ if (minNAL!=0)
             rule.minNAL = Math.min(rule.minNAL, minNAL);
 
         return true;

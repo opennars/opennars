@@ -31,7 +31,7 @@ public class PackatainerTest {
                 
         SetMultimap<Class, Class> anc = rg.includeAncestorImplementations();
 
-        assertEquals(6, anc.keySet().size());
+        assertEquals(7, anc.keySet().size());
         assertTrue(anc.size() > anc.keySet().size());
         
         for (Class c : anc.keySet()) {

@@ -332,7 +332,7 @@ public class NAL5Test extends AbstractNALTest {
         TestNAR tester = test();
         tester.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
 
-        //TODO find the actual value for these intermediate steps, i think it is 81%
+        //TODO find the actual value for these intermediate steps, i think it is 81p
         tester.mustBelieve(70, "<a --> b>", 1f, 0.81f);
         tester.mustBelieve(70, "<b --> a>", 1f, 0.81f);
 
@@ -343,12 +343,27 @@ public class NAL5Test extends AbstractNALTest {
 
     @Test
     public void missingEdgeCase1() {
-        //((<%1 ==> %2>, <(&&, %1, %3) ==> %2>), (<%3 ==> %2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>)))
+        //((<p1 ==> p2>, <(&&, p1, p3) ==> p2>), (<p3 ==> p2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>)))
         //((<p1 ==> p2>, <(&&, p1, p3) ==> p2>), (<p3 ==> p2>, (<DecomposeNegativePositivePositive --> Truth>, <ForAllSame --> Order>)))
         new RuleTest(
-                "<p1 ==> p2>. %0.75;0.9%", "<(&&, p1, p3) ==> p2>.",
+                "<p1 ==> p2>. p0.75;0.9p", "<(&&, p1, p3) ==> p2>.",
                 "<p3 ==> p2>.",
                 0.25f, 0.25f, 0.2f, 0.2f)
                 .run();
     }
+
+    @Test
+    public void posNegQuestion() {
+        //((p1, (--,p1), task("?")), (p1, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
+        //  ((a:b, (--,a:b), task("?")), (a:b, (<BeliefNegation --> Truth>, <Judgment --> Punctuation>)))
+        new RuleTest(
+                "a:b?", "(--,a:b).",
+                "a:b.",
+                0,0,0.9f,0.9f)
+                .run();
+    }
+
+
+    //NO	((<(--,p1) ==> p2>, p2), (<(--,p2) ==> p1>, (<Contraposition --> Truth>, <AllowBackward --> Derive>)))
+
 }

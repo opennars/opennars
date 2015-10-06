@@ -2,6 +2,7 @@ package nars.nar;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import nars.Global;
 import nars.meta.RuleMatch;
 import nars.meta.TaskRule;
 import nars.meter.DerivationGraph;
@@ -12,6 +13,7 @@ import nars.util.db.InfiniPeer;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,9 +28,9 @@ public class SingleStepNAR extends Default {
     static Multimap<TaskRule, DerivationGraph.PremiseKey> ruleDerivations =
             Multimaps.newMultimap(new FasterHashMap(1024),
                     () -> new HashSet());
-    static Multimap<DerivationGraph.PremiseKey, TaskRule> derivationRules =
-            Multimaps.newMultimap(new FasterHashMap(1024),
-                    () -> new HashSet());
+//    static Multimap<DerivationGraph.PremiseKey, TaskRule> derivationRules =
+//            Multimaps.newMultimap(new FasterHashMap(1024),
+//                    () -> new HashSet());
 
     /*static DirectedMultigraph rulegraph = new DirectedMultigraph((a, b)->{
         return a + ":" + b;
@@ -36,14 +38,60 @@ public class SingleStepNAR extends Default {
 
 
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        Runtime.getRuntime().addShutdownHook(new Thread(new RuleReport()));
+    }
+
+    protected SimpleDeriver newDeriver() {
+        return new SimpleDeriver(SimpleDeriver.standard) {
+
+            @Override
+            public Stream<Task> forEachRule(RuleMatch match) {
+
+                //record an empty derivation, in case nothing is returned in the stream
+                //allowing us to see what is mising
+                derivations.add(match.premise /* none */);
+
+                ;
+                Stream<Task> s = super.forEachRule(match).peek(t -> {
+                    DerivationGraph.DerivationPattern dd =
+                            derivations.add(match.premise, t);
+                    ruleDerivations.put(match.rule, dd.key);
+                    //derivationRules.put(dd.key, match.rule);
+                });
+
+                return s;
+            }
+        };
+    }
+
+
+    public SingleStepNAR() {
+        super(64, 1, 1, 16);
+
+        Global.DEBUG = true;
+
+//        memory.eventConceptProcess.on((p) -> {
+//           derivations.add(p)
+//        });
+
+    }
+
+    @Override
+    public FIFOTaskPerception initInput() {
+        FIFOTaskPerception input = new FIFOTaskPerception(this,
+                task -> task.isInput() /* allow only input tasks*/,
+                task -> exec(task)
+        );
+        return input;
+    }
+
+    private static class RuleReport implements Runnable {
+        @Override
+        public void run() {
 
             try {
                 {
-                    String fn = InfiniPeer.getTempDir() + "/derivations.txt";
-                    PrintStream out = new PrintStream(new FileOutputStream(
-                            fn));
-
+                    PrintStream out = newReportStream("derivations.aggregate.txt");
 
                     derivations.premiseResult.forEach((k, v) -> {
 
@@ -66,14 +114,11 @@ public class SingleStepNAR extends Default {
                             out.print(x + " ");
                         });
                     }
-                    out.println();
-                    System.out.println("Derivation results saved to: " + fn);
+                    out.close();
                 }
                 {
-                    String fn2 = InfiniPeer.getTempDir() + "/derivations.unused.txt";
-                    PrintStream out = new PrintStream(new FileOutputStream(
-                            fn2));
 
+                    PrintStream out = newReportStream("derivations.unused.txt");
 
                     TreeSet<TaskRule> used = new TreeSet();
                     TreeSet<TaskRule> unused = new TreeSet();
@@ -81,8 +126,7 @@ public class SingleStepNAR extends Default {
                         Collection<DerivationGraph.PremiseKey> x = ruleDerivations.get(t);
                         if (x == null || x.isEmpty()) {
                             unused.add(t);
-                        }
-                        else {
+                        } else {
                             used.add(t);
                         }
                     }
@@ -108,9 +152,9 @@ public class SingleStepNAR extends Default {
                             out.println("\t NAL" + i + " has 0 specific rules\n");
                             continue;
                         }
-                        float p = (((float)un) / (us))*100.0f;
-                        out.println("\t NAL" + i + " Tested " + (us-un) + "/" + (us) + " (" +
-                                Math.ceil((int)p) + "% tested, " + un + " not tested): ");
+                        float p = (((float) un) / (us)) * 100.0f;
+                        out.println("\t NAL" + i + " Tested " + (us - un) + "/" + (us) + " (" +
+                                Math.ceil((int) p) + "% tested, " + un + " not tested): ");
                         final int finalI = i;
                         all[i].forEach(r -> {
                             boolean tested = !unusedCounts[finalI].contains(r);
@@ -143,57 +187,28 @@ public class SingleStepNAR extends Default {
                     out.println();
 
 
-                    System.out.println("Derivation results saved to: " + fn2);
+                    out.close();
+                }
+                {
+
+                    PrintStream out = newReportStream("derivations.gml");
+                    derivations.print(new OutputStreamWriter(out));
+                    out.close();
                 }
 
 
-            } catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
 
-        }));
-    }
+        }
 
-    protected SimpleDeriver newDeriver() {
-        return new SimpleDeriver(SimpleDeriver.standard) {
+        public PrintStream newReportStream(String file) throws FileNotFoundException {
+            String path = InfiniPeer.getTempDir() + "/" + file;
 
-            @Override
-            public Stream<Task> forEachRule(RuleMatch match) {
+            System.out.println("Saving results to: " + path);
 
-                //record an empty derivation, in case nothing is returned in the stream
-                //allowing us to see what is mising
-                derivations.add(match.premise /* none */);
-
-                ;
-                Stream<Task> s = super.forEachRule(match).peek(t -> {
-                    DerivationGraph.DerivationPattern dd =
-                            derivations.add(match.premise, t);
-                    ruleDerivations.put(match.rule, dd.key);
-                    derivationRules.put(dd.key, match.rule);
-                });
-
-                return s;
-            }
-        };
-    }
-
-
-    public SingleStepNAR() {
-        super(1024, 1, 1, 3);
-
-
-//        memory.eventConceptProcess.on((p) -> {
-//           derivations.add(p)
-//        });
-
-    }
-
-    @Override
-    public FIFOTaskPerception initInput() {
-        FIFOTaskPerception input = new FIFOTaskPerception(this,
-                task -> task.isInput() /* allow only input tasks*/,
-                task -> exec(task)
-        );
-        return input;
+            return new PrintStream(new FileOutputStream(path));
+        }
     }
 }

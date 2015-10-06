@@ -70,7 +70,6 @@ public enum TruthFunction implements TruthOrDesireFunction {
     },
     Negation() {
         @Override public Truth get(final Truth T, /* nullable */ final Truth B) {
-            //if (B!=null)  return null; //only apply when B is null
             return TruthFunctions.negation(T);
         }
     },

@@ -242,13 +242,13 @@ public class Conjunction extends Junction<Term> {
         }
     }
 
-    final public static Term make(final int temporalOrder, final Term prefix, final Term... suffix) {
-        final int suffixLen = suffix.length;
-        Term[] t = new Term[suffixLen + 1];
-        t[0] = prefix;
-        System.arraycopy(suffix, 0, t, 1, suffixLen);
-        return make(t, temporalOrder);
-    }
+//    final public static Term make(final int temporalOrder, final Term prefix, final Term... suffix) {
+//        final int suffixLen = suffix.length;
+//        Term[] t = new Term[suffixLen + 1];
+//        t[0] = prefix;
+//        System.arraycopy(suffix, 0, t, 1, suffixLen);
+//        return make(t, temporalOrder);
+//    }
 
 
     /**
@@ -263,16 +263,16 @@ public class Conjunction extends Junction<Term> {
 
     // overload this method by term type?
 
-    /**
-     * Try to make a new compound from two term. Called by the logic rules.
-     *
-     * @param term1 The first component
-     * @param term2 The second component
-     * @return A compound generated or a term it reduced to
-     */
-    final public static Term make(final Term term1, final Term term2) {
-        return make(term1, term2, Temporal.ORDER_NONE);
-    }
+//    /**
+//     * Try to make a new compound from two term. Called by the logic rules.
+//     *
+//     * @param term1 The first component
+//     * @param term2 The second component
+//     * @return A compound generated or a term it reduced to
+//     */
+//    final public static Term make(final Term term1, final Term term2) {
+//        return make(term1, term2, Temporal.ORDER_NONE);
+//    }
 
 
     final public static Term make(final Term term1, final Term term2, int temporalOrder) {

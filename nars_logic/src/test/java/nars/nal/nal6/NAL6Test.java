@@ -2,6 +2,7 @@ package nars.nal.nal6;
 
 import nars.Global;
 import nars.NAR;
+import nars.meter.RuleTest;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
 import nars.narsese.InvalidInputException;
@@ -364,5 +365,12 @@ public class NAL6Test extends AbstractNALTest {
 
     }*/
 
+    @Test public void missingEdgeCase1() {
+        //((<%1 --> %2>, <(&&, %3, <%1 --> $4>) ==> %5>, substitute($4, %2)), (<%3 ==> %5>, (<Deduction --> Truth>, <ForAllSame --> Order>)))
+        //  ((<p1 --> p2>, <(&&, p3, <p1 --> $4>) ==> p5>, substitute($4, p2)), (<p3 ==> p5>, (<Deduction --> Truth>, <ForAllSame --> Order>)))
+        new RuleTest("<p1 --> p2>.","<(&&, p3, <p1 --> $4>) ==> p5>.",
+                "<p3 ==> p5>.", 0, 1, 0, 1).run();
+
+    }
 
 }

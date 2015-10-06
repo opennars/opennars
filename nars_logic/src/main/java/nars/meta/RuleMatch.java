@@ -7,14 +7,12 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.meta.pre.PairMatchingProduct;
 import nars.meta.pre.Substitute;
-import nars.nal.nal1.Inheritance;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.task.TaskSeed;
 import nars.task.stamp.Stamp;
-import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
@@ -141,13 +139,9 @@ public class RuleMatch extends FindSubst {
             if (Global.DEBUG) {
                 Term termm = resolve(outcome.term);
                 if (termm != null) {
-
-                    //HACK wrap the non-compound in a compound to form a task
-                    if (!(termm instanceof Compound)) {
-                        termm = Inheritance.make(termm, Atom.the("NON_COMPOUND"));
-                    }
-
-                    removedPreTask(new PreTask((Compound) termm, punct, truth, Budget.zero, occurence_shift, premise), "Cyclic");
+                    premise.memory().remove(
+                            new PreTask(termm, punct, truth, Budget.zero, occurence_shift, premise),
+                            "Cyclic");
                 }
 
             }
@@ -266,7 +260,7 @@ public class RuleMatch extends FindSubst {
         }
         if (!premise.validateDerivedBudget(budget)) {
             if (Global.DEBUG) {
-                removedPreTask(new PreTask((Compound)derivedTerm, punct, truth, budget, occurence_shift, premise), "Insufficient Derivation Budget");
+                premise.memory().remove(new PreTask((Compound)derivedTerm, punct, truth, budget, occurence_shift, premise), "Insufficient Derivation Budget");
             }
             return null;
         }
@@ -327,13 +321,6 @@ public class RuleMatch extends FindSubst {
         return null;
     }
 
-    public void removedPreTask(PreTask task, String removalReason) {
-        premise.memory().remove(
-                task,
-                //.log(premise) ...
-                removalReason
-        );
-    }
 
     static Truth getTruth(final PostCondition outcome, final char punc, final Truth T, final Truth B) {
 
@@ -410,11 +397,11 @@ public class RuleMatch extends FindSubst {
 //        }
 
         //cached:
-        return resolutions.computeIfAbsent(t, resolver);
+        //return resolutions.computeIfAbsent(t, resolver);
 
 
         //uncached:
-        //return resolver.apply(t);
+        return resolver.apply(t);
     }
 
 

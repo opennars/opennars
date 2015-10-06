@@ -1,12 +1,10 @@
 package nars.term;
 
 import nars.NAR;
-import nars.nal.nal5.Conjunction;
 import nars.nar.Default;
 import nars.task.Task;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -34,29 +32,21 @@ public class VariableTransformationTest {
 
     }
 
-    @Test
-    public void testCombinations() {
 
 
-        String same = "(&&,<$1 --> x>,<$1 --> y>)";
-        String different = "(&&,<$1 --> x>,<$2 --> y>)";
-        combine("<$1 --> x>", "<$1 --> y>", same);
 
-    }
-
-
-    public void combine(String a, String b, String expect) {
-        NAR n = new Default();
-        Term ta = n.term(a);
-        Term tb = n.term(b);
-        Term c = Conjunction.make(ta, tb).normalized();
-
-        Term e = n.term(expect).normalized();
-        Term d = e.normalized();
-        assertNotNull(e);
-        assertEquals(d, c);
-        assertEquals(e, c);
-    }
+//    public void combine(String a, String b, String expect) {
+//        NAR n = new Default();
+//        Term ta = n.term(a);
+//        Term tb = n.term(b);
+//        Term c = Conjunction.make(ta, tb).normalized();
+//
+//        Term e = n.term(expect).normalized();
+//        Term d = e.normalized();
+//        assertNotNull(e);
+//        assertEquals(d, c);
+//        assertEquals(e, c);
+//    }
 
     @Test public void varNormTestIndVar() {
         //<<($1, $2) --> bigger> ==> <($2, $1) --> smaller>>. gets changed to this: <<($1, $4) --> bigger> ==> <($2, $1) --> smaller>>. after input
