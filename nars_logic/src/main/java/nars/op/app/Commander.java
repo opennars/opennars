@@ -71,7 +71,7 @@ public class Commander extends NARReaction implements Consumer<Memory> {
     @Override
     public void setActive(boolean b) {
         super.setActive(b);
-        if (b == false) {
+        if (!b) {
             commands.clear();
         }
     }

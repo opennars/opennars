@@ -23,11 +23,11 @@ public class AnalyticTruth extends DefaultTruth {
 //    protected AnalyticTruth(float freq, float conf, float epsilon) {
 //        super(freq, conf, epsilon);
 //    }
-
-    protected AnalyticTruth(Truth cloneFrom) {
-        this(cloneFrom.getFrequency(), cloneFrom.getConfidence());
-        //this(cloneFrom.getFrequency(), cloneFrom.getConfidence(), cloneFrom.getEpsilon());
-    }
+//
+//    protected AnalyticTruth(Truth cloneFrom) {
+//        this(cloneFrom.getFrequency(), cloneFrom.getConfidence());
+//        //this(cloneFrom.getFrequency(), cloneFrom.getConfidence(), cloneFrom.getEpsilon());
+//    }
 
     public AnalyticTruth(float f, float c) {
         super();

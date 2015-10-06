@@ -201,11 +201,6 @@ abstract public class ConceptProcess extends NAL implements Serializable {
         }
 
 
-        if (Global.DEBUG) {
-            Budget.requireNotDeleted(total);
-            if (n == 0)
-                throw new RuntimeException("missing both parent task and parent belief");
-        }
 
         return total/n;
     }

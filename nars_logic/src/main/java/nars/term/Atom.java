@@ -412,9 +412,9 @@ public class Atom implements Term, Byted /*extends ImmutableAtom*/, Externalizab
         return data;
     }
 
-    final public byte byt(int n) {
-        return data[n];
-    }
+//    final public byte byt(int n) {
+//        return data[n];
+//    }
 
     final byte byt0() {
         return data[0];

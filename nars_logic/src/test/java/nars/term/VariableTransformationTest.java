@@ -6,20 +6,19 @@ import nars.task.Task;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 5/13/15.
  */
 public class VariableTransformationTest {
 
-    @Test public void testTransformVariables() {
-        NAR nar = new Default();
-        Compound c = nar.term("<$a --> x>");
-        Compound d = Compound.transformIndependentToDependentVariables(c).normalized();
-        assertTrue(c!=d);
-        assertEquals(d, nar.term("<#1 --> x>"));
-    }
+//    @Test public void testTransformVariables() {
+//        NAR nar = new Default();
+//        Compound c = nar.term("<$a --> x>");
+//        Compound d = Compound.transformIndependentToDependentVariables(c).normalized();
+//        assertTrue(c!=d);
+//        assertEquals(d, nar.term("<#1 --> x>"));
+//    }
 
     @Test
     public void testDestructiveNormalization() {

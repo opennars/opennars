@@ -1,10 +1,11 @@
 package nars.meta.pre;
 
+import nars.Global;
 import nars.meta.RuleMatch;
 import nars.nal.nal3.SetTensional;
 import nars.term.Term;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by me on 8/15/15.
@@ -25,7 +26,7 @@ public class Difference extends PreCondition3Output {
         SetTensional A = (SetTensional) a;
         SetTensional B = (SetTensional) b;
 
-        ArrayList<Term> terms = new ArrayList<Term>();
+        List<Term> terms = Global.newArrayList();
         for(Term t: A.terms()) { //set difference
             boolean include = true;
             for(Term t2 : B.terms()) {

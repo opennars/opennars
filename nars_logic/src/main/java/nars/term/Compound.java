@@ -26,14 +26,20 @@ import nars.Op;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
-import nars.term.transform.*;
+import nars.term.transform.CompoundTransform;
+import nars.term.transform.Substitution;
+import nars.term.transform.TermVisitor;
+import nars.term.transform.VariableNormalization;
 import nars.util.data.Util;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Random;
 
 import static nars.Symbols.*;
 
@@ -237,12 +243,12 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return x;
     }
 
-    public static Compound<?> transformIndependentToDependentVariables(final Compound c) {
-        if (!c.hasVarIndep())
-            return c;
-
-        return (Compound) c.cloneTransforming(new TransformIndependentToDependentVariables());
-    }
+//    public static Compound<?> transformIndependentToDependentVariables(final Compound c) {
+//        if (!c.hasVarIndep())
+//            return c;
+//
+//        return (Compound) c.cloneTransforming(new TransformIndependentToDependentVariables());
+//    }
 
     public static Term[] resultOfCloneTermsExcept(boolean requireModification, Term[] l, int remain) {
         final boolean removed = (remain != l.length);
@@ -772,18 +778,18 @@ public abstract class Compound<T extends Term> extends TermVector<T> implements 
         return false;
     }
 
-    /**
-     * Gives a set of all (unique) contained term, recursively
-     */
-    public Set<Term> getContainedTerms() {
-        Set<Term> s = Global.newHashSet(complexity());
-        for (Term t : term) {
-            s.add(t);
-            if (t instanceof Compound)
-                s.addAll(((Compound) t).getContainedTerms());
-        }
-        return s;
-    }
+//    /**
+//     * Gives a set of all (unique) contained term, recursively
+//     */
+//    public Set<Term> getContainedTerms() {
+//        Set<Term> s = Global.newHashSet(complexity());
+//        for (Term t : term) {
+//            s.add(t);
+//            if (t instanceof Compound)
+//                s.addAll(((Compound) t).getContainedTerms());
+//        }
+//        return s;
+//    }
 
     /**
      * (shallow) Clone the component list

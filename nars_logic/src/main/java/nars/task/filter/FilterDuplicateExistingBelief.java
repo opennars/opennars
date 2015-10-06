@@ -11,21 +11,21 @@ import java.util.Arrays;
 /**
  * Prevent a duplicate belief from entering the system again
  */
-public class FilterDuplicateExistingBelief implements DerivationFilter {
+public class FilterDuplicateExistingBelief { //implements DerivationFilter {
 
-    public final static String DUPLICATE = "DuplicateExistingBelief";
-
-
-
-    @Override public final String reject(final Premise nal, final Task task, final boolean solution, final boolean revised) {
-
-
-        //only process non-solution judgments
-        if (solution || !task.isJudgment())
-            return VALID;
-
-        return isUniqueBelief(nal, task) ? VALID : DUPLICATE;
-    }
+//    public final static String DUPLICATE = "DuplicateExistingBelief";
+//
+//
+//
+//    @Override public final String reject(final Premise nal, final Task task, final boolean solution, final boolean revised) {
+//
+//
+//        //only process non-solution judgments
+//        if (solution || !task.isJudgment())
+//            return VALID;
+//
+//        return isUniqueBelief(nal, task) ? VALID : DUPLICATE;
+//    }
 
     public static boolean isUniqueBelief(Premise nal, Task t) {
         return isUniqueBelief(nal, t.getTerm(), t.getTruth(), t.getOccurrenceTime(), t.getEvidence());

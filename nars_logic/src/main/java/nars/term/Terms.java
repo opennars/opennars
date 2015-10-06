@@ -1,7 +1,6 @@
 package nars.term;
 
 import nars.Global;
-import nars.Memory;
 import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -203,30 +202,30 @@ public class Terms {
 //
 //    }
 
-    public static Term reduceComponentOneLayer(Compound t1, Term t2, Memory memory) {
-        Term[] list;
-        if ((t1.op() == t2.op())) {
-            list = t1.cloneTermsExcept(true, ((Compound) t2).term);
-        } else {
-            list = t1.cloneTermsExcept(true, t2);
-        }
-        if (list != null) {
-            if (list.length > 1) {
-                return term(t1, list);
-            } else if (list.length == 1) {
-                return list[0];
-            }
-        }
-        return t1;
-    }
-
-
-    public static Term unwrapNegation(final Term T) {
-        if (T != null && T instanceof Negation) {
-            return ((Compound) T).term[0];
-        }
-        return T;
-    }
+//    public static Term reduceComponentOneLayer(Compound t1, Term t2, Memory memory) {
+//        Term[] list;
+//        if ((t1.op() == t2.op())) {
+//            list = t1.cloneTermsExcept(true, ((Compound) t2).term);
+//        } else {
+//            list = t1.cloneTermsExcept(true, t2);
+//        }
+//        if (list != null) {
+//            if (list.length > 1) {
+//                return term(t1, list);
+//            } else if (list.length == 1) {
+//                return list[0];
+//            }
+//        }
+//        return t1;
+//    }
+//
+//
+//    public static Term unwrapNegation(final Term T) {
+//        if (T != null && T instanceof Negation) {
+//            return ((Compound) T).term[0];
+//        }
+//        return T;
+//    }
 
     public static boolean equalSubjectPredicateInRespectToImageAndProduct(final Term a, final Term b) {
         return equalSubjectPredicateInRespectToImageAndProduct(a, b, true);

@@ -25,7 +25,6 @@ import com.gs.collections.api.block.procedure.Procedure2;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
-import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.truth.Truth;
 import nars.util.data.Util;
@@ -837,15 +836,15 @@ public class Budget implements Cloneable, Prioritized, Serializable {
     }
 
 
-    public static void requireNotDeleted(float pri) {
-        if (isDeleted(pri)) {
-            throw new RuntimeException("NaN priority");
-        }
-
-    }
-
-    public static void requireNotDeleted(Task q) {
-        requireNotDeleted(q.getPriority());
-    }
+//    public static void requireNotDeleted(float pri) {
+//        if (isDeleted(pri)) {
+//            throw new RuntimeException("NaN priority");
+//        }
+//
+//    }
+//
+//    public static void requireNotDeleted(Task q) {
+//        requireNotDeleted(q.getPriority());
+//    }
 
 }

@@ -41,7 +41,7 @@ public class Implication<A extends Term, B extends Term> extends Statement<A,B> 
         super(subject, predicate);
 
         if (order == Temporal.ORDER_INVALID) {
-            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + subject + "," + predicate);
+            throw new RuntimeException("Invalid temporal order; args=" + subject + "," + predicate);
         }
 
         temporalOrder = order;
