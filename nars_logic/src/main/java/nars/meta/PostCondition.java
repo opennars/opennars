@@ -6,6 +6,7 @@ import nars.process.Level;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public class PostCondition implements Serializable, Level //since there can be m
         this.afterConclusions = afterConclusions;
         this.truth = truth;
         this.desire = desire;
-        this.minNAL = term.op().minLevel;
+        this.minNAL = Terms.maxLevel(term);// term.op().minLevel;
     }
 
     public final Term term;
@@ -186,7 +187,11 @@ public class PostCondition implements Serializable, Level //since there can be m
                 return false;
         }
 
-        rule.minNAL = Math.max(rule.minNAL, minNAL);
+        //assign the lowest non-zero, because non-zero will try them all anyway
+        if (rule.minNAL == 0)
+            rule.minNAL = minNAL;
+        else if (minNAL!=0)
+            rule.minNAL = Math.min(rule.minNAL, minNAL);
 
         return true;
     }

@@ -1,6 +1,7 @@
 package nars.nal.nal4;
 
 import nars.NAR;
+import nars.meter.RuleTest;
 import nars.meter.TestNAR;
 import nars.nal.AbstractNALTest;
 import nars.narsese.InvalidInputException;
@@ -154,5 +155,54 @@ public class NAL4Test extends AbstractNALTest {
         n.run();
     }
     */
+
+//    @Test public void missingEdgeCase() {
+//        //((<%1 --> %2>, <(|, %1, %3) --> %2>), (<%3 --> %2>,
+//        //((<p1 --> p2>, <(|, p1, p3) --> p2>), (<p3 --> p2>,
+//        TestNAR tester = test();
+//        tester.believe("<p1 --> p2>");
+//        tester.believe("<(|, p1, p3) --> p2>");
+//        tester.mustBelieve(100, "<p3 --> p2>",
+//                1f, 1f, 0.1f, 1f);
+//        tester.run(true);
+//    }
+    @Test public void missingEdgeCase2() {
+        //((<(%1) --> %2>, %2), (<%2 --> (/, %1, _)>, (<Identity --> Truth>, <Identity --> Desire>)))
+        //  ((<(p1) --> p2>, p2), (<p2 --> (/, p1, _)>, (<Identity --> Truth>, <Identity --> Desire>)))
+        new RuleTest(
+                "<(p1) --> belief:p2>.", "belief:p2.",
+                "<belief:p2 --> (/, p1, _)>.",
+                1f, 1f, 0.9f, 1f)
+                .run();
+    }
+
+
+    @Test public void missingEdgeCase3() {
+        //((<(%1) --> %2>, %1), (<%1 --> (/, %2, _)>, (<Identity --> Truth>, <Identity --> Desire>)))
+        //  ((<(p1) --> p2>, p1), (<p1 --> (/, p2, _)>, (<Identity --> Truth>, <Identity --> Desire>)))
+        new RuleTest(
+                "<(belief:p1) --> p2>.", "belief:p1.",
+                "<belief:p1 --> (/, p2, _)>.",
+                1f, 1f, 0.9f, 1f)
+            .run();
+    }
+
+    @Test public void missingEdgeCase4() {
+        //((<%1 --> (%2)>, %1), (<(\, %2, _) --> %1>, (<Identity --> Truth>, <Identity --> Desire>)))
+        new RuleTest(
+                "<belief:p1 --> (p2)>.", "belief:p1.",
+                "<(\\, p2, _) --> belief:p1>.",
+                1f, 1f, 0.9f, 1f)
+                .run();
+    }
+
+    @Test public void missingEdgeCase5() {
+        //((<%1 --> (%2)>, %2), (<(\, %1, _) --> %2>, (<Identity --> Truth>, <Identity --> Desire>)))
+        new RuleTest(
+                "<p1 --> (belief:p2)>.", "belief:p2.",
+                "<(\\, p1, _) --> belief:p2>.",
+                1f, 1f, 0.9f, 1f)
+                .run();
+    }
 
 }

@@ -73,7 +73,18 @@ public class ImageExt extends Image {
         if (argList.length < 2) {
             return argList[0];
         }
+
         Term relation = argList[0];
+
+        //experimental
+//        if (isPlaceHolder(relation)) {
+//            //first term is placeholder
+//            return new ImageExt(
+//                    Arrays.copyOfRange(argList, 1, argList.length),
+//                    (short)0);
+//        }
+
+
         Term[] argument = new Term[argList.length-1];
         int index = 0, n = 0;
         for (int j = 1; j < argList.length; j++) {

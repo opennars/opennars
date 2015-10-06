@@ -479,11 +479,7 @@ public class Terms {
 //    }
 
 
-    public static boolean levelValid(Termed t, int nal) {
-        return t.getTerm().levelValid(nal);
-    }
-
-//    public static boolean levelValid(Sentence sentence, int nal) {
+    //    public static boolean levelValid(Sentence sentence, int nal) {
 //        if (nal >= 8) return true;
 //
 //        Term t = sentence.getTerm();
@@ -852,5 +848,15 @@ public class Terms {
         });
 
         return result;
+    }
+
+    public static int maxLevel(Term term) {
+        final int[] max = {0};
+        term.recurseTerms((t,p) -> {
+            int m = t.op().minLevel;
+            if (m > max[0])
+                max[0] = m;
+        });
+        return max[0];
     }
 }

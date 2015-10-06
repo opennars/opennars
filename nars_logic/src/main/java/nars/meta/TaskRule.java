@@ -9,10 +9,7 @@ import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal4.ProductN;
 import nars.process.Level;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Variable;
+import nars.term.*;
 import nars.term.transform.CompoundTransform;
 import nars.term.transform.VariableNormalization;
 
@@ -43,7 +40,7 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
     boolean allowBackward = false;
 
     /** maximum of the minimum NAL levels involved in the postconditions of this rule */
-    public int minNAL = 0;
+    public int minNAL;
     private int numPatternVar;
 
     public Product getPremises() {
@@ -155,6 +152,12 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
         this.numPatternVar = patternVars.size();
     }
 
+    public Term task() {
+        return pattern.term(0);
+    }
+    public Term belief() {
+        return pattern.term(1);
+    }
 
 
     static class UppercaseAtomsToPatternVariables implements CompoundTransform<Compound, Term> {
@@ -397,6 +400,16 @@ public class TaskRule extends Rule/*<Premise, Task>*/ implements Level {
         }
 
         this.postconditions = postConditionsList.toArray( new PostCondition[postConditionsList.size() ] );
+
+
+        //TODO add modifiers to affect minNAL (ex: anything temporal set to 7)
+        //this will be raised by conclusion postconditions of higher NAL level
+        this.minNAL =
+                Math.max(this.minNAL,
+                    Math.max(
+                            Terms.maxLevel(pattern.term(0)),
+                            Terms.maxLevel(pattern.term(1)
+                            )));
 
         ensureValid();
 

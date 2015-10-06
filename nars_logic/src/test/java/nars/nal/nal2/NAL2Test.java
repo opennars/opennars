@@ -207,5 +207,23 @@ public class NAL2Test extends AbstractNALTest {
         tester.mustOutput(cycles, "<{?1} --> bird>?");//What is a bird?");
         tester.run();
     }
+
+    @Test
+    public void missingEdgeCase1() {
+        //		((<%1 --> %2>, <%2 <-> %3>, not_equal(%3, %1)), (<%1 --> %3>, (<Analogy --> Truth>, <Strong --> Desire>, <AllowBackward --> Derive>)))
+        //((<%1 --> %2>, <%2 <-> %3>, not_equal(%3, %1)),
+        //      (<%1 --> %3>,
+        //((<p1 --> p2>, <p2 <-> p3>, not_equal(p3, p1)),
+        //      (<p1 --> p3>,
+        //        TestNAR tester = test();
+        TestNAR tester = test();
+        tester.believe("<p1 --> p2>");
+        tester.believe("<p2 <-> p3>");
+        tester.mustBelieve(100, "<p1 --> p3>",
+                1f, 1f, 0.81f, 1f);
+        tester.debug();
+        tester.run(true);
+    }
+
 }
 

@@ -10,7 +10,6 @@ import nars.meta.pre.Substitute;
 import nars.nal.nal1.Inheritance;
 import nars.premise.Premise;
 import nars.process.ConceptProcess;
-import nars.process.Level;
 import nars.task.PreTask;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 
@@ -426,13 +424,13 @@ public class RuleMatch extends FindSubst {
 
     public Stream<Task> run(final Stream<TaskRule> rules, final int maxNAL) {
 
-        Predicate<Level> pcFilter = Level.maxFilter(maxNAL);
+        //Predicate<Level> pcFilter = Level.maxFilter(maxNAL);
 
         return rules.
-                filter( /* filter the entire rule */ pcFilter).
+                //filter( /* filter the entire rule */ pcFilter).
                 map(r -> run(r)).
                 flatMap(p -> Stream.of(p)).
-                filter( /* filter each rule postcondition */ pcFilter).
+                //filter( /* filter each rule postcondition */ pcFilter).
                 map(p -> apply(p)).
                 filter(t -> t != null);
     }

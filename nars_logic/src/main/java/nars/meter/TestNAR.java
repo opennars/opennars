@@ -352,7 +352,7 @@ public class TestNAR  {
         return run(true);
     }
 
-    public TestNAR run(boolean printReport) {
+    public TestNAR run(boolean testAndPrintReport /* for use with JUnit */) {
         long finalCycle = 0;
         for (TaskCondition oc : requires) {
             if (oc.cycleEnd > finalCycle)
@@ -364,23 +364,29 @@ public class TestNAR  {
 
         runUntil(finalCycle);
 
-        assertTrue("No conditions tested", !requires.isEmpty());
 
-        //assertTrue("No cycles elapsed", tester.nar.memory().time/*SinceLastCycle*/() > 0);
+        if (testAndPrintReport) {
+            assertTrue("No conditions tested", !requires.isEmpty());
 
+            //assertTrue("No cycles elapsed", tester.nar.memory().time/*SinceLastCycle*/() > 0);
 
-        if (printReport) {
-            Report report = new Report(this);
-
-            report.setError(getError());
-
-            requires.forEach(report::add);
-
-            report(report, report.isSuccess());
+            getReport();
         }
 
 
         return this;
+    }
+
+    public Report getReport() {
+        Report report = new Report(this);
+
+        report.setError(getError());
+
+        requires.forEach(report::add);
+
+        report(report, report.isSuccess());
+
+        return report;
     }
 
     protected void report(Report report, boolean success) {

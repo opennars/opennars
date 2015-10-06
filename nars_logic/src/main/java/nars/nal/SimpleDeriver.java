@@ -16,9 +16,10 @@ import java.util.stream.Stream;
 /** separates rules according to task/belief term type but otherwise involves significant redundancy we'll eliminate in other Deriver implementations */
 public class SimpleDeriver extends Deriver  {
 
-    public static final String key = "derivation_rules:standard";
 
+    //not ready yet
     static void loadCachedRules() {
+        final String key = "derivation_rules:standard";
         SimpleDeriver.standard = TemporaryCache.computeIfAbsent(
                 key, new GenericJBossMarshaller(),
                 () -> {

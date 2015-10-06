@@ -7,6 +7,7 @@ import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
+import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -389,6 +390,33 @@ public class NarseseParserTest {
         assertEquals("(/,open,$1,_)", t.toString(false));
         assertEquals("(/, open, $1, _)", t.toString());
         assertEquals("index psuedo-term should not count toward its size", 2, t.length());
+    }
+
+    @Test
+    public void testImageIndex2() {
+
+        {
+
+            String img = "<a --> (/, _, b, c)>";
+            Inheritance<Atom,ImageExt> ti = term(img);
+            assertEquals(0, ti.getPredicate().relationIndex );
+            assertEquals(img, ti.toString());
+        }
+        {
+            String img1 = "<b --> (/, a, c, _)>";
+            Inheritance<Atom, ImageExt> ti1 = term(img1);
+            assertEquals(2, ti1.getPredicate().relationIndex);
+            assertEquals(img1, ti1.toString());
+        }
+
+        {
+            String img1 = "<b --> (/, a, _, c)>";
+            Inheritance<Atom, ImageExt> ti1 = term(img1);
+            assertEquals(1, ti1.getPredicate().relationIndex);
+            assertEquals(img1, ti1.toString());
+        }
+
+
     }
 
     private void taskParses(String s) {

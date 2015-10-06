@@ -405,7 +405,7 @@ abstract public class NAR implements Serializable, Level {
             return false;
         }
 
-        if (!Terms.levelValid(t, nal())) {
+        if (!t.getTerm().levelValid(nal())) {
             m.remove(t, "Insufficient NAL level");
             return false;
         }

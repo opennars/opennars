@@ -22,7 +22,7 @@ public enum Op implements Serializable {
 //            return Atom.the(i);
 //        }}
 //
-    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, Op.ANY, OpType.Variable),
+    VAR_INDEPENDENT(Symbols.VAR_INDEPENDENT, 6 /*NAL6 for Indep Vars */, OpType.Variable),
 
     VAR_DEPENDENT(Symbols.VAR_DEPENDENT, Op.ANY, OpType.Variable),
     VAR_QUERY(Symbols.VAR_QUERY, Op.ANY, OpType.Variable),
@@ -221,8 +221,7 @@ public enum Op implements Serializable {
     }
 
     public final boolean levelValid(final int nal) {
-        final int l = minLevel;
-        return (l == ANY) || (nal >= l);
+        return (nal >= minLevel);
     }
 
     /**
