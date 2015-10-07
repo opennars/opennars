@@ -16,7 +16,7 @@ public enum TruthFunction implements TruthOrDesireFunction {
 
     Revision() {
         @Override public Truth get(final Truth T, final Truth B) {
-            //if (B == null) return null;
+            if (B == null) return null;
             return TruthFunctions.revision(T, B);
         }
     },
@@ -28,7 +28,7 @@ public enum TruthFunction implements TruthOrDesireFunction {
     },
     StructuralDeduction() {
         @Override public Truth get(final Truth T, final Truth B) {
-            //if (B == null) return null;
+            if (B == null) return null;
             return TruthFunctions.deduction(T, new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE));
         }
     },
