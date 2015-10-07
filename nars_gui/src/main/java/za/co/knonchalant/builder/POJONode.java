@@ -1,18 +1,17 @@
 package za.co.knonchalant.builder;
 
+import com.gs.collections.api.tuple.Twin;
+import com.gs.collections.impl.tuple.Tuples;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -20,6 +19,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import nars.Global;
+import nars.guifx.annotation.Range;
+import nars.guifx.util.NSlider;
 import za.co.knonchalant.builder.converters.IValueFieldConverter;
 import za.co.knonchalant.builder.exception.ComponentException;
 
@@ -27,10 +28,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Generate JavaFX layouts based on POJO.
@@ -202,27 +200,35 @@ public class POJONode {
      * @param params   additional parameters
      * @return the GUI
      */
-    public static Collection<Node> methodNodes(Object object, TaggedParameters params) {
-        Method[] declaredMethods = object.getClass().getMethods();
+//    public static Collection<Node> methodNodes(Object object, TaggedParameters params) {
+//        Method[] declaredMethods = object.getClass().getMethods();
+//
+//        List<Node> nodes = Global.newArrayList();
+//
+//        for (Method method : declaredMethods) {
+//            if (method.getAnnotation(Ignore.class) != null) {
+//                continue;
+//            }
+//
+//            HBox methodBox = produceMethodNode(object, /* readOnly*/ false, params, method);
+//
+//            nodes.add(methodBox);
+//        }
+//        return nodes;
+//    }
 
-        List<Node> nodes = Global.newArrayList();
-
-        for (Method method : declaredMethods) {
-            if (method.getAnnotation(Ignore.class) != null) {
-                continue;
-            }
-
-            HBox methodBox = produceMethodNode(object, /* readOnly*/ false, params, method);
-
-            nodes.add(methodBox);
+    public static List<Twin<Node>> propertyNodes(Object object, TaggedParameters params) {
+        if (object instanceof ObjectProperty) {
+            //TODO attach listener that updates content inside its own managed wrapper
+            ObjectProperty op = (ObjectProperty)object;
+            object = op.get();
         }
-        return nodes;
-    }
+        if (object == null) return Collections.emptyList();
 
-    public static Collection<Node> propertyNodes(Object object, TaggedParameters params) {
         Field[] fields = object.getClass().getFields();
+        System.out.println("fields for : " + object + " (" + object.getClass() + "): " + Arrays.toString(fields));
 
-        List<Node> nodes = Global.newArrayList();
+        List<Twin<Node>> nodes = Global.newArrayList();
 
         for (Field f : fields) {
             if (f.getAnnotation(Ignore.class) != null) {
@@ -240,7 +246,7 @@ public class POJONode {
             }
 
 
-            HBox methodBox = newFieldNode(object, /* readOnly*/ false, params, f);
+            Twin<Node> methodBox = newFieldNode(object, /* readOnly*/ false, params, f);
 
             nodes.add(methodBox);
         }
@@ -348,6 +354,7 @@ public class POJONode {
      * @return the GUI
      */
     public static Pane build(Object object, boolean readOnly, Layout layout, TaggedParameters params) {
+
         Method[] declaredMethods = object.getClass().getDeclaredMethods();
         Pane pane = getPane(layout);
 
@@ -370,7 +377,6 @@ public class POJONode {
      * @param readOnly true if e.g., labels should be produced instead of text fields.
      * @param params   additional parameters
      * @param method   the getter method
-     * @param window   the window that this GUI will be in.
      * @return the GUI for this field
      */
     private static HBox produceMethodNode(Object object, boolean readOnly, TaggedParameters params, Method method) {
@@ -388,21 +394,37 @@ public class POJONode {
         }
         return methodBox;
     }
-    private static HBox newFieldNode(Object object, boolean readOnly, TaggedParameters params, Field field) {
-        HBox methodBox = new HBox();
 
-        {
-            String name = getName(field);
-            Label label = new Label(name);
-            label.getStyleClass().addAll("built-label");
-            //label.setPrefWidth(200);
-            /*Node valueNode = getValueField(object, method, readOnly || getSetter(method) == null, name, params);*/
-            Node valueNode = new Text(field.getType().toString());
+    private static Twin<Node> newFieldNode(Object object, boolean readOnly, TaggedParameters params, Field field) {
 
-            methodBox.getChildren().addAll(label, valueNode);
+
+        String name = getName(field);
+        Label label = new Label(name);
+        label.getStyleClass().addAll("built-label");
+        //label.setPrefWidth(200);
+        //Node valueNode = getValueField(object, method, readOnly || getSetter(method) == null, name, params);*/
+
+        Node valueNode;
+        try {
+            Object value = getField(object, field);
+            if (value!=null)
+                valueNode = valueToNode(value, params, field);
+            else
+                valueNode = new Text("null");
+        } catch (IllegalAccessException e) {
+            valueNode = new TextArea(field.getType().toString() + "\n" + e.toString());
         }
-        return methodBox;
+
+
+        return Tuples.twin(label, valueNode);
+
     }
+
+    private static Object getField(Object object, Field field) throws IllegalAccessException {
+        Object o = field.get(object);
+        return o;
+    }
+
     /**
      * Check if the method is a valid getter method - that is, does it begin with get and take no parameters.
      *
@@ -470,18 +492,23 @@ public class POJONode {
             params = new TaggedParameters();
         }
 
-        Object result = getValue(object, method);
+        try {
+            Object result = getValue(object, method);
 
-        IValueFieldConverter converter = getConverter(method);
-        if (converter == null) {
-            return new Label("Unknown: " + method);
+            IValueFieldConverter converter = getConverter(method);
+            if (converter == null) {
+                return new Label("Unknown: " + method);
+            }
+            String prompt = getPrompt(method);
+            params.addTag("prompt", prompt);
+            Node returned = converter.toNode(result, readOnly, params);
+            returned.getStyleClass().addAll("value", getStyleClass(name));
+
+            return returned;
         }
-        String prompt = getPrompt(method);
-        params.addTag("prompt", prompt);
-        Node returned = converter.toNode(result, readOnly, params);
-        returned.getStyleClass().addAll("value", getStyleClass(name));
-
-        return returned;
+        catch (Exception e) {
+            return new Label(e.toString());
+        }
     }
 
     /**
@@ -556,7 +583,7 @@ public class POJONode {
         }
 
         return method.getName().replaceFirst(GETTER_PREFIX,
-                    "");
+                "");
     }
 
     private static String getName(Field field) {
@@ -583,5 +610,58 @@ public class POJONode {
         }
 
         return "";
+    }
+
+    public static <X> Node valueToNode(X obj, TaggedParameters taggedParameters, Object parentValue) {
+        VBox ctl = new VBox();
+        ObservableList<Node> chi = ctl.getChildren();
+        ctl.getStyleClass().add("graphpopup"); //TODO revise these css rules
+
+        if (obj instanceof StringProperty) {
+            StringProperty d = (StringProperty)obj;
+
+            TextField n = new TextField();
+            n.setText(d.getValue());
+            d.bind(n.textProperty());
+            chi.add(n);
+        }
+        if (obj instanceof DoubleProperty) {
+            DoubleProperty d = (DoubleProperty)obj;
+
+            double min = 0;
+            double max = 1;
+
+            if (parentValue instanceof Field) {
+                Field p = (Field)parentValue;
+                Range range = p.getAnnotation(Range.class);
+                if (range!=null) {
+                    min = range.min();
+                    max = range.max();
+                }
+            }
+            NSlider n = new NSlider("" /*shortLabel(parentValue)*/,
+                    64, 16, NSlider.BarSlider, min);
+            n.min.set(min);
+            n.max.set(max);
+            n.value(d.getValue());
+            d.bind(n.value[0]);
+            chi.add(n);
+        }
+        else {
+
+            for (Twin<Node> n : POJONode.propertyNodes(obj, taggedParameters)) {
+                chi.addAll(n.getOne(), n.getTwo());
+            }
+        }
+        return ctl;
+    }
+
+    private static String shortLabel(Object v) {
+
+        if (v instanceof Field) {
+            return ((Field)v).getName();
+        }
+
+        return v.toString();
     }
 }

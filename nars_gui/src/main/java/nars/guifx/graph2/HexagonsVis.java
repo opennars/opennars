@@ -1,5 +1,6 @@
 package nars.guifx.graph2;
 
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
 import javafx.scene.canvas.Canvas;
@@ -11,6 +12,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.*;
 import nars.guifx.JFX;
 import nars.guifx.NARfx;
+import nars.guifx.annotation.Range;
 import nars.term.Term;
 
 /**
@@ -23,7 +25,17 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
     protected double minSize = 16;
     protected double maxSize = 64;
 
+    double nodeScaleCache = 1.0;
 
+    @Range(min=0, max=16)
+    public final SimpleDoubleProperty nodeScale = new SimpleDoubleProperty(1.0);
+
+    public HexagonsVis() {
+        super();
+        nodeScale.addListener((e) -> {
+            nodeScaleCache = nodeScale.get();
+        });
+    }
     //public Function<Term,TermNode> nodeBuilder;
 
     @Override
@@ -47,9 +59,10 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
         t.scale(minSize + (maxSize - minSize) * t.priNorm);
     }
 
-    public static class HexTerm2Node extends TermNode {
+    final static Font mono = NARfx.mono(8);
 
-        final static Font mono = NARfx.mono(8);
+    public class HexTerm2Node extends TermNode {
+
 
         private final Canvas base;
         private GraphicsContext g;
@@ -123,7 +136,8 @@ public class HexagonsVis implements VisModel<HexagonsVis.HexTerm2Node> {
             base.setHeight(h);
 
 
-            double s = 4.0 / w; //scaled to width
+            //TODO move nodeScaleCache elsewhere
+            double s = (nodeScaleCache * 4.0) / w; //scaled to width
             base.setScaleX(s);
             base.setScaleY(s);
             base.setScaleZ(s);

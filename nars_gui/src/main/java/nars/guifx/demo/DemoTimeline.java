@@ -6,6 +6,7 @@ import nars.Global;
 import nars.NAR;
 import nars.guifx.AutoLabel;
 import nars.guifx.NARfx;
+import nars.guifx.graph2.NARConceptSource;
 import nars.guifx.graph2.NARGraph;
 import nars.nal.nal7.Temporal;
 import nars.nar.Default;
@@ -90,7 +91,7 @@ public class DemoTimeline  {
         double d = 150.0; //duration window
 
         public TaskTimelinePane(NAR n) {
-            super(n,64);
+            super(new NARConceptSource(n),64);
 
             this.nar = n;
 

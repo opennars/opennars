@@ -21,7 +21,7 @@ import java.util.Set;
  */
 public class DerivationRules extends ArrayList<TaskRule> {
 
-    @Deprecated static final int maxVarArgsToMatch = 3;
+    @Deprecated public static int maxVarArgsToMatch = 3;
 
     static final NarseseParser parser = NarseseParser.the();
 

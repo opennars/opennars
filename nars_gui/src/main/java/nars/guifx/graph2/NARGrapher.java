@@ -1,43 +1,21 @@
-//package nars.guifx.graph2;
-//
-//import com.google.common.collect.HashBasedTable;
-//import com.google.common.collect.Table;
-//import javafx.beans.property.SimpleIntegerProperty;
-//import nars.Global;
-//import nars.NAR;
-//import nars.concept.Concept;
-//import nars.link.TLink;
-//import nars.nar.Default;
-//import nars.term.Term;
-//import nars.util.event.ArraySharingList;
-//
-//import java.util.LinkedHashMap;
-//import java.util.Map;
-//import java.util.Set;
-//import java.util.function.Consumer;
-//
-//import static javafx.application.Platform.runLater;
-//
-///**
-// * Created by me on 9/6/15.
-// */
-//public class NARGrapher implements Consumer<NARGraph> {
-//
-//    //final Set<Term> active = Global.newHashSet(1);
-//
-//    final ArraySharingList<TermNode> termList = new ArraySharingList<>(i->new TermNode[i]);
-//
-//    //final Map<Term, TermNode> termToAdd = new LinkedHashMap(64);
-//    //final Table<Term, Term, TermEdge> edges = HashBasedTable.create();
-//    //final Table<Term, Term, TermEdge> edgeToAdd = HashBasedTable.create();
-//
-//
-//    DoubleSummaryReusableStatistics conPri = new DoubleSummaryReusableStatistics();
-//
-//
-//    @Override
-//    public void accept(NARGraph graph) {
-//
+package nars.guifx.graph2;
+
+import nars.concept.Concept;
+
+import java.util.function.Consumer;
+
+/**
+ * Created by me on 9/6/15.
+ */
+abstract public class NARGrapher implements Consumer<NARGraph> {
+
+
+    //DoubleSummaryReusableStatistics conPri = new DoubleSummaryReusableStatistics();
+
+
+    @Override
+    public void accept(NARGraph graph) {
+
 //        final NAR nar = graph.nar;
 //
 //        //final long now = nar.time();
@@ -80,10 +58,22 @@
 ////        } else x = null;
 //
 ////        runLater(() -> graph.commit(active));
-//
-//    }
-//
-//    public void refresh(NARGraph graph, TermNode tn, Concept cc/*, long now*/) {
+
+    }
+
+    public void refresh(NARGraph graph, TermNode tn, Concept cc/*, long now*/) {
+
+    }
+
+    public <V> void start(NARGraph vnarGraph) {
+
+
+    }
+
+    public <V> void stop(NARGraph vnarGraph) {
+
+
+    }
 //
 //        //final Term source = c.getTerm();
 //
@@ -154,6 +144,6 @@
 //        return e;
 //    }
 //
-//
-//
-//}
+
+
+}

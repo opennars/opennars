@@ -3,7 +3,6 @@ package nars.guifx.demo;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
 import nars.Global;
 import nars.NAR;
 import nars.guifx.IOPane;
@@ -11,18 +10,21 @@ import nars.guifx.NARide;
 import nars.guifx.graph2.DefaultNARGraph;
 import nars.guifx.graph2.NARGraph;
 import nars.guifx.util.TabX;
+import nars.nal.DerivationRules;
 import nars.nar.Default;
 import za.co.knonchalant.builder.POJONode;
 import za.co.knonchalant.builder.TaggedParameters;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import static nars.guifx.NARfx.scrolled;
 
 /**
  * Created by me on 8/15/15.
  */
 public class NARGraph1Test {
+
+    static {
+        DerivationRules.maxVarArgsToMatch = 2;
+    }
 
     public static NARGraph newGraph(NAR n) {
         Global.CONCEPT_FORGETTING_EXTRA_DEPTH = 0.5f;
@@ -43,13 +45,14 @@ public class NARGraph1Test {
 
         NARGraph g = new DefaultNARGraph(n,32);
 
-//        GenericControlPane c = new GenericControlPane(g);
-//        g.getChildren().add(c);
+        GenericControlPane c = new GenericControlPane(g);
+        c.getStyleClass().add("graphpopup");
+        g.getChildren().add(scrolled(c));
 
         return g;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
 
 
         NAR n = new Default(512, 2,3,5);
@@ -96,28 +99,17 @@ public class NARGraph1Test {
 
 
             TaggedParameters taggedParameters = new TaggedParameters();
-            List<String> range = new ArrayList<>();
-            range.add("a");
-            range.add("b");
-            range.add("c");
-            taggedParameters.addTag("range", range);
 
-            FlowPane ctl = new FlowPane();
-            for (Node n : POJONode.propertyNodes(obj, taggedParameters)) {
-                ctl.getChildren().addAll(n);
-            }
+
+            Node ctl = POJONode.valueToNode(obj, taggedParameters, this); //new VBox();
+
 
 
             setCenter(ctl);
             setTop(new Button("X"));
 
 
-            ctl.setPrefSize(400,400);
-            ctl.setMinSize(400,400);
-            autosize();
-            layout();
 
-            System.out.println(ctl.getLayoutBounds());
         }
 
     }

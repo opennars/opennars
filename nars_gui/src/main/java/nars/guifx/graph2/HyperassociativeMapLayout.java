@@ -1,6 +1,8 @@
 package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
+import javafx.beans.property.SimpleDoubleProperty;
+import nars.guifx.annotation.Range;
 
 import java.util.function.Consumer;
 
@@ -10,6 +12,12 @@ import java.util.function.Consumer;
 public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, TermEdge> {
     double scaleFactor = 1;
     private TermNode[] termList;
+
+
+    @Range(min=1, max=20)
+    public final SimpleDoubleProperty attractionStrength = new SimpleDoubleProperty(15.0);
+    @Range(min=1, max=20)
+    public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(10.0);
 
     public HyperassociativeMapLayout() {
         this(2);
@@ -39,8 +47,8 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     protected void init() {
         resetLearning();
         setLearningRate(0.4f);
-        setRepulsiveWeakness(10.0);
-        setAttractionStrength(15.0);
+        setRepulsiveWeakness(repulseWeakness.get());
+        setAttractionStrength(attractionStrength.get());
         setMaxRepulsionDistance(150);
         setEquilibriumDistance(0.02f);
     }

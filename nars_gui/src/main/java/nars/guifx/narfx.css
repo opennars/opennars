@@ -98,3 +98,8 @@
 .windgetContent {
     -fx-background-color: rgb(25,25,25) !important;
 }
+.graphpopup {
+    -fx-background-color: rgba(100,100,100,0.45) !important;
+    -fx-border-width: 2px 2px 2px 12px;
+    -fx-border-color: transparent;
+}

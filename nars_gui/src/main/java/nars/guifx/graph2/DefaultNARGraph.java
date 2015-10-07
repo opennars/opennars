@@ -12,7 +12,8 @@ public class DefaultNARGraph extends NARGraph {
 
     public DefaultNARGraph(NAR nar, VisModel v, IterativeLayout l, int size) {
 
-        super(nar, size);
+        super(new NARConceptSource(nar), size);
+
 
 
         vis.set( v );

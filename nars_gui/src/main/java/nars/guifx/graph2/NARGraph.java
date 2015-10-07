@@ -6,13 +6,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import nars.Global;
-import nars.NAR;
-import nars.concept.Concept;
 import nars.guifx.Spacegraph;
 import nars.guifx.demo.Animate;
-import nars.link.TLink;
-import nars.nar.Default;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
 import org.infinispan.commons.util.WeakValueHashMap;
@@ -20,7 +15,6 @@ import org.infinispan.commons.util.WeakValueHashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import static javafx.application.Platform.runLater;
@@ -33,23 +27,20 @@ public class NARGraph<V> extends Spacegraph {
     final Map<Term, TermNode> terms = new WeakValueHashMap<>();
 
 
-
     public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
-
-
     public final SimpleObjectProperty<IterativeLayout<TermNode, TermEdge>> layout = new SimpleObjectProperty<>();
+    public final SimpleIntegerProperty maxNodes;
+    public final SimpleObjectProperty<NARGrapher> source = new SimpleObjectProperty<>();
 
-    final AtomicBoolean conceptsChanged = new AtomicBoolean(true);
+
 
 
     private Animate animator;
 
 
-    public final NAR nar;
 
 
     static final Random rng = new XORShiftRandom();
-    private final SimpleIntegerProperty maxNodes;
 
 
     int layoutPeriodMS = 30 /* slightly less than 2 * 17, approx sooner than 30fps */;
@@ -57,7 +48,6 @@ public class NARGraph<V> extends Spacegraph {
 
     public final SimpleObjectProperty<VisModel> vis = new SimpleObjectProperty<>();
     public TermNode[] displayed = new TermNode[0];
-    private Set<TermNode> prevActive;
 
 
     /**
@@ -92,7 +82,6 @@ public class NARGraph<V> extends Spacegraph {
     public final TermNode getTermNode(final Term t) {
         return terms.get(t);
     }
-
 
 
     public final TermNode getOrCreateTermNode(final Term t/*, boolean createIfMissing*/) {
@@ -172,125 +161,19 @@ public class NARGraph<V> extends Spacegraph {
 //    }
 
 
-    public final void updateGraph(NAR n) {
-
-        if (!isVisible())
-            return;
-
-        if (conceptsChanged.compareAndSet(true, false)) {
-
-            //synchronized (conceptsChanged)
-            {
-                Set<TermNode> active = Global.newHashSet(maxNodes.get());
-
-                ((Default) nar).core.concepts().forEach(maxNodes.get(), c -> {
-                    TermNode tn = getOrCreateTermNode(c.getTerm());
-                    if (tn != null) {
-
-                        active.add(tn);
-                        refresh(tn, c);
-                    }
-                });
-
-                if (prevActive != null && !prevActive.equals(active)) {
-
-                    runLater(() -> {
-
-                        ObservableList<Node> v = getVertices();
-                        //                    for (Node d : v) {
-                        //                        if (!active.contains(d))
-                        //                            v.remove(d);
-                        //                    }
-                        v.clear();
-                        v.addAll(active);
-
-                        displayed = v.toArray(displayed);
-
-                        System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
-                    });
-                }
-
-                prevActive = active;
-            }
-        }
-
-    }
-
-    public void refresh(TermNode tn, Concept cc/*, long now*/) {
-
-        //final Term source = c.getTerm();
-
-        tn.c = cc;
-        //conPri.accept(cc.getPriority());
-        tn.priNorm = cc.getPriority();
-
-        final Term t = tn.term;
-        final DoubleSummaryReusableStatistics ta = tn.taskLinkStat;
-        final DoubleSummaryReusableStatistics te = tn.termLinkStat;
-
-        tn.termLinkStat.clear();
-        cc.getTermLinks().forEach(l ->
-            updateConceptEdges(tn, l, te)
-        );
 
 
-        tn.taskLinkStat.clear();
-        cc.getTaskLinks().forEach(l -> {
-            if (!l.getTerm().equals(t)) {
-                updateConceptEdges(tn, l, ta);
-            }
+    public void setVertices(Set<TermNode> active) {
+        runLater(() -> {
+
+            ObservableList<Node> v = getVertices();
+            v.setAll(active);
+
+            displayed = v.toArray(displayed);
+
+            //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
         });
-
-//        System.out.println("refresh " + Thread.currentThread() + " " + termLinkMean.getResult() + " #" + termLinkMean.getN() );
-
-
-//        Consumer<TLink> tLinkConsumer = t -> {
-//            Term target = t.getTerm();
-//            if (!source.equals(target.getTerm())) {
-//                TermNode tn = getTermNode(graph, target);
-//                //TermEdge edge = getConceptEdge(graph, sn, tn);
-//
-//            }
-//        };
-//
-//        c.getTaskLinks().forEach(tLinkConsumer);
-//        c.getTermLinks().forEach(tLinkConsumer);
-
-
     }
-
-    public void updateConceptEdges(TermNode s, TLink link, DoubleSummaryReusableStatistics accumulator) {
-
-
-        Term t = link.getTerm();
-        TermNode target = getTermNode(t);
-        if ((target == null) || (s == target)) return;
-
-        TermEdge ee = getConceptEdge(s, target);
-        if (ee!=null) {
-            ee.linkFrom(s, link);
-            accumulator.accept(link.getPriority());
-        }
-    }
-
-    public TermEdge getConceptEdge(TermNode s, TermNode t) {
-        //re-order
-        if (!NARGraph.order(s.term, t.term)) {
-            TermNode x = s;
-            s = t;
-            t = x;
-        }
-
-        TermEdge e = getConceptEdgeOrdered(s, t);
-        if (e == null) {
-            e = new TermEdge(s, t);
-        }
-        s.putEdge(t.term, e);
-
-        return e;
-    }
-
-
 
 
 //    @FunctionalInterface
@@ -312,7 +195,6 @@ public class NARGraph<V> extends Spacegraph {
 //    }
 
 
-
     final Color FADEOUT = Color.BLACK;
     //new Color(0,0,0,0.5);
 
@@ -331,7 +213,7 @@ public class NARGraph<V> extends Spacegraph {
 
         /** apply vis properties */
         VisModel v = vis.get();
-        for (TermNode t: displayed)
+        for (TermNode t : displayed)
             v.accept(t);
 
 
@@ -350,9 +232,9 @@ public class NARGraph<V> extends Spacegraph {
         //Collections.addAll(removable, edges.getChildren());
         final EdgeRenderer<TermEdge> er = edgeRenderer.get();
 
-        for (TermNode n: displayed) {
+        for (TermNode n : displayed) {
 
-        //termList.forEach((Consumer<TermNode>) n -> {
+            //termList.forEach((Consumer<TermNode>) n -> {
 
 //        for (int i = 0, termListSize = termList.size(); i < termListSize; i++) {
 //            final TermNode n = termList.get(i);
@@ -366,9 +248,9 @@ public class NARGraph<V> extends Spacegraph {
 //        termList.forEach((Consumer<TermNode>)n -> {
 //        for (int i = 0, termListSize = termList.size(); i < termListSize; i++) {
 //            final TermNode n = termList.get(i);
-            if (n!=null) {
+            if (n != null) {
                 for (final TermEdge e : n.getEdges())
-                    if (e!=null) er.accept(e);
+                    if (e != null) er.accept(e);
             }
         }
 
@@ -383,18 +265,25 @@ public class NARGraph<V> extends Spacegraph {
     }
 
 
-    public NARGraph(NAR n, int size) {
+    public NARGraph(NARGrapher g, int size) {
         super();
+
 
         this.maxNodes = new SimpleIntegerProperty(size);
 
-        this.nar = n
-                //.stdout()
-                //.stdoutTrace()
-//                .input("<a --> b>. %1.00;0.7%", //$0.9;0.75;0.2$
-//                        "<b --> c>. %1.00;0.7%")
-                .onConceptActive((c) -> conceptsChanged.set(true))
-                .onEachFrame(this::updateGraph)
+        source.addListener((e, c, v) -> {
+
+            if (c != null) {
+                v.stop(this);
+            }
+
+            if (v != null) {
+                v.start(this);
+            } else {
+                System.out.println("no signal");
+            }
+        });
+
 
         //.onEachNthFrame(this::updateGraph, 1);
 
@@ -413,29 +302,27 @@ public class NARGraph<V> extends Spacegraph {
                 })*/
         ;
 
-        visibleProperty().addListener(v -> {
-            checkVisibility();
-        });
+        //TODO add enable override boolean switch
+        parentProperty().addListener(v -> checkVisibility());
+        visibleProperty().addListener(v -> checkVisibility());
+        runLater(() -> checkVisibility() );
 
-        runLater(() -> {
-            checkVisibility();
-        });
+        source.set(g);
 
     }
 
-    protected void checkVisibility() {
-        if (isVisible())
+    protected synchronized void checkVisibility() {
+        if (isVisible() && getParent() != null)
             start();
         else
             stop();
     }
 
-    protected void start() {
-        synchronized (nar) {
+    void start() {
             if (this.animator == null) {
 
                 this.animator = new Animate(layoutPeriodMS, a -> {
-                    if (displayed.length!=0) {
+                    if (displayed.length != 0) {
                         rerender();
                     }
                 });
@@ -449,16 +336,15 @@ public class NARGraph<V> extends Spacegraph {
                 animator.start();
                 //updaterSlow.start();
             }
-        }
+
     }
 
-    protected void stop() {
-        synchronized (nar) {
+    void stop() {
             if (this.animator != null) {
                 animator.stop();
                 animator = null;
             }
-        }
+
     }
 
     //    private class TermEdgeConsumer implements Consumer<TermEdge> {
