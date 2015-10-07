@@ -146,6 +146,13 @@
             </exclusions>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.chiralbehaviors</groupId>
+            <artifactId>failure-detectors</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+
         <!--<dependency>-->
             <!--<groupId>io.advantageous.boon</groupId>-->
             <!--<artifactId>boon-json</artifactId>-->
@@ -186,6 +193,16 @@
 
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>ChiralBehaviors-Snapshots</id>
+            <url>http://repository-chiralbehaviors.forge.cloudbees.com/snapshot/</url>
+        </repository>
+        <repository>
+            <id>ChiralBehaviors-release</id>
+            <url>http://repository-chiralbehaviors.forge.cloudbees.com/release/</url>
+        </repository>
+    </repositories>
 
 </project>
 
