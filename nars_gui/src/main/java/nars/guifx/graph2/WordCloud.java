@@ -17,7 +17,8 @@ import java.io.IOException;
 public class WordCloud extends DefaultNARGraph {
 
     public WordCloud(NAR nar) {
-        super(nar, new V(), new L(), 64);
+        super(nar, new V(), 64);
+        layoutType.setValue(L.class);
     }
     public static void main(String[] args) throws IOException {
 
@@ -65,8 +66,6 @@ public class WordCloud extends DefaultNARGraph {
      * aligns the entries in a line
      */
     static class L extends HyperassociativeMapLayout {
-
-
 
         public L() {
             super();

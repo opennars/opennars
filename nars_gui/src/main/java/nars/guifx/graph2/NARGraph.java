@@ -27,6 +27,7 @@ public class NARGraph<V> extends Spacegraph {
     final Map<Term, TermNode> terms = new WeakValueHashMap<>();
 
 
+
     public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
     public final SimpleObjectProperty<IterativeLayout<TermNode, TermEdge>> layout = new SimpleObjectProperty<>();
     public final SimpleIntegerProperty maxNodes;

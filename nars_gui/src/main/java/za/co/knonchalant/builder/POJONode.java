@@ -19,6 +19,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import nars.Global;
+import nars.guifx.annotation.Implementation;
+import nars.guifx.annotation.ImplementationProperty;
+import nars.guifx.annotation.Implementations;
 import nars.guifx.annotation.Range;
 import nars.guifx.util.NSlider;
 import za.co.knonchalant.builder.converters.IValueFieldConverter;
@@ -28,7 +31,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Generate JavaFX layouts based on POJO.
@@ -195,8 +201,6 @@ public class POJONode {
      * and additional information provided by parameters.
      *
      * @param object   POJO to read
-     * @param readOnly true if e.g., labels should be produced instead of text fields.
-     * @param layout   horizontal or vertical layout
      * @param params   additional parameters
      * @return the GUI
      */
@@ -226,7 +230,7 @@ public class POJONode {
         if (object == null) return Collections.emptyList();
 
         Field[] fields = object.getClass().getFields();
-        System.out.println("fields for : " + object + " (" + object.getClass() + "): " + Arrays.toString(fields));
+        //System.out.println("fields for : " + object + " (" + object.getClass() + "): " + Arrays.toString(fields));
 
         List<Twin<Node>> nodes = Global.newArrayList();
 
@@ -633,19 +637,44 @@ public class POJONode {
 
             if (parentValue instanceof Field) {
                 Field p = (Field)parentValue;
-                Range range = p.getAnnotation(Range.class);
+                Range range = p.getDeclaredAnnotation(Range.class);
                 if (range!=null) {
                     min = range.min();
                     max = range.max();
                 }
             }
-            NSlider n = new NSlider("" /*shortLabel(parentValue)*/,
+            NSlider w = new NSlider("" /*shortLabel(parentValue)*/,
                     64, 16, NSlider.BarSlider, min);
-            n.min.set(min);
-            n.max.set(max);
-            n.value(d.getValue());
-            d.bind(n.value[0]);
-            chi.add(n);
+            w.min.set(min);
+            w.max.set(max);
+            w.value(d.getValue());
+            d.bind(w.value[0]);
+            chi.add(w);
+        }
+        else if (obj instanceof ImplementationProperty) {
+            ImplementationProperty d = (ImplementationProperty)obj;
+
+            Class[] impls = null;
+
+            if (parentValue instanceof Field) {
+                Field p = (Field)parentValue;
+
+                Implementations ii = p.getAnnotation(Implementations.class);
+                if (ii!=null) {
+                    Implementation[] iv = ii.value();
+                    impls = new Class[iv.length];
+                    for (int i = 0; i < iv.length; i++)
+                        impls[i] = iv[i].value();
+                }
+            }
+
+            ComboBox<Class> w = new ComboBox();
+            if (impls == null) { w.setDisable(true); }
+            else {
+                w.getItems().addAll(impls);
+            }
+            d.bind(w.valueProperty());
+            chi.add(w);
         }
         else {
 

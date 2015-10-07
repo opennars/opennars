@@ -373,11 +373,10 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         return speedFactor;
     }
     
-    /** edge "weight" which can be mapped in certain ways (via EdgeWeightToDistanceFunction) to distance */
-    @Override
-    public double getEdgeWeight(E e) {
-        return 1.0;
-    }
+//    /** edge "weight" which can be mapped in certain ways (via EdgeWeightToDistanceFunction) to distance */
+//    public double getEdgeWeight(E e) {
+//        return 1.0;
+//    }
     
 //    public static enum EdgeWeightToDistanceFunction {
 //        Min, Max, Sum, SumOneDiv, OneDivSum, OneDivSumOneDiv

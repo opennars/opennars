@@ -8,20 +8,22 @@ public interface IterativeLayout<V,E> {
 
     ArrayRealVector getPosition(V vertex);
 
-    public void run(NARGraph graph, int iterations);
+    void run(NARGraph graph, int iterations);
 
     void resetLearning();
 
     double getRadius(V vertex);
 
-    default public double getEdgeWeight(E e) {
-        return 1.0;
+//    default public double getEdgeWeight(E e) {
+//        return 1.0;
+//    }
+
+
+    default void pre(V[] vertices) {
+
     }
 
-    default public void pre(V[] vertices) {
-
-    }
-
+    /** setup starting conditions for a new node */
     void init(V n);
 
 }
