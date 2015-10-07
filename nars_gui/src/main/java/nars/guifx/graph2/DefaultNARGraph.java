@@ -5,54 +5,28 @@ import javafx.beans.InvalidationListener;
 import nars.NAR;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
-import org.apache.commons.math3.linear.ArrayRealVector;
+import nars.guifx.graph2.layout.*;
+
+import static javafx.application.Platform.runLater;
 
 /**
  * provides defalut settings for a NARGraph view
  */
-public class DefaultNARGraph extends NARGraph {
+public class DefaultNARGraph extends NARGraph<Object> {
 
 //    @Implementation(values = {HexagonsVis.class})
 //    public final ImplementationProperty<EdgeRenderer> visType = new ImplementationProperty();
 
-    @Implementation(HyperassociativeMapLayout.class)
-    @Implementation(CircleLayout.class)
+    @Implementation(HyperassociativeMap2D.class)
+    @Implementation(Circle.class)
+    @Implementation(Grid.class)
+    @Implementation(HyperassociativeMap1D.class)
     public final ImplementationProperty<IterativeLayout> layoutType = new ImplementationProperty();
 
     public DefaultNARGraph(NAR nar, int capacity) {
         this(nar,
                 new HexagonsVis(),
                 capacity);
-    }
-
-    public static class NullLayout implements IterativeLayout {
-
-        public final ArrayRealVector zero = new ArrayRealVector(2);
-
-        @Override
-        public ArrayRealVector getPosition(Object vertex) {
-            return zero;
-        }
-
-        @Override
-        public void run(NARGraph graph, int iterations) {
-
-        }
-
-        @Override
-        public void resetLearning() {
-
-        }
-
-        @Override
-        public double getRadius(Object vertex) {
-            return 0;
-        }
-
-        @Override
-        public void init(Object n) {
-
-        }
     }
 
     public DefaultNARGraph(NAR nar, VisModel v, int size) {
@@ -65,13 +39,16 @@ public class DefaultNARGraph extends NARGraph {
                 try {
                     IterativeLayout il = lc.newInstance();
                     layout.set(il);
+                    source.getValue().refresh();
+                    rerender();
                     return;
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
             }
-
-            layout.set(new NullLayout());
+            else {
+                layout.set(nullLayout);
+            }
         };
         layoutType.addListener(layoutChange);
 
@@ -83,7 +60,8 @@ public class DefaultNARGraph extends NARGraph {
         //g.setEdgeRenderer(new QuadPolyEdgeRenderer());
 
         //g.setLayout(new CircleLayout<>());
-        layoutChange.invalidated(null);
+        runLater(()->
+            layoutChange.invalidated(null));
 
         //g.setLayout(new TimelineLayout());
 

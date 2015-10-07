@@ -14,6 +14,8 @@ import java.util.Map;
 abstract public class TermNode extends Group {
 
 
+    public static final TermNode[] empty = new TermNode[0];
+
     final public Map<Term, TermEdge> edge = new LinkedHashMap(8);
 
     /**
@@ -41,7 +43,6 @@ abstract public class TermNode extends Group {
 
     //private Color stroke;
 
-    private static TermEdge[] empty = new TermEdge[0];
 
 
     public TermNode(Term t) {
@@ -109,13 +110,15 @@ abstract public class TermNode extends Group {
         return this;
     }
 
-
     final public void move(final double[] v, final double speed, final double threshold) {
+        move(v[0], v[1], speed, threshold);
+    }
+    final public void move(final double v0, final double v1, final double speed, final double threshold) {
         final double px = tx;
         final double py = ty;
         final double momentum = 1f - speed;
-        final double nx = v[0] * speed + px * momentum;
-        final double ny = v[1] * speed + py * momentum;
+        final double nx = v0 * speed + px * momentum;
+        final double ny = v1 * speed + py * momentum;
         final double dx = Math.abs(px - nx);
         final double dy = Math.abs(py - ny);
         if ((dx > threshold) || (dy > threshold)) {
@@ -198,7 +201,7 @@ abstract public class TermNode extends Group {
             if (edge.size() > 0)
                 updateEdges();
             else
-                edges = empty;
+                edges = TermEdge.empty;
         }
 
         return edges;

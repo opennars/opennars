@@ -14,15 +14,18 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
 import nars.guifx.annotation.Implementations;
 import nars.guifx.annotation.Range;
+import nars.guifx.graph2.layout.None;
 import nars.guifx.util.NSlider;
 import za.co.knonchalant.builder.converters.IValueFieldConverter;
 import za.co.knonchalant.builder.exception.ComponentException;
@@ -419,7 +422,7 @@ public class POJONode {
             else
                 valueNode = new Text("null");
         } catch (IllegalAccessException e) {
-            valueNode = new TextArea(field.getType().toString() + "\n" + e.toString());
+            valueNode = new /*Error*/Label(field.getType().toString() + "\n" + e.toString());
         }
 
 
@@ -620,7 +623,7 @@ public class POJONode {
     }
 
     public static <X> Node valueToNode(X obj, TaggedParameters taggedParameters, Object parentValue) {
-        VBox ctl = new VBox();
+        FlowPane ctl = new FlowPane();
         ObservableList<Node> chi = ctl.getChildren();
         ctl.getStyleClass().add("graphpopup"); //TODO revise these css rules
 
@@ -665,13 +668,26 @@ public class POJONode {
                 Implementations ii = p.getAnnotation(Implementations.class);
                 if (ii!=null) {
                     Implementation[] iv = ii.value();
-                    impls = new Class[iv.length];
+                    impls = new Class[iv.length+1];
+                    impls[0] = None.class;//the null value option
                     for (int i = 0; i < iv.length; i++)
-                        impls[i] = iv[i].value();
+                        impls[i+1] = iv[i].value();
+
                 }
             }
 
             ComboBox<Class> w = new ComboBox();
+            w.setConverter(new StringConverter<Class>() {
+                @Override
+                public String toString(Class aClass) {
+                    return aClass.getSimpleName();
+                }
+
+                @Override
+                public Class fromString(String s) {
+                    return null;
+                }
+            });
             if (impls == null) { w.setDisable(true); }
             else {
                 w.getItems().addAll(impls);

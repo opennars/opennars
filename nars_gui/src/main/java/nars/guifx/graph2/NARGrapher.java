@@ -1,20 +1,18 @@
 package nars.guifx.graph2;
 
-import nars.concept.Concept;
-
 import java.util.function.Consumer;
 
 /**
  * Created by me on 9/6/15.
  */
-abstract public class NARGrapher implements Consumer<NARGraph> {
+abstract public class NARGrapher<G> implements Consumer<NARGraph<G>> {
 
 
     //DoubleSummaryReusableStatistics conPri = new DoubleSummaryReusableStatistics();
 
 
     @Override
-    public void accept(NARGraph graph) {
+    public void accept(NARGraph<G> graph) {
 
 //        final NAR nar = graph.nar;
 //
@@ -22,7 +20,7 @@ abstract public class NARGrapher implements Consumer<NARGraph> {
 //
 //        //conPri.clear();
 //
-//        if (graph.conceptsChanged.compareAndSet(true, false)) {
+//        if (graph.refresh.compareAndSet(true, false)) {
 //            //active.clear();
 //
 //
@@ -60,17 +58,20 @@ abstract public class NARGrapher implements Consumer<NARGraph> {
 ////        runLater(() -> graph.commit(active));
 
     }
+//
+//    public void refresh(NARGraph graph, TermNode tn, Concept cc/*, long now*/) {
+//
+//    }
 
-    public void refresh(NARGraph graph, TermNode tn, Concept cc/*, long now*/) {
+    public void start(NARGraph<G> narGraph) {
+
 
     }
 
-    public <V> void start(NARGraph vnarGraph) {
+    /** called ex: invalidation */
+    public void refresh() { }
 
-
-    }
-
-    public <V> void stop(NARGraph vnarGraph) {
+    public void stop(NARGraph<G> narGraph) {
 
 
     }

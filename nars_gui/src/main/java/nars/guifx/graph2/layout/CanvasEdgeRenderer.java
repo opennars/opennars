@@ -1,9 +1,12 @@
-package nars.guifx.graph2;
+package nars.guifx.graph2.layout;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import nars.guifx.ResizableCanvas;
+import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.TermEdge;
+import nars.guifx.graph2.TermNode;
 import nars.guifx.util.ColorMatrix;
 import nars.util.data.Util;
 

@@ -10,6 +10,7 @@ import nars.link.TermLink;
 public class TermEdge /*implements ChangeListener*/ {
 
 
+    public static final TermEdge[] empty = new TermEdge[0];
     public final TermNode bSrc;
     public final TermNode aSrc;
 

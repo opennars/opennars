@@ -1,7 +1,10 @@
-package nars.guifx.graph2;
+package nars.guifx.graph2.layout;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
 import javafx.beans.property.SimpleDoubleProperty;
+import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.TermEdge;
+import nars.guifx.graph2.TermNode;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.util.function.ToDoubleFunction;
@@ -9,7 +12,7 @@ import java.util.function.ToDoubleFunction;
 /**
  * Created by me on 9/6/15.
  */
-public class CircleLayout<N extends TermNode, E extends TermEdge> implements IterativeLayout<N,E> {
+public class Circle<N extends TermNode, E extends TermEdge> implements IterativeLayout<N,E> {
 
     public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(100);
     public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(100);

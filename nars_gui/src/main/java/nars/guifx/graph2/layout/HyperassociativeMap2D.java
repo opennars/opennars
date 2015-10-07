@@ -1,15 +1,18 @@
-package nars.guifx.graph2;
+package nars.guifx.graph2.layout;
 
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.annotation.Range;
+import nars.guifx.graph2.NARGraph;
+import nars.guifx.graph2.TermEdge;
+import nars.guifx.graph2.TermNode;
 
 import java.util.function.Consumer;
 
 /**
  * Created by me on 9/6/15.
  */
-public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, TermEdge> {
+public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdge> {
     double scaleFactor = 1;
     private TermNode[] termList;
 
@@ -19,11 +22,11 @@ public class HyperassociativeMapLayout extends HyperassociativeMap<TermNode, Ter
     @Range(min=1, max=20)
     public final SimpleDoubleProperty repulseWeakness = new SimpleDoubleProperty(10.0);
 
-    public HyperassociativeMapLayout() {
+    public HyperassociativeMap2D() {
         this(2);
     }
 
-    public HyperassociativeMapLayout(int dim) {
+    public HyperassociativeMap2D(int dim) {
         super(dim);
     }
 

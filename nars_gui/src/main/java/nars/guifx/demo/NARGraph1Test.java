@@ -15,8 +15,6 @@ import nars.nar.Default;
 import za.co.knonchalant.builder.POJONode;
 import za.co.knonchalant.builder.TaggedParameters;
 
-import static nars.guifx.NARfx.scrolled;
-
 /**
  * Created by me on 8/15/15.
  */
@@ -43,11 +41,13 @@ public class NARGraph1Test {
 
         //n.frame(5);
 
-        NARGraph g = new DefaultNARGraph(n,32);
+        NARGraph g = new DefaultNARGraph(n,256);
 
         GenericControlPane c = new GenericControlPane(g);
         c.getStyleClass().add("graphpopup");
-        g.getChildren().add(scrolled(c));
+        c.layout();
+        c.autosize();
+        g.getChildren().add(c);
 
         return g;
     }

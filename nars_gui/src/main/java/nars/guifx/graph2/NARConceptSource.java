@@ -2,7 +2,6 @@ package nars.guifx.graph2;
 
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
-import nars.Global;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.concept.Concept;
@@ -12,14 +11,17 @@ import nars.term.Term;
 import nars.util.event.Active;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import static javafx.application.Platform.runLater;
+
 /**
- * Created by me on 10/6/15.
+ * Example Concept supplier with some filters
  */
-public class NARConceptSource extends NARGrapher {
+public class NARConceptSource extends NARGrapher<Object> {
 
 
     private final NAR nar;
@@ -33,9 +35,14 @@ public class NARConceptSource extends NARGrapher {
 
     public NARConceptSource(NAR nar) {
         this.nar = nar;
+
+        includeString.addListener((e) -> {
+            refresh();
+        });
     }
 
-    final AtomicBoolean conceptsChanged = new AtomicBoolean();
+    final AtomicBoolean refresh = new AtomicBoolean();
+
 
     @Override
     public synchronized void start(NARGraph g) {
@@ -49,10 +56,11 @@ public class NARConceptSource extends NARGrapher {
         if (regs != null)
             regs.off();
 
-        conceptsChanged.set(true);
+        refresh();
+
         regs = new Active(
                 nar.memory.eventConceptActivated.on(
-                        (c) -> conceptsChanged.set(true)
+                        (c) -> refresh.set(true)
                 ),
                 nar.memory.eventFrameStart.on(
                         h -> update(g)
@@ -63,8 +71,17 @@ public class NARConceptSource extends NARGrapher {
 
     }
 
+
+    @Override public void refresh() {
+        runLater( () -> {
+            refresh.set(true);
+            if (prevActive!=null)
+                prevActive.clear();
+        });
+    }
+
     @Override
-    public <V> void stop(NARGraph vnarGraph) {
+    public void stop(NARGraph vnarGraph) {
         regs.off();
         regs = null;
     }
@@ -72,17 +89,18 @@ public class NARConceptSource extends NARGrapher {
     public final void update(NARGraph g) {
 
 
-        if (conceptsChanged.compareAndSet(true, false)) {
+        if (refresh.compareAndSet(true, false)) {
 
-            //synchronized (conceptsChanged)
+            int maxNodes = g.maxNodes.get();
+
+            Set<TermNode> active = new LinkedHashSet(maxNodes); //Global.newHashSet(maxNodes);
+
+            //synchronized (refresh)
             {
-                int maxNodes = g.maxNodes.get();
-                Set<TermNode> active = Global.newHashSet(maxNodes);
 
                 Consumer<Concept> each = c -> {
                     TermNode tn = g.getOrCreateTermNode(c.getTerm());
                     if (tn != null) {
-
                         active.add(tn);
                         refresh(g, tn, c);
                     }
@@ -90,33 +108,33 @@ public class NARConceptSource extends NARGrapher {
 
                 Bag<Term, Concept> x = ((Default) nar).core.concepts();
 
-                    //x.forEach(maxNodes, each);
+                //x.forEach(maxNodes, each);
 
 
-                    String filter = includeString.get();
+                String filter = includeString.get();
 
-                        double minPri = this.minPri.get();
-                        double maxPri = this.maxPri.get();
+                double minPri = this.minPri.get();
+                double maxPri = this.maxPri.get();
 
-                        Iterator<Concept> cc = x.iterator();
-                        int n = 0;
-                        while (cc.hasNext() && n < maxNodes) {
-                            Concept c = cc.next();
-                            float p = c.getPriority();
-                            if ((p < minPri) || (p > maxPri)) continue;
-                            if ((filter != null) && (!c.getTerm().toString().contains(filter))) continue;
+                Iterator<Concept> cc = x.iterator();
+                int n = 0;
+                while (cc.hasNext() && n < maxNodes) {
+                    Concept c = cc.next();
+                    float p = c.getPriority();
 
-                            each.accept(c);
-                        }
+                    if ((p < minPri) || (p > maxPri)) continue;
+                    if ((filter != null) && (!c.getTerm().toString().contains(filter))) continue;
 
-
-
-                if (prevActive != null && !prevActive.equals(active)) {
-
-                    g.setVertices(active);
+                    each.accept(c);
                 }
 
-                prevActive = active;
+
+                if (prevActive == null || !prevActive.equals(active)) {
+                    g.setVertices(active);
+                } else {
+                    prevActive = active;
+                }
+
             }
         }
 

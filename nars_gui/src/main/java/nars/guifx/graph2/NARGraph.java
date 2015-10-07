@@ -1,16 +1,15 @@
 package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
+import com.gs.collections.impl.map.mutable.UnifiedMap;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import nars.guifx.Spacegraph;
 import nars.guifx.demo.Animate;
+import nars.guifx.graph2.layout.None;
 import nars.term.Term;
 import nars.util.data.random.XORShiftRandom;
-import org.infinispan.commons.util.WeakValueHashMap;
 
 import java.util.Map;
 import java.util.Random;
@@ -24,14 +23,20 @@ import static javafx.application.Platform.runLater;
  */
 public class NARGraph<V> extends Spacegraph {
 
-    final Map<Term, TermNode> terms = new WeakValueHashMap<>();
+    final Map<Term, TermNode> terms =
+            new UnifiedMap();
+            //new WeakValueHashMap<>();
 
 
 
     public final SimpleObjectProperty<EdgeRenderer<TermEdge>> edgeRenderer = new SimpleObjectProperty<>();
+
     public final SimpleObjectProperty<IterativeLayout<TermNode, TermEdge>> layout = new SimpleObjectProperty<>();
+    public static final IterativeLayout nullLayout = new None();
+
+
     public final SimpleIntegerProperty maxNodes;
-    public final SimpleObjectProperty<NARGrapher> source = new SimpleObjectProperty<>();
+    public final SimpleObjectProperty<NARGrapher<V>> source = new SimpleObjectProperty<>();
 
 
 
@@ -163,17 +168,37 @@ public class NARGraph<V> extends Spacegraph {
 
 
 
+    final Runnable clear = () -> {
+        this.displayed = TermNode.empty;
+        getVertices().clear();
+        edgeRenderer.get().reset(this);
+    };
 
-    public void setVertices(Set<TermNode> active) {
-        runLater(() -> {
+    public final void setVertices(final Set<TermNode> active) {
 
-            ObservableList<Node> v = getVertices();
-            v.setAll(active);
 
-            displayed = v.toArray(displayed);
+        if (active.isEmpty()) {
+            runLater(clear);
+        }
+        else {
+            final TermNode[] toDisplay = active.toArray(displayed);
+            if (toDisplay == null) {
+                throw new RuntimeException("null toDisplay");
+            }
 
-            //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
-        });
+            if (toDisplay.length == 0) {
+                runLater(clear);
+                return;
+            }
+
+            runLater( () -> {
+                this.displayed = toDisplay;
+                getVertices().setAll(
+                    active
+                );
+                //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
+            });
+        }
     }
 
 
@@ -212,12 +237,6 @@ public class NARGraph<V> extends Spacegraph {
      */
     protected void rerender() {
 
-        /** apply vis properties */
-        VisModel v = vis.get();
-        for (TermNode t : displayed)
-            v.accept(t);
-
-
         /** apply layout */
         IterativeLayout<TermNode, TermEdge> l;
         if ((l = layout.get()) != null) {
@@ -226,14 +245,13 @@ public class NARGraph<V> extends Spacegraph {
             System.err.println(this + " has no layout");
         }
 
-
-        edgeRenderer.get().reset(this);
-
-
-        //Collections.addAll(removable, edges.getChildren());
         final EdgeRenderer<TermEdge> er = edgeRenderer.get();
+        er.reset(this);
 
+        /** apply vis properties */
+        VisModel v = vis.get();
         for (TermNode n : displayed) {
+            v.accept(n);
 
             //termList.forEach((Consumer<TermNode>) n -> {
 
