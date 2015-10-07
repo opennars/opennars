@@ -14,10 +14,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -622,7 +619,7 @@ public class POJONode {
         return "";
     }
 
-    public static <X> Node valueToNode(X obj, TaggedParameters taggedParameters, Object parentValue) {
+    public static <X> Region valueToNode(X obj, TaggedParameters taggedParameters, Object parentValue) {
         FlowPane ctl = new FlowPane();
         ObservableList<Node> chi = ctl.getChildren();
         ctl.getStyleClass().add("graphpopup"); //TODO revise these css rules

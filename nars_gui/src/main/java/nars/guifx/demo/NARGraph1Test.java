@@ -1,8 +1,8 @@
 package nars.guifx.demo;
 
-import javafx.scene.Node;
-import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Region;
 import nars.Global;
 import nars.NAR;
 import nars.guifx.IOPane;
@@ -44,7 +44,6 @@ public class NARGraph1Test {
         NARGraph g = new DefaultNARGraph(n,256);
 
         GenericControlPane c = new GenericControlPane(g);
-        c.getStyleClass().add("graphpopup");
         c.layout();
         c.autosize();
         g.getChildren().add(c);
@@ -96,19 +95,15 @@ public class NARGraph1Test {
             super();
             this.obj = obj;
 
-
-
             TaggedParameters taggedParameters = new TaggedParameters();
 
+            Region controls = POJONode.valueToNode(obj, taggedParameters, this); //new VBox();
 
-            Node ctl = POJONode.valueToNode(obj, taggedParameters, this); //new VBox();
+            ToggleButton toggle = new ToggleButton("[X]");
+            controls.visibleProperty().bind(toggle.selectedProperty());
+            toggle.setSelected(true);
 
-
-
-            setCenter(ctl);
-            setTop(new Button("X"));
-
-
+            setTop(toggle);            setCenter(controls);
 
         }
 

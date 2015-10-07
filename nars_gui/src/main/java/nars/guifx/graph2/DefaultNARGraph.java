@@ -18,6 +18,7 @@ public class DefaultNARGraph extends NARGraph<Object> {
 //    public final ImplementationProperty<EdgeRenderer> visType = new ImplementationProperty();
 
     @Implementation(HyperassociativeMap2D.class)
+    @Implementation(Spiral.class)
     @Implementation(Circle.class)
     @Implementation(Grid.class)
     @Implementation(HyperassociativeMap1D.class)

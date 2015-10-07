@@ -176,9 +176,10 @@ public class NARGraph<V> extends Spacegraph {
 
     public final void setVertices(final Set<TermNode> active) {
 
+        Runnable next;
 
         if (active.isEmpty()) {
-            runLater(clear);
+            next = clear;
         }
         else {
             final TermNode[] toDisplay = active.toArray(displayed);
@@ -187,18 +188,21 @@ public class NARGraph<V> extends Spacegraph {
             }
 
             if (toDisplay.length == 0) {
-                runLater(clear);
-                return;
+                next = clear; //necessary?
             }
-
-            runLater( () -> {
-                this.displayed = toDisplay;
-                getVertices().setAll(
-                    active
-                );
-                //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
-            });
+            else {
+                next = (() -> {
+                    this.displayed = toDisplay;
+                    getVertices().setAll(
+                            active
+                    );
+                    //System.out.println("cached: " + terms.size() + ", displayed: " + displayed.length + " , shown=" + v.size());
+                });
+            }
         }
+
+
+        runLater(next);
     }
 
 

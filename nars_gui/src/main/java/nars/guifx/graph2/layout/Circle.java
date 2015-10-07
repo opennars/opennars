@@ -10,7 +10,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import java.util.function.ToDoubleFunction;
 
 /**
- * Created by me on 9/6/15.
+ * TODO rewrite as subclass of Linear
  */
 public class Circle<N extends TermNode, E extends TermEdge> implements IterativeLayout<N,E> {
 

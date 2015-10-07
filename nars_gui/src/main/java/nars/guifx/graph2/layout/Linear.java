@@ -43,4 +43,5 @@ public abstract class Linear<N extends TermNode> implements IterativeLayout<N,Te
     public void resetLearning() {
 
     }
+
 }
