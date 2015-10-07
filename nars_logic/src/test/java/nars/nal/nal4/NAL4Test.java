@@ -172,7 +172,7 @@ public class NAL4Test extends AbstractNALTest {
         new RuleTest(
                 "<(p1) --> belief:p2>.", "belief:p2.",
                 "<belief:p2 --> (/, _, p1)>.",
-                1f, 1f, 0.9f, 1f)
+                1f, 1f, 0.9f, 0.9f) //
                 .run();
     }
 
@@ -183,7 +183,7 @@ public class NAL4Test extends AbstractNALTest {
         new RuleTest(
                 "<(belief:p1) --> p2>.", "belief:p1.",
                 "<belief:p1 --> (/, p2, _)>.",
-                1f, 1f, 0.9f, 1f)
+                1f, 1f, 0.9f, 0.9f)
             .run();
     }
 
@@ -192,7 +192,7 @@ public class NAL4Test extends AbstractNALTest {
         new RuleTest(
                 "<belief:p1 --> (p2)>.", "belief:p1.",
                 "<(\\, _, p2) --> belief:p1>.",
-                1f, 1f, 0.9f, 1f)
+                1f, 1f, 0.9f, 0.9f)
                 .run();
     }
 
@@ -201,7 +201,7 @@ public class NAL4Test extends AbstractNALTest {
         new RuleTest(
                 "<p1 --> (belief:p2)>.", "belief:p2.",
                 "<(\\, p1, _) --> belief:p2>.",
-                1f, 1f, 0.9f, 1f)
+                1f, 1f, 0.9f, 0.9f)
                 .run();
     }
 
