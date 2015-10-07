@@ -11,7 +11,6 @@ public class Spiral extends Linear {
 
     @Override
     public void setPosition(TermNode v, int i, int max) {
-        double size = 50; //temproary
         double minR = 200;
         final double dr = 15;
         final double dt = 0.2;

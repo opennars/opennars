@@ -5,7 +5,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import nars.guifx.graph2.NARGraph;
 import nars.guifx.graph2.TermEdge;
 import nars.guifx.graph2.TermNode;
-import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.util.function.ToDoubleFunction;
 
@@ -14,8 +13,8 @@ import java.util.function.ToDoubleFunction;
  */
 public class Circle<N extends TermNode, E extends TermEdge> implements IterativeLayout<N,E> {
 
-    public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(100);
-    public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(100);
+    public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(5);
+    public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(10);
 
     @Override
     public void init(N n) {
@@ -43,10 +42,6 @@ public class Circle<N extends TermNode, E extends TermEdge> implements Iterative
 
     }
 
-    @Override
-    public ArrayRealVector getPosition(N vertex) {
-        return null;
-    }
 
     @Override
     public void run(NARGraph graph, int iterations) {
@@ -54,8 +49,10 @@ public class Circle<N extends TermNode, E extends TermEdge> implements Iterative
 
         double[] i = new double[1];
         double numFraction = Math.PI * 2.0 * 1.0 / termList.length;
-        double radiusMin = this.radiusMin.get();
-        double radiusMax = radiusMin + this.radiusMax.get();
+
+        final int num = graph.maxNodes.get(); //termList.length;
+        double radiusMin = num * this.radiusMin.get();
+        double radiusMax = radiusMin + num * this.radiusMax.get();
 
         run(termList,
                 (v) -> {
@@ -76,14 +73,5 @@ public class Circle<N extends TermNode, E extends TermEdge> implements Iterative
 
     }
 
-    @Override
-    public void resetLearning() {
-
-    }
-
-    @Override
-    public double getRadius(N vertex) {
-        return 0;
-    }
 
 }

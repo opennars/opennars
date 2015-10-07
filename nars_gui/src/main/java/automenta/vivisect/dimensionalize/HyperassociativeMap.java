@@ -211,15 +211,15 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         this.maxRepulsionDistance = maxRepulsionDistance;
     }
 
-    public double getEquilibriumDistance() {
-        return equilibriumDistance;
-    }
+//    public double getEquilibriumDistance() {
+//        return equilibriumDistance;
+//    }
 
     public void setEquilibriumDistance(final double equilibriumDistance) {
         this.equilibriumDistance = Math.abs(equilibriumDistance);
     }
 
-    @Override
+
     public void resetLearning() {
         learningRate = DEFAULT_LEARNING_RATE;
         maxMovement = DEFAULT_TOTAL_MOVEMENT;
@@ -476,7 +476,7 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
 
         double nodeSpeed = getSpeedFactor(nodeToAlign);
 
-        ArrayRealVector originalPosition = new ArrayRealVector(getPosition(nodeToAlign), false);
+        ArrayRealVector originalPosition = getCurrentPosition(nodeToAlign);
         if (nodeSpeed == 0) return originalPosition;
 
         // calculate equilibrium with neighbors
@@ -597,6 +597,10 @@ abstract public class HyperassociativeMap<N, E> implements IterativeLayout<N,E> 
         totalMovement += moveDistance;
 
         return (ArrayRealVector) originalPosition.mapMultiplyToSelf(scale);
+    }
+
+    protected ArrayRealVector getCurrentPosition(N n) {
+        return new ArrayRealVector(getPosition(n), false);
     }
 
     protected ArrayRealVector newVector() {

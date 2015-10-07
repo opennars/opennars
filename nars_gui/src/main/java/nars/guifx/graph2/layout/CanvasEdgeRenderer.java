@@ -123,8 +123,8 @@ public class CanvasEdgeRenderer implements NARGraph.EdgeRenderer<TermEdge> {
 
         }
 
-        double w = g.getWidth();
-        double h = g.getHeight();
+        double w = g.getScene().getWindow().getWidth(); //g.getWidth();
+        double h = g.getScene().getWindow().getHeight();
 
         tx = g.translate.getX();
         ty = g.translate.getY();

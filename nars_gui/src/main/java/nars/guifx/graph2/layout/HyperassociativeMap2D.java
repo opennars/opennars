@@ -28,12 +28,26 @@ public class HyperassociativeMap2D extends HyperassociativeMap<TermNode, TermEdg
 
     public HyperassociativeMap2D(int dim) {
         super(dim);
+
+        //reusedCurrentPosition = new ArrayRealVector(dim);
     }
 
     @Override
     public void init(TermNode n) {
         n.move(Math.random()*200,Math.random()*200);
     }
+
+
+//
+//    private final ArrayRealVector reusedCurrentPosition;
+//
+//    //this assumes single-thread usage so we reuse the vector */
+//    @Override protected final ArrayRealVector getCurrentPosition(TermNode n) {
+//        ArrayRealVector rcp = reusedCurrentPosition;
+//        n.getPosition(rcp.getDataRef());
+//        return rcp;
+//    }
+
 
     @Override
     public void run(NARGraph graph, int i) {
