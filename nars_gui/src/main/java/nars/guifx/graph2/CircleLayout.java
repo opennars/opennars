@@ -1,6 +1,7 @@
 package nars.guifx.graph2;
 
 import automenta.vivisect.dimensionalize.IterativeLayout;
+import javafx.beans.property.SimpleDoubleProperty;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 import java.util.function.ToDoubleFunction;
@@ -9,6 +10,9 @@ import java.util.function.ToDoubleFunction;
  * Created by me on 9/6/15.
  */
 public class CircleLayout<N extends TermNode, E extends TermEdge> implements IterativeLayout<N,E> {
+
+    public final SimpleDoubleProperty radiusMin = new SimpleDoubleProperty(100);
+    public final SimpleDoubleProperty radiusMax = new SimpleDoubleProperty(100);
 
     @Override
     public void init(N n) {
@@ -25,6 +29,8 @@ public class CircleLayout<N extends TermNode, E extends TermEdge> implements Ite
         double d[] = new double[2];
 
         for (TermNode v : verts) {
+            if (v == null) continue; //break?
+
             final double r = radiusFraction.applyAsDouble(v);
             final double a = angle.applyAsDouble(v);
             d[0] = Math.cos(a) * r;
@@ -45,8 +51,8 @@ public class CircleLayout<N extends TermNode, E extends TermEdge> implements Ite
 
         double[] i = new double[1];
         double numFraction = Math.PI * 2.0 * 1.0 / termList.length;
-        double radiusMin = (termList.length + 1) * 10;
-        double radiusMax = 3f * radiusMin;
+        double radiusMin = this.radiusMin.get();
+        double radiusMax = radiusMin + this.radiusMax.get();
 
         run(termList,
                 (v) -> {

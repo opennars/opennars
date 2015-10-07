@@ -5,6 +5,7 @@ import com.gs.collections.impl.tuple.Tuples;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +19,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
-import nars.Global;
 import nars.guifx.annotation.Implementation;
 import nars.guifx.annotation.ImplementationProperty;
 import nars.guifx.annotation.Implementations;
@@ -32,7 +32,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -221,18 +220,22 @@ public class POJONode {
 //        return nodes;
 //    }
 
-    public static List<Twin<Node>> propertyNodes(Object object, TaggedParameters params) {
+    public static Node propertyNodes(Object object, TaggedParameters params) {
+
         if (object instanceof ObjectProperty) {
-            //TODO attach listener that updates content inside its own managed wrapper
+
             ObjectProperty op = (ObjectProperty)object;
-            object = op.get();
+            return new ObjectPropertyNode(op);
         }
-        if (object == null) return Collections.emptyList();
+
+        if (object == null) return new Text("null"); //Collections.emptyList();
 
         Field[] fields = object.getClass().getFields();
         //System.out.println("fields for : " + object + " (" + object.getClass() + "): " + Arrays.toString(fields));
 
-        List<Twin<Node>> nodes = Global.newArrayList();
+        //List<Twin<Node>> nodes = Global.newArrayList();
+
+        final Pane node = new VBox(); //TODO use a lambda parameter builder
 
         for (Field f : fields) {
             if (f.getAnnotation(Ignore.class) != null) {
@@ -252,9 +255,9 @@ public class POJONode {
 
             Twin<Node> methodBox = newFieldNode(object, /* readOnly*/ false, params, f);
 
-            nodes.add(methodBox);
+            node.getChildren().addAll(methodBox.getOne(), methodBox.getTwo());
         }
-        return nodes;
+        return node;
     }
 
 
@@ -677,10 +680,8 @@ public class POJONode {
             chi.add(w);
         }
         else {
-
-            for (Twin<Node> n : POJONode.propertyNodes(obj, taggedParameters)) {
-                chi.addAll(n.getOne(), n.getTwo());
-            }
+            Node n = POJONode.propertyNodes(obj, taggedParameters);
+            chi.add(n);
         }
         return ctl;
     }
@@ -692,5 +693,22 @@ public class POJONode {
         }
 
         return v.toString();
+    }
+
+    /** //attach listener that updates content inside its own managed wrapper */
+    public static class ObjectPropertyNode<O> extends VBox implements ChangeListener<O> {
+        public ObjectPropertyNode(ObjectProperty<O> op) {
+            super();
+            op.addListener(this);
+            changed(op, null, op.get());
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends O> observableValue, O o, O newValue) {
+            if (newValue == null)
+                getChildren().setAll(new Text("null"));
+            else
+                getChildren().setAll( propertyNodes( newValue, null ) );
+        }
     }
 }
